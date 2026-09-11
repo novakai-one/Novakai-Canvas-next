@@ -30,9 +30,9 @@ Final observable outcomes:
 
 | # | Capability | Responsibility | Status | PR |
 |---|---|---|---|---|
-| 1 | model | Diagram meaning, validity and immutable transition plans | Complete: 18 tests pass; both bounded rewrite audits found no verified issues | Original #1; rewrite pending |
-| 2 | library | Catalog folders, collection membership/order/archive and discovery projections | Pending | |
-| 3 | persistence | Atomic versioned storage, receipts, recovery and backups | Pending | |
+| 1 | model | Diagram meaning, validity and immutable transition plans | Complete: 18 tests pass; both bounded rewrite audits found no verified issues | [#2](https://github.com/novakai-one/Novakai-Canvas-next/pull/2) |
+| 2 | library | Catalog folders, collection membership/order/archive and discovery projections | Complete: specs/review/build/two audits; 8 tests pass; PR opening | |
+| 3 | persistence | Atomic versioned storage, receipts, recovery and backups | Next: specs and plan review | |
 | 4 | assets | Safe immutable media admission, identity and resolution | Pending | |
 | 5 | templates | Versioned recipes/themes and independent editable expansion | Pending | |
 | 6 | presentation | Accessible visual content, notation and measurement/render parity | Pending | |

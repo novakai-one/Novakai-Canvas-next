@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint capability/model eslint.config.js .dependency-cruiser.cjs",
+    "lint": "eslint .",
     "architecture": "depcruise capability apps --config .dependency-cruiser.cjs --output-type err",
-    "test": "vitest run capability/model/tests",
+    "test": "vitest run capability",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test",
-    "format:check": "prettier --check capability/model/**/*.ts eslint.config.js .dependency-cruiser.cjs"
+    "format:check": "prettier --check \"capability/**/*.ts\" eslint.config.js .dependency-cruiser.cjs"
   },
   "devDependencies": {
     "dependency-cruiser": "18.2.0",

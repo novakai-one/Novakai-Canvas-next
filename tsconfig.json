@@ -12,5 +12,7 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["capability/model/**/*.ts"]
+  "include": [
+    "capability/**/*.ts"
+  ]
 }

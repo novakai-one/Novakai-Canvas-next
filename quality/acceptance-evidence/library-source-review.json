@@ -1,0 +1,1307 @@
+{
+  "reviewer": "author",
+  "files": [
+    {
+      "file": "capability/library/contract/api.ts",
+      "sha256": "68de516f2b75864891e6c5a887f8738e58277a5d32aff389c19dcf6b3c264a6e",
+      "lines": 6,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "notes": "Public re-export bindings require editing for another operation; thin binding hides substantial core behavior."
+    },
+    {
+      "file": "capability/library/contract/brands.ts",
+      "sha256": "f9a9a4a6ec9909bcfa9132bf01626723ac8068373c74ab6dcb6f1e7e793c3d94",
+      "lines": 32,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "New identity namespaces edit declarations; schema parsing/recovery ownership is not named at every scalar export."
+    },
+    {
+      "file": "capability/library/contract/errors.ts",
+      "sha256": "5f45e4785e29322d0c5988d0d2c12a9fd1517871a3c0c7d269cb8d9d19120368",
+      "lines": 22,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "notes": "Closed diagnostic union requires editing for new categories; shared declarations provide thin hiding."
+    },
+    {
+      "file": "capability/library/contract/index.ts",
+      "sha256": "fca3d26338d3314b174ad6946c33914051b631517801871c075426ff500f790c",
+      "lines": 10,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "notes": "Export vocabulary changes require editing; it hides actual implementation topology."
+    },
+    {
+      "file": "capability/library/contract/types.ts",
+      "sha256": "737ed3c950ae386637c445c4841001083391753262aa03002d497a790a309b71",
+      "lines": 13,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "notes": "New outcome fields require edits; useful but thin common declarations."
+    },
+    {
+      "file": "capability/library/tests/catalog.test.ts",
+      "sha256": "d803653a588b458747bf370a7ed60d59d2f35c5f120cada8b6307b3568a94aa6",
+      "lines": 70,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 8,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "Acceptance scenarios are intentionally explicit/fixed, and have only limited information-hiding depth. Public typed failure results are asserted."
+    },
+    {
+      "file": "capability/library/tests/fixtures.ts",
+      "sha256": "ef06bb2da8daa318d3053187e9f795396c99c883aaa27fb7e5b827f0bc8104d1",
+      "lines": 79,
+      "functions": [
+        {
+          "name": "snapshot",
+          "line": 22,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "valueOf",
+          "line": 69,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "hasFailure",
+          "line": 74,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 74,
+          "score": 1
+        },
+        {
+          "line": 77,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 9,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 149,
+      "notes": "Fixture vocabulary is fixed; diagnostic helper accepts string instead of existing DiagnosticCode union; Vitest failure owner implicit; multiple fixture helpers."
+    },
+    {
+      "file": "capability/library/tests/planning.test.ts",
+      "sha256": "7980f22caac96e77ce60b5ccbde19c4d9b32650ed20a4c412054a08c3d47451c",
+      "lines": 106,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 8,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "notes": "Explicit fixed scenarios; ordered round-trip test carries several related operations; limited hiding in test entry callbacks."
+    },
+    {
+      "file": "capability/library/tests/query.test.ts",
+      "sha256": "d46164a43dbb6cab13ae1744335d80af488dbd80b5e846696fe665098540ce0e",
+      "lines": 96,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 8,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "notes": "Fixed acceptance cases; cursor fixture has large input but verifies a real bound; limited hiding in test callbacks."
+    },
+    {
+      "file": "capability/library/contract/records/catalog.ts",
+      "sha256": "7ec4173d412000ec356c71765a040137adcf61712e24d63f840488f21b16ed65",
+      "lines": 36,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "Shape extension edits declarations; local schema entries do not name Authoring recovery."
+    },
+    {
+      "file": "capability/library/contract/records/change.ts",
+      "sha256": "943c1c24ca9cca287a053900d42f5df86d3dca62998d2e8af667935f4fb35e30",
+      "lines": 22,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "Adding operations edits the discriminated union; recovery is named at the API rather than these schemas."
+    },
+    {
+      "file": "capability/library/contract/records/query.ts",
+      "sha256": "57ab4ac594db58559a519f8d30ea1cedd99b887cecb05aa921958bf7d3b6d6c1",
+      "lines": 50,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "New criteria edit shape declarations; schema-level recovery owner is unnamed locally."
+    },
+    {
+      "file": "capability/library/contract/records/snapshot.ts",
+      "sha256": "546a63364ceccc0efe61fc5c357ad75f86eccbc81c9cb7037786b0657941bef9",
+      "lines": 43,
+      "functions": [],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "Additional projected fields edit declarations; pure parsing ownership is named at the callable boundary."
+    },
+    {
+      "file": "capability/library/core/catalog/folders.ts",
+      "sha256": "dc70ee8f5829449a30968fe647951becff5c3041767329ea11694388d91c2bad",
+      "lines": 94,
+      "functions": [
+        {
+          "name": "canVisit",
+          "line": 11,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "ancestry",
+          "line": 15,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "isWithin",
+          "line": 25,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "moveFolder",
+          "line": 34,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "moveEntry",
+          "line": 41,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "rehomeFolder",
+          "line": 48,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "rehomeEntry",
+          "line": 53,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "rehomeContents",
+          "line": 58,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "removeExisting",
+          "line": 65,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "removeFolder",
+          "line": 85,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 11,
+          "score": 1
+        },
+        {
+          "line": 15,
+          "score": 1
+        },
+        {
+          "line": 25,
+          "score": 1
+        },
+        {
+          "line": 34,
+          "score": 1
+        },
+        {
+          "line": 41,
+          "score": 1
+        },
+        {
+          "line": 48,
+          "score": 1
+        },
+        {
+          "line": 53,
+          "score": 1
+        },
+        {
+          "line": 65,
+          "score": 2
+        },
+        {
+          "line": 85,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 9,
+        "Demeter": 10,
+        "Immutability": 5,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 147,
+      "notes": "Ancestry/removal stages are fixed; three core exports broaden the surface; local traversal Set/cursor mutation receives P13=5."
+    },
+    {
+      "file": "capability/library/core/catalog/operations.ts",
+      "sha256": "efb0c66ecdfbaac96b42f15e1ab94d3ba7f28a2551014b2e8a89bbb480ac6085",
+      "lines": 99,
+      "functions": [
+        {
+          "name": "checkIdentity",
+          "line": 11,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "requireAbsent",
+          "line": 17,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "replaceMatching",
+          "line": 22,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "writeList",
+          "line": 27,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "writeFolder",
+          "line": 37,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "writeEntry",
+          "line": 45,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "unregister",
+          "line": 53,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "unsupported",
+          "line": 64,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "applyOperation",
+          "line": 97,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 11,
+          "score": 2
+        },
+        {
+          "line": 17,
+          "score": 1
+        },
+        {
+          "line": 22,
+          "score": 1
+        },
+        {
+          "line": 27,
+          "score": 1
+        },
+        {
+          "line": 37,
+          "score": 1
+        },
+        {
+          "line": 45,
+          "score": 1
+        },
+        {
+          "line": 53,
+          "score": 1
+        },
+        {
+          "line": 68,
+          "score": 1
+        },
+        {
+          "line": 72,
+          "score": 1
+        },
+        {
+          "line": 76,
+          "score": 1
+        },
+        {
+          "line": 80,
+          "score": 1
+        },
+        {
+          "line": 84,
+          "score": 1
+        },
+        {
+          "line": 88,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 5,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "notes": "Fixed dispatch table; repeated guard/narrow/reject idiom in six handlers gets literal DRY dock."
+    },
+    {
+      "file": "capability/library/core/catalog/plan.ts",
+      "sha256": "153e879d884c1ad9e19f898daf33ac72a5a0e4575d892c6820588da23fb3de59",
+      "lines": 80,
+      "functions": [
+        {
+          "name": "applyNext",
+          "line": 16,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "validateCandidate",
+          "line": 21,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "applyBatch",
+          "line": 36,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "chooseInventory",
+          "line": 48,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "preparePlan",
+          "line": 53,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "planCatalog",
+          "line": 74,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 16,
+          "score": 1
+        },
+        {
+          "line": 21,
+          "score": 1
+        },
+        {
+          "line": 36,
+          "score": 2
+        },
+        {
+          "line": 48,
+          "score": 1
+        },
+        {
+          "line": 53,
+          "score": 2
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "notes": "Planning steps require source edits; JSON structural comparison is documented but still less direct to inspect than named field comparison."
+    },
+    {
+      "file": "capability/library/core/discovery/cursor.ts",
+      "sha256": "743134e71f58fb1de4a8a40687700e32eb8697f4ea169826dce44b2ef71023f0",
+      "lines": 81,
+      "functions": [
+        {
+          "name": "cursorIdentity",
+          "line": 17,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "decodeCursor",
+          "line": 29,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "cursorOffset",
+          "line": 39,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "validateCursor",
+          "line": 50,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "nextCursor",
+          "line": 68,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 29,
+          "score": 2
+        },
+        {
+          "line": 39,
+          "score": 2
+        },
+        {
+          "line": 50,
+          "score": 2
+        },
+        {
+          "line": 68,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "notes": "Encoding/check stages are fixed; serialized large identity strings retain a tracing/size cost, with an explicit typed limit outcome."
+    },
+    {
+      "file": "capability/library/core/discovery/filters.ts",
+      "sha256": "73ebcb2d7f7e6349ee86cc9be9b20a876e50489eccb17d454d8e97480f33d684",
+      "lines": 44,
+      "functions": [
+        {
+          "name": "archiveMatches",
+          "line": 7,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "folderMatches",
+          "line": 13,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "textMatches",
+          "line": 23,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "filterHits",
+          "line": 28,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 7,
+          "score": 2
+        },
+        {
+          "line": 13,
+          "score": 2
+        },
+        {
+          "line": 34,
+          "score": 1
+        },
+        {
+          "line": 39,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "Adding a criterion edits filter orchestration; core helper comment does not name public query/Authoring recovery ownership."
+    },
+    {
+      "file": "capability/library/core/discovery/project.ts",
+      "sha256": "2cdda84e5be90393ec46e8ae5545b123d0f5969fbe13f09c494fd1e22ad09eb6",
+      "lines": 49,
+      "functions": [
+        {
+          "name": "compareText",
+          "line": 6,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "readVersions",
+          "line": 12,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "projectCollection",
+          "line": 19,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "projectHits",
+          "line": 47,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 6,
+          "score": 2
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "notes": "Projection kinds require source edits; local utility recovery owner unnamed; comparison helper expands the core surface."
+    },
+    {
+      "file": "capability/library/core/discovery/query.ts",
+      "sha256": "104c90a600c8b6fb4b5de944ab5b037a15c4e1247beb064b9b6e1f40a5f7fb2a",
+      "lines": 73,
+      "functions": [
+        {
+          "name": "normalizeRequest",
+          "line": 17,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "validateFolder",
+          "line": 23,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "completePage",
+          "line": 30,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "searchSnapshot",
+          "line": 48,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "prepareQuery",
+          "line": 59,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "queryLibrary",
+          "line": 71,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 23,
+          "score": 2
+        },
+        {
+          "line": 30,
+          "score": 2
+        },
+        {
+          "line": 48,
+          "score": 2
+        },
+        {
+          "line": 59,
+          "score": 2
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "notes": "The pure stages are explicit but fixed rather than injected; frozen typed page/failure contract with no I/O."
+    },
+    {
+      "file": "capability/library/core/discovery/ranking.ts",
+      "sha256": "6b35eacaf8eb7771c03c2bca16e95729475fdbf1a98e6100b307df397b73964a",
+      "lines": 56,
+      "functions": [
+        {
+          "name": "rankMetadata",
+          "line": 17,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "firstDifference",
+          "line": 23,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "compareOrder",
+          "line": 27,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "sortHits",
+          "line": 48,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "notes": "Sort criteria table is local; impossible missing-entry fallback defaults order to zero rather than producing an explicit internal failure; recovery unnamed locally."
+    },
+    {
+      "file": "capability/library/core/validation/identities.ts",
+      "sha256": "1ca8303e3776c3bb22164a93a63027af2a765b4b1747c2e02cf08eae5e0c6fc0",
+      "lines": 18,
+      "functions": [
+        {
+          "name": "duplicateIssues",
+          "line": 4,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [],
+      "scores": {
+        "SRP": 10,
+        "OCP": 10,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Deep module": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "notes": "Parameterized key/path policy; real but thin algorithm; helper doc does not name recovery boundary."
+    },
+    {
+      "file": "capability/library/core/validation/outcomes.ts",
+      "sha256": "b521f17b0f0e05c548c369f237bb59a5a434c55051f587837bd9d66ef487dcd3",
+      "lines": 59,
+      "functions": [
+        {
+          "name": "failure",
+          "line": 14,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "success",
+          "line": 18,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "diagnoseWhen",
+          "line": 22,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "parse",
+          "line": 32,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "freeze",
+          "line": 43,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "protect",
+          "line": 53,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 22,
+          "score": 1
+        },
+        {
+          "line": 32,
+          "score": 1
+        },
+        {
+          "line": 43,
+          "score": 1
+        },
+        {
+          "line": 53,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "notes": "Boundary parse/freeze stages fixed; generic catch intentionally loses original cause; several private-core construction exports."
+    },
+    {
+      "file": "capability/library/core/validation/rules.ts",
+      "sha256": "f4030bc6dfc5ba054fb37a688dfd09ddd398fe945306c9d0b212ad234a6161c0",
+      "lines": 131,
+      "functions": [
+        {
+          "name": "parentIssues",
+          "line": 9,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "folderIssues",
+          "line": 20,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "entryIssues",
+          "line": 34,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "membershipIssues",
+          "line": 58,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "objectVisibility",
+          "line": 81,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "projectionIssues",
+          "line": 97,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "recentIssues",
+          "line": 111,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "validateRecords",
+          "line": 125,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 9,
+          "score": 1
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "notes": "Independent rules accumulate diagnostics; adding another rule stage requires editing this orchestrator."
+    },
+    {
+      "file": "capability/library/core/validation/validate.ts",
+      "sha256": "3ae289d119772718ee9700d1d554010142a862b922dc58ee07132f75f4f9e16a",
+      "lines": 21,
+      "functions": [
+        {
+          "name": "validateInput",
+          "line": 7,
+          "typed": true,
+          "documented": true
+        },
+        {
+          "name": "validateSnapshot",
+          "line": 19,
+          "typed": true,
+          "documented": true
+        }
+      ],
+      "sonar": [
+        {
+          "line": 7,
+          "score": 2
+        }
+      ],
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Deep module": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "notes": "Two fixed stages; thin orchestration hides domain checks and safe input boundary."
+    }
+  ],
+  "namedFunctions": 68,
+  "tests": 8,
+  "testLimit": 8
+}

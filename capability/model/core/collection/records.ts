@@ -3,62 +3,109 @@ import type { RecordChange } from '../../contract/records/change.js';
 import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../invariants/issues.js';
 import { preserveSection } from './preservation.js';
-function records<T extends { readonly id: string }>(
+
+/** Create appends; replacement retains the existing position in the ordered record list. */
+function writeRecordList<T extends { readonly id: string }>(
   items: readonly T[],
   value: T,
-  mode: 'create' | 'replace',
+  operation: RecordChange['op'],
 ): readonly T[] {
-  if (mode === 'create') return [...items, value];
-  return items.map((item) => (item.id === value.id ? value : item));
+  if (operation === 'create') return [...items, value];
+  return items.map((item) => replaceMatchingRecord(item, value));
 }
-function objects(collection: Collection, change: RecordChange): Collection {
+
+/** Preserve unrelated record identities while copying only the changed list. */
+function replaceMatchingRecord<T extends { readonly id: string }>(item: T, replacement: T): T {
+  if (item.id !== replacement.id) return item;
+  return replacement;
+}
+
+/** Namespace writers narrow the discriminated payload before constructing a collection. */
+function writeObjects(collection: Collection, change: RecordChange): Collection {
   if (change.target !== 'objects') return collection;
-  return { ...collection, objects: records(collection.objects, change.value, change.op) };
+  const objects = writeRecordList(collection.objects, change.value, change.op);
+  return { ...collection, objects };
 }
-function relationships(collection: Collection, change: RecordChange): Collection {
+
+/** Relationship replacement changes semantics; section wire routing remains section-owned. */
+function writeRelationships(collection: Collection, change: RecordChange): Collection {
   if (change.target !== 'relationships') return collection;
-  return {
-    ...collection,
-    relationships: records(collection.relationships, change.value, change.op),
-  };
+  const relationships = writeRecordList(collection.relationships, change.value, change.op);
+  return { ...collection, relationships };
 }
-function sections(collection: Collection, change: RecordChange): Collection {
+
+/** New sections have no prior overrides; existing sections inherit omitted geometry. */
+function sectionReplacement(
+  collection: Collection,
+  change: Extract<RecordChange, { target: 'sections' }>,
+): Collection['sections'][number] {
+  const previous = collection.sections.find((section) => section.id === change.value.id);
+  if (previous === undefined) return change.value;
+  return preserveSection(change.value, previous);
+}
+
+/** Section writes preserve geometry before replacing the record at its existing position. */
+function writeSections(collection: Collection, change: RecordChange): Collection {
   if (change.target !== 'sections') return collection;
-  const value = preserveSection(
-    change.value,
-    collection.sections.find((section) => section.id === change.value.id),
-  );
-  return { ...collection, sections: records(collection.sections, value, change.op) };
+  const replacement = sectionReplacement(collection, change);
+  const sections = writeRecordList(collection.sections, replacement, change.op);
+  return { ...collection, sections };
 }
-function assets(collection: Collection, change: RecordChange): Collection {
+
+/** Asset metadata replacement performs no byte storage or fetch. */
+function writeAssets(collection: Collection, change: RecordChange): Collection {
   if (change.target !== 'assets') return collection;
-  return { ...collection, assets: records(collection.assets, change.value, change.op) };
+  const assets = writeRecordList(collection.assets, change.value, change.op);
+  return { ...collection, assets };
 }
-function sources(collection: Collection, change: RecordChange): Collection {
+
+/** Provenance replacement performs no source verification. */
+function writeSources(collection: Collection, change: RecordChange): Collection {
   if (change.target !== 'sources') return collection;
-  return { ...collection, sources: records(collection.sources, change.value, change.op) };
+  const sources = writeRecordList(collection.sources, change.value, change.op);
+  return { ...collection, sources };
 }
-const writers = { objects, relationships, sections, assets, sources };
-export function writeRecord(collection: Collection, change: RecordChange): Result<Collection> {
-  const exists = collection[change.target].some((record) => record.id === change.value.id);
-  if (change.op === 'create' && exists)
-    return failure(
-      'already-exists',
-      `${change.target}.${change.value.id}`,
-      'Create requires absent ID',
-    );
-  return replaceExisting(collection, change, exists);
-}
-function replaceExisting(
+
+type RecordWriter = (collection: Collection, change: RecordChange) => Collection;
+const recordWriters: Readonly<Record<RecordChange['target'], RecordWriter>> = {
+  objects: writeObjects,
+  relationships: writeRelationships,
+  sections: writeSections,
+  assets: writeAssets,
+  sources: writeSources,
+};
+
+/** Replacement must resolve an existing ID; creation was checked at the entry point. */
+function writeAfterIdentityCheck(
   collection: Collection,
   change: RecordChange,
   exists: boolean,
 ): Result<Collection> {
-  if (change.op === 'replace' && !exists)
+  if (change.op === 'replace' && !exists) {
     return failure(
       'not-found',
       `${change.target}.${change.value.id}`,
       'Replace requires existing ID',
     );
-  return success(writers[change.target](collection, change));
+  }
+  const writer = recordWriters[change.target];
+  return success(writer(collection, change));
+}
+
+/**
+ * Writes one complete record, rejecting duplicate creates and missing replacements.
+ * Dispatch and payload share the same target, so namespace writers cannot be mismatched.
+ * Pure replay against the same snapshot is safe; planChanges owns final validation and
+ * Authoring owns commit/recovery. No partially written collection is exposed on failure.
+ */
+export function writeRecord(collection: Collection, change: RecordChange): Result<Collection> {
+  const exists = collection[change.target].some((record) => record.id === change.value.id);
+  if (change.op === 'create' && exists) {
+    return failure(
+      'already-exists',
+      `${change.target}.${change.value.id}`,
+      'Create requires absent ID',
+    );
+  }
+  return writeAfterIdentityCheck(collection, change, exists);
 }

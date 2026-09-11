@@ -4,6 +4,8 @@ import { objectSchema } from './object.js';
 import { relationshipSchema } from './relationship.js';
 import { sectionSchema } from './section.js';
 import { layoutSchema } from './layout.js';
+
+/** Asset metadata and content identity. Byte storage and license interpretation are outside Model. */
 export const assetSchema = z
   .strictObject({
     id: assetId,
@@ -14,6 +16,8 @@ export const assetSchema = z
     attribution: z.string().optional(),
   })
   .readonly();
+
+/** Provenance claim attached to objects or relationships; Model does not verify the URI. */
 export const sourceSchema = z
   .strictObject({
     id: sourceId,
@@ -24,9 +28,13 @@ export const sourceSchema = z
     status: z.enum(['asserted', 'source-backed', 'unverified']),
   })
   .readonly();
+
+/** Pinned theme identity and available role names; referenced roles must resolve here. */
 export const themeSchema = z
   .strictObject({ id: label, version: label, digest, roles: z.array(label).min(1).readonly() })
   .readonly();
+
+/** Strict collection shape with explicit defaults. Cross-record validity is checked by Model core. */
 export const collectionSchema = z
   .strictObject({
     schemaVersion: z.literal(1),
@@ -43,4 +51,6 @@ export const collectionSchema = z
     arrangement: layoutSchema,
   })
   .readonly();
+
+/** Readonly canonical diagram data shared by all views in this collection. */
 export type Collection = z.infer<typeof collectionSchema>;

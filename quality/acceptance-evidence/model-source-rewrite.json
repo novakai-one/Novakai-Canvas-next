@@ -1,0 +1,3512 @@
+{
+  "baseline": "860f458",
+  "reviewer": "author",
+  "tests": "unchanged and not executed by user instruction",
+  "namedFunctionCount": 166,
+  "sourceInventory": {
+    "inventory": [
+      {
+        "file": "capability/model/core/collection/cascade-content.ts",
+        "lines": 39,
+        "functions": [
+          {
+            "name": "keyGroupReferencesObject",
+            "line": 6,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "linksToObject",
+            "line": 13,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "clearDeletedFieldReference",
+            "line": 19,
+            "returnType": "ContentBlock",
+            "documented": true
+          },
+          {
+            "name": "cascadeContent",
+            "line": 33,
+            "returnType": "DiagramObject",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 33,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/cascade-views.ts",
+        "lines": 91,
+        "functions": [
+          {
+            "name": "detachAppearance",
+            "line": 6,
+            "returnType": "Appearance",
+            "documented": true
+          },
+          {
+            "name": "detachGroup",
+            "line": 15,
+            "returnType": "Group",
+            "documented": true
+          },
+          {
+            "name": "addressesRemovedTarget",
+            "line": 24,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "pruneLayout",
+            "line": 34,
+            "returnType": "LayoutIntent",
+            "documented": true
+          },
+          {
+            "name": "clearDeletedRoot",
+            "line": 49,
+            "returnType": "Section",
+            "documented": true
+          },
+          {
+            "name": "sequenceItemSurvives",
+            "line": 57,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "cascadeSection",
+            "line": 67,
+            "returnType": "Section",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 67,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/impact.ts",
+        "lines": 56,
+        "functions": [
+          {
+            "name": "hasChanged",
+            "line": 7,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "describeRecordImpact",
+            "line": 12,
+            "returnType": "readonly Impact[]",
+            "documented": true
+          },
+          {
+            "name": "collectionMetadata",
+            "line": 36,
+            "returnType": "CollectionMetadata",
+            "documented": true
+          },
+          {
+            "name": "describeImpact",
+            "line": 50,
+            "returnType": "readonly Impact[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 50,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/operations.ts",
+        "lines": 74,
+        "functions": [
+          {
+            "name": "replaceDocument",
+            "line": 13,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "unsupportedOperation",
+            "line": 26,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "applyOperation",
+            "line": 71,
+            "returnType": "Result<Collection>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 71,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/plan.ts",
+        "lines": 68,
+        "functions": [
+          {
+            "name": "applyNextOperation",
+            "line": 14,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "validateCandidateAndDescribeImpact",
+            "line": 20,
+            "returnType": "Result<ChangePlan>",
+            "documented": true
+          },
+          {
+            "name": "applyChangeBatch",
+            "line": 31,
+            "returnType": "Result<ChangePlan>",
+            "documented": true
+          },
+          {
+            "name": "parseAndApplyChanges",
+            "line": 38,
+            "returnType": "Result<ChangePlan>",
+            "documented": true
+          },
+          {
+            "name": "validatePlanningInputs",
+            "line": 46,
+            "returnType": "Result<ChangePlan>",
+            "documented": true
+          },
+          {
+            "name": "planChanges",
+            "line": 61,
+            "returnType": "Result<ChangePlan>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 61,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/preservation.ts",
+        "lines": 99,
+        "functions": [
+          {
+            "name": "inheritPlacement",
+            "line": 8,
+            "returnType": "T",
+            "documented": true
+          },
+          {
+            "name": "previousAppearancePlacement",
+            "line": 18,
+            "returnType": "Placement | undefined",
+            "documented": true
+          },
+          {
+            "name": "previousGroupPlacement",
+            "line": 29,
+            "returnType": "Placement | undefined",
+            "documented": true
+          },
+          {
+            "name": "preserveWireRoute",
+            "line": 37,
+            "returnType": "WireAppearance",
+            "documented": true
+          },
+          {
+            "name": "preserveSection",
+            "line": 51,
+            "returnType": "Section",
+            "documented": true
+          },
+          {
+            "name": "preserveMatchingSection",
+            "line": 66,
+            "returnType": "Section",
+            "documented": true
+          },
+          {
+            "name": "preserveOverrides",
+            "line": 73,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "clearPlacement",
+            "line": 79,
+            "returnType": "Omit<T, 'placement'>",
+            "documented": true
+          },
+          {
+            "name": "clearRoute",
+            "line": 86,
+            "returnType": "WireAppearance",
+            "documented": true
+          },
+          {
+            "name": "clearSection",
+            "line": 93,
+            "returnType": "Section",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 51,
+            "documented": true
+          },
+          {
+            "line": 73,
+            "documented": true
+          },
+          {
+            "line": 86,
+            "documented": true
+          },
+          {
+            "line": 93,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/records.ts",
+        "lines": 111,
+        "functions": [
+          {
+            "name": "writeRecordList",
+            "line": 8,
+            "returnType": "readonly T[]",
+            "documented": true
+          },
+          {
+            "name": "replaceMatchingRecord",
+            "line": 18,
+            "returnType": "T",
+            "documented": true
+          },
+          {
+            "name": "writeObjects",
+            "line": 24,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "writeRelationships",
+            "line": 31,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "sectionReplacement",
+            "line": 38,
+            "returnType": "Collection['sections'][number]",
+            "documented": true
+          },
+          {
+            "name": "writeSections",
+            "line": 48,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "writeAssets",
+            "line": 56,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "writeSources",
+            "line": 63,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "writeAfterIdentityCheck",
+            "line": 79,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "writeRecord",
+            "line": 101,
+            "returnType": "Result<Collection>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 101,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/removal.ts",
+        "lines": 92,
+        "functions": [
+          {
+            "name": "cascadeObjectDeletion",
+            "line": 13,
+            "returnType": "Collection",
+            "documented": true
+          },
+          {
+            "name": "planObjectDeletion",
+            "line": 31,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "deleteObject",
+            "line": 53,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "withoutRecord",
+            "line": 60,
+            "returnType": "readonly T[]",
+            "documented": true
+          },
+          {
+            "name": "removeRecord",
+            "line": 72,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "removeFromNamespace",
+            "line": 80,
+            "returnType": "Collection",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 53,
+            "documented": true
+          },
+          {
+            "line": 72,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/view-operations.ts",
+        "lines": 95,
+        "functions": [
+          {
+            "name": "hideAppearance",
+            "line": 12,
+            "returnType": "Result<Section>",
+            "documented": true
+          },
+          {
+            "name": "resetMatchingWire",
+            "line": 38,
+            "returnType": "WireAppearance",
+            "documented": true
+          },
+          {
+            "name": "resetVisibleRoute",
+            "line": 44,
+            "returnType": "Result<Section>",
+            "documented": true
+          },
+          {
+            "name": "applySectionEdit",
+            "line": 57,
+            "returnType": "Result<Section>",
+            "documented": true
+          },
+          {
+            "name": "replaceMatchingSection",
+            "line": 68,
+            "returnType": "Section",
+            "documented": true
+          },
+          {
+            "name": "editExistingSection",
+            "line": 74,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "editView",
+            "line": 90,
+            "returnType": "Result<Collection>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 90,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/duplicates.ts",
+        "lines": 24,
+        "functions": [
+          {
+            "name": "duplicates",
+            "line": 9,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 9,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/freeze.ts",
+        "lines": 11,
+        "functions": [
+          {
+            "name": "freeze",
+            "line": 7,
+            "returnType": "T",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 7,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/identity.ts",
+        "lines": 30,
+        "functions": [
+          {
+            "name": "recordId",
+            "line": 6,
+            "returnType": "T['id']",
+            "documented": true
+          },
+          {
+            "name": "validateIdentity",
+            "line": 15,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 15,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/input.ts",
+        "lines": 155,
+        "functions": [
+          {
+            "name": "isJsonScalar",
+            "line": 22,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "isObject",
+            "line": 29,
+            "returnType": "value is object",
+            "documented": true
+          },
+          {
+            "name": "hasPlainPrototype",
+            "line": 34,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "isDenseArray",
+            "line": 42,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "isEnumerableData",
+            "line": 48,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "childFrames",
+            "line": 53,
+            "returnType": "Result<readonly InputFrame[]>",
+            "documented": true
+          },
+          {
+            "name": "inspectArrayShape",
+            "line": 74,
+            "returnType": "Result<readonly InputFrame[]>",
+            "documented": true
+          },
+          {
+            "name": "inspectObject",
+            "line": 82,
+            "returnType": "Result<readonly InputFrame[]>",
+            "documented": true
+          },
+          {
+            "name": "expandValue",
+            "line": 90,
+            "returnType": "Result<readonly InputFrame[]>",
+            "documented": true
+          },
+          {
+            "name": "inspectFrame",
+            "line": 97,
+            "returnType": "Result<readonly InputFrame[]>",
+            "documented": true
+          },
+          {
+            "name": "visitNext",
+            "line": 109,
+            "returnType": "Result<readonly InputFrame[]>",
+            "documented": true
+          },
+          {
+            "name": "queueChildren",
+            "line": 117,
+            "returnType": "void",
+            "documented": true
+          },
+          {
+            "name": "scanInput",
+            "line": 123,
+            "returnType": "Result<true>",
+            "documented": true
+          },
+          {
+            "name": "completedInspection",
+            "line": 137,
+            "returnType": "Result<true>",
+            "documented": true
+          },
+          {
+            "name": "inspectInput",
+            "line": 149,
+            "returnType": "Result<true>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 149,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/issues.ts",
+        "lines": 32,
+        "functions": [
+          {
+            "name": "diagnoseWhen",
+            "line": 4,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "referenceIssue",
+            "line": 15,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "failure",
+            "line": 25,
+            "returnType": "Result<T>",
+            "documented": true
+          },
+          {
+            "name": "success",
+            "line": 30,
+            "returnType": "Result<T>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 4,
+            "documented": true
+          },
+          {
+            "line": 15,
+            "documented": true
+          },
+          {
+            "line": 25,
+            "documented": true
+          },
+          {
+            "line": 30,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/references.ts",
+        "lines": 100,
+        "functions": [
+          {
+            "name": "validateSourceIds",
+            "line": 17,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateLinkSection",
+            "line": 29,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateObjectLink",
+            "line": 43,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateAssetReference",
+            "line": 58,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateObjectReferences",
+            "line": 74,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateReferences",
+            "line": 92,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 92,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/shape-diagnostics.ts",
+        "lines": 16,
+        "functions": [
+          {
+            "name": "shapeErrors",
+            "line": 10,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 10,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/validate.ts",
+        "lines": 56,
+        "functions": [
+          {
+            "name": "parseAndValidate",
+            "line": 27,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "safelyValidateShape",
+            "line": 36,
+            "returnType": "Result<Collection>",
+            "documented": true
+          },
+          {
+            "name": "validateCollection",
+            "line": 51,
+            "returnType": "Result<Collection>",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 51,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/objects/content.ts",
+        "lines": 91,
+        "functions": [
+          {
+            "name": "contentDescendants",
+            "line": 24,
+            "returnType": "readonly ObjectDescendant[]",
+            "documented": true
+          },
+          {
+            "name": "descendants",
+            "line": 35,
+            "returnType": "readonly ObjectDescendant[]",
+            "documented": true
+          },
+          {
+            "name": "validateContentPlacement",
+            "line": 42,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateTableWidth",
+            "line": 57,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateObjectContent",
+            "line": 70,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateContent",
+            "line": 89,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 10,
+            "documented": true
+          },
+          {
+            "line": 35,
+            "documented": true
+          },
+          {
+            "line": 89,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/objects/keys.ts",
+        "lines": 196,
+        "functions": [
+          {
+            "name": "entityFields",
+            "line": 12,
+            "returnType": "readonly Field[]",
+            "documented": true
+          },
+          {
+            "name": "findField",
+            "line": 17,
+            "returnType": "Field | undefined",
+            "documented": true
+          },
+          {
+            "name": "candidateKeys",
+            "line": 22,
+            "returnType": "readonly OrderedKey[]",
+            "documented": true
+          },
+          {
+            "name": "targetKeys",
+            "line": 32,
+            "returnType": "readonly OrderedKey[]",
+            "documented": true
+          },
+          {
+            "name": "resolveForeignField",
+            "line": 38,
+            "returnType": "Field | undefined",
+            "documented": true
+          },
+          {
+            "name": "matchesOrderedKey",
+            "line": 45,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "missingForeignFields",
+            "line": 51,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateForeignKey",
+            "line": 63,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateFieldKey",
+            "line": 106,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateGroupReferences",
+            "line": 124,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateKeyGroup",
+            "line": 146,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateBlockKey",
+            "line": 161,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateObjectKeys",
+            "line": 173,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateKeys",
+            "line": 194,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 194,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/relationships/endpoints.ts",
+        "lines": 146,
+        "functions": [
+          {
+            "name": "resolveEndpoint",
+            "line": 36,
+            "returnType": "DiagramObject | undefined",
+            "documented": true
+          },
+          {
+            "name": "isAllowedMember",
+            "line": 41,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "validateMember",
+            "line": 48,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateObjectKind",
+            "line": 66,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateEndpoint",
+            "line": 82,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateCardinalities",
+            "line": 96,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateRelationship",
+            "line": 116,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateRelationships",
+            "line": 142,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 142,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/groups.ts",
+        "lines": 119,
+        "functions": [
+          {
+            "name": "visibleObjects",
+            "line": 11,
+            "returnType": "readonly ObjectId[]",
+            "documented": true
+          },
+          {
+            "name": "canVisit",
+            "line": 25,
+            "returnType": "id is Id",
+            "documented": true
+          },
+          {
+            "name": "traceAncestors",
+            "line": 30,
+            "returnType": "Ancestry<Id>",
+            "documented": true
+          },
+          {
+            "name": "hasCycle",
+            "line": 44,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "parentGroup",
+            "line": 52,
+            "returnType": "GroupId | undefined",
+            "documented": true
+          },
+          {
+            "name": "nestedIn",
+            "line": 58,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "validateParentReference",
+            "line": 68,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateGroupAncestry",
+            "line": 79,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateGroups",
+            "line": 100,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 11,
+            "documented": true
+          },
+          {
+            "line": 44,
+            "documented": true
+          },
+          {
+            "line": 58,
+            "documented": true
+          },
+          {
+            "line": 100,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/layout.ts",
+        "lines": 123,
+        "functions": [
+          {
+            "name": "validateConstraint",
+            "line": 15,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateConstraintShapes",
+            "line": 33,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "isVisibleTarget",
+            "line": 40,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "targetParent",
+            "line": 46,
+            "returnType": "GroupId | undefined",
+            "documented": true
+          },
+          {
+            "name": "validateGroupScope",
+            "line": 58,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateLocalLayout",
+            "line": 78,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateArrangement",
+            "line": 94,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateSectionLayouts",
+            "line": 106,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateLayouts",
+            "line": 119,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 119,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/modes.ts",
+        "lines": 125,
+        "functions": [
+          {
+            "name": "visibleRelationships",
+            "line": 31,
+            "returnType": "readonly Relationship[]",
+            "documented": true
+          },
+          {
+            "name": "validateDecisionLabels",
+            "line": 41,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateTreeOnlyFields",
+            "line": 61,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "isAllowedWire",
+            "line": 81,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "validateLayoutCompatibility",
+            "line": 88,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateModes",
+            "line": 104,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 31,
+            "documented": true
+          },
+          {
+            "line": 104,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/sequence.ts",
+        "lines": 142,
+        "functions": [
+          {
+            "name": "itemIdentities",
+            "line": 12,
+            "returnType": "readonly DescendantId[]",
+            "documented": true
+          },
+          {
+            "name": "hasValidBranchCount",
+            "line": 18,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "validateFragment",
+            "line": 24,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateBranchMembership",
+            "line": 37,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateParent",
+            "line": 55,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "isVisibleParticipant",
+            "line": 65,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "validateEvent",
+            "line": 72,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "parentId",
+            "line": 90,
+            "returnType": "DescendantId | undefined",
+            "documented": true
+          },
+          {
+            "name": "validateSequenceItem",
+            "line": 96,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "siblingOrderKey",
+            "line": 116,
+            "returnType": "string",
+            "documented": true
+          },
+          {
+            "name": "validateSequence",
+            "line": 127,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 127,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/tree.ts",
+        "lines": 108,
+        "functions": [
+          {
+            "name": "participatesInTree",
+            "line": 11,
+            "returnType": "boolean",
+            "documented": true
+          },
+          {
+            "name": "validateRoot",
+            "line": 19,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateParentEdge",
+            "line": 33,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "expectedParentCount",
+            "line": 49,
+            "returnType": "number",
+            "documented": true
+          },
+          {
+            "name": "firstParent",
+            "line": 55,
+            "returnType": "ObjectId | undefined",
+            "documented": true
+          },
+          {
+            "name": "validateParentCount",
+            "line": 61,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateAncestry",
+            "line": 76,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateTree",
+            "line": 95,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 95,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/views.ts",
+        "lines": 95,
+        "functions": [
+          {
+            "name": "validateWireAppearance",
+            "line": 14,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateRoleOverride",
+            "line": 44,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateViewReferences",
+            "line": 54,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateSection",
+            "line": 82,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          },
+          {
+            "name": "validateSections",
+            "line": 93,
+            "returnType": "readonly Diagnostic[]",
+            "documented": true
+          }
+        ],
+        "exports": [
+          {
+            "line": 93,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/api.ts",
+        "lines": 11,
+        "functions": [],
+        "exports": []
+      },
+      {
+        "file": "capability/model/contract/brands.ts",
+        "lines": 63,
+        "functions": [],
+        "exports": [
+          {
+            "line": 4,
+            "documented": true
+          },
+          {
+            "line": 7,
+            "documented": true
+          },
+          {
+            "line": 10,
+            "documented": true
+          },
+          {
+            "line": 13,
+            "documented": true
+          },
+          {
+            "line": 16,
+            "documented": true
+          },
+          {
+            "line": 19,
+            "documented": true
+          },
+          {
+            "line": 22,
+            "documented": true
+          },
+          {
+            "line": 25,
+            "documented": true
+          },
+          {
+            "line": 28,
+            "documented": true
+          },
+          {
+            "line": 31,
+            "documented": true
+          },
+          {
+            "line": 36,
+            "documented": true
+          },
+          {
+            "line": 39,
+            "documented": true
+          },
+          {
+            "line": 42,
+            "documented": true
+          },
+          {
+            "line": 45,
+            "documented": true
+          },
+          {
+            "line": 48,
+            "documented": true
+          },
+          {
+            "line": 51,
+            "documented": true
+          },
+          {
+            "line": 54,
+            "documented": true
+          },
+          {
+            "line": 57,
+            "documented": true
+          },
+          {
+            "line": 60,
+            "documented": true
+          },
+          {
+            "line": 63,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/errors.ts",
+        "lines": 28,
+        "functions": [],
+        "exports": [
+          {
+            "line": 2,
+            "documented": true
+          },
+          {
+            "line": 20,
+            "documented": true
+          },
+          {
+            "line": 26,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/index.ts",
+        "lines": 42,
+        "functions": [],
+        "exports": []
+      },
+      {
+        "file": "capability/model/contract/types.ts",
+        "lines": 14,
+        "functions": [],
+        "exports": [
+          {
+            "line": 3,
+            "documented": true
+          },
+          {
+            "line": 5,
+            "documented": true
+          },
+          {
+            "line": 11,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/change.ts",
+        "lines": 107,
+        "functions": [],
+        "exports": [
+          {
+            "line": 31,
+            "documented": true
+          },
+          {
+            "line": 90,
+            "documented": true
+          },
+          {
+            "line": 101,
+            "documented": true
+          },
+          {
+            "line": 104,
+            "documented": true
+          },
+          {
+            "line": 107,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/collection.ts",
+        "lines": 56,
+        "functions": [],
+        "exports": [
+          {
+            "line": 9,
+            "documented": true
+          },
+          {
+            "line": 21,
+            "documented": true
+          },
+          {
+            "line": 33,
+            "documented": true
+          },
+          {
+            "line": 38,
+            "documented": true
+          },
+          {
+            "line": 56,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/content.ts",
+        "lines": 134,
+        "functions": [],
+        "exports": [
+          {
+            "line": 5,
+            "documented": true
+          },
+          {
+            "line": 106,
+            "documented": true
+          },
+          {
+            "line": 120,
+            "documented": true
+          },
+          {
+            "line": 125,
+            "documented": true
+          },
+          {
+            "line": 128,
+            "documented": true
+          },
+          {
+            "line": 131,
+            "documented": true
+          },
+          {
+            "line": 134,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/layout.ts",
+        "lines": 51,
+        "functions": [],
+        "exports": [
+          {
+            "line": 5,
+            "documented": true
+          },
+          {
+            "line": 8,
+            "documented": true
+          },
+          {
+            "line": 19,
+            "documented": true
+          },
+          {
+            "line": 32,
+            "documented": true
+          },
+          {
+            "line": 42,
+            "documented": true
+          },
+          {
+            "line": 45,
+            "documented": true
+          },
+          {
+            "line": 48,
+            "documented": true
+          },
+          {
+            "line": 51,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/object.ts",
+        "lines": 43,
+        "functions": [],
+        "exports": [
+          {
+            "line": 6,
+            "documented": true
+          },
+          {
+            "line": 25,
+            "documented": true
+          },
+          {
+            "line": 40,
+            "documented": true
+          },
+          {
+            "line": 43,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/relationship.ts",
+        "lines": 42,
+        "functions": [],
+        "exports": [
+          {
+            "line": 6,
+            "documented": true
+          },
+          {
+            "line": 22,
+            "documented": true
+          },
+          {
+            "line": 39,
+            "documented": true
+          },
+          {
+            "line": 42,
+            "documented": true
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/records/section.ts",
+        "lines": 136,
+        "functions": [],
+        "exports": [
+          {
+            "line": 14,
+            "documented": true
+          },
+          {
+            "line": 27,
+            "documented": true
+          },
+          {
+            "line": 42,
+            "documented": true
+          },
+          {
+            "line": 89,
+            "documented": true
+          },
+          {
+            "line": 92,
+            "documented": true
+          },
+          {
+            "line": 104,
+            "documented": true
+          },
+          {
+            "line": 121,
+            "documented": true
+          },
+          {
+            "line": 124,
+            "documented": true
+          },
+          {
+            "line": 127,
+            "documented": true
+          },
+          {
+            "line": 130,
+            "documented": true
+          },
+          {
+            "line": 133,
+            "documented": true
+          },
+          {
+            "line": 136,
+            "documented": true
+          }
+        ]
+      }
+    ],
+    "sonar": [
+      {
+        "file": "capability/model/core/collection/cascade-content.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 6,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 13,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 19,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 35,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/cascade-views.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 6,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 15,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 24,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 49,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 57,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/impact.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 25,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 50,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/operations.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 13,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 32,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 36,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 40,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 44,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 48,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 52,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 56,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 60,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/plan.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 14,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 20,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 31,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 38,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 46,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 61,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/preservation.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 8,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 18,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 29,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 37,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 66,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/records.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 8,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 18,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 24,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 31,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 38,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 48,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 56,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 63,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 79,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 101,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/removal.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 31,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 53,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 72,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/collection/view-operations.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 12,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 38,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 44,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 57,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 68,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 74,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 90,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/duplicates.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/core/invariants/freeze.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 7,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/identity.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/core/invariants/input.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 22,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 29,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 34,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 42,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 48,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 53,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 74,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 82,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 90,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 97,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 109,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 117,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 123,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 137,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 149,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/issues.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 4,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/references.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 29,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 43,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 58,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/invariants/shape-diagnostics.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/core/invariants/validate.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 27,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 36,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 51,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/objects/content.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 24,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 42,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 57,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/objects/keys.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 32,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 38,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 45,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 106,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 124,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 161,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 175,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/relationships/endpoints.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 41,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 48,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 66,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 96,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/groups.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 25,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 30,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 68,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/layout.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 15,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 40,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 46,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 58,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 97,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/modes.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 41,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 45,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 50,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 61,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 81,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 104,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/sequence.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 12,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 18,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 24,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 37,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 55,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 65,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 72,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 127,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/tree.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 11,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 19,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 49,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          },
+          {
+            "line": 95,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/core/sections/views.ts",
+        "nonzeroFunctions": [
+          {
+            "line": 14,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed."
+          },
+          {
+            "line": 44,
+            "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed."
+          }
+        ]
+      },
+      {
+        "file": "capability/model/contract/api.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/brands.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/errors.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/index.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/types.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/change.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/collection.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/content.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/layout.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/object.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/relationship.ts",
+        "nonzeroFunctions": []
+      },
+      {
+        "file": "capability/model/contract/records/section.ts",
+        "nonzeroFunctions": []
+      }
+    ]
+  },
+  "files": [
+    {
+      "file": "capability/model/contract/api.ts",
+      "sha256": "7effb32ff894f2c5f7be31ea6330380c3841d4bfef180a8b7933ebb71d3a2871",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "validateCollection as validate",
+        "planChanges as plan"
+      ],
+      "deductions": "The two bindings require editing to add an entry point (P2); this is a thin binding over substantial hidden core behavior (P11)."
+    },
+    {
+      "file": "capability/model/contract/brands.ts",
+      "sha256": "0e44f990b34b57b59c7ba170846cce5942494bc7a1b7d95804de5e41322e9a89",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export const identifier",
+        "export type GroupId"
+      ],
+      "deductions": "A new namespace needs a declaration (P2). Checked schemas are stateless; the parsing/recovery boundary is not named here (P10)."
+    },
+    {
+      "file": "capability/model/contract/errors.ts",
+      "sha256": "cad04e402af9a74361161b17f94df76f45e64689a6fc4d902e2298e5f2df5954",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export type DiagnosticCode",
+        "export type Result"
+      ],
+      "deductions": "New failure categories edit a closed union (P2); useful shared declaration, little hidden behavior (P11)."
+    },
+    {
+      "file": "capability/model/contract/index.ts",
+      "sha256": "9dd77adf4d844cbea7018a406a11f65c7bc4efdcd42f085eae282b75eb63ab2e",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export { validate, plan }",
+        "export type { Result"
+      ],
+      "deductions": "Public export additions require editing this declaration list (P2). The boundary hides core topology and private policies."
+    },
+    {
+      "file": "capability/model/contract/records/change.ts",
+      "sha256": "81c2dc5d3b3a56708abcbda5fd12a342fc44ec9d745fcec802c5dca755ee28f2",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "const recordOperationSchema",
+        "export const changeSchema",
+        "export const changesSchema"
+      ],
+      "deductions": "Shipped operations require schema additions (P2). The planner owns recovery, but these schema declarations do not name it at each entry (P10)."
+    },
+    {
+      "file": "capability/model/contract/records/collection.ts",
+      "sha256": "f8fe9a47a5929704fc49c454e6a3b6cecad7a993fc0fcb934c908ceb628f9984",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export const sourceSchema",
+        "export const themeSchema",
+        "export const collectionSchema"
+      ],
+      "deductions": "Shape additions edit the schema (P2); stateless schema definitions leave recovery ownership to the callable boundary (P10)."
+    },
+    {
+      "file": "capability/model/contract/records/content.ts",
+      "sha256": "b44dac584a5e91c0a7165f6a687f487f71b9151ffd2b09dc45c718e0b29e1db6",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "const keyGroupSchema",
+        "export const contentSchema",
+        "export const portSchema"
+      ],
+      "deductions": "Content extension adds a schema variant (P2). Core validation/Authoring recovery is not stated at these individual schema entries (P10)."
+    },
+    {
+      "file": "capability/model/contract/records/layout.ts",
+      "sha256": "3771ca1c692d2f811bce18d5a33d97964c74256b3aaedbe9f7bf36cce6d583da",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export const layoutTargetSchema",
+        "const constraintSchema",
+        "export const layoutSchema"
+      ],
+      "deductions": "New intent shapes edit declarations (P2). Schemas have no effects but do not name the recovery boundary (P10)."
+    },
+    {
+      "file": "capability/model/contract/records/object.ts",
+      "sha256": "deb198cbb8f62f99692ede33d20df41bb2cb9f99cee5e9f490db04d68f0acb82",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export const objectKind",
+        "export const objectSchema"
+      ],
+      "deductions": "New object variants edit the declaration (P2). Safe parsing/commit ownership is documented at the public API rather than this schema (P10)."
+    },
+    {
+      "file": "capability/model/contract/records/relationship.ts",
+      "sha256": "f6d8e6fad1370a488e618f15f8886640c0e548dea8dbb423e2fa23af42acbed9",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "const cardinalitySchema",
+        "export const relationshipSchema"
+      ],
+      "deductions": "New connection variants edit declarations (P2). Stateless schema recovery boundary unnamed locally (P10)."
+    },
+    {
+      "file": "capability/model/contract/records/section.ts",
+      "sha256": "11920c0699fd31dcb6af9179fc83116f2f7f59a729a182e868f60343d97e0ab8",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export const appearanceSchema",
+        "const sequenceScopeFields",
+        "export const sectionSchema"
+      ],
+      "deductions": "New section variants require schema edits (P2). These declarations leave error/recovery ownership to Model API docs (P10)."
+    },
+    {
+      "file": "capability/model/contract/types.ts",
+      "sha256": "bea71f6f28d44311aab3c362c77ab264bfc85b3c3912f83dd106ec67898c1dc3",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 9,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 147,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export type Target",
+        "export interface Impact",
+        "export interface ChangePlan"
+      ],
+      "deductions": "New impact namespaces edit Target (P2). Impact.id is an unbranded reporting identity (P5); thin shared outcome declarations (P11)."
+    },
+    {
+      "file": "capability/model/core/collection/cascade-content.ts",
+      "sha256": "e4db70b24f459ed5fa10b08746c480ee77bc9f31e024eb7c961b479a0c18f144",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function keyGroupReferencesObject",
+        "function clearDeletedFieldReference",
+        "export function cascadeContent"
+      ],
+      "deductions": "Additional dependency-bearing content adds an explicit cleanup step (P2); current cleanup decisions are named and ordered."
+    },
+    {
+      "file": "capability/model/core/collection/cascade-views.ts",
+      "sha256": "2d31415d4f77ca3d24cf81f564a508f1990d96b5e05138d6c721ef08c0dac541",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function addressesRemovedTarget",
+        "function detachGroup",
+        "export function cascadeSection"
+      ],
+      "deductions": "New cleanup steps require an orchestrator edit (P2); the entry coordinates six local view concerns despite named intermediate values (P7)."
+    },
+    {
+      "file": "capability/model/core/collection/impact.ts",
+      "sha256": "9e824a1691d80f737525a9019b8c06329736bc599273aab6d9992ae7efd1f6a0",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 9,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "function describeRecordImpact",
+        "function collectionMetadata",
+        "export function describeImpact"
+      ],
+      "deductions": "Additional namespaces/metadata fields edit this step list (P2); consumes the unbranded Impact.id report contract (P5). JSON.stringify equality remains less explicit about object-key ordering (P7)."
+    },
+    {
+      "file": "capability/model/core/collection/operations.ts",
+      "sha256": "1538caf548baa67490e45a7720d03e76218a615bde358b61f8618899aac1c515",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 5,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "type OperationHandler",
+        "const operationHandlers",
+        "export function applyOperation"
+      ],
+      "deductions": "Handlers live in a fixed local table (P2). Repeated narrow-or-reject guard idiom appears in more than three table entries (P6); no cast hides the union correlation."
+    },
+    {
+      "file": "capability/model/core/collection/plan.ts",
+      "sha256": "ae617a5764b368c501b822e6f190cba54141c99fb420e47c50747e8376ec9e48",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function applyNextOperation",
+        "function validateCandidateAndDescribeImpact",
+        "export function planChanges"
+      ],
+      "deductions": "Batch stages require an orchestration edit (P2). The retained public catch maps all thrown causes to a generic shape diagnostic, limiting tracing (P7)."
+    },
+    {
+      "file": "capability/model/core/collection/preservation.ts",
+      "sha256": "fd14fbca015ddfd2e0a97e3d31e900f92d97066fb71284af068bdb61f6c71d7c",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 8,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 151,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function previousAppearancePlacement",
+        "function previousGroupPlacement",
+        "export function preserveSection",
+        "export function clearSection"
+      ],
+      "deductions": "New override categories edit the coordinated transforms (P2). Four core exports expose preservation/reset operations, broader than one entry (P11); the leaf placement helper is private."
+    },
+    {
+      "file": "capability/model/core/collection/records.ts",
+      "sha256": "2c2dbfc20d089784a2f0f415560570bb31d80a7baa7e589ae119334c650ea09b",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 5,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function writeRecordList",
+        "function sectionReplacement",
+        "export function writeRecord"
+      ],
+      "deductions": "Fixed namespace writer table requires updates (P2). Repeated namespace guard/writer assembly idiom across five writers receives the literal DRY dock (P6)."
+    },
+    {
+      "file": "capability/model/core/collection/removal.ts",
+      "sha256": "d455bf34a3f45704e62d4183aa0073dce237cb7e37b9d7e9949e474eac9fea08",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function cascadeObjectDeletion",
+        "function planObjectDeletion",
+        "export function removeRecord"
+      ],
+      "deductions": "Namespace removal and cascade step lists are closed (P2). JSON serialization used to detect nontrivial dependency cleanup is less direct than an explicit change set (P7)."
+    },
+    {
+      "file": "capability/model/core/collection/view-operations.ts",
+      "sha256": "e9156c5d6b3e673ea18cdc71f0e8aa90eba234355cb0ff632dc1bbc95030fc8f",
+      "scores": {
+        "SRP": 10,
+        "OCP": 0,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 147,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function hideAppearance",
+        "function applySectionEdit",
+        "export function editView"
+      ],
+      "deductions": "New view operation kinds require editing the applySectionEdit conditional chain (P2=0). Remaining steps have explicit names, results and recovery documentation."
+    },
+    {
+      "file": "capability/model/core/invariants/duplicates.ts",
+      "sha256": "f2d7ac0b66611d5f87cc66ed36246db619af088904f77fa05d86659c01e9a0be",
+      "scores": {
+        "SRP": 10,
+        "OCP": 10,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "export function duplicates"
+      ],
+      "deductions": "Key and path policies come from callers; a real but thin identity algorithm (P11)."
+    },
+    {
+      "file": "capability/model/core/invariants/freeze.ts",
+      "sha256": "8dc7c1993e802b08854130085d659ffd281e3303e9b24c1581eaa55065d0c423",
+      "scores": {
+        "SRP": 10,
+        "OCP": 10,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "export function freeze"
+      ],
+      "deductions": "Small recursive utility hides real but thin behavior (P11); entry explicitly requires detached acyclic input."
+    },
+    {
+      "file": "capability/model/core/invariants/identity.ts",
+      "sha256": "04707aec1507c27d554eb9906f42ff35c200804dce22ac4880b2dbd659d2cc23",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 148,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "function recordId",
+        "export function validateIdentity"
+      ],
+      "deductions": "Fixed namespace step list (P2); thin scope policy over the duplicate algorithm (P11)."
+    },
+    {
+      "file": "capability/model/core/invariants/input.ts",
+      "sha256": "af74c8f5fe4ae25f153b251a0e47aa1b7a3cf7ad79a03a6028e9165d0c0e7d82",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 5,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 147,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "interface InputScan",
+        "function childFrames",
+        "function scanInput",
+        "export function inspectInput"
+      ],
+      "deductions": "Input guard stages require source edits (P2). The explicit traversal queue still requires tracing several stages (P7). Local queue/counter mutation receives the SOP P13=5 anchor."
+    },
+    {
+      "file": "capability/model/core/invariants/issues.ts",
+      "sha256": "b223e893f713ba736af06d1f8aad4b0a1b4d9b234e462c549053aabfc1b72ebc",
+      "scores": {
+        "SRP": 10,
+        "OCP": 10,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "export function diagnoseWhen",
+        "export function referenceIssue",
+        "export function failure",
+        "export function success"
+      ],
+      "deductions": "Parameterized diagnostic constructors share one true-means-failure convention. Entry docs do not all identify recovery ownership (P10); construction is real but thin (P11)."
+    },
+    {
+      "file": "capability/model/core/invariants/references.ts",
+      "sha256": "26f175bb7e4954af7df2e783ea9a99d0f9f154070d9501c97bd59b384b775639",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function validateLinkSection",
+        "const contentReferenceRules",
+        "export function validateReferences"
+      ],
+      "deductions": "Content rules compose through a list, but new collection-level reference owners require a step edit (P2). Brand types retained throughout address resolution."
+    },
+    {
+      "file": "capability/model/core/invariants/shape-diagnostics.ts",
+      "sha256": "09dcc74700c32155165279508d4729d4a8ed1bffa2529d3dfd8fcf9bc7d34d14",
+      "scores": {
+        "SRP": 10,
+        "OCP": 10,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 8,
+        "Information hiding": 5,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 150,
+      "sonarMax": 0,
+      "evidenceAnchors": [
+        "interface ShapeIssue",
+        "export function shapeErrors"
+      ],
+      "deductions": "Thin library-error translation (P11); the doc does not name the calling validation/plan recovery boundary (P10)."
+    },
+    {
+      "file": "capability/model/core/invariants/validate.ts",
+      "sha256": "416b3dd9e19e0f7337af7aaae106b667c5b1f7fdb4db7a3b47020f8aff62d2d9",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "const collectionRules",
+        "function safelyValidateShape",
+        "export function validateCollection"
+      ],
+      "deductions": "The local validation stage list needs edits for new stages (P2). Retained broad exception mapping loses cause detail (P7); output is still a typed failure, so P9 remains 10."
+    },
+    {
+      "file": "capability/model/core/objects/content.ts",
+      "sha256": "2b44991e98f6aab7a49810388b8a734585b9a8b3fff9a78ff53e95d6d136532a",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "export interface ObjectDescendant",
+        "const contentOwners",
+        "function validateObjectContent"
+      ],
+      "deductions": "Adding a rule stage requires an edit (P2). Descendant projection is an extra core surface alongside validation (P11)."
+    },
+    {
+      "file": "capability/model/core/objects/keys.ts",
+      "sha256": "c93f3eaf6f721e39e6b650b6147b8cbe987b875e8b40d5ba5dd3e751555aba4d",
+      "scores": {
+        "SRP": 10,
+        "OCP": 0,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 9,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 146,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function candidateKeys",
+        "function validateForeignKey",
+        "function validateBlockKey",
+        "export function validateKeys"
+      ],
+      "deductions": "Additional key-bearing block variants require changing validateBlockKey conditional dispatch (P2=0). Foreign-key checks still carry six coordinated rule outcomes (P7), now named explicitly."
+    },
+    {
+      "file": "capability/model/core/relationships/endpoints.ts",
+      "sha256": "2ac41b2d7e2986c6a9e330e5e8019905ecc10afa3465520ddc2b6e16995fbdb9",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "const endpointKinds",
+        "function validateEndpoint",
+        "export function validateRelationships"
+      ],
+      "deductions": "Allowed kinds are typed table policies; additional validation stages still require editing orchestration (P2). Endpoint lookup is now private."
+    },
+    {
+      "file": "capability/model/core/sections/groups.ts",
+      "sha256": "65fd3feb2b8f48200ea1a3e00abbe21a0a4df43522664f879757104da51b02c5",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 9,
+        "Demeter": 10,
+        "Immutability": 5,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 147,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "function traceAncestors",
+        "export function nestedIn",
+        "export function validateGroups"
+      ],
+      "deductions": "New containment checks edit the orchestration (P2). Exposes useful ancestry/visibility helpers in addition to validation (P11). Local traversal cursor/set mutation receives P13=5."
+    },
+    {
+      "file": "capability/model/core/sections/layout.ts",
+      "sha256": "e4cac52e42a9a4dbaed72c3320393e27afc5ed49aa9d27ad85a0f21336ce53ee",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function validateConstraint",
+        "function targetParent",
+        "export function validateLayouts"
+      ],
+      "deductions": "New scope/rule steps require edits (P2). Group membership precedence and absent owner semantics are documented and expressed as named steps."
+    },
+    {
+      "file": "capability/model/core/sections/modes.ts",
+      "sha256": "adb84b59b52df7ab3f6214fd0a3f068fdaa21976dc9b561bbbd1ffe45f30fbeb",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 9,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 152,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "const compatibleLayouts",
+        "const compatibleWires",
+        "export function validateModes"
+      ],
+      "deductions": "Compatibility data are typed; additional specialized rule stages need edits (P2). visibleRelationships adds a second core surface (P11)."
+    },
+    {
+      "file": "capability/model/core/sections/sequence.ts",
+      "sha256": "ebb51cd44467e3981eff1a8f033abe7d84a18820e8d5f98b3db20d3db898c418",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function validateParent",
+        "function siblingOrderKey",
+        "export function validateSequence"
+      ],
+      "deductions": "Additional sequence rules need a stage edit (P2). Parent, branch, participant and ordering decisions have separate named helpers."
+    },
+    {
+      "file": "capability/model/core/sections/tree.ts",
+      "sha256": "bcc0ea298418385f8e08d5471ca012f51074e029e36635dd802114d0b7b9423b",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 1,
+      "evidenceAnchors": [
+        "function participatesInTree",
+        "function validateParentCount",
+        "function validateAncestry",
+        "export function validateTree"
+      ],
+      "deductions": "The validation stage set requires edits to extend (P2). Counts and cycles are independently named; diagnostic order is retained."
+    },
+    {
+      "file": "capability/model/core/sections/views.ts",
+      "sha256": "dc2291e303351b7dbda70da7ba2851f8d924112d93b77189894b5e7aaf851099",
+      "scores": {
+        "SRP": 10,
+        "OCP": 6,
+        "LSP": 7,
+        "ISP": 10,
+        "DIP": 10,
+        "DRY": 10,
+        "KISS": 10,
+        "YAGNI": 10,
+        "Typed errors": 10,
+        "Recovery": 10,
+        "Information hiding": 10,
+        "Demeter": 10,
+        "Immutability": 10,
+        "Type safety": 10,
+        "Cognitive style": 10,
+        "Testability": 10
+      },
+      "total": 153,
+      "sonarMax": 2,
+      "evidenceAnchors": [
+        "function validateWireAppearance",
+        "const sectionRules",
+        "export function validateSections"
+      ],
+      "deductions": "Rule arrays compose current behavior, but the fixed group-first stage remains source-owned (P2)."
+    }
+  ]
+}

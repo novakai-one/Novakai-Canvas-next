@@ -1,77 +1,123 @@
+import type { GroupId } from '../../contract/brands.js';
+import type { Diagnostic } from '../../contract/errors.js';
 import type { Collection } from '../../contract/records/collection.js';
-import type { LayoutIntent, LayoutTarget } from '../../contract/records/layout.js';
+import type {
+  LayoutIntent,
+  LayoutTarget,
+  LayoutConstraint,
+} from '../../contract/records/layout.js';
 import type { Section } from '../../contract/records/section.js';
-import { duplicates, issue, required } from '../invariants/issues.js';
+import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
+import { duplicates } from '../invariants/duplicates.js';
 import { nestedIn, visibleObjects } from './groups.js';
-function shape(layout: LayoutIntent, path: string) {
-  return layout.constraints.flatMap((constraint, index) => [
-    ...duplicates(
-      constraint.targets,
-      (target) => `${target.kind}:${target.id}`,
-      `${path}.constraints.${index}`,
-    ),
-    ...issue(
-      ['before', 'below'].includes(constraint.kind) && constraint.targets.length !== 2,
-      'layout',
-      `${path}.constraints.${index}`,
-      'before/below need exactly two targets',
-    ),
-  ]);
+
+/** before/below order a pair; rank/align can address two or more unique targets. */
+function validateConstraint(constraint: LayoutConstraint, path: string): readonly Diagnostic[] {
+  const duplicateTargets = duplicates(
+    constraint.targets,
+    (target) => `${target.kind}:${target.id}`,
+    path,
+  );
+  const requiresPair = constraint.kind === 'before' || constraint.kind === 'below';
+  const wrongArity = requiresPair && constraint.targets.length !== 2;
+  const arityIssues = diagnoseWhen(
+    wrongArity,
+    'layout',
+    path,
+    'before/below need exactly two targets',
+  );
+  return [...duplicateTargets, ...arityIssues];
 }
-function visible(target: LayoutTarget, section: Section) {
+
+/** Structural constraint rules apply equally to collection, section and group layouts. */
+function validateConstraintShapes(layout: LayoutIntent, path: string): readonly Diagnostic[] {
+  return layout.constraints.flatMap((constraint, index) =>
+    validateConstraint(constraint, `${path}.constraints.${index}`),
+  );
+}
+
+/** A section constraint may address its visible objects or groups, never another section. */
+function isVisibleTarget(target: LayoutTarget, section: Section): boolean {
   if (target.kind === 'object') return visibleObjects(section).includes(target.id);
   return target.kind === 'group' && section.groups.some((group) => group.id === target.id);
 }
-function inGroup(target: LayoutTarget, section: Section, owner: string) {
-  if (target.kind === 'group')
-    return nestedIn(section.groups.find((group) => group.id === target.id)?.parent, owner, section);
-  const represented = section.groups.find((group) => group.represents === target.id);
-  const parent =
-    section.appearances.find((appearance) => appearance.object === target.id)?.group ??
-    represented?.parent;
-  return nestedIn(parent, owner, section);
+
+/** Prefer ordinary membership; a represented object derives membership from its container's parent. */
+function targetParent(target: LayoutTarget, section: Section): GroupId | undefined {
+  if (target.kind === 'group') {
+    const group = section.groups.find((candidate) => candidate.id === target.id);
+    return group?.parent;
+  }
+  const appearance = section.appearances.find((candidate) => candidate.object === target.id);
+  if (appearance?.group !== undefined) return appearance.group;
+  const representation = section.groups.find((group) => group.represents === target.id);
+  return representation?.parent;
 }
-function local(layout: LayoutIntent, section: Section, path: string, owner?: string) {
-  const targets = layout.constraints.flatMap((constraint) => constraint.targets);
-  return [
-    ...shape(layout, path),
-    ...targets.flatMap((target) => required(visible(target, section), `${path}.${target.id}`)),
-    ...ownedTargets(targets, section, path, owner),
-  ];
-}
-function ownedTargets(
+
+/** Group-owned constraints may address descendants, not the owning group or unrelated peers. */
+function validateGroupScope(
   targets: readonly LayoutTarget[],
   section: Section,
   path: string,
-  owner?: string,
-) {
-  if (!owner) return [];
-  return targets.flatMap((target) =>
-    issue(
-      !inGroup(target, section, owner),
+  ownerId: GroupId | undefined,
+): readonly Diagnostic[] {
+  if (ownerId === undefined) return [];
+  return targets.flatMap((target) => {
+    const parentId = targetParent(target, section);
+    const isDescendant = nestedIn(parentId, ownerId, section);
+    return diagnoseWhen(
+      !isDescendant,
       'layout',
       `${path}.${target.id}`,
       'Group constraints must address descendants',
-    ),
-  );
+    );
+  });
 }
-export function validateLayouts(collection: Collection) {
-  return [
-    ...shape(collection.arrangement, 'arrangement'),
-    ...collection.arrangement.constraints.flatMap((constraint) =>
-      constraint.targets.flatMap((target) =>
-        required(
-          target.kind === 'section' &&
-            collection.sections.some((section) => section.id === target.id),
-          `arrangement.${target.id}`,
-        ),
-      ),
-    ),
-    ...collection.sections.flatMap((section) => [
-      ...local(section.layout, section, `sections.${section.id}.layout`),
-      ...section.groups.flatMap((group) =>
-        local(group.layout, section, `sections.${section.id}.groups.${group.id}.layout`, group.id),
-      ),
-    ]),
-  ];
+
+/** Resolve references in the containing section, then apply optional group ownership restrictions. */
+function validateLocalLayout(
+  layout: LayoutIntent,
+  section: Section,
+  path: string,
+  ownerId?: GroupId,
+): readonly Diagnostic[] {
+  const shapeIssues = validateConstraintShapes(layout, path);
+  const targets = layout.constraints.flatMap((constraint) => constraint.targets);
+  const targetIssues = targets.flatMap((target) =>
+    referenceIssue(!isVisibleTarget(target, section), `${path}.${target.id}`),
+  );
+  const scopeIssues = validateGroupScope(targets, section, path, ownerId);
+  return [...shapeIssues, ...targetIssues, ...scopeIssues];
+}
+
+/** Collection arrangement addresses section IDs only, in collection scope. */
+function validateArrangement(collection: Collection): readonly Diagnostic[] {
+  const shapeIssues = validateConstraintShapes(collection.arrangement, 'arrangement');
+  const targets = collection.arrangement.constraints.flatMap((constraint) => constraint.targets);
+  const targetIssues = targets.flatMap((target) => {
+    const sectionExists =
+      target.kind === 'section' && collection.sections.some((section) => section.id === target.id);
+    return referenceIssue(!sectionExists, `arrangement.${target.id}`);
+  });
+  return [...shapeIssues, ...targetIssues];
+}
+
+/** Each group has its own descendant scope while sharing the section's visibility set. */
+function validateSectionLayouts(section: Section): readonly Diagnostic[] {
+  const path = `sections.${section.id}`;
+  const sectionIssues = validateLocalLayout(section.layout, section, `${path}.layout`);
+  const groupIssues = section.groups.flatMap((group) =>
+    validateLocalLayout(group.layout, section, `${path}.groups.${group.id}.layout`, group.id),
+  );
+  return [...sectionIssues, ...groupIssues];
+}
+
+/**
+ * Validates semantic constraint shape and scope at every layout level; computes no geometry.
+ * Failures accumulate without mutation. Pure replay; Authoring owns correction and commit/recovery.
+ */
+export function validateLayouts(collection: Collection): readonly Diagnostic[] {
+  const arrangementIssues = validateArrangement(collection);
+  const sectionIssues = collection.sections.flatMap(validateSectionLayouts);
+  return [...arrangementIssues, ...sectionIssues];
 }

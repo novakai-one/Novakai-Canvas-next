@@ -2,42 +2,66 @@ import type { Collection } from '../../contract/records/collection.js';
 import { changesSchema, type Change } from '../../contract/records/change.js';
 import type { Result } from '../../contract/errors.js';
 import type { ChangePlan } from '../../contract/types.js';
-import { validateCollection, shapeErrors } from '../invariants/validate.js';
+import { validateCollection } from '../invariants/validate.js';
+import { shapeErrors } from '../invariants/shape-diagnostics.js';
 import { inspectInput } from '../invariants/input.js';
 import { failure, success } from '../invariants/issues.js';
 import { freeze } from '../invariants/freeze.js';
 import { applyOperation } from './operations.js';
 import { describeImpact } from './impact.js';
-function next(result: Result<Collection>, change: Change): Result<Collection> {
-  if (!result.ok) return result;
-  return applyOperation(result.value, change);
+
+/** Once an operation fails, later operations cannot run or expose a partial collection. */
+function applyNextOperation(current: Result<Collection>, change: Change): Result<Collection> {
+  if (!current.ok) return current;
+  return applyOperation(current.value, change);
 }
-function candidate(before: Collection, changes: readonly Change[]): Result<ChangePlan> {
-  const reduced = changes.reduce(next, success(before));
-  if (!reduced.ok) return reduced;
-  return complete(before, reduced.value);
-}
-function complete(before: Collection, candidate: Collection): Result<ChangePlan> {
+
+/** Final-state validation permits related records to be changed together in one batch. */
+function validateCandidateAndDescribeImpact(
+  before: Collection,
+  candidate: Collection,
+): Result<ChangePlan> {
   const validated = validateCollection(candidate);
   if (!validated.ok) return validated;
-  return success({ candidate: validated.value, impact: describeImpact(before, validated.value) });
+  const impact = describeImpact(before, validated.value);
+  return success({ candidate: validated.value, impact });
 }
-function parsed(before: Collection, changes: unknown): Result<ChangePlan> {
-  const parsed = changesSchema.safeParse(changes);
-  if (!parsed.success) return { ok: false, diagnostics: shapeErrors(parsed.error.issues) };
-  return candidate(before, parsed.data);
+
+/** Apply checked operations in order; intermediate records may await another operation's repair. */
+function applyChangeBatch(before: Collection, changes: readonly Change[]): Result<ChangePlan> {
+  const applied = changes.reduce(applyNextOperation, success(before));
+  if (!applied.ok) return applied;
+  return validateCandidateAndDescribeImpact(before, applied.value);
 }
-function prepare(snapshot: unknown, changes: unknown): Result<ChangePlan> {
-  const before = validateCollection(snapshot);
-  if (!before.ok) return before;
-  const inspected = inspectInput(changes);
-  if (!inspected.ok) return inspected;
-  return parsed(before.value, changes);
+
+/** Structural parsing rejects unsupported operations before any candidate is constructed. */
+function parseAndApplyChanges(before: Collection, changes: unknown): Result<ChangePlan> {
+  const parsedChanges = changesSchema.safeParse(changes);
+  if (!parsedChanges.success)
+    return { ok: false, diagnostics: shapeErrors(parsedChanges.error.issues) };
+  return applyChangeBatch(before, parsedChanges.data);
 }
-/** Pure replay; Authoring owns commit, revision increment and crash recovery. */
+
+/** Validate the snapshot first, then inspect the untrusted change batch before parsing it. */
+function validatePlanningInputs(snapshot: unknown, changes: unknown): Result<ChangePlan> {
+  const validatedSnapshot = validateCollection(snapshot);
+  if (!validatedSnapshot.ok) return validatedSnapshot;
+  const inspectedChanges = inspectInput(changes);
+  if (!inspectedChanges.ok) return inspectedChanges;
+  return parseAndApplyChanges(validatedSnapshot.value, changes);
+}
+
+/**
+ * Returns a detached, frozen valid candidate and net impact, or typed diagnostics with no
+ * partial candidate. Neither input nor revision is changed. Replaying the same snapshot
+ * and batch produces the same plan; applying a create to an already changed snapshot may
+ * reject an existing ID. Input-read exceptions are translated here. Authoring owns
+ * admission, revision increments, commit and crash recovery.
+ */
 export function planChanges(snapshot: unknown, changes: unknown): Result<ChangePlan> {
   try {
-    return freeze(prepare(snapshot, changes));
+    const planned = validatePlanningInputs(snapshot, changes);
+    return freeze(planned);
   } catch {
     return freeze(failure('shape', 'changes', 'Input could not be read as plain data'));
   }

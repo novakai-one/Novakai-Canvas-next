@@ -1,91 +1,142 @@
+import type { DescendantId, ObjectId } from '../../contract/brands.js';
+import type { Diagnostic } from '../../contract/errors.js';
 import type { Collection } from '../../contract/records/collection.js';
 import type { Section, SequenceItem } from '../../contract/records/section.js';
-import { duplicates, issue } from '../invariants/issues.js';
+import { duplicates } from '../invariants/duplicates.js';
+import { diagnoseWhen } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
-function identities(item: SequenceItem): readonly string[] {
+
+type Fragment = Extract<SequenceItem, { kind: 'fragment' }>;
+
+/** Fragment branches share the sequence identity namespace with events and fragments. */
+function itemIdentities(item: SequenceItem): readonly DescendantId[] {
   if (item.kind === 'event') return [item.id];
   return [item.id, ...item.branches.map((branch) => branch.id)];
 }
-function fragment(item: SequenceItem, path: string) {
+
+/** alt has alternatives; opt and loop contain a single unbranched body. */
+function hasValidBranchCount(fragment: Fragment): boolean {
+  if (fragment.operator === 'alt') return fragment.branches.length >= 2;
+  return fragment.branches.length === 0;
+}
+
+/** Branch identities are checked globally; branch labels must also be unique within their fragment. */
+function validateFragment(item: SequenceItem, path: string): readonly Diagnostic[] {
   if (item.kind !== 'fragment') return [];
-  const countValid =
-    item.operator === 'alt' ? item.branches.length >= 2 : item.branches.length === 0;
-  return [
-    ...issue(
-      !countValid,
-      'sequence',
-      path,
-      'alt needs at least two branches; opt/loop forbid branches',
-    ),
-    ...duplicates(item.branches, (branch) => branch.label, `${path}.branches`),
-  ];
+  const countIssues = diagnoseWhen(
+    !hasValidBranchCount(item),
+    'sequence',
+    path,
+    'alt needs at least two branches; opt/loop forbid branches',
+  );
+  const labelIssues = duplicates(item.branches, (branch) => branch.label, `${path}.branches`);
+  return [...countIssues, ...labelIssues];
 }
-function parent(item: SequenceItem, section: Section, path: string) {
-  if (!item.parent)
-    return issue(item.branch !== undefined, 'sequence', path, 'Root item has no branch');
-  const owner = section.sequence.find((candidate) => candidate.id === item.parent);
-  if (owner?.kind !== 'fragment')
-    return issue(true, 'sequence', path, 'Parent must resolve to a fragment');
-  return branch(item, owner, path);
-}
-function branch(
+
+/** Children of alt identify one of its branches; other parents forbid a branch selector. */
+function validateBranchMembership(
   item: SequenceItem,
-  owner: Extract<SequenceItem, { kind: 'fragment' }>,
+  owner: Fragment,
   path: string,
-) {
-  if (owner.operator !== 'alt')
-    return issue(
+): readonly Diagnostic[] {
+  if (owner.operator !== 'alt') {
+    return diagnoseWhen(
       item.branch !== undefined,
       'sequence',
       path,
       'Only alt children identify a branch',
     );
-  return issue(
-    !owner.branches.some((branch) => branch.id === item.branch),
-    'sequence',
-    path,
-    'Child must name an owning alt branch',
-  );
+  }
+  const branchExists = owner.branches.some((branch) => branch.id === item.branch);
+  return diagnoseWhen(!branchExists, 'sequence', path, 'Child must name an owning alt branch');
 }
-function event(item: SequenceItem, section: Section, collection: Collection, path: string) {
+
+/** A missing parent means root scope, where a branch selector is not meaningful. */
+function validateParent(item: SequenceItem, section: Section, path: string): readonly Diagnostic[] {
+  if (item.parent === undefined)
+    return diagnoseWhen(item.branch !== undefined, 'sequence', path, 'Root item has no branch');
+  const owner = section.sequence.find((candidate) => candidate.id === item.parent);
+  if (owner?.kind !== 'fragment')
+    return diagnoseWhen(true, 'sequence', path, 'Parent must resolve to a fragment');
+  return validateBranchMembership(item, owner, path);
+}
+
+/** A sequence endpoint must resolve to a participant currently visible in this section. */
+function isVisibleParticipant(id: ObjectId, section: Section, collection: Collection): boolean {
+  const visible = visibleObjects(section).includes(id);
+  const object = collection.objects.find((candidate) => candidate.id === id);
+  return visible && object?.kind === 'participant';
+}
+
+/** Fragments carry no endpoints; message events validate both participants independently. */
+function validateEvent(
+  item: SequenceItem,
+  section: Section,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
   if (item.kind !== 'event') return [];
-  const visible = visibleObjects(section);
   return [item.source, item.target].flatMap((id) =>
-    issue(
-      !visible.includes(id) ||
-        collection.objects.find((object) => object.id === id)?.kind !== 'participant',
+    diagnoseWhen(
+      !isVisibleParticipant(id, section, collection),
       'sequence',
       `${path}.${id}`,
       'Event endpoint must be a visible participant',
     ),
   );
 }
-export function validateSequence(section: Section, collection: Collection) {
+
+/** No parent means root scope; unresolved parents are diagnosed independently of cycles. */
+function parentId(id: DescendantId, section: Section): DescendantId | undefined {
+  const item = section.sequence.find((candidate) => candidate.id === id);
+  return item?.parent;
+}
+
+/** All items carry containment metadata, so cycle checks apply to events and fragments alike. */
+function validateSequenceItem(
+  item: SequenceItem,
+  section: Section,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
+  const fragmentIssues = validateFragment(item, path);
+  const parentIssues = validateParent(item, section, path);
+  const eventIssues = validateEvent(item, section, collection, path);
+  const cycleExists = hasCycle(item.id, (id) => parentId(id, section));
+  const cycleIssues = diagnoseWhen(
+    cycleExists,
+    'sequence',
+    path,
+    'Fragment containment must be acyclic',
+  );
+  return [...fragmentIssues, ...parentIssues, ...eventIssues, ...cycleIssues];
+}
+
+/** Order values need only be unique within the same parent and alt branch, not contiguous. */
+function siblingOrderKey(item: SequenceItem): string {
+  const parentScope = item.parent ?? '';
+  const branchScope = item.branch ?? '';
+  return `${parentScope}:${branchScope}:${item.order}`;
+}
+
+/**
+ * Validates sequence identities, sibling ordering, fragment containment and message participants.
+ * Other modes return no sequence diagnostics here. Pure replay; Authoring owns correction
+ * and commit/recovery. Events remain ordered semantic records, not routed wire appearances.
+ */
+export function validateSequence(section: Section, collection: Collection): readonly Diagnostic[] {
   if (section.mode !== 'sequence') return [];
   const path = `sections.${section.id}.sequence`;
-  return [
-    ...issue(
-      section.wires.length > 0,
-      'sequence',
-      path,
-      'Sequence uses ordered events, not wire appearances',
-    ),
-    ...duplicates(section.sequence.flatMap(identities), (id) => id, path),
-    ...duplicates(
-      section.sequence,
-      (item) => `${item.parent ?? ''}:${item.branch ?? ''}:${item.order}`,
-      `${path}.order`,
-    ),
-    ...section.sequence.flatMap((item) => [
-      ...fragment(item, `${path}.${item.id}`),
-      ...parent(item, section, `${path}.${item.id}`),
-      ...event(item, section, collection, `${path}.${item.id}`),
-      ...issue(
-        hasCycle(item.id, (id) => section.sequence.find((item) => item.id === id)?.parent),
-        'sequence',
-        `${path}.${item.id}`,
-        'Fragment containment must be acyclic',
-      ),
-    ]),
-  ];
+  const wireIssues = diagnoseWhen(
+    section.wires.length > 0,
+    'sequence',
+    path,
+    'Sequence uses ordered events, not wire appearances',
+  );
+  const identityIssues = duplicates(section.sequence.flatMap(itemIdentities), (id) => id, path);
+  const orderIssues = duplicates(section.sequence, siblingOrderKey, `${path}.order`);
+  const itemIssues = section.sequence.flatMap((item) =>
+    validateSequenceItem(item, section, collection, `${path}.${item.id}`),
+  );
+  return [...wireIssues, ...identityIssues, ...orderIssues, ...itemIssues];
 }

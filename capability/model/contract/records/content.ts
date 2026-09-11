@@ -1,12 +1,14 @@
 import { z } from 'zod';
 import { assetId, descendantId, label, objectId, sectionId, size } from '../brands.js';
+
+/** Canonical object address, optionally narrowed to an addressable descendant. */
 export const endpointSchema = z
   .strictObject({ object: objectId, member: descendantId.optional() })
   .readonly();
-const text = z
+const textBlockSchema = z
   .strictObject({ kind: z.literal('text'), id: descendantId, text: z.string() })
   .readonly();
-const code = z
+const codeBlockSchema = z
   .strictObject({
     kind: z.literal('code'),
     id: descendantId,
@@ -14,7 +16,7 @@ const code = z
     language: z.string().optional(),
   })
   .readonly();
-const list = z
+const listBlockSchema = z
   .strictObject({
     kind: z.literal('list'),
     id: descendantId,
@@ -22,7 +24,7 @@ const list = z
     ordered: z.boolean().default(false),
   })
   .readonly();
-const image = z
+const imageBlockSchema = z
   .strictObject({
     kind: z.enum(['image', 'icon']),
     id: descendantId,
@@ -31,16 +33,20 @@ const image = z
     fit: z.enum(['contain', 'cover']).default('contain'),
   })
   .readonly();
-const linkTarget = z.discriminatedUnion('kind', [
+
+/** Local links may select a section; URI links remain external references. */
+const linkTargetSchema = z.discriminatedUnion('kind', [
   z
     .strictObject({ kind: z.literal('object'), id: objectId, section: sectionId.optional() })
     .readonly(),
   z.strictObject({ kind: z.literal('uri'), uri: label }).readonly(),
 ]);
-const link = z
-  .strictObject({ kind: z.literal('link'), id: descendantId, label, target: linkTarget })
+const linkBlockSchema = z
+  .strictObject({ kind: z.literal('link'), id: descendantId, label, target: linkTargetSchema })
   .readonly();
-const field = z
+
+/** Scalar ER key metadata. Core requires references only for foreign keys. */
+const fieldSchema = z
   .strictObject({
     kind: z.literal('field'),
     id: descendantId,
@@ -51,7 +57,9 @@ const field = z
     references: endpointSchema.optional(),
   })
   .readonly();
-const keygroup = z
+
+/** Field order is significant for composite keys and their foreign references. */
+const keyGroupSchema = z
   .strictObject({
     kind: z.literal('keygroup'),
     id: descendantId,
@@ -60,7 +68,9 @@ const keygroup = z
     references: z.array(endpointSchema).readonly().optional(),
   })
   .readonly();
-const signature = z
+
+/** Callable type information displayed as structured content, not executable code. */
+const signatureSchema = z
   .strictObject({
     kind: z.literal('signature'),
     id: descendantId,
@@ -69,7 +79,7 @@ const signature = z
     returns: label,
   })
   .readonly();
-const member = z
+const memberSchema = z
   .strictObject({
     kind: z.literal('member'),
     id: descendantId,
@@ -78,31 +88,47 @@ const member = z
     visibility: z.enum(['public', 'private', 'protected']).default('public'),
   })
   .readonly();
-const row = z.strictObject({ id: descendantId, cells: z.array(z.string()).readonly() }).readonly();
-const table = z
+
+/** Row identities share the owning object descendant scope; core checks cell count. */
+const tableRowSchema = z
+  .strictObject({ id: descendantId, cells: z.array(z.string()).readonly() })
+  .readonly();
+const tableBlockSchema = z
   .strictObject({
     kind: z.literal('table'),
     id: descendantId,
     columns: z.array(label).min(1).readonly(),
-    rows: z.array(row).readonly(),
+    rows: z.array(tableRowSchema).readonly(),
   })
   .readonly();
+
+/** Structured node contents. Kind determines the payload; core validates placement and references. */
 export const contentSchema = z.union([
-  text,
-  code,
-  list,
-  image,
-  link,
-  field,
-  keygroup,
-  signature,
-  member,
-  table,
+  textBlockSchema,
+  codeBlockSchema,
+  listBlockSchema,
+  imageBlockSchema,
+  linkBlockSchema,
+  fieldSchema,
+  keyGroupSchema,
+  signatureSchema,
+  memberSchema,
+  tableBlockSchema,
 ]);
+
+/** Named connection point with a direction and type label, scoped to its owning object. */
 export const portSchema = z
   .strictObject({ id: descendantId, direction: z.enum(['in', 'out', 'inout']), label, type: label })
   .readonly();
+
+/** One readonly content variant; narrow on kind before reading variant fields. */
 export type ContentBlock = z.infer<typeof contentSchema>;
+
+/** Object-level address when member is absent; descendant-level address otherwise. */
 export type Endpoint = z.infer<typeof endpointSchema>;
+
+/** ER field definition; a foreign key reference is validated against an ordered candidate key. */
 export type Field = Extract<ContentBlock, { kind: 'field' }>;
+
+/** Ordered composite primary, unique or foreign key over fields in the owning entity. */
 export type KeyGroup = Extract<ContentBlock, { kind: 'keygroup' }>;

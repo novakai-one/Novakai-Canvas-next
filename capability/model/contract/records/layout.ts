@@ -1,6 +1,10 @@
 import { z } from 'zod';
-import { identifier } from '../brands.js';
+import { objectId, groupId, sectionId } from '../brands.js';
+
+/** App-resolved route point. This is stored geometry, not an agent DSL coordinate requirement. */
 export const pointSchema = z.strictObject({ x: z.number(), y: z.number() }).readonly();
+
+/** Explicit position and optional dimensions; locked preserves a human layout decision. */
 export const placementSchema = z
   .strictObject({
     x: z.number(),
@@ -10,15 +14,21 @@ export const placementSchema = z
     locked: z.boolean().default(false),
   })
   .readonly();
-export const layoutTargetSchema = z
-  .strictObject({ kind: z.enum(['object', 'group', 'section']), id: identifier })
-  .readonly();
+
+/** Layout address with a namespace-specific checked identity. Core resolves its local scope. */
+export const layoutTargetSchema = z.discriminatedUnion('kind', [
+  z.strictObject({ kind: z.literal('object'), id: objectId }).readonly(),
+  z.strictObject({ kind: z.literal('group'), id: groupId }).readonly(),
+  z.strictObject({ kind: z.literal('section'), id: sectionId }).readonly(),
+]);
 const constraintSchema = z
   .strictObject({
     kind: z.enum(['rank', 'before', 'below', 'align']),
     targets: z.array(layoutTargetSchema).min(2).readonly(),
   })
   .readonly();
+
+/** Semantic layout request and ordering constraints. Model validates intent; it does not place nodes. */
 export const layoutSchema = z
   .strictObject({
     algorithm: z.enum(['flow', 'layered', 'tree', 'sequence', 'grid']),
@@ -27,6 +37,15 @@ export const layoutSchema = z
     constraints: z.array(constraintSchema).readonly().default([]),
   })
   .readonly();
+
+/** Algorithm, direction, spacing and relative constraints for one layout scope. */
 export type LayoutIntent = z.infer<typeof layoutSchema>;
+
+/** Discriminated object, group or section address; IDs retain their namespace. */
 export type LayoutTarget = z.infer<typeof layoutTargetSchema>;
+
+/** Stored geometric override; absence requests automatic placement. */
 export type Placement = z.infer<typeof placementSchema>;
+
+/** One relative ordering or alignment rule; target scope is validated in core. */
+export type LayoutConstraint = z.infer<typeof constraintSchema>;

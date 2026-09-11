@@ -1,0 +1,936 @@
+{
+  "commit": "860f458b3f3104cde03c6e6610621f8c8c379245",
+  "pluginVersion": "4.2.0",
+  "method": "Existing ESLint rule; threshold0 in this process only exposes nonzero function scores. Unreported parsed functions score0. No source/config changed. Every diagnostic mapped to its innermost TS function.",
+  "files": [
+    {
+      "file": "capability/model/core/invariants/freeze.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 1,
+      "functions": [
+        {
+          "name": "freeze",
+          "line": 2,
+          "column": 1,
+          "score": 1,
+          "exported": true,
+          "tsdoc": true
+        }
+      ],
+      "messages": [
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 2,
+          "column": 17,
+          "messageId": "refactorFunction",
+          "endLine": 2,
+          "endColumn": 23
+        }
+      ]
+    },
+    {
+      "file": "capability/model/core/invariants/identity.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 0,
+      "functions": [
+        {
+          "name": "id",
+          "line": 3,
+          "column": 12,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "validateIdentity",
+          "line": 4,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@11:43",
+          "line": 11,
+          "column": 43,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        }
+      ],
+      "messages": []
+    },
+    {
+      "file": "capability/model/core/invariants/input.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 2,
+      "functions": [
+        {
+          "name": "primitive",
+          "line": 9,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "numeric",
+          "line": 13,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "plain",
+          "line": 16,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "plainDescriptor",
+          "line": 21,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "children",
+          "line": 24,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@26:31",
+          "line": 26,
+          "column": 31,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@27:17",
+          "line": 27,
+          "column": 17,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@35:14",
+          "line": 35,
+          "column": 14,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "plainKeys",
+          "line": 43,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "overLimit",
+          "line": 46,
+          "column": 1,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "objectFrames",
+          "line": 49,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "arrayFrames",
+          "line": 55,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "denseArray",
+          "line": 60,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@61:57",
+          "line": 61,
+          "column": 57,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@62:53",
+          "line": 62,
+          "column": 53,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "scalar",
+          "line": 64,
+          "column": 1,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "isObject",
+          "line": 67,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "expand",
+          "line": 70,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "inspect",
+          "line": 75,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "scan",
+          "line": 81,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "append",
+          "line": 91,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "scanResult",
+          "line": 95,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "inspectInput",
+          "line": 100,
+          "column": 1,
+          "score": 1,
+          "exported": true,
+          "tsdoc": true
+        }
+      ],
+      "messages": [
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 9,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 9,
+          "endColumn": 19
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 13,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 13,
+          "endColumn": 17
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 16,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 16,
+          "endColumn": 15
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 21,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 21,
+          "endColumn": 25
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 24,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 24,
+          "endColumn": 18
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 43,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 43,
+          "endColumn": 19
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 49,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 49,
+          "endColumn": 22
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 55,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 55,
+          "endColumn": 21
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 60,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 60,
+          "endColumn": 20
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 67,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 67,
+          "endColumn": 18
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 70,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 70,
+          "endColumn": 16
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 75,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 75,
+          "endColumn": 17
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 81,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 81,
+          "endColumn": 14
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 91,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 91,
+          "endColumn": 16
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 95,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 95,
+          "endColumn": 20
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 100,
+          "column": 17,
+          "messageId": "refactorFunction",
+          "endLine": 100,
+          "endColumn": 29
+        }
+      ]
+    },
+    {
+      "file": "capability/model/core/invariants/issues.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 1,
+      "functions": [
+        {
+          "name": "issue",
+          "line": 2,
+          "column": 1,
+          "score": 1,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "failure",
+          "line": 11,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "success",
+          "line": 14,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "duplicates",
+          "line": 17,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@22:24",
+          "line": 22,
+          "column": 24,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@24:23",
+          "line": 24,
+          "column": 23,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "required",
+          "line": 31,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "present",
+          "line": 34,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        }
+      ],
+      "messages": [
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 2,
+          "column": 17,
+          "messageId": "refactorFunction",
+          "endLine": 2,
+          "endColumn": 22
+        }
+      ]
+    },
+    {
+      "file": "capability/model/core/invariants/references.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 2,
+      "functions": [
+        {
+          "name": "sources",
+          "line": 5,
+          "column": 1,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@7:24",
+          "line": 7,
+          "column": 24,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@8:20",
+          "line": 8,
+          "column": 20,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@10:33",
+          "line": 10,
+          "column": 33,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "localLink",
+          "line": 16,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@25:31",
+          "line": 25,
+          "column": 31,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "linkSection",
+          "line": 31,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@38:44",
+          "line": 38,
+          "column": 44,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "blockReference",
+          "line": 41,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@45:30",
+          "line": 45,
+          "column": 30,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "validateReferences",
+          "line": 50,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@52:35",
+          "line": 52,
+          "column": 35,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@54:33",
+          "line": 54,
+          "column": 33,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@58:41",
+          "line": 58,
+          "column": 41,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        }
+      ],
+      "messages": [
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 16,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 16,
+          "endColumn": 19
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 31,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 31,
+          "endColumn": 21
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 41,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 41,
+          "endColumn": 24
+        }
+      ]
+    },
+    {
+      "file": "capability/model/core/invariants/validate.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 2,
+      "functions": [
+        {
+          "name": "shapeErrors",
+          "line": 23,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@26:21",
+          "line": 26,
+          "column": 21,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "validateShape",
+          "line": 32,
+          "column": 1,
+          "score": 2,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@35:37",
+          "line": 35,
+          "column": 37,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "validateCollection",
+          "line": 40,
+          "column": 1,
+          "score": 1,
+          "exported": true,
+          "tsdoc": true
+        },
+        {
+          "name": "safeShape",
+          "line": 46,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        }
+      ],
+      "messages": [
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.",
+          "line": 32,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 32,
+          "endColumn": 23
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 40,
+          "column": 17,
+          "messageId": "refactorFunction",
+          "endLine": 40,
+          "endColumn": 35
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 46,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 46,
+          "endColumn": 19
+        }
+      ]
+    },
+    {
+      "file": "capability/model/core/collection/preservation.ts",
+      "configuredRule": [
+        2,
+        2
+      ],
+      "maximum": 1,
+      "functions": [
+        {
+          "name": "placement",
+          "line": 4,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "route",
+          "line": 11,
+          "column": 1,
+          "score": 1,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "preserveSection",
+          "line": 15,
+          "column": 1,
+          "score": 1,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@19:39",
+          "line": 19,
+          "column": 39,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@22:35",
+          "line": 22,
+          "column": 35,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@23:32",
+          "line": 23,
+          "column": 32,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@26:29",
+          "line": 26,
+          "column": 29,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@29:30",
+          "line": 29,
+          "column": 30,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@30:37",
+          "line": 30,
+          "column": 37,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@33:27",
+          "line": 33,
+          "column": 27,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@36:29",
+          "line": 36,
+          "column": 29,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "preserveOverrides",
+          "line": 41,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@44:33",
+          "line": 44,
+          "column": 33,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "callback@47:32",
+          "line": 47,
+          "column": 32,
+          "score": 0,
+          "exported": false,
+          "tsdoc": false
+        },
+        {
+          "name": "clearPlacement",
+          "line": 52,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "clearRoute",
+          "line": 59,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        },
+        {
+          "name": "clearSection",
+          "line": 64,
+          "column": 1,
+          "score": 0,
+          "exported": true,
+          "tsdoc": false
+        }
+      ],
+      "messages": [
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 4,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 4,
+          "endColumn": 19
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 11,
+          "column": 10,
+          "messageId": "refactorFunction",
+          "endLine": 11,
+          "endColumn": 15
+        },
+        {
+          "ruleId": "sonarjs/cognitive-complexity",
+          "severity": 2,
+          "message": "Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.",
+          "line": 15,
+          "column": 17,
+          "messageId": "refactorFunction",
+          "endLine": 15,
+          "endColumn": 32
+        }
+      ]
+    }
+  ]
+}

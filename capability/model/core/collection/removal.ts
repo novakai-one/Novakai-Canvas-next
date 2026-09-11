@@ -5,63 +5,88 @@ import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../invariants/issues.js';
 import { cascadeContent } from './cascade-content.js';
 import { cascadeSection } from './cascade-views.js';
-function cascade(collection: Collection, id: ObjectId): Collection {
-  const relationships = collection.relationships
-    .filter((relationship) => [relationship.source.object, relationship.target.object].includes(id))
-    .map((relationship) => relationship.id);
-  return {
-    ...collection,
-    objects: collection.objects
-      .filter((object) => object.id !== id)
-      .map((object) => cascadeContent(object, id)),
-    relationships: collection.relationships.filter(
-      (relationship) => !relationships.includes(relationship.id),
-    ),
-    sections: collection.sections.map((section) => cascadeSection(section, id, relationships)),
-  };
+
+type ObjectDeletion = Extract<Change, { op: 'delete-object' }>;
+type RecordRemoval = Extract<Change, { op: 'remove' }>;
+
+/** Compute the full cascade before deciding whether deletion needs explicit consent. */
+function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Collection {
+  const incidentRelationships = collection.relationships.filter(
+    (relationship) =>
+      relationship.source.object === removedId || relationship.target.object === removedId,
+  );
+  const removedRelationshipIds = incidentRelationships.map((relationship) => relationship.id);
+  const survivingObjects = collection.objects.filter((object) => object.id !== removedId);
+  const objects = survivingObjects.map((object) => cascadeContent(object, removedId));
+  const relationships = collection.relationships.filter(
+    (relationship) => !removedRelationshipIds.includes(relationship.id),
+  );
+  const sections = collection.sections.map((section) =>
+    cascadeSection(section, removedId, removedRelationshipIds),
+  );
+  return { ...collection, objects, relationships, sections };
 }
-export function deleteObject(
-  collection: Collection,
-  change: Extract<Change, { op: 'delete-object' }>,
-): Result<Collection> {
-  if (!collection.objects.some((object) => object.id === change.id))
-    return failure('not-found', `objects.${change.id}`, 'Object must exist');
-  return deletion(collection, change);
-}
-function deletion(
-  collection: Collection,
-  change: Extract<Change, { op: 'delete-object' }>,
-): Result<Collection> {
-  const candidate = cascade(collection, change.id);
-  const simple = {
+
+/** Any difference beyond removing the object itself constitutes a dependency cleanup. */
+function planObjectDeletion(collection: Collection, change: ObjectDeletion): Result<Collection> {
+  const cascaded = cascadeObjectDeletion(collection, change.id);
+  const objectOnly = {
     ...collection,
     objects: collection.objects.filter((object) => object.id !== change.id),
   };
-  if (!change.cascade && JSON.stringify(candidate) !== JSON.stringify(simple))
+  const requiresCascade = JSON.stringify(cascaded) !== JSON.stringify(objectOnly);
+  if (!change.cascade && requiresCascade) {
     return failure(
       'delete-referenced',
       `objects.${change.id}`,
       'Explicit cascade required for referenced object',
     );
-  return success(candidate);
+  }
+  return success(cascaded);
 }
-const without = <T extends { readonly id: string }>(items: readonly T[], id: string) =>
-  items.filter((item) => item.id !== id);
-export function removeRecord(
-  collection: Collection,
-  change: Extract<Change, { op: 'remove' }>,
-): Result<Collection> {
-  if (!collection[change.target].some((record) => record.id === change.id))
+
+/**
+ * Deletes a canonical object; removing dependent content requires cascade=true.
+ * Returns not-found or delete-referenced without exposing a partial result. Pure replay
+ * against the same snapshot is safe. Authoring owns admission and commit/recovery.
+ */
+export function deleteObject(collection: Collection, change: ObjectDeletion): Result<Collection> {
+  const objectExists = collection.objects.some((object) => object.id === change.id);
+  if (!objectExists) return failure('not-found', `objects.${change.id}`, 'Object must exist');
+  return planObjectDeletion(collection, change);
+}
+
+/** Filter preserves record order and the namespace-specific ID type. */
+function withoutRecord<T extends { readonly id: string }>(
+  items: readonly T[],
+  removedId: RecordRemoval['id'],
+): readonly T[] {
+  return items.filter((item) => item.id !== removedId);
+}
+
+/**
+ * Removes exactly one record without cascade. References are checked on the final batch,
+ * allowing a later operation to repair them. Missing IDs fail. Pure snapshot replay;
+ * planChanges owns final validation and Authoring owns commit/recovery.
+ */
+export function removeRecord(collection: Collection, change: RecordRemoval): Result<Collection> {
+  const recordExists = collection[change.target].some((record) => record.id === change.id);
+  if (!recordExists)
     return failure('not-found', `${change.target}.${change.id}`, 'Remove requires existing ID');
-  const removers = {
-    objects: () => ({ ...collection, objects: without(collection.objects, change.id) }),
+  return success(removeFromNamespace(collection, change));
+}
+
+/** Namespace-specific lists retain their distinct record schemas in the returned collection. */
+function removeFromNamespace(collection: Collection, change: RecordRemoval): Collection {
+  const removers: Readonly<Record<RecordRemoval['target'], () => Collection>> = {
+    objects: () => ({ ...collection, objects: withoutRecord(collection.objects, change.id) }),
     relationships: () => ({
       ...collection,
-      relationships: without(collection.relationships, change.id),
+      relationships: withoutRecord(collection.relationships, change.id),
     }),
-    sections: () => ({ ...collection, sections: without(collection.sections, change.id) }),
-    assets: () => ({ ...collection, assets: without(collection.assets, change.id) }),
-    sources: () => ({ ...collection, sources: without(collection.sources, change.id) }),
+    sections: () => ({ ...collection, sections: withoutRecord(collection.sections, change.id) }),
+    assets: () => ({ ...collection, assets: withoutRecord(collection.assets, change.id) }),
+    sources: () => ({ ...collection, sources: withoutRecord(collection.sources, change.id) }),
   };
-  return success(removers[change.target]());
+  return removers[change.target]();
 }

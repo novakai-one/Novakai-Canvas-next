@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { label, objectId, size, sourceId } from '../brands.js';
 import { contentSchema, portSchema } from './content.js';
+
+/** Supported semantic node kinds, independent of the section displaying the node. */
 export const objectKind = z.enum([
   'step',
   'start',
@@ -18,6 +20,8 @@ export const objectKind = z.enum([
   'system',
   'note',
 ]);
+
+/** Canonical node content and semantic appearance preferences. Section-specific geometry lives elsewhere. */
 export const objectSchema = z
   .strictObject({
     id: objectId,
@@ -31,5 +35,9 @@ export const objectSchema = z
     sources: z.array(sourceId).readonly().default([]),
   })
   .readonly();
+
+/** One reusable semantic object; several sections may show it without copying its content. */
 export type DiagramObject = z.infer<typeof objectSchema>;
+
+/** Closed set of semantic node kinds accepted by the object schema. */
 export type ObjectKind = z.infer<typeof objectKind>;

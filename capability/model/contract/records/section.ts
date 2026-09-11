@@ -9,6 +9,8 @@ import {
   size,
 } from '../brands.js';
 import { layoutSchema, placementSchema, pointSchema } from './layout.js';
+
+/** Section-local view of one object. Omitted overrides inherit semantic defaults or automatic layout. */
 export const appearanceSchema = z
   .strictObject({
     object: objectId,
@@ -20,6 +22,8 @@ export const appearanceSchema = z
     placement: placementSchema.optional(),
   })
   .readonly();
+
+/** Section-local container, optionally representing a canonical object instead of an ordinary appearance. */
 export const groupSchema = z
   .strictObject({
     id: groupId,
@@ -30,26 +34,34 @@ export const groupSchema = z
     placement: placementSchema.optional(),
   })
   .readonly();
-const side = z.enum(['auto', 'top', 'right', 'bottom', 'left']);
+
+/** Auto delegates attachment selection to routing; named sides preserve an authored constraint. */
+const attachmentSideSchema = z.enum(['auto', 'top', 'right', 'bottom', 'left']);
+
+/** Section-local route of a canonical relationship. Manual points and their lock are preserved together. */
 export const wireSchema = z
   .strictObject({
     relationship: relationshipId,
     route: z.enum(['orthogonal', 'curve']).default('orthogonal'),
-    sourceSide: side.default('auto'),
-    targetSide: side.default('auto'),
+    sourceSide: attachmentSideSchema.default('auto'),
+    targetSide: attachmentSideSchema.default('auto'),
     manual: z.array(pointSchema).min(2).readonly().optional(),
     locked: z.boolean().default(false),
   })
   .readonly();
-const sequenceBase = {
+
+/** Order is local to parent and optional alt branch; root items omit both references. */
+const sequenceScopeFields = {
   id: descendantId,
   parent: descendantId.optional(),
   branch: descendantId.optional(),
   order: z.number().int().nonnegative(),
 };
-const event = z
+
+/** A labelled message between visible participant objects, optionally changing activation. */
+const sequenceEventSchema = z
   .strictObject({
-    ...sequenceBase,
+    ...sequenceScopeFields,
     kind: z.literal('event'),
     source: objectId,
     target: objectId,
@@ -58,17 +70,25 @@ const event = z
     activate: z.boolean().optional(),
   })
   .readonly();
-const branch = z.strictObject({ id: descendantId, label }).readonly();
-const fragment = z
+
+/** Named alternative inside one alt fragment; identity is unique across the sequence. */
+const sequenceBranchSchema = z.strictObject({ id: descendantId, label }).readonly();
+
+/** alt declares two or more alternatives; opt/loop use an unbranched body, enforced by core. */
+const sequenceFragmentSchema = z
   .strictObject({
-    ...sequenceBase,
+    ...sequenceScopeFields,
     kind: z.literal('fragment'),
     operator: z.enum(['alt', 'opt', 'loop']),
     label,
-    branches: z.array(branch).readonly().default([]),
+    branches: z.array(sequenceBranchSchema).readonly().default([]),
   })
   .readonly();
-export const sequenceSchema = z.union([event, fragment]);
+
+/** Ordered message or nested control fragment; identities and parent/branch scope are checked by core. */
+export const sequenceSchema = z.union([sequenceEventSchema, sequenceFragmentSchema]);
+
+/** Supported diagram modes, each with its own topology and compatible layout algorithms. */
 export const modeSchema = z.enum([
   'flow',
   'er',
@@ -79,6 +99,8 @@ export const modeSchema = z.enum([
   'story',
   'grid',
 ]);
+
+/** One diagram view: visible objects, containers, wires and mode-specific semantic structure. */
 export const sectionSchema = z
   .strictObject({
     id: sectionId,
@@ -94,9 +116,21 @@ export const sectionSchema = z
     placement: placementSchema.optional(),
   })
   .readonly();
+
+/** Readonly diagram view within a collection; referenced objects remain collection-owned. */
 export type Section = z.infer<typeof sectionSchema>;
+
+/** Ordinary presentation of a canonical object in one section. */
 export type Appearance = z.infer<typeof appearanceSchema>;
+
+/** Container whose parent is section-local; represents suppresses a duplicate ordinary appearance. */
 export type Group = z.infer<typeof groupSchema>;
+
+/** View-specific route controls for one canonical relationship. */
 export type WireAppearance = z.infer<typeof wireSchema>;
+
+/** Message event or control fragment, ordered within its parent and optional alt branch. */
 export type SequenceItem = z.infer<typeof sequenceSchema>;
+
+/** Diagram mode used to select topology and layout validation rules. */
 export type Mode = z.infer<typeof modeSchema>;

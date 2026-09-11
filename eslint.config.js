@@ -36,6 +36,10 @@ export default tseslint.config(
     files: ['capability/*/contract/api.ts'],
     rules: { 'no-restricted-imports': restrict(['**/adapters/**']) },
   },
+  {
+    files: ['capability/*/tests/**/*.ts'],
+    rules: { 'no-restricted-imports': restrict(['**/core/**']) },
+  },
   { files: ['capability/*/contract/compose.ts'], rules: { 'no-restricted-imports': 'off' } },
   { files: ['*.cjs'], rules: { '@typescript-eslint/no-require-imports': 'off' } },
 );

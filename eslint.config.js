@@ -29,7 +29,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['capability/*/core/**/*.ts'],
+    files: ['capability/*/core/**/*.{ts,tsx}'],
     rules: { 'no-restricted-imports': restrict(coreForbidden) },
   },
   {
@@ -37,7 +37,7 @@ export default tseslint.config(
     rules: { 'no-restricted-imports': restrict(['**/adapters/**']) },
   },
   {
-    files: ['capability/*/tests/**/*.ts'],
+    files: ['capability/*/tests/**/*.{ts,tsx}'],
     rules: { 'no-restricted-imports': restrict(['**/core/**']) },
   },
   { files: ['capability/*/contract/compose.ts'], rules: { 'no-restricted-imports': 'off' } },

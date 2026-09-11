@@ -36,7 +36,7 @@ const adapter = (name) => ({
   name: `${name}-adapter-isolation`,
   severity: 'error',
   from: { path: `^capability/${name}/adapters/` },
-  to: { path: `^capability/${name}/(core/|adapters/)` },
+  to: { path: `^capability/${name}/(core/|adapters/)`, pathNot: '\\.module\\.css$' },
 });
 const wiring = (name) => ({
   name: `${name}-adapter-wiring`,

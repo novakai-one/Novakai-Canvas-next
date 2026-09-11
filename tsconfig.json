@@ -13,9 +13,11 @@
     "noEmit": true,
     "types": [
       "node"
-    ]
+    ],
+    "jsx": "react-jsx"
   },
   "include": [
-    "capability/**/*.ts"
+    "capability/**/*.ts",
+    "capability/**/*.tsx"
   ]
 }

@@ -1,9 +1,7 @@
-# assets
+# Assets
 
-Responsibility: Immutable media admission, resolution and reachability.
+Admit safe immutable media, resolve exact offline bytes, and protect reachability through leases. Authoring owns diagram bindings; Assets never writes collection documents.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+Enter through `contract/index.ts`. `createAssets` binds injected dependencies; `openAssets` explicitly opens the native SQLite/file store. PNG/JPEG/WebP normalize to PNG; strict SVG stays vector; supported fonts retain exact bytes. Missing/corrupt resources produce typed diagnostics.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
-
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+Specs: `docs/specs/assets`. Evidence: `quality/acceptance-evidence/assets-*`, `quality/file-reviews/assets.md`. Ten in-process tests cover real codecs/files and lease races. Browser integration remains in the later host/UI stage.

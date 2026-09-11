@@ -1,6 +1,6 @@
 # Canvas development contract
 
-Model and Library have pure tested implementations; Persistence has a tested SQLite/backup implementation. Remaining capabilities and hosts are scaffolds. This is not yet a working application. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
+Model and Library have pure tested implementations; Persistence has a tested SQLite/backup implementation; Assets has tested media/file/lease implementations. Remaining capabilities and hosts are scaffolds. This is not yet a working application. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
 
 ## Authority and scope
 

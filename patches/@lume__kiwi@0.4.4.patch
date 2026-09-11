@@ -1,0 +1,44 @@
+diff --git a/dist/solver.js b/dist/solver.js
+index 1de1a7160a2ebf0e34d18147acc8c88ec91ba12d..3ae213d5d5381ad344f290780ddcf29df9f19377 100644
+--- a/dist/solver.js
++++ b/dist/solver.js
+@@ -58,7 +58,7 @@ export class Solver {
+         // then it represents an unsatisfiable constraint.
+         if (subject.type() === SymbolType.Invalid && row.allDummies()) {
+             if (!nearZero(row.constant())) {
+-                throw new Error('unsatisfiable constraint');
++                throw Object.assign(new Error('unsatisfiable constraint'), { code: 'UNSATISFIABLE_CONSTRAINT' });
+             }
+             else {
+                 subject = tag.marker;
+@@ -69,7 +69,7 @@ export class Solver {
+         // the row represents an unsatisfiable constraint.
+         if (subject.type() === SymbolType.Invalid) {
+             if (!this._addWithArtificialVariable(row)) {
+-                throw new Error('unsatisfiable constraint');
++                throw Object.assign(new Error('unsatisfiable constraint'), { code: 'UNSATISFIABLE_CONSTRAINT' });
+             }
+         }
+         else {
+diff --git a/src/solver.ts b/src/solver.ts
+index 56f57dc64de5db45f3bbac4bb154b28e04c4c64c..25cbbed0035e6d1a7563eaea4767df9c272fc1da 100644
+--- a/src/solver.ts
++++ b/src/solver.ts
+@@ -70,7 +70,7 @@ export class Solver {
+ 		// then it represents an unsatisfiable constraint.
+ 		if (subject.type() === SymbolType.Invalid && row.allDummies()) {
+ 			if (!nearZero(row.constant())) {
+-				throw new Error('unsatisfiable constraint')
++				throw Object.assign(new Error('unsatisfiable constraint'), { code: 'UNSATISFIABLE_CONSTRAINT' })
+ 			} else {
+ 				subject = tag.marker
+ 			}
+@@ -81,7 +81,7 @@ export class Solver {
+ 		// the row represents an unsatisfiable constraint.
+ 		if (subject.type() === SymbolType.Invalid) {
+ 			if (!this._addWithArtificialVariable(row)) {
+-				throw new Error('unsatisfiable constraint')
++				throw Object.assign(new Error('unsatisfiable constraint'), { code: 'UNSATISFIABLE_CONSTRAINT' })
+ 			}
+ 		} else {
+ 			row.solveFor(subject)

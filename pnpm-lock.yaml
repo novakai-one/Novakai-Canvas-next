@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@lume/kiwi@0.4.4': 641e7da4118b6978e1f1cc1f91f47265aeb51f5f76244978c98873cce9b4f46d
+  libavoid-js@0.5.0-beta.5: 242ab2e5ddfc5c5be68f7e3e9de2bd5445394e398b96f9d5c9ca42bba72c3cab
+
 importers:
 
   .:
@@ -57,6 +61,28 @@ importers:
       '@types/fontkit':
         specifier: 2.0.9
         version: 2.0.9
+
+  capability/layout:
+    dependencies:
+      '@lume/kiwi':
+        specifier: 0.4.4
+        version: 0.4.4(patch_hash=641e7da4118b6978e1f1cc1f91f47265aeb51f5f76244978c98873cce9b4f46d)
+      '@novakai/canvas-presentation':
+        specifier: workspace:*
+        version: link:../presentation
+      elkjs:
+        specifier: 0.12.0
+        version: 0.12.0
+      libavoid-js:
+        specifier: 0.5.0-beta.5
+        version: 0.5.0-beta.5(patch_hash=242ab2e5ddfc5c5be68f7e3e9de2bd5445394e398b96f9d5c9ca42bba72c3cab)
+      zod:
+        specifier: 4.6.2
+        version: 4.6.2
+    devDependencies:
+      '@novakai/canvas-model':
+        specifier: workspace:*
+        version: link:../model
 
   capability/library:
     dependencies:
@@ -357,6 +383,9 @@ packages:
 
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
+
+  '@lume/kiwi@0.4.4':
+    resolution: {integrity: sha512-ie0YTKgiZqD4TXlJ4eUbfi4UEoKs6YlLRYNTfPm5eUXwfudTBmPRs7Qcxz2SWKDpVTwThv3sWG6zwtyAA0nPpw==}
 
   '@oxc-project/types@0.149.0':
     resolution: {integrity: sha512-Efcc+iF0j3Bf67YjEqIqWXbX5XddXoK/Mw4K1/JuXwRCZ8N16VR7iT23nlCc9XrveFVh/E5Rqs2StT0V8v9LdA==}
@@ -676,6 +705,9 @@ packages:
   dfa@1.2.0:
     resolution: {integrity: sha512-ED3jP8saaweFTjeGX8HQPjeC1YYyZs98jGNZx6IiBvxW7JG5v492kamAQB3m2wop07CvU/RQmzcKr6bgcC5D/Q==}
 
+  elkjs@0.12.0:
+    resolution: {integrity: sha512-YZcKynxVxYoKIOEpywEPwCFdg+BTbxQRNf3pbwdDCvc8O3kQD8bmIwSxKU1eOTVc4Xo+VG9Te+575mlfvOrhEQ==}
+
   enhanced-resolve@5.24.5:
     resolution: {integrity: sha512-L1l8TNvomm6UVW5B253AGxQagSQr+vGwhMlrrfRS2qmhx46AMpMVJKQYLvWYbysTMY8VoicOvzHzoHMbyzB+4A==}
     engines: {node: '>=10.13.0'}
@@ -895,6 +927,9 @@ packages:
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
+
+  libavoid-js@0.5.0-beta.5:
+    resolution: {integrity: sha512-jHkn6A10815TgFhZ1paUD/NDnQkg4C66qJc2Juj1NpmO/+QXnJ4UjIdKQarkXLmI/QgXhEO3RWDxMi3i+uHPwA==}
 
   lightningcss-android-arm64@1.33.0:
     resolution: {integrity: sha512-gEpRTalKdosp4Bb8qWtc2iOgE5SeIHlpS1up9bFq2wAyYhl1UdTObYiHe98zEM9SQvSoqQZ1IQD0JNpg3Ml5pg==}
@@ -1540,6 +1575,8 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
+  '@lume/kiwi@0.4.4(patch_hash=641e7da4118b6978e1f1cc1f91f47265aeb51f5f76244978c98873cce9b4f46d)': {}
+
   '@oxc-project/types@0.149.0': {}
 
   '@rolldown/binding-android-arm-eabi@1.2.8':
@@ -1833,6 +1870,8 @@ snapshots:
 
   dfa@1.2.0: {}
 
+  elkjs@0.12.0: {}
+
   enhanced-resolve@5.24.5:
     dependencies:
       graceful-fs: 4.2.11
@@ -2052,6 +2091,8 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
       type-check: 0.4.0
+
+  libavoid-js@0.5.0-beta.5(patch_hash=242ab2e5ddfc5c5be68f7e3e9de2bd5445394e398b96f9d5c9ca42bba72c3cab): {}
 
   lightningcss-android-arm64@1.33.0:
     optional: true

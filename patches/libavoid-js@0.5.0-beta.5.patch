@@ -1,0 +1,25 @@
+diff --git a/dist/layout-loader.d.ts b/dist/layout-loader.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..01c1d5fccf92d5b27f0c27c86fad32d1ea9cebd2
+--- /dev/null
++++ b/dist/layout-loader.d.ts
+@@ -0,0 +1,5 @@
++/** Version-pinned loader surface; native Embind objects are checked by the consuming adapter. */
++export declare class AvoidLib {
++  static load(wasmPath?: string): Promise<void>;
++  static getInstance(): unknown;
++}
+diff --git a/package.json b/package.json
+index 510c23d4864a259a7cdcfb888ad57f680666e938..21b464e13f45e6ddcb5967a55b750259d418db4a 100644
+--- a/package.json
++++ b/package.json
+@@ -6,8 +6,8 @@
+   "types": "dist/index.d.ts",
+   "exports": {
+     ".": {
++      "types": "./dist/layout-loader.d.ts",
+       "node": "./dist/index-node.mjs",
+-      "types": "./dist/libavoid.d.ts",
+       "default": "./dist/index.js"
+     }
+   },

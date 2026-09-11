@@ -73,6 +73,12 @@ importers:
         specifier: 4.6.2
         version: 4.6.2
 
+  capability/templates:
+    dependencies:
+      zod:
+        specifier: 4.6.2
+        version: 4.6.2
+
 packages:
 
   '@cacheable/memory@2.2.0':

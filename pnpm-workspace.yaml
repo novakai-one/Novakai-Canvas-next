@@ -1,0 +1,4 @@
+# Tool-defined key; architectural folders are named capability/.
+packages:
+  - 'capability/*'
+  - 'apps/*'

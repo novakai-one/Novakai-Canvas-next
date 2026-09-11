@@ -1,0 +1,7 @@
+{
+  "name": "@novakai/canvas",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Canvas capability architecture scaffold. Runtime implementation and dependency pins are not yet present."
+}

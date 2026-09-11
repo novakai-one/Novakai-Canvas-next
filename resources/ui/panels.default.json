@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "panels": {
+    "left": {
+      "sectionIds": [
+        "collections",
+        "sections",
+        "objects",
+        "create"
+      ]
+    },
+    "right": {
+      "sectionIds": [
+        "shared-content",
+        "appearance",
+        "connection",
+        "collection-theme",
+        "interface"
+      ]
+    }
+  },
+  "collapsedSectionIds": [
+    "collections",
+    "create",
+    "collection-theme",
+    "interface"
+  ],
+  "hiddenSectionIds": []
+}

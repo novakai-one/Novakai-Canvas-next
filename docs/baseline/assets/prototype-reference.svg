@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1020" viewBox="0 0 1440 1020" role="img" aria-labelledby="title desc">
+<title id="title">From idea to a frontend prototype</title><desc id="desc">Seven steps with a review decision and labelled feedback loop. A wireframe image illustrates the sketch step. Proposed visual acceptance reference, not current app output.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1,1 L8,5 L1,9" fill="none" stroke="#b9b9bd" stroke-width="1.5"/></marker></defs>
+<rect width="1440" height="1020" fill="#121214"/>
+<style>text{font-family:Arial,sans-serif;fill:#f1f1f3}.muted{fill:#b9b9bd}.title{font-size:25px;font-weight:600}.body{font-size:18px}.wire{fill:none;stroke:#b9b9bd;stroke-width:2;marker-end:url(#arrow)}.label{font-size:16px;fill:#e0e0e3}</style>
+<text x="40" y="43" font-size="14" class="muted" text-anchor="start">PROPOSED VISUAL REFERENCE · COLLECTION / PROTOTYPE</text>
+<text x="40" y="100" font-size="40" class="" text-anchor="start">From idea to a frontend prototype</text>
+<text x="40" y="139" font-size="23" class="muted" text-anchor="start">A small, testable learning loop</text>
+<path d="M330 310 H380" class="wire"/>
+<path d="M680 310 H730" class="wire"/>
+<path d="M1030 310 H1080" class="wire"/>
+<path d="M1230 450 V510 H200 V730 H250" class="wire"/>
+<path d="M550 725 H730" class="wire"/>
+<path d="M880 850 V916 H400 V850" stroke-dasharray="7 5" class="wire"/>
+<path d="M400 610 V560 H1230 V610" class="wire"/>
+<g><title>Understand the task: Identify the audience and the problem to solve.</title><rect x="30" y="210" width="300" height="240" rx="14" fill="#1b1b1e" stroke="#505056"/></g>
+<text x="52" y="241" font-size="15" class="muted" text-anchor="start">01</text>
+<text x="52" y="278" font-size="18" class="title" text-anchor="start">Understand the task</text>
+<text x="52" y="350" font-size="18" class="body" text-anchor="start">Identify the audience and</text>
+<text x="52" y="376" font-size="18" class="body" text-anchor="start">the problem to solve.</text>
+<g><title>Choose one useful journey: Define the outcome and what this prototype must demonstrate.</title><rect x="380" y="210" width="300" height="240" rx="14" fill="#1b1b1e" stroke="#505056"/></g>
+<text x="402" y="241" font-size="15" class="muted" text-anchor="start">02</text>
+<text x="402" y="278" font-size="18" class="title" text-anchor="start">Choose one useful</text>
+<text x="402" y="307" font-size="18" class="title" text-anchor="start">journey</text>
+<text x="402" y="350" font-size="18" class="body" text-anchor="start">Define the outcome and what</text>
+<text x="402" y="376" font-size="18" class="body" text-anchor="start">this prototype must</text>
+<text x="402" y="402" font-size="18" class="body" text-anchor="start">demonstrate.</text>
+<g><title>Sketch the screen: Make the hierarchy and the next action obvious.</title><rect x="730" y="210" width="300" height="240" rx="14" fill="#1b1b1e" stroke="#505056"/></g>
+<text x="752" y="241" font-size="15" class="muted" text-anchor="start">03</text>
+<text x="752" y="278" font-size="18" class="title" text-anchor="start">Sketch the screen</text>
+<image x="752" y="303" width="256" height="90" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iMjYwIiB2aWV3Qm94PSIwIDAgNjAwIDI2MCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSIyNjAiIHJ4PSIxOCIgZmlsbD0iIzI1MjUyOSIvPjxyZWN0IHg9IjIwIiB5PSIyMCIgd2lkdGg9IjU2MCIgaGVpZ2h0PSIzNSIgcng9IjciIGZpbGw9IiM1MDUwNTYiLz48cmVjdCB4PSIyMCIgeT0iNzUiIHdpZHRoPSIzNTAiIGhlaWdodD0iMjQiIHJ4PSI0IiBmaWxsPSIjYjliOWJkIi8+PHJlY3QgeD0iMjAiIHk9IjExNSIgd2lkdGg9IjI3MCIgaGVpZ2h0PSI3MCIgcng9IjciIGZpbGw9IiM1MDUwNTYiLz48cmVjdCB4PSIzMTAiIHk9IjExNSIgd2lkdGg9IjI3MCIgaGVpZ2h0PSI3MCIgcng9IjciIGZpbGw9IiM1MDUwNTYiLz48cmVjdCB4PSIyMCIgeT0iMjA1IiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjMwIiByeD0iNyIgZmlsbD0iI2MwOGEyMSIvPjwvc3ZnPg=="/>
+<text x="752" y="411" font-size="18" class="body" text-anchor="start">Make the hierarchy and the next</text>
+<text x="752" y="433" font-size="18" class="body" text-anchor="start">action obvious.</text>
+<g><title>Build the prototype: Implement the chosen journey with realistic content.</title><rect x="1080" y="210" width="300" height="240" rx="14" fill="#1b1b1e" stroke="#505056"/></g>
+<text x="1102" y="241" font-size="15" class="muted" text-anchor="start">04</text>
+<text x="1102" y="278" font-size="18" class="title" text-anchor="start">Build the prototype</text>
+<text x="1102" y="350" font-size="18" class="body" text-anchor="start">Implement the chosen</text>
+<text x="1102" y="376" font-size="18" class="body" text-anchor="start">journey with realistic</text>
+<text x="1102" y="402" font-size="18" class="body" text-anchor="start">content.</text>
+<path d="M400 610 L550 730 L400 850 L250 730 Z" fill="#1b1b1e" stroke="#c08a21" stroke-width="2"/>
+<text x="400" y="676" font-size="14" class="muted" text-anchor="middle">05 · DECISION</text>
+<text x="400" y="711" font-size="18" class="title" text-anchor="middle">Does the journey</text>
+<text x="400" y="739" font-size="18" class="title" text-anchor="middle">work?</text>
+<text x="400" y="775" font-size="18" class="body" text-anchor="middle">Try the task with a</text>
+<text x="400" y="797" font-size="18" class="body" text-anchor="middle">person.</text>
+<text x="250" y="872" font-size="17" class="muted" text-anchor="end">Observe where they hesitate.</text>
+<rect x="730" y="610" width="300" height="240" rx="14" fill="#1b1b1e" stroke="#505056"/>
+<text x="752" y="646" font-size="15" class="muted" text-anchor="start">06</text>
+<text x="752" y="688" font-size="18" class="title" text-anchor="start">Refine the weak</text>
+<text x="752" y="717" font-size="18" class="title" text-anchor="start">point</text>
+<text x="752" y="762" font-size="18" class="body" text-anchor="start">Change the smallest thing</text>
+<text x="752" y="788" font-size="18" class="body" text-anchor="start">that improves</text>
+<text x="752" y="814" font-size="18" class="body" text-anchor="start">understanding.</text>
+<rect x="1080" y="610" width="300" height="240" rx="40" fill="#1b1b1e" stroke="#505056"/>
+<text x="1102" y="646" font-size="15" class="muted" text-anchor="start">07</text>
+<text x="1102" y="688" font-size="18" class="title" text-anchor="start">Share what you</text>
+<text x="1102" y="717" font-size="18" class="title" text-anchor="start">learned</text>
+<text x="1102" y="762" font-size="18" class="body" text-anchor="start">Show the prototype,</text>
+<text x="1102" y="788" font-size="18" class="body" text-anchor="start">decisions and remaining</text>
+<text x="1102" y="814" font-size="18" class="body" text-anchor="start">questions.</text>
+<rect x="315.25" y="277" width="79.5" height="26" rx="5" fill="#121214"/>
+<text x="355" y="295" font-size="18" class="label" text-anchor="middle">Clarify</text>
+<rect x="652.5" y="277" width="105.0" height="26" rx="5" fill="#121214"/>
+<text x="705" y="295" font-size="18" class="label" text-anchor="middle">Prioritize</text>
+<rect x="1023.75" y="277" width="62.5" height="26" rx="5" fill="#121214"/>
+<text x="1055" y="295" font-size="18" class="label" text-anchor="middle">Build</text>
+<rect x="815.25" y="492" width="79.5" height="26" rx="5" fill="#121214"/>
+<text x="855" y="510" font-size="18" class="label" text-anchor="middle">Observe</text>
+<rect x="579.0" y="692" width="122.0" height="26" rx="5" fill="#121214"/>
+<text x="640" y="710" font-size="18" class="label" text-anchor="middle">No · improve</text>
+<rect x="889.75" y="542" width="130.5" height="26" rx="5" fill="#121214"/>
+<text x="955" y="560" font-size="18" class="label" text-anchor="middle">Yes · explain</text>
+<rect x="641.75" y="898" width="96.5" height="26" rx="5" fill="#121214"/>
+<text x="690" y="916" font-size="18" class="label" text-anchor="middle">Try again</text>
+<text x="40" y="982" font-size="16" class="muted" text-anchor="start">Rounded card = step / outcome    ·    Diamond = decision    ·    Dashed wire = feedback</text>
+<text x="1400" y="982" font-size="14" class="muted" text-anchor="end">Layout is illustrative; meaning and constraints are normative.</text>
+</svg>

@@ -1,0 +1,1 @@
+{"name":"@novakai/canvas-language","version":"0.1.0","private":true,"type":"module","exports":{".":"./contract/index.ts"},"dependencies":{"@novakai/canvas-model":"workspace:*"}}

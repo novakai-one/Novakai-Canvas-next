@@ -3,7 +3,7 @@
  * Record types describe data; checked ID schemas mint identities without casts.
  * Authoring owns admission, revision changes and persistence recovery.
  */
-export { validate, plan } from './api.js';
+export { validate, plan, stage } from './api.js';
 export {
   objectId,
   collectionId,
@@ -39,4 +39,4 @@ export type {
 } from './records/section.js';
 export type { LayoutIntent, LayoutTarget, LayoutConstraint, Placement } from './records/layout.js';
 export type { Change, RecordChange } from './records/change.js';
-export type { ChangePlan, Impact, Target } from './types.js';
+export type { ChangePlan, ChangeStage, Impact, Target } from './types.js';

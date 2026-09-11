@@ -9,3 +9,6 @@ export { validateCollection as validate } from '../core/invariants/validate.js';
 
 /** Plan an ordered change batch against a snapshot without writing or incrementing its revision. */
 export { planChanges as plan } from '../core/collection/plan.js';
+
+/** Compiler-only unchecked projection; plan remains the final validity gate. */
+export { stageChanges as stage } from '../core/collection/stage.js';

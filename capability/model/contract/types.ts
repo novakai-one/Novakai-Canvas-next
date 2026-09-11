@@ -12,3 +12,10 @@ export interface ChangePlan {
   readonly candidate: Collection;
   readonly impact: readonly Impact[];
 }
+
+/** Compiler-only structural projection. References may be unresolved; only plan proves validity. */
+export interface ChangeStage {
+  readonly validity: 'unchecked';
+  readonly candidate: Collection;
+  readonly changes: readonly import('./records/change.js').Change[];
+}

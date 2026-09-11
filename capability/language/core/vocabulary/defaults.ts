@@ -1,0 +1,49 @@
+/** Layout defaults are mode semantics, shared by lowering and describe; Language owns correction. */
+export const layouts: Readonly<Record<string, string>> = {
+  flow: 'flow',
+  er: 'layered',
+  modules: 'layered',
+  tree: 'tree',
+  sequence: 'sequence',
+  state: 'flow',
+  story: 'grid',
+  grid: 'grid',
+};
+export const defaults = {
+  theme: 'paper',
+  role: 'neutral',
+  size: 'medium',
+  mode: 'flow',
+  direction: 'right',
+  gap: 'normal',
+  collectionLayout: 'grid',
+  sourceStatus: 'unverified',
+};
+export const nodeKinds = [
+  'step',
+  'start',
+  'end',
+  'decision',
+  'fork',
+  'join',
+  'entity',
+  'module',
+  'interface',
+  'function',
+  'state',
+  'participant',
+  'concept',
+  'system',
+  'note',
+];
+export const relationshipKinds = [
+  'flow',
+  'association',
+  'imports',
+  'calls',
+  'implements',
+  'contains',
+  'parent',
+  'reference',
+  'transition',
+];

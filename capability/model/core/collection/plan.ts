@@ -1,67 +1,33 @@
 import type { Collection } from '../../contract/records/collection.js';
-import { changesSchema, type Change } from '../../contract/records/change.js';
 import type { Result } from '../../contract/errors.js';
 import type { ChangePlan } from '../../contract/types.js';
 import { validateCollection } from '../invariants/validate.js';
-import { shapeErrors } from '../invariants/shape-diagnostics.js';
-import { inspectInput } from '../invariants/input.js';
 import { failure, success } from '../invariants/issues.js';
 import { freeze } from '../invariants/freeze.js';
-import { applyOperation } from './operations.js';
+import { stageChanges } from './stage.js';
 import { describeImpact } from './impact.js';
 
-/** Once an operation fails, later operations cannot run or expose a partial collection. */
-function applyNextOperation(current: Result<Collection>, change: Change): Result<Collection> {
-  if (!current.ok) return current;
-  return applyOperation(current.value, change);
+/** Stage shares exact structural semantics; final validation alone turns a prefix into a valid plan. */
+function validateFinalCandidate(snapshot: unknown, changes: unknown): Result<ChangePlan> {
+  const before = validateCollection(snapshot);
+  if (!before.ok) return before;
+  const staged = stageChanges(before.value, changes);
+  if (!staged.ok) return staged;
+  return finalizeCandidate(before.value, staged.value.candidate);
 }
-
-/** Final-state validation permits related records to be changed together in one batch. */
-function validateCandidateAndDescribeImpact(
-  before: Collection,
-  candidate: Collection,
-): Result<ChangePlan> {
-  const validated = validateCollection(candidate);
-  if (!validated.ok) return validated;
-  const impact = describeImpact(before, validated.value);
-  return success({ candidate: validated.value, impact });
+/** Final invariants are never inferred from successful structural staging. */
+function finalizeCandidate(before: Collection, unchecked: Collection): Result<ChangePlan> {
+  const candidate = validateCollection(unchecked);
+  if (!candidate.ok) return candidate;
+  return success({ candidate: candidate.value, impact: describeImpact(before, candidate.value) });
 }
-
-/** Apply checked operations in order; intermediate records may await another operation's repair. */
-function applyChangeBatch(before: Collection, changes: readonly Change[]): Result<ChangePlan> {
-  const applied = changes.reduce(applyNextOperation, success(before));
-  if (!applied.ok) return applied;
-  return validateCandidateAndDescribeImpact(before, applied.value);
-}
-
-/** Structural parsing rejects unsupported operations before any candidate is constructed. */
-function parseAndApplyChanges(before: Collection, changes: unknown): Result<ChangePlan> {
-  const parsedChanges = changesSchema.safeParse(changes);
-  if (!parsedChanges.success)
-    return { ok: false, diagnostics: shapeErrors(parsedChanges.error.issues) };
-  return applyChangeBatch(before, parsedChanges.data);
-}
-
-/** Validate the snapshot first, then inspect the untrusted change batch before parsing it. */
-function validatePlanningInputs(snapshot: unknown, changes: unknown): Result<ChangePlan> {
-  const validatedSnapshot = validateCollection(snapshot);
-  if (!validatedSnapshot.ok) return validatedSnapshot;
-  const inspectedChanges = inspectInput(changes);
-  if (!inspectedChanges.ok) return inspectedChanges;
-  return parseAndApplyChanges(validatedSnapshot.value, changes);
-}
-
 /**
- * Returns a detached, frozen valid candidate and net impact, or typed diagnostics with no
- * partial candidate. Neither input nor revision is changed. Replaying the same snapshot
- * and batch produces the same plan; applying a create to an already changed snapshot may
- * reject an existing ID. Input-read exceptions are translated here. Authoring owns
- * admission, revision increments, commit and crash recovery.
+ * Return a detached valid candidate and net impact. Ordered changes may temporarily break references;
+ * final invariants must hold. Neither revision nor inputs change. Authoring owns commit/recovery.
  */
 export function planChanges(snapshot: unknown, changes: unknown): Result<ChangePlan> {
   try {
-    const planned = validatePlanningInputs(snapshot, changes);
-    return freeze(planned);
+    return freeze(validateFinalCandidate(snapshot, changes));
   } catch {
     return freeze(failure('shape', 'changes', 'Input could not be read as plain data'));
   }

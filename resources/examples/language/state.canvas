@@ -1,0 +1,8 @@
+canvas 1 collection @states "Lifecycle" {
+ node @start start "Begin" {} node @working state "Working" {} node @done end "Done" {}
+ wire @begin @start -> @working "Begin" kind=transition guard="ready" effect="start work"
+ wire @finish @working -> @done "Complete" kind=transition guard="passed" effect="record receipt"
+ section @states "State machine" mode=state { show @start @working @done connect @begin @finish }
+ section @story "Explanation" mode=story order=2 { show @working @start @done }
+ section @grid "Overview" mode=grid order=3 { show @working }
+}

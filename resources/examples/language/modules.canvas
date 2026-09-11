@@ -1,0 +1,16 @@
+canvas 1 collection @modules "Contracts" {
+ source @spec "https://example.com/spec" revision="1" location="Authoring" description="Contract evidence"
+ node @spec module "Authoring" sources=[@spec] {
+  port @plans out "planner" type="TransitionPlanner"
+  port @apply in "apply" type="ChangeRequest → Result"
+ }
+ node @planner interface "TransitionPlanner" {
+  member @plan "plan" type="(Snapshot, Intent) → Result" visibility=public
+ }
+ node @validate function "validateTransition" {
+  signature @call "validateTransition" parameters=["snapshot: Snapshot", "intent: Intent"] returns="Result"
+ }
+ wire @uses @spec.@plans -> @planner "imports type contract" kind=imports sources=[@spec]
+ wire @implements @validate -> @planner.@plan "implements plan" kind=implements
+ section @contracts "Module contracts" mode=modules { show @spec @planner @validate connect @uses @implements }
+}

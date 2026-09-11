@@ -1,0 +1,1970 @@
+[
+  {
+    "file": "capability/language/contract/api.ts",
+    "lines": 39,
+    "functions": [
+      {
+        "name": "createLanguage",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "describe",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parse",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lower",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "print",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/contract/errors.ts",
+    "lines": 33,
+    "functions": []
+  },
+  {
+    "file": "capability/language/contract/index.ts",
+    "lines": 26,
+    "functions": []
+  },
+  {
+    "file": "capability/language/contract/ports/model.ts",
+    "lines": 19,
+    "functions": []
+  },
+  {
+    "file": "capability/language/contract/records/requests.ts",
+    "lines": 40,
+    "functions": []
+  },
+  {
+    "file": "capability/language/contract/records/syntax.ts",
+    "lines": 129,
+    "functions": []
+  },
+  {
+    "file": "capability/language/contract/records/vocabulary.ts",
+    "lines": 46,
+    "functions": []
+  },
+  {
+    "file": "capability/language/contract/types.ts",
+    "lines": 17,
+    "functions": []
+  },
+  {
+    "file": "capability/language/core/lexing/locations.ts",
+    "lines": 28,
+    "functions": [
+      {
+        "name": "lineStarts",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lineIndex",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "position",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sourceSpan",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lexing/strings.ts",
+    "lines": 16,
+    "functions": [
+      {
+        "name": "decodeString",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "decodeEscape",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lexing/tokens.ts",
+    "lines": 57,
+    "functions": [
+      {
+        "name": "classify",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "classifyBare",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isTrivia",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "tokenize",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "collectTokens",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "appendToken",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireCompleteLexeme",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/content.ts",
+    "lines": 67,
+    "functions": [
+      {
+        "name": "lowerRecord",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerContent",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerLink",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerTable",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerNode",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "optionalSection",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/diagnostics.ts",
+    "lines": 79,
+    "functions": [
+      {
+        "name": "ownerValue",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nearestSpan",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sourceMappings",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mappingPath",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ownedPath",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "descendantPath",
+        "line": 68,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/document.ts",
+    "lines": 101,
+    "functions": [
+      {
+        "name": "lowerDocumentData",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "records",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkMode",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireReplacement",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireAbsent",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerDocument",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/fields.ts",
+    "lines": 52,
+    "functions": [
+      {
+        "name": "field",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "text",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "textOr",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reference",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "id",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "list",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "optional",
+        "line": 45,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "endpoint",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/layout.ts",
+    "lines": 42,
+    "functions": [
+      {
+        "name": "isConstraint",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerLayout",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "modeLayout",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerConstraint",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerTarget",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/properties.ts",
+    "lines": 54,
+    "functions": [
+      {
+        "name": "lowerValue",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "scalarType",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerReference",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mapProperties",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mappedEntry",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mapDeclaredProperties",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/resources.ts",
+    "lines": 136,
+    "functions": [
+      {
+        "name": "themePin",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveTheme",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkThemeIdentity",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerAsset",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkAssetRequest",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkAlt",
+        "line": 75,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkMetadata",
+        "line": 87,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "assetRequest",
+        "line": 99,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "documentResources",
+        "line": 114,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "patchResources",
+        "line": 123,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "patchThemeRequest",
+        "line": 129,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/sequence.ts",
+    "lines": 51,
+    "functions": [
+      {
+        "name": "lowerSequence",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isSequence",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerItem",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "branchId",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerFragment",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerAlternatives",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/lowering/views.ts",
+    "lines": 95,
+    "functions": [
+      {
+        "name": "lowerShows",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerConnections",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mergeViews",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerGroup",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "omitLayoutProperties",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerViews",
+        "line": 58,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerView",
+        "line": 68,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rootField",
+        "line": 74,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "lowerSection",
+        "line": 83,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/attributes.ts",
+    "lines": 71,
+    "functions": [
+      {
+        "name": "readAttributes",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "startsAttribute",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readAttribute",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "insertUnique",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireQuotedValues",
+        "line": 53,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireQuotedList",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireStringToken",
+        "line": 68,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/cursor.ts",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "peek",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "advance",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "consume",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "enter",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "leave",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "consumedSpan",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/declarations.ts",
+    "lines": 107,
+    "functions": [
+      {
+        "name": "readDeclaration",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readDefined",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readPosition",
+        "line": 57,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readRequiredPosition",
+        "line": 63,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireQuotedPosition",
+        "line": 70,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "positionalValue",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkRequired",
+        "line": 81,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readChildren",
+        "line": 88,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "optionalIdentityMissing",
+        "line": 105,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/document.ts",
+    "lines": 102,
+    "functions": [
+      {
+        "name": "parseSource",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readEnvelope",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readSupportedEnvelope",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readCanvas",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readPatch",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "describeParsedSource",
+        "line": 87,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/patch.ts",
+    "lines": 254,
+    "functions": [
+      {
+        "name": "readOperation",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "operation",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "targetKind",
+        "line": 74,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readAdd",
+        "line": 81,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readReplace",
+        "line": 86,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readDeclarationOperation",
+        "line": 90,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readTarget",
+        "line": 112,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readSet",
+        "line": 130,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readUnset",
+        "line": 150,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "continuesProperty",
+        "line": 172,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readPropertyName",
+        "line": 176,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readMembership",
+        "line": 180,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readDelete",
+        "line": 195,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readReset",
+        "line": 211,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readAddBlock",
+        "line": 217,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readBlockMove",
+        "line": 246,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/references.ts",
+    "lines": 52,
+    "functions": [
+      {
+        "name": "readIdentity",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readAddressTail",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readMember",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readSectionMember",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readReference",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readNamespaced",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/repetition.ts",
+    "lines": 46,
+    "functions": [
+      {
+        "name": "repeat",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "collect",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkProgress",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireCapacity",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/value-types.ts",
+    "lines": 82,
+    "functions": [
+      {
+        "name": "isList",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isReference",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isIdentity",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isEndpoint",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "listOf",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "normalizeEnum",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkValue",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkEnum",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/parsing/values.ts",
+    "lines": 98,
+    "functions": [
+      {
+        "name": "readValue",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readScalarOrNamespace",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "scalar",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readWord",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readInteger",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readList",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readFollowingItem",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finishList",
+        "line": 68,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readReferenceList",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "startsReference",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "wordValue",
+        "line": 95,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/blocks.ts",
+    "lines": 86,
+    "functions": [
+      {
+        "name": "replaceBlock",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "editBlocks",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "changedContent",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "addContent",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "moveContent",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "beforeId",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "insertBefore",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/compile.ts",
+    "lines": 106,
+    "functions": [
+      {
+        "name": "lowerPatch",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compileNext",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkSectionIdentity",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "deletedSections",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compileOperation",
+        "line": 81,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compileStructuralOrView",
+        "line": 92,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/properties.ts",
+    "lines": 132,
+    "functions": [
+      {
+        "name": "editProperties",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "adjustNestedProperties",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "adjustSectionOrContent",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "collectionProperties",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nestedRecord",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nestedLayout",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "linkProperties",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "linkTarget",
+        "line": 96,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "withSection",
+        "line": 104,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "withoutSection",
+        "line": 121,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "retainedSection",
+        "line": 128,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/property-targets.ts",
+    "lines": 117,
+    "functions": [
+      {
+        "name": "propertyTarget",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "canonicalTarget",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "contentTarget",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "appearanceTarget",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "routeTarget",
+        "line": 98,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/property-values.ts",
+    "lines": 72,
+    "functions": [
+      {
+        "name": "changedProperties",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "owningProperty",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "assignProperty",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "removeProperty",
+        "line": 53,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/structural.ts",
+    "lines": 85,
+    "functions": [
+      {
+        "name": "structuralChange",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "deleteRecord",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "declarationRecord",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resetChange",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireSnapshot",
+        "line": 66,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/targets.ts",
+    "lines": 74,
+    "functions": [
+      {
+        "name": "findRecord",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requirePlainAddress",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "blockOwner",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireBlockAddress",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "viewOwner",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "blockId",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hasForeignSelector",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "blockAddressParts",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/patching/views.ts",
+    "lines": 61,
+    "functions": [
+      {
+        "name": "editMembership",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "show",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "connect",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "changedWires",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "removeWire",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/content.ts",
+    "lines": 34,
+    "functions": [
+      {
+        "name": "printNode",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printContent",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printLink",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "linkSection",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/document.ts",
+    "lines": 75,
+    "functions": [
+      {
+        "name": "printCollection",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printEnvelope",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printDeclarations",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printAsset",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "assetKind",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "withHeading",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/geometry.ts",
+    "lines": 35,
+    "functions": [
+      {
+        "name": "manualSummary",
+        "line": 4,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sectionSummary",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "placementSummary",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "wireSummary",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/layout.ts",
+    "lines": 34,
+    "functions": [
+      {
+        "name": "printConstraints",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printTarget",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "layoutAttributes",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireDepth",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "scopedGroups",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/properties.ts",
+    "lines": 52,
+    "functions": [
+      {
+        "name": "definition",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "header",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "position",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printProperties",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "propertyText",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "omittedPosition",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/scope.ts",
+    "lines": 57,
+    "functions": [
+      {
+        "name": "selectScope",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sectionScope",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "objectScope",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resourceScope",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/sequence.ts",
+    "lines": 31,
+    "functions": [
+      {
+        "name": "printSequence",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printItem",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fragmentBody",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/strings.ts",
+    "lines": 12,
+    "functions": [
+      {
+        "name": "quote",
+        "line": 2,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "body",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/values.ts",
+    "lines": 66,
+    "functions": [
+      {
+        "name": "record",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "string",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printValue",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printScalar",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "word",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printList",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printEndpoint",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/printing/views.ts",
+    "lines": 50,
+    "functions": [
+      {
+        "name": "printSection",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printScope",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printGroup",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printAppearance",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "printWire",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "root",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/validation/input.ts",
+    "lines": 20,
+    "functions": [
+      {
+        "name": "readSource",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkUnicode",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/validation/outcomes.ts",
+    "lines": 64,
+    "functions": [
+      {
+        "name": "reject",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "accepted",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "freezeOwned",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protect",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "faultResult",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/vocabulary/constructs.ts",
+    "lines": 281,
+    "functions": []
+  },
+  {
+    "file": "capability/language/core/vocabulary/defaults.ts",
+    "lines": 49,
+    "functions": []
+  },
+  {
+    "file": "capability/language/core/vocabulary/description.ts",
+    "lines": 53,
+    "functions": [
+      {
+        "name": "describeLanguage",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/core/vocabulary/patch-properties.ts",
+    "lines": 60,
+    "functions": []
+  },
+  {
+    "file": "capability/language/core/vocabulary/properties.ts",
+    "lines": 100,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/boundaries.test.ts",
+    "lines": 120,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/documents.test.ts",
+    "lines": 125,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/domain-fixture.ts",
+    "lines": 33,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/engineering-fixtures.ts",
+    "lines": 52,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/engineering.test.ts",
+    "lines": 97,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/fixtures.ts",
+    "lines": 130,
+    "functions": [
+      {
+        "name": "value",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checked",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejected",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "create",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "pins",
+        "line": 53,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "edit",
+        "line": 60,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "graph",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "object",
+        "line": 120,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "section",
+        "line": 126,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/language/tests/patches.test.ts",
+    "lines": 160,
+    "functions": []
+  },
+  {
+    "file": "capability/language/tests/roundtrip.test.ts",
+    "lines": 99,
+    "functions": []
+  }
+]

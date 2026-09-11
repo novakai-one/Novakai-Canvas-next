@@ -38,7 +38,7 @@ Final observable outcomes:
 | 6 | presentation | Accessible visual content, notation and measurement/render parity | Complete: specs/review/build/two audits/verified fixes;10 cases pass | [#7](https://github.com/novakai-one/Novakai-Canvas-next/pull/7) |
 | 7 | layout | Stable arrangement, routing and constraint feasibility | Complete: specs/review/build/two bounded audits/one verified fix;12 cases pass | [#8](https://github.com/novakai-one/Novakai-Canvas-next/pull/8) |
 | 8 | authoring | Sole admission/preview/commit gate, concurrency, history and retries | Complete: specs/plan review/build/two bounded audits/one verified fix;14 cases pass | [#9](https://github.com/novakai-one/Novakai-Canvas-next/pull/9) |
-| 9 | language | Readable DSL parse/print/lower and semantic editing | Pending | |
+| 9 | language | Readable DSL parse/print/lower and semantic editing | Complete: specs/plan review/build/two bounded audits/sole verified lexer fix;18 cases pass; PR opening | |
 | 10 | design-system | Shared tokens, theme resolution and reusable React primitives | Pending | |
 | 11 | canvas | React Flow scene interaction, camera, gestures and edit drafts | Pending | |
 | 12 | export | Revision-consistent artifacts and validated import preparation | Pending | |

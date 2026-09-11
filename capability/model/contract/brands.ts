@@ -1,0 +1,18 @@
+import { z } from 'zod';
+export const identifier = z.string().regex(/^[A-Za-z][A-Za-z0-9_-]*$/);
+export const collectionId = identifier.brand<'CollectionId'>();
+export const objectId = identifier.brand<'ObjectId'>();
+export const relationshipId = identifier.brand<'RelationshipId'>();
+export const sectionId = identifier.brand<'SectionId'>();
+export const assetId = identifier.brand<'AssetId'>();
+export const sourceId = identifier.brand<'SourceId'>();
+export const groupId = identifier.brand<'GroupId'>();
+export const descendantId = identifier.brand<'DescendantId'>();
+export const label = z.string().refine((value) => value.trim().length > 0, 'Must be nonblank');
+export const digest = z.string().regex(/^sha256:[a-f0-9]{64}$/);
+export const size = z.enum(['small', 'medium', 'large']);
+export type ObjectId = z.infer<typeof objectId>;
+export type CollectionId = z.infer<typeof collectionId>;
+export type SectionId = z.infer<typeof sectionId>;
+export type RelationshipId = z.infer<typeof relationshipId>;
+export type DescendantId = z.infer<typeof descendantId>;

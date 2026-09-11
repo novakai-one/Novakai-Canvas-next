@@ -1,6 +1,6 @@
 # Canvas development contract
 
-This repository is a directory scaffold, not a working application. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
+Model now has a pure, tested implementation; other capabilities and hosts remain directory scaffolds. This is not yet a working application. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
 
 ## Authority and scope
 

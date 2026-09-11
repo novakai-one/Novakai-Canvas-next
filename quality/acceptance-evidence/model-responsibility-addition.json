@@ -1,0 +1,30 @@
+{
+  "reason": "User-requested explicit responsibility statement; repo snapshots added for PR review. Existing Obsidian metadata preserved. Original audit counts remain historical.",
+  "source": "/Users/christopherdasca/Library/Mobile Documents/iCloud~md~obsidian/Documents/playbook-library/0-inbox/Executions/260911-Canvas-Next/capability/model",
+  "current_counts": {
+    "Doc1-Target-Repo-Tree.md": {
+      "words": 276,
+      "lines": 44
+    },
+    "Doc2-Entities-and-Invariants.md": {
+      "words": 1549,
+      "lines": 146
+    },
+    "Doc3-Modules.md": {
+      "words": 554,
+      "lines": 60
+    },
+    "Doc4-Ownership-CRUD.md": {
+      "words": 483,
+      "lines": 28
+    },
+    "Doc5-Build-and-Test-Appendix.md": {
+      "words": 1171,
+      "lines": 59
+    },
+    "TOTAL": {
+      "words": 4033,
+      "lines": 337
+    }
+  }
+}

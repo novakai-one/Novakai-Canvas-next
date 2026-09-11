@@ -2,3 +2,5 @@
 packages:
   - 'capability/*'
   - 'apps/*'
+minimumReleaseAgeExclude:
+  - zod@4.6.2

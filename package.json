@@ -3,5 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Canvas capability architecture scaffold. Runtime implementation and dependency pins are not yet present."
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint capability/model eslint.config.js .dependency-cruiser.cjs",
+    "architecture": "depcruise capability apps --config .dependency-cruiser.cjs --output-type err",
+    "test": "vitest run capability/model/tests",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test",
+    "format:check": "prettier --check capability/model/**/*.ts eslint.config.js .dependency-cruiser.cjs"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "18.2.0",
+    "eslint": "10.10.0",
+    "eslint-plugin-sonarjs": "4.2.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.0"
+  }
 }

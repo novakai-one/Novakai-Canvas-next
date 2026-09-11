@@ -1,9 +1,23 @@
-# model
+# Model
 
-Responsibility: Valid collection meaning and immutable transition plans.
+Implemented: pure validation and immutable transition planning for schema version 1.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+```ts
+import { validate, plan } from '@novakai/canvas-model';
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
+const checked = validate(proposedCollection);
+const planned = plan(currentSnapshot, [
+  { op: 'replace', target: 'objects', value: completeEditedObject },
+]);
+// Both return { ok: true, value } or { ok: false, diagnostics }.
+```
 
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+`validate` accepts an initial document. `plan` validates the base, applies an ordered typed change list, and validates the final candidate. Intermediate references may be forward references. Neither entry writes data, changes a revision, reads a clock, opens a file or imports a UI. Replaying the same snapshot and changes gives an equal result. **Authoring owns admission, commit, revision increments and crash recovery.** Successful planning is not a committed edit or geometric feasibility approval.
+
+Canonical records cover engineering entities/keys/ports, content blocks, shared objects, section appearances/groups, labelled relationships, tree/state/flow/sequence/story/grid modes, exact asset/theme bindings and authored layout overrides. Generated geometry belongs outside Model.
+
+Outside imports use `contract/index.ts` or the exported capability name. Core stays private. No I/O ports or adapters are manufactured for this pure capability. Record schemas are strict and reject unsupported fields; branded ID schemas offer `safeParse` for checked construction.
+
+Specs: `260911-Canvas-Next/capability/model` in the playbook-library vault. The precise path and measured counts are recorded in `quality/acceptance-evidence/model-build.md`. Actual file inventory and standards evidence are in `quality/file-reviews/model.md`.
+
+Run from repo root: `pnpm check`. This executes strict type checks, ESLint (Sonar maximum 2), import/cycle checks and 18 public contract tests. No E2E, server or browser tests.

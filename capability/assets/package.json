@@ -1,1 +1,22 @@
-{"name":"@novakai/canvas-assets","version":"0.1.0","private":true,"type":"module","exports":{".":"./contract/index.ts"},"dependencies":{"zod":"4.6.2","sharp":"0.35.4","saxes":"6.0.0","fontkit":"2.0.4"},"devDependencies":{"@types/fontkit":"2.0.9"}}
+{
+  "name": "@novakai/canvas-assets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./contract/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.2",
+    "sharp": "0.35.4",
+    "saxes": "6.0.0",
+    "fontkit": "2.0.4"
+  },
+  "devDependencies": {
+    "@types/fontkit": "2.0.9"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
+}

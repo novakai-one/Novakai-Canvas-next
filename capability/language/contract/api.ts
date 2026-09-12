@@ -1,8 +1,15 @@
+import { expandRecipe } from '../core/lowering/expansion.js';
 import type { Language, Dependencies } from './types.js';
 import type { Result } from './errors.js';
 import type { ParsedSource } from './records/syntax.js';
 import type { Description } from './records/vocabulary.js';
-import type { LowerRequest, LoweredIntent, PrintRequest, Readout } from './records/requests.js';
+import type {
+  LowerRequest,
+  LoweredIntent,
+  PrintRequest,
+  Readout,
+  ExpansionRequest,
+} from './records/requests.js';
 import { protect } from '../core/validation/outcomes.js';
 import { parseSource } from '../core/parsing/document.js';
 import { lowerDocument } from '../core/lowering/document.js';
@@ -35,5 +42,9 @@ export function createLanguage(deps: Dependencies): Language {
   function print(input: PrintRequest): Result<Readout> {
     return protect(() => printCollection(structuredClone(input), deps.reader));
   }
-  return Object.freeze({ describe, parse, lower, print });
+  /** Instantiate semantics under a new root; Authoring checks destination absence before committing. */
+  function expand(input: ExpansionRequest): Result<LoweredIntent> {
+    return protect(() => expandRecipe(structuredClone(input), deps));
+  }
+  return Object.freeze({ describe, parse, lower, print, expand });
 }

@@ -125,6 +125,15 @@ describe('Layout routing acceptance', () => {
       metrics(er).markers['zero-many'].advance,
     );
     expect(scene.sections[0]?.nodes.every((node) => !overlap(node.box, wire.labelBox))).toBe(true);
+    // Different field rows must still connect inside the free corridor, without a backward outside loop.
+    expect(
+      wire.points.every(
+        (point) => point.x >= wire.source.point.x && point.x <= wire.target.point.x,
+      ),
+    ).toBe(true);
+    expect(wire.points.map((point) => point.x)).toEqual(
+      wire.points.map((point) => point.x).toSorted((a, b) => a - b),
+    );
     const crossing = crossingProjection();
     const other = await harness([crossing]);
     const crossed = value(await other.arrange(request(other, crossing)));
@@ -255,9 +264,32 @@ function overlap(a: Box, b: Box): boolean {
 function erProjection(): Projection {
   return project(
     collection({
-      objects: [object('user', 'entity'), object('order', 'entity')],
+      objects: [
+        object('user', 'entity', {
+          content: [{ kind: 'field', id: 'id', label: 'id', type: 'UserId', key: 'primary' }],
+        }),
+        object('order', 'entity', {
+          content: [
+            { kind: 'field', id: 'id', label: 'id', type: 'OrderId', key: 'primary' },
+            {
+              kind: 'field',
+              id: 'userId',
+              label: 'userId',
+              type: 'UserId',
+              key: 'foreign',
+              references: { object: 'user', member: 'id' },
+            },
+          ],
+        }),
+      ],
       relationships: [
-        edge('places', 'user', 'order', { kind: 'association', from: '1', to: '0..many' }),
+        edge('places', 'user', 'order', {
+          kind: 'association',
+          from: '1',
+          to: '0..many',
+          source: { object: 'user', member: 'id' },
+          target: { object: 'order', member: 'userId' },
+        }),
       ],
       sections: [
         section('er', ['user', 'order'], {

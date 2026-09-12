@@ -1,7 +1,8 @@
 import type { VisualNode, VisualSection, LayoutIntent } from '../../contract/records/input.js';
 import type { PlacementValue, PlacementProblem } from '../../contract/records/problem.js';
 import type { Point } from '../../contract/records/geometry.js';
-import type { SeedContext } from '../../contract/types.js';
+import type { SupplementalMeasurements, SeedContext } from '../../contract/types.js';
+import { routingGap } from './spacing.js';
 import { placeScope } from './policy.js';
 import { union } from '../geometry/bounds.js';
 import { reject } from '../validation/outcomes.js';
@@ -14,8 +15,9 @@ async function branch(
   node: VisualNode,
   section: VisualSection,
   context: SeedContext,
+  measurements: SupplementalMeasurements,
 ): Promise<Branch> {
-  const descendants = await seedScope(node.id, section, context);
+  const descendants = await seedScope(node.id, section, context, measurements);
   if (descendants.length === 0)
     return {
       root: { id: node.id, box: { x: 0, y: 0, width: node.width, height: node.height } },
@@ -101,10 +103,13 @@ export async function seedScope(
   parent: string | null,
   section: VisualSection,
   context: SeedContext,
+  measurements: SupplementalMeasurements,
 ): Promise<readonly PlacementValue[]> {
   const children = section.nodes.filter((node) => node.parent === parent);
   if (children.length === 0) return [];
-  const branches = await Promise.all(children.map((node) => branch(node, section, context)));
+  const branches = await Promise.all(
+    children.map((node) => branch(node, section, context, measurements)),
+  );
   const roots = branches.map((item) => item.root.id);
   const nodes = branches.map((item) => ({
     id: item.root.id,
@@ -114,7 +119,12 @@ export async function seedScope(
     header: 0,
   }));
   const placed = await placeScope(
-    { nodes, edges: edges(roots, section), layout: intent(parent, section) },
+    {
+      nodes,
+      edges: edges(roots, section),
+      layout: intent(parent, section),
+      minimumGap: routingGap(section, edges(roots, section), measurements, context.options),
+    },
     context,
   );
   return placed.flatMap((item) => flatten(item, branches));

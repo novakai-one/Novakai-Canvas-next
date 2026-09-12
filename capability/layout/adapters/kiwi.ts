@@ -1,3 +1,4 @@
+import { nativeEngineVersions } from '../contract/records/engines.js';
 import { Solver, Variable, Expression, Constraint, Operator, Strength } from '@lume/kiwi';
 import type { SolverPort } from '../contract/ports/solver.js';
 import type {
@@ -116,7 +117,7 @@ function solve(problem: SolverProblem, native: SolverFactory): Result<readonly S
 /** Adapter exceptions remain typed; Layout retains the old scene and independently inspects successful values. */
 export function createSolver(native: SolverFactory = () => new Solver()): SolverPort {
   return {
-    version: 'lume-kiwi-0.4.4/layout-1',
+    version: nativeEngineVersions.solver,
     solve(problem: SolverProblem): Result<readonly SolverValue[]> {
       try {
         return solve(problem, native);

@@ -23,6 +23,25 @@ function DialogHost(): ReactElement {
     </Dialog>
   );
 }
+/** A panel can supply an external trigger while the shared dialog still owns focus return. */
+function ExternalDialogHost(): ReactElement {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button label="Open inspector" onClick={() => setOpen(true)} />
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+        title="Inspector"
+        description="Edit selection"
+        placement="bottom"
+        portal={document.body}
+      >
+        <Button label="Apply selection" />
+      </Dialog>
+    </>
+  );
+}
 /** State survives switching tabs only when the explicit retention option is enabled. */
 function TabHost(): ReactElement {
   const [value, setValue] = useState('first');
@@ -108,6 +127,17 @@ describe('Design System native controls', () => {
     expect(document.activeElement).toBe(trigger);
     view.rerender(<DialogHost />);
     expect(bindings.Dialog).toBe(identity);
+    cleanup();
+    render(<ExternalDialogHost />);
+    const externalTrigger = screen.getByRole('button', { name: 'Open inspector' });
+    externalTrigger.focus();
+    fireEvent.click(externalTrigger);
+    const sheet = await screen.findByRole('dialog', { name: 'Inspector' });
+    expect(sheet.getAttribute('data-placement')).toBe('bottom');
+    expect(sheet.contains(document.activeElement)).toBe(true);
+    fireEvent.keyDown(sheet, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(document.activeElement).toBe(externalTrigger);
     cleanup();
     render(<TabHost />);
     const draft = screen.getByLabelText('Draft');

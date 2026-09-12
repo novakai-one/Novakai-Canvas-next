@@ -4,6 +4,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
+    "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
@@ -18,7 +19,9 @@
   },
   "include": [
     "capability/**/*.ts",
-    "capability/**/*.tsx"
+    "capability/**/*.tsx",
+    "apps/**/*.ts",
+    "apps/**/*.tsx"
   ],
   "exclude": [
     "**/node_modules/**",

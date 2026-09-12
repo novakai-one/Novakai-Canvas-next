@@ -1,4 +1,10 @@
-import type { ComponentType, ReactElement, KeyboardEvent, MouseEventHandler } from 'react';
+import type {
+  ComponentType,
+  ReactElement,
+  ReactNode,
+  KeyboardEvent,
+  MouseEventHandler,
+} from 'react';
 import type { Node, Edge, NodeProps, EdgeProps, ReactFlowProps } from '@xyflow/react';
 import type {
   NodeContentProps,
@@ -27,12 +33,20 @@ export type SurfaceSession = Pick<
 export type ViewReader = Pick<Canvas, 'present' | 'describeAccessibility'>;
 export interface ButtonProps {
   readonly label: string;
+  readonly title?: string | undefined;
+  readonly icon?: ReactNode;
+  readonly iconOnly?: boolean;
   readonly onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
   readonly disabled?: boolean | undefined;
   readonly selected?: boolean;
 }
+export type ControlIconName = 'select' | 'hand' | 'connect' | 'minus' | 'plus' | 'outline';
+export interface ControlIconProps {
+  readonly name: ControlIconName;
+}
 /** Required stable renderer slots keep diagram notation and design-system button policy out of Canvas. */
 export interface RenderSlots {
+  readonly FontDefinitions: ComponentType;
   readonly NodeContent: ComponentType<NodeContentProps>;
   readonly MeasuredContent: ComponentType<MeasuredContentProps>;
   readonly Marker: ComponentType<MarkerProps>;
@@ -147,6 +161,7 @@ export type GraphSelector = (
   paint: Paint,
 ) => { nodes: FlowNode[]; edges: FlowEdge[] };
 export interface SurfaceSlots {
+  readonly FontDefinitions: ComponentType;
   readonly createGraphSelector: () => GraphSelector;
   readonly useScene: UseScene;
   readonly createInteractions: CreateInteractions;

@@ -7,49 +7,24 @@ import type {
 import type { SeedContext, LayoutOptions } from '../../contract/types.js';
 import { box } from '../../contract/records/geometry.js';
 import { reject, requireValue } from '../validation/outcomes.js';
+import { gridPlacement } from './grid.js';
 export interface Scope {
   readonly nodes: readonly PlacementNode[];
   readonly edges: PlacementProblem['edges'];
   readonly layout: LayoutIntent;
+  readonly minimumGap: number;
 }
-/** Fixed cells reserve the largest measured box, so heterogeneous grid contents cannot overlap. */
+/** Measured track sizes keep heterogeneous diagrams compact without allowing overlap. */
 function grid(scope: Scope, options: LayoutOptions): readonly PlacementValue[] {
-  const gap = options.gap[scope.layout.gap];
-  const width = Math.max(1, ...scope.nodes.map((node) => node.width)) + gap;
-  const height = Math.max(1, ...scope.nodes.map((node) => node.height)) + gap;
+  const gap = Math.max(options.gap[scope.layout.gap], scope.minimumGap);
   const columns =
     scope.layout.algorithm === 'sequence' ? Math.max(1, scope.nodes.length) : options.gridColumns;
-  return scope.nodes.map((node, index) => ({
-    id: node.id,
-    box: {
-      ...position(index, columns, width, height, gridDirection(scope.layout)),
-      width: node.width,
-      height: node.height,
-    },
-  }));
+  return gridPlacement(scope.nodes, columns, gap, gridDirection(scope.layout));
 }
 /** Sequence headers are horizontal; down/up describe time, not a column of overlapping lifelines. */
 function gridDirection(layout: LayoutIntent): LayoutIntent['direction'] {
   if (layout.algorithm !== 'sequence') return layout.direction;
   return layout.direction === 'left' ? 'left' : 'right';
-}
-/** Direction controls reading order; negative axes preserve negative logical coordinates. */
-function position(
-  index: number,
-  columns: number,
-  width: number,
-  height: number,
-  direction: LayoutIntent['direction'],
-): { readonly x: number; readonly y: number } {
-  const column = index % columns;
-  const row = Math.floor(index / columns);
-  const policies = {
-    right: { x: column * width, y: row * height },
-    left: { x: -column * width, y: row * height },
-    down: { x: row * width, y: column * height },
-    up: { x: row * width, y: -column * height },
-  };
-  return policies[direction];
 }
 /** Placement engines provide seeds only; required constraints are applied afterward. */
 async function native(scope: Scope, context: SeedContext): Promise<readonly PlacementValue[]> {
@@ -58,7 +33,7 @@ async function native(scope: Scope, context: SeedContext): Promise<readonly Plac
     ...scope,
     algorithm,
     direction: scope.layout.direction,
-    spacing: context.options.gap[scope.layout.gap],
+    spacing: Math.max(context.options.gap[scope.layout.gap], scope.minimumGap),
     padding: context.options.padding,
   });
   return requireValue(result);

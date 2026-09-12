@@ -28,6 +28,7 @@ export interface FieldProps {
   readonly control: (props: FieldControlProps) => ReactNode;
 }
 export interface DialogProps {
+  readonly placement?: 'center' | 'left' | 'right' | 'bottom';
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
   readonly title: string;

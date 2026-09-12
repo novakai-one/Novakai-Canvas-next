@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { createFontMetrics } from '../adapters/fontkit.js';
 import { fixture, fonts, style, value, collection, object, section, node } from './fixtures.js';
 /** Exact fontkit output is checked against a real monospace property, not the production wrapping helper. */
-it('1 measures pinned offline fonts and refuses missing resources or glyphs', () => {
+it('1 measures pinned offline fonts and refuses missing resources or glyphs', async () => {
   const pinned = fonts();
   const metrics = value(createFontMetrics(pinned));
   const mono = style(pinned).monoFont;
@@ -30,8 +30,8 @@ it('1 measures pinned offline fonts and refuses missing resources or glyphs', ()
   });
 });
 /** React and public static export serialize the same measured node and exact embedded font bytes. */
-it('9 shares escaped React markup and pinned fonts across every local shape', () => {
-  const setup = fixture();
+it('9 shares escaped React markup and pinned fonts across every local shape', async () => {
+  const setup = await fixture();
   const source = collection({
     objects: [
       object('A', 'step', [{ kind: 'text', id: 'html', text: '<script>alert(1)</script>' }]),

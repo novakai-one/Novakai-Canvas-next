@@ -51,7 +51,7 @@ export function createSceneEdge(
           data-style={wire.style}
         />
         <g transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
-          <Content content={wire.measuredLabel} />
+          <Content embedFonts={false} content={wire.measuredLabel} />
         </g>
         <g transform={endpointTransform(first, second)}>
           <Marker kind={wire.sourceMarker} paint={paint} />

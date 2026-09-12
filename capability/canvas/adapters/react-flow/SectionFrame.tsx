@@ -24,7 +24,7 @@ export function createSectionFrame(
         }}
       >
         <div className={`section-drag-handle ${styles.title}`} style={{ left, top }}>
-          <Content content={section.title.content} />
+          <Content embedFonts={false} content={section.title.content} />
         </div>
       </div>
     );

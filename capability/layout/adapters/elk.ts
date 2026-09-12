@@ -1,3 +1,4 @@
+import { nativeEngineVersions } from '../contract/records/engines.js';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import type { ElkNode, ElkExtendedEdge } from 'elkjs/lib/elk-api.js';
 import type { PlacementPort } from '../contract/ports/placement.js';
@@ -70,7 +71,7 @@ function flatten(node: ElkNode, x: number, y: number): readonly PlacementValue[]
 /** Native implementation is isolated per invocation; no cached job or previous graph is mutated. */
 export function createPlacement(native: PlacementFactory = () => new ELK.default()): PlacementPort {
   return {
-    version: 'elk-0.12.0/layout-1',
+    version: nativeEngineVersions.placement,
     async place(problem: PlacementProblem): Promise<Result<readonly PlacementValue[]>> {
       try {
         const engine = native();

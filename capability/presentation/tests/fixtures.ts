@@ -98,9 +98,9 @@ function assetResult(asset: VisualAsset | null): Result<VisualAsset> {
   return { ok: true, value: asset };
 }
 /** Compose real fontkit and shared React components once per acceptance case. */
-export function fixture(): ComposedPresentation {
+export async function fixture(): Promise<ComposedPresentation> {
   const pinned = fonts();
-  return value(composePresentation(owners(style(pinned)), pinned));
+  return value(await composePresentation(owners(style(pinned)), pinned));
 }
 /** Minimal canonical collection fixture; all semantic defaults come from Model. */
 export function collection(extra: Readonly<Record<string, unknown>> = {}): unknown {

@@ -1,0 +1,46 @@
+@layer components {
+  .shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    color: var(--nv-color-content);
+    background: var(--nv-surface-base);
+    font-family: var(--nv-font-body);
+    font-size: var(--nv-type-base);
+    line-height: var(--nv-line-height-body);
+  }
+  .workspace {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    min-width: 0;
+  }
+  .canvas {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .status {
+    min-height: var(--nv-status-minimum);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--nv-space-4);
+    padding: var(--nv-space-1) var(--nv-space-4);
+    background: var(--nv-color-panel);
+    border-top: var(--nv-stroke-base) solid var(--nv-border-default);
+    font-size: var(--nv-font-caption);
+    color: var(--nv-color-subtle);
+  }
+  .problem {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-2) var(--nv-space-4);
+    padding: var(--nv-space-3) var(--nv-space-4);
+    color: var(--nv-status-error);
+    background: var(--nv-color-panel);
+    border-top: var(--nv-stroke-base) solid var(--nv-status-error);
+  }
+}

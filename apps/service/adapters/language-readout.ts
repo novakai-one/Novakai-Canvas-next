@@ -1,0 +1,17 @@
+import type { Language } from '@novakai/canvas-language';
+import type { RouterBindings } from '../contract/records/server.js';
+import { failure } from '../contract/errors.js';
+/** Readout translation keeps language diagnostics readable without teaching HTTP the diagram syntax. */
+export function createSourceReadout(
+  language: Pick<Language, 'describe' | 'print'>,
+): RouterBindings['source'] {
+  return {
+    describe: () => language.describe(),
+    print: (collection) => {
+      const printed = language.print({ collection, scope: { kind: 'all' } });
+      if (!printed.ok)
+        return failure('invalid-input', 'source', JSON.stringify(printed.diagnostics));
+      return { ok: true, value: printed.value };
+    },
+  };
+}

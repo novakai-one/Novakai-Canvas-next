@@ -28,6 +28,7 @@ export interface Expansion<T> {
 }
 /** Stateless policy facade. Authoring owns admission/commit/retry; no durable writes occur here. */
 export interface Templates<T> {
+  readCatalog(input: unknown): Result<Catalog>;
   validatePreset(catalog: unknown, input: unknown): Result<Preset>;
   planAdmission(catalog: unknown, input: unknown): Result<PresetPlan>;
   list(catalog: unknown, query: unknown): Result<readonly Summary[]>;

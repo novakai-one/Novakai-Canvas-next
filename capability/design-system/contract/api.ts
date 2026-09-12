@@ -15,6 +15,7 @@ import { readFonts } from '../core/themes/fonts.js';
 /** Resolve detached visual data without I/O. Host retains last valid scope; Templates owns theme admission. */
 export function createDesignSystem(dependencies: DesignSystemDependencies): DesignSystem {
   return {
+    readPreferences: (input) => protect(() => parsed(uiPreferences, input, 'preferences')),
     compile: (input) => protect(() => compileArtifacts(readSources(input), dependencies.identity)),
     auditStyles: (styles, resolved) =>
       protect(() => auditStyles(styles, validateResolved(resolved))),

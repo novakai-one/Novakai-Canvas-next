@@ -3,6 +3,7 @@ import type { StyleDeclaration } from '../../contract/records/artifacts.js';
 const structural = new Set([
   '0',
   '100%',
+  '100dvh',
   'auto',
   'none',
   'inherit',
@@ -67,9 +68,12 @@ export function isEligible(declaration: StyleDeclaration): boolean {
 export function variables(value: string): readonly string[] {
   return [...value.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)].map((match) => match[1] ?? '');
 }
-/** Strip variable references, then retain every authored visual literal rather than counting any-var as full coverage. */
+/** Browser safe-area insets and full dynamic viewport are structural. Authored fractions and fallback literals still require tokens. */
 export function meaningfulLiterals(value: string): readonly string[] {
-  const rest = value.replace(/var\(\s*--[a-zA-Z0-9-]+\s*\)/g, ' ').replace(/[(),/]/g, ' ');
+  const rest = value
+    .replace(/env\(\s*safe-area-inset-(top|right|bottom|left)\s*\)/g, ' ')
+    .replace(/var\(\s*--[a-zA-Z0-9-]+\s*\)/g, ' ')
+    .replace(/[(),/]/g, ' ');
   return rest.split(/\s+/).filter((part) => part.length > 0 && !structural.has(part));
 }
 /** Layer and !important violations apply even to otherwise structural declarations. */

@@ -49,7 +49,7 @@ export function createSequenceLayer(
           fill="none"
         />
         <g transform={`translate(${event.labelBox.x} ${event.labelBox.y})`}>
-          <Content content={event.content} />
+          <Content embedFonts={false} content={event.content} />
         </g>
         {last && (
           <g transform={`translate(${last.x} ${last.y}) rotate(${angle}) translate(-26 -8)`}>
@@ -104,7 +104,7 @@ export function createSequenceLayer(
           <g key={frame.id}>
             <rect {...frame.box} fill="none" />
             <g transform={`translate(${frame.labelBox.x} ${frame.labelBox.y})`}>
-              <Content content={frame.content} />
+              <Content embedFonts={false} content={frame.content} />
             </g>
             {frame.branches.map((branch) => (
               <g key={branch.id}>
@@ -115,7 +115,7 @@ export function createSequenceLayer(
                   y2={branch.box.y}
                 />
                 <g transform={`translate(${branch.labelBox.x} ${branch.labelBox.y})`}>
-                  <Content content={branch.content} />
+                  <Content embedFonts={false} content={branch.content} />
                 </g>
               </g>
             ))}

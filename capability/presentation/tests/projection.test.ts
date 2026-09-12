@@ -17,8 +17,8 @@ import {
 import type { VisualAsset } from '../contract/index.js';
 
 describe('Presentation measured content', () => {
-  it('2 preserves newlines and graphemes while wrapping long content', () => {
-    const app = fixture().presentation;
+  it('2 preserves newlines and graphemes while wrapping long content', async () => {
+    const app = (await fixture()).presentation;
     const pinned = fonts();
     const font = style(pinned).bodyFont;
     const result = value(
@@ -39,7 +39,7 @@ describe('Presentation measured content', () => {
     expect(runs.every((item) => !item.text.startsWith('́'))).toBe(true);
     expect(result.height).toBeGreaterThan(runs.length * 16);
   });
-  it('3 renders ER types, keys, nullability and addressable field rows', () => {
+  it('3 renders ER types, keys, nullability and addressable field rows', async () => {
     const source = collection({
       objects: [
         object('Customer', 'entity', [
@@ -56,16 +56,35 @@ describe('Presentation measured content', () => {
       ],
       sections: [section('er', ['Customer'])],
     });
-    const projected = value(fixture().presentation.project(source));
+    const projected = value((await fixture()).presentation.project(source));
     const customer = node(projected, 'Customer');
     expect(customer.shape).toBe('entity');
-    expect(text(customer)).toContain('PK id: UUID');
-    expect(text(customer)).toContain('UQ email: string');
+    const rows = customer.content.primitives.filter((item) => item.kind === 'text');
+    expect(rows.map((item) => item.text)).toEqual([
+      'Customer',
+      'PK',
+      'id:',
+      'UUID',
+      'UQ',
+      'email:',
+      'string?',
+    ]);
+    const primary = rows.find((item) => item.text === 'PK');
+    const name = rows.find((item) => item.text === 'id:');
+    const type = rows.find((item) => item.text === 'UUID');
+    assert(primary && name && type);
+    expect(primary.y).toBe(name.y);
+    expect(type.y).toBe(name.y);
+    expect(primary.x).toBeLessThan(name.x);
+    expect(name.x + name.width).toBeLessThan(type.x);
+    expect(rows.find((item) => item.text === 'email:')?.x).toBe(name.x);
+    expect(rows.find((item) => item.text === 'string?')?.x).toBe(type.x);
+    expect(customer.content.primitives.filter((item) => item.kind === 'rule')).toHaveLength(2);
     expect(customer.content.outline.join(' ')).toContain('nullable');
     expect(customer.content.anchors.map((anchor) => anchor.member)).toEqual(['id', 'email']);
     expect(customer.content.anchors[0]?.y).toBeLessThan(customer.content.anchors[1]?.y ?? 0);
   });
-  it('4 preserves typed ports, members, callable signatures and table row anchors', () => {
+  it('4 preserves typed ports, members, callable signatures and table row anchors', async () => {
     const source = collection({
       objects: [
         object(
@@ -92,7 +111,7 @@ describe('Presentation measured content', () => {
       ],
       sections: [section('modules', ['Service'])],
     });
-    const service = node(value(fixture().presentation.project(source)), 'Service');
+    const service = node(value((await fixture()).presentation.project(source)), 'Service');
     expect(service.content.outline.join(' ')).toContain('run(input: Request): Outcome');
     expect(service.content.outline.join(' ')).toContain('private state: State');
     expect(service.content.anchors.map((item) => item.member)).toEqual([
@@ -104,7 +123,7 @@ describe('Presentation measured content', () => {
     expect(service.width).toBeGreaterThan(360);
     expect(service.content.anchors.find((item) => item.member === 'input')?.direction).toBe('in');
   });
-  it('6 measures admitted media with alt text and rejects missing or unsafe resources', () => {
+  it('6 measures admitted media with alt text and rejects missing or unsafe resources', async () => {
     const pinned = fonts();
     const asset: VisualAsset = {
       digest: 'b'.repeat(64),
@@ -127,13 +146,13 @@ describe('Presentation measured content', () => {
       ],
       sections: [section('grid', ['Photo'])],
     });
-    const app = value(composePresentation(owners(style(pinned), asset), pinned)).presentation;
+    const app = value(await composePresentation(owners(style(pinned), asset), pinned)).presentation;
     const image = node(value(app.project(source)), 'Photo').content.primitives.find(
       (item) => item.kind === 'media',
     );
     assert(image?.kind === 'media');
     expect([image.width, image.height, image.alt]).toEqual([180, 90, 'A sample image']);
-    expect(fixture().presentation.project(source)).toMatchObject({
+    expect((await fixture()).presentation.project(source)).toMatchObject({
       ok: false,
       error: { code: 'missing-resource' },
     });
@@ -146,12 +165,14 @@ describe('Presentation measured content', () => {
         }),
       },
     };
-    expect(value(composePresentation(unsafe, pinned)).presentation.project(source)).toMatchObject({
+    expect(
+      value(await composePresentation(unsafe, pinned)).presentation.project(source),
+    ).toMatchObject({
       ok: false,
       error: { code: 'invalid-input' },
     });
   });
-  it('7 keeps shared group representations, compact outlines, links and sequence labels', () => {
+  it('7 keeps shared group representations, compact outlines, links and sequence labels', async () => {
     const source = collection({
       objects: [
         object('Shared', 'concept', [
@@ -198,7 +219,7 @@ describe('Presentation measured content', () => {
         },
       ],
     });
-    const projected = value(fixture().presentation.project(source));
+    const projected = value((await fixture()).presentation.project(source));
     expect(projected.sections[0]?.nodes).toHaveLength(1);
     expect(projected.sections[0]?.nodes[0]?.groupId).toBe('group');
     expect(projected.sections[1]?.nodes[0]?.content.outline).toContain('Read source');
@@ -225,18 +246,18 @@ describe('Presentation measured content', () => {
       ],
       sections: [section('grid', [], { appearances: [{ object: 'Table', detail: 'summary' }] })],
     });
-    const summary = node(value(fixture().presentation.project(table)), 'Table');
+    const summary = node(value((await fixture()).presentation.project(table)), 'Table');
     expect(text(summary)).toContain('First');
     expect(text(summary)).toContain('Second');
     expect(text(summary)).not.toContain('Hidden body');
     expect(summary.content.outline).toContain('Hidden body');
     expect(summary.content.anchors.every((anchor) => !anchor.collapsed)).toBe(true);
   });
-  it('8 keys content and resolved style and freezes detached output', () => {
+  it('8 keys content and resolved style and freezes detached output', async () => {
     const pinned = fonts();
     const tokens = style(pinned);
     const source = collection({ objects: [object('A')], sections: [section('flow', ['A'])] });
-    const app = value(composePresentation(owners(tokens), pinned)).presentation;
+    const app = value(await composePresentation(owners(tokens), pinned)).presentation;
     const first = value(app.project(source));
     const second = value(app.project(structuredClone(source)));
     expect(first.inputKey).toBe(second.inputKey);
@@ -244,7 +265,7 @@ describe('Presentation measured content', () => {
       ...tokens,
       roles: { neutral: { fill: '#000000', stroke: '#ffffff', text: '#ffffff' } },
     };
-    const themed = value(composePresentation(owners(inverse), pinned)).presentation;
+    const themed = value(await composePresentation(owners(inverse), pinned)).presentation;
     const themedNode = node(value(themed.project(source)), 'A');
     expect(
       themedNode.content.primitives
@@ -262,7 +283,7 @@ describe('Presentation measured content', () => {
     expect(node(value(app.project(resized)), 'A').width).toBe(480);
 
     const changed = value(
-      composePresentation(owners({ ...tokens, fontSize: 18 }), pinned),
+      await composePresentation(owners({ ...tokens, fontSize: 18 }), pinned),
     ).presentation;
     expect(value(changed.project(source)).inputKey).not.toBe(first.inputKey);
 
@@ -275,7 +296,7 @@ describe('Presentation measured content', () => {
     });
     expect(value(app.project(renamed)).inputKey).not.toBe(first.inputKey);
   });
-  it('10 rejects invalid providers and nonfinite or oversized public inputs without a partial scene', () => {
+  it('10 rejects invalid providers and nonfinite or oversized public inputs without a partial scene', async () => {
     const pinned = fonts();
     const metrics = value(createFontMetrics(pinned));
     const app = createPresentation({

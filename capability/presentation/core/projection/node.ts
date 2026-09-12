@@ -7,6 +7,7 @@ import { measureBlock } from '../content/blocks.js';
 import type { ContentContext } from '../content/blocks.js';
 import { measureText, offset, stack } from '../content/text.js';
 import { nodeShape } from '../notation/nodes.js';
+import { fieldColumns } from '../content/fields.js';
 import { parse, reject } from '../validation/outcomes.js';
 /** Scene identities are section-scoped and distinguish an object appearance from a container. */
 export function identity(section: string, kind: 'object' | 'group', id: string): VisualNode['id'] {
@@ -58,8 +59,9 @@ interface BodyContent {
 }
 /** Measure each canonical block once; retain the complete first block for summary mode. */
 function body(object: DiagramObject, context: ContentContext): BodyContent {
+  const scoped = { ...context, fields: fieldColumns(object.content, context) };
   const blocks = [
-    ...object.content.map((block) => measureBlock(block, context)),
+    ...object.content.map((block) => measureBlock(block, scoped)),
     ...object.ports.map((port) => portContent(port, context)),
   ];
   return { full: stack(blocks, context.style.gap), summary: blocks[0] ?? emptyContent() };
@@ -127,8 +129,11 @@ export function projectNode(
   const size = view.size ?? source.size;
   const shape = nodeShape(source.kind);
   const scoped = appearanceContext(view, role, size, shape, context);
-  const heading = labelContent(`${source.kind} · ${source.label}`, scoped);
-  const measured = stack([heading, detail(body(source, scoped), view.detail)], context.style.gap);
+  const heading = labelContent(source.label, scoped);
+  const measured = stack(
+    [heading, detail(body(source, scoped), view.detail)],
+    headingGap(shape, context),
+  );
   return parse(visualNode, {
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
@@ -150,6 +155,12 @@ export function projectNode(
     placement: view.placement ?? null,
     parent: parent(section.id, view.group),
   });
+}
+/** Engineering cards reserve a padded header compartment; body content starts below its separator. */
+function headingGap(shape: VisualNode['shape'], context: ContentContext): number {
+  if (['entity', 'module', 'interface', 'function'].includes(shape))
+    return context.style.padding + context.style.gap;
+  return context.style.gap;
 }
 /** A represented group owns the canonical object's measured content; an ordinary group has a title only. */
 export function projectGroup(group: Group, section: Section, context: ContentContext): VisualNode {

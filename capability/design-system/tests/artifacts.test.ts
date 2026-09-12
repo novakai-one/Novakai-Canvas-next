@@ -93,6 +93,18 @@ describe('Design System artifacts', () => {
       'important-not-permitted',
       'unknown-variable:--not-known',
     ]);
+    const platform = must(
+      parser.read([
+        {
+          file: 'platform.css',
+          css: '@layer components { .sheet { max-height:calc(100dvh * var(--nv-sheet-maximum)); padding-bottom:max(var(--nv-space-4), env(safe-area-inset-bottom)); } .bad { height:70dvh; padding-bottom:env(safe-area-inset-bottom, 12px); } }',
+        },
+      ]),
+    );
+    const platformAudit = must(system.auditStyles(platform, must(ui())));
+    expect(platformAudit.violations.filter((item) => item.selector === '.sheet')).toEqual([]);
+    expect(platformAudit.violations.map((item) => item.reason)).toContain('visual-literal:70dvh');
+    expect(platformAudit.violations.map((item) => item.reason)).toContain('visual-literal:12px');
     const actual = must(
       parser.read(await componentStyles(new URL('../adapters/react', import.meta.url).pathname)),
     );

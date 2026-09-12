@@ -54,6 +54,42 @@ describe('Layout arrangement acceptance', () => {
     const scene = value(await mixedLayout.arrange(request(mixedLayout, mixed)));
     expect(scene.sections.map((item) => item.id)).toEqual(['grid', 'tree']);
     expect(scene.sections.map((item) => item.nodes.length)).toEqual([2, 2]);
+    // A tall third-row card cannot inflate the distance between the first two short rows.
+    const compactGrid = project(
+      collection({
+        objects: ['a', 'b', 'c', 'd', 'e', 'f'].map((id) =>
+          object(id, 'note', {
+            content: [
+              { id: 'text', kind: 'text', text: id === 'e' ? 'Tall\n'.repeat(12) : 'Short' },
+            ],
+          }),
+        ),
+        sections: [
+          section('cards', ['a', 'b', 'c', 'd', 'e', 'f'], {
+            mode: 'grid',
+            layout: { algorithm: 'grid' },
+          }),
+        ],
+      }),
+    );
+    const gridLayout = await harness([compactGrid]);
+    const gridInput = {
+      projection: compactGrid,
+      measurements: metrics(compactGrid),
+      options: { ...settings, gridColumns: 2 },
+      previous: null,
+    };
+    const gridScene = value(
+      await gridLayout.arrange({
+        ...gridInput,
+        job: { id: 'heterogeneous-grid', inputKey: value(gridLayout.key(gridInput)) },
+      }),
+    );
+    const a = node(gridScene, 'a').box;
+    const b = node(gridScene, 'b').box;
+    const c = node(gridScene, 'c').box;
+    expect(c.y - a.y).toBeCloseTo(Math.max(a.height, b.height) + settings.gap.normal);
+    expect(node(gridScene, 'e').box.height).toBeGreaterThan(a.height);
   });
 
   it('2 — encloses nested represented groups and preserves coordinate conversions', async () => {

@@ -1,8 +1,8 @@
 /** Presentation public boundary: measured scenes and stable React bindings; host owns recovery and layout. */
 export { createPresentation } from './api.js';
-export { composePresentation } from './compose.js';
+export { composePresentation, createReactBindings } from './compose.js';
 export type { Owners, ComposedPresentation } from './compose.js';
-export type { Dependencies, Presentation, TextRequest } from './types.js';
+export type { Dependencies, Presentation, TextRequest, SupplementalMeasurements } from './types.js';
 export type { Result, Diagnostic, ErrorCode } from './errors.js';
 export type { DomainReader } from './ports/domain.js';
 export type { ThemeResolver, AssetReader } from './ports/resources.js';
@@ -60,3 +60,7 @@ export type {
   MarkerProps,
   StaticRenderer,
 } from './react-types.js';
+
+export { readMeasuredProjection, readMeasuredContent } from './api.js';
+
+export { readSupplementalMeasurements } from './api.js';

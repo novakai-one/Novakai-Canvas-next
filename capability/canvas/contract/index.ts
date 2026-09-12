@@ -17,6 +17,7 @@ export type {
   AttachmentSide,
 } from './records/draft.js';
 export type { EditIntent, CanvasEffect, Endpoint, LocalPlacement } from './records/intent.js';
+export type { PlacementIntent, RouteIntent } from './records/intent.js';
 export type {
   CanvasView,
   ViewNode,

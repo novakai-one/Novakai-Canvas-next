@@ -79,7 +79,10 @@ export async function arrangeSections(
     height: section.box.height,
     header: 0,
   }));
-  const seeds = await placeScope({ nodes, edges: [], layout: projection.arrangement }, context);
+  const seeds = await placeScope(
+    { nodes, edges: [], layout: projection.arrangement, minimumGap: 0 },
+    context,
+  );
   const items = sections.map((section) => item(section, seeds, projection, previous));
   const problem = compile(items, context.options);
   const gap = context.options.gap[projection.arrangement.gap];

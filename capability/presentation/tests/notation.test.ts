@@ -1,8 +1,8 @@
 import { it, expect } from 'vitest';
 import { fixture, collection, object, section, value } from './fixtures.js';
 /** Symbol assertions use independently specified ER notation, not production lookup values. */
-it('5 retains independently chosen crow-foot endpoints and required wire labels', () => {
-  const app = fixture().presentation;
+it('5 retains independently chosen crow-foot endpoints and required wire labels', async () => {
+  const app = (await fixture()).presentation;
   const source = collection({
     objects: [object('Customer', 'entity'), object('Order', 'entity')],
     relationships: [

@@ -15,5 +15,9 @@
   },
   "devDependencies": {
     "@novakai/canvas-model": "workspace:*"
-  }
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
 }

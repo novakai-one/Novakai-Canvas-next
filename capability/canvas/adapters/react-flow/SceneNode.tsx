@@ -42,7 +42,7 @@ export function createSceneNode(
     const node = { ...view.placed.measured, width: view.box.width, height: view.box.height };
     return (
       <div className={styles.node} data-preview={view.draft}>
-        <Content node={node} />
+        <Content embedFonts={false} node={node} />
         <Handle
           isConnectable={isConnectable}
           type="target"

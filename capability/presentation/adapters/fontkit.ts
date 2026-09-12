@@ -25,18 +25,19 @@ function load(source: FontSource, parser: FontParser): LoadedFont {
   return { source, font: parser(bytes) };
 }
 /** Unsupported codepoints are explicit failures; invisible substitution would invalidate measured layout. */
-function missingGlyph(text: string, font: Font): boolean {
-  return Array.from(text).some(
+function missingGlyph(text: string, font: Font): string | undefined {
+  return Array.from(text).find(
     (character) => !font.hasGlyphForCodePoint(character.codePointAt(0) ?? 0),
   );
 }
 /** Shape with the pinned font and convert native design units into the requested local text size. */
 function shape(text: string, loaded: LoadedFont, size: number): Result<TextMetrics> {
-  if (missingGlyph(text, loaded.font))
+  const missing = missingGlyph(text, loaded.font);
+  if (missing !== undefined)
     return fail(
       'missing-glyph',
       loaded.source.digest,
-      'Pinned font does not contain a requested glyph',
+      `Pinned font ${loaded.source.family} does not contain ${JSON.stringify(missing)} (${codepoint(missing)})`,
     );
   const run = loaded.font.layout(text);
   const scale = size / loaded.font.unitsPerEm;
@@ -48,6 +49,10 @@ function shape(text: string, loaded: LoadedFont, size: number): Result<TextMetri
       descent: Math.abs(loaded.font.descent) * scale,
     },
   };
+}
+/** Unicode identity makes a missing symbol actionable without dumping the entire authored paragraph. */
+function codepoint(character: string): string {
+  return `U+${(character.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}`;
 }
 /** Exact identity lookup prevents family-name fallback to an unrelated machine font. */
 function measure(

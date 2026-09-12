@@ -1,3 +1,4 @@
+import { nativeEngineVersions } from '../contract/records/engines.js';
 import type { RoutingPort } from '../contract/ports/routing.js';
 import type {
   RoutingProblem,
@@ -214,7 +215,7 @@ export async function createRouting(load: WasmLoader): Promise<Result<RoutingPor
     return {
       ok: true,
       value: {
-        version: 'libavoid-js-0.5.0-beta.5/layout-1',
+        version: nativeEngineVersions.routing,
         route: async (problem) => protectedRoute(problem, native),
       },
     };

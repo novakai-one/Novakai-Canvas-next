@@ -8,7 +8,6 @@ import type {
 import type { FontSet } from '../../contract/records/style.js';
 import type { VisualNode } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';
-import styles from './NodeContent.module.css';
 /** Embedded font rules contain only validated digest/base64/MIME values, never authored CSS. */
 function fontRules(fonts: FontSet): string {
   return fonts
@@ -28,7 +27,7 @@ function frame(node: VisualNode): ReactElement {
   if (node.shape === 'diamond')
     return (
       <polygon
-        className={styles.frame}
+        vectorEffect="non-scaling-stroke"
         points={`${node.width / 2},0 ${node.width},${node.height / 2} ${node.width / 2},${node.height} 0,${node.height / 2}`}
         fill={node.paint.fill}
         stroke={node.paint.stroke}
@@ -37,13 +36,29 @@ function frame(node: VisualNode): ReactElement {
     );
   return (
     <rect
-      className={styles.frame}
+      vectorEffect="non-scaling-stroke"
       width={node.width}
       height={node.height}
       rx={radius(node)}
       fill={node.paint.fill}
       stroke={node.paint.stroke}
       strokeWidth={node.strokeWidth}
+    />
+  );
+}
+/** Engineering notation has a distinct title compartment; ordinary process cards retain their simpler frame. */
+function headerRule(node: VisualNode): ReactElement | null {
+  if (!['entity', 'module', 'interface', 'function'].includes(node.shape)) return null;
+  if (node.height <= node.headerHeight) return null;
+  return (
+    <line
+      x1={0}
+      x2={node.width}
+      y1={node.headerHeight}
+      y2={node.headerHeight}
+      stroke={node.paint.stroke}
+      strokeWidth={node.strokeWidth}
+      vectorEffect="non-scaling-stroke"
     />
   );
 }
@@ -58,7 +73,8 @@ export function createContentRenderer(
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
     return (
       <svg
-        className={styles.node}
+        display="block"
+        overflow="visible"
         xmlns="http://www.w3.org/2000/svg"
         width={node.width}
         height={node.height}
@@ -71,6 +87,7 @@ export function createContentRenderer(
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}
         {frame(node)}
+        {headerRule(node)}
         <Blocks primitives={node.content.primitives} />
       </svg>
     );
@@ -85,7 +102,7 @@ export function createMarkerRenderer(draw: MarkerFactory): ComponentType<MarkerP
     const fill = drawing.filled ? paint.stroke : 'none';
     return (
       <svg
-        className={styles.marker}
+        overflow="visible"
         xmlns="http://www.w3.org/2000/svg"
         width="28"
         height="16"

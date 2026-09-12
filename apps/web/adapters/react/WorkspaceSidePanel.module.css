@@ -1,0 +1,14 @@
+@layer components {
+  .customize {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-2);
+    padding: var(--nv-space-3);
+    border-bottom: var(--nv-stroke-base) solid var(--nv-border-default);
+  }
+  .customize p {
+    margin: 0;
+    color: var(--nv-color-subtle);
+    font-size: var(--nv-font-caption);
+  }
+}

@@ -20,6 +20,7 @@ function reportView(result: Result<ViewSnapshot>, onError: SurfaceProps['onError
 export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceProps> {
   const nodeTypes: NodeTypes = { scene: slots.SceneNode, section: slots.SectionFrame };
   const edgeTypes: EdgeTypes = { scene: slots.SceneEdge };
+  const Fonts = slots.FontDefinitions;
   const Controls = slots.CanvasControls;
   const Outline = slots.DiagramOutline;
   const Sequence = slots.SequenceLayer;
@@ -60,6 +61,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
         onPointerCancel={interactions.actions.cancelGeometry}
         onPointerDownCapture={(event) => setPointer(pointerThreshold(event.pointerType))}
       >
+        <Fonts />
         <ReactFlow<FlowNode, FlowEdge>
           nodes={graph.nodes}
           edges={graph.edges}

@@ -1,3 +1,5 @@
+import type { SceneReaderOwners } from './types.js';
+import { admitScene } from '../core/validation/admission.js';
 import type { Dependencies, Layout, Inspection } from './types.js';
 import type { Result } from './errors.js';
 import type { Scene } from './records/geometry.js';
@@ -27,3 +29,8 @@ export function createLayout(dependencies: Dependencies): Layout {
 }
 
 export { toCollection, toSection, toParent } from '../core/geometry/coordinates.js';
+
+/** Independently validate and reconstruct a worker/HTTP scene; Canvas retains its accepted scene when rejected. */
+export function readScene(input: unknown, owners: SceneReaderOwners): Result<Scene> {
+  return protect(() => admitScene(readInspection(input, owners.projection), owners.engineVersions));
+}

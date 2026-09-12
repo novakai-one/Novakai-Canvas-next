@@ -14,6 +14,7 @@ export type {
   SourceMapping,
 } from './records/syntax.js';
 export type {
+  ExpansionRequest,
   LowerRequest,
   LoweredIntent,
   ResolvedResources,

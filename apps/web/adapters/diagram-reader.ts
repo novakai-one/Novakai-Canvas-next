@@ -1,0 +1,94 @@
+import { renderEnvelope } from '@novakai/canvas-service';
+import type { RenderDocument } from '@novakai/canvas-service';
+import { validate } from '@novakai/canvas-model';
+import {
+  readMeasuredProjection,
+  readMeasuredContent,
+  readSupplementalMeasurements,
+  resolvedStyle,
+  fontSet,
+} from '@novakai/canvas-presentation';
+import type { Result as PresentationResult } from '@novakai/canvas-presentation';
+import { readScene, defaultEngineVersions, options } from '@novakai/canvas-layout';
+import type { Result as LayoutResult } from '@novakai/canvas-layout';
+import type { SceneAdmission } from '@novakai/canvas-canvas';
+import type { Result } from '../contract/errors.js';
+import { failure } from '../contract/errors.js';
+/** Private boundary rejection is caught into a readable failure; the browser retains its previous scene. */
+class DiagramRejected extends Error {}
+/** Owner results, never casts, turn serialized content into a trusted diagram. */
+function accepted<T>(result: { readonly ok: true; readonly value: T } | { readonly ok: false }): T {
+  if (!result.ok) throw new DiagramRejected();
+  return result.value;
+}
+/** Translate only the consumer's error vocabulary; Projection remains Presentation-owned. */
+function layoutResult<T>(result: PresentationResult<T>): LayoutResult<T> {
+  if (result.ok) return result;
+  return { ok: false, error: { ...result.error, code: 'invalid-input', targets: [] } };
+}
+/** Canonical shape, measured content, routing and engine versions all receive their owner's independent admission. */
+function decode(input: unknown): RenderDocument {
+  const payload = renderEnvelope.parse(input);
+  const collection = accepted(validate(payload.collection));
+  const domain = {
+    read: (input: unknown): PresentationResult<typeof collection> => {
+      const checked = validate(input);
+      if (!checked.ok)
+        return {
+          ok: false,
+          error: {
+            code: 'invalid-input',
+            path: 'collection',
+            message: 'Invalid collection',
+            recovery: 'Refresh the committed collection',
+          },
+        };
+      return checked;
+    },
+  };
+  const projection = accepted(readMeasuredProjection(payload.projection, collection, domain));
+  const measurements = accepted(readSupplementalMeasurements(payload.measurements));
+  const scene = accepted(
+    readScene(
+      { projection, measurements, options: payload.options, candidate: payload.scene },
+      {
+        engineVersions: defaultEngineVersions,
+        projection: {
+          read: (input) => layoutResult(readMeasuredProjection(input, collection, domain)),
+          content: (input) => layoutResult(readMeasuredContent(input)),
+        },
+      },
+    ),
+  );
+  return {
+    collection,
+    projection,
+    measurements,
+    scene,
+    fonts: fontSet.parse(payload.fonts),
+    style: resolvedStyle.parse(payload.style),
+    options: options.parse(payload.options),
+  };
+}
+/** Browser transport success alone cannot mount a scene. Any owner rejection leaves the existing canvas available. */
+export function readDiagram(input: unknown): Result<RenderDocument> {
+  try {
+    return { ok: true, value: decode(input) };
+  } catch {
+    return failure('invalid-diagram', 'The rendered diagram could not be validated');
+  }
+}
+/** Canvas independently checks the stamp and its interaction geometry after this full owner readout. */
+export function createSceneAdmission(): SceneAdmission {
+  return {
+    read: (input) => {
+      const document = readDiagram(input);
+      if (!document.ok)
+        return {
+          ok: false,
+          error: { ...document.error, code: 'invalid-input', path: 'diagram', targets: [] },
+        };
+      return { ok: true, value: document.value.scene };
+    },
+  };
+}

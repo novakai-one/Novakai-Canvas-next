@@ -60,6 +60,10 @@ describe('Canvas camera contract', () => {
     expect(
       step(canvas, state, { kind: 'zoom', factor: 100, pointer: { x: 0, y: 0 } }).state.camera.zoom,
     ).toBe(4);
+    expect(
+      step(canvas, state, { kind: 'zoom', factor: 0.001, pointer: { x: 0, y: 0 } }).state.camera
+        .zoom,
+    ).toBe(0.01);
   });
   it('3 normalized gesture precedence preserves typing and threshold clicks', () => {
     const { canvas } = harness();

@@ -1,3 +1,4 @@
+import { nativeEngineVersions } from '../../contract/records/engines.js';
 import type { VisualSection } from '../../contract/records/input.js';
 import type { LayoutOptions, SupplementalMeasurements } from '../../contract/types.js';
 import type { CheckedLayoutRequest } from '../validation/input.js';
@@ -15,7 +16,7 @@ export function versions(dependencies: VersionedEngines): readonly string[] {
     dependencies.placement.version,
     dependencies.solver.version,
     dependencies.routing.version,
-    'layout-policy-1',
+    nativeEngineVersions.policy,
   ];
 }
 /** Local section identity intentionally excludes unrelated collection revision and other sections. */

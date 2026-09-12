@@ -12,6 +12,8 @@ export interface ScopeTarget {
   ): Result<ScopeSnapshot>;
 }
 export interface ScopeLease {
+  /** Replace this lease atomically, keeping its original cleanup baseline. A stale lease cannot overwrite another owner. */
+  replace(resolved: unknown): Result<ScopeLease>;
   cleanup(): Result<{ readonly restored: boolean }>;
 }
 export interface ScopeInstaller {

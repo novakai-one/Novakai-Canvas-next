@@ -38,3 +38,10 @@ export interface Readout {
   readonly manual: readonly ManualTarget[];
   readonly pins: { readonly theme: string; readonly assets: readonly string[] };
 }
+
+/** A recipe creates a new collection namespace while preserving readable local aliases and their references. */
+export interface ExpansionRequest {
+  readonly source: string;
+  readonly namespace: string;
+  readonly resources: ResolvedResources;
+}

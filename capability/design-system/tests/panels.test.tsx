@@ -128,6 +128,18 @@ describe('Design System panels and scopes', () => {
     expect(must(newer.cleanup()).restored).toBe(true);
     expect(element.style.getPropertyValue('--nv-space-2')).toBe('8px');
     expect(element.style.left).toBe('25px');
+    const initialScope = element.style.cssText;
+    const replaceable = must(installer.install(first));
+    const replacement = must(replaceable.replace(second));
+    expect(replaceable.replace(first).ok).toBe(false);
+    expect(must(replaceable.cleanup()).restored).toBe(false);
+    expect(element.style.getPropertyValue('--nv-space-2')).toBe('12px');
+    expect(replacement.replace({ ...second, css: {} }).ok).toBe(false);
+    expect(element.style.getPropertyValue('--nv-space-2')).toBe('12px');
+    expect(must(replacement.cleanup()).restored).toBe(true);
+    expect(element.style.getPropertyValue('--nv-space-2')).toBe('8px');
+    expect(element.style.left).toBe('25px');
+    expect(initialScope).toContain('left: 25px');
   });
 });
 /** Test boundary narrows real DOM input before checking retained value. */

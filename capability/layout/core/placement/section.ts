@@ -3,7 +3,7 @@ import type { VisualSection, VisualNode } from '../../contract/records/input.js'
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { PlacedNode } from '../../contract/records/geometry.js';
 import type { PlacementValue, LinearConstraint } from '../../contract/records/problem.js';
-import type { PlacementContext } from '../../contract/types.js';
+import type { SupplementalMeasurements, PlacementContext } from '../../contract/types.js';
 import type { PositionedInput } from '../constraints/compile.js';
 import { compile } from '../constraints/compile.js';
 import { relative } from '../constraints/relative.js';
@@ -62,8 +62,9 @@ export async function placeSection(
   section: VisualSection,
   previous: SectionCandidate | null,
   context: PlacementContext,
+  measurements: SupplementalMeasurements,
 ): Promise<readonly PlacedNode[]> {
-  const seeds = await seedScope(null, section, context);
+  const seeds = await seedScope(null, section, context, measurements);
   const items = section.nodes.map((node) => input(node, seeds, previous));
   const problem = compile(items, context.options);
   const values = await separateBoxes(

@@ -1,13 +1,13 @@
 import type { ReactElement } from 'react';
 import type { ContentBlocksProps } from '../../contract/react-types.js';
 import type { Primitive } from '../../contract/records/visual.js';
-import styles from './ContentBlocks.module.css';
 /** Measured text uses digest-derived family and exact advance; JSX escapes source text. */
 function text(item: Extract<Primitive, { kind: 'text' }>, key: number): ReactElement {
   return (
     <text
       key={key}
-      className={styles.text}
+      xmlSpace="preserve"
+      style={{ whiteSpace: 'pre', fontKerning: 'normal' }}
       x={item.x}
       y={item.y}
       fill={item.fill}
@@ -26,7 +26,7 @@ function media(item: Extract<Primitive, { kind: 'media' }>, key: number): ReactE
   return (
     <image
       key={key}
-      className={styles.media}
+      pointerEvents="none"
       x={item.x}
       y={item.y}
       width={item.width}
@@ -43,7 +43,7 @@ function rule(item: Extract<Primitive, { kind: 'rule' }>, key: number): ReactEle
   return (
     <line
       key={key}
-      className={styles.rule}
+      vectorEffect="non-scaling-stroke"
       x1={item.x1}
       y1={item.y1}
       x2={item.x2}

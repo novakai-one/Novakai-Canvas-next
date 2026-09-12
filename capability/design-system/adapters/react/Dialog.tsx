@@ -1,4 +1,5 @@
 import { Dialog as Primitive } from 'radix-ui';
+import { useRef } from 'react';
 import type { ReactElement, ComponentType } from 'react';
 import type { DialogProps, ButtonProps } from '../../contract/react-types.js';
 import styles from './Dialog.module.css';
@@ -14,13 +15,31 @@ export function createDialog(Button: ComponentType<ButtonProps>): ComponentType<
     children,
     portal,
     closeLabel = 'Close dialog',
+    placement = 'center',
   }: DialogProps): ReactElement {
+    const opener = useRef<HTMLElement | null>(null);
+    /** External triggers are allowed; remember the actual focused control before the modal takes focus. */
+    function rememberOpener(): void {
+      const focused = portal.ownerDocument.activeElement;
+      opener.current = focused instanceof HTMLElement ? focused : null;
+    }
+    /** Radix's built-in trigger handles its own return; a host-controlled panel restores its external opener explicitly. */
+    function restoreOpener(event: Event): void {
+      if (trigger !== undefined) return;
+      event.preventDefault();
+      opener.current?.focus();
+    }
     return (
       <Primitive.Root open={open} onOpenChange={onOpenChange}>
         {trigger && <Primitive.Trigger asChild>{trigger}</Primitive.Trigger>}
         <Primitive.Portal container={portal}>
           <Primitive.Overlay className={styles.overlay} />
-          <Primitive.Content className={styles.dialog}>
+          <Primitive.Content
+            className={styles.dialog}
+            data-placement={placement}
+            onOpenAutoFocus={rememberOpener}
+            onCloseAutoFocus={restoreOpener}
+          >
             <header className={styles.header}>
               <Primitive.Title className={styles.title}>{title}</Primitive.Title>
               <Primitive.Close asChild>

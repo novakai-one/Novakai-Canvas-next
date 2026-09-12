@@ -87,3 +87,9 @@ export interface Layout {
   route(input: unknown): Promise<Result<Scene>>;
   inspect(input: unknown): Result<Inspection>;
 }
+
+/** Browser admission uses producing engine versions without loading those native engines. */
+export interface SceneReaderOwners {
+  readonly projection: ProjectionReader;
+  readonly engineVersions: readonly string[];
+}

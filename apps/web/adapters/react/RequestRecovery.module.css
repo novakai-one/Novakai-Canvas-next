@@ -1,0 +1,26 @@
+@layer components {
+  .recovery {
+    background: var(--nv-color-panel);
+    border-top: var(--nv-stroke-base) solid var(--nv-border-default);
+    max-height: calc(var(--nv-space-8) * 5);
+    overflow: auto;
+  }
+  .request {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--nv-space-3);
+    padding: var(--nv-space-3) var(--nv-space-4);
+  }
+  .request > div {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: var(--nv-space-1);
+  }
+  .request span {
+    font: var(--nv-font-caption) var(--nv-font-mono);
+    color: var(--nv-color-subtle);
+    overflow-wrap: anywhere;
+  }
+}

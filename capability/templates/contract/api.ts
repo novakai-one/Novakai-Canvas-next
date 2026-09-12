@@ -58,6 +58,8 @@ function expandInput<T>(
 /** Bind mandatory semantic owners and hashing. Stateless plans are replayable; Authoring owns commits/recovery. */
 export function createTemplates<T>(deps: Dependencies<T>): Templates<T> {
   return Object.freeze({
+    /** Read a complete immutable catalog once; callers retain the prior snapshot on malformed hashes/dependencies. */
+    readCatalog: (input) => withCatalog(input, deps, (records) => success(records)),
     validatePreset: (catalog, input) =>
       withCatalog(catalog, deps, (records) => validate(records, input, deps)),
     planAdmission: (catalog, input) =>

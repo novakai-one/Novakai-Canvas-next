@@ -292,7 +292,7 @@ export async function fixture(): Promise<Fixture> {
     border: '#334155',
   });
   const presentation = value(
-    composePresentation(
+    await composePresentation(
       {
         domain: {
           read: (input) => {

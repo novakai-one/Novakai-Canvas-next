@@ -5,7 +5,7 @@ export const box = point.unwrap().extend({ width: dimension, height: dimension }
 export const viewport = z.strictObject({ width: dimension, height: dimension }).readonly();
 export const camera = point
   .unwrap()
-  .extend({ zoom: z.number().finite().min(0.1).max(4), viewport })
+  .extend({ zoom: z.number().finite().min(0.01).max(4), viewport })
   .readonly();
 export type Point = z.infer<typeof point>;
 export type Box = z.infer<typeof box>;

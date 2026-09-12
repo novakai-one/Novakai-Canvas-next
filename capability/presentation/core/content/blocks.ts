@@ -1,23 +1,14 @@
-import type { ContentBlock, InputCollection } from '../../contract/records/input.js';
-import type { ResolvedStyle } from '../../contract/records/style.js';
+import type { ContentBlock } from '../../contract/records/input.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
-import type { MeasurementPort } from '../../contract/ports/measurement.js';
-import type { AssetReader } from '../../contract/ports/resources.js';
+import type { ContentContext } from '../../contract/records/content-context.js';
+export type { ContentContext } from '../../contract/records/content-context.js';
+import { measureField, fieldKey } from './fields.js';
 import { measureText } from './text.js';
 import { measureTable } from './table.js';
 import { measureMedia } from './media.js';
 import { reject } from '../validation/outcomes.js';
-export interface ContentContext {
-  readonly collection: InputCollection;
-  readonly width: number;
-  readonly style: ResolvedStyle;
-  readonly metrics: MeasurementPort;
-  readonly assets: AssetReader;
-}
 /** Content processor chooses local presentation only; semantic validity remains in Model. */
 type Processor = (block: ContentBlock, context: ContentContext) => MeasuredContent;
-/** Textual type/key labels remain ordinary readable text, never executable code. */
-const keyNames: Readonly<Record<string, string>> = { primary: 'PK', foreign: 'FK', unique: 'UQ' };
 /** One textual block carries optional addressable-row metadata at its measured midpoint. */
 function text(
   text: string,
@@ -72,13 +63,11 @@ const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
   icon: (block, context) => image(block, context),
   field: (block, context) => {
     if (block.kind !== 'field') return mismatch(block);
-    const key = keyPrefix(block.key);
-    const nullable = block.nullable ? 'nullable' : 'required';
-    return text(`${key}${block.label}: ${block.type} · ${nullable}`, context, block.id, true);
+    return measureField(block, context);
   },
   keygroup: (block, context) => {
     if (block.kind !== 'keygroup') return mismatch(block);
-    return text(`${keyNames[block.key]} (${block.fields.join(', ')})`, context, null, true);
+    return text(`${fieldKey(block.key)} (${block.fields.join(', ')})`, context, null, true);
   },
   member: (block, context) => {
     if (block.kind !== 'member') return mismatch(block);
@@ -110,10 +99,4 @@ function image(block: ContentBlock, context: ContentContext): MeasuredContent {
 /** Canonical content enters through the registered local presentation policy; public project owns typed failure. */
 export function measureBlock(block: ContentBlock, context: ContentContext): MeasuredContent {
   return processors[block.kind](block, context);
-}
-
-/** Key absence has one explicit display meaning; no boolean polarity switch at field call sites. */
-function keyPrefix(key: Extract<ContentBlock, { kind: 'field' }>['key']): string {
-  if (key === undefined) return '';
-  return keyNames[key] + ' ';
 }

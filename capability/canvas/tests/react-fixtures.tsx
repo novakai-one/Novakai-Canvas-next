@@ -31,7 +31,7 @@ export async function slots(): Promise<RenderSlots> {
       base64: bytes.toString('base64'),
     },
   ]);
-  const result = composePresentation(
+  const result = await composePresentation(
     {
       domain: { read: unavailable },
       themes: { resolve: unavailable },

@@ -4,12 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "tsx apps/service/cli/serve.ts",
+    "canvas": "tsx apps/cli/cli/main.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "architecture": "depcruise capability apps --config .dependency-cruiser.cjs --output-type err",
-    "test": "vitest run capability",
+    "test": "vitest run capability apps",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test",
-    "format:check": "prettier --check \"capability/**/*.{ts,tsx}\" eslint.config.js .dependency-cruiser.cjs",
+    "format:check": "prettier --check \"capability/**/*.{ts,tsx}\" \"apps/**/*.{ts,tsx}\" eslint.config.js .dependency-cruiser.cjs",
     "tokens:build": "tsx capability/design-system/cli/build-tokens.ts --write",
     "tokens:check": "tsx capability/design-system/cli/build-tokens.ts --check"
   },

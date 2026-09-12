@@ -6,6 +6,7 @@ import type { PortableTheme, StyleProjection } from './records/theme.js';
 import type { Identity } from './ports/identity.js';
 /** Headless token contract; no CSS, React or filesystem loads at import time. */
 export interface DesignSystem {
+  readPreferences(input: unknown): Result<import('./records/preferences.js').UiPreferences>;
   compile(sources: unknown): Result<ArtifactSet>;
   auditStyles(
     styles: readonly StyleDeclaration[],

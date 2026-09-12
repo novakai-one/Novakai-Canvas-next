@@ -46,7 +46,7 @@ export async function arrangeSection(
 ): Promise<PlacedSection> {
   const reuse = cached(source, previous, metrics, context);
   if (reuse !== null) return reuse;
-  const nodes = await placeSection(source, previous, context);
+  const nodes = await placeSection(source, previous, context, metrics);
   return completeSection(source, nodes, metrics, context);
 }
 /** Build wires, sequence and heading around fixed nodes without assigning collection-space positions. */

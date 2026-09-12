@@ -17,7 +17,7 @@ const restrict = (group) => [
 ];
 
 export default tseslint.config(
-  { ignores: ['node_modules/**', '**/node_modules/**', 'dist/**', '**/.generated/**'] },
+  { ignores: ['node_modules/**', '**/node_modules/**', '**/dist/**', '**/.generated/**'] },
   ...tseslint.configs.recommended,
   {
     files: ['**/*.{ts,tsx,js,cjs,mjs}'],
@@ -29,17 +29,20 @@ export default tseslint.config(
     },
   },
   {
-    files: ['capability/*/core/**/*.{ts,tsx}'],
+    files: ['capability/*/core/**/*.{ts,tsx}', 'apps/*/core/**/*.{ts,tsx}'],
     rules: { 'no-restricted-imports': restrict(coreForbidden) },
   },
   {
-    files: ['capability/*/contract/api.ts'],
+    files: ['capability/*/contract/api.ts', 'apps/*/contract/api.ts'],
     rules: { 'no-restricted-imports': restrict(['**/adapters/**']) },
   },
   {
-    files: ['capability/*/tests/**/*.{ts,tsx}'],
+    files: ['capability/*/tests/**/*.{ts,tsx}', 'apps/*/tests/**/*.{ts,tsx}'],
     rules: { 'no-restricted-imports': restrict(['**/core/**']) },
   },
-  { files: ['capability/*/contract/compose.ts'], rules: { 'no-restricted-imports': 'off' } },
+  {
+    files: ['capability/*/contract/compose.ts', 'apps/*/contract/compose.ts'],
+    rules: { 'no-restricted-imports': 'off' },
+  },
   { files: ['*.cjs'], rules: { '@typescript-eslint/no-require-imports': 'off' } },
 );

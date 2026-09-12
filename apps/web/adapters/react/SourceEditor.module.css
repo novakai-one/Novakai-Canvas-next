@@ -1,0 +1,55 @@
+@layer components {
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-3);
+  }
+  .source {
+    position: absolute;
+    inset: var(--nv-space-4);
+    z-index: var(--nv-layer-popover);
+    display: flex;
+    flex-direction: column;
+    background: var(--nv-color-panel);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border-radius: var(--nv-radius-panel);
+    padding: var(--nv-space-6);
+    box-shadow: 0 var(--nv-space-2) var(--nv-space-8) var(--nv-shadow-opacity-color);
+  }
+  .source header,
+  .source footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nv-space-4);
+  }
+  .source h2 {
+    margin: 0;
+    font-size: var(--nv-font-title);
+  }
+  .source p {
+    color: var(--nv-color-subtle);
+    font-size: var(--nv-font-caption);
+  }
+  .label {
+    margin-block: var(--nv-space-3) var(--nv-space-2);
+  }
+  .source textarea {
+    flex: 1;
+    min-height: 0;
+    resize: none;
+    padding: var(--nv-space-4);
+    font-family: var(--nv-font-mono);
+    font-size: var(--nv-type-base);
+    line-height: var(--nv-line-height-body);
+    background: var(--nv-surface-base);
+    color: var(--nv-color-content);
+    border: var(--nv-stroke-base) solid var(--nv-color-input-boundary);
+    border-radius: var(--nv-radius-control);
+    tab-size: 2;
+  }
+  .source textarea:focus-visible {
+    outline: var(--nv-focus-width) solid var(--nv-color-focus);
+    outline-offset: var(--nv-focus-offset);
+  }
+}

@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./contract/index.ts" },
-  "dependencies": { "zod": "4.6.2" }
+  "exports": {
+    ".": "./contract/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.2"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
 }

@@ -58,3 +58,8 @@ export type {
   Obstacle,
 } from './records/problem.js';
 export { toCollection, toSection, toParent } from './api.js';
+
+export { readScene } from './api.js';
+export type { SceneReaderOwners } from './types.js';
+
+export { defaultEngineVersions } from './records/engines.js';

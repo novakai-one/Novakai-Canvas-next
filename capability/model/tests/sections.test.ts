@@ -132,6 +132,16 @@ test('validate layout intent', () => {
     ]),
   });
   expect(value(validate(arranged)).arrangement.constraints).toHaveLength(1);
+  const engineeringGrid = base({
+    sections: [
+      section('data', 'er', { layout: layout('grid') }),
+      section('code', 'modules', { layout: layout('grid') }),
+    ],
+  });
+  expect(value(validate(engineeringGrid)).sections.map((item) => item.layout.algorithm)).toEqual([
+    'grid',
+    'grid',
+  ]);
 });
 test('validate flow and state', () => {
   const objects = [node('a', 'decision'), node('b'), node('c')];

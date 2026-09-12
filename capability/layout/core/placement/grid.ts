@@ -9,11 +9,16 @@ interface Tracks {
   readonly widths: readonly number[];
   readonly heights: readonly number[];
 }
+interface AxisGaps {
+  readonly x: number;
+  readonly y: number;
+}
 /** Each row and column reserves its own largest member; one tall diagram cannot inflate every row in a collection. */
 export function gridPlacement(
   nodes: readonly PlacementNode[],
   columns: number,
-  gap: number,
+  spacing: number,
+  layerSpacing: number,
   direction: LayoutIntent['direction'],
   physicalColumns = false,
 ): readonly PlacementValue[] {
@@ -21,7 +26,7 @@ export function gridPlacement(
   const cells = nodes.map((_, index): Cell => cell(index, stride, direction));
   const tracks = measureTracks(nodes, cells);
   return nodes.map((node, index) =>
-    place(node, cells[index] ?? { column: 0, row: 0 }, tracks, gap, direction),
+    place(node, cells[index] ?? { column: 0, row: 0 }, tracks, spacing, layerSpacing, direction),
   );
 }
 /** Down/up transpose row-major reading order; reverse directions preserve negative logical coordinates. */
@@ -62,11 +67,13 @@ function place(
   node: PlacementNode,
   cell: Cell,
   tracks: Tracks,
-  gap: number,
+  spacing: number,
+  layerSpacing: number,
   direction: LayoutIntent['direction'],
 ): PlacementValue {
-  const x = offset(tracks.widths, cell.column, gap);
-  const y = offset(tracks.heights, cell.row, gap);
+  const gap = axisGaps(spacing, layerSpacing)[direction];
+  const x = offset(tracks.widths, cell.column, gap.x);
+  const y = offset(tracks.heights, cell.row, gap.y);
   return {
     id: node.id,
     box: {
@@ -75,6 +82,19 @@ function place(
       width: node.width,
       height: node.height,
     },
+  };
+}
+
+/** Physical axes receive the local flow/cross minima without changing column membership. */
+function axisGaps(
+  spacing: number,
+  layerSpacing: number,
+): Readonly<Record<LayoutIntent['direction'], AxisGaps>> {
+  return {
+    right: { x: layerSpacing, y: spacing },
+    left: { x: layerSpacing, y: spacing },
+    down: { x: spacing, y: layerSpacing },
+    up: { x: spacing, y: layerSpacing },
   };
 }
 

@@ -10,8 +10,8 @@ import { visibleObjects } from './groups.js';
 const compatibleLayouts: Readonly<Record<Mode, readonly LayoutIntent['algorithm'][]>> = {
   flow: ['flow', 'layered'],
   state: ['flow', 'layered'],
-  er: ['layered'],
-  modules: ['layered'],
+  er: ['layered', 'grid'],
+  modules: ['layered', 'grid'],
   tree: ['tree'],
   sequence: ['sequence'],
   story: ['grid'],

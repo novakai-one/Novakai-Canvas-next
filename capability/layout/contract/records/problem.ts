@@ -41,7 +41,10 @@ export interface PlacementProblem {
   }[];
   readonly direction: 'right' | 'down' | 'left' | 'up';
   readonly algorithm: 'layered' | 'tree';
+  /** Cross-axis boundary clearance between sibling nodes. */
   readonly spacing: number;
+  /** Flow-axis boundary clearance between adjacent layers. */
+  readonly layerSpacing: number;
   readonly padding: number;
 }
 export interface PlacementValue {

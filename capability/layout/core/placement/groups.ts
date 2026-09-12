@@ -75,8 +75,15 @@ function parentOwner(
   return owner(parent, roots, section);
 }
 /** Only edges joining distinct immediate branches enter the scope's placement graph. */
-function edges(roots: readonly string[], section: VisualSection): PlacementProblem['edges'] {
-  return section.wires.flatMap((wire) =>
+function edges(
+  roots: readonly string[],
+  section: VisualSection,
+  layout: LayoutIntent,
+): PlacementProblem['edges'] {
+  const wires = section.wires.filter(
+    (wire) => layout.algorithm !== 'tree' || wire.kind === 'parent',
+  );
+  return wires.flatMap((wire) =>
     scopeEdge(
       wire.id,
       owner(wire.source.node, roots, section),
@@ -112,6 +119,8 @@ export async function seedScope(
     children.map((node) => branch(node, section, context, measurements)),
   );
   const roots = branches.map((item) => item.root.id);
+  const layout = intent(parent, section);
+  const scopeEdges = edges(roots, section, layout);
   const nodes = branches.map((item) => ({
     id: item.root.id,
     parent: null,
@@ -123,9 +132,15 @@ export async function seedScope(
     await placeScope(
       {
         nodes,
-        edges: edges(roots, section),
-        layout: intent(parent, section),
-        minimumGap: routingGap(section, edges(roots, section), measurements, context.options),
+        edges: scopeEdges,
+        layout,
+        minimumLayerSpacing: routingGap(
+          section,
+          scopeEdges,
+          layout.direction,
+          measurements,
+          context.options,
+        ),
       },
       context,
     ),

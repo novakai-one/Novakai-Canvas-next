@@ -15,7 +15,7 @@ export interface NativePlacement {
 }
 export type PlacementFactory = () => NativePlacement;
 const directions = { right: 'RIGHT', down: 'DOWN', left: 'LEFT', up: 'UP' };
-const algorithms = { layered: 'layered', tree: 'mrtree' };
+const algorithms = { layered: 'layered', tree: 'layered' };
 /** Job-local mutable native graph is built from readonly capability data. */
 function node(item: PlacementNode, problem: PlacementProblem): ElkNode {
   return {
@@ -42,7 +42,7 @@ function graph(problem: PlacementProblem): ElkNode {
       'elk.algorithm': algorithms[problem.algorithm],
       'elk.direction': directions[problem.direction],
       'elk.spacing.nodeNode': String(problem.spacing),
-      'elk.layered.spacing.nodeNodeBetweenLayers': String(problem.spacing),
+      'elk.layered.spacing.nodeNodeBetweenLayers': String(problem.layerSpacing),
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.randomSeed': '1',
     },

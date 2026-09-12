@@ -14,16 +14,18 @@ export interface Scope {
   readonly nodes: readonly PlacementNode[];
   readonly edges: PlacementProblem['edges'];
   readonly layout: LayoutIntent;
-  readonly minimumGap: number;
+  readonly minimumLayerSpacing: number;
 }
 /** Measured track sizes keep heterogeneous diagrams compact without allowing overlap. */
 function grid(scope: Scope, options: LayoutOptions): readonly PlacementValue[] {
-  const gap = Math.max(options.gap[scope.layout.gap], scope.minimumGap);
+  const spacing = options.gap[scope.layout.gap];
+  const layerSpacing = Math.max(spacing, scope.minimumLayerSpacing);
   const columns = gridColumns(scope, options);
   return gridPlacement(
     scope.nodes,
     columns,
-    gap,
+    spacing,
+    layerSpacing,
     gridDirection(scope.layout),
     scope.layout.columns !== undefined,
   );
@@ -36,11 +38,13 @@ function gridDirection(layout: LayoutIntent): LayoutIntent['direction'] {
 /** Placement engines provide seeds only; required constraints are applied afterward. */
 async function native(scope: Scope, context: SeedContext): Promise<readonly PlacementValue[]> {
   const algorithm = scope.layout.algorithm === 'tree' ? 'tree' : 'layered';
+  const spacing = context.options.gap[scope.layout.gap];
   const result = await context.dependencies.placement.place({
     ...scope,
     algorithm,
     direction: scope.layout.direction,
-    spacing: Math.max(context.options.gap[scope.layout.gap], scope.minimumGap),
+    spacing,
+    layerSpacing: Math.max(spacing, scope.minimumLayerSpacing),
     padding: context.options.padding,
   });
   return requireValue(result);

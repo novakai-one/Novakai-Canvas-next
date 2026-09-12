@@ -84,7 +84,7 @@ export async function arrangeSections(
     }));
     const seeds = requireValue(
       await placeScope(
-        { nodes, edges: [], layout: projection.arrangement, minimumGap: 0 },
+        { nodes, edges: [], layout: projection.arrangement, minimumLayerSpacing: 0 },
         context,
       ),
     );

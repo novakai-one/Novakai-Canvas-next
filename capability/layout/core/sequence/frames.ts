@@ -52,11 +52,17 @@ function heading(content: MeasuredContent, top: number, context: SequenceContext
   };
 }
 /** Frame bounds include the complete child geometry plus a padding border. */
-function frameBox(header: Box, content: Body, context: SequenceContext): Box {
+function frameBox(
+  header: Box,
+  content: Body,
+  context: SequenceContext,
+  branches: FragmentFrame['branches'] = [],
+): Box {
   const geometry = union([
     header,
     ...content.events.flatMap((event) => [event.labelBox, pointBounds(event.points)]),
     ...content.fragments.map((frame) => frame.box),
+    ...branches.map((branch) => branch.box),
     {
       x: context.extent.x,
       y: header.y,
@@ -130,7 +136,7 @@ function fragmentBody(input: FragmentInput, top: number, context: SequenceContex
     labelBox.y + labelBox.height + context.options.sequenceGap + context.options.padding,
     context,
   );
-  const box = frameBox(labelBox, nested.body, context);
+  const box = frameBox(labelBox, nested.body, context, nested.branches);
   const frame: FragmentFrame = {
     id: input.item.id,
     parent: input.item.parent ?? null,

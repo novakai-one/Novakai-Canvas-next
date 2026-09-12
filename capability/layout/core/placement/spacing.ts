@@ -8,22 +8,25 @@ import type { SupplementalMeasurements, LayoutOptions } from '../../contract/typ
 export function routingGap(
   section: VisualSection,
   edges: PlacementProblem['edges'],
+  direction: VisualSection['layout']['direction'],
   measurements: SupplementalMeasurements,
   options: LayoutOptions,
 ): number {
   const connected = new Set(edges.map((edge) => edge.id));
   const wires = section.wires.filter((wire) => connected.has(wire.id));
-  return Math.max(0, ...wires.map((wire) => corridorWidth(wire, measurements, options)));
+  return Math.max(0, ...wires.map((wire) => corridorWidth(wire, direction, measurements, options)));
 }
 
-/** Reserving the larger label axis also supports nested scopes whose reading direction differs. */
+/** Flow-axis reservation does not inflate the independent cross-axis sibling minimum. */
 function corridorWidth(
   wire: VisualWire,
+  direction: VisualSection['layout']['direction'],
   measurements: SupplementalMeasurements,
   options: LayoutOptions,
 ): number {
   const source = measurements.markers[wire.sourceMarker].advance;
   const target = measurements.markers[wire.targetMarker].advance;
-  const label = Math.max(wire.label.width, wire.label.height);
+  const label =
+    direction === 'right' || direction === 'left' ? wire.label.width : wire.label.height;
   return source + target + options.routeClearance * 4 + label + options.labelGap * 2;
 }

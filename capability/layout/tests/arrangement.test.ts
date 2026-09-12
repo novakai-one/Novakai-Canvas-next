@@ -13,7 +13,13 @@ import {
 } from './fixtures.js';
 import { node, dependencies, settings, metrics } from './fixtures.js';
 import { createLayout, toCollection, toSection, toParent } from '../contract/index.js';
-import type { LayoutIntent, Projection, Scene } from '../contract/index.js';
+import type {
+  LayoutIntent,
+  PlacementProblem,
+  PlacementValue,
+  Projection,
+  Scene,
+} from '../contract/index.js';
 describe('Layout arrangement acceptance', () => {
   it('1 — lays out mixed section policies deterministically with complete labelled wires', async () => {
     const source = flow();
@@ -237,6 +243,17 @@ describe('Layout arrangement acceptance', () => {
         (item) => item.nodes,
       ),
     ).toEqual(first.sections.map((item) => item.nodes));
+    const changedEngine = createLayout({
+      ...native,
+      placement: { ...native.placement, version: `${native.placement.version}/changed` },
+    });
+    const rederived = value(await changedEngine.arrange(request(changedEngine, before, first)));
+    expect(rederived.sections.map((item) => item.nodes)).toEqual(
+      first.sections.map((item) => item.nodes),
+    );
+    expect(rederived.sections.map((item) => item.inputKey)).not.toEqual(
+      first.sections.map((item) => item.inputKey),
+    );
   });
   it('6 — renders ordered sequence messages, nested fragments, measured branches and activations', async () => {
     const source = sequenceProjection();
@@ -268,6 +285,45 @@ describe('Layout arrangement acceptance', () => {
     );
     const headings = metrics(source).branchHeadings.map((item) => item.content);
     expect(sequence.fragments[0]?.branches.map((item) => item.content)).toEqual(headings);
+    const wideInput = request(layout, source);
+    const wideMeasurements = {
+      ...wideInput.measurements,
+      branchHeadings: wideInput.measurements.branchHeadings.map((item) => ({
+        ...item,
+        content: item.branch === 'yes' ? { ...item.content, width: 900 } : item.content,
+      })),
+    };
+    const wideScene = value(
+      await layout.arrange({
+        ...wideInput,
+        measurements: wideMeasurements,
+        job: {
+          id: 'wide-alternative',
+          inputKey: value(
+            layout.key({
+              projection: source,
+              measurements: wideMeasurements,
+              options: wideInput.options,
+              previous: null,
+            }),
+          ),
+        },
+      }),
+    );
+    const wideSequence = wideScene.sections[0]?.sequence;
+    const parent = wideSequence?.fragments.find((item) => item.id === 'alternatives');
+    assert(parent && wideSequence);
+    parent.branches.forEach((branch) => expect(contained(parent.box, branch.box)).toBe(true));
+    wideSequence.fragments
+      .filter((fragment) => fragment.parent === parent.id)
+      .forEach((fragment) => expect(contained(parent.box, fragment.box)).toBe(true));
+    expect(wideSequence.events.map((item) => item.id)).toEqual(
+      sequence.events.map((item) => item.id),
+    );
+    expect(wideSequence.fragments.map((item) => item.id)).toEqual(
+      sequence.fragments.map((item) => item.id),
+    );
+    expect(wideSequence.activations).toHaveLength(sequence.activations.length);
     const isolated = isolatedAlternatives();
     const scoped = await harness([isolated]);
     const isolatedScene = value(await scoped.arrange(request(scoped, isolated)));
@@ -304,6 +360,230 @@ describe('Layout arrangement acceptance', () => {
     );
   });
 });
+
+it('keeps measured flow spacing independent across directions and nested scopes', async (): Promise<void> => {
+  const directions: readonly LayoutIntent['direction'][] = ['right', 'down', 'left', 'up'];
+  for (const direction of directions) await checkDirectionalSpacing(direction);
+  await checkNestedSpacing();
+  await checkTreeSeed();
+});
+
+/** Real ELK output for unequal boxes must preserve the measured flow reservation without inflating siblings. */
+async function checkDirectionalSpacing(direction: LayoutIntent['direction']): Promise<void> {
+  const source = directionalProjection(direction);
+  const captured: PlacementProblem[] = [];
+  let placed: readonly PlacementValue[] = [];
+  const native = await dependencies([source]);
+  const layout = createLayout({
+    ...native,
+    placement: {
+      ...native.placement,
+      async place(problem) {
+        captured.push(problem);
+        const result = await native.placement.place(problem);
+        if (result.ok && problem.edges.length === 2) placed = result.value;
+        return result;
+      },
+    },
+  });
+  const outcome = await layout.arrange(request(layout, source));
+  if (!outcome.ok) expect(outcome.error.code).toBe('engine-failed');
+  const problem = captured.find((item) => item.edges.length === 2);
+  assert(problem);
+  const first = placed.find((item) => item.id === problem.nodes[0]?.id);
+  const second = placed.find((item) => item.id === problem.nodes[1]?.id);
+  const third = placed.find((item) => item.id === problem.nodes[2]?.id);
+  assert(first && second && third);
+  expect(problem.spacing).toBe(settings.gap.compact);
+  expect(problem.layerSpacing).toBe(expectedLayerSpacing(source, direction));
+  expect(mainClearance(first.box, second.box, direction)).toBeGreaterThanOrEqual(
+    problem.layerSpacing - 0.000001,
+  );
+  const siblingGap = crossClearance(second.box, third.box, direction);
+  expect(siblingGap).toBeGreaterThanOrEqual(problem.spacing - 0.000001);
+  expect(siblingGap).toBeLessThan(problem.layerSpacing);
+}
+
+/** Nested groups reserve only their contracted local edges using their own reading direction. */
+async function checkNestedSpacing(): Promise<void> {
+  const source = nestedSpacingProjection();
+  const captured: PlacementProblem[] = [];
+  const native = await dependencies([source]);
+  const layout = createLayout({
+    ...native,
+    placement: {
+      ...native.placement,
+      async place(problem) {
+        captured.push(problem);
+        return native.placement.place(problem);
+      },
+    },
+  });
+  value(await layout.arrange(request(layout, source)));
+  const scopes = captured.filter((item) => item.edges.length === 1);
+  expect(scopes.map((item) => item.direction).toSorted()).toEqual(['down', 'right']);
+  scopes.forEach((problem) => {
+    expect(problem.spacing).toBe(settings.gap.compact);
+    expect(problem.layerSpacing).toBe(expectedLayerSpacing(source, problem.direction));
+  });
+}
+
+/** Tree seeds retain validated parent topology while annotation references stay out of native ranking. */
+async function checkTreeSeed(): Promise<void> {
+  const source = project(
+    collection({
+      objects: [object('root', 'concept'), object('child', 'concept'), object('note', 'note')],
+      relationships: [
+        edge('parent', 'root', 'child', { kind: 'parent' }),
+        edge('annotation', 'root', 'note', { kind: 'reference' }),
+      ],
+      sections: [
+        section('tree', [], {
+          mode: 'tree',
+          root: 'root',
+          layout: { algorithm: 'tree', direction: 'down', gap: 'compact' },
+          appearances: [
+            { object: 'root' },
+            { object: 'child' },
+            { object: 'note', participation: 'annotation' },
+          ],
+          wires: [{ relationship: 'parent' }, { relationship: 'annotation' }],
+        }),
+      ],
+    }),
+  );
+  const captured: PlacementProblem[] = [];
+  const native = await dependencies([source]);
+  const layout = createLayout({
+    ...native,
+    placement: {
+      ...native.placement,
+      async place(problem) {
+        captured.push(problem);
+        return native.placement.place(problem);
+      },
+    },
+  });
+  const result = await layout.arrange(request(layout, source));
+  assert(!result.ok);
+  expect(result.error).toMatchObject({ code: 'engine-failed', path: 'routing' });
+  const problem = captured.find((item) => item.algorithm === 'tree');
+  assert(problem);
+  expect(problem.edges).toHaveLength(1);
+  expect(problem.layerSpacing).toBe(expectedLayerSpacing(source, 'down'));
+}
+
+/** Projection labels deliberately have unequal flow extents so width/height swaps cannot pass. */
+function directionalProjection(direction: LayoutIntent['direction']): Projection {
+  return project(
+    collection({
+      objects: [
+        object('a'),
+        object('b', 'note', { content: [{ id: 'body', kind: 'text', text: 'Tall\nTall\nTall' }] }),
+        object('c', 'note', { label: 'Unequal sibling width' }),
+      ],
+      relationships: [
+        edge('ab', 'a', 'b', { label: 'Measured directional reservation' }),
+        edge('ac', 'a', 'c', { label: 'Measured directional reservation' }),
+      ],
+      sections: [
+        section('directional', ['a', 'b', 'c'], {
+          layout: { algorithm: 'layered', direction, gap: 'compact' },
+          wires: [{ relationship: 'ab' }, { relationship: 'ac' }],
+        }),
+      ],
+    }),
+  );
+}
+
+/** One child-local edge and one contracted outer edge expose accidental cross-scope leakage. */
+function nestedSpacingProjection(): Projection {
+  return project(
+    collection({
+      objects: [object('a'), object('b'), object('c')],
+      relationships: [
+        edge('inner-edge', 'a', 'b', { label: 'Inner vertical label' }),
+        edge('outer-edge', 'b', 'c', { label: 'Outer horizontal reservation label' }),
+      ],
+      sections: [
+        section('nested-spacing', [], {
+          layout: { algorithm: 'layered', direction: 'right', gap: 'compact' },
+          groups: [
+            {
+              id: 'inner',
+              title: 'Inner',
+              layout: { algorithm: 'layered', direction: 'down', gap: 'compact' },
+            },
+          ],
+          appearances: [
+            { object: 'a', group: 'inner' },
+            { object: 'b', group: 'inner' },
+            { object: 'c' },
+          ],
+          wires: [{ relationship: 'inner-edge' }, { relationship: 'outer-edge' }],
+        }),
+      ],
+    }),
+  );
+}
+
+/** Reservation is independently specified from public measured labels and marker metrics. */
+function expectedLayerSpacing(source: Projection, direction: LayoutIntent['direction']): number {
+  const wire = source.sections[0]?.wires.find((item) =>
+    direction === 'down'
+      ? ['inner-edge', 'ab', 'parent'].includes(item.relationshipId)
+      : item.relationshipId === 'outer-edge' || item.relationshipId === 'ab',
+  );
+  assert(wire);
+  const label =
+    direction === 'right' || direction === 'left' ? wire.label.width : wire.label.height;
+  return (
+    metrics(source).markers[wire.sourceMarker].advance +
+    metrics(source).markers[wire.targetMarker].advance +
+    settings.routeClearance * 4 +
+    label +
+    settings.labelGap * 2
+  );
+}
+
+/** Boundary clearance follows the declared forward or reverse flow axis. */
+function mainClearance(
+  first: Scene['bounds'],
+  second: Scene['bounds'],
+  direction: LayoutIntent['direction'],
+): number {
+  const values = {
+    right: second.x - first.x - first.width,
+    left: first.x - second.x - second.width,
+    down: second.y - first.y - first.height,
+    up: first.y - second.y - second.height,
+  };
+  return values[direction];
+}
+
+/** Sibling clearance uses the physical axis perpendicular to local flow. */
+function crossClearance(
+  first: Scene['bounds'],
+  second: Scene['bounds'],
+  direction: LayoutIntent['direction'],
+): number {
+  const horizontal = direction === 'right' || direction === 'left';
+  const starts = horizontal ? [first.y, second.y] : [first.x, second.x];
+  const ends = horizontal
+    ? [first.y + first.height, second.y + second.height]
+    : [first.x + first.width, second.x + second.width];
+  return Math.max(...starts) - Math.min(...ends);
+}
+
+/** Parent bounds include a candidate when every physical edge stays inside. */
+function contained(parent: Scene['bounds'], child: Scene['bounds']): boolean {
+  return (
+    child.x >= parent.x &&
+    child.y >= parent.y &&
+    child.x + child.width <= parent.x + parent.width &&
+    child.y + child.height <= parent.y + parent.height
+  );
+}
 /** Relative scenarios use public Model/Presentation constructors rather than forged checked types. */
 function relativeProjection(
   kind: string,

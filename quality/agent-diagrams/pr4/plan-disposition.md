@@ -1,0 +1,1 @@
+First three findings verified against grid/ELK spacing, sequence frame union excluding branches, and retained previous seeds. Corrected once. Reject fourth finding's proposed five-build-file cap: user cap applies to each auditor, not implementation breadth. Accept its missinggrid/misnamedframes inventory correction. No second pressure review.

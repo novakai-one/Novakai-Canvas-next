@@ -54,7 +54,7 @@ Target images are external benchmarks, not app output: `quality/agent-diagrams/r
 
 |Target|Source|Quality to borrow|
 |---|---|---|
-|ER|https://www.holistics.io/blog/a-database-diagram-designer-built-for-developers-and-analysts/|Compact readable tables, field connections, practical density; diagram area only|
+|ER|https://www.conceptdraw.com/How-To-Guide/erd-er-diagram-styles|Compact ER composition, visible cardinality and labelled relationships; use typed fields as additionally required|
 |Modules|https://c4model.com/diagrams/component|Explicit boundaries/roles, labelled dependencies, meaningful grouping|
 |Infographic|https://bytebytego.com/guides/top-5-caching-strategies/|Repeated comparison structure, icons, concise annotations and visual hierarchy|
 

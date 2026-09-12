@@ -1,0 +1,146 @@
+[
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/er-course-enrollment.canvas",
+    "sha256": "881710adc53fc1bcf206033bbf7a8f2f444e87ef3304938131c7c76392bae182",
+    "exit": 0,
+    "output": "no-op: pr5-r2-er-course-enrollment\nWorkspace sequence: 15\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/er-course-enrollment.canvas --revision 0 --request pr5-r2-er-course-enrollment\n(node:22263) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/er-habitat-survey.canvas",
+    "sha256": "0fdc85213f2551c997a75b8f6d6539a8c8b1c2e84f396bbe75367219bf3e0433",
+    "exit": 1,
+    "output": "[ELIFECYCLE] Command failed with exit code 1.\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/er-habitat-survey.canvas --request pr5-r2-er-habitat-survey\n(node:22313) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\nconstraint-conflict: No valid labelled route within the initial, eight local and one outside candidate budget\nRetain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/er-museum-loans.canvas",
+    "sha256": "a1f7b9cb12cc7857e6318122cf1431f87cff1ce10163dc32221e4412c6973747",
+    "exit": 0,
+    "output": "committed: pr5-r2-er-museum-loans\nWorkspace sequence: 16\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/er-museum-loans.canvas --request pr5-r2-er-museum-loans\n(node:22337) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-emergency-dispatch.canvas",
+    "sha256": "581d40b840ee68850719a52f2a58e741a4818e52a1b4299a1eb80a03bfb7f92b",
+    "exit": 1,
+    "output": "[ELIFECYCLE] Command failed with exit code 1.\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-emergency-dispatch.canvas --request pr5-r2-flow-emergency-dispatch\n(node:22386) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\nconstraint-conflict: No valid labelled route within the initial, eight local and one outside candidate budget\nRetain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-equipment-return.canvas",
+    "sha256": "599c9d5bec46870a4ae2cd53fd9b88fad86f172979d66965fb544ffbc0838d13",
+    "exit": 0,
+    "output": "no-op: pr5-r2-flow-equipment-return\nWorkspace sequence: 17\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-equipment-return.canvas --revision 0 --request pr5-r2-flow-equipment-return\n(node:22408) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-research-approval.canvas",
+    "sha256": "af592f33a2929fd814d8db41efa5ced36b5f7dd17c1a84e7649900e971e489ef",
+    "exit": 0,
+    "output": "committed: pr5-r2-flow-research-approval\nWorkspace sequence: 18\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-research-approval.canvas --request pr5-r2-flow-research-approval\n(node:22456) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-archive-comparison.canvas",
+    "sha256": "335473f3f7dfb00f9a42a0638f642a24db8caee67b73a0e506f4a553ea04d0e6",
+    "exit": 0,
+    "output": "no-op: pr5-r2-grid-archive-comparison\nWorkspace sequence: 19\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-archive-comparison.canvas --revision 0 --request pr5-r2-grid-archive-comparison\n(node:22504) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-feedback-methods.canvas",
+    "sha256": "adc5c8bc82ed23ca4a4a4218eee18efb93ce3b7fc0e6ace69a1b68f107d59047",
+    "exit": 0,
+    "output": "no-op: pr5-r2-grid-feedback-methods\nWorkspace sequence: 20\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-feedback-methods.canvas --revision 0 --request pr5-r2-grid-feedback-methods\n(node:22552) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-research-methods.canvas",
+    "sha256": "a4078793ae3ec0a1659e9471584730d2622421c94ab67b4e96d47fcc6b27944b",
+    "exit": 0,
+    "output": "no-op: pr5-r2-grid-research-methods\nWorkspace sequence: 21\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-research-methods.canvas --revision 0 --request pr5-r2-grid-research-methods\n(node:22601) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-document-publishing.canvas",
+    "sha256": "5dc72dc3b9dcd431926e645ab9ef7d9116c2528fe8b87a92d8aa0a86669d5d54",
+    "exit": 0,
+    "output": "no-op: pr5-r2-modules-document-publishing\nWorkspace sequence: 22\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-document-publishing.canvas --revision 0 --request pr5-r2-modules-document-publishing\n(node:22649) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-payroll-policy.canvas",
+    "sha256": "d05d42c6498b3a5c579be5ba1b5cd6f43f9fde022fd0b1c0984b491fd59ecb0b",
+    "exit": 1,
+    "output": "[ELIFECYCLE] Command failed with exit code 1.\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-payroll-policy.canvas --request pr5-r2-modules-payroll-policy\n(node:22699) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\nconstraint-conflict: No valid labelled route within the initial, eight local and one outside candidate budget\nRetain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-sensor-gateway.canvas",
+    "sha256": "98bc4b77955bd58bea3f4bfb3dac2d6c61e8cb7a3f2a8490b02be3704550691b",
+    "exit": 0,
+    "output": "committed: pr5-r2-modules-sensor-gateway\nWorkspace sequence: 23\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-sensor-gateway.canvas --request pr5-r2-modules-sensor-gateway\n(node:22722) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-incident-notification.canvas",
+    "sha256": "e1cb2192157d006f8364ae7778ca551fa3c14b3e9d2619e77aa8d5d09e9cbcb6",
+    "exit": 0,
+    "output": "no-op: pr5-r2-sequence-incident-notification\nWorkspace sequence: 24\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-incident-notification.canvas --revision 0 --request pr5-r2-sequence-incident-notification\n(node:22787) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-library-reservation.canvas",
+    "sha256": "68ddd5893311c565ddcef14fa440f367858158d2ad31ecd0e71cb41415d74200",
+    "exit": 0,
+    "output": "no-op: pr5-r2-sequence-library-reservation\nWorkspace sequence: 25\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-library-reservation.canvas --revision 0 --request pr5-r2-sequence-library-reservation\n(node:22836) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-payment-settlement.canvas",
+    "sha256": "112027848dbe3d9440425a1faf097d89efc12b09c270459d01e92c2654ba38ad",
+    "exit": 0,
+    "output": "no-op: pr5-r2-sequence-payment-settlement\nWorkspace sequence: 26\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-payment-settlement.canvas --revision 0 --request pr5-r2-sequence-payment-settlement\n(node:22885) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/state-batch-job.canvas",
+    "sha256": "d541220f16a4d9c2fcf4bea675c85ef68482b008b720f952eb71fd1c83f266bf",
+    "exit": 0,
+    "output": "committed: pr5-r2-state-batch-job\nWorkspace sequence: 27\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/state-batch-job.canvas --request pr5-r2-state-batch-job\n(node:22933) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/state-exhibition-lifecycle.canvas",
+    "sha256": "67cbbe9e4828236b55751aa219019628c50a52df8f65d683d8ccc34cfe353729",
+    "exit": 0,
+    "output": "committed: pr5-r2-state-exhibition-lifecycle\nWorkspace sequence: 28\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/state-exhibition-lifecycle.canvas --request pr5-r2-state-exhibition-lifecycle\n(node:22981) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/state-membership-reinstatement.canvas",
+    "sha256": "2df618860bc17a7936aec45ea426dbd93f769a62e03a2e6c8bb43bd01bf4cd46",
+    "exit": 0,
+    "output": "committed: pr5-r2-state-membership-reinstatement\nWorkspace sequence: 29\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/state-membership-reinstatement.canvas --request pr5-r2-state-membership-reinstatement\n(node:23049) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/story-evidence-lesson.canvas",
+    "sha256": "ca67c5f65bb680a8ee34fd1f94331beca7f30d3059f2c643e6f44e9b92888a9f",
+    "exit": 0,
+    "output": "no-op: pr5-r2-story-evidence-lesson\nWorkspace sequence: 30\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/story-evidence-lesson.canvas --revision 0 --request pr5-r2-story-evidence-lesson\n(node:23097) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/story-safe-deployment.canvas",
+    "sha256": "437d9be230626e2cea8057233be792de3ab3d258af7c03073a0b17943bc80469",
+    "exit": 0,
+    "output": "no-op: pr5-r2-story-safe-deployment\nWorkspace sequence: 31\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/story-safe-deployment.canvas --revision 0 --request pr5-r2-story-safe-deployment\n(node:23163) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/story-water-treatment.canvas",
+    "sha256": "00457d97bd90b442a6f1156b2c69f82e74687b40b26a2871702638f9ddf7ff67",
+    "exit": 0,
+    "output": "no-op: pr5-r2-story-water-treatment\nWorkspace sequence: 32\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/story-water-treatment.canvas --revision 0 --request pr5-r2-story-water-treatment\n(node:23211) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-course-objectives.canvas",
+    "sha256": "698f158c089d20c105c6e8e5b127da5826f4653cad50d14410c31007b98d7372",
+    "exit": 0,
+    "output": "committed: pr5-r2-tree-course-objectives\nWorkspace sequence: 33\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-course-objectives.canvas --request pr5-r2-tree-course-objectives\n(node:23259) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-field-research.canvas",
+    "sha256": "6db48a7cbc1f05a55d3013d356549cb807b35c1f8f7abf323c9990ccbc3cab30",
+    "exit": 0,
+    "output": "committed: pr5-r2-tree-field-research\nWorkspace sequence: 34\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-field-research.canvas --request pr5-r2-tree-field-research\n(node:23309) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-incident-causes.canvas",
+    "sha256": "175c9ee51e2d4fbcd99300f400b7fee0306e39d7f3a0348f6564aeeb7ae394de",
+    "exit": 0,
+    "output": "no-op: pr5-r2-tree-incident-causes\nWorkspace sequence: 35\n$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-incident-causes.canvas --revision 0 --request pr5-r2-tree-incident-causes\n(node:23357) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  }
+]

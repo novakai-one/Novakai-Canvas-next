@@ -12,8 +12,7 @@ export function routingGap(
   measurements: SupplementalMeasurements,
   options: LayoutOptions,
 ): number {
-  const connected = new Set(edges.map((edge) => edge.id));
-  const wires = section.wires.filter((wire) => connected.has(wire.id));
+  const wires = localWires(section, edges);
   return Math.max(0, ...wires.map((wire) => corridorWidth(wire, direction, measurements, options)));
 }
 
@@ -29,4 +28,30 @@ function corridorWidth(
   const label =
     direction === 'right' || direction === 'left' ? wire.label.width : wire.label.height;
   return source + target + options.routeClearance * 4 + label + options.labelGap * 2;
+}
+
+/** Current native checkpoints extend 2c + advance; another c keeps them outside adjacent obstacles.
+ * Only wires joining this scope's branches contribute; labels never affect this cross-axis floor.
+ * Pure replay has no recovery state; Layout's facade owns failures from invalid measurements.
+ */
+export function crossingGap(
+  section: VisualSection,
+  edges: PlacementProblem['edges'],
+  measurements: SupplementalMeasurements,
+  options: LayoutOptions,
+): number {
+  const advances = localWires(section, edges).flatMap((wire) => [
+    measurements.markers[wire.sourceMarker].advance,
+    measurements.markers[wire.targetMarker].advance,
+  ]);
+  if (advances.length === 0) return 0;
+  return options.routeClearance * 3 + Math.max(...advances);
+}
+/** Local wire membership is independent of the parent-only graph used for tree ranking. */
+function localWires(
+  section: VisualSection,
+  edges: PlacementProblem['edges'],
+): readonly VisualWire[] {
+  const connected = new Set(edges.map((edge) => edge.id));
+  return section.wires.filter((wire) => connected.has(wire.id));
 }

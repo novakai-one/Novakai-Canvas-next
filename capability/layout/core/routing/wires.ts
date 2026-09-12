@@ -9,45 +9,35 @@ import { obstacles, contentBoxes } from './obstacles.js';
 import { markerBox, validRoute } from './checks.js';
 import { labelBox } from './labels.js';
 import { curvePath, linePath, segments } from './paths.js';
-import { union, pointBounds } from '../geometry/bounds.js';
 import { accumulate } from '../arrangement/sequential.js';
+import { localCorridors, outsideCorridor, compareRoutes } from './corridors.js';
+import type { Corridor } from './corridors.js';
 import { reject } from '../validation/outcomes.js';
 interface WireContext {
   readonly placement: RoutingContext;
   readonly metrics: SupplementalMeasurements;
   readonly obstacles: readonly Obstacle[];
 }
+/** Ranking metadata stays private and must never enter the strict public scene record. */
+interface RankedRoute {
+  readonly wire: RoutedWire;
+  readonly points: readonly Point[];
+  readonly index: number;
+}
 /** Marker and accepted label regions are reserved for subsequent labels. */
 function reserved(plans: readonly RoutePlan[], context: WireContext): readonly Box[] {
-  return plans.flatMap((item) => [
+  return plans.flatMap((item): readonly Box[] => [
     markerBox(item.attachments.source, context.metrics.markers[item.wire.sourceMarker]),
     markerBox(item.attachments.target, context.metrics.markers[item.wire.targetMarker]),
+    ...routeBoxes([
+      item.connection.source,
+      item.connection.sourceApproach ?? item.connection.source,
+    ]),
+    ...routeBoxes([
+      item.connection.target,
+      item.connection.targetApproach ?? item.connection.target,
+    ]),
   ]);
-}
-/** Native geometry must still satisfy all required attachment and obstacle facts. */
-function checkedPoints(
-  plan: RoutePlan,
-  values: readonly RouteValue[],
-  context: WireContext,
-): readonly Point[] {
-  const value = values.find((item) => item.id === plan.wire.id);
-  if (!value) return reject('engine-failed', plan.wire.id, 'Routing omitted a wire');
-  if (
-    !validRoute(
-      value.points,
-      plan.attachments.source,
-      plan.attachments.target,
-      context.obstacles.map((item) => item.box),
-      plan.wire,
-      context.metrics,
-    )
-  )
-    return reject(
-      'engine-failed',
-      plan.wire.id,
-      'Native route violates required ports, marker clearance or obstacles',
-    );
-  return value.points;
 }
 /** Wire rendering retains authoritative label/marker/style data and derives only path geometry. */
 function wire(
@@ -56,7 +46,7 @@ function wire(
   labelBox: Box,
   context: WireContext,
 ): RoutedWire {
-  const obstacles = context.obstacles.map((item) => item.box);
+  const obstacles = context.obstacles.map((item): Box => item.box);
   const path =
     plan.wire.route.route === 'curve'
       ? curvePath(points, context.placement.options.routeClearance / 2, obstacles)
@@ -73,115 +63,151 @@ function wire(
     style: plan.wire.style,
   };
 }
-/** If the first corridor has no room for its label, ask the router for a measured outside lane. */
-async function labelled(
+/** Candidate validation is independent of native success and reserves the candidate's own wire path. */
+function candidate(
   plan: RoutePlan,
   points: readonly Point[],
   occupied: readonly Box[],
   context: WireContext,
-): Promise<RoutedWire> {
-  const label = labelBox(points, plan.wire.label, occupied, context.placement.options.labelGap);
-  if (label !== null) return wire(plan, points, label, context);
-  if (plan.wire.route.locked)
-    return reject(
-      'constraint-conflict',
-      plan.wire.id,
-      'Locked route has no clear space for its measured label',
-      [plan.wire.id],
-    );
-  return outsideLane(plan, occupied, context);
-}
-/** A bounded deterministic outside lane adds space while maintaining named departure/arrival checkpoints. */
-async function outsideLane(
-  plan: RoutePlan,
-  occupied: readonly Box[],
-  context: WireContext,
-): Promise<RoutedWire> {
-  const bounds = union(occupied);
-  const gap = context.placement.options.labelGap + context.placement.options.routeClearance;
-  const y = bounds.y - plan.wire.label.height - gap * 2;
-  const left = { x: bounds.x - plan.wire.label.width - gap * 2, y };
-  const right = { x: bounds.x + bounds.width + gap * 2, y };
-  const checkpoints = [
-    ...plan.connection.checkpoints.slice(0, 1),
-    left,
-    right,
-    ...plan.connection.checkpoints.slice(1),
-  ];
-  const values = await routeNative(
-    [{ ...plan.connection, checkpoints }],
-    context.obstacles,
-    context.placement,
-  );
-  const points = checkedPoints(plan, values, context);
-  const label = labelBox(points, plan.wire.label, occupied, context.placement.options.labelGap);
-  if (label === null)
-    return reject('engine-failed', plan.wire.id, 'No clear measured label corridor found');
-  return wire(plan, points, label, context);
-}
-/** Label placement is sequential because accepted rectangles constrain later wires. */
-async function labelAll(
-  plans: readonly RoutePlan[],
-  values: readonly RouteValue[],
-  occupied: readonly Box[],
-  context: WireContext,
-): Promise<readonly RoutedWire[]> {
-  return accumulate<RoutePlan, readonly RoutedWire[]>(plans, [], async (result, plan) => {
-    const current = withPriorLabels(context, result);
-    const points = await avoidPriorLabels(plan, values, current);
-    const corridors = [...result.flatMap((item) => routeBoxes(item.points)), ...routeBoxes(points)];
-    const prior = result.map((item) => item.labelBox);
-    const occupiedSpace = [
-      ...occupied,
-      ...prior,
-      ...corridors,
-      ...values.flatMap((item) => routeBoxes(item.points)),
-    ];
-    const next = await labelled(plan, points, occupiedSpace, current);
-    return [...result, next];
-  });
-}
-/** Accepted labels become real routing obstacles for subsequent connections. */
-function withPriorLabels(context: WireContext, wires: readonly RoutedWire[]): WireContext {
-  const labels = wires.map((wire) => ({ id: `label:${wire.id}`, box: wire.labelBox }));
-  return { ...context, obstacles: [...context.obstacles, ...labels] };
-}
-/** Thin route footprints stop new labels from obscuring already accepted wire segments. */
-function routeBoxes(points: readonly Point[]): readonly Box[] {
-  return segments(points).map((segment) => pointBounds([segment.a, segment.b]));
-}
-/** A precomputed batch corridor may need rerouting after earlier measured labels claim free space. */
-async function avoidPriorLabels(
-  plan: RoutePlan,
-  values: readonly RouteValue[],
-  context: WireContext,
-): Promise<readonly Point[]> {
-  const found = values.find((value) => value.id === plan.wire.id);
+): RoutedWire | null {
   if (
-    found &&
-    validRoute(
-      found.points,
+    !validRoute(
+      points,
       plan.attachments.source,
       plan.attachments.target,
-      context.obstacles.map((item) => item.box),
+      context.obstacles.map((item): Box => item.box),
       plan.wire,
       context.metrics,
     )
   )
-    return found.points;
-  return rerouteLabelCollision(plan, context);
+    return null;
+  const label = labelBox(
+    points,
+    plan.wire.label,
+    [...occupied, ...routeBoxes(points)],
+    context.placement.options.labelGap,
+  );
+  if (label === null) return null;
+  return wire(plan, points, label, context);
 }
-/** Manual locks remain hard even when the collision is with another wire's label. */
-async function rerouteLabelCollision(
+/** Candidate infeasibility consumes one attempt; operational and cancellation failures propagate immediately. */
+async function attempt(
   plan: RoutePlan,
+  corridor: Corridor,
+  occupied: readonly Box[],
   context: WireContext,
-): Promise<readonly Point[]> {
-  if (plan.wire.route.locked)
-    return reject('constraint-conflict', plan.wire.id, 'Locked route crosses a reserved label', [
-      plan.wire.id,
-    ]);
-  const values = await routeNative([plan.connection], context.obstacles, context.placement);
-  return checkedPoints(plan, values, context);
+): Promise<RoutedWire | null> {
+  const placement = {
+    ...context.placement,
+    options: { ...context.placement.options, routeClearance: plan.clearance },
+  };
+  const values = await routeNative([corridor.connection], context.obstacles, placement);
+  if (values.kind === 'candidate-infeasible') return null;
+  const value = values.routes[0];
+  if (value === undefined) return reject('engine-failed', plan.wire.id, 'Routing omitted a wire');
+  return candidate(plan, value.points, occupied, context);
+}
+/** Eight local alternatives are inspected and ranked before the one permitted outside attempt. */
+async function alternatives(
+  plan: RoutePlan,
+  occupied: readonly Box[],
+  context: WireContext,
+): Promise<RoutedWire> {
+  const gap = context.placement.options.routeClearance * 2 + context.placement.options.labelGap;
+  const candidates = await accumulate<Corridor, readonly RankedRoute[]>(
+    localCorridors(plan, gap),
+    [],
+    async (accepted, corridor): Promise<readonly RankedRoute[]> => {
+      const next = await attempt(plan, corridor, occupied, context);
+      if (next === null) return accepted;
+      return [...accepted, { wire: next, points: next.points, index: corridor.index }];
+    },
+  );
+  const best = candidates.toSorted(compareRoutes)[0];
+  if (best !== undefined) return best.wire;
+  const outside = await attempt(plan, outsideCorridor(plan, occupied, gap), occupied, context);
+  if (outside !== null) return outside;
+  return reject(
+    'constraint-conflict',
+    plan.wire.id,
+    'No valid labelled route within the initial, eight local and one outside candidate budget',
+    [plan.wire.id],
+  );
+}
+/** Valid manual geometry is retained exactly; label infeasibility never silently discards authored points. */
+async function labelled(
+  plan: RoutePlan,
+  saved: RouteValue | null,
+  occupied: readonly Box[],
+  context: WireContext,
+): Promise<RoutedWire> {
+  if (saved !== null) return savedWire(plan, saved, occupied, context);
+  const initial = await attempt(
+    plan,
+    { connection: plan.connection, index: -1 },
+    occupied,
+    context,
+  );
+  if (initial !== null) return initial;
+  return alternatives(plan, occupied, context);
+}
+/** An authored route with no clear label or a collision with a prior label has a named correction path. */
+function savedWire(
+  plan: RoutePlan,
+  saved: RouteValue,
+  occupied: readonly Box[],
+  context: WireContext,
+): RoutedWire {
+  const result = candidate(plan, saved.points, occupied, context);
+  if (result !== null) return result;
+  return reject(
+    'constraint-conflict',
+    plan.wire.id,
+    'Manual route has no clear space for its measured label or crosses a reserved label',
+    [plan.wire.id],
+  );
+}
+/** Accepted labels constrain later routes; every retained manual path constrains label placement from the start. */
+async function labelAll(
+  plans: readonly RoutePlan[],
+  saved: readonly RouteValue[],
+  occupied: readonly Box[],
+  context: WireContext,
+): Promise<readonly RoutedWire[]> {
+  return accumulate<RoutePlan, readonly RoutedWire[]>(
+    plans,
+    [],
+    async (result, plan): Promise<readonly RoutedWire[]> => {
+      const current = withPriorLabels(context, result);
+      const occupiedSpace = [
+        ...occupied,
+        ...result.map((item): Box => item.labelBox),
+        ...result.flatMap((item): readonly Box[] => routeBoxes(item.points)),
+        ...saved.flatMap((item): readonly Box[] => routeBoxes(item.points)),
+      ];
+      const next = await labelled(
+        plan,
+        saved.find((item): boolean => item.id === plan.wire.id) ?? null,
+        occupiedSpace,
+        current,
+      );
+      return [...result, next];
+    },
+  );
+}
+/** Accepted labels become real routing obstacles for subsequent connections. */
+function withPriorLabels(context: WireContext, wires: readonly RoutedWire[]): WireContext {
+  const labels = wires.map((wire): Obstacle => ({ id: `label:${wire.id}`, box: wire.labelBox }));
+  return { ...context, obstacles: [...context.obstacles, ...labels] };
+}
+/** Exact segment footprints let labelGap protect both sides equally; a positive one-sided box biases labels away from right/bottom. */
+function routeBoxes(points: readonly Point[]): readonly Box[] {
+  return segments(points).map((segment): Box => ({
+    x: Math.min(segment.a.x, segment.b.x),
+    y: Math.min(segment.a.y, segment.b.y),
+    width: Math.abs(segment.a.x - segment.b.x),
+    height: Math.abs(segment.a.y - segment.b.y),
+  }));
 }
 /** Final rounded paths account for all label rectangles, including ones added later in source order. */
 function finalPaths(
@@ -190,10 +216,10 @@ function finalPaths(
   context: WireContext,
 ): readonly RoutedWire[] {
   const occupied = [
-    ...context.obstacles.map((item) => item.box),
-    ...wires.map((item) => item.labelBox),
+    ...context.obstacles.map((item): Box => item.box),
+    ...wires.map((item): Box => item.labelBox),
   ];
-  return wires.map((wire) =>
+  return wires.map((wire): RoutedWire =>
     finalPath(wire, section, occupied, context.placement.options.routeClearance / 2),
   );
 }
@@ -204,7 +230,7 @@ function finalPath(
   occupied: readonly Box[],
   radius: number,
 ): RoutedWire {
-  const source = section.wires.find((item) => item.id === wire.id);
+  const source = section.wires.find((item): boolean => item.id === wire.id);
   if (source?.route.route !== 'curve') return wire;
   return { ...wire, path: curvePath(wire.points, radius, occupied) };
 }
@@ -214,11 +240,11 @@ function parallel(section: VisualSection, index: number): number {
   return section.wires
     .slice(0, index)
     .filter(
-      (item) =>
+      (item): boolean =>
         item.source.node === current?.source.node && item.target.node === current?.target.node,
     ).length;
 }
-/** Arrange no boxes: route fixed section nodes, retaining valid manual geometry and reserving every label. */
+/** Route fixed nodes and retain manual geometry. Public Layout arrange/route execute catches structured faults; Authoring retains the scene and draft on failure. */
 export async function routeWires(
   section: VisualSection,
   nodes: readonly PlacedNode[],
@@ -226,19 +252,15 @@ export async function routeWires(
   placement: RoutingContext,
 ): Promise<readonly RoutedWire[]> {
   const context: WireContext = { metrics, placement, obstacles: obstacles(nodes) };
-  const plans = section.wires.map((item, index) =>
+  const plans = section.wires.map((item, index): RoutePlan =>
     plan(item, nodes, metrics, placement, parallel(section, index)),
   );
-  const saved = plans.flatMap((item) => manual(item, context.obstacles, metrics) ?? []);
-  const automatic = plans.filter((item) => !saved.some((route) => route.id === item.wire.id));
-  const routed = await routeNative(
-    automatic.map((item) => item.connection),
-    context.obstacles,
-    placement,
+  const saved = plans.flatMap(
+    (item): RouteValue | readonly RouteValue[] => manual(item, context.obstacles, metrics) ?? [],
   );
   const labelled = await labelAll(
     plans,
-    [...saved, ...routed],
+    saved,
     [...contentBoxes(nodes), ...reserved(plans, context)],
     context,
   );

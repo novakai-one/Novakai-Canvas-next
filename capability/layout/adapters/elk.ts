@@ -13,6 +13,7 @@ import type { Result } from '../contract/errors.js';
 export interface NativePlacement {
   layout(graph: ElkNode): Promise<ElkNode>;
 }
+/** Creates one isolated native engine per place invocation; the host owns worker lifetime and cancellation. */
 export type PlacementFactory = () => NativePlacement;
 const directions = { right: 'RIGHT', down: 'DOWN', left: 'LEFT', up: 'UP' };
 const algorithms = { layered: 'layered', tree: 'layered' };

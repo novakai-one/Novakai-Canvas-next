@@ -10,6 +10,7 @@ import {
   request,
   value,
   flow,
+  rejected,
 } from './fixtures.js';
 import { node, dependencies, settings, metrics } from './fixtures.js';
 import { createLayout, toCollection, toSection, toParent } from '../contract/index.js';
@@ -19,6 +20,9 @@ import type {
   PlacementValue,
   Projection,
   Scene,
+  SolverProblem,
+  Box,
+  SupplementalMeasurements,
 } from '../contract/index.js';
 describe('Layout arrangement acceptance', () => {
   it('1 — lays out mixed section policies deterministically with complete labelled wires', async () => {
@@ -255,10 +259,11 @@ describe('Layout arrangement acceptance', () => {
       first.sections.map((item) => item.inputKey),
     );
   });
-  it('6 — renders ordered sequence messages, nested fragments, measured branches and activations', async () => {
-    const source = sequenceProjection();
+  it('6 — renders ordered sequence messages, nested fragments, measured branches and activations', async (): Promise<void> => {
+    const source = sequenceProjection('compact');
     const layout = await harness([source]);
     const scene = value(await layout.arrange(request(layout, source)));
+    await checkSequenceSpacing(source, scene);
     const sequence = scene.sections[0]?.sequence;
     assert(sequence);
     expect(sequence.events.map((item) => item.id)).toEqual([
@@ -290,7 +295,8 @@ describe('Layout arrangement acceptance', () => {
       ...wideInput.measurements,
       branchHeadings: wideInput.measurements.branchHeadings.map((item) => ({
         ...item,
-        content: item.branch === 'yes' ? { ...item.content, width: 900 } : item.content,
+        content:
+          item.branch === 'yes' ? { ...item.content, width: 900, height: 160 } : item.content,
       })),
     };
     const wideScene = value(
@@ -310,6 +316,17 @@ describe('Layout arrangement acceptance', () => {
         },
       }),
     );
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: wideMeasurements,
+          options: wideInput.options,
+          candidate: wideScene,
+        }),
+      ).valid,
+    ).toBe(true);
+    assertSequenceMeasurements(source, wideScene);
     const wideSequence = wideScene.sections[0]?.sequence;
     const parent = wideSequence?.fragments.find((item) => item.id === 'alternatives');
     assert(parent && wideSequence);
@@ -366,6 +383,7 @@ it('keeps measured flow spacing independent across directions and nested scopes'
   for (const direction of directions) await checkDirectionalSpacing(direction);
   await checkNestedSpacing();
   await checkTreeSeed();
+  await checkTreeAcceptance();
 });
 
 /** Real ELK output for unequal boxes must preserve the measured flow reservation without inflating siblings. */
@@ -394,7 +412,7 @@ async function checkDirectionalSpacing(direction: LayoutIntent['direction']): Pr
   const second = placed.find((item) => item.id === problem.nodes[1]?.id);
   const third = placed.find((item) => item.id === problem.nodes[2]?.id);
   assert(first && second && third);
-  expect(problem.spacing).toBe(settings.gap.compact);
+  expect(problem.spacing).toBe(expectedCrossSpacing(source));
   expect(problem.layerSpacing).toBe(expectedLayerSpacing(source, direction));
   expect(mainClearance(first.box, second.box, direction)).toBeGreaterThanOrEqual(
     problem.layerSpacing - 0.000001,
@@ -423,54 +441,29 @@ async function checkNestedSpacing(): Promise<void> {
   const scopes = captured.filter((item) => item.edges.length === 1);
   expect(scopes.map((item) => item.direction).toSorted()).toEqual(['down', 'right']);
   scopes.forEach((problem) => {
-    expect(problem.spacing).toBe(settings.gap.compact);
+    expect(problem.spacing).toBe(
+      expectedCrossSpacing(
+        source,
+        problem.edges.map((edge) => edge.id),
+      ),
+    );
     expect(problem.layerSpacing).toBe(expectedLayerSpacing(source, problem.direction));
   });
 }
 
 /** Tree seeds retain validated parent topology while annotation references stay out of native ranking. */
 async function checkTreeSeed(): Promise<void> {
-  const source = project(
-    collection({
-      objects: [object('root', 'concept'), object('child', 'concept'), object('note', 'note')],
-      relationships: [
-        edge('parent', 'root', 'child', { kind: 'parent' }),
-        edge('annotation', 'root', 'note', { kind: 'reference' }),
-      ],
-      sections: [
-        section('tree', [], {
-          mode: 'tree',
-          root: 'root',
-          layout: { algorithm: 'tree', direction: 'down', gap: 'compact' },
-          appearances: [
-            { object: 'root' },
-            { object: 'child' },
-            { object: 'note', participation: 'annotation' },
-          ],
-          wires: [{ relationship: 'parent' }, { relationship: 'annotation' }],
-        }),
-      ],
-    }),
-  );
-  const captured: PlacementProblem[] = [];
-  const native = await dependencies([source]);
-  const layout = createLayout({
-    ...native,
-    placement: {
-      ...native.placement,
-      async place(problem) {
-        captured.push(problem);
-        return native.placement.place(problem);
-      },
-    },
-  });
-  const result = await layout.arrange(request(layout, source));
-  assert(!result.ok);
-  expect(result.error).toMatchObject({ code: 'engine-failed', path: 'routing' });
-  const problem = captured.find((item) => item.algorithm === 'tree');
+  const source = treeProjection('Annotation\nwith context\nand provenance');
+  const { problems } = await captureSeeds(source);
+  const problem = problems.find((item) => item.algorithm === 'tree');
   assert(problem);
-  expect(problem.edges).toHaveLength(1);
-  expect(problem.layerSpacing).toBe(expectedLayerSpacing(source, 'down'));
+  const parent = source.sections[0]?.wires.find((wire) => wire.relationshipId === 'parent');
+  assert(parent);
+  expect(problem.edges).toEqual([
+    { id: parent.id, source: parent.source.node, target: parent.target.node },
+  ]);
+  expect(problem.spacing).toBe(expectedCrossSpacing(source));
+  expect(problem.layerSpacing).toBe(expectedWireSpacing(source, 'down'));
 }
 
 /** Projection labels deliberately have unequal flow extents so width/height swaps cannot pass. */
@@ -502,7 +495,7 @@ function nestedSpacingProjection(): Projection {
     collection({
       objects: [object('a'), object('b'), object('c')],
       relationships: [
-        edge('inner-edge', 'a', 'b', { label: 'Inner vertical label' }),
+        edge('inner-edge', 'a', 'b', { kind: 'reference', label: 'Inner vertical label' }),
         edge('outer-edge', 'b', 'c', { label: 'Outer horizontal reservation label' }),
       ],
       sections: [
@@ -693,14 +686,14 @@ function twoSections(revision: number, label: string): Projection {
   );
 }
 /** Nested sequence fixture includes all required message forms and branch-owned headings. */
-function sequenceProjection(): Projection {
+function sequenceProjection(gap: LayoutIntent['gap'] = 'normal'): Projection {
   return project(
     collection({
       objects: [object('client', 'participant'), object('server', 'participant')],
       sections: [
         section('sequence', ['client', 'server'], {
           mode: 'sequence',
-          layout: { algorithm: 'sequence', direction: 'right' },
+          layout: { algorithm: 'sequence', direction: 'right', gap },
           sequence: [
             {
               id: 'call',
@@ -781,6 +774,105 @@ function sequenceProjection(): Projection {
   );
 }
 
+/** The same measured content must fit every semantic gap; native engines and public inspection stay authoritative. */
+async function checkSequenceSpacing(compact: Projection, compactScene: Scene): Promise<void> {
+  const normal = sequenceProjection('normal');
+  const roomy = sequenceProjection('roomy');
+  const sources = [compact, normal, roomy];
+  const layout = await harness(sources);
+  const scenes = [compactScene];
+  for (const source of [normal, roomy])
+    scenes.push(value(await layout.arrange(request(layout, source))));
+  expect(scenes[0]?.bounds.height).toBeLessThan(scenes[1]?.bounds.height ?? 0);
+  expect(scenes[1]?.bounds.height).toBeLessThan(scenes[2]?.bounds.height ?? 0);
+  sources.forEach((source, index): void => {
+    const scene = scenes[index];
+    assert(scene);
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: metrics(source),
+          options: settings,
+          candidate: scene,
+        }),
+      ).valid,
+    ).toBe(true);
+    assertSequenceMeasurements(source, scene);
+    expect(scene.sections[0]?.sequence.events.map((event): string => event.id)).toEqual(
+      compactScene.sections[0]?.sequence.events.map((event): string => event.id),
+    );
+    expect(
+      scene.sections[0]?.sequence.activations.map((item): readonly unknown[] => [
+        item.participant,
+        item.fromEvent,
+        item.toEvent,
+      ]),
+    ).toEqual(
+      compactScene.sections[0]?.sequence.activations.map((item): readonly unknown[] => [
+        item.participant,
+        item.fromEvent,
+        item.toEvent,
+      ]),
+    );
+  });
+}
+
+/** Independent box assertions catch clipping even when inspection regenerates the same sequence policy. */
+function assertSequenceMeasurements(source: Projection, scene: Scene): void {
+  const view = scene.sections[0];
+  const section = source.sections[0];
+  assert(view && section);
+  const sequence = view.sequence;
+  const participants = view.nodes.filter((item): boolean => item.measured.kind === 'participant');
+  expect(sequence.lifelines.map((item): string => item.participant)).toEqual(
+    participants.map((item): string => item.id),
+  );
+  expect(participants.map((item): string => item.id)).toEqual(
+    section.nodes
+      .filter((item): boolean => item.kind === 'participant')
+      .map((item): string => item.id),
+  );
+  const gap = (settings.sequenceGap * settings.gap[section.layout.gap]) / settings.gap.normal;
+  const first = sequence.events[0];
+  assert(first);
+  expect(
+    first.labelBox.y -
+      Math.max(...participants.map((item): number => item.box.y + item.box.height)),
+  ).toBeCloseTo(gap);
+  sequence.events.forEach((event, index): void => {
+    const measured = section.sequence.find((item): boolean => item.item.id === event.id);
+    assert(measured);
+    expect(event.content).toEqual(measured.label);
+    expect(event.labelBox.width).toBe(measured.label.width);
+    expect(event.labelBox.height).toBe(measured.label.height);
+    expect(event.points[0]?.y).toBeCloseTo(
+      event.labelBox.y + measured.label.height + settings.labelGap,
+    );
+    assertSequenceOrder(sequence.events[index - 1], event);
+  });
+  sequence.fragments.forEach((frame): void => {
+    expect(contained(frame.box, frame.labelBox)).toBe(true);
+    expect(frame.labelBox.height).toBe(frame.content.height);
+    frame.branches.forEach((branch): void => {
+      expect(contained(frame.box, branch.box)).toBe(true);
+      expect(contained(branch.box, branch.labelBox)).toBe(true);
+      expect(branch.labelBox.height).toBe(branch.content.height);
+    });
+  });
+}
+
+/** Adjacent events retain complete paths below their labels and above the next measured band. */
+function assertSequenceOrder(
+  previous: Scene['sections'][number]['sequence']['events'][number] | undefined,
+  event: Scene['sections'][number]['sequence']['events'][number],
+): void {
+  if (previous === undefined) return;
+  expect(event.labelBox.y).toBeGreaterThan(
+    Math.max(...previous.points.map((point): number => point.y)),
+  );
+}
+
 /** A1 counterexample: activation starts in one alternative while an unrelated sibling deactivation follows visually. */
 function isolatedAlternatives(): Projection {
   return project(
@@ -843,6 +935,7 @@ it('explicit horizontal tracks override automatic history in every direction and
 function columnsProjection(
   columns: number | undefined,
   direction: LayoutIntent['direction'],
+  labelled = false,
 ): Projection {
   const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
   return project(
@@ -853,10 +946,24 @@ function columnsProjection(
           content: [{ id: 'text', kind: 'text', text: 'Line\n'.repeat(index + 1) }],
         }),
       ),
+      relationships: labelled
+        ? [
+            edge('ab', 'a', 'b', {
+              kind: 'reference',
+              label: 'Measured grid reservation with unequal axes',
+            }),
+          ]
+        : [],
       sections: [
         section('cards', ids, {
           mode: 'grid',
-          layout: { algorithm: 'grid', direction, ...optionalColumns(columns) },
+          layout: {
+            algorithm: 'grid',
+            direction,
+            gap: gridGap(labelled),
+            ...optionalColumns(columns),
+          },
+          wires: labelled ? [{ relationship: 'ab' }] : [],
         }),
       ],
     }),
@@ -887,6 +994,7 @@ function assertTracks(
 }
 /** Every derivation uses explicit columns, including a second replay with unchanged intent and a previous scene. */
 async function checkColumnsDirection(direction: LayoutIntent['direction']): Promise<void> {
+  await checkLabelledGrid(direction);
   const before = columnsProjection(undefined, direction);
   const variants = [1, 2, 3, 12].map((columns): Projection =>
     columnsProjection(columns, direction),
@@ -987,6 +1095,18 @@ async function checkScopedColumns(): Promise<void> {
   const freeLayout = await harness([freeBefore, freeAfter]);
   const freePrevious = value(await freeLayout.arrange(request(freeLayout, freeBefore)));
   const freeScene = value(await freeLayout.arrange(request(freeLayout, freeAfter, freePrevious)));
+  assertTrackGaps(
+    freeScene.sections.map((section) => section.box),
+    'x',
+    false,
+    settings.gap.normal,
+  );
+  assertTrackGaps(
+    freeScene.sections.map((section) => section.box),
+    'y',
+    false,
+    settings.gap.normal,
+  );
   assertTracks(
     freeScene.sections.map((section): typeof section.box => section.box),
     2,
@@ -1048,4 +1168,272 @@ function assertMembership(
     const previousEnd = Math.max(...(tracks[index] ?? []).map((box) => box[axis] + box[size]));
     expect(Math.min(...track.map((box) => box[axis]))).toBeGreaterThan(previousEnd);
   });
+}
+
+/** Capture genuine native/grid seeds at the owned solver boundary, then deliberately stop before routing. */
+async function captureSeeds(
+  source: Projection,
+  measurements = metrics(source),
+): Promise<{
+  readonly problems: readonly PlacementProblem[];
+  readonly boxes: ReadonlyMap<string, Box>;
+}> {
+  const problems: PlacementProblem[] = [];
+  const captured: SolverProblem[] = [];
+  const native = await dependencies([source]);
+  const stop = rejected<never>('Seed-only boundary capture; routing acceptance is a separate gate');
+  const layout = createLayout({
+    ...native,
+    placement: {
+      ...native.placement,
+      async place(problem) {
+        problems.push(problem);
+        const placed = value(await native.placement.place(problem));
+        return { ok: true, value: placed };
+      },
+    },
+    solver: {
+      ...native.solver,
+      solve(problem) {
+        captured.push(problem);
+        return stop;
+      },
+    },
+    routing: {
+      ...native.routing,
+      async route() {
+        throw new Error('Seed-only test must not invoke routing');
+      },
+    },
+  });
+  const { job, ...seedInput } = request(layout, source);
+  const input = { ...seedInput, measurements };
+  expect(
+    await layout.arrange({ ...input, job: { ...job, inputKey: value(layout.key(input)) } }),
+  ).toEqual(stop);
+  expect(captured).toHaveLength(1);
+  const variables = captured[0]?.variables ?? [];
+  const field = (id: string, name: string): number => {
+    const found = variables.find((item) => item.id === `${id}.${name}`);
+    assert(found);
+    return found.initial;
+  };
+  const boxes = new Map(
+    (source.sections[0]?.nodes ?? []).map((node) => [
+      node.id,
+      {
+        x: field(node.id, 'x'),
+        y: field(node.id, 'y'),
+        width: field(node.id, 'width'),
+        height: field(node.id, 'height'),
+      },
+    ]),
+  );
+  return { problems, boxes };
+}
+/** Cross-axis checkpoint plus adjacent obstacle clearance, independently of label length. */
+function expectedCrossSpacing(
+  source: Projection,
+  wireIds: readonly string[] = source.sections.flatMap((section) =>
+    section.wires.map((wire) => wire.id),
+  ),
+): number {
+  const advances = source.sections.flatMap((section) =>
+    section.wires
+      .filter((wire) => wireIds.includes(wire.id))
+      .flatMap((wire) => [
+        metrics(source).markers[wire.sourceMarker].advance,
+        metrics(source).markers[wire.targetMarker].advance,
+      ]),
+  );
+  return Math.max(settings.gap.compact, settings.routeClearance * 3 + Math.max(...advances));
+}
+/** Every local wire reserves its measured flow extent, including references omitted from tree ranking. */
+function expectedWireSpacing(source: Projection, direction: LayoutIntent['direction']): number {
+  return Math.max(
+    ...(source.sections[0]?.wires ?? []).map((wire) => {
+      const label =
+        direction === 'right' || direction === 'left' ? wire.label.width : wire.label.height;
+      return (
+        metrics(source).markers[wire.sourceMarker].advance +
+        metrics(source).markers[wire.targetMarker].advance +
+        settings.routeClearance * 4 +
+        label +
+        settings.labelGap * 2
+      );
+    }),
+  );
+}
+/** Unequal measured boxes and labelled edges make swapping/equalizing either axis observable in all directions. */
+async function checkLabelledGrid(direction: LayoutIntent['direction']): Promise<void> {
+  const source = columnsProjection(2, direction, true);
+  const { boxes } = await captureSeeds(source);
+  assertTracks([...boxes.values()], 2, direction);
+  const flow = expectedWireSpacing(source, direction);
+  const cross = expectedCrossSpacing(source);
+  expect(flow).toBeGreaterThan(cross);
+  const horizontal = direction === 'right' || direction === 'left';
+  assertTrackGaps([...boxes.values()], 'x', direction === 'left', horizontal ? flow : cross);
+  assertTrackGaps([...boxes.values()], 'y', direction === 'up', horizontal ? cross : flow);
+}
+/** Adjacent track envelopes, including unequal trailing edges, expose the actual reserved boundary gap. */
+function assertTrackGaps(
+  boxes: readonly Box[],
+  axis: 'x' | 'y',
+  reverse: boolean,
+  expected: number,
+): void {
+  const size = axis === 'x' ? 'width' : 'height';
+  const tracks = new Map<number, Box[]>();
+  boxes.forEach((box) => {
+    const anchor = reverse ? box[axis] + box[size] : box[axis];
+    tracks.set(anchor, [...(tracks.get(anchor) ?? []), box]);
+  });
+  const envelopes = [...tracks.values()]
+    .map((members) => ({
+      start: Math.min(...members.map((box) => box[axis])),
+      end: Math.max(...members.map((box) => box[axis] + box[size])),
+    }))
+    .toSorted((a, b) => a.start - b.start);
+  envelopes
+    .slice(1)
+    .forEach((track, index) =>
+      expect(track.start - (envelopes[index]?.end ?? NaN)).toBeCloseTo(expected),
+    );
+}
+
+/** ER's 23-unit marker is longer than the old 24−12 corridor; native and grid seeds must both accommodate it. */
+it('reserves measured ER marker approaches independently of label length in native and grid scopes', async (): Promise<void> => {
+  const directions: readonly LayoutIntent['direction'][] = ['right', 'left', 'down', 'up'];
+  for (const direction of directions) await checkErCorridors(direction);
+});
+/** Two label sizes keep cross-axis clearance invariant while exercising the actual measured marker bound. */
+async function checkErCorridors(direction: LayoutIntent['direction']): Promise<void> {
+  await checkErSeed(direction, 'layered', 'relates');
+  await checkErSeed(direction, 'layered', 'A considerably longer relationship label');
+  await checkErSeed(direction, 'grid', 'relates');
+  await checkErSeed(direction, 'grid', 'A considerably longer relationship label');
+}
+/** The diamond supplies real siblings; measured track envelopes supply the grid oracle. */
+async function checkErSeed(
+  direction: LayoutIntent['direction'],
+  algorithm: 'grid' | 'layered',
+  label: string,
+): Promise<void> {
+  const source = erCorridorProjection(direction, algorithm, label);
+  const measured: SupplementalMeasurements = {
+    ...metrics(source),
+    markers: { ...metrics(source).markers, 'zero-many': { advance: 23, halfHeight: 7 } },
+  };
+  const { problems, boxes } = await captureSeeds(source, measured);
+  const floor = settings.routeClearance * 3 + measured.markers['zero-many'].advance;
+  expect(floor).toBe(59);
+  if (algorithm === 'grid') return assertErGrid(boxes, direction, floor);
+  expect(problems[0]?.spacing).toBe(floor);
+  const siblings =
+    source.sections[0]?.nodes.filter((node) => ['b', 'c'].includes(node.objectId ?? '')) ?? [];
+  const first = boxes.get(siblings[0]?.id ?? '');
+  const second = boxes.get(siblings[1]?.id ?? '');
+  assert(first && second);
+  expect(crossClearance(first, second, direction)).toBeGreaterThanOrEqual(floor - 0.000001);
+}
+/** Cross tracks must leave checkpoint 2c+a plus the adjacent node's c-wide clearance region. */
+function assertErGrid(
+  boxes: ReadonlyMap<string, Box>,
+  direction: LayoutIntent['direction'],
+  floor: number,
+): void {
+  const axis = direction === 'right' || direction === 'left' ? 'y' : 'x';
+  assertTrackGaps([...boxes.values()], axis, false, floor);
+}
+/** Model-valid associations use measured entity boxes, semantic cardinalities and no authored coordinates. */
+function erCorridorProjection(
+  direction: LayoutIntent['direction'],
+  algorithm: 'grid' | 'layered',
+  label: string,
+): Projection {
+  const ids = ['a', 'b', 'c', 'd'];
+  const relations = [
+    ['ab', 'a', 'b'],
+    ['ac', 'a', 'c'],
+    ['bd', 'b', 'd'],
+    ['cd', 'c', 'd'],
+  ];
+  return project(
+    collection({
+      objects: ids.map((id) =>
+        object(id, 'entity', {
+          content: [{ kind: 'field', id: 'id', label: 'id', type: 'Id', key: 'primary' }],
+        }),
+      ),
+      relationships: relations.map(([id = '', source = '', target = '']) =>
+        edge(id, source, target, { kind: 'association', from: '1', to: '0..many', label }),
+      ),
+      sections: [
+        section('er-corridor', ids, {
+          mode: 'er',
+          layout: {
+            algorithm,
+            direction,
+            gap: 'compact',
+            ...(algorithm === 'grid' ? { columns: 2 } : {}),
+          },
+          wires: relations.map(([relationship]) => ({ relationship })),
+        }),
+      ],
+    }),
+  );
+}
+
+/** Preserve existing wire-free history fixtures' normal semantic spacing. */
+function gridGap(labelled: boolean): 'compact' | 'normal' {
+  return labelled ? 'compact' : 'normal';
+}
+
+/** Same original Model-valid tree; varying the annotation label tests reservation without changing parent topology. */
+function treeProjection(annotation: string): Projection {
+  return project(
+    collection({
+      objects: [object('root', 'concept'), object('child', 'concept'), object('note', 'note')],
+      relationships: [
+        edge('parent', 'root', 'child', { kind: 'parent' }),
+        edge('annotation', 'root', 'note', {
+          kind: 'reference',
+          label: annotation,
+        }),
+      ],
+      sections: [
+        section('tree', [], {
+          mode: 'tree',
+          root: 'root',
+          layout: { algorithm: 'tree', direction: 'down', gap: 'compact' },
+          appearances: [
+            { object: 'root' },
+            { object: 'child' },
+            { object: 'note', participation: 'annotation' },
+          ],
+          wires: [{ relationship: 'parent' }, { relationship: 'annotation' }],
+        }),
+      ],
+    }),
+  );
+}
+/** Route acceptance requires real native success and independent inspection, separately from the seed-only capture. */
+async function checkTreeAcceptance(): Promise<void> {
+  const source = treeProjection('annotation');
+  const layout = await harness([source]);
+  const scene = value(await layout.arrange(request(layout, source)));
+  expect(scene.sections[0]?.wires.map((wire) => wire.id).toSorted()).toEqual(
+    source.sections[0]?.wires.map((wire) => wire.id).toSorted(),
+  );
+  expect(
+    value(
+      layout.inspect({
+        projection: source,
+        measurements: metrics(source),
+        options: settings,
+        candidate: scene,
+      }),
+    ).valid,
+  ).toBe(true);
 }

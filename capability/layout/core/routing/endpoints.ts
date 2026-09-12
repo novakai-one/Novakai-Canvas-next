@@ -1,6 +1,14 @@
-import type { PlacedNode, Point, ResolvedEndpoint, Side } from '../../contract/records/geometry.js';
+/** Public Layout arrange/route/inspect catches structured endpoint faults; Authoring retains the scene and owns correction. */
+import type {
+  PlacedNode,
+  Point,
+  ResolvedEndpoint,
+  Side,
+  Box,
+} from '../../contract/records/geometry.js';
 import type { VisualWire } from '../../contract/records/input.js';
 import { center } from '../geometry/bounds.js';
+import { contentBoxes } from './obstacles.js';
 import { reject } from '../validation/outcomes.js';
 export interface Attachments {
   readonly source: ResolvedEndpoint;
@@ -8,7 +16,7 @@ export interface Attachments {
 }
 /** Resolve the physical visible node; callers never substitute an absent member/object. */
 export function visible(id: string, nodes: readonly PlacedNode[]): PlacedNode {
-  const found = nodes.find((node) => node.id === id);
+  const found = nodes.find((node): boolean => node.id === id);
   if (!found) return reject('invalid-input', id, 'Wire attachment node is not visible');
   return found;
 }
@@ -21,11 +29,13 @@ function facing(source: PlacedNode, target: PlacedNode): Side {
 }
 /** Positive horizontal separation exits on the right; ties use the same stable side. */
 function horizontalSide(from: number, to: number): Side {
-  return to >= from ? 'right' : 'left';
+  if (to >= from) return 'right';
+  return 'left';
 }
 /** Positive vertical separation exits below the source. */
 function verticalSide(from: number, to: number): Side {
-  return to >= from ? 'bottom' : 'top';
+  if (to >= from) return 'bottom';
+  return 'top';
 }
 /** Named sides are hard intent; row members default to a lateral attachment at the measured row. */
 function chooseSide(
@@ -40,7 +50,7 @@ function chooseSide(
 /** A table/interface member must connect at its row height, not the centre of the object. */
 function automaticSide(member: string | null, source: PlacedNode, target: PlacedNode): Side {
   if (member === null) return facing(source, target);
-  return center(target.box).x >= center(source.box).x ? 'right' : 'left';
+  return horizontalSide(center(source.box).x, center(target.box).x);
 }
 /** Orthogonal attachment points lie on the chosen box edge. */
 function edge(node: PlacedNode, side: Side): Point {
@@ -66,7 +76,7 @@ function memberPoint(node: PlacedNode, member: string, side: Side): Point {
       node.id,
       member,
     ]);
-  const anchor = node.measured.content.anchors.find((item) => item.member === member);
+  const anchor = node.measured.content.anchors.find((item): boolean => item.member === member);
   if (!anchor)
     return reject('invalid-input', member, 'Measured member anchor is missing', [node.id, member]);
   return { ...edge(node, side), y: node.box.y + anchor.y };
@@ -100,7 +110,7 @@ function selfTarget(wire: VisualWire, source: PlacedNode, target: PlacedNode): S
     return 'bottom';
   return chooseSide(wire.route.targetSide, wire.target.member, target, source);
 }
-/** Native checkpoints enforce departure/arrival direction despite the wrapper lacking directed ConnEnd constructors. */
+/** Exact outward points define marker stubs; the native adapter routes their free corridor without a directed ConnEnd constructor. */
 export function approach(endpoint: ResolvedEndpoint, distance: number): Point {
   const vectors = {
     top: { x: 0, y: -1 },
@@ -110,4 +120,61 @@ export function approach(endpoint: ResolvedEndpoint, distance: number): Point {
   };
   const vector = vectors[endpoint.side];
   return { x: endpoint.point.x + vector.x * distance, y: endpoint.point.y + vector.y * distance };
+}
+
+/** The first fixed obstacle on the outward ray limits optional routing clearance, never marker length. */
+export function departureSpace(endpoint: ResolvedEndpoint, nodes: readonly PlacedNode[]): number {
+  const boxes = contentBoxes(nodes.filter((node): boolean => node.id !== endpoint.node));
+  return Math.min(Infinity, ...boxes.map((box): number => obstacleDistance(endpoint, box)));
+}
+/** Normalize every named side to a positive ray; container headers use the same protected content geometry. */
+function obstacleDistance(endpoint: ResolvedEndpoint, box: Box): number {
+  const point = endpoint.point;
+  const rays = {
+    right: {
+      position: point.x,
+      near: box.x,
+      far: box.x + box.width,
+      across: point.y,
+      min: box.y,
+      max: box.y + box.height,
+    },
+    left: {
+      position: -point.x,
+      near: -box.x - box.width,
+      far: -box.x,
+      across: point.y,
+      min: box.y,
+      max: box.y + box.height,
+    },
+    bottom: {
+      position: point.y,
+      near: box.y,
+      far: box.y + box.height,
+      across: point.x,
+      min: box.x,
+      max: box.x + box.width,
+    },
+    top: {
+      position: -point.y,
+      near: -box.y - box.height,
+      far: -box.y,
+      across: point.x,
+      min: box.x,
+      max: box.x + box.width,
+    },
+  };
+  return distanceAlongRay(rays[endpoint.side]);
+}
+/** Obstacles behind the endpoint or outside its attachment axis do not constrain departure. */
+function distanceAlongRay(ray: {
+  readonly position: number;
+  readonly near: number;
+  readonly far: number;
+  readonly across: number;
+  readonly min: number;
+  readonly max: number;
+}): number {
+  if (ray.across <= ray.min || ray.across >= ray.max || ray.far <= ray.position) return Infinity;
+  return Math.max(0, ray.near - ray.position);
 }

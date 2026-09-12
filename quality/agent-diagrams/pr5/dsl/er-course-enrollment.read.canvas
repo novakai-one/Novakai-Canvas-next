@@ -1,0 +1,56 @@
+# er-course-enrollment revision=0
+canvas 1
+collection @er-course-enrollment "Course enrollment records" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" layout=grid {
+  node @student entity "Student" role=primary size=medium sources=[] {
+  field @campus "campus_id" type="CampusId"
+  field @number "student_no" type="StudentNo"
+  field @name "display_name" type="string"
+  keygroup @identity kind=primary fields=[@campus, @number]
+}
+  node @course entity "Course" role=supporting size=medium sources=[] {
+  field @school "school_code" type="SchoolCode"
+  field @code "course_code" type="CourseCode"
+  field @title "title" type="string"
+  keygroup @identity kind=primary fields=[@school, @code]
+}
+  node @offering entity "Course offering" role=neutral size=large sources=[] {
+  field @school "school_code" type="SchoolCode"
+  field @course "course_code" type="CourseCode"
+  field @term "term_code" type="TermCode"
+  keygroup @identity kind=primary fields=[@school, @course, @term]
+  keygroup @course-ref kind=foreign fields=[@school, @course] references=[@course.@school, @course.@code]
+}
+  node @enrollment entity "Enrollment" role=success size=large sources=[] {
+  field @campus "campus_id" type="CampusId"
+  field @student "student_no" type="StudentNo"
+  field @school "school_code" type="SchoolCode"
+  field @course "course_code" type="CourseCode"
+  field @term "term_code" type="TermCode"
+  field @status "status" type="EnrollmentStatus"
+  keygroup @identity kind=primary fields=[@campus, @student, @school, @course, @term]
+  keygroup @student-ref kind=foreign fields=[@campus, @student] references=[@student.@campus, @student.@number]
+  keygroup @offering-ref kind=foreign fields=[@school, @course, @term] references=[@offering.@school, @offering.@course, @offering.@term]
+}
+  node @assessment entity "Assessment result" role=warning size=small sources=[] {
+  field @id "result_id" type="ResultId" key=primary
+  field @grade "grade" type="Grade" nullable=true
+}
+  wire @offers @course.@code -> @offering.@course "scheduled as" kind=association from=1 to=0..many sources=[]
+  wire @student-enrolls @student.@number -> @enrollment.@student "registers through" kind=association from=1 to=0..many sources=[]
+  wire @offering-enrolls @offering.@term -> @enrollment.@term "accepts" kind=association from=1 to=0..many sources=[]
+  wire @earns @enrollment -> @assessment "may earn" kind=association from=1 to=0..1 sources=[]
+  section @enrollment-model "COURSE ENROLLMENT / Composite identities across terms" mode=er layout=layered gap=compact {
+  show @student
+  show @course
+  show @offering
+  show @enrollment
+  show @assessment
+  connect @offers
+  connect @student-enrolls
+  connect @offering-enrolls
+  connect @earns
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read er-course-enrollment
+(node:20872) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,47 @@
+# modules-sensor-gateway revision=0
+canvas 1
+collection @modules-sensor-gateway "Sensor gateway adapters" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" layout=grid {
+  node @gateway module "Sensor gateway" role=primary size=large sources=[] {
+  port @readings in "readings" type="AsyncIterable<RawReading>"
+  port @normalizer out "normalizer" type="ReadingNormalizer"
+  port @events out "events" type="TelemetrySink"
+}
+  node @normalizer interface "ReadingNormalizer" role=supporting size=medium sources=[] {
+  member @normalize "normalize" type="(RawReading, Calibration) => Result<Measurement, ReadingError>"
+}
+  node @normalize function "normalizeReading" role=neutral size=large sources=[] {
+  signature @call "normalizeReading" parameters=["reading: RawReading", "calibration: Calibration", "clock: Clock"] returns="Result<Measurement, ReadingError>"
+}
+  node @mqtt module "MQTT input adapter" role=neutral size=medium sources=[] {
+  port @packets in "packets" type="MqttPacket"
+  port @decoded out "decoded readings" type="AsyncIterable<RawReading>"
+}
+  node @serial module "Serial input adapter" role=neutral size=medium sources=[] {
+  port @frames in "frames" type="SerialFrame"
+  port @decoded out "decoded readings" type="AsyncIterable<RawReading>"
+}
+  node @sink interface "TelemetrySink" role=success size=small sources=[] {
+  member @append "append" type="(Measurement) => Promise<Ack>"
+}
+  wire @mqtt-feeds @mqtt.@decoded -> @gateway.@readings "streams decoded MQTT readings" kind=reference sources=[]
+  wire @serial-feeds @serial.@decoded -> @gateway.@readings "streams decoded serial readings" kind=reference sources=[]
+  wire @uses-normalizer @gateway.@normalizer -> @normalizer "imports normalization contract" kind=imports sources=[]
+  wire @implements-normalizer @normalize -> @normalizer.@normalize "implements normalize" kind=implements sources=[]
+  wire @emits @gateway.@events -> @sink "imports telemetry sink contract" kind=imports sources=[]
+  section @gateway-boundary "SENSOR GATEWAY / Two transports, one typed core" mode=modules layout=layered gap=compact {
+  show @mqtt
+  show @serial
+  show @gateway
+  show @normalizer
+  show @normalize
+  show @sink
+  connect @mqtt-feeds
+  connect @serial-feeds
+  connect @uses-normalizer
+  connect @implements-normalizer
+  connect @emits
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read modules-sensor-gateway
+(node:22771) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

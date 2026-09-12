@@ -1,6 +1,11 @@
 /** Layout failures never authorize partial geometry or semantic writes. */
 export type ErrorCode =
-  'invalid-input' | 'constraint-conflict' | 'engine-failed' | 'cancelled' | 'limit';
+  | 'candidate-infeasible'
+  | 'invalid-input'
+  | 'constraint-conflict'
+  | 'engine-failed'
+  | 'cancelled'
+  | 'limit';
 export interface Diagnostic {
   readonly code: ErrorCode;
   readonly path: string;

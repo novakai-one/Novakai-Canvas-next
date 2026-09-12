@@ -1,0 +1,410 @@
+[
+  {
+    "id": "er-course-enrollment",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/er-course-enrollment.canvas",
+    "sha256": "881710adc53fc1bcf206033bbf7a8f2f444e87ef3304938131c7c76392bae182",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 4,
+    "totalWireLength": 1305.8572064999998,
+    "maximumWireLength": 563.464295625,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1970.678626875,
+      "height": 775.142852
+    },
+    "request": "pr5-final-er-course-enrollment"
+  },
+  {
+    "id": "er-habitat-survey",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/er-habitat-survey.canvas",
+    "sha256": "0fdc85213f2551c997a75b8f6d6539a8c8b1c2e84f396bbe75367219bf3e0433",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 5,
+    "totalWireLength": 2418.428544,
+    "maximumWireLength": 606.3571360000001,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1225.5558259140626,
+      "height": 1338.2857040000001
+    },
+    "request": "pr5-final-er-habitat-survey"
+  },
+  {
+    "id": "er-museum-loans",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/er-museum-loans.canvas",
+    "sha256": "a1f7b9cb12cc7857e6318122cf1431f87cff1ce10163dc32221e4412c6973747",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 4,
+    "totalWireLength": 1305.24115396875,
+    "maximumWireLength": 402.3817114921875,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1493.620582984375,
+      "height": 694.57142
+    },
+    "request": "pr5-final-er-museum-loans"
+  },
+  {
+    "id": "flow-emergency-dispatch",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-emergency-dispatch.canvas",
+    "sha256": "581d40b840ee68850719a52f2a58e741a4818e52a1b4299a1eb80a03bfb7f92b",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 10,
+    "totalWireLength": 2507.858597994791,
+    "maximumWireLength": 667.8585979947916,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 864,
+      "height": 1689.4284960000002
+    },
+    "request": "pr5-final-flow-emergency-dispatch"
+  },
+  {
+    "id": "flow-equipment-return",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-equipment-return.canvas",
+    "sha256": "599c9d5bec46870a4ae2cd53fd9b88fad86f172979d66965fb544ffbc0838d13",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 6,
+    "totalWireLength": 2141.7590215312493,
+    "maximumWireLength": 1065.8169729218748,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 2394.1250756874997,
+      "height": 388.71427200000005
+    },
+    "request": "pr5-final-flow-equipment-return"
+  },
+  {
+    "id": "flow-research-approval",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-research-approval.canvas",
+    "sha256": "af592f33a2929fd814d8db41efa5ced36b5f7dd17c1a84e7649900e971e489ef",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 10,
+    "totalWireLength": 5810.16605676302,
+    "maximumWireLength": 2767.9686724999997,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 3101.1115425,
+      "height": 495.0952226666667
+    },
+    "request": "pr5-final-flow-research-approval"
+  },
+  {
+    "id": "grid-archive-comparison",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-archive-comparison.canvas",
+    "sha256": "335473f3f7dfb00f9a42a0638f642a24db8caee67b73a0e506f4a553ea04d0e6",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1176,
+      "height": 709.714248
+    },
+    "request": "pr5-final-grid-archive-comparison"
+  },
+  {
+    "id": "grid-feedback-methods",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-feedback-methods.canvas",
+    "sha256": "adc5c8bc82ed23ca4a4a4218eee18efb93ce3b7fc0e6ace69a1b68f107d59047",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 760,
+      "height": 855.9999520000001
+    },
+    "request": "pr5-final-grid-feedback-methods"
+  },
+  {
+    "id": "grid-research-methods",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/grid-research-methods.canvas",
+    "sha256": "a4078793ae3ec0a1659e9471584730d2622421c94ab67b4e96d47fcc6b27944b",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1344,
+      "height": 1239.9999520000001
+    },
+    "request": "pr5-final-grid-research-methods"
+  },
+  {
+    "id": "modules-document-publishing",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-document-publishing.canvas",
+    "sha256": "5dc72dc3b9dcd431926e645ab9ef7d9116c2528fe8b87a92d8aa0a86669d5d54",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 4,
+    "totalWireLength": 1582.52691846875,
+    "maximumWireLength": 445.0364919505208,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1326.6745906171875,
+      "height": 749.14284
+    },
+    "request": "pr5-final-modules-document-publishing"
+  },
+  {
+    "id": "modules-payroll-policy",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-payroll-policy.canvas",
+    "sha256": "d05d42c6498b3a5c579be5ba1b5cd6f43f9fde022fd0b1c0984b491fd59ecb0b",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 9,
+    "totalWireLength": 8857.239663132812,
+    "maximumWireLength": 1903.2888021171877,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1287.9781729296876,
+      "height": 1697.714224
+    },
+    "request": "pr5-final-modules-payroll-policy"
+  },
+  {
+    "id": "modules-sensor-gateway",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/modules-sensor-gateway.canvas",
+    "sha256": "98bc4b77955bd58bea3f4bfb3dac2d6c61e8cb7a3f2a8490b02be3704550691b",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 5,
+    "totalWireLength": 2250.707289375,
+    "maximumWireLength": 575.078593875,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1719.52864375,
+      "height": 562.57142
+    },
+    "request": "pr5-final-modules-sensor-gateway"
+  },
+  {
+    "id": "sequence-incident-notification",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-incident-notification.canvas",
+    "sha256": "e1cb2192157d006f8364ae7778ca551fa3c14b3e9d2619e77aa8d5d09e9cbcb6",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1536,
+      "height": 2017.0000479999997
+    },
+    "request": "pr5-final-sequence-incident-notification"
+  },
+  {
+    "id": "sequence-library-reservation",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-library-reservation.canvas",
+    "sha256": "68ddd5893311c565ddcef14fa440f367858158d2ad31ecd0e71cb41415d74200",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1604,
+      "height": 1735.8571839999997
+    },
+    "request": "pr5-final-sequence-library-reservation"
+  },
+  {
+    "id": "sequence-payment-settlement",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-payment-settlement.canvas",
+    "sha256": "112027848dbe3d9440425a1faf097d89efc12b09c270459d01e92c2654ba38ad",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1664.102616140625,
+      "height": 1454.7143199999998
+    },
+    "request": "pr5-final-sequence-payment-settlement"
+  },
+  {
+    "id": "state-batch-job",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/state-batch-job.canvas",
+    "sha256": "d541220f16a4d9c2fcf4bea675c85ef68482b008b720f952eb71fd1c83f266bf",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 10,
+    "totalWireLength": 4831.751122450521,
+    "maximumWireLength": 974.1712088697916,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 2054.9711003046878,
+      "height": 521.14284
+    },
+    "request": "pr5-final-state-batch-job"
+  },
+  {
+    "id": "state-exhibition-lifecycle",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/state-exhibition-lifecycle.canvas",
+    "sha256": "67cbbe9e4828236b55751aa219019628c50a52df8f65d683d8ccc34cfe353729",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 8,
+    "totalWireLength": 2757.5181490625,
+    "maximumWireLength": 424.08262063281256,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 2701.47337053125,
+      "height": 411.428562
+    },
+    "request": "pr5-final-state-exhibition-lifecycle"
+  },
+  {
+    "id": "state-membership-reinstatement",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/state-membership-reinstatement.canvas",
+    "sha256": "2df618860bc17a7936aec45ea426dbd93f769a62e03a2e6c8bb43bd01bf4cd46",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 10,
+    "totalWireLength": 6882.497608447917,
+    "maximumWireLength": 1544.9376131562499,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 2610.393014875,
+      "height": 481.14286400000003
+    },
+    "request": "pr5-final-state-membership-reinstatement"
+  },
+  {
+    "id": "story-evidence-lesson",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/story-evidence-lesson.canvas",
+    "sha256": "ca67c5f65bb680a8ee34fd1f94331beca7f30d3059f2c643e6f44e9b92888a9f",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1032,
+      "height": 510.857136
+    },
+    "request": "pr5-final-story-evidence-lesson"
+  },
+  {
+    "id": "story-safe-deployment",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/story-safe-deployment.canvas",
+    "sha256": "437d9be230626e2cea8057233be792de3ab3d258af7c03073a0b17943bc80469",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1128,
+      "height": 811.4285440000001
+    },
+    "request": "pr5-final-story-safe-deployment"
+  },
+  {
+    "id": "story-water-treatment",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/story-water-treatment.canvas",
+    "sha256": "00457d97bd90b442a6f1156b2c69f82e74687b40b26a2871702638f9ddf7ff67",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 0,
+    "totalWireLength": 0,
+    "maximumWireLength": 0,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1020.8748449375,
+      "height": 771.4285440000001
+    },
+    "request": "pr5-final-story-water-treatment"
+  },
+  {
+    "id": "tree-course-objectives",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-course-objectives.canvas",
+    "sha256": "698f158c089d20c105c6e8e5b127da5826f4653cad50d14410c31007b98d7372",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 9,
+    "totalWireLength": 3172.2991918593752,
+    "maximumWireLength": 968.477659984375,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1287.8125399687501,
+      "height": 1018.285656
+    },
+    "request": "pr5-final-tree-course-objectives"
+  },
+  {
+    "id": "tree-field-research",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-field-research.canvas",
+    "sha256": "6db48a7cbc1f05a55d3013d356549cb807b35c1f8f7abf323c9990ccbc3cab30",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 7,
+    "totalWireLength": 1574.388417921875,
+    "maximumWireLength": 399.3615997031251,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1094.72323540625,
+      "height": 707.4285440000001
+    },
+    "request": "pr5-final-tree-field-research"
+  },
+  {
+    "id": "tree-incident-causes",
+    "source": "../Novakai-Canvas-next-corpus/resources/examples/showcase/tree-incident-causes.canvas",
+    "sha256": "175c9ee51e2d4fbcd99300f400b7fee0306e39d7f3a0348f6564aeeb7ae394de",
+    "replaceExit": 0,
+    "renderOk": true,
+    "wireCount": 10,
+    "totalWireLength": 2525.1514889687505,
+    "maximumWireLength": 741.3154544453125,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1241.6583184453125,
+      "height": 1015.9999760000001
+    },
+    "request": "pr5-final-tree-incident-causes"
+  }
+]

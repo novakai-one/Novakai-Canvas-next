@@ -16,7 +16,11 @@ function children(
     )
     .toSorted((a, b) => a.item.order - b.item.order);
 }
-/** Walk one ordered body; each complete event/frame advances the next item's vertical origin. */
+/** Walk one ordered body; each complete event/frame advances the next item's vertical origin.
+ * @throws LayoutFault with invalid-input when an alternative branch heading measurement is absent.
+ * The public createLayout().arrange facade catches it through execute and returns a typed failure;
+ * Authoring retains the committed scene while the caller corrects measurements and retries.
+ */
 export function body(
   context: SequenceContext,
   parent: string | null,

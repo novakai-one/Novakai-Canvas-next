@@ -1,0 +1,5 @@
+committed: vq5-state-exhibition-lifecycle
+Workspace sequence: 42
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof create resources/examples/showcase/state-exhibition-lifecycle.canvas --request vq5-state-exhibition-lifecycle
+(node:67760) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

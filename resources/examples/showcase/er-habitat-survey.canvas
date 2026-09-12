@@ -1,6 +1,6 @@
 canvas 1
 collection @er-habitat-survey "Habitat survey records" theme=atlas {
- node @habitat entity "Habitat" role=primary {
+ node @habitat entity "Habitat" {
   field @id "habitat_id" type="HabitatId" key=primary
   field @parent "parent_id" type="HabitatId" key=foreign nullable=true references=@habitat.@id
   field @code "site_code" type="string" key=unique
@@ -34,6 +34,10 @@ collection @er-habitat-survey "Habitat survey records" theme=atlas {
  wire @identifies @species.@id -> @observation.@species "identified in" kind=association from=1 to=0..many
  section @habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=grid columns=2 direction=right gap=compact {
   show @habitat @visit @observer @species @observation
-  connect @nested @surveyed @records @reports @identifies
+  connect @nested source-side=left target-side=left
+  connect @surveyed source-side=right target-side=left
+  connect @records source-side=right target-side=right
+  connect @reports source-side=left target-side=left
+  connect @identifies source-side=left target-side=right
  }
 }

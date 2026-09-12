@@ -1,0 +1,5 @@
+committed: vq5-flow-equipment-return
+Workspace sequence: 40
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof create resources/examples/showcase/flow-equipment-return.canvas --request vq5-flow-equipment-return
+(node:67709) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

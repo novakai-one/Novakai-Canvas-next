@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "grid-research-methods",
+    "revision": 3,
+    "title": "Choose evidence for the claim",
+    "inputKeySha256": "f1b780798356864d84f42ed9e17c890ae0daa61ec4e7fbc02436be9648d3fe11"
+  },
+  "digest": "da8b11a6e63451ba3d9161b8a94f0e32748fb8bd854ff94954975cd3f672e368",
+  "bytes": 109768,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 792,
+    "height": 1298.88
+  }
+}

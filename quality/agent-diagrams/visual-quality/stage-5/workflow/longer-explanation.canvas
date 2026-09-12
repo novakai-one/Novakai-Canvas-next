@@ -1,0 +1,3 @@
+patch 1 @story-evidence-lesson {
+ set block @explain.@caption text="Explain which difference matters, how it changes the outcome, and what evidence would disprove that explanation. Separate the observed result from the reason you propose."
+}

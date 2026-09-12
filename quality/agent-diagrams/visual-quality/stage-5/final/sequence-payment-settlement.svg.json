@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "sequence-payment-settlement",
+    "revision": 1,
+    "title": "Payment settlement conversation",
+    "inputKeySha256": "3ce6c1ffb3104b5280bb068d8a5b63555fd2f128ac3817b0ca5f16c759f1fad8"
+  },
+  "digest": "ebcb731e19b457dcf9a1a109abfe4b452c5034969a471c3b3e21233e1784b64c",
+  "bytes": 117963,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1760.102616140625,
+    "height": 1209.14286
+  }
+}

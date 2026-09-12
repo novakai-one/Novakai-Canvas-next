@@ -57,3 +57,7 @@ These retained files originate from `quality/agent-diagrams/references/target/`;
 | Delivery | Inspect fit overview and useful reading zoom, then inspect actual export with pinned fonts and resources. |
 
 A green suite, node/edge count, screenshot count or numerical aesthetic score cannot replace this comparison. Record known visual gaps honestly and keep building until the final acceptance is met.
+
+## Final result
+
+[Original 24-diagram gallery and mixed collection](../../../quality/agent-diagrams/visual-quality/stage-5/GALLERY.md) and [acceptance against these criteria](../../../quality/agent-diagrams/visual-quality/stage-5/README.md). The baseline and target images above remain immutable context; the new images are actual app exports and visible-browser captures.

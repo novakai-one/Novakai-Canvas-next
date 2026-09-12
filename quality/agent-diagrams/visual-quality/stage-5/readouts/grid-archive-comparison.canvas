@@ -1,0 +1,47 @@
+# grid-archive-comparison revision=0
+canvas 1
+collection @grid-archive-comparison "Archive operating models" theme="atlas@1.0.0#sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7" layout=grid {
+  node @local-policy concept "Local archive" role=primary size=large frame=auto composition=stack sources=[] {
+  text @purpose "Keep the original close to the curator." role=body
+}
+  node @local-speed concept "Fast to inspect" role=neutral size=medium frame=auto composition=stack sources=[] {
+  list @points ["No network dependency", "Immediate full-resolution access"]
+}
+  node @local-risk note "One building is one failure domain" role=warning size=small frame=auto composition=stack sources=[] {
+  text @risk "Arrange an independent backup." role=body
+}
+  node @shared-policy concept "Shared repository" role=supporting size=large frame=auto composition=stack sources=[] {
+  text @purpose "Give partner museums one catalog." role=body
+}
+  node @shared-access concept "Easy to collaborate" role=neutral size=medium frame=auto composition=stack sources=[] {
+  list @points ["Shared identifiers", "Consistent access policy"]
+}
+  node @shared-risk note "Availability depends on the service" role=warning size=small frame=auto composition=stack sources=[] {
+  text @risk "Keep an offline inventory." role=body
+}
+  node @hybrid-policy concept "Hybrid archive" role=success size=large frame=auto composition=stack sources=[] {
+  text @purpose "Combine local originals and shared discovery." role=body
+}
+  node @hybrid-access concept "Resilient discovery" role=neutral size=medium frame=auto composition=stack sources=[] {
+  list @points ["Local preservation copy", "Shared searchable metadata"]
+}
+  node @hybrid-risk note "Synchronization needs ownership" role=warning size=small frame=auto composition=stack sources=[] {
+  text @risk "Name the authoritative record." role=body
+}
+  section @archive-comparison "ARCHIVE OPTIONS / Choose by the failure you can tolerate" mode=grid columns=2 layout=grid gap=compact {
+  group @options "Three operating models" frame=auto role=neutral columns=3 layout=grid gap=compact {
+  group @local "LOCAL" represents=@local-policy frame=auto role=neutral columns=1 layout=grid gap=compact {
+  show @local-speed
+  show @local-risk
+}
+  group @shared "SHARED" represents=@shared-policy frame=auto role=neutral columns=1 layout=grid gap=compact {
+  show @shared-access
+  show @shared-risk
+}
+  group @hybrid "HYBRID" represents=@hybrid-policy frame=auto role=neutral columns=1 layout=grid gap=compact {
+  show @hybrid-access
+  show @hybrid-risk
+}
+}
+}
+}

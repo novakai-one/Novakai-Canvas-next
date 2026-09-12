@@ -23,7 +23,7 @@ collection @tree-incident-causes "Incident cause hypotheses" theme=atlas descrip
  wire @owner-path @recovery -> @runbook "candidate delay" kind=parent
  section @causes "INCIDENT CAUSES / Test branches against the timeline" mode=tree layout=tree direction=down gap=compact {
   show @incident @trigger @deploy @capacity @pool @held @timeout @traffic @detection @recovery @runbook
-  connect @trigger-branch @release @capacity-branch @pool-path @held-path @timeout-path @traffic-path @detect-branch @recover-branch @owner-path
+  connect @trigger-branch @release @capacity-branch @pool-path @held-path @timeout-path @traffic-path @detect-branch @recover-branch @owner-path source-side=bottom target-side=top
   root @incident
  }
 }

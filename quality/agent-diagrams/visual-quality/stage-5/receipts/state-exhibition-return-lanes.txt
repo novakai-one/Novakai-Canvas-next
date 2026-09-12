@@ -1,0 +1,18 @@
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof replace resources/examples/showcase/state-exhibition-lifecycle.canvas --revision 2 --request vq5-exhibition-return-lanes
+(node:70387) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+invariant-violation: The owning capability rejected this input
+domain 18:2 sections.lifecycle.layout: Mode and layout must be compatible
+Expected: mode
+Correct the referenced diagram declaration; check again before Authoring admission.
+mode sections.lifecycle.layout: Mode and layout must be compatible
+domain 18:2 sections.lifecycle.layout: Mode and layout must be compatible
+Expected: mode
+Correct the referenced diagram declaration; check again before Authoring admission.
+mode sections.lifecycle.layout: Mode and layout must be compatible
+domain 18:2 sections.lifecycle.layout: Mode and layout must be compatible
+Expected: mode
+Correct the referenced diagram declaration; check again before Authoring admission.
+mode sections.lifecycle.layout: Mode and layout must be compatible
+Retain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.
+[ELIFECYCLE] Command failed with exit code 1.

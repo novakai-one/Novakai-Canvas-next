@@ -1,0 +1,54 @@
+# story-evidence-lesson revision=3
+canvas 1
+collection @story-evidence-lesson "Build an explanation that transfers" theme="studio@1.0.1#sha256:b7c632906dc67c69671c0f8661f43a261bab0d6c1545ddadf6974eea96c5f78a" layout=grid {
+  asset @evidence image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="An inspectable source document and magnifying lens"
+  asset @lesson image source="sha256:48522bf36b79d9b9d678e1bf61828f4d42f38198855b26da9784d5ac2bcf71d8" alt="An open book representing an explained principle"
+  asset @shield image source="sha256:0bc044e8e0be3bc07b3538468145e0e7655df95c15dc090a4de041cc08401dc4" alt="A check that the learner can apply the explanation"
+  node @observe concept "Start with evidence" role=neutral size=medium frame=none composition=media-top sources=[] {
+  image @figure asset=@evidence size=medium
+  text @caption "Show the example, the conditions and what was observed." role=caption
+}
+  node @contrast note "Find a contrasting case" role=warning size=medium frame=card composition=stack sources=[] {
+  text @detail "A case where the outcome differs helps reveal the boundary of the claim." role=caption
+}
+  node @explain concept "Make the principle visible" role=neutral size=medium frame=none composition=media-top sources=[] {
+  image @figure asset=@lesson size=medium
+  text @caption "Explain which difference matters, how it changes the outcome, and what evidence would disprove that explanation. Separate the observed result from the reason you propose." role=caption
+}
+  node @limit note "State the limit" role=warning size=medium frame=card composition=stack sources=[] {
+  text @detail "Supported here does not mean universal. Name the conditions that may change the result." role=caption
+}
+  node @practice concept "Apply it somewhere new" role=neutral size=large frame=none composition=media-top sources=[] {
+  image @figure asset=@shield size=medium
+  text @caption "Ask the learner to predict a new case, then explain their reasoning." role=caption
+}
+  node @transfer note "Understanding transfers" role=success size=large frame=card composition=stack sources=[] {
+  text @detail "A reasoned prediction in a new setting is stronger evidence than repeating the original answer." role=caption
+}
+  wire @support @observe -> @explain "supports an explanation" step=1 sources=[]
+  wire @challenge @contrast -> @explain "test a contrasting case" kind=reference style=dashed sources=[]
+  wire @apply @explain -> @practice "predict a new case" step=2 sources=[]
+  wire @bound @explain -> @limit "name the conditions" kind=reference style=dashed sources=[]
+  wire @check @practice -> @transfer "explain the result" step=3 sources=[]
+  wire @revise @practice -> @observe "if prediction fails: collect better evidence" kind=reference style=dashed sources=[]
+  section @lesson "From evidence to understanding" mode=story columns=3 layout=grid {
+  group @inputs "OBSERVE + CONTRAST" frame=panel role=supporting columns=1 layout=grid {
+  show @observe
+  show @contrast
+}
+  group @meaning "EXPLAIN + BOUND" frame=panel role=neutral columns=1 layout=grid gap=roomy {
+  show @explain
+  show @limit
+}
+  group @application "PREDICT + CHECK" frame=panel role=success columns=1 layout=grid gap=roomy {
+  show @practice
+  show @transfer
+}
+  connect @support source-side=right target-side=left
+  connect @apply source-side=right target-side=left
+  connect @challenge source-side=right target-side=left
+  connect @bound source-side=bottom target-side=top
+  connect @check source-side=bottom target-side=top
+  connect @revise source-side=top target-side=top
+}
+}

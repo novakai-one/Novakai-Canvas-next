@@ -1,0 +1,71 @@
+# tree-incident-causes revision=1
+canvas 1
+collection @tree-incident-causes "Incident cause hypotheses" theme="atlas@1.0.0#sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7" description="Illustrative investigation map; branches are hypotheses, not established causes." layout=grid {
+  node @incident concept "Checkout interruption" role=primary size=medium frame=auto composition=stack sources=[] {
+  text @detail "Explain the interruption using evidence." role=body
+}
+  node @trigger concept "Trigger" role=warning size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @deploy concept "Configuration release" role=neutral size=medium frame=auto composition=stack sources=[] {
+  text @detail "Compare the deployed limit with the prior value." role=body
+}
+  node @capacity concept "Capacity conditions" role=supporting size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @pool concept "Connection pool exhausted" role=neutral size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @held concept "Connections held too long" role=neutral size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @timeout concept "Missing query timeout" role=neutral size=medium frame=auto composition=stack sources=[] {
+  text @detail "Inspect slow-query traces and cancellation." role=body
+}
+  node @traffic concept "Traffic concentration" role=neutral size=medium frame=auto composition=stack sources=[] {
+  text @detail "Compare arrival rate across partitions." role=body
+}
+  node @detection concept "Detection gap" role=neutral size=medium frame=auto composition=stack sources=[] {
+  text @detail "Check why user errors preceded the page." role=body
+}
+  node @recovery concept "Recovery friction" role=neutral size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @runbook concept "Unclear rollback owner" role=neutral size=medium frame=auto composition=stack sources=[] {
+  text @detail "Compare handover notes with the incident timeline." role=body
+}
+  wire @trigger-branch @incident -> @trigger "possible trigger" kind=parent sources=[]
+  wire @release @trigger -> @deploy "candidate change" kind=parent sources=[]
+  wire @capacity-branch @incident -> @capacity "possible amplifier" kind=parent sources=[]
+  wire @pool-path @capacity -> @pool "resource symptom" kind=parent sources=[]
+  wire @held-path @pool -> @held "possible mechanism" kind=parent sources=[]
+  wire @timeout-path @held -> @timeout "candidate control gap" kind=parent sources=[]
+  wire @traffic-path @capacity -> @traffic "alternate pressure" kind=parent sources=[]
+  wire @detect-branch @incident -> @detection "time to notice" kind=parent sources=[]
+  wire @recover-branch @incident -> @recovery "time to recover" kind=parent sources=[]
+  wire @owner-path @recovery -> @runbook "candidate delay" kind=parent sources=[]
+  section @causes "INCIDENT CAUSES / Test branches against the timeline" mode=tree layout=tree direction=down gap=compact {
+  show @incident
+  show @trigger
+  show @deploy
+  show @capacity
+  show @pool
+  show @held
+  show @timeout
+  show @traffic
+  show @detection
+  show @recovery
+  show @runbook
+  connect @trigger-branch source-side=bottom target-side=top
+  connect @release source-side=bottom target-side=top
+  connect @capacity-branch source-side=bottom target-side=top
+  connect @pool-path source-side=bottom target-side=top
+  connect @held-path source-side=bottom target-side=top
+  connect @timeout-path source-side=bottom target-side=top
+  connect @traffic-path source-side=bottom target-side=top
+  connect @detect-branch source-side=bottom target-side=top
+  connect @recover-branch source-side=bottom target-side=top
+  connect @owner-path source-side=bottom target-side=top
+  root @incident
+}
+}

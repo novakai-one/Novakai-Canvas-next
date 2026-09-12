@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "tree-course-objectives",
+    "revision": 1,
+    "title": "Course learning objectives",
+    "inputKeySha256": "2a75675e1cf8888438f56c7291e488bae5c9f19fe03608d97b4b14dd6a8dbe80"
+  },
+  "digest": "470a70f73f8b12e5edc3abec877b9cbb92f2f948ae64d27337ce1a50733f94c1",
+  "bytes": 144509,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1327.78125,
+    "height": 982.1904333333332
+  }
+}

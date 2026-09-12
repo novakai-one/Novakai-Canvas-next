@@ -21,7 +21,7 @@ collection @tree-course-objectives "Course learning objectives" theme=atlas {
  wire @operate-communicate @operate -> @communicate "supports with" kind=parent
  section @objectives "COURSE OBJECTIVES / From concepts to observable outcomes" mode=tree layout=tree direction=right gap=compact {
   show @course @model @boundaries @invariants @verify @tests @evidence @operate @respond @communicate
-  connect @learn-model @learn-verify @learn-operate @model-boundaries @model-invariants @verify-tests @verify-evidence @operate-respond @operate-communicate
+  connect @learn-model @learn-verify @learn-operate @model-boundaries @model-invariants @verify-tests @verify-evidence @operate-respond @operate-communicate source-side=right target-side=left
   root @course
  }
 }

@@ -108,19 +108,34 @@ function parallelCheckpoints(
   if (parallel === 0) return [source, target];
   const bounds = union(nodes.map((node): Box => node.box));
   const distance = (parallel + 1) * (gap + labelHeight);
-  return laneCheckpoints(source, target, side, bounds.x - distance, bounds.y - distance);
+  return laneCheckpoints(source, target, side, bounds, distance);
 }
-/** Outside checkpoint pairs create a visible lane along the endpoint's perpendicular axis. */
+/** Parallel return lanes follow the actors' displacement; attachment side selects the outward boundary.
+ * A horizontal row with top/bottom ports needs a horizontal lane, not an out-and-back excursion to the left.
+ */
 function laneCheckpoints(
   source: Point,
   target: Point,
   side: Connection['sourceSide'],
-  x: number,
-  y: number,
+  bounds: Box,
+  distance: number,
 ): readonly Point[] {
-  if (side === 'left' || side === 'right')
+  if (Math.abs(target.x - source.x) >= Math.abs(target.y - source.y)) {
+    const y = horizontalLane(side, bounds, distance);
     return [source, { x: source.x, y }, { x: target.x, y }, target];
+  }
+  const x = verticalLane(side, bounds, distance);
   return [source, { x, y: source.y }, { x, y: target.y }, target];
+}
+/** Bottom departures stay below the row; other horizontal lanes use its upper boundary. */
+function horizontalLane(side: Connection['sourceSide'], bounds: Box, distance: number): number {
+  if (side === 'bottom') return bounds.y + bounds.height + distance;
+  return bounds.y - distance;
+}
+/** Right departures stay beyond the column; other vertical lanes use its left boundary. */
+function verticalLane(side: Connection['sourceSide'], bounds: Box, distance: number): number {
+  if (side === 'right') return bounds.x + bounds.width + distance;
+  return bounds.x - distance;
 }
 /** Retain valid authored points. Public Layout execute catches lock faults; Authoring retains the scene and owns correction. */
 export function manual(

@@ -1,0 +1,46 @@
+# modules-document-publishing revision=0
+canvas 1
+collection @modules-document-publishing "Document publishing boundary" theme="studio@1.0.0#sha256:32c858278187e74523054d6799884b5790ba057815860168e76a91a1d369a9c1" description="An illustrative software dependency design. Imports and calls show code dependencies; implementation wires show contract conformance, not runtime data flow." layout=grid {
+  asset @document image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="A publishing document"
+  asset @adapter image source="sha256:0bc044e8e0be3bc07b3538468145e0e7655df95c15dc090a4de041cc08401dc4" alt="An integration boundary"
+  node @editor module "Editorial workspace" role=primary size=large frame=none composition=media-left sources=[] {
+  icon @figure asset=@document size=small
+  text @detail "Validates a draft before asking the publishing port to submit it." role=body
+  port @publish out "publisher" type="PublicationPort"
+}
+  node @publication interface "PublicationPort" role=supporting size=large frame=auto composition=stack sources=[] {
+  member @submit "submit" type="(ApprovedDraft) => Promise<Result<PublicationReceipt, PublishError>>"
+  member @withdraw "withdraw" type="(PublicationId, Reason) => Promise<Result<WithdrawalReceipt, PublishError>>"
+}
+  node @validate function "validateApproval" role=neutral size=large frame=auto composition=stack sources=[] {
+  signature @call "validateApproval" parameters=["draft: Draft", "policy: EditorialPolicy"] returns="Result<ApprovedDraft, ValidationError>"
+}
+  node @web-adapter module "Web publisher adapter" role=success size=large frame=card composition=media-top sources=[] {
+  icon @figure asset=@adapter size=small
+  text @detail "Implements both submit and withdraw; translates vendor failures into PublishError." role=body
+  port @remote out "CMS client" type="CmsClient"
+}
+  node @cms interface "CmsClient / external boundary" role=warning size=large frame=auto composition=stack sources=[] {
+  member @create "createPage" type="(CmsPage) => Promise<Result<CmsPageId, CmsError>>"
+  member @remove "removePage" type="(CmsPageId) => Promise<Result<void, CmsError>>"
+}
+  wire @checks @editor -> @validate.@call "calls validation before submit" kind=calls sources=[]
+  wire @imports @editor.@publish -> @publication "imports publishing contract" kind=imports sources=[]
+  wire @implements @web-adapter -> @publication "implements submit and withdraw" kind=implements sources=[]
+  wire @calls-cms @web-adapter.@remote -> @cms "imports vendor contract" kind=imports sources=[]
+  section @publishing-boundary "Publishing boundaries" mode=modules columns=2 layout=grid {
+  group @policy "APPLICATION POLICY" frame=panel role=supporting columns=1 layout=grid {
+  show @editor
+  show @validate
+  show @publication
+}
+  group @integration "VENDOR INTEGRATION" frame=auto role=neutral columns=1 layout=grid {
+  show @web-adapter
+  show @cms
+}
+  connect @checks
+  connect @imports
+  connect @implements source-side=left target-side=right
+  connect @calls-cms source-side=right target-side=right
+}
+}

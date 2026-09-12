@@ -5,6 +5,7 @@ import type { Point } from '../../contract/records/geometry.js';
 import type { SupplementalMeasurements, SeedContext } from '../../contract/types.js';
 import { routingGap, crossingGap, labelPadding } from './spacing.js';
 import { placeScope } from './policy.js';
+import { scopeEdges } from './scope-edges.js';
 import { union } from '../geometry/bounds.js';
 import { reject } from '../validation/outcomes.js';
 interface Branch {
@@ -68,40 +69,6 @@ function intent(parent: string | null, section: VisualSection): LayoutIntent {
   if (!group) return reject('invalid-input', parent, 'Visible group has no layout intent');
   return group.layout;
 }
-/** Contract a wire to its immediate visible branch, so child-internal edges do not distort an outer scope. */
-function owner(id: string, roots: readonly string[], section: VisualSection): string | null {
-  if (roots.includes(id)) return id;
-  const node = section.nodes.find((item) => item.id === id);
-  return parentOwner(node?.parent ?? null, roots, section);
-}
-/** A root outside this scope contributes no placement edge. */
-function parentOwner(
-  parent: string | null,
-  roots: readonly string[],
-  section: VisualSection,
-): string | null {
-  if (parent === null) return null;
-  return owner(parent, roots, section);
-}
-/** Only edges joining distinct immediate branches enter the scope's placement graph. */
-function edges(roots: readonly string[], section: VisualSection): PlacementProblem['edges'] {
-  return section.wires.flatMap((wire) =>
-    scopeEdge(
-      wire.id,
-      owner(wire.source.node, roots, section),
-      owner(wire.target.node, roots, section),
-    ),
-  );
-}
-/** Missing/outside endpoints and intra-branch edges are intentionally omitted from this seed-only graph. */
-function scopeEdge(
-  id: string,
-  source: string | null,
-  target: string | null,
-): PlacementProblem['edges'] {
-  if (source === null || target === null || source === target) return [];
-  return [{ id, source, target }];
-}
 /** Reattach child-local descendants after the native engine chooses the branch's outer position. */
 function flatten(value: PlacementValue, branches: readonly Branch[]): readonly PlacementValue[] {
   const found = branches.find((item) => item.root.id === value.id);
@@ -123,8 +90,8 @@ export async function seedScope(
   );
   const roots = branches.map((item) => item.root.id);
   const layout = intent(parent, section);
-  const localEdges = edges(roots, section);
-  const scopeEdges = rankingEdges(localEdges, section, layout);
+  const localEdges = scopeEdges(roots, section);
+  const rankedEdges = rankingEdges(localEdges, section, layout);
   const nodes = branches.map((item) => ({
     id: item.root.id,
     parent: null,
@@ -136,7 +103,7 @@ export async function seedScope(
     await placeScope(
       {
         nodes,
-        edges: scopeEdges,
+        edges: rankedEdges,
         layout,
         minimumCrossSpacing: crossingGap(section, localEdges, measurements, context.options),
         minimumLayerSpacing: routingGap(

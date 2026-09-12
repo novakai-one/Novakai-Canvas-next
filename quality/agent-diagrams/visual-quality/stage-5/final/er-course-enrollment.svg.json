@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "er-course-enrollment",
+    "revision": 1,
+    "title": "Course enrollment records",
+    "inputKeySha256": "6f76b777287d3c04941299beb66aa492a92e07e9be55137e2b73546e99210dd3"
+  },
+  "digest": "d28afc2a496fc2bc8b7b442b0acf16c8f2437295d6d193be098738705e26f322",
+  "bytes": 182867,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1617.75,
+    "height": 1066.79428
+  }
+}

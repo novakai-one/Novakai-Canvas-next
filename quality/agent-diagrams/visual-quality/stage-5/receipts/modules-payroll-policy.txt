@@ -1,0 +1,5 @@
+committed: vq5-modules-payroll-policy
+Workspace sequence: 50
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof create resources/examples/showcase/modules-payroll-policy.canvas --request vq5-modules-payroll-policy
+(node:68099) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

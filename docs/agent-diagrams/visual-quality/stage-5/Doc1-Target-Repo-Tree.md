@@ -11,6 +11,10 @@ Shared requirements: [SOP](../SOP.md), [current/target images](../References.md)
 ```text
 capability/export/tests
 capability/language/tests
+capability/layout/contract/records
+capability/layout/core/placement
+capability/layout/core/routing
+capability/layout/tests
 quality/agent-diagrams
 resources/examples
 resources/examples/showcase
@@ -20,11 +24,13 @@ resources/examples/showcase
 
 **Public imports:** outside consumers enter capability/<owner>/contract/index.ts only. Core uses own core and declaration-only contracts; concrete adapters compose only at contract/compose.ts.
 
-**Stage exit:** all Doc5 conditions, bounded reviews and verified corrections, evidence and PR pushed. Continue to the next stage; intermediate exits do not claim overall benchmark completion.
+**Stage exit:** all Doc5 conditions, bounded reviews and verified corrections, evidence and PR pushed. Close the goal only when README overall done is evidenced across all examples and workflows.
 
 ## Visual context
 
-![Current educational baseline](../assets/current/2026-09-13-water-treatment.png)
+![Verified Stage 3 infographic](../../../../quality/agent-diagrams/visual-quality/stage-3/water-final.png)
+
+![Verified Stage 4 engineering](../../../../quality/agent-diagrams/visual-quality/stage-4/modules-final.png)
 
 ![Approved infographic target](../assets/targets/docker-infographic.png)
 

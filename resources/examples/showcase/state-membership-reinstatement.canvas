@@ -27,6 +27,8 @@ collection @state-membership-reinstatement "Membership reinstatement" theme=atla
   group @reviewing "REVIEW & CLOSURE" layout=layered direction=right gap=compact { show @suspended @review @closed
    rank @suspended @review @closed
   }
-  connect @submit @approve @decline @suspend @appeal @reject @restore @complete @relapse @withdraw
+  connect @submit @approve @suspend @appeal @restore @complete @relapse @withdraw
+  connect @decline source-side=right target-side=top
+  connect @reject source-side=bottom target-side=bottom
  }
 }

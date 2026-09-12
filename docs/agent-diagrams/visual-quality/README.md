@@ -1,6 +1,6 @@
 # Visual-quality build contract
 
-Status: active. Five stages; continue after each PR. Baseline code: `38ea827`; current screenshots captured 2026-09-13 in the visible in-app browser. Historical close-up captures are labelled separately.
+Status: five stages implemented; final evidence is in [Stage5 acceptance](../../../quality/agent-diagrams/visual-quality/stage-5/README.md) and the [visual gallery](../../../quality/agent-diagrams/visual-quality/stage-5/GALLERY.md). Baseline code: `38ea827`; current screenshots captured 2026-09-13 in the visible in-app browser. Historical close-up captures are labelled separately.
 
 **Purpose:** agents explain systems, engineering designs, concepts and SOPs through readable semantic DSL and editable diagrams at the quality of the approved references. Rendered relationships replace reading prose specs. A pretty grid of paragraphs is insufficient for a process.
 

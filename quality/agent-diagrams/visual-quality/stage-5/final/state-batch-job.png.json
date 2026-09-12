@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "state-batch-job",
+    "revision": 4,
+    "title": "Batch job retry lifecycle",
+    "inputKeySha256": "41ddaf696d1a3d8e652369bd9460841e78b7b257216a683038a8d5364cd0de84"
+  },
+  "digest": "66d5e1e50293188eccfce71793f71abf197d72747073d3e6b6616d65e4def4f0",
+  "bytes": 126317,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1812.03125,
+    "height": 1019.1904433333334
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "story-safe-deployment",
+    "revision": 3,
+    "title": "Deployment is a controlled experiment",
+    "inputKeySha256": "df912e8c40898c003f2aba3a16af5a94891e02752355c6494b51982104b58aa1"
+  },
+  "digest": "12003c9df49ed67b2f1cd723374fa01faeea9822df1051f20a94bbb3d245cebe",
+  "bytes": 139188,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1448.511015625,
+    "height": 1002.6400000000001
+  }
+}

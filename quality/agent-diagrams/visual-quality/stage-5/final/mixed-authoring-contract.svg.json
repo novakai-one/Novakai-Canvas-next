@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "mixed-authoring-contract",
+    "revision": 0,
+    "title": "Two authors / one admission boundary",
+    "inputKeySha256": "b6af867f24518b62ce47fb9bedd78e25b8e4d35d492d52fb2a20ada337ba4c71"
+  },
+  "digest": "fd06b91a41d2c63d51aa00fdb4bfa624a008ed7486a8f62c019f740840af1879",
+  "bytes": 167684,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 2696.6296875000003,
+    "height": 680.3199999999999
+  }
+}

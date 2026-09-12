@@ -1,0 +1,58 @@
+# story-safe-deployment revision=3
+canvas 1
+collection @story-safe-deployment "Deployment is a controlled experiment" theme="studio@1.0.1#sha256:b7c632906dc67c69671c0f8661f43a261bab0d6c1545ddadf6974eea96c5f78a" layout=grid {
+  asset @shield image source="sha256:0bc044e8e0be3bc07b3538468145e0e7655df95c15dc090a4de041cc08401dc4" alt="A verified release safety boundary"
+  asset @release image source="sha256:73c917f70776364ea22575cbd743b76eafac4731434507ec6c162a05eb327956" alt="A versioned release entering a limited cohort"
+  asset @evidence image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="Observed release evidence compared against expectations"
+  node @prepare concept "Prepare a reversible change" role=neutral size=large frame=none composition=media-left sources=[] {
+  image @figure asset=@shield size=medium
+  text @caption "Name the owner, rehearse migration and prove the rollback path." role=caption
+}
+  node @release-stage concept "Release to a small cohort" role=neutral size=large frame=none composition=media-top sources=[] {
+  image @figure asset=@release size=medium
+  text @caption "Expose limited traffic and retain the previous version." role=caption
+}
+  node @learn concept "Compare the signals" role=neutral size=large frame=none composition=media-left sources=[] {
+  image @figure asset=@evidence size=medium
+  text @caption "Compare errors, latency and task completion with the expected range." role=caption
+}
+  node @healthy concept "Expand deliberately" role=success size=medium frame=card composition=stack sources=[] {
+  text @caption "Increase exposure one step at a time; keep watching the same guardrails." role=caption
+}
+  node @unsafe concept "Pause and restore" role=warning size=medium frame=card composition=stack sources=[] {
+  text @caption "Restore the known version, retain diagnostic evidence and assign follow-up." role=caption
+}
+  node @record note "Record what changed" role=neutral size=medium frame=none composition=stack sources=[] {
+  text @caption "The outcome improves the next release plan; a quiet rollout is still evidence." role=caption
+}
+  wire @admit @prepare -> @release-stage "readiness checks pass" step=1 sources=[]
+  wire @observe @release-stage -> @learn "observe a bounded cohort" step=2 sources=[]
+  wire @expand @learn -> @healthy "guardrails remain healthy" step=3 sources=[]
+  wire @restore @learn -> @unsafe "guardrail breached" sources=[]
+  wire @repeat @healthy -> @release-stage "repeat at wider exposure" kind=reference style=dashed sources=[]
+  wire @capture @unsafe -> @record "preserve the failure evidence" sources=[]
+  wire @improve @record -> @prepare "revise the release plan" kind=reference style=dashed sources=[]
+  section @deployment "Safe deployment / learn before expanding" mode=story columns=2 layout=grid {
+  group @delivery "BOUND THE CHANGE" frame=panel role=supporting columns=1 layout=grid direction=down gap=roomy {
+  show @prepare
+  show @release-stage
+}
+  group @feedback "USE EVIDENCE TO CONTROL EXPOSURE" frame=panel role=neutral columns=1 layout=grid direction=down {
+  show @learn
+  show @record
+  group @outcomes "CHOOSE THE NEXT ACTION" frame=none role=neutral columns=2 layout=grid {
+  show @healthy
+  show @unsafe
+}
+  before @learn group:@outcomes
+  before group:@outcomes @record
+}
+  connect @admit source-side=bottom target-side=top
+  connect @observe source-side=right target-side=left
+  connect @expand source-side=bottom target-side=top
+  connect @restore source-side=right target-side=top
+  connect @repeat source-side=left target-side=bottom
+  connect @capture source-side=bottom target-side=right
+  connect @improve source-side=bottom target-side=left
+}
+}

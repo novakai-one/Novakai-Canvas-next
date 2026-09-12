@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "flow-equipment-return",
+    "revision": 0,
+    "title": "Return equipment safely",
+    "inputKeySha256": "c266ea3d25b8dd5894af2a26725fc652622216bd00d419a34231c6a8365e40d9"
+  },
+  "digest": "0ca72a0704802d49ef11fb294f01cbdbf5375a6841d40ae57b0d3728bbbe8c3c",
+  "bytes": 62229,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 708.9375,
+    "height": 1073.71424
+  }
+}

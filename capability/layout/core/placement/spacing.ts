@@ -8,6 +8,7 @@ import type { LinearConstraint, PlacementProblem } from '../../contract/records/
 import type { SupplementalMeasurements, LayoutOptions } from '../../contract/types.js';
 
 import { relative } from '../constraints/relative.js';
+import { scopeEdges } from './scope-edges.js';
 
 /** Automatic seeds reserve the measured label and both marker approaches between connected branches.
  * Semantic gap is a minimum; explicit positions and hard constraints remain authoritative afterward.
@@ -83,7 +84,7 @@ export function routingPreferences(
   ];
   return scopes.flatMap((scope) => preferredScope(section, scope, measurements, options));
 }
-/** Only immediate connected siblings reserve space; unrelated scope labels cannot inflate a rank. */
+/** Cross-boundary descendants reserve room between their owning sibling branches; internal edges stay local. */
 function preferredScope(
   section: VisualSection,
   scope: { readonly id: string; readonly layout: LayoutIntent; readonly parent: string | null },
@@ -91,10 +92,10 @@ function preferredScope(
   options: LayoutOptions,
 ): readonly LinearConstraint[] {
   const nodes = section.nodes.filter((node) => node.parent === scope.parent);
-  const ids = new Set(nodes.map((node) => node.id));
-  const edges = section.wires
-    .filter((wire) => ids.has(wire.source.node) && ids.has(wire.target.node))
-    .map((wire) => ({ id: wire.id, source: wire.source.node, target: wire.target.node }));
+  const edges = scopeEdges(
+    nodes.map((node): string => node.id),
+    section,
+  );
   const gap = routingGap(section, edges, scope.layout.direction, measurements, options);
   if (gap <= options.gap[scope.layout.gap]) return [];
   const layout = {

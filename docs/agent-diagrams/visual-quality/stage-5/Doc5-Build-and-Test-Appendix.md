@@ -16,9 +16,13 @@ One focused parameterized public-contract case per row; reuse existing fixtures 
 
 | # | Case / bug caught | Tier/type | Loop/nightly allowance | Maintenance | Why add / confidence | Against / confidence | Existing coverage | Retirement |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | corpus semantic roundtrip: All 24 source read/print/edit operations preserve meaning through public contracts | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Existing Language roundtrip covers individual fixtures | Behavior removed or superseded by the same public-contract coverage |
-| 2 | corpus encoded fidelity: All family outputs preserve admitted content/notation/resource references | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Existing Export artifact tests cover fewer families | Behavior removed or superseded by the same public-contract coverage |
-| **Total** | **2 cases** | fast; slow/guard/e2e=0 | **1.0s / 1.0s** | | | | | |
+| 1 | corpus semantic roundtrip: Roundtrip preserves semantics; requested edits survive readback while unrelated semantics remain unchanged | fast / contract | 1s / 1s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Existing Language roundtrip covers individual fixtures | Behavior removed or superseded by the same public-contract coverage |
+| 2 | corpus encoded fidelity: All family outputs preserve admitted content/notation/resource references | fast / contract | 5s / 5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Existing Export artifact tests cover fewer families | Behavior removed or superseded by the same public-contract coverage |
+| 3 | Nested-group ordering retains room for measured cross-boundary wire labels | fast / Layout contract | 1s / 1s | low | Mixed DSL exposed lost corridor after before constraints (verified) | Extra native case (low) | Existing cases cover immediate siblings | Equivalent public regression coverage |
+| 4 | Reciprocal top/bottom attachments use a local return lane without retracing past endpoints | fast / Layout contract | 1s / 1s | low | State proof exposed wrong-axis parallel checkpoints (verified) | Native timing (low) | Existing reciprocal cases lack this orientation | Equivalent public regression coverage |
+| **Total** | **4 cases** | fast; slow/guard/e2e=0 | **8s / 8s** | | | | | |
+
+Timing adjustment before export-case build: 24 semantic roundtrips measured ~0.7s. Allow 5s for real SVG encoders plus checked recorded inputs; no browser automation tests. Builder-discovered group-order spacing defect adds one Layout case before its fix.
 
 ## Execution
 

@@ -9,7 +9,7 @@ collection @modules-sensor-gateway "Sensor gateway adapters" theme=atlas {
   member @normalize "normalize" type="(RawReading, Calibration) => Result<Measurement, ReadingError>" visibility=public
  }
  node @normalize function "normalizeReading" size=large {
-  signature @call "normalizeReading" parameters=["reading: RawReading", "calibration: Calibration", "clock: Clock"] returns="Result<Measurement, ReadingError>"
+  signature @call "normalizeReading" parameters=["reading: RawReading", "calibration: Calibration"] returns="Result<Measurement, ReadingError>"
  }
  node @mqtt module "MQTT input adapter" size=medium {
   port @packets in "packets" type="MqttPacket"

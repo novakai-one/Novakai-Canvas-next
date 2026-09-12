@@ -33,10 +33,15 @@ collection @modules-payroll-policy "Payroll calculation contracts" theme=atlas {
  wire @gross-policy @gross -> @policy.@gross "implements gross" kind=implements
  wire @deduct-policy @deduct -> @policy.@deduct "implements deductions" kind=implements
  wire @round-policy @round -> @rounding.@round "implements round" kind=implements
- section @payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=grid columns=2 direction=right gap=compact {
-  group @contracts "RULE CONTRACTS" layout=grid columns=2 { show @policy @rounding }
-  group @functions "PURE CALCULATION" layout=grid columns=2 { show @calculate @gross @deduct @round }
+ section @payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=grid columns=3 direction=right gap=roomy {
+  before @run group:@contracts
+  before group:@contracts group:@functions
+  group @contracts "RULE CONTRACTS" layout=grid columns=1 direction=down gap=roomy { show @policy @rounding }
+  group @functions "PURE CALCULATION" layout=layered direction=down gap=roomy { show @calculate @gross @deduct @round }
   show @run
-  connect @imports-policy @imports-rounding @imports-calculator @call-gross @call-deduct @call-round @gross-policy @deduct-policy @round-policy
+  connect @imports-policy @imports-rounding source-side=right target-side=left
+  connect @imports-calculator source-side=right target-side=top
+  connect @call-gross @call-deduct @call-round source-side=bottom target-side=top
+  connect @gross-policy @deduct-policy @round-policy source-side=left target-side=right
  }
 }

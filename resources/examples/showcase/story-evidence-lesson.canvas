@@ -1,17 +1,44 @@
 canvas 1
-collection @story-evidence-lesson "Turn evidence into a lesson" theme=atlas {
- asset @evidence image source="./assets/evidence.svg" alt="A document with a magnifying lens"
- asset @lesson image source="./assets/lesson.svg" alt="An open lesson book"
- asset @shield image source="./assets/shield.svg" alt="A shield with a check mark"
- node @observe concept "1 · Observe" role=primary { icon @symbol asset=@evidence size=large text @detail "Gather an example people can inspect." }
- node @explain concept "2 · Explain" role=supporting { icon @symbol asset=@lesson size=large text @detail "Connect the evidence to a useful principle." }
- node @practice concept "3 · Practice" role=success { icon @symbol asset=@shield size=large text @detail "Ask the learner to apply it in a new situation." }
- node @source note "Show the source" { list @detail ["Who observed it?", "When and under what conditions?"] }
- node @limit note "Name the limit" role=warning { text @detail "Separate a supported claim from an assumption." }
- node @transfer note "Test transfer" { text @detail "A new example shows understanding beyond recall." }
- section @evidence-lesson "TEACHING / From evidence to understanding" mode=story layout=grid columns=3 direction=right gap=compact {
-  group @observe-column "EVIDENCE" represents=@observe layout=grid columns=1 { show @source }
-  group @explain-column "MEANING" represents=@explain layout=grid columns=1 { show @limit }
-  group @practice-column "TRANSFER" represents=@practice layout=grid columns=1 { show @transfer }
- }
+collection @story-evidence-lesson "Build an explanation that transfers" theme=studio {
+  asset @evidence image source="./assets/evidence.svg" alt="An inspectable source document and magnifying lens"
+  asset @lesson image source="./assets/lesson.svg" alt="An open book representing an explained principle"
+  asset @shield image source="./assets/shield.svg" alt="A check that the learner can apply the explanation"
+
+  node @observe concept "Start with evidence" frame=none composition=media-top {
+    image @figure asset=@evidence size=medium
+    text @caption "Show the example, the conditions and what was observed." role=caption
+  }
+  node @contrast note "Find a contrasting case" role=warning frame=card {
+    text @detail "A case where the outcome differs helps reveal the boundary of the claim." role=caption
+  }
+  node @explain concept "Make the principle visible" frame=none composition=media-top {
+    image @figure asset=@lesson size=medium
+    text @caption "Explain which difference matters, how it changes the outcome, and what evidence would disprove that explanation. Separate the observed result from the reason you propose." role=caption
+  }
+  node @limit note "State the limit" role=warning frame=card {
+    text @detail "Supported here does not mean universal. Name the conditions that may change the result." role=caption
+  }
+  node @practice concept "Apply it somewhere new" size=large frame=none composition=media-top {
+    image @figure asset=@shield size=medium
+    text @caption "Ask the learner to predict a new case, then explain their reasoning." role=caption
+  }
+  node @transfer note "Understanding transfers" size=large role=success frame=card {
+    text @detail "A reasoned prediction in a new setting is stronger evidence than repeating the original answer." role=caption
+  }
+  wire @support @observe -> @explain "supports an explanation" kind=flow step=1
+  wire @challenge @contrast -> @explain "test a contrasting case" kind=reference style=dashed
+  wire @apply @explain -> @practice "predict a new case" kind=flow step=2
+  wire @bound @explain -> @limit "name the conditions" kind=reference style=dashed
+  wire @check @practice -> @transfer "explain the result" kind=flow step=3
+  wire @revise @practice -> @observe "if prediction fails: collect better evidence" kind=reference style=dashed
+
+  section @lesson "From evidence to understanding" mode=story layout=grid columns=3 direction=right gap=normal {
+    group @inputs "OBSERVE + CONTRAST" frame=panel role=supporting layout=grid columns=1 gap=normal { show @observe @contrast }
+    group @meaning "EXPLAIN + BOUND" frame=panel layout=grid columns=1 gap=roomy { show @explain @limit }
+    group @application "PREDICT + CHECK" frame=panel role=success layout=grid columns=1 gap=roomy { show @practice @transfer }
+    connect @support @apply source-side=right target-side=left
+    connect @challenge source-side=right target-side=left
+    connect @bound @check source-side=bottom target-side=top
+    connect @revise source-side=top target-side=top
+  }
 }

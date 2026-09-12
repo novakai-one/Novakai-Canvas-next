@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "tree-field-research",
+    "revision": 2,
+    "title": "Design a field study",
+    "inputKeySha256": "d1426e9c291546ebfa39c5d03a3a44eaf42884c5e0e684b7104a4f5aab7973e5"
+  },
+  "digest": "702625678bc1d00429b7a447c2ac723f9c1497115d924a0a0ae5e0e743e24097",
+  "bytes": 139537,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1586.34375,
+    "height": 730.57141
+  }
+}

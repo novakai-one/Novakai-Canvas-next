@@ -1,0 +1,10 @@
+patch 1 @grid-beta {
+  set collection title="Compare incident learning formats"
+  set node @guided label="Facilitated review"
+  set block @guided.@summary text="Reconstruct the incident together while evidence is fresh."
+  set node @self label="Written reflection"
+  set block @self.@summary text="Give each responder quiet time to record observations independently."
+  set node @paired label="Scenario replay"
+  set block @paired.@summary text="Walk through a similar event with a partner and test the response."
+  set section @options title="Incident learning formats at a glance"
+}

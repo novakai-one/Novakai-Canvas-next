@@ -1,5 +1,5 @@
 canvas 1
-collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layout=grid columns=3 direction=right gap=roomy description="24 original DSL diagrams: three examples in each of eight families. Fictional engineering models and educational explanations; all geometry is app-derived." {
+collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=atlas layout=grid columns=3 direction=right gap=roomy description="24 original DSL diagrams: three examples in each of eight families. Fictional engineering models and educational explanations; all geometry is app-derived." {
 
   # ER / 1: er-museum-loans.canvas
 
@@ -199,7 +199,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  node @modules-3-rounding interface "RoundingPolicy" {
   member @modules-3-round "round" type="(Money, Currency) => Money" visibility=public
  }
- node @modules-3-calculate function "calculatePay" size=large {
+ node @modules-3-calculate function "calculatePay" size=medium {
   signature @modules-3-call "calculatePay" parameters=["period: WorkPeriod", "policy: PayPolicy", "rounding: RoundingPolicy"] returns="PayStatement"
  }
  node @modules-3-gross function "grossPay" {
@@ -269,8 +269,13 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @flow-2-changes @flow-2-decision -> @flow-2-revise "no · changes required" kind=flow
  wire @flow-2-resubmit @flow-2-revise -> @flow-2-triage "resubmit new version" kind=flow style=dashed
  section @flow-2-approval "RESEARCH APPROVAL / Independent review, one decision" mode=flow direction=down gap=compact order=7 {
+  rank @flow-2-submit @flow-2-triage @flow-2-split
+  before @flow-2-split @flow-2-merge
+  before @flow-2-merge @flow-2-decision
+  before @flow-2-decision @flow-2-approved
   show @flow-2-submit @flow-2-triage @flow-2-split @flow-2-ethics @flow-2-methods @flow-2-merge @flow-2-decision @flow-2-revise @flow-2-approved
-  connect @flow-2-begin @flow-2-ready @flow-2-ethics-path @flow-2-methods-path @flow-2-ethics-done @flow-2-methods-done @flow-2-decide @flow-2-accept @flow-2-changes
+  connect @flow-2-begin @flow-2-ready source-side=bottom target-side=top
+  connect @flow-2-ethics-path @flow-2-methods-path @flow-2-ethics-done @flow-2-methods-done @flow-2-decide @flow-2-accept @flow-2-changes
   connect @flow-2-resubmit source-side=left target-side=left
  }
 
@@ -393,10 +398,16 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @state-1-withdraw @state-1-rollback -> @state-1-withdrawn "withdraw exhibition" kind=transition guard="no safe release" effect="post public notice"
  wire @state-1-close @state-1-withdrawn -> @state-1-end "close record" kind=transition guard="retention captured"
  section @state-1-lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=down gap=compact order=12 {
-  group @state-1-authoring "PREPARE & APPROVE" layout=layered direction=right gap=compact { show @state-1-start @state-1-draft @state-1-review }
-  group @state-1-publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @state-1-published @state-1-rollback @state-1-withdrawn }
+  group @state-1-authoring "PREPARE & APPROVE" layout=layered direction=right gap=compact { show @state-1-start @state-1-draft @state-1-review
+   rank @state-1-start @state-1-draft @state-1-review
+  }
+  group @state-1-publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @state-1-published @state-1-rollback @state-1-withdrawn
+   rank @state-1-published @state-1-rollback @state-1-withdrawn
+  }
   show @state-1-end
-  connect @state-1-prepare @state-1-submit @state-1-revise @state-1-publish @state-1-detect @state-1-restore @state-1-withdraw @state-1-close
+  connect @state-1-prepare @state-1-submit @state-1-detect @state-1-withdraw source-side=bottom target-side=bottom
+  connect @state-1-revise @state-1-restore source-side=top target-side=top
+  connect @state-1-publish @state-1-close
  }
 
   # STATE / 2: state-batch-job.canvas
@@ -420,9 +431,14 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @state-2-finish-success @state-2-succeeded -> @state-2-end "close successful job" kind=transition effect="publish outcome"
  section @state-2-job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=down gap=compact order=13 {
   show @state-2-start
-  group @state-2-execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @state-2-running @state-2-backoff @state-2-cancelling }
+  group @state-2-execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @state-2-running @state-2-backoff @state-2-cancelling
+   rank @state-2-running @state-2-backoff @state-2-cancelling
+  }
   group @state-2-outcomes "DURABLE OUTCOMES" layout=layered direction=right gap=compact { show @state-2-failed @state-2-succeeded @state-2-end }
-  connect @state-2-claim @state-2-retry @state-2-resume @state-2-exhaust @state-2-complete @state-2-cancel-running @state-2-cancel-wait @state-2-cancelled @state-2-finish-failed @state-2-finish-success
+  connect @state-2-claim source-side=bottom target-side=top
+  connect @state-2-retry source-side=bottom target-side=bottom
+  connect @state-2-resume source-side=top target-side=top
+  connect @state-2-exhaust @state-2-complete @state-2-cancel-running @state-2-cancel-wait @state-2-cancelled @state-2-finish-failed @state-2-finish-success
  }
 
   # STATE / 3: state-membership-reinstatement.canvas
@@ -445,9 +461,15 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @state-3-relapse @state-3-restored -> @state-3-suspended "suspend again" kind=transition guard="conditions breached"
  wire @state-3-withdraw @state-3-suspended -> @state-3-closed "withdraw membership" kind=transition guard="member requests closure"
  section @state-3-membership "MEMBERSHIP / Reinstatement is a reviewed return" mode=state layout=layered direction=down gap=compact order=14 {
-  group @state-3-application "APPLICATION" layout=layered direction=right gap=compact { show @state-3-start @state-3-pending }
-  group @state-3-membership "ACTIVE MEMBERSHIP" layout=layered direction=down gap=compact { show @state-3-active @state-3-restored }
-  group @state-3-reviewing "REVIEW & CLOSURE" layout=layered direction=right gap=compact { show @state-3-suspended @state-3-review @state-3-closed }
+  group @state-3-application "APPLICATION" layout=layered direction=right gap=compact { show @state-3-start @state-3-pending
+   rank @state-3-start @state-3-pending
+  }
+  group @state-3-membership "ACTIVE MEMBERSHIP" layout=layered direction=right gap=compact { show @state-3-active @state-3-restored
+   rank @state-3-active @state-3-restored
+  }
+  group @state-3-reviewing "REVIEW & CLOSURE" layout=layered direction=right gap=compact { show @state-3-suspended @state-3-review @state-3-closed
+   rank @state-3-suspended @state-3-review @state-3-closed
+  }
   connect @state-3-submit @state-3-approve @state-3-decline @state-3-suspend @state-3-appeal @state-3-reject @state-3-restore @state-3-complete @state-3-relapse @state-3-withdraw
  }
 

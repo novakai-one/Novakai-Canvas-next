@@ -1,5 +1,5 @@
 canvas 1
-collection @modules-payroll-policy "Payroll calculation contracts" theme=paper {
+collection @modules-payroll-policy "Payroll calculation contracts" theme=atlas {
  node @run module "Payroll run" role=primary {
   port @policy out "policy" type="PayPolicy"
   port @rounding out "rounding" type="RoundingPolicy"
@@ -12,7 +12,7 @@ collection @modules-payroll-policy "Payroll calculation contracts" theme=paper {
  node @rounding interface "RoundingPolicy" {
   member @round "round" type="(Money, Currency) => Money" visibility=public
  }
- node @calculate function "calculatePay" size=large {
+ node @calculate function "calculatePay" size=medium {
   signature @call "calculatePay" parameters=["period: WorkPeriod", "policy: PayPolicy", "rounding: RoundingPolicy"] returns="PayStatement"
  }
  node @gross function "grossPay" {

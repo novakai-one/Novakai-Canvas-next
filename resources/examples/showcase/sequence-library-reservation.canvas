@@ -1,5 +1,5 @@
 canvas 1
-collection @sequence-library-reservation "Library reservation conversation" theme=paper {
+collection @sequence-library-reservation "Library reservation conversation" theme=atlas {
  node @reader participant "Reader" role=primary size=medium {}
  node @catalog participant "Catalog" size=medium {}
  node @holds participant "Reservations" role=supporting size=large {}

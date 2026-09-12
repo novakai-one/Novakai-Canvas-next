@@ -15,9 +15,14 @@
 |export/contract/records/manual.ts; core/artifacts/produce.ts|50;170|
 |layout/canvas/export contract/records/limits.ts bridges; existing admission/scale tests|5each;100–400|
 |24 example .canvas files; combined collection|35–120;1200|
+|Presentation contract/{api,records/content-context}.ts; core/{content/blocks,projection/node}.ts|60;40;200;300|
+|Layout contract/records/engines.ts; core/{routing/obstacles,routing/wires,validation/wires}.ts|20;110;140;120|
+|CLI adapters/theme-config.ts; Service adapters/theme-preparation.ts; existing CLI/Layout/Presentation tests|160;130;400–1600|
 
 Presentation owns its accepted projection capacity; downstream consumers reuse the public constant without reverse imports. Existing semantic collection limits remain separate from projection scale. Field/port/cardinality/fragment correctness stays mandatory regardless of appearance.
 
-Presentation producer and reader share aggregate admission: count projected appearances/wires across sections, not unique canonical objects. Enforce32/1000/1500 before returning success. Consumer declaration-only record bridges re-export immutable limits through Presentation’s public index; each core imports its own record.
+Producer/reader count appearances across sections. Consumers re-export public limits through local contract records; enforce32/1000/1500.
 
 Section-origin checks use existing geometry tolerance; content and identity remain exact.
+
+Key captions resolve owner labels; labels avoid group borders. Numeric theme overrides remain Design System validated.

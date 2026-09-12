@@ -1,5 +1,5 @@
 canvas 1
-collection @tree-field-research "Design a field study" theme=paper {
+collection @tree-field-research "Design a field study" theme=atlas {
  node @study concept "Field study" role=primary { text @detail "A question connected to observable evidence." }
  node @question concept "Question" { text @detail "What changes between the two habitats?" }
  node @sampling concept "Sampling" role=supporting {}

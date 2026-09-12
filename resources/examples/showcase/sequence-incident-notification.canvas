@@ -1,5 +1,5 @@
 canvas 1
-collection @sequence-incident-notification "Incident notification conversation" theme=paper {
+collection @sequence-incident-notification "Incident notification conversation" theme=atlas {
  node @monitor participant "Monitor" role=primary {}
  node @incident participant "Incident service" role=supporting {}
  node @directory participant "On-call directory" {}

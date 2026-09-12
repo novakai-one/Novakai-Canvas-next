@@ -1,5 +1,5 @@
 canvas 1
-collection @er-habitat-survey "Habitat survey records" theme=paper {
+collection @er-habitat-survey "Habitat survey records" theme=atlas {
  node @habitat entity "Habitat" role=primary {
   field @id "habitat_id" type="HabitatId" key=primary
   field @parent "parent_id" type="HabitatId" key=foreign nullable=true references=@habitat.@id

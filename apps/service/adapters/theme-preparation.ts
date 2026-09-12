@@ -6,7 +6,10 @@ import { failure } from '@novakai/canvas-authoring';
 import type { Result, Json } from '@novakai/canvas-authoring';
 const config = z.looseObject({
   kind: z.literal('theme'),
-  raw: z.strictObject({ base: z.string(), overrides: z.record(z.string(), z.string()) }),
+  raw: z.strictObject({
+    base: z.string(),
+    overrides: z.record(z.string(), z.union([z.string(), z.number()])),
+  }),
 });
 /** Exact base and font identities are resolved before retention; Design System owns the supplied token override values. */
 export function prepareTheme(
@@ -27,7 +30,7 @@ export function prepareTheme(
 /** Resolve the two font descriptors only after the base selection is exact. */
 function withFonts(
   admission: Json,
-  overrides: Readonly<Record<string, string>>,
+  overrides: Readonly<Record<string, string | number>>,
   base: import('@novakai/canvas-templates').Preset,
   bindings: readonly { readonly alias: string; readonly digest: string }[],
   assets: Pick<Assets, 'resolve'>,
@@ -50,7 +53,7 @@ function withFonts(
         base: { kind: 'preset', pin },
         fonts: Object.fromEntries(fonts.filter((item) => item.ok).map((item) => item.value)),
         overrides: Object.fromEntries(
-          Object.entries(overrides).map(([id, value]) => [id, color(value)]),
+          Object.entries(overrides).map(([id, value]) => [id, tokenValue(value)]),
         ),
       },
     },
@@ -80,6 +83,12 @@ function font(
       { family: blob.value.descriptor.fontFamily, digest: input.digest, approved: true },
     ],
   };
+}
+
+/** Numbers retain their owner-defined meaning; colors translate to the existing sRGB record. */
+function tokenValue(value: string | number): Json {
+  if (typeof value === 'number') return value;
+  return color(value);
 }
 
 /** Translate semantic hexadecimal color syntax into the existing Design System sRGB input shape. */

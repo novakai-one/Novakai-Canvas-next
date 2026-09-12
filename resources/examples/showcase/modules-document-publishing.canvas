@@ -1,5 +1,5 @@
 canvas 1
-collection @modules-document-publishing "Document publishing boundary" theme=paper {
+collection @modules-document-publishing "Document publishing boundary" theme=atlas {
  node @editor module "Editorial workspace" role=primary size=large {
   port @drafts out "drafts" type="DraftRepository"
   port @publish out "publisher" type="PublicationPort"

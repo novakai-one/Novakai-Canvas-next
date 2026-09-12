@@ -1,5 +1,5 @@
 canvas 1
-collection @state-batch-job "Batch job retry lifecycle" theme=paper {
+collection @state-batch-job "Batch job retry lifecycle" theme=atlas {
  node @start start "Queued" size=small {}
  node @running state "Running" role=primary size=large { text @detail "Process the claimed batch under one attempt." }
  node @backoff state "Waiting to retry" role=warning size=medium { text @detail "Keep the failure and schedule the next attempt." }
@@ -19,8 +19,13 @@ collection @state-batch-job "Batch job retry lifecycle" theme=paper {
  wire @finish-success @succeeded -> @end "close successful job" kind=transition effect="publish outcome"
  section @job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=down gap=compact {
   show @start
-  group @execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @running @backoff @cancelling }
+  group @execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @running @backoff @cancelling
+   rank @running @backoff @cancelling
+  }
   group @outcomes "DURABLE OUTCOMES" layout=layered direction=right gap=compact { show @failed @succeeded @end }
-  connect @claim @retry @resume @exhaust @complete @cancel-running @cancel-wait @cancelled @finish-failed @finish-success
+  connect @claim source-side=bottom target-side=top
+  connect @retry source-side=bottom target-side=bottom
+  connect @resume source-side=top target-side=top
+  connect @exhaust @complete @cancel-running @cancel-wait @cancelled @finish-failed @finish-success
  }
 }

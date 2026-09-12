@@ -1,5 +1,5 @@
 canvas 1
-collection @tree-course-objectives "Course learning objectives" theme=paper {
+collection @tree-course-objectives "Course learning objectives" theme=atlas {
  node @course concept "Design reliable services" role=primary size=large { text @detail "Learners move from recognition to defensible operation." }
  node @model concept "Model the system" role=supporting size=medium {}
  node @boundaries concept "Identify boundaries" size=small { text @detail "Name responsibilities and dependencies." }

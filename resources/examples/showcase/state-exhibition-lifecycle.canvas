@@ -1,5 +1,5 @@
 canvas 1
-collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme=paper {
+collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme=atlas {
  node @start start "Begin" size=small {}
  node @draft state "Draft" role=primary size=medium { text @detail "Objects and interpretation are still changing." }
  node @review state "Under review" role=supporting size=large { text @detail "Curatorial and rights checks run together." }
@@ -16,9 +16,15 @@ collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme=
  wire @withdraw @rollback -> @withdrawn "withdraw exhibition" kind=transition guard="no safe release" effect="post public notice"
  wire @close @withdrawn -> @end "close record" kind=transition guard="retention captured"
  section @lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=down gap=compact {
-  group @authoring "PREPARE & APPROVE" layout=layered direction=right gap=compact { show @start @draft @review }
-  group @publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @published @rollback @withdrawn }
+  group @authoring "PREPARE & APPROVE" layout=layered direction=right gap=compact { show @start @draft @review
+   rank @start @draft @review
+  }
+  group @publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @published @rollback @withdrawn
+   rank @published @rollback @withdrawn
+  }
   show @end
-  connect @prepare @submit @revise @publish @detect @restore @withdraw @close
+  connect @prepare @submit @detect @withdraw source-side=bottom target-side=bottom
+  connect @revise @restore source-side=top target-side=top
+  connect @publish @close
  }
 }

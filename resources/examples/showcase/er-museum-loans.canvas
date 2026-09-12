@@ -1,5 +1,5 @@
 canvas 1
-collection @er-museum-loans "Museum loans and inspections" theme=paper {
+collection @er-museum-loans "Museum loans and inspections" theme=atlas {
  node @artifact entity "Artifact" role=primary size=large {
   field @id "artifact_id" type="ArtifactId" key=primary
   field @title "title" type="string"

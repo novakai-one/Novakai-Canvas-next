@@ -1,5 +1,5 @@
 canvas 1
-collection @grid-archive-comparison "Archive operating models" theme=paper {
+collection @grid-archive-comparison "Archive operating models" theme=atlas {
  node @local-policy concept "Local archive" role=primary size=large { text @purpose "Keep the original close to the curator." }
  node @local-speed concept "Fast to inspect" size=medium { list @points ["No network dependency", "Immediate full-resolution access"] }
  node @local-risk note "One building is one failure domain" role=warning size=small { text @risk "Arrange an independent backup." }

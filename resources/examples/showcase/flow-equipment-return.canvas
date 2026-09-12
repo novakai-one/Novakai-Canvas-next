@@ -1,5 +1,5 @@
 canvas 1
-collection @flow-equipment-return "Return equipment safely" theme=paper {
+collection @flow-equipment-return "Return equipment safely" theme=atlas {
  node @receive step "1 · Receive" role=primary { text @detail "Record the item and its borrower." }
  node @inspect decision "Safe to reuse?" { text @detail "Inspect before closing the loan." }
  node @service step "Repair" role=warning { text @detail "Quarantine and record the defect." }

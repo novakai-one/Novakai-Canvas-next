@@ -1,5 +1,5 @@
 canvas 1
-collection @tree-incident-causes "Incident cause hypotheses" theme=paper description="Illustrative investigation map; branches are hypotheses, not established causes." {
+collection @tree-incident-causes "Incident cause hypotheses" theme=atlas description="Illustrative investigation map; branches are hypotheses, not established causes." {
  node @incident concept "Checkout interruption" role=primary { text @detail "Explain the interruption using evidence." }
  node @trigger concept "Trigger" role=warning {}
  node @deploy concept "Configuration release" { text @detail "Compare the deployed limit with the prior value." }

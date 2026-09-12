@@ -1,5 +1,5 @@
 canvas 1
-collection @grid-research-methods "Research methods evidence matrix" theme=paper description="Illustrative method selection aid; evidence strength depends on execution." {
+collection @grid-research-methods "Research methods evidence matrix" theme=atlas description="Illustrative method selection aid; evidence strength depends on execution." {
  node @question concept "Start with the claim" role=primary { text @detail "Choose evidence that can challenge the claim." }
  node @experiment concept "Experiment" role=success {
   table @matrix columns=["Dimension", "Evidence"] {

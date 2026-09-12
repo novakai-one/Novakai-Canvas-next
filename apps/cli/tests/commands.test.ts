@@ -193,6 +193,22 @@ it('PR3 CLI retains exact pins and normalized bytes across alias advance, source
       ok: false,
       error: { code: 'duplicate-token', message: expect.stringContaining('surface.base') },
     });
+    const readableTheme = `${originalTheme}\nset number ratio.caption=1\nset number lineHeight.body=1.25`;
+    expect(readThemeConfig(readableTheme)).toMatchObject({
+      ok: true,
+      value: { admission: { raw: { overrides: { 'ratio.caption': 1, 'lineHeight.body': 1.25 } } } },
+    });
+    expect(readThemeConfig(`${readableTheme}\nset number ratio.caption=2`)).toMatchObject({
+      ok: false,
+      error: { code: 'duplicate-token' },
+    });
+    expect(
+      readThemeConfig(`${originalTheme}\nset number ratio.caption=${'9'.repeat(400)}`),
+    ).toMatchObject({
+      ok: false,
+      error: { code: 'invalid-theme' },
+    });
+    await writeFile(join(root, 'harbor.theme'), readableTheme);
     const admitted = await cli([
       'theme',
       'admit',
@@ -201,6 +217,18 @@ it('PR3 CLI retains exact pins and normalized bytes across alias advance, source
       'cli-harbor',
     ]);
     assert(admitted.ok, JSON.stringify(admitted));
+    await writeFile(
+      join(root, 'invalid-number.theme'),
+      originalTheme.replace('@harbor', '@invalid-number') + '\nset number action.accent=1',
+    );
+    const wrongTokenType = await cli([
+      'theme',
+      'admit',
+      join(root, 'invalid-number.theme'),
+      '--request',
+      'invalid-number-theme',
+    ]);
+    expect(wrongTokenType).toMatchObject({ ok: false, error: { code: 'invalid-input' } });
     const preview = await cli([
       'preview',
       join(root, 'wetland.canvas'),
@@ -257,6 +285,12 @@ it('PR3 CLI retains exact pins and normalized bytes across alias advance, source
     const readout = await cli(['read', 'wetland']);
     assert(readout.ok);
     expect(readout.value).toContain('harbor@1.0.0#sha256:');
+    const renderedTheme = await service.render('wetland', new AbortController().signal);
+    assert(renderedTheme.ok, JSON.stringify(renderedTheme));
+    expect(renderedTheme.value.style.typography.annotation.size).toBe(16);
+    expect(renderedTheme.value.style.typography.annotation.lineHeight).toBe(20);
+    expect(renderedTheme.value.style.typography.body.lineHeight).toBe(20);
+
     const recipePath = fileURLToPath(
       new URL('../../../resources/recipes/infographic.canvas', import.meta.url),
     );

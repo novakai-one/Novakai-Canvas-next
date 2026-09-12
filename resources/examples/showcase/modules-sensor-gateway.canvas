@@ -1,5 +1,5 @@
 canvas 1
-collection @modules-sensor-gateway "Sensor gateway adapters" theme=paper {
+collection @modules-sensor-gateway "Sensor gateway adapters" theme=atlas {
  node @gateway module "Sensor gateway" role=primary size=large {
   port @readings in "readings" type="AsyncIterable<RawReading>"
   port @normalizer out "normalizer" type="ReadingNormalizer"

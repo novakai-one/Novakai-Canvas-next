@@ -1,5 +1,5 @@
 canvas 1
-collection @story-safe-deployment "Deploy safely and learn" theme=paper {
+collection @story-safe-deployment "Deploy safely and learn" theme=atlas {
  asset @shield image source="./assets/shield.svg" alt="A shield with a check mark"
  asset @release image source="./assets/release.svg" alt="A release package moving forward"
  asset @evidence image source="./assets/evidence.svg" alt="A document with a magnifying lens"

@@ -1,5 +1,5 @@
 canvas 1
-collection @sequence-payment-settlement "Payment settlement conversation" theme=paper {
+collection @sequence-payment-settlement "Payment settlement conversation" theme=atlas {
  node @merchant participant "Merchant" role=primary size=medium {}
  node @payments participant "Payment service" role=supporting size=large {}
  node @ledger participant "Ledger" size=medium {}

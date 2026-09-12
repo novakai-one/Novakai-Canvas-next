@@ -1,5 +1,5 @@
 canvas 1
-collection @flow-emergency-dispatch "Emergency dispatch escalation" theme=paper description="Illustrative dispatch software workflow, not operational emergency guidance." {
+collection @flow-emergency-dispatch "Emergency dispatch escalation" theme=atlas description="Illustrative dispatch software workflow, not operational emergency guidance." {
  node @reported start "Incident reported" role=primary {}
  node @assess step "Classify incident" { text @detail "Record location, incident type and contact." }
  node @eligible decision "Dispatch required?" role=decision {}

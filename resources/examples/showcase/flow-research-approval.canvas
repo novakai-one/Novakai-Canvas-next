@@ -1,5 +1,5 @@
 canvas 1
-collection @flow-research-approval "Research approval workflow" theme=paper {
+collection @flow-research-approval "Research approval workflow" theme=atlas {
  node @submit start "Protocol submitted" role=primary size=small {}
  node @triage step "Administrative triage" size=medium { text @detail "Confirm ownership, version and required documents." }
  node @split fork "Parallel review" role=supporting size=small {}
@@ -20,8 +20,13 @@ collection @flow-research-approval "Research approval workflow" theme=paper {
  wire @changes @decision -> @revise "no · changes required" kind=flow
  wire @resubmit @revise -> @triage "resubmit new version" kind=flow style=dashed
  section @approval "RESEARCH APPROVAL / Independent review, one decision" mode=flow direction=down gap=compact {
+  rank @submit @triage @split
+  before @split @merge
+  before @merge @decision
+  before @decision @approved
   show @submit @triage @split @ethics @methods @merge @decision @revise @approved
-  connect @begin @ready @ethics-path @methods-path @ethics-done @methods-done @decide @accept @changes
+  connect @begin @ready source-side=bottom target-side=top
+  connect @ethics-path @methods-path @ethics-done @methods-done @decide @accept @changes
   connect @resubmit source-side=left target-side=left
  }
 }

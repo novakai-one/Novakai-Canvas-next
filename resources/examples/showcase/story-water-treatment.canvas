@@ -1,5 +1,5 @@
 canvas 1
-collection @story-water-treatment "How water treatment uses several barriers" theme=paper description="Simplified conventional treatment story; processes vary with source water." {
+collection @story-water-treatment "How water treatment uses several barriers" theme=atlas description="Simplified conventional treatment story; processes vary with source water." {
  asset @water image source="./assets/water.svg" alt="Water drop: water moving through treatment"
  asset @evidence image source="./assets/evidence.svg" alt="Inspection document: sample and check"
  asset @shield image source="./assets/shield.svg" alt="Shield: a protective treatment barrier"

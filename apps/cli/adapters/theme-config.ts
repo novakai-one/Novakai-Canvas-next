@@ -3,7 +3,7 @@ import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 interface Override {
   readonly token: string;
-  readonly value: string;
+  readonly value: string | number;
   readonly line: number;
 }
 /** Theme grammar faults retain a stable reason and exact corrective instruction. */
@@ -31,7 +31,7 @@ function themeFailure<T>(error: unknown): Result<T> {
   if (error instanceof ThemeFault) return failure(error.code, error.message, error.recovery);
   return failure(
     'invalid-theme',
-    'Expected theme 1 @id "Title" version=X base=ALIAS, font body/mono source="PATH", or set color TOKEN="HEX"',
+    'Expected theme 1 @id "Title" version=X base=ALIAS, font body/mono source="PATH", set color TOKEN="HEX", or set number TOKEN=VALUE',
   );
 }
 /** Header vocabulary is intentionally closed and coordinate-free; no diagram or typography metric model is introduced. */
@@ -68,7 +68,7 @@ function parse(source: string): {
     resources,
   };
 }
-/** Each line selects one font alias or one existing color token before owner preparation. */
+/** Font and token syntax is translated only; Design System owns token types, bounds and derived values. */
 function line(input: { readonly text: string; readonly line: number }): {
   readonly resources: readonly ResourceRequest[];
   readonly overrides: readonly Override[];
@@ -89,11 +89,33 @@ function line(input: { readonly text: string; readonly line: number }): {
       ],
       overrides: [],
     };
+  return tokenLine(input);
+}
+/** Existing color syntax remains unchanged; numeric root tokens enable reusable readable diagram themes. */
+function tokenLine(input: { readonly text: string; readonly line: number }): {
+  readonly resources: readonly ResourceRequest[];
+  readonly overrides: readonly Override[];
+} {
   const color = /^set color ([\w.-]+)="(#[a-fA-F0-9]{6}(?:[a-fA-F0-9]{2})?)"$/.exec(input.text);
-  if (!color) throw new Error('Invalid theme line');
+  if (!color) return numberLine(input);
   return {
     resources: [],
     overrides: [{ token: required(color, 1), value: required(color, 2), line: input.line }],
+  };
+}
+
+/** Parse finite numbers without inventing token names or duplicating owner range validation. */
+function numberLine(input: { readonly text: string; readonly line: number }): {
+  readonly resources: readonly ResourceRequest[];
+  readonly overrides: readonly Override[];
+} {
+  const match = /^set number ([\w.-]+)=(-?\d+(?:\.\d+)?)$/.exec(input.text);
+  if (!match) throw new Error('Invalid theme line');
+  const value = Number(required(match, 2));
+  if (!Number.isFinite(value)) throw new Error('Theme number must be finite');
+  return {
+    resources: [],
+    overrides: [{ token: required(match, 1), value, line: input.line }],
   };
 }
 
@@ -105,7 +127,7 @@ function uniqueOverrides(overrides: readonly Override[]): readonly Override[] {
   if (duplicate)
     throw new ThemeFault(
       'duplicate-token',
-      `Line ${duplicate.line} repeats color token ${duplicate.token}`,
+      `Line ${duplicate.line} repeats theme token ${duplicate.token}`,
       `Remove the duplicate ${duplicate.token} declaration and admit the theme again.`,
     );
   return overrides;

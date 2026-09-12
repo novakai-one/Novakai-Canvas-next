@@ -1,5 +1,5 @@
 canvas 1
-collection @er-course-enrollment "Course enrollment records" theme=paper {
+collection @er-course-enrollment "Course enrollment records" theme=atlas {
  node @student entity "Student" role=primary size=medium {
   field @campus "campus_id" type="CampusId"
   field @number "student_no" type="StudentNo"

@@ -1,5 +1,5 @@
 canvas 1
-collection @story-evidence-lesson "Turn evidence into a lesson" theme=paper {
+collection @story-evidence-lesson "Turn evidence into a lesson" theme=atlas {
  asset @evidence image source="./assets/evidence.svg" alt="A document with a magnifying lens"
  asset @lesson image source="./assets/lesson.svg" alt="An open lesson book"
  asset @shield image source="./assets/shield.svg" alt="A shield with a check mark"

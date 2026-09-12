@@ -1,5 +1,5 @@
 canvas 1
-collection @grid-feedback-methods "Feedback methods comparison" theme=paper {
+collection @grid-feedback-methods "Feedback methods comparison" theme=atlas {
  asset @evidence image source="./assets/evidence.svg" alt="A document with a magnifying lens"
  asset @lesson image source="./assets/lesson.svg" alt="An open lesson book"
  asset @reed image source="./assets/reed.svg" alt="A reed suggesting an in-context observation"

@@ -36,7 +36,7 @@ const adapter = (name) => ({
   name: `${name}-adapter-isolation`,
   severity: 'error',
   from: { path: `^capability/${name}/adapters/` },
-  to: { path: `^capability/${name}/(core/|adapters/)`, pathNot: '\\.module\\.css$' },
+  to: { path: `^capability/${name}/(core/|adapters/)`, pathNot: '\\.css$' },
 });
 const wiring = (name) => ({
   name: `${name}-adapter-wiring`,
@@ -63,6 +63,6 @@ module.exports = {
     doNotFollow: { path: 'node_modules' },
     tsConfig: { fileName: 'tsconfig.json' },
     enhancedResolveOptions: { conditionNames: ['import', 'default'], exportsFields: ['exports'] },
-    exclude: { path: '\\.gitkeep$' },
+    exclude: { path: '\\.gitkeep$|/\\.generated/' },
   },
 };

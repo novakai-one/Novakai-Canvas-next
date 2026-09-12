@@ -9,7 +9,9 @@
     "architecture": "depcruise capability apps --config .dependency-cruiser.cjs --output-type err",
     "test": "vitest run capability",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test",
-    "format:check": "prettier --check \"capability/**/*.{ts,tsx}\" eslint.config.js .dependency-cruiser.cjs"
+    "format:check": "prettier --check \"capability/**/*.{ts,tsx}\" eslint.config.js .dependency-cruiser.cjs",
+    "tokens:build": "tsx capability/design-system/cli/build-tokens.ts --write",
+    "tokens:check": "tsx capability/design-system/cli/build-tokens.ts --check"
   },
   "devDependencies": {
     "@fontsource/inter": "5.3.0",
@@ -21,6 +23,7 @@
     "prettier": "3.9.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.0",
-    "vitest": "5.0.0"
+    "vitest": "5.0.0",
+    "tsx": "4.23.13"
   }
 }

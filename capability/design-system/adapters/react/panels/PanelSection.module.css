@@ -1,0 +1,4 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.section { border-block-end:var(--nv-stroke-base) solid var(--nv-border-default); }
+}

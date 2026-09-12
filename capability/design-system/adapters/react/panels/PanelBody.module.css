@@ -1,0 +1,4 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.body { flex:1; overflow:auto; min-block-size:0; padding-block-end:var(--nv-space-3); }
+}

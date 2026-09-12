@@ -2,7 +2,7 @@
 
 A local diagram application for engineering, education and communication, designed for human and agent authoring.
 
-**Status: nine capabilities implemented; application integration remains in progress.** Model, Library, Persistence, Assets, Templates, Presentation, Layout, Authoring and Language have public contracts, implementations and bounded audit evidence. `pnpm check` passes 112 tests plus type, lint, format and import-boundary checks. Design System, Canvas, Export and the web/service/CLI hosts remain. This is not yet a usable application; browser and restart acceptance are still pending. Follow [the delivery ledger](WORK-PLAN.md).
+**Status: ten capabilities implemented; application integration remains in progress.** Model, Library, Persistence, Assets, Templates, Presentation, Layout, Authoring, Language and Design System have public contracts, implementations and bounded audit evidence. `pnpm check` passes 126 tests plus type, lint, format and import-boundary checks. Canvas, Export and the web/service/CLI hosts remain. This is not yet a usable application; browser and restart acceptance are still pending. Follow [the delivery ledger](WORK-PLAN.md).
 
 ## Start here
 

@@ -1,0 +1,8 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.header { display:flex; align-items:center; gap:var(--nv-space-1); padding-inline:var(--nv-space-2); }
+.toggle { flex:1; display:flex; align-items:center; gap:var(--nv-space-2); min-block-size:var(--nv-control-height); padding:var(--nv-space-1); border:0; border-radius:var(--nv-radius-control); background:var(--nv-color-panel); color:var(--nv-color-content); font-family:var(--nv-font-body); font-size:var(--nv-type-base); line-height:var(--nv-line-height-body); text-align:start; cursor:pointer; }
+.toggle:hover { background:var(--nv-surface-base); }
+.toggle:focus-visible { outline:var(--nv-focus-width) solid var(--nv-color-focus); outline-offset:var(--nv-focus-offset); }
+.actions { display:flex; gap:var(--nv-space-1); }
+}

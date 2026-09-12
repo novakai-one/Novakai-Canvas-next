@@ -1,0 +1,107 @@
+{
+  "id": "ink",
+  "version": "1.0.0",
+  "baseVersion": "1.0.0",
+  "overrides": {
+    "surface.base": {
+      "colorSpace": "srgb",
+      "components": [
+        0.09019607843137255,
+        0.09803921568627451,
+        0.11372549019607843
+      ],
+      "alpha": 1
+    },
+    "surface.raised": {
+      "colorSpace": "srgb",
+      "components": [
+        0.13333333333333333,
+        0.14901960784313725,
+        0.17254901960784313
+      ],
+      "alpha": 1
+    },
+    "text.primary": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9450980392156862,
+        0.9529411764705882,
+        0.9607843137254902
+      ],
+      "alpha": 1
+    },
+    "text.secondary": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7215686274509804,
+        0.7568627450980392,
+        0.792156862745098
+      ],
+      "alpha": 1
+    },
+    "border.default": {
+      "colorSpace": "srgb",
+      "components": [
+        0.28627450980392155,
+        0.3254901960784314,
+        0.3764705882352941
+      ],
+      "alpha": 1
+    },
+    "action.accent": {
+      "colorSpace": "srgb",
+      "components": [
+        0.611764705882353,
+        0.7176470588235294,
+        1.0
+      ],
+      "alpha": 1
+    },
+    "action.onAccent": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784313725490196,
+        0.13333333333333333,
+        0.22745098039215686
+      ],
+      "alpha": 1
+    },
+    "status.success": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4823529411764706,
+        0.8313725490196079,
+        0.6431372549019608
+      ],
+      "alpha": 1
+    },
+    "status.warning": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9411764705882353,
+        0.7764705882352941,
+        0.42745098039215684
+      ],
+      "alpha": 1
+    },
+    "status.error": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.611764705882353,
+        0.5803921568627451
+      ],
+      "alpha": 1
+    },
+    "boundary.essential": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6039215686274509,
+        0.6705882352941176,
+        0.7294117647058823
+      ],
+      "alpha": 1
+    },
+    "shadow.strength": 0.32
+  }
+}

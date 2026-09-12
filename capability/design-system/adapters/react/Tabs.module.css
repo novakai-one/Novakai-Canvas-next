@@ -1,0 +1,10 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.tabs { color:var(--nv-color-content); font-family:var(--nv-font-body); font-size:var(--nv-type-base); line-height:var(--nv-line-height-body); }
+.list { display:flex; gap:var(--nv-space-1); border-block-end:var(--nv-stroke-base) solid var(--nv-border-default); }
+.trigger { min-block-size:var(--nv-control-height); padding-inline:var(--nv-space-3); border:var(--nv-stroke-base) solid var(--nv-color-input-boundary); border-radius:var(--nv-radius-control); background:var(--nv-color-panel); color:var(--nv-color-subtle); font:inherit; cursor:pointer; }
+.trigger[data-state="active"] { color:var(--nv-color-action); border-color:var(--nv-color-action); }
+.trigger:focus-visible { outline:var(--nv-focus-width) solid var(--nv-color-focus); outline-offset:var(--nv-focus-offset); }
+.trigger:disabled { color:var(--nv-color-subtle); cursor:not-allowed; }
+.content { padding-block:var(--nv-space-3); }
+}

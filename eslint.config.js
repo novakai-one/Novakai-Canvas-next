@@ -17,7 +17,7 @@ const restrict = (group) => [
 ];
 
 export default tseslint.config(
-  { ignores: ['node_modules/**', '**/node_modules/**', 'dist/**'] },
+  { ignores: ['node_modules/**', '**/node_modules/**', 'dist/**', '**/.generated/**'] },
   ...tseslint.configs.recommended,
   {
     files: ['**/*.{ts,tsx,js,cjs,mjs}'],

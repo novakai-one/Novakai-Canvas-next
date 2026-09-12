@@ -1,0 +1,4 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.tooltip { padding-block:var(--nv-space-1); padding-inline:var(--nv-space-2); border:var(--nv-stroke-base) solid var(--nv-color-input-boundary); border-radius:var(--nv-radius-control); background:var(--nv-color-panel); color:var(--nv-color-content); font-family:var(--nv-font-body); font-size:var(--nv-font-caption); line-height:var(--nv-line-height-body); z-index:var(--nv-layer-tooltip); }
+}

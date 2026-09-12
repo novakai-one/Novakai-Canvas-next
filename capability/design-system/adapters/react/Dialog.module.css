@@ -1,0 +1,10 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.overlay { position:fixed; inset:0; background:var(--nv-shadow-opacity-color); z-index:var(--nv-layer-backdrop); }
+.dialog { position:fixed; inset-block-start:50%; inset-inline-start:50%; transform:translate(-50%,-50%); inline-size:var(--nv-panel-right-maximum); max-inline-size:calc(100% - var(--nv-space-8)); max-block-size:calc(100% - var(--nv-space-8)); overflow:auto; padding:var(--nv-space-4); border:var(--nv-stroke-base) solid var(--nv-border-default); border-radius:var(--nv-radius-panel); background:var(--nv-color-panel); color:var(--nv-color-content); font-family:var(--nv-font-body); font-size:var(--nv-type-base); line-height:var(--nv-line-height-body); z-index:var(--nv-layer-modal); }
+.header { display:flex; align-items:center; justify-content:space-between; gap:var(--nv-space-3); }
+.title { margin:0; color:var(--nv-color-content); font-size:var(--nv-font-title); }
+.description { color:var(--nv-color-subtle); margin-block:var(--nv-space-2); }
+.body { padding-block-start:var(--nv-space-3); }
+.dialog:focus-visible { outline:var(--nv-focus-width) solid var(--nv-color-focus); outline-offset:var(--nv-focus-offset); }
+}

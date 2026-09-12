@@ -1,0 +1,2 @@
+/* Native normalization only; component typography and palette remain scoped. */
+@layer reset { *, *::before, *::after { box-sizing:border-box; } body { margin:0; } button, input, select, textarea { font:inherit; } }

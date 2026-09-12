@@ -1,0 +1,492 @@
+{
+  "color": {
+    "panel": {
+      "$type": "color",
+      "$value": "{surface.raised}"
+    },
+    "content": {
+      "$type": "color",
+      "$value": "{text.primary}"
+    },
+    "subtle": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    },
+    "action": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    },
+    "onAction": {
+      "$type": "color",
+      "$value": "{action.onAccent}"
+    },
+    "inputBoundary": {
+      "$type": "color",
+      "$value": "{boundary.essential}"
+    },
+    "focus": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    },
+    "hover": {
+      "$type": "color",
+      "$value": "{surface.base}"
+    }
+  },
+  "space": {
+    "1": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.unit}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.one}"
+            }
+          }
+        }
+      }
+    },
+    "2": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.unit}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.two}"
+            }
+          }
+        }
+      }
+    },
+    "3": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.unit}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.three}"
+            }
+          }
+        }
+      }
+    },
+    "4": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.unit}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.four}"
+            }
+          }
+        }
+      }
+    },
+    "6": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.unit}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.six}"
+            }
+          }
+        }
+      }
+    },
+    "8": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.unit}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.eight}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "radius": {
+    "control": {
+      "$type": "dimension",
+      "$value": "{shape.radius}"
+    },
+    "panel": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{shape.radius}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.two}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "font": {
+    "caption": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "max",
+            "values": [
+              {
+                "op": "reference",
+                "value": "{caption.minimum}"
+              },
+              {
+                "op": "multiply",
+                "value": {
+                  "op": "reference",
+                  "value": "{type.base}"
+                },
+                "scalar": {
+                  "op": "reference",
+                  "value": "{ratio.caption}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "title": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{type.base}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{ratio.title}"
+            }
+          }
+        }
+      }
+    },
+    "large": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{type.base}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{ratio.large}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "diagram": {
+    "rowMin": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "sum",
+            "values": [
+              {
+                "op": "multiply",
+                "value": {
+                  "op": "reference",
+                  "value": "{type.base}"
+                },
+                "scalar": {
+                  "op": "reference",
+                  "value": "{lineHeight.body}"
+                }
+              },
+              {
+                "op": "multiply",
+                "value": {
+                  "op": "reference",
+                  "value": "{space.unit}"
+                },
+                "scalar": {
+                  "op": "reference",
+                  "value": "{scalar.two}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "edgeStroke": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{stroke.base}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.two}"
+            }
+          }
+        }
+      }
+    },
+    "widthSmall": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{type.base}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{ratio.widthSmall}"
+            }
+          }
+        }
+      }
+    },
+    "widthMedium": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{type.base}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{ratio.widthMedium}"
+            }
+          }
+        }
+      }
+    },
+    "widthLarge": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{type.base}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{ratio.widthLarge}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "control": {
+    "height": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "max",
+            "values": [
+              {
+                "op": "reference",
+                "value": "{control.unit}"
+              },
+              {
+                "op": "reference",
+                "value": "{diagram.rowMin}"
+              },
+              {
+                "op": "reference",
+                "value": "{target.active}"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "shadow": {
+    "opacityColor": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{shadow.color}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{shadow.strength}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "role": {
+    "neutral": {
+      "fill": {
+        "$type": "color",
+        "$value": "{surface.raised}"
+      },
+      "stroke": {
+        "$type": "color",
+        "$value": "{boundary.essential}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{text.primary}"
+      }
+    },
+    "primary": {
+      "fill": {
+        "$type": "color",
+        "$value": "{action.accent}"
+      },
+      "stroke": {
+        "$type": "color",
+        "$value": "{action.accent}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{action.onAccent}"
+      }
+    },
+    "supporting": {
+      "fill": {
+        "$type": "color",
+        "$value": "{surface.base}"
+      },
+      "stroke": {
+        "$type": "color",
+        "$value": "{boundary.essential}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{text.secondary}"
+      }
+    },
+    "decision": {
+      "fill": {
+        "$type": "color",
+        "$value": "{surface.raised}"
+      },
+      "stroke": {
+        "$type": "color",
+        "$value": "{status.warning}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{text.primary}"
+      }
+    },
+    "success": {
+      "fill": {
+        "$type": "color",
+        "$value": "{surface.raised}"
+      },
+      "stroke": {
+        "$type": "color",
+        "$value": "{status.success}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{text.primary}"
+      }
+    },
+    "warning": {
+      "fill": {
+        "$type": "color",
+        "$value": "{surface.raised}"
+      },
+      "stroke": {
+        "$type": "color",
+        "$value": "{status.warning}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{text.primary}"
+      }
+    }
+  }
+}

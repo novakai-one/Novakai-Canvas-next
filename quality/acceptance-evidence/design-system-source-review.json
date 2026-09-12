@@ -1,0 +1,1913 @@
+[
+  {
+    "file": "capability/design-system/adapters/browser/install-tokens.ts",
+    "lines": 66,
+    "functions": [
+      {
+        "name": "createDomScopeTarget",
+        "line": 4,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "read",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "replace",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "snapshot",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isOwned",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "failure",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/build/stylesheet-reader.ts",
+    "lines": 79,
+    "functions": [
+      {
+        "name": "createStylesheetReader",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "read",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readSource",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readDeclaration",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "layer",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ownLayer",
+        "line": 58,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "selector",
+        "line": 63,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "importDeclaration",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/build/token-files.ts",
+    "lines": 226,
+    "functions": [
+      {
+        "name": "createTokenFiles",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ioFailure",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readJson",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readSources",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sourceInput",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "publish",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejectSymlink",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "writeGeneration",
+        "line": 94,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "moveGeneration",
+        "line": 106,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "writeArtifact",
+        "line": 118,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "activate",
+        "line": 124,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readActive",
+        "line": 136,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireGeneration",
+        "line": 151,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "generationValue",
+        "line": 158,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireManifestMatch",
+        "line": 163,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifyExistingGeneration",
+        "line": 168,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifyArtifactBytes",
+        "line": 178,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifySnapshots",
+        "line": 187,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "writeSnapshots",
+        "line": 207,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/hash/sha256.ts",
+    "lines": 35,
+    "functions": [
+      {
+        "name": "createSha256",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hash",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hashFailure",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/Button.tsx",
+    "lines": 32,
+    "functions": [
+      {
+        "name": "Button",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/Dialog.tsx",
+    "lines": 40,
+    "functions": [
+      {
+        "name": "createDialog",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "Dialog",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/Field.tsx",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "Field",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "descriptions",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/Menu.tsx",
+    "lines": 33,
+    "functions": [
+      {
+        "name": "Menu",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/StatusMessage.tsx",
+    "lines": 18,
+    "functions": [
+      {
+        "name": "StatusMessage",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/Tabs.tsx",
+    "lines": 47,
+    "functions": [
+      {
+        "name": "Tabs",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "renderPanel",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/Tooltip.tsx",
+    "lines": 18,
+    "functions": [
+      {
+        "name": "Tooltip",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/PanelBody.tsx",
+    "lines": 12,
+    "functions": [
+      {
+        "name": "PanelBody",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/PanelBodyHeader.tsx",
+    "lines": 15,
+    "functions": [
+      {
+        "name": "PanelBodyHeader",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/PanelHeader.tsx",
+    "lines": 21,
+    "functions": [
+      {
+        "name": "createPanelHeader",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "PanelHeader",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/PanelSection.tsx",
+    "lines": 20,
+    "functions": [
+      {
+        "name": "createPanelSection",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "PanelSection",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/PanelSectionBody.tsx",
+    "lines": 17,
+    "functions": [
+      {
+        "name": "PanelSectionBody",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/PanelSectionHeader.tsx",
+    "lines": 28,
+    "functions": [
+      {
+        "name": "PanelSectionHeader",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/adapters/react/panels/SidePanel.tsx",
+    "lines": 93,
+    "functions": [
+      {
+        "name": "SidePanel",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "start",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "move",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "end",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "key",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "emitDrag",
+        "line": 70,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "clamp",
+        "line": 80,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "keyboardWidth",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/cli/build-tokens.ts",
+    "lines": 61,
+    "functions": [
+      {
+        "name": "build",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compileAndPublish",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "handleSnapshots",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verified",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "drift",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/contract/api.ts",
+    "lines": 68,
+    "functions": [
+      {
+        "name": "createDesignSystem",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveRequest",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uiRequest",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "diagramRequest",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/contract/brands.ts",
+    "lines": 20,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/compose.ts",
+    "lines": 94,
+    "functions": [
+      {
+        "name": "composeDesignSystem",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createScopeInstaller",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createTokenFileBindings",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createStylesheetBindings",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createReactBindings",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/contract/css.d.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/errors.ts",
+    "lines": 34,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/generated/breakpoints.ts",
+    "lines": 5,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/generated/token-names.ts",
+    "lines": 110,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/index.ts",
+    "lines": 18,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/ports/build-files.ts",
+    "lines": 17,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/ports/identity.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/ports/scope-target.ts",
+    "lines": 19,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/ports/styles.ts",
+    "lines": 10,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/ports/token-artifacts.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/ports/token-source.ts",
+    "lines": 5,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/react-types.ts",
+    "lines": 138,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/artifact-schema.ts",
+    "lines": 30,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/artifacts.ts",
+    "lines": 40,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/portable-schema.ts",
+    "lines": 29,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/preferences.ts",
+    "lines": 29,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/resolved.ts",
+    "lines": 27,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/scope-schema.ts",
+    "lines": 42,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/source.ts",
+    "lines": 44,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/theme.ts",
+    "lines": 51,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/tokens.ts",
+    "lines": 23,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/validation.ts",
+    "lines": 54,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/token-schemas.ts",
+    "lines": 3,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/token-types.ts",
+    "lines": 3,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/contract/types.ts",
+    "lines": 32,
+    "functions": []
+  },
+  {
+    "file": "capability/design-system/core/artifacts/compile.ts",
+    "lines": 192,
+    "functions": [
+      {
+        "name": "compileArtifacts",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "generatedFiles",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "themeStyles",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "preferenceStyles",
+        "line": 75,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "profileRule",
+        "line": 88,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "densityName",
+        "line": 107,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveProfile",
+        "line": 113,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rule",
+        "line": 140,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "layer",
+        "line": 151,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "layoutStyles",
+        "line": 157,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "tokenNames",
+        "line": 171,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "breakpoints",
+        "line": 180,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/artifacts/manifest.ts",
+    "lines": 32,
+    "functions": [
+      {
+        "name": "validateArtifacts",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/styles/coverage.ts",
+    "lines": 88,
+    "functions": [
+      {
+        "name": "auditStyles",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ratio",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspectDeclaration",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "literalViolations",
+        "line": 66,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reachesPrimary",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dependencyReaches",
+        "line": 81,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/styles/policy.ts",
+    "lines": 91,
+    "functions": [
+      {
+        "name": "isEligible",
+        "line": 60,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "variables",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "meaningfulLiterals",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "policyViolations",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/admit-data.ts",
+    "lines": 98,
+    "functions": [
+      {
+        "name": "resolveThemeData",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uniqueFonts",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "baseValues",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uiBase",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "presetBase",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/diagram.ts",
+    "lines": 124,
+    "functions": [
+      {
+        "name": "resolveDiagram",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rootsOnly",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "noMotion",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "projectDiagram",
+        "line": 79,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fontReference",
+        "line": 113,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rolePaint",
+        "line": 117,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/fonts.ts",
+    "lines": 62,
+    "functions": [
+      {
+        "name": "readFonts",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateFonts",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateFontValue",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requirePinnedFont",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uniqueFamilyPin",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/overrides.ts",
+    "lines": 23,
+    "functions": [
+      {
+        "name": "changedDefinitions",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "replaceLiteral",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/portable.ts",
+    "lines": 122,
+    "functions": [
+      {
+        "name": "toPortable",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "portableValue",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nonFontPortable",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "portableUnit",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fromPortable",
+        "line": 56,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateMembers",
+        "line": 83,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unpackValue",
+        "line": 94,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unpackNumber",
+        "line": 104,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unpackFont",
+        "line": 114,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/preferences.ts",
+    "lines": 37,
+    "functions": [
+      {
+        "name": "preferenceOverrides",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "activeTarget",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "motionOverrides",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/themes/resolve.ts",
+    "lines": 114,
+    "functions": [
+      {
+        "name": "themePin",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveUi",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "selectedTheme",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "namedTheme",
+        "line": 90,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "systemThemeId",
+        "line": 100,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireUiPin",
+        "line": 105,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/bounds.ts",
+    "lines": 23,
+    "functions": [
+      {
+        "name": "validateBounds",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkRange",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/contrast.ts",
+    "lines": 104,
+    "functions": [
+      {
+        "name": "channels",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "composite",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "linear",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "luminance",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "contrastRatio",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateContrast",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireOpaque",
+        "line": 56,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rolePairs",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspectPair",
+        "line": 83,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/dependencies.ts",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "expressionReferences",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "referenceTargets",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "multiplyTargets",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "alphaTargets",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "aggregateTargets",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dependencyGraph",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/emit.ts",
+    "lines": 49,
+    "functions": [
+      {
+        "name": "cssName",
+        "line": 4,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "cssValue",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "numericCss",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fontCss",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fontName",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "emitVariables",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/flatten.ts",
+    "lines": 77,
+    "functions": [
+      {
+        "name": "flatten",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readType",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readGroup",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "joined",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readToken",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "tokenExpression",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/install.ts",
+    "lines": 33,
+    "functions": [
+      {
+        "name": "createInstaller",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "install",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "cleanup",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/read-expression.ts",
+    "lines": 77,
+    "functions": [
+      {
+        "name": "readValueExpression",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readRecipe",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readReference",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readMultiply",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readAlpha",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readAggregate",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/read.ts",
+    "lines": 79,
+    "functions": [
+      {
+        "name": "readSources",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateNames",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readTheme",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readOverrides",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readOverride",
+        "line": 57,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validatePolicy",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/recipes.ts",
+    "lines": 114,
+    "functions": [
+      {
+        "name": "evaluate",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "literal",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reference",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "multiply",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "aggregate",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "alpha",
+        "line": 57,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "scalarValue",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sameUnit",
+        "line": 78,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "changedNumber",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "aggregateNumber",
+        "line": 106,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "alphaSuffix",
+        "line": 111,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/references.ts",
+    "lines": 33,
+    "functions": [
+      {
+        "name": "reference",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "curlyReference",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "pointerReference",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "objectReference",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/resolve.ts",
+    "lines": 53,
+    "functions": [
+      {
+        "name": "resolveDefinitions",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveReady",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "evaluateDefinition",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/scope.ts",
+    "lines": 21,
+    "functions": [
+      {
+        "name": "validateResolved",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/tokens/values.ts",
+    "lines": 54,
+    "functions": [
+      {
+        "name": "colorByte",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "colorValue",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fontValue",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkFamily",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readLiteral",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "numeric",
+        "line": 45,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "colorText",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/validation/canonical.ts",
+    "lines": 26,
+    "functions": [
+      {
+        "name": "canonical",
+        "line": 2,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ordered",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "orderedRecord",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compareKeys",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/validation/input.ts",
+    "lines": 74,
+    "functions": [
+      {
+        "name": "record",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "keys",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "text",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "number",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "list",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "member",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parsed",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "depthLimit",
+        "line": 66,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "plainRecord",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/core/validation/outcomes.ts",
+    "lines": 60,
+    "functions": [
+      {
+        "name": "reject",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "accepted",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "freezeData",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protect",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "failure",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protectAsync",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/artifacts.test.ts",
+    "lines": 105,
+    "functions": [
+      {
+        "name": "componentStyles",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/fixtures.ts",
+    "lines": 110,
+    "functions": [
+      {
+        "name": "jsonFile",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "object",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sources",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "must",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejected",
+        "line": 60,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ui",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "themeRequest",
+        "line": 79,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "portable",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "diagram",
+        "line": 88,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "replacePath",
+        "line": 101,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "color",
+        "line": 108,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/panels.test.tsx",
+    "lines": 137,
+    "functions": [
+      {
+        "name": "PanelsHost",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inputValue",
+        "line": 134,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/primitives.test.tsx",
+    "lines": 156,
+    "functions": [
+      {
+        "name": "DialogHost",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "TabHost",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "MenuHost",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inputValue",
+        "line": 153,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/themes.test.ts",
+    "lines": 126,
+    "functions": [
+      {
+        "name": "templatePayload",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/tokens.test.ts",
+    "lines": 154,
+    "functions": []
+  }
+]

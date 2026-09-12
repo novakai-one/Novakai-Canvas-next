@@ -41,7 +41,7 @@ Final observable outcomes:
 | 9 | language | Readable DSL parse/print/lower and semantic editing | Complete: specs/plan review/build/two bounded audits/sole verified lexer fix;18 cases pass | [#10](https://github.com/novakai-one/Novakai-Canvas-next/pull/10) |
 | 10 | design-system | Shared tokens, theme resolution and reusable React primitives | Complete: specs/plan review/build/two bounded audits; strengthened retained-draft assertion and formatted audited Button CSS;14 cases pass | [#11](https://github.com/novakai-one/Novakai-Canvas-next/pull/11) |
 | 11 | canvas | React Flow scene interaction, camera, gestures and edit drafts | Implemented: specs/plan review/two audits/sole verified fixes;16 cases pass; standards gate remains open | [#12](https://github.com/novakai-one/Novakai-Canvas-next/pull/12) |
-| 12 | export | Revision-consistent artifacts and validated import preparation | Implemented: specs/plan review/two audits/sole verified fixes;12 cases pass; standards gate remains open | PR checkpoint pending |
+| 12 | export | Revision-consistent artifacts and validated import preparation | Implemented: specs/plan review/two audits/sole verified fixes;12 cases pass; standards gate remains open | [#13](https://github.com/novakai-one/Novakai-Canvas-next/pull/13) |
 
 Order refines BUILD-ORDER.md: build resource, presentation and layout prerequisites before completing Authoring, so apply never relies on fake feasibility or admission providers. Public contracts allow incremental integration; each capability PR must honestly state current host integration coverage.
 

@@ -41,7 +41,7 @@ Final observable outcomes:
 | 9 | language | Readable DSL parse/print/lower and semantic editing | Complete: specs/plan review/build/two bounded audits/sole verified lexer fix;18 cases pass | [#10](https://github.com/novakai-one/Novakai-Canvas-next/pull/10) |
 | 10 | design-system | Shared tokens, theme resolution and reusable React primitives | Complete: specs/plan review/build/two bounded audits; strengthened retained-draft assertion and formatted audited Button CSS;14 cases pass | [#11](https://github.com/novakai-one/Novakai-Canvas-next/pull/11) |
 | 11 | canvas | React Flow scene interaction, camera, gestures and edit drafts | Implemented: specs/plan review/two audits/sole verified fixes;16 cases pass; standards gate remains open | [#12](https://github.com/novakai-one/Novakai-Canvas-next/pull/12) |
-| 12 | export | Revision-consistent artifacts and validated import preparation | Pending | |
+| 12 | export | Revision-consistent artifacts and validated import preparation | Implemented: specs/plan review/two audits/sole verified fixes;12 cases pass; standards gate remains open | PR checkpoint pending |
 
 Order refines BUILD-ORDER.md: build resource, presentation and layout prerequisites before completing Authoring, so apply never relies on fake feasibility or admission providers. Public contracts allow incremental integration; each capability PR must honestly state current host integration coverage.
 
@@ -65,3 +65,7 @@ Read this ledger and `git status`, inspect running auditors before starting repl
 ## Open standards gate after Canvas audit
 
 Canvas A1's literal source scores did not clear145 in four of five sampled targets. Product/test defects were fixed once; the evidence keeps original scores and source hashes. Do not claim full file compliance from passing Sonar/tests. Cross-call session/cache mutation, concrete React adapters and unreviewed file-local rows remain release work. Continue the remaining capability/host implementation without treating its PR as overall completion; no second Canvas audit is authorized.
+
+## Export checkpoint
+
+All twelve capability folders now have functional implementations and their specified review cycles; this does not close Part1's standards gate. Export produces real SVG/PNG/PDF/offline HTML/bundles and validates import preparation. Its49 source files have Sonar≤2, while native/composition file-score constraints remain explicit. Full suite154 cases/44files passes. No visible-browser app acceptance has been performed. Next: bind service/CLI owners, build the React host and complete each UI audit unit and final interoperability/restart proofs.

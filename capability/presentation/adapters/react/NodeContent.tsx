@@ -55,7 +55,7 @@ export function createContentRenderer(
   const css = fontRules(fonts);
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
-  function NodeContent({ node }: NodeContentProps): ReactElement {
+  function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
     return (
       <svg
         className={styles.node}
@@ -69,7 +69,7 @@ export function createContentRenderer(
         data-node-id={node.id}
       >
         <title>{node.label}</title>
-        <style>{css}</style>
+        {embedFonts && <style>{css}</style>}
         {frame(node)}
         <Blocks primitives={node.content.primitives} />
       </svg>
@@ -121,7 +121,7 @@ export function createMeasuredRenderer(
   const css = fontRules(fonts);
   const Blocks = slots.ContentBlocks;
   /** Render admitted measured content at its exact bounds; no wrapping, frame or typography policy is introduced. */
-  function MeasuredContent({ content }: MeasuredContentProps): ReactElement {
+  function MeasuredContent({ content, embedFonts = true }: MeasuredContentProps): ReactElement {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -131,10 +131,20 @@ export function createMeasuredRenderer(
         role="img"
         aria-label={content.outline.join('; ')}
       >
-        <style>{css}</style>
+        {embedFonts && <style>{css}</style>}
         <Blocks primitives={content.primitives} />
       </svg>
     );
   }
   return MeasuredContent;
+}
+
+/** Export can embed the same owned font rules once per scene rather than once per node/label. */
+export function createFontDefinitions(fonts: FontSet): ComponentType {
+  const css = fontRules(fonts);
+  /** Static font definitions contain only admitted digest/MIME/base64 data; host owns renderer recovery. */
+  function FontDefinitions(): ReactElement {
+    return <style>{css}</style>;
+  }
+  return FontDefinitions;
 }

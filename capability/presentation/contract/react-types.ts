@@ -7,10 +7,12 @@ export interface ContentBlocksProps {
 }
 export interface NodeContentProps {
   readonly node: VisualNode;
+  readonly embedFonts?: boolean;
 }
 /** Measured labels/titles reuse exact font bytes and primitives without inventing a node frame. */
 export interface MeasuredContentProps {
   readonly content: MeasuredContent;
+  readonly embedFonts?: boolean;
 }
 export interface MarkerProps {
   readonly kind: MarkerKind;
@@ -21,6 +23,7 @@ export interface ReactBindings {
   readonly MeasuredContent: ComponentType<MeasuredContentProps>;
   readonly Marker: ComponentType<MarkerProps>;
   readonly fonts: FontSet;
+  readonly FontDefinitions: ComponentType;
 }
 export interface NodeSlots {
   readonly ContentBlocks: ComponentType<ContentBlocksProps>;

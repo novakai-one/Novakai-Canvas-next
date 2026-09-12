@@ -9,6 +9,7 @@ import {
   createContentRenderer,
   createMarkerRenderer,
   createMeasuredRenderer,
+  createFontDefinitions,
 } from '../adapters/react/NodeContent.js';
 import { createMarkupRenderer } from '../adapters/static-markup.js';
 import { markerDrawing } from '../core/notation/markers.js';
@@ -32,6 +33,7 @@ export function composePresentation(
       MeasuredContent: createMeasuredRenderer(pinned, { ContentBlocks }),
       Marker: createMarkerRenderer(markerDrawing),
       fonts: pinned,
+      FontDefinitions: createFontDefinitions(pinned),
     };
     const renderer = createMarkupRenderer(react, nativeRender);
     return { presentation: createPresentation({ ...owners, measurement, renderer }), react };

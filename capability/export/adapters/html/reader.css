@@ -1,0 +1,10 @@
+:root { --reader-background: #ffffff; --reader-foreground: #17212b; --reader-muted: #526273; --reader-accent: #245cc7; --reader-gap: 1rem; --reader-width: 90rem; --reader-font: 1rem; }
+body { margin: 0; padding: calc(var(--reader-gap) * 2); background: var(--reader-background); color: var(--reader-foreground); font: var(--reader-font)/1.5 system-ui, sans-serif; }
+header, main { max-width: var(--reader-width); margin-inline: auto; }
+nav { display: flex; flex-wrap: wrap; gap: var(--reader-gap); }
+a { color: var(--reader-accent); }
+section { margin-block: calc(var(--reader-gap) * 3); }
+.diagram { overflow: auto; }
+.diagram > svg { display: block; max-width: 100%; height: auto; }
+details { margin-block: var(--reader-gap); color: var(--reader-muted); }
+summary { cursor: pointer; }

@@ -5,7 +5,7 @@ import { lowerNode, lowerRecord } from '../lowering/content.js';
 import { lowerSection } from '../lowering/views.js';
 import { lowerAsset } from '../lowering/resources.js';
 import type { RawRecord } from '../lowering/fields.js';
-import { reject } from '../validation/outcomes.js';
+import { accepted, reject } from '../validation/outcomes.js';
 import { requirePlainAddress } from './targets.js';
 const namespaces: Readonly<Record<string, string>> = {
   node: 'objects',
@@ -42,7 +42,7 @@ function declarationRecord(operation: Operation, resources: ResolvedResources): 
     reject('syntax', operation.span, 'Complete declaration', 'Missing replacement declaration');
   const translators: Readonly<Record<string, () => RawRecord>> = {
     node: () => lowerNode(item),
-    section: () => lowerSection(item),
+    section: () => accepted(lowerSection(item)),
     asset: () => lowerAsset(item, resources),
   };
   const translate = translators[item.kind];

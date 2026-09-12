@@ -1,3 +1,4 @@
+/** Measured grid placement is pure and replayable; validated input enters through Layout execute, whose caller retains the previous scene on failure. */
 import type { LayoutIntent } from '../../contract/records/input.js';
 import type { PlacementNode, PlacementValue } from '../../contract/records/problem.js';
 interface Cell {
@@ -14,8 +15,10 @@ export function gridPlacement(
   columns: number,
   gap: number,
   direction: LayoutIntent['direction'],
+  physicalColumns = false,
 ): readonly PlacementValue[] {
-  const cells = nodes.map((_, index) => cell(index, columns, direction));
+  const stride = readingStride(nodes.length, columns, direction, physicalColumns);
+  const cells = nodes.map((_, index): Cell => cell(index, stride, direction));
   const tracks = measureTracks(nodes, cells);
   return nodes.map((node, index) =>
     place(node, cells[index] ?? { column: 0, row: 0 }, tracks, gap, direction),
@@ -73,4 +76,24 @@ function place(
       height: node.height,
     },
   };
+}
+
+/** Vertical explicit grids fill ceil(count/columns) rows; omission preserves the legacy transpose. */
+function readingStride(
+  count: number,
+  columns: number,
+  direction: LayoutIntent['direction'],
+  physical: boolean,
+): number {
+  if (!physical) return columns;
+  return verticalStride(count, columns, direction);
+}
+/** Physical track count is horizontal in every direction; pure replay needs no recovery state. */
+function verticalStride(
+  count: number,
+  columns: number,
+  direction: LayoutIntent['direction'],
+): number {
+  if (direction === 'down' || direction === 'up') return Math.max(1, Math.ceil(count / columns));
+  return columns;
 }

@@ -1,3 +1,4 @@
+/** Public Model scenarios are replayable; Vitest owns assertion reporting and the developer corrects regressions before rerunning. */
 import { expect, test } from 'vitest';
 import { validate } from '../contract/index.js';
 import { base, graph, layout, node, rejects, relation, section, value } from './fixtures.js';
@@ -188,7 +189,7 @@ test('validate flow and state', () => {
       .relationships,
   ).toHaveLength(2);
 });
-function tree(extra: Readonly<Record<string, unknown>> = {}) {
+function tree(extra: Readonly<Record<string, unknown>> = {}): ReturnType<typeof base> {
   return base({
     objects: [node('root', 'concept'), node('child', 'concept'), node('note', 'note')],
     relationships: [relation('parent', 'root', 'child', { kind: 'parent' })],
@@ -248,7 +249,7 @@ test('validate tree topology', () => {
     ).sections[0]?.root,
   ).toBeUndefined();
 });
-function sequence(items: readonly unknown[]) {
+function sequence(items: readonly unknown[]): ReturnType<typeof base> {
   return base({
     objects: [node('user', 'participant'), node('agent', 'participant')],
     sections: [
@@ -307,5 +308,55 @@ test('validate sequence topology', () => {
     ]),
     'duplicate',
     'branches',
+  );
+});
+
+/** Public validation rejects malformed intent without mutation; callers correct and retry. */
+test('grid columns validate independently in collection, section and nested group scopes', (): void => {
+  const invalidColumns: readonly unknown[] = [0, 13, -1, 1.5, '2', null, NaN, Infinity];
+  invalidColumns.forEach((columns): void => {
+    rejects(base({ arrangement: { algorithm: 'grid', columns } }), 'shape', 'columns');
+    rejects(
+      base({ sections: [section('grid', 'grid', { layout: { algorithm: 'grid', columns } })] }),
+      'shape',
+      'columns',
+    );
+  });
+  ['flow', 'layered', 'tree', 'sequence'].forEach((algorithm): void => {
+    rejects(base({ arrangement: { algorithm, columns: 2 } }), 'layout', 'columns');
+  });
+  [1, 2, 12].forEach((columns): void => {
+    const input = base({
+      arrangement: { algorithm: 'grid', columns },
+      sections: [
+        section('grid', 'grid', {
+          layout: { algorithm: 'grid', columns },
+          groups: [
+            { id: 'outer', title: 'Outer', layout: { algorithm: 'grid', columns: 1 } },
+            {
+              id: 'inner',
+              title: 'Inner',
+              parent: 'outer',
+              layout: { algorithm: 'grid', columns },
+            },
+          ],
+        }),
+      ],
+    });
+    const checked = value(validate(input));
+    expect(checked.arrangement.columns).toBe(columns);
+    expect(checked.sections[0]?.groups[1]?.layout.columns).toBe(columns);
+    expect(input.arrangement).toEqual({ algorithm: 'grid', columns });
+  });
+  rejects(
+    base({
+      sections: [
+        section('grid', 'grid', {
+          groups: [{ id: 'g', title: 'G', layout: { algorithm: 'flow', columns: 2 } }],
+        }),
+      ],
+    }),
+    'layout',
+    'groups.g.layout.columns',
   );
 });

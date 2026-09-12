@@ -1,3 +1,4 @@
+/** Pure scalar edits run under Language protect; callers retain their snapshot on failure and Authoring owns commit recovery. */
 import type { Collection } from '../../contract/ports/model.js';
 import type { Operation } from '../../contract/records/syntax.js';
 import type { ResolvedResources } from '../../contract/records/requests.js';
@@ -7,17 +8,21 @@ import { changedProperties } from './property-values.js';
 import { resolveTheme } from '../lowering/resources.js';
 import { modeLayout } from '../lowering/layout.js';
 import { isReference } from '../parsing/value-types.js';
-import { reject } from '../validation/outcomes.js';
-/** Scalar edits preserve all unmentioned canonical data and human geometry. Model validates the final batch. */
+import { partitionLayout } from '../lowering/layout-fields.js';
+import type { Result } from '../../contract/errors.js';
+import { protect, reject } from '../validation/outcomes.js';
+/** Scalar edits preserve all unmentioned canonical data and human geometry. Model validates the batch; Language owns correction and Authoring owns commit recovery. Retrying has no writes. */
 export function editProperties(
   collection: Collection,
   operation: Operation,
   resources: ResolvedResources,
-): RawRecord {
-  const target = propertyTarget(collection, operation);
-  const changed = changedProperties(target.record, operation, target.properties);
-  const semantic = adjustNestedProperties(target.record, changed, operation, resources);
-  return target.write(semantic);
+): Result<RawRecord> {
+  return protect(() => {
+    const target = propertyTarget(collection, operation);
+    const changed = changedProperties(target.record, operation, target.properties);
+    const semantic = adjustNestedProperties(target.record, changed, operation, resources);
+    return target.write(semantic);
+  });
 }
 /** Layout and link syntax flatten readability only; their canonical data remains explicitly nested. */
 function adjustNestedProperties(
@@ -69,14 +74,14 @@ function nestedLayout(
   field: 'layout' | 'arrangement',
 ): RawRecord {
   const before = nestedRecord(previous[field], operation);
-  const { algorithm, direction, gap, ...remaining } = next;
-  const modified = { algorithm, direction, gap };
+  const { layout: modified, remaining } = partitionLayout(next);
   const updates = Object.fromEntries(
     Object.entries(modified).filter(([, value]) => value !== undefined),
   );
   const resetAlgorithm = operation.properties.includes('layout');
   const defaultAlgorithm = field === 'arrangement' ? 'grid' : modeLayout(String(next.mode));
-  const layout = { ...before, ...updates };
+  const retained = retainedColumns(before, operation);
+  const layout = { ...retained, ...updates };
   const resolved = resetAlgorithm ? { ...layout, algorithm: defaultAlgorithm } : layout;
   return { ...remaining, [field]: resolved };
 }
@@ -129,4 +134,12 @@ function retainedSection(previous: RawRecord, operation: Operation): RawRecord {
   const target = nestedRecord(previous.target, operation);
   if (target.section === undefined) return {};
   return { section: target.section };
+}
+
+/** Explicit unset drops nested columns; pure replay retains other intent and Authoring owns recovery. */
+function retainedColumns(layout: RawRecord, operation: Operation): RawRecord {
+  if (!operation.properties.includes('columns')) return layout;
+  const { columns, ...remaining } = layout;
+  void columns;
+  return remaining;
 }

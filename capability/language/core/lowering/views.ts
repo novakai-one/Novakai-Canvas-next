@@ -1,32 +1,39 @@
+/** Pure view lowering is protected by Language protect; callers retain source on diagnostics and Authoring owns commit recovery. */
 import type { Declaration } from '../../contract/records/syntax.js';
 import { lowerRecord } from './content.js';
 import { id, list, optional, textOr, type RawRecord } from './fields.js';
 import { lowerLayout, modeLayout } from './layout.js';
 import { lowerSequence } from './sequence.js';
 import { lowerValue } from './properties.js';
-import { reject, origin } from '../validation/outcomes.js';
+import { partitionLayout } from './layout-fields.js';
+import type { Result } from '../../contract/errors.js';
+import { accepted, protect, reject, origin } from '../validation/outcomes.js';
 interface ViewParts {
   readonly appearances: readonly RawRecord[];
   readonly groups: readonly RawRecord[];
 }
-/** A show/connect statement applies one explicit preference set to every listed identity. */
-export function lowerShows(item: Declaration, group?: string): readonly RawRecord[] {
-  const { ids: ignored, ...preferences } = lowerRecord(item);
-  void ignored;
-  return list(item.fields, 'ids').map((value) => ({
-    object: lowerValue(value, 'id'),
-    ...preferences,
-    ...optional('group', group),
-  }));
+/** A show/connect statement applies one explicit preference set to every listed identity. Retries have no writes; Language owns correction and Authoring owns commit recovery. */
+export function lowerShows(item: Declaration, group?: string): Result<readonly RawRecord[]> {
+  return protect(() => {
+    const { ids: ignored, ...preferences } = lowerRecord(item);
+    void ignored;
+    return list(item.fields, 'ids').map((value) => ({
+      object: lowerValue(value, 'id'),
+      ...preferences,
+      ...optional('group', group),
+    }));
+  });
 }
-/** Canonical wires are referenced here; this never creates a relationship implicitly. */
-export function lowerConnections(item: Declaration): readonly RawRecord[] {
-  const { ids: ignored, ...preferences } = lowerRecord(item);
-  void ignored;
-  return list(item.fields, 'ids').map((value) => ({
-    relationship: lowerValue(value, 'id'),
-    ...preferences,
-  }));
+/** Canonical wires are referenced here; this never creates a relationship implicitly. Retries have no writes; Language owns correction and Authoring owns commit recovery. */
+export function lowerConnections(item: Declaration): Result<readonly RawRecord[]> {
+  return protect(() => {
+    const { ids: ignored, ...preferences } = lowerRecord(item);
+    void ignored;
+    return list(item.fields, 'ids').map((value) => ({
+      relationship: lowerValue(value, 'id'),
+      ...preferences,
+    }));
+  });
 }
 /** Combine independent scope projections without mutating shared view arrays. */
 function mergeViews(left: ViewParts, right: ViewParts): ViewParts {
@@ -40,19 +47,11 @@ function lowerGroup(item: Declaration, algorithm: string, parent?: string): View
   const group = {
     ...lowerRecord(item),
     ...optional('parent', parent),
-    layout: lowerLayout(item.fields, item.children, algorithm),
+    layout: accepted(lowerLayout(item.fields, item.children, algorithm)),
   };
-  const clean = omitLayoutProperties(group);
+  const clean = partitionLayout(group).remaining;
   const nested = lowerViews(item.children, algorithm, id(item.fields));
   return { appearances: nested.appearances, groups: [clean, ...nested.groups] };
-}
-/** Layout attributes are nested canonically, never copied as unknown group/section top-level fields. */
-function omitLayoutProperties(record: RawRecord): RawRecord {
-  const { algorithm, direction, gap, ...rest } = record;
-  void algorithm;
-  void direction;
-  void gap;
-  return rest;
 }
 /** Each layout scope owns its appearance order; interleaving unrelated scopes has no authored meaning. */
 function lowerViews(
@@ -66,7 +65,7 @@ function lowerViews(
 }
 /** Other section statements are handled by their own projections rather than becoming hidden nodes. */
 function lowerView(item: Declaration, algorithm: string, parent?: string): ViewParts {
-  if (item.kind === 'show') return { appearances: lowerShows(item, parent), groups: [] };
+  if (item.kind === 'show') return { appearances: accepted(lowerShows(item, parent)), groups: [] };
   if (item.kind === 'group') return lowerGroup(item, algorithm, parent);
   return { appearances: [], groups: [] };
 }
@@ -79,17 +78,21 @@ function rootField(children: readonly Declaration[]): RawRecord {
   if (root === undefined) return {};
   return { root: id(root.fields) };
 }
-/** Section semantic configuration includes every mode-specific structure without layout coordinates. */
-export function lowerSection(item: Declaration): RawRecord {
-  const mode = textOr(item.fields, 'mode', 'flow');
-  const views = lowerViews(item.children, modeLayout(mode));
-  return {
-    ...omitLayoutProperties(lowerRecord(item)),
-    mode,
-    layout: lowerLayout(item.fields, item.children, modeLayout(mode)),
-    ...views,
-    wires: item.children.filter((child) => child.kind === 'connect').flatMap(lowerConnections),
-    sequence: lowerSequence(item.children),
-    ...rootField(item.children),
-  };
+/** Section semantic configuration includes every mode-specific structure without layout coordinates. Retries have no writes; Language owns correction and Authoring owns commit recovery. */
+export function lowerSection(item: Declaration): Result<RawRecord> {
+  return protect(() => {
+    const mode = textOr(item.fields, 'mode', 'flow');
+    const views = lowerViews(item.children, modeLayout(mode));
+    return {
+      ...partitionLayout(lowerRecord(item)).remaining,
+      mode,
+      layout: accepted(lowerLayout(item.fields, item.children, modeLayout(mode))),
+      ...views,
+      wires: item.children
+        .filter((child) => child.kind === 'connect')
+        .flatMap((child) => accepted(lowerConnections(child))),
+      sequence: lowerSequence(item.children),
+      ...rootField(item.children),
+    };
+  });
 }

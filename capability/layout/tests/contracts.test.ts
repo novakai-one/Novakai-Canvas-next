@@ -1,3 +1,4 @@
+/** Public Layout boundary scenarios are replayable; Vitest owns assertion reporting and the developer fixes failures before rerunning. */
 import { describe, it, expect, assert } from 'vitest';
 import type { Projection, Dependencies } from '../contract/index.js';
 import { createLayout } from '../contract/index.js';
@@ -265,4 +266,90 @@ function scaleSection(index: number): {
 function horizontalEdge(source: string, index: number, ids: readonly string[]): readonly unknown[] {
   if (index % 10 === 9) return [];
   return [edge(`${source}-h`, source, ids[index + 1] ?? '', { label: 'uses' })];
+}
+
+/** Dishonest projection providers cannot bypass Layout's independently checked intent; callers retain the current scene. */
+it('rejects invalid grid columns at each consumed scope and preserves authored placements', async (): Promise<void> => {
+  const source = project(
+    collection({
+      objects: [object('a')],
+      sections: [
+        section('grid', ['a'], {
+          mode: 'grid',
+          layout: { algorithm: 'grid' },
+          groups: [{ id: 'g', title: 'G', layout: { algorithm: 'grid' } }],
+        }),
+      ],
+    }),
+  );
+  const invalid = [0, 13, 1.5, NaN, Infinity].flatMap((columns): readonly Projection[] =>
+    invalidColumnScopes(source, columns),
+  );
+  const nonGrid: Projection = {
+    ...source,
+    arrangement: { ...source.arrangement, algorithm: 'flow', columns: 2 },
+  };
+  const layout = await harness([source, ...invalid, nonGrid]);
+  [...invalid, nonGrid].forEach((projection): void => {
+    const result = layout.key({
+      projection,
+      measurements: metrics(projection),
+      options: settings,
+      previous: null,
+    });
+    assert(!result.ok);
+    expect(result.error.code).toBe('invalid-input');
+    expect(result.error.recovery.length).toBeGreaterThan(0);
+  });
+  await checkColumnLocks();
+});
+/** Deliberately dishonest typed data exercises each consumer scope without calling Model validation first. */
+function invalidColumnScopes(source: Projection, columns: number): readonly Projection[] {
+  return [
+    { ...source, arrangement: { ...source.arrangement, columns } },
+    {
+      ...source,
+      sections: source.sections.map((section): Projection['sections'][number] => ({
+        ...section,
+        layout: { ...section.layout, columns },
+      })),
+    },
+    {
+      ...source,
+      sections: source.sections.map((section): Projection['sections'][number] => ({
+        ...section,
+        groups: section.groups.map((group): typeof group => ({
+          ...group,
+          layout: { ...group.layout, columns },
+        })),
+      })),
+    },
+  ];
+}
+/** Both soft human preferences and hard locks outrank regenerated automatic grid seeds. */
+async function checkColumnLocks(): Promise<void> {
+  for (const locked of [false, true]) {
+    const make = (columns: number): Projection =>
+      project(
+        collection({
+          objects: [object('a'), object('b')],
+          sections: [
+            section('grid', [], {
+              mode: 'grid',
+              layout: { algorithm: 'grid', columns },
+              appearances: [
+                { object: 'a', placement: { x: -400, y: -250, locked } },
+                { object: 'b' },
+              ],
+            }),
+          ],
+        }),
+      );
+    const before = make(1);
+    const after = make(2);
+    const layout = await harness([before, after]);
+    const previous = value(await layout.arrange(request(layout, before)));
+    const scene = value(await layout.arrange(request(layout, after, previous)));
+    expect(scene.sections[0]?.nodes[0]?.box).toMatchObject({ x: -400, y: -250 });
+  }
 }

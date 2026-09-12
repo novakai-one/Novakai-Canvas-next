@@ -1,3 +1,4 @@
+import { requireValue } from '../validation/outcomes.js';
 import type { VisualNode, VisualSection, LayoutIntent } from '../../contract/records/input.js';
 import type { PlacementValue, PlacementProblem } from '../../contract/records/problem.js';
 import type { Point } from '../../contract/records/geometry.js';
@@ -118,14 +119,16 @@ export async function seedScope(
     height: item.root.box.height,
     header: 0,
   }));
-  const placed = await placeScope(
-    {
-      nodes,
-      edges: edges(roots, section),
-      layout: intent(parent, section),
-      minimumGap: routingGap(section, edges(roots, section), measurements, context.options),
-    },
-    context,
+  const placed = requireValue(
+    await placeScope(
+      {
+        nodes,
+        edges: edges(roots, section),
+        layout: intent(parent, section),
+        minimumGap: routingGap(section, edges(roots, section), measurements, context.options),
+      },
+      context,
+    ),
   );
   return placed.flatMap((item) => flatten(item, branches));
 }

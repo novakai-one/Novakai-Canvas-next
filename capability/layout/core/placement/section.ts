@@ -1,3 +1,5 @@
+import type { Result } from '../../contract/errors.js';
+/** Section placement runs under Layout execute; Authoring retains committed state and the caller keeps its previous scene on failure. */
 import { participantConstraints } from '../sequence/participants.js';
 import type { VisualSection, VisualNode } from '../../contract/records/input.js';
 import type { SectionCandidate } from '../../contract/records/candidate.js';
@@ -8,17 +10,19 @@ import type { PositionedInput } from '../constraints/compile.js';
 import { compile } from '../constraints/compile.js';
 import { relative } from '../constraints/relative.js';
 import { separateBoxes } from '../constraints/separation.js';
+import { previousNode } from './seeds.js';
 import { seedScope } from './groups.js';
-import { reject } from '../validation/outcomes.js';
+import { execute, protect, requireValue, reject } from '../validation/outcomes.js';
 /** Prior geometry is a soft seed only; changed measured content and current locks always win. */
 function input(
   node: VisualNode,
   seeds: readonly PlacementValue[],
   previous: SectionCandidate | null,
+  section: VisualSection,
 ): PositionedInput {
   const seed = seeds.find((item) => item.id === node.id);
   if (!seed) return reject('engine-failed', node.id, 'Missing placement seed');
-  const prior = previous?.nodes.find((item) => item.id === node.id);
+  const prior = previousNode(node, section, previous);
   return {
     node: {
       id: node.id,
@@ -32,18 +36,25 @@ function input(
     strength: prior === undefined ? 'weak' : 'strong',
   };
 }
-/** Scope constraints resolve canonical identities through visible measured nodes. */
+/** Scope constraints resolve canonical identities through visible measured nodes. Callers retain scene/draft and retry safely; Authoring owns commit recovery. */
 export function sectionConstraints(
   section: VisualSection,
   context: PlacementContext,
-): readonly LinearConstraint[] {
-  return [
-    ...participantConstraints(section, context.options.gap[section.layout.gap]),
-    ...relative(section.layout, section.nodes, context.options.gap[section.layout.gap], section.id),
-    ...section.groups.flatMap((group) =>
-      relative(group.layout, section.nodes, context.options.gap[group.layout.gap], group.id),
-    ),
-  ];
+): Result<readonly LinearConstraint[]> {
+  return protect(() => {
+    return [
+      ...participantConstraints(section, context.options.gap[section.layout.gap]),
+      ...relative(
+        section.layout,
+        section.nodes,
+        context.options.gap[section.layout.gap],
+        section.id,
+      ),
+      ...section.groups.flatMap((group) =>
+        relative(group.layout, section.nodes, context.options.gap[group.layout.gap], group.id),
+      ),
+    ];
+  });
 }
 /** Reconstruct placed data exclusively from the authoritative projection, never previous measured payloads. */
 function placed(node: VisualNode, values: readonly PlacementValue[]): PlacedNode {
@@ -57,21 +68,29 @@ function placed(node: VisualNode, values: readonly PlacementValue[]): PlacedNode
     measured: node,
   };
 }
-/** Derive one section's boxes through seeds, hard constraints and bounded nonoverlap search. */
+/** Derive one section's boxes through seeds, hard constraints and bounded nonoverlap search. Callers retain scene/draft and retry safely; Authoring owns commit recovery. */
 export async function placeSection(
   section: VisualSection,
   previous: SectionCandidate | null,
   context: PlacementContext,
   measurements: SupplementalMeasurements,
-): Promise<readonly PlacedNode[]> {
-  const seeds = await seedScope(null, section, context, measurements);
-  const items = section.nodes.map((node) => input(node, seeds, previous));
-  const problem = compile(items, context.options);
-  const values = await separateBoxes(
-    { ...problem, constraints: [...problem.constraints, ...sectionConstraints(section, context)] },
-    items,
-    { ...context.dependencies, job: context.job, gap: context.options.gap[section.layout.gap] },
-    context.options.maxBranches,
-  );
-  return section.nodes.map((node) => placed(node, values));
+): Promise<Result<readonly PlacedNode[]>> {
+  return execute(async () => {
+    const seeds = await seedScope(null, section, context, measurements);
+    const items = section.nodes.map((node) => input(node, seeds, previous, section));
+    const problem = compile(items, context.options);
+    const values = await separateBoxes(
+      {
+        ...problem,
+        constraints: [
+          ...problem.constraints,
+          ...requireValue(sectionConstraints(section, context)),
+        ],
+      },
+      items,
+      { ...context.dependencies, job: context.job, gap: context.options.gap[section.layout.gap] },
+      context.options.maxBranches,
+    );
+    return section.nodes.map((node) => placed(node, values));
+  });
 }

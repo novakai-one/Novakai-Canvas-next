@@ -1,3 +1,5 @@
+import type { Result } from '../../contract/errors.js';
+/** Seed policy runs under Layout execute; structured native failures return to the caller, which retains the previous scene and retries. */
 import type { LayoutIntent } from '../../contract/records/input.js';
 import type {
   PlacementValue,
@@ -6,7 +8,7 @@ import type {
 } from '../../contract/records/problem.js';
 import type { SeedContext, LayoutOptions } from '../../contract/types.js';
 import { box } from '../../contract/records/geometry.js';
-import { reject, requireValue } from '../validation/outcomes.js';
+import { execute, reject, requireValue } from '../validation/outcomes.js';
 import { gridPlacement } from './grid.js';
 export interface Scope {
   readonly nodes: readonly PlacementNode[];
@@ -17,9 +19,14 @@ export interface Scope {
 /** Measured track sizes keep heterogeneous diagrams compact without allowing overlap. */
 function grid(scope: Scope, options: LayoutOptions): readonly PlacementValue[] {
   const gap = Math.max(options.gap[scope.layout.gap], scope.minimumGap);
-  const columns =
-    scope.layout.algorithm === 'sequence' ? Math.max(1, scope.nodes.length) : options.gridColumns;
-  return gridPlacement(scope.nodes, columns, gap, gridDirection(scope.layout));
+  const columns = gridColumns(scope, options);
+  return gridPlacement(
+    scope.nodes,
+    columns,
+    gap,
+    gridDirection(scope.layout),
+    scope.layout.columns !== undefined,
+  );
 }
 /** Sequence headers are horizontal; down/up describe time, not a column of overlapping lifelines. */
 function gridDirection(layout: LayoutIntent): LayoutIntent['direction'] {
@@ -52,19 +59,27 @@ function checkBox(value: PlacementValue): void {
   if (!box.safeParse(value.box).success)
     reject('engine-failed', value.id, 'Native placement returned invalid bounds');
 }
-/** Cancellation is observed on both sides of native work and also for synchronous grid placement. */
+/** Cancellation is observed on both sides of native work and also for synchronous grid placement. Callers retain scene/draft and retry safely; Authoring owns commit recovery. */
 export async function placeScope(
   scope: Scope,
   context: SeedContext,
-): Promise<readonly PlacementValue[]> {
-  requireValue(await context.dependencies.jobs.checkpoint(context.job));
-  const values = await choose(scope, context);
-  requireValue(await context.dependencies.jobs.checkpoint(context.job));
-  return checked(values, scope);
+): Promise<Result<readonly PlacementValue[]>> {
+  return execute(async () => {
+    requireValue(await context.dependencies.jobs.checkpoint(context.job));
+    const values = await choose(scope, context);
+    requireValue(await context.dependencies.jobs.checkpoint(context.job));
+    return checked(values, scope);
+  });
 }
 /** Closed layout policy selection keeps native dependencies out of geometry rules. */
 async function choose(scope: Scope, context: SeedContext): Promise<readonly PlacementValue[]> {
   if (scope.layout.algorithm === 'grid' || scope.layout.algorithm === 'sequence')
     return grid(scope, context.options);
   return native(scope, context);
+}
+
+/** Omitted tracks retain legacy policy; validated explicit grid intent takes priority on every replay. */
+function gridColumns(scope: Scope, options: LayoutOptions): number {
+  if (scope.layout.algorithm === 'sequence') return Math.max(1, scope.nodes.length);
+  return scope.layout.columns ?? options.gridColumns;
 }

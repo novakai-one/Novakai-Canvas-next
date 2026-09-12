@@ -1,3 +1,5 @@
+import type { Result } from '../../contract/errors.js';
+/** Collection arrangement runs under Layout execute; callers retain the previous scene on failure and Authoring owns commit recovery. */
 import type { Placement } from '../../contract/records/input.js';
 import type { Box } from '../../contract/records/geometry.js';
 import type { Projection } from '../../contract/records/input.js';
@@ -10,7 +12,7 @@ import { placeScope } from '../placement/policy.js';
 import { compile } from '../constraints/compile.js';
 import { relativeSections } from '../constraints/relative.js';
 import { separateBoxes } from '../constraints/separation.js';
-import { reject } from '../validation/outcomes.js';
+import { execute, requireValue, reject } from '../validation/outcomes.js';
 /** Section locks address origins; translate them to visible-box positions for the shared solver. */
 function item(
   section: PlacedSection,
@@ -65,42 +67,47 @@ function placed(section: PlacedSection, values: readonly PlacementValue[]): Plac
     box: value.box,
   };
 }
-/** Collection arrangement uses the same hard constraints and bounded nonoverlap policy as node scopes. */
+/** Collection arrangement uses the same hard constraints and bounded nonoverlap policy as node scopes. Callers retain scene/draft and retry safely; Authoring owns commit recovery. */
 export async function arrangeSections(
   sections: readonly PlacedSection[],
   projection: Projection,
   previous: SceneCandidate | null,
   context: PlacementContext,
-): Promise<readonly PlacedSection[]> {
-  const nodes = sections.map((section) => ({
-    id: section.id,
-    parent: null,
-    width: section.box.width,
-    height: section.box.height,
-    header: 0,
-  }));
-  const seeds = await placeScope(
-    { nodes, edges: [], layout: projection.arrangement, minimumGap: 0 },
-    context,
-  );
-  const items = sections.map((section) => item(section, seeds, projection, previous));
-  const problem = compile(items, context.options);
-  const gap = context.options.gap[projection.arrangement.gap];
-  const values = await separateBoxes(
-    {
-      ...problem,
-      constraints: [
-        ...problem.constraints,
-        ...relativeSections(
-          projection.arrangement,
-          sections.map((item) => item.id),
-          gap,
-        ),
-      ],
-    },
-    items,
-    { ...context.dependencies, job: context.job, gap },
-    context.options.maxBranches,
-  );
-  return sections.map((section) => placed(section, values));
+): Promise<Result<readonly PlacedSection[]>> {
+  return execute(async () => {
+    const nodes = sections.map((section) => ({
+      id: section.id,
+      parent: null,
+      width: section.box.width,
+      height: section.box.height,
+      header: 0,
+    }));
+    const seeds = requireValue(
+      await placeScope(
+        { nodes, edges: [], layout: projection.arrangement, minimumGap: 0 },
+        context,
+      ),
+    );
+    const history = projection.arrangement.columns === undefined ? previous : null;
+    const items = sections.map((section) => item(section, seeds, projection, history));
+    const problem = compile(items, context.options);
+    const gap = context.options.gap[projection.arrangement.gap];
+    const values = await separateBoxes(
+      {
+        ...problem,
+        constraints: [
+          ...problem.constraints,
+          ...relativeSections(
+            projection.arrangement,
+            sections.map((item) => item.id),
+            gap,
+          ),
+        ],
+      },
+      items,
+      { ...context.dependencies, job: context.job, gap },
+      context.options.maxBranches,
+    );
+    return sections.map((section) => placed(section, values));
+  });
 }

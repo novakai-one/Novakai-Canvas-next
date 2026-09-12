@@ -39,6 +39,7 @@ function readAttribute(
     );
   const start = consume(advance(cursor), '=');
   const raw = readValue(start);
+  requireIntegerValue(raw, property, name);
   requireQuotedValues(start, raw.next, property);
   return { value: [name, checkValue(raw.value, property, name)], next: raw.next };
 }
@@ -68,4 +69,21 @@ function requireQuotedList(start: Cursor, end: Cursor): void {
 function requireStringToken(cursor: Cursor): void {
   if (peek(cursor).kind !== 'string')
     reject('syntax', peek(cursor).span, 'Quoted string', 'Text property must be quoted');
+}
+
+/** An integer attribute must reject a decimal as one invalid value, not as a following patch command. */
+function requireIntegerValue(raw: Parsed<LocatedValue>, property: Property, name: string): void {
+  if (property.type !== 'integer') return;
+  rejectFraction(raw, name);
+}
+/** Retain the full decimal span and owning property for source correction. */
+function rejectFraction(raw: Parsed<LocatedValue>, name: string): void {
+  if (peek(raw.next).text !== '.' || peek(raw.next, 1).kind !== 'integer') return;
+  reject(
+    'invalid-value',
+    { start: raw.value.span.start, end: peek(raw.next, 1).span.end },
+    'Integer',
+    'Fractional values are not valid integers',
+    name,
+  );
 }

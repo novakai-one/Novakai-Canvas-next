@@ -1,3 +1,4 @@
+/** Input decoding runs under Layout protect/execute; typed diagnostics tell callers to correct input and retry without changing committed state. */
 import {
   arrangementRequest,
   routeRequest,
@@ -16,6 +17,7 @@ import type {
 } from '../../contract/types.js';
 import { box } from '../../contract/records/geometry.js';
 import { parse, requireValue, reject, snapshot } from './outcomes.js';
+import { checkColumns } from './columns.js';
 export type CheckedLayoutRequest = Omit<LayoutRequest, 'previous'> & {
   readonly previous: SceneCandidate | null;
 };
@@ -37,6 +39,7 @@ function projection(input: unknown, reader: ProjectionReader): Projection {
   );
   result.sections.forEach(checkSection);
   checkLimits(result);
+  requireValue(checkColumns(result));
   return result;
 }
 /** The scale bound is explicit rather than relying on an engine allocation failure. */

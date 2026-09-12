@@ -1,3 +1,4 @@
+/** Layout records are immutable checked data. Model validate returns diagnostics; Authoring owns correction, commit and recovery. */
 import { z } from 'zod';
 import { objectId, groupId, sectionId } from '../brands.js';
 
@@ -34,6 +35,7 @@ export const layoutSchema = z
     algorithm: z.enum(['flow', 'layered', 'tree', 'sequence', 'grid']),
     direction: z.enum(['right', 'down', 'left', 'up']).default('right'),
     gap: z.enum(['compact', 'normal', 'roomy']).default('normal'),
+    columns: z.number().int().min(1).max(12).optional(),
     constraints: z.array(constraintSchema).readonly().default([]),
   })
   .readonly();

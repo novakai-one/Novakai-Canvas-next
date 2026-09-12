@@ -1,7 +1,7 @@
 import type { Dependencies } from '../../contract/types.js';
 import type { ExpansionRequest, LoweredIntent } from '../../contract/records/requests.js';
 import { parseSource } from '../parsing/document.js';
-import { reject } from '../validation/outcomes.js';
+import { accepted, reject } from '../validation/outcomes.js';
 import { lowerDocument } from './document.js';
 /** Rebind the parsed root identity, never replace matching text in labels, URIs, code or local references. */
 export function expandRecipe(input: ExpansionRequest, deps: Dependencies): LoweredIntent {
@@ -20,9 +20,11 @@ export function expandRecipe(input: ExpansionRequest, deps: Dependencies): Lower
       id: { value: input.namespace, span: parsed.declaration.span },
     },
   };
-  return lowerDocument(
-    { ...parsed, collection: input.namespace, declaration },
-    { source: input.source, mode: 'create', snapshot: null, resources: input.resources },
-    deps,
+  return accepted(
+    lowerDocument(
+      { ...parsed, collection: input.namespace, declaration },
+      { source: input.source, mode: 'create', snapshot: null, resources: input.resources },
+      deps,
+    ),
   );
 }

@@ -1,15 +1,17 @@
+/** Section derivation runs under Layout execute; rejected cache hints are recomputed and callers retain the previous scene on failure. */
 import type { VisualSection } from '../../contract/records/input.js';
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { PlacedSection, PlacedNode } from '../../contract/records/geometry.js';
 import type { SupplementalMeasurements } from '../../contract/types.js';
 import type { DerivationContext } from '../../contract/types.js';
+import { hasColumns } from '../placement/seeds.js';
 import { placeSection } from '../placement/section.js';
 import { routeWires } from '../routing/wires.js';
 import { sequenceGeometry } from '../sequence/sequence.js';
 import { contentBounds, titleBox, sectionBounds } from './bounds.js';
 import { sectionKey, versions } from './keys.js';
 import { inspectSection } from '../validation/sections.js';
-import { protect } from '../validation/outcomes.js';
+import { requireValue, protect } from '../validation/outcomes.js';
 /** Cache geometry is accepted only after full current-source inspection; a bad hint falls back to derivation. */
 function cached(
   source: VisualSection,
@@ -17,7 +19,7 @@ function cached(
   metrics: SupplementalMeasurements,
   context: DerivationContext,
 ): PlacedSection | null {
-  if (previous === null) return null;
+  if (previous === null || hasColumns(source)) return null;
   const result = protect(() =>
     inspectSection(source, previous, {
       options: context.options,
@@ -46,7 +48,7 @@ export async function arrangeSection(
 ): Promise<PlacedSection> {
   const reuse = cached(source, previous, metrics, context);
   if (reuse !== null) return reuse;
-  const nodes = await placeSection(source, previous, context, metrics);
+  const nodes = requireValue(await placeSection(source, previous, context, metrics));
   return completeSection(source, nodes, metrics, context);
 }
 /** Build wires, sequence and heading around fixed nodes without assigning collection-space positions. */

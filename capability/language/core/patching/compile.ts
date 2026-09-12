@@ -9,7 +9,7 @@ import { requireSnapshot, structuralChange, resetChange } from './structural.js'
 import { editBlocks } from './blocks.js';
 import { editMembership } from './views.js';
 import { editProperties } from './properties.js';
-import { reject } from '../validation/outcomes.js';
+import { accepted, reject } from '../validation/outcomes.js';
 interface Compilation {
   readonly candidate: Collection;
   readonly changes: readonly Change[];
@@ -84,7 +84,7 @@ function compileOperation(
   request: LowerRequest,
 ): RawRecord {
   if (operation.action === 'set' || operation.action === 'unset')
-    return editProperties(collection, operation, request.resources);
+    return accepted(editProperties(collection, operation, request.resources));
   if (operation.target === 'block') return editBlocks(collection, operation);
   return compileStructuralOrView(collection, operation, request);
 }

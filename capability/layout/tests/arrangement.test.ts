@@ -1,3 +1,4 @@
+/** Public Layout scenarios use real injected engines; Vitest owns assertion reporting and the developer fixes failures before rerunning. */
 import { describe, it, expect, assert } from 'vitest';
 import {
   collection,
@@ -12,7 +13,7 @@ import {
 } from './fixtures.js';
 import { node, dependencies, settings, metrics } from './fixtures.js';
 import { createLayout, toCollection, toSection, toParent } from '../contract/index.js';
-import type { LayoutIntent, Projection } from '../contract/index.js';
+import type { LayoutIntent, Projection, Scene } from '../contract/index.js';
 describe('Layout arrangement acceptance', () => {
   it('1 — lays out mixed section policies deterministically with complete labelled wires', async () => {
     const source = flow();
@@ -550,4 +551,221 @@ function isolatedAlternatives(): Projection {
       ],
     }),
   );
+}
+
+/** Public measured geometry supplies the oracle; failures are surfaced by Vitest and fixtures can be replayed. */
+it('explicit horizontal tracks override automatic history in every direction and nested scope', async (): Promise<void> => {
+  const directions: readonly LayoutIntent['direction'][] = ['right', 'left', 'down', 'up'];
+  for (const direction of directions) await checkColumnsDirection(direction);
+  await checkScopedColumns();
+});
+/** Unequal dimensions detect transposed physical tracks and wrong reverse-edge alignment. */
+function columnsProjection(
+  columns: number | undefined,
+  direction: LayoutIntent['direction'],
+): Projection {
+  const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
+  return project(
+    collection({
+      objects: ids.map((id, index): unknown =>
+        object(id, 'note', {
+          label: id.repeat(index + 1),
+          content: [{ id: 'text', kind: 'text', text: 'Line\n'.repeat(index + 1) }],
+        }),
+      ),
+      sections: [
+        section('cards', ids, {
+          mode: 'grid',
+          layout: { algorithm: 'grid', direction, ...optionalColumns(columns) },
+        }),
+      ],
+    }),
+  );
+}
+/** Omission is represented as absence, allowing a direct regression comparison against legacy options. */
+function optionalColumns(columns: number | undefined): Readonly<Record<string, number>> {
+  if (columns === undefined) return {};
+  return { columns };
+}
+/** Track anchors use leading edges forward and trailing edges in reverse; dimensions never masquerade as extra columns. */
+function assertTracks(
+  boxes: readonly {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }[],
+  columns: number,
+  direction: LayoutIntent['direction'],
+): void {
+  const horizontal = boxes.map((box): number => (direction === 'left' ? box.x + box.width : box.x));
+  const vertical = boxes.map((box): number => (direction === 'up' ? box.y + box.height : box.y));
+  expect(new Set(horizontal.map((position): number => Math.round(position))).size).toBe(columns);
+  expect(new Set(vertical.map((position): number => Math.round(position))).size).toBe(
+    Math.ceil(boxes.length / columns),
+  );
+}
+/** Every derivation uses explicit columns, including a second replay with unchanged intent and a previous scene. */
+async function checkColumnsDirection(direction: LayoutIntent['direction']): Promise<void> {
+  const before = columnsProjection(undefined, direction);
+  const variants = [1, 2, 3, 12].map((columns): Projection =>
+    columnsProjection(columns, direction),
+  );
+  const layout = await harness([before, ...variants]);
+  const legacy = value(await layout.arrange(request(layout, before)));
+  for (const source of variants) {
+    const scene = value(await layout.arrange(request(layout, source, legacy)));
+    const columns = Math.min(source.sections[0]?.layout.columns ?? 0, 6);
+    assertTracks(
+      scene.sections[0]?.nodes.map((node): typeof node.box => node.box) ?? [],
+      columns,
+      direction,
+    );
+    const replay = value(await layout.arrange(request(layout, source, scene)));
+    expect(replay.sections).toEqual(scene.sections);
+    const displaced = displacedHistory(scene);
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: metrics(source),
+          options: settings,
+          candidate: displaced,
+        }),
+      ),
+    ).toEqual({ valid: true, diagnostics: [] });
+    const corrected = value(await layout.arrange(request(layout, source, displaced)));
+    expect(corrected.sections[0]?.nodes).toEqual(scene.sections[0]?.nodes);
+    assertDirection(scene, columns, direction);
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: metrics(source),
+          options: settings,
+          candidate: scene,
+        }),
+      ).valid,
+    ).toBe(true);
+  }
+}
+/** Collection and nested-group columns choose independent scopes while a human origin and node lock stay authoritative. */
+async function checkScopedColumns(): Promise<void> {
+  const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
+  const make = (columns: number): Projection =>
+    project(
+      collection({
+        arrangement: { algorithm: 'grid', columns },
+        objects: ids.map((id): unknown => object(id)),
+        sections: [
+          section('nested', [], {
+            mode: 'grid',
+            layout: { algorithm: 'grid', columns: 1 },
+            placement: { x: -1000, y: -1000, locked: true },
+            groups: [
+              { id: 'outer', title: 'Outer', layout: { algorithm: 'grid', columns: 1 } },
+              {
+                id: 'inner',
+                title: 'Inner',
+                parent: 'outer',
+                layout: { algorithm: 'grid', columns },
+              },
+            ],
+            appearances: ids.map((object): unknown => ({ object, group: 'inner' })),
+          }),
+          ...ids.slice(0, 5).map((id, index): unknown =>
+            section(`s${id}`, [id], {
+              order: index + 1,
+              mode: 'grid',
+              layout: { algorithm: 'grid' },
+            }),
+          ),
+        ],
+      }),
+    );
+  const before = make(3);
+  const after = make(2);
+  const layout = await harness([before, after]);
+  const previous = value(await layout.arrange(request(layout, before)));
+  const scene = value(await layout.arrange(request(layout, after, previous)));
+  expect(scene.sections[0]?.origin).toEqual({ x: -1000, y: -1000 });
+  assertTracks(
+    scene.sections[0]?.nodes
+      .filter((node): boolean => node.measured.objectId !== null)
+      .map((node): typeof node.box => node.box) ?? [],
+    2,
+    'right',
+  );
+  const freeBefore = project(
+    collection({
+      objects: ids.map((id): unknown => object(id)),
+      sections: ids.map((id, index): unknown => section(id, [id], { order: index })),
+      arrangement: { algorithm: 'grid', columns: 3 },
+    }),
+  );
+  const freeAfter = { ...freeBefore, arrangement: { ...freeBefore.arrangement, columns: 2 } };
+  const freeLayout = await harness([freeBefore, freeAfter]);
+  const freePrevious = value(await freeLayout.arrange(request(freeLayout, freeBefore)));
+  const freeScene = value(await freeLayout.arrange(request(freeLayout, freeAfter, freePrevious)));
+  assertTracks(
+    freeScene.sections.map((section): typeof section.box => section.box),
+    2,
+    'right',
+  );
+}
+
+/** Translate the complete node-only fixture, including title and bounds; public inspection proves admissibility before replay. */
+function displacedHistory(scene: Scene): Scene {
+  return {
+    ...scene,
+    bounds: shiftedBox(scene.bounds),
+    sections: scene.sections.map((section): Scene['sections'][number] => ({
+      ...section,
+      box: shiftedBox(section.box),
+      title: { ...section.title, box: shiftedBox(section.title.box) },
+      nodes: section.nodes.map((node): typeof node => ({
+        ...node,
+        box: shiftedBox(node.box),
+      })),
+    })),
+  };
+}
+/** Apply one explicit translation; dimensions and section origin retain their original meaning. */
+function shiftedBox(box: Scene['bounds']): Scene['bounds'] {
+  return { ...box, x: box.x + 1234, y: box.y + 987 };
+}
+/** Independent six-node/two-column spatial memberships specify all four reading directions. */
+function assertDirection(
+  scene: Scene,
+  columns: number,
+  direction: LayoutIntent['direction'],
+): void {
+  if (columns !== 2) return;
+  const memberships = {
+    right: { rows: ['ab', 'cd', 'ef'], columns: ['ace', 'bdf'] },
+    left: { rows: ['ba', 'dc', 'fe'], columns: ['bdf', 'ace'] },
+    down: { rows: ['ad', 'be', 'cf'], columns: ['abc', 'def'] },
+    up: { rows: ['cf', 'be', 'ad'], columns: ['cba', 'fed'] },
+  };
+  const expected = memberships[direction];
+  assertMembership(scene, expected.rows, 'y', direction === 'up');
+  assertMembership(scene, expected.columns, 'x', direction === 'left');
+}
+/** Each named member shares its track edge, and successive tracks clear every preceding member. */
+function assertMembership(
+  scene: Scene,
+  groups: readonly string[],
+  axis: 'x' | 'y',
+  trailing: boolean,
+): void {
+  const size = axis === 'x' ? 'width' : 'height';
+  const tracks = groups.map((ids) => [...ids].map((id) => node(scene, id).box));
+  tracks.forEach((track) => {
+    const anchors = track.map((box) => box[axis] + (trailing ? box[size] : 0));
+    anchors.forEach((anchor) => expect(anchor).toBeCloseTo(anchors[0] ?? NaN));
+  });
+  tracks.slice(1).forEach((track, index) => {
+    const previousEnd = Math.max(...(tracks[index] ?? []).map((box) => box[axis] + box[size]));
+    expect(Math.min(...track.map((box) => box[axis]))).toBeGreaterThan(previousEnd);
+  });
 }

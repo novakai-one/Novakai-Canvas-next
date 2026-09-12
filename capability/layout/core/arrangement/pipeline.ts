@@ -62,7 +62,7 @@ export async function arrange(
       return [...result, section];
     },
   );
-  const sections = await arrangeSections(local, request.projection, prior, context);
+  const sections = requireValue(await arrangeSections(local, request.projection, prior, context));
   const scene: Scene = {
     collectionId: request.projection.collectionId,
     revision: request.projection.revision,

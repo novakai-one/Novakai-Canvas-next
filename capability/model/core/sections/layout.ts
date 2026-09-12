@@ -31,9 +31,16 @@ function validateConstraint(constraint: LayoutConstraint, path: string): readonl
 
 /** Structural constraint rules apply equally to collection, section and group layouts. */
 function validateConstraintShapes(layout: LayoutIntent, path: string): readonly Diagnostic[] {
-  return layout.constraints.flatMap((constraint, index) =>
+  const columnIssues = diagnoseWhen(
+    layout.columns !== undefined && layout.algorithm !== 'grid',
+    'layout',
+    `${path}.columns`,
+    'Columns require grid layout',
+  );
+  const constraints = layout.constraints.flatMap((constraint, index): readonly Diagnostic[] =>
     validateConstraint(constraint, `${path}.constraints.${index}`),
   );
+  return [...columnIssues, ...constraints];
 }
 
 /** A section constraint may address its visible objects or groups, never another section. */

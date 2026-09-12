@@ -1,3 +1,4 @@
+/** Shared vocabulary is immutable declaration data; Language protect reports invalid source and callers correct then retry. */
 import type { Property } from '../../contract/records/vocabulary.js';
 import { nodeKinds, relationshipKinds } from './defaults.js';
 /** Shared property facts drive checks, canonical field mapping, patches and describe. */
@@ -92,9 +93,11 @@ export const properties = {
     fallback: 'call',
   },
   activate: { type: 'boolean', field: 'activate' },
-} satisfies Readonly<Record<string, Property>>;
+} as const satisfies Readonly<Record<string, Property>>;
+/** Scope columns are integer tracks; table columns retain their distinct string-list vocabulary. */
 export const layoutProperties = {
+  columns: { type: 'integer', field: 'columns' },
   layout: properties.layout,
   direction: properties.direction,
   gap: properties.gap,
-};
+} as const satisfies Readonly<Record<string, Property>>;

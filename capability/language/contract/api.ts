@@ -10,7 +10,7 @@ import type {
   Readout,
   ExpansionRequest,
 } from './records/requests.js';
-import { protect } from '../core/validation/outcomes.js';
+import { accepted, protect } from '../core/validation/outcomes.js';
 import { parseSource } from '../core/parsing/document.js';
 import { lowerDocument } from '../core/lowering/document.js';
 import { lowerPatch } from '../core/patching/compile.js';
@@ -34,7 +34,7 @@ export function createLanguage(deps: Dependencies): Language {
     return protect(() => {
       const request = structuredClone(input);
       const parsed = parseSource(request.source);
-      if (parsed.kind === 'canvas') return lowerDocument(parsed, request, deps);
+      if (parsed.kind === 'canvas') return accepted(lowerDocument(parsed, request, deps));
       return lowerPatch(parsed, request, deps);
     });
   }

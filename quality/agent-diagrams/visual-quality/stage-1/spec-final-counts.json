@@ -1,0 +1,26 @@
+{
+  "Doc6-File-Scope-and-Estimates.md": {
+    "words": 130,
+    "lines": 9
+  },
+  "Doc4-Ownership-CRUD.md": {
+    "words": 277,
+    "lines": 17
+  },
+  "Doc2-Entities-and-Invariants.md": {
+    "words": 212,
+    "lines": 21
+  },
+  "Doc5-Build-and-Test-Appendix.md": {
+    "words": 345,
+    "lines": 27
+  },
+  "Doc3-Modules-and-Contracts.md": {
+    "words": 270,
+    "lines": 24
+  },
+  "Doc1-Target-Repo-Tree.md": {
+    "words": 145,
+    "lines": 29
+  }
+}

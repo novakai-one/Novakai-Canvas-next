@@ -1,0 +1,27 @@
+[
+  {
+    "path": "assets/targets/aws-global-architecture.png",
+    "sha256": "95e5ba5863b10d461ed39730abe78a37321d02cc3b97adc598f3857e3b3d1687",
+    "usage": "reference-only benchmark; not shipped application artwork"
+  },
+  {
+    "path": "assets/targets/caching-infographic.png",
+    "sha256": "4432553bc930f9667bf6c2b428d1c3ecfba4ee743ca3c7aafacd778422d928a4",
+    "usage": "reference-only benchmark; not shipped application artwork"
+  },
+  {
+    "path": "assets/targets/docker-infographic.png",
+    "sha256": "28270e53a884ca5e85178d61fbc900879c82ead3893ccdc057ed542c550d8c3c",
+    "usage": "reference-only benchmark; not shipped application artwork"
+  },
+  {
+    "path": "assets/targets/er.png",
+    "sha256": "4744727f4edaefef790f32e79f2fa305b0970956145bc19d3d4ebbf82c955526",
+    "usage": "reference-only benchmark; not shipped application artwork"
+  },
+  {
+    "path": "assets/targets/modules.png",
+    "sha256": "cef01dbbd1e1ab92e61d06a5be5bab848bf14b914e20b814a8319a0c1e86bd07",
+    "usage": "reference-only benchmark; not shipped application artwork"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "vq1-water-create": {
+    "exit": 0,
+    "stdout": "committed: vq1-water-create\nWorkspace sequence: 11\n"
+  },
+  "vq1-research-create": {
+    "exit": 0,
+    "stdout": "committed: vq1-research-create\nWorkspace sequence: 12\n"
+  },
+  "vq1-modules-corrected": {
+    "exit": 0,
+    "stdout": "committed: vq1-modules-corrected\nWorkspace sequence: 14\n"
+  },
+  "vq1-water-edit": {
+    "exit": 0,
+    "stdout": "committed: vq1-water-edit\nWorkspace sequence: 13\n"
+  },
+  "vq1-modules-create": {
+    "exit": 0,
+    "stdout": "No committed receipt found.\n"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "method": "Full canonical source comparison; exact expected label replacement and revision 0 to 1. No other differences accepted.",
+  "beforeSha256": "9ad0759e680251fedac20e15a775cf31a6856499a595a4219f5b7ca171d0fc80",
+  "afterSha256": "16a03e798dd7e49f8cff8d5abfd4e6ae2713bfb8878225f816c6008f083006f5",
+  "request": "vq1-water-edit"
+}

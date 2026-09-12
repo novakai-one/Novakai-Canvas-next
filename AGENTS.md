@@ -24,3 +24,7 @@ Model and Library have pure tested implementations; Persistence has a tested SQL
 ## Starting work
 
 Use BUILD-ORDER.md. Implement thin complete behaviors through contracts rather than completing an entire capability in isolation. Introduce dependency pins, manifests and enforcement honestly with the first slice. Scaffold verification is not an application build/test result.
+
+## Active visual-quality mission
+
+Read `docs/agent-diagrams/visual-quality/README.md`, `SOP.md`, and `References.md` before resuming the five-stage build. The Docker infographic and AWS architecture images are mandatory target context, alongside retained ER/module references. Each stage has five build docs and a separate file-estimate appendix. User authorization continues through building, corrections, stage PRs and subsequent stages; audit limits prevent endless reviews, not completion work. The Result protocol in root `CODING-STANDARDS.md` section 9 supersedes historical dialect examples. Do not claim all-stage completion from the current Atlas corpus or a green suite.

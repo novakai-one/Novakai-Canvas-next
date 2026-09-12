@@ -1,29 +1,39 @@
 canvas 1
-collection @modules-document-publishing "Document publishing boundary" theme=atlas {
- node @editor module "Editorial workspace" role=primary size=large {
-  port @drafts out "drafts" type="DraftRepository"
-  port @publish out "publisher" type="PublicationPort"
- }
- node @publication interface "PublicationPort" role=supporting size=medium {
-  member @submit "submit" type="(ApprovedDraft) => Promise<PublicationReceipt>" visibility=public
-  member @withdraw "withdraw" type="(PublicationId, Reason) => Promise<WithdrawalReceipt>" visibility=public
- }
- node @validate function "validateApproval" size=medium {
-  signature @call "validateApproval" parameters=["draft: Draft", "policy: EditorialPolicy"] returns="Result<ApprovedDraft, ValidationError>"
- }
- node @web-adapter module "Web publisher adapter" role=success size=large {
-  port @input in "approved draft" type="ApprovedDraft"
-  port @remote out "CMS client" type="CmsClient"
- }
- node @cms interface "External CMS" role=warning size=small {
-  member @create "createPage" type="(CmsPage) => Promise<CmsPageId>" visibility=public
- }
- wire @checks @editor.@drafts -> @validate "validates approval with" kind=calls
- wire @imports @editor.@publish -> @publication "depends on publishing contract" kind=imports
- wire @implements @web-adapter.@input -> @publication.@submit "implements submit" kind=implements
- wire @calls-cms @web-adapter.@remote -> @cms "imports the external CMS contract" kind=imports
- section @publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules layout=grid columns=2 direction=right gap=compact {
-  show @editor @validate @publication @web-adapter @cms
-  connect @checks @imports @implements @calls-cms
- }
+collection @modules-document-publishing "Document publishing boundary" theme=atlas description="An illustrative software dependency design. Imports and calls show code dependencies; implementation wires show contract conformance, not runtime data flow." {
+  node @editor module "Editorial workspace" role=primary size=large {
+    port @publish out "publisher" type="PublicationPort"
+    text @detail "Validates a draft before asking the publishing port to submit it."
+  }
+  node @publication interface "PublicationPort" role=supporting size=large {
+    member @submit "submit" type="(ApprovedDraft) => Promise<Result<PublicationReceipt, PublishError>>" visibility=public
+    member @withdraw "withdraw" type="(PublicationId, Reason) => Promise<Result<WithdrawalReceipt, PublishError>>" visibility=public
+  }
+  node @validate function "validateApproval" size=large {
+    signature @call "validateApproval" parameters=["draft: Draft", "policy: EditorialPolicy"] returns="Result<ApprovedDraft, ValidationError>"
+  }
+  node @web-adapter module "Web publisher adapter" role=success size=large {
+    port @remote out "CMS client" type="CmsClient"
+    text @detail "Implements both submit and withdraw; translates vendor failures into PublishError."
+  }
+  node @cms interface "CmsClient / external boundary" role=warning size=large {
+    member @create "createPage" type="(CmsPage) => Promise<Result<CmsPageId, CmsError>>" visibility=public
+    member @remove "removePage" type="(CmsPageId) => Promise<Result<void, CmsError>>" visibility=public
+  }
+
+  wire @checks @editor -> @validate.@call "calls validation before submit" kind=calls
+  wire @imports @editor.@publish -> @publication "imports publishing contract" kind=imports
+  wire @implements @web-adapter -> @publication "implements submit and withdraw" kind=implements
+  wire @calls-cms @web-adapter.@remote -> @cms "imports vendor contract" kind=imports
+
+  section @publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules layout=grid columns=2 direction=right gap=roomy {
+    group @policy "APPLICATION POLICY" layout=grid columns=1 gap=roomy {
+      show @editor @validate @publication
+    }
+    group @integration "VENDOR INTEGRATION" layout=grid columns=1 gap=roomy {
+      show @web-adapter @cms
+    }
+    connect @checks @imports
+    connect @implements source-side=left target-side=right
+    connect @calls-cms source-side=right target-side=right
+  }
 }

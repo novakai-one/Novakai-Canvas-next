@@ -1,13 +1,21 @@
 canvas 1
 collection @flow-research-approval "Research approval workflow" theme=atlas {
  node @submit start "Protocol submitted" role=primary size=small {}
- node @triage step "Administrative triage" size=medium { text @detail "Confirm ownership, version and required documents." }
+ node @triage step "Administrative triage" size=medium {
+    text @detail "Confirm ownership, version and required documents."
+  }
  node @split fork "Parallel review" role=supporting size=small {}
- node @ethics step "Ethics review" size=large { text @detail "Assess consent, risk and participant safeguards." }
- node @methods step "Methods review" size=large { text @detail "Assess design, sample and analysis plan." }
+ node @ethics step "Ethics review" size=large {
+    text @detail "Assess consent, risk and participant safeguards."
+  }
+ node @methods step "Methods review" size=large {
+    text @detail "Assess design, sample and analysis plan."
+  }
  node @merge join "Reviews complete" role=supporting size=small {}
  node @decision decision "Both reviews approve?" role=decision size=medium {}
- node @revise step "Revise protocol" role=warning size=medium { text @detail "Resolve the consolidated requests before resubmission." }
+ node @revise step "Revise protocol" role=warning size=medium {
+    text @detail "Resolve the consolidated requests before resubmission."
+  }
  node @approved end "Approval recorded" role=success size=small {}
  wire @begin @submit -> @triage "open case" kind=flow
  wire @ready @triage -> @split "documents complete" kind=flow
@@ -16,11 +24,13 @@ collection @flow-research-approval "Research approval workflow" theme=atlas {
  wire @ethics-done @ethics -> @merge "ethics recommendation" kind=flow
  wire @methods-done @methods -> @merge "methods recommendation" kind=flow
  wire @decide @merge -> @decision "combine findings" kind=flow
- wire @accept @decision -> @approved "yes" kind=flow
- wire @changes @decision -> @revise "no · changes required" kind=flow
+ wire @accept @decision -> @approved "yes: record approval" kind=flow
+ wire @changes @decision -> @revise "no: revise protocol" kind=flow
  wire @resubmit @revise -> @triage "resubmit new version" kind=flow style=dashed
- section @approval "RESEARCH APPROVAL / Independent review, one decision" mode=flow direction=down gap=compact {
-  rank @submit @triage @split
+ section @approval "RESEARCH APPROVAL / Independent review, one decision" mode=flow direction=down gap=roomy {
+  before @submit @triage
+  before @triage @split
+  rank @ethics @methods
   before @split @merge
   before @merge @decision
   before @decision @approved

@@ -1,0 +1,69 @@
+# story-water-treatment revision=1
+canvas 1
+collection @story-water-treatment "How water treatment uses several barriers" theme="atlas@1.0.0#sha256:e88a64da0915336263953d299d6bfa81653bf09dc6c903e7aac11b5a6672c06f" description="Simplified conventional treatment explanation. Actual barriers and operating limits depend on source-water risks; this is not an operating procedure." layout=grid {
+  asset @water image source="sha256:ace1c762e50de96fdd2ec99c459823bb91635a33a7413de4690444bf5f0892b3" alt="Water moving through treatment"
+  asset @evidence image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="A recorded observation"
+  asset @shield image source="sha256:0bc044e8e0be3bc07b3538468145e0e7655df95c15dc090a4de041cc08401dc4" alt="A treatment barrier"
+  node @source concept "1. Screen the intake" role=primary size=medium sources=[] {
+  icon @symbol asset=@water size=large
+  text @detail "Remove large debris from incoming water."
+}
+  node @settle concept "2. Form and settle floc" role=supporting size=medium sources=[] {
+  icon @symbol asset=@water size=large
+  text @detail "Gather fine particles into floc that can settle."
+}
+  node @filter concept "3. Filter" role=supporting size=medium sources=[] {
+  icon @symbol asset=@shield size=large
+  text @detail "Pass clarified water through filter media."
+}
+  node @disinfect concept "4. Disinfect" role=success size=medium sources=[] {
+  icon @symbol asset=@shield size=large
+  text @detail "Apply the selected controlled disinfection barrier."
+}
+  node @supply concept "5. Protect storage and distribution" role=success size=medium sources=[] {
+  icon @symbol asset=@water size=large
+  text @detail "Protect treated water as it enters the network."
+}
+  node @monitor note "Observe the barriers" role=primary size=medium sources=[] {
+  icon @symbol asset=@evidence size=large
+  text @detail "Samples and instruments inform treatment checks. Dashed links show monitoring, not water transport."
+}
+  node @residuals note "Handle residual streams" role=warning size=medium sources=[] {
+  text @detail "Settled solids and filter wash water require separate handling."
+}
+  node @limits note "Select barriers for the source" role=neutral size=medium sources=[] {
+  text @detail "No single barrier addresses every contaminant. The source-water risks determine the process."
+}
+  wire @intake @source -> @settle "screened water" sources=[]
+  wire @clarified @settle -> @filter "clarified water" sources=[]
+  wire @filtered @filter -> @disinfect "filtered water" sources=[]
+  wire @treated @disinfect -> @supply "treated water" sources=[]
+  wire @solids @settle -> @residuals "settled solids" sources=[]
+  wire @wash @filter -> @residuals "filter wash water" sources=[]
+  wire @filter-check @monitor -> @filter "checks filtration" kind=reference style=dashed sources=[]
+  wire @disinfection-check @monitor -> @disinfect "checks disinfection" kind=reference style=dashed sources=[]
+  section @treatment "WATER TREATMENT / Follow the water and its checks" mode=story columns=1 layout=grid direction=down gap=roomy {
+  show @limits
+  group @intake-stage "REMOVE PARTICLES" columns=2 layout=grid gap=roomy {
+  show @source
+  show @settle
+}
+  group @barriers "TREAT AND PROTECT" columns=3 layout=grid gap=roomy {
+  show @filter
+  show @disinfect
+  show @supply
+}
+  group @oversight "MONITORING AND SEPARATE STREAMS" columns=2 layout=grid gap=roomy {
+  show @monitor
+  show @residuals
+}
+  connect @intake source-side=right target-side=left
+  connect @clarified source-side=bottom target-side=top
+  connect @filtered source-side=right target-side=left
+  connect @treated source-side=right target-side=left
+  connect @solids source-side=bottom target-side=top
+  connect @wash source-side=bottom target-side=top
+  connect @filter-check source-side=top target-side=bottom
+  connect @disinfection-check source-side=top target-side=bottom
+}
+}

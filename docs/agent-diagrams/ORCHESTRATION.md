@@ -31,6 +31,8 @@ All semantic wires are labelled. At 1600×1100, each 5–12-primary-node example
 
 ## Per-PR SOP
 
+User clarification: round limits bound repeated audit/fix/re-audit cycles. They do not prohibit continuing implementation or fixing known defects to achieve the original visual-quality goal. Completed audit rounds remain closed; further implementation does not silently start another audit.
+
 1. Five terse scoped specs: tree, entities/invariants + file/estimated LOC inventory, modules/contracts, ownership/CRUD, build/test appendix. State responsibility. Record baseline words/lines and exact justified test budget; existing tests can be extended, no E2E suites.
 2. One fresh-context plan pressure test, eight-minute maximum. Classification exactly: engineering violation / major build risk / preference / minor. Scope limited to this PR.
 3. Verify findings skeptically; one correction round; word/line growth each <=20%; no second plan audit.

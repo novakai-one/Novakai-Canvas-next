@@ -30,6 +30,10 @@ Some native adapters and integration tests remain below the literal >144/160 rub
 
 Several severe routing detours were corrected. Some awkward review branches, long returns and crossing/shared corridors remain; 15 crossing warnings are retained. Final screenshots establish framing and readability, not universal reference-level polish.
 
-The permitted additional PR6 delegate alignment is consumed. Further production correction needs renewed process authorization; no additional audit has been started. The active goal remains incomplete.
+The user clarified that round limits prevent repeated audit cycles, not continued implementation or correction of known defects. Existing audit rounds remain closed. No additional permission is required to continue toward the original visual-quality goal.
+
+The visual gap is broader than routing: educational examples still rely heavily on nested text panels and small icons. Three examples per family establish coverage, not benchmark-quality visual communication. Further work must improve composition, visual hierarchy, useful imagery and visible relationships through reusable capabilities, followed by real DSL dogfooding.
+
+Browser ownership: use the existing in-app browser when practical; keep routine checks in the background. Only the orchestrator owns visual verification. Close any temporary headed session immediately after use. Five abandoned Playwright sessions were closed and verified stopped; personal Chrome was preserved.
 
 See `quality/agent-diagrams/pr6/ACCEPTANCE.md` for the complete evidence matrix and remaining gates, and `resources/examples/showcase/README.md` to reproduce the collection from DSL.

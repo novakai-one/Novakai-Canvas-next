@@ -1,6 +1,6 @@
 # Atlas acceptance record
 
-Functional corpus delivered; overall completion remains open for standards scoring and remaining routing polish. Live: http://127.0.0.1:5185/?collection=agent-diagram-atlas . Use Diagram outline to inspect individual diagrams.
+Functional corpus delivered; overall completion remains open for benchmark-level visual communication and standards scoring. Example count and readability measurements do not establish infographic-quality acceptance. Live: http://127.0.0.1:5185/?collection=agent-diagram-atlas . Use Diagram outline to inspect individual diagrams.
 
 |Evidence|Result|
 |---|---|
@@ -52,6 +52,7 @@ Every row has matching source/capture/revision evidence in acceptance-matrix.jso
 
 - **Literal coding score:** native adapters and integration tests still fall below>144/160; examples include libavoid137, Layout contracts124, routing130, notation134 and CLI integration125. Their actual infrastructure is required to verify the deployed behavior, while the supplied rubric gives P16=0 for real infrastructure. Fixed policy/typed-assertion deductions also apply. Passing execution is not a waiver. Source evidence is in correction-scores.md, root-correction-scores.md, routing-alignment.md and prior PR reports. User interpretation remains unanswered.
 - **Routing polish:** final Research Approval review branches retain a small unnecessary-looking loop; dense state/module graphs retain long return routes and shared/crossing corridors.15 crossing warnings are retained, not hidden. The scoped correction demonstrably removed several severe detours; it does not establish globally optimal routing or universal reference-level polish. Final screenshots and routing-alignment.md show the practical limit. No invented zero-detour acceptance is claimed.
-- The one additional PR6 correction allowed for delegate alignment is consumed. No further audit or production correction is silently started. Resolving the remaining routing issue requires renewed scope/process authorization; resolving literal scoring requires an explicit standards interpretation. Human editor/panel work remains deferred.
+- **Broader visual quality:** educational examples still rely heavily on nested text panels and small icons. They do not yet match benchmark composition, imagery and relationship-led explanation. This is a remaining implementation outcome, not merely a routing issue.
+- **Process clarification:** the user confirmed that round limits prevent repeated audit/fix cycles; they do not prevent implementation and known-defect corrections required to finish. Existing audit rounds remain closed. Human editor/panel work remains deferred.
 
 Prior browser directories and revision receipts are historical, not final-state evidence. atlas-final-render.json.gz and atlas-final-readout.canvas identify revision4. atlas-final-overview.png proves the mixed collection only; the readable proof is the individual final gallery. Recipes cover all8modes; state/grid starter admission is explicit as documented in recipes/README.md.

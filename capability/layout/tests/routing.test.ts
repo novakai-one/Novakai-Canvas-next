@@ -399,6 +399,7 @@ it('keeps labelled parallel and return routes local when unrelated boxes move fa
       );
     });
     expect(section.wires[0]?.points).not.toEqual(section.wires[1]?.points);
+    independentLanes(section.wires);
     expect(
       value(
         layout.inspect({
@@ -530,4 +531,137 @@ async function lockedLabelConflict(): Promise<void> {
   expect(rejected.error.code).toBe('constraint-conflict');
   expect(rejected.error.message).toContain('measured label');
   expect(rejected.error.targets).toEqual([locked.sections[0]?.wires[0]?.id]);
+}
+
+/** Independent interval oracle rejects shared travel except within explicit common endpoint stubs, including reversed routes. */
+function independentLanes(wires: readonly import('../contract/index.js').RoutedWire[]): void {
+  wires.forEach((wire, i): void =>
+    wires.slice(i + 1).forEach((other): void => {
+      wire.points.slice(1).forEach((b, j): void =>
+        other.points.slice(1).forEach((d, k): void => {
+          const a = wire.points[j];
+          const c = other.points[k];
+          assert(a && c);
+          checkSharedInterval([a, b], [c, d], wire.points, other.points);
+        }),
+      );
+    }),
+  );
+}
+/** Project a coincident pair onto its travel axis; point crossings have no positive common interval. */
+function checkSharedInterval(
+  a: readonly [Point, Point],
+  b: readonly [Point, Point],
+  left: readonly Point[],
+  right: readonly Point[],
+): void {
+  const [axis, fixed] = segmentAxes(a);
+  if (a[0][fixed] !== b[0][fixed] || b[0][fixed] !== b[1][fixed]) return;
+  const low = Math.max(Math.min(a[0][axis], a[1][axis]), Math.min(b[0][axis], b[1][axis]));
+  const high = Math.min(Math.max(a[0][axis], a[1][axis]), Math.max(b[0][axis], b[1][axis]));
+  if (high <= low) return;
+  expect(stubAllows(left, right, axis, fixed, a[0][fixed], low, high)).toBe(true);
+}
+/** Check both orientations and both complete overlap ends against the longer explicit endpoint approach. */
+function stubAllows(
+  left: readonly Point[],
+  right: readonly Point[],
+  axis: 'x' | 'y',
+  fixed: 'x' | 'y',
+  line: number,
+  low: number,
+  high: number,
+): boolean {
+  return [left, left.toReversed()].some((a): boolean =>
+    [right, right.toReversed()].some((b): boolean => {
+      const start = a[0];
+      const other = b[0];
+      assert(start && other);
+      if (start.x !== other.x || start.y !== other.y || start[fixed] !== line) return false;
+      const reach = Math.max(manhattan(start, a[1]), manhattan(other, b[1]));
+      return Math.max(Math.abs(low - start[axis]), Math.abs(high - start[axis])) <= reach;
+    }),
+  );
+}
+
+/** Marker width is measured independently of the clear centreline; planning and inspection must both reject its content overlap. */
+it('rejects full measured marker boxes without shrinking advance or half-height', async (): Promise<void> => {
+  const original = project(
+    collection({
+      objects: [object('a'), object('b'), object('near')],
+      relationships: [edge('link', 'a', 'b')],
+      sections: [
+        section('markers', [], {
+          appearances: [
+            { object: 'a', placement: { x: 0, y: 0, height: 100, locked: true } },
+            { object: 'b', placement: { x: 600, y: 0, height: 100, locked: true } },
+            { object: 'near', placement: { x: 146, y: 55, height: 100, locked: true } },
+          ],
+          wires: [{ relationship: 'link', sourceSide: 'right', targetSide: 'left' }],
+        }),
+      ],
+    }),
+  );
+  const source: Projection = {
+    ...original,
+    sections: original.sections.map((section): VisualSection => ({
+      ...section,
+      wires: section.wires.map((wire): typeof wire => ({ ...wire, sourceMarker: 'one' })),
+    })),
+  };
+  const layout = await harness([source]);
+  const small = {
+    ...metrics(source),
+    markers: { ...metrics(source).markers, one: { advance: 20, halfHeight: 1 } },
+  };
+  const { job, ...base } = request(layout, source);
+  const input = {
+    ...base,
+    measurements: small,
+    options: { ...settings, routeClearance: 1, gap: { compact: 1, normal: 1, roomy: 1 } },
+  };
+  const scene = value(
+    await layout.arrange({ ...input, job: { ...job, inputKey: value(layout.key(input)) } }),
+  );
+  const wire = scene.sections[0]?.wires[0];
+  assert(wire);
+  const obstacle = node(scene, 'near').box;
+  const box = { x: wire.source.point.x, y: wire.source.point.y - 8, width: 20, height: 16 };
+  expect(hits(wire.points, obstacle)).toBe(false);
+  expect(overlap(box, obstacle)).toBe(true);
+  const full = { ...small, markers: { ...small.markers, one: { advance: 20, halfHeight: 8 } } };
+  const blocked = { ...input, measurements: full };
+  const planned = await layout.arrange({
+    ...blocked,
+    job: { ...job, inputKey: value(layout.key(blocked)) },
+  });
+  assert(!planned.ok);
+  expect(planned.error.code).toBe('constraint-conflict');
+  expect(planned.error.targets).toEqual([wire.id]);
+  // Rebind transported derivation keys so rejection must come from marker geometry, not stale metadata.
+  const candidate = {
+    ...scene,
+    inputKey: value(layout.key(blocked)),
+    sections: scene.sections.map((section): typeof section => ({
+      ...section,
+      inputKey: section.inputKey.replace(
+        '"one":{"advance":20,"halfHeight":1}',
+        '"one":{"advance":20,"halfHeight":8}',
+      ),
+    })),
+  };
+  const inspected = value(
+    layout.inspect({ projection: source, measurements: full, options: input.options, candidate }),
+  );
+  expect(inspected.valid).toBe(false);
+  expect(inspected.diagnostics.some((issue): boolean => issue.message.includes('marker'))).toBe(
+    true,
+  );
+  expect(full.markers.one).toEqual({ advance: 20, halfHeight: 8 });
+});
+
+/** Axis choice keeps the interval oracle symmetric for vertical routes. */
+function segmentAxes(segment: readonly [Point, Point]): readonly ['x' | 'y', 'x' | 'y'] {
+  if (segment[0].y === segment[1].y) return ['x', 'y'];
+  return ['y', 'x'];
 }

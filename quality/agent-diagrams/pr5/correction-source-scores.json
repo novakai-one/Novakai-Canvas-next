@@ -1,0 +1,710 @@
+{
+  "base": "58e5dbdb9755985692756826c025bc581e1efd10",
+  "kind": "author evidence, not additional audit",
+  "priorReceipts": "source-scores.json and sonar-measurement.json retained unchanged",
+  "files": [
+    {
+      "path": "capability/layout/contract/records/engines.ts",
+      "sha256": "cf2ad3658a8341f5140795325a5e695aede0e7b17126fb2c3e9eaec8dd32b451",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        5,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "total": 148,
+      "sonarMaximum": 0,
+      "gate": "PASS",
+      "evidence": "Fixed version registry (P2); no subtyping (P3=7); thin shared authority (P11=5). One routing version change, frozen objects/arrays, no I/O/failures/casts or unused policy.",
+      "declarations": []
+    },
+    {
+      "path": "capability/layout/core/routing/checks.ts",
+      "sha256": "a009dacdd10972a5f0360292faf464d079e399767082a3489a1e2ffaed42c56b",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        9,
+        10,
+        10,
+        5,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "total": 147,
+      "sonarMaximum": 2,
+      "gate": "PASS",
+      "evidence": "Routing validity predicates have one owner (P1); fixed geometry vocabulary lacks an extension slot (P2=6); no subtype demonstration (P3=7); no behavioral port (P4); core-only data/geometry dependencies (P5); paired marker preparation repeats source/target structure (P6=9). Named pure predicates remain readable and required (P7/P8). checkLabel raises structured faults absent from void signature (P9=5); every export names Layout execute and Authoring recovery (P10). Exact geometry is hidden behind reusable predicates (P11); direct records only (P12); readonly immutable computations (P13); no casts/any (P14); no conditional-return idiom (P15); pure fixture-testable behavior (P16).",
+      "declarations": [
+        {
+          "line": 9,
+          "declaration": "function outward("
+        },
+        {
+          "line": 19,
+          "declaration": "function inDirection(origin: Point, expected: Point, actual: Point): boolean {"
+        },
+        {
+          "line": 25,
+          "declaration": "function followsRay("
+        },
+        {
+          "line": 37,
+          "declaration": "export function markerBox("
+        },
+        {
+          "line": 58,
+          "declaration": "export function validRoute("
+        },
+        {
+          "line": 75,
+          "declaration": "function endpointsMatch("
+        },
+        {
+          "line": 86,
+          "declaration": "export function checkLabel(box: Box, wire: VisualWire, occupied: readonly Box[]): void {"
+        },
+        {
+          "line": 93,
+          "declaration": "export function crosses(a: RoutedWire, b: RoutedWire): boolean {"
+        },
+        {
+          "line": 99,
+          "declaration": "function crossing(a: Point, b: Point, c: Point, d: Point): boolean {"
+        },
+        {
+          "line": 104,
+          "declaration": "function horizontalCrossing(a: Point, b: Point, c: Point, d: Point): boolean {"
+        },
+        {
+          "line": 108,
+          "declaration": "function inside(value: number, a: number, b: number): boolean {"
+        },
+        {
+          "line": 113,
+          "declaration": "function markersClear("
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/core/routing/corridors.ts",
+      "sha256": "ffeb2a809fe0d9b12bc7a9694772430ec3db06df07daba9561fa2899b863bbdc",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "total": 153,
+      "sonarMaximum": 2,
+      "gate": "PASS",
+      "evidence": "Fixed four-side/two-distance vocabulary has no extension slot (P2). No subtyping (P3=7). Pure proposals and explicit ranking hide search geometry; readonly data and explicit signatures; no casts, native I/O or exceptions.",
+      "declarations": [
+        {
+          "line": 12,
+          "declaration": "export function localCorridors(plan: RoutePlan, gap: number): readonly Corridor[] {"
+        },
+        {
+          "line": 19,
+          "declaration": "export function outsideCorridor(plan: RoutePlan, occupied: readonly Box[], gap: number): Corridor {"
+        },
+        {
+          "line": 31,
+          "declaration": "function around(plan: RoutePlan, bounds: Box, gap: number, offset: number): readonly Corridor[] {"
+        },
+        {
+          "line": 72,
+          "declaration": "function corridor(plan: RoutePlan, middle: readonly Point[], index: number): Corridor {"
+        },
+        {
+          "line": 86,
+          "declaration": "export function compareRoutes("
+        },
+        {
+          "line": 97,
+          "declaration": "function routeLength(points: readonly Point[]): number {"
+        },
+        {
+          "line": 105,
+          "declaration": "function bends(points: readonly Point[]): number {"
+        },
+        {
+          "line": 111,
+          "declaration": "function turns(a: Point | undefined, b: Point, c: Point | undefined): boolean {"
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/core/routing/endpoints.ts",
+      "sha256": "7f2bbecb95954ee9873e5c0db4e39ffbaa5127dbad4f319ac6034488bdbf4608",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        9,
+        10,
+        10,
+        5,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "total": 147,
+      "sonarMaximum": 2,
+      "gate": "PASS",
+      "evidence": "Side vocabulary is fixed (P2). No subtyping (P3=7). Side geometry is repeated in edge/approach/obstacleDistance (P6). visible/memberPoint expose value signatures while raising structured faults (P9=5); the actual Layout boundary catches them. Exact measured row lookup, readonly geometry and pure replay substantiate remaining rows.",
+      "declarations": [
+        {
+          "line": 18,
+          "declaration": "export function visible(id: string, nodes: readonly PlacedNode[]): PlacedNode {"
+        },
+        {
+          "line": 24,
+          "declaration": "function facing(source: PlacedNode, target: PlacedNode): Side {"
+        },
+        {
+          "line": 31,
+          "declaration": "function horizontalSide(from: number, to: number): Side {"
+        },
+        {
+          "line": 36,
+          "declaration": "function verticalSide(from: number, to: number): Side {"
+        },
+        {
+          "line": 41,
+          "declaration": "function chooseSide("
+        },
+        {
+          "line": 51,
+          "declaration": "function automaticSide(member: string | null, source: PlacedNode, target: PlacedNode): Side {"
+        },
+        {
+          "line": 56,
+          "declaration": "function edge(node: PlacedNode, side: Side): Point {"
+        },
+        {
+          "line": 68,
+          "declaration": "function attachment(node: PlacedNode, member: string | null, side: Side): Point {"
+        },
+        {
+          "line": 73,
+          "declaration": "function memberPoint(node: PlacedNode, member: string, side: Side): Point {"
+        },
+        {
+          "line": 85,
+          "declaration": "export function endpoints(wire: VisualWire, nodes: readonly PlacedNode[]): Attachments {"
+        },
+        {
+          "line": 104,
+          "declaration": "function selfTarget(wire: VisualWire, source: PlacedNode, target: PlacedNode): Side {"
+        },
+        {
+          "line": 114,
+          "declaration": "export function approach(endpoint: ResolvedEndpoint, distance: number): Point {"
+        },
+        {
+          "line": 126,
+          "declaration": "export function departureSpace(endpoint: ResolvedEndpoint, nodes: readonly PlacedNode[]): number {"
+        },
+        {
+          "line": 131,
+          "declaration": "function obstacleDistance(endpoint: ResolvedEndpoint, box: Box): number {"
+        },
+        {
+          "line": 170,
+          "declaration": "function distanceAlongRay(ray: {"
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/core/routing/lanes.ts",
+      "sha256": "63edbfd7b0d3697bcca6571cb149d1c4b5059052d55dfa404ca3ae08d753fb7b",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        9,
+        9,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "total": 151,
+      "sonarMaximum": 2,
+      "gate": "PASS",
+      "evidence": "One endpoint-family/lane separation concern (P1). Fixed orthogonal vocabulary (P2=6); no subtyping demonstrated (P3=7); no behavioral port (P4); declaration-only types and own core segments (P5). Horizontal/vertical interval symmetry repeats knowledge (P6=9); explicit overlap clipping plus endpoint exceptions costs one readability point (P7=9), with no speculative seam (P8). Boolean total outcomes (P9), pure replay and Layout retry named at both exported entries (P10). Small API hides interval/stub reconciliation (P11); direct records (P12); readonly inputs and copy transforms (P13); no casts/any (P14); no ternary idioms (P15); pure deterministic fixtures suffice (P16).",
+      "declarations": [
+        {
+          "line": 10,
+          "declaration": "export function sameEndpoints(a: Ends, b: Ends): boolean {"
+        },
+        {
+          "line": 14,
+          "declaration": "function key(wire: Ends): string {"
+        },
+        {
+          "line": 22,
+          "declaration": "export function distinctLane(a: readonly Point[], b: readonly Point[]): boolean {"
+        },
+        {
+          "line": 29,
+          "declaration": "function sharedStubs(a: readonly Point[], b: readonly Point[]): readonly Segment[] {"
+        },
+        {
+          "line": 37,
+          "declaration": "function endpointSegments(points: readonly Point[]): readonly Segment[] {"
+        },
+        {
+          "line": 42,
+          "declaration": "function firstSegment(points: readonly Point[]): readonly Segment[] {"
+        },
+        {
+          "line": 49,
+          "declaration": "function clearPair(a: Segment, b: Segment, stubs: readonly Segment[]): boolean {"
+        },
+        {
+          "line": 64,
+          "declaration": "function contains(segment: Segment, point: Point): boolean {"
+        },
+        {
+          "line": 73,
+          "declaration": "function collinearOverlap(a: Segment, b: Segment): boolean {"
+        },
+        {
+          "line": 78,
+          "declaration": "function verticalOverlap(a: Segment, b: Segment): boolean {"
+        },
+        {
+          "line": 84,
+          "declaration": "function overlap(a: number, b: number, c: number, d: number): boolean {"
+        },
+        {
+          "line": 89,
+          "declaration": "function horizontal(segment: Segment): boolean {"
+        },
+        {
+          "line": 94,
+          "declaration": "function horizontalOverlap(a: Segment, b: Segment): boolean {"
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/core/routing/native.ts",
+      "sha256": "ecb5b5f0e149fb75ca994a9ed481844ae15ccee901916bcbd885512944e0b668",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        9,
+        10,
+        10,
+        5,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "total": 147,
+      "sonarMaximum": 2,
+      "gate": "PASS",
+      "evidence": "Fixed planning/check sequence (P2); no subtyping (P3=7). Repeated source/target preparation (P6). plan/manual/checkedValues raise typed LayoutFaults absent from their signatures (P9=5). NativeRouteOutcome distinguishes infeasibility; routing/jobs ports are fully consumed; public execute owns recovery. No casts or shared mutable state.",
+      "declarations": [
+        {
+          "line": 22,
+          "declaration": "export function plan("
+        },
+        {
+          "line": 78,
+          "declaration": "function departureDistance(id: string, advance: number, preferred: number, space: number): number {"
+        },
+        {
+          "line": 89,
+          "declaration": "function parallelCheckpoints("
+        },
+        {
+          "line": 104,
+          "declaration": "function laneCheckpoints("
+        },
+        {
+          "line": 116,
+          "declaration": "export function manual("
+        },
+        {
+          "line": 134,
+          "declaration": "function invalidManual(plan: RoutePlan): RouteValue | null {"
+        },
+        {
+          "line": 145,
+          "declaration": "function checkedRoute(value: RouteValue): RouteValue {"
+        },
+        {
+          "line": 153,
+          "declaration": "function distinct(point: Point, previous: Point | undefined): boolean {"
+        },
+        {
+          "line": 158,
+          "declaration": "function checkPoint(value: Point): void {"
+        },
+        {
+          "line": 167,
+          "declaration": "export async function routeNative("
+        },
+        {
+          "line": 182,
+          "declaration": "function checkedOutcome("
+        },
+        {
+          "line": 191,
+          "declaration": "function checkedValues("
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/core/routing/wires.ts",
+      "sha256": "a808c01e992baa7d0febb2e91a70a20d82db9c1d14272591addc34e4f0774840",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        9,
+        10,
+        10,
+        5,
+        10,
+        10,
+        10,
+        10,
+        10,
+        9,
+        10
+      ],
+      "total": 146,
+      "sonarMaximum": 2,
+      "gate": "PASS",
+      "evidence": "Fixed orchestration steps lack an injected step seam (P2), no subtyping (P3=7), repeated occupied-region assembly (P6). Internal Promise/value signatures propagate structured rejection (P9=5); public execute is named. One curve/line ternary (P15=9). Both chosen routing/job methods are consumed; immutable accumulation and private ranking keep strict scene data clean.",
+      "declarations": [
+        {
+          "line": 30,
+          "declaration": "function reserved(plans: readonly RoutePlan[], context: WireContext): readonly Box[] {"
+        },
+        {
+          "line": 45,
+          "declaration": "function wire("
+        },
+        {
+          "line": 69,
+          "declaration": "function candidate("
+        },
+        {
+          "line": 97,
+          "declaration": "async function attempt("
+        },
+        {
+          "line": 114,
+          "declaration": "async function alternatives("
+        },
+        {
+          "line": 141,
+          "declaration": "async function labelled("
+        },
+        {
+          "line": 158,
+          "declaration": "function savedWire("
+        },
+        {
+          "line": 174,
+          "declaration": "async function labelAll("
+        },
+        {
+          "line": 202,
+          "declaration": "function withPriorLabels(context: WireContext, wires: readonly RoutedWire[]): WireContext {"
+        },
+        {
+          "line": 207,
+          "declaration": "function routeBoxes(points: readonly Point[]): readonly Box[] {"
+        },
+        {
+          "line": 216,
+          "declaration": "function finalPaths("
+        },
+        {
+          "line": 230,
+          "declaration": "function finalPath("
+        },
+        {
+          "line": 241,
+          "declaration": "function parallel(section: VisualSection, index: number): number {"
+        },
+        {
+          "line": 248,
+          "declaration": "export async function routeWires("
+        },
+        {
+          "line": 271,
+          "declaration": "function laneAvailable("
+        },
+        {
+          "line": 283,
+          "declaration": "function labelledCandidate("
+        },
+        {
+          "line": 294,
+          "declaration": "function candidateClearance(plan: RoutePlan, context: WireContext): number {"
+        },
+        {
+          "line": 305,
+          "declaration": "function boxDistance(point: Point, box: Box): number {"
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/tests/contracts.test.ts",
+      "sha256": "d6bfe33c809bcee91e5292ef456413c66fb2bcbd334c626a02f1a2ffa708a3d6",
+      "scores": [
+        9,
+        6,
+        7,
+        10,
+        10,
+        9,
+        9,
+        10,
+        5,
+        8,
+        9,
+        10,
+        5,
+        10,
+        7,
+        0
+      ],
+      "total": 124,
+      "sonarMaximum": 2,
+      "gate": "OPEN",
+      "evidence": "Correctness and timing responsibilities (P1), fixed scenarios (P2), no demonstrated shared subtype suite (P3=7), repeated request/inspection idioms (P6), multi-stage setup (P7), untyped assertions (P9=5), unnamed per-entry recovery (P10), broad suite boundary (P11), local capture/gate mutation (P13=5), conditional return idioms (P15=7), real Wasm and ambient performance clock (P16=0). No useful assertions weakened.",
+      "declarations": [
+        {
+          "line": 220,
+          "declaration": "function gate(): { readonly promise: Promise<void>; readonly release: () => void } {"
+        },
+        {
+          "line": 228,
+          "declaration": "function scaleProjection(): Projection {"
+        },
+        {
+          "line": 239,
+          "declaration": "function scaleSection(index: number): {"
+        },
+        {
+          "line": 267,
+          "declaration": "function horizontalEdge(source: string, index: number, ids: readonly string[]): readonly unknown[] {"
+        },
+        {
+          "line": 308,
+          "declaration": "function invalidColumnScopes(source: Projection, columns: number): readonly Projection[] {"
+        },
+        {
+          "line": 331,
+          "declaration": "async function checkColumnLocks(): Promise<void> {"
+        },
+        {
+          "line": 359,
+          "declaration": "async function candidateBudget(): Promise<void> {"
+        },
+        {
+          "line": 398,
+          "declaration": "async function terminalRouteFailure("
+        },
+        {
+          "line": 427,
+          "declaration": "function routeFailure("
+        },
+        {
+          "line": 443,
+          "declaration": "async function rankedCandidates("
+        },
+        {
+          "line": 495,
+          "declaration": "function routeRank("
+        },
+        {
+          "line": 518,
+          "declaration": "function numericRank(a: readonly number[], b: readonly number[]): number {"
+        },
+        {
+          "line": 526,
+          "declaration": "function outsideGeometry(calls: readonly import('../contract/index.js').RoutingProblem[]): void {"
+        },
+        {
+          "line": 546,
+          "declaration": "async function rankingTies("
+        },
+        {
+          "line": 601,
+          "declaration": "async function inspectRankingVector("
+        }
+      ]
+    },
+    {
+      "path": "capability/layout/tests/routing.test.ts",
+      "sha256": "5fb0b548a1d6471149a257929e3e168300f52f26034cab2fcc976d513d02ef3d",
+      "scores": [
+        10,
+        6,
+        7,
+        10,
+        10,
+        9,
+        9,
+        10,
+        5,
+        8,
+        9,
+        10,
+        10,
+        10,
+        7,
+        0
+      ],
+      "total": 130,
+      "sonarMaximum": 2,
+      "gate": "OPEN",
+      "evidence": "Fixed scenario inventory (P2), no target-file subtyping demonstrated (P3=7), repeated inspection setup (P6), multi-stage scenarios (P7), assertion failures absent from return types (P9=5), suite-level recovery ownership not documented at every entry (P10=8), broad scenario interface (P11=9), return-statement conditional idioms in existing helpers (P15=7). Actual Wasm is required (P16=0). These useful tests are retained; literal test scoring interpretation remains open.",
+      "declarations": [
+        {
+          "line": 146,
+          "declaration": "function routingProjection(): Projection {"
+        },
+        {
+          "line": 191,
+          "declaration": "function manualProjection("
+        },
+        {
+          "line": 208,
+          "declaration": "function manualSection("
+        },
+        {
+          "line": 230,
+          "declaration": "function hits(points: readonly Point[], box: Box): boolean {"
+        },
+        {
+          "line": 234,
+          "declaration": "function segmentHit(a: Point | undefined, b: Point, box: Box): boolean {"
+        },
+        {
+          "line": 246,
+          "declaration": "function verticalHit(a: Point, b: Point, box: Box): boolean {"
+        },
+        {
+          "line": 255,
+          "declaration": "function manhattan(a: Point | undefined, b: Point | undefined): number {"
+        },
+        {
+          "line": 260,
+          "declaration": "function overlap(a: Box, b: Box): boolean {"
+        },
+        {
+          "line": 264,
+          "declaration": "function erProjection(): Projection {"
+        },
+        {
+          "line": 305,
+          "declaration": "function crossingProjection(): Projection {"
+        },
+        {
+          "line": 347,
+          "declaration": "function quadraticSamples(path: string): readonly Point[] {"
+        },
+        {
+          "line": 363,
+          "declaration": "function quadratic(a: Point, control: Point, b: Point, t: number): Point {"
+        },
+        {
+          "line": 370,
+          "declaration": "function insideBox(point: Point, box: Box): boolean {"
+        },
+        {
+          "line": 417,
+          "declaration": "function localProjection(distant: number): Projection {"
+        },
+        {
+          "line": 440,
+          "declaration": "function totalLength(points: readonly Point[]): number {"
+        },
+        {
+          "line": 507,
+          "declaration": "async function lockedLabelConflict(): Promise<void> {"
+        },
+        {
+          "line": 537,
+          "declaration": "function independentLanes(wires: readonly import('../contract/index.js').RoutedWire[]): void {"
+        },
+        {
+          "line": 552,
+          "declaration": "function checkSharedInterval("
+        },
+        {
+          "line": 566,
+          "declaration": "function stubAllows("
+        },
+        {
+          "line": 664,
+          "declaration": "function segmentAxes(segment: readonly [Point, Point]): readonly ['x' | 'y', 'x' | 'y'] {"
+        }
+      ]
+    }
+  ]
+}

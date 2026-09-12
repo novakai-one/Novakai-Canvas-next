@@ -8,14 +8,14 @@ export interface Corridor {
   readonly connection: Connection;
   readonly index: number;
 }
-/** Four endpoint-local sides at two measured distances give exactly eight local alternatives. */
+/** Four endpoint-local sides at two measured distances give exactly eight local alternatives. Pure replay is safe; Layout owns retry and Authoring retains the scene on failure. */
 export function localCorridors(plan: RoutePlan, gap: number): readonly Corridor[] {
   const bounds = pointBounds([plan.connection.source, plan.connection.target]);
   return [1, 2].flatMap((scale): readonly Corridor[] =>
     around(plan, bounds, gap * scale, (scale - 1) * 4),
   );
 }
-/** The final fallback alone may depend on whole-scene bounds; it consumes exactly one attempt. */
+/** The final fallback alone may depend on whole-scene bounds; it consumes exactly one attempt. Pure replay is safe; Layout owns retry and Authoring retains the scene on failure. */
 export function outsideCorridor(plan: RoutePlan, occupied: readonly Box[], gap: number): Corridor {
   const bounds = union(occupied);
   return corridor(
@@ -82,7 +82,7 @@ function corridor(plan: RoutePlan, middle: readonly Point[], index: number): Cor
     },
   };
 }
-/** Manhattan length, bend count and stable proposal index order only independently valid candidates. */
+/** Manhattan length, bend count and stable proposal index order only independently valid candidates. Pure replay is safe; Layout owns retry and Authoring retains the scene on failure. */
 export function compareRoutes(
   a: { readonly points: readonly Point[]; readonly index: number },
   b: { readonly points: readonly Point[]; readonly index: number },

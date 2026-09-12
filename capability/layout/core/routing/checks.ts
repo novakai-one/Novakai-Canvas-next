@@ -33,7 +33,7 @@ function followsRay(
     (actual - origin) * (expected - origin) >= (expected - origin) ** 2 - 0.000001
   );
 }
-/** Marker bounds use supplied Presentation metrics, oriented along the endpoint ray. */
+/** Marker bounds use supplied Presentation metrics, oriented along the endpoint ray. Layout execute catches structured faults; Authoring retains the scene and owns correction. */
 export function markerBox(
   endpoint: ResolvedEndpoint,
   metric: { readonly advance: number; readonly halfHeight: number },
@@ -54,7 +54,7 @@ export function markerBox(
     height: Math.max(0.000001, metric.advance),
   };
 }
-/** Route checking is reused after native routing and by independent candidate inspection. */
+/** Route checking is reused after native routing and by independent candidate inspection. Layout execute catches structured faults; Authoring retains the scene and owns correction. */
 export function validRoute(
   points: readonly Point[],
   source: ResolvedEndpoint,
@@ -66,6 +66,7 @@ export function validRoute(
   return (
     endpointsMatch(points, source, target) &&
     clear(points, obstacles) &&
+    markersClear(source, target, wire, metrics, obstacles) &&
     outward(source, points[1], metrics.markers[wire.sourceMarker].advance) &&
     outward(target, points.at(-2), metrics.markers[wire.targetMarker].advance)
   );
@@ -81,14 +82,14 @@ function endpointsMatch(
   if (first === undefined || last === undefined) return false;
   return samePoint(first, source.point) && samePoint(last, target.point);
 }
-/** Labels reserve measured dimensions and avoid both content and previously accepted label/marker regions. */
+/** Labels reserve measured dimensions and avoid both content and previously accepted label/marker regions. Layout execute catches structured faults; Authoring retains the scene and owns correction. */
 export function checkLabel(box: Box, wire: VisualWire, occupied: readonly Box[]): void {
   if (box.width !== wire.label.width || box.height !== wire.label.height)
     reject('invalid-input', wire.id, 'Wire label dimensions differ from measured content');
   if (occupied.some((other) => overlaps(box, other)))
     reject('constraint-conflict', wire.id, 'Wire label overlaps reserved content');
 }
-/** Crossings are warnings rather than silently classified as a semantic invalidity. */
+/** Crossings are warnings rather than silently classified as a semantic invalidity. Layout execute catches structured faults; Authoring retains the scene and owns correction. */
 export function crosses(a: RoutedWire, b: RoutedWire): boolean {
   return segments(a.points).some((left) =>
     segments(b.points).some((right) => crossing(left.a, left.b, right.a, right.b)),
@@ -106,4 +107,21 @@ function horizontalCrossing(a: Point, b: Point, c: Point, d: Point): boolean {
 /** Open intervals exclude shared ports and bends from crossing warnings. */
 function inside(value: number, a: number, b: number): boolean {
   return value > Math.min(a, b) && value < Math.max(a, b);
+}
+
+/** Full measured marker rectangles must clear content; Layout's protected boundary owns correction after rejection. */
+function markersClear(
+  source: ResolvedEndpoint,
+  target: ResolvedEndpoint,
+  wire: VisualWire,
+  metrics: SupplementalMeasurements,
+  obstacles: readonly Box[],
+): boolean {
+  const boxes = [
+    markerBox(source, metrics.markers[wire.sourceMarker]),
+    markerBox(target, metrics.markers[wire.targetMarker]),
+  ];
+  return boxes.every((box): boolean =>
+    obstacles.every((obstacle): boolean => !overlaps(box, obstacle)),
+  );
 }

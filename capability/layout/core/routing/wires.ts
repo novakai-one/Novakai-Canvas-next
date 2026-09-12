@@ -6,6 +6,7 @@ import type { RoutingContext } from '../../contract/types.js';
 import type { RoutePlan } from './native.js';
 import { plan, manual, routeNative } from './native.js';
 import { obstacles, contentBoxes } from './obstacles.js';
+import { distinctLane, sameEndpoints } from './lanes.js';
 import { markerBox, validRoute } from './checks.js';
 import { labelBox } from './labels.js';
 import { curvePath, linePath, segments } from './paths.js';
@@ -17,6 +18,7 @@ interface WireContext {
   readonly placement: RoutingContext;
   readonly metrics: SupplementalMeasurements;
   readonly obstacles: readonly Obstacle[];
+  readonly prior: readonly RoutedWire[];
 }
 /** Ranking metadata stays private and must never enter the strict public scene record. */
 interface RankedRoute {
@@ -69,6 +71,7 @@ function candidate(
   points: readonly Point[],
   occupied: readonly Box[],
   context: WireContext,
+  retained = false,
 ): RoutedWire | null {
   if (
     !validRoute(
@@ -81,14 +84,14 @@ function candidate(
     )
   )
     return null;
+  if (!laneAvailable(plan, points, context, retained)) return null;
   const label = labelBox(
     points,
     plan.wire.label,
     [...occupied, ...routeBoxes(points)],
     context.placement.options.labelGap,
   );
-  if (label === null) return null;
-  return wire(plan, points, label, context);
+  return labelledCandidate(plan, points, label, context);
 }
 /** Candidate infeasibility consumes one attempt; operational and cancellation failures propagate immediately. */
 async function attempt(
@@ -99,7 +102,7 @@ async function attempt(
 ): Promise<RoutedWire | null> {
   const placement = {
     ...context.placement,
-    options: { ...context.placement.options, routeClearance: plan.clearance },
+    options: { ...context.placement.options, routeClearance: candidateClearance(plan, context) },
   };
   const values = await routeNative([corridor.connection], context.obstacles, placement);
   if (values.kind === 'candidate-infeasible') return null;
@@ -158,7 +161,7 @@ function savedWire(
   occupied: readonly Box[],
   context: WireContext,
 ): RoutedWire {
-  const result = candidate(plan, saved.points, occupied, context);
+  const result = candidate(plan, saved.points, occupied, context, true);
   if (result !== null) return result;
   return reject(
     'constraint-conflict',
@@ -198,7 +201,7 @@ async function labelAll(
 /** Accepted labels become real routing obstacles for subsequent connections. */
 function withPriorLabels(context: WireContext, wires: readonly RoutedWire[]): WireContext {
   const labels = wires.map((wire): Obstacle => ({ id: `label:${wire.id}`, box: wire.labelBox }));
-  return { ...context, obstacles: [...context.obstacles, ...labels] };
+  return { ...context, prior: wires, obstacles: [...context.obstacles, ...labels] };
 }
 /** Exact segment footprints let labelGap protect both sides equally; a positive one-sided box biases labels away from right/bottom. */
 function routeBoxes(points: readonly Point[]): readonly Box[] {
@@ -234,15 +237,12 @@ function finalPath(
   if (source?.route.route !== 'curve') return wire;
   return { ...wire, path: curvePath(wire.points, radius, occupied) };
 }
-/** Parallel ordinal is local to the same ordered visible endpoints and stable in source order. */
+/** Reciprocal and parallel edges share one endpoint-local ordinal, stable in source order. */
 function parallel(section: VisualSection, index: number): number {
   const current = section.wires[index];
-  return section.wires
-    .slice(0, index)
-    .filter(
-      (item): boolean =>
-        item.source.node === current?.source.node && item.target.node === current?.target.node,
-    ).length;
+  if (current === undefined) return 0;
+  return section.wires.slice(0, index).filter((item): boolean => sameEndpoints(current, item))
+    .length;
 }
 /** Route fixed nodes and retain manual geometry. Public Layout arrange/route execute catches structured faults; Authoring retains the scene and draft on failure. */
 export async function routeWires(
@@ -251,7 +251,7 @@ export async function routeWires(
   metrics: SupplementalMeasurements,
   placement: RoutingContext,
 ): Promise<readonly RoutedWire[]> {
-  const context: WireContext = { metrics, placement, obstacles: obstacles(nodes) };
+  const context: WireContext = { metrics, placement, obstacles: obstacles(nodes), prior: [] };
   const plans = section.wires.map((item, index): RoutePlan =>
     plan(item, nodes, metrics, placement, parallel(section, index)),
   );
@@ -265,4 +265,49 @@ export async function routeWires(
     context,
   );
   return finalPaths(labelled, section, context);
+}
+
+/** Retained manual geometry takes precedence; automatic peers must use distinct endpoint-local lanes. */
+function laneAvailable(
+  plan: RoutePlan,
+  points: readonly Point[],
+  context: WireContext,
+  retained: boolean,
+): boolean {
+  if (retained) return true;
+  const peers = context.prior.filter((item): boolean => sameEndpoints(plan.attachments, item));
+  return peers.every((item): boolean => distinctLane(points, item.points));
+}
+
+/** A missing adjacent label invalidates the proposal without hiding a partial wire. */
+function labelledCandidate(
+  plan: RoutePlan,
+  points: readonly Point[],
+  label: Box | null,
+  context: WireContext,
+): RoutedWire | null {
+  if (label === null) return null;
+  return wire(plan, points, label, context);
+}
+
+/** Prior labels must not swallow native approach points when optional obstacle buffers are expanded. */
+function candidateClearance(plan: RoutePlan, context: WireContext): number {
+  const points = [
+    plan.connection.sourceApproach ?? plan.connection.source,
+    plan.connection.targetApproach ?? plan.connection.target,
+  ];
+  const distances = points.flatMap((point): readonly number[] =>
+    context.obstacles.map((obstacle): number => boxDistance(point, obstacle.box) / 2),
+  );
+  return Math.min(plan.clearance, ...distances);
+}
+/** Distance to a rectangle bounds optional native inflation without changing required marker dimensions. */
+function boxDistance(point: Point, box: Box): number {
+  return Math.max(
+    0,
+    box.x - point.x,
+    point.x - box.x - box.width,
+    box.y - point.y,
+    point.y - box.y - box.height,
+  );
 }

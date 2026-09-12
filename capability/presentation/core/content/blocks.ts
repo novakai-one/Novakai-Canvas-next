@@ -27,7 +27,15 @@ function text(text: string, context: ContentContext, mono = false): MeasuredCont
 const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
   text: (block, context): MeasuredContent => {
     if (block.kind !== 'text') return mismatch(block);
-    return text(block.text, context);
+    return measureText(
+      {
+        text: block.text,
+        width: context.width,
+        ...context.style.typography[block.role],
+        fill: context.style.text,
+      },
+      context.metrics,
+    );
   },
   code: (block, context): MeasuredContent => {
     if (block.kind !== 'code') return mismatch(block);

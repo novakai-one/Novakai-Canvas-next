@@ -6,7 +6,8 @@ import type {
   VisualWire,
 } from '../../contract/records/visual.js';
 import type { ContentContext } from '../content/blocks.js';
-import { identity, labelContent, projectNode, projectGroup } from './node.js';
+import { identity, projectNode, projectGroup } from './node.js';
+import { labelContent } from '../content/headings.js';
 import { wireNotation, wireLabel, sequenceMarker, sequenceLabel } from '../notation/wires.js';
 import { reject } from '../validation/outcomes.js';
 /** Canonical endpoints resolve through the visible representation, including represented groups. */

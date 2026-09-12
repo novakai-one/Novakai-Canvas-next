@@ -6,7 +6,7 @@ Shared requirements: [SOP](../SOP.md), [current/target images](../References.md)
 | --- | --- | --- |
 | S2-A | Figure-led story | Prominent figure + short caption, at least one frame-free actor and one grouped panel; visible hierarchy superior to baseline. |
 | S2-B | Transfer | Use the same intents in a software architecture and comparison diagram without a new renderer. |
-| S2-C | Round trip | Create, full print, patch and unset override preserve/reset exactly documented fields. |
+| S2-C | Round trip | Create, full print, patch, replace and unset preserve/reset documented fields. Replacement retains supplied fields; omitted object fields reset to defaults and omitted view overrides inherit. |
 | S2-D | Growth/export | Longer text and portrait figure remain unclipped; actual SVG and visible Canvas agree. |
 
 ## Frozen test budget
@@ -15,8 +15,8 @@ One focused parameterized public-contract case per row; reuse existing fixtures 
 
 | # | Case / bug caught | Tier/type | Loop/nightly allowance | Maintenance | Why add / confidence | Against / confidence | Existing coverage | Retirement |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | composition admission: Reject missing media/unknown intent and resolve inherited overrides | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Model content/sections tests cover old records, not new intent | Behavior removed or superseded by the same public-contract coverage |
-| 2 | composition DSL roundtrip: Create/print/set/unset retains frame/composition/caption role | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Language roundtrip covers old vocabulary | Behavior removed or superseded by the same public-contract coverage |
+| 1 | composition admission: Reject missing media/unknown intent and resolve inherited/group overrides, including filtered-media rejection | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Model content/sections tests cover old records, not new intent | Behavior removed or superseded by the same public-contract coverage |
+| 2 | composition DSL roundtrip: Create/print/set/unset/replace retains frame/composition/caption role | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Language roundtrip covers old vocabulary | Behavior removed or superseded by the same public-contract coverage |
 | 3 | measured composition: Two orientations, long text, portrait media, member anchors and no clipping | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Presentation sizing/media cases cover stacked content only | Behavior removed or superseded by the same public-contract coverage |
 | 4 | render/export agreement: Measured primitives/font identities survive renderer and actual SVG encoder | fast / contract | 0.5s / 0.5s | medium | New observable contract otherwise unguarded (90%) | May overlap existing vectors (30%) | Existing rendering/export cases lack new primitives | Behavior removed or superseded by the same public-contract coverage |
 | **Total** | **4 cases** | fast; slow/guard/e2e=0 | **2.0s / 2.0s** | | | | | |
@@ -32,3 +32,5 @@ One focused parameterized public-contract case per row; reuse existing fixtures 
 Proofs: `story-water-treatment.canvas`, `modules-document-publishing.canvas`, `grid-research-methods.canvas`
 
 Private implementation preferences are nonblocking. Material return/invariant/coding/visual violations are blocking. All references remain targets; intermediate readability alone is not final benchmark quality.
+
+Builder correction: case 4 also verifies actual PNG dimensions for fractional scene bounds at non-integer scale; the native encoder preserves the public ceil(bounds × scale) contract. No new case or E2E. Actual file scope and observed visual gaps are recorded in the stage evidence README.

@@ -77,6 +77,7 @@ function node(
     width: box.width,
     height: box.height,
     headerHeight: 24,
+    frame: 'auto',
     radius: 4,
     strokeWidth: 1,
     placement: null,

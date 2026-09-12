@@ -1,0 +1,3 @@
+patch 1 @grid-research-methods {
+ set block @experiment.@caption text="Compare outcomes under an assigned change; record the comparison before interpreting the result." role=caption
+}

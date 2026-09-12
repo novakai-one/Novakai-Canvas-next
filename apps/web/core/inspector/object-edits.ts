@@ -88,7 +88,7 @@ const contentDefaults: Readonly<
     (id: ContentBlock['id']) => ContentBlock
   >
 > = {
-  text: (id) => ({ id, kind: 'text', text: 'Explain this idea' }),
+  text: (id) => ({ id, kind: 'text', text: 'Explain this idea', role: 'body' }),
   field: (id) => ({ id, kind: 'field', label: 'field', type: 'string', nullable: false }),
   member: (id) => ({ id, kind: 'member', label: 'member', type: 'string', visibility: 'public' }),
   signature: (id) => ({ id, kind: 'signature', label: 'execute', parameters: [], returns: 'void' }),

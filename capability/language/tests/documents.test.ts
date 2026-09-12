@@ -41,6 +41,7 @@ describe('Language complete documents', () => {
     expect(card.content[0]).toEqual({
       kind: 'text',
       id: 'intro',
+      role: 'body',
       text: 'Unicode 🧠\nsecond line\tTabbed "quote" and \\ slash',
     });
     expect(card.content.at(-1)).toEqual({

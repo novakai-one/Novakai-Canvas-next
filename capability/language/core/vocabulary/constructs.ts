@@ -42,7 +42,14 @@ export const constructs: readonly ConstructDefinition[] = [
       { name: 'kind', type: 'word', values: nodeKinds },
       { name: 'label', type: 'string' },
     ],
-    properties: { role: p.role, size: p.size, step: p.step, sources: p.sources },
+    properties: {
+      role: p.role,
+      size: p.size,
+      frame: p.frame,
+      composition: p.composition,
+      step: p.step,
+      sources: p.sources,
+    },
     children: [
       'text',
       'code',
@@ -104,7 +111,12 @@ export const constructs: readonly ConstructDefinition[] = [
       { name: 'id', type: 'id' },
       { name: 'title', type: 'string' },
     ],
-    properties: { represents: p.represents, ...layoutProperties },
+    properties: {
+      represents: p.represents,
+      frame: p.containerFrame,
+      role: p.role,
+      ...layoutProperties,
+    },
     children: ['show', 'group', 'rank', 'align', 'before', 'below'],
   },
   {
@@ -113,7 +125,7 @@ export const constructs: readonly ConstructDefinition[] = [
       { name: 'id', type: 'id' },
       { name: 'text', type: 'string' },
     ],
-    properties: {},
+    properties: { role: p.textRole },
     children: null,
   },
   {
@@ -213,7 +225,14 @@ export const constructs: readonly ConstructDefinition[] = [
   {
     kind: 'show',
     positions: [{ name: 'ids', type: 'references' }],
-    properties: { role: p.role, size: p.size, detail: p.detail, participation: p.participation },
+    properties: {
+      role: p.role,
+      size: p.size,
+      frame: p.frame,
+      composition: p.composition,
+      detail: p.detail,
+      participation: p.participation,
+    },
     children: null,
   },
   {

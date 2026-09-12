@@ -1,12 +1,18 @@
 import { z } from 'zod';
 import { assetId, descendantId, label, objectId, sectionId, size } from '../brands.js';
+import { textRoleSchema } from './composition.js';
 
 /** Canonical object address, optionally narrowed to an addressable descendant. */
 export const endpointSchema = z
   .strictObject({ object: objectId, member: descendantId.optional() })
   .readonly();
 const textBlockSchema = z
-  .strictObject({ kind: z.literal('text'), id: descendantId, text: z.string() })
+  .strictObject({
+    kind: z.literal('text'),
+    id: descendantId,
+    text: z.string(),
+    role: textRoleSchema.default('body'),
+  })
   .readonly();
 const codeBlockSchema = z
   .strictObject({

@@ -45,6 +45,7 @@ export interface DiagramTypography {
   readonly body: TextMetric;
   readonly mono: TextMetric;
   readonly annotation: TextMetric;
+  readonly caption: TextMetric;
 }
 /** Preferred and maximum interior widths are positive and ordered. */
 export interface SizeBand {
@@ -56,6 +57,8 @@ export interface ContentSizing {
   readonly widths: Readonly<Record<'small' | 'medium' | 'large', SizeBand>>;
   readonly rowMinimum: number;
   readonly iconBox: Readonly<Record<'small' | 'medium' | 'large', number>>;
+  /** Prominent figure slots scale with the same root spacing policy as content widths. */
+  readonly figureBox: Readonly<Record<'small' | 'medium' | 'large', number>>;
 }
 /** Complete numeric projection; consumers keep the prior scene on validation failure. */
 export interface StyleProjection {

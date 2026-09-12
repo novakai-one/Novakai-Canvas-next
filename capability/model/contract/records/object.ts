@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { label, objectId, size, sourceId } from '../brands.js';
 import { contentSchema, portSchema } from './content.js';
+import { frameSchema, compositionSchema } from './composition.js';
 
 /** Supported semantic node kinds, independent of the section displaying the node. */
 export const objectKind = z.enum([
@@ -29,6 +30,8 @@ export const objectSchema = z
     label,
     role: label.default('neutral'),
     size: size.default('medium'),
+    frame: frameSchema.default('auto'),
+    composition: compositionSchema.default('stack'),
     step: z.number().int().positive().optional(),
     content: z.array(contentSchema).readonly().default([]),
     ports: z.array(portSchema).readonly().default([]),

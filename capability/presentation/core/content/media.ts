@@ -11,13 +11,14 @@ export function measureMedia(
   width: number,
   style: ResolvedStyle,
   assets: AssetReader,
+  emphasis: 'inline' | 'figure' = 'inline',
 ): MeasuredContent {
   const binding = collection.assets.find((value) => value.id === block.asset);
   if (!binding) return reject('missing-resource', block.asset, 'Asset binding is absent');
   const resource = parse(visualAsset, requireValue(assets.read(binding.digest.slice(7))));
   if (`sha256:${resource.digest}` !== binding.digest)
     return reject('missing-resource', binding.id, 'Asset reader returned a different digest');
-  return slot(block, resource, binding.alt, width, style);
+  return slot(block, resource, binding.alt, width, style, emphasis);
 }
 type MediaBlock = Extract<ContentBlock, { kind: 'image' | 'icon' }>;
 /** Bounded media slots center in the final node interior; public projection owns resource rejection. */
@@ -27,11 +28,9 @@ function slot(
   alt: string,
   width: number,
   style: ResolvedStyle,
+  emphasis: 'inline' | 'figure',
 ): MeasuredContent {
-  const preferred =
-    block.kind === 'icon'
-      ? style.contentSizing.iconBox[block.size]
-      : style.contentSizing.widths[block.size].preferred;
+  const preferred = preferredWidth(block, style, emphasis);
   const targetWidth = Math.min(width, preferred);
   const height = slotHeight(block, targetWidth, resource.height / resource.width);
   return {
@@ -55,8 +54,20 @@ function slot(
   };
 }
 
-/** Icons use square slots; images retain aspect up to a square, including portrait cover crops. */
+/** Figure emphasis is a semantic composition choice, while inline symbols retain their compact slots. */
+function preferredWidth(
+  block: MediaBlock,
+  style: ResolvedStyle,
+  emphasis: 'inline' | 'figure',
+): number {
+  if (emphasis === 'figure') return style.contentSizing.figureBox[block.size];
+  if (block.kind === 'icon') return style.contentSizing.iconBox[block.size];
+  return style.contentSizing.widths[block.size].preferred;
+}
+
+/** Contained images retain portrait extent; explicit cover uses a bounded square crop. */
 function slotHeight(block: MediaBlock, width: number, ratio: number): number {
   if (block.kind === 'icon') return width;
-  return Math.min(width, width * ratio);
+  if (block.fit === 'cover') return width;
+  return width * ratio;
 }

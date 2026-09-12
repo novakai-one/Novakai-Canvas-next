@@ -48,6 +48,9 @@
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
   --nv-diagram-icon-large: 48px;
+  --nv-diagram-figure-small: 96px;
+  --nv-diagram-figure-medium: 128px;
+  --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
 }
 }

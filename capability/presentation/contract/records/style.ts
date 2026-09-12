@@ -35,6 +35,7 @@ export const diagramTypography = z
     body: textMetric,
     mono: textMetric,
     annotation: textMetric,
+    caption: textMetric,
   })
   .readonly();
 /** Validated semantic typography roles sharing pinned body/mono identities. */
@@ -51,6 +52,7 @@ export const contentSizing = z
   .strictObject({
     widths: z.strictObject({ small: sizeBand, medium: sizeBand, large: sizeBand }).readonly(),
     rowMinimum: positive,
+    figureBox: z.strictObject({ small: positive, medium: positive, large: positive }).readonly(),
     iconBox: z.strictObject({ small: positive, medium: positive, large: positive }).readonly(),
   })
   .readonly();

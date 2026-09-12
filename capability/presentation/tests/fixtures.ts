@@ -60,6 +60,11 @@ export function style(pinned: FontSet): ResolvedStyle {
       },
       body: { font: { family: body.family, digest: body.digest }, size: 16, lineHeight: 24 },
       mono: { font: { family: mono.family, digest: mono.digest }, size: 16, lineHeight: 24 },
+      caption: {
+        font: { family: body.family, digest: body.digest },
+        size: 14.0,
+        lineHeight: 21.0,
+      },
       annotation: {
         font: { family: body.family, digest: body.digest },
         size: 14.0,
@@ -78,6 +83,7 @@ export function style(pinned: FontSet): ResolvedStyle {
       },
       rowMinimum: 32,
       iconBox: { small: 24, medium: 32, large: 48 },
+      figureBox: { small: 180, medium: 240, large: 320 },
     },
     roles: { neutral: { fill: '#ffffff', stroke: '#334155', text: '#0f172a' } },
     surface: '#ffffff',

@@ -20,12 +20,18 @@ function fontRules(fonts: FontSet): string {
 }
 /** Rounded forms use token radii; pills use their geometric half-height. */
 function radius(node: VisualNode): number {
+  if (node.frame !== 'auto') return node.radius;
   if (node.shape === 'pill') return node.height / 2;
   return node.radius;
 }
 /** Diamond bounds expand around the measured inscribed content rectangle. */
-function frame(node: VisualNode): ReactElement {
-  if (node.shape === 'diamond')
+function frame(node: VisualNode): ReactElement | null {
+  if (node.frame === 'none') return null;
+  return visibleFrame(node);
+}
+/** Explicit cards/panels use rounded regions; auto retains semantic shape notation. */
+function visibleFrame(node: VisualNode): ReactElement {
+  if (node.shape === 'diamond' && node.frame === 'auto')
     return (
       <polygon
         vectorEffect="non-scaling-stroke"
@@ -49,6 +55,11 @@ function frame(node: VisualNode): ReactElement {
 }
 /** Engineering notation has a distinct title compartment; ordinary process cards retain their simpler frame. */
 function headerRule(node: VisualNode): ReactElement | null {
+  if (node.frame !== 'auto') return null;
+  return semanticHeaderRule(node);
+}
+/** Only kind-appropriate auto frames receive a separator, after the measured heading region. */
+function semanticHeaderRule(node: VisualNode): ReactElement | null {
   if (!['entity', 'module', 'interface', 'function'].includes(node.shape)) return null;
   if (node.height <= node.headerHeight) return null;
   return (
@@ -83,6 +94,7 @@ export function createContentRenderer(
         role="img"
         aria-label={node.content.outline.join('; ')}
         data-shape={node.shape}
+        data-frame={node.frame}
         data-node-id={node.id}
       >
         <title>{node.label}</title>

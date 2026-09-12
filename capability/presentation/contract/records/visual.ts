@@ -114,6 +114,7 @@ export const visualNode = z
     role: z.string(),
     size: z.enum(['small', 'medium', 'large']),
     shape,
+    frame: z.enum(['auto', 'none', 'card', 'panel']),
     paint,
     content,
     navigation: z.array(navigation).readonly(),

@@ -6,7 +6,15 @@ const title: Property = { type: 'string', field: 'title', required: true };
 /** Patch properties are owning scalar edits only; kinds, IDs, groups and memberships require replacement. */
 export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string, Property>>>> = {
   collection: { title, description: p.description, theme: p.theme, ...layoutProperties },
-  node: { label, role: p.role, size: p.size, step: p.step, sources: p.sources },
+  node: {
+    label,
+    role: p.role,
+    size: p.size,
+    frame: p.frame,
+    composition: p.composition,
+    step: p.step,
+    sources: p.sources,
+  },
   wire: {
     label,
     from: p.from,
@@ -19,10 +27,18 @@ export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string
     'to-end': { type: 'endpoint', field: 'target', required: true },
   },
   section: { title, mode: p.mode, order: p.order, ...layoutProperties },
-  appearance: { role: p.role, size: p.size, detail: p.detail, participation: p.participation },
+  appearance: {
+    role: p.role,
+    size: p.size,
+    frame: p.frame,
+    composition: p.composition,
+    detail: p.detail,
+    participation: p.participation,
+  },
   route: { route: p.route, 'source-side': p.sourceSide, 'target-side': p.targetSide },
   block: {
     label,
+    role: p.textRole,
     text: { type: 'string', field: 'text', required: true },
     items: { type: 'strings', field: 'items', required: true },
     language: p.language,

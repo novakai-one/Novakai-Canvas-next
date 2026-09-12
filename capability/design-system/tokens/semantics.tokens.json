@@ -419,6 +419,63 @@
           }
         }
       }
+    },
+    "figureSmall": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.8}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.three}"
+            }
+          }
+        }
+      }
+    },
+    "figureMedium": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.8}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.four}"
+            }
+          }
+        }
+      }
+    },
+    "figureLarge": {
+      "$type": "dimension",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "multiply",
+            "value": {
+              "op": "reference",
+              "value": "{space.8}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{scalar.six}"
+            }
+          }
+        }
+      }
     }
   },
   "control": {

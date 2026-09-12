@@ -4,6 +4,7 @@ import { inspectInput } from './input.js';
 import { validateIdentity } from './identity.js';
 import { validateReferences } from './references.js';
 import { validateContent } from '../objects/content.js';
+import { validateComposition } from '../objects/composition.js';
 import { validateKeys } from '../objects/keys.js';
 import { validateRelationships } from '../relationships/endpoints.js';
 import { validateSections } from '../sections/views.js';
@@ -16,6 +17,7 @@ type CollectionRule = (collection: Collection) => readonly Diagnostic[];
 const collectionRules: readonly CollectionRule[] = [
   validateIdentity,
   validateContent,
+  validateComposition,
   validateReferences,
   validateKeys,
   validateRelationships,

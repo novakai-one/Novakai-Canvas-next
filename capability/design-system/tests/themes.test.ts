@@ -102,6 +102,7 @@ describe('Design System themes', () => {
       },
       rowMinimum: 32,
       iconBox: { small: 24, medium: 32, large: 48 },
+      figureBox: { small: 96, medium: 128, large: 192 },
     });
     expect(resolvedStyle.safeParse({ ...style, fontSize: 14 }).success).toBe(false);
     expect(

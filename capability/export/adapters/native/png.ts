@@ -5,7 +5,10 @@ import type { Result } from '../../contract/errors.js';
 import type { Encoded } from '../../contract/records/artifact.js';
 import { failure } from '../../contract/errors.js';
 /** WASM is initialized once by composition; each bounded render owns and frees its native allocations. */
-export function createPngEncoder(deps: RenderDependencies, fonts: FontDecoder): FormatHandler {
+export function createPngEncoder(
+  deps: Pick<RenderDependencies, 'renderer'>,
+  fonts: FontDecoder,
+): FormatHandler {
   /** Missing fonts or renderer failures return no partial PNG; the outer job releases its revision. */
   async function encode(input: RenderInput): Promise<Result<Encoded>> {
     const rendered = deps.renderer.render(input);
@@ -55,15 +58,19 @@ function renderNative(
   width: number,
   height: number,
 ): Result<Encoded> {
-  const renderer = new Resvg(svg, {
+  const viewport = rasterViewport(svg, width, height, input.request.scale);
+  const renderer = new Resvg(viewport, {
     font: { fontBuffers: fonts.map((font) => font.bytes) },
-    fitTo: { mode: 'zoom', value: input.request.scale },
   });
   try {
     return readImage(renderer, width, height);
   } finally {
     renderer.free();
   }
+}
+/** Integral outer pixels preserve the requested scale, adding only the fractional remainder as edge padding. */
+function rasterViewport(svg: string, width: number, height: number, scale: number): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width / scale} ${height / scale}">${svg}</svg>`;
 }
 /** Dimensions and signature are independent output checks, not assumptions about the native binding. */
 function readImage(

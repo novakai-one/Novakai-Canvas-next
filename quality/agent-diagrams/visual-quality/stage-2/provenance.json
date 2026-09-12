@@ -1,0 +1,32 @@
+{
+  "parentRevision": "5160d27b1a24f6d92976fbe61108ee87450f304b",
+  "implementation": "source-manifest.json hashes; same PR includes these exact source files",
+  "workspace": ".local/visual-quality-proof",
+  "browser": "existing visible in-app browser tab12 at 127.0.0.1:5185",
+  "collections": {
+    "story-water-treatment": 0,
+    "modules-document-publishing": 0,
+    "grid-research-methods": 1
+  },
+  "notes": [
+    "comparison-overview.png is revision0; comparison-live-edit.png and comparison.svg revision1",
+    "Browser refresh verified edited caption in AX text; no restart claim yet",
+    "All screenshot/export files are genuine captured artifacts; no screenshot retouching"
+  ],
+  "artifacts": {
+    "grid-research-methods-read.canvas": "42b17b69da0ead53c097683f785047e86d4f2c56f7cf75f99736f4c5eaa2e98c",
+    "comparison.svg": "343613798e8a9093f3d027b95aac247e915c24a6b9232f0543e1f70b518dc566",
+    "modules-overview.png": "c969f8122d4822fb881ed7a21ea978809802e512299f9dea99ea2fcfc02db663",
+    "comparison-live-edit.png": "8db2674e1c41e246a5f12ccf9b0f8f980f49339d80a0e113b310c82bc4104734",
+    "water-detail.png": "64a6f56d32330352bb6d4d68c4ec50274010f8dc6c24dd97247b5502e93b3a49",
+    "water-overview.png": "b0230f9e13a02dc996ee760a9db13576745ada7b516d1ecf4c49904def8d4b0f",
+    "comparison-overview.png": "bcaa8a46d7de9a26b7c75558834a8a37c638b08505fcbf15f6288b94ddd67fe6",
+    "story-water-treatment-read.canvas": "24db3d320d0f0eefa8c9240895fdeddb5e9d76bf0563b4c5e2192e8f24861a4e",
+    "comparison-read-after.canvas": "2f5b1a3c4f11f9e13f46cad16061a535a4cce018ac10e3284b675b2f50773db8",
+    "comparison-edit.canvas": "f34fe5539a8afa927a7c05ef14a9287e916194e96d203da7a8e4bf7335d47efd",
+    "modules-document-publishing-read.canvas": "836a0bfa7fa1a9b6bb6bef58a742c77cd1373c596fc6a8d2855bbe2792ed176d",
+    "modules.svg": "dadb61b2a258461e64e25c15184eeb76552d4059dd5b86bb5470ab17b3b7a2a1",
+    "water.svg": "8207460aa4213af79b1afd9e4320cd47d9dea6299d1ce38b5089dd258c6888f9",
+    "water-export.png": "57a9c4541652a18c65162134789f149ed8d6682a3d5c89c250a8b6d37b9af19f"
+  }
+}

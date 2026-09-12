@@ -145,6 +145,7 @@ function typography(resolved: ResolvedTokenSet): DiagramTypography {
     body: metric(resolved, 'font.body', 'type.base'),
     mono: metric(resolved, 'font.mono', 'type.base'),
     annotation: metric(resolved, 'font.body', 'font.caption'),
+    caption: metric(resolved, 'font.body', 'font.caption'),
   };
 }
 /** Width bands describe interior content; token validation owns finite positive values. */
@@ -161,6 +162,11 @@ function contentSizing(values: TokenValues): ContentSizing {
       small: band(values, 'diagram.widthSmall', 'diagram.widthMedium'),
       medium: band(values, 'diagram.widthMedium', 'diagram.widthLarge'),
       large: band(values, 'diagram.widthLarge', 'diagram.widthExtraLarge'),
+    },
+    figureBox: {
+      small: tokenNumber(values, 'diagram.figureSmall'),
+      medium: tokenNumber(values, 'diagram.figureMedium'),
+      large: tokenNumber(values, 'diagram.figureLarge'),
     },
     rowMinimum: tokenNumber(values, 'diagram.rowMin'),
     iconBox: {

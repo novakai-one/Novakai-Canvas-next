@@ -9,6 +9,7 @@ import {
   size,
 } from '../brands.js';
 import { layoutSchema, placementSchema, pointSchema } from './layout.js';
+import { frameSchema, compositionSchema, containerFrameSchema } from './composition.js';
 
 /** Section-local view of one object. Omitted overrides inherit semantic defaults or automatic layout. */
 export const appearanceSchema = z
@@ -17,6 +18,8 @@ export const appearanceSchema = z
     group: groupId.optional(),
     role: label.optional(),
     size: size.optional(),
+    frame: frameSchema.optional(),
+    composition: compositionSchema.optional(),
     detail: z.enum(['full', 'summary', 'label']).default('full'),
     participation: z.enum(['tree', 'annotation']).optional(),
     placement: placementSchema.optional(),
@@ -30,6 +33,8 @@ export const groupSchema = z
     title: label,
     parent: groupId.optional(),
     represents: objectId.optional(),
+    frame: containerFrameSchema.default('auto'),
+    role: label.default('neutral'),
     layout: layoutSchema,
     placement: placementSchema.optional(),
   })

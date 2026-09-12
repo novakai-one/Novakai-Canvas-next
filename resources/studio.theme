@@ -1,0 +1,9 @@
+theme 1 @studio "Studio / explained systems" version=1.0.0 base=paper
+font body source="./fonts/inter-latin-400-normal.woff2"
+font mono source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+set color surface.base="#f4f8fa"
+set color action.accent="#176b76"
+set number ratio.caption=0.95
+set number ratio.title=1.35
+set number ratio.large=2.6
+set number lineHeight.body=1.3

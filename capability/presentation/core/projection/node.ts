@@ -1,108 +1,25 @@
-import type {
-  Appearance,
-  ContentBlock,
-  DiagramObject,
-  Group,
-  Section,
-} from '../../contract/records/input.js';
-import type { DiagramTypography, Paint } from '../../contract/records/style.js';
-import type { MeasuredContent, VisualNode, Anchor } from '../../contract/records/visual.js';
+import type { Appearance, DiagramObject, Group, Section } from '../../contract/records/input.js';
+import type { Paint } from '../../contract/records/style.js';
+import type { MeasuredContent, VisualNode } from '../../contract/records/visual.js';
 import { sceneId } from '../../contract/brands.js';
 import { visualNode } from '../../contract/records/visual.js';
-import { measureBlock } from '../content/blocks.js';
 import type { ContentContext } from '../content/blocks.js';
-import { measureText, offset, stack } from '../content/text.js';
+import { offset } from '../content/text.js';
+import { labelContent } from '../content/headings.js';
+import { visibleBody } from '../content/node-body.js';
+import { composeNodeContent } from '../content/composition.js';
 import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
-import { fieldColumns } from '../content/fields.js';
 import { parse, reject } from '../validation/outcomes.js';
 /** Build a section-scoped scene identity; public project owns rejection and retains the prior scene. */
 export function identity(section: string, kind: 'object' | 'group', id: string): VisualNode['id'] {
   return parse(sceneId, `${section}:${kind}:${id}`);
-}
-/** Measure a semantic text role; public project owns provider failure and retains the prior scene. */
-export function labelContent(
-  text: string,
-  context: ContentContext,
-  role: keyof DiagramTypography = 'body',
-): MeasuredContent {
-  return measureText(
-    {
-      text,
-      width: context.width,
-      ...context.style.typography[role],
-      fill: context.style.text,
-    },
-    context.metrics,
-  );
 }
 /** Resolve canonical content once; a broken injected domain reader fails visibly. */
 function object(id: string, context: ContentContext): DiagramObject {
   const found = context.collection.objects.find((item) => item.id === id);
   if (!found) return reject('invalid-input', id, 'Visible object is missing');
   return found;
-}
-/** A typed port is an addressable local row, independent of the eventual routed side. */
-function portContent(
-  port: DiagramObject['ports'][number],
-  context: ContentContext,
-): MeasuredContent {
-  const content = labelContent(`${port.label}: ${port.type} (${port.direction})`, context);
-  return {
-    ...content,
-    anchors: [
-      {
-        member: port.id,
-        x: 0,
-        y: content.height / 2,
-        direction: port.direction,
-        collapsed: false,
-        label: port.label,
-      },
-    ],
-  };
-}
-interface BodySelection {
-  readonly content: readonly ContentBlock[];
-  readonly ports: DiagramObject['ports'];
-  readonly complete: boolean;
-}
-/** Measure selected rows against columns derived only from those visible rows. */
-function measureBody(selection: BodySelection, context: ContentContext): MeasuredContent {
-  const scoped = { ...context, fields: fieldColumns(selection.content, context) };
-  const blocks = [
-    ...selection.content.map((block) => measureBlock(block, scoped)),
-    ...selection.ports.map((port) => portContent(port, context)),
-  ];
-  return stack(blocks, context.style.gap);
-}
-/** Hidden descendants attach at the body boundary and keep their own semantic label. */
-function collapsed(anchor: Anchor): Anchor {
-  return { ...anchor, x: 0, y: 0, collapsed: true };
-}
-/** Visible summary rows retain measured row anchors; only omitted descendants collapse. */
-function visibleAnchor(anchor: Anchor, visible: MeasuredContent): Anchor {
-  const found = visible.anchors.find((item) => item.member === anchor.member);
-  if (found) return found;
-  return collapsed(anchor);
-}
-/** Compact detail keeps canonical outline/anchors while visible geometry stays independently measured. */
-function compact(visible: MeasuredContent, canonical: MeasuredContent): MeasuredContent {
-  return {
-    ...visible,
-    anchors: canonical.anchors.map((anchor) => visibleAnchor(anchor, visible)),
-    outline: canonical.outline,
-  };
-}
-/** Measure visible body once; compact modes retain a separate canonical accessibility path. */
-function body(
-  object: DiagramObject,
-  selection: BodySelection,
-  context: ContentContext,
-): MeasuredContent {
-  const visible = measureBody(selection, context);
-  if (selection.complete) return visible;
-  return compact(visible, measureBody(fullBody(object), context));
 }
 /** Parent containers are addressed in the same section scope. */
 function parent(section: string, id: string | undefined): VisualNode['parent'] {
@@ -142,8 +59,9 @@ export function projectNode(
   const source = object(view.object, context);
   const role = view.role ?? source.role;
   const size = view.size ?? source.size;
-  const shape = nodeShape(source.kind);
-  const initial = appearanceContext(view, role, size, shape, { ...context, owner: source });
+  const shape = appearanceShape(source.kind, view.frame ?? source.frame);
+  const appearance = appearanceContext(view, role, size, shape, { ...context, owner: source });
+  const initial = contentForeground(view.frame ?? source.frame, view.group, section, appearance);
   const visible = visibleBody(source, view.detail);
   const scoped = plannedContext(
     { ...source, content: visible.content },
@@ -151,8 +69,13 @@ export function projectNode(
     context.style.contentSizing.widths[size],
     view.placement?.width !== undefined,
   );
-  const heading = labelContent(source.label, scoped, 'nodeHeading');
-  const measured = stack([heading, body(source, visible, scoped)], headingGap(shape, context));
+  const composed = composeNodeContent(
+    source,
+    visible,
+    view.composition ?? source.composition,
+    headingGap(shape, context),
+    scoped,
+  );
   return parse(visualNode, {
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
@@ -166,14 +89,24 @@ export function projectNode(
     role,
     size,
     shape,
+    frame: view.frame ?? source.frame,
     paint: rolePaint(role, context),
-    ...frame(measured, shape, scoped),
-    headerHeight: heading.height + context.style.padding * 2,
+    ...frame(composed.content, shape, scoped),
+    headerHeight: composed.headerHeight + context.style.padding * 2,
     radius: context.style.radius,
     strokeWidth: context.style.stroke,
     placement: view.placement ?? null,
     parent: parent(section.id, view.group),
   });
+}
+/** Explicit chrome changes visual geometry only; the canonical kind and member anchors remain unchanged. */
+function appearanceShape(
+  kind: DiagramObject['kind'],
+  frame: VisualNode['frame'],
+): VisualNode['shape'] {
+  if (frame === 'auto') return nodeShape(kind);
+  if (frame === 'panel') return 'container';
+  return 'card';
 }
 /** Engineering cards reserve a padded header compartment; body content starts below its separator. */
 function headingGap(shape: VisualNode['shape'], context: ContentContext): number {
@@ -184,7 +117,8 @@ function headingGap(shape: VisualNode['shape'], context: ContentContext): number
 /** Reserve represented content or an ordinary title; public project owns rejection and Authoring retains the prior scene. */
 export function projectGroup(group: Group, section: Section, context: ContentContext): VisualNode {
   if (group.represents !== undefined) return represented(group, section, context);
-  const initial = scopedContext(group.placement, 'neutral', 'medium', 'container', context);
+  const appearance = scopedContext(group.placement, group.role, 'medium', 'container', context);
+  const initial = contentForeground(group.frame, group.parent, section, appearance);
   const scoped = plannedContext(
     { label: group.title, content: [] },
     initial,
@@ -200,10 +134,11 @@ export function projectGroup(group: Group, section: Section, context: ContentCon
     navigation: [],
     kind: 'group',
     label: group.title,
-    role: 'neutral',
+    role: group.role,
     size: 'medium',
     shape: 'container',
-    paint: context.style.roles.neutral,
+    frame: group.frame,
+    paint: rolePaint(group.role, context),
     ...frame(heading, 'container', scoped),
     headerHeight: heading.height + context.style.padding * 2,
     radius: context.style.radius,
@@ -217,7 +152,15 @@ function represented(group: Group, section: Section, context: ContentContext): V
   const source = group.represents;
   if (source === undefined)
     return reject('invalid-input', group.id, 'Represented object is missing');
-  const node = projectNode(placedView(source, group.placement), section, context);
+  const node = projectNode(
+    {
+      ...withinGroup(placedView(source, group.placement), group.parent),
+      role: group.role,
+      frame: group.frame,
+    },
+    section,
+    context,
+  );
   return {
     ...node,
     id: identity(section.id, 'group', group.id),
@@ -288,22 +231,6 @@ function placedView(object: Appearance['object'], placement: Appearance['placeme
   return { ...view, placement };
 }
 
-/** Derive one visible-body policy for sizing and final measurement. */
-function visibleBody(object: DiagramObject, mode: Appearance['detail']): BodySelection {
-  if (mode === 'full') return fullBody(object);
-  if (mode === 'label') return { content: [], ports: [], complete: false };
-  return summaryBody(object);
-}
-/** Summary shows the first content block, or the first port when content is absent. */
-function summaryBody(object: DiagramObject): BodySelection {
-  const first = object.content.slice(0, 1);
-  if (first.length > 0) return { content: first, ports: [], complete: false };
-  return { content: [], ports: object.ports.slice(0, 1), complete: false };
-}
-/** Canonical body selection retains every outline and addressable row. */
-function fullBody(object: DiagramObject): BodySelection {
-  return { content: object.content, ports: object.ports, complete: true };
-}
 /** Shared intrinsic sizing replaces duplicate node/group planning policy. */
 function plannedContext(
   source: Pick<DiagramObject, 'label' | 'content'>,
@@ -313,4 +240,36 @@ function plannedContext(
 ): ContentContext {
   const plan = planContent(source, context, band, explicit);
   return { ...context, width: plan.width };
+}
+
+/** Frame-free text inherits its visible container foreground, avoiding white text on an absent role fill. */
+function contentForeground(
+  frame: VisualNode['frame'],
+  group: Appearance['group'],
+  section: Section,
+  context: ContentContext,
+): ContentContext {
+  if (frame !== 'none') return context;
+  const role = containerRole(group, section.groups);
+  const paint = rolePaint(role, context);
+  return { ...context, style: { ...context.style, text: paint.text } };
+}
+/** Model has already rejected containment cycles; transparent regions inherit from their nearest painted ancestor. */
+function containerRole(id: Group['parent'], groups: readonly Group[]): string {
+  return paintedRole(
+    groups.find((group) => group.id === id),
+    groups,
+  );
+}
+/** An absent parent is the section surface; its neutral role supplies the readable foreground. */
+function paintedRole(group: Group | undefined, groups: readonly Group[]): string {
+  if (group === undefined) return 'neutral';
+  if (group.frame !== 'none') return group.role;
+  return containerRole(group.parent, groups);
+}
+
+/** Resolve parent context before measuring represented content; foreground depends on the visible ancestor. */
+function withinGroup(view: Appearance, parent: Group['parent']): Appearance {
+  if (parent === undefined) return view;
+  return { ...view, group: parent };
 }

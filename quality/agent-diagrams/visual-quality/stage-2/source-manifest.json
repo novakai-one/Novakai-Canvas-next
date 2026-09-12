@@ -1,0 +1,212 @@
+[
+  {
+    "file": "apps/web/core/inspector/object-edits.ts",
+    "beforeLines": 157,
+    "finalLines": 157,
+    "sha256": "f0be14433fbab279a1073ea66053f337ccfc84bcccbee6c26b08e7de6536fd8f"
+  },
+  {
+    "file": "capability/canvas/tests/fixtures.ts",
+    "beforeLines": 331,
+    "finalLines": 332,
+    "sha256": "5edccfd41b46eeea25bf7fe0182308140be724fc33896a5de5238c7c79b9f089"
+  },
+  {
+    "file": "capability/design-system/contract/generated/token-names.ts",
+    "beforeLines": 114,
+    "finalLines": 117,
+    "sha256": "8e388cb4c2ab4fe68032d3dc4693d062be4c21667a9c1c2572f6ab89fdfb5782"
+  },
+  {
+    "file": "capability/design-system/contract/records/theme.ts",
+    "beforeLines": 76,
+    "finalLines": 79,
+    "sha256": "61c904fd5b560a66f69fb982289fd75179ad70fb4f009b30983f7013481f4956"
+  },
+  {
+    "file": "capability/design-system/core/themes/diagram.ts",
+    "beforeLines": 187,
+    "finalLines": 193,
+    "sha256": "dcb7ec4ce38ebd4c631b0ff325c287b9cf0ed036518ec7ddbff8a11c40011637"
+  },
+  {
+    "file": "capability/design-system/tests/themes.test.ts",
+    "beforeLines": 179,
+    "finalLines": 180,
+    "sha256": "90cd96218f3ee439cd5a933b41895b18ade4622882836ff4f14ba3ff74d18840"
+  },
+  {
+    "file": "capability/export/adapters/native/png.ts",
+    "beforeLines": 94,
+    "finalLines": 101,
+    "sha256": "f4e678ffd17a5456fdb9b65f11a0809d672f718af7d59cb1cbf51068a48145c4"
+  },
+  {
+    "file": "capability/export/tests/composition.test.ts",
+    "beforeLines": 0,
+    "finalLines": 71,
+    "sha256": "998d903c158bfaceaba54b1c62f949d3fc9c0ed6649a60e01e515c174937d6fe"
+  },
+  {
+    "file": "capability/export/tests/fixtures.ts",
+    "beforeLines": 439,
+    "finalLines": 452,
+    "sha256": "6695a5787cdb2978c06c165997d89ef333895b4ba2d8e6fbd1b8538ac7d5975f"
+  },
+  {
+    "file": "capability/language/core/vocabulary/constructs.ts",
+    "beforeLines": 281,
+    "finalLines": 300,
+    "sha256": "76d51b3bc6880784ba2d3ab901c1c30c4609a0e2f440b4d60e886c17ece713fa"
+  },
+  {
+    "file": "capability/language/core/vocabulary/patch-properties.ts",
+    "beforeLines": 60,
+    "finalLines": 76,
+    "sha256": "9d3c64f318dfc449bf2921e1061778fb31ca8a8949d403a99b6573c366d183c5"
+  },
+  {
+    "file": "capability/language/core/vocabulary/properties.ts",
+    "beforeLines": 103,
+    "finalLines": 107,
+    "sha256": "1b0884db3667354eab0c7fd0dc2ecc809cee033c238e5a6e18c58fee65c5678c"
+  },
+  {
+    "file": "capability/language/tests/composition.test.ts",
+    "beforeLines": 0,
+    "finalLines": 70,
+    "sha256": "bc3ba10255a4ba94c10bcf86f29cd5fad94d92439d1f7fbdb7e851ff1657f773"
+  },
+  {
+    "file": "capability/language/tests/documents.test.ts",
+    "beforeLines": 125,
+    "finalLines": 126,
+    "sha256": "c30467576b3df2e3b546c4232151a964036f0f708cfc776400b4a8da176e0f6d"
+  },
+  {
+    "file": "capability/layout/tests/fixtures.ts",
+    "beforeLines": 276,
+    "finalLines": 278,
+    "sha256": "f4267affb2b92a8c1aeceaf696509305d9b263e7c3720ad94c0b733b44b3708b"
+  },
+  {
+    "file": "capability/model/contract/records/composition.ts",
+    "beforeLines": 0,
+    "finalLines": 13,
+    "sha256": "27c1fffd68a201fa233dfabb8f61514df0c2caf24ad777dca2a8952e463c2e03"
+  },
+  {
+    "file": "capability/model/contract/records/content.ts",
+    "beforeLines": 134,
+    "finalLines": 140,
+    "sha256": "7f4d0c5733a28102576c5615c563ad6f24e8cf60ee184680e1e482661ca358d2"
+  },
+  {
+    "file": "capability/model/contract/records/object.ts",
+    "beforeLines": 43,
+    "finalLines": 46,
+    "sha256": "1602da77340d81950d2b151a05efe67059f322612bc977f334d634b125947890"
+  },
+  {
+    "file": "capability/model/contract/records/section.ts",
+    "beforeLines": 136,
+    "finalLines": 141,
+    "sha256": "2d829a9b5b872298bfffd41f3dbe58910462e15657d100e7a137ffe93c7992d0"
+  },
+  {
+    "file": "capability/model/core/invariants/validate.ts",
+    "beforeLines": 56,
+    "finalLines": 58,
+    "sha256": "b7abd7badc888d2edeb7392a2220edd5fb4fe7e5be01dfb10e808b80e4cf7efa"
+  },
+  {
+    "file": "capability/model/core/objects/composition.ts",
+    "beforeLines": 0,
+    "finalLines": 78,
+    "sha256": "161c965c57dae865c0d4cb1e379ef29999634bb1cdf93211da4df5beacb20fb7"
+  },
+  {
+    "file": "capability/model/tests/composition.test.ts",
+    "beforeLines": 0,
+    "finalLines": 57,
+    "sha256": "f10062967dc34be57871e7a058e693a39c311f0a9f30c2fa76d4e2275521e910"
+  },
+  {
+    "file": "capability/presentation/adapters/react/NodeContent.tsx",
+    "beforeLines": 167,
+    "finalLines": 179,
+    "sha256": "4f2d6ec2ad9ab3ab718063ca617192d3310564c05d1e448e9257f0d88b05f4e5"
+  },
+  {
+    "file": "capability/presentation/contract/records/style.ts",
+    "beforeLines": 105,
+    "finalLines": 107,
+    "sha256": "2052d21fcaadf87047aca7c6dec2d0f9136bd6d51946ad9a4ea3cb25ccab7779"
+  },
+  {
+    "file": "capability/presentation/contract/records/visual.ts",
+    "beforeLines": 187,
+    "finalLines": 188,
+    "sha256": "204bb0d40e94dfdc9d1cc9de278048ecde20f331c0f0f1cf803a9899062d7be0"
+  },
+  {
+    "file": "capability/presentation/core/content/blocks.ts",
+    "beforeLines": 97,
+    "finalLines": 105,
+    "sha256": "cfed1ba63a5e796fcedfd0dcb62ba9dec88bec2d2a8050bd276977b6deaabe1b"
+  },
+  {
+    "file": "capability/presentation/core/content/composition.ts",
+    "beforeLines": 0,
+    "finalLines": 130,
+    "sha256": "94f6cf8d745fd9aa72ae53f8bc8c9d8daf8637db622be514e2275443cb2988bc"
+  },
+  {
+    "file": "capability/presentation/core/content/headings.ts",
+    "beforeLines": 0,
+    "finalLines": 20,
+    "sha256": "b786ff0b67a7a8dad9309deeea2c8b9282dfcb809c24c21c3dff3c3cc00e1b87"
+  },
+  {
+    "file": "capability/presentation/core/content/media.ts",
+    "beforeLines": 62,
+    "finalLines": 73,
+    "sha256": "2a1bd0102f03e6e7a79796c34c07528ddc11663d5a49075c3c118dbda07db4d2"
+  },
+  {
+    "file": "capability/presentation/core/content/node-body.ts",
+    "beforeLines": 0,
+    "finalLines": 85,
+    "sha256": "f6b1bc4de067057913ebd48f9e018133463d6c3098ea21ec324a6934b24c8a02"
+  },
+  {
+    "file": "capability/presentation/core/projection/node.ts",
+    "beforeLines": 316,
+    "finalLines": 275,
+    "sha256": "4fc8ce5c935dd3002bbe535cc3180d41e615eff6fc40883b232c96cbcf226262"
+  },
+  {
+    "file": "capability/presentation/core/projection/section.ts",
+    "beforeLines": 76,
+    "finalLines": 77,
+    "sha256": "4e19e151d6322effdebf909778580d79db6739586d4497f68c830da58f4e71f9"
+  },
+  {
+    "file": "capability/presentation/core/projection/supplement.ts",
+    "beforeLines": 46,
+    "finalLines": 46,
+    "sha256": "e34a10651d96693355487fbc514cb721c5ef117d319ca1ace3c713181e6adcb9"
+  },
+  {
+    "file": "capability/presentation/tests/composition.test.ts",
+    "beforeLines": 0,
+    "finalLines": 164,
+    "sha256": "2e27dbc267288170ea7bd28b47dc99e8655b19e801ca1bd5214a521757d8a2a6"
+  },
+  {
+    "file": "capability/presentation/tests/fixtures.ts",
+    "beforeLines": 190,
+    "finalLines": 196,
+    "sha256": "a73c8db98dc2ab77b864efbee631543f58f9dcea68c94369f6fdae93dd5e831c"
+  }
+]

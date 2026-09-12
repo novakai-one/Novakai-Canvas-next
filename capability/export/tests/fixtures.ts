@@ -80,7 +80,10 @@ export async function startRaster(): Promise<void> {
   value(await initializeRaster(await WebAssembly.compile(readFileSync(file))));
 }
 /** Canonical input has readable semantic labels, retained manual coordinates and a real WebP asset. */
-function collection(resource: Resource): Collection {
+function collection(
+  resource: Resource,
+  composition: 'stack' | 'media-top' | 'media-left',
+): Collection {
   return value(
     validate({
       schemaVersion: 1,
@@ -102,6 +105,8 @@ function collection(resource: Resource): Collection {
           id: 'alpha',
           kind: 'step',
           label: 'Agent & human',
+          composition,
+          frame: composition === 'stack' ? 'auto' : 'none',
           content: [{ id: 'icon', kind: 'image', asset: 'picture' }],
         },
         { id: 'beta', kind: 'end', label: 'Admitted revision' },
@@ -256,7 +261,9 @@ export interface Fixture {
   readonly request: (format?: ExportRequest['format']) => unknown;
 }
 /** Compose real rendering/encoding with controlled retention and owner-validation collaborators. */
-export async function fixture(): Promise<Fixture> {
+export async function fixture(
+  composition: 'stack' | 'media-top' | 'media-left' = 'stack',
+): Promise<Fixture> {
   const bytes = await sharp({
     create: { width: 20, height: 20, channels: 4, background: '#1265dd' },
   })
@@ -269,7 +276,7 @@ export async function fixture(): Promise<Fixture> {
     bytes,
     metadata: { alt: 'Blue status square' },
   };
-  const original = collection(image);
+  const original = collection(image, composition);
   const fonts = pinnedFonts();
   const first = fonts.at(0);
   const mono = fonts.at(1);
@@ -292,6 +299,11 @@ export async function fixture(): Promise<Fixture> {
       },
       body: { font: { family: first.family, digest: first.digest }, size: 16, lineHeight: 24 },
       mono: { font: { family: mono.family, digest: mono.digest }, size: 16, lineHeight: 24 },
+      caption: {
+        font: { family: first.family, digest: first.digest },
+        size: 14.0,
+        lineHeight: 21.0,
+      },
       annotation: {
         font: { family: first.family, digest: first.digest },
         size: 14.0,
@@ -310,6 +322,7 @@ export async function fixture(): Promise<Fixture> {
       },
       rowMinimum: 32,
       iconBox: { small: 24, medium: 32, large: 48 },
+      figureBox: { small: 180, medium: 240, large: 320 },
     },
     roles: { neutral: paint },
     surface: '#ffffff',

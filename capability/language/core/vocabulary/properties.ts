@@ -8,6 +8,10 @@ export const properties = {
   role: { type: 'word', field: 'role' },
   size: { type: 'word', field: 'size', values: ['small', 'medium', 'large'] },
   step: { type: 'integer', field: 'step' },
+  frame: { type: 'word', field: 'frame', values: ['auto', 'none', 'card', 'panel'] },
+  containerFrame: { type: 'word', field: 'frame', values: ['auto', 'none', 'panel'] },
+  composition: { type: 'word', field: 'composition', values: ['stack', 'media-top', 'media-left'] },
+  textRole: { type: 'word', field: 'role', values: ['body', 'caption', 'annotation'] },
   sources: { type: 'ids', field: 'sources' },
   layout: {
     type: 'word',

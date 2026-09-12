@@ -111,6 +111,9 @@
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
   --nv-diagram-icon-large: 36px;
+  --nv-diagram-figure-small: 72px;
+  --nv-diagram-figure-medium: 96px;
+  --nv-diagram-figure-large: 144px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="paper"][data-nv-density="compact"][data-nv-reduced-motion="true"] {
@@ -224,6 +227,9 @@
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
   --nv-diagram-icon-large: 36px;
+  --nv-diagram-figure-small: 72px;
+  --nv-diagram-figure-medium: 96px;
+  --nv-diagram-figure-large: 144px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="paper"][data-nv-density="comfortable"][data-nv-reduced-motion="false"] {
@@ -337,6 +343,9 @@
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
   --nv-diagram-icon-large: 48px;
+  --nv-diagram-figure-small: 96px;
+  --nv-diagram-figure-medium: 128px;
+  --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="paper"][data-nv-density="comfortable"][data-nv-reduced-motion="true"] {
@@ -450,6 +459,9 @@
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
   --nv-diagram-icon-large: 48px;
+  --nv-diagram-figure-small: 96px;
+  --nv-diagram-figure-medium: 128px;
+  --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="paper"][data-nv-density="spacious"][data-nv-reduced-motion="false"] {
@@ -563,6 +575,9 @@
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
   --nv-diagram-icon-large: 72px;
+  --nv-diagram-figure-small: 144px;
+  --nv-diagram-figure-medium: 192px;
+  --nv-diagram-figure-large: 288px;
   --nv-control-height: 44px;
 }
 [data-nv-scope="ui"][data-nv-theme="paper"][data-nv-density="spacious"][data-nv-reduced-motion="true"] {
@@ -676,6 +691,9 @@
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
   --nv-diagram-icon-large: 72px;
+  --nv-diagram-figure-small: 144px;
+  --nv-diagram-figure-medium: 192px;
+  --nv-diagram-figure-large: 288px;
   --nv-control-height: 44px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"][data-nv-density="compact"][data-nv-reduced-motion="false"] {
@@ -789,6 +807,9 @@
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
   --nv-diagram-icon-large: 36px;
+  --nv-diagram-figure-small: 72px;
+  --nv-diagram-figure-medium: 96px;
+  --nv-diagram-figure-large: 144px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"][data-nv-density="compact"][data-nv-reduced-motion="true"] {
@@ -902,6 +923,9 @@
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
   --nv-diagram-icon-large: 36px;
+  --nv-diagram-figure-small: 72px;
+  --nv-diagram-figure-medium: 96px;
+  --nv-diagram-figure-large: 144px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"][data-nv-density="comfortable"][data-nv-reduced-motion="false"] {
@@ -1015,6 +1039,9 @@
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
   --nv-diagram-icon-large: 48px;
+  --nv-diagram-figure-small: 96px;
+  --nv-diagram-figure-medium: 128px;
+  --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"][data-nv-density="comfortable"][data-nv-reduced-motion="true"] {
@@ -1128,6 +1155,9 @@
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
   --nv-diagram-icon-large: 48px;
+  --nv-diagram-figure-small: 96px;
+  --nv-diagram-figure-medium: 128px;
+  --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"][data-nv-density="spacious"][data-nv-reduced-motion="false"] {
@@ -1241,6 +1271,9 @@
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
   --nv-diagram-icon-large: 72px;
+  --nv-diagram-figure-small: 144px;
+  --nv-diagram-figure-medium: 192px;
+  --nv-diagram-figure-large: 288px;
   --nv-control-height: 44px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"][data-nv-density="spacious"][data-nv-reduced-motion="true"] {
@@ -1354,6 +1387,9 @@
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
   --nv-diagram-icon-large: 72px;
+  --nv-diagram-figure-small: 144px;
+  --nv-diagram-figure-medium: 192px;
+  --nv-diagram-figure-large: 288px;
   --nv-control-height: 44px;
 }
 }

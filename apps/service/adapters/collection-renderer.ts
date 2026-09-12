@@ -21,9 +21,10 @@ async function render(
   owners: CollectionRenderOwners,
 ): Promise<Result<RenderDocument>> {
   const resources = owners.resources.forCollection(collection, workspace);
-  if (!resources.ok) return failure('unavailable', resources.error.path, resources.error.message);
+  if (!resources.ok)
+    return failure('unavailable', resources.error.path, resources.error.message, resources.error);
   const lease = owners.assets.acquire(resources.value);
-  if (!lease.ok) return failure('unavailable', lease.error.path, lease.error.message);
+  if (!lease.ok) return failure('unavailable', lease.error.path, lease.error.message, lease.error);
   try {
     return await produce(collection, workspace, signal, owners);
   } finally {
@@ -43,7 +44,7 @@ async function produce(
     null,
     `read:${collection.id}:${collection.revision}`,
   );
-  if (!job.ok) return failure('unavailable', job.error.path, job.error.message);
+  if (!job.ok) return failure('unavailable', job.error.path, job.error.message, job.error);
   return owners.producer.produce(job.value, signal);
 }
 /** Composed callers own retry and retain the previous readable scene when a required byte/provider is unavailable. */

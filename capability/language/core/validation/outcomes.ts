@@ -25,7 +25,7 @@ export function reject(
 }
 /** Unwrap a checked private result; Language boundary retains all diagnostics on failure. */
 export function accepted<T>(result: Result<T>): T {
-  if (!result.ok) throw new LanguageFault(result.diagnostics);
+  if (!result.ok) throw new LanguageFault(result.error.diagnostics);
   return result.value;
 }
 /** Freeze only detached compiler-owned records, never caller data; no cross-call state exists. */
@@ -47,18 +47,22 @@ export function protect<T>(operation: () => T): Result<T> {
 }
 /** Unexpected provider failures reveal no unchecked candidate or private exception text. */
 function faultResult(error: unknown): Result<never> {
-  if (error instanceof LanguageFault) return { ok: false, diagnostics: error.diagnostics };
+  if (error instanceof LanguageFault)
+    return { ok: false, error: { code: 'validation-failed', diagnostics: error.diagnostics } };
   return {
     ok: false,
-    diagnostics: [
-      {
-        code: 'provider-failure',
-        span: origin,
-        target: '',
-        expected: 'Readable immutable input and a successful owner result',
-        message: 'Input or provider could not be read',
-        recovery: 'Retain source; repair the provider or input and check again.',
-      },
-    ],
+    error: {
+      code: 'validation-failed',
+      diagnostics: [
+        {
+          code: 'provider-failure',
+          span: origin,
+          target: '',
+          expected: 'Readable immutable input and a successful owner result',
+          message: 'Input or provider could not be read',
+          recovery: 'Retain source; repair the provider or input and check again.',
+        },
+      ],
+    },
   };
 }

@@ -1,3 +1,5 @@
+import { failureSource } from './records/failure-source.js';
+import type { FailureSource } from './records/failure-source.js';
 import { z } from 'zod';
 /** One failure vocabulary for all authors; no response grants permission to discard a draft. */
 export const diagnosticSchema = z.strictObject({
@@ -20,19 +22,22 @@ export const diagnosticSchema = z.strictObject({
   message: z.string(),
   recovery: z.string(),
   traceId: z.string().nullable(),
+  source: failureSource.optional(),
 });
 export type Diagnostic = z.infer<typeof diagnosticSchema>;
 export type ErrorCode = Diagnostic['code'];
-export type Result<T> =
-  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: Diagnostic };
+/** Locally owned success/failure envelope; E retains the owning capability's structured failure. */
+export type Result<T, E = Diagnostic> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** Authoring reconciles receipts before retry; callers retain drafts and correct named inputs. */
 export function failure<T>(
   code: ErrorCode,
   path: string,
   message: string,
   targets: readonly string[] = [],
+  source?: FailureSource,
 ): Result<T> {
-  return {
+  const rejected: Extract<Result<T>, { readonly ok: false }> = {
     ok: false,
     error: {
       code,
@@ -44,6 +49,8 @@ export function failure<T>(
       traceId: null,
     },
   };
+  if (source === undefined) return rejected;
+  return { ok: false, error: { ...rejected.error, source } };
 }
 /** Private typed rejection; every facade operation catches it into Result. */
 export class AuthoringFault extends Error {

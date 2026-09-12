@@ -10,7 +10,12 @@ export function createSourceReadout(
     print: (collection) => {
       const printed = language.print({ collection, scope: { kind: 'all' } });
       if (!printed.ok)
-        return failure('invalid-input', 'source', JSON.stringify(printed.diagnostics));
+        return failure(
+          'invalid-input',
+          'source',
+          'Language could not print this collection',
+          printed.error,
+        );
       return { ok: true, value: printed.value };
     },
   };

@@ -29,7 +29,9 @@ function planOrganization(
     return failure(
       'invariant-violation',
       'catalog',
-      planned.diagnostics.map((item) => `${item.path}: ${item.message}`).join('; '),
+      'The owning capability rejected this input',
+      [],
+      planned.error,
     );
   return checkedProposal(planned.value.candidate, snapshot);
 }

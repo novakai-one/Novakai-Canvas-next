@@ -88,7 +88,7 @@ export function value<T>(result: Result<T>): T {
 export function invalid(result: Result<unknown>, code: DiagnosticCode, path: string) {
   assert(!result.ok, 'Expected rejected public result');
   expect(result).not.toHaveProperty('value');
-  expect(result.diagnostics).toEqual(
+  expect(result.error.diagnostics).toEqual(
     expect.arrayContaining([
       expect.objectContaining({ code, path: expect.stringContaining(path) }),
     ]),

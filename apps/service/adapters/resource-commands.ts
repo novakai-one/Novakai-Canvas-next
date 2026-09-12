@@ -1,3 +1,4 @@
+import type { ValidationError as LanguageError } from '@novakai/canvas-language';
 import { z } from 'zod';
 import { requestSchema, recordId } from '@novakai/canvas-authoring';
 import type { Request, Snapshot } from '@novakai/canvas-authoring';
@@ -137,7 +138,7 @@ function instantiate(raw: unknown, snapshot: Snapshot, owners: PresetOwners): st
     collection: expanded.intent.collection,
     scope: { kind: 'all' },
   });
-  if (!printed.ok) throw languageFault(printed.diagnostics);
+  if (!printed.ok) throw languageFault(printed.error);
   return printed.value.source;
 }
 /** Exact normalized restoration uses Assets reservations and releases on every settlement path; callers retain local backup bytes. */
@@ -208,22 +209,14 @@ function preparationDiagnostic(error: unknown): ResourceDiagnostic {
   };
 }
 
-/** Language's diagnostic list is reduced only at this single-outcome host boundary, retaining first-failure recovery. */
-function languageFault(
-  diagnostics: readonly {
-    readonly code: string;
-    readonly target: string;
-    readonly message: string;
-    readonly recovery: string;
-  }[],
-): PreparationFault {
-  const first = diagnostics[0];
-  if (first) return new PreparationFault({ ...first, path: first.target });
+/** Language's complete diagnostic batch survives resource preparation under its typed source. */
+function languageFault(source: LanguageError): PreparationFault {
   return new PreparationFault({
-    code: 'provider-failure',
+    code: 'invalid-input',
     path: 'language',
-    message: 'Language returned no printable source or diagnostic',
-    recovery: 'Retain the prepared recipe and retry after restoring Language.',
+    message: 'Language could not print the prepared recipe',
+    recovery: 'Correct the named source diagnostics and prepare again.',
+    source,
   });
 }
 

@@ -1,3 +1,4 @@
+import type { Diagnostic } from './errors.js';
 import { folderId } from '@novakai/canvas-library';
 import { createLibraryController } from '../adapters/library-session.js';
 import { createLibraryReader } from '../adapters/library-reader.js';
@@ -73,14 +74,18 @@ import type { WorkspaceController } from './records/workspace.js';
 /** Only fonts and public token source data are delivered at browser initialization; installation credentials are never included. */
 const installation = z.strictObject({ fonts: fontSet, tokens: z.unknown() });
 /** A typed initialization fault is caught once at startWeb; no half-mounted workspace is reported as ready. */
-class InitializationRejected extends Error {}
+class InitializationRejected extends Error {
+  /** Preserve an owner's complete failure until startWeb returns it to the display boundary. */
+  constructor(
+    message: string,
+    readonly diagnostic?: Diagnostic,
+  ) {
+    super(message);
+  }
+}
 /** Preserve a failing owner's readable message without asserting the success type. */
-function accepted<T>(
-  result:
-    | { readonly ok: true; readonly value: T }
-    | { readonly ok: false; readonly error: { readonly message: string } },
-): T {
-  if (!result.ok) throw new InitializationRejected(result.error.message);
+function accepted<T>(result: Result<T>): T {
+  if (!result.ok) throw new InitializationRejected(result.error.message, result.error);
   return result.value;
 }
 /** Sources are authenticated transport data and then admitted through their public owner schemas. */
@@ -324,8 +329,7 @@ export async function startWeb(element: HTMLElement): Promise<Result<{ dispose()
 }
 /** Provider details are shown only when explicitly carried by the initialization boundary. */
 function initializationFailure(error: unknown): Result<never> {
-  if (error instanceof InitializationRejected)
-    return failure('initialization-failed', error.message);
+  if (error instanceof InitializationRejected) return initializationRejection(error);
   return failure('initialization-failed', 'Canvas could not initialize its UI resources');
 }
 
@@ -346,4 +350,10 @@ export function createWireSession(bindings: WireEditorBindings): WireEditorSessi
     edit: retainWireCommand,
     apply: (draft) => bindings.apply(draft, wireChanges(draft)),
   });
+}
+
+/** Owner failures keep their original code; locally detected setup faults use the host vocabulary. */
+function initializationRejection(error: InitializationRejected): Result<never> {
+  if (error.diagnostic !== undefined) return { ok: false, error: error.diagnostic };
+  return failure('initialization-failed', error.message);
 }

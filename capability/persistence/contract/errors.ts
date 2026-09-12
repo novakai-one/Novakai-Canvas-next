@@ -14,9 +14,9 @@ export interface StorageError {
   readonly message: string;
   readonly recovery: string;
 }
-/** Failure never contains a partial value; storage-unavailable may require receipt reconciliation. */
-export type Result<T> =
-  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: StorageError };
+/** Locally owned success/failure envelope; E retains the owning capability's structured failure. */
+export type Result<T, E = StorageError> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** Shared typed failure vocabulary for adapters and core; callers own the named recovery. */
 export function fail<T>(code: ErrorCode, path: string, message: string): Result<T> {
   const recovery = recoveryByCode[code];

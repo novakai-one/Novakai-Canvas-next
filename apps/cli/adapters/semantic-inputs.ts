@@ -28,7 +28,12 @@ function existingVersion(
   if (!record) return failure('not-found', 'The collection does not exist');
   const collection = validate(record.value);
   if (!collection.ok)
-    return failure('invalid-response', 'The collection is not a valid Model document');
+    return failure(
+      'invalid-response',
+      'The collection is not a valid Model document',
+      'Correct the named Model diagnostics.',
+      collection.error,
+    );
   return matchedRevision(record, collection.value.revision, revision);
 }
 /** A missing revision is an actionable input error, not permission to overwrite newer authoring. */
@@ -124,9 +129,9 @@ function request(
   if (!parsed.ok)
     return failure(
       'invalid-source',
-      parsed.diagnostics
-        .map((item) => `${item.span.start.line}:${item.span.start.column} ${item.message}`)
-        .join('\n'),
+      'Language rejected this source',
+      'Correct the named source diagnostics and retry.',
+      parsed.error,
     );
   return build(command, source, state, id, parsed.value.collection);
 }
@@ -179,7 +184,12 @@ export function createSemanticInputs(language: Pick<Language, 'parse'>): Semanti
     requests: (source) => {
       const result = language.parse(source);
       if (!result.ok)
-        return failure('invalid-source', result.diagnostics.map((item) => item.message).join('; '));
+        return failure(
+          'invalid-source',
+          'Language rejected this source',
+          'Correct the named source diagnostics and retry.',
+          result.error,
+        );
       return { ok: true, value: result.value.resources };
     },
     admissionDigest: (input) => {

@@ -15,14 +15,12 @@ export interface Diagnostic {
   readonly path: string;
   readonly message: string;
   readonly recovery: string;
+  /** A release failure accompanies the primary failure; hosts repair both. */
+  readonly cleanup?: Diagnostic;
 }
-export type Result<T> =
-  | { readonly ok: true; readonly value: T }
-  | {
-      readonly ok: false;
-      readonly error: Diagnostic;
-      readonly diagnostics?: readonly Diagnostic[];
-    };
+/** Locally owned success/failure envelope; E retains the owning capability's structured failure. */
+export type Result<T, E = Diagnostic> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** A failed read exposes no partial artifact; callers retain the original input. */
 export function failure(code: ErrorCode, path: string, message: string): Result<never> {
   return {

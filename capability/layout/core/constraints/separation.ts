@@ -1,3 +1,4 @@
+import { LayoutFault } from '../../contract/errors.js';
 import type {
   SolverProblem,
   PlacementValue,
@@ -221,8 +222,7 @@ function complete(result: Search): readonly PlacementValue[] {
 }
 /** Distinguish an exhausted geometric strategy from a typed infrastructure/cancellation failure. */
 function failedSearch(result: Exclude<Search, { kind: 'found' }>): never {
-  if (result.kind === 'failed')
-    return reject(result.error.code, result.error.path, result.error.message, result.error.targets);
+  if (result.kind === 'failed') throw new LayoutFault(result.error);
   return reject(
     'engine-failed',
     'nonoverlap',

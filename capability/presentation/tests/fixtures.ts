@@ -95,7 +95,7 @@ export function domain(input: unknown): Result<InputCollection> {
     error: {
       code: 'invalid-input',
       path: '$',
-      message: JSON.stringify(checked.diagnostics),
+      message: JSON.stringify(checked.error.diagnostics),
       recovery: 'Correct the fixture',
     },
   };

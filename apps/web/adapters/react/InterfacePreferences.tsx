@@ -1,3 +1,4 @@
+import { formatFailure } from '../../contract/api.js';
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { PreferenceController, ThemeChoice } from '../../contract/records/preferences.js';
@@ -76,11 +77,7 @@ export function createInterfacePreferences(
             ))}
           </div>
         </fieldset>
-        {view.problem && (
-          <p role="alert">
-            {view.problem.message} {view.problem.recovery}
-          </p>
-        )}
+        {view.problem && <p role="alert">{formatFailure(view.problem).join(' · ')}</p>}
         <Button label="Reset interface preferences" onClick={preferences.reset} />
       </div>
     );

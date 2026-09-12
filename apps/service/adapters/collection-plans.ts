@@ -47,7 +47,9 @@ function proposal(
     return failure(
       'invariant-violation',
       'catalog',
-      organization.diagnostics.map((item) => item.message).join('; '),
+      'The owning capability rejected this input',
+      [],
+      organization.error,
     );
   return checked(
     [

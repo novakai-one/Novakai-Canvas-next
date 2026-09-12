@@ -2,7 +2,6 @@ import { prepareResources, restoreResources } from './resources.js';
 import type { Command } from '../../contract/records/command.js';
 import type { CliDependencies, RequestDraft } from '../../contract/ports/runtime.js';
 import type { Result } from '../../contract/errors.js';
-import { failure } from '../../contract/errors.js';
 
 /** Capture source and observed versions once; neither preview nor apply refreshes the resulting Authoring envelope. */
 async function prepare(
@@ -90,11 +89,13 @@ function submitted(
   dependencies: CliDependencies,
 ): Result<string> {
   if (!result.ok)
-    return failure(
-      result.error.code,
-      result.error.message,
-      `Run canvas receipt ${id}, then canvas retry ${id} only if no receipt exists.`,
-    );
+    return {
+      ok: false,
+      error: {
+        ...result.error,
+        recovery: `Run canvas receipt ${id}, then canvas retry ${id} only if no receipt exists.`,
+      },
+    };
   if (!result.value.outcome.ok) return result.value.outcome;
   return confirmed(result.value.outcome.value, id, preview, dependencies);
 }

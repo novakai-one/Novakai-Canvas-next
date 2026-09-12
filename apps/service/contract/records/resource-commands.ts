@@ -1,3 +1,5 @@
+import type { FailureSource } from './failure-source.js';
+import type { Result } from '../errors.js';
 import { z } from 'zod';
 import type { Assets, Admission, StoredBlob, Result as AssetResult } from '@novakai/canvas-assets';
 import type { Request, Snapshot, ReadVersion, RecordKey } from '@novakai/canvas-authoring';
@@ -38,10 +40,9 @@ export interface ResourceDiagnostic {
   readonly path: string;
   readonly message: string;
   readonly recovery: string;
+  readonly source?: FailureSource | undefined;
 }
-export type ResourceResult<T> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly error: ResourceDiagnostic };
+export type ResourceResult<T> = Result<T, ResourceDiagnostic>;
 /** Byte operations remain Assets-owned; semantic operations bind one explicit snapshot. */
 export interface ResourceCommands {
   stage(input: unknown): Promise<AssetResult<Admission>>;

@@ -20,14 +20,28 @@ export interface Diagnostic {
   readonly expected: string;
   readonly message: string;
   readonly recovery: string;
+  /** Original domain evidence survives source-span translation. */
+  readonly source?: OwnerDiagnostic;
 }
-export type Result<T> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly diagnostics: readonly Diagnostic[] };
+/** Validation rejects with at least one actionable diagnostic; no partial value is exposed. */
+export interface ValidationError {
+  readonly code: 'validation-failed';
+  readonly diagnostics: readonly [Diagnostic, ...Diagnostic[]];
+}
+/** Locally owned envelope; E belongs to this capability, never a shared Result kernel. */
+export type Result<T, E = ValidationError> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** Private compiler rejection; public Language methods convert it to a typed diagnostic. */
 export class LanguageFault extends Error {
   /** Preserve structured correction data. Language owns recovery before Authoring admission. */
-  constructor(readonly diagnostics: readonly Diagnostic[]) {
+  constructor(readonly diagnostics: readonly [Diagnostic, ...Diagnostic[]]) {
     super('Language rejected input');
   }
+}
+
+/** Narrow consumer-owned record failure; Model owns the vocabulary and validation behavior. */
+export interface OwnerDiagnostic {
+  readonly code: string;
+  readonly path: string;
+  readonly message: string;
 }

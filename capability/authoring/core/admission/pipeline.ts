@@ -1,3 +1,4 @@
+import { jsonSchema } from '../../contract/records/storage.js';
 import type { Request } from '../../contract/records/request.js';
 import type { Snapshot } from '../../contract/records/storage.js';
 import type { Digest } from '../../contract/brands.js';
@@ -80,11 +81,10 @@ export async function buildCandidate(
     diff: { semantic: proposal.diff, geometry: geometry.diff },
     warnings: [...proposal.warnings, ...geometry.warnings],
   };
-  const candidateHash = readShape(
-    digest,
-    accepted(deps.hash.digest(canonical(hashed))),
-    'corrupt-record',
-  );
+  const hashInput = readShape(jsonSchema, hashed, 'corrupt-record');
+  const canonicalInput = canonical(hashInput);
+  const hashedCandidate = accepted(deps.hash.digest(canonicalInput));
+  const candidateHash = readShape(digest, hashedCandidate, 'corrupt-record');
   return freeze({
     before,
     after: candidate.after,

@@ -12,14 +12,16 @@ import { failure, type Result } from '../contract/errors.js';
 async function close(storage: Persistence, assets: Assets): Promise<Result<void>> {
   const database = storage.close();
   const blobs = assets.close();
-  if (!database.ok) return failure('unavailable', database.error.path, database.error.message);
-  if (!blobs.ok) return failure('unavailable', blobs.error.path, blobs.error.message);
+  if (!database.ok)
+    return failure('unavailable', database.error.path, database.error.message, database.error);
+  if (!blobs.ok) return failure('unavailable', blobs.error.path, blobs.error.message, blobs.error);
   return { ok: true, value: undefined };
 }
 /** Asset opening precedes canonical storage; failed database opening releases the already-open byte owner. */
 function open(options: WorkspaceOptions, factories: NativeFactories): Result<NativeWorkspace> {
   const assets = factories.assets(join(options.directory, 'assets'));
-  if (!assets.ok) return failure('unavailable', assets.error.path, assets.error.message);
+  if (!assets.ok)
+    return failure('unavailable', assets.error.path, assets.error.message, assets.error);
   return openDatabase(options, factories, assets.value);
 }
 /** No direct record writes occur during physical opening; Authoring performs initialization after all owners are ready. */
@@ -31,7 +33,7 @@ function openDatabase(
   const storage = factories.storage(join(options.directory, 'workspace.sqlite'), options.workspace);
   if (!storage.ok) {
     assets.close();
-    return failure('unavailable', storage.error.path, storage.error.message);
+    return failure('unavailable', storage.error.path, storage.error.message, storage.error);
   }
   return {
     ok: true,

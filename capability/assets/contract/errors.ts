@@ -13,8 +13,9 @@ export interface AssetError {
   readonly message: string;
   readonly recovery: string;
 }
-export type Result<T> =
-  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: AssetError };
+/** Locally owned success/failure envelope; E retains the owning capability's structured failure. */
+export type Result<T, E = AssetError> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** Shared typed error construction; Authoring owns submission retry, Assets owns staged-file cleanup. */
 export function fail<T>(code: ErrorCode, path: string, message: string): Result<T> {
   return { ok: false, error: { code, path, message, recovery: recovery[code] } };

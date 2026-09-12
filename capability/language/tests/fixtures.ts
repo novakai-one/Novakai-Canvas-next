@@ -43,7 +43,9 @@ export function checked(input: unknown): Collection {
 export function rejected(result: Result<unknown>, code: DiagnosticCode): void {
   assert(!result.ok, 'Expected a typed rejection');
   expect(result).not.toHaveProperty('value');
-  expect(result.diagnostics).toEqual(expect.arrayContaining([expect.objectContaining({ code })]));
+  expect(result.error.diagnostics).toEqual(
+    expect.arrayContaining([expect.objectContaining({ code })]),
+  );
 }
 /** Creation uses real owner validation and planning, without filesystem or resource providers. */
 export function create(source: string): Collection {

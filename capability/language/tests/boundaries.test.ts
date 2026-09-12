@@ -8,7 +8,7 @@ describe('Language correction and safety boundaries', () => {
     const result = language.parse(source);
     rejected(result, 'unknown-property');
     assert(!result.ok);
-    const issue = result.diagnostics[0];
+    const issue = result.error.diagnostics[0];
     expect(issue?.span.start).toEqual({ offset: source.indexOf('colour'), line: 3, column: 19 });
     expect(issue?.target).toBe('colour');
     expect(issue?.expected).toContain('role');

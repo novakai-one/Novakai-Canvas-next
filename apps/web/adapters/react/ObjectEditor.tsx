@@ -1,3 +1,4 @@
+import { formatFailure } from '../../contract/api.js';
 import { useSyncExternalStore } from 'react';
 import type { ReactElement, ComponentType } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
@@ -84,7 +85,7 @@ export function createObjectEditor({
             />
           ))}
         </div>
-        {forms.problem && <p role="alert">{forms.problem.message}</p>}
+        {forms.problem && <p role="alert">{formatFailure(forms.problem).join(' · ')}</p>}
         {draft && (
           <footer>
             <p>

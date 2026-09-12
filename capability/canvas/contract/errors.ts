@@ -16,8 +16,9 @@ export interface Diagnostic {
   readonly message: string;
   readonly recovery: string;
 }
-export type Result<T> =
-  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: Diagnostic };
+/** Locally owned success/failure envelope; E retains the owning capability's structured failure. */
+export type Result<T, E = Diagnostic> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** Private structured control flow; all public operations catch it into Result. */
 export class CanvasFault extends Error {
   constructor(readonly detail: Diagnostic) {

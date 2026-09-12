@@ -1,3 +1,4 @@
+import type { FailureSource } from '../contract/records/failure-source.js';
 import { validate } from '@novakai/canvas-model';
 import {
   composePresentation,
@@ -15,17 +16,13 @@ import type { RenderingJob, RenderDocument } from '../contract/records/rendering
 import { failure, type Result } from '../contract/errors.js';
 /** A structured local failure is translated only at produce; callers retain current scene and retry corrected resources. */
 class RenderingFault extends Error {
-  constructor(readonly diagnostic: string) {
-    super(diagnostic);
+  constructor(readonly diagnostic: FailureSource) {
+    super('Rendering owner rejected input');
   }
 }
 /** Owner failures stop the pipeline before exposing partial geometry; exception text is never used as a branch condition. */
-function accepted<T>(
-  result:
-    | { readonly ok: true; readonly value: T }
-    | { readonly ok: false; readonly error: { readonly message: string } },
-): T {
-  if (!result.ok) throw new RenderingFault(result.error.message);
+function accepted<T>(result: Result<T, FailureSource>): T {
+  if (!result.ok) throw new RenderingFault(result.error);
   return result.value;
 }
 /** Model validates canonical data; Presentation receives its own error vocabulary without a second domain validator. */
@@ -37,7 +34,8 @@ function domain(input: unknown): PresentationResult<InputCollection> {
     error: {
       code: 'invalid-input',
       path: 'collection',
-      message: result.diagnostics.map((item) => item.message).join('; '),
+      message: 'Model rejected the rendering input',
+      source: result.error,
       recovery: 'Correct the canonical collection through Authoring.',
     },
   };
@@ -59,7 +57,10 @@ function asset(digest: string, assets: readonly VisualAsset[]): PresentationResu
 /** Consumer error translation preserves failure while adapting the required Layout target list. */
 function forLayout<T>(result: PresentationResult<T>): LayoutResult<T> {
   if (result.ok) return result;
-  return { ok: false, error: { ...result.error, code: 'invalid-input', targets: [] } };
+  return {
+    ok: false,
+    error: { ...result.error, code: 'invalid-input', targets: [], source: result.error },
+  };
 }
 /** Bind one immutable canonical collection; transported projections are decoded by their owner on every read. */
 function projectionReader(job: RenderingJob): ProjectionReader {
@@ -119,6 +120,12 @@ export async function produceDiagram(
 }
 /** Expected owner rejection is actionable input; unexpected native failure asks the caller to restore dependencies. */
 function renderingFailure(error: unknown): Result<never> {
-  if (error instanceof RenderingFault) return failure('invalid-input', 'render', error.diagnostic);
+  if (error instanceof RenderingFault)
+    return failure(
+      'invalid-input',
+      'render',
+      'A rendering owner rejected the input',
+      error.diagnostic,
+    );
   return failure('unavailable', 'render', 'Diagram measurement or layout could not complete');
 }

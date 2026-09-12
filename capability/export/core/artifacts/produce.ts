@@ -35,7 +35,7 @@ export async function produce(
 function settle(result: Result<Artifact>, cleanup: Result<void>): Result<Artifact> {
   if (cleanup.ok) return result;
   if (result.ok) return cleanup;
-  return { ...result, diagnostics: [cleanup.error] };
+  return { ok: false, error: { ...result.error, cleanup: cleanup.error } };
 }
 /** Validate the identity and scope before any format handler sees a scene. */
 async function renderSnapshot(

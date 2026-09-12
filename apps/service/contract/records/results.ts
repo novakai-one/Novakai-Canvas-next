@@ -1,3 +1,4 @@
+import { failureSource } from './failure-source.js';
 import { z } from 'zod';
 /** Versioned transport errors are host-owned; owner-specific detail is reported before encoding this boundary. */
 export const diagnostic = z
@@ -13,6 +14,7 @@ export const diagnostic = z
     path: z.string(),
     message: z.string(),
     recovery: z.string(),
+    source: failureSource.optional(),
   })
   .readonly();
 /** An unknown success payload acquires its domain type only after owner decoding. */

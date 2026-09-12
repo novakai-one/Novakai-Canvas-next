@@ -23,10 +23,21 @@ export function referenceIssue(missing: boolean, path: string): readonly Diagnos
 
 /** Return a typed rejection with no partial value. The calling Model boundary freezes it. */
 export function failure<T>(code: DiagnosticCode, path: string, message: string): Result<T> {
-  return { ok: false, diagnostics: [{ code, path, message }] };
+  return {
+    ok: false,
+    error: { code: 'validation-failed', diagnostics: [{ code, path, message }] },
+  };
 }
 
 /** Return a completed pure step; plan/validate own freezing and Authoring owns commit/recovery. */
 export function success<T>(value: T): Result<T> {
   return { ok: true, value };
+}
+
+/** Empty rejected evidence is a provider contract failure. The owner returns a typed shape error; Authoring owns correction. */
+export function rejected<T>(diagnostics: readonly Diagnostic[]): Result<T> {
+  const [first, ...remaining] = diagnostics;
+  if (first === undefined)
+    return failure('shape', '$', 'Validation provider rejected input without diagnostic evidence');
+  return { ok: false, error: { code: 'validation-failed', diagnostics: [first, ...remaining] } };
 }

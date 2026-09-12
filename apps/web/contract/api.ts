@@ -22,3 +22,5 @@ export { editedWire, wireChanges, wireDraftKey } from '../core/inspector/wire-ed
 export { selectedWire } from '../core/inspector/wire-selection.js';
 export { retainObjectCommand, retainWireCommand } from '../core/inspector/draft-commands.js';
 export { endpointKey, endpointChoices } from '../core/inspector/endpoints.js';
+
+export { formatFailure } from '../core/output/diagnostics.js';

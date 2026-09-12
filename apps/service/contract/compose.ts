@@ -66,7 +66,7 @@ async function prepareInstallationInputs(
   assets: Assets,
 ): Promise<Result<BuiltinResources>> {
   const files = await createTokenFileBindings(tokenRoot);
-  if (!files.ok) return failure('unavailable', 'tokens', files.error.message);
+  if (!files.ok) return failure('unavailable', 'tokens', files.error.message, files.error);
   const [loader, codecs, builtins] = await Promise.all([
     import('../adapters/builtin-files.js'),
     import('../adapters/preset-codecs.js'),
@@ -264,7 +264,8 @@ async function wireWorkspace(
 /** Existing workspaces are validated without rewriting them; new workspaces receive one ordinary atomic initialization request. */
 async function initialize(wired: WiredWorkspace): Promise<Result<WorkspaceSession>> {
   const snapshot = await wired.session.read();
-  if (!snapshot.ok) return failure('unavailable', snapshot.error.path, snapshot.error.message);
+  if (!snapshot.ok)
+    return failure('unavailable', snapshot.error.path, snapshot.error.message, snapshot.error);
   const existing = snapshot.value.records.some(
     (item) => item.key.kind === 'workspace' && !item.deleted,
   );
@@ -281,7 +282,12 @@ async function initialized(
     return started(checked, wired.session);
   }
   if (!wired.initialize.ok)
-    return failure('invalid-input', wired.initialize.error.path, wired.initialize.error.message);
+    return failure(
+      'invalid-input',
+      wired.initialize.error.path,
+      wired.initialize.error.message,
+      wired.initialize.error,
+    );
   return started(
     await wired.session.apply(wired.initialize.value, new AbortController().signal),
     wired.session,
@@ -292,7 +298,8 @@ function started(
   result: AuthoringResult<unknown>,
   session: WorkspaceSession,
 ): Result<WorkspaceSession> {
-  if (!result.ok) return failure('unavailable', result.error.path, result.error.message);
+  if (!result.ok)
+    return failure('unavailable', result.error.path, result.error.message, result.error);
   return { ok: true, value: session };
 }
 /** Resource preparation and worker construction precede registration of the authoritative workspace facade. */

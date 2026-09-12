@@ -179,12 +179,18 @@ it('grid columns round-trip and edit independently without colliding with table 
     });
     rejected(result, code);
     assert(!result.ok);
-    expect(result.diagnostics).toEqual(
+    expect(result.error.diagnostics).toEqual(
       expect.arrayContaining([expect.objectContaining({ code, target })]),
     );
-    expect(result.diagnostics.every((diagnostic) => diagnostic.code === code)).toBe(true);
-    const diagnostic = result.diagnostics.find((diagnostic) => diagnostic.target === target);
+    expect(result.error.diagnostics.every((diagnostic) => diagnostic.code === code)).toBe(true);
+    const diagnostic = result.error.diagnostics.find((diagnostic) => diagnostic.target === target);
     assert(diagnostic);
+    if (code === 'domain')
+      expect(diagnostic.source).toMatchObject({
+        code: diagnostic.expected,
+        path: target,
+        message: diagnostic.message,
+      });
     const fragment = code === 'invalid-value' ? '1.5' : statement;
     expect(source.slice(diagnostic.span.start.offset, diagnostic.span.end.offset)).toBe(fragment);
     expect(diagnostic.span.start).toEqual({
@@ -210,10 +216,10 @@ it('grid columns round-trip and edit independently without colliding with table 
     });
     rejected(result, 'invalid-value');
     assert(!result.ok);
-    expect(result.diagnostics).toEqual([
+    expect(result.error.diagnostics).toEqual([
       expect.objectContaining({ code: 'invalid-value', target: 'a' }),
     ]);
-    const diagnostic = result.diagnostics[0];
+    const diagnostic = result.error.diagnostics[0];
     assert(diagnostic);
     expect(source.slice(diagnostic.span.start.offset, diagnostic.span.end.offset)).toBe(constraint);
     expect(diagnostic.span.start.offset).toBe(source.indexOf(constraint));

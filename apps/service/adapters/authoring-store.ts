@@ -27,6 +27,8 @@ function translate<T>(result: StorageResult<T>): Result<T> {
     storageCodes[result.error.code],
     result.error.path,
     result.error.message,
+    [],
+    result.error,
   );
   return mapped;
 }

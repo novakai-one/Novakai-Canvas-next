@@ -20,7 +20,9 @@ function collection(
     return failure(
       'invariant-violation',
       record.key.id,
-      checked.diagnostics.map((item) => item.message).join('; '),
+      'The owning capability rejected this input',
+      [],
+      checked.error,
     );
   return { ok: true, value: [...records.value, checked.value] };
 }
@@ -60,12 +62,15 @@ function checkedCatalogs(
     return failure(
       'invariant-violation',
       'catalog',
-      library.diagnostics.map((item) => item.message).join('; '),
+      'The owning capability rejected this input',
+      [],
+      library.error,
     );
   const presets = owners.templates.readCatalog(
     live.filter((record) => record.key.kind === 'preset').map((record) => record.value),
   );
-  if (!presets.ok) return failure('invariant-violation', 'presets', presets.error.message);
+  if (!presets.ok)
+    return failure('invariant-violation', 'presets', presets.error.message, [], presets.error);
   return { ok: true, value: { collections, library: library.value, presets: presets.value } };
 }
 /** Read-only bridge; Authoring retains the current snapshot if an owner rejects any canonical participant. */

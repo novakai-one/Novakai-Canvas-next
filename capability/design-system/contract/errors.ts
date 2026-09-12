@@ -21,8 +21,9 @@ export interface TokenError {
   readonly message: string;
   readonly recovery: string;
 }
-export type Result<T> =
-  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: TokenError };
+/** Locally owned success/failure envelope; E retains the owning capability's structured failure. */
+export type Result<T, E = TokenError> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 /** Private structured short-circuit; public Design System operations convert this to Result. */
 export class TokenFault extends Error {
   readonly detail: TokenError;

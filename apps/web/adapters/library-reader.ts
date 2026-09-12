@@ -1,3 +1,4 @@
+import type { Result as LibraryResult } from '@novakai/canvas-library';
 import { z } from 'zod';
 import { validate, query, collectionId, folderId } from '@novakai/canvas-library';
 import { projectCollection } from '@novakai/canvas-service';
@@ -67,12 +68,7 @@ function cursorFilter(cursor: string | null): Readonly<Record<string, unknown>> 
   return { cursor };
 }
 /** Owner diagnostics remain readable while preserving the browser's stable failure envelope. */
-function checked<T>(
-  result:
-    | { readonly ok: true; readonly value: T }
-    | { readonly ok: false; readonly diagnostics: readonly { readonly message: string }[] },
-): Result<T> {
-  if (!result.ok)
-    return failure('invalid-library', result.diagnostics.map((item) => item.message).join('; '));
+function checked<T>(result: LibraryResult<T>): Result<T> {
+  if (!result.ok) return failure('invalid-library', 'Library rejected this input', result.error);
   return result;
 }

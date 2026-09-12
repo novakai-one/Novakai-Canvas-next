@@ -1,3 +1,4 @@
+import { formatFailure } from '../../contract/api.js';
 import { panelVisible } from '../../contract/api.js';
 import { useState, useSyncExternalStore, useEffect } from 'react';
 import type { ComponentType, ReactElement } from 'react';
@@ -52,8 +53,9 @@ export function createWorkspaceShell(slots: ChromeSlots): ComponentType<Workspac
         </div>
         {view.problem && (
           <div className={styles.problem} role="alert">
-            <strong>{view.problem.message}</strong>
-            <span>{view.problem.recovery}</span>
+            {formatFailure(view.problem).map((line, index) => (
+              <span key={index}>{line}</span>
+            ))}
           </div>
         )}
         <Recovery controller={controller} view={view} />

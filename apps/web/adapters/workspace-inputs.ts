@@ -96,7 +96,8 @@ export function createWorkspaceInputs(
       if (!result.ok)
         return failure(
           'source-unavailable',
-          result.diagnostics.map((item) => item.message).join('\n'),
+          'Language could not print this collection',
+          result.error,
         );
       return { ok: true, value: result.value.source };
     },

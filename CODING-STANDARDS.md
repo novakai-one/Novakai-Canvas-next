@@ -102,13 +102,34 @@ Ship needed pure rules; no runtime plugin or I/O adapter without a real use.
 
 Bad:
 ```ts
-throw new Error("Missing object " + id);
+return failure('invalid-input', issues.map(issue => issue.message).join('; '));
+return { ok: false, error, diagnostics: moreErrors }; // two failure channels
 ```
 Good:
 ```ts
-return { ok: false, diagnostics: [{ code: "not-found", path, message }] };
+// Each capability declares this shape locally; E defaults to its own named error.
+type Result<T, E = ValidationError> =
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly error: E };
+interface ValidationError {
+  readonly code: 'validation-failed';
+  readonly diagnostics: readonly [Diagnostic, ...Diagnostic[]];
+}
+// At a consumer boundary, translation retains the originating typed failure.
+return { ok: false, error: {
+  code: 'invariant-violation', path, message, recovery, targets: [], traceId: null,
+  source: planned.error,
+} };
 ```
-All supported-input failures return a typed Result; never parse error messages.
+
+- Declare Result locally in each capability; no shared kernel or foreign Result import to define it. A local default error type keeps signatures concise.
+- Supported-input failures expose only `error`, never a partial `value` or optional second failure channel.
+- Validation failures contain a non-empty diagnostic tuple. Empty accumulated issues mean success; empty rejected evidence is a provider bug.
+- Adapters retain typed originating failures under `error.source`. Add context without replacing source codes, paths, spans, targets, expected values or recovery. Cleanup failures belong inside the primary error as `cleanup`.
+- Source contracts are consumer-owned data protocols. Originating owners keep closed code vocabularies; consumers preserve foreign codes without interpreting prose. These declaration records contain no foreign behavior or shared kernel dependency.
+- Runtime readers must validate and retain source evidence. A boundary probe must pass multiple distinct diagnostics through the real adapter and serialization boundary and compare the complete evidence.
+- Format only at terminal/browser display boundaries. Never recover by parsing a message string.
+- Private typed throw idioms (`TokenFault`, `LanguageFault`, etc.) remain legal when the public boundary converts them to Result. Do not rewrite them merely for envelope consistency.
 
 ## 10. Idempotency and failure semantics
 

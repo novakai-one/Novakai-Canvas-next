@@ -2,32 +2,20 @@ import type { Span, Declaration } from '../../contract/records/syntax.js';
 import type { SourceMapping } from '../../contract/records/requests.js';
 import { LanguageFault } from '../../contract/errors.js';
 import { id } from './fields.js';
-interface OwnerDiagnostic {
-  readonly code: string;
-  readonly path: string;
-  readonly message: string;
+import type { OwnerDiagnostic, Result, Diagnostic } from '../../contract/errors.js';
+interface OwnerError {
+  readonly code: 'validation-failed';
+  readonly diagnostics: readonly [OwnerDiagnostic, ...OwnerDiagnostic[]];
 }
-type OwnerOutcome<T> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly diagnostics: readonly OwnerDiagnostic[] };
 /** Translate structured Model paths to source spans; never parse human error-message strings. */
 export function ownerValue<T>(
-  result: OwnerOutcome<T>,
+  result: Result<T, OwnerError>,
   mappings: readonly SourceMapping[],
   fallback: Span,
 ): T {
   if (result.ok) return structuredClone(result.value);
-  throw new LanguageFault(
-    result.diagnostics.map((issue) => ({
-      code: 'domain',
-      target: issue.path,
-      span: nearestSpan(issue.path, mappings, fallback),
-      expected: issue.code,
-      message: issue.message,
-      recovery:
-        'Correct the referenced diagram declaration; check again before Authoring admission.',
-    })),
-  );
+  const [first, ...remaining] = result.error.diagnostics;
+  return rejectOwner(first, remaining, mappings, fallback);
 }
 /** Most-specific owner path wins; fallback is the complete source when no narrower target exists. */
 function nearestSpan(path: string, mappings: readonly SourceMapping[], fallback: Span): Span {
@@ -76,4 +64,33 @@ function descendantPath(item: Declaration, prefix: string): string {
   };
   const name = namespaces[item.kind] ?? 'content';
   return `${prefix}.${name}.${id(item.fields)}`;
+}
+
+/** Translate every issue while preserving order and non-emptiness at the compiler boundary. */
+function rejectOwner(
+  first: OwnerDiagnostic,
+  remaining: readonly OwnerDiagnostic[],
+  mappings: readonly SourceMapping[],
+  fallback: Span,
+): never {
+  throw new LanguageFault([
+    sourceDiagnostic(first, mappings, fallback),
+    ...remaining.map((issue) => sourceDiagnostic(issue, mappings, fallback)),
+  ]);
+}
+/** Enrichment adds a source span; it never replaces the original owner code or path. */
+function sourceDiagnostic(
+  issue: OwnerDiagnostic,
+  mappings: readonly SourceMapping[],
+  fallback: Span,
+): Diagnostic {
+  return {
+    code: 'domain',
+    target: issue.path,
+    span: nearestSpan(issue.path, mappings, fallback),
+    expected: issue.code,
+    message: issue.message,
+    source: issue,
+    recovery: 'Correct the referenced diagram declaration; check again before Authoring admission.',
+  };
 }

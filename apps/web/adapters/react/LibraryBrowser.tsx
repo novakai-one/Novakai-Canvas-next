@@ -1,3 +1,4 @@
+import { formatFailure } from '../../contract/api.js';
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps } from '../../contract/react-types.js';
@@ -13,7 +14,7 @@ export function createLibraryBrowser(
     const state = useSyncExternalStore(library.subscribe, library.getSnapshot);
     return (
       <div className={styles.editor}>
-        {state.problem && <p role="alert">{state.problem.message}</p>}
+        {state.problem && <p role="alert">{formatFailure(state.problem).join(' · ')}</p>}
         {slots.map(({ id, Content }) => (
           <Content
             key={id}

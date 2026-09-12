@@ -24,7 +24,7 @@ export type {
   SourceId,
   GroupId,
 } from './brands.js';
-export type { Result, Diagnostic, DiagnosticCode } from './errors.js';
+export type { Result, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';
 export type { Collection } from './records/collection.js';
 export type { DiagramObject, ObjectKind } from './records/object.js';
 export type { ContentBlock, Endpoint, Field, KeyGroup } from './records/content.js';

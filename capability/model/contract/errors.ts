@@ -22,7 +22,11 @@ export interface Diagnostic {
   readonly path: string;
   readonly message: string;
 }
-/** Success value or diagnostics with no partial candidate. Replaying pure Model operations is safe. */
-export type Result<T> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly diagnostics: readonly Diagnostic[] };
+/** Validation rejects with at least one actionable diagnostic; no partial value is exposed. */
+export interface ValidationError {
+  readonly code: 'validation-failed';
+  readonly diagnostics: readonly [Diagnostic, ...Diagnostic[]];
+}
+/** Locally owned envelope; E belongs to this capability, never a shared Result kernel. */
+export type Result<T, E = ValidationError> =
+  { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };

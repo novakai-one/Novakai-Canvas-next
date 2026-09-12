@@ -1,3 +1,4 @@
+import type { FailureSource } from '../contract/records/failure-source.js';
 import { failure } from '@novakai/canvas-authoring';
 import type {
   CandidateValidator,
@@ -11,7 +12,15 @@ import type { AdmissionOwners } from '../contract/ports/admission.js';
 import type { WorkspaceContents } from '../contract/records/workspace.js';
 import { workspaceMetadata, assetMetadata } from '../contract/records/metadata.js';
 /** Cross-owner references are validated as a whole; a missing participant never becomes a skipped check. */
-class AdmissionFault extends Error {}
+class AdmissionFault extends Error {
+  /** Expected owner failures keep their evidence through private short-circuiting. */
+  constructor(
+    message: string,
+    readonly source?: FailureSource,
+  ) {
+    super(message);
+  }
+}
 /** Failure is raised only inside the named candidate boundary; Authoring retains the original committed snapshot. */
 function requireFact(condition: boolean, message: string): void {
   if (!condition) throw new AdmissionFault(message);
@@ -41,7 +50,7 @@ function collections(snapshot: Snapshot, view: WorkspaceContents, owners: Admiss
       `Collection revision differs: ${collection.id}`,
     );
     const expected = owners.resources.forCollection(collection, view);
-    if (!expected.ok) throw new AdmissionFault(expected.error.message);
+    if (!expected.ok) throw new AdmissionFault(expected.error.message, expected.error);
     resources(slot, expected.value);
   });
 }
@@ -110,7 +119,7 @@ function checked(
 /** Structured consistency faults are actionable; unexpected provider errors never authorize partial admission. */
 function rejected(error: unknown): Result<never> {
   if (error instanceof AdmissionFault)
-    return failure('invariant-violation', 'candidate', error.message);
+    return failure('invariant-violation', 'candidate', error.message, [], error.source);
   return failure(
     'corrupt-record',
     'candidate',

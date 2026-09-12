@@ -39,7 +39,8 @@ function prepareSourceTheme(
   const parsed = config.safeParse(admission);
   if (!parsed.success) return { ok: true, value: admission };
   const base = owners.templates.read(catalog, selection(parsed.data.raw.base));
-  if (!base.ok) return failure('invalid-input', base.error.path, base.error.message);
+  if (!base.ok)
+    return failure('invalid-input', base.error.path, base.error.message, [], base.error);
   return withFonts(admission, parsed.data.raw.overrides, base.value, bindings, owners.assets);
 }
 /** Resolve the two font descriptors only after the base selection is exact. */
@@ -88,7 +89,8 @@ function font(
   readonly [string, { readonly family: string; readonly digest: string; readonly approved: true }]
 > {
   const blob = assets.resolve(input.digest);
-  if (!blob.ok) return failure('missing-asset', blob.error.path, blob.error.message);
+  if (!blob.ok)
+    return failure('missing-asset', blob.error.path, blob.error.message, [], blob.error);
   if (blob.value.descriptor.kind !== 'font' || blob.value.descriptor.fontFamily === null)
     return failure('invalid-input', input.alias, 'Theme input must identify a verified font');
   return {

@@ -1,7 +1,7 @@
 /** Language's only consumer entry. Authoring owns all writes; these operations are pure and retry-safe. */
 export { createLanguage } from './api.js';
 export type { Language, Dependencies } from './types.js';
-export type { Result, Diagnostic, DiagnosticCode } from './errors.js';
+export type { Result, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';
 export type {
   Document,
   Patch,

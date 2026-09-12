@@ -1,3 +1,4 @@
+import { formatFailure } from '../contract/api.js';
 import { fileURLToPath } from 'node:url';
 import { runCli } from '../contract/index.js';
 /** The executable reports one readable outcome and exit status. No credentials or request envelopes are logged. */
@@ -5,9 +6,7 @@ async function main(): Promise<void> {
   const workspace = fileURLToPath(new URL('../../../.local/workspace', import.meta.url));
   const result = await runCli(process.argv.slice(2), workspace);
   if (!result.ok) {
-    process.stderr.write(
-      `${result.error.code}: ${result.error.message}\n${result.error.recovery}\n`,
-    );
+    process.stderr.write(`${formatFailure(result.error).join('\n')}\n`);
     process.exitCode = 1;
     return;
   }

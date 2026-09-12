@@ -61,7 +61,9 @@ function compile(
     return failure(
       'invalid-input',
       'source',
-      parsed.diagnostics.map((item) => item.message).join('; '),
+      'The owning capability rejected this input',
+      [],
+      parsed.error,
     );
   return compileCollection(command, parsed.value.collection, snapshot, selected, owners);
 }
@@ -85,9 +87,9 @@ function compileCollection(
     return failure(
       'invariant-violation',
       'source',
-      intent.diagnostics
-        .map((item) => `${item.span.start.line}:${item.span.start.column} ${item.message}`)
-        .join('; '),
+      'The owning capability rejected this input',
+      [],
+      intent.error,
     );
   return owners.collections.propose(snapshot, intent.value.collection);
 }
@@ -118,7 +120,9 @@ function modelCollection(
     return failure(
       'invariant-violation',
       command.collection,
-      planned.diagnostics.map((item) => `${item.path}: ${item.message}`).join('; '),
+      'The owning capability rejected this input',
+      [],
+      planned.error,
     );
   return owners.collections.propose(snapshot, planned.value.candidate);
 }

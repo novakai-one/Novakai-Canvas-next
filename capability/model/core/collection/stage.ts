@@ -5,7 +5,7 @@ import type { ChangeStage } from '../../contract/types.js';
 import { validateCollection } from '../invariants/validate.js';
 import { shapeErrors } from '../invariants/shape-diagnostics.js';
 import { inspectInput } from '../invariants/input.js';
-import { failure, success } from '../invariants/issues.js';
+import { failure, success, rejected } from '../invariants/issues.js';
 import { freeze } from '../invariants/freeze.js';
 import { applyOperation } from './operations.js';
 
@@ -17,7 +17,7 @@ function applyNextOperation(current: Result<Collection>, change: Change): Result
 /** Check operation shapes once, then expose their exact ordered structural effects to the compiler. */
 function applyCheckedChanges(before: Collection, changes: unknown): Result<ChangeStage> {
   const parsed = changesSchema.safeParse(changes);
-  if (!parsed.success) return { ok: false, diagnostics: shapeErrors(parsed.error.issues) };
+  if (!parsed.success) return rejected(shapeErrors(parsed.error.issues));
   const applied = parsed.data.reduce(applyNextOperation, success(before));
   if (!applied.ok) return applied;
   return success({ validity: 'unchecked', candidate: applied.value, changes: parsed.data });

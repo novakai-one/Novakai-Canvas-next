@@ -1,3 +1,4 @@
+import type { FailureSource } from '../contract/records/failure-source.js';
 import { z } from 'zod';
 import { validate } from '@novakai/canvas-model';
 import type { Collection } from '@novakai/canvas-model';
@@ -10,18 +11,19 @@ import type { ResourceSelector, ResourceSelection } from '../contract/records/pl
 import type { WorkspaceContents } from '../contract/records/workspace.js';
 import { dslCommand, modelCommand } from '../contract/records/commands.js';
 /** Exact owner diagnostics cross private selection steps; Authoring catches the resulting typed rejection. */
-class ResourceFault extends Error {}
-type OwnerFailure =
-  | { readonly ok: false; readonly error: { readonly message: string } }
-  | { readonly ok: false; readonly diagnostics: readonly { readonly message: string }[] };
-/** Preserve the two explicit public owner failure shapes without optional error fields. */
-function message(result: OwnerFailure): string {
-  if ('error' in result) return result.error.message;
-  return result.diagnostics.map((item) => item.message).join('; ');
+class ResourceFault extends Error {
+  /** Private native/input failures have no invented source; checked owner failures retain theirs. */
+  constructor(
+    message: string,
+    readonly source?: FailureSource,
+  ) {
+    super(message);
+  }
 }
 /** No missing resource is replaced by an empty alias, fallback theme or unverified blob. */
-function accepted<T>(result: { readonly ok: true; readonly value: T } | OwnerFailure): T {
-  if (!result.ok) throw new ResourceFault(message(result));
+function accepted<T>(result: Result<T, FailureSource>): T {
+  if (!result.ok)
+    throw new ResourceFault('The owning capability rejected this input', result.error);
   return result.value;
 }
 /** Startup candidates are fixed trusted installation data; ordinary requests read only authoritative stored presets. */
@@ -302,7 +304,8 @@ function checkAssets(
 }
 /** Structured owner failures ask for resource correction; malformed envelopes never leak native exception strings. */
 function rejected(error: unknown): Result<never> {
-  if (error instanceof ResourceFault) return failure('missing-asset', 'resources', error.message);
+  if (error instanceof ResourceFault)
+    return failure('missing-asset', 'resources', error.message, [], error.source);
   return failure('invalid-input', 'resources', 'Resource request could not be decoded');
 }
 /** Private selection exceptions are translated into Authoring's public outcome before any lease/write is exposed. */

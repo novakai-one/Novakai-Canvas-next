@@ -26,7 +26,14 @@ async function render(
   );
   if (!job.ok) return job;
   const result = await owners.producer.produce(job.value, new AbortController().signal);
-  if (!result.ok) return failure('constraint-conflict', result.error.path, result.error.message);
+  if (!result.ok)
+    return failure(
+      'constraint-conflict',
+      result.error.path,
+      result.error.message,
+      [],
+      result.error,
+    );
   return result;
 }
 /** Preserve failure while accumulating complete changed diagrams; no partial preview is admitted. */

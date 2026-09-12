@@ -1,3 +1,4 @@
+import type { FailureSource } from '../contract/records/failure-source.js';
 import { validate } from '@novakai/canvas-model';
 import type { Catalog, Preset, RecipePayload } from '@novakai/canvas-templates';
 import type { ResolvedResources } from '@novakai/canvas-language';
@@ -8,18 +9,18 @@ import type {
 } from '../contract/records/builtins.js';
 import { failure, type Result } from '../contract/errors.js';
 /** Boot admission stops at an owner rejection; service retains the original workspace. */
-class PresetFault extends Error {}
-type OwnerFailure =
-  | { readonly ok: false; readonly error: { readonly path: string; readonly message: string } }
-  | { readonly ok: false; readonly diagnostics: readonly { readonly message: string }[] };
-/** Preserve actionable owner diagnostics while adapting two explicit public failure shapes. */
-function ownerMessage(result: OwnerFailure): string {
-  if ('error' in result) return `${result.error.path}: ${result.error.message}`;
-  return result.diagnostics.map((item) => item.message).join('; ');
+class PresetFault extends Error {
+  /** Private native/input failures have no invented source; checked owner failures retain theirs. */
+  constructor(
+    message: string,
+    readonly source?: FailureSource,
+  ) {
+    super(message);
+  }
 }
 /** Immutable owner output is required before selecting the next built-in admission. */
-function accepted<T>(result: { readonly ok: true; readonly value: T } | OwnerFailure): T {
-  if (!result.ok) throw new PresetFault(ownerMessage(result));
+function accepted<T>(result: Result<T, FailureSource>): T {
+  if (!result.ok) throw new PresetFault('The owning capability rejected this input', result.error);
   return result.value;
 }
 /** Admission uses the actual font families verified by Assets; missing shipped fonts cannot fall back to the OS. */
@@ -141,6 +142,7 @@ export function prepareBuiltinPresets(
 
 /** Known owner rejection explains correction; unexpected provider faults do not leak native exception details. */
 function preparationFailure(error: unknown): Result<never> {
-  if (error instanceof PresetFault) return failure('invalid-input', 'builtins', error.message);
+  if (error instanceof PresetFault)
+    return failure('invalid-input', 'builtins', error.message, error.source);
   return failure('unavailable', 'builtins', 'Built-in preparation provider failed');
 }

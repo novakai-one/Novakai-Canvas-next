@@ -9,7 +9,7 @@ const checked = validate(proposedCollection);
 const planned = plan(currentSnapshot, [
   { op: 'replace', target: 'objects', value: completeEditedObject },
 ]);
-// Both return { ok: true, value } or { ok: false, diagnostics }.
+// Both return { ok: true, value } or { ok: false, error: { code: "validation-failed", diagnostics } }.
 ```
 
 `validate` accepts an initial document. `plan` validates the base, applies an ordered typed change list, and validates the final candidate. Intermediate references may be forward references. Neither entry writes data, changes a revision, reads a clock, opens a file or imports a UI. Replaying the same snapshot and changes gives an equal result. **Authoring owns admission, commit, revision increments and crash recovery.** Successful planning is not a committed edit or geometric feasibility approval.

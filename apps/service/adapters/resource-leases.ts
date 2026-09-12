@@ -18,7 +18,8 @@ function acquire(
   const selected = selector.select(request, snapshot);
   if (!selected.ok) return selected;
   const lease = assets.acquire(selected.value.covered);
-  if (!lease.ok) return failure('missing-asset', lease.error.path, lease.error.message);
+  if (!lease.ok)
+    return failure('missing-asset', lease.error.path, lease.error.message, [], lease.error);
   return {
     ok: true,
     value: {
@@ -32,7 +33,7 @@ function acquire(
 /** Release failure remains typed; Assets conservatively retains protection for maintenance recovery. */
 function released(result: ReturnType<Assets['close']>): Result<void> {
   if (result.ok) return result;
-  return failure('storage-unavailable', result.error.path, result.error.message);
+  return failure('storage-unavailable', result.error.path, result.error.message, [], result.error);
 }
 /** Bind actual Assets leases; even an empty digest set uses the owner's real lifecycle contract. */
 export function createResourceAdmission(

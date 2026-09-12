@@ -121,8 +121,7 @@ describe('Export revision lifecycle', () => {
       await createExport({ ...deps, formats: cancelled }).exportArtifact(f.request(), signal),
     ).toMatchObject({
       ok: false,
-      error: { code: 'cancelled' },
-      diagnostics: [{ code: 'cleanup-failed' }],
+      error: { code: 'cancelled', cleanup: { code: 'cleanup-failed' } },
     });
   });
   it('3 selected bounds preserve negative origins and apply nested section transforms once', async () => {

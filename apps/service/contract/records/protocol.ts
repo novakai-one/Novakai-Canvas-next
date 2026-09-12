@@ -1,3 +1,5 @@
+import type { OperationSource } from './failure-source.js';
+import { operationSource } from './failure-source.js';
 import { z } from 'zod';
 import type { Result } from '../errors.js';
 import type { Caller, HttpAdmission, HttpMetadata } from './http.js';
@@ -22,17 +24,8 @@ export interface CommandAdmission {
   readonly ingress: Pick<HttpAdmission, 'mutation'>;
 }
 /** Owner error codes remain stable in transport; consumers can retain richer owner-specific diagnostics. */
-export type WireOutcome =
-  | { readonly ok: true; readonly value: unknown }
-  | {
-      readonly ok: false;
-      readonly error: {
-        readonly code: string;
-        readonly path: string;
-        readonly message: string;
-        readonly recovery: string;
-      };
-    };
+export type WireOutcome = Result<unknown, OperationSource>;
+
 export interface ApiCall {
   readonly path: string;
   readonly query: Readonly<Record<string, string>>;
@@ -55,12 +48,7 @@ export const responseEnvelope = z.strictObject({
     z.strictObject({ ok: z.literal(true), value: z.unknown() }),
     z.strictObject({
       ok: z.literal(false),
-      error: z.looseObject({
-        code: z.string(),
-        path: z.string(),
-        message: z.string(),
-        recovery: z.string(),
-      }),
+      error: operationSource,
     }),
   ]),
 });

@@ -1,3 +1,4 @@
+import type { FailureSource } from '../contract/records/failure-source.js';
 import { presetId, version, digest } from '@novakai/canvas-templates';
 import type { PortableTheme, PortableToken } from '@novakai/canvas-design-system';
 import type { Result, RecipePayload, ThemePayload, ThemePreset } from '@novakai/canvas-templates';
@@ -5,25 +6,22 @@ import type { LoweredIntent, Result as LanguageResult } from '@novakai/canvas-la
 import type { PresetCodecs, PresetContext } from '../contract/records/presets.js';
 import { themeInput, type ThemeInput } from '../contract/records/theme-input.js';
 /** Codec failures leave immutable preset admission uncommitted; Authoring callers correct the source or selected base. */
-function rejected<T>(message: string): Result<T> {
+function rejected<T>(message: string, source?: FailureSource): Result<T> {
   return {
     ok: false,
     error: {
       code: 'invalid-input',
+      source,
       path: 'preset',
       message,
       recovery: 'Retain the source; correct the named preset input and prepare again.',
     },
   };
 }
-/** All compiler diagnostics remain visible in the admission failure message rather than being replaced with a success stub. */
+/** Compiler diagnostics remain typed through preset admission; display adapters choose how to present them. */
 function translated<T>(result: LanguageResult<T>): Result<T> {
   if (result.ok) return result;
-  return rejected(
-    result.diagnostics
-      .map((item) => `${item.span.start.line}:${item.span.start.column} ${item.message}`)
-      .join('; '),
-  );
+  return rejected('Language rejected the preset source', result.error);
 }
 /** Canonical printing supplies recipe source; dependency pins come from the actual lowered collection. */
 function inspected(
@@ -133,7 +131,7 @@ function resolvedTheme(
     sources: context.sources,
     theme: { ...input, base: base.value },
   });
-  if (!result.ok) return rejected(result.error.message);
+  if (!result.ok) return rejected(result.error.message, result.error);
   return checkedThemePayload(result.value);
 }
 /** Stable snapshot codecs keep recipe parsing/remapping and theme semantics at their public owners. */

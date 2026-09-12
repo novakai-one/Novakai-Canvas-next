@@ -9,7 +9,7 @@ import { validateRelationships } from '../relationships/endpoints.js';
 import { validateSections } from '../sections/views.js';
 import { validateLayouts } from '../sections/layout.js';
 import { freeze } from './freeze.js';
-import { failure, success } from './issues.js';
+import { failure, success, rejected } from './issues.js';
 import { shapeErrors } from './shape-diagnostics.js';
 
 type CollectionRule = (collection: Collection) => readonly Diagnostic[];
@@ -26,9 +26,9 @@ const collectionRules: readonly CollectionRule[] = [
 /** Parse and detach first. Domain rules must never receive structurally invalid data. */
 function parseAndValidate(input: unknown): Result<Collection> {
   const parsed = collectionSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, diagnostics: shapeErrors(parsed.error.issues) };
+  if (!parsed.success) return rejected(shapeErrors(parsed.error.issues));
   const diagnostics = collectionRules.flatMap((rule) => rule(parsed.data));
-  if (diagnostics.length > 0) return { ok: false, diagnostics };
+  if (diagnostics.length > 0) return rejected(diagnostics);
   return success(parsed.data);
 }
 

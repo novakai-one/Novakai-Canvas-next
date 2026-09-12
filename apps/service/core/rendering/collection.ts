@@ -9,9 +9,10 @@ export async function renderCollection(
   dependencies: SessionDependencies,
 ): Promise<Result<RenderDocument>> {
   const snapshot = await dependencies.authoring(signal).read(dependencies.workspace);
-  if (!snapshot.ok) return failure('unavailable', snapshot.error.path, snapshot.error.message);
+  if (!snapshot.ok)
+    return failure('unavailable', snapshot.error.path, snapshot.error.message, snapshot.error);
   const view = dependencies.views.read(snapshot.value);
-  if (!view.ok) return failure('unavailable', view.error.path, view.error.message);
+  if (!view.ok) return failure('unavailable', view.error.path, view.error.message, view.error);
   return renderSelected(id, signal, view.value, dependencies);
 }
 /** Missing collection is distinct from an empty collection; the caller retains its current navigation/draft. */

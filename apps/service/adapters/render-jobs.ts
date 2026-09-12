@@ -1,3 +1,4 @@
+import type { FailureSource } from '../contract/records/failure-source.js';
 import { fontSource, fontSet, visualAsset, resolvedStyle } from '@novakai/canvas-presentation';
 import type { FontSource, VisualAsset } from '@novakai/canvas-presentation';
 import { options } from '@novakai/canvas-layout';
@@ -10,14 +11,19 @@ import type { WorkspaceContents } from '../contract/records/workspace.js';
 import type { RenderingJob } from '../contract/records/rendering.js';
 import type { RenderJobs } from '../contract/ports/render-jobs.js';
 /** Known owner failures preserve their actionable explanation at the Authoring feasibility boundary. */
-class RenderResourceFault extends Error {}
+class RenderResourceFault extends Error {
+  /** Expected owner failures keep their evidence through private short-circuiting. */
+  constructor(
+    message: string,
+    readonly source?: FailureSource,
+  ) {
+    super(message);
+  }
+}
 /** Render resources are mandatory owner results, never machine-local fallback fonts or blank images. */
-function accepted<T>(
-  result:
-    | { readonly ok: true; readonly value: T }
-    | { readonly ok: false; readonly error: { readonly message: string } },
-): T {
-  if (!result.ok) throw new RenderResourceFault(result.error.message);
+function accepted<T>(result: Result<T, FailureSource>): T {
+  if (!result.ok)
+    throw new RenderResourceFault('A render resource owner rejected input', result.error);
   return result.value;
 }
 /** Read the normalized admitted font bytes and family that both measurement and browser/export must use. */
@@ -99,7 +105,7 @@ function create(
 /** Owner rejection is a correction path; malformed resource output does not escape as a native exception. */
 function rejected(error: unknown): Result<never> {
   if (error instanceof RenderResourceFault)
-    return failure('missing-asset', 'render-resources', error.message);
+    return failure('missing-asset', 'render-resources', error.message, [], error.source);
   return failure('invalid-input', 'render-resources', 'Render resources could not be decoded');
 }
 /** Every job is built from one consistent workspace view; Authoring owns admission and keeps the prior scene on failure. */

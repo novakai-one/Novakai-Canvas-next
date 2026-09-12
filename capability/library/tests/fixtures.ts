@@ -73,7 +73,7 @@ export function valueOf<T>(result: Result<T>): T {
 /** Check both failure category and its independently specified affected path. */
 export function hasFailure<T>(result: Result<T>, code: string, path: string): boolean {
   if (result.ok) return false;
-  return result.diagnostics.some(
+  return result.error.diagnostics.some(
     (diagnostic) => diagnostic.code === code && diagnostic.path === path,
   );
 }

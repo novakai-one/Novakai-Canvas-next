@@ -3,7 +3,7 @@ import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { PlacedNode, RoutedWire, Box } from '../../contract/records/geometry.js';
 import type { LayoutOptions, SupplementalMeasurements } from '../../contract/types.js';
 import { endpoints } from '../routing/endpoints.js';
-import { contentBoxes } from '../routing/obstacles.js';
+import { contentBoxes, labelObstacles } from '../routing/obstacles.js';
 import { validRoute, checkLabel, markerBox } from '../routing/checks.js';
 import { linePath, curvePath, segments } from '../routing/paths.js';
 import { adjacentLabel } from '../routing/labels.js';
@@ -78,7 +78,7 @@ function checkLabels(
   const others = context.candidates.filter((item) => item.id !== wire.id);
   const markers = context.candidates.flatMap((item) => markerBounds(item, context.metrics));
   const occupied = [
-    ...contentBoxes(context.nodes),
+    ...labelObstacles(context.nodes),
     ...others.map((item) => item.labelBox),
     ...markers,
   ];
@@ -102,7 +102,8 @@ function checkLabelCrossing(id: string, box: Box, points: RoutedWire['points']):
   if (segments(points).some((segment) => segmentHits(segment.a, segment.b, box)))
     reject('constraint-conflict', id, 'Another wire crosses this label');
 }
-/** Wire cardinality and every measured payload are checked before renderer-ready records are returned. */
+/** Check wire cardinality and measured payloads before returning immutable rendering records.
+ * Layout inspect protects structured failures; callers correct the candidate and Authoring retains committed state. */
 export function inspectWires(
   source: VisualSection,
   candidates: SectionCandidate['wires'],

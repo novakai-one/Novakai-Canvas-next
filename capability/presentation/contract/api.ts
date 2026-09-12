@@ -14,7 +14,15 @@ import { measureText } from '../core/content/text.js';
 export function createPresentation(deps: Dependencies): Presentation {
   return {
     project(input: unknown): Result<Projection> {
-      return protect(() => projectCollection(input, deps));
+      return protect(() =>
+        projectCollection(input, {
+          domain: deps.domain,
+          themes: deps.themes,
+          assets: deps.assets,
+          measurement: deps.measurement,
+          rendererVersion: deps.renderer.version,
+        }),
+      );
     },
     supplement(input: unknown): Result<SupplementalMeasurements> {
       return protect(() => supplement(input, deps));

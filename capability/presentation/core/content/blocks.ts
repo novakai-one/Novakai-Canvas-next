@@ -25,46 +25,50 @@ function text(text: string, context: ContentContext, mono = false): MeasuredCont
 }
 /** Dispatch tables keep adding content kinds outside projection/Authoring orchestration. */
 const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
-  text: (block, context) => {
+  text: (block, context): MeasuredContent => {
     if (block.kind !== 'text') return mismatch(block);
     return text(block.text, context);
   },
-  code: (block, context) => {
+  code: (block, context): MeasuredContent => {
     if (block.kind !== 'code') return mismatch(block);
     return text(block.text, context, true);
   },
-  list: (block, context) => {
+  list: (block, context): MeasuredContent => {
     if (block.kind !== 'list') return mismatch(block);
     return text(
       block.items
-        .map((item, index) => `${block.ordered ? String(index + 1) + '.' : '•'} ${item}`)
+        .map((item, index): string => `${block.ordered ? String(index + 1) + '.' : '•'} ${item}`)
         .join('\n'),
       context,
     );
   },
-  link: (block, context) => {
+  link: (block, context): MeasuredContent => {
     if (block.kind !== 'link') return mismatch(block);
     return text(block.label, context);
   },
-  image: (block, context) => image(block, context),
-  icon: (block, context) => image(block, context),
-  field: (block, context) => {
+  image: (block, context): MeasuredContent => image(block, context),
+  icon: (block, context): MeasuredContent => image(block, context),
+  field: (block, context): MeasuredContent => {
     if (block.kind !== 'field') return mismatch(block);
     return measureField(block, context);
   },
-  keygroup: (block, context) => {
+  keygroup: (block, context): MeasuredContent => {
     if (block.kind !== 'keygroup') return mismatch(block);
-    return text(`${fieldKey(block.key)} (${block.fields.join(', ')})`, context, true);
+    return text(
+      `${fieldKey(block.key)} (${block.fields.map((id): string => fieldLabel(id, context)).join(', ')})`,
+      context,
+      true,
+    );
   },
-  member: (block, context) => {
+  member: (block, context): MeasuredContent => {
     if (block.kind !== 'member') return mismatch(block);
     return measureMember(block, context);
   },
-  signature: (block, context) => {
+  signature: (block, context): MeasuredContent => {
     if (block.kind !== 'signature') return mismatch(block);
     return measureSignature(block, context);
   },
-  table: (block, context) => {
+  table: (block, context): MeasuredContent => {
     if (block.kind !== 'table') return mismatch(block);
     return measureTable(block, context.width, context.style, context.metrics);
   },
@@ -78,7 +82,16 @@ function image(block: ContentBlock, context: ContentContext): MeasuredContent {
   if (block.kind !== 'image' && block.kind !== 'icon') return mismatch(block);
   return measureMedia(block, context.collection, context.width, context.style, context.assets);
 }
-/** Canonical content enters through the registered local presentation policy; public project owns typed failure. */
+/** Measure canonical content without mutation; createPresentation.project protects provider/structured failures.
+ * Callers correct input/resources and retry; Authoring retains the committed scene. */
 export function measureBlock(block: ContentBlock, context: ContentContext): MeasuredContent {
   return processors[block.kind](block, context);
+}
+
+/** Resolve local canonical membership without renaming IDs; project protection owns a broken owner/field rejection. */
+function fieldLabel(id: string, context: ContentContext): string {
+  const field = context.owner?.content.find((block): boolean => block.id === id);
+  if (field?.kind !== 'field')
+    return reject('invalid-input', id, 'Key group field is missing from its owning entity');
+  return field.label;
 }

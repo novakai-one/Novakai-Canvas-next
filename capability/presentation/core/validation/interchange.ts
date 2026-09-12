@@ -88,7 +88,7 @@ export function readProjection(
 ): Projection {
   const collection = requireValue(domain.read(clone(canonical)));
   const raw = parse(projectionEnvelope, clone(input));
-  requireProjectionCapacity(raw.sections);
+  requireValue(requireProjectionCapacity(raw.sections));
   equal(
     [collection.id, collection.revision, collection.title, collection.arrangement],
     [raw.collectionId, raw.revision, raw.title, raw.arrangement],

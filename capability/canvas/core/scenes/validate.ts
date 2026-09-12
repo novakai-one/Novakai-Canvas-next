@@ -7,7 +7,7 @@ import { parse, reject } from '../validation/outcomes.js';
 function unique(ids: readonly string[], path: string): void {
   if (new Set(ids).size !== ids.length) reject('invalid-scene', path, 'Duplicate scene identity');
 }
-/** Bounded parent traversal proves acyclicity without recursive stack growth. */
+/** Recursive parent traversal proves acyclicity within the admitted scene capacity. */
 function validateAncestors(node: PlacedNode, nodes: readonly PlacedNode[]): void {
   validateParent(node, nodes, []);
 }

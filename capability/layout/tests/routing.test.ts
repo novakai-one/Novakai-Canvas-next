@@ -23,6 +23,8 @@ describe('Layout routing acceptance', () => {
     const wires = scene.sections[0]?.wires;
     assert(wires);
     expect(wires).toHaveLength(3);
+    await groupLabelBorders(false);
+    await groupLabelBorders(true);
     const first = wires[0];
     const second = wires[1];
     const self = wires[2];
@@ -664,4 +666,153 @@ it('rejects full measured marker boxes without shrinking advance or half-height'
 function segmentAxes(segment: readonly [Point, Point]): readonly ['x' | 'y', 'x' | 'y'] {
   if (segment[0].y === segment[1].y) return ['x', 'y'];
   return ['y', 'x'];
+}
+
+/** Real routing crosses nested/root borders while labels retain clear group interior or exterior space. */
+async function groupLabelBorders(enter: boolean): Promise<void> {
+  const source = groupBorderProjection(enter);
+  const layout = await harness([source]);
+  const scene = value(await layout.arrange(request(layout, source)));
+  const placed = scene.sections[0];
+  const wire = placed?.wires[0];
+  assert(placed && wire);
+  const groups = placed.nodes.filter((node): boolean => node.measured.groupId !== null);
+  expect(groups).toHaveLength(2);
+  expect(groups.map((group): string | null => group.parent)).toContain(null);
+  groups.forEach((group): void => {
+    expect(hits(wire.points, group.box)).toBe(true);
+    expect(borderCrosses(wire.labelBox, group.box)).toBe(false);
+    // Exit ordering selects free interior space; the reversed route may select clear exterior space.
+    if (!enter) expect(labelInside(wire.labelBox, group.box)).toBe(true);
+    forgedBorderLabels(group.box, group.measured.strokeWidth, wire.labelBox).forEach(
+      (labelBox): void => {
+        const candidate = {
+          ...scene,
+          sections: scene.sections.map((section): typeof section => ({
+            ...section,
+            wires: section.wires.map((wire): typeof wire => ({ ...wire, labelBox })),
+          })),
+        };
+        const inspected = value(
+          layout.inspect({
+            projection: source,
+            measurements: metrics(source),
+            options: settings,
+            candidate,
+          }),
+        );
+        expect(inspected.valid).toBe(false);
+        expect(
+          inspected.diagnostics.some(
+            (issue): boolean => issue.message === 'Wire label overlaps reserved content',
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+  expect(
+    value(
+      layout.inspect({
+        projection: source,
+        measurements: metrics(source),
+        options: settings,
+        candidate: scene,
+      }),
+    ).valid,
+  ).toBe(true);
+  expect(wire.points[0]).toEqual(wire.source.point);
+  expect(wire.points.at(-1)).toEqual(wire.target.point);
+  const locked: Projection = {
+    ...source,
+    sections: source.sections.map((section): VisualSection => ({
+      ...section,
+      wires: section.wires.map((item): typeof item => ({
+        ...item,
+        route: { ...item.route, locked: true, manual: wire.points },
+      })),
+    })),
+  };
+  const retainedLayout = await harness([locked]);
+  const retained = value(await retainedLayout.arrange(request(retainedLayout, locked)));
+  expect(retained.sections[0]?.wires[0]?.points).toEqual(wire.points);
+}
+/** Fixed semantic containment makes the first midpoint caption straddle the outer group's right border. */
+function groupBorderProjection(enter: boolean): Projection {
+  const direction = enter
+    ? { source: 'outside', target: 'inside', sourceSide: 'left', targetSide: 'right' }
+    : { source: 'inside', target: 'outside', sourceSide: 'right', targetSide: 'left' };
+  return project(
+    collection({
+      objects: [object('inside'), object('outside')],
+      relationships: [
+        edge('exit', direction.source, direction.target, {
+          label: 'cross group boundaries',
+        }),
+      ],
+      sections: [
+        section('borders', [], {
+          mode: 'grid',
+          layout: { algorithm: 'grid' },
+          groups: [
+            {
+              id: 'outer',
+              title: 'Outer',
+              layout: { algorithm: 'grid' },
+              placement: { x: 0, y: 0, width: 820, height: 800, locked: true },
+            },
+            {
+              id: 'inner',
+              title: 'Inner',
+              parent: 'outer',
+              layout: { algorithm: 'grid' },
+              placement: { x: 100, y: 100, width: 600, height: 600, locked: true },
+            },
+          ],
+          appearances: [
+            {
+              object: 'inside',
+              group: 'inner',
+              placement: { x: 200, y: 300, height: 100, locked: true },
+            },
+            { object: 'outside', placement: { x: 1300, y: 300, height: 100, locked: true } },
+          ],
+          wires: [
+            {
+              relationship: 'exit',
+              sourceSide: direction.sourceSide,
+              targetSide: direction.targetSide,
+            },
+          ],
+        }),
+      ],
+    }),
+  );
+}
+/** Independent interval oracle checks four border centre lines without calling production obstacle construction. */
+function borderCrosses(label: Box, group: Box): boolean {
+  return [
+    { ...group, height: 0 },
+    { ...group, y: group.y + group.height, height: 0 },
+    { ...group, width: 0 },
+    { ...group, x: group.x + group.width, width: 0 },
+  ].some((border): boolean => overlap(label, border));
+}
+/** Each forged rectangle touches only the outward painted quarter-stroke, preserving exact measured dimensions. */
+function forgedBorderLabels(group: Box, stroke: number, label: Box): readonly Box[] {
+  const x = group.x + (group.width - label.width) / 2;
+  const y = group.y + (group.height - label.height) / 2;
+  return [
+    { ...label, x, y: group.y - label.height - stroke / 4 },
+    { ...label, x, y: group.y + group.height + stroke / 4 },
+    { ...label, x: group.x - label.width - stroke / 4, y },
+    { ...label, x: group.x + group.width + stroke / 4, y },
+  ];
+}
+
+/** Both label corners must sit strictly inside the group for the positive interior-space assertion. */
+function labelInside(label: Box, group: Box): boolean {
+  return (
+    insideBox(label, group) &&
+    insideBox({ x: label.x + label.width, y: label.y + label.height }, group)
+  );
 }

@@ -5,7 +5,7 @@ import type { SupplementalMeasurements } from '../../contract/types.js';
 import type { RoutingContext } from '../../contract/types.js';
 import type { RoutePlan } from './native.js';
 import { plan, manual, routeNative } from './native.js';
-import { obstacles, contentBoxes } from './obstacles.js';
+import { obstacles, labelObstacles } from './obstacles.js';
 import { distinctLane, sameEndpoints } from './lanes.js';
 import { markerBox, validRoute } from './checks.js';
 import { labelBox } from './labels.js';
@@ -261,7 +261,7 @@ export async function routeWires(
   const labelled = await labelAll(
     plans,
     saved,
-    [...contentBoxes(nodes), ...reserved(plans, context)],
+    [...labelObstacles(nodes), ...reserved(plans, context)],
     context,
   );
   return finalPaths(labelled, section, context);

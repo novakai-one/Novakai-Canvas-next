@@ -143,7 +143,7 @@ export function projectNode(
   const role = view.role ?? source.role;
   const size = view.size ?? source.size;
   const shape = nodeShape(source.kind);
-  const initial = appearanceContext(view, role, size, shape, context);
+  const initial = appearanceContext(view, role, size, shape, { ...context, owner: source });
   const visible = visibleBody(source, view.detail);
   const scoped = plannedContext(
     { ...source, content: visible.content },

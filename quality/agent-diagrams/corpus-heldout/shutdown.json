@@ -1,0 +1,9 @@
+{
+  "closedAt": "2026-09-12T11:58:41.978985+00:00",
+  "port": 5180,
+  "workspace": ".local/workspace-corpus-heldout",
+  "signal": "SIGINT",
+  "serverPid": 9962,
+  "portClosed": true,
+  "startedAt": "2026-09-12T11:50:09+00:00"
+}

@@ -1,0 +1,121 @@
+{
+  "base": "5049cae40c932edc98aa9e7d09420a6ea277b5e8",
+  "note": "Public Language lower plus Model validate. SVG metadata hashes actual bytes; no asset admission or rendered visual acceptance is implied.",
+  "results": [
+    {
+      "example": "er-habitat-survey",
+      "sourceSha256": "0fdc85213f2551c997a75b8f6d6539a8c8b1c2e84f396bbe75367219bf3e0433",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 5,
+      "wires": 5,
+      "assets": {},
+      "print": true
+    },
+    {
+      "example": "modules-payroll-policy",
+      "sourceSha256": "d05d42c6498b3a5c579be5ba1b5cd6f43f9fde022fd0b1c0984b491fd59ecb0b",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 7,
+      "wires": 9,
+      "assets": {},
+      "print": true
+    },
+    {
+      "example": "flow-emergency-dispatch",
+      "sourceSha256": "581d40b840ee68850719a52f2a58e741a4818e52a1b4299a1eb80a03bfb7f92b",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 10,
+      "wires": 10,
+      "assets": {},
+      "print": true
+    },
+    {
+      "example": "sequence-incident-notification",
+      "sourceSha256": "e1cb2192157d006f8364ae7778ca551fa3c14b3e9d2619e77aa8d5d09e9cbcb6",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 5,
+      "wires": 0,
+      "assets": {},
+      "print": true
+    },
+    {
+      "example": "state-membership-reinstatement",
+      "sourceSha256": "2df618860bc17a7936aec45ea426dbd93f769a62e03a2e6c8bb43bd01bf4cd46",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 7,
+      "wires": 10,
+      "assets": {},
+      "print": true
+    },
+    {
+      "example": "tree-incident-causes",
+      "sourceSha256": "175c9ee51e2d4fbcd99300f400b7fee0306e39d7f3a0348f6564aeeb7ae394de",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 11,
+      "wires": 10,
+      "assets": {},
+      "print": true
+    },
+    {
+      "example": "story-water-treatment",
+      "sourceSha256": "00457d97bd90b442a6f1156b2c69f82e74687b40b26a2871702638f9ddf7ff67",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": true,
+      "model": true,
+      "nodes": 8,
+      "wires": 0,
+      "assets": {
+        "water": {
+          "id": "water",
+          "digest": "sha256:2d097a777ce681ba9b33dd262db05e5d034366f38248ef01d91c033a8ffdebb5",
+          "mediaType": "image/svg+xml",
+          "alt": "Water drop: water moving through treatment"
+        },
+        "evidence": {
+          "id": "evidence",
+          "digest": "sha256:818b66016f00a0f635c61481b60962e24eb39e85d3bdeab5322265efe3e766cb",
+          "mediaType": "image/svg+xml",
+          "alt": "Inspection document: sample and check"
+        },
+        "shield": {
+          "id": "shield",
+          "digest": "sha256:71b2b9456da8b8f2c6bc2f3fa27abfefdfb9f0608fb2aabf85d3f82f4e536b11",
+          "mediaType": "image/svg+xml",
+          "alt": "Shield: a protective treatment barrier"
+        }
+      },
+      "print": true
+    },
+    {
+      "example": "grid-research-methods",
+      "sourceSha256": "a4078793ae3ec0a1659e9471584730d2622421c94ab67b4e96d47fcc6b27944b",
+      "parse": true,
+      "lower": true,
+      "assetMetadataOnly": false,
+      "model": true,
+      "nodes": 7,
+      "wires": 0,
+      "assets": {},
+      "print": true
+    }
+  ]
+}

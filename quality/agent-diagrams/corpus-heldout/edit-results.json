@@ -1,0 +1,122 @@
+[
+  {
+    "example": "er-habitat-survey",
+    "command": [
+      "pnpm",
+      "canvas",
+      "patch",
+      "quality/agent-diagrams/corpus-heldout/er-habitat-survey-edit.patch",
+      "--revision",
+      "0",
+      "--server",
+      "http://127.0.0.1:5180",
+      "--workspace",
+      ".local/workspace-corpus-heldout",
+      "--request",
+      "heldout-edit-er-habitat-survey"
+    ],
+    "exit": 0,
+    "stdout": "committed: heldout-edit-er-habitat-survey\nWorkspace sequence: 8\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/er-habitat-survey-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-er-habitat-survey\n(node:11059) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "example": "flow-emergency-dispatch",
+    "command": [
+      "pnpm",
+      "canvas",
+      "patch",
+      "quality/agent-diagrams/corpus-heldout/flow-emergency-dispatch-edit.patch",
+      "--revision",
+      "0",
+      "--server",
+      "http://127.0.0.1:5180",
+      "--workspace",
+      ".local/workspace-corpus-heldout",
+      "--request",
+      "heldout-edit-flow-emergency-dispatch"
+    ],
+    "exit": 0,
+    "stdout": "committed: heldout-edit-flow-emergency-dispatch\nWorkspace sequence: 9\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/flow-emergency-dispatch-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-flow-emergency-dispatch\n(node:11107) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "example": "state-membership-reinstatement",
+    "command": [
+      "pnpm",
+      "canvas",
+      "patch",
+      "quality/agent-diagrams/corpus-heldout/state-membership-reinstatement-edit.patch",
+      "--revision",
+      "0",
+      "--server",
+      "http://127.0.0.1:5180",
+      "--workspace",
+      ".local/workspace-corpus-heldout",
+      "--request",
+      "heldout-edit-state-membership-reinstatement"
+    ],
+    "exit": 0,
+    "stdout": "committed: heldout-edit-state-membership-reinstatement\nWorkspace sequence: 10\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/state-membership-reinstatement-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-state-membership-reinstatement\n(node:11160) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "example": "tree-incident-causes",
+    "command": [
+      "pnpm",
+      "canvas",
+      "patch",
+      "quality/agent-diagrams/corpus-heldout/tree-incident-causes-edit.patch",
+      "--revision",
+      "0",
+      "--server",
+      "http://127.0.0.1:5180",
+      "--workspace",
+      ".local/workspace-corpus-heldout",
+      "--request",
+      "heldout-edit-tree-incident-causes"
+    ],
+    "exit": 0,
+    "stdout": "committed: heldout-edit-tree-incident-causes\nWorkspace sequence: 11\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/tree-incident-causes-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-tree-incident-causes\n(node:11214) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "example": "grid-research-methods",
+    "command": [
+      "pnpm",
+      "canvas",
+      "patch",
+      "quality/agent-diagrams/corpus-heldout/grid-research-methods-edit.patch",
+      "--revision",
+      "0",
+      "--server",
+      "http://127.0.0.1:5180",
+      "--workspace",
+      ".local/workspace-corpus-heldout",
+      "--request",
+      "heldout-edit-grid-research-methods"
+    ],
+    "exit": 0,
+    "stdout": "committed: heldout-edit-grid-research-methods\nWorkspace sequence: 12\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/grid-research-methods-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-grid-research-methods\n(node:11264) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "example": "sequence-incident-notification",
+    "command": [
+      "pnpm",
+      "canvas",
+      "patch",
+      "quality/agent-diagrams/corpus-heldout/sequence-incident-notification-edit.patch",
+      "--revision",
+      "0",
+      "--server",
+      "http://127.0.0.1:5180",
+      "--workspace",
+      ".local/workspace-corpus-heldout",
+      "--request",
+      "heldout-edit-sequence-incident-notification"
+    ],
+    "exit": 0,
+    "stdout": "committed: heldout-edit-sequence-incident-notification\nWorkspace sequence: 13\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/sequence-incident-notification-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-sequence-incident-notification\n(node:11313) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  }
+]

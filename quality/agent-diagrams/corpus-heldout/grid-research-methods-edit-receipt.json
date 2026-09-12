@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "generation": "5fd9889044cdb75b8ded6149183cc85d",
+  "outcome": {
+    "ok": true,
+    "value": {
+      "request": "heldout-edit-grid-research-methods",
+      "fingerprint": "64c00571e017e4ab5898664ae4ca6a6dc5bb32ffb675af640a511122fb2756c6",
+      "sequence": 12,
+      "versions": [
+        {
+          "key": {
+            "kind": "collection",
+            "id": "grid-research-methods"
+          },
+          "version": 1
+        },
+        {
+          "key": {
+            "kind": "history",
+            "id": "tx:heldout-edit-grid-research-methods"
+          },
+          "version": 0
+        },
+        {
+          "key": {
+            "kind": "history",
+            "id": "head:heldout-edit-grid-research-methods"
+          },
+          "version": 0
+        }
+      ],
+      "outcome": {
+        "status": "committed",
+        "transaction": "heldout-edit-grid-research-methods",
+        "pins": {
+          "resources": {
+            "themes": {
+              "paper@1.0.0#sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9": {
+                "id": "paper",
+                "version": "1.0.0",
+                "digest": "sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              },
+              "ink@1.0.0#sha256:d3625931a3a5dca6ddc8e6bdfb2863645931e4b89e25416bb45783654cf12883": {
+                "id": "ink",
+                "version": "1.0.0",
+                "digest": "sha256:d3625931a3a5dca6ddc8e6bdfb2863645931e4b89e25416bb45783654cf12883",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              },
+              "paper": {
+                "id": "paper",
+                "version": "1.0.0",
+                "digest": "sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              },
+              "ink": {
+                "id": "ink",
+                "version": "1.0.0",
+                "digest": "sha256:d3625931a3a5dca6ddc8e6bdfb2863645931e4b89e25416bb45783654cf12883",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              }
+            },
+            "assets": {}
+          }
+        },
+        "diff": {
+          "semantic": {
+            "collection": "grid-research-methods"
+          },
+          "geometry": [
+            {
+              "collection": "grid-research-methods",
+              "adjustments": []
+            }
+          ]
+        },
+        "warnings": []
+      }
+    }
+  }
+}

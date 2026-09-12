@@ -1,0 +1,5 @@
+committed: heldout-edit-sequence-incident-notification
+Workspace sequence: 13
+$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/sequence-incident-notification-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-sequence-incident-notification
+(node:11313) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

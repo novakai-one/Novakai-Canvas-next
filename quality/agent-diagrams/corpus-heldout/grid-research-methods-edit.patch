@@ -1,0 +1,3 @@
+patch 1 @grid-research-methods {
+ add block @triangulate { list @checks ["Seek contradictory cases", "Record unresolved disagreements"] }
+}

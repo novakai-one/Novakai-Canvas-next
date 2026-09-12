@@ -1,0 +1,3 @@
+patch 1 @er-habitat-survey {
+ add block @observation { field @method "method" type="ObservationMethod" }
+}

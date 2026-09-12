@@ -1,4 +1,5 @@
 /** ESLint owns configuration failure reporting and rerun recovery. */
+import { readdirSync } from 'node:fs';
 import tseslint from 'typescript-eslint';
 import sonarjs from 'eslint-plugin-sonarjs';
 
@@ -11,21 +12,25 @@ const coreForbidden = [
   '**/apps/**',
   '@novakai/*',
 ];
-/** Import syntax remains visible to ESLint even when TypeScript erases a type-only dependency. */
-const designSystemEntry = {
-  regex: '(?:^|/)design-system/contract/(?!index\\.(?:js|ts)$)',
-  message: 'Import Design System through contract/index.js; declaration files are private.',
+/** Capability directories define the boundary vocabulary; new capabilities require no rule edit. */
+const capabilityNames = readdirSync(new URL('./capability/', import.meta.url), {
+  withFileTypes: true,
+})
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => RegExp.escape(entry.name))
+  .join('|');
+/** Named capability segments cover full paths and sibling-relative paths; own ../contract imports stay local. */
+const capabilityEntry = {
+  regex: `(?:^|/)(?:${capabilityNames})/contract/(?!index\\.(?:js|ts)$)`,
+  message: 'Import capabilities through contract/index.js; declaration files are private.',
 };
 /** Empty path restrictions let composition wire adapters while retaining the foreign contract boundary. */
 function pathRestrictions(group) {
   if (group.length === 0) return [];
   return [{ group, message: 'Use the permitted capability contract; see import matrix.' }];
 }
-/** Every layer retains the Design System public-entry restriction, including composition roots. */
-const restrict = (group) => [
-  'error',
-  { patterns: [...pathRestrictions(group), designSystemEntry] },
-];
+/** Every layer retains the capability public-entry restriction, including composition roots. */
+const restrict = (group) => ['error', { patterns: [...pathRestrictions(group), capabilityEntry] }];
 
 export default tseslint.config(
   { ignores: ['node_modules/**', '**/node_modules/**', '**/dist/**', '**/.generated/**'] },

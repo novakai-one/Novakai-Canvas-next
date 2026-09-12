@@ -1,5 +1,11 @@
-import type { Appearance, DiagramObject, Group, Section } from '../../contract/records/input.js';
-import type { Paint } from '../../contract/records/style.js';
+import type {
+  Appearance,
+  ContentBlock,
+  DiagramObject,
+  Group,
+  Section,
+} from '../../contract/records/input.js';
+import type { DiagramTypography, Paint } from '../../contract/records/style.js';
 import type { MeasuredContent, VisualNode, Anchor } from '../../contract/records/visual.js';
 import { sceneId } from '../../contract/brands.js';
 import { visualNode } from '../../contract/records/visual.js';
@@ -7,6 +13,7 @@ import { measureBlock } from '../content/blocks.js';
 import type { ContentContext } from '../content/blocks.js';
 import { measureText, offset, stack } from '../content/text.js';
 import { nodeShape } from '../notation/nodes.js';
+import { planContent } from '../content/sizing.js';
 import { fieldColumns } from '../content/fields.js';
 import { parse, reject } from '../validation/outcomes.js';
 /** Scene identities are section-scoped and distinguish an object appearance from a container. */
@@ -14,14 +21,16 @@ export function identity(section: string, kind: 'object' | 'group', id: string):
   return parse(sceneId, `${section}:${kind}:${id}`);
 }
 /** Labels share the same pinned typography as body content. */
-export function labelContent(text: string, context: ContentContext): MeasuredContent {
+export function labelContent(
+  text: string,
+  context: ContentContext,
+  role: keyof DiagramTypography = 'body',
+): MeasuredContent {
   return measureText(
     {
       text,
       width: context.width,
-      font: context.style.bodyFont,
-      size: context.style.fontSize,
-      lineHeight: context.style.lineHeight,
+      ...context.style.typography[role],
       fill: context.style.text,
     },
     context.metrics,
@@ -99,12 +108,17 @@ function parent(section: string, id: string | undefined): VisualNode['parent'] {
   if (id === undefined) return null;
   return identity(section, 'group', id);
 }
+interface NodeFrame {
+  readonly content: MeasuredContent;
+  readonly width: number;
+  readonly height: number;
+}
 /** Measured minimum grows for wide glyphs/tables and leaves diamond content in its inscribed rectangle. */
 function frame(
   content: MeasuredContent,
   shape: VisualNode['shape'],
   context: ContentContext,
-): { readonly content: MeasuredContent; readonly width: number; readonly height: number } {
+): NodeFrame {
   const scale = shape === 'diamond' ? 2 : 1;
   const width = (Math.max(context.width, content.width) + context.style.padding * 2) * scale;
   const height = (content.height + context.style.padding * 2) * scale;
@@ -118,7 +132,7 @@ function frame(
     height,
   };
 }
-/** Project one appearance using view overrides; global coordinates are passed through for Layout. */
+/** Project one appearance without committing; public project reports failure and Authoring retains the prior scene. */
 export function projectNode(
   view: Appearance,
   section: Section,
@@ -128,8 +142,15 @@ export function projectNode(
   const role = view.role ?? source.role;
   const size = view.size ?? source.size;
   const shape = nodeShape(source.kind);
-  const scoped = appearanceContext(view, role, size, shape, context);
-  const heading = labelContent(source.label, scoped);
+  const initial = appearanceContext(view, role, size, shape, context);
+  const plan = planContent(
+    { ...source, content: visibleBlocks(source.content, view.detail) },
+    initial,
+    context.style.contentSizing.widths[size],
+    view.placement?.width !== undefined,
+  );
+  const scoped = { ...initial, width: plan.width };
+  const heading = labelContent(source.label, scoped, 'nodeHeading');
   const measured = stack(
     [heading, detail(body(source, scoped), view.detail)],
     headingGap(shape, context),
@@ -162,11 +183,18 @@ function headingGap(shape: VisualNode['shape'], context: ContentContext): number
     return context.style.padding + context.style.gap;
   return context.style.gap;
 }
-/** A represented group owns the canonical object's measured content; an ordinary group has a title only. */
+/** Reserve represented content or an ordinary title; public project owns rejection and Authoring retains the prior scene. */
 export function projectGroup(group: Group, section: Section, context: ContentContext): VisualNode {
   if (group.represents !== undefined) return represented(group, section, context);
-  const scoped = scopedContext(group.placement, 'neutral', 'medium', 'container', context);
-  const heading = labelContent(group.title, scoped);
+  const initial = scopedContext(group.placement, 'neutral', 'medium', 'container', context);
+  const plan = planContent(
+    { label: group.title, content: [] },
+    initial,
+    context.style.contentSizing.widths.medium,
+    group.placement?.width !== undefined,
+  );
+  const scoped = { ...initial, width: plan.width };
+  const heading = labelContent(group.title, scoped, 'nodeHeading');
   return parse(visualNode, {
     id: identity(section.id, 'group', group.id),
     objectId: null,
@@ -198,6 +226,7 @@ function represented(group: Group, section: Section, context: ContentContext): V
     id: identity(section.id, 'group', group.id),
     groupId: group.id,
     shape: 'container',
+    headerHeight: node.height,
     parent: parent(section.id, group.parent),
     placement: group.placement ?? null,
   };
@@ -230,7 +259,12 @@ function scopedContext(
   const paint = rolePaint(role, context);
   return {
     ...context,
-    width: contentWidth(placement, context.style.widths[size], shape, context.style.padding),
+    width: contentWidth(
+      placement,
+      context.style.contentSizing.widths[size].preferred,
+      shape,
+      context.style.padding,
+    ),
     style: { ...context.style, text: paint.text, border: paint.stroke },
   };
 }
@@ -255,4 +289,13 @@ function placedView(object: Appearance['object'], placement: Appearance['placeme
   const view: Appearance = { object, detail: 'full' };
   if (placement === undefined) return view;
   return { ...view, placement };
+}
+
+/** Compact detail preserves its prior visible-width policy while full canonical content remains in the outline. */
+function visibleBlocks(
+  blocks: readonly ContentBlock[],
+  mode: Appearance['detail'],
+): readonly ContentBlock[] {
+  if (mode === 'full') return blocks;
+  return mode === 'summary' ? blocks.slice(0, 1) : [];
 }

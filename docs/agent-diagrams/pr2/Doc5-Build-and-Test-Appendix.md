@@ -1,0 +1,7 @@
+# Build and verification
+1. Freeze these counts; one scoped plan pressure test later under orchestration rules. This planning task performs no code audit.
+2. Implement Design System contract/derivations/generated artifacts, then Presentation schema/sizing/formatters, service constructor migration and shared renderer clipping. Migrate every style fixture in the same change.
+3. Test budget: **zero new test definitions**. Extend existing Design System theme case7 and Presentation cases3/4/6/7: exact projected absolute hierarchy/sizing; dense ER and long heading width; multiline signature/table/module alignment with no punctuation-only run; image/icon slot/clip/alt; visible sequence operator and annotation metrics. No E2E.
+4. Run generated-artifact verification, typecheck, lint, format, restricted imports and relevant Design System/Presentation/Layout/Export/service suites. Later visible acceptance uses dense ER/module and long-label sequence DSL; no reference-image template.
+5. Every changed first-party source file requires literal 16-row rubric evidence **>144/160**, Sonar cognitive complexity **≤2 per function**, responsibility/recovery TSDoc and explicit named return types. No pre-awarded score or sampled certification.
+6. PR3 may begin only after `StyleProjection`/`ResolvedStyle`, `DiagramTypography` and `ContentSizing` names/fields pass contract tests. Record remaining browser acceptance honestly; do not push or merge automatically.

@@ -14,15 +14,20 @@ export function fieldKey(key: Field['key']): string {
 function typeLabel(field: Field): string {
   return field.nullable ? `${field.type}?` : field.type;
 }
-/** Actual pinned glyph metrics determine column minimums; long identifiers wrap at the token-defined large width. */
+/** Actual pinned glyph metrics determine column minimums; atomic identifiers retain their full width. */
 function column(values: readonly string[], context: ContentContext): number {
   const widths = values.map(
     (text) =>
-      requireValue(context.metrics.measure(text, context.style.monoFont, context.style.fontSize))
-        .width,
+      requireValue(
+        context.metrics.measure(
+          text,
+          context.style.typography.mono.font,
+          context.style.typography.mono.size,
+        ),
+      ).width,
   );
   return (
-    Math.ceil(Math.min(context.style.widths.large, Math.max(context.style.fontSize, ...widths))) +
+    Math.ceil(Math.max(context.style.typography.mono.size, ...widths)) +
     context.style.stroke +
     context.style.gap * 2
   );
@@ -48,9 +53,7 @@ function cell(text: string, width: number, x: number, context: ContentContext): 
     {
       text,
       width: width - context.style.gap * 2,
-      font: context.style.monoFont,
-      size: context.style.fontSize,
-      lineHeight: context.style.lineHeight,
+      ...context.style.typography.mono,
       fill: context.style.text,
     },
     context.metrics,
@@ -65,7 +68,9 @@ export function measureField(field: Field, context: ContentContext): MeasuredCon
     cell(`${field.label}:`, columns.name, columns.key, context),
     cell(typeLabel(field), columns.type, columns.key + columns.name, context),
   ];
-  const height = Math.max(...values.map((value) => value.height)) + context.style.gap * 2;
+  const height =
+    Math.max(context.style.contentSizing.rowMinimum, ...values.map((value) => value.height)) +
+    context.style.gap * 2;
   const width = columns.key + columns.name + columns.type;
   const nullability = field.nullable ? 'nullable' : 'required';
   const label = `${fieldKey(field.key)} ${field.label}: ${field.type} · ${nullability}`.trim();

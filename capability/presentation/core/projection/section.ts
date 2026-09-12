@@ -7,7 +7,7 @@ import type {
 } from '../../contract/records/visual.js';
 import type { ContentContext } from '../content/blocks.js';
 import { identity, labelContent, projectNode, projectGroup } from './node.js';
-import { wireNotation, wireLabel, sequenceMarker } from '../notation/wires.js';
+import { wireNotation, wireLabel, sequenceMarker, sequenceLabel } from '../notation/wires.js';
 import { reject } from '../validation/outcomes.js';
 /** Canonical endpoints resolve through the visible representation, including represented groups. */
 function endpoint(value: Endpoint, nodes: readonly VisualNode[]): VisualEndpoint {
@@ -38,7 +38,7 @@ function wire(
     kind: source.kind,
     source: endpoint(source.source, nodes),
     target: endpoint(source.target, nodes),
-    label: labelContent(wireLabel(source), context),
+    label: labelContent(wireLabel(source), context, 'annotation'),
     sourceMarker: notation.source,
     targetMarker: notation.target,
     style: notation.style,
@@ -53,7 +53,7 @@ export function projectSection(section: Section, context: ContentContext): Visua
   ];
   return {
     id: section.id,
-    title: labelContent(section.title, context),
+    title: labelContent(section.title, context, 'sectionHeading'),
     mode: section.mode,
     order: section.order,
     layout: section.layout,
@@ -62,7 +62,7 @@ export function projectSection(section: Section, context: ContentContext): Visua
     wires: section.wires.map((item) => wire(item, section, nodes, context)),
     sequence: section.sequence.map((item) => ({
       item,
-      label: labelContent(item.label, context),
+      label: labelContent(sequenceLabel(item), context, 'annotation'),
       marker: sequenceMarker(item),
     })),
     groups: section.groups,

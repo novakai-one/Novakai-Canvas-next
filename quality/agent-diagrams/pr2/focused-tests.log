@@ -1,0 +1,16 @@
+
+ RUN  v5.0.0 /Users/christopherdasca/Programming/Novakai-Canvas-next-typography
+
+(node:94870) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:94872) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  17 passed (17)
+      Tests  50 passed (50)
+   Start at  21:08:10
+   Duration  2.63s (tests 44%, transform 30%, import 20%, environment 5%)
+
+  Transform  transforming modules took 5.20s · 30% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns

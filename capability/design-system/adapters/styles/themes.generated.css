@@ -107,6 +107,10 @@
   --nv-role-warning-fill: #ffffff;
   --nv-role-warning-stroke: #805200;
   --nv-role-warning-text: #17212b;
+  --nv-diagram-width-extra-large: 437.5px;
+  --nv-diagram-icon-small: 24px;
+  --nv-diagram-icon-medium: 32px;
+  --nv-diagram-icon-large: 48px;
   --nv-control-height: 36px;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"] {
@@ -216,6 +220,10 @@
   --nv-role-warning-fill: #22262c;
   --nv-role-warning-stroke: #f0c66d;
   --nv-role-warning-text: #f1f3f5;
+  --nv-diagram-width-extra-large: 437.5px;
+  --nv-diagram-icon-small: 24px;
+  --nv-diagram-icon-medium: 32px;
+  --nv-diagram-icon-large: 48px;
   --nv-control-height: 36px;
 }
 }

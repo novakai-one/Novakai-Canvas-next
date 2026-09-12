@@ -79,6 +79,45 @@ describe('Design System themes', () => {
     const checked = must(diagram('diagram', payload));
     const style = must(system.projectDiagram(checked));
     expect(resolvedStyle.safeParse(style).success).toBe(true);
+    expect(style.typography.sectionHeading.size).toBeCloseTo(27.428576, 6);
+    expect(style.typography.nodeHeading.size).toBeCloseTo(22.857136, 6);
+    expect(style.typography.body.size).toBe(16);
+    expect(style.typography.mono.size).toBe(16);
+    expect(style.typography.annotation.size).toBeCloseTo(13.714288, 6);
+    expect(style.typography.sectionHeading.lineHeight).toBeCloseTo(41.142864, 6);
+    expect(style.typography.nodeHeading.lineHeight).toBeCloseTo(34.285704, 6);
+    expect(style.typography.body.lineHeight).toBe(24);
+    expect(style.typography.mono.font).toEqual(style.monoFont);
+    expect(style.typography.sectionHeading.font).toEqual(style.bodyFont);
+    expect(style.contentSizing).toEqual({
+      widths: {
+        small: { preferred: 180, maximum: 240 },
+        medium: { preferred: 240, maximum: 320 },
+        large: { preferred: 320, maximum: 500 },
+      },
+      rowMinimum: 32,
+      iconBox: { small: 24, medium: 32, large: 48 },
+    });
+    expect(resolvedStyle.safeParse({ ...style, fontSize: 14 }).success).toBe(false);
+    expect(
+      resolvedStyle.safeParse({
+        ...style,
+        typography: {
+          ...style.typography,
+          nodeHeading: { ...style.typography.nodeHeading, font: style.monoFont },
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      resolvedStyle.safeParse({
+        ...style,
+        contentSizing: {
+          ...style.contentSizing,
+          widths: { ...style.contentSizing.widths, small: { preferred: 200, maximum: 100 } },
+        },
+      }).success,
+    ).toBe(false);
+
     expect(style.roles.neutral).toEqual({ fill: '#ffffff', stroke: '#526170', text: '#17212b' });
     expect(style.roles.primary).toEqual({ fill: '#355ccd', stroke: '#355ccd', text: '#ffffff' });
     const templates = composeTemplates({

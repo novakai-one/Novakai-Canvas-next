@@ -30,6 +30,10 @@ export {
   visualAsset,
 } from './records/style.js';
 export type {
+  TextMetric,
+  DiagramTypography,
+  SizeBand,
+  ContentSizing,
   ResolvedStyle,
   FontSet,
   FontSource,

@@ -70,11 +70,9 @@ function create(
   );
   const projected = accepted(owners.system.projectDiagram(tokens));
   // Presentation's digest denotes the selected immutable preset; all resolved style values still enter its full derivation key.
-  // Design System supplies a line-height ratio; Presentation measures absolute line boxes in diagram units.
   const style = resolvedStyle.parse({
     ...projected,
     digest: preset.digest,
-    lineHeight: projected.fontSize * projected.lineHeight,
   });
   return {
     id,
@@ -91,7 +89,7 @@ function create(
       padding: style.padding * 2,
       routeClearance: style.padding,
       labelGap: style.gap,
-      sequenceGap: style.lineHeight * 2,
+      sequenceGap: style.typography.body.lineHeight * 2,
       activationWidth: style.padding,
       gridColumns: 4,
       maxBranches: 4096,

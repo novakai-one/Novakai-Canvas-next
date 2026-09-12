@@ -24,18 +24,27 @@ function text(item: Extract<Primitive, { kind: 'text' }>, key: number): ReactEle
 function media(item: Extract<Primitive, { kind: 'media' }>, key: number): ReactElement {
   const fit = { contain: 'xMidYMid meet', cover: 'xMidYMid slice' };
   return (
-    <image
+    <svg
       key={key}
-      pointerEvents="none"
       x={item.x}
       y={item.y}
       width={item.width}
       height={item.height}
-      href={item.dataUri}
-      preserveAspectRatio={fit[item.fit]}
+      overflow="hidden"
+      aria-label={item.alt}
     >
-      <title>{item.alt}</title>
-    </image>
+      <image
+        pointerEvents="none"
+        x={0}
+        y={0}
+        width={item.width}
+        height={item.height}
+        href={item.dataUri}
+        preserveAspectRatio={fit[item.fit]}
+      >
+        <title>{item.alt}</title>
+      </image>
+    </svg>
   );
 }
 /** Rule geometry is already measured; the renderer never recalculates table rows. */

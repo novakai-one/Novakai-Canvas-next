@@ -16,7 +16,7 @@ function branchHeadings(
     section: section.id,
     fragment: item.id,
     branch: branch.id,
-    content: labelContent(branch.label, context),
+    content: labelContent(branch.label, context, 'annotation'),
   }));
 }
 /** Measure the remaining routing/sequence vocabulary; caller restores missing pinned resources on failure. */
@@ -32,7 +32,7 @@ export function supplement(input: unknown, deps: Dependencies): SupplementalMeas
   const context = {
     collection,
     style,
-    width: style.widths.medium,
+    width: style.contentSizing.widths.medium.preferred,
     metrics: deps.measurement,
     assets: deps.assets,
   };

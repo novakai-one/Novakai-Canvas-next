@@ -1,0 +1,468 @@
+[
+  {
+    "file": "apps/service/adapters/render-jobs.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 15,
+        "complexity": 1
+      },
+      {
+        "line": 45,
+        "complexity": 1
+      },
+      {
+        "line": 100,
+        "complexity": 1
+      },
+      {
+        "line": 108,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/contract/generated/token-names.ts",
+    "maximum": 0,
+    "nonzeroFunctions": []
+  },
+  {
+    "file": "capability/design-system/contract/records/theme.ts",
+    "maximum": 0,
+    "nonzeroFunctions": []
+  },
+  {
+    "file": "capability/design-system/contract/types.ts",
+    "maximum": 0,
+    "nonzeroFunctions": []
+  },
+  {
+    "file": "capability/design-system/core/themes/diagram.ts",
+    "maximum": 2,
+    "nonzeroFunctions": [
+      {
+        "line": 27,
+        "complexity": 2
+      },
+      {
+        "line": 88,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/design-system/tests/themes.test.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 24,
+        "complexity": 1
+      },
+      {
+        "line": 34,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/export/tests/fixtures.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 161,
+        "complexity": 1
+      },
+      {
+        "line": 166,
+        "complexity": 1
+      },
+      {
+        "line": 174,
+        "complexity": 1
+      },
+      {
+        "line": 181,
+        "complexity": 1
+      },
+      {
+        "line": 258,
+        "complexity": 1
+      },
+      {
+        "line": 323,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/layout/tests/fixtures.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 176,
+        "complexity": 1
+      },
+      {
+        "line": 200,
+        "complexity": 1
+      },
+      {
+        "line": 205,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/adapters/react/ContentBlocks.tsx",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 66,
+        "complexity": 1
+      },
+      {
+        "line": 71,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/contract/index.ts",
+    "maximum": 0,
+    "nonzeroFunctions": []
+  },
+  {
+    "file": "capability/presentation/contract/records/style.ts",
+    "maximum": 2,
+    "nonzeroFunctions": [
+      {
+        "line": 81,
+        "complexity": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/content/blocks.ts",
+    "maximum": 2,
+    "nonzeroFunctions": [
+      {
+        "line": 14,
+        "complexity": 1
+      },
+      {
+        "line": 28,
+        "complexity": 1
+      },
+      {
+        "line": 32,
+        "complexity": 1
+      },
+      {
+        "line": 36,
+        "complexity": 1
+      },
+      {
+        "line": 40,
+        "complexity": 1
+      },
+      {
+        "line": 45,
+        "complexity": 1
+      },
+      {
+        "line": 51,
+        "complexity": 1
+      },
+      {
+        "line": 55,
+        "complexity": 1
+      },
+      {
+        "line": 59,
+        "complexity": 1
+      },
+      {
+        "line": 63,
+        "complexity": 1
+      },
+      {
+        "line": 67,
+        "complexity": 1
+      },
+      {
+        "line": 77,
+        "complexity": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/content/fields.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 9,
+        "complexity": 1
+      },
+      {
+        "line": 14,
+        "complexity": 1
+      },
+      {
+        "line": 64,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/content/media.ts",
+    "maximum": 2,
+    "nonzeroFunctions": [
+      {
+        "line": 8,
+        "complexity": 2
+      },
+      {
+        "line": 24,
+        "complexity": 1
+      },
+      {
+        "line": 59,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/content/signature.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 18,
+        "complexity": 1
+      },
+      {
+        "line": 25,
+        "complexity": 1
+      },
+      {
+        "line": 30,
+        "complexity": 1
+      },
+      {
+        "line": 35,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/content/sizing.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 26,
+        "complexity": 1
+      },
+      {
+        "line": 36,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/content/table.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 104,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/notation/wires.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 26,
+        "complexity": 1
+      },
+      {
+        "line": 31,
+        "complexity": 1
+      },
+      {
+        "line": 41,
+        "complexity": 1
+      },
+      {
+        "line": 46,
+        "complexity": 1
+      },
+      {
+        "line": 51,
+        "complexity": 1
+      },
+      {
+        "line": 62,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/projection/collection.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 8,
+        "complexity": 1
+      },
+      {
+        "line": 13,
+        "complexity": 1
+      },
+      {
+        "line": 22,
+        "complexity": 1
+      },
+      {
+        "line": 66,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/projection/node.ts",
+    "maximum": 2,
+    "nonzeroFunctions": [
+      {
+        "line": 40,
+        "complexity": 1
+      },
+      {
+        "line": 87,
+        "complexity": 1
+      },
+      {
+        "line": 93,
+        "complexity": 1
+      },
+      {
+        "line": 98,
+        "complexity": 1
+      },
+      {
+        "line": 107,
+        "complexity": 1
+      },
+      {
+        "line": 117,
+        "complexity": 1
+      },
+      {
+        "line": 181,
+        "complexity": 1
+      },
+      {
+        "line": 187,
+        "complexity": 1
+      },
+      {
+        "line": 219,
+        "complexity": 1
+      },
+      {
+        "line": 236,
+        "complexity": 1
+      },
+      {
+        "line": 272,
+        "complexity": 1
+      },
+      {
+        "line": 283,
+        "complexity": 1
+      },
+      {
+        "line": 288,
+        "complexity": 1
+      },
+      {
+        "line": 295,
+        "complexity": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/projection/section.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 13,
+        "complexity": 1
+      },
+      {
+        "line": 20,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/core/projection/supplement.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 9,
+        "complexity": 1
+      },
+      {
+        "line": 23,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/tests/fixtures.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 42,
+        "complexity": 1
+      },
+      {
+        "line": 90,
+        "complexity": 1
+      },
+      {
+        "line": 112,
+        "complexity": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/tests/projection.test.ts",
+    "maximum": 2,
+    "nonzeroFunctions": [
+      {
+        "line": 42,
+        "complexity": 2
+      },
+      {
+        "line": 138,
+        "complexity": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/presentation/tests/rendering.test.ts",
+    "maximum": 1,
+    "nonzeroFunctions": [
+      {
+        "line": 33,
+        "complexity": 1
+      },
+      {
+        "line": 136,
+        "complexity": 1
+      }
+    ]
+  }
+]

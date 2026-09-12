@@ -47,6 +47,39 @@ it('9 shares escaped React markup and pinned fonts across every local shape', as
   expect(markup).not.toContain('<script>');
   expect(markup).toContain(`font-family:canvas-${setup.react.fonts[0]?.digest}`);
   expect(markup).toContain(setup.react.fonts[0]?.base64);
+  const structured = node(
+    value(
+      setup.presentation.project(
+        collection({
+          objects: [
+            object('Typed', 'module', [
+              {
+                kind: 'signature',
+                id: 'run',
+                label: 'run',
+                parameters: ['input: Request'],
+                returns: 'Result',
+              },
+            ]),
+          ],
+          sections: [section('modules', ['Typed'])],
+        }),
+      ),
+    ),
+    'Typed',
+  );
+  const structuredMarkup = value(setup.presentation.renderContent(structured));
+  expect(structuredMarkup).toBe(
+    renderToStaticMarkup(createElement(setup.react.NodeContent, { node: structured })),
+  );
+  for (const pinned of setup.react.fonts) {
+    expect(structuredMarkup).toContain(pinned.base64);
+    expect(structuredMarkup).toContain(`font-family="canvas-${pinned.digest}"`);
+  }
+  const runs = structured.content.primitives.filter((item) => item.kind === 'text');
+  expect(runs[0]).toMatchObject({ size: 20, font: { digest: setup.react.fonts[0]?.digest } });
+  expect(runs[1]).toMatchObject({ size: 16, font: { digest: setup.react.fonts[1]?.digest } });
+
   const kinds: Readonly<Record<string, string>> = {
     step: 'card',
     start: 'pill',

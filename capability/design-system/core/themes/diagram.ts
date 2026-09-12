@@ -1,5 +1,14 @@
 import type { ResolvedTokenSet } from '../../contract/records/resolved.js';
-import type { StyleProjection, Paint, FontPin, PresetPin } from '../../contract/records/theme.js';
+import type {
+  StyleProjection,
+  Paint,
+  FontPin,
+  PresetPin,
+  TextMetric,
+  DiagramTypography,
+  ContentSizing,
+  SizeBand,
+} from '../../contract/records/theme.js';
 import type { SourceSet } from '../../contract/records/source.js';
 import type { Identity } from '../../contract/ports/identity.js';
 import type { TokenValues } from '../../contract/records/tokens.js';
@@ -91,17 +100,12 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     digest: resolved.digest,
     bodyFont: fontReference(requirePinnedFont('font.body', values, resolved.fonts)),
     monoFont: fontReference(requirePinnedFont('font.mono', values, resolved.fonts)),
-    fontSize: number('type.base'),
-    lineHeight: number('lineHeight.body'),
+    typography: typography(resolved),
+    contentSizing: contentSizing(values),
     padding: number('space.3'),
     gap: number('space.2'),
     stroke: number('stroke.base'),
     radius: number('shape.radius'),
-    widths: {
-      small: number('diagram.widthSmall'),
-      medium: number('diagram.widthMedium'),
-      large: number('diagram.widthLarge'),
-    },
     roles: Object.fromEntries(resolved.roles.map((role) => [role, rolePaint(role, values)])),
     surface: color('surface.base'),
     text: color('text.primary'),
@@ -110,7 +114,7 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
   };
 }
 /** Presentation needs exact bytes and family, not the admission-evidence flag. */
-function fontReference(font: FontPin): { readonly family: string; readonly digest: string } {
+function fontReference(font: FontPin): TextMetric['font'] {
   return { family: font.family, digest: font.digest };
 }
 /** The frozen role-token mapping works for built-in and declared additional roles equally. */
@@ -120,5 +124,50 @@ function rolePaint(role: string, values: TokenValues): Paint {
     fill: colorText(member(values, prefix + '.fill'), prefix),
     stroke: colorText(member(values, prefix + '.stroke'), prefix),
     text: colorText(member(values, prefix + '.text'), prefix),
+  };
+}
+
+/** Resolve one absolute text role; resolver boundary translates missing tokens into typed failure. */
+function metric(resolved: ResolvedTokenSet, font: string, sizeToken: string): TextMetric {
+  const size = numeric(member(resolved.values, sizeToken), sizeToken);
+  const ratio = numeric(member(resolved.values, 'lineHeight.body'), 'lineHeight.body');
+  return {
+    font: fontReference(requirePinnedFont(font, resolved.values, resolved.fonts)),
+    size,
+    lineHeight: size * ratio,
+  };
+}
+/** Each semantic role maps to the existing type hierarchy with no new font authority. */
+function typography(resolved: ResolvedTokenSet): DiagramTypography {
+  return {
+    sectionHeading: metric(resolved, 'font.body', 'font.large'),
+    nodeHeading: metric(resolved, 'font.body', 'font.title'),
+    body: metric(resolved, 'font.body', 'type.base'),
+    mono: metric(resolved, 'font.mono', 'type.base'),
+    annotation: metric(resolved, 'font.body', 'font.caption'),
+  };
+}
+/** Width bands describe interior content; token validation owns finite positive values. */
+function band(values: TokenValues, preferred: string, maximum: string): SizeBand {
+  return {
+    preferred: numeric(member(values, preferred), preferred),
+    maximum: numeric(member(values, maximum), maximum),
+  };
+}
+/** Shared content policies are derived from semantic tokens for all renderers. */
+function contentSizing(values: TokenValues): ContentSizing {
+  const number = (id: string): number => numeric(member(values, id), id);
+  return {
+    widths: {
+      small: band(values, 'diagram.widthSmall', 'diagram.widthMedium'),
+      medium: band(values, 'diagram.widthMedium', 'diagram.widthLarge'),
+      large: band(values, 'diagram.widthLarge', 'diagram.widthExtraLarge'),
+    },
+    rowMinimum: number('diagram.rowMin'),
+    iconBox: {
+      small: number('diagram.iconSmall'),
+      medium: number('diagram.iconMedium'),
+      large: number('diagram.iconLarge'),
+    },
   };
 }

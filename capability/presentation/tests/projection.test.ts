@@ -83,6 +83,57 @@ describe('Presentation measured content', () => {
     expect(customer.content.outline.join(' ')).toContain('nullable');
     expect(customer.content.anchors.map((anchor) => anchor.member)).toEqual(['id', 'email']);
     expect(customer.content.anchors[0]?.y).toBeLessThan(customer.content.anchors[1]?.y ?? 0);
+    expect(rows[0]?.size).toBe(20);
+    expect(primary.size).toBe(16);
+    const [firstAnchor, secondAnchor] = customer.content.anchors;
+    assert(firstAnchor && secondAnchor);
+    expect(secondAnchor.y - firstAnchor.y).toBe(56);
+    const dense = collection({
+      objects: [
+        object('Ledger', 'entity', [
+          {
+            kind: 'field',
+            id: 'key',
+            label: 'external_customer_identifier',
+            type: 'UUID',
+            key: 'primary',
+          },
+          {
+            kind: 'field',
+            id: 'owner',
+            label: 'owner',
+            type: 'NullableExternalAccountReference',
+            nullable: true,
+          },
+        ]),
+      ],
+      sections: [
+        section('er', [], {
+          appearances: [{ object: 'Ledger', placement: { x: 0, y: 0, width: 120 } }],
+        }),
+      ],
+    });
+    const expanded = node(value((await fixture()).presentation.project(dense)), 'Ledger');
+    const denseRuns = expanded.content.primitives.filter((item) => item.kind === 'text');
+    expect(denseRuns.map((run) => run.text)).toContain('external_customer_identifier:');
+    expect(denseRuns.map((run) => run.text)).toContain('NullableExternalAccountReference?');
+    expect(expanded.width).toBeGreaterThan(600);
+    expect(denseRuns.find((run) => run.text === 'UUID')?.x).toBe(
+      denseRuns.find((run) => run.text === 'NullableExternalAccountReference?')?.x,
+    );
+    const heading = node(
+      value(
+        (await fixture()).presentation.project(
+          collection({
+            objects: [object('Heading', 'concept', [], { label: 'Customer lifecycle records' })],
+            sections: [section('grid', ['Heading'])],
+          }),
+        ),
+      ),
+      'Heading',
+    );
+    expect(heading.width).toBeGreaterThan(264);
+    expect(heading.width).toBeLessThanOrEqual(344);
   });
   it('4 preserves typed ports, members, callable signatures and table row anchors', async () => {
     const source = collection({
@@ -121,7 +172,76 @@ describe('Presentation measured content', () => {
       'input',
     ]);
     expect(service.width).toBeGreaterThan(360);
+    expect(service.headerHeight).toBe(54);
     expect(service.content.anchors.find((item) => item.member === 'input')?.direction).toBe('in');
+    const callable = collection({
+      objects: [
+        object('Callable', 'function', [
+          {
+            kind: 'signature',
+            id: 'dispatch',
+            label: 'dispatch',
+            parameters: ['request: Request', 'context: Context', 'options: Options'],
+            returns: 'Outcome',
+          },
+        ]),
+      ],
+      sections: [
+        section('modules', [], {
+          appearances: [{ object: 'Callable', placement: { x: 0, y: 0, width: 160 } }],
+        }),
+      ],
+    });
+    const wrapped = node(value((await fixture()).presentation.project(callable)), 'Callable');
+    const signatureRuns = wrapped.content.primitives
+      .filter((item) => item.kind === 'text')
+      .slice(1);
+    expect(signatureRuns.map((run) => run.text)).toEqual([
+      'dispatch(request: Request,',
+      'context: Context,',
+      'options: Options): Outcome',
+    ]);
+    const [opening, middle, closing] = signatureRuns;
+    assert(opening && middle && closing);
+    expect(middle.y - opening.y).toBe(24);
+    expect(closing.y - middle.y).toBe(24);
+    expect(wrapped.content.anchors[0]?.label).toBe(
+      'dispatch(request: Request, context: Context, options: Options): Outcome',
+    );
+    expect(wrapped.width).toBeGreaterThan(160);
+    const matrix = collection({
+      objects: [
+        object('Matrix', 'module', [
+          {
+            kind: 'table',
+            id: 'table',
+            columns: ['ID', 'Description'],
+            rows: [
+              {
+                id: 'row',
+                cells: ['VeryLongUnbrokenIdentifierThatMustStayWhole', 'Short description'],
+              },
+            ],
+          },
+        ]),
+      ],
+      sections: [
+        section('modules', [], {
+          appearances: [{ object: 'Matrix', placement: { x: 0, y: 0, width: 80 } }],
+        }),
+      ],
+    });
+    const tableNode = node(value((await fixture()).presentation.project(matrix)), 'Matrix');
+    const cells = tableNode.content.primitives.filter((item) => item.kind === 'text');
+    const longCell = cells.find(
+      (run) => run.text === 'VeryLongUnbrokenIdentifierThatMustStayWhole',
+    );
+    const description = cells.find((run) => run.text === 'Description');
+    assert(longCell && description);
+    expect(description.x).toBeGreaterThan(longCell.x + longCell.width);
+    expect(tableNode.content.anchors.find((anchor) => anchor.member === 'row')?.label).toBe(
+      'VeryLongUnbrokenIdentifierThatMustStayWhole | Short description',
+    );
   });
   it('6 measures admitted media with alt text and rejects missing or unsafe resources', async () => {
     const pinned = fonts();
@@ -152,10 +272,50 @@ describe('Presentation measured content', () => {
     );
     assert(image?.kind === 'media');
     expect([image.width, image.height, image.alt]).toEqual([180, 90, 'A sample image']);
+    expect(image.x).toBe(42);
     expect((await fixture()).presentation.project(source)).toMatchObject({
       ok: false,
       error: { code: 'missing-resource' },
     });
+
+    const portrait = value(
+      await composePresentation(
+        owners(style(pinned), { ...asset, width: 100, height: 400 }),
+        pinned,
+      ),
+    ).presentation;
+    const mediaSource = collection({
+      assets: [
+        {
+          id: 'photo',
+          digest: `sha256:${asset.digest}`,
+          mediaType: asset.mediaType,
+          alt: 'A sample image',
+        },
+      ],
+      objects: [
+        object('Photo', 'concept', [
+          { kind: 'image', id: 'photo', asset: 'photo', size: 'large', fit: 'cover' },
+          { kind: 'icon', id: 'icon', asset: 'photo', size: 'small', fit: 'contain' },
+        ]),
+      ],
+      sections: [
+        section('grid', [], {
+          appearances: [{ object: 'Photo', placement: { x: 0, y: 0, width: 100 } }],
+        }),
+      ],
+    });
+    const mediaNode = node(value(portrait.project(mediaSource)), 'Photo');
+    const slots = mediaNode.content.primitives.filter((item) => item.kind === 'media');
+    expect(slots.map((slot) => [slot.x, slot.width, slot.height])).toEqual([
+      [12, 76, 76],
+      [38, 24, 24],
+    ]);
+    const markup = value(portrait.renderContent(mediaNode));
+    expect(markup).toContain('overflow="hidden"');
+    expect(markup).toContain('xMidYMid slice');
+    expect(markup).toContain('xMidYMid meet');
+    expect(markup).toContain('<title>A sample image</title>');
     const unsafe = {
       ...owners(style(pinned)),
       assets: {
@@ -229,6 +389,49 @@ describe('Presentation measured content', () => {
     });
     expect(projected.sections[2]?.sequence[0]?.label.outline).toEqual(['Sends request']);
     expect(projected.sections[2]?.sequence[0]?.marker).toBe('arrow');
+    const represented = projected.sections[0]?.nodes[0];
+    assert(represented);
+    expect(represented.headerHeight).toBe(represented.height);
+    expect(represented.headerHeight).toBe(118);
+    expect(projected.sections[2]?.title.primitives[0]).toMatchObject({ kind: 'text', size: 24 });
+    expect(projected.sections[2]?.sequence[0]?.label.primitives[0]).toMatchObject({
+      kind: 'text',
+      size: 14,
+    });
+    const fragments = collection({
+      objects: [object('A', 'participant'), object('B', 'participant')],
+      sections: [
+        section('sequence', ['A', 'B'], {
+          layout: { algorithm: 'sequence' },
+          sequence: [
+            { id: 'retry', kind: 'fragment', order: 0, operator: 'loop', label: 'Retry request' },
+            { id: 'optional', kind: 'fragment', order: 1, operator: 'opt', label: 'Cached result' },
+            {
+              id: 'choice',
+              kind: 'fragment',
+              order: 2,
+              operator: 'alt',
+              label: 'Outcome',
+              branches: [
+                { id: 'yes', label: 'Success' },
+                { id: 'no', label: 'Failure' },
+              ],
+            },
+          ],
+        }),
+      ],
+    });
+    const sequenceApp = (await fixture()).presentation;
+    const fragmentScene = value(sequenceApp.project(fragments));
+    expect(fragmentScene.sections[0]?.sequence.map((item) => item.label.outline[0])).toEqual([
+      'loop Retry request',
+      'opt Cached result',
+      'alt Outcome',
+    ]);
+    expect(
+      value(sequenceApp.supplement(fragments)).branchHeadings[0]?.content.primitives[0],
+    ).toMatchObject({ kind: 'text', size: 14 });
+
     const table = collection({
       objects: [
         object('Table', 'concept', [
@@ -283,7 +486,13 @@ describe('Presentation measured content', () => {
     expect(node(value(app.project(resized)), 'A').width).toBe(480);
 
     const changed = value(
-      await composePresentation(owners({ ...tokens, fontSize: 18 }), pinned),
+      await composePresentation(
+        owners({
+          ...tokens,
+          typography: { ...tokens.typography, body: { ...tokens.typography.body, size: 18 } },
+        }),
+        pinned,
+      ),
     ).presentation;
     expect(value(changed.project(source)).inputKey).not.toBe(first.inputKey);
 

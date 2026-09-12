@@ -31,7 +31,7 @@ export function projectCollection(input: unknown, deps: Dependencies): Projectio
   const context = {
     collection,
     style,
-    width: style.widths.medium,
+    width: style.contentSizing.widths.medium.preferred,
     metrics: deps.measurement,
     assets: deps.assets,
   };

@@ -5,36 +5,23 @@ export type { ContentContext } from '../../contract/records/content-context.js';
 import { measureField, fieldKey } from './fields.js';
 import { measureText } from './text.js';
 import { measureTable } from './table.js';
+import { measureSignature, measureMember } from './signature.js';
 import { measureMedia } from './media.js';
 import { reject } from '../validation/outcomes.js';
 /** Content processor chooses local presentation only; semantic validity remains in Model. */
 type Processor = (block: ContentBlock, context: ContentContext) => MeasuredContent;
-/** One textual block carries optional addressable-row metadata at its measured midpoint. */
-function text(
-  text: string,
-  context: ContentContext,
-  member: string | null = null,
-  mono = false,
-): MeasuredContent {
-  const font = mono ? context.style.monoFont : context.style.bodyFont;
-  const result = measureText(
+/** Prose and code select their pinned role metrics; structured addressable rows have dedicated processors. */
+function text(text: string, context: ContentContext, mono = false): MeasuredContent {
+  const metric = mono ? context.style.typography.mono : context.style.typography.body;
+  return measureText(
     {
       text,
       width: context.width,
-      font,
-      size: context.style.fontSize,
-      lineHeight: context.style.lineHeight,
+      ...metric,
       fill: context.style.text,
     },
     context.metrics,
   );
-  if (member === null) return result;
-  return {
-    ...result,
-    anchors: [
-      { member, x: 0, y: result.height / 2, direction: 'inout', collapsed: false, label: text },
-    ],
-  };
 }
 /** Dispatch tables keep adding content kinds outside projection/Authoring orchestration. */
 const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
@@ -44,7 +31,7 @@ const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
   },
   code: (block, context) => {
     if (block.kind !== 'code') return mismatch(block);
-    return text(block.text, context, null, true);
+    return text(block.text, context, true);
   },
   list: (block, context) => {
     if (block.kind !== 'list') return mismatch(block);
@@ -67,20 +54,15 @@ const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
   },
   keygroup: (block, context) => {
     if (block.kind !== 'keygroup') return mismatch(block);
-    return text(`${fieldKey(block.key)} (${block.fields.join(', ')})`, context, null, true);
+    return text(`${fieldKey(block.key)} (${block.fields.join(', ')})`, context, true);
   },
   member: (block, context) => {
     if (block.kind !== 'member') return mismatch(block);
-    return text(`${block.visibility} ${block.label}: ${block.type}`, context, block.id, true);
+    return measureMember(block, context);
   },
   signature: (block, context) => {
     if (block.kind !== 'signature') return mismatch(block);
-    return text(
-      `${block.label}(${block.parameters.join(', ')}): ${block.returns}`,
-      context,
-      block.id,
-      true,
-    );
+    return measureSignature(block, context);
   },
   table: (block, context) => {
     if (block.kind !== 'table') return mismatch(block);

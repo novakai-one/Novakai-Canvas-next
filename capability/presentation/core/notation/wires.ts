@@ -57,3 +57,9 @@ export function sequenceMarker(item: SequenceItem): MarkerKind {
   };
   return messages[item.message];
 }
+
+/** Fragment operators are visible notation; canonical sequence ordering remains untouched. */
+export function sequenceLabel(item: SequenceItem): string {
+  if (item.kind === 'event') return item.label;
+  return `${item.operator} ${item.label}`;
+}

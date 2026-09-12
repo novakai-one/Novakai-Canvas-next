@@ -21,26 +21,68 @@ export type FontSet = z.infer<typeof fontSet>;
 export const paint = z.strictObject({ fill: color, stroke: color, text: color }).readonly();
 export type Paint = z.infer<typeof paint>;
 const positive = z.number().finite().positive().max(10000);
+/** Absolute role metrics use the exact admitted font; malformed values fail the public reader. */
+export const textMetric = z
+  .strictObject({ font: fontRef, size: positive, lineHeight: positive })
+  .readonly();
+export type TextMetric = z.infer<typeof textMetric>;
+/** Semantic text roles share body bytes except for the explicit monospace role. */
+export const diagramTypography = z
+  .strictObject({
+    sectionHeading: textMetric,
+    nodeHeading: textMetric,
+    body: textMetric,
+    mono: textMetric,
+    annotation: textMetric,
+  })
+  .readonly();
+export type DiagramTypography = z.infer<typeof diagramTypography>;
+/** Interior width bands reject inverted limits instead of silently changing their meaning. */
+export const sizeBand = z
+  .strictObject({ preferred: positive, maximum: positive })
+  .refine((band) => band.preferred <= band.maximum)
+  .readonly();
+export type SizeBand = z.infer<typeof sizeBand>;
+/** Content widths, row floors and icon slots have one token-derived authority. */
+export const contentSizing = z
+  .strictObject({
+    widths: z.strictObject({ small: sizeBand, medium: sizeBand, large: sizeBand }).readonly(),
+    rowMinimum: positive,
+    iconBox: z.strictObject({ small: positive, medium: positive, large: positive }).readonly(),
+  })
+  .readonly();
+export type ContentSizing = z.infer<typeof contentSizing>;
 /** Numeric/CSS styles come from the same token resolver; no palette or size default is duplicated here. */
 export const resolvedStyle = z
   .strictObject({
     digest,
     bodyFont: fontRef,
     monoFont: fontRef,
-    fontSize: positive,
-    lineHeight: positive,
+    typography: diagramTypography,
+    contentSizing,
     padding: positive,
     gap: positive,
     stroke: positive,
     radius: z.number().min(0).max(1000),
-    widths: z.strictObject({ small: positive, medium: positive, large: positive }).readonly(),
-    roles: z.record(z.string(), paint),
+    roles: z.record(z.string(), paint).readonly(),
     surface: color,
     text: color,
     secondary: color,
     border: color,
   })
+  .refine(matchingFonts, { message: 'Typography roles must use their pinned body/mono font bytes' })
   .readonly();
+/** Reject mismatched role bytes before measurement; the public reader owns typed recovery. */
+function matchingFonts(style: {
+  readonly bodyFont: FontRef;
+  readonly monoFont: FontRef;
+  readonly typography: DiagramTypography;
+}): boolean {
+  return Object.entries(style.typography).every(([role, metric]) => {
+    const expected = role === 'mono' ? style.monoFont : style.bodyFont;
+    return metric.font.digest === expected.digest && metric.font.family === expected.family;
+  });
+}
 export type ResolvedStyle = z.infer<typeof resolvedStyle>;
 /** Reader returns safe local bytes and mechanically verified dimensions; no remote URLs. */
 export const visualAsset = z

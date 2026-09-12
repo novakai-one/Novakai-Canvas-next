@@ -28,6 +28,10 @@ export type {
   PortableToken,
   FontPin,
   StyleProjection,
+  TextMetric,
+  DiagramTypography,
+  SizeBand,
+  ContentSizing,
   Paint,
 } from './records/theme.js';
 export type { UiPreferences, Environment, UiThemePin } from './records/preferences.js';

@@ -1,10 +1,15 @@
 import type { Dependencies } from '../../contract/types.js';
 import type { ExpansionRequest, LoweredIntent } from '../../contract/records/requests.js';
 import { parseSource } from '../parsing/document.js';
-import { accepted, reject } from '../validation/outcomes.js';
+import { accepted, reject, protect } from '../validation/outcomes.js';
+import type { Result } from '../../contract/errors.js';
 import { lowerDocument } from './document.js';
+/** Compile an independent recipe root without writes. Language returns correction diagnostics; Authoring owns commit/retry recovery. */
+export function expandRecipe(input: ExpansionRequest, deps: Dependencies): Result<LoweredIntent> {
+  return protect(() => expandedRecipe(input, deps));
+}
 /** Rebind the parsed root identity, never replace matching text in labels, URIs, code or local references. */
-export function expandRecipe(input: ExpansionRequest, deps: Dependencies): LoweredIntent {
+function expandedRecipe(input: ExpansionRequest, deps: Dependencies): LoweredIntent {
   const parsed = parseSource(input.source);
   if (parsed.kind !== 'canvas')
     return reject(

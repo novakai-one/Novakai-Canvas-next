@@ -1,0 +1,4 @@
+# One implementation audit round — verified disposition
+A1 semantic qualifier loss verified: lowerTarget copies id/namespace and discards member/section. Typed-outcome and duplicate field/default findings match source. Recovery comments are file-level, not entry-level. Ordinary ternary deduction rejected as auditor advises; no source rewrite for that preference.
+A2 vertical-order gap verified: counts plus last-vs-first ordering cannot distinguish row-major from column-major. Displaced history changes nodes without coherent title/bounds, so fails ordinary inspection. Invalid-language-edit assertions permit provider-failure, confirming incorrect rejection handling can pass. All three will be strengthened within the existing case budget.
+One combined findings-only fix follows. No further audit or pressure test for PR1. Preserve real native-engine evidence; no score-driven replacement with mirroring fakes. Standards residuals remain explicit until evidenced resolved.

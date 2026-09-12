@@ -1,0 +1,2 @@
+# Verified one-round fixes
+All three findings verified against the named source. Group edits use existing replace-section syntax; explicit columns count physical horizontal tracks; explicit columns outranks prior automatic seeds while authored placements remain authoritative. No second audit. Final spec counts below20% growth; independent Layout validation consumes Presentation/Model vocabulary rather than inventing another layout schema.

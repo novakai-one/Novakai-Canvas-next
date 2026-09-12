@@ -20,7 +20,7 @@ Date: 2026-09-12. Base: 70d36f6. Human UI feature work is deferred.
 |3|Assets and diagram themes|Complete CLI asset staging/preset admission; Assets owns bytes, Templates pins, Design System tokens, Presentation measurement; shared interfaces frozen before parallel work|Admitted images/fonts and two differently themed collections prove isolated tokens; section role accents support mixed diagrams|
 |4|Balanced automatic arrangement|Layout collection/group/grid/tree/layered policies, compactness and measured spacing; acceptance depends PR2+3 integrated font/theme measurements; includes sequence fragments and state topology|Balanced comparison, hierarchy, nested and engineering views with varied content|
 |5|Clear routing and labels|Layout endpoint sides, member anchors, branches, cycles, crossings and measured labels; after PR4; measured labels/markers reserve directional space; bounded routing failure remains explicit|Field-level ER, adapter dependencies and rework loops use readable economical routes|
-|6|Reusable recipes and broad acceptance collection|Assemble incrementally authored recipes/examples; third held-out example per family after interface freeze; depends PR2–5|Three distinct examples per family, all on a mixed collection canvas, through real CLI create/read/edit and visible browser|
+|6|Reusable recipes and broad acceptance collection|Coordinate section admission limits for24 examples within existing1000-node/1500-wire bounds; assemble incremental recipes/examples; third held-out example per family after interface freeze; depends PR2–5|Three distinct examples per family, all on a mixed collection canvas, through real CLI create/read/edit and visible browser|
 
 ## Required final family matrix
 

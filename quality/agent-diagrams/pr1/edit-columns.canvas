@@ -1,0 +1,3 @@
+patch 1 @composition-lab {
+  set collection columns=1
+}

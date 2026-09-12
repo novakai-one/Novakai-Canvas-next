@@ -44,7 +44,7 @@ export function createLanguage(deps: Dependencies): Language {
   }
   /** Instantiate semantics under a new root; Authoring checks destination absence before committing. */
   function expand(input: ExpansionRequest): Result<LoweredIntent> {
-    return protect(() => expandRecipe(structuredClone(input), deps));
+    return protect(() => accepted(expandRecipe(structuredClone(input), deps)));
   }
   return Object.freeze({ describe, parse, lower, print, expand });
 }

@@ -3,7 +3,7 @@
 |---|---|---|
 |Model|unknown intent→checked LayoutIntent|Reject noninteger/out-of-range/non-grid columns; caller corrects intent|
 |Language|columns=N → intent → printable DSL|Unknown/invalid DSL has source diagnostics; print retains explicit columns|
-|Language patch|set/reset columns on collection/section/group|Set changes only requested field; reset removes columns; unrelated patches preserve it|
+|Language patch|set/unset collection/section columns; replace section for group columns|Set changes only requested field; unset removes columns; unrelated patches preserve it|
 |Layout|checked intent + measured nodes→grid placement|Independent contract rejects invalid values; existing derive failure remains typed|
 |Authoring|compiled requested change→validated candidate→commit|Existing gate remains sole diagram mutation route|
 

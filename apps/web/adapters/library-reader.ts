@@ -27,7 +27,7 @@ export function createLibraryReader(): LibraryReader {
           text: filters.text,
           archived: filters.archived,
           sort: filters.sort,
-          kinds: ['collection', 'section', 'object'],
+          kinds: filters.text.trim() === '' ? ['collection'] : ['collection', 'section', 'object'],
           limit: 50,
           ...folderFilter(filters.folder),
           ...cursorFilter(cursor),
@@ -41,7 +41,14 @@ export function createLibraryReader(): LibraryReader {
     },
     folderDraft: (input) => {
       const parsed = z
-        .strictObject({ id: folderId, title: z.string(), revision: z.number().int().nonnegative() })
+        .strictObject({
+          id: folderId,
+          title: z.string(),
+          revision: z.number().int().nonnegative(),
+          operation: z.enum(['create-folder', 'replace-folder']).default('create-folder'),
+          parent: folderId.nullable().default(null),
+          order: z.number().int().safe().default(0),
+        })
         .safeParse(input);
       if (!parsed.success)
         return failure(

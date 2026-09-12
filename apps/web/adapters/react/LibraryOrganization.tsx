@@ -15,14 +15,38 @@ export function createLibraryOrganization({
     workspace,
   }: LibraryFeatureProps): ReactElement | null {
     const folderDraft = state.folderDraft;
+    const labels = folderLabels[folderDraft?.operation ?? 'create-folder'];
     const catalog = state.source?.catalog;
     if (catalog === undefined) return null;
     const activeId = workspace.getSnapshot().active?.document.collection.id;
+    const selectedFolder = catalog.folders.find((folder) => folder.id === state.filters.folder);
     const entry = catalog.entries.find((entry) => entry.collection === activeId);
     return (
       <div className={styles.editor}>
+        {selectedFolder && (
+          <fieldset className={styles.block}>
+            <legend>Selected folder</legend>
+            <strong>{selectedFolder.title}</strong>
+            <Button
+              label="Edit folder"
+              disabled={busy || folderDraft !== null}
+              onClick={() => library.editFolder(selectedFolder.id)}
+            />
+            <p>Removing the folder moves its collections and child folders up one level.</p>
+            <Button
+              label="Remove folder, keep contents"
+              disabled={busy}
+              onClick={() => {
+                void library.apply(
+                  [{ op: 'remove-folder', id: selectedFolder.id, policy: 'rehome' }],
+                  catalog.revision,
+                );
+              }}
+            />
+          </fieldset>
+        )}
         <fieldset className={styles.block}>
-          <legend>New folder</legend>
+          <legend>{labels.heading}</legend>
           <Field
             label="Folder title"
             control={(props) => (
@@ -35,13 +59,35 @@ export function createLibraryOrganization({
             )}
           />
           <Button
-            label="Create folder"
+            label={labels.action}
             disabled={busy || !folderDraft?.title.trim()}
             onClick={() => {
               if (folderDraft === null) return;
               void library.createFolder();
             }}
           />
+          {folderDraft && (
+            <Field
+              label="Parent folder"
+              control={(props) => (
+                <select
+                  {...props}
+                  value={folderDraft.parent ?? ''}
+                  disabled={busy}
+                  onChange={(event) => library.setFolderParent(event.target.value || null)}
+                >
+                  <option value="">Workspace root</option>
+                  {catalog.folders
+                    .filter((folder) => folder.id !== folderDraft.id)
+                    .map((folder) => (
+                      <option key={folder.id} value={folder.id}>
+                        {folder.title}
+                      </option>
+                    ))}
+                </select>
+              )}
+            />
+          )}
           {folderDraft && <Button label="Discard folder draft" onClick={library.discardFolder} />}
         </fieldset>
         {entry && (
@@ -90,3 +136,8 @@ export function createLibraryOrganization({
   }
   return LibraryOrganization;
 }
+
+const folderLabels = {
+  'create-folder': { heading: 'New folder', action: 'Create folder' },
+  'replace-folder': { heading: 'Edit folder', action: 'Save folder' },
+};

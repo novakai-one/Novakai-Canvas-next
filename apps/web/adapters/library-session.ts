@@ -67,12 +67,44 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
   /** Identity and catalog revision are allocated on the first edit only. */
   function editFolderTitle(title: string): void {
     if (state.source === null) return;
-    const original = state.folderDraft ?? {
+    const original: FolderDraft = state.folderDraft ?? {
       id: bindings.nextFolderId(),
       title: '',
+      operation: 'create-folder',
+      parent: null,
+      order: state.source.catalog.folders.length,
       revision: state.source.catalog.revision,
     };
     saveFolder({ ...original, title });
+  }
+  /** Opening a folder form captures its current properties and catalog version. */
+  function editFolder(id: string): void {
+    if (state.source === null) return;
+    const folder = state.source.catalog.folders.find((item) => item.id === id);
+    if (folder === undefined) return;
+    saveFolder({
+      id: folder.id,
+      title: folder.title,
+      operation: 'replace-folder',
+      parent: folder.parent ?? null,
+      order: folder.order,
+      revision: state.source.catalog.revision,
+    });
+  }
+  /** Parent selection preserves its branded identity; final Library validation rejects cycles. */
+  function setFolderParent(id: string | null): void {
+    if (state.folderDraft === null) return;
+    if (id === null) {
+      saveFolder({ ...state.folderDraft, parent: null });
+      return;
+    }
+    selectFolderParent(id, state.folderDraft);
+  }
+  /** Unknown parent options cannot be interpreted as workspace root. */
+  function selectFolderParent(id: string, draft: FolderDraft): void {
+    const folder = state.source?.catalog.folders.find((item) => item.id === id);
+    if (folder === undefined) return;
+    saveFolder({ ...draft, parent: folder.id });
   }
   /** Confirmed creation clears only the exact submitted form; failed or newer typing remains retained. */
   async function createFolder(): Promise<void> {
@@ -81,11 +113,12 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
     const created = await commit(
       [
         {
-          op: 'create-folder',
+          op: draft.operation,
           value: {
             id: draft.id,
             title: draft.title,
-            order: state.source?.catalog.folders.length ?? 0,
+            order: draft.order,
+            ...folderParent(draft.parent),
           },
         },
       ],
@@ -200,8 +233,18 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
       await commit(changes, revision);
     },
     editFolderTitle,
+    editFolder,
+    setFolderParent,
     createFolder,
     discardFolder: () => saveFolder(null),
     next: () => search(state.page?.nextCursor ?? null),
   };
+}
+
+/** An absent folder parent means workspace root in the Library contract. */
+function folderParent(parent: FolderDraft['parent']): {
+  readonly parent?: NonNullable<FolderDraft['parent']>;
+} {
+  if (parent === null) return {};
+  return { parent };
 }

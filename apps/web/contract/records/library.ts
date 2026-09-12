@@ -28,6 +28,9 @@ export interface FolderDraft {
   readonly id: FolderId;
   readonly title: string;
   readonly revision: number;
+  readonly operation: 'create-folder' | 'replace-folder';
+  readonly parent: FolderId | null;
+  readonly order: number;
 }
 export interface LibraryReader {
   read(
@@ -53,6 +56,8 @@ export interface LibraryController {
   visit(collection: string): void;
   apply(changes: readonly CatalogChange[], revision: number): Promise<void>;
   editFolderTitle(title: string): void;
+  editFolder(id: string): void;
+  setFolderParent(id: string | null): void;
   createFolder(): Promise<void>;
   discardFolder(): void;
 }

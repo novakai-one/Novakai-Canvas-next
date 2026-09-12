@@ -1,0 +1,4 @@
+# Corrected routing integration evidence
+Corrected source6d8b60b integrated into PR6 proof checkout. Real DSL authored mixed agent-diagram-atlas collection revision1 and rendered on restarted http://127.0.0.1:5185. All24 sections pass native scene admission; current routes use layout-policy-7. Browser captures are actual headed React Flow at1600×1100. PR6 also includes collection capacity and numeric origin tolerance; these are dependencies of this mixed acceptance, not PR5 changes.
+
+Representative field-level ER, typed gateway, branching dispatch and hierarchy images are in browser-corrected/. Remaining corpus full-frame readability and compact composition failures belong to the ongoing PR6 acceptance correction; these images do not claim every diagram meets12px. Native adapter/test literal grade gaps remain open. No re-audit was run after the single verified routing correction.

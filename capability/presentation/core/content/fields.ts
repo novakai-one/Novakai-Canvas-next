@@ -4,11 +4,30 @@ import type { MeasuredContent } from '../../contract/records/visual.js';
 import { requireValue } from '../validation/outcomes.js';
 import { measureText, offset } from './text.js';
 type Field = Extract<ContentBlock, { kind: 'field' }>;
-const keys: Readonly<Record<string, string>> = { primary: 'PK', foreign: 'FK', unique: 'UQ' };
+type Key = Exclude<Field['key'], undefined>;
+const keys: Readonly<Record<Key, string>> = { primary: 'PK', foreign: 'FK', unique: 'UQ' };
+const keyOrder: readonly Key[] = ['primary', 'foreign', 'unique'];
 /** Empty key cells are meaningful; key vocabulary is shared by visible text and accessible row descriptions. */
 export function fieldKey(key: Field['key']): string {
   if (key === undefined) return '';
-  return keys[key] ?? '';
+  return keys[key];
+}
+/** Canonical composite membership survives a view that hides the key-group summary. */
+function compositeKeys(field: Field, context: ContentContext): readonly Key[] {
+  const owner = context.owner;
+  if (owner === undefined) return [];
+  return owner.content
+    .filter((block) => block.kind === 'keygroup')
+    .filter((group) => group.fields.includes(field.id))
+    .map((group) => group.key);
+}
+/** A field may be PK and FK together; fixed role order keeps the visible badge unambiguous. */
+function fieldBadge(field: Field, context: ContentContext): string {
+  const membership = [field.key, ...compositeKeys(field, context)];
+  return keyOrder
+    .filter((key) => membership.includes(key))
+    .map((key) => keys[key])
+    .join('/');
 }
 /** Optionality is visible without repeating the word required in every row; the full meaning remains in its accessible outline. */
 function typeLabel(field: Field): string {
@@ -39,7 +58,10 @@ export function fieldColumns(
 ): FieldColumns {
   const fields = blocks.filter((block) => block.kind === 'field');
   return {
-    key: column(['PK', 'FK', 'UQ'], context),
+    key: column(
+      fields.map((field) => fieldBadge(field, context)),
+      context,
+    ),
     name: column(
       fields.map((field) => `${field.label}:`),
       context,
@@ -64,7 +86,7 @@ function cell(text: string, width: number, x: number, context: ContentContext): 
 export function measureField(field: Field, context: ContentContext): MeasuredContent {
   const columns = context.fields ?? fieldColumns([field], context);
   const values = [
-    cell(fieldKey(field.key), columns.key, 0, context),
+    cell(fieldBadge(field, context), columns.key, 0, context),
     cell(`${field.label}:`, columns.name, columns.key, context),
     cell(typeLabel(field), columns.type, columns.key + columns.name, context),
   ];
@@ -73,7 +95,8 @@ export function measureField(field: Field, context: ContentContext): MeasuredCon
     context.style.gap * 2;
   const width = columns.key + columns.name + columns.type;
   const nullability = field.nullable ? 'nullable' : 'required';
-  const label = `${fieldKey(field.key)} ${field.label}: ${field.type} · ${nullability}`.trim();
+  const label =
+    `${fieldBadge(field, context)} ${field.label}: ${field.type} · ${nullability}`.trim();
   return {
     width,
     height,

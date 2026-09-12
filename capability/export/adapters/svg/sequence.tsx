@@ -12,6 +12,19 @@ export function createSequenceDrawing(
   label: DrawingSlots['label'],
   Marker: MarkerDrawing,
 ): (geometry: SequenceGeometry, paint: Paint) => ReactElement {
+  /** Surface-backed measured labels keep lifelines out of glyphs without changing Layout geometry. */
+  function backedLabel(
+    content: Frame['content'],
+    box: Frame['labelBox'],
+    paint: Paint,
+  ): ReactElement {
+    return (
+      <g stroke="none">
+        <rect {...box} fill={paint.fill} />
+        {label(content, box)}
+      </g>
+    );
+  }
   /** Message labels and arrowheads retain their measured semantic presentation. */
   function message(event: Event, paint: Paint): ReactElement {
     const dash = event.message === 'return' ? '6 4' : undefined;
@@ -22,17 +35,22 @@ export function createSequenceDrawing(
           fill="none"
           strokeDasharray={dash}
         />
-        {label(event.content, event.labelBox)}
-        <Marker kind={event.marker} points={event.points} at="target" paint={paint} />
+        {backedLabel(event.content, event.labelBox, paint)}
+        <Marker
+          kind={event.marker}
+          points={event.points}
+          at="target"
+          paint={{ ...paint, stroke: paint.text }}
+        />
       </g>
     );
   }
   /** Branch separators are supplied rectangles, not independently inferred execution semantics. */
-  function frame(item: Frame): ReactElement {
+  function frame(item: Frame, paint: Paint): ReactElement {
     return (
       <g key={item.id}>
         <rect {...item.box} fill="none" />
-        {label(item.content, item.labelBox)}
+        {backedLabel(item.content, item.labelBox, paint)}
         {item.branches.map((branch) => (
           <g key={branch.id}>
             <line
@@ -41,7 +59,7 @@ export function createSequenceDrawing(
               x2={branch.box.x + branch.box.width}
               y2={branch.box.y}
             />
-            {label(branch.content, branch.labelBox)}
+            {backedLabel(branch.content, branch.labelBox, paint)}
           </g>
         ))}
       </g>
@@ -50,7 +68,7 @@ export function createSequenceDrawing(
   /** All annotations share their section coordinate frame with participant nodes. */
   function sequence(geometry: SequenceGeometry, paint: Paint): ReactElement {
     return (
-      <g stroke={paint.stroke} data-layer="sequence">
+      <g stroke={paint.text} data-layer="sequence">
         {geometry.lifelines.map((line) => (
           <line
             key={line.participant}
@@ -64,7 +82,7 @@ export function createSequenceDrawing(
         {geometry.activations.map((item) => (
           <rect key={`${item.participant}:${item.fromEvent}`} {...item.box} fill={paint.fill} />
         ))}
-        {geometry.fragments.map(frame)}
+        {geometry.fragments.map((item) => frame(item, paint))}
         {geometry.events.map((event) => message(event, paint))}
       </g>
     );

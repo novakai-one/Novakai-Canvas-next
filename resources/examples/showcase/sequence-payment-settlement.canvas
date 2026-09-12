@@ -11,7 +11,15 @@ collection @sequence-payment-settlement "Payment settlement conversation" theme=
   event @pending @payments -> @ledger "Record pending settlement" kind=call
   fragment @attempts loop "Until accepted or retry limit" {
    event @submit @payments -> @network "Submit settlement batch" kind=call activate=true
-   event @ack @network -> @payments "Return batch acceptance" kind=return activate=false
+   fragment @result alt "Submission result" {
+    branch @batch-accepted "Accepted" {
+     event @ack @network -> @payments "Return batch acceptance" kind=return activate=false
+    }
+    branch @transient "Temporary failure" {
+     event @retry @network -> @payments "Return retry-after interval" kind=return activate=false
+     event @wait @payments -> @payments "Wait before next attempt" kind=call
+    }
+   }
   }
   event @accepted @payments -> @merchant "Return accepted receipt" kind=return activate=false
   event @callback @network -> @payments "Settlement completed callback" kind=async activate=true

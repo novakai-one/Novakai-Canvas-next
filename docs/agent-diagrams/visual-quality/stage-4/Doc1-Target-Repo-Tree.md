@@ -27,7 +27,7 @@ resources/examples/showcase
 
 ## Visual context
 
-![Current educational baseline](../assets/current/2026-09-13-water-treatment.png)
+![Current engineering baseline](../../../../quality/agent-diagrams/visual-quality/stage-3/modules-final.png)
 
 ![Approved infographic target](../assets/targets/docker-infographic.png)
 

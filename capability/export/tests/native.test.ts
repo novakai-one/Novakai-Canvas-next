@@ -22,6 +22,18 @@ describe('Concrete portable rendering', () => {
       'validated changes',
     );
     expect(document.querySelector('[data-sequence-event="message"]')).not.toBeNull();
+    expect(document.querySelector('[data-layer="sequence"]')?.getAttribute('stroke')).toBe(
+      '#0f172a',
+    );
+    const messageText = document.querySelector('[data-sequence-event="message"] text');
+    assert(messageText);
+    const labelLayer = messageText.closest('[stroke]');
+    expect(labelLayer?.getAttribute('stroke')).toBe('none');
+    const backing = labelLayer?.querySelector('rect');
+    assert(backing);
+    expect(backing.getAttribute('fill')).toBe('#ffffff');
+    expect(Number(backing.getAttribute('width'))).toBeGreaterThan(0);
+    expect(Number(backing.getAttribute('height'))).toBeGreaterThan(0);
     expect(document.querySelector('metadata')?.textContent).toContain('"revision":7');
     expect(document.querySelectorAll('[data-node-id]').length).toBe(3);
     expect(document.querySelectorAll('style')).toHaveLength(1);

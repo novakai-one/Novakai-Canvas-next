@@ -67,6 +67,7 @@ describe('Presentation measured content', () => {
     expect(customer.shape).toBe('entity');
     const rows = customer.content.primitives.filter((item) => item.kind === 'text');
     expect(rows.map((item) => item.text)).toEqual([
+      'ENTITY',
       'Customer',
       'PK',
       'id:',
@@ -89,7 +90,7 @@ describe('Presentation measured content', () => {
     expect(customer.content.outline.join(' ')).toContain('nullable');
     expect(customer.content.anchors.map((anchor) => anchor.member)).toEqual(['id', 'email']);
     expect(customer.content.anchors[0]?.y).toBeLessThan(customer.content.anchors[1]?.y ?? 0);
-    expect(rows[0]?.size).toBe(20);
+    expect(rows.find((item) => item.text === 'Customer')?.size).toBe(20);
     expect(primary.size).toBe(16);
     const [firstAnchor, secondAnchor] = customer.content.anchors;
     assert(firstAnchor && secondAnchor);
@@ -178,7 +179,7 @@ describe('Presentation measured content', () => {
       'input',
     ]);
     expect(service.width).toBeGreaterThan(360);
-    expect(service.headerHeight).toBe(54);
+    expect(service.headerHeight).toBe(79);
     expect(service.content.anchors.find((item) => item.member === 'input')?.direction).toBe('in');
     const callable = collection({
       objects: [
@@ -201,7 +202,7 @@ describe('Presentation measured content', () => {
     const wrapped = node(value((await fixture()).presentation.project(callable)), 'Callable');
     const signatureRuns = wrapped.content.primitives
       .filter((item) => item.kind === 'text')
-      .slice(1);
+      .slice(2);
     expect(signatureRuns.map((run) => run.text)).toEqual([
       'dispatch(request: Request,',
       'context: Context,',
@@ -239,7 +240,7 @@ describe('Presentation measured content', () => {
     const gatewayNode = node(value((await fixture()).presentation.project(gateway)), 'Gateway');
     const memberRuns = gatewayNode.content.primitives
       .filter((item) => item.kind === 'text')
-      .slice(1);
+      .slice(2);
     expect(memberRuns.length).toBeGreaterThan(1);
     expect(memberRuns.map((run) => run.text).join(' ')).toBe(declaration);
     expect(memberRuns.every((run) => !/^[^\p{L}\p{N}_$]+$/u.test(run.text))).toBe(true);

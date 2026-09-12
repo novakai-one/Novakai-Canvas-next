@@ -3,7 +3,7 @@ import type { ContentContext } from '../../contract/records/content-context.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { BodySelection } from './node-body.js';
 import { measureNodeBody } from './node-body.js';
-import { labelContent } from './headings.js';
+import { nodeHeading } from './headings.js';
 import { measureMedia } from './media.js';
 import { offset, stack } from './text.js';
 import { reject } from '../validation/outcomes.js';
@@ -51,7 +51,7 @@ function bodyWithoutFigure(request: CompositionRequest, figure: MediaBlock): Bod
 
 /** Heading and body reuse the same measurements for stacked and side-by-side arrangements. */
 function textColumn(request: CompositionRequest): ComposedNodeContent {
-  const heading = labelContent(request.object.label, request.context, 'nodeHeading');
+  const heading = nodeHeading(request.object, request.context);
   const body = measureNodeBody(request.object, request.selection, request.context);
   return {
     content: stack([heading, body], request.headingGap),

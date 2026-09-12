@@ -65,6 +65,8 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
       canonical({
         collection,
         style,
+        // Derived geometry changes invalidate retained scenes even when domain and fonts do not.
+        notation: 'presentation-notation-2',
         measurement: deps.measurement.version,
         renderer: deps.rendererVersion,
       }),

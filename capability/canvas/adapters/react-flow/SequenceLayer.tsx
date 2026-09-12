@@ -25,6 +25,19 @@ export function createSequenceLayer(
 ): ComponentType<SequenceProps> {
   const Content = slots.MeasuredContent;
   const Marker = slots.Marker;
+  /** Paint only the measured label box over lifelines; the Layout-owned message route stays intact. */
+  function backedLabel(
+    content: SequenceEvent['content'],
+    box: SequenceEvent['labelBox'],
+    paint: SequenceProps['paint'],
+  ): ReactElement {
+    return (
+      <g stroke="none" transform={`translate(${box.x} ${box.y})`}>
+        <rect width={box.width} height={box.height} fill={paint.fill} />
+        <Content embedFonts={false} content={content} />
+      </g>
+    );
+  }
   /** Measured sequence message keeps its native arrow kind and call/return style. */
   function message(event: SequenceEvent, section: ViewSection, props: SequenceProps): ReactElement {
     const target = { kind: 'sequence' as const, section: section.section.id, id: event.id };
@@ -48,12 +61,10 @@ export function createSequenceLayer(
           points={event.points.map((point) => `${point.x},${point.y}`).join(' ')}
           fill="none"
         />
-        <g transform={`translate(${event.labelBox.x} ${event.labelBox.y})`}>
-          <Content embedFonts={false} content={event.content} />
-        </g>
+        {backedLabel(event.content, event.labelBox, props.paint)}
         {last && (
           <g transform={`translate(${last.x} ${last.y}) rotate(${angle}) translate(-26 -8)`}>
-            <Marker kind={event.marker} paint={props.paint} />
+            <Marker kind={event.marker} paint={{ ...props.paint, stroke: props.paint.text }} />
           </g>
         )}
       </g>
@@ -77,7 +88,7 @@ export function createSequenceLayer(
       <g
         key={view.id}
         transform={`translate(${view.position.x - view.section.box.x + view.section.origin.x} ${view.position.y - view.section.box.y + view.section.origin.y})`}
-        stroke={props.paint.stroke}
+        stroke={props.paint.text}
       >
         {geometry.lifelines
           .filter((line) => visibleParticipant(props, view.section.id, line.participant))
@@ -103,9 +114,7 @@ export function createSequenceLayer(
         {geometry.fragments.map((frame) => (
           <g key={frame.id}>
             <rect {...frame.box} fill="none" />
-            <g transform={`translate(${frame.labelBox.x} ${frame.labelBox.y})`}>
-              <Content embedFonts={false} content={frame.content} />
-            </g>
+            {backedLabel(frame.content, frame.labelBox, props.paint)}
             {frame.branches.map((branch) => (
               <g key={branch.id}>
                 <line
@@ -114,9 +123,7 @@ export function createSequenceLayer(
                   x2={branch.box.x + branch.box.width}
                   y2={branch.box.y}
                 />
-                <g transform={`translate(${branch.labelBox.x} ${branch.labelBox.y})`}>
-                  <Content embedFonts={false} content={branch.content} />
-                </g>
+                {backedLabel(branch.content, branch.labelBox, props.paint)}
               </g>
             ))}
           </g>

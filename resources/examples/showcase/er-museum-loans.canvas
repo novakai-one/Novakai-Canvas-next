@@ -1,11 +1,11 @@
 canvas 1
 collection @er-museum-loans "Museum loans and inspections" theme=atlas {
- node @artifact entity "Artifact" role=primary size=large {
+ node @artifact entity "Artifact" size=large {
   field @id "artifact_id" type="ArtifactId" key=primary
   field @title "title" type="string"
   field @period "period" type="Period"
  }
- node @museum entity "Museum" role=primary size=medium {
+ node @museum entity "Museum" size=medium {
   field @id "museum_id" type="MuseumId" key=primary
   field @name "name" type="string"
  }
@@ -13,6 +13,7 @@ collection @er-museum-loans "Museum loans and inspections" theme=atlas {
   field @id "loan_id" type="LoanId" key=primary
   field @museum "borrower_id" type="MuseumId" key=foreign references=@museum.@id
   field @due "due_date" type="Date"
+  field @returned "returned_at" type="Timestamp" nullable=true
  }
  node @loan-item entity "Loan item" role=supporting size=medium {
   field @loan "loan_id" type="LoanId" key=foreign references=@loan.@id

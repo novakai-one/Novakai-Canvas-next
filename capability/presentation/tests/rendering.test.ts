@@ -77,8 +77,14 @@ it('9 shares escaped React markup and pinned fonts across every local shape', as
     expect(structuredMarkup).toContain(`font-family="canvas-${pinned.digest}"`);
   }
   const runs = structured.content.primitives.filter((item) => item.kind === 'text');
-  expect(runs[0]).toMatchObject({ size: 20, font: { digest: setup.react.fonts[0]?.digest } });
-  expect(runs[1]).toMatchObject({ size: 16, font: { digest: setup.react.fonts[1]?.digest } });
+  expect(runs.find((run) => run.text === 'Typed')).toMatchObject({
+    size: 20,
+    font: { digest: setup.react.fonts[0]?.digest },
+  });
+  expect(runs.find((run) => run.text.startsWith('run('))).toMatchObject({
+    size: 16,
+    font: { digest: setup.react.fonts[1]?.digest },
+  });
 
   const kinds: Readonly<Record<string, string>> = {
     step: 'card',

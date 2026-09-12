@@ -7,6 +7,7 @@ collection @tree-field-research "Design a field study" theme=atlas {
  node @timing concept "Timing" { text @detail "Repeat at dawn and after rainfall." }
  node @records concept "Records" role=success {}
  node @observations concept "Observations" { list @detail ["Species count", "Water clarity"] }
+ node @calibration concept "Calibration" { text @detail "Check the same reference before each visit." }
  node @context concept "Context" { list @detail ["Weather", "Observer", "Equipment"] }
  wire @ask @study -> @question "defines" kind=parent
  wire @plan @study -> @sampling "plans" kind=parent
@@ -15,9 +16,14 @@ collection @tree-field-research "Design a field study" theme=atlas {
  wire @when @sampling -> @timing "when" kind=parent
  wire @measure @records -> @observations "measures" kind=parent
  wire @explain @records -> @context "explains" kind=parent
+ wire @calibrate @context -> @calibration "standardizes" kind=parent
+ wire @answers @observations -> @question "answers" kind=reference style=dashed
  section @field-research "FIELD STUDY / Make evidence comparable" mode=tree direction=right gap=compact {
-  show @study @question @sampling @sites @timing @records @observations @context
-  connect @ask @plan @keep @where @when @measure @explain
+  show @study @question @sampling @sites @timing @records @observations @context @calibration
+  connect @plan source-side=right target-side=left
+  connect @ask @keep source-side=bottom target-side=left
+  connect @where @when @measure @explain @calibrate
+  connect @answers source-side=top target-side=top
   root @study
  }
 }

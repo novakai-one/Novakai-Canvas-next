@@ -14,8 +14,8 @@ Existing records/identities remain; no replacement engineering DSL. Field { id, 
 
 | Invariant | Acceptance |
 | --- | --- |
-| ER | PK/FK/unique/nullability and composite key membership are visible; both endpoint minimum/maximum multiplicities remain independent and correct. |
-| Modules | Function/interface/module are distinguishable; ports/types and function parameters/returns remain readable; imports/calls/implements have labels and correct endpoints. |
+| ER | PK/FK/unique/nullability and composite key membership are visible; simultaneous PK/FK badges fit their measured column; both endpoint minimum/maximum multiplicities remain independent and correct. |
+| Modules | Canonical function/interface/module kinds are distinguishable even with frame=none/card/panel; headers reserve measured clearance and retain anchors; ports/types and function parameters/returns remain readable; imports/calls/implements have labels and correct endpoints. |
 | Sequence | Participant order, event order, alt/opt/loop scope and activation/return meaning survive visual refinements. |
 | State/tree | Guards/effects and parent-vs-reference meaning remain visible. A cross-reference does not become a second tree parent. |
 | Density | Long type names expand/wrap measured rows with correct anchors, not clipped text or fixed CSS guesses. |

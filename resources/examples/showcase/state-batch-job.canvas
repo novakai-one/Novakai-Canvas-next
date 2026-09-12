@@ -19,13 +19,18 @@ collection @state-batch-job "Batch job retry lifecycle" theme=atlas {
  wire @finish-success @succeeded -> @end "close successful job" kind=transition effect="publish outcome"
  section @job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=down gap=compact {
   show @start
-  group @execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @running @backoff @cancelling
+  group @execution "Execution" layout=layered direction=right gap=compact { show @running @backoff @cancelling
    rank @running @backoff @cancelling
   }
-  group @outcomes "DURABLE OUTCOMES" layout=layered direction=right gap=compact { show @failed @succeeded @end }
-  connect @claim source-side=bottom target-side=top
-  connect @retry source-side=bottom target-side=bottom
+  group @outcomes "Outcomes" layout=layered direction=right gap=compact { show @failed @succeeded @end }
   connect @resume source-side=top target-side=top
-  connect @exhaust @complete @cancel-running @cancel-wait @cancelled @finish-failed @finish-success
+  connect @claim source-side=bottom target-side=left
+  connect @retry source-side=right target-side=left
+  connect @exhaust source-side=left target-side=left
+  connect @complete source-side=bottom target-side=top
+  connect @cancel-running source-side=bottom target-side=bottom
+  connect @cancel-wait source-side=right target-side=left
+  connect @cancelled source-side=right target-side=right
+  connect @finish-failed @finish-success
  }
 }

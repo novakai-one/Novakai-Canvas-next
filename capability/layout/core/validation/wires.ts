@@ -2,6 +2,7 @@ import type { VisualSection, VisualWire } from '../../contract/records/input.js'
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { PlacedNode, RoutedWire, Box } from '../../contract/records/geometry.js';
 import type { LayoutOptions, SupplementalMeasurements } from '../../contract/types.js';
+import { distinctLane } from '../routing/lanes.js';
 import { endpoints } from '../routing/endpoints.js';
 import { contentBoxes, labelObstacles } from '../routing/obstacles.js';
 import { validRoute, checkLabel, markerBox } from '../routing/checks.js';
@@ -23,13 +24,15 @@ function rebind(wire: VisualWire, context: Context): RoutedWire {
   const attachments = endpoints(wire, context.nodes);
   same(attachments, { source: candidate.source, target: candidate.target }, wire.id);
   same(wire.label, candidate.measuredLabel, wire.id);
+  same(wire.appearance, candidate.appearance, wire.id);
   same(
     [wire.sourceMarker, wire.targetMarker, wire.style],
     [candidate.sourceMarker, candidate.targetMarker, candidate.style],
     wire.id,
   );
   checkGeometry(wire, candidate, context);
-  return { ...candidate, ...attachments, measuredLabel: wire.label };
+  checkSharedRuns(candidate, context.candidates);
+  return { ...candidate, ...attachments, measuredLabel: wire.label, appearance: wire.appearance };
 }
 /** Native output has no special authority: inspect the corridor, exact path syntax, manual lock and label independently. */
 function checkGeometry(
@@ -118,4 +121,18 @@ export function inspectWires(
   );
   const context: Context = { candidates, nodes, metrics, options };
   return source.wires.map((wire) => rebind(wire, context));
+}
+
+/** Inspect final routes independently; an interior shared run hides which relationship reaches which endpoint. */
+function checkSharedRuns(
+  wire: SectionCandidate['wires'][number],
+  candidates: Context['candidates'],
+): void {
+  const others = candidates.filter((item) => item.id !== wire.id);
+  const hidden = others.find((item) => !distinctLane(wire.points, item.points));
+  if (hidden !== undefined)
+    reject('constraint-conflict', wire.id, 'Wires share an obscuring interior route', [
+      wire.id,
+      hidden.id,
+    ]);
 }

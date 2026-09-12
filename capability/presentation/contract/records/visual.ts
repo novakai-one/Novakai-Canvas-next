@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { sceneId, coordinate, dimension } from '../brands.js';
+import type { ConnectionStyle } from './style.js';
 import { fontRef, paint, color } from './style.js';
 import type {
   LayoutIntent,
@@ -46,7 +47,21 @@ export const rule = z
     width: z.number().positive().max(100),
   })
   .readonly();
-export const primitive = z.discriminatedUnion('kind', [textRun, mediaRun, rule]);
+/** Measured capsule background; number glyphs remain ordinary pinned-font text runs. */
+export const badgeRun = z
+  .strictObject({
+    kind: z.literal('badge'),
+    x: coordinate,
+    y: coordinate,
+    width: dimension,
+    height: dimension,
+    radius: dimension,
+    fill: color,
+    stroke: color,
+    strokeWidth: z.number().positive().max(100),
+  })
+  .readonly();
+export const primitive = z.discriminatedUnion('kind', [textRun, mediaRun, rule, badgeRun]);
 export type Primitive = z.infer<typeof primitive>;
 export type TextRun = z.infer<typeof textRun>;
 export const anchor = z
@@ -151,6 +166,7 @@ export interface VisualWire {
   readonly source: VisualEndpoint;
   readonly target: VisualEndpoint;
   readonly label: MeasuredContent;
+  readonly appearance: ConnectionStyle;
   readonly sourceMarker: MarkerKind;
   readonly targetMarker: MarkerKind;
   readonly style: 'solid' | 'dashed';

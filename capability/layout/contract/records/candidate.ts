@@ -22,6 +22,7 @@ const wire = z
     path: z.string().max(100000),
     labelBox: box,
     measuredLabel: z.unknown(),
+    appearance: z.unknown(),
     sourceMarker: marker,
     targetMarker: marker,
     style: z.enum(['solid', 'dashed']),

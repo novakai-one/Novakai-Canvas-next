@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "modules-document-publishing",
+    "revision": 0,
+    "title": "Document publishing boundary",
+    "inputKeySha256": "a941746491625307cb8301e4610d0eb16cd30861b2dd67db95fa47857a0c32d9"
+  },
+  "digest": "33dfc4d0047f5528d6ae3166ea23264f7ebf2b627d0f7f875f0570dc7b445caf",
+  "bytes": 126339,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1690.48515625,
+    "height": 853.1200000000001
+  }
+}

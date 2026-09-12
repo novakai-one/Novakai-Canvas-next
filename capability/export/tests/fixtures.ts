@@ -83,6 +83,7 @@ export async function startRaster(): Promise<void> {
 function collection(
   resource: Resource,
   composition: 'stack' | 'media-top' | 'media-left',
+  numbered: boolean,
 ): Collection {
   return value(
     validate({
@@ -116,6 +117,7 @@ function collection(
           id: 'apply',
           kind: 'flow',
           label: 'validated changes',
+          ...(numbered ? { step: 12 } : {}),
           source: { object: 'alpha' },
           target: { object: 'beta' },
         },
@@ -219,6 +221,11 @@ function placed(projection: Projection, label: MeasuredContent): PlacedSection {
         path: 'M240 160L500 160',
         labelBox: { x: 300, y: 130, width: label.width, height: label.height },
         measuredLabel: label,
+        appearance: {
+          paint: { fill: '#ffffff', stroke: '#444444', text: '#222222' },
+          width: 2,
+          dash: [8, 4],
+        },
         sourceMarker: 'one',
         targetMarker: 'zero-many',
         style: 'dashed',
@@ -263,6 +270,7 @@ export interface Fixture {
 /** Compose real rendering/encoding with controlled retention and owner-validation collaborators. */
 export async function fixture(
   composition: 'stack' | 'media-top' | 'media-left' = 'stack',
+  numbered = false,
 ): Promise<Fixture> {
   const bytes = await sharp({
     create: { width: 20, height: 20, channels: 4, background: '#1265dd' },
@@ -276,7 +284,7 @@ export async function fixture(
     bytes,
     metadata: { alt: 'Blue status square' },
   };
-  const original = collection(image, composition);
+  const original = collection(image, composition, numbered);
   const fonts = pinnedFonts();
   const first = fonts.at(0);
   const mono = fonts.at(1);
@@ -314,6 +322,11 @@ export async function fixture(
     gap: 8,
     stroke: 1,
     radius: 8,
+    connection: {
+      paint: { fill: '#ffffff', stroke: '#444444', text: '#222222' },
+      width: 2,
+      dash: [8, 4],
+    },
     contentSizing: {
       widths: {
         small: { preferred: 180, maximum: 240 },
@@ -366,16 +379,9 @@ export async function fixture(
     ),
   );
   const projection = value(presentation.presentation.project(original));
-  const label = value(
-    presentation.presentation.measureText({
-      text: 'validated changes',
-      width: 180,
-      font: { family: first.family, digest: first.digest },
-      size: 16,
-      lineHeight: 24,
-      fill: paint.text,
-    }),
-  );
+  const projectedWire = projection.sections[0]?.wires[0];
+  assert(projectedWire);
+  const label = projectedWire.label;
   const section = placed(projection, label);
   const scene: Scene = {
     collectionId: original.id,

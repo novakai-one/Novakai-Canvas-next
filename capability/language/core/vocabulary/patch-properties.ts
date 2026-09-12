@@ -17,6 +17,7 @@ export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string
   },
   wire: {
     label,
+    step: p.step,
     from: p.from,
     to: p.to,
     guard: p.guard,

@@ -70,9 +70,31 @@ function primitive(item: Primitive, key: number): ReactElement {
 /** Image and line are the remaining closed primitive variants. */
 function nonText(item: Exclude<Primitive, { kind: 'text' }>, key: number): ReactElement {
   if (item.kind === 'media') return media(item, key);
-  return rule(item, key);
+  return decoration(item, key);
 }
 /** Shared block renderer owns escaping and local primitives for both interactive nodes and static export. */
 export function ContentBlocks({ primitives }: ContentBlocksProps): ReactElement {
   return <g>{primitives.map(primitive)}</g>;
+}
+
+/** Badge fill and line geometry were measured before routing; no renderer-owned dimensions. */
+function decoration(
+  item: Extract<Primitive, { kind: 'badge' | 'rule' }>,
+  key: number,
+): ReactElement {
+  if (item.kind === 'rule') return rule(item, key);
+  return (
+    <rect
+      key={key}
+      data-badge="true"
+      x={item.x}
+      y={item.y}
+      width={item.width}
+      height={item.height}
+      rx={item.radius}
+      fill={item.fill}
+      stroke={item.stroke}
+      strokeWidth={item.strokeWidth}
+    />
+  );
 }

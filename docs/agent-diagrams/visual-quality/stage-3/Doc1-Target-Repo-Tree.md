@@ -35,7 +35,7 @@ resources/examples/showcase
 
 ## Visual context
 
-![Current educational baseline](../assets/current/2026-09-13-water-treatment.png)
+![Current educational baseline](../../../../quality/agent-diagrams/visual-quality/stage-2/water-export.png)
 
 ![Approved infographic target](../assets/targets/docker-infographic.png)
 

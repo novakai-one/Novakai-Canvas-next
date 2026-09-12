@@ -102,6 +102,15 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     monoFont: fontReference(requirePinnedFont('font.mono', values, resolved.fonts)),
     typography: typography(resolved),
     contentSizing: contentSizing(values),
+    connection: {
+      paint: {
+        fill: color('surface.base'),
+        stroke: color('text.secondary'),
+        text: color('text.primary'),
+      },
+      width: tokenNumber(values, 'diagram.edgeStroke'),
+      dash: [tokenNumber(values, 'space.2'), tokenNumber(values, 'space.1')],
+    },
     padding: tokenNumber(values, 'space.3'),
     gap: tokenNumber(values, 'space.2'),
     stroke: tokenNumber(values, 'stroke.base'),

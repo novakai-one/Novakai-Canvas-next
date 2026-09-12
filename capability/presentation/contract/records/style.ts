@@ -21,6 +21,15 @@ export type FontSet = z.infer<typeof fontSet>;
 export const paint = z.strictObject({ fill: color, stroke: color, text: color }).readonly();
 export type Paint = z.infer<typeof paint>;
 const positive = z.number().finite().positive().max(10000);
+/** Diagram-owned wire paint travels with the scene; UI theme never substitutes its own stroke. */
+export const connectionStyle = z
+  .strictObject({
+    paint,
+    width: positive,
+    dash: z.tuple([positive, positive]).readonly(),
+  })
+  .readonly();
+export type ConnectionStyle = z.infer<typeof connectionStyle>;
 /** Absolute role metrics use the exact admitted font; malformed values fail the public reader. */
 export const textMetric = z
   .strictObject({ font: fontRef, size: positive, lineHeight: positive })
@@ -66,6 +75,7 @@ export const resolvedStyle = z
     monoFont: fontRef,
     typography: diagramTypography,
     contentSizing,
+    connection: connectionStyle,
     padding: positive,
     gap: positive,
     stroke: positive,

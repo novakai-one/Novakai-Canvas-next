@@ -67,6 +67,12 @@ export interface StyleProjection {
   readonly monoFont: TextMetric['font'];
   readonly typography: DiagramTypography;
   readonly contentSizing: ContentSizing;
+  /** Diagram wire paint and dimensions; Canvas and Export consume the same admitted values. */
+  readonly connection: {
+    readonly paint: Paint;
+    readonly width: number;
+    readonly dash: readonly [number, number];
+  };
   readonly padding: number;
   readonly gap: number;
   readonly stroke: number;

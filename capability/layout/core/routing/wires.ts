@@ -14,6 +14,7 @@ import { accumulate } from '../arrangement/sequential.js';
 import { localCorridors, outsideCorridor, compareRoutes } from './corridors.js';
 import type { Corridor } from './corridors.js';
 import { reject } from '../validation/outcomes.js';
+import { expand } from '../geometry/bounds.js';
 interface WireContext {
   readonly placement: RoutingContext;
   readonly metrics: SupplementalMeasurements;
@@ -60,6 +61,7 @@ function wire(
     path,
     labelBox,
     measuredLabel: plan.wire.label,
+    appearance: plan.wire.appearance,
     sourceMarker: plan.wire.sourceMarker,
     targetMarker: plan.wire.targetMarker,
     style: plan.wire.style,
@@ -71,7 +73,6 @@ function candidate(
   points: readonly Point[],
   occupied: readonly Box[],
   context: WireContext,
-  retained = false,
 ): RoutedWire | null {
   if (
     !validRoute(
@@ -84,7 +85,7 @@ function candidate(
     )
   )
     return null;
-  if (!laneAvailable(plan, points, context, retained)) return null;
+  if (!laneAvailable(points, context)) return null;
   const label = labelBox(
     points,
     plan.wire.label,
@@ -102,9 +103,13 @@ async function attempt(
 ): Promise<RoutedWire | null> {
   const placement = {
     ...context.placement,
-    options: { ...context.placement.options, routeClearance: candidateClearance(plan, context) },
+    options: { ...context.placement.options, routeClearance: 0 },
   };
-  const values = await routeNative([corridor.connection], context.obstacles, placement);
+  const values = await routeNative(
+    [corridor.connection],
+    nativeObstacles(plan, context),
+    placement,
+  );
   if (values.kind === 'candidate-infeasible') return null;
   const value = values.routes[0];
   if (value === undefined) return reject('engine-failed', plan.wire.id, 'Routing omitted a wire');
@@ -161,7 +166,7 @@ function savedWire(
   occupied: readonly Box[],
   context: WireContext,
 ): RoutedWire {
-  const result = candidate(plan, saved.points, occupied, context, true);
+  const result = candidate(plan, saved.points, occupied, context);
   if (result !== null) return result;
   return reject(
     'constraint-conflict',
@@ -253,7 +258,7 @@ export async function routeWires(
 ): Promise<readonly RoutedWire[]> {
   const context: WireContext = { metrics, placement, obstacles: obstacles(nodes), prior: [] };
   const plans = section.wires.map((item, index): RoutePlan =>
-    plan(item, nodes, metrics, placement, parallel(section, index)),
+    plan(item, nodes, metrics, placement, parallel(section, index), index),
   );
   const saved = plans.flatMap(
     (item): RouteValue | readonly RouteValue[] => manual(item, context.obstacles, metrics) ?? [],
@@ -267,16 +272,9 @@ export async function routeWires(
   return finalPaths(labelled, section, context);
 }
 
-/** Retained manual geometry takes precedence; automatic peers must use distinct endpoint-local lanes. */
-function laneAvailable(
-  plan: RoutePlan,
-  points: readonly Point[],
-  context: WireContext,
-  retained: boolean,
-): boolean {
-  if (retained) return true;
-  const peers = context.prior.filter((item): boolean => sameEndpoints(plan.attachments, item));
-  return peers.every((item): boolean => distinctLane(points, item.points));
+/** Every completed wire keeps an attributable interior lane; only shared endpoint stubs may coincide. */
+function laneAvailable(points: readonly Point[], context: WireContext): boolean {
+  return context.prior.every((item): boolean => distinctLane(points, item.points));
 }
 
 /** A missing adjacent label invalidates the proposal without hiding a partial wire. */
@@ -290,17 +288,19 @@ function labelledCandidate(
   return wire(plan, points, label, context);
 }
 
-/** Prior labels must not swallow native approach points when optional obstacle buffers are expanded. */
-function candidateClearance(plan: RoutePlan, context: WireContext): number {
-  const points = [
+/** Inflate each obstacle separately: a tight endpoint approach must not remove clearance around unrelated content. */
+function nativeObstacles(plan: RoutePlan, context: WireContext): readonly Obstacle[] {
+  const approaches = [
     plan.connection.sourceApproach ?? plan.connection.source,
     plan.connection.targetApproach ?? plan.connection.target,
   ];
-  const distances = points.flatMap((point): readonly number[] =>
-    context.obstacles.map((obstacle): number => boxDistance(point, obstacle.box) / 2),
-  );
-  return Math.min(plan.clearance, ...distances);
+  return context.obstacles.map((obstacle): Obstacle => {
+    const distances = approaches.map((point): number => boxDistance(point, obstacle.box) / 2);
+    const clearance = Math.min(plan.clearance, ...distances);
+    return { ...obstacle, box: expand(obstacle.box, clearance) };
+  });
 }
+
 /** Distance to a rectangle bounds optional native inflation without changing required marker dimensions. */
 function boxDistance(point: Point, box: Box): number {
   return Math.max(

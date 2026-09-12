@@ -4,10 +4,6 @@
   }
   .wire {
     fill: none;
-    stroke-width: var(--nv-diagram-edge-stroke);
-  }
-  .wire[data-style='dashed'] {
-    stroke-dasharray: var(--nv-space-2) var(--nv-space-1);
   }
   .wire[data-selected='true'] {
     filter: drop-shadow(0 0 var(--nv-stroke-base) var(--nv-action-accent));

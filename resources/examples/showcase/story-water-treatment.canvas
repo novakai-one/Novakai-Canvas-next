@@ -1,64 +1,74 @@
 canvas 1
 collection @story-water-treatment "How water treatment uses several barriers" theme=studio description="Simplified conventional treatment explanation. Actual barriers and operating limits depend on source-water risks; this is not an operating procedure." {
-  asset @water image source="./assets/water.svg" alt="Water moving through treatment"
-  asset @evidence image source="./assets/evidence.svg" alt="A recorded observation"
-  asset @shield image source="./assets/shield.svg" alt="A treatment barrier"
+  asset @screen image source="./assets/intake-screen.svg" alt="A coarse screen intercepts debris in an incoming water channel"
+  asset @basin image source="./assets/settling-basin.svg" alt="Particles gather and settle in a treatment basin"
+  asset @filter image source="./assets/layered-filter.svg" alt="Water passes through layered filter media"
+  asset @control image source="./assets/treatment-control.svg" alt="A controlled treatment stage protects the water stream"
+  asset @storage image source="./assets/protected-storage.svg" alt="Protected storage supplies the distribution network"
+  asset @evidence image source="./assets/evidence.svg" alt="Recorded observations used to check treatment"
 
-  node @source concept "1. Screen the intake" role=primary frame=none composition=media-top {
-    icon @symbol asset=@water size=small
-    text @detail "Remove large debris from incoming water." role=caption
+  node @source concept "Screen the intake" frame=none composition=media-top {
+    image @figure asset=@screen size=large
+    text @detail "Intercept large debris before treatment." role=caption
   }
-  node @settle concept "2. Form and settle floc" role=supporting frame=none composition=media-top {
-    icon @symbol asset=@water size=small
+  node @settle concept "Gather and settle" frame=none composition=media-top {
+    image @figure asset=@basin size=large
     text @detail "Gather fine particles into floc that can settle." role=caption
   }
-  node @filter concept "3. Filter" role=supporting frame=none composition=media-top {
-    icon @symbol asset=@shield size=small
+  node @filter concept "Filter the water" frame=none composition=media-top {
+    image @figure asset=@filter size=large
     text @detail "Pass clarified water through filter media." role=caption
   }
-  node @disinfect concept "4. Disinfect" role=success frame=none composition=media-top {
-    icon @symbol asset=@shield size=small
-    text @detail "Apply the selected controlled disinfection barrier." role=caption
+  node @disinfect concept "Apply disinfection" frame=none composition=media-top {
+    image @figure asset=@control size=large
+    text @detail "Apply the selected, controlled disinfection barrier." role=caption
   }
-  node @supply concept "5. Protect storage and distribution" role=success frame=none composition=media-top {
-    icon @symbol asset=@water size=small
-    text @detail "Protect treated water as it enters the network." role=caption
+  node @supply concept "Protect distribution" frame=none composition=media-top {
+    image @figure asset=@storage size=large
+    text @detail "Protect treated water in storage and the network." role=caption
   }
-  node @monitor note "Observe the barriers" role=primary frame=none composition=media-top {
-    icon @symbol asset=@evidence size=small
-    text @detail "Samples and instruments inform treatment checks. Dashed links show monitoring, not water transport." role=caption
+  node @barrier-system concept "02 / TREAT THE WATER" {}
+  node @monitor note "Check performance" frame=none composition=media-top {
+    image @figure asset=@evidence size=small
+    text @detail "Samples and instruments check filtration and disinfection." role=caption
+    text @legend "Dashed arrows = monitoring, not water transport." role=annotation
   }
-  node @residuals note "Handle residual streams" role=warning {
+  node @residuals note "Separate residuals" role=warning frame=card {
     text @detail "Settled solids and filter wash water require separate handling." role=caption
   }
-  node @limits note "Select barriers for the source" {
-    text @detail "No single barrier addresses every contaminant. The source-water risks determine the process." role=caption
+  node @limits note "One barrier is not enough" role=success frame=card {
+    text @detail "Each stage addresses a different part of the source-water risk." role=caption
+    text @scope "The source determines the necessary barriers and operating limits." role=annotation
   }
 
-  wire @intake @source -> @settle "screened water" kind=flow
-  wire @clarified @settle -> @filter "clarified water" kind=flow
-  wire @filtered @filter -> @disinfect "filtered water" kind=flow
-  wire @treated @disinfect -> @supply "treated water" kind=flow
+  wire @intake @source -> @settle "screened source water" kind=flow step=1
+  wire @clarified @settle -> @filter "clarified water" kind=flow step=2
+  wire @filtered @filter -> @disinfect "filtered water" kind=flow step=3
+  wire @treated @disinfect -> @supply "treated water" kind=flow step=4
   wire @solids @settle -> @residuals "settled solids" kind=flow
   wire @wash @filter -> @residuals "filter wash water" kind=flow
-  wire @filter-check @monitor -> @filter "checks filtration" kind=reference style=dashed
-  wire @disinfection-check @monitor -> @disinfect "checks disinfection" kind=reference style=dashed
+  wire @barrier-check @monitor -> @barrier-system "checks both barriers" kind=reference style=dashed
 
-  section @treatment "Water treatment" mode=story layout=grid columns=1 direction=down gap=normal {
-    group @intake-stage "REMOVE PARTICLES" frame=panel role=supporting layout=grid columns=2 gap=normal {
-      show @source @settle
+  section @treatment "Water treatment" mode=story layout=grid columns=2 direction=right gap=normal {
+    group @train "A SEQUENCE OF BARRIERS" frame=none layout=grid columns=1 direction=down gap=normal {
+      group @intake-stage "01 / REMOVE PARTICLES" frame=panel role=supporting layout=grid columns=2 direction=right gap=normal {
+        show @source @settle
+      }
+      group @barriers "02 / TREAT THE WATER" represents=@barrier-system frame=panel role=success layout=grid columns=2 direction=right gap=normal {
+        show @disinfect @filter
+      }
+      group @delivery "03 / KEEP IT PROTECTED" frame=panel layout=grid columns=2 direction=right gap=normal {
+        show @supply @limits
+      }
     }
-    group @barriers "TREAT AND PROTECT" frame=panel role=neutral layout=grid columns=3 gap=normal {
-      show @filter @disinfect @supply
-    }
-    group @oversight "MONITORING AND SEPARATE STREAMS" frame=panel role=supporting layout=grid columns=2 gap=normal {
+    group @oversight "OBSERVE + HANDLE SIDE STREAMS" frame=panel role=decision layout=grid columns=1 direction=down gap=roomy {
       show @monitor @residuals
     }
-    show @limits
     connect @intake source-side=right target-side=left
     connect @clarified source-side=bottom target-side=top
-    connect @filtered @treated source-side=right target-side=left
-    connect @solids @wash source-side=bottom target-side=top
-    connect @filter-check @disinfection-check source-side=top target-side=bottom
+    connect @filtered source-side=left target-side=right
+    connect @treated source-side=bottom target-side=top
+    connect @solids @wash source-side=right target-side=left
+    connect @barrier-check source-side=bottom target-side=right
   }
 }

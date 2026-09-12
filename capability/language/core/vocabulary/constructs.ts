@@ -76,6 +76,7 @@ export const constructs: readonly ConstructDefinition[] = [
     ],
     properties: {
       kind: p.wireKind,
+      step: p.step,
       from: p.from,
       to: p.to,
       guard: p.guard,

@@ -47,6 +47,11 @@ const tokens = resolvedStyle.parse({
   gap: 4,
   stroke: 1,
   radius: 4,
+  connection: {
+    paint: { fill: '#ffffff', stroke: '#444444', text: '#222222' },
+    width: 2,
+    dash: [8, 4],
+  },
   contentSizing: {
     widths: {
       small: { preferred: 100, maximum: 120 },

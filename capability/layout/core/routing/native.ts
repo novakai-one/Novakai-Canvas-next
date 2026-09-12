@@ -25,6 +25,7 @@ export function plan(
   metrics: SupplementalMeasurements,
   context: RoutingContext,
   parallel: number,
+  ordinal: number,
 ): RoutePlan {
   const resolved = endpoints(wire, nodes);
   const clearance = context.options.routeClearance * 2;
@@ -36,12 +37,14 @@ export function plan(
     metrics.markers[wire.sourceMarker].advance,
     departure,
     sourceSpace,
+    ordinal,
   );
   const targetDistance = departureDistance(
     wire.id,
     metrics.markers[wire.targetMarker].advance,
     departure,
     targetSpace,
+    ordinal,
   );
   const source = approach(resolved.source, sourceDistance);
   const target = approach(resolved.target, targetDistance);
@@ -74,8 +77,14 @@ export function plan(
     },
   };
 }
-/** Reserve at most a third of the free ray for optional approach so opposite native endpoints remain distinct; required marker advance is never reduced. */
-function departureDistance(id: string, advance: number, preferred: number, space: number): number {
+/** Stable source-order ordinals shorten optional clearance to keep coincident approaches distinct; required marker advance and the free-ray limit remain intact. */
+function departureDistance(
+  id: string,
+  advance: number,
+  preferred: number,
+  space: number,
+  ordinal: number,
+): number {
   if (advance > space)
     return reject(
       'constraint-conflict',
@@ -83,7 +92,8 @@ function departureDistance(id: string, advance: number, preferred: number, space
       'Required endpoint marker approach is blocked by fixed content',
       [id],
     );
-  return Math.max(advance, Math.min(preferred + advance, space / 3));
+  const available = Math.max(0, Math.min(preferred, space / 3 - advance));
+  return advance + available / (ordinal + 1);
 }
 /** Parallel wires reserve distinct outside lanes while keeping the same exact semantic endpoints. */
 function parallelCheckpoints(

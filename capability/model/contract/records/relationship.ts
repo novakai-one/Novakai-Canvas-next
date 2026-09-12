@@ -24,6 +24,7 @@ export const relationshipSchema = z
     id: relationshipId,
     kind: relationshipKind,
     label,
+    step: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
     source: endpointSchema,
     target: endpointSchema,
     from: cardinalitySchema.optional(),

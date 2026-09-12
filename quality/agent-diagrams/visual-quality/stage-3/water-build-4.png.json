@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "story-water-treatment",
+    "revision": 5,
+    "title": "How water treatment uses several barriers",
+    "inputKeySha256": "837158a2e72127b866821fca7e286eb1650700a92569fc40e558ab87327806f5"
+  },
+  "digest": "d5e1847e47e152fba290857bf7b73105099dd05dc5f38415a7f66a78ee911f51",
+  "bytes": 159827,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1410.447890625,
+    "height": 1412.7199999999998
+  }
+}

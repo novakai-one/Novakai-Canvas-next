@@ -123,6 +123,11 @@ export function scene(revision = 0): Scene {
             path: 'M 140 70 L 380 70',
             labelBox: { x: 240, y: 80, width: 80, height: 20 },
             measuredLabel: measured('owns'),
+            appearance: {
+              paint: { fill: '#ffffff', stroke: '#222222', text: '#222222' },
+              width: 2,
+              dash: [8, 4],
+            },
             sourceMarker: 'one',
             targetMarker: 'zero-many',
             style: 'solid',

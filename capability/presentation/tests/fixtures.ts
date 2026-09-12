@@ -75,6 +75,11 @@ export function style(pinned: FontSet): ResolvedStyle {
     gap: 8,
     stroke: 1,
     radius: 8,
+    connection: {
+      paint: { fill: '#ffffff', stroke: '#444444', text: '#222222' },
+      width: 2,
+      dash: [8, 4],
+    },
     contentSizing: {
       widths: {
         small: { preferred: 180, maximum: 240 },

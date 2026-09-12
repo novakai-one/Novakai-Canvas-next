@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { sceneId } from '../brands.js';
+import { connectionStyle } from './style.js';
 import { content, markerKind, visualNode } from './visual.js';
 import { PROJECTION_CAPACITY } from './limits.js';
 /** Serialized visual fields are owned here; Model fragments remain unknown until owner validation and equality checks. */
@@ -13,6 +14,7 @@ const wire = z
     source: endpoint,
     target: endpoint,
     label: content,
+    appearance: connectionStyle,
     sourceMarker: markerKind,
     targetMarker: markerKind,
     style: z.enum(['solid', 'dashed']),

@@ -1,7 +1,13 @@
 import type { LayoutInputKey } from '../brands.js';
 import { z } from 'zod';
 import { identity, coordinate, dimension } from '../brands.js';
-import type { VisualNode, MeasuredContent, MarkerKind, VisualSequenceItem } from './input.js';
+import type {
+  VisualNode,
+  MeasuredContent,
+  MarkerKind,
+  VisualSequenceItem,
+  VisualWire,
+} from './input.js';
 export const point = z.strictObject({ x: coordinate, y: coordinate }).readonly();
 export type Point = z.infer<typeof point>;
 export const box = point.unwrap().extend({ width: dimension, height: dimension }).readonly();
@@ -30,6 +36,7 @@ export interface RoutedWire {
   readonly path: string;
   readonly labelBox: Box;
   readonly measuredLabel: MeasuredContent;
+  readonly appearance: VisualWire['appearance'];
   readonly sourceMarker: MarkerKind;
   readonly targetMarker: MarkerKind;
   readonly style: 'solid' | 'dashed';

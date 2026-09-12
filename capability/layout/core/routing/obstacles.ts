@@ -1,9 +1,16 @@
 import type { PlacedNode, Box } from '../../contract/records/geometry.js';
 import type { Obstacle } from '../../contract/records/problem.js';
-/** Container interiors are available to their children; only their measured headers block connections. */
+/** Container interiors are available to their children; only their measured title/content footprint blocks connections. */
 export function nodeObstacle(node: PlacedNode): Obstacle {
   if (node.measured.groupId === null) return { id: node.id, box: node.box };
-  return { id: node.id, box: { ...node.box, height: node.measured.headerHeight } };
+  return {
+    id: node.id,
+    box: {
+      ...node.box,
+      width: Math.min(node.box.width, node.measured.width),
+      height: node.measured.headerHeight,
+    },
+  };
 }
 /** Wire routing treats complete ordinary content and container headers as obstacles. */
 export function obstacles(nodes: readonly PlacedNode[]): readonly Obstacle[] {
@@ -21,7 +28,7 @@ export function labelObstacles(nodes: readonly PlacedNode[]): readonly Box[] {
 }
 /** Four stroke-width strips cover the complete border, including its outward painted half. */
 function groupBorders(node: PlacedNode): readonly Box[] {
-  if (node.measured.groupId === null) return [];
+  if (node.measured.groupId === null || node.measured.frame === 'none') return [];
   const { x, y, width, height } = node.box;
   const stroke = node.measured.strokeWidth;
   const half = stroke / 2;

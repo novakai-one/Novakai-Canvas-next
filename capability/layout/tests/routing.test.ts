@@ -25,6 +25,7 @@ describe('Layout routing acceptance', () => {
     expect(wires).toHaveLength(3);
     await groupLabelBorders(false);
     await groupLabelBorders(true);
+    await rankedLabelCorridors();
     const first = wires[0];
     const second = wires[1];
     const self = wires[2];
@@ -815,4 +816,66 @@ function labelInside(label: Box, group: Box): boolean {
     insideBox(label, group) &&
     insideBox({ x: label.x + label.width, y: label.y + label.height }, group)
   );
+}
+
+/** The existing native acceptance case also covers compressed ranked cycles in every direction. */
+async function rankedLabelCorridors(): Promise<void> {
+  for (const direction of ['right', 'left', 'down', 'up'] as const) {
+    await rankedLabelCorridor(direction, false);
+    await rankedLabelCorridor(direction, true);
+  }
+}
+/** Real seeded ranks must reserve readable straight forward wires; the return edge keeps its own lane. */
+async function rankedLabelCorridor(
+  direction: VisualSection['layout']['direction'],
+  grouped: boolean,
+): Promise<void> {
+  const layoutIntent = {
+    algorithm: 'layered',
+    direction,
+    gap: 'compact',
+    constraints: [{ kind: 'rank', targets: ['a', 'b', 'c'].map((id) => ({ kind: 'object', id })) }],
+  };
+  const source = project(
+    collection({
+      objects: ['a', 'b', 'c'].map((id) => object(id)),
+      relationships: [
+        edge('ab', 'a', 'b', { label: 'Submit application for review and record applicant' }),
+        edge('bc', 'b', 'c', { label: 'Complete review and record the decision' }),
+        edge('ca', 'c', 'a', { label: 'Return for another review' }),
+      ],
+      sections: [
+        section('ranked', [], {
+          layout: grouped ? { algorithm: 'layered', direction } : layoutIntent,
+          groups: grouped ? [{ id: 'group', title: 'Review', layout: layoutIntent }] : [],
+          appearances: ['a', 'b', 'c'].map((object) => ({
+            object,
+            ...(grouped ? { group: 'group' } : {}),
+          })),
+          wires: ['ab', 'bc', 'ca'].map((relationship) => ({ relationship })),
+        }),
+      ],
+    }),
+  );
+  const layout = await harness([source]);
+  const scene = value(await layout.arrange(request(layout, source)));
+  const placed = scene.sections[0];
+  assert(placed);
+  placed.wires.slice(0, 2).forEach((wire) => {
+    const travel = wire.points
+      .slice(1)
+      .reduce((sum, point, index) => sum + manhattan(wire.points[index], point), 0);
+    expect(travel).toBeCloseTo(manhattan(wire.source.point, wire.target.point));
+    expect(placed.nodes.every((node) => !borderCrosses(wire.labelBox, node.box))).toBe(true);
+  });
+  expect(
+    value(
+      layout.inspect({
+        projection: source,
+        measurements: metrics(source),
+        options: settings,
+        candidate: scene,
+      }),
+    ).valid,
+  ).toBe(true);
 }

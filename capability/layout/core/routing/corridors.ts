@@ -27,8 +27,10 @@ export function outsideCorridor(plan: RoutePlan, occupied: readonly Box[], gap: 
     8,
   );
 }
-/** Measured label dimensions reserve readable space on either side of the endpoint envelope. */
+/** Measured offsets reserve label space; approach-aligned checkpoints follow source-to-target order without forcing reversals past endpoint stubs. */
 function around(plan: RoutePlan, bounds: Box, gap: number, offset: number): readonly Corridor[] {
+  const source = plan.connection.sourceApproach ?? plan.connection.source;
+  const target = plan.connection.targetApproach ?? plan.connection.target;
   const left = bounds.x - gap - plan.wire.label.width;
   const right = bounds.x + bounds.width + gap + plan.wire.label.width;
   const top = bounds.y - gap - plan.wire.label.height;
@@ -37,32 +39,32 @@ function around(plan: RoutePlan, bounds: Box, gap: number, offset: number): read
     corridor(
       plan,
       [
-        { x: bounds.x, y: top },
-        { x: bounds.x + bounds.width, y: top },
+        { x: source.x, y: top },
+        { x: target.x, y: top },
       ],
       offset,
     ),
     corridor(
       plan,
       [
-        { x: bounds.x, y: bottom },
-        { x: bounds.x + bounds.width, y: bottom },
+        { x: source.x, y: bottom },
+        { x: target.x, y: bottom },
       ],
       offset + 1,
     ),
     corridor(
       plan,
       [
-        { x: left, y: bounds.y },
-        { x: left, y: bounds.y + bounds.height },
+        { x: left, y: source.y },
+        { x: left, y: target.y },
       ],
       offset + 2,
     ),
     corridor(
       plan,
       [
-        { x: right, y: bounds.y },
-        { x: right, y: bounds.y + bounds.height },
+        { x: right, y: source.y },
+        { x: right, y: target.y },
       ],
       offset + 3,
     ),

@@ -40,7 +40,7 @@ export function labelBox(
   occupied: readonly Box[],
   gap: number,
 ): Box | null {
-  const ordered = segments(points).toSorted((a, b) => length(b) - length(a));
+  const ordered = labelSegments(points).toSorted((a, b) => length(b) - length(a));
   const boxes = ordered.flatMap((segment) => candidates(segment, content, gap));
   return (
     boxes.find((candidate) => occupied.every((box) => !overlaps(expand(candidate, gap), box))) ??
@@ -59,10 +59,31 @@ export function adjacentLabel(
   content: MeasuredContent,
   gap: number,
 ): boolean {
-  return segments(points)
+  return labelSegments(points)
     .flatMap((segment) => candidates(segment, content, gap))
     .some(
       (candidate) =>
         Math.abs(candidate.x - box.x) < 0.000001 && Math.abs(candidate.y - box.y) < 0.000001,
     );
+}
+
+/** Collinear native checkpoints split no painted line; allocate against its full straight run.
+ * Authored vertices remain untouched. Pure replay has no recovery state; Layout owns rejection.
+ */
+function labelSegments(points: readonly Point[]): readonly Segment[] {
+  return segments(points).reduce<readonly Segment[]>(extendRun, []);
+}
+/** Only forward collinear travel merges; bends and reversals retain their separate footprints. */
+function extendRun(runs: readonly Segment[], next: Segment): readonly Segment[] {
+  const previous = runs.at(-1);
+  if (previous === undefined) return [next];
+  if (!sameDirection(previous, next)) return [...runs, next];
+  return [...runs.slice(0, -1), { a: previous.a, b: next.b }];
+}
+/** Signed unit directions distinguish a straight continuation from a retraced hairpin. */
+function sameDirection(a: Segment, b: Segment): boolean {
+  return (
+    Math.sign(a.b.x - a.a.x) === Math.sign(b.b.x - b.a.x) &&
+    Math.sign(a.b.y - a.a.y) === Math.sign(b.b.y - b.a.y)
+  );
 }

@@ -1,9 +1,17 @@
-import type { VisualSection, VisualWire } from '../../contract/records/input.js';
-import type { PlacementProblem } from '../../contract/records/problem.js';
+import type {
+  LayoutIntent,
+  VisualNode,
+  VisualSection,
+  VisualWire,
+} from '../../contract/records/input.js';
+import type { LinearConstraint, PlacementProblem } from '../../contract/records/problem.js';
 import type { SupplementalMeasurements, LayoutOptions } from '../../contract/types.js';
+
+import { relative } from '../constraints/relative.js';
 
 /** Automatic seeds reserve the measured label and both marker approaches between connected branches.
  * Semantic gap is a minimum; explicit positions and hard constraints remain authoritative afterward.
+ * Pure replay is safe; Layout reports invalid input and Authoring retains the scene on failure.
  */
 export function routingGap(
   section: VisualSection,
@@ -54,4 +62,75 @@ function localWires(
 ): readonly VisualWire[] {
   const connected = new Set(edges.map((edge) => edge.id));
   return section.wires.filter((wire) => connected.has(wire.id));
+}
+
+/** Preserve measured corridors when authored rank alignment moves automatic seeds.
+ * Preferences are soft: locks and semantic equations remain authoritative. Layout returns
+ * typed arrangement failures; Authoring retains the prior scene and owns recovery.
+ */
+export function routingPreferences(
+  section: VisualSection,
+  measurements: SupplementalMeasurements,
+  options: LayoutOptions,
+): readonly LinearConstraint[] {
+  const scopes = [
+    { id: section.id, layout: section.layout, parent: null },
+    ...section.groups.map((group) => ({
+      id: group.id,
+      layout: group.layout,
+      parent: section.nodes.find((node) => node.groupId === group.id)?.id ?? null,
+    })),
+  ];
+  return scopes.flatMap((scope) => preferredScope(section, scope, measurements, options));
+}
+/** Only immediate connected siblings reserve space; unrelated scope labels cannot inflate a rank. */
+function preferredScope(
+  section: VisualSection,
+  scope: { readonly id: string; readonly layout: LayoutIntent; readonly parent: string | null },
+  measurements: SupplementalMeasurements,
+  options: LayoutOptions,
+): readonly LinearConstraint[] {
+  const nodes = section.nodes.filter((node) => node.parent === scope.parent);
+  const ids = new Set(nodes.map((node) => node.id));
+  const edges = section.wires
+    .filter((wire) => ids.has(wire.source.node) && ids.has(wire.target.node))
+    .map((wire) => ({ id: wire.id, source: wire.source.node, target: wire.target.node }));
+  const gap = routingGap(section, edges, scope.layout.direction, measurements, options);
+  if (gap <= options.gap[scope.layout.gap]) return [];
+  const layout = {
+    ...scope.layout,
+    constraints: scope.layout.constraints.filter(
+      (constraint) => constraint.kind === 'rank' || constraint.kind === 'before',
+    ),
+  };
+  return relative(layout, section.nodes, gap, `${scope.id}:routing-preference`).map(
+    (constraint): LinearConstraint => ({ ...constraint, strength: 'strong' }),
+  );
+}
+
+/** Container trailing padding leaves a measured caption beside a straight child connection,
+ * including its gap from the painted border. This is a seed preference, never a changed lock.
+ * Pure replay is safe; Layout's arrangement boundary reports failure and Authoring owns recovery.
+ */
+export function labelPadding(
+  group: VisualNode,
+  section: VisualSection,
+  options: LayoutOptions,
+): { readonly width: number; readonly height: number } {
+  const children = section.nodes.filter((node) => node.parent === group.id);
+  const ids = new Set(children.map((node) => node.id));
+  const wires = section.wires.filter(
+    (wire) => ids.has(wire.source.node) && ids.has(wire.target.node),
+  );
+  const direction = section.groups.find((item) => item.id === group.groupId)?.layout.direction;
+  const horizontal = direction === 'left' || direction === 'right';
+  const extent = horizontal ? 'height' : 'width';
+  const reserve = Math.max(
+    options.padding,
+    ...wires.map((wire) => wire.label[extent] + options.labelGap * 2 + group.strokeWidth / 2),
+  );
+  const halfNode = Math.min(Infinity, ...children.map((node) => node[extent] / 2));
+  const padding = Math.max(options.padding, reserve - halfNode);
+  if (horizontal) return { width: options.padding, height: padding };
+  return { width: padding, height: options.padding };
 }

@@ -11,6 +11,7 @@ import { compile } from '../constraints/compile.js';
 import { relative } from '../constraints/relative.js';
 import { separateBoxes } from '../constraints/separation.js';
 import { previousNode } from './seeds.js';
+import { routingPreferences } from './spacing.js';
 import { seedScope } from './groups.js';
 import { execute, protect, requireValue, reject } from '../validation/outcomes.js';
 /** Prior geometry is a soft seed only; changed measured content and current locks always win. */
@@ -85,6 +86,7 @@ export async function placeSection(
         constraints: [
           ...problem.constraints,
           ...requireValue(sectionConstraints(section, context)),
+          ...routingPreferences(section, measurements, context.options),
         ],
       },
       items,

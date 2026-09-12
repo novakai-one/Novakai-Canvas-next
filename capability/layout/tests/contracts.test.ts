@@ -569,16 +569,31 @@ function outsideGeometry(calls: readonly import('../contract/index.js').RoutingP
 /** Equal-length admissible proposals force fewer bends first, then stable proposal order; redundant collinear vertices are not bends. */
 async function rankingTies(
   source: Projection,
-  original: readonly import('../contract/index.js').Point[],
+  selected: readonly import('../contract/index.js').Point[],
   native: Dependencies,
 ): Promise<void> {
-  const start = original[0];
-  const end = original.at(-1);
-  const a = original[1];
-  const b = original.at(-2);
+  const start = selected[0];
+  const end = selected.at(-1);
+  const a = selected[1];
+  const b = selected.at(-2);
   assert(start && end && a && b);
   expect(start.y).toBe(end.y);
-  const distance = (routeRank(original, 0)[0] - Math.abs(end.x - start.x)) / 2;
+  // Keep the original 376-unit / eight-bend adversarial vector even when native routing improves.
+  const distance = (376 - Math.abs(end.x - start.x)) / 2;
+  const firstTurn = a.x + (b.x - a.x) / 3;
+  const lastTurn = b.x - (b.x - a.x) / 3;
+  const original = [
+    start,
+    a,
+    { x: a.x, y: start.y - distance / 2 },
+    { x: firstTurn, y: start.y - distance / 2 },
+    { x: firstTurn, y: start.y - distance },
+    { x: lastTurn, y: start.y - distance },
+    { x: lastTurn, y: start.y - distance / 2 },
+    { x: b.x, y: start.y - distance / 2 },
+    b,
+    end,
+  ];
   const upper = [
     start,
     a,

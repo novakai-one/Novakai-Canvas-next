@@ -3,7 +3,7 @@ import type { VisualNode, VisualSection, LayoutIntent } from '../../contract/rec
 import type { PlacementValue, PlacementProblem } from '../../contract/records/problem.js';
 import type { Point } from '../../contract/records/geometry.js';
 import type { SupplementalMeasurements, SeedContext } from '../../contract/types.js';
-import { routingGap, crossingGap } from './spacing.js';
+import { routingGap, crossingGap, labelPadding } from './spacing.js';
 import { placeScope } from './policy.js';
 import { union } from '../geometry/bounds.js';
 import { reject } from '../validation/outcomes.js';
@@ -24,13 +24,19 @@ async function branch(
       root: { id: node.id, box: { x: 0, y: 0, width: node.width, height: node.height } },
       descendants,
     };
-  return container(node, descendants, context.options.padding);
+  return container(
+    node,
+    descendants,
+    context.options.padding,
+    labelPadding(node, section, context.options),
+  );
 }
 /** Header and padding belong to the outer group; descendant points remain section-frame translations. */
 function container(
   node: VisualNode,
   descendants: readonly PlacementValue[],
   padding: number,
+  trailing: { readonly width: number; readonly height: number },
 ): Branch {
   const bounds = union(descendants.map((item) => item.box));
   const offset = { x: padding - bounds.x, y: node.headerHeight + padding - bounds.y };
@@ -40,8 +46,11 @@ function container(
       box: {
         x: 0,
         y: 0,
-        width: Math.max(node.width, bounds.width + padding * 2),
-        height: Math.max(node.height, bounds.height + node.headerHeight + padding * 2),
+        width: Math.max(node.width, bounds.width + padding + trailing.width),
+        height: Math.max(
+          node.height,
+          bounds.height + node.headerHeight + padding + trailing.height,
+        ),
       },
     },
     descendants: descendants.map((item) => translate(item, offset)),
@@ -99,7 +108,8 @@ function flatten(value: PlacementValue, branches: readonly Branch[]): readonly P
   if (!found) return reject('engine-failed', value.id, 'Placement returned an unknown branch');
   return [value, ...found.descendants.map((item) => translate(item, value.box))];
 }
-/** Bottom-up scoped arrangement honours every group's algorithm without letting adapters own domain policy. */
+/** Bottom-up scoped arrangement honours each group's algorithm through injected native engines.
+ * Pure retries are safe; Layout execute catches structured faults and Authoring retains the scene. */
 export async function seedScope(
   parent: string | null,
   section: VisualSection,

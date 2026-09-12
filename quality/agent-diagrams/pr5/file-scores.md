@@ -33,3 +33,21 @@ Evidence for the deductions and remaining rows:
 P4=10 where the file declares no behavioral port or fully consumes its narrow chosen port. P9/P10=10 for declaration-only data means no callable failure/effect exists; it is not an untested runtime guarantee. P14=10 means no target-file `any` or unchecked `as`; it does not certify every external ABI method. P15 follows the literal idiom anchors; the independent Sonar measurement remains ≤2.
 
 Highest remaining source-gate costs: native detail-owned ABI and local native mutation; real-engine testability under the literal P16=0 anchor; assertion failure signatures under P9. No abstractions or weaker tests were added to manufacture a passing total.
+
+## Combined correction — current source matrix
+
+The original table and hash receipts above describe the earlier source and are retained. This matrix supersedes those rows for the corrected files; direct exported-entry recovery TSDoc now supports P10 for corridors/endpoints/native. This is author evidence for the authorized correction, not another audit. Full P1–P16 rationale, line declarations and SHA-256 hashes are in `correction-source-scores.json`; raw per-function Sonar evidence is in `correction-sonar-measurement.json`.
+
+|File|P1–P16|Total|Sonar max|Gate|
+|---|---|---:|---:|---|
+|`contract/records/engines.ts`|10,6,7,10,10,10,10,10,10,10,5,10,10,10,10,10|148|0|PASS|
+|`core/routing/checks.ts`|10,6,7,10,10,9,10,10,5,10,10,10,10,10,10,10|147|2|PASS|
+|`core/routing/corridors.ts`|10,6,7,10,10,10,10,10,10,10,10,10,10,10,10,10|153|2|PASS|
+|`core/routing/endpoints.ts`|10,6,7,10,10,9,10,10,5,10,10,10,10,10,10,10|147|2|PASS|
+|`core/routing/lanes.ts`|10,6,7,10,10,9,9,10,10,10,10,10,10,10,10,10|151|2|PASS|
+|`core/routing/native.ts`|10,6,7,10,10,9,10,10,5,10,10,10,10,10,10,10|147|2|PASS|
+|`core/routing/wires.ts`|10,6,7,10,10,9,10,10,5,10,10,10,10,10,9,10|146|2|PASS|
+|`tests/contracts.test.ts`|9,6,7,10,10,9,9,10,5,8,9,10,5,10,7,0|124|2|OPEN|
+|`tests/routing.test.ts`|10,6,7,10,10,9,9,10,5,8,9,10,10,10,7,0|130|2|OPEN|
+
+Untouched native adapter remains **137/160 OPEN**; retained arrangement tests remain **124/160 OPEN**. Corrected routing/contracts tests remain **130/124 OPEN**. No interpretation waiver, native-test removal, or empty adapter seam was used. Automated checks do not settle the pending literal grading question.

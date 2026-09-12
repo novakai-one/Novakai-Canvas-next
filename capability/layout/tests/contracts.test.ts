@@ -385,6 +385,7 @@ async function candidateBudget(): Promise<void> {
       }),
     ).valid,
   ).toBe(true);
+  await rankedCandidates(source, scene, attempts, native);
   const first = [...attempts];
   attempts.length = 0;
   expect(value(await layout.arrange(request(layout, source)))).toEqual(scene);
@@ -419,6 +420,8 @@ async function terminalRouteFailure(
   expect(result.error.code).toBe(expected);
   expect(result.error.targets).toHaveLength(1);
   expect(calls).toHaveLength(budget);
+  if (code !== 'candidate-infeasible') expect(result).toEqual(routeFailure(code));
+  if (budget === 10) outsideGeometry(calls);
 }
 /** Failure discriminants, never message parsing, define which proposals the routing owner may skip. */
 function routeFailure(
@@ -434,4 +437,192 @@ function routeFailure(
       recovery: 'Retain the scene',
     },
   };
+}
+
+/** Re-admit each native proposal in isolation, then rank its inspected geometry with an independent numeric oracle. */
+async function rankedCandidates(
+  source: Projection,
+  selected: import('../contract/index.js').Scene,
+  attempts: readonly import('../contract/index.js').RoutingProblem[],
+  native: Dependencies,
+): Promise<void> {
+  const proposals = await Promise.all(
+    attempts.slice(1).map(
+      async (
+        problem,
+        index,
+      ): Promise<{
+        index: number;
+        points: readonly import('../contract/index.js').Point[];
+        rank: readonly [number, number, number];
+      } | null> => {
+        const outcome = await native.routing.route(problem);
+        const layout = createLayout({
+          ...native,
+          routing: {
+            version: native.routing.version,
+            route: async (): Promise<typeof outcome> => outcome,
+          },
+        });
+        const admitted = await layout.arrange(request(layout, source));
+        if (!admitted.ok) return null;
+        const wire = admitted.value.sections[0]?.wires[0];
+        assert(wire);
+        expect(
+          value(
+            layout.inspect({
+              projection: source,
+              measurements: metrics(source),
+              options: settings,
+              candidate: admitted.value,
+            }),
+          ).valid,
+        ).toBe(true);
+        return { index, points: wire.points, rank: routeRank(wire.points, index) };
+      },
+    ),
+  );
+  const admissible = proposals.filter((item): item is NonNullable<typeof item> => item !== null);
+  expect(admissible.length).toBeGreaterThan(1);
+  expect(new Set(admissible.map((item): number => item.rank[0])).size).toBeGreaterThan(1);
+  const ordered = admissible.toSorted((a, b): number => numericRank(a.rank, b.rank));
+  expect(selected.sections[0]?.wires[0]?.points).toEqual(ordered[0]?.points);
+  const best = ordered[0];
+  assert(best);
+  await rankingTies(source, best.points, native);
+}
+/** Test-owned length and cross-product bend calculation does not import the router's comparison implementation. */
+function routeRank(
+  points: readonly import('../contract/index.js').Point[],
+  index: number,
+): readonly [number, number, number] {
+  const vectors = points
+    .slice(1)
+    .map((point, i): readonly [number, number] => [
+      point.x - (points[i]?.x ?? NaN),
+      point.y - (points[i]?.y ?? NaN),
+    ]);
+  const length = vectors.reduce(
+    (sum, vector): number => sum + Math.abs(vector[0]) + Math.abs(vector[1]),
+    0,
+  );
+  const bends = vectors
+    .slice(1)
+    .filter(
+      (vector, i): boolean =>
+        vector[0] * (vectors[i]?.[1] ?? NaN) !== vector[1] * (vectors[i]?.[0] ?? NaN),
+    ).length;
+  return [length, bends, index];
+}
+/** Lexicographic ordering makes both bend and original-proposal index tie breakers observable. */
+function numericRank(a: readonly number[], b: readonly number[]): number {
+  return (
+    a
+      .map((value, index): number => value - (b[index] ?? NaN))
+      .find((difference): boolean => difference !== 0) ?? 0
+  );
+}
+/** The tenth proposal must actually leave occupied bounds, retaining distinct source/target approach checkpoints. */
+function outsideGeometry(calls: readonly import('../contract/index.js').RoutingProblem[]): void {
+  const last = calls.at(-1);
+  const first = calls[0];
+  assert(last && first);
+  const connection = last.connections[0];
+  assert(connection);
+  const boxes = last.obstacles.map((item): typeof item.box => item.box);
+  const middle = connection.checkpoints.slice(1, -1);
+  expect(middle).toHaveLength(2);
+  expect(middle[0]?.x).toBeLessThan(Math.min(...boxes.map((box): number => box.x)));
+  expect(middle[1]?.x).toBeGreaterThan(Math.max(...boxes.map((box): number => box.x + box.width)));
+  expect(
+    middle.every((point): boolean => point.y < Math.min(...boxes.map((box): number => box.y))),
+  ).toBe(true);
+  expect(connection.checkpoints).not.toEqual(first.connections[0]?.checkpoints);
+  expect(connection.checkpoints[0]).toEqual(connection.sourceApproach);
+  expect(connection.checkpoints.at(-1)).toEqual(connection.targetApproach);
+}
+
+/** Equal-length admissible proposals force fewer bends first, then stable proposal order; redundant collinear vertices are not bends. */
+async function rankingTies(
+  source: Projection,
+  original: readonly import('../contract/index.js').Point[],
+  native: Dependencies,
+): Promise<void> {
+  const start = original[0];
+  const end = original.at(-1);
+  const a = original[1];
+  const b = original.at(-2);
+  assert(start && end && a && b);
+  expect(start.y).toBe(end.y);
+  const distance = (routeRank(original, 0)[0] - Math.abs(end.x - start.x)) / 2;
+  const upper = [
+    start,
+    a,
+    { x: a.x, y: start.y - distance },
+    { x: (a.x + b.x) / 2, y: start.y - distance },
+    { x: b.x, y: start.y - distance },
+    b,
+    end,
+  ];
+  const lower = [
+    start,
+    a,
+    { x: a.x, y: start.y + distance },
+    { x: b.x, y: start.y + distance },
+    b,
+    end,
+  ];
+  const candidates = [original, upper, lower];
+  expect(candidates.map((points): number => routeRank(points, 0)[0])).toEqual([376, 376, 376]);
+  expect(candidates.map((points): number => routeRank(points, 0)[1])).toEqual([8, 4, 4]);
+  for (const points of candidates) await inspectRankingVector(source, points, native);
+  let attempt = -2;
+  const layout = createLayout({
+    ...native,
+    routing: {
+      version: native.routing.version,
+      route: async (
+        problem,
+      ): Promise<
+        import('../contract/index.js').Result<readonly import('../contract/index.js').RouteValue[]>
+      > => {
+        attempt += 1;
+        const points = candidates[attempt];
+        if (points === undefined) return routeFailure('candidate-infeasible');
+        return { ok: true, value: [{ id: problem.connections[0]?.id ?? '', points }] };
+      },
+    },
+  });
+  const scene = value(await layout.arrange(request(layout, source)));
+  expect(scene.sections[0]?.wires[0]?.points).toEqual(upper);
+  expect(attempt).toBe(7);
+}
+/** Each controlled tie vector must independently pass the public geometry inspector before it can establish ranking. */
+async function inspectRankingVector(
+  source: Projection,
+  points: readonly import('../contract/index.js').Point[],
+  native: Dependencies,
+): Promise<void> {
+  const layout = createLayout({
+    ...native,
+    routing: {
+      version: native.routing.version,
+      route: async (
+        problem,
+      ): Promise<
+        import('../contract/index.js').Result<readonly import('../contract/index.js').RouteValue[]>
+      > => ({ ok: true, value: [{ id: problem.connections[0]?.id ?? '', points }] }),
+    },
+  });
+  const scene = value(await layout.arrange(request(layout, source)));
+  expect(
+    value(
+      layout.inspect({
+        projection: source,
+        measurements: metrics(source),
+        options: settings,
+        candidate: scene,
+      }),
+    ).valid,
+  ).toBe(true);
 }

@@ -14,7 +14,7 @@ export interface Attachments {
   readonly source: ResolvedEndpoint;
   readonly target: ResolvedEndpoint;
 }
-/** Resolve the physical visible node; callers never substitute an absent member/object. */
+/** Resolve the physical visible node; callers never substitute an absent member/object. Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function visible(id: string, nodes: readonly PlacedNode[]): PlacedNode {
   const found = nodes.find((node): boolean => node.id === id);
   if (!found) return reject('invalid-input', id, 'Wire attachment node is not visible');
@@ -81,7 +81,7 @@ function memberPoint(node: PlacedNode, member: string, side: Side): Point {
     return reject('invalid-input', member, 'Measured member anchor is missing', [node.id, member]);
   return { ...edge(node, side), y: node.box.y + anchor.y };
 }
-/** Resolve both ends before invoking native routing; automatic self-loops leave on different sides. */
+/** Resolve both ends before invoking native routing; automatic self-loops leave on different sides. Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function endpoints(wire: VisualWire, nodes: readonly PlacedNode[]): Attachments {
   const source = visible(wire.source.node, nodes);
   const target = visible(wire.target.node, nodes);
@@ -110,7 +110,7 @@ function selfTarget(wire: VisualWire, source: PlacedNode, target: PlacedNode): S
     return 'bottom';
   return chooseSide(wire.route.targetSide, wire.target.member, target, source);
 }
-/** Exact outward points define marker stubs; the native adapter routes their free corridor without a directed ConnEnd constructor. */
+/** Exact outward points define marker stubs; the native adapter routes their free corridor without a directed ConnEnd constructor. Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function approach(endpoint: ResolvedEndpoint, distance: number): Point {
   const vectors = {
     top: { x: 0, y: -1 },
@@ -122,7 +122,7 @@ export function approach(endpoint: ResolvedEndpoint, distance: number): Point {
   return { x: endpoint.point.x + vector.x * distance, y: endpoint.point.y + vector.y * distance };
 }
 
-/** The first fixed obstacle on the outward ray limits optional routing clearance, never marker length. */
+/** The first fixed obstacle on the outward ray limits optional routing clearance, never marker length. Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function departureSpace(endpoint: ResolvedEndpoint, nodes: readonly PlacedNode[]): number {
   const boxes = contentBoxes(nodes.filter((node): boolean => node.id !== endpoint.node));
   return Math.min(Infinity, ...boxes.map((box): number => obstacleDistance(endpoint, box)));

@@ -1,0 +1,26 @@
+{
+  "Doc1-Target-Repo-Tree.md": {
+    "words": 64,
+    "lines": 10
+  },
+  "Doc2-Entities-and-Invariants.md": {
+    "words": 172,
+    "lines": 22
+  },
+  "Doc3-Modules.md": {
+    "words": 93,
+    "lines": 12
+  },
+  "Doc4-Ownership-CRUD.md": {
+    "words": 73,
+    "lines": 10
+  },
+  "Doc5-Build-and-Test-Appendix.md": {
+    "words": 156,
+    "lines": 6
+  },
+  "total": {
+    "words": 558,
+    "lines": 60
+  }
+}

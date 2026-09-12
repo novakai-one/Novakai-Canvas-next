@@ -18,7 +18,7 @@ export interface RoutePlan {
   readonly manual: readonly Point[] | null;
   readonly clearance: number;
 }
-/** Parallel connections get separate approach lengths without altering the actual row/side attachment. */
+/** Plan exact attachments and distinct local approaches. Public Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function plan(
   wire: VisualWire,
   nodes: readonly PlacedNode[],
@@ -28,18 +28,19 @@ export function plan(
 ): RoutePlan {
   const resolved = endpoints(wire, nodes);
   const clearance = context.options.routeClearance * 2;
+  const departure = clearance * (parallel + 1);
   const sourceSpace = departureSpace(resolved.source, nodes);
   const targetSpace = departureSpace(resolved.target, nodes);
   const sourceDistance = departureDistance(
     wire.id,
     metrics.markers[wire.sourceMarker].advance,
-    clearance,
+    departure,
     sourceSpace,
   );
   const targetDistance = departureDistance(
     wire.id,
     metrics.markers[wire.targetMarker].advance,
-    clearance,
+    departure,
     targetSpace,
   );
   const source = approach(resolved.source, sourceDistance);
@@ -73,7 +74,7 @@ export function plan(
     },
   };
 }
-/** Fixed content may reduce optional clearance; a marker that cannot physically fit is a named placement constraint. */
+/** Reserve at most a third of the free ray for optional approach so opposite native endpoints remain distinct; required marker advance is never reduced. */
 function departureDistance(id: string, advance: number, preferred: number, space: number): number {
   if (advance > space)
     return reject(
@@ -82,7 +83,7 @@ function departureDistance(id: string, advance: number, preferred: number, space
       'Required endpoint marker approach is blocked by fixed content',
       [id],
     );
-  return Math.max(advance, Math.min(preferred + advance, space / 2));
+  return Math.max(advance, Math.min(preferred + advance, space / 3));
 }
 /** Parallel wires reserve distinct outside lanes while keeping the same exact semantic endpoints. */
 function parallelCheckpoints(
@@ -111,7 +112,7 @@ function laneCheckpoints(
     return [source, { x: source.x, y }, { x: target.x, y }, target];
   return [source, { x, y: source.y }, { x, y: target.y }, target];
 }
-/** Locked authored routes are accepted only if every original point remains valid. */
+/** Retain valid authored points. Public Layout execute catches lock faults; Authoring retains the scene and owns correction. */
 export function manual(
   plan: RoutePlan,
   obstacles: readonly Obstacle[],
@@ -162,7 +163,7 @@ function checkPoint(value: Point): void {
 export type NativeRouteOutcome =
   | { readonly kind: 'candidate-infeasible' }
   | { readonly kind: 'routed'; readonly routes: readonly RouteValue[] };
-/** Native failures remain typed until the protected Layout boundary; cancellation wins even after an infeasible result. */
+/** Native failures remain typed until the protected Layout boundary; cancellation wins even after an infeasible result. Public Layout execute catches faults; Authoring retains the scene and owns correction. */
 export async function routeNative(
   connections: readonly Connection[],
   obstacles: readonly Obstacle[],

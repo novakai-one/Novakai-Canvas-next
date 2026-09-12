@@ -1,0 +1,8 @@
+{
+  "implementation-a1.md": "eb0144abb43956e47b14fa6b81c23b6c538f1342be8b1b5222e2d5e9ea0ca171",
+  "implementation-a2.md": "f53c956f930f19aa913c5916bc3ea6dafbd102bdf2a570d17e903fc6265d0991",
+  "audit-disposition.md": "d33af672af1f29991f084c9786a408ecb5b0d9547b35951feb1d7b52062c35fe",
+  "integration-check.md": "aa7e1d7a8d68d78ee33ec4d2cce9509c3badc77d7a5f20ea3cc1a470fa825044",
+  "source-scores.json": "2e54e1407b4e8a8ade30b691000e23aef6910d2b33a1fae65d01a1cb33b30d27",
+  "sonar-measurement.json": "b4713388f0909018bd13358c6c3acfdc36eaac27e2e940bd615a634fcb92d787"
+}

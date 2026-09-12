@@ -10,24 +10,36 @@ import type { WorkspaceSession } from '@novakai/canvas-service';
 /** In-process integration opens the actual owner composition; there is no HTTP, browser or replacement planner. */
 export async function workspaceFixture(): Promise<{
   readonly session: WorkspaceSession;
+  readonly directory: string;
   close(): Promise<void>;
+  reopen(): Promise<WorkspaceSession>;
 }> {
   const directory = await mkdtemp(join(tmpdir(), 'canvas-host-contract-'));
   const root = fileURLToPath(new URL('../../../', import.meta.url));
-  const opened = await openWorkspace({
+  const options = {
     directory,
     workspace: 'integration',
     title: 'Integration workspace',
     resourceRoot: join(root, 'resources'),
     tokenRoot: join(root, 'capability/design-system'),
     createdAt: 1,
-  });
+  };
+  const opened = await openWorkspace(options);
   if (!opened.ok) await rm(directory, { recursive: true, force: true });
   assert(opened.ok, JSON.stringify(opened));
+  let active = opened.value;
   return {
     session: opened.value,
+    directory,
+    reopen: async () => {
+      assert((await active.close()).ok);
+      const reopened = await openWorkspace(options);
+      assert(reopened.ok, JSON.stringify(reopened));
+      active = reopened.value;
+      return active;
+    },
     close: async () => {
-      await opened.value.close();
+      await active.close();
       await rm(directory, { recursive: true, force: true });
     },
   };

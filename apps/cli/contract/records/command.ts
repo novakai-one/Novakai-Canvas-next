@@ -12,6 +12,9 @@ export const commandName = z.enum([
   'receipt',
   'retry',
   'apply',
+  'theme-admit',
+  'recipe-admit',
+  'recipe-instantiate',
 ]);
 export type CommandName = z.infer<typeof commandName>;
 export interface Command {
@@ -21,6 +24,15 @@ export interface Command {
   readonly mode: 'create' | 'replace' | 'patch';
   readonly request: string | null;
   readonly output: string | null;
+  readonly preset?:
+    | {
+        readonly id?: string;
+        readonly version?: string;
+        readonly family?: string;
+        readonly title?: string;
+        readonly namespace?: string;
+      }
+    | undefined;
 }
 export interface CliOptions {
   readonly command: Command;

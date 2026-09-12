@@ -152,6 +152,9 @@ async function wireWorkspace(
     installationModule,
     channelModule,
     lifetimeModule,
+    resourceCommandsModule,
+    presetPlannerModule,
+    themePreparationModule,
   ] = await Promise.all([
     import('../adapters/authoring-store.js'),
     import('../adapters/preset-codecs.js'),
@@ -168,6 +171,9 @@ async function wireWorkspace(
     import('../adapters/installation-planner.js'),
     import('../adapters/change-channel.js'),
     import('../adapters/session-lifetime.js'),
+    import('../adapters/resource-commands.js'),
+    import('../adapters/preset-planner.js'),
+    import('../adapters/theme-preparation.js'),
   ]);
   const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
   const system = composeDesignSystem();
@@ -185,6 +191,18 @@ async function wireWorkspace(
     language,
     installation: installation.presets,
   });
+  const resourceCommands = resourceCommandsModule.createResourceCommands({
+    assets: native.assets,
+    selector: resources,
+    language,
+    normalize: (admission, catalog, bindings) =>
+      themePreparationModule.prepareTheme(admission, catalog, bindings, {
+        assets: native.assets,
+        templates,
+      }),
+    templates: (resources) =>
+      composeTemplates(codecModule.createPresetCodecs({ ...context, resources })),
+  });
   const collections = collectionModule.createCollectionPlanner(views, resources);
   const initial = {
     workspace: options.workspace,
@@ -194,6 +212,7 @@ async function wireWorkspace(
   };
   const planners = [
     installationModule.createInstallationPlanner(initial),
+    presetPlannerModule.createPresetPlanner(resourceCommands),
     libraryModule.createLibraryPlanner(views),
     ...plannerModule.createDiagramPlanners({ language, workspace: views, resources, collections }),
   ];
@@ -225,6 +244,7 @@ async function wireWorkspace(
   const session = createWorkspaceSession({
     workspace: options.workspace,
     installation,
+    resources: resourceCommands,
     views,
     changes,
     lifetime,

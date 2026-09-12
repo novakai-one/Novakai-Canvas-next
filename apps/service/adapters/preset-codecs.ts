@@ -106,7 +106,10 @@ function selectedBase(
       item.digest === input.pin.digest,
   );
   if (!found) return rejected('The exact base theme is unavailable');
-  return { ok: true, value: { kind: 'preset', pin: input.pin, payload: found.payload } };
+  return {
+    ok: true,
+    value: { kind: 'preset', pin: input.pin, payload: found.payload, fonts: baseFonts(found) },
+  };
 }
 /** Resolve complete tokens through Design System; malformed selectors return no partially normalized theme. */
 function theme(
@@ -181,4 +184,13 @@ function guarded<T>(operation: () => Result<T>): Result<T> {
   } catch {
     return rejected('Preset provider returned invalid identity or token data');
   }
+}
+
+/** Exact catalog payloads have already passed owner admission; retain their original font evidence while choosing replacements. */
+function baseFonts(
+  theme: ThemePreset,
+): readonly { readonly family: string; readonly digest: string; readonly approved: boolean }[] {
+  return Object.values(theme.payload.tokens)
+    .filter((value) => value.type === 'font')
+    .map((value) => ({ family: value.family, digest: value.digest, approved: true }));
 }

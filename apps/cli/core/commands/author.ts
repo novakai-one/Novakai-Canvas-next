@@ -1,3 +1,4 @@
+import { prepareResources, restoreResources } from './resources.js';
 import type { Command } from '../../contract/records/command.js';
 import type { CliDependencies, RequestDraft } from '../../contract/ports/runtime.js';
 import type { Result } from '../../contract/errors.js';
@@ -12,7 +13,18 @@ async function prepare(
   if (!source.ok) return source;
   const current = await dependencies.transport.get('/api/v1/workspace');
   if (!current.ok) return current;
-  return captured(command, source.value, current.value, dependencies);
+  return prepareCaptured(command, source.value, current.value, dependencies);
+}
+/** Capture and resource preparation finish before retention or canonical submission. */
+async function prepareCaptured(
+  command: Command,
+  source: string,
+  current: import('../../contract/records/owners.js').TransportResponse,
+  dependencies: CliDependencies,
+): Promise<Result<RequestDraft>> {
+  const draft = captured(command, source, current, dependencies);
+  if (!draft.ok) return draft;
+  return prepareResources(command, source, draft.value, dependencies);
 }
 /** Owner readers give transported snapshots their type before request construction. */
 function captured(
@@ -44,15 +56,30 @@ function draft(
   return { ok: true, value: { generation, request: request.value } };
 }
 /** Retention failure prevents a write because an uncertain result could not be reconciled safely without the request. */
-async function submit(
+export async function submit(
   draft: RequestDraft,
   preview: boolean,
   dependencies: CliDependencies,
 ): Promise<Result<string>> {
   const saved = await dependencies.files.save(draft);
   if (!saved.ok) return saved;
+  const restored = await restoreResources(draft, dependencies);
+  if (!restored.ok) return restored;
+  return transmit(draft, preview, dependencies);
+}
+/** Transport receives only the canonical envelope, never local byte backups. */
+async function transmit(
+  draft: RequestDraft,
+  preview: boolean,
+  dependencies: CliDependencies,
+): Promise<Result<string>> {
   const path = preview ? '/api/v1/authoring/preview' : '/api/v1/authoring/apply';
-  const outcome = await dependencies.transport.post(path, { version: 1, ...draft, preview });
+  const outcome = await dependencies.transport.post(path, {
+    version: 1,
+    generation: draft.generation,
+    request: draft.request,
+    preview,
+  });
   return submitted(outcome, draft.request.request, preview, dependencies);
 }
 /** Network uncertainty names the retained request instead of suggesting a new request ID. */

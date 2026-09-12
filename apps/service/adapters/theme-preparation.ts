@@ -1,0 +1,96 @@
+import { z } from 'zod';
+import type { Assets } from '@novakai/canvas-assets';
+import type { Catalog, Templates } from '@novakai/canvas-templates';
+import type { LoweredIntent } from '@novakai/canvas-language';
+import { failure } from '@novakai/canvas-authoring';
+import type { Result, Json } from '@novakai/canvas-authoring';
+const config = z.looseObject({
+  kind: z.literal('theme'),
+  raw: z.strictObject({ base: z.string(), overrides: z.record(z.string(), z.string()) }),
+});
+/** Exact base and font identities are resolved before retention; Design System owns the supplied token override values. */
+export function prepareTheme(
+  admission: Json,
+  catalog: Catalog,
+  bindings: readonly { readonly alias: string; readonly digest: string }[],
+  owners: {
+    readonly assets: Pick<Assets, 'resolve'>;
+    readonly templates: Pick<Templates<LoweredIntent>, 'read'>;
+  },
+): Result<Json> {
+  const parsed = config.safeParse(admission);
+  if (!parsed.success) return { ok: true, value: admission };
+  const base = owners.templates.read(catalog, selection(parsed.data.raw.base));
+  if (!base.ok) return failure('invalid-input', base.error.path, base.error.message);
+  return withFonts(admission, parsed.data.raw.overrides, base.value, bindings, owners.assets);
+}
+/** Resolve the two font descriptors only after the base selection is exact. */
+function withFonts(
+  admission: Json,
+  overrides: Readonly<Record<string, string>>,
+  base: import('@novakai/canvas-templates').Preset,
+  bindings: readonly { readonly alias: string; readonly digest: string }[],
+  assets: Pick<Assets, 'resolve'>,
+): Result<Json> {
+  const fonts = bindings.map((item) => font(item, assets));
+  const failed = fonts.find((item) => !item.ok);
+  if (failed) return failed;
+  const header = z.record(z.string(), z.json()).parse(admission);
+  const pin = {
+    kind: base.kind,
+    id: base.id,
+    version: base.version,
+    digest: base.digest,
+  };
+  return {
+    ok: true,
+    value: {
+      ...header,
+      raw: {
+        base: { kind: 'preset', pin },
+        fonts: Object.fromEntries(fonts.filter((item) => item.ok).map((item) => item.value)),
+        overrides: Object.fromEntries(
+          Object.entries(overrides).map(([id, value]) => [id, color(value)]),
+        ),
+      },
+    },
+  };
+}
+/** Exact pin syntax matches canonical Language readouts; bare IDs resolve once through Templates ordering. */
+function selection(source: string): unknown {
+  const exact = /^([^@]+)@([^#]+)#sha256:([a-f0-9]{64})$/.exec(source);
+  if (exact) return { kind: 'theme', id: exact[1], version: exact[2], digest: exact[3] };
+  return { kind: 'theme', id: source };
+}
+/** Font family is the Assets descriptor's verified family, never a caller-supplied name or OS fallback. */
+function font(
+  input: { readonly alias: string; readonly digest: string },
+  assets: Pick<Assets, 'resolve'>,
+): Result<
+  readonly [string, { readonly family: string; readonly digest: string; readonly approved: true }]
+> {
+  const blob = assets.resolve(input.digest);
+  if (!blob.ok) return failure('missing-asset', blob.error.path, blob.error.message);
+  if (blob.value.descriptor.kind !== 'font' || blob.value.descriptor.fontFamily === null)
+    return failure('invalid-input', input.alias, 'Theme input must identify a verified font');
+  return {
+    ok: true,
+    value: [
+      input.alias,
+      { family: blob.value.descriptor.fontFamily, digest: input.digest, approved: true },
+    ],
+  };
+}
+
+/** Translate semantic hexadecimal color syntax into the existing Design System sRGB input shape. */
+function color(value: string): Json {
+  const hex = z
+    .string()
+    .regex(/^#[a-fA-F0-9]{6}([a-fA-F0-9]{2})?$/)
+    .parse(value);
+  return {
+    colorSpace: 'srgb',
+    components: [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255),
+    alpha: hex.length === 9 ? Number.parseInt(hex.slice(7, 9), 16) / 255 : 1,
+  };
+}

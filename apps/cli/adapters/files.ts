@@ -1,11 +1,16 @@
 import { readFile, mkdir, open, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { requestSchema, requestId } from '@novakai/canvas-authoring';
+import { byteBackup } from '../contract/records/resources.js';
 import { z } from 'zod';
 import type { RequestFiles, RequestDraft } from '../contract/ports/runtime.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
-const retained = z.strictObject({ generation: z.string(), request: requestSchema });
+const retained = z.strictObject({
+  generation: z.string(),
+  request: requestSchema,
+  backups: z.array(byteBackup).optional(),
+});
 /** A bounded UTF-8 file is decoded strictly; unreadable inputs fail before any service request. */
 async function source(path: string): Promise<Result<string>> {
   try {

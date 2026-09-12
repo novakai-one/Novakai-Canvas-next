@@ -25,7 +25,20 @@ export const base64 = z
   .string()
   .min(4)
   .max(Math.ceil(limits.bytes / 3) * 4)
-  .regex(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/);
+  .refine(validBase64, 'Invalid base64 encoding');
+/** Scan the alphabet without a repeated-group regex stack; bounded media admission returns normal diagnostics. */
+function validBase64(value: string): boolean {
+  if (value.length % 4 !== 0) return false;
+  if (/[^A-Za-z0-9+/=]/.test(value)) return false;
+  return validPadding(value);
+}
+/** Padding is optional, terminal and at most two characters, matching the original encoding contract. */
+function validPadding(value: string): boolean {
+  const start = value.indexOf('=');
+  if (start === -1) return true;
+  const suffix = value.slice(start);
+  return suffix === '=' || suffix === '==';
+}
 export const provenance = z
   .strictObject({
     source: z.string().min(1).max(2048),

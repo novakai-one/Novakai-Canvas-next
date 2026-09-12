@@ -2,6 +2,7 @@ import { snapshotSchema, requestSchema, receiptSchema } from '@novakai/canvas-au
 import type { Request, Snapshot, StoredRecord } from '@novakai/canvas-authoring';
 import { validate } from '@novakai/canvas-model';
 import type { Language } from '@novakai/canvas-language';
+import { byteBackup } from '../contract/records/resources.js';
 import { z } from 'zod';
 import type { SemanticInputs, ReceiptExpectation } from '../contract/ports/runtime.js';
 import type { Command } from '../contract/records/command.js';
@@ -174,6 +175,32 @@ function receiptReadout(input: unknown, request: string): Result<string> {
 export function createSemanticInputs(language: Pick<Language, 'parse'>): SemanticInputs {
   return {
     snapshot,
+    checkedRequest,
+    requests: (source) => {
+      const result = language.parse(source);
+      if (!result.ok)
+        return failure('invalid-source', result.diagnostics.map((item) => item.message).join('; '));
+      return { ok: true, value: result.value.resources };
+    },
+    admissionDigest: (input) => {
+      const result = z
+        .looseObject({ descriptor: z.looseObject({ digest: z.string().regex(/^[a-f0-9]{64}$/) }) })
+        .safeParse(input);
+      if (!result.success) return failure('invalid-response', 'Invalid Assets admission');
+      return { ok: true, value: result.data.descriptor.digest };
+    },
+    backup: (input) => {
+      const result = z
+        .looseObject({ descriptor: z.looseObject({ digest: z.string() }), base64: z.string() })
+        .safeParse(input);
+      if (!result.success) return failure('invalid-response', 'Invalid normalized Assets bytes');
+      const checked = byteBackup.safeParse({
+        digest: result.data.descriptor.digest,
+        base64: result.data.base64,
+      });
+      if (!checked.success) return failure('invalid-response', 'Invalid normalized Assets digest');
+      return { ok: true, value: checked.data };
+    },
     receipt,
     readout: sourceReadout,
     request: (command, source, state, id) => request(command, source, state, id, language),

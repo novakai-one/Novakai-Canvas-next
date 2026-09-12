@@ -5,7 +5,8 @@ import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js'
 import styles from './WorkspaceShell.module.css';
 /** The work surface is the primary content; chrome uses stable injected sections and shared design tokens. */
 export function createWorkspaceShell(slots: ChromeSlots): ComponentType<WorkspaceProps> {
-  const { Header, Library, Panel, Source, Recovery, CreateDialog, CanvasSurface } = slots;
+  const { Header, Library, Panel, Source, Recovery, CreateDialog, CanvasSurface, FontDefinitions } =
+    slots;
   /** Mount owns subscription lifetime. Selection and panning remain entirely inside the Canvas session. */
   function WorkspaceShell({ controller }: WorkspaceProps): ReactElement {
     const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
@@ -18,6 +19,7 @@ export function createWorkspaceShell(slots: ChromeSlots): ComponentType<Workspac
     }, [controller]);
     return (
       <div className={styles.shell}>
+        <FontDefinitions fonts={view.active?.document.fonts} />
         <Header controller={controller} view={view} onCreate={() => setCreating(true)} />
         <div className={styles.workspace}>
           {navigationContext && panelVisible(panelState, 'left') && (

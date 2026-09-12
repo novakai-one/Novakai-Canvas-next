@@ -4,6 +4,7 @@ import type {
   NodeSlots,
   MarkerProps,
   MeasuredContentProps,
+  FontDefinitionsProps,
 } from '../../contract/react-types.js';
 import type { FontSet } from '../../contract/records/style.js';
 import type { VisualNode } from '../../contract/records/visual.js';
@@ -157,11 +158,10 @@ export function createMeasuredRenderer(
 }
 
 /** Export can embed the same owned font rules once per scene rather than once per node/label. */
-export function createFontDefinitions(fonts: FontSet): ComponentType {
-  const css = fontRules(fonts);
-  /** Static font definitions contain only admitted digest/MIME/base64 data; host owns renderer recovery. */
-  function FontDefinitions(): ReactElement {
-    return <style>{css}</style>;
+export function createFontDefinitions(boundFonts: FontSet): ComponentType<FontDefinitionsProps> {
+  /** Current document fonts replace installation defaults without rebinding any sibling renderer. */
+  function FontDefinitions({ fonts = boundFonts }: FontDefinitionsProps): ReactElement {
+    return <style>{fontRules(fonts)}</style>;
   }
   return FontDefinitions;
 }

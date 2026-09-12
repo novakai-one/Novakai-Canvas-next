@@ -4,6 +4,9 @@ import { readAgentCredential } from '@novakai/canvas-service';
 import { createLanguage } from '@novakai/canvas-language';
 import { validate, plan, stage } from '@novakai/canvas-model';
 import { readArguments } from '../adapters/arguments.js';
+import { createPresetInputs } from '../adapters/preset-inputs.js';
+import { readThemeConfig } from '../adapters/theme-config.js';
+import { createResourceFiles } from '../adapters/resource-inputs.js';
 import { createRequestFiles } from '../adapters/files.js';
 import { createTransport } from '../adapters/transport.js';
 import { createSemanticInputs } from '../adapters/semantic-inputs.js';
@@ -36,10 +39,13 @@ async function run(options: import('./records/command.js').CliOptions): Promise<
   const transport = createTransport(options.server, credential.value);
   if (!transport.ok) return transport;
   const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
+  const semantic = createSemanticInputs(language);
   return executeCommand(options.command, {
     transport: transport.value,
+    resourceFiles: createResourceFiles(),
     files: createRequestFiles(resolve(options.workspaceDirectory, 'requests')),
-    semantic: createSemanticInputs(language),
+    semantic,
+    presets: createPresetInputs(semantic, readThemeConfig),
     nextRequestId: randomUUID,
   });
 }

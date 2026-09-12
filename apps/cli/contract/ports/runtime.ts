@@ -1,3 +1,9 @@
+import type {
+  ByteBackup,
+  ResourceFiles,
+  ResourceSyntax,
+  PresetInputs,
+} from '../records/resources.js';
 import type { Result } from '../errors.js';
 import type { Snapshot, Request, TransportResponse } from '../records/owners.js';
 import type { Command } from '../records/command.js';
@@ -7,6 +13,7 @@ export interface Transport {
 }
 export interface RequestDraft {
   readonly generation: string;
+  readonly backups?: readonly ByteBackup[] | undefined;
   readonly request: Request;
 }
 export interface RequestFiles {
@@ -15,7 +22,10 @@ export interface RequestFiles {
   read(id: string): Promise<Result<RequestDraft>>;
   output(path: string, text: string): Promise<Result<void>>;
 }
-export interface SemanticInputs {
+export interface SemanticInputs extends ResourceSyntax {
+  checkedRequest(input: unknown): Result<Request>;
+  admissionDigest(input: unknown): Result<string>;
+  backup(input: unknown): Result<ByteBackup>;
   snapshot(input: unknown): Result<Snapshot>;
   request(command: Command, source: string, snapshot: Snapshot, id: string): Result<Request>;
   readout(input: unknown): Result<string>;
@@ -26,6 +36,8 @@ export interface SemanticInputs {
 export interface CliDependencies {
   readonly transport: Transport;
   readonly files: RequestFiles;
+  readonly resourceFiles: ResourceFiles;
+  readonly presets: PresetInputs;
   readonly semantic: SemanticInputs;
   nextRequestId(): string;
 }

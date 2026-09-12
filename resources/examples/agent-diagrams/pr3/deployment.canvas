@@ -1,0 +1,6 @@
+canvas 1
+collection @deployment "Deployment ownership" theme=ember {
+ asset @illustration image source="./deployment.svg" alt="Service team owns release"
+ node @topic step "Service team owns release" { image @illustration asset=@illustration }
+ section @overview "Overview" mode=story { show @topic }
+}

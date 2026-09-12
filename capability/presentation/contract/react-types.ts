@@ -18,12 +18,16 @@ export interface MarkerProps {
   readonly kind: MarkerKind;
   readonly paint: Paint;
 }
+/** A mounted host may replace installation fonts with the current validated document font set. */
+export interface FontDefinitionsProps {
+  readonly fonts?: FontSet | undefined;
+}
 export interface ReactBindings {
   readonly NodeContent: ComponentType<NodeContentProps>;
   readonly MeasuredContent: ComponentType<MeasuredContentProps>;
   readonly Marker: ComponentType<MarkerProps>;
   readonly fonts: FontSet;
-  readonly FontDefinitions: ComponentType;
+  readonly FontDefinitions: ComponentType<FontDefinitionsProps>;
 }
 export interface NodeSlots {
   readonly ContentBlocks: ComponentType<ContentBlocksProps>;

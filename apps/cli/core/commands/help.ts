@@ -8,6 +8,9 @@ canvas create FILE                      Create a collection from DSL
 canvas replace FILE --revision N        Replace semantics at the revision you read
 canvas patch FILE --revision N          Apply an ordered DSL patch
 canvas preview FILE [--mode MODE]        Preview; use --revision N for existing collections
+canvas theme admit FILE                 Admit a semantic theme config
+canvas recipe admit FILE                Requires --id --version --family --title
+canvas recipe instantiate PIN           Requires --namespace ID; --out FILE emits editable DSL
 canvas apply REQUEST_ID                 Apply a retained preview
 canvas receipt REQUEST_ID               Check a committed receipt
 canvas retry REQUEST_ID                 Reconcile, then retry the identical retained request

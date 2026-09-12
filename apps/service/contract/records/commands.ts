@@ -4,6 +4,7 @@ export const dslCommand = z
   .strictObject({
     source: z.string().max(16 * 1024 * 1024),
     mode: z.enum(['create', 'replace', 'patch']),
+    themePins: z.record(z.string(), z.string()).optional(),
   })
   .readonly();
 export const modelCommand = z

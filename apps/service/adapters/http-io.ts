@@ -3,7 +3,7 @@ import type { HttpMetadata } from '../contract/records/http.js';
 import { httpBodyLimit } from '../contract/records/http.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
-import type { HttpIo, StaticFile } from '../contract/records/server.js';
+import type { BodyStream, HttpIo, StaticFile } from '../contract/records/server.js';
 import type { WireOutcome } from '../contract/records/protocol.js';
 /** Ambiguous duplicated headers are rejected by returning a value that cannot pass exact admission. */
 function header(request: IncomingMessage, name: string): string {
@@ -26,7 +26,7 @@ function metadata(request: IncomingMessage): HttpMetadata {
   };
 }
 /** Bound streaming bytes before decoding UTF-8. The caller authenticates first and closes rejected requests. */
-async function body(request: IncomingMessage): Promise<Result<string>> {
+async function body(request: BodyStream): Promise<Result<string>> {
   try {
     const chunks = await consume(request);
     return {
@@ -51,10 +51,10 @@ function checkedSize(previous: number, chunk: Buffer): number {
   return next;
 }
 /** Native buffering is confined to one request; no chunks or counters survive across calls. */
-async function consume(request: IncomingMessage): Promise<readonly Buffer[]> {
+async function consume(request: BodyStream): Promise<readonly Buffer[]> {
   const chunks: Buffer[] = [];
   let size = 0;
-  for await (const input of request) {
+  for await (const input of request.iterator({ destroyOnReturn: false })) {
     const chunk = checkedChunk(input);
     size = checkedSize(size, chunk);
     chunks.push(chunk);
@@ -95,7 +95,7 @@ function json(response: ServerResponse, outcome: WireOutcome, generation: string
   headers(response);
   response.statusCode = status(outcome);
   response.setHeader('Content-Type', 'application/json; charset=utf-8');
-  response.end(JSON.stringify({ version: 1, generation, outcome }));
+  response.end(JSON.stringify({ version: 1, generation, outcome: wireValue(outcome) }));
 }
 /** Static content is already constrained to the built web root; bytes are sent without interpolation. */
 function bytes(response: ServerResponse, file: StaticFile): void {
@@ -107,4 +107,10 @@ function bytes(response: ServerResponse, file: StaticFile): void {
 /** Pure policy is supplied elsewhere; this binding owns native socket encoding and bounded body reads. */
 export function createHttpIo(): HttpIo {
   return { metadata, body, json, bytes };
+}
+
+/** Void owner successes use an explicit JSON null so the versioned transport envelope remains valid. */
+function wireValue(outcome: WireOutcome): WireOutcome {
+  if (!outcome.ok) return outcome;
+  return { ok: true, value: outcome.value ?? null };
 }

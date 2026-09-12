@@ -2,6 +2,7 @@ import type { PanelController } from './panel-types.js';
 import type { ComponentType, ReactElement } from 'react';
 import type { ReactBindings as DesignBindings } from '@novakai/canvas-design-system';
 import type { SurfaceProps } from '@novakai/canvas-canvas';
+import type { FontDefinitionsProps } from '@novakai/canvas-presentation';
 import type { WorkspaceController, WorkspaceView } from './records/workspace.js';
 /** Feature views receive readonly presentation and intent callbacks. No component owns canonical diagram state. */
 export interface WorkspaceProps {
@@ -33,6 +34,7 @@ export interface ChromeSlots {
   readonly Source: ComponentType<FeatureProps>;
   readonly CreateDialog: ComponentType<CreateDialogProps>;
   readonly CanvasSurface: ComponentType<SurfaceProps>;
+  readonly FontDefinitions: ComponentType<FontDefinitionsProps>;
   readonly portal: HTMLElement;
   nextGestureId(): string;
 }

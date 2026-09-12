@@ -34,5 +34,5 @@ export interface HttpAdmission {
 export interface MutationOwner {
   read(input: unknown): Result<Request>;
 }
-export const httpBodyLimit = 20 * 1024 * 1024;
+export const httpBodyLimit = 24 * 1024 * 1024;
 export const browserCookieName = 'novakai_canvas_session';

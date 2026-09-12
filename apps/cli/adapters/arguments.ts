@@ -27,12 +27,25 @@ export function readArguments(
         mode: { type: 'string', default: 'create' },
         request: { type: 'string' },
         out: { type: 'string' },
+        id: { type: 'string' },
+        version: { type: 'string' },
+        family: { type: 'string' },
+        title: { type: 'string' },
+        namespace: { type: 'string' },
       },
     });
-    const command = readCommand(
-      commandOperands(parsed.values.help, parsed.positionals),
-      parsed.values,
-    );
+    const command = readCommand(commandOperands(parsed.values.help, parsed.positionals), {
+      ...parsed.values,
+      preset: Object.fromEntries(
+        Object.entries({
+          id: parsed.values.id,
+          version: parsed.values.version,
+          family: parsed.values.family,
+          title: parsed.values.title,
+          namespace: parsed.values.namespace,
+        }).filter(([, value]) => value !== undefined),
+      ),
+    });
     if (!command.ok) return command;
     return {
       ok: true,
@@ -54,6 +67,7 @@ export function readArguments(
 function readCommand(
   positionals: readonly string[],
   flags: {
+    readonly preset?: Command['preset'];
     readonly revision?: string;
     readonly mode: string;
     readonly request?: string;
@@ -73,6 +87,7 @@ function operands(
   name: Command['name'],
   positionals: readonly string[],
   flags: {
+    readonly preset?: Command['preset'];
     readonly revision?: string;
     readonly mode: string;
     readonly request?: string;
@@ -89,6 +104,7 @@ function fields(
   name: Command['name'],
   target: string,
   flags: {
+    readonly preset?: Command['preset'];
     readonly revision?: string;
     readonly mode: string;
     readonly request?: string;
@@ -99,7 +115,14 @@ function fields(
   const checked = mode.safeParse(selected);
   if (!checked.success) return failure('invalid-mode', 'Mode must be create, replace or patch');
   return versioned(
-    { name, target, mode: checked.data, request: flags.request ?? null, output: flags.out ?? null },
+    {
+      name,
+      target,
+      mode: checked.data,
+      request: flags.request ?? null,
+      output: flags.out ?? null,
+      preset: flags.preset,
+    },
     flags.revision,
   );
 }
@@ -118,5 +141,7 @@ function commandOperands(
   positionals: readonly string[],
 ): readonly string[] {
   if (help) return ['help'];
+  if (['theme', 'recipe'].includes(positionals[0] ?? ''))
+    return [`${positionals[0]}-${positionals[1]}`, ...positionals.slice(2)];
   return positionals;
 }

@@ -13,7 +13,7 @@ import { readOverrides } from '../tokens/read.js';
 import { resolveDefinitions } from '../tokens/resolve.js';
 import { validateBounds } from '../tokens/bounds.js';
 import { validateContrast } from '../tokens/contrast.js';
-import { validateFonts } from './fonts.js';
+import { validateFonts, readFonts } from './fonts.js';
 import { toPortable, fromPortable } from './portable.js';
 import { rootsOnly } from './diagram.js';
 /** Resolve submitted theme data only; Templates owns immutable admission and hash allocation. */
@@ -91,8 +91,18 @@ function presetBase(
   data: Readonly<Record<string, unknown>>,
   fonts: readonly FontPin[],
 ): { readonly values: TokenValues; readonly roles: readonly string[]; readonly pin: PresetPin } {
-  keys(data, ['kind', 'pin', 'payload'], 'base');
+  keys(data, ['kind', 'pin', 'payload', 'fonts'], 'base');
   const pin = parsed(presetPin, data.pin, 'base.pin');
-  const portable = fromPortable(data.payload, source, fonts);
+  const baseFonts = admittedBaseFonts(data, fonts);
+  const portable = fromPortable(data.payload, source, baseFonts);
   return { values: rootsOnly(source, portable.values), roles: portable.theme.roles, pin };
+}
+
+/** Base decoding and replacement selection use distinct admitted byte sets; legacy callers may reuse unchanged pins. */
+function admittedBaseFonts(
+  data: Readonly<Record<string, unknown>>,
+  selected: readonly FontPin[],
+): readonly FontPin[] {
+  if (data.fonts === undefined) return selected;
+  return readFonts(data.fonts);
 }

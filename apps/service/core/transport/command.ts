@@ -12,7 +12,7 @@ function envelope(body: string, contentType: string): Result<unknown> {
 /** TextEncoder uses the same UTF-8 byte budget as the socket reader, including non-ASCII source text. */
 function boundedJson(body: string): Result<unknown> {
   if (new TextEncoder().encode(body).byteLength > httpBodyLimit)
-    return failure('invalid-input', 'body', 'Request exceeds the 20 MiB transport limit');
+    return failure('invalid-input', 'body', 'Request exceeds the 24 MiB transport limit');
   try {
     const value: unknown = JSON.parse(body);
     return { ok: true, value };

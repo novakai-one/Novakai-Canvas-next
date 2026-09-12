@@ -73,7 +73,7 @@ function agentCaller(metadata: HttpMetadata, security: HttpSecurity): Result<Cal
 /** Public semantic planners are transport-addressable; installation and raw Model authoring remain restricted. */
 function permittedPlanner(request: Request, caller: Caller): boolean {
   if (request.intent.kind !== 'change') return true;
-  const allowed = { human: ['dsl', 'model', 'library'], agent: ['dsl', 'library'] };
+  const allowed = { human: ['dsl', 'model', 'library'], agent: ['dsl', 'library', 'preset'] };
   return allowed[caller.kind].includes(request.intent.planner);
 }
 /** Parse with Authoring's schema, then require exact authenticated authorship and the caller's planner policy. */

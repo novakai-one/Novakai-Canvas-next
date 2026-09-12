@@ -62,6 +62,7 @@ export type {
   MeasuredContentProps,
   ContentBlocksProps,
   MarkerProps,
+  FontDefinitionsProps,
   StaticRenderer,
 } from './react-types.js';
 

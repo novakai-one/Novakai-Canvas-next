@@ -1,0 +1,4 @@
+theme 1 @ember "Ember" version=1.0.0 base=paper
+font body source="./inter-latin-700-normal.woff2"
+font mono source="./jetbrains-mono-latin-400-normal.woff2"
+set color surface.base="#fff4eb"

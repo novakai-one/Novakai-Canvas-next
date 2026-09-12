@@ -9,6 +9,7 @@ export function createWorkspaceSession(dependencies: SessionDependencies): Works
   return {
     workspace: dependencies.workspace,
     installation: dependencies.installation,
+    resources: dependencies.resources,
     read: () =>
       lifetime.run(
         () => dependencies.authoring(dependencies.readSignal).read(dependencies.workspace),

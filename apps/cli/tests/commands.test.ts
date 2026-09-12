@@ -1,5 +1,11 @@
+import { randomInt } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { cp, symlink } from 'node:fs/promises';
+import { openAssets, digest as assetDigest } from '../../../capability/assets/contract/index.js';
+import { serveWorkspace } from '@novakai/canvas-service';
+import { openWorkspace } from '@novakai/canvas-service';
 import { it, expect, assert } from 'vitest';
-import { mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, readFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createLanguage } from '@novakai/canvas-language';
@@ -7,6 +13,9 @@ import { validate, plan, stage } from '@novakai/canvas-model';
 import { snapshotSchema, requestSchema, receiptSchema } from '@novakai/canvas-authoring';
 import type { Request } from '@novakai/canvas-authoring';
 import { readArguments } from '../adapters/arguments.js';
+import { createPresetInputs } from '../adapters/preset-inputs.js';
+import { readThemeConfig } from '../adapters/theme-config.js';
+import { createResourceFiles } from '../adapters/resource-inputs.js';
 import { createRequestFiles } from '../adapters/files.js';
 import { createSemanticInputs } from '../adapters/semantic-inputs.js';
 import { executeCommand, runCli } from '../contract/index.js';
@@ -57,7 +66,9 @@ it('host 8 maps readable arguments and files to exact requests, rejects invalid 
     let getCount = 0;
     const deps: CliDependencies = {
       files,
+      resourceFiles: createResourceFiles(),
       semantic,
+      presets: createPresetInputs(semantic, readThemeConfig),
       nextRequestId: () => 'generated-request',
       transport: {
         get: async (path) => {
@@ -65,6 +76,7 @@ it('host 8 maps readable arguments and files to exact requests, rejects invalid 
           return envelope(path.startsWith('/api/v1/receipt') ? knownReceipt : snapshot);
         },
         post: async (_path, input) => {
+          if (_path === '/api/v1/resources/freeze') return envelope(input);
           assert(typeof input === 'object' && input !== null && 'request' in input);
           const request = requestSchema.parse(input.request);
           const retained = await files.read(request.request);
@@ -155,4 +167,254 @@ function envelope(value: unknown): Result<TransportResponse> {
     ok: true,
     value: { version: 1, generation: 'generation-one', outcome: { ok: true, value } },
   };
+}
+
+it('PR3 CLI retains exact pins and normalized bytes across alias advance, source deletion, GC and reopen', async () => {
+  const fixture = await resourceWorkspace();
+  const root = await mkdtemp(join(tmpdir(), 'canvas-cli-resources-'));
+  const port = randomInt(45000, 55000);
+  const serverOptions = {
+    port,
+    webRoot: root,
+    credentialFile: join(root, 'agent-credential.json'),
+  };
+  let service = fixture.session;
+  let server = await serveWorkspace(service, serverOptions);
+  assert(server.ok);
+  const base = fileURLToPath(
+    new URL('../../../resources/examples/agent-diagrams/pr3/', import.meta.url),
+  );
+  const cli = (args: readonly string[]) =>
+    runCli([...args, '--server', `http://127.0.0.1:${port}`, '--workspace', root], root);
+  try {
+    await cp(base, root, { recursive: true });
+    const originalTheme = await readFile(join(root, 'harbor.theme'), 'utf8');
+    expect(readThemeConfig(`${originalTheme}\nset color surface.base="#ffffff"`)).toMatchObject({
+      ok: false,
+      error: { code: 'duplicate-token', message: expect.stringContaining('surface.base') },
+    });
+    const admitted = await cli([
+      'theme',
+      'admit',
+      join(root, 'harbor.theme'),
+      '--request',
+      'cli-harbor',
+    ]);
+    assert(admitted.ok, JSON.stringify(admitted));
+    const preview = await cli([
+      'preview',
+      join(root, 'wetland.canvas'),
+      '--request',
+      'retained-wetland',
+    ]);
+    assert(preview.ok, JSON.stringify(preview));
+    const files = createRequestFiles(join(root, 'requests'));
+    const retained = await files.read('retained-wetland');
+    assert(retained.ok);
+    expect(retained.value.backups).toHaveLength(1);
+    const original = retained.value.request;
+    await writeFile(
+      join(root, 'harbor.theme'),
+      (await readFile(join(root, 'harbor.theme'), 'utf8')).replace(
+        'version=1.0.0',
+        'version=2.0.0',
+      ),
+    );
+    const advanced = await cli([
+      'theme',
+      'admit',
+      join(root, 'harbor.theme'),
+      '--request',
+      'cli-harbor-two',
+    ]);
+    assert(advanced.ok, JSON.stringify(advanced));
+    const snapshot = await service.read();
+    assert(snapshot.ok);
+    await server.value.close();
+    await service.close();
+    const assets = openAssets(join(fixture.directory, 'assets'));
+    assert(assets.ok);
+    const collected = assets.value.collectUnreferenced(() => ({
+      ok: true,
+      value: snapshot.value.records
+        .flatMap((item) => item.resources)
+        .map((item) => assetDigest.parse(item)),
+    }));
+    assert(collected.ok);
+    expect(collected.value.removed).toContain(retained.value.backups?.[0]?.digest);
+    assets.value.close();
+    await rm(join(root, 'wetland.canvas'));
+    await rm(join(root, 'wetland.png'));
+    service = await fixture.reopen();
+    server = await serveWorkspace(service, serverOptions);
+    assert(server.ok);
+    const applied = await cli(['apply', 'retained-wetland']);
+    assert(applied.ok, JSON.stringify(applied));
+    expect(await files.read('retained-wetland')).toMatchObject({
+      ok: true,
+      value: { request: original },
+    });
+    const readout = await cli(['read', 'wetland']);
+    assert(readout.ok);
+    expect(readout.value).toContain('harbor@1.0.0#sha256:');
+    const recipePath = fileURLToPath(
+      new URL('../../../resources/recipes/infographic.canvas', import.meta.url),
+    );
+    const recipe = await cli([
+      'recipe',
+      'admit',
+      recipePath,
+      '--id',
+      'cli-guide',
+      '--version',
+      '1.0.0',
+      '--family',
+      'infographic',
+      '--title',
+      'CLI guide',
+      '--request',
+      'cli-recipe',
+    ]);
+    assert(recipe.ok, JSON.stringify(recipe));
+    const latest = await service.read();
+    assert(latest.ok);
+    const preset = latest.value.records.find(
+      (item) =>
+        item.key.kind === 'preset' &&
+        typeof item.value === 'object' &&
+        item.value !== null &&
+        'id' in item.value &&
+        item.value.id === 'cli-guide',
+    );
+    assert(
+      preset &&
+        typeof preset.value === 'object' &&
+        preset.value !== null &&
+        'digest' in preset.value,
+    );
+    const out = join(root, 'fresh.canvas');
+    const expanded = await cli([
+      'recipe',
+      'instantiate',
+      `cli-guide@1.0.0#sha256:${preset.value.digest}`,
+      '--namespace',
+      'fresh-cli',
+      '--out',
+      out,
+    ]);
+    assert(expanded.ok, JSON.stringify(expanded));
+    expect(await readFile(out, 'utf8')).toContain('fresh-cli');
+    const created = await cli(['create', out, '--request', 'fresh-cli-create']);
+    assert(created.ok, JSON.stringify(created));
+    const pinned = await createResourceFiles().read(join(root, 'missing.canvas'), {
+      kind: 'image',
+      alias: 'known',
+      source: `sha256:${'a'.repeat(64)}`,
+      span: { start: { line: 1, column: 1, offset: 0 }, end: { line: 1, column: 2, offset: 1 } },
+    });
+    expect(pinned).toMatchObject({ ok: true, value: { digest: 'a'.repeat(64) } });
+    await mkdir(join(root, '..media'));
+    await cp(join(base, 'wetland.png'), join(root, '..media', 'icon.png'));
+    const dotted = await createResourceFiles().read(join(root, 'input.canvas'), {
+      kind: 'image',
+      alias: 'dotted',
+      source: './..media/icon.png',
+      span: { start: { line: 2, column: 1, offset: 0 }, end: { line: 2, column: 2, offset: 1 } },
+    });
+    expect(dotted).toMatchObject({ ok: true, value: { alias: 'dotted' } });
+    const completeBytes = Buffer.alloc(8 * 1024 * 1024, 37);
+    await writeFile(join(root, 'complete.png'), completeBytes);
+    const complete = await createResourceFiles().read(join(root, 'input.canvas'), {
+      kind: 'image',
+      alias: 'complete',
+      source: './complete.png',
+      span: { start: { line: 3, column: 1, offset: 0 }, end: { line: 3, column: 2, offset: 1 } },
+    });
+    assert(complete.ok);
+    const completeStage = complete.value.stage;
+    assert(
+      typeof completeStage === 'object' && completeStage !== null && 'base64' in completeStage,
+    );
+    assert(typeof completeStage.base64 === 'string');
+    expect(Buffer.from(completeStage.base64, 'base64')).toEqual(completeBytes);
+    await writeFile(join(root, 'oversized.png'), Buffer.alloc(16 * 1024 * 1024 + 1));
+    const oversized = await createResourceFiles().read(join(root, 'input.canvas'), {
+      kind: 'image',
+      alias: 'oversized',
+      source: './oversized.png',
+      span: { start: { line: 4, column: 1, offset: 0 }, end: { line: 4, column: 2, offset: 1 } },
+    });
+    expect(oversized).toMatchObject({ ok: false, error: { code: 'resource-too-large' } });
+    await symlink(join(base, 'wetland.png'), join(root, 'escape.png'));
+    await expectInvalidResources(root, base);
+  } finally {
+    await closeResourceServer(server);
+    await fixture.close();
+    await rm(root, { recursive: true, force: true });
+  }
+}, 30000);
+
+/** Each resource contract owns a private native workspace, closed and removed after the case. */
+async function resourceWorkspace() {
+  const directory = await mkdtemp(join(tmpdir(), 'pr3-resource-workspace-'));
+  const root = fileURLToPath(new URL('../../../', import.meta.url));
+  const options = {
+    directory,
+    workspace: 'pr3',
+    title: 'PR3',
+    createdAt: 1,
+    resourceRoot: join(root, 'resources'),
+    tokenRoot: join(root, 'capability/design-system'),
+  };
+  const opened = await openWorkspace(options);
+  assert(opened.ok, JSON.stringify(opened));
+  let active = opened.value;
+  return {
+    directory,
+    session: active,
+    reopen: async () => {
+      await active.close();
+      const next = await openWorkspace(options);
+      assert(next.ok, JSON.stringify(next));
+      active = next.value;
+      return active;
+    },
+    close: async () => {
+      await active.close();
+      await rm(directory, { recursive: true, force: true });
+    },
+  };
+}
+
+/** Distinct filesystem/media failures retain one code while sharing precise source context. */
+async function expectInvalidResources(root: string, base: string): Promise<void> {
+  const invalidSources: readonly { readonly source: string; readonly code: string }[] = [
+    { source: join(base, 'wetland.png'), code: 'absolute-path' },
+    { source: './escape.png', code: 'path-escape' },
+    { source: './missing.png', code: 'source-unavailable' },
+    { source: './harbor.theme', code: 'unsupported-media' },
+    { source: './inter-latin-400-normal.woff2', code: 'resource-mismatch' },
+  ];
+  for (const { source, code } of invalidSources) {
+    const result = await createResourceFiles().read(join(root, 'input.canvas'), {
+      kind: 'image',
+      alias: 'bad',
+      source,
+      span: {
+        start: { line: 4, column: 18, offset: 0 },
+        end: { line: 4, column: 19, offset: 1 },
+      },
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      error: { code, message: expect.stringContaining('4:18 asset @bad') },
+    });
+  }
+}
+
+/** A failed restart has no live transport to close; native workspace cleanup remains independent. */
+async function closeResourceServer(
+  server: Awaited<ReturnType<typeof serveWorkspace>>,
+): Promise<void> {
+  if (server.ok) await server.value.close();
 }

@@ -1,0 +1,119 @@
+import type { ResourceRequest } from '@novakai/canvas-language';
+import type { Result } from '../contract/errors.js';
+import { failure } from '../contract/errors.js';
+interface Override {
+  readonly token: string;
+  readonly value: string;
+  readonly line: number;
+}
+/** Theme grammar faults retain a stable reason and exact corrective instruction. */
+class ThemeFault extends Error {
+  constructor(
+    readonly code: string,
+    message: string,
+    readonly recovery: string,
+  ) {
+    super(message);
+  }
+}
+/** A small semantic host config selects existing tokens; Design System remains their only schema and resolution owner. */
+export function readThemeConfig(
+  source: string,
+): Result<{ readonly admission: unknown; readonly resources: readonly ResourceRequest[] }> {
+  try {
+    return { ok: true, value: parse(source) };
+  } catch (error) {
+    return themeFailure(error);
+  }
+}
+/** Unexpected grammar faults remain a stable generic syntax outcome. */
+function themeFailure<T>(error: unknown): Result<T> {
+  if (error instanceof ThemeFault) return failure(error.code, error.message, error.recovery);
+  return failure(
+    'invalid-theme',
+    'Expected theme 1 @id "Title" version=X base=ALIAS, font body/mono source="PATH", or set color TOKEN="HEX"',
+  );
+}
+/** Header vocabulary is intentionally closed and coordinate-free; no diagram or typography metric model is introduced. */
+function parse(source: string): {
+  readonly admission: unknown;
+  readonly resources: readonly ResourceRequest[];
+} {
+  const lines = source
+    .split(/\r?\n/)
+    .map((text, index) => ({ text: text.trim(), line: index + 1 }))
+    .filter((item) => item.text.length > 0 && !item.text.startsWith('#'));
+  const header = /^theme 1 @([\w-]+) "([^"]+)" version=([\w.-]+) base=(\S+)$/.exec(
+    lines[0]?.text ?? '',
+  );
+  if (!header) throw new Error('Invalid theme header');
+  const entries = lines.slice(1).map(line);
+  const resources = entries.flatMap((item) => item.resources);
+  const overrides = uniqueOverrides(entries.flatMap((item) => item.overrides));
+  if (resources.length !== 2 || new Set(resources.map((item) => item.alias)).size !== 2)
+    throw new Error('Exactly body and mono are required');
+  return {
+    admission: {
+      schemaVersion: 1,
+      kind: 'theme',
+      id: header[1],
+      title: header[2],
+      version: header[3],
+      description: '',
+      raw: {
+        base: header[4],
+        overrides: Object.fromEntries(overrides.map((item) => [item.token, item.value])),
+      },
+    },
+    resources,
+  };
+}
+/** Each line selects one font alias or one existing color token before owner preparation. */
+function line(input: { readonly text: string; readonly line: number }): {
+  readonly resources: readonly ResourceRequest[];
+  readonly overrides: readonly Override[];
+} {
+  const font = /^font (body|mono) source="([^"]+)"$/.exec(input.text);
+  if (font)
+    return {
+      resources: [
+        {
+          kind: 'font',
+          alias: required(font, 1),
+          source: required(font, 2),
+          span: {
+            start: { line: input.line, column: 1, offset: 0 },
+            end: { line: input.line, column: input.text.length + 1, offset: input.text.length },
+          },
+        },
+      ],
+      overrides: [],
+    };
+  const color = /^set color ([\w.-]+)="(#[a-fA-F0-9]{6}(?:[a-fA-F0-9]{2})?)"$/.exec(input.text);
+  if (!color) throw new Error('Invalid theme line');
+  return {
+    resources: [],
+    overrides: [{ token: required(color, 1), value: required(color, 2), line: input.line }],
+  };
+}
+
+/** Duplicate tokens reject at the second declaration instead of silently changing preset identity. */
+function uniqueOverrides(overrides: readonly Override[]): readonly Override[] {
+  const duplicate = overrides.find(
+    (item, index, all) => all.findIndex((candidate) => candidate.token === item.token) !== index,
+  );
+  if (duplicate)
+    throw new ThemeFault(
+      'duplicate-token',
+      `Line ${duplicate.line} repeats color token ${duplicate.token}`,
+      `Remove the duplicate ${duplicate.token} declaration and admit the theme again.`,
+    );
+  return overrides;
+}
+
+/** Regex captures are checked before becoming semantic identifiers. */
+function required(match: RegExpExecArray, index: number): string {
+  const value = match[index];
+  if (value === undefined) throw new Error('Missing capture');
+  return value;
+}

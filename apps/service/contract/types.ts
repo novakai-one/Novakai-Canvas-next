@@ -1,3 +1,4 @@
+import type { ResourceCommands } from './records/resource-commands.js';
 import type { SessionLifetime } from './ports/lifetime.js';
 import type { Authoring, Snapshot, Receipt, AuthoringResult } from './records/owners.js';
 import type { Preparation } from '@novakai/canvas-authoring';
@@ -11,6 +12,7 @@ import type { Result } from './errors.js';
 export interface WorkspaceSession {
   readonly workspace: string;
   readonly installation: BuiltinResources;
+  readonly resources: ResourceCommands;
   read(): Promise<AuthoringResult<Snapshot>>;
   prepare(
     request: unknown,
@@ -31,6 +33,7 @@ export interface WorkspaceSession {
 export interface SessionDependencies {
   readonly workspace: string;
   readonly installation: BuiltinResources;
+  readonly resources: ResourceCommands;
   readonly views: WorkspaceReader;
   readonly renderer: CollectionRenderer;
   readonly changes: ChangeChannel;

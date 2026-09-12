@@ -2,6 +2,7 @@ import { usage } from './help.js';
 import type { Command, CommandName } from '../../contract/records/command.js';
 import type { CliDependencies } from '../../contract/ports/runtime.js';
 import type { Result } from '../../contract/errors.js';
+import { admitPreset, instantiateRecipe } from './presets.js';
 import { author, retry } from './author.js';
 /** Read failures preserve the service diagnostic; successful payloads still pass their owner-specific readout. */
 async function query(
@@ -24,6 +25,9 @@ export async function execute(
   dependencies: CliDependencies,
 ): Promise<Result<string>> {
   const operations: Record<CommandName, () => Promise<Result<string>>> = {
+    'theme-admit': () => admitPreset(command, dependencies),
+    'recipe-admit': () => admitPreset(command, dependencies),
+    'recipe-instantiate': () => instantiateRecipe(command, dependencies),
     help: async () => ({ ok: true, value: usage }),
     describe: () => query('/api/v1/language', describe, dependencies),
     list: () => query('/api/v1/workspace', dependencies.semantic.collections, dependencies),

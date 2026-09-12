@@ -84,14 +84,35 @@ function authoredChange(
   intent: Extract<Request['intent'], { readonly kind: 'change' }>,
   owners: ResourceOwners,
 ): AuthoredResources {
+  if (intent.planner === 'preset') return presetAuthored(intent.payload, owners);
   if (intent.planner === 'dsl') {
     const command = dslCommand.parse(intent.payload);
     const parsed = accepted(owners.language.parse(command.source));
     return { collection: parsed.collection, requests: parsed.resources };
   }
+  return authoredModel(intent);
+}
+/** Model selections carry scope only; they cannot supply filesystem declarations. */
+function authoredModel(
+  intent: Extract<Request['intent'], { readonly kind: 'change' }>,
+): AuthoredResources {
   if (intent.planner === 'model')
     return { collection: modelCommand.parse(intent.payload).collection, requests: [] };
   return { collection: null, requests: [] };
+}
+/** Preset acquisition distinguishes theme fonts from recipe asset declarations without inventing collection metadata. */
+function presetAuthored(input: unknown, owners: ResourceOwners): AuthoredResources {
+  const payload = z
+    .looseObject({
+      admission: z.looseObject({
+        kind: z.enum(['theme', 'recipe']),
+        source: z.string().optional(),
+      }),
+    })
+    .parse(input);
+  if (payload.admission.kind === 'theme') return { collection: null, requests: [] };
+  const parsed = accepted(owners.language.parse(payload.admission.source ?? ''));
+  return { collection: null, requests: parsed.resources };
 }
 /** Existing bindings are collection-local; identical aliases in another collection never leak into this request. */
 function priorAssets(id: string | null, snapshot: Snapshot): Collection['assets'] {
@@ -165,16 +186,43 @@ function assets(
   owners: ResourceOwners,
 ): ResolvedResources['assets'] {
   const previous = priorAssets(source.collection, snapshot);
-  if (request.assets.length === 0)
-    return Object.fromEntries(previous.map((item) => [item.id, item]));
-  const theme = Object.values(resolvedThemes)[0];
-  if (!theme) throw new ResourceFault('Asset binding requires an admitted theme');
+  if (isThemeAdmission(request)) return {};
+  const pinned = source.requests
+    .filter((item) => item.kind !== 'theme' && item.source.startsWith('sha256:'))
+    .map((item) => ({ alias: item.alias, digest: digest.parse(item.source.slice(7)) }));
+  const supplied = [...pinned, ...request.assets];
+  if (supplied.length === 0) return Object.fromEntries(previous.map((item) => [item.id, item]));
+  const theme = firstTheme(resolvedThemes);
   return Object.fromEntries(
     [
       ...previous,
-      ...request.assets.map((item) => suppliedAsset(item, source, previous, theme, owners)),
+      ...supplied.map((item) => suppliedAsset(item, source, previous, theme, owners)),
     ].map((item) => [item.id, item]),
   );
+}
+/** Theme font bytes enter lease coverage directly, never through Model asset binding metadata. */
+function isThemeAdmission(request: Request): boolean {
+  if (request.intent.kind !== 'change') return false;
+  if (request.intent.planner !== 'preset') return false;
+  const payload = z
+    .looseObject({ admission: z.looseObject({ kind: z.string() }) })
+    .parse(request.intent.payload);
+  return payload.admission.kind === 'theme';
+}
+/** Retained alias pins are validated against the current exact catalog; latest aliases cannot replace their bytes. */
+function pinnedThemes(
+  request: Request,
+  available: ResolvedResources['themes'],
+): ResolvedResources['themes'] {
+  if (request.intent.kind !== 'change') return available;
+  if (request.intent.planner !== 'dsl') return available;
+  const command = dslCommand.parse(request.intent.payload);
+  const pins = Object.entries(command.themePins ?? {}).map(([alias, exact]) => {
+    const pin = available[exact];
+    if (!pin) throw new ResourceFault(`Retained theme pin unavailable: ${exact}`);
+    return [alias, pin] as const;
+  });
+  return { ...available, ...Object.fromEntries(pins) };
 }
 /** Hold actual bytes for current content, history, installation fonts and submitted bindings until physical commit settles. */
 function coverage(request: Request, snapshot: Snapshot, catalog: Catalog): readonly Digest[] {
@@ -194,7 +242,7 @@ function coverage(request: Request, snapshot: Snapshot, catalog: Catalog): reado
 /** Resolve immutable aliases and conservative read dependencies; unrelated data is not granted write scope. */
 function select(request: Request, snapshot: Snapshot, owners: ResourceOwners): ResourceSelection {
   const catalog = presets(request, snapshot, owners);
-  const resolvedThemes = themes(catalog, owners);
+  const resolvedThemes = pinnedThemes(request, themes(catalog, owners));
   const source = authored(request, owners);
   const resources = {
     themes: resolvedThemes,
@@ -203,7 +251,12 @@ function select(request: Request, snapshot: Snapshot, owners: ResourceOwners): R
   return {
     resources,
     pins: z.json().parse({ resources }),
-    covered: coverage(request, snapshot, catalog),
+    covered: [
+      ...new Set([
+        ...coverage(request, snapshot, catalog),
+        ...Object.values(resources.assets).map((item) => digest.parse(item.digest.slice(7))),
+      ]),
+    ],
     reads: snapshot.records
       .filter((item) => item.key.kind === 'preset')
       .map((item) => ({ key: item.key, version: item.version })),
@@ -267,4 +320,11 @@ export function createResourceSelector(owners: ResourceOwners): ResourceSelector
     forCollection: (collection, workspace) =>
       guarded(() => collectionResources(collection, workspace, owners)),
   };
+}
+
+/** Model binding validation requires one actual admitted theme. */
+function firstTheme(themes: ResolvedResources['themes']): Collection['theme'] {
+  const theme = Object.values(themes)[0];
+  if (!theme) throw new ResourceFault('Asset binding requires an admitted theme');
+  return theme;
 }

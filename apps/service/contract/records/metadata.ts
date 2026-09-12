@@ -6,6 +6,7 @@ export const workspaceMetadata = z
     id: z.string().min(1).max(128),
     title: z.string().min(1).max(256),
     createdAt: z.number().int().nonnegative(),
+    presetRevision: z.number().int().nonnegative().default(0),
   })
   .readonly();
 /** Asset discovery metadata references admitted bytes; Model creates collection-local bindings independently. */

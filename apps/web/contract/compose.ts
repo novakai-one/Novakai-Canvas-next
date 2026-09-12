@@ -297,6 +297,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     Recovery: createRequestRecovery(design),
     CreateDialog: createCollectionDialog(design),
     CanvasSurface: surface.CanvasSurface,
+    FontDefinitions: presentation.FontDefinitions,
     portal: element,
     nextGestureId: () => crypto.randomUUID(),
   });

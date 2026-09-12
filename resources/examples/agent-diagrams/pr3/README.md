@@ -1,0 +1,1 @@
+PR3 local resource proof inputs. Run theme admit before each matching create. Fonts are copied from the repository fonts and @fontsource/inter; their OFL license is resources/fonts/INTER-LICENSE.txt and JETBRAINS-MONO-LICENSE.txt. The tiny PNG is a mechanical staging fixture, not an educational illustration. Both recipes remain ordinary editable DSL.

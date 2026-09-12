@@ -1,0 +1,1100 @@
+[
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasControls.tsx",
+    "max": 1,
+    "functions": [
+      {
+        "line": 10,
+        "score": 1
+      },
+      {
+        "line": 60,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasSurface.tsx",
+    "max": 2,
+    "functions": [
+      {
+        "line": 16,
+        "score": 1
+      },
+      {
+        "line": 27,
+        "score": 2
+      },
+      {
+        "line": 125,
+        "score": 1
+      },
+      {
+        "line": 131,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/DiagramOutline.tsx",
+    "max": 1,
+    "functions": [
+      {
+        "line": 47,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/RouteHandles.tsx",
+    "max": 2,
+    "functions": [
+      {
+        "line": 9,
+        "score": 1
+      },
+      {
+        "line": 26,
+        "score": 1
+      },
+      {
+        "line": 30,
+        "score": 1
+      },
+      {
+        "line": 36,
+        "score": 1
+      },
+      {
+        "line": 43,
+        "score": 1
+      },
+      {
+        "line": 70,
+        "score": 1
+      },
+      {
+        "line": 82,
+        "score": 1
+      },
+      {
+        "line": 91,
+        "score": 2
+      },
+      {
+        "line": 97,
+        "score": 1
+      },
+      {
+        "line": 108,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneEdge.tsx",
+    "max": 2,
+    "functions": [
+      {
+        "line": 8,
+        "score": 1
+      },
+      {
+        "line": 25,
+        "score": 1
+      },
+      {
+        "line": 30,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneNode.tsx",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SectionFrame.tsx",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SequenceLayer.tsx",
+    "max": 2,
+    "functions": [
+      {
+        "line": 11,
+        "score": 1
+      },
+      {
+        "line": 63,
+        "score": 2
+      },
+      {
+        "line": 143,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/flow-records.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 16,
+        "score": 1
+      },
+      {
+        "line": 31,
+        "score": 2
+      },
+      {
+        "line": 51,
+        "score": 1
+      },
+      {
+        "line": 88,
+        "score": 1
+      },
+      {
+        "line": 113,
+        "score": 2
+      },
+      {
+        "line": 126,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/interaction-handlers.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 25,
+        "score": 2
+      },
+      {
+        "line": 36,
+        "score": 1
+      },
+      {
+        "line": 44,
+        "score": 1
+      },
+      {
+        "line": 54,
+        "score": 1
+      },
+      {
+        "line": 63,
+        "score": 1
+      },
+      {
+        "line": 79,
+        "score": 1
+      },
+      {
+        "line": 89,
+        "score": 1
+      },
+      {
+        "line": 99,
+        "score": 1
+      },
+      {
+        "line": 115,
+        "score": 2
+      },
+      {
+        "line": 132,
+        "score": 1
+      },
+      {
+        "line": 137,
+        "score": 1
+      },
+      {
+        "line": 155,
+        "score": 2
+      },
+      {
+        "line": 195,
+        "score": 1
+      },
+      {
+        "line": 199,
+        "score": 1
+      },
+      {
+        "line": 205,
+        "score": 1
+      },
+      {
+        "line": 210,
+        "score": 1
+      },
+      {
+        "line": 226,
+        "score": 2
+      },
+      {
+        "line": 240,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/style-entry.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/use-scene.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 12,
+        "score": 2
+      },
+      {
+        "line": 21,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/session/store.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 6,
+        "score": 1
+      },
+      {
+        "line": 51,
+        "score": 1
+      },
+      {
+        "line": 56,
+        "score": 2
+      },
+      {
+        "line": 77,
+        "score": 1
+      },
+      {
+        "line": 82,
+        "score": 1
+      },
+      {
+        "line": 89,
+        "score": 2
+      },
+      {
+        "line": 117,
+        "score": 1
+      },
+      {
+        "line": 126,
+        "score": 1
+      },
+      {
+        "line": 138,
+        "score": 1
+      },
+      {
+        "line": 147,
+        "score": 2
+      },
+      {
+        "line": 161,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/contract/api.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/brands.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/compose.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 68,
+        "score": 1
+      },
+      {
+        "line": 77,
+        "score": 1
+      },
+      {
+        "line": 82,
+        "score": 1
+      },
+      {
+        "line": 87,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/contract/errors.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/events.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/index.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/interaction-profile.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/ports/scene-admission.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/ports/session.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/react-types.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/camera.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/draft.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/intent.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/profile.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/scene.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/selection.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/state.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/view.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/schemas.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/types.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/core/accessibility/outline.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 44,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/camera/coordinates.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 15,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/camera/navigate.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/core/camera/resize.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/core/drafts/begin.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 28,
+        "score": 1
+      },
+      {
+        "line": 35,
+        "score": 2
+      },
+      {
+        "line": 59,
+        "score": 2
+      },
+      {
+        "line": 69,
+        "score": 1
+      },
+      {
+        "line": 74,
+        "score": 2
+      },
+      {
+        "line": 80,
+        "score": 1
+      },
+      {
+        "line": 96,
+        "score": 1
+      },
+      {
+        "line": 102,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/finish.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 14,
+        "score": 1
+      },
+      {
+        "line": 25,
+        "score": 1
+      },
+      {
+        "line": 42,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/reconcile.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 14,
+        "score": 1
+      },
+      {
+        "line": 35,
+        "score": 2
+      },
+      {
+        "line": 60,
+        "score": 1
+      },
+      {
+        "line": 72,
+        "score": 2
+      },
+      {
+        "line": 81,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/update.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 8,
+        "score": 2
+      },
+      {
+        "line": 15,
+        "score": 1
+      },
+      {
+        "line": 35,
+        "score": 1
+      },
+      {
+        "line": 42,
+        "score": 1
+      },
+      {
+        "line": 64,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/camera-events.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 12,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/changes.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/core/interaction/commands.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 12,
+        "score": 1
+      },
+      {
+        "line": 18,
+        "score": 2
+      },
+      {
+        "line": 27,
+        "score": 2
+      },
+      {
+        "line": 35,
+        "score": 2
+      },
+      {
+        "line": 59,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/draft-events.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/core/interaction/gesture-policy.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 7,
+        "score": 1
+      },
+      {
+        "line": 12,
+        "score": 2
+      },
+      {
+        "line": 18,
+        "score": 1
+      },
+      {
+        "line": 24,
+        "score": 1
+      },
+      {
+        "line": 29,
+        "score": 1
+      },
+      {
+        "line": 35,
+        "score": 1
+      },
+      {
+        "line": 41,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/handler.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 19,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/keyboard.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 18,
+        "score": 2
+      },
+      {
+        "line": 30,
+        "score": 2
+      },
+      {
+        "line": 41,
+        "score": 1
+      },
+      {
+        "line": 48,
+        "score": 1
+      },
+      {
+        "line": 57,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/scene-events.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 9,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/selection-events.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 8,
+        "score": 2
+      },
+      {
+        "line": 14,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/selection.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 33,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/transition.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 23,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/accept.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 19,
+        "score": 2
+      },
+      {
+        "line": 26,
+        "score": 1
+      },
+      {
+        "line": 42,
+        "score": 1
+      },
+      {
+        "line": 69,
+        "score": 1
+      },
+      {
+        "line": 75,
+        "score": 2
+      },
+      {
+        "line": 84,
+        "score": 2
+      },
+      {
+        "line": 92,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/address.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 5,
+        "score": 1
+      },
+      {
+        "line": 10,
+        "score": 1
+      },
+      {
+        "line": 15,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/ancestry.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 3,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/index.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 28,
+        "score": 1
+      },
+      {
+        "line": 34,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/present.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 7,
+        "score": 2
+      },
+      {
+        "line": 22,
+        "score": 2
+      },
+      {
+        "line": 34,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/preview.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 7,
+        "score": 1
+      },
+      {
+        "line": 20,
+        "score": 2
+      },
+      {
+        "line": 28,
+        "score": 1
+      },
+      {
+        "line": 34,
+        "score": 1
+      },
+      {
+        "line": 40,
+        "score": 2
+      },
+      {
+        "line": 48,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/reading.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 8,
+        "score": 2
+      },
+      {
+        "line": 26,
+        "score": 1
+      },
+      {
+        "line": 35,
+        "score": 1
+      },
+      {
+        "line": 42,
+        "score": 1
+      },
+      {
+        "line": 65,
+        "score": 2
+      },
+      {
+        "line": 77,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/sequence-checks.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 6,
+        "score": 1
+      },
+      {
+        "line": 11,
+        "score": 1
+      },
+      {
+        "line": 29,
+        "score": 1
+      },
+      {
+        "line": 37,
+        "score": 2
+      },
+      {
+        "line": 42,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/validate.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 6,
+        "score": 1
+      },
+      {
+        "line": 10,
+        "score": 1
+      },
+      {
+        "line": 18,
+        "score": 2
+      },
+      {
+        "line": 26,
+        "score": 1
+      },
+      {
+        "line": 33,
+        "score": 2
+      },
+      {
+        "line": 39,
+        "score": 1
+      },
+      {
+        "line": 46,
+        "score": 1
+      },
+      {
+        "line": 76,
+        "score": 1
+      },
+      {
+        "line": 90,
+        "score": 2
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/view-nodes.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 11,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/view-wires.ts",
+    "max": 2,
+    "functions": [
+      {
+        "line": 19,
+        "score": 2
+      },
+      {
+        "line": 28,
+        "score": 2
+      },
+      {
+        "line": 38,
+        "score": 2
+      },
+      {
+        "line": 88,
+        "score": 1
+      },
+      {
+        "line": 93,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/validation/outcomes.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 13,
+        "score": 1
+      },
+      {
+        "line": 18,
+        "score": 1
+      },
+      {
+        "line": 32,
+        "score": 1
+      },
+      {
+        "line": 40,
+        "score": 1
+      },
+      {
+        "line": 61,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/camera.test.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/tests/drafts.test.ts",
+    "max": 0,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/tests/fixtures.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 137,
+        "score": 1
+      },
+      {
+        "line": 197,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/interaction.test.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 4,
+        "score": 1
+      },
+      {
+        "line": 75,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/react-bindings.test.tsx",
+    "max": 1,
+    "functions": [
+      {
+        "line": 71,
+        "score": 1
+      },
+      {
+        "line": 80,
+        "score": 1
+      },
+      {
+        "line": 83,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/react-fixtures.tsx",
+    "max": 1,
+    "functions": [
+      {
+        "line": 77,
+        "score": 1
+      },
+      {
+        "line": 82,
+        "score": 1
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/scene.test.ts",
+    "max": 1,
+    "functions": [
+      {
+        "line": 61,
+        "score": 1
+      },
+      {
+        "line": 98,
+        "score": 1
+      }
+    ]
+  }
+]

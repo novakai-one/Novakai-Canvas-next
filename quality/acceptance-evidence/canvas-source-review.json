@@ -1,0 +1,1917 @@
+[
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasControls.tsx",
+    "lines": 80,
+    "functions": [
+      {
+        "name": "createCanvasControls",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "CanvasControls",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasSurface.tsx",
+    "lines": 133,
+    "functions": [
+      {
+        "name": "reportView",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createCanvasSurface",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "CanvasSurface",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dispatchSize",
+        "line": 125,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "pointerThreshold",
+        "line": 131,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/DiagramOutline.tsx",
+    "lines": 73,
+    "functions": [
+      {
+        "name": "createDiagramOutline",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "entry",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "connectMember",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "DiagramOutline",
+        "line": 56,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/RouteHandles.tsx",
+    "lines": 175,
+    "functions": [
+      {
+        "name": "RouteHandles",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "start",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "move",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finish",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "cancel",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "update",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "commit",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "key",
+        "line": 70,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "deleteBend",
+        "line": 91,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "addBend",
+        "line": 97,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "side",
+        "line": 108,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isSide",
+        "line": 173,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneEdge.tsx",
+    "lines": 69,
+    "functions": [
+      {
+        "name": "wirePath",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "endpointTransform",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSceneEdge",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "SceneEdge",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "renderEdge",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneNode.tsx",
+    "lines": 71,
+    "functions": [
+      {
+        "name": "anchorHandles",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSceneNode",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "SceneNode",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SectionFrame.tsx",
+    "lines": 33,
+    "functions": [
+      {
+        "name": "createSectionFrame",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "SectionFrame",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SequenceLayer.tsx",
+    "lines": 149,
+    "functions": [
+      {
+        "name": "visibleParticipant",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "visibleEvent",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSequenceLayer",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "message",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "messageKey",
+        "line": 63,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "section",
+        "line": 74,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "SequenceLayer",
+        "line": 131,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "endpointAngle",
+        "line": 143,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/flow-records.ts",
+    "lines": 136,
+    "functions": [
+      {
+        "name": "flowNodes",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parentOrder",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "flowEdges",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "graphRecords",
+        "line": 88,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createGraphSelector",
+        "line": 100,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stableFlowNode",
+        "line": 113,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stableFlowEdge",
+        "line": 126,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/interaction-handlers.ts",
+    "lines": 251,
+    "functions": [
+      {
+        "name": "selectedTargets",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "applySelectionChange",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "setSelected",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stillActive",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createInteractions",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dispatch",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "startDrag",
+        "line": 63,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "moveDrag",
+        "line": 79,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finishGeometry",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "cancelGeometry",
+        "line": 99,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "beginResize",
+        "line": 109,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resize",
+        "line": 115,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "selection",
+        "line": 132,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "connect",
+        "line": 137,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "keyboard",
+        "line": 155,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "focusKeyboardTarget",
+        "line": 226,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "keyboardTarget",
+        "line": 240,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "targetAddress",
+        "line": 249,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/style-entry.ts",
+    "lines": 3,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/use-scene.ts",
+    "lines": 36,
+    "functions": [
+      {
+        "name": "createSelector",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "select",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readOutline",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "useScene",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/adapters/session/store.ts",
+    "lines": 183,
+    "functions": [
+      {
+        "name": "notify",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "disposed",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createStore",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "publish",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "notifyChange",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "commit",
+        "line": 56,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "copyPointer",
+        "line": 117,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "admitEffects",
+        "line": 126,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "conflicts",
+        "line": 138,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "admitFreshIntents",
+        "line": 147,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "repeatedIntents",
+        "line": 161,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "invalidIntent",
+        "line": 171,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/contract/api.ts",
+    "lines": 23,
+    "functions": [
+      {
+        "name": "createCanvas",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/contract/brands.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/compose.ts",
+    "lines": 93,
+    "functions": [
+      {
+        "name": "composeCanvas",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSession",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createReactBindings",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ownsNativeInput",
+        "line": 68,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "focusedId",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "observeSize",
+        "line": 82,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/contract/errors.ts",
+    "lines": 26,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/events.ts",
+    "lines": 89,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/index.ts",
+    "lines": 43,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/interaction-profile.ts",
+    "lines": 3,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/ports/scene-admission.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/ports/session.ts",
+    "lines": 24,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/react-types.ts",
+    "lines": 168,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/camera.ts",
+    "lines": 13,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/draft.ts",
+    "lines": 40,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/intent.ts",
+    "lines": 51,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/profile.ts",
+    "lines": 44,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/scene.ts",
+    "lines": 37,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/selection.ts",
+    "lines": 12,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/state.ts",
+    "lines": 38,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/records/view.ts",
+    "lines": 57,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/schemas.ts",
+    "lines": 15,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/contract/types.ts",
+    "lines": 16,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/core/accessibility/outline.ts",
+    "lines": 75,
+    "functions": [
+      {
+        "name": "nodeEntry",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "wireEntry",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sequenceEntries",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "describeScene",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/camera/coordinates.ts",
+    "lines": 19,
+    "functions": [
+      {
+        "name": "toWorld",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "toScreen",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "translateBox",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "intersects",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/camera/navigate.ts",
+    "lines": 41,
+    "functions": [
+      {
+        "name": "clampZoom",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "zoomAt",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fitBounds",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "locateBounds",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/camera/resize.ts",
+    "lines": 10,
+    "functions": [
+      {
+        "name": "resizeCamera",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/begin.ts",
+    "lines": 109,
+    "functions": [
+      {
+        "name": "hasSelectedAncestor",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "originalGeometry",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "geometryEntry",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "routeDraft",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateStart",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateTargets",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireSingleTarget",
+        "line": 74,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "beginDraft",
+        "line": 80,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateAvailable",
+        "line": 96,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateRecoveryCapacity",
+        "line": 102,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/finish.ts",
+    "lines": 56,
+    "functions": [
+      {
+        "name": "localPlacement",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "draftIntent",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finishDraft",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/reconcile.ts",
+    "lines": 84,
+    "functions": [
+      {
+        "name": "retainActive",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "receiveScene",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reconcileScene",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejectDraft",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "removeRecovery",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "draftSurvives",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "retainForScene",
+        "line": 81,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/drafts/update.ts",
+    "lines": 80,
+    "functions": [
+      {
+        "name": "activeDraft",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "moveDraft",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resizeDraft",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resizePlacement",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "updateRoute",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/camera-events.ts",
+    "lines": 56,
+    "functions": [
+      {
+        "name": "fitted",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "cameraHandlers",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/changes.ts",
+    "lines": 25,
+    "functions": [
+      {
+        "name": "changed",
+        "line": 4,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unchanged",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "canMutate",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/commands.ts",
+    "lines": 111,
+    "functions": [
+      {
+        "name": "emitIntent",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkEndpoint",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "connect",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "completeConnection",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nudgeSelection",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "commandHandlers",
+        "line": 78,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/draft-events.ts",
+    "lines": 31,
+    "functions": [
+      {
+        "name": "draftHandlers",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/gesture-policy.ts",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "selectGesture",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "targetGesture",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "toolGesture",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "pointerGesture",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "panGesture",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "decideGesture",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "blankGesture",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/handler.ts",
+    "lines": 24,
+    "functions": [
+      {
+        "name": "matches",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "handler",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/keyboard.ts",
+    "lines": 71,
+    "functions": [
+      {
+        "name": "arrow",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "navigate",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "selectAdjacent",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspectSelected",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "keyboardEvent",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "canvasKey",
+        "line": 57,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/scene-events.ts",
+    "lines": 27,
+    "functions": [
+      {
+        "name": "connectionState",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sceneHandlers",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/selection-events.ts",
+    "lines": 34,
+    "functions": [
+      {
+        "name": "escapeCanvas",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "escapeTool",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "selectionHandlers",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/selection.ts",
+    "lines": 46,
+    "functions": [
+      {
+        "name": "distinct",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "toggle",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "selectTargets",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "marquee",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "survivingSelection",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/interaction/transition.ts",
+    "lines": 33,
+    "functions": [
+      {
+        "name": "createTransition",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dispatch",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/accept.ts",
+    "lines": 95,
+    "functions": [
+      {
+        "name": "sameStamp",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "freezeTree",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "admitScene",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "openSession",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "expectScene",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateRequested",
+        "line": 75,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateProfile",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateCollection",
+        "line": 92,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/address.ts",
+    "lines": 20,
+    "functions": [
+      {
+        "name": "targetKey",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sectionId",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "targetInfo",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/ancestry.ts",
+    "lines": 11,
+    "functions": [
+      {
+        "name": "ancestorKeys",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/index.ts",
+    "lines": 133,
+    "functions": [
+      {
+        "name": "sectionInfo",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parentOrigin",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parentTarget",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nodeInfo",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "labelledInfo",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sectionTargets",
+        "line": 73,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "indexScene",
+        "line": 102,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/present.ts",
+    "lines": 66,
+    "functions": [
+      {
+        "name": "stableNode",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stableWire",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stableSection",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "presentScene",
+        "line": 45,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/preview.ts",
+    "lines": 52,
+    "functions": [
+      {
+        "name": "movedAncestor",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ancestorDelta",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "entryDelta",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "draftEntry",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "placementEntry",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "previewBox",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hiddenByReading",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/reading.ts",
+    "lines": 87,
+    "functions": [
+      {
+        "name": "enter",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "advance",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "focusReading",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "exit",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readingAction",
+        "line": 58,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "collapseTarget",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "refreshReadingOrder",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/sequence-checks.ts",
+    "lines": 54,
+    "functions": [
+      {
+        "name": "participant",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "message",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fragment",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "activation",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateActivationEnd",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateSequence",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/validate.ts",
+    "lines": 93,
+    "functions": [
+      {
+        "name": "unique",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateAncestors",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nextParent",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateNode",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateMember",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateEndpoint",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateWire",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateSection",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateScene",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateLimits",
+        "line": 90,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/view-nodes.ts",
+    "lines": 50,
+    "functions": [
+      {
+        "name": "selected",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parentBox",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "viewNode",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "viewSection",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/scenes/view-wires.ts",
+    "lines": 96,
+    "functions": [
+      {
+        "name": "nodeDelta",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "endpointPoints",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "movedWire",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "projectedWire",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "viewWire",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isRouteTarget",
+        "line": 88,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "routePoints",
+        "line": 93,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/core/validation/outcomes.ts",
+    "lines": 70,
+    "functions": [
+      {
+        "name": "reject",
+        "line": 3,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "accepted",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "failure",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protect",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protectAsync",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parse",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/camera.test.ts",
+    "lines": 95,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/tests/drafts.test.ts",
+    "lines": 183,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/tests/fixtures.ts",
+    "lines": 330,
+    "functions": [
+      {
+        "name": "value",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "measured",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "node",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "scene",
+        "line": 87,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "admission",
+        "line": 135,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "harness",
+        "line": 159,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "step",
+        "line": 183,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "begin",
+        "line": 187,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nodeShape",
+        "line": 197,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "sequenceScene",
+        "line": 217,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/interaction.test.ts",
+    "lines": 173,
+    "functions": []
+  },
+  {
+    "file": "capability/canvas/tests/react-bindings.test.tsx",
+    "lines": 249,
+    "functions": [
+      {
+        "name": "flowNode",
+        "line": 240,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/react-fixtures.tsx",
+    "lines": 119,
+    "functions": [
+      {
+        "name": "unavailable",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "slots",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "installDomGeometry",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "renderedScene",
+        "line": 94,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mouseGesture",
+        "line": 108,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/canvas/tests/scene.test.ts",
+    "lines": 155,
+    "functions": []
+  }
+]

@@ -1,0 +1,17 @@
+@layer components {
+  .layer {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .layer [role='button'] {
+    pointer-events: visiblePainted;
+    cursor: pointer;
+  }
+  .message[data-message='return'] {
+    stroke-dasharray: var(--nv-space-1);
+  }
+  .lifeline {
+    stroke-dasharray: var(--nv-space-1);
+  }
+}

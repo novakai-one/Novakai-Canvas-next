@@ -1,0 +1,35 @@
+@layer components {
+  .toolBox {
+    width: var(--nv-panel-right);
+    height: calc(var(--nv-control-height) * var(--nv-scalar-two) + var(--nv-space-4));
+  }
+  .bend {
+    r: var(--nv-space-2);
+    fill: var(--nv-surface-raised);
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-stroke-base);
+    cursor: move;
+    touch-action: none;
+  }
+  .bend:focus-visible {
+    outline: var(--nv-focus-width) solid var(--nv-color-focus);
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-1);
+    padding: var(--nv-space-1);
+    background: var(--nv-surface-raised);
+    color: var(--nv-text-primary);
+    font: inherit;
+  }
+  .tools button,
+  .tools select {
+    min-height: var(--nv-control-height);
+    background: var(--nv-surface-base);
+    color: var(--nv-text-primary);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border-radius: var(--nv-radius-control);
+    font: inherit;
+  }
+}

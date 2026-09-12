@@ -1,0 +1,25 @@
+@layer components {
+  .outline {
+    position: absolute;
+    top: var(--nv-space-8);
+    right: var(--nv-space-3);
+    width: min(100%, var(--nv-panel-right));
+    max-height: calc(100% - var(--nv-space-8));
+    overflow: auto;
+    padding: var(--nv-space-4);
+    background: var(--nv-surface-raised);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border-radius: var(--nv-radius-panel);
+    color: var(--nv-text-primary);
+  }
+  .outline ul {
+    padding-inline-start: var(--nv-space-4);
+  }
+  .outline li {
+    margin-block: var(--nv-space-4);
+  }
+  .outline p {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}

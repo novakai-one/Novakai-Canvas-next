@@ -1,0 +1,576 @@
+[
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasControls.module.css",
+    "sha256": "4a1363fad515ce7c19cfe1d35dd8ed5b1b22afdf1ed12b6aed9ea21d9c0c59b4",
+    "lines": 21,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasControls.tsx",
+    "sha256": "8d3ff47c24d69d5aa49c9072083d64d2f3f0e76ff0f98695f53757c8de7e1217",
+    "lines": 80,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasSurface.module.css",
+    "sha256": "654d097ee2fa4a1a99ddaf55b21f161563d3050ca8909d755cf462005615efaa",
+    "lines": 15,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/CanvasSurface.tsx",
+    "sha256": "45700623f85638a2275231cebb539d0e3b08f7699533a892c4956053d0233319",
+    "lines": 133,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/DiagramOutline.module.css",
+    "sha256": "5bfd4f702d88bda0d1a683a95c958c01690a1efacaeec39b40200bc62e9621cd",
+    "lines": 25,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/DiagramOutline.tsx",
+    "sha256": "13045c56d2d694b7167d9fb1d261b342e0c419b34b7ebfeae9d15c629761ebed",
+    "lines": 73,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/RouteHandles.module.css",
+    "sha256": "d817ac0c606e911505aabbe95b60b68e639e938fc5584b159d87f6e088b05297",
+    "lines": 35,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/RouteHandles.tsx",
+    "sha256": "df9d0ea95d05affbfafb401496cd61305eef808005a8036c5a92ce30be3d60dc",
+    "lines": 175,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneEdge.module.css",
+    "sha256": "80c777ec26cee4fd970898da070522b76b27321ce40c574840d527999a8aee1b",
+    "lines": 24,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneEdge.tsx",
+    "sha256": "285ed2d20d3c3e7be3c0e08b53dc7b470119e66b574871445948ba770a62ac77",
+    "lines": 69,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneNode.module.css",
+    "sha256": "23b38782e2ca8786d1359e18a5efb80e1c6a5924eade3f802e230350418e8627",
+    "lines": 14,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SceneNode.tsx",
+    "sha256": "8f20f404fbf31d24ed51165b21bf7e5e311c9ccaae5c501f91c051cf4ca98f85",
+    "lines": 71,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SectionFrame.module.css",
+    "sha256": "e58571132f9e845c69fca248626ae6cca2d7b9736421c3cf39ce41f3a23e91d7",
+    "lines": 12,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SectionFrame.tsx",
+    "sha256": "0aaa2b97c1790aedea8ed6996a2766d1723722fd4173158bc40a612ce00cb089",
+    "lines": 33,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SequenceLayer.module.css",
+    "sha256": "f8064c2da197d1a33c071b81b4d32fc9aa6269a65eb8e1891b10792a1807a546",
+    "lines": 17,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/SequenceLayer.tsx",
+    "sha256": "76e1dd4bd67a80c632605df8fd8aa7f68913926b1ef6c0f107250fb483d8f7dc",
+    "lines": 149,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/flow-records.ts",
+    "sha256": "b27df7a1f363aa30797588f7c8c0283ca37e3a21bdde7a90daa562820f12dc44",
+    "lines": 136,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/interaction-handlers.ts",
+    "sha256": "29fb04c1a560bb7121ec9bf914dcd10bd950623df4ab4212f8f89391bf0ac67e",
+    "lines": 251,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/react-flow-theme.module.css",
+    "sha256": "c6f65d5210bb696aac709d9ff9ceeb87c39c8d6790bb23c4e7eab4b6917402d7",
+    "lines": 18,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/style-entry.ts",
+    "sha256": "4e08b869ef7d99b9e471e91c21e2e4f0f9def522f6db5d8cd73f75787f874745",
+    "lines": 3,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/use-scene.ts",
+    "sha256": "2486072fdab1a1c4749fc522b1a5dd005c485749b3502720094a04e4ae0fc28c",
+    "lines": 36,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/react-flow/vendor.css",
+    "sha256": "7987082ff03369db6828f86a9a2477e0ad7cd6c661ebf4466d95192d5f3bc35e",
+    "lines": 1,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/adapters/session/store.ts",
+    "sha256": "e229726562271c0f50197810d8fcdac19d08688030c9530126c044995d3b9f27",
+    "lines": 183,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/api.ts",
+    "sha256": "ca17b885544afa4379f5b70c3ec83e3dc65deec61f6788a597cc2e0022329d7a",
+    "lines": 23,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/brands.ts",
+    "sha256": "ce7ce4925cefa68a3902a8647a5ffa73ff02c131705dc21144b0ab5d3c3979c1",
+    "lines": 6,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/compose.ts",
+    "sha256": "74d414d3e6eb9401a7bb85dda3b8b468d405661e4f3a65ee3d0f6107dca51633",
+    "lines": 93,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/errors.ts",
+    "sha256": "094425bc7cbe32120f2bc80140f108ac8f6f9642e7a1cd594c2ded8ac0cbf023",
+    "lines": 26,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/events.ts",
+    "sha256": "2e3b83f78b8524af0cbe5fd56ed0624da4622337431109dcc4554e7f31e2a536",
+    "lines": 89,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/index.ts",
+    "sha256": "b1ac6e36b06eb79a383bb58b83febd25c231000737aa80bea1e95cfb6d1b4c94",
+    "lines": 43,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/interaction-profile.ts",
+    "sha256": "6b39cb1ac28df598e4d7de5e8badf7513fdc287a025984ec5935aac1d9ce1aee",
+    "lines": 3,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/ports/scene-admission.ts",
+    "sha256": "8e8dc6c7c67269e34dd9b9affd55a2094d1f5fd38321c9e8c5ac35dca9c4f546",
+    "lines": 6,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/ports/session.ts",
+    "sha256": "58763c0eb9fe1a8b7d89f5225547302b62c58c0e60590842b869f1a2e56d6d13",
+    "lines": 24,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/react-types.ts",
+    "sha256": "f02abfe42856a374bfb065f33f411c5c663bc301e859481267c9c5b9da17710b",
+    "lines": 168,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/camera.ts",
+    "sha256": "593d4bbdc53f44294682c31de501873f2794f38cb4ad706ce05ee03a946d5b57",
+    "lines": 13,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/draft.ts",
+    "sha256": "da94d409786a9d4cf14895739ebb43acc312d029ea37798b01dbadd1bdd27e15",
+    "lines": 40,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/intent.ts",
+    "sha256": "bf387f1c230bdc498b62b780f2df1627bca3430f706fe6c5ebdccc04ecca4aae",
+    "lines": 51,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/profile.ts",
+    "sha256": "d6dd6b48eb47727ec7273cb41cb655e207e053c3365063ed748d0c5d02c2b59a",
+    "lines": 44,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/scene.ts",
+    "sha256": "86f32ac06be443f98162f6118bfab9e46972cd0ab42466871cbd87f34249989d",
+    "lines": 37,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/selection.ts",
+    "sha256": "607c0f185003c12464f9d2e2e358e25674c20e3112d48faa46660be23d05a870",
+    "lines": 12,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/state.ts",
+    "sha256": "267173692391f016bc5e8c85f10b127eae99eb57804b4c848dd79ef1805ee50e",
+    "lines": 38,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/records/view.ts",
+    "sha256": "b743f81a4dabaf1245c3b620432b6b6087935c49a307a15ac4f45b4f3b96e903",
+    "lines": 57,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/schemas.ts",
+    "sha256": "0b24d3721573b82767adf105c2fa5b27a284fec3fd9adcba0cb73a937af54663",
+    "lines": 15,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/contract/types.ts",
+    "sha256": "388a61360f5d5b0b33eb7ba7df963d0f593adb01e39d87b5ab3b8ad7250a6053",
+    "lines": 16,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/accessibility/outline.ts",
+    "sha256": "41d0895ab7ff26e044da1ad313e495d57e683c37a5456c3fa6702f7b825ebd26",
+    "lines": 75,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/camera/coordinates.ts",
+    "sha256": "4f8fffac599647ebaac17ccbcd0cfa424332c42192c4a44e898f0e9dfa5a5742",
+    "lines": 19,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/camera/navigate.ts",
+    "sha256": "0960e2a188f83686f9068be61f89641288f73a22907f061b1308d5a090c408ac",
+    "lines": 41,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/camera/resize.ts",
+    "sha256": "a0970bc3921a348bad35347ac25c95266815e1b85cab2a91e650177ce45338a4",
+    "lines": 10,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/drafts/begin.ts",
+    "sha256": "697eb754634a5396d3b0b56e4089a1685080e5bf9e42fe9fe0984aba4f4a4c2c",
+    "lines": 109,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/drafts/finish.ts",
+    "sha256": "383377e2e7565340c538a734481d16464c70ac300e52bf300928d6df81ad780c",
+    "lines": 56,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/drafts/reconcile.ts",
+    "sha256": "e4fc6afb4f0228b89fb18a8e954a2e3d82bae92d8031140ef0d41eb1d55ef031",
+    "lines": 84,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/drafts/update.ts",
+    "sha256": "62cacb5169214022f941a9da82001061ac8750a1deada91d57121e6a1669b992",
+    "lines": 80,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/camera-events.ts",
+    "sha256": "9ba5bf5c6a271c27452f2d1536ff257e1acd59d3da05ce9df9be38d1dd12f4bd",
+    "lines": 56,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/changes.ts",
+    "sha256": "6aa41c324cfb86376988bd361029b3acd73e36787e2f9c1c53e3d1ffd76a642d",
+    "lines": 25,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/commands.ts",
+    "sha256": "b87ed990211e6dc7d10ea1fd2509fc466db28591b75eef9cc7e6eeb1a3074b83",
+    "lines": 111,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/draft-events.ts",
+    "sha256": "003cd141526fbc753fc8e4049f626a5658ce2b2c66e85cef00555c3137559834",
+    "lines": 31,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/gesture-policy.ts",
+    "sha256": "609bd1e00ee5d7a9ebd467299dc316a4ebeefe61e8d8742e57c137fe663153a7",
+    "lines": 43,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/handler.ts",
+    "sha256": "96b17e8e6ad09bc44e4f280346aea631e5b0307e238f6a63e68827dcfa3d8e95",
+    "lines": 24,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/keyboard.ts",
+    "sha256": "3eb3d6d70a85cd256767d761d2fc0f09e5b0c9cfa5ad83c7dcecb0b3a0771797",
+    "lines": 71,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/scene-events.ts",
+    "sha256": "ec23d566d4e547d67740a255e3ac6bdeffbed4614b3eca6db609b4570fb45458",
+    "lines": 27,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/selection-events.ts",
+    "sha256": "5568664828eced0c992d63ab5b4842a5ca63248a1dce7f0d6410d9777f676b42",
+    "lines": 34,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/selection.ts",
+    "sha256": "510fc7a2f8fb88cfdc0ab205f6871f61aae932a88091d35f22fed38b46200d00",
+    "lines": 46,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/interaction/transition.ts",
+    "sha256": "5e1292d362b493be5ed4f10641d17d76683c405fde9a1573a97b544c33a7cae6",
+    "lines": 33,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/accept.ts",
+    "sha256": "cee21223033a541facaa4efb1fb9c3256ccfd30722de3ff65aed276aa70c0eca",
+    "lines": 95,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/address.ts",
+    "sha256": "c2885e3335ee9e60a8a7c582d2bc7446a1170c70424efeb4dafe7b1448ee0f79",
+    "lines": 20,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/ancestry.ts",
+    "sha256": "14daa492c757b5cd5f8f7af51904c242b34cf4613174a927ab9bb144af5e2839",
+    "lines": 11,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/index.ts",
+    "sha256": "ab6f94bba4777036170e980cfccedb7043ebaa0ae983ccb1881158cae872ad15",
+    "lines": 133,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/present.ts",
+    "sha256": "02eb289536e54665ba7046080eddfbbafc0a446b99017aa60d884fd8f3a25828",
+    "lines": 66,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/preview.ts",
+    "sha256": "7fa422a8f1a6d22a15b73246539dbd1136be75cda27e447dd42d561f7a983884",
+    "lines": 52,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/reading.ts",
+    "sha256": "ca7372cb4e0a9e4409412e08e66dcc92e6d96e8f888c4310592c031e748c2eac",
+    "lines": 87,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/sequence-checks.ts",
+    "sha256": "1572bcc80debeb6cd625161880f556eb4cf062b36dae21f9897e3e34d6cf8528",
+    "lines": 54,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/validate.ts",
+    "sha256": "b586482b8ae010b99a2d8335d0ddef6e7a8829647573f85bbb16f9d692983498",
+    "lines": 93,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/view-nodes.ts",
+    "sha256": "9a189953decbf02be667d1e4de4d5aa3d9fb56d855e0bde9845feb164b6adc85",
+    "lines": 50,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/scenes/view-wires.ts",
+    "sha256": "ccc23b71d25ea6da5b861265afe4ea4b526d77975330e5417d79721f0b1f51f9",
+    "lines": 96,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/core/validation/outcomes.ts",
+    "sha256": "9562bd76da7815dd27553105a095870acf7eed757f79042c3f20d7aeafbebcd0",
+    "lines": 70,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/package.json",
+    "sha256": "3187613756e9e01a3ff50f572e5f9b158d22e003a0441b4dcba6420cac6cf255",
+    "lines": 26,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/camera.test.ts",
+    "sha256": "3723c0beff5d90718c072feaa23360aec581ab6147a84ac6d887442aedf719ff",
+    "lines": 95,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/drafts.test.ts",
+    "sha256": "d6235a04b4d8af7838a96c5c6b14c74dbfa8fd1fdd0c1677679c68c9c5c4b1ba",
+    "lines": 183,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/fixtures.ts",
+    "sha256": "6c86c5e5d4593e85303a1c1cb70e83c53d3d1892111a7d053eea700a7633e500",
+    "lines": 330,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/interaction.test.ts",
+    "sha256": "caa3fae981715b99106e4895d73b45063d41c2d107ea40092270c9b7e0148c06",
+    "lines": 173,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/react-bindings.test.tsx",
+    "sha256": "763638fe0e7e2d85697b832fd26a0c5a6cf6bd95bb7d64eff49869c73b0ac732",
+    "lines": 249,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/react-fixtures.tsx",
+    "sha256": "44b6ddfb1f933bc2b763b5a6943f03a6b65a9a5ad51df6cf206e48ddbdb786b1",
+    "lines": 119,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  },
+  {
+    "file": "capability/canvas/tests/scene.test.ts",
+    "sha256": "c7a5790c2d201e0bf471dfe3d5b9fa850e821d0c35f6868b5098645973fdee0e",
+    "lines": 155,
+    "current16Scores": null,
+    "status": "Uncertified: scoped audit and correction evidence do not replace current per-file scoring"
+  }
+]

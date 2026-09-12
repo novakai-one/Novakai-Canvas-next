@@ -1,0 +1,24 @@
+@layer components {
+  .edge {
+    pointer-events: visiblePainted;
+  }
+  .wire {
+    fill: none;
+    stroke-width: var(--nv-diagram-edge-stroke);
+  }
+  .wire[data-style='dashed'] {
+    stroke-dasharray: var(--nv-space-2) var(--nv-space-1);
+  }
+  .wire[data-selected='true'] {
+    filter: drop-shadow(0 0 var(--nv-stroke-base) var(--nv-action-accent));
+  }
+  .hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: var(--nv-space-4);
+    cursor: pointer;
+  }
+  .edge[data-preview='true'] .wire {
+    stroke-dasharray: var(--nv-space-1);
+  }
+}

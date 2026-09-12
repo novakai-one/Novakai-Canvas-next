@@ -55,6 +55,7 @@ export type {
 export type {
   ReactBindings,
   NodeContentProps,
+  MeasuredContentProps,
   ContentBlocksProps,
   MarkerProps,
   StaticRenderer,

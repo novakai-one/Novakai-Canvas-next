@@ -1,5 +1,10 @@
 import type { ReactElement, ComponentType } from 'react';
-import type { NodeContentProps, NodeSlots, MarkerProps } from '../../contract/react-types.js';
+import type {
+  NodeContentProps,
+  NodeSlots,
+  MarkerProps,
+  MeasuredContentProps,
+} from '../../contract/react-types.js';
 import type { FontSet } from '../../contract/records/style.js';
 import type { VisualNode } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';
@@ -106,4 +111,30 @@ export function createMarkerRenderer(draw: MarkerFactory): ComponentType<MarkerP
     );
   }
   return Marker;
+}
+
+/** Bind the existing primitive/font path for wire labels, titles and sequence annotations; host owns render recovery. */
+export function createMeasuredRenderer(
+  fonts: FontSet,
+  slots: NodeSlots,
+): ComponentType<MeasuredContentProps> {
+  const css = fontRules(fonts);
+  const Blocks = slots.ContentBlocks;
+  /** Render admitted measured content at its exact bounds; no wrapping, frame or typography policy is introduced. */
+  function MeasuredContent({ content }: MeasuredContentProps): ReactElement {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={content.width}
+        height={content.height}
+        viewBox={`0 0 ${content.width} ${content.height}`}
+        role="img"
+        aria-label={content.outline.join('; ')}
+      >
+        <style>{css}</style>
+        <Blocks primitives={content.primitives} />
+      </svg>
+    );
+  }
+  return MeasuredContent;
 }

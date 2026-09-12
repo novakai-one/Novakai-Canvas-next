@@ -5,7 +5,11 @@ import { fontSet } from './records/style.js';
 import { createPresentation } from './api.js';
 import { createFontMetrics } from '../adapters/fontkit.js';
 import { ContentBlocks } from '../adapters/react/ContentBlocks.js';
-import { createContentRenderer, createMarkerRenderer } from '../adapters/react/NodeContent.js';
+import {
+  createContentRenderer,
+  createMarkerRenderer,
+  createMeasuredRenderer,
+} from '../adapters/react/NodeContent.js';
 import { createMarkupRenderer } from '../adapters/static-markup.js';
 import { markerDrawing } from '../core/notation/markers.js';
 import { protect, parse, requireValue } from '../core/validation/outcomes.js';
@@ -25,6 +29,7 @@ export function composePresentation(
     const measurement = requireValue(createFontMetrics(pinned));
     const react = {
       NodeContent: createContentRenderer(pinned, { ContentBlocks }),
+      MeasuredContent: createMeasuredRenderer(pinned, { ContentBlocks }),
       Marker: createMarkerRenderer(markerDrawing),
       fonts: pinned,
     };

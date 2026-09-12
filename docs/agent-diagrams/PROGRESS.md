@@ -10,7 +10,7 @@ Priority: polished, broad DSL authoring. Human UI expansion deferred. Original d
 | PR3 resources | Same bounded SOP complete. Draft PR17. |
 | PR4 arrangement | Same bounded SOP complete, including sequence spacing alignment. Draft PR18. |
 | PR5 routing | Same bounded SOP complete, including tree routing alignment. Draft PR19. |
-| PR6 recipes/acceptance | Five specs, one pressure/fix, one A1/A2/fix and the additional bounded Layout alignment complete. Final 24 original diagrams captured and individually inspected. Final draft PR being prepared. |
+| PR6 recipes/acceptance | Five specs, one pressure/fix, one A1/A2/fix and the additional bounded Layout alignment complete. Final 24 original diagrams captured and individually inspected. Draft PR20: https://github.com/novakai-one/Novakai-Canvas-next/pull/20 . |
 
 Current proof: `Novakai-Canvas-next-proof`, branch `feat/agent-diagram-atlas`. Live collection: http://127.0.0.1:5185/?collection=agent-diagram-atlas . No active delegated builders; no GitHub merges.
 

@@ -33,6 +33,23 @@ function suffix(index: number, block: Signature): string {
   if (index === block.parameters.length - 1) return `): ${block.returns}`;
   return ',';
 }
+/** Punctuation binds to the preceding lexical group so wrapping never creates a symbol-only row. */
+function appendMemberUnit(groups: Lines, unit: string): Lines {
+  if (/^[^\p{L}\p{N}_$]+$/u.test(unit)) return { ...groups, current: `${groups.current} ${unit}` };
+  return { complete: [...groups.complete, groups.current], current: unit };
+}
+/** Member declarations wrap only at whitespace-delimited lexical groups; identifiers remain whole. */
+function memberGroups(block: Member): readonly string[] {
+  const heading = `${block.visibility} ${block.label}:`;
+  const grouped = block.type
+    .trim()
+    .split(/\s+/u)
+    .reduce<Lines>((result, unit) => appendMemberUnit(result, unit), {
+      complete: [],
+      current: heading,
+    });
+  return [...grouped.complete, grouped.current];
+}
 /** A full line moves intact on overflow; an oversized atomic group grows the measured node. */
 function append(lines: Lines, group: string, context: ContentContext): Lines {
   if (lines.current === '') return { ...lines, current: group };
@@ -75,8 +92,8 @@ export function measureSignature(block: Signature, context: ContentContext): Mea
   const units = groups(block);
   return measured(units, units.join(' '), block.id, context);
 }
-/** Member rows remain atomic; public project owns rejection and retains the prior scene. */
+/** Member rows preserve lexical groups; public project owns rejection and retains the prior scene. */
 export function measureMember(block: Member, context: ContentContext): MeasuredContent {
   const label = `${block.visibility} ${block.label}: ${block.type}`;
-  return measured([label], label, block.id, context);
+  return measured(memberGroups(block), label, block.id, context);
 }

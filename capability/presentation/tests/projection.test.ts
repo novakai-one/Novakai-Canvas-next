@@ -209,6 +209,40 @@ describe('Presentation measured content', () => {
       'dispatch(request: Request, context: Context, options: Options): Outcome',
     );
     expect(wrapped.width).toBeGreaterThan(160);
+    const memberType =
+      '(IncomingReading, ReadingContext, NormalizationOptions) => Promise<NormalizedReading>';
+    const declaration = `public normalizeReading: ${memberType}`;
+    const gateway = collection({
+      objects: [
+        object('Gateway', 'interface', [
+          {
+            kind: 'member',
+            id: 'normalize',
+            label: 'normalizeReading',
+            type: memberType,
+            visibility: 'public',
+          },
+        ]),
+      ],
+      sections: [
+        section('modules', [], {
+          appearances: [{ object: 'Gateway', placement: { x: 0, y: 0, width: 180 } }],
+        }),
+      ],
+    });
+    const gatewayNode = node(value((await fixture()).presentation.project(gateway)), 'Gateway');
+    const memberRuns = gatewayNode.content.primitives
+      .filter((item) => item.kind === 'text')
+      .slice(1);
+    expect(memberRuns.length).toBeGreaterThan(1);
+    expect(memberRuns.map((run) => run.text).join(' ')).toBe(declaration);
+    expect(memberRuns.every((run) => !/^[^\p{L}\p{N}_$]+$/u.test(run.text))).toBe(true);
+    expect(memberRuns.some((run) => run.text.includes('NormalizationOptions'))).toBe(true);
+    expect(gatewayNode.content.outline).toContain(declaration);
+    expect(gatewayNode.content.anchors[0]).toMatchObject({
+      member: 'normalize',
+      label: declaration,
+    });
     const matrix = collection({
       objects: [
         object('Matrix', 'module', [

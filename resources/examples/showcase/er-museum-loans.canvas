@@ -1,0 +1,35 @@
+canvas 1
+collection @er-museum-loans "Museum loans and inspections" theme=paper {
+ node @artifact entity "Artifact" role=primary size=large {
+  field @id "artifact_id" type="ArtifactId" key=primary
+  field @title "title" type="string"
+  field @period "period" type="Period"
+ }
+ node @museum entity "Museum" role=primary size=medium {
+  field @id "museum_id" type="MuseumId" key=primary
+  field @name "name" type="string"
+ }
+ node @loan entity "Loan" size=large {
+  field @id "loan_id" type="LoanId" key=primary
+  field @museum "borrower_id" type="MuseumId" key=foreign references=@museum.@id
+  field @due "due_date" type="Date"
+ }
+ node @loan-item entity "Loan item" role=supporting size=medium {
+  field @loan "loan_id" type="LoanId" key=foreign references=@loan.@id
+  field @artifact "artifact_id" type="ArtifactId" key=foreign references=@artifact.@id
+  keygroup @identity kind=primary fields=[@loan,@artifact]
+ }
+ node @inspection entity "Inspection" role=success size=small {
+  field @id "inspection_id" type="InspectionId" key=primary
+  field @artifact "artifact_id" type="ArtifactId" key=foreign references=@artifact.@id
+  field @condition "condition" type="Condition"
+ }
+ wire @borrows @museum.@id -> @loan.@museum "borrows" kind=association from=1 to=0..many
+ wire @includes @loan.@id -> @loan-item.@loan "includes" kind=association from=1 to=1..many
+ wire @travels @artifact.@id -> @loan-item.@artifact "travels on" kind=association from=1 to=0..many
+ wire @checked @artifact.@id -> @inspection.@artifact "optionally checked by" kind=association from=1 to=0..many
+ section @museum-loans "MUSEUM LOANS / Trace every movement" mode=er layout=layered direction=right gap=compact {
+  show @museum @loan @artifact @loan-item @inspection
+  connect @borrows @includes @travels @checked
+ }
+}

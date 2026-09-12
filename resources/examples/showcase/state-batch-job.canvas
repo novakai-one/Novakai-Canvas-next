@@ -1,0 +1,24 @@
+canvas 1
+collection @state-batch-job "Batch job retry lifecycle" theme=paper {
+ node @start start "Queued" size=small {}
+ node @running state "Running" role=primary size=large { text @detail "Process the claimed batch under one attempt." }
+ node @backoff state "Waiting to retry" role=warning size=medium { text @detail "Keep the failure and schedule the next attempt." }
+ node @cancelling state "Cancelling" role=supporting size=medium { text @detail "Stop new work and release held resources." }
+ node @failed state "Failed" role=warning size=medium { text @detail "Retry budget is exhausted." }
+ node @succeeded state "Succeeded" role=success size=medium { text @detail "Outputs and completion receipt are durable." }
+ node @end end "Terminal" size=small {}
+ wire @claim @start -> @running "claim batch" kind=transition guard="worker available" effect="increment attempt"
+ wire @retry @running -> @backoff "schedule retry" kind=transition guard="transient failure and attempts remain" effect="record error"
+ wire @resume @backoff -> @running "retry batch" kind=transition guard="backoff elapsed" effect="increment attempt"
+ wire @exhaust @running -> @failed "mark failed" kind=transition guard="retry budget exhausted" effect="retain diagnostics"
+ wire @complete @running -> @succeeded "commit outputs" kind=transition guard="all items processed" effect="write receipt"
+ wire @cancel-running @running -> @cancelling "request cancel" kind=transition guard="operator requested"
+ wire @cancel-wait @backoff -> @cancelling "cancel scheduled retry" kind=transition guard="operator requested"
+ wire @cancelled @cancelling -> @end "confirm cancelled" kind=transition guard="resources released" effect="write cancellation receipt"
+ wire @finish-failed @failed -> @end "close failed job" kind=transition effect="publish outcome"
+ wire @finish-success @succeeded -> @end "close successful job" kind=transition effect="publish outcome"
+ section @job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=right gap=compact {
+  show @start @running @backoff @cancelling @failed @succeeded @end
+  connect @claim @retry @resume @exhaust @complete @cancel-running @cancel-wait @cancelled @finish-failed @finish-success
+ }
+}

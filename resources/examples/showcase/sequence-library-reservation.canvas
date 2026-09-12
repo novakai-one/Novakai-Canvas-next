@@ -1,0 +1,25 @@
+canvas 1
+collection @sequence-library-reservation "Library reservation conversation" theme=paper {
+ node @reader participant "Reader" role=primary size=medium {}
+ node @catalog participant "Catalog" size=medium {}
+ node @holds participant "Reservations" role=supporting size=large {}
+ node @notice participant "Notifications" size=small {}
+ node @desk participant "Pickup desk" role=success size=medium {}
+ section @library-reservation "RESERVATION / Availability decides the path" mode=sequence direction=down gap=compact {
+  show @reader @catalog @holds @notice @desk
+  event @search @reader -> @catalog "Find a copy" kind=call activate=true
+  event @status @catalog -> @reader "Return availability" kind=return activate=false
+  fragment @availability alt "Reserve or wait" {
+   branch @available "Copy available" {
+    event @hold @reader -> @holds "Reserve copy" kind=call activate=true
+    event @notify @holds -> @notice "Send confirmation" kind=async
+    event @stage @holds -> @desk "Prepare pickup" kind=async
+    event @confirmed @holds -> @reader "Return reservation receipt" kind=return activate=false
+   }
+   branch @unavailable "No copy available" {
+    event @queue @reader -> @holds "Join waitlist" kind=call
+    event @queued @holds -> @reader "Return queue position" kind=return
+   }
+  }
+ }
+}

@@ -1,0 +1,21 @@
+canvas 1
+collection @grid-feedback-methods "Feedback methods comparison" theme=paper {
+ asset @evidence image source="./assets/evidence.svg" alt="A document with a magnifying lens"
+ asset @lesson image source="./assets/lesson.svg" alt="An open lesson book"
+ asset @reed image source="./assets/reed.svg" alt="A reed suggesting an in-context observation"
+ asset @water image source="./assets/water.svg" alt="A water drop suggesting a measured signal"
+ node @interview concept "Interview" role=primary size=large { icon @symbol asset=@lesson size=medium text @detail "Ask why a recent moment mattered." }
+ node @interview-use note "Rich explanation · low scale" size=small { text @tip "Use after a specific experience, not for predictions." }
+ node @survey concept "Survey" role=supporting size=large { icon @symbol asset=@evidence size=medium text @detail "Measure a known question across many people." }
+ node @survey-use note "Broad pattern · fixed questions" size=small { text @tip "Pilot wording before comparing responses." }
+ node @observation concept "Observation" role=success size=large { icon @symbol asset=@reed size=medium text @detail "Watch real work in its normal setting." }
+ node @observation-use note "Real behavior · slower analysis" size=small { text @tip "Record context as well as actions." }
+ node @telemetry concept "Telemetry" role=warning size=large { icon @symbol asset=@water size=medium text @detail "Track what happened at product scale." }
+ node @telemetry-use note "Continuous signal · weak intent" size=small { text @tip "Pair behavior with a method that explains why." }
+ section @feedback-grid "FEEDBACK METHODS / Match the method to the question" mode=grid layout=grid columns=2 gap=compact {
+  group @explain "EXPLAIN" represents=@interview layout=grid columns=1 gap=compact { show @interview-use }
+  group @measure "MEASURE" represents=@survey layout=grid columns=1 gap=compact { show @survey-use }
+  group @observe "OBSERVE" represents=@observation layout=grid columns=1 gap=compact { show @observation-use }
+  group @monitor "MONITOR" represents=@telemetry layout=grid columns=1 gap=compact { show @telemetry-use }
+ }
+}

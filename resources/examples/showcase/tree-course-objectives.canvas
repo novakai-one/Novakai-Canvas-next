@@ -1,0 +1,27 @@
+canvas 1
+collection @tree-course-objectives "Course learning objectives" theme=paper {
+ node @course concept "Design reliable services" role=primary size=large { text @detail "Learners move from recognition to defensible operation." }
+ node @model concept "Model the system" role=supporting size=medium {}
+ node @boundaries concept "Identify boundaries" size=small { text @detail "Name responsibilities and dependencies." }
+ node @invariants concept "State invariants" size=small { text @detail "Describe what must remain true." }
+ node @verify concept "Verify behavior" role=success size=medium {}
+ node @tests concept "Design tests" size=medium { list @detail ["Happy path", "Failure path", "Recovery path"] }
+ node @evidence concept "Interpret evidence" size=small { text @detail "Separate observations from assumptions." }
+ node @operate concept "Operate safely" role=warning size=medium {}
+ node @respond concept "Respond to failure" size=medium { text @detail "Detect, contain, recover and learn." }
+ node @communicate concept "Communicate decisions" size=small { text @detail "Record tradeoffs for the next operator." }
+ wire @learn-model @course -> @model "learns to" kind=parent
+ wire @learn-verify @course -> @verify "learns to" kind=parent
+ wire @learn-operate @course -> @operate "learns to" kind=parent
+ wire @model-boundaries @model -> @boundaries "decomposes into" kind=parent
+ wire @model-invariants @model -> @invariants "makes explicit" kind=parent
+ wire @verify-tests @verify -> @tests "demonstrates with" kind=parent
+ wire @verify-evidence @verify -> @evidence "reasons from" kind=parent
+ wire @operate-respond @operate -> @respond "practises" kind=parent
+ wire @operate-communicate @operate -> @communicate "supports with" kind=parent
+ section @objectives "COURSE OBJECTIVES / From concepts to observable outcomes" mode=tree layout=tree direction=right gap=compact {
+  show @course @model @boundaries @invariants @verify @tests @evidence @operate @respond @communicate
+  connect @learn-model @learn-verify @learn-operate @model-boundaries @model-invariants @verify-tests @verify-evidence @operate-respond @operate-communicate
+  root @course
+ }
+}

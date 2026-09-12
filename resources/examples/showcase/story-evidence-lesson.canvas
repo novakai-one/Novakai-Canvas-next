@@ -1,0 +1,17 @@
+canvas 1
+collection @story-evidence-lesson "Turn evidence into a lesson" theme=paper {
+ asset @evidence image source="./assets/evidence.svg" alt="A document with a magnifying lens"
+ asset @lesson image source="./assets/lesson.svg" alt="An open lesson book"
+ asset @shield image source="./assets/shield.svg" alt="A shield with a check mark"
+ node @observe concept "1 · Observe" role=primary { icon @symbol asset=@evidence size=large text @detail "Gather an example people can inspect." }
+ node @explain concept "2 · Explain" role=supporting { icon @symbol asset=@lesson size=large text @detail "Connect the evidence to a useful principle." }
+ node @practice concept "3 · Practice" role=success { icon @symbol asset=@shield size=large text @detail "Ask the learner to apply it in a new situation." }
+ node @source note "Show the source" { list @detail ["Who observed it?", "When and under what conditions?"] }
+ node @limit note "Name the limit" role=warning { text @detail "Separate a supported claim from an assumption." }
+ node @transfer note "Test transfer" { text @detail "A new example shows understanding beyond recall." }
+ section @evidence-lesson "TEACHING / From evidence to understanding" mode=story layout=grid columns=3 direction=right gap=compact {
+  group @observe-column "EVIDENCE" represents=@observe layout=grid columns=1 { show @source }
+  group @explain-column "MEANING" represents=@explain layout=grid columns=1 { show @limit }
+  group @practice-column "TRANSFER" represents=@practice layout=grid columns=1 { show @transfer }
+ }
+}

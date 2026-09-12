@@ -1,0 +1,20 @@
+canvas 1
+collection @flow-equipment-return "Return equipment safely" theme=paper {
+ node @receive step "1 · Receive" role=primary { text @detail "Record the item and its borrower." }
+ node @inspect decision "Safe to reuse?" { text @detail "Inspect before closing the loan." }
+ node @service step "Repair" role=warning { text @detail "Quarantine and record the defect." }
+ node @clean step "2 · Clean" { text @detail "Prepare the kit for its next user." }
+ node @restock step "3 · Restock" role=success { text @detail "Return all parts to the assigned shelf." }
+ node @receipt end "Loan closed" role=success {}
+ wire @check @receive -> @inspect "inspect" kind=flow
+ wire @fail @inspect -> @service "no" kind=flow
+ wire @retry @service -> @inspect "recheck" kind=flow
+ wire @pass @inspect -> @clean "yes" kind=flow
+ wire @ready @clean -> @restock "dry and complete" kind=flow
+ wire @close @restock -> @receipt "issue receipt" kind=flow
+ section @equipment-return "RETURN / Inspect before restocking" mode=flow direction=right gap=compact {
+  show @receive @inspect @service @clean @restock @receipt
+  connect @check @fail @pass @ready @close
+  connect @retry source-side=bottom target-side=bottom
+ }
+}

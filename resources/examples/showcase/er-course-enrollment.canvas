@@ -1,0 +1,45 @@
+canvas 1
+collection @er-course-enrollment "Course enrollment records" theme=paper {
+ node @student entity "Student" role=primary size=medium {
+  field @campus "campus_id" type="CampusId"
+  field @number "student_no" type="StudentNo"
+  field @name "display_name" type="string"
+  keygroup @identity kind=primary fields=[@campus,@number]
+ }
+ node @course entity "Course" role=supporting size=medium {
+  field @school "school_code" type="SchoolCode"
+  field @code "course_code" type="CourseCode"
+  field @title "title" type="string"
+  keygroup @identity kind=primary fields=[@school,@code]
+ }
+ node @offering entity "Course offering" size=large {
+  field @school "school_code" type="SchoolCode"
+  field @course "course_code" type="CourseCode"
+  field @term "term_code" type="TermCode"
+  keygroup @identity kind=primary fields=[@school,@course,@term]
+  keygroup @course-ref kind=foreign fields=[@school,@course] references=[@course.@school,@course.@code]
+ }
+ node @enrollment entity "Enrollment" role=success size=large {
+  field @campus "campus_id" type="CampusId"
+  field @student "student_no" type="StudentNo"
+  field @school "school_code" type="SchoolCode"
+  field @course "course_code" type="CourseCode"
+  field @term "term_code" type="TermCode"
+  field @status "status" type="EnrollmentStatus"
+  keygroup @identity kind=primary fields=[@campus,@student,@school,@course,@term]
+  keygroup @student-ref kind=foreign fields=[@campus,@student] references=[@student.@campus,@student.@number]
+  keygroup @offering-ref kind=foreign fields=[@school,@course,@term] references=[@offering.@school,@offering.@course,@offering.@term]
+ }
+ node @assessment entity "Assessment result" role=warning size=small {
+  field @id "result_id" type="ResultId" key=primary
+  field @grade "grade" type="Grade" nullable=true
+ }
+ wire @offers @course.@code -> @offering.@course "scheduled as" kind=association from=1 to=0..many
+ wire @student-enrolls @student.@number -> @enrollment.@student "registers through" kind=association from=1 to=0..many
+ wire @offering-enrolls @offering.@term -> @enrollment.@term "accepts" kind=association from=1 to=0..many
+ wire @earns @enrollment -> @assessment "may earn" kind=association from=1 to=0..1
+ section @enrollment-model "COURSE ENROLLMENT / Composite identities across terms" mode=er layout=layered direction=right gap=compact {
+  show @student @course @offering @enrollment @assessment
+  connect @offers @student-enrolls @offering-enrolls @earns
+ }
+}

@@ -1,3 +1,5 @@
+> Orchestrator integration finding at58e5dbd: full pnpm check passed all static gates and173/174tests; the corrected PR4 positive tree annotation fixture now rejects with constraint-conflict. Exact reproduction: pnpm exec vitest run capability/layout/tests/arrangement.test.ts; checkTreeAcceptance at line1425. The prior PR4 source passed this valid fixture. Keep its positive assertion. Root has not changed production code or waived this regression. This is directly within routing acceptance; see integration-check.md.
+
 # PR5 initial implementation handoff
 
 Base: integrated initialPR4 `febb7baf84cc2342eb91043d450f0968d0363871` in the isolated Novakai-Canvas-next-routing worktree. Initial wall-clock budget began 2026-09-12 12:42:38 UTC; hard deadline 13:06:38 UTC. No A1/A2 audit was run; root must integrate the separate upstream PR4 geometry correction before audits.

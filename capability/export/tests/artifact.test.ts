@@ -15,6 +15,31 @@ describe('Export revision lifecycle', () => {
     });
     expect(mismatch).toMatchObject({ ok: false, error: { code: 'snapshot-mismatch' } });
     expect(f.releases()).toBe(2);
+    const section = f.snapshot.scene.sections[0];
+    assert(section);
+    const oversized = {
+      ...f.snapshot,
+      scene: {
+        ...f.snapshot.scene,
+        sections: Array.from({ length: 33 }, (_, index) => ({
+          ...section,
+          id: `section-${index}`,
+        })),
+      },
+    };
+    const dependencies: Dependencies = {
+      ...f.bindings.dependencies,
+      snapshots: {
+        acquire: async () => ({
+          ok: true,
+          value: { snapshot: oversized, release: async () => ({ ok: true, value: undefined }) },
+        }),
+      },
+    };
+    expect(await createExport(dependencies).exportArtifact(f.request())).toMatchObject({
+      ok: false,
+      error: { code: 'limit-exceeded' },
+    });
   });
   it('2 cancellation and provider failures expose no partial artifacts and release once', async () => {
     const f = await fixture();

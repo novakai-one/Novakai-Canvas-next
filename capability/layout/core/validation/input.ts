@@ -16,6 +16,7 @@ import type {
   InspectionRequest,
 } from '../../contract/types.js';
 import { box } from '../../contract/records/geometry.js';
+import { PROJECTION_CAPACITY } from '../../contract/records/limits.js';
 import { parse, requireValue, reject, snapshot } from './outcomes.js';
 import { checkColumns } from './columns.js';
 export type CheckedLayoutRequest = Omit<LayoutRequest, 'previous'> & {
@@ -46,8 +47,16 @@ function projection(input: unknown, reader: ProjectionReader): Projection {
 function checkLimits(projection: Projection): void {
   const nodes = projection.sections.reduce((sum, section) => sum + section.nodes.length, 0);
   const wires = projection.sections.reduce((sum, section) => sum + section.wires.length, 0);
-  if (nodes > 1000 || wires > 1500 || projection.sections.length > 10)
-    reject('limit', 'projection', 'Layout limit is1000nodes/1500wires/10sections');
+  if (
+    nodes > PROJECTION_CAPACITY.maxNodes ||
+    wires > PROJECTION_CAPACITY.maxWires ||
+    projection.sections.length > PROJECTION_CAPACITY.maxSections
+  )
+    reject(
+      'limit',
+      'projection',
+      `Layout limit is${PROJECTION_CAPACITY.maxSections}sections/${PROJECTION_CAPACITY.maxNodes}nodes/${PROJECTION_CAPACITY.maxWires}wires`,
+    );
 }
 /** Every local parent and wire endpoint is checked even if no native engine is called for cached data. */
 function checkSection(section: VisualSection): void {

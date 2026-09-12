@@ -67,10 +67,25 @@ describe('Canvas scene admission contract', () => {
       ...invalid,
       sections: [{ ...first, nodes: [...first.nodes, ...first.nodes] }],
     };
-    const canvas = createCanvas({ sceneAdmission: admission([malformed]) });
+    const oversized = {
+      ...invalid,
+      sections: Array.from({ length: 33 }, (_, index) => ({
+        ...first,
+        id: `section-${index}`,
+        nodes: first.nodes.map((node) => ({ ...node, sectionId: `section-${index}` })),
+      })),
+    };
+    const canvas = createCanvas({ sceneAdmission: admission([malformed, oversized]) });
     expect(
       canvas.open({
         scene: malformed,
+        expected: { collectionId: 'demo', revision: 0, inputKey: 'scene-0', generation: 0 },
+        viewport: { width: 800, height: 600 },
+      }).ok,
+    ).toBe(false);
+    expect(
+      canvas.open({
+        scene: oversized,
         expected: { collectionId: 'demo', revision: 0, inputKey: 'scene-0', generation: 0 },
         viewport: { width: 800, height: 600 },
       }).ok,

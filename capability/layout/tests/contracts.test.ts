@@ -92,7 +92,8 @@ describe('Layout boundary/native acceptance', () => {
         nodes: [...section.nodes, ...section.nodes],
       })),
     };
-    const layout = await harness([source, duplicate]);
+    const overLimit = forgedSections(source, 33);
+    const layout = await harness([source, duplicate, overLimit]);
     const input = request(layout, source);
     expect(
       layout.key({
@@ -102,6 +103,14 @@ describe('Layout boundary/native acceptance', () => {
         previous: null,
       }).ok,
     ).toBe(false);
+    expect(
+      layout.key({
+        projection: overLimit,
+        measurements: metrics(overLimit),
+        options: settings,
+        previous: null,
+      }),
+    ).toMatchObject({ ok: false, error: { code: 'limit' } });
     expect((await layout.arrange({ ...input, options: { ...settings, padding: NaN } })).ok).toBe(
       false,
     );
@@ -192,7 +201,7 @@ describe('Layout boundary/native acceptance', () => {
       ).valid,
     ).toBe(false);
   });
-  it('12 — derives 1000 nodes and 1500 labelled wires in ten sections with bounded work', async () => {
+  it('12 — derives 1000 nodes and 1500 labelled wires in 32 sections with bounded work', async () => {
     const source = scaleProjection();
     const layout = await harness([source]);
     const input = {
@@ -204,7 +213,7 @@ describe('Layout boundary/native acceptance', () => {
     const key = value(layout.key(input));
     const started = performance.now();
     const scene = value(await layout.arrange({ ...input, job: { id: 'scale', inputKey: key } }));
-    expect(scene.sections).toHaveLength(10);
+    expect(scene.sections).toHaveLength(32);
     expect(scene.sections.reduce((count, section) => count + section.nodes.length, 0)).toBe(1000);
     expect(scene.sections.reduce((count, section) => count + section.wires.length, 0)).toBe(1500);
     expect(
@@ -223,9 +232,11 @@ function gate(): { readonly promise: Promise<void>; readonly release: () => void
   assert(release);
   return { promise, release };
 }
-/** A 10x10 regular graph per section provides 90 horizontal and 60 vertical labelled connections. */
+/** Exact aggregate counts are spread across all 32 admitted sections. */
 function scaleProjection(): Projection {
-  const sections = Array.from({ length: 10 }, (_, index) => scaleSection(index));
+  const sections = Array.from({ length: 32 }, (_, index) =>
+    scaleSection(index, index < 8 ? 32 : 31, index < 4 ? 46 : 47),
+  );
   return project(
     collection({
       objects: sections.flatMap((item) => item.objects),
@@ -235,22 +246,23 @@ function scaleProjection(): Projection {
   );
 }
 /** Scale fixture geometry is entirely automatic; no hardcoded coordinates make the native work disappear. */
-function scaleSection(index: number): {
+function scaleSection(
+  index: number,
+  nodeCount: number,
+  wireCount: number,
+): {
   readonly objects: readonly unknown[];
   readonly relationships: readonly unknown[];
   readonly section: unknown;
 } {
   const prefix = `s${index}`;
-  const ids = Array.from({ length: 100 }, (_, item) => `${prefix}-n${item}`);
-  const horizontal = ids.slice(0, 99).flatMap((source, item) => horizontalEdge(source, item, ids));
-  const vertical = ids
-    .slice(0, 60)
-    .map((source, item) => edge(`${source}-v`, source, ids[item + 10] ?? '', { label: 'uses' }));
-  const links = [...horizontal, ...vertical];
-  const wireIds = [
-    ...ids.slice(0, 99).flatMap((source, item) => (item % 10 === 9 ? [] : [`${source}-h`])),
-    ...ids.slice(0, 60).map((source) => `${source}-v`),
-  ];
+  const ids = Array.from({ length: nodeCount }, (_, item) => `${prefix}-n${item}`);
+  const wireIds = Array.from({ length: wireCount }, (_, item) => `${prefix}-w${item}`);
+  const links = wireIds.map((wire, item) =>
+    edge(wire, ids[item % nodeCount] ?? '', ids[(item + 1) % nodeCount] ?? '', {
+      label: 'uses',
+    }),
+  );
   return {
     objects: ids.map((id) => object(id)),
     relationships: links,
@@ -262,10 +274,22 @@ function scaleSection(index: number): {
     }),
   };
 }
-/** Row boundaries never wrap a horizontal connection into the next row. */
-function horizontalEdge(source: string, index: number, ids: readonly string[]): readonly unknown[] {
-  if (index % 10 === 9) return [];
-  return [edge(`${source}-h`, source, ids[index + 1] ?? '', { label: 'uses' })];
+/** A dishonest reader can supply section-count overflow without a Presentation producer. */
+function forgedSections(source: Projection, count: number): Projection {
+  const sample = source.sections[0];
+  assert(sample);
+  return {
+    ...source,
+    sections: Array.from({ length: count }, (_, index) => ({
+      ...sample,
+      id: `forged-${index}`,
+      nodes: [],
+      wires: [],
+      sequence: [],
+      groups: [],
+      root: null,
+    })),
+  };
 }
 
 /** Dishonest projection providers cannot bypass Layout's independently checked intent; callers retain the current scene. */

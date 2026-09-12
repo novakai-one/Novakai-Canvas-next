@@ -4,6 +4,7 @@ import { resolvedStyle } from '../../contract/records/style.js';
 import { clone, parse, requireValue, reject } from '../validation/outcomes.js';
 import { projectSection } from './section.js';
 import { measureBlock } from '../content/blocks.js';
+import { requireProjectionCapacity } from '../validation/capacity.js';
 /** Stable key canonicalizes object property order while retaining significant array order. */
 function canonical(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(canonical);
@@ -36,6 +37,7 @@ export function projectCollection(input: unknown, deps: Dependencies): Projectio
     assets: deps.assets,
   };
   const sections = collection.sections.map((section) => projectSection(section, context));
+  requireProjectionCapacity(sections);
   checkScene(sections);
   const outline = collection.objects.flatMap((object) => [
     object.label,

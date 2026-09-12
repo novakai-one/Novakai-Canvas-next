@@ -1,11 +1,17 @@
 import { describe, it, expect, assert } from 'vitest';
-import { composePresentation, createPresentation } from '../contract/index.js';
+import {
+  composePresentation,
+  createPresentation,
+  PROJECTION_CAPACITY,
+  readMeasuredProjection,
+} from '../contract/index.js';
 import { createFontMetrics } from '../adapters/fontkit.js';
 import {
   fixture,
   fonts,
   style,
   owners,
+  domain,
   collection,
   object,
   section,
@@ -639,6 +645,91 @@ describe('Presentation measured content', () => {
     });
     expect(value(app.project(renamed)).inputKey).not.toBe(first.inputKey);
   });
+  it('9 shares aggregate 32/1000/1500 admission across projection production and reading', async () => {
+    const app = (await fixture()).presentation;
+    const acceptedSource = capacityCollection(32, 2, 1);
+    const accepted = value(app.project(acceptedSource));
+    expect(PROJECTION_CAPACITY).toEqual({ maxSections: 32, maxNodes: 1000, maxWires: 1500 });
+    expect(Object.isFrozen(PROJECTION_CAPACITY)).toBe(true);
+    expect(accepted.sections).toHaveLength(32);
+    expect(readMeasuredProjection(accepted, acceptedSource, { read: domain }).ok).toBe(true);
+
+    const sourceSection = accepted.sections[0];
+    const nodeSample = sourceSection?.nodes[0];
+    const wireSample = sourceSection?.wires[0];
+    assert(sourceSection && nodeSample && wireSample);
+    const thirtyThree = capacityCollection(33, 2, 1);
+    expect(app.project(thirtyThree)).toMatchObject({ ok: false, error: { code: 'limit' } });
+    const forgedSection = {
+      ...sourceSection,
+      id: 's32',
+      nodes: sourceSection.nodes.map((item) => ({ ...item, sectionId: 's32' })),
+      wires: sourceSection.wires.map((item) => ({ ...item, sectionId: 's32' })),
+    };
+    const readerBoundary = readMeasuredProjection(
+      { ...accepted, sections: [...accepted.sections, forgedSection] },
+      thirtyThree,
+      { read: domain },
+    );
+    expect(readerBoundary).toMatchObject({ ok: false, error: { code: 'limit' } });
+
+    expect(app.project(capacityCollection(32, 32, 0))).toMatchObject({
+      ok: false,
+      error: { code: 'limit' },
+    });
+    expect(app.project(capacityCollection(32, 2, 48))).toMatchObject({
+      ok: false,
+      error: { code: 'limit' },
+    });
+    const forgedNodes = {
+      ...accepted,
+      sections: accepted.sections.map((item, index) => ({
+        ...item,
+        nodes: Array.from({ length: index === 31 ? 40 : 31 }, () => nodeSample),
+      })),
+    };
+    const forgedWires = {
+      ...accepted,
+      sections: accepted.sections.map((item, index) => ({
+        ...item,
+        wires: Array.from({ length: index === 31 ? 75 : 46 }, () => wireSample),
+      })),
+    };
+    expect(readMeasuredProjection(forgedNodes, acceptedSource, { read: domain })).toMatchObject({
+      ok: false,
+      error: { code: 'limit' },
+    });
+    expect(readMeasuredProjection(forgedWires, acceptedSource, { read: domain })).toMatchObject({
+      ok: false,
+      error: { code: 'limit' },
+    });
+    const perSectionNodes = {
+      ...accepted,
+      sections: [
+        { ...sourceSection, nodes: Array.from({ length: 1001 }, () => nodeSample) },
+        ...accepted.sections.slice(1),
+      ],
+    };
+    const perSectionWires = {
+      ...accepted,
+      sections: [
+        { ...sourceSection, wires: Array.from({ length: 1501 }, () => wireSample) },
+        ...accepted.sections.slice(1),
+      ],
+    };
+    expect(readMeasuredProjection(perSectionNodes, acceptedSource, { read: domain })).toMatchObject(
+      {
+        ok: false,
+        error: { code: 'invalid-input' },
+      },
+    );
+    expect(readMeasuredProjection(perSectionWires, acceptedSource, { read: domain })).toMatchObject(
+      {
+        ok: false,
+        error: { code: 'invalid-input' },
+      },
+    );
+  });
   it('10 rejects invalid providers and nonfinite or oversized public inputs without a partial scene', async () => {
     const pinned = fonts();
     const metrics = value(createFontMetrics(pinned));
@@ -687,3 +778,26 @@ describe('Presentation measured content', () => {
     expect(result).not.toHaveProperty('value');
   });
 });
+
+/** Capacity collections distribute appearances and wires across sections without changing semantic limits. */
+function capacityCollection(sectionCount: number, objectCount: number, wireCount: number): unknown {
+  const ids = Array.from({ length: objectCount }, (_, index) => `n${index}`);
+  const relationships = Array.from({ length: wireCount }, (_, index) => ({
+    id: `w${index}`,
+    kind: 'flow',
+    label: `wire ${index}`,
+    source: { object: ids[0] ?? '' },
+    target: { object: ids[1] ?? ids[0] ?? '' },
+  }));
+  return collection({
+    objects: ids.map((id) => object(id)),
+    relationships,
+    sections: Array.from({ length: sectionCount }, (_, index) =>
+      section('flow', ids, {
+        id: `s${index}`,
+        order: index,
+        wires: relationships.map((relationship) => ({ relationship: relationship.id })),
+      }),
+    ),
+  });
+}

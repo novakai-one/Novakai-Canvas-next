@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { identity, inputKey } from '../brands.js';
 import { box, point, endpoint } from './geometry.js';
+import { PROJECTION_CAPACITY } from './limits.js';
 /** Foreign measured payloads remain unknown until compared with the authoritative Projection; no cast mints trusted content. */
 const node = z
   .strictObject({
@@ -71,8 +72,8 @@ const section = z
     box,
     title: z.strictObject({ content: z.unknown(), box }).readonly(),
     inputKey,
-    nodes: z.array(node).max(1000).readonly(),
-    wires: z.array(wire).max(1500).readonly(),
+    nodes: z.array(node).max(PROJECTION_CAPACITY.maxNodes).readonly(),
+    wires: z.array(wire).max(PROJECTION_CAPACITY.maxWires).readonly(),
     sequence,
   })
   .readonly();
@@ -98,7 +99,7 @@ export const candidate = z
     revision: z.number().int().nonnegative(),
     inputKey,
     engineVersions: z.array(z.string()).readonly(),
-    sections: z.array(section).max(10).readonly(),
+    sections: z.array(section).max(PROJECTION_CAPACITY.maxSections).readonly(),
     bounds: box,
     warnings: z.array(warning).readonly(),
     adjustments: z.array(adjustment).readonly(),

@@ -4,6 +4,7 @@ import type { Projection, VisualSection, VisualWire } from '../../contract/recor
 import { projectionEnvelope } from '../../contract/records/interchange.js';
 import type { SectionEnvelope, WireEnvelope } from '../../contract/records/interchange.js';
 import { clone, parse, reject, requireValue } from './outcomes.js';
+import { requireProjectionCapacity } from './capacity.js';
 /** Property order is not domain meaning; array order remains significant in a transported projection. */
 function normalized(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(normalized);
@@ -87,6 +88,7 @@ export function readProjection(
 ): Projection {
   const collection = requireValue(domain.read(clone(canonical)));
   const raw = parse(projectionEnvelope, clone(input));
+  requireProjectionCapacity(raw.sections);
   equal(
     [collection.id, collection.revision, collection.title, collection.arrangement],
     [raw.collectionId, raw.revision, raw.title, raw.arrangement],

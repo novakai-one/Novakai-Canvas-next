@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { sceneId } from '../brands.js';
 import { content, markerKind, visualNode } from './visual.js';
+import { PROJECTION_CAPACITY } from './limits.js';
 /** Serialized visual fields are owned here; Model fragments remain unknown until owner validation and equality checks. */
 const endpoint = z.strictObject({ node: sceneId, member: z.string().nullable() }).readonly();
 const wire = z
@@ -29,8 +30,8 @@ const section = z
     order: z.number().int().nonnegative(),
     layout: z.unknown(),
     placement: z.unknown(),
-    nodes: z.array(visualNode).max(1000).readonly(),
-    wires: z.array(wire).max(1500).readonly(),
+    nodes: z.array(visualNode).max(PROJECTION_CAPACITY.maxNodes).readonly(),
+    wires: z.array(wire).max(PROJECTION_CAPACITY.maxWires).readonly(),
     sequence: z.array(sequence).readonly(),
     groups: z.unknown(),
     root: z.string().nullable(),
@@ -45,7 +46,7 @@ export const projectionEnvelope = z
     styleDigest: z.string(),
     inputKey: z.string(),
     arrangement: z.unknown(),
-    sections: z.array(section).max(10).readonly(),
+    sections: z.array(section).readonly(),
     outline: z.array(z.string()).readonly(),
     assetDigests: z.array(z.string()).readonly(),
     fontDigests: z.array(z.string()).readonly(),

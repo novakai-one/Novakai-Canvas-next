@@ -90,6 +90,7 @@ section @exchange "Sequence" mode=sequence {show @human @agent event @request @h
     const manifest = bundle(artifact.bytes);
     const section = manifest.manual.sections[0];
     expect(section).toBeDefined();
+    if (!section) return;
     const altered = {
       ...manifest,
       manual: {
@@ -106,6 +107,23 @@ section @exchange "Sequence" mode=sequence {show @human @agent event @request @h
         targetCollectionId: 'copy',
       }),
     ).toMatchObject({ ok: false, error: { code: 'invalid-import' } });
+    const oversized = {
+      ...manifest,
+      manual: {
+        ...manifest.manual,
+        sections: Array.from({ length: 33 }, (_, index) => ({
+          ...section,
+          id: `section-${index}`,
+        })),
+      },
+    };
+    oversized.manualDigest = encoding.hash(encoding.utf8(canonical(oversized.manual)));
+    expect(
+      await f.bindings.service.prepareImport({
+        bytes: encoding.utf8(JSON.stringify(oversized)),
+        targetCollectionId: 'copy',
+      }),
+    ).toMatchObject({ ok: false, error: { code: 'invalid-bundle' } });
     const missingResource = {
       ...manifest,
       resources: manifest.resources.filter((item) => item.kind !== 'preset'),

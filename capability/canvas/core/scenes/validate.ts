@@ -1,6 +1,7 @@
 import { validateSequence } from './sequence-checks.js';
 import type { Scene, PlacedSection, PlacedNode, RoutedWire } from '../../contract/records/scene.js';
 import { box, point } from '../../contract/records/camera.js';
+import { PROJECTION_CAPACITY } from '../../contract/records/limits.js';
 import { parse, reject } from '../validation/outcomes.js';
 /** A namespace cannot contain duplicate IDs; parent and endpoint references would otherwise be ambiguous. */
 function unique(ids: readonly string[], path: string): void {
@@ -8,19 +9,28 @@ function unique(ids: readonly string[], path: string): void {
 }
 /** Bounded parent traversal proves acyclicity without recursive stack growth. */
 function validateAncestors(node: PlacedNode, nodes: readonly PlacedNode[]): void {
-  let parent = node.parent;
-  const visited = new Set([node.id]);
-  while (parent !== null) {
-    parent = nextParent(parent, nodes, visited);
-  }
+  validateParent(node, nodes, []);
 }
-/** Resolve one parent step; local visited set is confined to this admission operation. */
-function nextParent(id: string, nodes: readonly PlacedNode[], visited: Set<string>): string | null {
-  if (visited.has(id)) reject('invalid-scene', id, 'Cyclic parent chain');
+/** Resolve an immutable bounded parent path; malformed chains retain the caller's prior scene. */
+function validateParent(
+  node: PlacedNode,
+  nodes: readonly PlacedNode[],
+  visited: readonly string[],
+): void {
+  if (node.parent === null) return;
+  requireUnvisited(node.id, visited);
+  const parent = requiredParent(node.parent, nodes);
+  validateParent(parent, nodes, [...visited, node.id]);
+}
+/** Reject a repeated ancestor identity without mutating traversal state. */
+function requireUnvisited(id: string, visited: readonly string[]): void {
+  if (visited.includes(id)) reject('invalid-scene', id, 'Cyclic parent chain');
+}
+/** Resolve one parent in the admitted section without accepting a foreign node. */
+function requiredParent(id: string, nodes: readonly PlacedNode[]): PlacedNode {
   const parent = nodes.find((candidate) => candidate.id === id);
-  if (!parent) reject('invalid-scene', id, 'Unknown parent node');
-  visited.add(id);
-  return parent.parent;
+  if (!parent) return reject('invalid-scene', id, 'Unknown parent node');
+  return parent;
 }
 /** Layout owns feasibility; Canvas still rejects nonfinite rendering geometry and cross-section nodes. */
 function validateNode(node: PlacedNode, section: PlacedSection): void {
@@ -74,8 +84,7 @@ function validateSection(section: PlacedSection): void {
 }
 /** Reject malformed/oversized scene before creating indexes; public open/receive retains prior state on failure. */
 export function validateScene(scene: Scene): void {
-  if (scene.sections.length > 10)
-    reject('invalid-scene', 'sections', 'At most10sections are supported');
+  validateSectionCount(scene.sections.length);
   const nodes = scene.sections.reduce((total, section) => total + section.nodes.length, 0);
   const wires = scene.sections.reduce((total, section) => total + section.wires.length, 0);
   validateLimits(nodes, wires);
@@ -86,8 +95,23 @@ export function validateScene(scene: Scene): void {
   );
   scene.sections.forEach(validateSection);
 }
+/** Section admission follows Presentation's owner limit while preserving Canvas's typed recovery path. */
+function validateSectionCount(sections: number): void {
+  if (sections > PROJECTION_CAPACITY.maxSections)
+    reject(
+      'invalid-scene',
+      'sections',
+      `At most${PROJECTION_CAPACITY.maxSections}sections are supported`,
+    );
+}
 /** Global limits apply across all sections; splitting a graph never bypasses the admission bound. */
 function validateLimits(nodes: number, wires: number): void {
-  if (nodes > 1000) reject('invalid-scene', 'nodes', 'At most1000placed nodes are supported');
-  if (wires > 1500) reject('invalid-scene', 'wires', 'At most1500wires are supported');
+  if (nodes > PROJECTION_CAPACITY.maxNodes)
+    reject(
+      'invalid-scene',
+      'nodes',
+      `At most${PROJECTION_CAPACITY.maxNodes}placed nodes are supported`,
+    );
+  if (wires > PROJECTION_CAPACITY.maxWires)
+    reject('invalid-scene', 'wires', `At most${PROJECTION_CAPACITY.maxWires}wires are supported`);
 }

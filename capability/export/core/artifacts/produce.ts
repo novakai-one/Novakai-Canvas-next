@@ -8,6 +8,7 @@ import { selectScope, validBounds } from './scope.js';
 import { planPages } from './pages.js';
 import { matchesIdentity } from './identity.js';
 import { checkSceneResources } from '../bundles/completeness.js';
+import { PROJECTION_CAPACITY } from '../../contract/records/limits.js';
 const descriptors = {
   svg: ['image/svg+xml', 'svg'],
   png: ['image/png', 'png'],
@@ -129,9 +130,11 @@ function checkCounts(
   box: import('../../contract/records/artifact.js').Box,
 ): Result<void> {
   const counts = [
-    snapshot.scene.sections.length / 10,
-    snapshot.scene.sections.flatMap((section) => section.nodes).length / 1000,
-    snapshot.scene.sections.flatMap((section) => section.wires).length / 1500,
+    snapshot.scene.sections.length / PROJECTION_CAPACITY.maxSections,
+    snapshot.scene.sections.flatMap((section) => section.nodes).length /
+      PROJECTION_CAPACITY.maxNodes,
+    snapshot.scene.sections.flatMap((section) => section.wires).length /
+      PROJECTION_CAPACITY.maxWires,
   ];
   if (counts.some((ratio) => ratio > 1))
     return failure('limit-exceeded', 'scene', 'Scene exceeds the owning capability limits');

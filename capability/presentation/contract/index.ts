@@ -65,6 +65,7 @@ export type {
   FontDefinitionsProps,
   StaticRenderer,
 } from './react-types.js';
+export { PROJECTION_CAPACITY } from './records/limits.js';
 
 export { readMeasuredProjection, readMeasuredContent } from './api.js';
 

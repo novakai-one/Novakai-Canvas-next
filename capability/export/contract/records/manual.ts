@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { identity } from '../brands.js';
+import { PROJECTION_CAPACITY } from './limits.js';
 /** Transfer-only overrides are structurally bounded; Model owns final placement validity. */
 const point = z.strictObject({ x: z.number(), y: z.number() });
 const placement = point.extend({
@@ -19,18 +20,21 @@ const wire = z.strictObject({
 });
 const section = z.strictObject({
   id: identity,
-  appearanceOrder: z.array(identity).max(1000),
-  groupOrder: z.array(identity).max(1000),
+  appearanceOrder: z.array(identity).max(PROJECTION_CAPACITY.maxNodes),
+  groupOrder: z.array(identity).max(PROJECTION_CAPACITY.maxNodes),
   sequenceOrder: z
     .array(z.strictObject({ id: identity, order: z.number().int().nonnegative() }))
     .max(10000),
   placement: placement.optional(),
-  appearances: z.array(appearance).max(1000),
-  groups: z.array(group).max(1000),
-  wires: z.array(wire).max(1500),
+  appearances: z.array(appearance).max(PROJECTION_CAPACITY.maxNodes),
+  groups: z.array(group).max(PROJECTION_CAPACITY.maxNodes),
+  wires: z.array(wire).max(PROJECTION_CAPACITY.maxWires),
 });
 export const manualSchema = z
-  .strictObject({ schemaVersion: z.literal(1), sections: z.array(section).max(10) })
+  .strictObject({
+    schemaVersion: z.literal(1),
+    sections: z.array(section).max(PROJECTION_CAPACITY.maxSections),
+  })
   .readonly();
 export type ManualSnapshot = z.infer<typeof manualSchema>;
 export type ManualSection = ManualSnapshot['sections'][number];

@@ -2,7 +2,7 @@ import type { ContentBlock } from '../../contract/records/input.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import { measureText, offset } from './text.js';
-import { requireValue } from '../validation/outcomes.js';
+import { reject, requireValue } from '../validation/outcomes.js';
 type Signature = Extract<ContentBlock, { kind: 'signature' }>;
 type Member = Extract<ContentBlock, { kind: 'member' }>;
 interface Lines {
@@ -12,7 +12,14 @@ interface Lines {
 /** Exact atomic advances never split punctuation or identifiers; public projection owns provider failure. */
 function width(text: string, context: ContentContext): number {
   const metric = context.style.typography.mono;
-  return requireValue(context.metrics.measure(text, metric.font, metric.size)).width;
+  const measured = requireValue(context.metrics.measure(text, metric.font, metric.size));
+  if (![measured.width, measured.ascent, measured.descent].every(validDimension))
+    return reject('provider-failed', 'metrics', 'Invalid font measurement');
+  return measured.width;
+}
+/** Font-provider dimensions are finite nonnegative geometry or projection rejects them. */
+function validDimension(value: number): boolean {
+  return Number.isFinite(value) && value >= 0;
 }
 /** Commas bind to their preceding parameter and the result binds to the closing parameter. */
 function groups(block: Signature): readonly string[] {
@@ -63,12 +70,12 @@ function measured(
     outline: [label],
   };
 }
-/** Callable labels remain complete in anchors/readouts; rejection is translated by public project. */
+/** Callable rows preserve lexical groups; public project owns rejection and retains the prior scene. */
 export function measureSignature(block: Signature, context: ContentContext): MeasuredContent {
-  const label = `${block.label}(${block.parameters.join(', ')}): ${block.returns}`;
-  return measured(groups(block), label, block.id, context);
+  const units = groups(block);
+  return measured(units, units.join(' '), block.id, context);
 }
-/** Member visibility, label and type form one readable atomic declaration. */
+/** Member rows remain atomic; public project owns rejection and retains the prior scene. */
 export function measureMember(block: Member, context: ContentContext): MeasuredContent {
   const label = `${block.visibility} ${block.label}: ${block.type}`;
   return measured([label], label, block.id, context);

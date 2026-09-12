@@ -25,6 +25,7 @@ const positive = z.number().finite().positive().max(10000);
 export const textMetric = z
   .strictObject({ font: fontRef, size: positive, lineHeight: positive })
   .readonly();
+/** Validated absolute font and line-box metrics consumed by every renderer. */
 export type TextMetric = z.infer<typeof textMetric>;
 /** Semantic text roles share body bytes except for the explicit monospace role. */
 export const diagramTypography = z
@@ -36,12 +37,14 @@ export const diagramTypography = z
     annotation: textMetric,
   })
   .readonly();
+/** Validated semantic typography roles sharing pinned body/mono identities. */
 export type DiagramTypography = z.infer<typeof diagramTypography>;
 /** Interior width bands reject inverted limits instead of silently changing their meaning. */
 export const sizeBand = z
   .strictObject({ preferred: positive, maximum: positive })
   .refine((band) => band.preferred <= band.maximum)
   .readonly();
+/** Validated preferred and maximum interior widths for one density band. */
 export type SizeBand = z.infer<typeof sizeBand>;
 /** Content widths, row floors and icon slots have one token-derived authority. */
 export const contentSizing = z
@@ -51,6 +54,7 @@ export const contentSizing = z
     iconBox: z.strictObject({ small: positive, medium: positive, large: positive }).readonly(),
   })
   .readonly();
+/** Validated width, row and icon measurement policy for projected content. */
 export type ContentSizing = z.infer<typeof contentSizing>;
 /** Numeric/CSS styles come from the same token resolver; no palette or size default is duplicated here. */
 export const resolvedStyle = z

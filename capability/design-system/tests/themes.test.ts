@@ -87,6 +87,8 @@ describe('Design System themes', () => {
     expect(style.typography.sectionHeading.lineHeight).toBeCloseTo(41.142864, 6);
     expect(style.typography.nodeHeading.lineHeight).toBeCloseTo(34.285704, 6);
     expect(style.typography.body.lineHeight).toBe(24);
+    expect(style.typography.mono.lineHeight).toBe(24);
+    expect(style.typography.annotation.lineHeight).toBeCloseTo(20.571432, 6);
     expect(style.typography.mono.font).toEqual(style.monoFont);
     expect(style.typography.sectionHeading.font).toEqual(style.bodyFont);
     expect(style.contentSizing).toEqual({
@@ -108,6 +110,15 @@ describe('Design System themes', () => {
         },
       }).success,
     ).toBe(false);
+    const oversizedTitle = {
+      ...checked,
+      values: {
+        ...checked.values,
+        'font.title': { type: 'dimension' as const, value: 1.7e308, unit: 'px' as const },
+      },
+      css: { ...checked.css, '--nv-font-title': '1.7e+308px' },
+    };
+    rejected(system.projectDiagram(oversizedTitle), 'invalid-input');
     expect(
       resolvedStyle.safeParse({
         ...style,

@@ -16,11 +16,11 @@ import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
 import { fieldColumns } from '../content/fields.js';
 import { parse, reject } from '../validation/outcomes.js';
-/** Scene identities are section-scoped and distinguish an object appearance from a container. */
+/** Build a section-scoped scene identity; public project owns rejection and retains the prior scene. */
 export function identity(section: string, kind: 'object' | 'group', id: string): VisualNode['id'] {
   return parse(sceneId, `${section}:${kind}:${id}`);
 }
-/** Labels share the same pinned typography as body content. */
+/** Measure a semantic text role; public project owns provider failure and retains the prior scene. */
 export function labelContent(
   text: string,
   context: ContentContext,
@@ -62,22 +62,19 @@ function portContent(
     ],
   };
 }
-interface BodyContent {
-  readonly full: MeasuredContent;
-  readonly summary: MeasuredContent;
+interface BodySelection {
+  readonly content: readonly ContentBlock[];
+  readonly ports: DiagramObject['ports'];
+  readonly complete: boolean;
 }
-/** Measure each canonical block once; retain the complete first block for summary mode. */
-function body(object: DiagramObject, context: ContentContext): BodyContent {
-  const scoped = { ...context, fields: fieldColumns(object.content, context) };
+/** Measure selected rows against columns derived only from those visible rows. */
+function measureBody(selection: BodySelection, context: ContentContext): MeasuredContent {
+  const scoped = { ...context, fields: fieldColumns(selection.content, context) };
   const blocks = [
-    ...object.content.map((block) => measureBlock(block, scoped)),
-    ...object.ports.map((port) => portContent(port, context)),
+    ...selection.content.map((block) => measureBlock(block, scoped)),
+    ...selection.ports.map((port) => portContent(port, context)),
   ];
-  return { full: stack(blocks, context.style.gap), summary: blocks[0] ?? emptyContent() };
-}
-/** Empty body is explicit zero geometry, not an invisible line occupying height. */
-function emptyContent(): MeasuredContent {
-  return { width: 0, height: 0, primitives: [], anchors: [], outline: [] };
+  return stack(blocks, context.style.gap);
 }
 /** Hidden descendants attach at the body boundary and keep their own semantic label. */
 function collapsed(anchor: Anchor): Anchor {
@@ -89,19 +86,23 @@ function visibleAnchor(anchor: Anchor, visible: MeasuredContent): Anchor {
   if (found) return found;
   return collapsed(anchor);
 }
-/** Detail changes visible content only; every canonical row remains in the accessible outline. */
-function detail(content: BodyContent, mode: Appearance['detail']): MeasuredContent {
-  if (mode === 'full') return content.full;
-  return compact(content, mode);
-}
-/** Summary uses the complete measured first block, including table cells or media. */
-function compact(content: BodyContent, mode: Appearance['detail']): MeasuredContent {
-  const visible = mode === 'summary' ? content.summary : emptyContent();
+/** Compact detail keeps canonical outline/anchors while visible geometry stays independently measured. */
+function compact(visible: MeasuredContent, canonical: MeasuredContent): MeasuredContent {
   return {
     ...visible,
-    anchors: content.full.anchors.map((anchor) => visibleAnchor(anchor, visible)),
-    outline: content.full.outline,
+    anchors: canonical.anchors.map((anchor) => visibleAnchor(anchor, visible)),
+    outline: canonical.outline,
   };
+}
+/** Measure visible body once; compact modes retain a separate canonical accessibility path. */
+function body(
+  object: DiagramObject,
+  selection: BodySelection,
+  context: ContentContext,
+): MeasuredContent {
+  const visible = measureBody(selection, context);
+  if (selection.complete) return visible;
+  return compact(visible, measureBody(fullBody(object), context));
 }
 /** Parent containers are addressed in the same section scope. */
 function parent(section: string, id: string | undefined): VisualNode['parent'] {
@@ -143,18 +144,15 @@ export function projectNode(
   const size = view.size ?? source.size;
   const shape = nodeShape(source.kind);
   const initial = appearanceContext(view, role, size, shape, context);
-  const plan = planContent(
-    { ...source, content: visibleBlocks(source.content, view.detail) },
+  const visible = visibleBody(source, view.detail);
+  const scoped = plannedContext(
+    { ...source, content: visible.content },
     initial,
     context.style.contentSizing.widths[size],
     view.placement?.width !== undefined,
   );
-  const scoped = { ...initial, width: plan.width };
   const heading = labelContent(source.label, scoped, 'nodeHeading');
-  const measured = stack(
-    [heading, detail(body(source, scoped), view.detail)],
-    headingGap(shape, context),
-  );
+  const measured = stack([heading, body(source, visible, scoped)], headingGap(shape, context));
   return parse(visualNode, {
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
@@ -187,13 +185,12 @@ function headingGap(shape: VisualNode['shape'], context: ContentContext): number
 export function projectGroup(group: Group, section: Section, context: ContentContext): VisualNode {
   if (group.represents !== undefined) return represented(group, section, context);
   const initial = scopedContext(group.placement, 'neutral', 'medium', 'container', context);
-  const plan = planContent(
+  const scoped = plannedContext(
     { label: group.title, content: [] },
     initial,
     context.style.contentSizing.widths.medium,
     group.placement?.width !== undefined,
   );
-  const scoped = { ...initial, width: plan.width };
   const heading = labelContent(group.title, scoped, 'nodeHeading');
   return parse(visualNode, {
     id: identity(section.id, 'group', group.id),
@@ -291,11 +288,29 @@ function placedView(object: Appearance['object'], placement: Appearance['placeme
   return { ...view, placement };
 }
 
-/** Compact detail preserves its prior visible-width policy while full canonical content remains in the outline. */
-function visibleBlocks(
-  blocks: readonly ContentBlock[],
-  mode: Appearance['detail'],
-): readonly ContentBlock[] {
-  if (mode === 'full') return blocks;
-  return mode === 'summary' ? blocks.slice(0, 1) : [];
+/** Derive one visible-body policy for sizing and final measurement. */
+function visibleBody(object: DiagramObject, mode: Appearance['detail']): BodySelection {
+  if (mode === 'full') return fullBody(object);
+  if (mode === 'label') return { content: [], ports: [], complete: false };
+  return summaryBody(object);
+}
+/** Summary shows the first content block, or the first port when content is absent. */
+function summaryBody(object: DiagramObject): BodySelection {
+  const first = object.content.slice(0, 1);
+  if (first.length > 0) return { content: first, ports: [], complete: false };
+  return { content: [], ports: object.ports.slice(0, 1), complete: false };
+}
+/** Canonical body selection retains every outline and addressable row. */
+function fullBody(object: DiagramObject): BodySelection {
+  return { content: object.content, ports: object.ports, complete: true };
+}
+/** Shared intrinsic sizing replaces duplicate node/group planning policy. */
+function plannedContext(
+  source: Pick<DiagramObject, 'label' | 'content'>,
+  context: ContentContext,
+  band: { readonly preferred: number; readonly maximum: number },
+  explicit: boolean,
+): ContentContext {
+  const plan = planContent(source, context, band, explicit);
+  return { ...context, width: plan.width };
 }

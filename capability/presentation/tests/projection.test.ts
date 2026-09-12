@@ -242,6 +242,42 @@ describe('Presentation measured content', () => {
     expect(tableNode.content.anchors.find((anchor) => anchor.member === 'row')?.label).toBe(
       'VeryLongUnbrokenIdentifierThatMustStayWhole | Short description',
     );
+    const pinned = fonts();
+    const metrics = value(createFontMetrics(pinned));
+    const invalidMetrics = createPresentation({
+      ...owners(style(pinned)),
+      measurement: {
+        version: 'nonfinite-signature',
+        measure: (text, font, size) => {
+          const result = metrics.measure(text, font, size);
+          if (!result.ok || text !== 'run(a, b): R') return result;
+          return { ok: true, value: { ...result.value, width: Number.NaN } };
+        },
+      },
+      renderer: {
+        version: 'test',
+        render: () => ({ ok: true, value: '' }),
+        marker: () => ({ ok: true, value: '' }),
+      },
+    });
+    expect(
+      invalidMetrics.project(
+        collection({
+          objects: [
+            object('Invalid', 'function', [
+              {
+                kind: 'signature',
+                id: 'run',
+                label: 'run',
+                parameters: ['a', 'b'],
+                returns: 'R',
+              },
+            ]),
+          ],
+          sections: [section('modules', ['Invalid'])],
+        }),
+      ),
+    ).toMatchObject({ ok: false, error: { code: 'provider-failed' } });
   });
   it('6 measures admitted media with alt text and rejects missing or unsafe resources', async () => {
     const pinned = fonts();
@@ -290,13 +326,19 @@ describe('Presentation measured content', () => {
           id: 'photo',
           digest: `sha256:${asset.digest}`,
           mediaType: asset.mediaType,
-          alt: 'A sample image',
+          alt: 'Cover portrait',
+        },
+        {
+          id: 'icon',
+          digest: `sha256:${asset.digest}`,
+          mediaType: asset.mediaType,
+          alt: 'Contained icon',
         },
       ],
       objects: [
         object('Photo', 'concept', [
           { kind: 'image', id: 'photo', asset: 'photo', size: 'large', fit: 'cover' },
-          { kind: 'icon', id: 'icon', asset: 'photo', size: 'small', fit: 'contain' },
+          { kind: 'icon', id: 'icon', asset: 'icon', size: 'small', fit: 'contain' },
         ]),
       ],
       sections: [
@@ -307,15 +349,29 @@ describe('Presentation measured content', () => {
     });
     const mediaNode = node(value(portrait.project(mediaSource)), 'Photo');
     const slots = mediaNode.content.primitives.filter((item) => item.kind === 'media');
-    expect(slots.map((slot) => [slot.x, slot.width, slot.height])).toEqual([
-      [12, 76, 76],
-      [38, 24, 24],
+    expect(
+      slots.map((slot) => [slot.x, slot.y, slot.width, slot.height, slot.alt, slot.fit]),
+    ).toEqual([
+      [12, 50, 76, 76, 'Cover portrait', 'cover'],
+      [38, 134, 24, 24, 'Contained icon', 'contain'],
     ]);
     const markup = value(portrait.renderContent(mediaNode));
-    expect(markup).toContain('overflow="hidden"');
-    expect(markup).toContain('xMidYMid slice');
-    expect(markup).toContain('xMidYMid meet');
-    expect(markup).toContain('<title>A sample image</title>');
+    const coverViewport = markup.match(
+      /<svg[^>]+aria-label="Cover portrait"[^>]*>[\s\S]*?<\/svg>/,
+    )?.[0];
+    const iconViewport = markup.match(
+      /<svg[^>]+aria-label="Contained icon"[^>]*>[\s\S]*?<\/svg>/,
+    )?.[0];
+    expect(coverViewport).toContain(
+      '<svg x="12" y="50" width="76" height="76" overflow="hidden" aria-label="Cover portrait">',
+    );
+    expect(coverViewport).toContain('preserveAspectRatio="xMidYMid slice"');
+    expect(coverViewport).toContain('<title>Cover portrait</title>');
+    expect(iconViewport).toContain(
+      '<svg x="38" y="134" width="24" height="24" overflow="hidden" aria-label="Contained icon">',
+    );
+    expect(iconViewport).toContain('preserveAspectRatio="xMidYMid meet"');
+    expect(iconViewport).toContain('<title>Contained icon</title>');
     const unsafe = {
       ...owners(style(pinned)),
       assets: {
@@ -402,6 +458,7 @@ describe('Presentation measured content', () => {
       objects: [object('A', 'participant'), object('B', 'participant')],
       sections: [
         section('sequence', ['A', 'B'], {
+          title: 'Reliable workspace recovery for human and agent diagram collaboration',
           layout: { algorithm: 'sequence' },
           sequence: [
             { id: 'retry', kind: 'fragment', order: 0, operator: 'loop', label: 'Retry request' },
@@ -423,11 +480,23 @@ describe('Presentation measured content', () => {
     });
     const sequenceApp = (await fixture()).presentation;
     const fragmentScene = value(sequenceApp.project(fragments));
+    const sectionTitle = fragmentScene.sections[0]?.title;
+    expect(sectionTitle?.width).toBeGreaterThan(240);
+    expect(sectionTitle?.width).toBeLessThan(500);
+    expect(sectionTitle?.primitives).toHaveLength(2);
     expect(fragmentScene.sections[0]?.sequence.map((item) => item.label.outline[0])).toEqual([
       'loop Retry request',
       'opt Cached result',
       'alt Outcome',
     ]);
+    expect(
+      fragmentScene.sections[0]?.sequence.map((item) =>
+        item.label.primitives
+          .filter((primitive) => primitive.kind === 'text')
+          .map((primitive) => primitive.text)
+          .join(''),
+      ),
+    ).toEqual(['loop Retry request', 'opt Cached result', 'alt Outcome']);
     expect(
       value(sequenceApp.supplement(fragments)).branchHeadings[0]?.content.primitives[0],
     ).toMatchObject({ kind: 'text', size: 14 });
@@ -455,6 +524,37 @@ describe('Presentation measured content', () => {
     expect(text(summary)).not.toContain('Hidden body');
     expect(summary.content.outline).toContain('Hidden body');
     expect(summary.content.anchors.every((anchor) => !anchor.collapsed)).toBe(true);
+
+    const hiddenField = 'hidden_' + 'identifier_'.repeat(12);
+    const fields = collection({
+      objects: [
+        object('Record', 'entity', [
+          { kind: 'field', id: 'id', label: 'id', type: 'UUID' },
+          { kind: 'field', id: 'hidden', label: hiddenField, type: 'string' },
+        ]),
+      ],
+      sections: [
+        section('er', [], {
+          id: 'summary',
+          appearances: [{ object: 'Record', detail: 'summary' }],
+        }),
+        section('er', [], {
+          id: 'full',
+          appearances: [{ object: 'Record', detail: 'full' }],
+        }),
+      ],
+    });
+    const fieldScene = value((await fixture()).presentation.project(fields));
+    const summaryRecord = fieldScene.sections[0]?.nodes[0];
+    const fullRecord = fieldScene.sections[1]?.nodes[0];
+    expect(summaryRecord?.width).toBe(264);
+    expect(fullRecord?.width).toBeGreaterThan(summaryRecord?.width ?? 0);
+    expect(summaryRecord?.content.outline.join(' ')).toContain(hiddenField);
+    expect(
+      summaryRecord?.content.anchors.find((anchor) => anchor.member === 'hidden'),
+    ).toMatchObject({
+      collapsed: true,
+    });
   });
   it('8 keys content and resolved style and freezes detached output', async () => {
     const pinned = fonts();

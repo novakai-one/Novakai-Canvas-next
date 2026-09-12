@@ -23,7 +23,7 @@ import { numeric, colorText } from '../tokens/values.js';
 import { fromPortable } from './portable.js';
 import { changedDefinitions } from './overrides.js';
 import { validateFonts, requirePinnedFont } from './fonts.js';
-/** Pinned diagram data ignores UI preferences; export changes motion only. Host owns admission provenance. */
+/** Resolve pinned diagram data; the public facade returns typed failure and the host retains its prior scope. */
 export function resolveDiagram(
   source: SourceSet,
   input: unknown,
@@ -69,7 +69,7 @@ export function resolveDiagram(
     forcedColors: false,
   };
 }
-/** Re-evaluate semantic aliases from complete admitted root values, detecting forged derived values. */
+/** Re-evaluate admitted roots; the public resolver owns rejection and the host retains its prior scope. */
 export function rootsOnly(source: SourceSet, values: TokenValues): TokenValues {
   return Object.fromEntries(
     source.definitions
@@ -84,7 +84,7 @@ function noMotion(): TokenValues {
     'camera.duration': { type: 'duration', value: 0, unit: 'ms' },
   };
 }
-/** Project exact resolved data to Presentation; host supplies no palette or measurement defaults. */
+/** Project exact resolved data; the public facade returns typed failure and the host retains its prior scope. */
 export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
   if (resolved.scope === 'ui')
     return reject(
@@ -94,7 +94,6 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
       'UI scope cannot measure diagrams',
     );
   const values = resolved.values;
-  const number = (id: string): number => numeric(member(values, id), id);
   const color = (id: string): string => colorText(member(values, id), id);
   return {
     digest: resolved.digest,
@@ -102,10 +101,10 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     monoFont: fontReference(requirePinnedFont('font.mono', values, resolved.fonts)),
     typography: typography(resolved),
     contentSizing: contentSizing(values),
-    padding: number('space.3'),
-    gap: number('space.2'),
-    stroke: number('stroke.base'),
-    radius: number('shape.radius'),
+    padding: tokenNumber(values, 'space.3'),
+    gap: tokenNumber(values, 'space.2'),
+    stroke: tokenNumber(values, 'stroke.base'),
+    radius: tokenNumber(values, 'shape.radius'),
     roles: Object.fromEntries(resolved.roles.map((role) => [role, rolePaint(role, values)])),
     surface: color('surface.base'),
     text: color('text.primary'),
@@ -129,12 +128,12 @@ function rolePaint(role: string, values: TokenValues): Paint {
 
 /** Resolve one absolute text role; resolver boundary translates missing tokens into typed failure. */
 function metric(resolved: ResolvedTokenSet, font: string, sizeToken: string): TextMetric {
-  const size = numeric(member(resolved.values, sizeToken), sizeToken);
-  const ratio = numeric(member(resolved.values, 'lineHeight.body'), 'lineHeight.body');
+  const size = metricNumber(tokenNumber(resolved.values, sizeToken), sizeToken);
+  const ratio = tokenNumber(resolved.values, 'lineHeight.body');
   return {
     font: fontReference(requirePinnedFont(font, resolved.values, resolved.fonts)),
     size,
-    lineHeight: size * ratio,
+    lineHeight: metricNumber(size * ratio, sizeToken + '.lineHeight'),
   };
 }
 /** Each semantic role maps to the existing type hierarchy with no new font authority. */
@@ -150,24 +149,38 @@ function typography(resolved: ResolvedTokenSet): DiagramTypography {
 /** Width bands describe interior content; token validation owns finite positive values. */
 function band(values: TokenValues, preferred: string, maximum: string): SizeBand {
   return {
-    preferred: numeric(member(values, preferred), preferred),
-    maximum: numeric(member(values, maximum), maximum),
+    preferred: tokenNumber(values, preferred),
+    maximum: tokenNumber(values, maximum),
   };
 }
 /** Shared content policies are derived from semantic tokens for all renderers. */
 function contentSizing(values: TokenValues): ContentSizing {
-  const number = (id: string): number => numeric(member(values, id), id);
   return {
     widths: {
       small: band(values, 'diagram.widthSmall', 'diagram.widthMedium'),
       medium: band(values, 'diagram.widthMedium', 'diagram.widthLarge'),
       large: band(values, 'diagram.widthLarge', 'diagram.widthExtraLarge'),
     },
-    rowMinimum: number('diagram.rowMin'),
+    rowMinimum: tokenNumber(values, 'diagram.rowMin'),
     iconBox: {
-      small: number('diagram.iconSmall'),
-      medium: number('diagram.iconMedium'),
-      large: number('diagram.iconLarge'),
+      small: tokenNumber(values, 'diagram.iconSmall'),
+      medium: tokenNumber(values, 'diagram.iconMedium'),
+      large: tokenNumber(values, 'diagram.iconLarge'),
     },
   };
+}
+/** Numeric token extraction has one local policy for projection consumers. */
+function tokenNumber(values: TokenValues, id: string): number {
+  return numeric(member(values, id), id);
+}
+/** Presentation-bound metrics must satisfy its finite positive public schema. */
+function metricNumber(value: number, path: string): number {
+  if (!Number.isFinite(value) || value <= 0 || value > 10000)
+    return reject(
+      'invalid-input',
+      path,
+      'finite positive metric no greater than10000',
+      'Derived diagram metric is outside Presentation bounds',
+    );
+  return value;
 }

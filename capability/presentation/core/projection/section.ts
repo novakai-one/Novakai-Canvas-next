@@ -45,7 +45,7 @@ function wire(
     route,
   };
 }
-/** Measure one section while preserving downstream layout and sequence intent intact. */
+/** Measure one section; public project owns rejection and Authoring retains the prior scene. */
 export function projectSection(section: Section, context: ContentContext): VisualSection {
   const nodes = [
     ...section.groups.map((group) => projectGroup(group, section, context)),
@@ -53,7 +53,7 @@ export function projectSection(section: Section, context: ContentContext): Visua
   ];
   return {
     id: section.id,
-    title: labelContent(section.title, context, 'sectionHeading'),
+    title: sectionTitle(section.title, context),
     mode: section.mode,
     order: section.order,
     layout: section.layout,
@@ -68,4 +68,9 @@ export function projectSection(section: Section, context: ContentContext): Visua
     groups: section.groups,
     root: section.root ?? null,
   };
+}
+/** Section headings may use the generic large-band ceiling; measured width remains content-driven. */
+function sectionTitle(title: string, context: ContentContext): VisualSection['title'] {
+  const width = context.style.contentSizing.widths.large.maximum;
+  return labelContent(title, { ...context, width }, 'sectionHeading');
 }

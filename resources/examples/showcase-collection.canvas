@@ -31,9 +31,11 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @er-1-includes @er-1-loan.@er-1-id -> @er-1-loan-item.@er-1-loan "includes" kind=association from=1 to=1..many
  wire @er-1-travels @er-1-artifact.@er-1-id -> @er-1-loan-item.@er-1-artifact "travels on" kind=association from=1 to=0..many
  wire @er-1-checked @er-1-artifact.@er-1-id -> @er-1-inspection.@er-1-artifact "optionally checked by" kind=association from=1 to=0..many
- section @er-1-museum-loans "MUSEUM LOANS / Trace every movement" mode=er layout=layered direction=right gap=compact order=0 {
+ section @er-1-museum-loans "MUSEUM LOANS / Trace every movement" mode=er layout=grid columns=2 direction=right gap=compact order=0 {
   show @er-1-museum @er-1-loan @er-1-artifact @er-1-loan-item @er-1-inspection
-  connect @er-1-borrows @er-1-includes @er-1-travels @er-1-checked
+  connect @er-1-borrows @er-1-travels
+  connect @er-1-includes source-side=right target-side=right
+  connect @er-1-checked source-side=left target-side=left
  }
 
   # ER / 2: er-course-enrollment.canvas
@@ -76,7 +78,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @er-2-student-enrolls @er-2-student.@er-2-number -> @er-2-enrollment.@er-2-student "registers through" kind=association from=1 to=0..many
  wire @er-2-offering-enrolls @er-2-offering.@er-2-term -> @er-2-enrollment.@er-2-term "accepts" kind=association from=1 to=0..many
  wire @er-2-earns @er-2-enrollment -> @er-2-assessment "may earn" kind=association from=1 to=0..1
- section @er-2-enrollment-model "COURSE ENROLLMENT / Composite identities across terms" mode=er layout=layered direction=right gap=compact order=1 {
+ section @er-2-enrollment-model "COURSE ENROLLMENT / Composite identities across terms" mode=er layout=grid columns=3 direction=right gap=compact order=1 {
   show @er-2-student @er-2-course @er-2-offering @er-2-enrollment @er-2-assessment
   connect @er-2-offers @er-2-student-enrolls @er-2-offering-enrolls @er-2-earns
  }
@@ -115,7 +117,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @er-3-records @er-3-visit.@er-3-id -> @er-3-observation.@er-3-visit "records sightings" kind=association from=1 to=0..many
  wire @er-3-reports @er-3-observer.@er-3-id -> @er-3-observation.@er-3-observer "reports sightings" kind=association from=1 to=0..many
  wire @er-3-identifies @er-3-species.@er-3-id -> @er-3-observation.@er-3-species "identified in" kind=association from=1 to=0..many
- section @er-3-habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=layered direction=down gap=compact order=2 {
+ section @er-3-habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=grid columns=2 direction=right gap=compact order=2 {
   show @er-3-habitat @er-3-visit @er-3-observer @er-3-species @er-3-observation
   connect @er-3-nested @er-3-surveyed @er-3-records @er-3-reports @er-3-identifies
  }
@@ -144,7 +146,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @modules-1-imports @modules-1-editor.@modules-1-publish -> @modules-1-publication "depends on publishing contract" kind=imports
  wire @modules-1-implements @modules-1-web-adapter.@modules-1-input -> @modules-1-publication.@modules-1-submit "implements submit" kind=implements
  wire @modules-1-calls-cms @modules-1-web-adapter.@modules-1-remote -> @modules-1-cms "imports the external CMS contract" kind=imports
- section @modules-1-publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules layout=layered direction=right gap=compact order=3 {
+ section @modules-1-publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules layout=grid columns=2 direction=right gap=compact order=3 {
   show @modules-1-editor @modules-1-validate @modules-1-publication @modules-1-web-adapter @modules-1-cms
   connect @modules-1-checks @modules-1-imports @modules-1-implements @modules-1-calls-cms
  }
@@ -218,9 +220,9 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @modules-3-gross-policy @modules-3-gross -> @modules-3-policy.@modules-3-gross "implements gross" kind=implements
  wire @modules-3-deduct-policy @modules-3-deduct -> @modules-3-policy.@modules-3-deduct "implements deductions" kind=implements
  wire @modules-3-round-policy @modules-3-round -> @modules-3-rounding.@modules-3-round "implements round" kind=implements
- section @modules-3-payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=layered direction=down gap=compact order=5 {
-  group @modules-3-contracts "RULE CONTRACTS" { show @modules-3-policy @modules-3-rounding }
-  group @modules-3-functions "PURE CALCULATION" { show @modules-3-calculate @modules-3-gross @modules-3-deduct @modules-3-round }
+ section @modules-3-payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=grid columns=2 direction=right gap=compact order=5 {
+  group @modules-3-contracts "RULE CONTRACTS" layout=grid columns=2 { show @modules-3-policy @modules-3-rounding }
+  group @modules-3-functions "PURE CALCULATION" layout=grid columns=2 { show @modules-3-calculate @modules-3-gross @modules-3-deduct @modules-3-round }
   show @modules-3-run
   connect @modules-3-imports-policy @modules-3-imports-rounding @modules-3-imports-calculator @modules-3-call-gross @modules-3-call-deduct @modules-3-call-round @modules-3-gross-policy @modules-3-deduct-policy @modules-3-round-policy
  }
@@ -239,10 +241,10 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @flow-1-pass @flow-1-inspect -> @flow-1-clean "yes" kind=flow
  wire @flow-1-ready @flow-1-clean -> @flow-1-restock "dry and complete" kind=flow
  wire @flow-1-close @flow-1-restock -> @flow-1-receipt "issue receipt" kind=flow
- section @flow-1-equipment-return "RETURN / Inspect before restocking" mode=flow direction=right gap=compact order=6 {
+ section @flow-1-equipment-return "RETURN / Inspect before restocking" mode=flow direction=down gap=compact order=6 {
   show @flow-1-receive @flow-1-inspect @flow-1-service @flow-1-clean @flow-1-restock @flow-1-receipt
   connect @flow-1-check @flow-1-fail @flow-1-pass @flow-1-ready @flow-1-close
-  connect @flow-1-retry source-side=bottom target-side=bottom
+  connect @flow-1-retry source-side=right target-side=right
  }
 
   # FLOW / 2: flow-research-approval.canvas
@@ -266,10 +268,10 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @flow-2-accept @flow-2-decision -> @flow-2-approved "yes" kind=flow
  wire @flow-2-changes @flow-2-decision -> @flow-2-revise "no · changes required" kind=flow
  wire @flow-2-resubmit @flow-2-revise -> @flow-2-triage "resubmit new version" kind=flow style=dashed
- section @flow-2-approval "RESEARCH APPROVAL / Independent review, one decision" mode=flow direction=right gap=compact order=7 {
+ section @flow-2-approval "RESEARCH APPROVAL / Independent review, one decision" mode=flow direction=down gap=compact order=7 {
   show @flow-2-submit @flow-2-triage @flow-2-split @flow-2-ethics @flow-2-methods @flow-2-merge @flow-2-decision @flow-2-revise @flow-2-approved
   connect @flow-2-begin @flow-2-ready @flow-2-ethics-path @flow-2-methods-path @flow-2-ethics-done @flow-2-methods-done @flow-2-decide @flow-2-accept @flow-2-changes
-  connect @flow-2-resubmit source-side=bottom target-side=bottom
+  connect @flow-2-resubmit source-side=left target-side=left
  }
 
   # FLOW / 3: flow-emergency-dispatch.canvas
@@ -294,8 +296,10 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @flow-3-mutual @flow-3-aid -> @flow-3-assign "yes: aid unit" kind=flow
  wire @flow-3-pending @flow-3-aid -> @flow-3-unresolved "no: retain ownership" kind=flow
  wire @flow-3-dispatch @flow-3-assign -> @flow-3-accepted "unit accepts" kind=flow
- section @flow-3-dispatch "DISPATCH / Escalation preserves incident ownership" mode=flow direction=down gap=compact order=8 {
-  show @flow-3-reported @flow-3-assess @flow-3-eligible @flow-3-referred @flow-3-available @flow-3-escalate @flow-3-aid @flow-3-assign @flow-3-accepted @flow-3-unresolved
+ section @flow-3-dispatch "DISPATCH / Escalation preserves incident ownership" mode=flow layout=layered direction=right gap=compact order=8 {
+  group @flow-3-intake "TRIAGE" layout=layered direction=down gap=compact { show @flow-3-reported @flow-3-assess @flow-3-eligible @flow-3-referred }
+  group @flow-3-response "FIND A RESPONSE" layout=layered direction=down gap=compact { show @flow-3-available @flow-3-escalate @flow-3-aid @flow-3-unresolved }
+  group @flow-3-handoff "TRANSFER OWNERSHIP" layout=layered direction=down gap=compact { show @flow-3-assign @flow-3-accepted }
   connect @flow-3-open @flow-3-classify @flow-3-refer @flow-3-needed @flow-3-local @flow-3-shortage @flow-3-request @flow-3-mutual @flow-3-pending @flow-3-dispatch
  }
 
@@ -388,8 +392,10 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @state-1-restore @state-1-rollback -> @state-1-published "restore prior release" kind=transition guard="safe release available" effect="record rollback receipt"
  wire @state-1-withdraw @state-1-rollback -> @state-1-withdrawn "withdraw exhibition" kind=transition guard="no safe release" effect="post public notice"
  wire @state-1-close @state-1-withdrawn -> @state-1-end "close record" kind=transition guard="retention captured"
- section @state-1-lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=right gap=compact order=12 {
-  show @state-1-start @state-1-draft @state-1-review @state-1-published @state-1-rollback @state-1-withdrawn @state-1-end
+ section @state-1-lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=down gap=compact order=12 {
+  group @state-1-authoring "PREPARE & APPROVE" layout=layered direction=right gap=compact { show @state-1-start @state-1-draft @state-1-review }
+  group @state-1-publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @state-1-published @state-1-rollback @state-1-withdrawn }
+  show @state-1-end
   connect @state-1-prepare @state-1-submit @state-1-revise @state-1-publish @state-1-detect @state-1-restore @state-1-withdraw @state-1-close
  }
 
@@ -412,8 +418,10 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @state-2-cancelled @state-2-cancelling -> @state-2-end "confirm cancelled" kind=transition guard="resources released" effect="write cancellation receipt"
  wire @state-2-finish-failed @state-2-failed -> @state-2-end "close failed job" kind=transition effect="publish outcome"
  wire @state-2-finish-success @state-2-succeeded -> @state-2-end "close successful job" kind=transition effect="publish outcome"
- section @state-2-job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=right gap=compact order=13 {
-  show @state-2-start @state-2-running @state-2-backoff @state-2-cancelling @state-2-failed @state-2-succeeded @state-2-end
+ section @state-2-job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=down gap=compact order=13 {
+  show @state-2-start
+  group @state-2-execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @state-2-running @state-2-backoff @state-2-cancelling }
+  group @state-2-outcomes "DURABLE OUTCOMES" layout=layered direction=right gap=compact { show @state-2-failed @state-2-succeeded @state-2-end }
   connect @state-2-claim @state-2-retry @state-2-resume @state-2-exhaust @state-2-complete @state-2-cancel-running @state-2-cancel-wait @state-2-cancelled @state-2-finish-failed @state-2-finish-success
  }
 
@@ -436,8 +444,10 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=paper layo
  wire @state-3-complete @state-3-restored -> @state-3-active "complete review period" kind=transition guard="conditions met"
  wire @state-3-relapse @state-3-restored -> @state-3-suspended "suspend again" kind=transition guard="conditions breached"
  wire @state-3-withdraw @state-3-suspended -> @state-3-closed "withdraw membership" kind=transition guard="member requests closure"
- section @state-3-membership "MEMBERSHIP / Reinstatement is a reviewed return" mode=state layout=layered direction=right gap=compact order=14 {
-  show @state-3-start @state-3-pending @state-3-active @state-3-suspended @state-3-review @state-3-restored @state-3-closed
+ section @state-3-membership "MEMBERSHIP / Reinstatement is a reviewed return" mode=state layout=layered direction=down gap=compact order=14 {
+  group @state-3-application "APPLICATION" layout=layered direction=right gap=compact { show @state-3-start @state-3-pending }
+  group @state-3-membership "ACTIVE MEMBERSHIP" layout=layered direction=down gap=compact { show @state-3-active @state-3-restored }
+  group @state-3-reviewing "REVIEW & CLOSURE" layout=layered direction=right gap=compact { show @state-3-suspended @state-3-review @state-3-closed }
   connect @state-3-submit @state-3-approve @state-3-decline @state-3-suspend @state-3-appeal @state-3-reject @state-3-restore @state-3-complete @state-3-relapse @state-3-withdraw
  }
 

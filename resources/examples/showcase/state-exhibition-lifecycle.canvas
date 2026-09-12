@@ -15,8 +15,10 @@ collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme=
  wire @restore @rollback -> @published "restore prior release" kind=transition guard="safe release available" effect="record rollback receipt"
  wire @withdraw @rollback -> @withdrawn "withdraw exhibition" kind=transition guard="no safe release" effect="post public notice"
  wire @close @withdrawn -> @end "close record" kind=transition guard="retention captured"
- section @lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=right gap=compact {
-  show @start @draft @review @published @rollback @withdrawn @end
+ section @lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=down gap=compact {
+  group @authoring "PREPARE & APPROVE" layout=layered direction=right gap=compact { show @start @draft @review }
+  group @publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @published @rollback @withdrawn }
+  show @end
   connect @prepare @submit @revise @publish @detect @restore @withdraw @close
  }
 }

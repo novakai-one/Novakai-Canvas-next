@@ -4,7 +4,7 @@
     "family": "er",
     "variant": 1,
     "source": "er-museum-loans.canvas",
-    "sourceSha256": "a1f7b9cb12cc7857e6318122cf1431f87cff1ce10163dc32221e4412c6973747",
+    "sourceSha256": "7aea0c745bcd403842343ab0f32690a6305667d8035f6b9537a3df38af131810",
     "section": "er-1-museum-loans"
   },
   {
@@ -12,7 +12,7 @@
     "family": "er",
     "variant": 2,
     "source": "er-course-enrollment.canvas",
-    "sourceSha256": "881710adc53fc1bcf206033bbf7a8f2f444e87ef3304938131c7c76392bae182",
+    "sourceSha256": "62db7407ab0414a0b16cdf7d3a25c2f6a42006184d8eb8487619395e5fb0da0d",
     "section": "er-2-enrollment-model"
   },
   {
@@ -20,7 +20,7 @@
     "family": "er",
     "variant": 3,
     "source": "er-habitat-survey.canvas",
-    "sourceSha256": "0fdc85213f2551c997a75b8f6d6539a8c8b1c2e84f396bbe75367219bf3e0433",
+    "sourceSha256": "1b5749c3bf3287c823715b1083e2fc6dad3d6404c3f47f820e4c51d07fe05da6",
     "section": "er-3-habitats"
   },
   {
@@ -28,7 +28,7 @@
     "family": "modules",
     "variant": 1,
     "source": "modules-document-publishing.canvas",
-    "sourceSha256": "5dc72dc3b9dcd431926e645ab9ef7d9116c2528fe8b87a92d8aa0a86669d5d54",
+    "sourceSha256": "06d6be5d4fc6a489215f242806f1f80183484b04509e7b5a344cc10199839bb6",
     "section": "modules-1-publishing-boundary"
   },
   {
@@ -44,7 +44,7 @@
     "family": "modules",
     "variant": 3,
     "source": "modules-payroll-policy.canvas",
-    "sourceSha256": "d05d42c6498b3a5c579be5ba1b5cd6f43f9fde022fd0b1c0984b491fd59ecb0b",
+    "sourceSha256": "25c62fd4b51afdc51910dd41a11660df7b773f1159c335c20a078d047540126f",
     "section": "modules-3-payroll"
   },
   {
@@ -52,7 +52,7 @@
     "family": "flow",
     "variant": 1,
     "source": "flow-equipment-return.canvas",
-    "sourceSha256": "599c9d5bec46870a4ae2cd53fd9b88fad86f172979d66965fb544ffbc0838d13",
+    "sourceSha256": "93aa83587562da61241e4563320fb8d6142c05f5f7f0f1249c28a3b0fc8d37f5",
     "section": "flow-1-equipment-return"
   },
   {
@@ -60,7 +60,7 @@
     "family": "flow",
     "variant": 2,
     "source": "flow-research-approval.canvas",
-    "sourceSha256": "af592f33a2929fd814d8db41efa5ced36b5f7dd17c1a84e7649900e971e489ef",
+    "sourceSha256": "4f34fe2e882cc7671ad712694fa65695fa1a70283c9ba5db2f10e455e01305c6",
     "section": "flow-2-approval"
   },
   {
@@ -68,7 +68,7 @@
     "family": "flow",
     "variant": 3,
     "source": "flow-emergency-dispatch.canvas",
-    "sourceSha256": "581d40b840ee68850719a52f2a58e741a4818e52a1b4299a1eb80a03bfb7f92b",
+    "sourceSha256": "f702f5ef42c36235abceac7e45c249b6ec10e82c23a5929b6b62b253ae5e4192",
     "section": "flow-3-dispatch"
   },
   {
@@ -100,7 +100,7 @@
     "family": "state",
     "variant": 1,
     "source": "state-exhibition-lifecycle.canvas",
-    "sourceSha256": "67cbbe9e4828236b55751aa219019628c50a52df8f65d683d8ccc34cfe353729",
+    "sourceSha256": "d7abd8fefb7089d0b061d179ec2a73aa38f2fcc7eb85825db47f2a1ffdf4a100",
     "section": "state-1-lifecycle"
   },
   {
@@ -108,7 +108,7 @@
     "family": "state",
     "variant": 2,
     "source": "state-batch-job.canvas",
-    "sourceSha256": "d541220f16a4d9c2fcf4bea675c85ef68482b008b720f952eb71fd1c83f266bf",
+    "sourceSha256": "4711364b4ece003a54b76e2b1c40baece429855acf365e56f128b21c46e3f01e",
     "section": "state-2-job"
   },
   {
@@ -116,7 +116,7 @@
     "family": "state",
     "variant": 3,
     "source": "state-membership-reinstatement.canvas",
-    "sourceSha256": "2df618860bc17a7936aec45ea426dbd93f769a62e03a2e6c8bb43bd01bf4cd46",
+    "sourceSha256": "2db0ef50292df8345254c5dba569bbda5bfbdf8f08eea4218c8c9a1bfcb5a680",
     "section": "state-3-membership"
   },
   {

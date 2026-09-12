@@ -17,8 +17,10 @@ collection @state-membership-reinstatement "Membership reinstatement" theme=pape
  wire @complete @restored -> @active "complete review period" kind=transition guard="conditions met"
  wire @relapse @restored -> @suspended "suspend again" kind=transition guard="conditions breached"
  wire @withdraw @suspended -> @closed "withdraw membership" kind=transition guard="member requests closure"
- section @membership "MEMBERSHIP / Reinstatement is a reviewed return" mode=state layout=layered direction=right gap=compact {
-  show @start @pending @active @suspended @review @restored @closed
+ section @membership "MEMBERSHIP / Reinstatement is a reviewed return" mode=state layout=layered direction=down gap=compact {
+  group @application "APPLICATION" layout=layered direction=right gap=compact { show @start @pending }
+  group @membership "ACTIVE MEMBERSHIP" layout=layered direction=down gap=compact { show @active @restored }
+  group @reviewing "REVIEW & CLOSURE" layout=layered direction=right gap=compact { show @suspended @review @closed }
   connect @submit @approve @decline @suspend @appeal @reject @restore @complete @relapse @withdraw
  }
 }

@@ -33,9 +33,9 @@ collection @modules-payroll-policy "Payroll calculation contracts" theme=paper {
  wire @gross-policy @gross -> @policy.@gross "implements gross" kind=implements
  wire @deduct-policy @deduct -> @policy.@deduct "implements deductions" kind=implements
  wire @round-policy @round -> @rounding.@round "implements round" kind=implements
- section @payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=layered direction=down gap=compact {
-  group @contracts "RULE CONTRACTS" { show @policy @rounding }
-  group @functions "PURE CALCULATION" { show @calculate @gross @deduct @round }
+ section @payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=grid columns=2 direction=right gap=compact {
+  group @contracts "RULE CONTRACTS" layout=grid columns=2 { show @policy @rounding }
+  group @functions "PURE CALCULATION" layout=grid columns=2 { show @calculate @gross @deduct @round }
   show @run
   connect @imports-policy @imports-rounding @imports-calculator @call-gross @call-deduct @call-round @gross-policy @deduct-policy @round-policy
  }

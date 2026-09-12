@@ -20,8 +20,10 @@ collection @flow-emergency-dispatch "Emergency dispatch escalation" theme=paper 
  wire @mutual @aid -> @assign "yes: aid unit" kind=flow
  wire @pending @aid -> @unresolved "no: retain ownership" kind=flow
  wire @dispatch @assign -> @accepted "unit accepts" kind=flow
- section @dispatch "DISPATCH / Escalation preserves incident ownership" mode=flow direction=down gap=compact {
-  show @reported @assess @eligible @referred @available @escalate @aid @assign @accepted @unresolved
+ section @dispatch "DISPATCH / Escalation preserves incident ownership" mode=flow layout=layered direction=right gap=compact {
+  group @intake "TRIAGE" layout=layered direction=down gap=compact { show @reported @assess @eligible @referred }
+  group @response "FIND A RESPONSE" layout=layered direction=down gap=compact { show @available @escalate @aid @unresolved }
+  group @handoff "TRANSFER OWNERSHIP" layout=layered direction=down gap=compact { show @assign @accepted }
   connect @open @classify @refer @needed @local @shortage @request @mutual @pending @dispatch
  }
 }

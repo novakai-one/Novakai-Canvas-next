@@ -28,8 +28,10 @@ collection @er-museum-loans "Museum loans and inspections" theme=paper {
  wire @includes @loan.@id -> @loan-item.@loan "includes" kind=association from=1 to=1..many
  wire @travels @artifact.@id -> @loan-item.@artifact "travels on" kind=association from=1 to=0..many
  wire @checked @artifact.@id -> @inspection.@artifact "optionally checked by" kind=association from=1 to=0..many
- section @museum-loans "MUSEUM LOANS / Trace every movement" mode=er layout=layered direction=right gap=compact {
+ section @museum-loans "MUSEUM LOANS / Trace every movement" mode=er layout=grid columns=2 direction=right gap=compact {
   show @museum @loan @artifact @loan-item @inspection
-  connect @borrows @includes @travels @checked
+  connect @borrows @travels
+  connect @includes source-side=right target-side=right
+  connect @checked source-side=left target-side=left
  }
 }

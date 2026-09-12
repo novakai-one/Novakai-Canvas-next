@@ -1,0 +1,5 @@
+$ tsx apps/cli/cli/main.ts receipt atlas-integrated-create-2 --server http://127.0.0.1:5185 --workspace .local/atlas-proof
+(node:31615) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+committed: atlas-integrated-create-2
+Workspace sequence: 5

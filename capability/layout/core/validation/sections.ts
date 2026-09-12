@@ -9,7 +9,7 @@ import { sequenceGeometry } from '../sequence/sequence.js';
 import { contentBounds, titleBox, sectionBounds } from '../arrangement/bounds.js';
 import { sectionKey } from '../arrangement/keys.js';
 import { relativeSections } from '../constraints/relative.js';
-import { contains } from '../geometry/intersections.js';
+import { contains, samePoint } from '../geometry/intersections.js';
 import { union } from '../geometry/bounds.js';
 import { same, sameIds, disjoint, equations } from './facts.js';
 import { reject } from './outcomes.js';
@@ -60,7 +60,8 @@ function checkBounds(local: Box, candidate: SectionCandidate): void {
   const expected = { ...local, x: local.x + candidate.origin.x, y: local.y + candidate.origin.y };
   if (!contains(candidate.box, expected))
     reject('constraint-conflict', candidate.id, 'Section bounds omit visible content');
-  same([expected.x, expected.y], [candidate.box.x, candidate.box.y], candidate.id);
+  if (!samePoint(expected, candidate.box))
+    reject('constraint-conflict', candidate.id, 'Section origin differs from visible bounds');
 }
 /** A section lock fixes origin and only the optional dimensions that were actually authored. */
 function checkLock(source: VisualSection, candidate: SectionCandidate): void {

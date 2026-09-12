@@ -12,9 +12,9 @@ collection @flow-equipment-return "Return equipment safely" theme=paper {
  wire @pass @inspect -> @clean "yes" kind=flow
  wire @ready @clean -> @restock "dry and complete" kind=flow
  wire @close @restock -> @receipt "issue receipt" kind=flow
- section @equipment-return "RETURN / Inspect before restocking" mode=flow direction=right gap=compact {
+ section @equipment-return "RETURN / Inspect before restocking" mode=flow direction=down gap=compact {
   show @receive @inspect @service @clean @restock @receipt
   connect @check @fail @pass @ready @close
-  connect @retry source-side=bottom target-side=bottom
+  connect @retry source-side=right target-side=right
  }
 }

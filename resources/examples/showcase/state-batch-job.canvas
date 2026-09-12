@@ -17,8 +17,10 @@ collection @state-batch-job "Batch job retry lifecycle" theme=paper {
  wire @cancelled @cancelling -> @end "confirm cancelled" kind=transition guard="resources released" effect="write cancellation receipt"
  wire @finish-failed @failed -> @end "close failed job" kind=transition effect="publish outcome"
  wire @finish-success @succeeded -> @end "close successful job" kind=transition effect="publish outcome"
- section @job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=right gap=compact {
-  show @start @running @backoff @cancelling @failed @succeeded @end
+ section @job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=down gap=compact {
+  show @start
+  group @execution "ATTEMPT & CONTROL" layout=layered direction=right gap=compact { show @running @backoff @cancelling }
+  group @outcomes "DURABLE OUTCOMES" layout=layered direction=right gap=compact { show @failed @succeeded @end }
   connect @claim @retry @resume @exhaust @complete @cancel-running @cancel-wait @cancelled @finish-failed @finish-success
  }
 }

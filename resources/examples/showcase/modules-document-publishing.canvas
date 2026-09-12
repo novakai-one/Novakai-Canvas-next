@@ -22,7 +22,7 @@ collection @modules-document-publishing "Document publishing boundary" theme=pap
  wire @imports @editor.@publish -> @publication "depends on publishing contract" kind=imports
  wire @implements @web-adapter.@input -> @publication.@submit "implements submit" kind=implements
  wire @calls-cms @web-adapter.@remote -> @cms "imports the external CMS contract" kind=imports
- section @publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules layout=layered direction=right gap=compact {
+ section @publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules layout=grid columns=2 direction=right gap=compact {
   show @editor @validate @publication @web-adapter @cms
   connect @checks @imports @implements @calls-cms
  }

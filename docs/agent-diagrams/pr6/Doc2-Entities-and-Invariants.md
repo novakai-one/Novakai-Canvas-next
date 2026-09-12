@@ -10,7 +10,7 @@
 |Files|Estimated final LOC|
 |---|---:|
 |presentation/contract/records/{limits,interchange}.ts; contract/index.ts; core/{projection/collection,validation/interchange,validation/capacity}.ts|15;70;50;100;240;40|
-|layout/contract/records/candidate.ts; core/validation/input.ts|120;190|
+|layout/contract/records/candidate.ts; core/validation/{input,sections}.ts; tests/collection-roundtrip.test.ts|120;190;135;50|
 |canvas/core/scenes/validate.ts|120|
 |export/contract/records/manual.ts; core/artifacts/produce.ts|50;170|
 |layout/canvas/export contract/records/limits.ts bridges; existing admission/scale tests|5each;100–400|
@@ -19,3 +19,5 @@
 Presentation owns its accepted projection capacity; downstream consumers reuse the public constant without reverse imports. Existing semantic collection limits remain separate from projection scale. Field/port/cardinality/fragment correctness stays mandatory regardless of appearance.
 
 Presentation producer and reader share aggregate admission: count projected appearances/wires across sections, not unique canonical objects. Enforce32/1000/1500 before returning success. Consumer declaration-only record bridges re-export immutable limits through Presentation’s public index; each core imports its own record.
+
+Section-origin checks use existing geometry tolerance; content and identity remain exact.

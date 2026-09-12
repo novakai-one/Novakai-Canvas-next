@@ -32,7 +32,7 @@ collection @er-habitat-survey "Habitat survey records" theme=paper {
  wire @records @visit.@id -> @observation.@visit "records sightings" kind=association from=1 to=0..many
  wire @reports @observer.@id -> @observation.@observer "reports sightings" kind=association from=1 to=0..many
  wire @identifies @species.@id -> @observation.@species "identified in" kind=association from=1 to=0..many
- section @habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=layered direction=down gap=compact {
+ section @habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=grid columns=2 direction=right gap=compact {
   show @habitat @visit @observer @species @observation
   connect @nested @surveyed @records @reports @identifies
  }

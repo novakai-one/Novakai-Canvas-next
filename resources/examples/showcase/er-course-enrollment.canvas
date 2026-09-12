@@ -38,7 +38,7 @@ collection @er-course-enrollment "Course enrollment records" theme=paper {
  wire @student-enrolls @student.@number -> @enrollment.@student "registers through" kind=association from=1 to=0..many
  wire @offering-enrolls @offering.@term -> @enrollment.@term "accepts" kind=association from=1 to=0..many
  wire @earns @enrollment -> @assessment "may earn" kind=association from=1 to=0..1
- section @enrollment-model "COURSE ENROLLMENT / Composite identities across terms" mode=er layout=layered direction=right gap=compact {
+ section @enrollment-model "COURSE ENROLLMENT / Composite identities across terms" mode=er layout=grid columns=3 direction=right gap=compact {
   show @student @course @offering @enrollment @assessment
   connect @offers @student-enrolls @offering-enrolls @earns
  }

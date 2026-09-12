@@ -1,0 +1,45 @@
+# flow-equipment-return revision=0
+canvas 1
+collection @flow-equipment-return "Return equipment safely" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" layout=grid {
+  node @receive step "1 · Receive" role=primary size=medium sources=[] {
+  text @detail "Record the item and its borrower."
+}
+  node @inspect decision "Safe to reuse?" role=neutral size=medium sources=[] {
+  text @detail "Inspect before closing the loan."
+}
+  node @service step "Repair" role=warning size=medium sources=[] {
+  text @detail "Quarantine and record the defect."
+}
+  node @clean step "2 · Clean" role=neutral size=medium sources=[] {
+  text @detail "Prepare the kit for its next user."
+}
+  node @restock step "3 · Restock" role=success size=medium sources=[] {
+  text @detail "Return all parts to the assigned shelf."
+}
+  node @receipt end "Loan closed" role=success size=medium sources=[] {
+
+}
+  wire @check @receive -> @inspect "inspect" sources=[]
+  wire @fail @inspect -> @service "no" sources=[]
+  wire @retry @service -> @inspect "recheck" sources=[]
+  wire @pass @inspect -> @clean "yes" sources=[]
+  wire @ready @clean -> @restock "dry and complete" sources=[]
+  wire @close @restock -> @receipt "issue receipt" sources=[]
+  section @equipment-return "RETURN / Inspect before restocking" layout=flow gap=compact {
+  show @receive
+  show @inspect
+  show @service
+  show @clean
+  show @restock
+  show @receipt
+  connect @check
+  connect @fail
+  connect @pass
+  connect @ready
+  connect @close
+  connect @retry source-side=bottom target-side=bottom
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read flow-equipment-return
+(node:21003) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

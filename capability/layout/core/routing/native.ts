@@ -1,11 +1,12 @@
 import type { VisualWire } from '../../contract/records/input.js';
-import type { PlacedNode, Point } from '../../contract/records/geometry.js';
+import type { PlacedNode, Point, Box } from '../../contract/records/geometry.js';
 import { point } from '../../contract/records/geometry.js';
 import type { Connection, RouteValue, Obstacle } from '../../contract/records/problem.js';
 import type { SupplementalMeasurements } from '../../contract/types.js';
 import type { RoutingContext } from '../../contract/types.js';
+import type { Result } from '../../contract/errors.js';
 import type { Attachments } from './endpoints.js';
-import { approach, endpoints } from './endpoints.js';
+import { approach, endpoints, visible, departureSpace } from './endpoints.js';
 import { validRoute } from './checks.js';
 import { union } from '../geometry/bounds.js';
 import { samePoint } from '../geometry/intersections.js';
@@ -15,6 +16,7 @@ export interface RoutePlan {
   readonly attachments: Attachments;
   readonly connection: Connection;
   readonly manual: readonly Point[] | null;
+  readonly clearance: number;
 }
 /** Parallel connections get separate approach lengths without altering the actual row/side attachment. */
 export function plan(
@@ -26,29 +28,61 @@ export function plan(
 ): RoutePlan {
   const resolved = endpoints(wire, nodes);
   const clearance = context.options.routeClearance * 2;
-  const source = approach(resolved.source, clearance + metrics.markers[wire.sourceMarker].advance);
-  const target = approach(resolved.target, clearance + metrics.markers[wire.targetMarker].advance);
+  const sourceSpace = departureSpace(resolved.source, nodes);
+  const targetSpace = departureSpace(resolved.target, nodes);
+  const sourceDistance = departureDistance(
+    wire.id,
+    metrics.markers[wire.sourceMarker].advance,
+    clearance,
+    sourceSpace,
+  );
+  const targetDistance = departureDistance(
+    wire.id,
+    metrics.markers[wire.targetMarker].advance,
+    clearance,
+    targetSpace,
+  );
+  const source = approach(resolved.source, sourceDistance);
+  const target = approach(resolved.target, targetDistance);
   return {
     wire,
     attachments: resolved,
     manual: wire.route.manual ?? null,
+    clearance: Math.min(
+      context.options.routeClearance,
+      sourceSpace - sourceDistance,
+      targetSpace - targetDistance,
+    ),
     connection: {
       id: wire.id,
       source: resolved.source.point,
       target: resolved.target.point,
       sourceSide: resolved.source.side,
       targetSide: resolved.target.side,
+      sourceApproach: source,
+      targetApproach: target,
       checkpoints: parallelCheckpoints(
         source,
         target,
         resolved.source.side,
-        nodes,
+        [visible(wire.source.node, nodes), visible(wire.target.node, nodes)],
         parallel,
         clearance,
         wire.label.height,
       ),
     },
   };
+}
+/** Fixed content may reduce optional clearance; a marker that cannot physically fit is a named placement constraint. */
+function departureDistance(id: string, advance: number, preferred: number, space: number): number {
+  if (advance > space)
+    return reject(
+      'constraint-conflict',
+      id,
+      'Required endpoint marker approach is blocked by fixed content',
+      [id],
+    );
+  return Math.max(advance, Math.min(preferred + advance, space / 2));
 }
 /** Parallel wires reserve distinct outside lanes while keeping the same exact semantic endpoints. */
 function parallelCheckpoints(
@@ -61,7 +95,7 @@ function parallelCheckpoints(
   labelHeight: number,
 ): readonly Point[] {
   if (parallel === 0) return [source, target];
-  const bounds = union(nodes.map((node) => node.box));
+  const bounds = union(nodes.map((node): Box => node.box));
   const distance = (parallel + 1) * (gap + labelHeight);
   return laneCheckpoints(source, target, side, bounds.x - distance, bounds.y - distance);
 }
@@ -88,7 +122,7 @@ export function manual(
     plan.manual,
     plan.attachments.source,
     plan.attachments.target,
-    obstacles.map((item) => item.box),
+    obstacles.map((item): Box => item.box),
     plan.wire,
     metrics,
   );
@@ -111,7 +145,7 @@ function checkedRoute(value: RouteValue): RouteValue {
   value.points.forEach(checkPoint);
   return {
     ...value,
-    points: value.points.filter((item, index) => distinct(item, value.points[index - 1])),
+    points: value.points.filter((item, index): boolean => distinct(item, value.points[index - 1])),
   };
 }
 /** A missing predecessor identifies the first native point. */
@@ -124,24 +158,41 @@ function checkPoint(value: Point): void {
   if (!point.safeParse(value).success)
     reject('engine-failed', 'routing', 'Native route contains invalid coordinates');
 }
-/** Batched native routing is bracketed by cancellation and exact identity checks. */
+/** Owned search outcome; only geometric infeasibility is retryable inside the candidate budget. */
+export type NativeRouteOutcome =
+  | { readonly kind: 'candidate-infeasible' }
+  | { readonly kind: 'routed'; readonly routes: readonly RouteValue[] };
+/** Native failures remain typed until the protected Layout boundary; cancellation wins even after an infeasible result. */
 export async function routeNative(
   connections: readonly Connection[],
   obstacles: readonly Obstacle[],
   context: RoutingContext,
-): Promise<readonly RouteValue[]> {
-  if (connections.length === 0) return [];
+): Promise<NativeRouteOutcome> {
   requireValue(await context.dependencies.jobs.checkpoint(context.job));
-  const values = requireValue(
-    await context.dependencies.routing.route({
-      connections,
-      obstacles,
-      clearance: context.options.routeClearance,
-    }),
-  );
+  const result = await context.dependencies.routing.route({
+    connections,
+    obstacles,
+    clearance: context.options.routeClearance,
+  });
   requireValue(await context.dependencies.jobs.checkpoint(context.job));
-  const expected = connections.map((item) => item.id).toSorted();
-  const actual = values.map((item) => item.id).toSorted();
+  return checkedOutcome(connections, result);
+}
+/** Skip only the owned geometric failure; requireValue preserves operational diagnostics for public execute. */
+function checkedOutcome(
+  connections: readonly Connection[],
+  result: Result<readonly RouteValue[]>,
+): NativeRouteOutcome {
+  if (!result.ok && result.error.code === 'candidate-infeasible')
+    return { kind: 'candidate-infeasible' };
+  return { kind: 'routed', routes: checkedValues(connections, requireValue(result)) };
+}
+/** Exact identities and finite coordinates are operational requirements, never a reason to silently try another candidate. */
+function checkedValues(
+  connections: readonly Connection[],
+  values: readonly RouteValue[],
+): readonly RouteValue[] {
+  const expected = connections.map((item): string => item.id).toSorted();
+  const actual = values.map((item): string => item.id).toSorted();
   if (JSON.stringify(expected) !== JSON.stringify(actual))
     reject('engine-failed', 'routing', 'Native route set differs from requested connections');
   return values.map(checkedRoute);

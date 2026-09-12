@@ -1,0 +1,53 @@
+# state-exhibition-lifecycle revision=0
+canvas 1
+collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" layout=grid {
+  node @start start "Begin" role=neutral size=small sources=[] {
+
+}
+  node @draft state "Draft" role=primary size=medium sources=[] {
+  text @detail "Objects and interpretation are still changing."
+}
+  node @review state "Under review" role=supporting size=large sources=[] {
+  text @detail "Curatorial and rights checks run together."
+}
+  node @published state "Published" role=success size=medium sources=[] {
+  text @detail "The approved exhibition is visible."
+}
+  node @rollback state "Rollback pending" role=warning size=large sources=[] {
+  text @detail "Restore the last approved release and preserve evidence."
+}
+  node @withdrawn state "Withdrawn" role=warning size=medium sources=[] {
+  text @detail "Public access is disabled with a recorded reason."
+}
+  node @end end "Closed" role=neutral size=small sources=[] {
+
+}
+  wire @prepare @start -> @draft "create draft" kind=transition effect="open working version" sources=[]
+  wire @submit @draft -> @review "submit for review" kind=transition guard="required material complete" sources=[]
+  wire @revise @review -> @draft "request revision" kind=transition guard="changes requested" effect="record findings" sources=[]
+  wire @publish @review -> @published "publish approved release" kind=transition guard="curator and rights approved" effect="pin release" sources=[]
+  wire @detect @published -> @rollback "begin rollback" kind=transition guard="material defect found" effect="freeze affected release" sources=[]
+  wire @restore @rollback -> @published "restore prior release" kind=transition guard="safe release available" effect="record rollback receipt" sources=[]
+  wire @withdraw @rollback -> @withdrawn "withdraw exhibition" kind=transition guard="no safe release" effect="post public notice" sources=[]
+  wire @close @withdrawn -> @end "close record" kind=transition guard="retention captured" sources=[]
+  section @lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered gap=compact {
+  show @start
+  show @draft
+  show @review
+  show @published
+  show @rollback
+  show @withdrawn
+  show @end
+  connect @prepare
+  connect @submit
+  connect @revise
+  connect @publish
+  connect @detect
+  connect @restore
+  connect @withdraw
+  connect @close
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read state-exhibition-lifecycle
+(node:23013) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

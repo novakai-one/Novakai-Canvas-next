@@ -1,0 +1,56 @@
+# tree-field-research revision=0
+canvas 1
+collection @tree-field-research "Design a field study" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" layout=grid {
+  node @study concept "Field study" role=primary size=medium sources=[] {
+  text @detail "A question connected to observable evidence."
+}
+  node @question concept "Question" role=neutral size=medium sources=[] {
+  text @detail "What changes between the two habitats?"
+}
+  node @sampling concept "Sampling" role=supporting size=medium sources=[] {
+
+}
+  node @sites concept "Sites" role=neutral size=medium sources=[] {
+  list @detail ["Wetland edge", "Upstream reference"]
+}
+  node @timing concept "Timing" role=neutral size=medium sources=[] {
+  text @detail "Repeat at dawn and after rainfall."
+}
+  node @records concept "Records" role=success size=medium sources=[] {
+
+}
+  node @observations concept "Observations" role=neutral size=medium sources=[] {
+  list @detail ["Species count", "Water clarity"]
+}
+  node @context concept "Context" role=neutral size=medium sources=[] {
+  list @detail ["Weather", "Observer", "Equipment"]
+}
+  wire @ask @study -> @question "defines" kind=parent sources=[]
+  wire @plan @study -> @sampling "plans" kind=parent sources=[]
+  wire @keep @study -> @records "retains" kind=parent sources=[]
+  wire @where @sampling -> @sites "where" kind=parent sources=[]
+  wire @when @sampling -> @timing "when" kind=parent sources=[]
+  wire @measure @records -> @observations "measures" kind=parent sources=[]
+  wire @explain @records -> @context "explains" kind=parent sources=[]
+  section @field-research "FIELD STUDY / Make evidence comparable" mode=tree layout=tree gap=compact {
+  show @study
+  show @question
+  show @sampling
+  show @sites
+  show @timing
+  show @records
+  show @observations
+  show @context
+  connect @ask
+  connect @plan
+  connect @keep
+  connect @where
+  connect @when
+  connect @measure
+  connect @explain
+  root @study
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read tree-field-research
+(node:23341) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

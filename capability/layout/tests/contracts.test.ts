@@ -60,6 +60,7 @@ describe('Layout boundary/native acceptance', () => {
     const cancelled = await pending;
     assert(!cancelled.ok);
     expect(cancelled.error.code).toBe('cancelled');
+    await candidateBudget();
     const nativeFailure = failingNative();
     const router = value(await createRouting(async () => nativeFailure.module));
     const failed = await router.route({
@@ -352,4 +353,85 @@ async function checkColumnLocks(): Promise<void> {
     const scene = value(await layout.arrange(request(layout, after, previous)));
     expect(scene.sections[0]?.nodes[0]?.box).toMatchObject({ x: -400, y: -250 });
   }
+}
+
+/** Real routing remains the success oracle; owned failures exercise budget and operational propagation through the public API. */
+async function candidateBudget(): Promise<void> {
+  const source = flow();
+  const native = await dependencies([source]);
+  const attempts: import('../contract/index.js').RoutingProblem[] = [];
+  const routing: Dependencies['routing'] = {
+    version: native.routing.version,
+    async route(
+      problem,
+    ): Promise<
+      import('../contract/index.js').Result<readonly import('../contract/index.js').RouteValue[]>
+    > {
+      attempts.push(problem);
+      if (attempts.length === 1) return routeFailure('candidate-infeasible');
+      return native.routing.route(problem);
+    },
+  };
+  const layout = createLayout({ ...native, routing });
+  const scene = value(await layout.arrange(request(layout, source)));
+  expect(attempts).toHaveLength(9);
+  expect(
+    value(
+      layout.inspect({
+        projection: source,
+        measurements: metrics(source),
+        options: settings,
+        candidate: scene,
+      }),
+    ).valid,
+  ).toBe(true);
+  const first = [...attempts];
+  attempts.length = 0;
+  expect(value(await layout.arrange(request(layout, source)))).toEqual(scene);
+  expect(attempts).toEqual(first);
+  await terminalRouteFailure(source, 'candidate-infeasible', 10, 'constraint-conflict');
+  await terminalRouteFailure(source, 'engine-failed', 1, 'engine-failed');
+  await terminalRouteFailure(source, 'cancelled', 1, 'cancelled');
+}
+/** Each terminal vector records actual native calls; exhausted search returns a named wire and never a partial scene. */
+async function terminalRouteFailure(
+  source: Projection,
+  code: import('../contract/index.js').ErrorCode,
+  budget: number,
+  expected: import('../contract/index.js').ErrorCode,
+): Promise<void> {
+  const calls: import('../contract/index.js').RoutingProblem[] = [];
+  const layout = await harness([source], {
+    routing: {
+      version: 'controlled-failure',
+      async route(
+        problem,
+      ): Promise<
+        import('../contract/index.js').Result<readonly import('../contract/index.js').RouteValue[]>
+      > {
+        calls.push(problem);
+        return routeFailure(code);
+      },
+    },
+  });
+  const result = await layout.arrange(request(layout, source));
+  assert(!result.ok);
+  expect(result.error.code).toBe(expected);
+  expect(result.error.targets).toHaveLength(1);
+  expect(calls).toHaveLength(budget);
+}
+/** Failure discriminants, never message parsing, define which proposals the routing owner may skip. */
+function routeFailure(
+  code: import('../contract/index.js').ErrorCode,
+): import('../contract/index.js').Result<never> {
+  return {
+    ok: false,
+    error: {
+      code,
+      path: 'controlled',
+      targets: ['wire'],
+      message: 'Controlled routing outcome',
+      recovery: 'Retain the scene',
+    },
+  };
 }

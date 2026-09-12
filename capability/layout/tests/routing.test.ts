@@ -375,3 +375,159 @@ function insideBox(point: Point, box: Box): boolean {
     point.y < box.y + box.height
   );
 }
+
+/** A distant unrelated box cannot select a scene-wide initial lane for either parallel edges or a cycle. */
+it('keeps labelled parallel and return routes local when unrelated boxes move far away', async (): Promise<void> => {
+  const sources = [0, -10000].map(localProjection);
+  const layout = await harness(sources);
+  const scenes = await Promise.all(
+    sources.map(async (source): Promise<Scene> =>
+      value(await layout.arrange(request(layout, source))),
+    ),
+  );
+  scenes.forEach((scene, index): void => {
+    const section = scene.sections[0];
+    const source = sources[index];
+    assert(section && source);
+    expect(section.wires).toHaveLength(3);
+    section.wires.forEach((wire): void => {
+      expect(totalLength(wire.points)).toBeLessThan(1800);
+      expect(section.nodes.every((node): boolean => !hits(wire.points, node.box))).toBe(true);
+      expect(section.nodes.every((node): boolean => !overlap(node.box, wire.labelBox))).toBe(true);
+      expect(section.wires.every((other): boolean => !hits(other.points, wire.labelBox))).toBe(
+        true,
+      );
+    });
+    expect(section.wires[0]?.points).not.toEqual(section.wires[1]?.points);
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: metrics(source),
+          options: settings,
+          candidate: scene,
+        }),
+      ).valid,
+    ).toBe(true);
+  });
+  expect(scenes[0]?.sections[0]?.wires).toEqual(scenes[1]?.sections[0]?.wires);
+});
+/** Only the unrelated box position varies; endpoint positions, labels, topology and side constraints are constant. */
+function localProjection(distant: number): Projection {
+  return project(
+    collection({
+      objects: [object('sender'), object('receiver'), object('unrelated')],
+      relationships: [
+        edge('send', 'sender', 'receiver'),
+        edge('again', 'sender', 'receiver'),
+        edge('retry', 'receiver', 'sender'),
+      ],
+      sections: [
+        section('local', [], {
+          appearances: [
+            { object: 'sender', placement: { x: 0, y: 0, height: 120, locked: true } },
+            { object: 'receiver', placement: { x: 600, y: 0, height: 120, locked: true } },
+            { object: 'unrelated', placement: { x: distant, y: -2000 + distant, locked: true } },
+          ],
+          wires: [{ relationship: 'send' }, { relationship: 'again' }, { relationship: 'retry' }],
+        }),
+      ],
+    }),
+  );
+}
+/** Independent travel oracle includes every actual segment rather than bounding-box size. */
+function totalLength(points: readonly Point[]): number {
+  return points
+    .slice(1)
+    .reduce((total, point, index): number => total + manhattan(points[index], point), 0);
+}
+
+/** Fixed narrow field corridors may reduce optional native clearance while preserving asymmetric cardinality and exact rows. */
+it('routes dense measured fields without extending marker stubs into neighbouring content', async (): Promise<void> => {
+  const original = erProjection();
+  const source: Projection = {
+    ...original,
+    sections: original.sections.map((section): VisualSection => ({
+      ...section,
+      layout: { ...section.layout, gap: 'compact' },
+      nodes: section.nodes.map((node, index): typeof node => ({
+        ...node,
+        placement: {
+          x: index * ((section.nodes[0]?.width ?? 0) + 24),
+          y: 0,
+          height: 160,
+          locked: true,
+        },
+      })),
+    })),
+  };
+  const layout = await harness([source]);
+  const scene = value(await layout.arrange(request(layout, source)));
+  const wire = scene.sections[0]?.wires[0];
+  assert(wire);
+  const a = node(scene, 'user');
+  const b = node(scene, 'order');
+  expect(b.box.x - a.box.x - a.box.width).toBe(24);
+  expect(wire.source.point).toEqual({
+    x: a.box.x + a.box.width,
+    y:
+      a.box.y +
+      (a.measured.content.anchors.find((anchor): boolean => anchor.member === 'id')?.y ?? NaN),
+  });
+  expect(wire.target.point).toEqual({
+    x: b.box.x,
+    y:
+      b.box.y +
+      (b.measured.content.anchors.find((anchor): boolean => anchor.member === 'userId')?.y ?? NaN),
+  });
+  expect(wire.sourceMarker).toBe('one');
+  expect(wire.targetMarker).toBe('zero-many');
+  expect(manhattan(wire.points[0], wire.points[1])).toBeGreaterThanOrEqual(7);
+  expect(manhattan(wire.points.at(-1), wire.points.at(-2))).toBeGreaterThanOrEqual(22);
+  expect(
+    [a, b].every(
+      (node): boolean => !hits(wire.points, node.box) && !overlap(node.box, wire.labelBox),
+    ),
+  ).toBe(true);
+  expect(totalLength(wire.points)).toBeLessThan(1200);
+  expect(
+    value(
+      layout.inspect({
+        projection: source,
+        measurements: metrics(source),
+        options: settings,
+        candidate: scene,
+      }),
+    ).valid,
+  ).toBe(true);
+  await lockedLabelConflict();
+});
+/** A geometrically retained manual lock cannot be silently rerouted when its newly measured label has no adjacent space. */
+async function lockedLabelConflict(): Promise<void> {
+  const source = flow();
+  const original = await harness([source]);
+  const scene = value(await original.arrange(request(original, source)));
+  const points = scene.sections[0]?.wires[0]?.points;
+  assert(points);
+  const locked: Projection = {
+    ...source,
+    sections: source.sections.map((section): VisualSection => ({
+      ...section,
+      nodes: section.nodes.map((source): typeof source => {
+        const placed = node(scene, source.objectId ?? '');
+        return { ...source, placement: { x: placed.box.x, y: placed.box.y, locked: true } };
+      }),
+      wires: section.wires.map((wire): typeof wire => ({
+        ...wire,
+        label: { ...wire.label, width: 20000, height: 20000 },
+        route: { ...wire.route, manual: points, locked: true },
+      })),
+    })),
+  };
+  const layout = await harness([locked]);
+  const rejected = await layout.arrange(request(layout, locked));
+  assert(!rejected.ok);
+  expect(rejected.error.code).toBe('constraint-conflict');
+  expect(rejected.error.message).toContain('measured label');
+  expect(rejected.error.targets).toEqual([locked.sections[0]?.wires[0]?.id]);
+}

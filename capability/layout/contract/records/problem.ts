@@ -61,6 +61,9 @@ export interface Connection {
   readonly target: Point;
   readonly sourceSide: Side;
   readonly targetSide: Side;
+  /** Optional outward marker-clearance points; native routes the free corridor between these stubs. */
+  readonly sourceApproach?: Point;
+  readonly targetApproach?: Point;
   readonly checkpoints: readonly Point[];
 }
 export interface RoutingProblem {

@@ -1,0 +1,6 @@
+[ELIFECYCLE] Command failed with exit code 1.
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes create ../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-research-approval.canvas --request pr5-flow-research-approval
+(node:21027) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+constraint-conflict: Unrecognized key: "index"
+Retain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.

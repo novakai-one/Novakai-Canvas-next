@@ -1,0 +1,344 @@
+[
+  {
+    "path": "capability/layout/core/routing/corridors.ts",
+    "scores": [
+      10,
+      6,
+      7,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "total": 153,
+    "sonarMaximum": 2,
+    "sha256": "cd3ce1e78679efe4680cf9d4edec8894bc4aca791e753869a8dcf57307b09857",
+    "evidence": "Fixed four-side/two-distance vocabulary has no extension slot (P2). No subtyping (P3=7). Pure proposals and explicit ranking hide search geometry; readonly data and explicit signatures; no casts, native I/O or exceptions.",
+    "anchors": [
+      "[localCorridors](../../../capability/layout/core/routing/corridors.ts#L12)",
+      "[outsideCorridor](../../../capability/layout/core/routing/corridors.ts#L19)",
+      "[compareRoutes](../../../capability/layout/core/routing/corridors.ts#L86)"
+    ]
+  },
+  {
+    "path": "capability/layout/core/routing/endpoints.ts",
+    "scores": [
+      10,
+      6,
+      7,
+      10,
+      10,
+      9,
+      10,
+      10,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "total": 147,
+    "sonarMaximum": 2,
+    "sha256": "22242cea8cf3376e856476cdd0293007f18c3a21d035d92a096250d660d5c2e1",
+    "evidence": "Side vocabulary is fixed (P2). No subtyping (P3=7). Side geometry is repeated in edge/approach/obstacleDistance (P6). visible/memberPoint expose value signatures while raising structured faults (P9=5); the actual Layout boundary catches them. Exact measured row lookup, readonly geometry and pure replay substantiate remaining rows.",
+    "anchors": [
+      "[visible](../../../capability/layout/core/routing/endpoints.ts#L18)",
+      "[memberPoint](../../../capability/layout/core/routing/endpoints.ts#L73)",
+      "[endpoints](../../../capability/layout/core/routing/endpoints.ts#L85)",
+      "[departureSpace](../../../capability/layout/core/routing/endpoints.ts#L126)",
+      "[distanceAlongRay](../../../capability/layout/core/routing/endpoints.ts#L170)"
+    ]
+  },
+  {
+    "path": "capability/layout/core/routing/native.ts",
+    "scores": [
+      10,
+      6,
+      7,
+      10,
+      10,
+      9,
+      10,
+      10,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "total": 147,
+    "sonarMaximum": 2,
+    "sha256": "a85126ac89822da4ce6cabc3d8eeb65f159e3de0e71523619a03e14555a4b325",
+    "evidence": "Fixed planning/check sequence (P2); no subtyping (P3=7). Repeated source/target preparation (P6). plan/manual/checkedValues raise typed LayoutFaults absent from their signatures (P9=5). NativeRouteOutcome distinguishes infeasibility; routing/jobs ports are fully consumed; public execute owns recovery. No casts or shared mutable state.",
+    "anchors": [
+      "[plan](../../../capability/layout/core/routing/native.ts#L22)",
+      "[departureDistance](../../../capability/layout/core/routing/native.ts#L77)",
+      "[manual](../../../capability/layout/core/routing/native.ts#L115)",
+      "[routeNative](../../../capability/layout/core/routing/native.ts#L166)",
+      "[checkedOutcome](../../../capability/layout/core/routing/native.ts#L181)",
+      "[checkedValues](../../../capability/layout/core/routing/native.ts#L190)"
+    ]
+  },
+  {
+    "path": "capability/layout/core/routing/wires.ts",
+    "scores": [
+      10,
+      6,
+      7,
+      10,
+      10,
+      9,
+      10,
+      10,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      9,
+      10
+    ],
+    "total": 146,
+    "sonarMaximum": 2,
+    "sha256": "e4bec5334869b1342286fc090d11d8e2eacb9aa5e385d85b9e5d8e01ebc13517",
+    "evidence": "Fixed orchestration steps lack an injected step seam (P2), no subtyping (P3=7), repeated occupied-region assembly (P6). Internal Promise/value signatures propagate structured rejection (P9=5); public execute is named. One curve/line ternary (P15=9). Both chosen routing/job methods are consumed; immutable accumulation and private ranking keep strict scene data clean.",
+    "anchors": [
+      "[candidate](../../../capability/layout/core/routing/wires.ts#L67)",
+      "[attempt](../../../capability/layout/core/routing/wires.ts#L94)",
+      "[alternatives](../../../capability/layout/core/routing/wires.ts#L111)",
+      "[labelAll](../../../capability/layout/core/routing/wires.ts#L171)",
+      "[routeWires](../../../capability/layout/core/routing/wires.ts#L248)"
+    ]
+  },
+  {
+    "path": "capability/layout/adapters/libavoid.ts",
+    "scores": [
+      10,
+      6,
+      5,
+      10,
+      5,
+      10,
+      9,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5,
+      10,
+      7,
+      10
+    ],
+    "total": 137,
+    "sonarMaximum": 2,
+    "sha256": "67b6142fab2953b5fb3b9544d83de1db1c9455d31356d23ef532c525e3c74af6",
+    "evidence": "Fixed ABI/allocation sequence (P2); shared substitution suite is not demonstrated for native handle subtypes (P3=5, not the no-subtyping anchor). Native ABI abstractions are owned by the detail boundary (P5=5). Reflective ABI handling adds one readability blemish (P7). Local handle/native mutation (P13=5). Two conditional-array expressions in endpointStubs (P15=7). Public failures are typed and cleanup is attempted for every allocation; loader injection permits fakes. This file does not meet the literal gate.",
+    "anchors": [
+      "[isNative](../../../capability/layout/adapters/libavoid.ts#L63)",
+      "[connection](../../../capability/layout/adapters/libavoid.ts#L136)",
+      "[readRoute](../../../capability/layout/adapters/libavoid.ts#L165)",
+      "[endpointStubs](../../../capability/layout/adapters/libavoid.ts#L187)",
+      "[route](../../../capability/layout/adapters/libavoid.ts#L193)",
+      "[protectedRoute](../../../capability/layout/adapters/libavoid.ts#L241)",
+      "[createRouting](../../../capability/layout/adapters/libavoid.ts#L249)"
+    ]
+  },
+  {
+    "path": "capability/layout/contract/errors.ts",
+    "scores": [
+      10,
+      6,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5,
+      10,
+      9,
+      10,
+      10,
+      10
+    ],
+    "total": 145,
+    "sonarMaximum": 0,
+    "sha256": "85579fca4425ec172918db471bbdf9f2eabb9da8b24bd1c1a5e4d79123e1788b",
+    "evidence": "Fixed discriminant vocabulary (P2); Error subclass substitution is not demonstrated by a shared Error suite (P3=5). Data/error construction has thin behavior (P11=5). Inherited Error fields remain mutable (P13=9). Named recovery and a readonly discriminated Result support P9/P10; no I/O or casts.",
+    "anchors": [
+      "[failure](../../../capability/layout/contract/errors.ts#L19)",
+      "[LayoutFault](../../../capability/layout/contract/errors.ts#L38)"
+    ]
+  },
+  {
+    "path": "capability/layout/contract/records/problem.ts",
+    "scores": [
+      9,
+      6,
+      7,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "total": 147,
+    "sonarMaximum": 0,
+    "sha256": "35d59a3ce5b334e20a13d83a866e02d6deb1927b834be92c79ca027323398b53",
+    "evidence": "This existing record file combines placement, solver and routing vocabulary (P1=9); fixed schema evolution requires edits (P2); no subtyping (P3=7); data-only hiding is thin (P11=5). Readonly owned records, no callable operations/throws, no I/O/casts; optional approach points preserve the existing plain connection contract.",
+    "anchors": [
+      "[Connection](../../../capability/layout/contract/records/problem.ts#L58)",
+      "[RoutingProblem](../../../capability/layout/contract/records/problem.ts#L69)",
+      "[RouteValue](../../../capability/layout/contract/records/problem.ts#L74)"
+    ]
+  },
+  {
+    "path": "capability/layout/contract/records/engines.ts",
+    "scores": [
+      10,
+      6,
+      7,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "total": 148,
+    "sonarMaximum": 0,
+    "sha256": "adc8f3f46e8676f8fafa74ec0e56138b84c61daf677b2dba3e1a18c9616d6188",
+    "evidence": "Fixed version registry (P2); no subtyping (P3=7); thin shared authority (P11=5). One routing version change, frozen objects/arrays, no I/O/failures/casts or unused policy.",
+    "anchors": [
+      "[nativeEngineVersions](../../../capability/layout/contract/records/engines.ts#L2)",
+      "[defaultEngineVersions](../../../capability/layout/contract/records/engines.ts#L8)"
+    ]
+  },
+  {
+    "path": "capability/layout/tests/routing.test.ts",
+    "scores": [
+      10,
+      6,
+      7,
+      10,
+      10,
+      9,
+      9,
+      10,
+      5,
+      8,
+      9,
+      10,
+      10,
+      10,
+      7,
+      0
+    ],
+    "total": 130,
+    "sonarMaximum": 2,
+    "sha256": "9bfaeead5334b7bdef4949ff0f1726ecb4203ff0d80188290c417e38b3ac24e0",
+    "evidence": "Fixed scenario inventory (P2), no target-file subtyping demonstrated (P3=7), repeated inspection setup (P6), multi-stage scenarios (P7), assertion failures absent from return types (P9=5), suite-level recovery ownership not documented at every entry (P10=8), broad scenario interface (P11=9), return-statement conditional idioms in existing helpers (P15=7). Actual Wasm is required (P16=0). These useful tests are retained; literal test scoring interpretation remains open.",
+    "anchors": [
+      "[routingProjection](../../../capability/layout/tests/routing.test.ts#L146)",
+      "[manualProjection](../../../capability/layout/tests/routing.test.ts#L191)",
+      "[localProjection](../../../capability/layout/tests/routing.test.ts#L416)",
+      "[lockedLabelConflict](../../../capability/layout/tests/routing.test.ts#L506)"
+    ]
+  },
+  {
+    "path": "capability/layout/tests/contracts.test.ts",
+    "scores": [
+      9,
+      6,
+      7,
+      10,
+      10,
+      9,
+      9,
+      10,
+      5,
+      8,
+      9,
+      10,
+      5,
+      10,
+      7,
+      0
+    ],
+    "total": 124,
+    "sonarMaximum": 1,
+    "sha256": "b7ecbc5be515046f14241a743eea355b8f5df31bb03df3d15b86117c5cc18f15",
+    "evidence": "Correctness and timing responsibilities (P1), fixed scenarios (P2), no demonstrated shared subtype suite (P3=7), repeated request/inspection idioms (P6), multi-stage setup (P7), untyped assertions (P9=5), unnamed per-entry recovery (P10), broad suite boundary (P11), local capture/gate mutation (P13=5), conditional return idioms (P15=7), real Wasm and ambient performance clock (P16=0). No useful assertions weakened.",
+    "anchors": [
+      "[gate](../../../capability/layout/tests/contracts.test.ts#L220)",
+      "[scaleProjection](../../../capability/layout/tests/contracts.test.ts#L228)",
+      "[candidateBudget](../../../capability/layout/tests/contracts.test.ts#L359)",
+      "[terminalRouteFailure](../../../capability/layout/tests/contracts.test.ts#L397)"
+    ]
+  },
+  {
+    "path": "capability/layout/tests/arrangement.test.ts",
+    "scores": [
+      9,
+      6,
+      7,
+      10,
+      10,
+      9,
+      9,
+      10,
+      5,
+      8,
+      9,
+      10,
+      5,
+      10,
+      7,
+      0
+    ],
+    "total": 124,
+    "sonarMaximum": 2,
+    "sha256": "f6878442366e80e98ffd9d6ec5e2609b469caf14967c6eae49fa4dea6a9551a6",
+    "evidence": "Existing suite combines placement/sequence and routing-outcome expectations (P1); fixed scenarios (P2); no shared subtype demonstration (P3=7); repeated setup (P6); multi-stage fixtures (P7); assertion throws (P9=5); recovery not named per entry (P10); broad suite (P11); captured placement arrays mutate (P13=5); conditional-return idioms (P15=7); real engines required (P16=0). PR5 changes only the exact expected routing failure code/path/targets.",
+    "anchors": [
+      "[checkTreeSeed](../../../capability/layout/tests/arrangement.test.ts#L432)",
+      "[checkDirectionalSpacing](../../../capability/layout/tests/arrangement.test.ts#L372)",
+      "[checkRelative](../../../capability/layout/tests/arrangement.test.ts#L623)",
+      "[checkColumnsDirection](../../../capability/layout/tests/arrangement.test.ts#L893)"
+    ]
+  }
+]

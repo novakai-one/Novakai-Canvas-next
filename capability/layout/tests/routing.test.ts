@@ -1,3 +1,4 @@
+import { layoutInputKey } from '../contract/index.js';
 import { describe, it, expect, assert } from 'vitest';
 import type { Projection, Scene, Point, Box, VisualSection } from '../contract/index.js';
 import {
@@ -647,9 +648,11 @@ it('rejects full measured marker boxes without shrinking advance or half-height'
     inputKey: value(layout.key(blocked)),
     sections: scene.sections.map((section): typeof section => ({
       ...section,
-      inputKey: section.inputKey.replace(
-        '"one":{"advance":20,"halfHeight":1}',
-        '"one":{"advance":20,"halfHeight":8}',
+      inputKey: layoutInputKey.parse(
+        section.inputKey.replace(
+          '"one":{"advance":20,"halfHeight":1}',
+          '"one":{"advance":20,"halfHeight":8}',
+        ),
       ),
     })),
   };

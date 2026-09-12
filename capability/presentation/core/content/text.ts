@@ -54,7 +54,7 @@ function paragraph(
 }
 /** Public text requests are bounded before native shaping; callers correct unsupported or oversized input. */
 function checkRequest(request: TextRequest): void {
-  if (request.text.length > 100000) reject('limit', 'text', 'Text block exceeds100000characters');
+  if (request.text.length > 100000) reject('limit', 'text', 'Text block exceeds 100000 characters');
   if (
     ![request.width, request.size, request.lineHeight].every(
       (value) => Number.isFinite(value) && value > 0,
@@ -86,7 +86,7 @@ function run(
 export function measureText(request: TextRequest, metrics: MeasurementPort): MeasuredContent {
   checkRequest(request);
   const lines = request.text.split('\n').flatMap((text) => paragraph(text, request, metrics));
-  if (lines.length > 10000) return reject('limit', 'text', 'Text exceeds10000lines');
+  if (lines.length > 10000) return reject('limit', 'text', 'Text exceeds 10000 lines');
   return parse(contentSchema, finish(lines, request, metrics));
 }
 /** Ascender/descender floor prevents line boxes from overlapping even under compact token preferences. */

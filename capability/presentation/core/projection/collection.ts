@@ -88,5 +88,5 @@ function checkScene(sections: readonly VisualSection[]): void {
       section.sequence.reduce((count, item): number => count + item.label.primitives.length, 0),
     0,
   );
-  if (total > 100000) reject('limit', 'scene', 'Scene exceeds100000primitives');
+  if (total > 100000) reject('limit', 'scene', 'Scene exceeds 100000 primitives');
 }

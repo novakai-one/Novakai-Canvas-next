@@ -1,7 +1,7 @@
 # Capability: layout — Modules
 
 ### contract/api.ts; compose.ts; index.ts
-**Exposes:** createLayout(deps):Layout; composeLayout({projection,jobs,wasmResource}):Promise<Result<Layout>>. key({projection,measurements,options,previous}):Result<string>; arrange(LayoutRequest):Promise<Result<Scene>>; route(RouteRequest):Promise<Result<Scene>>; inspect(InspectionRequest):Result<Inspection>; all accept unknown at boundary. Named local↔collection point conversion exports.
+**Exposes:** createLayout(deps):Layout; composeLayout({projection,jobs,wasmResource}):Promise<Result<Layout>>. key({projection,measurements,options,previous}):Result<LayoutInputKey>; arrange(LayoutRequest):Promise<Result<Scene>>; route(RouteRequest):Promise<Result<Scene>>; inspect(InspectionRequest):Result<Inspection>; all accept unknown at boundary. Named local↔collection point conversion exports.
 **Imports:** own declarations/core; compose owns adapter selection.
 **Contract:** complete result or typed error. Authoring retains committed collection/draft on failure. Route-only fixes boxes; inspect independently checks hard constraints. No native result bypasses final inspection.
 

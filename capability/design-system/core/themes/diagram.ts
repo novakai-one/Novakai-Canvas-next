@@ -1,3 +1,4 @@
+import { tokenId } from '../../contract/brands.js';
 import type { ResolvedTokenSet } from '../../contract/records/resolved.js';
 import type {
   StyleProjection,
@@ -80,8 +81,8 @@ export function rootsOnly(source: SourceSet, values: TokenValues): TokenValues {
 /** Export has no transition timeline; layout dimensions and color remain canonical. */
 function noMotion(): TokenValues {
   return {
-    'motion.duration': { type: 'duration', value: 0, unit: 'ms' },
-    'camera.duration': { type: 'duration', value: 0, unit: 'ms' },
+    [tokenId.parse('motion.duration')]: { type: 'duration', value: 0, unit: 'ms' },
+    [tokenId.parse('camera.duration')]: { type: 'duration', value: 0, unit: 'ms' },
   };
 }
 /** Project exact resolved data; the public facade returns typed failure and the host retains its prior scope. */

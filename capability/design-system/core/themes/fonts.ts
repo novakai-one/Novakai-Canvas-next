@@ -1,5 +1,5 @@
 import type { SourceSet } from '../../contract/records/source.js';
-import type { TokenValues } from '../../contract/records/tokens.js';
+import type { TokenValue, TokenValues } from '../../contract/records/tokens.js';
 import type { FontPin } from '../../contract/records/theme.js';
 import { fontPin } from '../../contract/records/theme.js';
 import { member, parsed, list } from '../validation/input.js';
@@ -23,11 +23,7 @@ export function validateFonts(
     ['font.body', 'font.mono'].forEach((id) => requirePinnedFont(id, values, fonts));
 }
 /** Every family in a stack is approved; unsafe fallback members are not ignored. */
-function validateFontValue(
-  id: string,
-  value: TokenValues[string],
-  allowed: readonly string[],
-): void {
+function validateFontValue(id: string, value: TokenValue, allowed: readonly string[]): void {
   if (value.type !== 'fontFamily') return;
   value.value.forEach((family) => {
     if (!allowed.includes(family))

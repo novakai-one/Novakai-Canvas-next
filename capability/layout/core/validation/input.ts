@@ -55,7 +55,7 @@ function checkLimits(projection: Projection): void {
     reject(
       'limit',
       'projection',
-      `Layout limit is${PROJECTION_CAPACITY.maxSections}sections/${PROJECTION_CAPACITY.maxNodes}nodes/${PROJECTION_CAPACITY.maxWires}wires`,
+      `Layout limit is ${PROJECTION_CAPACITY.maxSections} sections / ${PROJECTION_CAPACITY.maxNodes} nodes / ${PROJECTION_CAPACITY.maxWires} wires`,
     );
 }
 /** Every local parent and wire endpoint is checked even if no native engine is called for cached data. */

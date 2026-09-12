@@ -19,7 +19,7 @@ export function keys(
 /** Decode a bounded string without coercion; facade owns input correction. */
 export function text(value: unknown, path: string): string {
   if (typeof value !== 'string') return reject('invalid-input', path, 'string', 'Expected text');
-  if (value.length > 4096) return reject('limit', path, 'at most4096 characters', 'Text too long');
+  if (value.length > 4096) return reject('limit', path, 'at most 4096 characters', 'Text too long');
   return value;
 }
 /** Decode finite numbers without coercion; all dimensions remain explicit. */

@@ -1,4 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import type { TokenId, TokenValues } from '../contract/index.js';
+import { tokenId } from '../contract/index.js';
+import { describe, it, expect, expectTypeOf } from 'vitest';
 import {
   system,
   sources,
@@ -12,11 +14,13 @@ import {
 } from './fixtures.js';
 describe('Design System tokens', () => {
   it('1 resolves sixteen exact primary defaults, inherited types and both reference forms immutably', () => {
+    expectTypeOf<string>().not.toExtend<TokenId>();
+    expectTypeOf<keyof TokenValues>().toEqualTypeOf<TokenId>();
     const input = sources();
     const before = JSON.stringify(input);
     const resolved = must(ui({ sources: input }));
     expect(resolved.primary).toHaveLength(16);
-    expect(resolved.primary.map((id) => resolved.values[id]?.value)).toEqual([
+    expect(resolved.primary.map((id) => resolved.values[tokenId.parse(id)]?.value)).toEqual([
       '#f4f6f8',
       '#ffffff',
       '#17212b',
@@ -41,8 +45,14 @@ describe('Design System tokens', () => {
       c: { $value: { $ref: '#/sample/a/$value' } },
     });
     const inherited = must(ui({ sources: { ...input, definitions } }));
-    expect(inherited.values['sample.c']).toEqual({ type: 'dimension', value: 7, unit: 'px' });
-    expect(inherited.values['sample.b']).toEqual(inherited.values['sample.c']);
+    expect(inherited.values[tokenId.parse('sample.c')]).toEqual({
+      type: 'dimension',
+      value: 7,
+      unit: 'px',
+    });
+    expect(inherited.values[tokenId.parse('sample.b')]).toEqual(
+      inherited.values[tokenId.parse('sample.c')],
+    );
     expect(JSON.stringify(input)).toBe(before);
     expect(Object.isFrozen(resolved.values)).toBe(true);
     expect(must(ui()).digest).toBe(resolved.digest);
@@ -124,9 +134,9 @@ describe('Design System tokens', () => {
     expect(larger.css['--nv-diagram-row-min']).toBe('42px');
     expect(Object.keys(larger.css)).toEqual(Object.keys(resolved.css));
     const pinned = must(diagram());
-    expect(pinned.values['diagram.widthSmall']?.value).toBe(180);
-    expect(pinned.values['diagram.widthMedium']?.value).toBe(240);
-    expect(pinned.values['diagram.widthLarge']?.value).toBe(320);
+    expect(pinned.values[tokenId.parse('diagram.widthSmall')]?.value).toBe(180);
+    expect(pinned.values[tokenId.parse('diagram.widthMedium')]?.value).toBe(240);
+    expect(pinned.values[tokenId.parse('diagram.widthLarge')]?.value).toBe(320);
     expect(pinned.css['--nv-diagram-edge-stroke']).toBe('2px');
   });
   it('4 respects density, text and pointer floors plus OS motion without changing diagram identity', () => {

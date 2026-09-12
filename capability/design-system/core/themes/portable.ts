@@ -4,7 +4,7 @@ import type {
   FontPin,
   PresetPin,
 } from '../../contract/records/theme.js';
-import type { TokenValues } from '../../contract/records/tokens.js';
+import type { TokenValue, TokenValues } from '../../contract/records/tokens.js';
 import type { SourceSet } from '../../contract/records/source.js';
 import { portableTheme } from '../../contract/records/portable-schema.js';
 import { parsed, member } from '../validation/input.js';
@@ -29,7 +29,7 @@ export function toPortable(
 /** The unit mapping is explicit; no scene camera scale enters token data. */
 function portableValue(
   id: string,
-  value: TokenValues[string],
+  value: TokenValue,
   values: TokenValues,
   fonts: readonly FontPin[],
 ): PortableToken {
@@ -40,14 +40,14 @@ function portableValue(
   return nonFontPortable(value);
 }
 /** Scalar/duration use the existing portable dimension envelope with distinct units. */
-function nonFontPortable(value: TokenValues[string]): PortableToken {
+function nonFontPortable(value: TokenValue): PortableToken {
   if (value.type === 'color') return value;
   if (typeof value.value !== 'number')
     return reject('type-mismatch', 'font', 'numeric token', 'Unexpected font');
   return { type: 'dimension', value: value.value, unit: portableUnit(value.type) };
 }
 /** Finite supported unit vocabulary stays local to this translation boundary. */
-function portableUnit(type: TokenValues[string]['type']): 'px' | 'ms' | 'scalar' {
+function portableUnit(type: TokenValue['type']): 'px' | 'ms' | 'scalar' {
   if (type === 'duration') return 'ms';
   if (type === 'number') return 'scalar';
   return 'px';
@@ -91,31 +91,27 @@ function validateMembers(values: TokenValues, source: SourceSet, roles: readonly
   );
 }
 /** Exact admitted font digest/family correspondence is verified before dropping its portable envelope. */
-function unpackValue(
-  id: string,
-  value: PortableToken,
-  fonts: readonly FontPin[],
-): TokenValues[string] {
+function unpackValue(id: string, value: PortableToken, fonts: readonly FontPin[]): TokenValue {
   if (value.type === 'font') return unpackFont(id, value, fonts);
   if (value.type === 'color') return value;
   return unpackNumber(value);
 }
 /** Portable numeric units map one-to-one to supported evaluator types. */
-function unpackNumber(value: Extract<PortableToken, { type: 'dimension' }>): TokenValues[string] {
+function unpackNumber(value: Extract<PortableToken, { type: 'dimension' }>): TokenValue {
   return numberReaders[value.unit](value.value);
 }
 const numberReaders = {
-  px: (value: number): TokenValues[string] => ({ type: 'dimension', value, unit: 'px' }),
-  world: (value: number): TokenValues[string] => ({ type: 'dimension', value, unit: 'px' }),
-  ms: (value: number): TokenValues[string] => ({ type: 'duration', value, unit: 'ms' }),
-  scalar: (value: number): TokenValues[string] => ({ type: 'number', value }),
+  px: (value: number): TokenValue => ({ type: 'dimension', value, unit: 'px' }),
+  world: (value: number): TokenValue => ({ type: 'dimension', value, unit: 'px' }),
+  ms: (value: number): TokenValue => ({ type: 'duration', value, unit: 'ms' }),
+  scalar: (value: number): TokenValue => ({ type: 'number', value }),
 };
 /** Fonts with the right family but wrong bytes are not interchangeable. */
 function unpackFont(
   id: string,
   value: Extract<PortableToken, { type: 'font' }>,
   fonts: readonly FontPin[],
-): TokenValues[string] {
+): TokenValue {
   const found = fonts.some((font) => font.family === value.family && font.digest === value.digest);
   if (!found) return reject('missing-font', id, 'exact admitted font', 'Portable font unavailable');
   return { type: 'fontFamily', value: [value.family] };

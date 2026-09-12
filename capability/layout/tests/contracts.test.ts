@@ -1,6 +1,13 @@
 /** Public Layout boundary scenarios are replayable; Vitest owns assertion reporting and the developer fixes failures before rerunning. */
-import { describe, it, expect, assert } from 'vitest';
-import type { Projection, Dependencies } from '../contract/index.js';
+import { describe, it, expect, assert, expectTypeOf } from 'vitest';
+import type {
+  Projection,
+  Dependencies,
+  Job,
+  LayoutInputKey,
+  Layout,
+  Result,
+} from '../contract/index.js';
 import { createLayout } from '../contract/index.js';
 import { createRouting } from '../adapters/libavoid.js';
 import { failingNative } from './native-fixture.js';
@@ -85,6 +92,9 @@ describe('Layout boundary/native acceptance', () => {
     expect(nativeFailure.disposed).toEqual([...nativeFailure.allocated].reverse());
   });
   it('11 — rejects malformed input/native output and independently detects forged geometry', async () => {
+    expectTypeOf<string>().not.toExtend<LayoutInputKey>();
+    expectTypeOf<Job['inputKey']>().toEqualTypeOf<LayoutInputKey>();
+    expectTypeOf<ReturnType<Layout['key']>>().toEqualTypeOf<Result<LayoutInputKey>>();
     const source = flow();
     const duplicate: Projection = {
       ...source,
@@ -125,6 +135,7 @@ describe('Layout boundary/native acceptance', () => {
     assert(!missing.ok);
     expect(missing.error.code).toBe('engine-failed');
     const scene = value(await layout.arrange(input));
+    expect(scene.inputKey).toBe(input.job.inputKey);
     const sourceSection = scene.sections[0];
     assert(sourceSection);
     const wrongContent = {

@@ -63,3 +63,6 @@ export { readScene } from './api.js';
 export type { SceneReaderOwners } from './types.js';
 
 export { defaultEngineVersions } from './records/engines.js';
+
+export type { LayoutInputKey } from './brands.js';
+export { inputKey as layoutInputKey } from './brands.js';

@@ -7,7 +7,7 @@
 ```text
 capability/design-system/
   contract/{index,api,compose,types,brands,errors}.ts
-  contract/{token-types,token-schemas,react-types}.ts
+  contract/react-types.ts
   contract/records/{tokens,source,theme,preferences,resolved,artifacts}.ts
   contract/ports/{identity,token-source,token-artifacts,scope-target}.ts
   contract/generated/{token-names,breakpoints}.ts
@@ -28,5 +28,5 @@ capability/design-system/
   tests/{fixtures,tokens,themes,artifacts,primitives,panels}.test.ts[x]
 ```
 
-**Imports:** consumers→contract/index only. Core→own declaration records/core; no domain capability, React, CSS, browser or Node imports. Root token-types/schemas are declaration facades; core uses records. React types never enter core. Compose alone wires sibling adapters/slots; own local CSS assets are permitted resources, not behavioral imports.
+**Imports:** consumers→contract/index only. Core→own declaration records/core; no domain capability, React, CSS, browser or Node imports. Public exports are explicitly listed; core uses declaration records directly. React types never enter core. Compose alone wires sibling adapters/slots; own local CSS assets are permitted resources, not behavioral imports.
 **Environment bindings:** importing the public entry for pure token work must not load CSS/DOM/filesystem modules. React/style and Node-build adapters load only in their explicitly requested binding factories. Bound component identities are stable; components are not recreated during render. Additional focused files permitted; no placeholder controls or fake success adapters.

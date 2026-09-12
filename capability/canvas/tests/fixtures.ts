@@ -1,3 +1,4 @@
+import { layoutInputKey } from '../../layout/contract/index.js';
 import { descendantId, objectId } from '@novakai/canvas-model';
 import { assert } from 'vitest';
 import { visualNode, content } from '@novakai/canvas-presentation';
@@ -93,7 +94,7 @@ export function scene(revision = 0): Scene {
   return {
     collectionId: 'demo',
     revision,
-    inputKey: `scene-${revision}`,
+    inputKey: layoutInputKey.parse(`scene-${revision}`),
     engineVersions: ['fixture'],
     bounds: { x: 80, y: 160, width: 560, height: 280 },
     warnings: [],
@@ -107,7 +108,7 @@ export function scene(revision = 0): Scene {
           content: measured('Engineering'),
           box: { x: -20, y: -40, width: 180, height: 24 },
         },
-        inputKey: 'flow',
+        inputKey: layoutInputKey.parse('flow'),
         nodes,
         wires: [
           {
@@ -320,7 +321,7 @@ export function sequenceScene(): Scene {
           box: { x: -20, y: -40, width: 180, height: 24 },
           content: measured('Concurrent authoring'),
         },
-        inputKey: 'sequence',
+        inputKey: layoutInputKey.parse('sequence'),
         nodes: participants,
         wires: [],
         sequence,

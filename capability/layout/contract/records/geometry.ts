@@ -1,3 +1,4 @@
+import type { LayoutInputKey } from '../brands.js';
 import { z } from 'zod';
 import { identity, coordinate, dimension } from '../brands.js';
 import type { VisualNode, MeasuredContent, MarkerKind, VisualSequenceItem } from './input.js';
@@ -79,7 +80,7 @@ export interface PlacedSection {
   readonly origin: Point;
   readonly box: Box;
   readonly title: { readonly content: MeasuredContent; readonly box: Box };
-  readonly inputKey: string;
+  readonly inputKey: LayoutInputKey;
   readonly nodes: readonly PlacedNode[];
   readonly wires: readonly RoutedWire[];
   readonly sequence: SequenceGeometry;
@@ -98,7 +99,7 @@ export interface Adjustment {
 export interface Scene {
   readonly collectionId: string;
   readonly revision: number;
-  readonly inputKey: string;
+  readonly inputKey: LayoutInputKey;
   readonly engineVersions: readonly string[];
   readonly sections: readonly PlacedSection[];
   readonly bounds: Box;

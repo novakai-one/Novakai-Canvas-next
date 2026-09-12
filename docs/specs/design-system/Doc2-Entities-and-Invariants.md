@@ -50,7 +50,7 @@ PanelBody "1" ── "0..1" BodyHeader; "1" ──< "n" Section slots
 | File scope | Estimated lines each |
 |---|---:|
 | contract/index,api,compose,types,brands,errors | 55;120;160;90;45;60 |
-| contract/token-types,token-schemas,react-types | 30;35;220 |
+| contract/react-types | 220 |
 | contract/records/tokens,source,theme,preferences,resolved,artifacts | 120;90;100;70;130;70 |
 | contract/ports/identity,token-source,token-artifacts,scope-target | 25;30;35;35 |
 | core/tokens/read,flatten,references,recipes,values,bounds,contrast,resolve,emit | 120;110;140;130;100;90;150;150;130 |

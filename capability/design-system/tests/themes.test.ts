@@ -1,3 +1,4 @@
+import { tokenId } from '../contract/index.js';
 import { describe, it, expect } from 'vitest';
 import { resolvedStyle } from '@novakai/canvas-presentation';
 import { composeTemplates, digest, type ThemePayload } from '@novakai/canvas-templates';
@@ -67,7 +68,9 @@ describe('Design System themes', () => {
     expect(exported.css['--nv-motion-duration']).toBe('0ms');
     expect(exported.css['--nv-camera-duration']).toBe('0ms');
     const normal = must(diagram());
-    expect(exported.values['type.base']).toEqual(normal.values['type.base']);
+    expect(exported.values[tokenId.parse('type.base')]).toEqual(
+      normal.values[tokenId.parse('type.base')],
+    );
     expect(must(system.projectDiagram(normal)).bodyFont).toEqual({
       family: 'Inter',
       digest: 'a'.repeat(64),

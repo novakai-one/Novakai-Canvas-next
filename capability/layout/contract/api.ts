@@ -1,3 +1,4 @@
+import type { LayoutInputKey } from './brands.js';
 import type { SceneReaderOwners } from './types.js';
 import { admitScene } from '../core/validation/admission.js';
 import type { Dependencies, Layout, Inspection } from './types.js';
@@ -10,8 +11,11 @@ import { arrange, inspect, reroute } from '../core/arrangement/pipeline.js';
 /** Bind required owner/native roles once; every public operation snapshots inputs and returns a typed outcome. */
 export function createLayout(dependencies: Dependencies): Layout {
   /** Compute the full key before the host registers its current job; route-only uses fixed as previous here. */
-  function key(input: unknown): Result<string> {
-    return protect(() => requestKey(readKey(input, dependencies.projection), dependencies));
+  function key(input: unknown): Result<LayoutInputKey> {
+    return protect(() => {
+      const request = readKey(input, dependencies.projection);
+      return requestKey(request, dependencies);
+    });
   }
   /** Derive all geometry atomically; Authoring retains the prior committed scene on rejection. */
   function arrangeScene(input: unknown): Promise<Result<Scene>> {

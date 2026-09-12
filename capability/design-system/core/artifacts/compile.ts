@@ -1,6 +1,6 @@
 import type { SourceSet } from '../../contract/records/source.js';
 import type { Identity } from '../../contract/ports/identity.js';
-import type { ArtifactSet, Artifact } from '../../contract/records/artifacts.js';
+import type { ArtifactSet } from '../../contract/records/artifacts.js';
 import type { UiPreferences, Environment } from '../../contract/records/preferences.js';
 import { resolveUi, themePin } from '../themes/resolve.js';
 import { cssName } from '../tokens/emit.js';
@@ -189,4 +189,3 @@ function breakpoints(source: SourceSet): string {
     ',\n} as const;\n'
   );
 }
-export type { Artifact };

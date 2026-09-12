@@ -1,3 +1,4 @@
+import { layoutInputKey } from '../../layout/contract/index.js';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { assert } from 'vitest';
@@ -199,7 +200,7 @@ function placed(projection: Projection, label: MeasuredContent): PlacedSection {
       content: section.title,
       box: { x: 10, y: 10, width: section.title.width, height: section.title.height },
     },
-    inputKey: projection.inputKey,
+    inputKey: layoutInputKey.parse(projection.inputKey),
     nodes,
     wires: [
       {
@@ -366,7 +367,7 @@ export async function fixture(): Promise<Fixture> {
   const scene: Scene = {
     collectionId: original.id,
     revision: 7,
-    inputKey: projection.inputKey,
+    inputKey: layoutInputKey.parse(projection.inputKey),
     engineVersions: ['explicit-contract-fixture'],
     sections: [section],
     bounds: section.box,
@@ -394,7 +395,7 @@ export async function fixture(): Promise<Fixture> {
     identity: {
       collectionId: original.id,
       revision: 7,
-      inputKey: projection.inputKey,
+      inputKey: layoutInputKey.parse(projection.inputKey),
       title: original.title,
     },
     collection: original,

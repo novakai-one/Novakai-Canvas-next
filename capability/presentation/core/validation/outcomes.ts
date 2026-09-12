@@ -34,7 +34,7 @@ export function clone<T>(value: T): T {
   const encoded = JSON.stringify(value);
   if (encoded === undefined) return reject('invalid-input', '$', 'Expected JSON input');
   if (new TextEncoder().encode(encoded).byteLength > 16 * 1024 * 1024)
-    return reject('limit', '$', 'Input exceeds16MiB');
+    return reject('limit', '$', 'Input exceeds 16 MiB');
   return structuredClone(value);
 }
 /** Only detached output is frozen; native font/provider objects are never recursively frozen. */

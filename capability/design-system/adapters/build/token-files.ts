@@ -132,7 +132,6 @@ async function activate(root: string, artifacts: ArtifactSet): Promise<void> {
   }
 }
 /** Read one manifest and pin it for the entire operation, verifying its generation and all bytes. */
-
 async function readActive(root: string, checks: BuildChecks): Promise<Result<ArtifactSet>> {
   try {
     const manifest = await readJson(join(root, 'manifest.json'));

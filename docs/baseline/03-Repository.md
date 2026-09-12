@@ -150,8 +150,6 @@ capability/design-system/             # supporting library, not another domain c
 │   ├── index.ts
 │   ├── api.ts
 │   ├── compose.ts
-│   ├── token-types.ts
-│   ├── token-schemas.ts
 │   ├── ports/token-source.ts
 │   ├── ports/token-artifacts.ts
 │   ├── react-types.ts              # explicit environment-specific binding types

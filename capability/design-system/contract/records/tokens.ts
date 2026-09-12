@@ -19,5 +19,5 @@ export interface TokenDefinition {
   readonly type: TokenType;
   readonly expression: Expression;
 }
-export type TokenValues = Readonly<Record<string, TokenValue>>;
+export type TokenValues = Readonly<Record<TokenId, TokenValue>>;
 export type Dependencies = Readonly<Record<string, readonly string[]>>;

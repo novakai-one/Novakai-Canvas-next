@@ -25,7 +25,7 @@ export function parse<T>(schema: Parser<T>, input: unknown): Result<T> {
 }
 /** Only plain finite JSON data is supported; reject executable/prototyped/deep input before cloning. */
 function inspect(value: unknown, depth: number): void {
-  if (depth > 48) throw new InputFault('invalid-input', '$', 'Input nesting exceeds48');
+  if (depth > 48) throw new InputFault('invalid-input', '$', 'Input nesting exceeds 48');
   inspectValue(value, depth);
 }
 /** Split scalar validation from container traversal so failure paths remain readable. */
@@ -54,7 +54,7 @@ export function clone<T>(value: T): T {
   inspect(value, 0);
   const encoded = JSON.stringify(value);
   if (new TextEncoder().encode(encoded).byteLength > 8 * 1024 * 1024)
-    throw new InputFault('invalid-input', '$', 'Operation exceeds8MiB');
+    throw new InputFault('invalid-input', '$', 'Operation exceeds 8 MiB');
   return structuredClone(value);
 }
 /** Freeze only detached successful data; providers and original caller objects retain ownership. */

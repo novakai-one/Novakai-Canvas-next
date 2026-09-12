@@ -1,3 +1,4 @@
+import { tokenId } from '../../contract/brands.js';
 import type { SourceSet } from '../../contract/records/source.js';
 import type { Identity } from '../../contract/ports/identity.js';
 import type { PortableTheme, FontPin, PresetPin } from '../../contract/records/theme.js';
@@ -33,8 +34,8 @@ export function resolveThemeData(
   const known = Object.fromEntries(source.definitions.map((item) => [item.id, item]));
   const overrides = readOverrides(record(data.overrides, 'overrides'), known);
   const fontValues: TokenValues = {
-    'font.body': { type: 'fontFamily', value: [body.family] },
-    'font.mono': { type: 'fontFamily', value: [mono.family] },
+    [tokenId.parse('font.body')]: { type: 'fontFamily', value: [body.family] },
+    [tokenId.parse('font.mono')]: { type: 'fontFamily', value: [mono.family] },
   };
   const resolved = resolveDefinitions(
     changedDefinitions(source, { ...base.values, ...overrides, ...fontValues }),
@@ -79,7 +80,10 @@ function uiBase(
   return {
     values: {
       ...theme.overrides,
-      'type.base': member(resolveDefinitions(source.definitions).values, 'type.diagramDefault'),
+      [tokenId.parse('type.base')]: member(
+        resolveDefinitions(source.definitions).values,
+        'type.diagramDefault',
+      ),
     },
     roles: source.policy.roles,
     pin: null,

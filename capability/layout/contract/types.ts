@@ -1,3 +1,4 @@
+import type { LayoutInputKey } from './brands.js';
 import { z } from 'zod';
 import type { ProjectionReader } from './ports/projection.js';
 import type { Result, Diagnostic } from './errors.js';
@@ -82,7 +83,7 @@ export type RoutingContext = WorkContext<Pick<GeometryDependencies, 'routing' | 
 export type DerivationContext = WorkContext<GeometryDependencies>;
 /** Public geometry derivation cannot mutate meaning; Authoring retains prior state on any failed result. */
 export interface Layout {
-  key(input: unknown): Result<string>;
+  key(input: unknown): Result<LayoutInputKey>;
   arrange(input: unknown): Promise<Result<Scene>>;
   route(input: unknown): Promise<Result<Scene>>;
   inspect(input: unknown): Result<Inspection>;

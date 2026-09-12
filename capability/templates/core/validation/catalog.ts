@@ -138,7 +138,7 @@ function checkRecipe(input: unknown): Result<void> {
 /** Canonical recipe manifests retain first-class exact pin identities and bounded source bytes. */
 function recipeCorrespondence(value: RecipePayload): Result<void> {
   if (new TextEncoder().encode(value.source).byteLength > 1024 * 1024)
-    return fail('invalid-input', 'source', 'Recipe source exceeds1MiB');
+    return fail('invalid-input', 'source', 'Recipe source exceeds 1 MiB');
   return uniqueManifest(value);
 }
 /** Direct assets/themes are sets with deterministic sorted order established by the syntax codec. */

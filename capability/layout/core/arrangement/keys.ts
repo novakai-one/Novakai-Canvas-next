@@ -1,3 +1,6 @@
+import { inputKey } from '../../contract/brands.js';
+import type { LayoutInputKey } from '../../contract/brands.js';
+import { parse } from '../validation/outcomes.js';
 import { nativeEngineVersions } from '../../contract/records/engines.js';
 import type { VisualSection } from '../../contract/records/input.js';
 import type { LayoutOptions, SupplementalMeasurements } from '../../contract/types.js';
@@ -25,9 +28,15 @@ export function sectionKey(
   metrics: SupplementalMeasurements,
   options: LayoutOptions,
   engines: readonly string[],
-): string {
+): LayoutInputKey {
   const headings = metrics.branchHeadings.filter((item) => item.section === section.id);
-  return encoded({ section, metrics: { ...metrics, branchHeadings: headings }, options, engines });
+  const canonicalInput = encoded({
+    section,
+    metrics: { ...metrics, branchHeadings: headings },
+    options,
+    engines,
+  });
+  return parse(inputKey, canonicalInput);
 }
 /** Previous content/keys never nest recursively in new request keys; only geometry preferences affect derivation. */
 function geometry(section: SectionCandidate): unknown {
@@ -43,12 +52,13 @@ function geometry(section: SectionCandidate): unknown {
 export function requestKey(
   request: Omit<CheckedLayoutRequest, 'job'>,
   dependencies: VersionedEngines,
-): string {
-  return encoded({
+): LayoutInputKey {
+  const canonicalInput = encoded({
     projection: request.projection,
     measurements: request.measurements,
     options: request.options,
     previous: request.previous?.sections.map(geometry) ?? null,
     engines: versions(dependencies),
   });
+  return parse(inputKey, canonicalInput);
 }

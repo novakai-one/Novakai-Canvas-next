@@ -39,7 +39,7 @@ export function snapshot(value: unknown): unknown {
   const encoded = encodeInput(value);
   if (encoded === undefined) return reject('invalid-input', '$', 'Layout requires JSON data');
   if (new TextEncoder().encode(encoded).byteLength > 16 * 1024 * 1024)
-    return reject('limit', '$', 'Layout input exceeds16MiB');
+    return reject('limit', '$', 'Layout input exceeds 16 MiB');
   return JSON.parse(encoded);
 }
 /** Serialization failures are input failures, not an invented native engine fault. */

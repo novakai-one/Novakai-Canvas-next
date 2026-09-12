@@ -1,6 +1,6 @@
 import type { SourceSet, ThemeDelta } from '../../contract/records/source.js';
 import { sourceHeader, themeHeader } from '../../contract/records/validation.js';
-import type { TokenDefinition, TokenValues } from '../../contract/records/tokens.js';
+import type { TokenValue, TokenDefinition, TokenValues } from '../../contract/records/tokens.js';
 import { parsed, member } from '../validation/input.js';
 import { reject } from '../validation/outcomes.js';
 import { flatten } from './flatten.js';
@@ -58,7 +58,7 @@ function readOverride(
   id: string,
   value: unknown,
   known: Readonly<Record<string, TokenDefinition>>,
-): TokenValues[string] {
+): TokenValue {
   const definition = member(known, id);
   if (definition.expression.op !== 'literal')
     return reject('invalid-input', id, 'base literal token', 'Cannot override a derived token');

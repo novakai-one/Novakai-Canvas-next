@@ -63,9 +63,10 @@ function readAggregate(
     return reject('invalid-input', path, '2..8 operands', 'Invalid recipe arity');
   return { op, values: values.map((value) => readRecipe(value, path, depth)) };
 }
+/** Literal values use readValueExpression; every non-literal recipe operator must have a reader. */
 const recipeReaders: Readonly<
   Record<
-    string,
+    Exclude<Expression['op'], 'literal'>,
     (data: Readonly<Record<string, unknown>>, path: string, depth: number) => Expression
   >
 > = {

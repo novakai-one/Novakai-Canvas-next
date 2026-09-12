@@ -7,4 +7,8 @@ export const dimension = z.number().finite().positive().max(1000000);
 export const inputKey = z
   .string()
   .min(1)
-  .max(16 * 1024 * 1024);
+  .max(16 * 1024 * 1024)
+  .brand<'LayoutInputKey'>();
+
+/** Checked derivation identity; arbitrary strings cannot be used as admitted job or scene keys. */
+export type LayoutInputKey = z.infer<typeof inputKey>;

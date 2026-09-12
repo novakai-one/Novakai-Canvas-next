@@ -5,7 +5,7 @@
 |Record|Fields / type|Cardinality / rule|
 |---|---|---|
 |ProjectionInput|Readonly Presentation Projection|One exact measured revision; no recreated semantic vocabulary|
-|JobKeyInput|projection,measurements,options,previous|key(input):Result<string> produces complete canonical job identity before scheduling; route-only supplies fixed as previous|
+|JobKeyInput|projection,measurements,options,previous|key(input):Result<LayoutInputKey> produces a checked branded canonical identity for jobs/scenes before scheduling; route-only supplies fixed as previous|
 |LayoutRequest|projection,measurements,previous:Scene or null,options,job:{id,inputKey}|One derivation; previous only a validated hint from same collection|
 |RouteRequest / InspectionRequest|projection,measurements,options,fixed:Scene / candidate:Scene|Mandatory geometry; previous hint is never inspection authority|
 |SupplementalMeasurements|version,branchHeadings:{section,fragment,branch,content:MeasuredContent}[],markers:Record<MarkerKind,{advance,halfHeight}>|Presentation-supplied exact heading/marker metrics; complete keys, finite bounds; included in derivation identity|

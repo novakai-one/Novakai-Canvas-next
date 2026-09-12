@@ -1,4 +1,9 @@
-import type { TokenDefinition, TokenValues, Dependencies } from '../../contract/records/tokens.js';
+import type {
+  TokenValue,
+  TokenDefinition,
+  TokenValues,
+  Dependencies,
+} from '../../contract/records/tokens.js';
 import { member, depthLimit } from '../validation/input.js';
 import { reject } from '../validation/outcomes.js';
 import { evaluate } from './recipes.js';
@@ -45,7 +50,7 @@ function resolveReady(
   );
 }
 /** Declared output type must agree with the recipe's actual primitive. */
-function evaluateDefinition(definition: TokenDefinition, values: TokenValues): TokenValues[string] {
+function evaluateDefinition(definition: TokenDefinition, values: TokenValues): TokenValue {
   const value = evaluate(definition.expression, values, definition.id);
   if (value.type !== definition.type)
     return reject('type-mismatch', definition.id, definition.type, 'Recipe or alias type differs');

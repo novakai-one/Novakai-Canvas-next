@@ -1,19 +1,35 @@
 # Agent-authored diagram work ledger
-Priority: polished broad DSL authoring. Human UI expansion deferred. Original dirty repository and original5174 server untouched.
 
-|Slice|State|
-|---|---|
-|Initial Kimi K3 + Astra CLI|Exactly one proposal review each; all3before/3target images supplied and inspected; verified plan correction complete.|
-|PR1 composition|Specs, pressure/fix, build, A1/A2, verified correction plus permitted alignment complete. DraftPR15.|
-|PR2 typography|Same bounded SOP complete. DraftPR16.|
-|PR3 resources|Same bounded SOP complete. DraftPR17.|
-|PR4 arrangement|Same bounded SOP complete, including sequence spacing alignment. DraftPR18.|
-|PR5 routing|One verified A1/A2 correction plus integrated tree alignment complete6d8b60b;175tests and24retained native cases pass. Actual mixedcanvas integration renders. DraftPR19.|
-|PR6 recipes/acceptance|Specs pressure/fix done; eight-mode recipes,24original DSL examples, capacity and precise geometry round-trip implemented.177tests pass. Mixedcollection revision3 persists restart. A1/A2 each one bounded round complete; one verified correction integrated. All24 final-frame text minima exceed12px; membership/research short-route detours triggered the one permitted bounded alignment, active. Revision3 survives restart; live DSL edit preserves camera.|
+Priority: polished, broad DSL authoring. Human UI expansion deferred. Original dirty repository and original port 5174 server untouched.
 
-Current production/proof: Novakai-Canvas-next-proof, feat/diagram-proof-preflight. Live5185 workspace.local/atlas-proof. Main routingbranch feat/agent-diagram-routing. No GitHub merges.
+| Slice | State |
+| --- | --- |
+| Initial Kimi K3 + Astra CLI | Exactly one proposal review each; all three before and three target images supplied. Verified plan correction complete. |
+| PR1 composition | Five specs, pressure/fix, build, A1/A2, verified correction and permitted alignment complete. Draft PR15. |
+| PR2 typography | Same bounded SOP complete. Draft PR16. |
+| PR3 resources | Same bounded SOP complete. Draft PR17. |
+| PR4 arrangement | Same bounded SOP complete, including sequence spacing alignment. Draft PR18. |
+| PR5 routing | Same bounded SOP complete, including tree routing alignment. Draft PR19. |
+| PR6 recipes/acceptance | Five specs, one pressure/fix, one A1/A2/fix and the additional bounded Layout alignment complete. Final 24 original diagrams captured and individually inspected. Final draft PR being prepared. |
+
+Current proof: `Novakai-Canvas-next-proof`, branch `feat/agent-diagram-atlas`. Live collection: http://127.0.0.1:5185/?collection=agent-diagram-atlas . No active delegated builders; no GitHub merges.
+
+## Delivered evidence
+
+- Three original DSL examples for each of eight families: ER, modules/interfaces/functions, flow/SOP, sequence, state, tree/mindmap, educational story and comparison grid.
+- All 24 displayed together; 187 placed nodes and 111 ordinary wires plus sequence notation.
+- Real CLI create/read/edit; final collection revision 4. Collection and scene hashes match across service restart.
+- Connected browser reflected an agent edit without moving its camera.
+- All 24 final headed-browser captures inspected; full section frames visible and smallest effective text 12.28px.
+- Full type/lint/format/import-boundary checks and 177 tests across 52 files pass; test execution 15.23s. Web build passes. No E2E suite.
+- Final PR6 specs: 590 words, 68 lines; growth remains below 20% in both measures.
 
 ## Unresolved gates
-Literal16-principle >144/160 interpretation remains pending for native tests/adapters/static host entry files that score below145 under the exact rubric. No waiver, fabricated score or removal of real correctness checks. Prior asynchronous questions remain unanswered.
-PR6 initial readability failures9.9–11.8px are corrected through semantic theme/DSL changes; current24 captures meet12px. Final acceptance refresh after the bounded routing alignment remains. No additional audit round is authorized.
-Active goal was created successfully after get_goal returnednull during continuation; all sixPRs and24original broad examples plus quality gates remain the objective. Do not mark complete at a checkpoint.
+
+Some native adapters and integration tests remain below the literal >144/160 rubric. Existing questions about applying that rubric to required infrastructure tests remain unanswered; no exemption or inflated score is claimed.
+
+Several severe routing detours were corrected. Some awkward review branches, long returns and crossing/shared corridors remain; 15 crossing warnings are retained. Final screenshots establish framing and readability, not universal reference-level polish.
+
+The permitted additional PR6 delegate alignment is consumed. Further production correction needs renewed process authorization; no additional audit has been started. The active goal remains incomplete.
+
+See `quality/agent-diagrams/pr6/ACCEPTANCE.md` for the complete evidence matrix and remaining gates, and `resources/examples/showcase/README.md` to reproduce the collection from DSL.

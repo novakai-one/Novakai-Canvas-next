@@ -1,4 +1,4 @@
-# agent-diagram-atlas revision=3
+# agent-diagram-atlas revision=4
 canvas 1
 collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme="atlas@1.0.0#sha256:e88a64da0915336263953d299d6bfa81653bf09dc6c903e7aac11b5a6672c06f" description="24 original DSL diagrams: three examples in each of eight families. Fictional engineering models and educational explanations; all geometry is app-derived." columns=3 layout=grid gap=roomy {
   asset @story-1-evidence image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="A document with a magnifying lens"
@@ -943,6 +943,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme="atlas@1.0
   connect @state-1-restore source-side=top target-side=top
   connect @state-1-publish
   connect @state-1-close
+  rank group:@state-1-authoring group:@state-1-publication
 }
   section @state-2-job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state order=13 layout=layered direction=down gap=compact {
   show @state-2-start

@@ -22,6 +22,7 @@ collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme=
   group @publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @published @rollback @withdrawn
    rank @published @rollback @withdrawn
   }
+  rank group:@authoring group:@publication
   show @end
   connect @prepare @submit @detect @withdraw source-side=bottom target-side=bottom
   connect @revise @restore source-side=top target-side=top

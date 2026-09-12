@@ -404,6 +404,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=atlas layo
   group @state-1-publication "PUBLISH & RECOVER" layout=layered direction=right gap=compact { show @state-1-published @state-1-rollback @state-1-withdrawn
    rank @state-1-published @state-1-rollback @state-1-withdrawn
   }
+  rank group:@state-1-authoring group:@state-1-publication
   show @state-1-end
   connect @state-1-prepare @state-1-submit @state-1-detect @state-1-withdraw source-side=bottom target-side=bottom
   connect @state-1-revise @state-1-restore source-side=top target-side=top

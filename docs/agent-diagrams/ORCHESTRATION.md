@@ -1,6 +1,6 @@
 # Broad agent-authored diagrams — orchestration proposal
 
-Status: initial proposal for one Kimi K3 + one Codex Astra pressure-test round.
+Status: revised after the single Kimi K3 + Codex Astra pressure-test round.
 Date: 2026-09-12. Base: 70d36f6. Human UI feature work is deferred.
 
 ## Objective and boundaries
@@ -15,19 +15,19 @@ Date: 2026-09-12. Base: 70d36f6. Human UI feature work is deferred.
 
 |PR|Owned outcome|Scope and dependencies|Visible acceptance|
 |---|---|---|---|
-|1|Reusable composition foundations|Minimum composition intent across Model/Language/Presentation/Layout; one complete vertical slice; freeze contracts before parallel workers|One new subject demonstrates grouping, reading order and arrangement without coordinates|
-|2|Readable typography and content|Presentation text/table/signature layout, content-aware sizing, reusable hierarchy; depends PR1 contract|Dense ER/module and long-label variants fit without clipped content or isolated signature punctuation|
-|3|Assets and diagram themes|CLI/service resource staging through existing Assets/Authoring; approved image/icon/font bytes, diagram theme pins; depends PR1 contract|New illustrated explanations with reusable assets and meaningful themes, no UI editor requirement|
-|4|Balanced automatic arrangement|Layout collection/group/grid/tree/layered policies, compactness and measured spacing; depends PR2 geometry input|Balanced comparison, hierarchy, nested and engineering views with varied content|
-|5|Clear routing and labels|Layout endpoint sides, member anchors, branches, cycles, crossings and measured labels; share PR4 geometry contract|Field-level ER, adapter dependencies and rework loops use readable economical routes|
-|6|Reusable recipes and broad acceptance collection|General recipes and 24 DSL examples; depends PR2–5 integration|Three distinct examples per family, all on a mixed collection canvas, through real CLI create/read/edit and visible browser|
+|1|Reusable composition foundations|Inventory eight families; add explicit grid columns across Model/Language/Layout; existing groups/content/sequence reused; freeze three composition probes|ER, nested illustrated comparison and sequence probes prove coordinate-free composition|
+|2|Readable typography and content|Presentation text/table/signature layout, content-aware sizing, Design System hierarchy tokens, media slots and sequence notation; depends PR1 contract|Dense ER/module and long-label variants fit without clipped content or isolated signature punctuation|
+|3|Assets and diagram themes|Complete CLI asset staging/preset admission; Assets owns bytes, Templates pins, Design System tokens, Presentation measurement; shared interfaces frozen before parallel work|Admitted images/fonts and two differently themed collections prove isolated tokens; section role accents support mixed diagrams|
+|4|Balanced automatic arrangement|Layout collection/group/grid/tree/layered policies, compactness and measured spacing; acceptance depends PR2+3 integrated font/theme measurements; includes sequence fragments and state topology|Balanced comparison, hierarchy, nested and engineering views with varied content|
+|5|Clear routing and labels|Layout endpoint sides, member anchors, branches, cycles, crossings and measured labels; after PR4; measured labels/markers reserve directional space; bounded routing failure remains explicit|Field-level ER, adapter dependencies and rework loops use readable economical routes|
+|6|Reusable recipes and broad acceptance collection|Assemble incrementally authored recipes/examples; third held-out example per family after interface freeze; depends PR2–5|Three distinct examples per family, all on a mixed collection canvas, through real CLI create/read/edit and visible browser|
 
 ## Required final family matrix
 
 Eight acceptance families: ER; modules/interfaces/functions; flow/SOP; sequence; state; mindmap/tree; educational story/infographic; structured grid/comparison.
 Each family needs three distinct subjects and compositions/topologies. A relabelled copy or theme-only variation does not qualify. Each example uses real DSL through the service; preserve source, committed identity/revision and screenshot evidence.
 Examples must vary label lengths, content density and topology. Include nested groups, cyclic flows, field/port endpoints, repeated comparison panels, icon/image-plus-text compositions, sequence alternatives and hierarchical branches across the corpus. Images are individual assets; never a screenshot of a complete reference used as a diagram background.
-All semantic wires are labelled. Content is readable at a practical viewing scale; fit-all collection overview is navigation, not proof of per-diagram readability. Record failures/limitations honestly.
+All semantic wires are labelled. At 1600×1100, each 5–12-primary-node example must frame its title/bounds with effective text >=12px; larger examples additionally require readable detail captures. Zero unintended clipping, overlaps, wrong anchors/cardinalities or Layout.inspect errors. Review avoidable detours/crossings, not a universal crossing ban. Preserve printed readouts and meaningful edits. Fit-all is navigation only; record limitations honestly.
 
 ## Per-PR SOP
 
@@ -42,7 +42,7 @@ All semantic wires are labelled. Content is readable at a practical viewing scal
 ## Orchestration and interference control
 
 - One orchestrator owns the integration branch, shared contracts, final service/browser and PR assembly.
-- PR1 sequential. PR2 and PR3 may run in separate worktrees with explicit file allowlists. PR4 starts after measured-geometry contract stabilizes. PR5 may develop beside PR4 after freezing shared interfaces; acceptance runs after integration. PR6 sequential integration/acceptance, with independent fixture authoring permitted.
+- PR1 sequential. PR2/3 may run in isolated worktrees after orchestrator freezes metric-bearing interfaces. PR4 acceptance follows both; PR5 follows integrated PR4 geometry. PR2–5 each deposit recipes and original DSL evidence. PR6 assembles all24; independent fixture authoring is permitted.
 - CLI builders: Kimi K3, Codex Astra or Codex 5.6 Sol. Fresh minimal briefs; no inherited thread; one scoped deliverable per worker. No worker starts another agent, modifies main checkout, pushes, merges or controls shared browser/service unless expressly assigned.
 - Pin base SHA, branch, owned paths, output path, tests and time limits before launch. Orchestrator inspects actual diffs and process logs for scope drift. Overlap in changed contracts serializes the affected work. Worktrees prevent accidental file collision, not conceptual conflict.
 - Initial two reviewers critique this proposal only. They may inspect relevant implementation to identify risks, not audit the whole repository. Exactly one initial round.

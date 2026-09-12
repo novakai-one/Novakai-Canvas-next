@@ -11,16 +11,13 @@ collection @story-safe-deployment "Deploy safely and learn" theme=paper {
  node @healthy note "Healthy signal" role=success size=small { text @detail "Expand only when guardrails remain green." }
  node @unsafe note "Unsafe signal" role=warning size=small { text @detail "Pause, roll back and preserve evidence." }
  node @record note "Close the loop" size=medium { text @detail "Record the outcome and update the next release plan." }
- section @deployment-story "SAFE DEPLOYMENT / Confidence grows through evidence" mode=story layout=grid columns=3 direction=right gap=compact {
-  group @prepare-column "PREPARE" represents=@prepare layout=grid columns=1 gap=compact {
-   show @checks
+ section @deployment-story "SAFE DEPLOYMENT / Confidence grows through evidence" mode=story layout=grid columns=1 direction=down gap=compact {
+  group @before-expansion "BEFORE INCREASING TRAFFIC" layout=grid columns=2 direction=right gap=compact {
+   group @prepare-column "PREPARE" represents=@prepare layout=grid columns=1 gap=compact { show @checks }
+   group @release-column "RELEASE" represents=@release-stage layout=grid columns=1 gap=compact { show @cohort }
   }
-  group @release-column "RELEASE" represents=@release-stage layout=grid columns=1 gap=compact {
-   show @cohort
-  }
-  group @learn-column "LEARN" represents=@learn layout=grid columns=1 gap=compact {
-   group @signals "SIGNALS" represents=@healthy layout=grid columns=1 gap=compact { show @unsafe }
-   show @record
+  group @learn-column "LEARN" represents=@learn layout=grid columns=3 direction=right gap=compact {
+   show @healthy @unsafe @record
   }
  }
 }

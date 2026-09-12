@@ -1,0 +1,194 @@
+[
+  {
+    "order": 0,
+    "family": "er",
+    "variant": 1,
+    "source": "er-museum-loans.canvas",
+    "sourceSha256": "a1f7b9cb12cc7857e6318122cf1431f87cff1ce10163dc32221e4412c6973747",
+    "section": "er-1-museum-loans"
+  },
+  {
+    "order": 1,
+    "family": "er",
+    "variant": 2,
+    "source": "er-course-enrollment.canvas",
+    "sourceSha256": "881710adc53fc1bcf206033bbf7a8f2f444e87ef3304938131c7c76392bae182",
+    "section": "er-2-enrollment-model"
+  },
+  {
+    "order": 2,
+    "family": "er",
+    "variant": 3,
+    "source": "er-habitat-survey.canvas",
+    "sourceSha256": "0fdc85213f2551c997a75b8f6d6539a8c8b1c2e84f396bbe75367219bf3e0433",
+    "section": "er-3-habitats"
+  },
+  {
+    "order": 3,
+    "family": "modules",
+    "variant": 1,
+    "source": "modules-document-publishing.canvas",
+    "sourceSha256": "5dc72dc3b9dcd431926e645ab9ef7d9116c2528fe8b87a92d8aa0a86669d5d54",
+    "section": "modules-1-publishing-boundary"
+  },
+  {
+    "order": 4,
+    "family": "modules",
+    "variant": 2,
+    "source": "modules-sensor-gateway.canvas",
+    "sourceSha256": "98bc4b77955bd58bea3f4bfb3dac2d6c61e8cb7a3f2a8490b02be3704550691b",
+    "section": "modules-2-gateway-boundary"
+  },
+  {
+    "order": 5,
+    "family": "modules",
+    "variant": 3,
+    "source": "modules-payroll-policy.canvas",
+    "sourceSha256": "d05d42c6498b3a5c579be5ba1b5cd6f43f9fde022fd0b1c0984b491fd59ecb0b",
+    "section": "modules-3-payroll"
+  },
+  {
+    "order": 6,
+    "family": "flow",
+    "variant": 1,
+    "source": "flow-equipment-return.canvas",
+    "sourceSha256": "599c9d5bec46870a4ae2cd53fd9b88fad86f172979d66965fb544ffbc0838d13",
+    "section": "flow-1-equipment-return"
+  },
+  {
+    "order": 7,
+    "family": "flow",
+    "variant": 2,
+    "source": "flow-research-approval.canvas",
+    "sourceSha256": "af592f33a2929fd814d8db41efa5ced36b5f7dd17c1a84e7649900e971e489ef",
+    "section": "flow-2-approval"
+  },
+  {
+    "order": 8,
+    "family": "flow",
+    "variant": 3,
+    "source": "flow-emergency-dispatch.canvas",
+    "sourceSha256": "581d40b840ee68850719a52f2a58e741a4818e52a1b4299a1eb80a03bfb7f92b",
+    "section": "flow-3-dispatch"
+  },
+  {
+    "order": 9,
+    "family": "sequence",
+    "variant": 1,
+    "source": "sequence-library-reservation.canvas",
+    "sourceSha256": "68ddd5893311c565ddcef14fa440f367858158d2ad31ecd0e71cb41415d74200",
+    "section": "sequence-1-library-reservation"
+  },
+  {
+    "order": 10,
+    "family": "sequence",
+    "variant": 2,
+    "source": "sequence-payment-settlement.canvas",
+    "sourceSha256": "112027848dbe3d9440425a1faf097d89efc12b09c270459d01e92c2654ba38ad",
+    "section": "sequence-2-settlement"
+  },
+  {
+    "order": 11,
+    "family": "sequence",
+    "variant": 3,
+    "source": "sequence-incident-notification.canvas",
+    "sourceSha256": "e1cb2192157d006f8364ae7778ca551fa3c14b3e9d2619e77aa8d5d09e9cbcb6",
+    "section": "sequence-3-notification"
+  },
+  {
+    "order": 12,
+    "family": "state",
+    "variant": 1,
+    "source": "state-exhibition-lifecycle.canvas",
+    "sourceSha256": "67cbbe9e4828236b55751aa219019628c50a52df8f65d683d8ccc34cfe353729",
+    "section": "state-1-lifecycle"
+  },
+  {
+    "order": 13,
+    "family": "state",
+    "variant": 2,
+    "source": "state-batch-job.canvas",
+    "sourceSha256": "d541220f16a4d9c2fcf4bea675c85ef68482b008b720f952eb71fd1c83f266bf",
+    "section": "state-2-job"
+  },
+  {
+    "order": 14,
+    "family": "state",
+    "variant": 3,
+    "source": "state-membership-reinstatement.canvas",
+    "sourceSha256": "2df618860bc17a7936aec45ea426dbd93f769a62e03a2e6c8bb43bd01bf4cd46",
+    "section": "state-3-membership"
+  },
+  {
+    "order": 15,
+    "family": "tree",
+    "variant": 1,
+    "source": "tree-field-research.canvas",
+    "sourceSha256": "6db48a7cbc1f05a55d3013d356549cb807b35c1f8f7abf323c9990ccbc3cab30",
+    "section": "tree-1-field-research"
+  },
+  {
+    "order": 16,
+    "family": "tree",
+    "variant": 2,
+    "source": "tree-course-objectives.canvas",
+    "sourceSha256": "698f158c089d20c105c6e8e5b127da5826f4653cad50d14410c31007b98d7372",
+    "section": "tree-2-objectives"
+  },
+  {
+    "order": 17,
+    "family": "tree",
+    "variant": 3,
+    "source": "tree-incident-causes.canvas",
+    "sourceSha256": "175c9ee51e2d4fbcd99300f400b7fee0306e39d7f3a0348f6564aeeb7ae394de",
+    "section": "tree-3-causes"
+  },
+  {
+    "order": 18,
+    "family": "story",
+    "variant": 1,
+    "source": "story-evidence-lesson.canvas",
+    "sourceSha256": "ca67c5f65bb680a8ee34fd1f94331beca7f30d3059f2c643e6f44e9b92888a9f",
+    "section": "story-1-evidence-lesson"
+  },
+  {
+    "order": 19,
+    "family": "story",
+    "variant": 2,
+    "source": "story-safe-deployment.canvas",
+    "sourceSha256": "b7d7a4ef5820d3dd66e1e7f592fcfd56a10180dc7ba1085b6100216e54916245",
+    "section": "story-2-deployment-story"
+  },
+  {
+    "order": 20,
+    "family": "story",
+    "variant": 3,
+    "source": "story-water-treatment.canvas",
+    "sourceSha256": "00457d97bd90b442a6f1156b2c69f82e74687b40b26a2871702638f9ddf7ff67",
+    "section": "story-3-treatment"
+  },
+  {
+    "order": 21,
+    "family": "grid",
+    "variant": 1,
+    "source": "grid-archive-comparison.canvas",
+    "sourceSha256": "335473f3f7dfb00f9a42a0638f642a24db8caee67b73a0e506f4a553ea04d0e6",
+    "section": "grid-1-archive-comparison"
+  },
+  {
+    "order": 22,
+    "family": "grid",
+    "variant": 2,
+    "source": "grid-feedback-methods.canvas",
+    "sourceSha256": "adc5c8bc82ed23ca4a4a4218eee18efb93ce3b7fc0e6ace69a1b68f107d59047",
+    "section": "grid-2-feedback-grid"
+  },
+  {
+    "order": 23,
+    "family": "grid",
+    "variant": 3,
+    "source": "grid-research-methods.canvas",
+    "sourceSha256": "23e2674b4ca1623f332e6a5f6eebeb47b150a2b972e4f869d051f03e5fb2128c",
+    "section": "grid-3-methods"
+  }
+]

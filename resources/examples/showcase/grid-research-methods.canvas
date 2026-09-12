@@ -31,13 +31,12 @@ collection @grid-research-methods "Research methods evidence matrix" theme=paper
  }
  node @causal note "Before a causal claim" role=warning { list @checks ["Check the comparison", "Check assignment and missing data"] }
  node @triangulate note "Combine complementary evidence" { text @detail "Use case context to interpret patterns; test explanations with new comparisons." }
- section @methods "RESEARCH METHODS / Compare questions, records and limits" mode=grid layout=grid columns=2 gap=compact {
-  group @primary "COLLECT PRIMARY EVIDENCE" layout=grid columns=2 gap=compact {
+ section @methods "RESEARCH METHODS / Compare questions, records and limits" mode=grid layout=grid columns=1 gap=compact {
+  group @primary "COLLECT PRIMARY EVIDENCE" layout=grid columns=3 gap=compact {
    show @experiment @cohort @case
   }
-  group @secondary "REUSE AND CHALLENGE" layout=grid columns=1 gap=compact {
-   show @synthesis @causal
+  group @secondary "REUSE AND CHALLENGE" layout=grid columns=4 gap=compact {
+   show @synthesis @causal @question @triangulate
   }
-  show @question @triangulate
  }
 }

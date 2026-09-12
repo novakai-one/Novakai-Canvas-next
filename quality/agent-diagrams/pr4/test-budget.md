@@ -9,3 +9,5 @@
 Existing Model case `validate layout intent` gains ER/modules grid compatibility assertions. Existing Layout case 5 gains version-invalidation/history proof; case 6 gains wide-alt containment; native case 11 records the ELK layered tree normalization options. No new E2E or routing-quality case.
 
 Combined correction uses the authorized ≤3 budget: one additional retained ER test, all A2 assertions extend existing tests. A temporary native-tree diagnostic (third definition during verification) required success, passed, and was folded into the existing tree case as a permanent positive acceptance helper. No E2E, skipped/todo case or failure-inversion assertion.
+
+Single additional sequence alignment extends existing case 6 only: compact/normal/roomy geometry, measured-box/order assertions, native public inspection and a tall/wide branch heading. **0 new definitions; 2 retained PR4 definitions unchanged.** Read-only corpus probes use a temporary standalone harness, not new Vitest definitions.

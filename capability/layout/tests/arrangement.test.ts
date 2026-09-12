@@ -259,10 +259,11 @@ describe('Layout arrangement acceptance', () => {
       first.sections.map((item) => item.inputKey),
     );
   });
-  it('6 — renders ordered sequence messages, nested fragments, measured branches and activations', async () => {
-    const source = sequenceProjection();
+  it('6 — renders ordered sequence messages, nested fragments, measured branches and activations', async (): Promise<void> => {
+    const source = sequenceProjection('compact');
     const layout = await harness([source]);
     const scene = value(await layout.arrange(request(layout, source)));
+    await checkSequenceSpacing(source, scene);
     const sequence = scene.sections[0]?.sequence;
     assert(sequence);
     expect(sequence.events.map((item) => item.id)).toEqual([
@@ -294,7 +295,8 @@ describe('Layout arrangement acceptance', () => {
       ...wideInput.measurements,
       branchHeadings: wideInput.measurements.branchHeadings.map((item) => ({
         ...item,
-        content: item.branch === 'yes' ? { ...item.content, width: 900 } : item.content,
+        content:
+          item.branch === 'yes' ? { ...item.content, width: 900, height: 160 } : item.content,
       })),
     };
     const wideScene = value(
@@ -314,6 +316,17 @@ describe('Layout arrangement acceptance', () => {
         },
       }),
     );
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: wideMeasurements,
+          options: wideInput.options,
+          candidate: wideScene,
+        }),
+      ).valid,
+    ).toBe(true);
+    assertSequenceMeasurements(source, wideScene);
     const wideSequence = wideScene.sections[0]?.sequence;
     const parent = wideSequence?.fragments.find((item) => item.id === 'alternatives');
     assert(parent && wideSequence);
@@ -673,14 +686,14 @@ function twoSections(revision: number, label: string): Projection {
   );
 }
 /** Nested sequence fixture includes all required message forms and branch-owned headings. */
-function sequenceProjection(): Projection {
+function sequenceProjection(gap: LayoutIntent['gap'] = 'normal'): Projection {
   return project(
     collection({
       objects: [object('client', 'participant'), object('server', 'participant')],
       sections: [
         section('sequence', ['client', 'server'], {
           mode: 'sequence',
-          layout: { algorithm: 'sequence', direction: 'right' },
+          layout: { algorithm: 'sequence', direction: 'right', gap },
           sequence: [
             {
               id: 'call',
@@ -758,6 +771,105 @@ function sequenceProjection(): Projection {
         }),
       ],
     }),
+  );
+}
+
+/** The same measured content must fit every semantic gap; native engines and public inspection stay authoritative. */
+async function checkSequenceSpacing(compact: Projection, compactScene: Scene): Promise<void> {
+  const normal = sequenceProjection('normal');
+  const roomy = sequenceProjection('roomy');
+  const sources = [compact, normal, roomy];
+  const layout = await harness(sources);
+  const scenes = [compactScene];
+  for (const source of [normal, roomy])
+    scenes.push(value(await layout.arrange(request(layout, source))));
+  expect(scenes[0]?.bounds.height).toBeLessThan(scenes[1]?.bounds.height ?? 0);
+  expect(scenes[1]?.bounds.height).toBeLessThan(scenes[2]?.bounds.height ?? 0);
+  sources.forEach((source, index): void => {
+    const scene = scenes[index];
+    assert(scene);
+    expect(
+      value(
+        layout.inspect({
+          projection: source,
+          measurements: metrics(source),
+          options: settings,
+          candidate: scene,
+        }),
+      ).valid,
+    ).toBe(true);
+    assertSequenceMeasurements(source, scene);
+    expect(scene.sections[0]?.sequence.events.map((event): string => event.id)).toEqual(
+      compactScene.sections[0]?.sequence.events.map((event): string => event.id),
+    );
+    expect(
+      scene.sections[0]?.sequence.activations.map((item): readonly unknown[] => [
+        item.participant,
+        item.fromEvent,
+        item.toEvent,
+      ]),
+    ).toEqual(
+      compactScene.sections[0]?.sequence.activations.map((item): readonly unknown[] => [
+        item.participant,
+        item.fromEvent,
+        item.toEvent,
+      ]),
+    );
+  });
+}
+
+/** Independent box assertions catch clipping even when inspection regenerates the same sequence policy. */
+function assertSequenceMeasurements(source: Projection, scene: Scene): void {
+  const view = scene.sections[0];
+  const section = source.sections[0];
+  assert(view && section);
+  const sequence = view.sequence;
+  const participants = view.nodes.filter((item): boolean => item.measured.kind === 'participant');
+  expect(sequence.lifelines.map((item): string => item.participant)).toEqual(
+    participants.map((item): string => item.id),
+  );
+  expect(participants.map((item): string => item.id)).toEqual(
+    section.nodes
+      .filter((item): boolean => item.kind === 'participant')
+      .map((item): string => item.id),
+  );
+  const gap = (settings.sequenceGap * settings.gap[section.layout.gap]) / settings.gap.normal;
+  const first = sequence.events[0];
+  assert(first);
+  expect(
+    first.labelBox.y -
+      Math.max(...participants.map((item): number => item.box.y + item.box.height)),
+  ).toBeCloseTo(gap);
+  sequence.events.forEach((event, index): void => {
+    const measured = section.sequence.find((item): boolean => item.item.id === event.id);
+    assert(measured);
+    expect(event.content).toEqual(measured.label);
+    expect(event.labelBox.width).toBe(measured.label.width);
+    expect(event.labelBox.height).toBe(measured.label.height);
+    expect(event.points[0]?.y).toBeCloseTo(
+      event.labelBox.y + measured.label.height + settings.labelGap,
+    );
+    assertSequenceOrder(sequence.events[index - 1], event);
+  });
+  sequence.fragments.forEach((frame): void => {
+    expect(contained(frame.box, frame.labelBox)).toBe(true);
+    expect(frame.labelBox.height).toBe(frame.content.height);
+    frame.branches.forEach((branch): void => {
+      expect(contained(frame.box, branch.box)).toBe(true);
+      expect(contained(branch.box, branch.labelBox)).toBe(true);
+      expect(branch.labelBox.height).toBe(branch.content.height);
+    });
+  });
+}
+
+/** Adjacent events retain complete paths below their labels and above the next measured band. */
+function assertSequenceOrder(
+  previous: Scene['sections'][number]['sequence']['events'][number] | undefined,
+  event: Scene['sections'][number]['sequence']['events'][number],
+): void {
+  if (previous === undefined) return;
+  expect(event.labelBox.y).toBeGreaterThan(
+    Math.max(...previous.points.map((point): number => point.y)),
   );
 }
 

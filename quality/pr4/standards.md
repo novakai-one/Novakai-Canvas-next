@@ -9,10 +9,12 @@ Author evidence under `docs/standards/CODING-STANDARDS.md`, not an independent a
 |`layout/contract/records/problem.ts`|10|6|7|10|10|10|10|10|10|8|5|10|10|10|10|10|146|0|Readonly engine DTOs; field TSDoc; no behavior, cast, I/O or host type|
 |`layout/core/arrangement/collection.ts`|10|6|7|10|10|10|10|10|10|10|10|10|10|10|10|10|153|2|Existing typed recovery entry; one renamed seed field; locks/history unchanged|
 |`layout/core/placement/grid.ts`|10|6|7|10|10|10|10|10|10|8|10|10|10|10|7|10|148|2|Pure measured tracks; explicit axis-gap map; two retained reverse-coordinate ternaries|
-|`layout/core/placement/groups.ts`|10|6|7|10|10|10|10|10|5|8|10|10|10|10|10|10|146|2|Bottom-up local scopes; immediate structured rejection bridge; pure contracted edges|
-|`layout/core/placement/policy.ts`|10|6|7|10|10|10|10|10|10|10|10|10|10|10|10|10|153|2|Typed Result/recovery entry; placement seam; independent values computed once|
-|`layout/core/placement/spacing.ts`|10|6|7|10|10|10|10|10|10|8|10|10|10|10|10|10|151|1|Pure local measured reservation; fixed policy vocabulary; caller owns recovery|
-|`layout/core/sequence/frames.ts`|10|6|7|10|10|10|10|10|5|8|10|10|10|10|10|10|146|1|Measured immutable frame assembly; structured private rejection behind facade|
+|`layout/core/placement/groups.ts`|10|6|7|10|10|10|10|10|5|8|10|10|10|10|10|10|146|2|groups.ts:78/103/147: local reservations separated from parent ranking; structured rejection bridge|
+|`layout/core/placement/policy.ts`|10|6|7|10|10|10|10|10|10|10|10|10|10|10|10|10|153|2|Typed Result/recovery entry; placement seam; Scope TSDoc; both seed paths independently bound local axes|
+|`layout/core/placement/spacing.ts`|10|6|7|10|10|10|10|10|10|8|10|10|10|10|10|10|151|1|spacing.ts:8/37/51: local measured flow/cross bounds; labels excluded from cross floor; fixed policy|
+|`layout/core/sequence/frames.ts`|10|6|7|10|10|10|10|10|5|8|10|10|10|10|10|10|146|1|frames.ts:19/24/89: actual LayoutFault/facade recovery documented; literal P9=5 and P10=8 retained|
 |`model/core/sections/modes.ts`|10|6|7|10|10|10|10|10|10|10|9|10|10|10|10|10|152|1|Prior whole-file score retained; only typed compatibility data changed|
 
 All ten totals are **>144/160**. The threshold-zero ESLint probe measured the displayed maxima; normal `pnpm check` enforced the required ceiling of 2. Every changed/introduced production function has an explicit return type and direct responsibility documentation; no `any`, unchecked cast, ambient service, shared mutable state or new extension framework was introduced.
+
+Correction verification remeasured the same maxima with ESLint threshold 0; all remain ≤2 under the enforced threshold. The existing literal 16-principle scores remain unchanged (minimum 146); TSDoc is not a Result-type waiver. `elk.ts:16` names factory invocation/lifetime; `policy.ts:13` names local scope semantics. This is amended author evidence, not another audit or test-fixture grade.

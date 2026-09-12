@@ -1,0 +1,56 @@
+{
+  "base": "1160b0a",
+  "full": {
+    "command": "pnpm check",
+    "exit": 0,
+    "files": 51,
+    "tests": 172,
+    "architectureModules": 821,
+    "architectureDependencies": 1943
+  },
+  "relevant": {
+    "command": "pnpm exec vitest run capability/layout/tests capability/model/tests",
+    "exit": 0,
+    "files": 8,
+    "tests": 35
+  },
+  "regressionBeforeFix": {
+    "command": "pnpm exec vitest run capability/layout/tests/arrangement.test.ts",
+    "failed": 2,
+    "nativeCross": {
+      "actual": 24,
+      "required": 46
+    },
+    "gridCross": {
+      "actual": 24,
+      "required": 48
+    }
+  },
+  "nativeTree": {
+    "originalFixture": "root -> child parent; root -> note annotation; down/compact",
+    "result": "passed; permanent positive arrangement and inspection assertion retained",
+    "universalAcceptance": "open until PR5 integration and root corpus/browser reprobe"
+  },
+  "complexityMaxima": {
+    "layout/adapters/elk.ts": 1,
+    "layout/contract/records/engines.ts": 0,
+    "layout/contract/records/problem.ts": 0,
+    "layout/core/arrangement/collection.ts": 2,
+    "layout/core/placement/grid.ts": 2,
+    "layout/core/placement/groups.ts": 2,
+    "layout/core/placement/policy.ts": 2,
+    "layout/core/placement/spacing.ts": 1,
+    "layout/core/sequence/frames.ts": 1,
+    "model/core/sections/modes.ts": 1
+  },
+  "specCounts": {
+    "baselineWords": 509,
+    "baselineLines": 57,
+    "finalWords": 602,
+    "finalLines": 63,
+    "wordCap": 610,
+    "lineCap": 68
+  },
+  "retainedNewTests": 2,
+  "routingFilesChanged": false
+}

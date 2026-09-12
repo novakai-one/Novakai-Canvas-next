@@ -3,7 +3,7 @@ import type { VisualNode, VisualSection, LayoutIntent } from '../../contract/rec
 import type { PlacementValue, PlacementProblem } from '../../contract/records/problem.js';
 import type { Point } from '../../contract/records/geometry.js';
 import type { SupplementalMeasurements, SeedContext } from '../../contract/types.js';
-import { routingGap } from './spacing.js';
+import { routingGap, crossingGap } from './spacing.js';
 import { placeScope } from './policy.js';
 import { union } from '../geometry/bounds.js';
 import { reject } from '../validation/outcomes.js';
@@ -75,15 +75,8 @@ function parentOwner(
   return owner(parent, roots, section);
 }
 /** Only edges joining distinct immediate branches enter the scope's placement graph. */
-function edges(
-  roots: readonly string[],
-  section: VisualSection,
-  layout: LayoutIntent,
-): PlacementProblem['edges'] {
-  const wires = section.wires.filter(
-    (wire) => layout.algorithm !== 'tree' || wire.kind === 'parent',
-  );
-  return wires.flatMap((wire) =>
+function edges(roots: readonly string[], section: VisualSection): PlacementProblem['edges'] {
+  return section.wires.flatMap((wire) =>
     scopeEdge(
       wire.id,
       owner(wire.source.node, roots, section),
@@ -120,7 +113,8 @@ export async function seedScope(
   );
   const roots = branches.map((item) => item.root.id);
   const layout = intent(parent, section);
-  const scopeEdges = edges(roots, section, layout);
+  const localEdges = edges(roots, section);
+  const scopeEdges = rankingEdges(localEdges, section, layout);
   const nodes = branches.map((item) => ({
     id: item.root.id,
     parent: null,
@@ -134,9 +128,10 @@ export async function seedScope(
         nodes,
         edges: scopeEdges,
         layout,
+        minimumCrossSpacing: crossingGap(section, localEdges, measurements, context.options),
         minimumLayerSpacing: routingGap(
           section,
-          scopeEdges,
+          localEdges,
           layout.direction,
           measurements,
           context.options,
@@ -146,4 +141,17 @@ export async function seedScope(
     ),
   );
   return placed.flatMap((item) => flatten(item, branches));
+}
+
+/** Validated semantic parents alone determine tree ranks; references still reserve routing corridors. */
+function rankingEdges(
+  localEdges: PlacementProblem['edges'],
+  section: VisualSection,
+  layout: LayoutIntent,
+): PlacementProblem['edges'] {
+  if (layout.algorithm !== 'tree') return localEdges;
+  const parents = new Set<string>(
+    section.wires.filter((wire) => wire.kind === 'parent').map((wire) => wire.id),
+  );
+  return localEdges.filter((edge) => parents.has(edge.id));
 }

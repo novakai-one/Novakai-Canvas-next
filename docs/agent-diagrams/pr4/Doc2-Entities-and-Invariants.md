@@ -20,3 +20,5 @@
 Sequence changes only where integrated measurements expose a failing named acceptance case. No speculative algorithm. Fixed coordinates remain app-derived. Explicit locks can prevent compactness; report conflicts without weakening constraints.
 
 Grid maps flow/cross minima to x/y for right/left and y/x for down/up, retaining physical columns. Tree must translate verified native options or normalize measured seeds; layered-only settings do not count. Each group computes local reservations.
+
+Cross-axis floor: local wires reserve 3×clearance+maximum marker advance, independently of labels and tree ranking; wire-free scopes retain semantic gap.

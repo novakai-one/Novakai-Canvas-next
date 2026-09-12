@@ -11,15 +11,30 @@ const config = z.looseObject({
     overrides: z.record(z.string(), z.union([z.string(), z.number()])),
   }),
 });
-/** Exact base and font identities are resolved before retention; Design System owns the supplied token override values. */
+type ThemeOwners = {
+  readonly assets: Pick<Assets, 'resolve'>;
+  readonly templates: Pick<Templates<LoweredIntent>, 'read'>;
+};
+type FontBinding = { readonly alias: string; readonly digest: string };
+/** Prepare exact identities and owner-validated tokens; Authoring retains the draft on any typed failure. */
 export function prepareTheme(
   admission: Json,
   catalog: Catalog,
+  bindings: readonly FontBinding[],
+  owners: ThemeOwners,
+): Result<Json> {
+  try {
+    return prepareSourceTheme(admission, catalog, bindings, owners);
+  } catch {
+    return failure('invalid-input', 'theme', 'Theme preparation failed');
+  }
+}
+/** Only this protected adapter translates source syntax; Design System remains the token policy owner. */
+function prepareSourceTheme(
+  admission: Json,
+  catalog: Catalog,
   bindings: readonly { readonly alias: string; readonly digest: string }[],
-  owners: {
-    readonly assets: Pick<Assets, 'resolve'>;
-    readonly templates: Pick<Templates<LoweredIntent>, 'read'>;
-  },
+  owners: ThemeOwners,
 ): Result<Json> {
   const parsed = config.safeParse(admission);
   if (!parsed.success) return { ok: true, value: admission };
@@ -100,6 +115,12 @@ function color(value: string): Json {
   return {
     colorSpace: 'srgb',
     components: [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255),
-    alpha: hex.length === 9 ? Number.parseInt(hex.slice(7, 9), 16) / 255 : 1,
+    alpha: colorAlpha(hex),
   };
+}
+
+/** Six-digit colors are opaque; the optional final byte supplies the only alpha override. */
+function colorAlpha(hex: string): number {
+  if (hex.length !== 9) return 1;
+  return Number.parseInt(hex.slice(7, 9), 16) / 255;
 }

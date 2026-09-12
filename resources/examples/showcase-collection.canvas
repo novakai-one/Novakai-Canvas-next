@@ -603,7 +603,7 @@ collection @agent-diagram-atlas "ATLAS / Engineering and ideas" theme=atlas layo
  node @story-3-disinfect concept "4. Disinfect" role=success { icon @story-3-symbol asset=@story-3-shield size=medium text @story-3-detail "Apply a controlled disinfection step." }
  node @story-3-monitor note "Check at each barrier" role=primary { icon @story-3-symbol asset=@story-3-evidence size=medium text @story-3-detail "Samples and instruments track treatment performance." }
  node @story-3-residuals note "A second material stream" role=warning { text @story-3-detail "Settled solids and filter wash water need separate handling." }
- node @story-3-limits note "Water quality sets the process" { text @story-3-detail "No single barrier addresses every contaminant." }
+ node @story-3-limits note "Water quality sets the process" { text @story-3-detail "No single barrier addresses every contaminant. Select barriers for the source-water risks." }
  node @story-3-supply concept "5. Store and distribute" role=success { icon @story-3-symbol asset=@story-3-water size=medium text @story-3-detail "Protect treated water as it reaches the network." }
  section @story-3-treatment "WATER TREATMENT / Follow water and its checks" mode=story layout=grid columns=2 direction=right gap=compact order=20 {
   group @story-3-water-path "WATER PATH" layout=grid columns=2 gap=compact { show @story-3-source @story-3-settle @story-3-filter @story-3-disinfect }

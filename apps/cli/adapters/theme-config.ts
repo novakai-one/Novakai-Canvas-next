@@ -16,7 +16,7 @@ class ThemeFault extends Error {
     super(message);
   }
 }
-/** A small semantic host config selects existing tokens; Design System remains their only schema and resolution owner. */
+/** Read semantic token intent; syntax failures retain the source for CLI correction, while Design System owns token validation. */
 export function readThemeConfig(
   source: string,
 ): Result<{ readonly admission: unknown; readonly resources: readonly ResourceRequest[] }> {

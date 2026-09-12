@@ -1,0 +1,5 @@
+$ tsx apps/cli/cli/main.ts replace resources/examples/showcase-collection.canvas --revision 2 --server http://127.0.0.1:5185 --workspace .local/atlas-proof --request atlas-final-replace-1
+(node:38525) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+committed: atlas-final-replace-1
+Workspace sequence: 9

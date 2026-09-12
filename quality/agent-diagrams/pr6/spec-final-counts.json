@@ -1,26 +1,26 @@
 {
-  "Doc4-Ownership-CRUD.md": {
-    "words": 80,
-    "lines": 10
-  },
-  "Doc2-Entities-and-Invariants.md": {
-    "words": 170,
-    "lines": 28
-  },
-  "Doc5-Build-and-Test-Appendix.md": {
-    "words": 171,
-    "lines": 6
-  },
   "Doc1-Target-Repo-Tree.md": {
     "words": 68,
     "lines": 12
+  },
+  "Doc2-Entities-and-Invariants.md": {
+    "words": 168,
+    "lines": 28
   },
   "Doc3-Modules.md": {
     "words": 98,
     "lines": 12
   },
+  "Doc4-Ownership-CRUD.md": {
+    "words": 80,
+    "lines": 10
+  },
+  "Doc5-Build-and-Test-Appendix.md": {
+    "words": 171,
+    "lines": 6
+  },
   "total": {
-    "words": 587,
+    "words": 585,
     "lines": 68
   }
 }

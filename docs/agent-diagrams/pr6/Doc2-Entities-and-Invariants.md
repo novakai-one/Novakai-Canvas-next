@@ -17,7 +17,7 @@
 |24 example .canvas files; combined collection|35–120;1200|
 |Presentation contract/{api,records/content-context}.ts; core/{content/blocks,projection/node}.ts|60;40;200;300|
 |Layout contract/records/engines.ts; core/{routing/obstacles,routing/wires,validation/wires}.ts|20;110;140;120|
-|CLI adapters/theme-config.ts; Service adapters/theme-preparation.ts; existing CLI/Layout/Presentation tests|160;130;400–1600|
+|apps/cli/adapters/theme-config.ts; apps/service/adapters/theme-preparation.ts; apps/cli/tests/commands.test.ts; layout/tests/routing.test.ts; presentation/tests/notation.test.ts|160;160;460;950;400|
 
 Presentation owns its accepted projection capacity; downstream consumers reuse the public constant without reverse imports. Existing semantic collection limits remain separate from projection scale. Field/port/cardinality/fragment correctness stays mandatory regardless of appearance.
 

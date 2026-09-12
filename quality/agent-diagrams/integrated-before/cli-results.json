@@ -1,0 +1,194 @@
+[
+  {
+    "source": "er-course-enrollment.canvas",
+    "sha256": "881710adc53fc1bcf206033bbf7a8f2f444e87ef3304938131c7c76392bae182",
+    "request": "integrated-before-er-course-enrollment",
+    "exit": 0,
+    "seconds": 1.52,
+    "output": "committed: integrated-before-er-course-enrollment\nWorkspace sequence: 2\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/er-course-enrollment.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-er-course-enrollment\n(node:14346) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "er-habitat-survey.canvas",
+    "sha256": "0fdc85213f2551c997a75b8f6d6539a8c8b1c2e84f396bbe75367219bf3e0433",
+    "request": "integrated-before-er-habitat-survey",
+    "exit": 0,
+    "seconds": 1.25,
+    "output": "committed: integrated-before-er-habitat-survey\nWorkspace sequence: 3\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/er-habitat-survey.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-er-habitat-survey\n(node:14366) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "er-museum-loans.canvas",
+    "sha256": "a1f7b9cb12cc7857e6318122cf1431f87cff1ce10163dc32221e4412c6973747",
+    "request": "integrated-before-er-museum-loans",
+    "exit": 0,
+    "seconds": 1.18,
+    "output": "committed: integrated-before-er-museum-loans\nWorkspace sequence: 4\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/er-museum-loans.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-er-museum-loans\n(node:14382) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "flow-emergency-dispatch.canvas",
+    "sha256": "581d40b840ee68850719a52f2a58e741a4818e52a1b4299a1eb80a03bfb7f92b",
+    "request": "integrated-before-flow-emergency-dispatch",
+    "exit": 0,
+    "seconds": 1.06,
+    "output": "committed: integrated-before-flow-emergency-dispatch\nWorkspace sequence: 5\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/flow-emergency-dispatch.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-flow-emergency-dispatch\n(node:14399) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "flow-equipment-return.canvas",
+    "sha256": "599c9d5bec46870a4ae2cd53fd9b88fad86f172979d66965fb544ffbc0838d13",
+    "request": "integrated-before-flow-equipment-return",
+    "exit": 0,
+    "seconds": 1.07,
+    "output": "committed: integrated-before-flow-equipment-return\nWorkspace sequence: 6\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/flow-equipment-return.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-flow-equipment-return\n(node:14415) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "flow-research-approval.canvas",
+    "sha256": "af592f33a2929fd814d8db41efa5ced36b5f7dd17c1a84e7649900e971e489ef",
+    "request": "integrated-before-flow-research-approval",
+    "exit": 0,
+    "seconds": 1.13,
+    "output": "committed: integrated-before-flow-research-approval\nWorkspace sequence: 7\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/flow-research-approval.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-flow-research-approval\n(node:14431) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "grid-archive-comparison.canvas",
+    "sha256": "335473f3f7dfb00f9a42a0638f642a24db8caee67b73a0e506f4a553ea04d0e6",
+    "request": "integrated-before-grid-archive-comparison",
+    "exit": 0,
+    "seconds": 1.07,
+    "output": "committed: integrated-before-grid-archive-comparison\nWorkspace sequence: 8\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/grid-archive-comparison.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-grid-archive-comparison\n(node:14454) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "grid-feedback-methods.canvas",
+    "sha256": "adc5c8bc82ed23ca4a4a4218eee18efb93ce3b7fc0e6ace69a1b68f107d59047",
+    "request": "integrated-before-grid-feedback-methods",
+    "exit": 0,
+    "seconds": 1.13,
+    "output": "committed: integrated-before-grid-feedback-methods\nWorkspace sequence: 9\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/grid-feedback-methods.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-grid-feedback-methods\n(node:14470) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "grid-research-methods.canvas",
+    "sha256": "a4078793ae3ec0a1659e9471584730d2622421c94ab67b4e96d47fcc6b27944b",
+    "request": "integrated-before-grid-research-methods",
+    "exit": 0,
+    "seconds": 1.42,
+    "output": "committed: integrated-before-grid-research-methods\nWorkspace sequence: 10\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/grid-research-methods.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-grid-research-methods\n(node:14487) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "modules-document-publishing.canvas",
+    "sha256": "5dc72dc3b9dcd431926e645ab9ef7d9116c2528fe8b87a92d8aa0a86669d5d54",
+    "request": "integrated-before-modules-document-publishing",
+    "exit": 0,
+    "seconds": 1.45,
+    "output": "committed: integrated-before-modules-document-publishing\nWorkspace sequence: 11\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/modules-document-publishing.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-modules-document-publishing\n(node:14504) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "modules-payroll-policy.canvas",
+    "sha256": "d05d42c6498b3a5c579be5ba1b5cd6f43f9fde022fd0b1c0984b491fd59ecb0b",
+    "request": "integrated-before-modules-payroll-policy",
+    "exit": 1,
+    "seconds": 1.45,
+    "output": "[ELIFECYCLE] Command failed with exit code 1.\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/modules-payroll-policy.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-modules-payroll-policy\n(node:14522) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\nconstraint-conflict: Native route violates required ports, marker clearance or obstacles\nRetain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.\n"
+  },
+  {
+    "source": "modules-sensor-gateway.canvas",
+    "sha256": "98bc4b77955bd58bea3f4bfb3dac2d6c61e8cb7a3f2a8490b02be3704550691b",
+    "request": "integrated-before-modules-sensor-gateway",
+    "exit": 0,
+    "seconds": 1.29,
+    "output": "committed: integrated-before-modules-sensor-gateway\nWorkspace sequence: 12\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/modules-sensor-gateway.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-modules-sensor-gateway\n(node:14544) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "sequence-incident-notification.canvas",
+    "sha256": "e1cb2192157d006f8364ae7778ca551fa3c14b3e9d2619e77aa8d5d09e9cbcb6",
+    "request": "integrated-before-sequence-incident-notification",
+    "exit": 0,
+    "seconds": 0.95,
+    "output": "committed: integrated-before-sequence-incident-notification\nWorkspace sequence: 13\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-incident-notification.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-sequence-incident-notification\n(node:14560) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "sequence-library-reservation.canvas",
+    "sha256": "68ddd5893311c565ddcef14fa440f367858158d2ad31ecd0e71cb41415d74200",
+    "request": "integrated-before-sequence-library-reservation",
+    "exit": 0,
+    "seconds": 0.94,
+    "output": "committed: integrated-before-sequence-library-reservation\nWorkspace sequence: 14\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-library-reservation.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-sequence-library-reservation\n(node:14577) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "sequence-payment-settlement.canvas",
+    "sha256": "112027848dbe3d9440425a1faf097d89efc12b09c270459d01e92c2654ba38ad",
+    "request": "integrated-before-sequence-payment-settlement",
+    "exit": 0,
+    "seconds": 0.95,
+    "output": "committed: integrated-before-sequence-payment-settlement\nWorkspace sequence: 15\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/sequence-payment-settlement.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-sequence-payment-settlement\n(node:14593) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "state-batch-job.canvas",
+    "sha256": "d541220f16a4d9c2fcf4bea675c85ef68482b008b720f952eb71fd1c83f266bf",
+    "request": "integrated-before-state-batch-job",
+    "exit": 0,
+    "seconds": 1.11,
+    "output": "committed: integrated-before-state-batch-job\nWorkspace sequence: 16\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/state-batch-job.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-state-batch-job\n(node:14619) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "state-exhibition-lifecycle.canvas",
+    "sha256": "67cbbe9e4828236b55751aa219019628c50a52df8f65d683d8ccc34cfe353729",
+    "request": "integrated-before-state-exhibition-lifecycle",
+    "exit": 0,
+    "seconds": 1.12,
+    "output": "committed: integrated-before-state-exhibition-lifecycle\nWorkspace sequence: 17\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/state-exhibition-lifecycle.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-state-exhibition-lifecycle\n(node:14636) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "state-membership-reinstatement.canvas",
+    "sha256": "2df618860bc17a7936aec45ea426dbd93f769a62e03a2e6c8bb43bd01bf4cd46",
+    "request": "integrated-before-state-membership-reinstatement",
+    "exit": 0,
+    "seconds": 1.13,
+    "output": "committed: integrated-before-state-membership-reinstatement\nWorkspace sequence: 18\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/state-membership-reinstatement.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-state-membership-reinstatement\n(node:14652) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "story-evidence-lesson.canvas",
+    "sha256": "ca67c5f65bb680a8ee34fd1f94331beca7f30d3059f2c643e6f44e9b92888a9f",
+    "request": "integrated-before-story-evidence-lesson",
+    "exit": 0,
+    "seconds": 1.74,
+    "output": "committed: integrated-before-story-evidence-lesson\nWorkspace sequence: 19\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/story-evidence-lesson.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-story-evidence-lesson\n(node:14687) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "story-safe-deployment.canvas",
+    "sha256": "437d9be230626e2cea8057233be792de3ab3d258af7c03073a0b17943bc80469",
+    "request": "integrated-before-story-safe-deployment",
+    "exit": 0,
+    "seconds": 1.13,
+    "output": "committed: integrated-before-story-safe-deployment\nWorkspace sequence: 20\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/story-safe-deployment.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-story-safe-deployment\n(node:14710) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "story-water-treatment.canvas",
+    "sha256": "00457d97bd90b442a6f1156b2c69f82e74687b40b26a2871702638f9ddf7ff67",
+    "request": "integrated-before-story-water-treatment",
+    "exit": 0,
+    "seconds": 1.16,
+    "output": "committed: integrated-before-story-water-treatment\nWorkspace sequence: 21\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/story-water-treatment.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-story-water-treatment\n(node:14733) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "tree-course-objectives.canvas",
+    "sha256": "698f158c089d20c105c6e8e5b127da5826f4653cad50d14410c31007b98d7372",
+    "request": "integrated-before-tree-course-objectives",
+    "exit": 0,
+    "seconds": 1.14,
+    "output": "committed: integrated-before-tree-course-objectives\nWorkspace sequence: 22\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/tree-course-objectives.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-tree-course-objectives\n(node:14749) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "tree-field-research.canvas",
+    "sha256": "6db48a7cbc1f05a55d3013d356549cb807b35c1f8f7abf323c9990ccbc3cab30",
+    "request": "integrated-before-tree-field-research",
+    "exit": 0,
+    "seconds": 1.1,
+    "output": "committed: integrated-before-tree-field-research\nWorkspace sequence: 23\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/tree-field-research.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-tree-field-research\n(node:14765) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "source": "tree-incident-causes.canvas",
+    "sha256": "175c9ee51e2d4fbcd99300f400b7fee0306e39d7f3a0348f6564aeeb7ae394de",
+    "request": "integrated-before-tree-incident-causes",
+    "exit": 0,
+    "seconds": 1.19,
+    "output": "committed: integrated-before-tree-incident-causes\nWorkspace sequence: 24\n$ tsx apps/cli/cli/main.ts create /Users/christopherdasca/Programming/Novakai-Canvas-next-corpus/resources/examples/showcase/tree-incident-causes.canvas --server http://127.0.0.1:5181 --workspace /Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/.local/agent-showcase --request integrated-before-tree-incident-causes\n(node:14781) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  }
+]

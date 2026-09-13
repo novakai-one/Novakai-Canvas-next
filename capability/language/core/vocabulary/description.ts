@@ -30,6 +30,7 @@ export function describeLanguage(version: number): Description {
     defaults: { ...defaults, ...layouts },
     examples: [
       'canvas 1 collection @demo "A process" { node @start step "Start" {} node @finish end "Finish" {} wire @next @start -> @finish "Continue" section @flow "Process" { show @start @finish connect @next } }',
+      'canvas 1 collection @emphasis "Emphasis" { node @read step "Read" { text @detail "The *receipt* proves the commit; paired asterisks set strong text in text blocks." role=caption } section @show "Show" { show @read } }',
       'patch 1 @demo { set node @start label="Begin here" }',
       'patch 1 @demo { set wire @next from-end=@start to-end=@finish }',
       'patch 1 @demo { add block @start { text @detail "Explain why this step matters." } }',

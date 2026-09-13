@@ -45,6 +45,41 @@ describe('Presentation measured content', () => {
     expect(runs.every((item) => !item.text.startsWith('́'))).toBe(true);
     expect(result.height).toBeGreaterThan(runs.length * 16);
   });
+  it('2b measures emphasis spans as advancing strong-face runs with markers stripped', async () => {
+    const app = (await fixture()).presentation;
+    const pinned = fonts();
+    const resolved = style(pinned);
+    const emphasized = value(
+      app.measureText({
+        text: 'Draft *diagrams* and *receipts* ship',
+        width: 400,
+        font: resolved.bodyFont,
+        strong: resolved.strongFont,
+        size: 16,
+        lineHeight: 1,
+        fill: '#000000',
+      }),
+    );
+    const runs = emphasized.primitives.filter((item) => item.kind === 'text');
+    expect(runs.map((item) => item.text).join('')).toBe('Draft diagrams and receipts ship');
+    const strong = runs.filter((item) => item.font.digest === resolved.strongFont.digest);
+    expect(strong.map((item) => item.text)).toEqual(['diagrams', 'receipts']);
+    expect(strong.every((item) => item.x > 0)).toBe(true);
+    expect(emphasized.outline.join('')).toBe('Draft diagrams and receipts ship');
+    const literal = value(
+      app.measureText({
+        text: 'Unpaired * marker and escaped \\* stay literal',
+        width: 400,
+        font: resolved.bodyFont,
+        strong: resolved.strongFont,
+        size: 16,
+        lineHeight: 1,
+        fill: '#000000',
+      }),
+    );
+    expect(literal.primitives.filter((item) => item.kind === 'text')).toHaveLength(1);
+    expect(literal.outline.join('')).toBe('Unpaired * marker and escaped \\* stay literal');
+  });
   it('3 renders ER types, keys, nullability and addressable field rows', async () => {
     const source = collection({
       objects: [

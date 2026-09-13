@@ -89,6 +89,9 @@ const drawers: Readonly<Record<FigureForm, (block: FigureBlock, palette: Palette
   window: (block, palette) => windowFigure(block, palette),
   gate: (block, palette) => gate(block, palette),
   stack: (block, palette) => stackFigure(block, palette),
+  store: (block, palette) => store(block, palette),
+  queue: (block, palette) => queue(block, palette),
+  cloud: (block, palette) => cloud(block, palette),
 };
 
 /** Draw the admitted form once; Model owns parameter validity before projection runs. */
@@ -230,6 +233,43 @@ function stackFigure(block: FigureBlock, palette: Palette): string {
 
 /** Gate outputs are one or two admitted streams, by semantic pass only. */
 const PASS_COUNT: Readonly<Record<'one' | 'few', number>> = { one: 1, few: 2 };
+
+/** Store: database cylinder; token-washed mouth over a plated body, the canonical persistence glyph. */
+function store(_block: FigureBlock, palette: Palette): string {
+  const body = `<path d="M60 44 v62 a60 13 0 0 0 120 0 v-62" fill="${palette.wash}" stroke="${palette.ink}" stroke-width="${STROKE.frame}"/>`;
+  const mouth = `<ellipse cx="120" cy="44" rx="60" ry="13" fill="${palette.accent}" opacity="${FILL.liquid}" stroke="${palette.ink}" stroke-width="${STROKE.frame}"/>`;
+  const plates = [68, 88]
+    .map(
+      (y) =>
+        `<path d="M60 ${y} a60 13 0 0 0 120 0" fill="none" stroke="${palette.soft}" stroke-width="${STROKE.detail}"/>`,
+    )
+    .join('');
+  return [body, mouth, plates].join('');
+}
+
+/** Occupied queue cells per semantic level; backlog depth never carries a raw count. */
+const QUEUE_CELLS: Readonly<Record<FigureLevel, number>> = { low: 1, half: 2, full: 3 };
+
+/** Queue: backlog pipe; occupied cells charge from the entry side and one stream exits. */
+function queue(block: FigureBlock, palette: Palette): string {
+  const level = block.form === 'queue' ? block.level : 'half';
+  const occupied = QUEUE_CELLS[level];
+  const cells = [0, 1, 2, 3]
+    .map((index) =>
+      index < occupied
+        ? `<rect x="${32 + index * 44}" y="57" width="40" height="36" rx="6" fill="${palette.accent}" opacity="${FILL.charge}" stroke="${palette.ink}" stroke-width="${STROKE.detail}"/>`
+        : rect(32 + index * 44, 57, 40, 36, palette.wash, palette.soft, STROKE.detail),
+    )
+    .join('');
+  return [flowArrow(8, 75, 28, palette.ink), cells, flowArrow(212, 75, 232, palette.ink)].join('');
+}
+
+/** Cloud: external network boundary; three merged arcs, closed outline, no internal art. */
+function cloud(_block: FigureBlock, palette: Palette): string {
+  const outline = `<path d="M72 108 a20 20 0 0 1 -4 -39 a26 26 0 0 1 50 -8 a21 21 0 0 1 30 26 a17 17 0 0 1 -8 21 z" fill="${palette.wash}" stroke="${palette.ink}" stroke-width="${STROKE.frame}" stroke-linejoin="round"/>`;
+  const pulses = [96, 120, 144].map((x) => dot(x, 88, 3, palette.soft)).join('');
+  return [outline, pulses].join('');
+}
 
 /** Stack depth is a small closed vocabulary; authors never count pixels. */
 const LAYER_COUNT: Readonly<Record<'few' | 'some' | 'many', number>> = { few: 3, some: 4, many: 5 };

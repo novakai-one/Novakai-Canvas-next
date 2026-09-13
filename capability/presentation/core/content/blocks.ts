@@ -33,6 +33,7 @@ const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
         text: block.text,
         width: context.width,
         ...context.style.typography[block.role],
+        strong: context.style.strongFont,
         fill: context.style.text,
       },
       context.metrics,

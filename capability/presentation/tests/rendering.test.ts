@@ -150,3 +150,28 @@ function assertCorner(node: VisualNode, point: { readonly x: number; readonly y:
         Math.abs(point.y - node.height / 2) / (node.height / 2),
     ).toBeLessThanOrEqual(1.000001);
 }
+
+/** Layout-stretched non-compartment shapes center their content slack; compartment cards stay left-aligned. */
+it('9b centers stretched slack for non-compartment shapes and keeps compartments left-aligned', async () => {
+  const setup = await fixture();
+  const source = collection({
+    objects: [
+      object('Plain', 'step', [{ kind: 'text', id: 'note', text: 'Centered content' }]),
+      object('Typed', 'module', [{ kind: 'text', id: 'note', text: 'Compartment content' }]),
+    ],
+    sections: [section('flow', ['Plain', 'Typed'])],
+  });
+  const projection = value(setup.presentation.project(source));
+  const plain = node(projection, 'Plain');
+  const typed = node(projection, 'Typed');
+  const plainSlack = (plain.width + 120 - plain.content.width) / 2;
+  expect(plainSlack).toBeGreaterThan(0);
+  const plainMarkup = renderToStaticMarkup(
+    createElement(setup.react.NodeContent, { node: { ...plain, width: plain.width + 120 } }),
+  );
+  expect(plainMarkup).toContain(`translate(${plainSlack} 0)`);
+  const typedMarkup = renderToStaticMarkup(
+    createElement(setup.react.NodeContent, { node: { ...typed, width: typed.width + 120 } }),
+  );
+  expect(typedMarkup).toContain('translate(0 0)');
+});

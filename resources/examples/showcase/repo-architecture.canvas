@@ -8,6 +8,7 @@ collection @repo-architecture "This repo, drawn by itself" theme=studio descript
     text @c2 "Owns catalog validity." role=caption
   }
   node @persistence module "Persistence" {
+    figure @store store size=small
     text @c3 "Atomic physical transactions." role=caption
   }
   node @tokens module "Design System" {
@@ -25,7 +26,7 @@ collection @repo-architecture "This repo, drawn by itself" theme=studio descript
   node @authoring module "Authoring" {
     port @api out "prepare · apply · undo · redo" type="Authoring"
     port @deps in "planners · validation · commits" type="Dependencies"
-    text @c8 "Imports nothing — every port is injected." role=caption
+    text @c8 "Imports nothing — every port is *injected*." role=caption
   }
   node @canvas module "Canvas" {
     text @c9 "React Flow interaction." role=caption
@@ -69,10 +70,11 @@ collection @repo-architecture "This repo, drawn by itself" theme=studio descript
     text @d5 "Hash · feasibility · preview" role=caption
   }
   node @apply step "Authoring — apply" step=5 {
-    text @d6 "One physical transaction" role=caption
+    text @d6 "One *physical* transaction" role=caption
   }
   node @receipt end "Receipt — r(n+1)" step=6 {}
   node @request start "Render request" step=1 {
+    figure @jobs queue level=half size=small
     text @d7 "Browser · CLI · export job" role=caption
   }
   node @project step "Design System — projection" step=3 {

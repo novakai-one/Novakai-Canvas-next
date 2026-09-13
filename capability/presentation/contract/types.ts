@@ -16,6 +16,7 @@ export interface TextRequest {
   readonly text: string;
   readonly width: number;
   readonly font: FontRef;
+  readonly strong?: FontRef;
   readonly size: number;
   readonly lineHeight: number;
   readonly fill: string;

@@ -222,3 +222,59 @@ it('measures parametric figures from theme tokens inside the figure band', async
   expect(winMedia.height / winMedia.width).toBe(0.625);
   expect(win.content.outline).toContain('window figure, full');
 });
+
+/** Engineering forms draw from the same token palette and aspect, with their semantic detail in the outline. */
+it('measures store, queue and cloud figures as closed token-drawn forms', async () => {
+  const pinned = fonts();
+  const tokens = style(pinned);
+  const setup = value(await composePresentation(owners(tokens, asset), pinned));
+  const source = collection({
+    objects: [
+      object(
+        'database',
+        'system',
+        [
+          { kind: 'figure', id: 'art', form: 'store', size: 'small' },
+          { kind: 'text', id: 'caption', text: caption, role: 'caption' },
+        ],
+        { composition: 'media-top', frame: 'none' },
+      ),
+      object(
+        'backlog',
+        'system',
+        [
+          { kind: 'figure', id: 'art', form: 'queue', level: 'full', size: 'small' },
+          { kind: 'text', id: 'caption', text: caption, role: 'caption' },
+        ],
+        { composition: 'media-top', frame: 'none' },
+      ),
+      object(
+        'boundary',
+        'system',
+        [
+          { kind: 'figure', id: 'art', form: 'cloud', size: 'small' },
+          { kind: 'text', id: 'caption', text: caption, role: 'caption' },
+        ],
+        { composition: 'media-top', frame: 'none' },
+      ),
+    ],
+    sections: [section('story', ['database', 'backlog', 'boundary'])],
+  });
+  const projection = value(setup.presentation.project(source));
+  const artwork = (id: string): string => {
+    const media = node(projection, id).content.primitives.find((item) => item.kind === 'media');
+    assert(media?.kind === 'media');
+    expect(media.digest.startsWith('figure:')).toBe(true);
+    expect(media.height / media.width).toBe(0.625);
+    return Buffer.from(
+      media.dataUri.replace('data:image/svg+xml;base64,', ''),
+      'base64',
+    ).toString();
+  };
+  expect(artwork('database')).toContain('ellipse');
+  expect(artwork('backlog')).toContain(tokens.text);
+  expect(artwork('boundary')).toContain('path');
+  expect(node(projection, 'database').content.outline).toContain('store figure');
+  expect(node(projection, 'backlog').content.outline).toContain('queue figure, full');
+  expect(node(projection, 'boundary').content.outline).toContain('cloud figure');
+});

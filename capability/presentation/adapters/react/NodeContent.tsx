@@ -58,9 +58,12 @@ function headerRule(node: VisualNode): ReactElement | null {
   if (node.frame !== 'auto') return null;
   return semanticHeaderRule(node);
 }
+/** Compartment cards keep left-aligned compartments under a separator; panel containers keep left-aligned tab titles. */
+const COMPARTMENT_SHAPES: readonly string[] = ['entity', 'module', 'interface', 'function'];
+const LEFT_ALIGNED_SHAPES: readonly string[] = [...COMPARTMENT_SHAPES, 'container'];
 /** Only kind-appropriate auto frames receive a separator, after the measured heading region. */
 function semanticHeaderRule(node: VisualNode): ReactElement | null {
-  if (!['entity', 'module', 'interface', 'function'].includes(node.shape)) return null;
+  if (!COMPARTMENT_SHAPES.includes(node.shape)) return null;
   if (node.height <= node.headerHeight) return null;
   return (
     <line
@@ -73,6 +76,11 @@ function semanticHeaderRule(node: VisualNode): ReactElement | null {
       vectorEffect="non-scaling-stroke"
     />
   );
+}
+/** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
+function contentSlack(node: VisualNode): number {
+  if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
+  return Math.max(0, (node.width - node.content.width) / 2);
 }
 /** Bind stable slots once; no component type is created during a React render. */
 export function createContentRenderer(
@@ -101,7 +109,9 @@ export function createContentRenderer(
         {embedFonts && <style>{css}</style>}
         {frame(node)}
         {headerRule(node)}
-        <Blocks primitives={node.content.primitives} />
+        <g transform={`translate(${contentSlack(node)} 0)`}>
+          <Blocks primitives={node.content.primitives} />
+        </g>
       </svg>
     );
   }

@@ -106,6 +106,31 @@ const figureBlockSchema = z.discriminatedUnion('form', [
       size: size.default('medium'),
     })
     .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('store'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('queue'),
+      level: figureLevelSchema.default('half'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('cloud'),
+      size: size.default('medium'),
+    })
+    .readonly(),
 ]);
 
 /** Local links may select a section; URI links remain external references. */

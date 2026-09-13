@@ -176,7 +176,18 @@ export const constructs: readonly ConstructDefinition[] = [
       {
         name: 'form',
         type: 'word',
-        values: ['vessel', 'layered-bed', 'screen', 'gauge', 'window', 'gate', 'stack'],
+        values: [
+          'vessel',
+          'layered-bed',
+          'screen',
+          'gauge',
+          'window',
+          'gate',
+          'stack',
+          'store',
+          'queue',
+          'cloud',
+        ],
       },
     ],
     properties: {

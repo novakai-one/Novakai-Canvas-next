@@ -43,4 +43,15 @@ export interface Description {
   readonly defaults: Readonly<Record<string, string>>;
   readonly examples: readonly string[];
   readonly diagnostics: readonly string[];
+  /** Acceptance policies published verbatim from Model's declaration records; discover without opening core. */
+  readonly policies: {
+    readonly layouts: Readonly<Record<string, readonly string[]>>;
+    readonly wires: Readonly<Record<string, readonly string[]>>;
+    readonly endpoints: {
+      readonly members: Readonly<Record<string, readonly string[]>>;
+      readonly genericMembers: readonly string[];
+      readonly sources: Readonly<Record<string, readonly string[]>>;
+      readonly targets: Readonly<Record<string, readonly string[]>>;
+    };
+  };
 }

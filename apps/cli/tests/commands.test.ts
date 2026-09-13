@@ -61,6 +61,17 @@ it('host 8 maps readable arguments and files to exact requests, rejects invalid 
     const semantic = createSemanticInputs(
       createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } }),
     );
+    expect(
+      semantic.readout({
+        source: 'canvas 1',
+        collection: 'demo',
+        revision: 2,
+        manual: [{ target: '@flow/@build', kind: 'placement', locked: false }],
+      }),
+    ).toMatchObject({ ok: true, value: expect.stringContaining('# manual geometry: 1 target(s)') });
+    expect(semantic.readout({ source: 'canvas 1', collection: 'demo', revision: 0 })).toMatchObject(
+      { ok: true, value: expect.not.stringContaining('manual geometry') },
+    );
     const files = createRequestFiles(join(root, 'requests'));
     const sent: Request[] = [];
     let knownReceipt: unknown = null;

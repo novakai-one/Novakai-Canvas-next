@@ -2,46 +2,26 @@ import type { Diagnostic } from '../../contract/errors.js';
 import type { Collection } from '../../contract/records/collection.js';
 import type { Endpoint } from '../../contract/records/content.js';
 import type { DiagramObject, ObjectKind } from '../../contract/records/object.js';
-import type { Relationship, RelationshipKind } from '../../contract/records/relationship.js';
+import type { Relationship } from '../../contract/records/relationship.js';
+import {
+  memberEndpoints,
+  genericMemberEndpoints,
+  sourceEndpoints,
+  targetEndpoints,
+} from '../../contract/records/policies.js';
 import { descendants, type ObjectDescendant } from '../objects/content.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
-
-// Unlisted object kinds support generic ports and table rows as addressed endpoints.
-const endpointKinds: Readonly<Partial<Record<ObjectKind, readonly ObjectDescendant['kind'][]>>> = {
-  entity: ['field', 'port'],
-  module: ['member', 'signature', 'port'],
-  interface: ['member', 'signature', 'port'],
-  function: ['member', 'signature', 'port'],
-};
-const genericEndpointKinds: readonly ObjectDescendant['kind'][] = ['port', 'row'];
-
-// An absent relationship policy means no additional restriction on that endpoint's object kind.
-const sourceKinds: Readonly<Partial<Record<RelationshipKind, readonly ObjectKind[]>>> = {
-  association: ['entity'],
-  imports: ['module'],
-  calls: ['module', 'function'],
-  implements: ['module', 'function'],
-  contains: ['module', 'system'],
-  transition: ['start', 'state'],
-};
-const targetKinds: Readonly<Partial<Record<RelationshipKind, readonly ObjectKind[]>>> = {
-  association: ['entity'],
-  imports: ['module', 'interface', 'function'],
-  calls: ['function'],
-  implements: ['interface'],
-  transition: ['state', 'end'],
-};
-
-/** Missing canonical objects are unresolved addresses; membership is checked separately. */
-function resolveEndpoint(endpoint: Endpoint, collection: Collection): DiagramObject | undefined {
-  return collection.objects.find((object) => object.id === endpoint.object);
-}
 
 /** A missing member differs from an existing descendant of the wrong semantic kind. */
 function isAllowedMember(member: ObjectDescendant | undefined, ownerKind: ObjectKind): boolean {
   if (member === undefined) return false;
-  const allowed = endpointKinds[ownerKind] ?? genericEndpointKinds;
-  return allowed.includes(member.kind);
+  const allowed = memberEndpoints[ownerKind] ?? genericMemberEndpoints;
+  return (allowed as readonly string[]).includes(member.kind);
+}
+
+/** Missing canonical objects are unresolved addresses; membership is checked separately. */
+function resolveEndpoint(endpoint: Endpoint, collection: Collection): DiagramObject | undefined {
+  return collection.objects.find((object) => object.id === endpoint.object);
 }
 
 /** An omitted member addresses the whole object; a missing object is diagnosed by the endpoint check. */
@@ -122,13 +102,13 @@ function validateRelationship(
     relationship.source,
     collection,
     `${path}.source`,
-    sourceKinds[relationship.kind],
+    sourceEndpoints[relationship.kind],
   );
   const targetIssues = validateEndpoint(
     relationship.target,
     collection,
     `${path}.target`,
-    targetKinds[relationship.kind],
+    targetEndpoints[relationship.kind],
   );
   const cardinalityIssues = validateCardinalities(relationship, path);
   return [...sourceIssues, ...targetIssues, ...cardinalityIssues];

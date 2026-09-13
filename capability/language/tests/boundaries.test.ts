@@ -1,5 +1,14 @@
 import { describe, it, expect, assert } from 'vitest';
-import { plan, stage } from '@novakai/canvas-model';
+import {
+  plan,
+  stage,
+  compatibleLayouts,
+  compatibleWires,
+  memberEndpoints,
+  genericMemberEndpoints,
+  sourceEndpoints,
+  targetEndpoints,
+} from '@novakai/canvas-model';
 import { createLanguage } from '../contract/index.js';
 import { language, value, resources, graph, pins, rejected } from './fixtures.js';
 describe('Language correction and safety boundaries', () => {
@@ -100,6 +109,16 @@ describe('Language correction and safety boundaries', () => {
     expect(description.patchTargets.wire['from-end']).toMatchObject({
       type: 'endpoint',
       field: 'source',
+    });
+    expect(description.policies).toEqual({
+      layouts: compatibleLayouts,
+      wires: compatibleWires,
+      endpoints: {
+        members: memberEndpoints,
+        genericMembers: genericMemberEndpoints,
+        sources: sourceEndpoints,
+        targets: targetEndpoints,
+      },
     });
     for (const example of description.examples) expect(language.parse(example).ok).toBe(true);
     rejected(

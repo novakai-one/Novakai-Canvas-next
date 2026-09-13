@@ -3,6 +3,14 @@ import type { Language, Dependencies } from './types.js';
 import type { Result } from './errors.js';
 import type { ParsedSource } from './records/syntax.js';
 import type { Description } from './records/vocabulary.js';
+import {
+  compatibleLayouts,
+  compatibleWires,
+  memberEndpoints,
+  genericMemberEndpoints,
+  sourceEndpoints,
+  targetEndpoints,
+} from '@novakai/canvas-model';
 import type {
   LowerRequest,
   LoweredIntent,
@@ -16,6 +24,17 @@ import { lowerDocument } from '../core/lowering/document.js';
 import { lowerPatch } from '../core/patching/compile.js';
 import { printCollection } from '../core/printing/document.js';
 import { describeLanguage } from '../core/vocabulary/description.js';
+/** Model's acceptance policies publish verbatim; core assembles, never duplicates the tables. */
+const policies: Description['policies'] = {
+  layouts: compatibleLayouts,
+  wires: compatibleWires,
+  endpoints: {
+    members: memberEndpoints,
+    genericMembers: genericMemberEndpoints,
+    sources: sourceEndpoints,
+    targets: targetEndpoints,
+  },
+};
 /**
  * Bind required owner roles without I/O. Language owns syntax correction and immutable compilation;
  * Authoring owns admission, revisions, concurrency and recovery. Retrying identical inputs has no effects.
@@ -23,7 +42,7 @@ import { describeLanguage } from '../core/vocabulary/description.js';
 export function createLanguage(deps: Dependencies): Language {
   /** Return a detached inspectable grammar, including defaults and complete example source. */
   function describe(version = 1): Result<Description> {
-    return protect(() => describeLanguage(version));
+    return protect(() => describeLanguage(version, policies));
   }
   /** Parse before resource admission; no file or network source is read or evaluated. */
   function parse(source: string): Result<ParsedSource> {

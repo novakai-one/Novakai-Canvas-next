@@ -1,31 +1,11 @@
 import type { Diagnostic } from '../../contract/errors.js';
 import type { Collection } from '../../contract/records/collection.js';
-import type { LayoutIntent } from '../../contract/records/layout.js';
 import type { Relationship, RelationshipKind } from '../../contract/records/relationship.js';
 import type { Section, Mode } from '../../contract/records/section.js';
+import { compatibleLayouts, compatibleWires } from '../../contract/records/policies.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { visibleObjects } from './groups.js';
-
-const compatibleLayouts: Readonly<Record<Mode, readonly LayoutIntent['algorithm'][]>> = {
-  flow: ['flow', 'layered'],
-  state: ['flow', 'layered'],
-  er: ['layered', 'grid'],
-  modules: ['layered', 'grid'],
-  tree: ['tree'],
-  sequence: ['sequence'],
-  story: ['grid'],
-  grid: ['grid'],
-};
-
-// An absent entry permits any canonical relationship kind; an empty list permits none.
-const compatibleWires: Readonly<Partial<Record<Mode, readonly RelationshipKind[]>>> = {
-  er: ['association', 'reference'],
-  modules: ['imports', 'calls', 'implements', 'contains', 'reference'],
-  state: ['transition', 'reference'],
-  tree: ['parent', 'reference'],
-  sequence: [],
-};
 
 /** Resolve visible wires to canonical relationships; missing identities are diagnosed by views. */
 export function visibleRelationships(

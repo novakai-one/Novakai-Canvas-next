@@ -8,10 +8,18 @@ import type { SemanticInputs, ReceiptExpectation } from '../contract/ports/runti
 import type { Command } from '../contract/records/command.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
+const manualTarget = z
+  .strictObject({
+    target: z.string(),
+    kind: z.enum(['placement', 'route']),
+    locked: z.boolean(),
+  })
+  .readonly();
 const readout = z.looseObject({
   source: z.string(),
   collection: z.string(),
   revision: z.number().int().nonnegative(),
+  manual: z.array(manualTarget).readonly().optional(),
 });
 /** Parse the server snapshot through Authoring, rather than asserting the JSON response type. */
 function snapshot(input: unknown): Result<Snapshot> {
@@ -141,6 +149,11 @@ function collectionLine(record: StoredRecord): string {
   if (!collection.ok) return `${record.key.id}\tInvalid collection — inspect service diagnostics`;
   return `${collection.value.id}\tr${collection.value.revision}\t${collection.value.title}\t${collection.value.sections.length} sections`;
 }
+/** Human geometry survives matching replacements; agents reset it explicitly when reflow is wanted. */
+function manualNote(manual: ReadonlyArray<{ readonly target: string }> | undefined): string {
+  if (manual === undefined || manual.length === 0) return '';
+  return `\n# manual geometry: ${manual.length} target(s) — replace preserves these; reset layout @section / reset route @section/@wire to reflow`;
+}
 /** Read output declares the exact revision as a DSL comment, preserving fully authorable source. */
 function sourceReadout(input: unknown): Result<string> {
   const parsed = readout.safeParse(input);
@@ -148,7 +161,7 @@ function sourceReadout(input: unknown): Result<string> {
     return failure('invalid-response', 'Service returned an invalid source readout');
   return {
     ok: true,
-    value: `# ${parsed.data.collection} revision=${parsed.data.revision}\n${parsed.data.source}`,
+    value: `# ${parsed.data.collection} revision=${parsed.data.revision}${manualNote(parsed.data.manual)}\n${parsed.data.source}`,
   };
 }
 /** Receipt output reports confirmed identity and sequence, not an optimistic saved status. */

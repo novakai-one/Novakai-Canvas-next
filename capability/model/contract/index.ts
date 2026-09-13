@@ -38,5 +38,14 @@ export type {
   Mode,
 } from './records/section.js';
 export type { LayoutIntent, LayoutTarget, LayoutConstraint, Placement } from './records/layout.js';
+export {
+  compatibleLayouts,
+  compatibleWires,
+  memberEndpoints,
+  genericMemberEndpoints,
+  sourceEndpoints,
+  targetEndpoints,
+} from './records/policies.js';
+export type { MemberEndpointKind } from './records/policies.js';
 export type { Change, RecordChange } from './records/change.js';
 export type { ChangePlan, ChangeStage, Impact, Target } from './types.js';

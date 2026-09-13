@@ -44,6 +44,8 @@ export async function execute(
           dependencies.semantic.receipt(input, { kind: 'lookup', request: command.target }),
         dependencies,
       ),
+    inspect: () =>
+      query(`/api/v1/inspect?id=${encodeURIComponent(command.target)}`, describe, dependencies),
     create: () => author(command, dependencies),
     replace: () => author(command, dependencies),
     patch: () => author(command, dependencies),

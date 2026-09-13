@@ -1,6 +1,7 @@
 import type { SessionDependencies, WorkspaceSession } from './types.js';
 import { failure } from './errors.js';
 import { renderCollection } from '../core/rendering/collection.js';
+import { inspectCollection } from '../core/rendering/inspection.js';
 export { createAdmission as createHttpAdmission } from '../core/transport/admission.js';
 export { readCommand } from '../core/transport/command.js';
 /** Bind a persistent workspace to read, mutation and render consumers; HTTP owns authentication and caller identity. */
@@ -34,6 +35,11 @@ export function createWorkspaceSession(dependencies: SessionDependencies): Works
     render: (id, signal) =>
       lifetime.run(
         () => renderCollection(id, signal, dependencies),
+        () => failure('unavailable', 'session', 'Workspace is closing or closed'),
+      ),
+    inspect: (id, signal) =>
+      lifetime.run(
+        () => inspectCollection(id, signal, dependencies),
         () => failure('unavailable', 'session', 'Workspace is closing or closed'),
       ),
     subscribe: (listener) => dependencies.changes.subscribe(listener),

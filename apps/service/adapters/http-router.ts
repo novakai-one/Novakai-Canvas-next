@@ -101,6 +101,7 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
     }),
     'GET /api/v1/source': (call) => source(call, owners),
     'GET /api/v1/render': (call) => owners.session.render(call.query.id ?? '', call.signal),
+    'GET /api/v1/inspect': (call) => owners.session.inspect(call.query.id ?? '', call.signal),
     'GET /api/v1/receipt': (call) => owners.session.receipt(call.query.id),
     'POST /api/v1/authoring/preview': (call) => mutate(call, owners, true),
     'POST /api/v1/authoring/apply': (call) => mutate(call, owners, false),

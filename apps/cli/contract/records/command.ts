@@ -12,6 +12,7 @@ export const commandName = z.enum([
   'receipt',
   'retry',
   'apply',
+  'inspect',
   'theme-admit',
   'recipe-admit',
   'recipe-instantiate',

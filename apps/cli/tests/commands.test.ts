@@ -4,6 +4,7 @@ import { cp, symlink } from 'node:fs/promises';
 import { openAssets, digest as assetDigest } from '../../../capability/assets/contract/index.js';
 import { serveWorkspace } from '@novakai/canvas-service';
 import { openWorkspace } from '@novakai/canvas-service';
+import { inspectionReport } from '@novakai/canvas-service';
 import { it, expect, assert } from 'vitest';
 import { mkdtemp, writeFile, rm, readFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -340,6 +341,16 @@ it('PR3 CLI retains exact pins and normalized bytes across alias advance, source
     expect(await readFile(out, 'utf8')).toContain('fresh-cli');
     const created = await cli(['create', out, '--request', 'fresh-cli-create']);
     assert(created.ok, JSON.stringify(created));
+    const inspected = await cli(['inspect', 'fresh-cli']);
+    assert(inspected.ok, JSON.stringify(inspected));
+    const report = inspectionReport.parse(JSON.parse(inspected.value));
+    expect(report).toMatchObject({ valid: true, diagnostics: [] });
+    expect(report.sections).toBeGreaterThan(0);
+    expect(report.engineVersions.join(' ')).toContain('layout-policy');
+    expect(await cli(['inspect', 'missing-collection'])).toMatchObject({
+      ok: false,
+      error: { code: 'not-found' },
+    });
     const pinned = await createResourceFiles().read(join(root, 'missing.canvas'), {
       kind: 'image',
       alias: 'known',

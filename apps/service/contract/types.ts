@@ -7,6 +7,7 @@ import type { WorkspaceReader } from './records/workspace.js';
 import type { CollectionRenderer } from './ports/collection-renderer.js';
 import type { ChangeChannel, CommittedChange } from './ports/notifications.js';
 import type { RenderDocument } from './records/rendering.js';
+import type { InspectionReport } from './records/inspection.js';
 import type { Result } from './errors.js';
 /** Session transport authenticates each caller before forwarding the explicit Authoring envelope. */
 export interface WorkspaceSession {
@@ -26,6 +27,7 @@ export interface WorkspaceSession {
   ): Promise<AuthoringResult<Receipt>>;
   receipt(request: unknown): Promise<AuthoringResult<Receipt | null>>;
   render(collection: string, signal: AbortSignal): Promise<Result<RenderDocument>>;
+  inspect(collection: string, signal: AbortSignal): Promise<Result<InspectionReport>>;
   subscribe(listener: (change: CommittedChange) => void): () => void;
   close(): Promise<Result<void>>;
 }

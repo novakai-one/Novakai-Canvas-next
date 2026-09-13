@@ -78,7 +78,7 @@ function readCommand(
   if (!parsed.success)
     return failure(
       'invalid-command',
-      'Choose describe, list, read, create, replace, patch, preview, receipt, retry or apply',
+      'Choose describe, list, read, inspect, create, replace, patch, preview, receipt, retry or apply',
     );
   return operands(parsed.data, positionals, flags);
 }

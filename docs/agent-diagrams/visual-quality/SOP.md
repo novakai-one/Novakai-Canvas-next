@@ -32,3 +32,14 @@ A pass is supported by source revision, source file, collection ID/revision, rec
 Only the orchestrator controls browser verification. Use the in-app browser; auditors inspect provided captures. No delegated browser launches. Any temporary process/session has an owner and is closed after use; preserve personal browsers.
 
 Every changed first-party source file needs reproducible >144/160 evidence and Sonar complexity ≤2. Mechanical passes and sampling are distinct from per-file scores; never pre-award absent principles. Standards apply to the approved boundary protocol and readable code, not an invented TypeScript line cap.
+
+## Agent quality loop (authoring feedback, 2026-09-13)
+
+An authoring agent measures before it eyeballs. The loop per iteration:
+
+1. `canvas preview FILE [--revision N]` — fail fast on syntax, domain and feasibility (geometry infeasibility is checked at preview, not only at commit).
+2. `canvas apply REQUEST_ID` — commit, then reconcile the receipt.
+3. `canvas inspect ID` — machine quality report: `valid`, typed `warnings` (`wire-crossing`, `constraint-relaxed` with targets), `crossings`/`relaxed` budget counts, `engineVersions`. Gate budgets against the visual benchmark floors before touching DSL again.
+4. Export/screenshot only for the final visual eyeball of a round, not for geometry verification.
+
+`constraint-relaxed` warnings mean the engine dropped or violated an authored hint to keep required geometry; correct the named hint rather than adding more constraints. A `constraint-conflict` names the failing wire and its authored side intent.

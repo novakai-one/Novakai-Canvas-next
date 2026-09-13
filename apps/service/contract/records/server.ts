@@ -44,7 +44,15 @@ export interface StaticFiles {
 export interface RouterBindings {
   readonly session: Pick<
     WorkspaceSession,
-    'workspace' | 'installation' | 'read' | 'apply' | 'prepare' | 'receipt' | 'render' | 'resources'
+    | 'workspace'
+    | 'installation'
+    | 'read'
+    | 'apply'
+    | 'prepare'
+    | 'receipt'
+    | 'render'
+    | 'inspect'
+    | 'resources'
   >;
   readonly generation: string;
   readonly admission: Pick<HttpAdmission, 'mutation'>;

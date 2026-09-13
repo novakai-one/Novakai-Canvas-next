@@ -4,6 +4,7 @@ export const usage = `Novakai Canvas — author collections with readable DSL
 canvas describe                         Read the DSL vocabulary
 canvas list                             List collection IDs and revisions
 canvas read ID [--out FILE]              Read editable DSL for a collection
+canvas inspect ID                        Scene quality report: validity, warnings, crossing/relaxed counts
 canvas create FILE                      Create a collection from DSL
 canvas replace FILE --revision N        Replace semantics at the revision you read
 canvas patch FILE --revision N          Apply an ordered DSL patch

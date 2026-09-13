@@ -138,6 +138,7 @@ it('host 4 rejects malformed identity, origin, generation and bounded payloads b
       read: rejected,
       receipt: rejected,
       render: rejected,
+      inspect: rejected,
     },
     source: { describe: rejected, print: () => ({ ok: true, value: null }) },
   });
@@ -160,6 +161,55 @@ it('host 4 rejects malformed identity, origin, generation and bounded payloads b
     });
     expect(outcome).toMatchObject({ ok: false, error: { code: 'unauthorized' } });
   }
+  expect(rejected).not.toHaveBeenCalled();
+});
+
+/** The quality route delegates to the session's inspection owner and passes the report through untouched. */
+it('host 4b GET /api/v1/inspect returns the session quality report for the named collection', async () => {
+  const report = {
+    valid: true,
+    diagnostics: [],
+    warnings: [{ code: 'wire-crossing', targets: ['a', 'b'], message: 'cross' }],
+    crossings: 1,
+    relaxed: 0,
+    sections: 2,
+    engineVersions: ['layout-policy-17'],
+  };
+  const inspect = vi.fn(async () => ({ ok: true as const, value: report }));
+  const rejected = vi.fn(async () => {
+    throw new Error('This owner is not part of the inspection route');
+  });
+  const router = createHttpRouter({
+    generation: security.generation,
+    admission: createHttpAdmission(security, { read: readAuthoringRequest }),
+    decoder: { read: readCommand },
+    session: {
+      workspace: 'local',
+      get resources(): never {
+        throw new Error('Resource owner is outside this inspection case');
+      },
+      get installation(): never {
+        throw new Error('Installation read is outside this inspection case');
+      },
+      apply: rejected,
+      prepare: rejected,
+      read: rejected,
+      receipt: rejected,
+      render: rejected,
+      inspect,
+    },
+    source: { describe: rejected, print: () => ({ ok: true, value: null }) },
+  });
+  const outcome = await router.invoke({
+    path: '/api/v1/inspect',
+    query: { id: 'demo' },
+    caller: { id: 'agent:cli', kind: 'agent' },
+    signal: new AbortController().signal,
+    metadata: { ...metadata, method: 'GET' },
+    body: '',
+  });
+  expect(outcome).toEqual({ ok: true, value: report });
+  expect(inspect).toHaveBeenCalledWith('demo', expect.anything());
   expect(rejected).not.toHaveBeenCalled();
 });
 

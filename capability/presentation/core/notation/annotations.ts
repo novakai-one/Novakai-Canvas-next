@@ -23,11 +23,16 @@ function numberedLabel(
   const padding = context.style.gap / 2;
   const height = number.height + padding * 2;
   const width = Math.max(height, number.width + padding * 2);
-  const blockHeight = Math.max(height, label.height);
+  const description = pilledLabel(label, context);
+  const blockHeight = Math.max(height, description.height);
   const text = offset(number, (width - number.width) / 2, padding + (blockHeight - height) / 2);
-  const description = offset(label, width + context.style.gap, (blockHeight - label.height) / 2);
+  const detail = offset(
+    description,
+    width + context.style.gap,
+    (blockHeight - description.height) / 2,
+  );
   return {
-    width: width + context.style.gap + label.width,
+    width: width + context.style.gap + description.width,
     height: blockHeight,
     anchors: [],
     outline: [`Step ${step}`, ...label.outline],
@@ -44,7 +49,34 @@ function numberedLabel(
         strokeWidth: context.style.stroke,
       },
       ...text.primitives,
-      ...description.primitives,
+      ...detail.primitives,
+    ],
+  };
+}
+
+/** Wire labels rest on a surface capsule; bare text never floats over panel boundaries or whitespace. */
+function pilledLabel(label: MeasuredContent, context: ContentContext): MeasuredContent {
+  const padding = context.style.gap / 2;
+  const height = label.height + padding * 2;
+  const width = label.width + padding * 2;
+  return {
+    width,
+    height,
+    anchors: [],
+    outline: label.outline,
+    primitives: [
+      {
+        kind: 'badge',
+        x: 0,
+        y: 0,
+        width,
+        height,
+        radius: height / 2,
+        fill: context.style.surface,
+        stroke: context.style.border,
+        strokeWidth: context.style.stroke,
+      },
+      ...offset(label, padding, padding).primitives,
     ],
   };
 }
@@ -55,6 +87,6 @@ export function measureWireAnnotation(
   context: ContentContext,
 ): MeasuredContent {
   const label = labelContent(wireLabel(wire), context, 'annotation');
-  if (wire.step === undefined) return label;
+  if (wire.step === undefined) return pilledLabel(label, context);
   return numberedLabel(wire.step, label, context);
 }

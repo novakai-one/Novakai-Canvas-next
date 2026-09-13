@@ -28,8 +28,12 @@ interface Palette {
   readonly tint: string;
   readonly soft: string;
   readonly accent: string;
+  readonly accentAlt: string;
   readonly success: string;
 }
+
+/** Artwork stroke weights live in one table; scaling the house style is a one-line change. */
+const STROKE = { frame: 4, line: 5, detail: 3 } as const;
 
 /** Measure one parametric figure as a media primitive; renderers already draw admitted media unchanged. */
 export function measureFigure(
@@ -44,7 +48,8 @@ export function measureFigure(
       : style.contentSizing.widths[block.size].preferred;
   const targetWidth = Math.min(width, preferred);
   const height = targetWidth * (VIEW.height / VIEW.width);
-  const svg = document_(drawFigure(block, palette(style)));
+  const colors = palette(style);
+  const svg = document_(drawFigure(block, colors), colors);
   return {
     width,
     height,
@@ -94,7 +99,7 @@ function vessel(block: FigureBlock, palette: Palette): string {
   const parts = [
     tank(palette),
     liquid,
-    sediment(2 + Number(specific.agitator) * 3, top + depth, palette.ink),
+    sediment(2 + Number(specific.agitator) * 3, top + depth, palette.accentAlt),
     agitatorMark(specific.agitator, top, palette.ink),
     markBadge(specific.mark, 168, 96, palette),
   ];
@@ -114,7 +119,7 @@ function layeredBed(block: FigureBlock, palette: Palette): string {
   const bedTop = top + depth * 0.45;
   const strata = [
     { fill: palette.soft, opacity: 0.5 },
-    { fill: palette.accent, opacity: 0.55 },
+    { fill: palette.accentAlt, opacity: 0.55 },
     { fill: palette.ink, opacity: 0.85 },
   ]
     .map((layer, index) => band(bedTop + index * 18, 16, layer.fill, layer.opacity))
@@ -131,7 +136,7 @@ function layeredBed(block: FigureBlock, palette: Palette): string {
 function screen(block: FigureBlock, palette: Palette): string {
   const debris = block.form === 'screen' ? block.debris : 'some';
   const bars = [0, 1, 2]
-    .map((index) => rect(112 + index * 8, 25, 4, 100, palette.tint, palette.ink, 2))
+    .map((index) => rect(112 + index * 8, 25, 4, 100, palette.wash, palette.ink, STROKE.detail))
     .join('');
   const caught =
     debris === 'some'
@@ -174,16 +179,16 @@ function windowFigure(block: FigureBlock, palette: Palette): string {
   const fraction = LEVEL_FRACTION[fill];
   const charged = 200 * fraction;
   const compartments = [0, 1, 2, 3]
-    .map((index) => rect(20 + index * 50, 55, 46, 40, palette.tint, palette.ink, 2))
+    .map((index) => rect(20 + index * 50, 55, 46, 40, palette.wash, palette.ink, STROKE.detail))
     .join('');
   const charge = `<rect x="23" y="58" width="${Math.max(0, charged - 6)}" height="34" fill="${palette.accent}" opacity="0.4"/>`;
   const outlines = [0, 1, 2, 3]
     .map(
       (index) =>
-        `<rect x="${20 + index * 50}" y="55" width="46" height="40" rx="8" fill="none" stroke="${palette.ink}" stroke-width="2"/>`,
+        `<rect x="${20 + index * 50}" y="55" width="46" height="40" rx="8" fill="none" stroke="${palette.ink}" stroke-width="${STROKE.detail}"/>`,
     )
     .join('');
-  const budget = `<rect x="20" y="115" width="200" height="6" rx="3" fill="${palette.tint}" stroke="${palette.soft}" stroke-width="1"/><rect x="20" y="115" width="${charged}" height="6" rx="3" fill="${palette.accent}"/>`;
+  const budget = `<rect x="20" y="115" width="200" height="6" rx="3" fill="${palette.wash}" stroke="${palette.soft}" stroke-width="1"/><rect x="20" y="115" width="${charged}" height="6" rx="3" fill="${palette.accent}"/>`;
   return [compartments, charge, outlines, budget].join('');
 }
 
@@ -194,10 +199,10 @@ function gate(block: FigureBlock, palette: Palette): string {
     .map(
       (index) =>
         dot(34, 35 + index * 20, 5, palette.accent) +
-        line(44, 35 + index * 20, 124, 65 + index * 5, palette.soft, 3),
+        line(44, 35 + index * 20, 124, 65 + index * 5, palette.soft, STROKE.detail),
     )
     .join('');
-  const bar = rect(124, 45, 16, 70, palette.tint, palette.ink, 3);
+  const bar = rect(124, 45, 16, 70, palette.wash, palette.ink, STROKE.frame);
   const admitted = Array.from({ length: PASS_COUNT[pass] }, (_, index) =>
     flowArrow(150, 65 + index * 25, 212, palette.ink),
   ).join('');
@@ -208,9 +213,9 @@ function gate(block: FigureBlock, palette: Palette): string {
 function stackFigure(block: FigureBlock, palette: Palette): string {
   const layers = block.form === 'stack' ? block.layers : 'some';
   const bands = Array.from({ length: LAYER_COUNT[layers] }, (_, index) =>
-    rect(40, 28 + index * 24, 160, 20, palette.tint, palette.ink, 2),
+    rect(40, 28 + index * 24, 160, 20, palette.wash, palette.ink, STROKE.detail),
   ).join('');
-  const priority = `<rect x="40" y="28" width="160" height="20" rx="8" fill="${palette.accent}" opacity="0.45"/><rect x="40" y="28" width="160" height="20" rx="8" fill="none" stroke="${palette.ink}" stroke-width="2"/>`;
+  const priority = `<rect x="40" y="28" width="160" height="20" rx="8" fill="${palette.accent}" opacity="0.45"/><rect x="40" y="28" width="160" height="20" rx="8" fill="none" stroke="${palette.ink}" stroke-width="${STROKE.detail}"/>`;
   return [bands, priority].join('');
 }
 
@@ -222,7 +227,7 @@ const LAYER_COUNT: Readonly<Record<'few' | 'some' | 'many', number>> = { few: 3,
 
 /** Shared tank outline reused by vessel and bed forms; geometry lives once. */
 function tank(palette: Palette): string {
-  return rect(60, 30, 120, 100, palette.wash, palette.ink, 3);
+  return rect(60, 30, 120, 100, palette.wash, palette.ink, STROKE.frame);
 }
 
 /** Liquid band fills from the band floor upward so level semantics stay visual. */
@@ -246,18 +251,19 @@ function sediment(count: number, floor: number, fill: string): string {
 /** Agitator shaft and paddle mark active mixing vessels. */
 function agitator(top: number, stroke: string): string {
   return (
-    line(120, top - 18, 120, top + 58, stroke, 5) + line(102, top + 58, 138, top + 58, stroke, 5)
+    line(120, top - 18, 120, top + 58, stroke, STROKE.line) +
+    line(102, top + 58, 138, top + 58, stroke, STROKE.line)
   );
 }
 
 /** Inflow arrow signals media entering the bed from above. */
 function inflowArrow(top: number, stroke: string): string {
-  return `${line(120, top - 22, 120, top - 2, stroke, 4)}<path d="m113 ${top - 10} 7 10 7-10" fill="none" stroke="${stroke}" stroke-width="4" stroke-linejoin="round"/>`;
+  return `${line(120, top - 22, 120, top - 2, stroke, STROKE.line)}<path d="m113 ${top - 10} 7 10 7-10" fill="none" stroke="${stroke}" stroke-width="${STROKE.line}" stroke-linejoin="round"/>`;
 }
 
 /** Horizontal flow segment with an arrowhead pointing right. */
 function flowArrow(x1: number, y: number, x2: number, stroke: string): string {
-  return `${line(x1, y, x2, y, stroke, 4)}<path d="m${x2 - 9} ${y - 7} 10 7-10 7" fill="none" stroke="${stroke}" stroke-width="4" stroke-linejoin="round"/>`;
+  return `${line(x1, y, x2, y, stroke, STROKE.line)}<path d="m${x2 - 9} ${y - 7} 10 7-10 7" fill="none" stroke="${stroke}" stroke-width="${STROKE.line}" stroke-linejoin="round"/>`;
 }
 
 /** Badge frames are a closed table; badges never become free artwork. */
@@ -265,9 +271,9 @@ const badgeFrames: Readonly<
   Record<'check' | 'shield', (x: number, y: number, palette: Palette) => string>
 > = {
   shield: (x, y, palette) =>
-    `<path d="M${x} ${y} l14 6 v12 c0 10-7 16-14 19 c-7-3-14-9-14-19 v-12 z" fill="${palette.wash}" stroke="${palette.success}" stroke-width="3"/>`,
+    `<path d="M${x} ${y} l14 6 v12 c0 10-7 16-14 19 c-7-3-14-9-14-19 v-12 z" fill="${palette.wash}" stroke="${palette.success}" stroke-width="${STROKE.detail}"/>`,
   check: (x, y, palette) =>
-    `<circle cx="${x + 7}" cy="${y + 14}" r="14" fill="${palette.wash}" stroke="${palette.success}" stroke-width="3"/>`,
+    `<circle cx="${x + 7}" cy="${y + 14}" r="14" fill="${palette.wash}" stroke="${palette.success}" stroke-width="${STROKE.detail}"/>`,
 };
 
 /** Mark badges certify a vessel; none carries no badge at all. */
@@ -346,6 +352,7 @@ function palette(style: ResolvedStyle): Palette {
     tint: rolePaint(style, 'neutral', style.surface).fill,
     soft: style.border,
     accent: rolePaint(style, 'primary', style.secondary).stroke,
+    accentAlt: rolePaint(style, 'decision', style.secondary).stroke,
     success: rolePaint(style, 'success', style.secondary).stroke,
   };
 }
@@ -411,7 +418,8 @@ function quartet(alphabet: string, chunk: number, remaining: number): string {
   return body.slice(0, 4 - pads) + '='.repeat(pads);
 }
 
-/** Wrap form artwork in the fixed viewBox document every renderer scales uniformly. */
-function document_(body: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${VIEW.width} ${VIEW.height}">${body}</svg>`;
+/** Wrap form artwork on a tinted stage chip; every figure reads as a contained unit, never floating art. */
+function document_(body: string, palette: Palette): string {
+  const stage = `<rect x="6" y="4" width="228" height="142" rx="18" fill="${palette.tint}" stroke="${palette.soft}" stroke-width="2"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${VIEW.width} ${VIEW.height}">${stage}${body}</svg>`;
 }

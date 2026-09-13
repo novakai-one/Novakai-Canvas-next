@@ -1,0 +1,120 @@
+canvas 1
+collection @story-image-supply "Where images come from" theme=studio description="How diagram imagery is supplied at scale: three admitted tiers in preference order, why images are computable, and which supply path to avoid. A teaching summary of the canvas capability model." {
+  node @need concept "A new image is needed" frame=none composition=media-top {
+    figure @figure gate pass=few size=large
+    text @detail "Every request starts here. The question is who draws it." role=caption
+  }
+  node @forms concept "The vocabulary draws it" frame=none composition=media-top {
+    figure @figure stack layers=few size=large
+    text @detail "Closed parametric forms, drawn from theme tokens. Default for abstract structure." role=caption
+  }
+  node @pack concept "The icon pack answers" frame=none composition=media-top {
+    figure @figure vessel level=full mark=shield size=large
+    text @detail "One admitted pack, normalized to tokens. Glyphs and badges." role=caption
+  }
+  node @library concept "An asset is admitted" role=warning frame=card {
+    text @detail "Literal art only: a real machine, a photo, a logo. Admitted with license and digest." role=caption
+  }
+  node @inversion note "Canva inverts the cost" frame=card {
+    text @detail "A giant library makes the most expensive artifact the default path. Here it is the last resort." role=caption
+  }
+  node @trap note "The trap to avoid" role=warning frame=card {
+    text @detail "AI-generated raster is pretty, but unthemed, unmeasurable and never byte-reproducible." role=caption
+  }
+
+  node @form concept "One closed form" frame=none composition=media-top {
+    figure @figure vessel level=low size=small
+    text @detail "vessel" role=caption
+  }
+  node @pond concept "A calm pond" frame=none composition=media-top {
+    figure @figure vessel level=low size=large
+    text @detail "level=low" role=caption
+  }
+  node @basin concept "A stirring basin" frame=none composition=media-top {
+    figure @figure vessel level=half agitator=true size=large
+    text @detail "level=half agitator=true" role=caption
+  }
+  node @tank concept "A protected tank" frame=none composition=media-top {
+    figure @figure vessel level=full mark=shield size=large
+    text @detail "level=full mark=shield" role=caption
+  }
+  node @lesson note "Declared, not drawn" role=success frame=card {
+    text @detail "One form, many scenes. Scale by needing the smallest library, not by growing the biggest." role=caption
+  }
+
+  node @hand1 concept "Draw image one" frame=card {
+    text @detail "Hand effort, paid in full." role=caption
+  }
+  node @hand2 concept "Draw image two" frame=card {
+    text @detail "Hand effort, paid again." role=caption
+  }
+  node @hand3 concept "Draw image three" frame=card {
+    text @detail "Hand effort, paid every time." role=caption
+  }
+  node @canva-verdict note "Most expensive becomes default" role=warning frame=card {
+    text @detail "The library grows; the cost per image never falls." role=caption
+  }
+  node @one-form concept "One closed form" frame=none composition=media-top {
+    figure @figure stack layers=some size=small
+    text @detail "Built once, inside the app." role=caption
+  }
+  node @img1 concept "Image one" frame=card {
+    text @detail "Declared in one line." role=caption
+  }
+  node @img2 concept "Image two" frame=card {
+    text @detail "Declared in one line." role=caption
+  }
+  node @img3 concept "Image three" frame=card {
+    text @detail "Declared in one line." role=caption
+  }
+  node @ours-verdict note "Smallest sufficient library" role=success frame=card {
+    text @detail "The form is built once; every later image is free." role=caption
+  }
+
+  wire @try-first @need -> @forms "try first" kind=flow step=1
+  wire @then-glyphs @forms -> @pack "then glyphs" kind=flow step=2
+  wire @last-resort @pack -> @library "last resort" kind=flow step=3
+  wire @never @trap -> @library "never the supply path" kind=reference style=dashed
+  wire @calm @form -> @pond "parameters" kind=reference style=dashed
+  wire @stirred @form -> @basin "parameters" kind=reference style=dashed
+  wire @protected @form -> @tank "parameters" kind=reference style=dashed
+  wire @again1 @hand1 -> @hand2 "paid again" kind=flow step=1
+  wire @again2 @hand2 -> @hand3 "paid again" kind=flow step=2
+  wire @free1 @one-form -> @img1 "zero marginal cost" kind=reference style=dashed
+  wire @free2 @one-form -> @img2 "zero marginal cost" kind=reference style=dashed
+  wire @free3 @one-form -> @img3 "zero marginal cost" kind=reference style=dashed
+
+  section @supply "The supply ladder" mode=story layout=grid columns=2 direction=right gap=normal order=1 {
+    group @ladder "THE SUPPLY LADDER — IN PREFERENCE ORDER" frame=panel role=supporting layout=grid columns=2 direction=right gap=normal {
+      show @need @forms @pack @library
+    }
+    group @cautions "COST + TRAP" frame=panel role=decision layout=grid columns=1 direction=down gap=roomy {
+      show @inversion @trap
+    }
+    connect @try-first source-side=right target-side=left
+    connect @then-glyphs source-side=bottom target-side=top
+    connect @last-resort source-side=right target-side=left
+    connect @never source-side=left target-side=right
+  }
+
+  section @computable "Images are computable" mode=story layout=grid columns=2 direction=right gap=normal order=2 {
+    group @source "THE FORM, BUILT ONCE" frame=panel role=supporting layout=grid columns=1 direction=down gap=normal {
+      show @form @lesson
+    }
+    group @scenes "MANY SCENES, SAME DECLARATION" frame=panel role=success layout=grid columns=3 direction=right gap=normal {
+      show @pond @basin @tank
+    }
+    connect @calm @stirred @protected source-side=right target-side=left
+  }
+
+  section @cost "The cost curve, inverted" mode=grid layout=grid columns=2 direction=right gap=normal order=3 {
+    group @canva-model "A GROWING LIBRARY" frame=panel role=warning layout=grid columns=1 direction=down gap=normal {
+      show @hand1 @hand2 @hand3 @canva-verdict
+    }
+    group @computed-model "A COMPUTED IMAGE" frame=panel role=success layout=grid columns=2 direction=right gap=normal {
+      show @one-form @img1 @img2 @img3 @ours-verdict
+    }
+    connect @again1 @again2 source-side=bottom target-side=top
+    connect @free1 @free2 @free3 source-side=right target-side=left
+  }
+}

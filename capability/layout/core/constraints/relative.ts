@@ -28,19 +28,33 @@ function matches(reference: Target, node: VisualNode): boolean {
   return node.groupId === reference.id;
 }
 /** Equal origin coordinate means a row/column exactly as declared by the DSL. */
-function equal(id: string, a: string, b: string, axis: Axis): LinearConstraint {
-  return equation(id, [term(a, axis), term(b, axis, -1)], 'eq', 0, [a, b]);
+function equal(
+  id: string,
+  a: string,
+  b: string,
+  axis: Axis,
+  strength: LinearConstraint['strength'],
+): LinearConstraint {
+  return equation(id, [term(a, axis), term(b, axis, -1)], 'eq', 0, [a, b], strength);
 }
 /** Ordering reserves the first box's extent and the requested gap, not just its origin. */
+const extents: Readonly<Record<Axis, 'width' | 'height'>> = { x: 'width', y: 'height' };
 export function before(
   id: string,
   a: string,
   b: string,
   axis: Axis,
   gap: number,
+  strength: LinearConstraint['strength'],
 ): LinearConstraint {
-  const extent = axis === 'x' ? 'width' : 'height';
-  return equation(id, [term(a, axis), term(a, extent), term(b, axis, -1)], 'le', -gap, [a, b]);
+  return equation(
+    id,
+    [term(a, axis), term(a, extents[axis]), term(b, axis, -1)],
+    'le',
+    -gap,
+    [a, b],
+    strength,
+  );
 }
 /** Negative directions reverse the physical inequality while retaining declared reading order. */
 function ordered(
@@ -49,9 +63,10 @@ function ordered(
   b: string,
   direction: Direction,
   gap: number,
+  strength: LinearConstraint['strength'],
 ): LinearConstraint {
-  if (direction.sign === -1) return before(id, b, a, direction.main, gap);
-  return before(id, a, b, direction.main, gap);
+  if (direction.sign === -1) return before(id, b, a, direction.main, gap, strength);
+  return before(id, a, b, direction.main, gap, strength);
 }
 interface Pair {
   readonly id: string;
@@ -61,17 +76,17 @@ interface Pair {
   readonly gap: number;
 }
 type Policy = (pair: Pair) => readonly LinearConstraint[];
-/** Closed semantic policy registry keeps native solver code independent of authoring syntax. */
+/** Authored spatial hints are strong solver preferences; required geometry may relax them with a visible warning. */
 const policies: Readonly<Record<LayoutIntent['constraints'][number]['kind'], Policy>> = {
   rank: (p) => [
-    equal(`${p.id}:rank`, p.a, p.b, p.direction.cross),
-    ordered(`${p.id}:order`, p.a, p.b, p.direction, p.gap),
+    equal(`${p.id}:rank`, p.a, p.b, p.direction.cross, 'strong'),
+    ordered(`${p.id}:order`, p.a, p.b, p.direction, p.gap, 'strong'),
   ],
-  before: (p) => [ordered(p.id, p.a, p.b, p.direction, p.gap)],
-  below: (p) => [before(p.id, p.b, p.a, 'y', p.gap)],
+  before: (p) => [ordered(p.id, p.a, p.b, p.direction, p.gap, 'strong')],
+  below: (p) => [before(p.id, p.b, p.a, 'y', p.gap, 'strong')],
   align: (p) => [
-    equal(`${p.id}:align`, p.a, p.b, p.direction.main),
-    before(`${p.id}:order`, p.a, p.b, p.direction.cross, p.gap),
+    equal(`${p.id}:align`, p.a, p.b, p.direction.main, 'strong'),
+    before(`${p.id}:order`, p.a, p.b, p.direction.cross, p.gap, 'strong'),
   ],
 };
 /** Consecutive pairs define the full declared order with linear rather than quadratic equations. */

@@ -37,7 +37,7 @@ function inspected(
     options: request.options,
     engines: versions(dependencies),
   });
-  same(warnings(sections), scene.warnings, 'warnings');
+  same(warnings(sections, request.projection, request.options), scene.warnings, 'warnings');
   return { ...scene, sections };
 }
 /** Derive one complete scene and reject stale work before it can be returned to Authoring. */
@@ -70,7 +70,7 @@ export async function arrange(
     engineVersions: versions(dependencies),
     sections,
     bounds: union(sections.map((section) => section.box)),
-    warnings: warnings(sections),
+    warnings: warnings(sections, request.projection, request.options),
     adjustments: adjustments(sections, request.projection, prior),
   };
   const result = inspected(scene, request, dependencies);
@@ -91,7 +91,11 @@ export function inspect(
   );
   if (!result.ok) return { valid: false, diagnostics: [result.error] };
   const crossingCheck = protect(() =>
-    same(warnings(result.value), request.candidate.warnings, 'warnings'),
+    same(
+      warnings(result.value, request.projection, request.options),
+      request.candidate.warnings,
+      'warnings',
+    ),
   );
   if (!crossingCheck.ok) return { valid: false, diagnostics: [crossingCheck.error] };
   return { valid: true, diagnostics: [] };
@@ -138,7 +142,7 @@ export async function reroute(
     engineVersions: versions(dependencies),
     sections,
     bounds: union(sections.map((item) => item.box)),
-    warnings: warnings(sections),
+    warnings: warnings(sections, request.projection, request.options),
     adjustments: adjustments(sections, request.projection, request.fixed),
   };
   const result = inspected(scene, request, dependencies);

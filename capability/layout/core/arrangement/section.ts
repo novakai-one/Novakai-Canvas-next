@@ -11,7 +11,9 @@ import { sequenceGeometry } from '../sequence/sequence.js';
 import { contentBounds, titleBox, sectionBounds } from './bounds.js';
 import { sectionKey, versions } from './keys.js';
 import { inspectSection } from '../validation/sections.js';
-import { requireValue, protect } from '../validation/outcomes.js';
+import { execute, requireValue, protect } from '../validation/outcomes.js';
+import { LayoutFault } from '../../contract/errors.js';
+import type { Diagnostic } from '../../contract/errors.js';
 /** Cache geometry is accepted only after full current-source inspection; a bad hint falls back to derivation. */
 function cached(
   source: VisualSection,
@@ -49,7 +51,45 @@ export async function arrangeSection(
   const reuse = cached(source, previous, metrics, context);
   if (reuse !== null) return reuse;
   const nodes = requireValue(await placeSection(source, previous, context, metrics));
-  return completeSection(source, nodes, metrics, context);
+  return completeWithRetry(source, nodes, previous, metrics, context);
+}
+/** Routing conflict retries once with authored hints dropped; hint-free sections fail identically, so they never retry. */
+async function completeWithRetry(
+  source: VisualSection,
+  nodes: readonly PlacedNode[],
+  previous: SectionCandidate | null,
+  metrics: SupplementalMeasurements,
+  context: DerivationContext,
+): Promise<PlacedSection> {
+  const completed = await execute(() => completeSection(source, nodes, metrics, context));
+  if (completed.ok) return completed.value;
+  if (!retryable(completed.error, source)) throw new LayoutFault(completed.error);
+  const relaxed = requireValue(
+    await placeSection(hintsDropped(source), previous, context, metrics),
+  );
+  return completeSection(source, relaxed, metrics, context);
+}
+/** Only a routing conflict with relaxable authored hints justifies a second derivation. */
+function retryable(error: Diagnostic, source: VisualSection): boolean {
+  return error.code === 'constraint-conflict' && hasHints(source);
+}
+/** Section or group scopes carry the relaxable hints; participant/geometry constraints are never dropped. */
+function hasHints(source: VisualSection): boolean {
+  return (
+    source.layout.constraints.length > 0 ||
+    source.groups.some((group) => group.layout.constraints.length > 0)
+  );
+}
+/** A routed-conflict retry drops authored spatial hints once; satisfied geometry then reports them relaxed. */
+function hintsDropped(source: VisualSection): VisualSection {
+  return {
+    ...source,
+    layout: { ...source.layout, constraints: [] },
+    groups: source.groups.map((group) => ({
+      ...group,
+      layout: { ...group.layout, constraints: [] },
+    })),
+  };
 }
 /** Build wires, sequence and heading around fixed nodes without assigning collection-space positions. */
 export async function completeSection(

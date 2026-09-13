@@ -158,7 +158,7 @@ describe('Layout arrangement acceptance', () => {
       y: 50,
     });
   });
-  it('3 — honours all relative meanings in all four directions and rejects named contradictions', async () => {
+  it('3 — honours all relative meanings in all four directions and relaxes contradictions visibly', async () => {
     const directions: readonly LayoutIntent['direction'][] = ['right', 'down', 'left', 'up'];
     const kinds: readonly LayoutIntent['constraints'][number]['kind'][] = [
       'rank',
@@ -179,10 +179,10 @@ describe('Layout arrangement acceptance', () => {
       },
     ]);
     const layout = await harness([source]);
-    const result = await layout.arrange(request(layout, source));
-    assert(!result.ok);
-    expect(result.error.code).toBe('constraint-conflict');
-    expect(result.error.targets).toHaveLength(2);
+    const scene = value(await layout.arrange(request(layout, source)));
+    const relaxed = scene.warnings.filter((warning) => warning.code === 'constraint-relaxed');
+    expect(relaxed).toHaveLength(1);
+    expect(relaxed[0]?.targets.toSorted()).toEqual(['a', 'b']);
   });
   it('4 — preserves hard negative positions and explicit sizes, rejecting impossible measured fit', async () => {
     const source = lockedProjection(240);
@@ -659,6 +659,7 @@ async function checkRelative(
       expect(a.y - b.y - b.height).toBeGreaterThanOrEqual(settings.gap.normal - 0.000001),
   };
   assertions[kind]();
+  expect(scene.warnings.filter((warning) => warning.code === 'constraint-relaxed')).toEqual([]);
 }
 /** A hard width smaller than measured minimum must fail rather than resize a user's locked box. */
 function lockedProjection(width: number): Projection {

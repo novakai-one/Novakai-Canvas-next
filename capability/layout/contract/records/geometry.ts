@@ -93,7 +93,7 @@ export interface PlacedSection {
   readonly sequence: SequenceGeometry;
 }
 export interface Warning {
-  readonly code: 'wire-crossing';
+  readonly code: 'wire-crossing' | 'constraint-relaxed';
   readonly targets: readonly string[];
   readonly message: string;
 }

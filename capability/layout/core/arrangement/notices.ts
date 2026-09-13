@@ -5,9 +5,13 @@ import type {
   Warning,
   Box,
 } from '../../contract/records/geometry.js';
+import type { LinearConstraint } from '../../contract/records/problem.js';
 import type { SceneCandidate } from '../../contract/records/candidate.js';
-import type { Projection, VisualSection } from '../../contract/records/input.js';
+import type { Projection, VisualSection, LayoutIntent } from '../../contract/records/input.js';
+import type { LayoutOptions } from '../../contract/types.js';
 import { crosses } from '../routing/checks.js';
+import { relative } from '../constraints/relative.js';
+import { violated } from '../constraints/evaluate.js';
 import { equal } from '../validation/equality.js';
 /** Geometry changes are visible records rather than silently discarded soft preferences. */
 function adjustment(
@@ -120,7 +124,7 @@ function notices(
   ];
 }
 /** Every strict wire crossing is reported once in stable source order. */
-export function warnings(sections: readonly PlacedSection[]): readonly Warning[] {
+function crossingWarnings(sections: readonly PlacedSection[]): readonly Warning[] {
   return sections.flatMap((section) =>
     section.wires.flatMap((wire, index) =>
       section.wires
@@ -134,4 +138,68 @@ export function warnings(sections: readonly PlacedSection[]): readonly Warning[]
         })),
     ),
   );
+}
+type AuthoredConstraint = LayoutIntent['constraints'][number];
+/** One violated compiled equation is enough to report the authored preference it came from. */
+function hintWarning(
+  constraint: AuthoredConstraint,
+  equations: readonly LinearConstraint[],
+  boxes: ReadonlyMap<string, Box>,
+): readonly Warning[] {
+  if (violated(equations, boxes).length === 0) return [];
+  return [
+    {
+      code: 'constraint-relaxed',
+      targets: constraint.targets.map((target) => target.id),
+      message: 'Authored spatial preference could not be fully honored; required geometry won.',
+    },
+  ];
+}
+/** Re-derive each authored hint's equations exactly as placement compiled them, per owning scope. */
+function scopeWarnings(
+  layout: LayoutIntent,
+  nodes: VisualSection['nodes'],
+  gap: number,
+  scope: string,
+  boxes: ReadonlyMap<string, Box>,
+): readonly Warning[] {
+  return layout.constraints.flatMap((constraint) =>
+    hintWarning(
+      constraint,
+      relative({ ...layout, constraints: [constraint] }, nodes, gap, scope),
+      boxes,
+    ),
+  );
+}
+/** Section and group hints reuse the same gap lookups placement used; satisfied hints emit nothing. */
+function relaxedWarnings(
+  section: PlacedSection,
+  projection: Projection,
+  options: LayoutOptions,
+): readonly Warning[] {
+  const source = projection.sections.find((item) => item.id === section.id);
+  if (source === undefined) return [];
+  const boxes: ReadonlyMap<string, Box> = new Map(section.nodes.map((node) => [node.id, node.box]));
+  const own = scopeWarnings(
+    source.layout,
+    source.nodes,
+    options.gap[source.layout.gap],
+    source.id,
+    boxes,
+  );
+  const grouped = source.groups.flatMap((group) =>
+    scopeWarnings(group.layout, source.nodes, options.gap[group.layout.gap], group.id, boxes),
+  );
+  return [...own, ...grouped];
+}
+/** Warnings are a pure function of projection and final geometry; the inspector re-derives them identically. */
+export function warnings(
+  sections: readonly PlacedSection[],
+  projection: Projection,
+  options: LayoutOptions,
+): readonly Warning[] {
+  return [
+    ...crossingWarnings(sections),
+    ...sections.flatMap((section) => relaxedWarnings(section, projection, options)),
+  ];
 }

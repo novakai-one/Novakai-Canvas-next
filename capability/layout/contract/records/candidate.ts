@@ -80,7 +80,7 @@ const section = z
   .readonly();
 const warning = z
   .strictObject({
-    code: z.literal('wire-crossing'),
+    code: z.union([z.literal('wire-crossing'), z.literal('constraint-relaxed')]),
     targets: z.array(identity).readonly(),
     message: z.string(),
   })

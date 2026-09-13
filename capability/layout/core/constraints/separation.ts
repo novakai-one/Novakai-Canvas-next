@@ -113,12 +113,12 @@ function choices(pair: Collision, gap: number): readonly LinearConstraint[] {
   const a = pair.a.id;
   const b = pair.b.id;
   const horizontal = [
-    before(`${a}:${b}:left`, a, b, 'x', gap),
-    before(`${a}:${b}:right`, b, a, 'x', gap),
+    before(`${a}:${b}:left`, a, b, 'x', gap, 'required'),
+    before(`${a}:${b}:right`, b, a, 'x', gap, 'required'),
   ];
   const vertical = [
-    before(`${a}:${b}:up`, a, b, 'y', gap),
-    before(`${a}:${b}:down`, b, a, 'y', gap),
+    before(`${a}:${b}:up`, a, b, 'y', gap, 'required'),
+    before(`${a}:${b}:down`, b, a, 'y', gap, 'required'),
   ];
   return preferred(pair, horizontal, vertical);
 }

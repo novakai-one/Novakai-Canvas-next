@@ -31,6 +31,7 @@ function pair(
       'eq',
       0,
       [previous.id, node.id],
+      'required',
     ),
     participantOrder(order, gap),
   ];
@@ -39,5 +40,5 @@ function pair(
 function participantOrder(ids: readonly [string, string], gap: number): LinearConstraint {
   const first = ids[0];
   const second = ids[1];
-  return before(`${first}:${second}:participant-order`, first, second, 'x', gap);
+  return before(`${first}:${second}:participant-order`, first, second, 'x', gap, 'required');
 }

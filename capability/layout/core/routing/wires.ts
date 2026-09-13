@@ -138,7 +138,7 @@ async function alternatives(
   return reject(
     'constraint-conflict',
     plan.wire.id,
-    'No valid labelled route within the initial, eight local and one outside candidate budget',
+    `No valid labelled route within the initial, eight local and one outside candidate budget; authored intent source-side=${plan.wire.route.sourceSide} target-side=${plan.wire.route.targetSide}`,
     [plan.wire.id],
   );
 }

@@ -33,8 +33,9 @@ export function equation(
   operator: LinearConstraint['operator'],
   constant: number,
   targets: readonly string[],
+  strength: LinearConstraint['strength'],
 ): LinearConstraint {
-  return { id, terms, operator, constant, strength: 'required', targets };
+  return { id, terms, operator, constant, strength, targets };
 }
 /** Individual terms are explicit, avoiding positional tuples in core constraint declarations. */
 export function term(id: string, field: (typeof fields)[number], coefficient = 1): Term {
@@ -65,12 +66,22 @@ function initialBox(item: PositionedInput): Box {
 function minimum(item: PositionedInput): readonly LinearConstraint[] {
   const node = item.node;
   return [
-    equation(`${node.id}:minimum-width`, [term(node.id, 'width')], 'ge', node.minimum.width, [
-      node.id,
-    ]),
-    equation(`${node.id}:minimum-height`, [term(node.id, 'height')], 'ge', node.minimum.height, [
-      node.id,
-    ]),
+    equation(
+      `${node.id}:minimum-width`,
+      [term(node.id, 'width')],
+      'ge',
+      node.minimum.width,
+      [node.id],
+      'required',
+    ),
+    equation(
+      `${node.id}:minimum-height`,
+      [term(node.id, 'height')],
+      'ge',
+      node.minimum.height,
+      [node.id],
+      'required',
+    ),
   ];
 }
 /** Ordinary boxes retain measured width; container outer dimensions remain solver variables. */
@@ -84,10 +95,16 @@ function dimensions(item: PositionedInput): readonly LinearConstraint[] {
       'eq',
       Math.max(item.node.minimum.width, item.node.placement?.width ?? 0),
       [item.node.id],
+      'required',
     ),
-    equation(`${item.node.id}:height`, [term(item.node.id, 'height')], 'eq', height, [
-      item.node.id,
-    ]),
+    equation(
+      `${item.node.id}:height`,
+      [term(item.node.id, 'height')],
+      'eq',
+      height,
+      [item.node.id],
+      'required',
+    ),
   ];
 }
 /** Absence of a lock is explicitly soft; locked supplied dimensions never silently grow. */
@@ -103,7 +120,7 @@ function lockField(
   value: number | undefined,
 ): readonly LinearConstraint[] {
   if (value === undefined) return [];
-  return [equation(`${id}:lock-${field}`, [term(id, field)], 'eq', value, [id])];
+  return [equation(`${id}:lock-${field}`, [term(id, field)], 'eq', value, [id], 'required')];
 }
 /** Children stay inside parent padding and below the complete measured header. */
 function containment(
@@ -123,6 +140,7 @@ function containment(
       'ge',
       padding,
       targets,
+      'required',
     ),
     equation(
       `${child}:inside-top`,
@@ -130,6 +148,7 @@ function containment(
       'ge',
       parent.node.headerHeight + padding,
       targets,
+      'required',
     ),
     equation(
       `${child}:inside-right`,
@@ -137,6 +156,7 @@ function containment(
       'le',
       -padding,
       targets,
+      'required',
     ),
     equation(
       `${child}:inside-bottom`,
@@ -144,6 +164,7 @@ function containment(
       'le',
       -padding,
       targets,
+      'required',
     ),
   ];
 }

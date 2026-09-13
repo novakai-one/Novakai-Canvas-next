@@ -12,6 +12,10 @@ export function admitScene(request: CheckedInspectionRequest, engines: readonly 
     options: request.options,
     engines,
   });
-  same(warnings(sections), request.candidate.warnings, 'warnings');
+  same(
+    warnings(sections, request.projection, request.options),
+    request.candidate.warnings,
+    'warnings',
+  );
   return { ...request.candidate, sections };
 }

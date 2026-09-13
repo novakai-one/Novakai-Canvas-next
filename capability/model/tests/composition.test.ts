@@ -66,6 +66,7 @@ it('admits parametric figures as composition media and rejects unknown forms or 
             composition: 'media-top',
             content: [
               { kind: 'figure', id: 'art', form: 'vessel', level: 'half', agitator: true },
+              { kind: 'figure', id: 'frame', form: 'window', fill: 'full' },
               { kind: 'text', id: 'caption', text: 'Settle first', role: 'caption' },
             ],
           }),
@@ -96,6 +97,19 @@ it('admits parametric figures as composition media and rejects unknown forms or 
         objects: [
           node('stray', 'concept', {
             content: [{ kind: 'figure', id: 'art', form: 'screen', mark: 'check' }],
+          }),
+        ],
+      }),
+    ),
+    'shape',
+    'content',
+  );
+  invalid(
+    validate(
+      base({
+        objects: [
+          node('mixed', 'concept', {
+            content: [{ kind: 'figure', id: 'art', form: 'stack', level: 'full' }],
           }),
         ],
       }),

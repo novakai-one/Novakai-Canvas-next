@@ -173,10 +173,17 @@ export const constructs: readonly ConstructDefinition[] = [
     kind: 'figure',
     positions: [
       { name: 'id', type: 'id' },
-      { name: 'form', type: 'word', values: ['vessel', 'layered-bed', 'screen', 'gauge'] },
+      {
+        name: 'form',
+        type: 'word',
+        values: ['vessel', 'layered-bed', 'screen', 'gauge', 'window', 'gate', 'stack'],
+      },
     ],
     properties: {
       level: p.figureLevel,
+      fill: p.figureFill,
+      pass: p.pass,
+      layers: p.layers,
       agitator: p.agitator,
       mark: p.mark,
       debris: p.debris,

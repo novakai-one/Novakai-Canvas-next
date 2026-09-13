@@ -75,6 +75,7 @@ it('retains figures through create, print, patch and replacement', () => {
 collection @parametric "Parametric figures" {
   node @basin concept "Gather and settle" composition=media-top {
     figure @art vessel level=half agitator=true mark=check size=large
+    figure @frame window fill=full size=medium
     text @caption "Gather fine particles into floc" role=caption
   }
   section @story "Treatment" mode=story layout=grid {

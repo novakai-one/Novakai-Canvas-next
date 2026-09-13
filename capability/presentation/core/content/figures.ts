@@ -72,6 +72,9 @@ const drawers: Readonly<Record<FigureForm, (block: FigureBlock, palette: Palette
   'layered-bed': (block, palette) => layeredBed(block, palette),
   screen: (block, palette) => screen(block, palette),
   gauge: (block, palette) => gauge(block, palette),
+  window: (block, palette) => windowFigure(block, palette),
+  gate: (block, palette) => gate(block, palette),
+  stack: (block, palette) => stackFigure(block, palette),
 };
 
 /** Draw the admitted form once; Model owns parameter validity before projection runs. */
@@ -164,6 +167,58 @@ function gauge(block: FigureBlock, palette: Palette): string {
     .join('');
   return [arc(cx, cy, radius, palette.ink), ticks, needle, dot(cx, cy, 7, palette.ink)].join('');
 }
+
+/** Window: four context compartments charge from the stable prefix; a budget bar repeats the fill level. */
+function windowFigure(block: FigureBlock, palette: Palette): string {
+  const fill = block.form === 'window' ? block.fill : 'half';
+  const fraction = LEVEL_FRACTION[fill];
+  const charged = 200 * fraction;
+  const compartments = [0, 1, 2, 3]
+    .map((index) => rect(20 + index * 50, 55, 46, 40, palette.tint, palette.ink, 2))
+    .join('');
+  const charge = `<rect x="23" y="58" width="${Math.max(0, charged - 6)}" height="34" fill="${palette.accent}" opacity="0.4"/>`;
+  const outlines = [0, 1, 2, 3]
+    .map(
+      (index) =>
+        `<rect x="${20 + index * 50}" y="55" width="46" height="40" rx="8" fill="none" stroke="${palette.ink}" stroke-width="2"/>`,
+    )
+    .join('');
+  const budget = `<rect x="20" y="115" width="200" height="6" rx="3" fill="${palette.tint}" stroke="${palette.soft}" stroke-width="1"/><rect x="20" y="115" width="${charged}" height="6" rx="3" fill="${palette.accent}"/>`;
+  return [compartments, charge, outlines, budget].join('');
+}
+
+/** Gate: many candidates converge on one admission bar; pass selects how few streams continue. */
+function gate(block: FigureBlock, palette: Palette): string {
+  const pass = block.form === 'gate' ? block.pass : 'few';
+  const candidates = [0, 1, 2, 3, 4]
+    .map(
+      (index) =>
+        dot(34, 35 + index * 20, 5, palette.accent) +
+        line(44, 35 + index * 20, 124, 65 + index * 5, palette.soft, 3),
+    )
+    .join('');
+  const bar = rect(124, 45, 16, 70, palette.tint, palette.ink, 3);
+  const admitted = Array.from({ length: PASS_COUNT[pass] }, (_, index) =>
+    flowArrow(150, 65 + index * 25, 212, palette.ink),
+  ).join('');
+  return [candidates, bar, admitted].join('');
+}
+
+/** Stack: ordered layers with the priority band charged; count stays semantic, never a raw number. */
+function stackFigure(block: FigureBlock, palette: Palette): string {
+  const layers = block.form === 'stack' ? block.layers : 'some';
+  const bands = Array.from({ length: LAYER_COUNT[layers] }, (_, index) =>
+    rect(40, 28 + index * 24, 160, 20, palette.tint, palette.ink, 2),
+  ).join('');
+  const priority = `<rect x="40" y="28" width="160" height="20" rx="8" fill="${palette.accent}" opacity="0.45"/><rect x="40" y="28" width="160" height="20" rx="8" fill="none" stroke="${palette.ink}" stroke-width="2"/>`;
+  return [bands, priority].join('');
+}
+
+/** Gate outputs are one or two admitted streams, by semantic pass only. */
+const PASS_COUNT: Readonly<Record<'one' | 'few', number>> = { one: 1, few: 2 };
+
+/** Stack depth is a small closed vocabulary; authors never count pixels. */
+const LAYER_COUNT: Readonly<Record<'few' | 'some' | 'many', number>> = { few: 3, some: 4, many: 5 };
 
 /** Shared tank outline reused by vessel and bed forms; geometry lives once. */
 function tank(palette: Palette): string {
@@ -307,8 +362,15 @@ function rolePaint(
 
 /** Accessible name and outline entry describe intent, never pixel content. */
 function altText(block: FigureBlock): string {
-  const level = 'level' in block ? `, ${block.level} level` : '';
-  return `${block.form} figure${level}`;
+  return `${block.form} figure${figureDetail(block)}`;
+}
+
+/** Chosen fill-level parameters join the accessible name; presence flags stay visible in the art. */
+function figureDetail(block: FigureBlock): string {
+  const values = ['level', 'fill', 'pass', 'layers'].flatMap((key) =>
+    key in block ? [String(block[key as keyof FigureBlock])] : [],
+  );
+  return values.length === 0 ? '' : `, ${values.join(' ')}`;
 }
 
 /** Deterministic identity for renderer caches; artwork bytes fully determine the digest. */

@@ -83,7 +83,7 @@ export function createFontMetrics(
     return {
       ok: true,
       value: {
-        version: 'fontkit-2.0.4/presentation-2',
+        version: 'fontkit-2.0.4/presentation-3',
         measure: (text, font, size) => measure(text, font, size, loaded),
       },
     };

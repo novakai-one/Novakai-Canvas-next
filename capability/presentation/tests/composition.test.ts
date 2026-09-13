@@ -186,8 +186,17 @@ it('measures parametric figures from theme tokens inside the figure band', async
         ],
         { composition: 'media-top', frame: 'none' },
       ),
+      object(
+        'win',
+        'system',
+        [
+          { kind: 'figure', id: 'art', form: 'window', fill: 'full', size: 'small' },
+          { kind: 'text', id: 'caption', text: caption, role: 'caption' },
+        ],
+        { composition: 'media-top', frame: 'none' },
+      ),
     ],
-    sections: [section('story', ['basin'])],
+    sections: [section('story', ['basin', 'win'])],
   });
   const projection = value(setup.presentation.project(source));
   const basin = node(projection, 'basin');
@@ -205,5 +214,11 @@ it('measures parametric figures from theme tokens inside the figure band', async
   ).toString();
   expect(svg).toContain(tokens.text);
   expect(svg).toContain(tokens.secondary);
-  expect(basin.content.outline).toContain('vessel figure, half level');
+  expect(basin.content.outline).toContain('vessel figure, half');
+  const win = node(projection, 'win');
+  const winMedia = win.content.primitives.find((item) => item.kind === 'media');
+  assert(winMedia?.kind === 'media');
+  expect(winMedia.digest.startsWith('figure:')).toBe(true);
+  expect(winMedia.height / winMedia.width).toBe(0.625);
+  expect(win.content.outline).toContain('window figure, full');
 });

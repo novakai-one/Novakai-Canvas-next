@@ -79,6 +79,33 @@ const figureBlockSchema = z.discriminatedUnion('form', [
       size: size.default('medium'),
     })
     .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('window'),
+      fill: figureLevelSchema.default('half'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('gate'),
+      pass: z.enum(['one', 'few']).default('few'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('stack'),
+      layers: z.enum(['few', 'some', 'many']).default('some'),
+      size: size.default('medium'),
+    })
+    .readonly(),
 ]);
 
 /** Local links may select a section; URI links remain external references. */

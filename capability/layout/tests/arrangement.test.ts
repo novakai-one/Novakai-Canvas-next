@@ -354,6 +354,21 @@ describe('Layout arrangement acceptance', () => {
     expect(activation.box.y + activation.box.height).toBeLessThanOrEqual(
       yes.box.y + yes.box.height,
     );
+    const trimSource = unclosedTrim();
+    const trimLayout = await harness([trimSource]);
+    const trimScene = value(await trimLayout.arrange(request(trimLayout, trimSource)));
+    const trimView = trimScene.sections[0];
+    assert(trimView);
+    const bar = trimView.sequence.activations[0];
+    const lastEvent = trimView.sequence.events.at(-1);
+    assert(bar);
+    assert(lastEvent);
+    expect(bar.box.y + bar.box.height).toBeCloseTo(
+      Math.max(...lastEvent.points.map((point) => point.y)) + settings.sequenceGap / 2,
+    );
+    expect(bar.box.y + bar.box.height).toBeLessThan(
+      trimView.sequence.lifelines[0]?.to.y ?? Infinity,
+    );
     const forged = {
       ...isolatedScene,
       sections: [
@@ -851,6 +866,7 @@ function assertSequenceMeasurements(source: Projection, scene: Scene): void {
       event.labelBox.y + measured.label.height + settings.labelGap,
     );
     assertSequenceOrder(sequence.events[index - 1], event);
+    assertSequencePitch(section, sequence.events[index - 1], event, gap);
   });
   sequence.fragments.forEach((frame): void => {
     expect(contained(frame.box, frame.labelBox)).toBe(true);
@@ -871,6 +887,67 @@ function assertSequenceOrder(
   if (previous === undefined) return;
   expect(event.labelBox.y).toBeGreaterThan(
     Math.max(...previous.points.map((point): number => point.y)),
+  );
+}
+/** Same-body event identity lookups stay inside the independent source projection. */
+function sequenceBand(source: Projection['sections'][number], id: string): string {
+  const found = source.sequence.find((entry) => entry.item.id === id);
+  return `${found?.item.parent ?? ''}/${found?.item.branch ?? ''}`;
+}
+/** Consecutive same-body events pitch to exactly one label gap plus one scaled sequence gap. */
+function assertSequencePitch(
+  source: Projection['sections'][number],
+  previous: Scene['sections'][number]['sequence']['events'][number] | undefined,
+  event: Scene['sections'][number]['sequence']['events'][number],
+  gap: number,
+): void {
+  if (previous === undefined) return;
+  if (sequenceBand(source, previous.id) !== sequenceBand(source, event.id)) return;
+  expect(event.labelBox.y - Math.max(...previous.points.map((point) => point.y))).toBeCloseTo(gap);
+}
+
+/** An unclosed call followed by later messages trims its bar half a gap past the participant's last event. */
+function unclosedTrim(): Projection {
+  return project(
+    collection({
+      objects: [object('agent', 'participant'), object('service', 'participant')],
+      sections: [
+        section('sequence', ['agent', 'service'], {
+          mode: 'sequence',
+          layout: { algorithm: 'sequence' },
+          sequence: [
+            {
+              id: 'open',
+              kind: 'event',
+              source: 'agent',
+              target: 'service',
+              label: 'Open',
+              message: 'call',
+              activate: true,
+              order: 0,
+            },
+            {
+              id: 'note',
+              kind: 'event',
+              source: 'service',
+              target: 'agent',
+              label: 'Note',
+              message: 'return',
+              order: 1,
+            },
+            {
+              id: 'done',
+              kind: 'event',
+              source: 'agent',
+              target: 'service',
+              label: 'Done',
+              message: 'call',
+              order: 2,
+            },
+          ],
+        }),
+      ],
+    }),
   );
 }
 

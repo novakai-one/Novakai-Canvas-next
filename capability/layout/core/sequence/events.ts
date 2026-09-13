@@ -30,7 +30,7 @@ function path(
     { x: b, y },
   ];
 }
-/** An event occupies its own ordered vertical band, retaining independent call/return/async markers. */
+/** An event occupies its own ordered vertical band: one measured label, one label gap and one sequence gap — never a uniform double slot. */
 export function eventBody(input: EventInput, top: number, context: SequenceContext): Body {
   const source = participant(input.item.source, context.nodes);
   const target = participant(input.item.target, context.nodes);
@@ -47,7 +47,7 @@ export function eventBody(input: EventInput, top: number, context: SequenceConte
     marker: input.marker,
     message: input.item.message,
   };
-  return { events: [event], fragments: [], bottom: y + context.options.sequenceGap * 2 };
+  return { events: [event], fragments: [], bottom: y + context.options.sequenceGap };
 }
 /** Different-participant labels centre on their message; self labels sit in the loop's reserved width. */
 function labelLeft(source: PlacedNode, target: PlacedNode, width: number, gap: number): number {

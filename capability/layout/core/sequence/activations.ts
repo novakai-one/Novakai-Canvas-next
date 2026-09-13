@@ -27,6 +27,7 @@ interface Context {
   readonly source: SequenceContext;
   readonly frames: readonly FragmentFrame[];
   readonly bottom: number;
+  readonly events: readonly SequenceEvent[];
 }
 /** Event points were created by the sequence geometry builder; the label's bottom is only its checked empty-path fallback. */
 function ordinate(event: SequenceEvent): number {
@@ -171,10 +172,23 @@ function interval(
     },
   };
 }
-/** Unclosed conditional calls end at their own branch/frame; root calls extend to the full sequence end. */
+/** An unfinished activation ends half a gap past the participant's last event, never beyond its scope. */
 function unfinished(open: Open, context: Context): readonly Activation[] {
   const range = scopeRange(open.scope, context.frames, { top: open.top, bottom: context.bottom });
-  return remaining(open, range.bottom, null, context);
+  const bottom = Math.min(
+    range.bottom,
+    lastOrdinate(open.participant, context) + context.source.options.sequenceGap / 2,
+  );
+  return remaining(open, bottom, null, context);
+}
+/** The participant's final event ordinate bounds its bar; an eventless participant keeps the scope end. */
+function lastOrdinate(participant: string, context: Context): number {
+  const involved = context.events.filter(
+    (event) => event.source === participant || event.target === participant,
+  );
+  const last = involved.map(ordinate).reduce((later, y) => Math.max(later, y), -Infinity);
+  if (last === -Infinity) return context.bottom;
+  return last;
 }
 /** Derive activation intervals without sharing mutable execution state between alternatives; Authoring retains the scene on a typed derivation fault. */
 export function activations(
@@ -183,7 +197,7 @@ export function activations(
   frames: readonly FragmentFrame[],
   source: SequenceContext,
 ): readonly Activation[] {
-  const context: Context = { source, frames, bottom };
+  const context: Context = { source, frames, bottom, events };
   const initial: State = { open: [], finished: [] };
   const state = events.reduce((state, event) => step(state, event, context), initial);
   return [...state.finished, ...state.open.flatMap((open) => unfinished(open, context))];

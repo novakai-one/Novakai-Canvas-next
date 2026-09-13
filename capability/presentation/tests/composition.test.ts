@@ -257,8 +257,17 @@ it('measures store, queue and cloud figures as closed token-drawn forms', async 
         ],
         { composition: 'media-top', frame: 'none' },
       ),
+      object(
+        'ledger',
+        'system',
+        [
+          { kind: 'figure', id: 'art', form: 'store', size: 'small' },
+          { kind: 'text', id: 'caption', text: 'SQL', role: 'caption' },
+        ],
+        { composition: 'media-top', frame: 'none' },
+      ),
     ],
-    sections: [section('story', ['database', 'backlog', 'boundary'])],
+    sections: [section('story', ['database', 'backlog', 'boundary', 'ledger'])],
   });
   const projection = value(setup.presentation.project(source));
   const artwork = (id: string): string => {
@@ -277,4 +286,9 @@ it('measures store, queue and cloud figures as closed token-drawn forms', async 
   expect(node(projection, 'database').content.outline).toContain('store figure');
   expect(node(projection, 'backlog').content.outline).toContain('queue figure, full');
   expect(node(projection, 'boundary').content.outline).toContain('cloud figure');
+  const sqlCaption = node(projection, 'ledger').content.primitives.find(
+    (item) => item.kind === 'text' && item.text === 'SQL',
+  );
+  assert(sqlCaption?.kind === 'text');
+  expect(sqlCaption.x).toBeGreaterThan(0);
 });

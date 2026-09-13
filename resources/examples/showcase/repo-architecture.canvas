@@ -73,7 +73,7 @@ collection @repo-architecture "This repo, drawn by itself" theme=studio descript
     text @d6 "One *physical* transaction" role=caption
   }
   node @receipt end "Receipt — r(n+1)" step=6 {}
-  node @request start "Render request" step=1 {
+  node @request start "Render request" step=1 composition=media-top {
     figure @jobs queue level=half size=small
     text @d7 "Browser · CLI · export job" role=caption
   }

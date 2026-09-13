@@ -74,13 +74,19 @@ function figureContent(figure: MediaBlock, context: ContentContext): MeasuredCon
   );
 }
 
+/** Narrow text columns center under the media band; the infographic idiom is figure-led, not left-hung. */
+function centered(content: MeasuredContent, width: number): MeasuredContent {
+  const slack = Math.max(0, width - content.width);
+  if (slack === 0) return content;
+  return { ...offset(content, slack / 2, 0), width };
+}
 /** Media sits above the heading; engineering title separators follow that complete heading region. */
 function mediaAbove(request: CompositionRequest): ComposedNodeContent {
   const figure = requireFigure(request);
   const media = figureContent(figure, request.context);
   const text = textColumn({ ...request, selection: bodyWithoutFigure(request, figure) });
   return {
-    content: stack([media, text.content], request.context.style.gap),
+    content: stack([media, centered(text.content, media.width)], request.context.style.gap),
     headerHeight: media.height + request.context.style.gap + text.headerHeight,
   };
 }

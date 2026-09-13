@@ -168,8 +168,9 @@ it('PR3 admits immutable themes and editable recipes through shared metadata CAS
       description: '',
       raw: { base: 'paper', overrides: {} },
     };
+    const aliases = ['body', 'mono', 'strong'] as const;
     const assets = session.installation.fonts.map((font, index) => ({
-      alias: index === 0 ? 'body' : 'mono',
+      alias: aliases[index] ?? 'strong',
       digest: font.digest,
     }));
     const left = session.resources.preparePreset({ admission, assets }, initial.value);

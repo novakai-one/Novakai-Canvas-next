@@ -27,6 +27,7 @@ export function fonts(read: (path: URL) => Uint8Array = (path) => readFileSync(p
     [
       { family: 'Inter', file: 'inter-latin-400-normal.woff2' },
       { family: 'JetBrains Mono', file: 'jetbrains-mono-latin-400-normal.woff2' },
+      { family: 'Inter Tight', file: 'inter-tight-latin-700-normal.woff2' },
     ].map((font) => {
       const bytes = read(new URL(`../../../resources/fonts/${font.file}`, import.meta.url));
       return {
@@ -42,19 +43,21 @@ export function fonts(read: (path: URL) => Uint8Array = (path) => readFileSync(p
 export function style(pinned: FontSet): ResolvedStyle {
   const body = pinned[0];
   const mono = pinned[1];
-  assert(body && mono);
+  const strong = pinned[2];
+  assert(body && mono && strong);
   return resolvedStyle.parse({
     digest: themeDigest,
     bodyFont: { family: body.family, digest: body.digest },
     monoFont: { family: mono.family, digest: mono.digest },
+    strongFont: { family: strong.family, digest: strong.digest },
     typography: {
       sectionHeading: {
-        font: { family: body.family, digest: body.digest },
+        font: { family: strong.family, digest: strong.digest },
         size: 24.0,
         lineHeight: 36.0,
       },
       nodeHeading: {
-        font: { family: body.family, digest: body.digest },
+        font: { family: strong.family, digest: strong.digest },
         size: 20.0,
         lineHeight: 30.0,
       },

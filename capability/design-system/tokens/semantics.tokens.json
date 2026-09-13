@@ -558,7 +558,7 @@
     "supporting": {
       "fill": {
         "$type": "color",
-        "$value": "{surface.base}"
+        "$value": "{rolefill.supporting}"
       },
       "stroke": {
         "$type": "color",
@@ -572,7 +572,7 @@
     "decision": {
       "fill": {
         "$type": "color",
-        "$value": "{surface.raised}"
+        "$value": "{rolefill.decision}"
       },
       "stroke": {
         "$type": "color",
@@ -586,7 +586,7 @@
     "success": {
       "fill": {
         "$type": "color",
-        "$value": "{surface.raised}"
+        "$value": "{rolefill.success}"
       },
       "stroke": {
         "$type": "color",
@@ -600,11 +600,11 @@
     "warning": {
       "fill": {
         "$type": "color",
-        "$value": "{surface.raised}"
+        "$value": "{rolefill.warning}"
       },
       "stroke": {
         "$type": "color",
-        "$value": "{status.warning}"
+        "$value": "{status.error}"
       },
       "text": {
         "$type": "color",

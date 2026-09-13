@@ -62,6 +62,7 @@ function pinnedFonts(): FontSet {
     [
       { family: 'Inter', file: 'inter-latin-400-normal.woff2' },
       { family: 'JetBrains Mono', file: 'jetbrains-mono-latin-400-normal.woff2' },
+      { family: 'Inter Tight', file: 'inter-tight-latin-700-normal.woff2' },
     ].map((font) => {
       const bytes = readFileSync(new URL(`../../../resources/fonts/${font.file}`, import.meta.url));
       return {
@@ -288,20 +289,22 @@ export async function fixture(
   const fonts = pinnedFonts();
   const first = fonts.at(0);
   const mono = fonts.at(1);
-  assert(first && mono);
+  const strong = fonts.at(2);
+  assert(first && mono && strong);
   const paint = { fill: '#ffffff', stroke: '#334155', text: '#0f172a' };
   const style = resolvedStyle.parse({
     digest: encoding.hash(themeBytes),
     bodyFont: { family: first.family, digest: first.digest },
     monoFont: { family: mono.family, digest: mono.digest },
+    strongFont: { family: strong.family, digest: strong.digest },
     typography: {
       sectionHeading: {
-        font: { family: first.family, digest: first.digest },
+        font: { family: strong.family, digest: strong.digest },
         size: 24.0,
         lineHeight: 36.0,
       },
       nodeHeading: {
-        font: { family: first.family, digest: first.digest },
+        font: { family: strong.family, digest: strong.digest },
         size: 20.0,
         lineHeight: 30.0,
       },

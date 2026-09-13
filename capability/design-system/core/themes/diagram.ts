@@ -100,6 +100,7 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     digest: resolved.digest,
     bodyFont: fontReference(requirePinnedFont('font.body', values, resolved.fonts)),
     monoFont: fontReference(requirePinnedFont('font.mono', values, resolved.fonts)),
+    strongFont: fontReference(requirePinnedFont('font.strong', values, resolved.fonts)),
     typography: typography(resolved),
     contentSizing: contentSizing(values),
     connection: {
@@ -146,11 +147,11 @@ function metric(resolved: ResolvedTokenSet, font: string, sizeToken: string): Te
     lineHeight: metricNumber(size * ratio, sizeToken + '.lineHeight'),
   };
 }
-/** Each semantic role maps to the existing type hierarchy with no new font authority. */
+/** Heading roles carry the admitted strong face; body-family roles keep reading weight. */
 function typography(resolved: ResolvedTokenSet): DiagramTypography {
   return {
-    sectionHeading: metric(resolved, 'font.body', 'font.large'),
-    nodeHeading: metric(resolved, 'font.body', 'font.title'),
+    sectionHeading: metric(resolved, 'font.strong', 'font.large'),
+    nodeHeading: metric(resolved, 'font.strong', 'font.title'),
     body: metric(resolved, 'font.body', 'type.base'),
     mono: metric(resolved, 'font.mono', 'type.base'),
     annotation: metric(resolved, 'font.body', 'font.caption'),

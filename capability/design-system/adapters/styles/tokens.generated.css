@@ -10,6 +10,7 @@
   --nv-action-on-accent: #ffffff;
   --nv-font-body: system-ui, sans-serif;
   --nv-font-mono: ui-monospace, monospace;
+  --nv-font-strong: system-ui, sans-serif;
   --nv-type-base: 14px;
   --nv-type-diagram-default: 16px;
   --nv-space-unit: 4px;
@@ -23,6 +24,10 @@
   --nv-status-warning: #805200;
   --nv-status-error: #b42318;
   --nv-status-minimum: 28px;
+  --nv-rolefill-decision: #fbe9c6;
+  --nv-rolefill-success: #cdeed6;
+  --nv-rolefill-warning: #fad4d1;
+  --nv-rolefill-supporting: #e3ebf3;
   --nv-boundary-essential: #526170;
   --nv-line-height-body: 1.5;
   --nv-ratio-caption: 0.857143;

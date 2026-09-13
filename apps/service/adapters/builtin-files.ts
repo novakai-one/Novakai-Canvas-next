@@ -47,9 +47,10 @@ export async function loadBuiltinSources(
   tokens: TokenFileBindings,
 ): Promise<Result<BuiltinSources>> {
   try {
-    const [body, mono, source, recipes] = await Promise.all([
+    const [body, mono, strong, source, recipes] = await Promise.all([
       font(resourceRoot, 'inter-latin-400-normal.woff2', assets),
       font(resourceRoot, 'jetbrains-mono-latin-400-normal.woff2', assets),
+      font(resourceRoot, 'inter-tight-latin-700-normal.woff2', assets),
       tokens.source.read(),
       Promise.all(
         (['er', 'modules', 'sop', 'mindmap', 'sequence', 'infographic'] as const).map((family) =>
@@ -59,7 +60,7 @@ export async function loadBuiltinSources(
     ]);
     return {
       ok: true,
-      value: { fonts: fontSet.parse([body, mono]), tokens: accepted(source), recipes },
+      value: { fonts: fontSet.parse([body, mono, strong]), tokens: accepted(source), recipes },
     };
   } catch {
     return failure(

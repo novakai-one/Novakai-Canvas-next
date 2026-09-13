@@ -35,6 +35,7 @@ const tokens = resolvedStyle.parse({
   digest,
   bodyFont: { family: 'fixture', digest },
   monoFont: { family: 'fixture', digest },
+  strongFont: { family: 'fixture', digest },
   typography: {
     sectionHeading: { font: { family: 'fixture', digest }, size: 18.0, lineHeight: 24.0 },
     nodeHeading: { font: { family: 'fixture', digest }, size: 15.0, lineHeight: 20.0 },

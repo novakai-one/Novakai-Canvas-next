@@ -183,15 +183,16 @@ describe('Concrete portable rendering', () => {
   });
 });
 
-/** Independent glyph oracle: direct resvg uses only the pinned Inter bytes, bypassing Export's family rebinding. */
+/** Independent glyph oracle: direct resvg uses only the run's own pinned bytes, bypassing Export's family rebinding. */
 async function interHeader(fixture: Fixture): Promise<Buffer> {
-  const font = fixture.snapshot.resources.find((resource) => resource.metadata.family === 'Inter');
   const node = fixture.snapshot.scene.sections[0]?.nodes[0];
   const run = node?.measured.content.primitives.find((primitive) => primitive.kind === 'text');
-  assert(font && run);
+  assert(run);
   expect(run.text).toBe('Validation group');
+  const font = fixture.snapshot.resources.find((resource) => resource.digest === run.font.digest);
+  assert(font);
   const decoded = await decompressFont(font.bytes);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="20" viewBox="12 12 180 20"><rect x="12" y="12" width="180" height="20" fill="#ffffff"/><text x="${run.x}" y="${run.y}" font-family="Inter" font-size="${run.size}" fill="${run.fill}" textLength="${run.width}" lengthAdjust="spacingAndGlyphs">Validation group</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="20" viewBox="12 12 180 20"><rect x="12" y="12" width="180" height="20" fill="#ffffff"/><text x="${run.x}" y="${run.y}" font-family="${String(font.metadata.family)}" font-size="${run.size}" fill="${run.fill}" textLength="${run.width}" lengthAdjust="spacingAndGlyphs">Validation group</text></svg>`;
   const renderer = new Resvg(svg, { font: { fontBuffers: [decoded] } });
   try {
     return await headerPixels(renderer);

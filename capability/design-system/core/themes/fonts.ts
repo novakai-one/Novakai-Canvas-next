@@ -20,7 +20,7 @@ export function validateFonts(
     .filter(([, value]) => value.type === 'fontFamily')
     .forEach(([id, value]) => validateFontValue(id, value, allowed));
   if (scope !== 'ui')
-    ['font.body', 'font.mono'].forEach((id) => requirePinnedFont(id, values, fonts));
+    ['font.body', 'font.mono', 'font.strong'].forEach((id) => requirePinnedFont(id, values, fonts));
 }
 /** Every family in a stack is approved; unsafe fallback members are not ignored. */
 function validateFontValue(id: string, value: TokenValue, allowed: readonly string[]): void {

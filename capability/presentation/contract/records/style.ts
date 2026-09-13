@@ -73,6 +73,7 @@ export const resolvedStyle = z
     digest,
     bodyFont: fontRef,
     monoFont: fontRef,
+    strongFont: fontRef,
     typography: diagramTypography,
     contentSizing,
     connection: connectionStyle,
@@ -88,14 +89,24 @@ export const resolvedStyle = z
   })
   .refine(matchingFonts, { message: 'Typography roles must use their pinned body/mono font bytes' })
   .readonly();
+/** Typography roles pin exactly one admitted font slot; heading weight is a lookup, not a branch. */
+const fontSlot: Readonly<Record<string, 'bodyFont' | 'monoFont' | 'strongFont'>> = {
+  sectionHeading: 'strongFont',
+  nodeHeading: 'strongFont',
+  body: 'bodyFont',
+  mono: 'monoFont',
+  annotation: 'bodyFont',
+  caption: 'bodyFont',
+};
 /** Reject mismatched role bytes before measurement; the public reader owns typed recovery. */
 function matchingFonts(style: {
   readonly bodyFont: FontRef;
   readonly monoFont: FontRef;
+  readonly strongFont: FontRef;
   readonly typography: DiagramTypography;
 }): boolean {
   return Object.entries(style.typography).every(([role, metric]) => {
-    const expected = role === 'mono' ? style.monoFont : style.bodyFont;
+    const expected = style[fontSlot[role] ?? 'bodyFont'];
     return metric.font.digest === expected.digest && metric.font.family === expected.family;
   });
 }

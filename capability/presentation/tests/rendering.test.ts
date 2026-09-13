@@ -79,7 +79,7 @@ it('9 shares escaped React markup and pinned fonts across every local shape', as
   const runs = structured.content.primitives.filter((item) => item.kind === 'text');
   expect(runs.find((run) => run.text === 'Typed')).toMatchObject({
     size: 20,
-    font: { digest: setup.react.fonts[0]?.digest },
+    font: { digest: setup.react.fonts[2]?.digest },
   });
   expect(runs.find((run) => run.text.startsWith('run('))).toMatchObject({
     size: 16,

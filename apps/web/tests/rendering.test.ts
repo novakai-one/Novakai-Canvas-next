@@ -125,10 +125,13 @@ it('PR3 concurrent pins isolate same-family font bytes, measured text and emitte
       });
       assert(media.ok, JSON.stringify(media));
       const mono = service.installation.fonts[1];
+      const strong = service.installation.fonts[2];
       assert(mono);
+      assert(strong);
       const assets = [
         { alias: 'body', digest: body.value.descriptor.digest },
         { alias: 'mono', digest: mono.digest },
+        { alias: 'strong', digest: strong.digest },
       ];
       const before = await service.read();
       assert(before.ok);
@@ -170,7 +173,7 @@ it('PR3 concurrent pins isolate same-family font bytes, measured text and emitte
       assert(admitted.ok, JSON.stringify(admitted));
       const snapshot = await service.read();
       assert(snapshot.ok);
-      const source = `canvas 1 collection @${id} "${id}" theme=${id} { asset @media image source="sha256:${media.value.descriptor.digest}" alt="${id}" node @topic step "Measured resource identity" { image @image asset=@media } section @overview "Overview" mode=story { show @topic } }`;
+      const source = `canvas 1 collection @${id} "${id}" theme=${id} { asset @media image source="sha256:${media.value.descriptor.digest}" alt="${id}" node @topic step "Measured resource identity" { text @note "Body measurement probe" image @image asset=@media } section @overview "Overview" mode=story { show @topic } }`;
       const created = await service.apply(
         request(snapshot.value, `create-${id}`, id, 'dsl', { source, mode: 'create' }, true),
         signal,
@@ -194,7 +197,12 @@ it('PR3 concurrent pins isolate same-family font bytes, measured text and emitte
       expect(body?.family).toBe('Inter');
       const node = result.value.projection.sections[0]?.nodes[0];
       assert(node);
-      const text = node.content.primitives.find((item) => item.kind === 'text');
+      const heading = node.content.primitives.find(byText('Measured resource identity'));
+      assert(heading);
+      const strong = service.installation.fonts[2];
+      assert(strong);
+      expect(heading.font.digest).toBe(strong.digest);
+      const text = node.content.primitives.find(byText('Body measurement probe'));
       assert(text);
       widths.push(text.width);
       expect(text.font.digest).toBe(expected.body);
@@ -234,3 +242,10 @@ function dataDigest(uri: string): string {
   assert(encoded);
   return createHash('sha256').update(Buffer.from(encoded, 'base64')).digest('hex');
 }
+/** One narrowing run-finder keeps measured text probes out of the host case's branching budget. */
+const byText =
+  (text: string) =>
+  <P extends { readonly kind: string; readonly text?: string }>(
+    item: P,
+  ): item is Extract<P, { kind: 'text' }> =>
+    item.kind === 'text' && item.text === text;

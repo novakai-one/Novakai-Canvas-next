@@ -93,7 +93,9 @@ describe('Design System themes', () => {
     expect(style.typography.mono.lineHeight).toBe(24);
     expect(style.typography.annotation.lineHeight).toBeCloseTo(20.571432, 6);
     expect(style.typography.mono.font).toEqual(style.monoFont);
-    expect(style.typography.sectionHeading.font).toEqual(style.bodyFont);
+    expect(style.typography.sectionHeading.font).toEqual(style.strongFont);
+    expect(style.typography.nodeHeading.font).toEqual(style.strongFont);
+    expect(style.typography.body.font).toEqual(style.bodyFont);
     expect(style.contentSizing).toEqual({
       widths: {
         small: { preferred: 180, maximum: 240 },

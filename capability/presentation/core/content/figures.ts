@@ -34,6 +34,15 @@ interface Palette {
 
 /** Artwork stroke weights live in one table; scaling the house style is a one-line change. */
 const STROKE = { frame: 4, line: 5, detail: 3 } as const;
+/** Chroma of every filled band lives in one table; pastel strength is a house-style decision, not per-form taste. */
+const FILL = {
+  liquid: 0.7,
+  charge: 0.7,
+  priority: 0.7,
+  strataSoft: 0.65,
+  strataAlt: 0.7,
+  strataInk: 0.85,
+} as const;
 
 /** Measure one parametric figure as a media primitive; renderers already draw admitted media unchanged. */
 export function measureFigure(
@@ -118,9 +127,9 @@ function layeredBed(block: FigureBlock, palette: Palette): string {
   const depth = 100;
   const bedTop = top + depth * 0.45;
   const strata = [
-    { fill: palette.soft, opacity: 0.5 },
-    { fill: palette.accentAlt, opacity: 0.55 },
-    { fill: palette.ink, opacity: 0.85 },
+    { fill: palette.soft, opacity: FILL.strataSoft },
+    { fill: palette.accentAlt, opacity: FILL.strataAlt },
+    { fill: palette.ink, opacity: FILL.strataInk },
   ]
     .map((layer, index) => band(bedTop + index * 18, 16, layer.fill, layer.opacity))
     .join('');
@@ -181,7 +190,7 @@ function windowFigure(block: FigureBlock, palette: Palette): string {
   const compartments = [0, 1, 2, 3]
     .map((index) => rect(20 + index * 50, 55, 46, 40, palette.wash, palette.ink, STROKE.detail))
     .join('');
-  const charge = `<rect x="23" y="58" width="${Math.max(0, charged - 6)}" height="34" fill="${palette.accent}" opacity="0.4"/>`;
+  const charge = `<rect x="23" y="58" width="${Math.max(0, charged - 6)}" height="34" fill="${palette.accent}" opacity="${FILL.charge}"/>`;
   const outlines = [0, 1, 2, 3]
     .map(
       (index) =>
@@ -215,7 +224,7 @@ function stackFigure(block: FigureBlock, palette: Palette): string {
   const bands = Array.from({ length: LAYER_COUNT[layers] }, (_, index) =>
     rect(40, 28 + index * 24, 160, 20, palette.wash, palette.ink, STROKE.detail),
   ).join('');
-  const priority = `<rect x="40" y="28" width="160" height="20" rx="8" fill="${palette.accent}" opacity="0.45"/><rect x="40" y="28" width="160" height="20" rx="8" fill="none" stroke="${palette.ink}" stroke-width="${STROKE.detail}"/>`;
+  const priority = `<rect x="40" y="28" width="160" height="20" rx="8" fill="${palette.accent}" opacity="${FILL.priority}"/><rect x="40" y="28" width="160" height="20" rx="8" fill="none" stroke="${palette.ink}" stroke-width="${STROKE.detail}"/>`;
   return [bands, priority].join('');
 }
 
@@ -233,7 +242,7 @@ function tank(palette: Palette): string {
 /** Liquid band fills from the band floor upward so level semantics stay visual. */
 function liquidBand(top: number, depth: number, fraction: number, fill: string): string {
   const height = depth * fraction;
-  return `<rect x="66" y="${top + depth - height}" width="108" height="${height}" fill="${fill}" opacity="0.45"/>`;
+  return `<rect x="66" y="${top + depth - height}" width="108" height="${height}" fill="${fill}" opacity="${FILL.liquid}"/>`;
 }
 
 /** One horizontal strata band inside a layered bed. */

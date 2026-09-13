@@ -31,7 +31,7 @@ function themeFailure<T>(error: unknown): Result<T> {
   if (error instanceof ThemeFault) return failure(error.code, error.message, error.recovery);
   return failure(
     'invalid-theme',
-    'Expected theme 1 @id "Title" version=X base=ALIAS, font body/mono source="PATH", set color TOKEN="HEX", or set number TOKEN=VALUE',
+    'Expected theme 1 @id "Title" version=X base=ALIAS, font body/mono/strong source="PATH", set color TOKEN="HEX", or set number TOKEN=VALUE',
   );
 }
 /** Header vocabulary is intentionally closed and coordinate-free; no diagram or typography metric model is introduced. */
@@ -50,8 +50,8 @@ function parse(source: string): {
   const entries = lines.slice(1).map(line);
   const resources = entries.flatMap((item) => item.resources);
   const overrides = uniqueOverrides(entries.flatMap((item) => item.overrides));
-  if (resources.length !== 2 || new Set(resources.map((item) => item.alias)).size !== 2)
-    throw new Error('Exactly body and mono are required');
+  if (resources.length !== 3 || new Set(resources.map((item) => item.alias)).size !== 3)
+    throw new Error('Exactly body, mono and strong are required');
   return {
     admission: {
       schemaVersion: 1,
@@ -73,7 +73,7 @@ function line(input: { readonly text: string; readonly line: number }): {
   readonly resources: readonly ResourceRequest[];
   readonly overrides: readonly Override[];
 } {
-  const font = /^font (body|mono) source="([^"]+)"$/.exec(input.text);
+  const font = /^font (body|mono|strong) source="([^"]+)"$/.exec(input.text);
   if (font)
     return {
       resources: [

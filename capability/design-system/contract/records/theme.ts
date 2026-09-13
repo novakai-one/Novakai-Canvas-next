@@ -65,6 +65,8 @@ export interface StyleProjection {
   readonly digest: string;
   readonly bodyFont: TextMetric['font'];
   readonly monoFont: TextMetric['font'];
+  /** Admitted display-weight face pinned by heading typography roles. */
+  readonly strongFont: TextMetric['font'];
   readonly typography: DiagramTypography;
   readonly contentSizing: ContentSizing;
   /** Diagram wire paint and dimensions; Canvas and Export consume the same admitted values. */

@@ -75,7 +75,9 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
     sections,
     outline,
     assetDigests: collection.assets.map((asset): string => asset.digest.slice(7)),
-    fontDigests: [...new Set([style.bodyFont.digest, style.monoFont.digest])],
+    fontDigests: [
+      ...new Set([style.bodyFont.digest, style.monoFont.digest, style.strongFont.digest]),
+    ],
   };
 }
 

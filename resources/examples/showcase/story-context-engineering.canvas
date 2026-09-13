@@ -4,9 +4,17 @@ collection @story-context-engineering "Context engineering" theme=studio descrip
     figure @figure gate pass=few size=large
     text @detail "Retrieve widely, then admit only what serves the task." role=caption
   }
+  node @rank-rules note "Principles for admission" frame=card {
+    text @first "1. Retrieve before ranking." role=caption
+    text @second "2. Every token must earn its place." role=caption
+  }
   node @assemble concept "Assemble in order" frame=none composition=media-top {
     figure @figure stack layers=some size=large
     text @detail "Stable instructions first, volatile evidence next." role=caption
+  }
+  node @order-rules note "Principles for order" frame=card {
+    text @first "1. Instructions before evidence." role=caption
+    text @second "2. Volatile closest to the question." role=caption
   }
   node @window concept "Fill the window" frame=none composition=media-top {
     figure @figure window fill=full size=large
@@ -20,11 +28,18 @@ collection @story-context-engineering "Context engineering" theme=studio descrip
     figure @figure gauge level=full size=small
     text @detail "Long, crowded windows dilute attention across more tokens." role=caption
   }
-  node @lost note "Lost in the middle" role=warning frame=card {
+  node @lost note "Lost in the middle" role=warning frame=card composition=media-top {
+    figure @figure window fill=half size=small
     text @detail "Evidence placed mid-window is recalled least; leads and ends win." role=caption
   }
-  node @poison note "Poisoned context" role=warning frame=card {
+  node @poison note "Poisoned context" role=warning frame=card composition=media-top {
+    figure @figure gate pass=one size=small
     text @detail "One unvetted document steers every later answer." role=caption
+  }
+  node @defend note "Defend the window" role=success frame=card {
+    text @first "1. Leads and ends carry recall." role=caption
+    text @second "2. Vet every source." role=caption
+    text @third "3. Leave room for the answer." role=caption
   }
 
   wire @selected @select -> @assemble "ranked candidates" kind=flow step=1
@@ -36,17 +51,17 @@ collection @story-context-engineering "Context engineering" theme=studio descrip
   section @engineering "Context engineering" mode=story layout=grid columns=2 direction=right gap=normal {
     group @train "BUILD THE CONTEXT" frame=none layout=grid columns=1 direction=down gap=normal {
       group @select-stage "01 / EARN YOUR PLACE" frame=panel role=supporting layout=grid columns=2 direction=right gap=normal {
-        show @select
+        show @select @rank-rules
       }
       group @order-stage "02 / ASSEMBLE IN ORDER" frame=panel role=decision layout=grid columns=2 direction=right gap=normal {
-        show @assemble
+        show @assemble @order-rules
       }
       group @load-stage "03 / FILL THE WINDOW" represents=@context-window frame=panel role=success layout=grid columns=2 direction=right gap=normal {
         show @window @respond
       }
     }
     group @risks "WATCH THE FAILURE MODES" frame=panel role=decision layout=grid columns=1 direction=down gap=roomy {
-      show @cost @lost @poison
+      show @cost @lost @poison @defend
     }
     connect @selected source-side=right target-side=left
     connect @ordered source-side=bottom target-side=top

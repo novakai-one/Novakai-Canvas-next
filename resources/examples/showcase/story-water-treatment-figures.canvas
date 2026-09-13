@@ -29,6 +29,15 @@ collection @story-water-treatment-figures "How water treatment uses several barr
   node @residuals note "Separate residuals" role=warning frame=card {
     text @detail "Settled solids and filter wash water require separate handling." role=caption
   }
+  node @legend note "How to read this diagram" frame=card {
+    text @solid "Solid arrows carry water." role=caption
+    text @dashed "Dashed arrows carry checks and residuals." role=caption
+    text @steps "Numbers follow the barriers in order." role=caption
+  }
+  node @records note "Record and adjust" role=supporting frame=card {
+    text @log "Log every check and its result." role=caption
+    text @adjust "Adjust the barrier before the next run." role=caption
+  }
   node @limits note "One barrier is not enough" role=success frame=card {
     text @detail "Each stage addresses a different part of the source-water risk." role=caption
     text @scope "The source determines the necessary barriers and operating limits." role=annotation
@@ -55,7 +64,7 @@ collection @story-water-treatment-figures "How water treatment uses several barr
       }
     }
     group @oversight "OBSERVE + HANDLE SIDE STREAMS" frame=panel role=decision layout=grid columns=1 direction=down gap=roomy {
-      show @monitor @residuals
+      show @monitor @residuals @records @legend
     }
     connect @intake source-side=right target-side=left
     connect @clarified source-side=bottom target-side=top

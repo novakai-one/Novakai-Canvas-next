@@ -11,7 +11,7 @@ describe('Portable bundle integrity', () => {
     expect(manifest.source).toMatch(/^canvas 1/);
     expect(manifest.sourceDigest).toBe(encoding.hash(encoding.utf8(manifest.source)));
     const inspection = value(await f.bindings.service.inspectBundle(first.bytes));
-    expect(inspection.resources.length).toBe(4);
+    expect(inspection.resources.length).toBe(5);
     expect(inspection.manual.sections[0]?.appearances[0]?.placement).toMatchObject({
       x: 31,
       y: 42,

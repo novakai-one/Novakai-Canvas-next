@@ -24,7 +24,7 @@ export function sources(): {
 } {
   return {
     schemaVersion: 1,
-    definitionVersion: '1.0.0',
+    definitionVersion: '1.1.0',
     definitions: jsonFile('tokens/definitions.tokens.json'),
     semantics: jsonFile('tokens/semantics.tokens.json'),
     preferences: jsonFile('tokens/preferences.tokens.json'),
@@ -48,8 +48,9 @@ export const environment = {
 export const fonts = {
   body: { family: 'Inter', digest: 'a'.repeat(64), approved: true },
   mono: { family: 'JetBrains Mono', digest: 'b'.repeat(64), approved: true },
+  strong: { family: 'Inter Tight', digest: 'd'.repeat(64), approved: true },
 };
-export const diagramPin = { kind: 'theme', id: 'paper', version: '1.0.0', digest: 'c'.repeat(64) };
+export const diagramPin = { kind: 'theme', id: 'paper', version: '1.1.0', digest: 'c'.repeat(64) };
 /** Result assertions preserve diagnostics and narrow the success branch without a type assertion. */
 export function must<T>(result: Result<T>): T {
   expect(result.ok, result.ok ? '' : JSON.stringify(result.error)).toBe(true);

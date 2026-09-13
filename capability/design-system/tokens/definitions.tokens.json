@@ -105,6 +105,13 @@
         "ui-monospace",
         "monospace"
       ]
+    },
+    "strong": {
+      "$type": "fontFamily",
+      "$value": [
+        "system-ui",
+        "sans-serif"
+      ]
     }
   },
   "type": {
@@ -228,6 +235,56 @@
       "$value": {
         "value": 28,
         "unit": "px"
+      }
+    }
+  },
+  "rolefill": {
+    "decision": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.984313725490196,
+          0.9137254901960784,
+          0.7764705882352941
+        ],
+        "alpha": 1
+      }
+    },
+    "success": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.803921568627451,
+          0.9333333333333333,
+          0.8392156862745098
+        ],
+        "alpha": 1
+      }
+    },
+    "warning": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9803921568627451,
+          0.8313725490196078,
+          0.8196078431372549
+        ],
+        "alpha": 1
+      }
+    },
+    "supporting": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.8901960784313725,
+          0.9215686274509803,
+          0.9529411764705882
+        ],
+        "alpha": 1
       }
     }
   },

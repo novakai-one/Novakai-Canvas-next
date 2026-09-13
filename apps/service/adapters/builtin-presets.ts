@@ -25,11 +25,12 @@ function accepted<T>(result: Result<T, FailureSource>): T {
 }
 /** Admission uses the actual font families verified by Assets; missing shipped fonts cannot fall back to the OS. */
 function fontPins(sources: BuiltinSources): unknown {
-  const [body, mono] = sources.fonts;
-  if (!body || !mono) throw new PresetFault('Both shipped fonts are required');
+  const [body, mono, strong] = sources.fonts;
+  if (!body || !mono || !strong) throw new PresetFault('All shipped fonts are required');
   return {
     body: { family: body.family, digest: body.digest, approved: true },
     mono: { family: mono.family, digest: mono.digest, approved: true },
+    strong: { family: strong.family, digest: strong.digest, approved: true },
   };
 }
 /** System theme selection yields exact release pins; personal preferences do not become diagram dependencies. */
@@ -68,7 +69,7 @@ function addTheme(
       schemaVersion: 1,
       kind: 'theme',
       id,
-      version: '1.0.0',
+      version: '1.1.0',
       title: id === 'paper' ? 'Paper' : 'Ink',
       description: 'Bundled diagram theme with pinned fonts.',
       raw: themeInput(sources, scheme, owners),

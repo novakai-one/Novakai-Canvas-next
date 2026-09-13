@@ -26,16 +26,18 @@ export function resolveThemeData(
   const data = record(input, 'theme-request');
   keys(data, ['base', 'overrides', 'fonts'], 'theme-request');
   const selectedFonts = record(data.fonts, 'fonts');
-  keys(selectedFonts, ['body', 'mono'], 'fonts');
+  keys(selectedFonts, ['body', 'mono', 'strong'], 'fonts');
   const body = parsed(fontPin, selectedFonts.body, 'font.body');
   const mono = parsed(fontPin, selectedFonts.mono, 'font.mono');
-  const fonts = uniqueFonts([body, mono]);
+  const strong = parsed(fontPin, selectedFonts.strong, 'font.strong');
+  const fonts = uniqueFonts([body, mono, strong]);
   const base = baseValues(source, data.base, fonts, identity);
   const known = Object.fromEntries(source.definitions.map((item) => [item.id, item]));
   const overrides = readOverrides(record(data.overrides, 'overrides'), known);
   const fontValues: TokenValues = {
     [tokenId.parse('font.body')]: { type: 'fontFamily', value: [body.family] },
     [tokenId.parse('font.mono')]: { type: 'fontFamily', value: [mono.family] },
+    [tokenId.parse('font.strong')]: { type: 'fontFamily', value: [strong.family] },
   };
   const resolved = resolveDefinitions(
     changedDefinitions(source, { ...base.values, ...overrides, ...fontValues }),

@@ -55,3 +55,52 @@ it('admits composition intent and rejects hidden or missing required media', () 
     composition: 'stack',
   });
 });
+
+/** Parametric figures satisfy media-led composition without any asset binding or external artwork. */
+it('admits parametric figures as composition media and rejects unknown forms or parameters', () => {
+  const admitted = value(
+    validate(
+      base({
+        objects: [
+          node('basin', 'concept', {
+            composition: 'media-top',
+            content: [
+              { kind: 'figure', id: 'art', form: 'vessel', level: 'half', agitator: true },
+              { kind: 'text', id: 'caption', text: 'Settle first', role: 'caption' },
+            ],
+          }),
+        ],
+      }),
+    ),
+  );
+  expect(admitted.objects[0]?.content[0]).toMatchObject({
+    kind: 'figure',
+    form: 'vessel',
+    mark: 'none',
+    size: 'medium',
+  });
+  invalid(
+    validate(
+      base({
+        objects: [
+          node('bad', 'concept', { content: [{ kind: 'figure', id: 'art', form: 'mystery' }] }),
+        ],
+      }),
+    ),
+    'shape',
+    'content.0',
+  );
+  invalid(
+    validate(
+      base({
+        objects: [
+          node('stray', 'concept', {
+            content: [{ kind: 'figure', id: 'art', form: 'screen', mark: 'check' }],
+          }),
+        ],
+      }),
+    ),
+    'shape',
+    'content',
+  );
+});

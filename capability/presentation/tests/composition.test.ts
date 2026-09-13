@@ -162,3 +162,48 @@ function checkContainerForeground(setup: ComposedPresentation): void {
   assert(heading?.kind === 'text');
   expect(heading.fill).toBe('#ffffff');
 }
+
+/** Parametric figures measure as token-drawn media; no asset binding or reader is consulted. */
+it('measures parametric figures from theme tokens inside the figure band', async () => {
+  const pinned = fonts();
+  const tokens = style(pinned);
+  const setup = value(await composePresentation(owners(tokens, asset), pinned));
+  const source = collection({
+    objects: [
+      object(
+        'basin',
+        'system',
+        [
+          {
+            kind: 'figure',
+            id: 'art',
+            form: 'vessel',
+            level: 'half',
+            agitator: true,
+            size: 'small',
+          },
+          { kind: 'text', id: 'caption', text: caption, role: 'caption' },
+        ],
+        { composition: 'media-top', frame: 'none' },
+      ),
+    ],
+    sections: [section('story', ['basin'])],
+  });
+  const projection = value(setup.presentation.project(source));
+  const basin = node(projection, 'basin');
+  const media = basin.content.primitives.filter((item) => item.kind === 'media');
+  expect(media).toHaveLength(1);
+  const art = media[0];
+  assert(art?.kind === 'media');
+  expect(art.x >= 0 && art.x + art.width <= basin.width).toBe(true);
+  expect(art.y >= 0 && art.y + art.height <= basin.height).toBe(true);
+  expect(art.digest.startsWith('figure:')).toBe(true);
+  expect(art.height / art.width).toBe(0.625);
+  const svg = Buffer.from(
+    art.dataUri.replace('data:image/svg+xml;base64,', ''),
+    'base64',
+  ).toString();
+  expect(svg).toContain(tokens.text);
+  expect(svg).toContain(tokens.secondary);
+  expect(basin.content.outline).toContain('vessel figure, half level');
+});

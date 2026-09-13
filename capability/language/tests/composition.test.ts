@@ -68,3 +68,41 @@ it('retains composition through create, print, patch, unset and replacement', ()
   expect(object(defaults, 'actor')).toMatchObject({ frame: 'auto', composition: 'stack' });
   expect(section(defaults).appearances[0]).not.toHaveProperty('composition');
 });
+
+/** Parametric figures round-trip as declarative intent; no asset or coordinate vocabulary appears. */
+it('retains figures through create, print, patch and replacement', () => {
+  const original = create(`canvas 1
+collection @parametric "Parametric figures" {
+  node @basin concept "Gather and settle" composition=media-top {
+    figure @art vessel level=half agitator=true mark=check size=large
+    text @caption "Gather fine particles into floc" role=caption
+  }
+  section @story "Treatment" mode=story layout=grid {
+    show @basin
+  }
+}`);
+  expect(object(original, 'basin').content[0]).toMatchObject({
+    kind: 'figure',
+    form: 'vessel',
+    level: 'half',
+    agitator: true,
+    mark: 'check',
+  });
+  const readout = value(language.print({ collection: original, scope: { kind: 'all' } }));
+  expect(readout.source).toContain('figure @art vessel');
+  expect(readout.source).toContain('level=half');
+  const replacement = value(
+    language.lower({
+      source: readout.source,
+      mode: 'replace',
+      snapshot: original,
+      resources: pins(original),
+    }),
+  ).collection;
+  expect(replacement).toEqual(original);
+  const patched = edit(
+    original,
+    'set block @basin.@art level=full unset block @basin.@art agitator',
+  );
+  expect(object(patched, 'basin').content[0]).toMatchObject({ level: 'full', agitator: false });
+});

@@ -5,6 +5,7 @@ import type { BodySelection } from './node-body.js';
 import { measureNodeBody } from './node-body.js';
 import { nodeHeading } from './headings.js';
 import { measureMedia } from './media.js';
+import { measureFigure } from './figures.js';
 import { offset, stack } from './text.js';
 import { reject } from '../validation/outcomes.js';
 
@@ -22,11 +23,11 @@ interface CompositionRequest {
   readonly context: ContentContext;
 }
 
-type MediaBlock = Extract<ContentBlock, { kind: 'image' | 'icon' }>;
+type MediaBlock = Extract<ContentBlock, { kind: 'image' | 'icon' | 'figure' }>;
 
 /** The first visible media block is the designated figure; later media remain ordered body content. */
 function isMedia(block: ContentBlock): block is MediaBlock {
-  return block.kind === 'image' || block.kind === 'icon';
+  return block.kind === 'image' || block.kind === 'icon' || block.kind === 'figure';
 }
 
 /** Model normally prevents this rejection; a broken injected reader still cannot erase missing media. */
@@ -61,6 +62,8 @@ function textColumn(request: CompositionRequest): ComposedNodeContent {
 
 /** Prominent media uses token-owned figure bands rather than the inline icon size. */
 function figureContent(figure: MediaBlock, context: ContentContext): MeasuredContent {
+  if (figure.kind === 'figure')
+    return measureFigure(figure, context.width, context.style, 'figure');
   return measureMedia(
     figure,
     context.collection,

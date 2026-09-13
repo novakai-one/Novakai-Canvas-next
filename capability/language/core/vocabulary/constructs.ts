@@ -57,6 +57,7 @@ export const constructs: readonly ConstructDefinition[] = [
       'list',
       'image',
       'icon',
+      'figure',
       'field',
       'keygroup',
       'signature',
@@ -166,6 +167,21 @@ export const constructs: readonly ConstructDefinition[] = [
     kind: 'icon',
     positions: [{ name: 'id', type: 'id' }],
     properties: { asset: p.asset, size: p.size, fit: p.fit },
+    children: null,
+  },
+  {
+    kind: 'figure',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'form', type: 'word', values: ['vessel', 'layered-bed', 'screen', 'gauge'] },
+    ],
+    properties: {
+      level: p.figureLevel,
+      agitator: p.agitator,
+      mark: p.mark,
+      debris: p.debris,
+      size: p.size,
+    },
     children: null,
   },
   {

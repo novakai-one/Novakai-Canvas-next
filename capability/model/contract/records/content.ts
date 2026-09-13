@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assetId, descendantId, label, objectId, sectionId, size } from '../brands.js';
-import { textRoleSchema } from './composition.js';
+import { figureLevelSchema, textRoleSchema } from './composition.js';
 
 /** Canonical object address, optionally narrowed to an addressable descendant. */
 export const endpointSchema = z
@@ -39,6 +39,47 @@ const imageBlockSchema = z
     fit: z.enum(['contain', 'cover']).default('contain'),
   })
   .readonly();
+/** App-drawn parametric figures; artwork derives from theme tokens, never from per-domain assets. */
+const figureBlockSchema = z.discriminatedUnion('form', [
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('vessel'),
+      level: figureLevelSchema.default('half'),
+      agitator: z.boolean().default(false),
+      mark: z.enum(['none', 'check', 'shield']).default('none'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('layered-bed'),
+      level: figureLevelSchema.default('full'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('screen'),
+      debris: z.enum(['none', 'some']).default('some'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+  z
+    .strictObject({
+      kind: z.literal('figure'),
+      id: descendantId,
+      form: z.literal('gauge'),
+      level: figureLevelSchema.default('half'),
+      size: size.default('medium'),
+    })
+    .readonly(),
+]);
 
 /** Local links may select a section; URI links remain external references. */
 const linkTargetSchema = z.discriminatedUnion('kind', [
@@ -114,6 +155,7 @@ export const contentSchema = z.union([
   codeBlockSchema,
   listBlockSchema,
   imageBlockSchema,
+  figureBlockSchema,
   linkBlockSchema,
   fieldSchema,
   keyGroupSchema,
@@ -135,6 +177,9 @@ export type Endpoint = z.infer<typeof endpointSchema>;
 
 /** ER field definition; a foreign key reference is validated against an ordered candidate key. */
 export type Field = Extract<ContentBlock, { kind: 'field' }>;
+
+/** Parametric figure block; narrow on form before reading form-specific parameters. */
+export type FigureBlock = Extract<ContentBlock, { kind: 'figure' }>;
 
 /** Ordered composite primary, unique or foreign key over fields in the owning entity. */
 export type KeyGroup = Extract<ContentBlock, { kind: 'keygroup' }>;

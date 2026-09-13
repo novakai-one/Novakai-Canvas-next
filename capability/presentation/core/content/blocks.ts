@@ -7,6 +7,7 @@ import { measureText } from './text.js';
 import { measureTable } from './table.js';
 import { measureSignature, measureMember } from './signature.js';
 import { measureMedia } from './media.js';
+import { measureFigure } from './figures.js';
 import { reject } from '../validation/outcomes.js';
 /** Content processor chooses local presentation only; semantic validity remains in Model. */
 type Processor = (block: ContentBlock, context: ContentContext) => MeasuredContent;
@@ -56,6 +57,7 @@ const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
   },
   image: (block, context): MeasuredContent => image(block, context),
   icon: (block, context): MeasuredContent => image(block, context),
+  figure: (block, context): MeasuredContent => figure(block, context),
   field: (block, context): MeasuredContent => {
     if (block.kind !== 'field') return mismatch(block);
     return measureField(block, context);
@@ -89,6 +91,11 @@ function mismatch(block: ContentBlock): never {
 function image(block: ContentBlock, context: ContentContext): MeasuredContent {
   if (block.kind !== 'image' && block.kind !== 'icon') return mismatch(block);
   return measureMedia(block, context.collection, context.width, context.style, context.assets);
+}
+/** Figures draw from tokens without touching asset resources; measurement stays local and deterministic. */
+function figure(block: ContentBlock, context: ContentContext): MeasuredContent {
+  if (block.kind !== 'figure') return mismatch(block);
+  return measureFigure(block, context.width, context.style);
 }
 /** Measure canonical content without mutation; createPresentation.project protects provider/structured failures.
  * Callers correct input/resources and retry; Authoring retains the committed scene. */

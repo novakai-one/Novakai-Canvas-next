@@ -27,7 +27,7 @@ export type {
 export type { Result, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';
 export type { Collection } from './records/collection.js';
 export type { DiagramObject, ObjectKind } from './records/object.js';
-export type { ContentBlock, Endpoint, Field, KeyGroup } from './records/content.js';
+export type { ContentBlock, Endpoint, Field, FigureBlock, KeyGroup } from './records/content.js';
 export type { Relationship, RelationshipKind } from './records/relationship.js';
 export type {
   Section,

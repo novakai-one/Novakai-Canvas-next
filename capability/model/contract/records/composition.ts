@@ -11,3 +11,9 @@ export const containerFrameSchema = z.enum(['auto', 'none', 'panel']);
 
 /** Typography role changes measured text, never its semantic identity or external position. */
 export const textRoleSchema = z.enum(['body', 'caption', 'annotation']);
+
+/** Closed parametric figure forms; Presentation owns drawing, so new forms ship with the renderer. */
+export const figureFormSchema = z.enum(['vessel', 'layered-bed', 'screen', 'gauge']);
+
+/** Semantic fill levels keep free numbers out of authored DSL; Presentation maps them to geometry. */
+export const figureLevelSchema = z.enum(['low', 'half', 'full']);

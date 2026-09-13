@@ -15,9 +15,9 @@ function visibleBlocks(
   return object.content;
 }
 
-/** Both admitted image families can lead a composition; other blocks cannot stand in for media. */
+/** Both admitted image families and parametric figures can lead a composition; other blocks cannot stand in for media. */
 function isMedia(block: ContentBlock): boolean {
-  return block.kind === 'image' || block.kind === 'icon';
+  return block.kind === 'image' || block.kind === 'icon' || block.kind === 'figure';
 }
 
 /** Ordinary stacks need no figure. A media-led intent must have a visible figure to arrange. */
@@ -31,7 +31,7 @@ function requireMedia(
     !blocks.some(isMedia),
     'content',
     path,
-    'Media-led composition requires a visible image or icon; use stack when hiding media',
+    'Media-led composition requires a visible image, icon or figure; use stack when hiding media',
   );
 }
 

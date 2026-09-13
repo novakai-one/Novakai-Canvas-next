@@ -34,6 +34,7 @@ export type Construct =
   | 'list'
   | 'image'
   | 'icon'
+  | 'figure'
   | 'field'
   | 'keygroup'
   | 'signature'

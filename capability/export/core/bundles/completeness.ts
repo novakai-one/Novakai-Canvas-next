@@ -48,6 +48,10 @@ function resourceKey(
   primitive: Snapshot['scene']['sections'][number]['title']['content']['primitives'][number],
 ): readonly string[] {
   if (primitive.kind === 'text') return [`font:${primitive.font.digest}`];
-  if (primitive.kind === 'media') return [`asset:${primitive.digest}`];
-  return [];
+  if (primitive.kind !== 'media') return [];
+  return mediaKey(primitive.digest);
+}
+/** Generated figures carry complete inline artwork in the scene; retention covers external asset bytes only. */
+function mediaKey(digest: string): readonly string[] {
+  return digest.startsWith('figure:') ? [] : [`asset:${digest}`];
 }

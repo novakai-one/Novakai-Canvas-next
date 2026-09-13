@@ -1,7 +1,8 @@
-import type { Result as LibraryResult } from '@novakai/canvas-library';
+import type { Result as LibraryResult, RecentVisit } from '@novakai/canvas-library';
 import { z } from 'zod';
 import { validate, query, collectionId, folderId } from '@novakai/canvas-library';
 import { projectCollection } from '@novakai/canvas-service';
+import type { Collection } from '../contract/records/owners.js';
 import type { LibraryReader } from '../contract/records/library.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
@@ -18,21 +19,24 @@ export function createLibraryReader(): LibraryReader {
         validate({
           catalog: catalogs[0]?.value,
           collections: collections.map(projectCollection),
-          recent,
+          recent: currentVisits(collections, recent),
         }),
       );
     },
     query: (snapshot, filters, cursor) =>
       checked(
-        query(snapshot, {
-          text: filters.text,
-          archived: filters.archived,
-          sort: filters.sort,
-          kinds: ['collection', 'section', 'object'],
-          limit: 50,
-          ...folderFilter(filters.folder),
-          ...cursorFilter(cursor),
-        }),
+        query(
+          { ...snapshot, recent: currentVisits(snapshot.collections, snapshot.recent) },
+          {
+            text: filters.text,
+            archived: filters.archived,
+            sort: filters.sort,
+            kinds: ['collection', 'section', 'object'],
+            limit: 50,
+            ...folderFilter(filters.folder),
+            ...cursorFilter(cursor),
+          },
+        ),
       ),
     visits: (input) => {
       const parsed = visits.safeParse(input);
@@ -71,4 +75,13 @@ function cursorFilter(cursor: string | null): Readonly<Record<string, unknown>> 
 function checked<T>(result: LibraryResult<T>): Result<T> {
   if (!result.ok) return failure('invalid-library', 'Library rejected this input', result.error);
   return result;
+}
+
+/** Visit history is an optional browser preference. Missing IDs are excluded from this view; canonical catalog errors still reject through checked(). Stored history is not rewritten. */
+function currentVisits(
+  collections: readonly Pick<Collection, 'id'>[],
+  recent: readonly RecentVisit[],
+): readonly RecentVisit[] {
+  const available = new Set(collections.map((collection) => collection.id));
+  return recent.filter((visit) => available.has(visit.collection));
 }

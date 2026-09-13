@@ -1,0 +1,21 @@
+{
+  "base": "4147553a8dc3eea80dd0a3bbf22a837a52d4d62d",
+  "review": "Builder assessment, no independent auditor for this targeted bug",
+  "files": [
+    {
+      "path": "apps/web/adapters/library-reader.ts",
+      "sha256": "5944b0f0ed5dd079599d8e911980d28e0760523a8300c788bfe878911d24b9d6",
+      "lines": 87
+    },
+    {
+      "path": "apps/web/adapters/react/LibraryResults.tsx",
+      "sha256": "a525d9e249f41cd5c500d81256dec07b9a5924c092bcc1c2ff33a14e1d46678b",
+      "lines": 56
+    },
+    {
+      "path": "apps/web/tests/library-loading.test.ts",
+      "sha256": "e809f7f1a02ec651013a426f88799370d0d964d3e059e31ac530a65d9ba8b595",
+      "lines": 126
+    }
+  ]
+}

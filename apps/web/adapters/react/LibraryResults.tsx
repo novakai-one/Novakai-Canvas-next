@@ -1,15 +1,21 @@
-import type { ComponentType, ReactElement } from 'react';
+import type { FunctionComponent, ReactElement } from 'react';
 import type { DesignSlots } from '../../contract/react-types.js';
 import type { LibraryFeatureProps } from '../../contract/library-react.js';
 import styles from './Navigation.module.css';
-/** Search results expose their scope; selecting one explicitly opens its collection. */
+/** Results require navigation and pagination only, not the full workspace or editor commands. */
+interface LibraryResultsProps {
+  readonly state: LibraryFeatureProps['state'];
+  readonly library: Pick<LibraryFeatureProps['library'], 'next'>;
+  readonly workspace: Pick<LibraryFeatureProps['workspace'], 'open'>;
+}
+/** Search results expose their scope; selection opens its collection. LibraryBrowser reports failures; reload retries discovery without changing stored diagrams. */
 export function createLibraryResults({
   Button,
-}: Pick<DesignSlots, 'Button'>): ComponentType<LibraryFeatureProps> {
+}: Pick<DesignSlots, 'Button'>): FunctionComponent<LibraryResultsProps> {
   /** Exact Library pagination tokens stay inside the controller. */
-  function LibraryResults({ library, state, workspace }: LibraryFeatureProps): ReactElement {
+  function LibraryResults({ library, state, workspace }: LibraryResultsProps): ReactElement {
     const page = state.page;
-    if (page === null) return <p>Library is loading…</p>;
+    if (page === null) return unavailable(state.problem);
     return (
       <div>
         <p role="status">{page.total} results</p>
@@ -40,4 +46,11 @@ export function createLibraryResults({
     );
   }
   return LibraryResults;
+}
+
+/** The enclosing browser displays structured errors; this slot distinguishes failed loading from pending work. Reload owns recovery. */
+function unavailable(problem: LibraryResultsProps['state']['problem']): ReactElement {
+  if (problem !== null)
+    return <p>Library could not be loaded. See the error above; reload to try again.</p>;
+  return <p>Library is loading…</p>;
 }

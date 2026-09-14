@@ -9,7 +9,14 @@ export function AccentStripeChrome({ node, style }: NodeChromeProps): ReactEleme
     <>
       {shadow && (
         <defs>
-          <filter id={filter} x="-25%" y="-25%" width="150%" height="150%">
+          <filter
+            id={filter}
+            filterUnits="userSpaceOnUse"
+            x={-shadow.extent}
+            y={-shadow.extent}
+            width={node.width + shadow.extent * 2}
+            height={node.height + shadow.extent * 2}
+          >
             <feDropShadow
               dx={shadow.offsetX}
               dy={shadow.offsetY}

@@ -1,4 +1,5 @@
 import type { Appearance, DiagramObject, Group, Section } from '../../contract/records/input.js';
+import { chromeResolvedStyle } from '../../contract/records/style.js';
 import type { Paint } from '../../contract/records/style.js';
 import type { MeasuredContent, VisualNode } from '../../contract/records/visual.js';
 import { sceneId } from '../../contract/brands.js';
@@ -78,7 +79,7 @@ export function projectNode(
     scoped,
   );
   return parse(visualNode, {
-    ...chromeStyle(source, context),
+    ...chromeStyle(source, view.frame ?? source.frame, context),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -279,8 +280,10 @@ function withinGroup(view: Appearance, parent: Group['parent']): Appearance {
 /** Legacy nodes retain their exact transport shape; selected module chromes carry resolved tokens. */
 function chromeStyle(
   object: DiagramObject,
+  frame: VisualNode['frame'],
   context: ContentContext,
 ): Pick<VisualNode, 'chromeStyle'> {
+  if (!['auto', 'card'].includes(frame)) return {};
   if (moduleChrome(object, context) === undefined) return {};
-  return { chromeStyle: context.style };
+  return { chromeStyle: parse(chromeResolvedStyle, context.style) };
 }

@@ -635,5 +635,15 @@
         "$value": "{chrome.header.warning}"
       }
     }
+  },
+  "chrome": {
+    "wire": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    },
+    "externalWire": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    }
   }
 }

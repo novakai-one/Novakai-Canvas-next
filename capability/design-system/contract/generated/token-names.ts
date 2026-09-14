@@ -72,6 +72,7 @@ export const tokenNames = [
   '--nv-elevation-offset-y',
   '--nv-elevation-blur',
   '--nv-elevation-color',
+  '--nv-elevation-extent',
   '--nv-chrome-tab-width',
   '--nv-chrome-tab-height',
   '--nv-chrome-accent-width',
@@ -138,4 +139,6 @@ export const tokenNames = [
   '--nv-role-warning-stroke',
   '--nv-role-warning-text',
   '--nv-role-warning-header',
+  '--nv-chrome-wire',
+  '--nv-chrome-external-wire',
 ] as const;

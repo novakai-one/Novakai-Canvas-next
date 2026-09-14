@@ -25,6 +25,7 @@ const positive = z.number().finite().positive().max(10000);
 export const connectionStyle = z
   .strictObject({
     paint,
+    dashedPaint: paint.optional(),
     width: positive,
     dash: z.tuple([positive, positive]).readonly(),
   })
@@ -76,6 +77,7 @@ export const elevation = z
     offsetX: z.number().finite(),
     offsetY: z.number().finite(),
     blur: z.number().nonnegative(),
+    extent: positive,
     color,
   })
   .readonly();
@@ -127,6 +129,11 @@ function matchingFonts(style: {
   });
 }
 export type ResolvedStyle = z.infer<typeof resolvedStyle>;
+/** A selected frame must receive complete token data; malformed transported chrome never renders an empty shell. */
+export const chromeResolvedStyle = resolvedStyle
+  .unwrap()
+  .required({ chrome: true, headers: true, elevation: true, chromeMetrics: true })
+  .readonly();
 /** Reader returns safe local bytes and mechanically verified dimensions; no remote URLs. */
 export const visualAsset = z
   .strictObject({

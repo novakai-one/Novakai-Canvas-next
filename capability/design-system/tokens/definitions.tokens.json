@@ -573,6 +573,13 @@
         ],
         "alpha": 1
       }
+    },
+    "extent": {
+      "$type": "dimension",
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      }
     }
   },
   "chrome": {

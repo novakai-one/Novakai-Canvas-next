@@ -69,6 +69,7 @@ export interface StyleProjection {
     readonly offsetX: number;
     readonly offsetY: number;
     readonly blur: number;
+    readonly extent: number;
     readonly color: string;
   };
   readonly chromeMetrics?: {
@@ -85,6 +86,7 @@ export interface StyleProjection {
   readonly contentSizing: ContentSizing;
   /** Diagram wire paint and dimensions; Canvas and Export consume the same admitted values. */
   readonly connection: {
+    readonly dashedPaint?: Paint;
     readonly paint: Paint;
     readonly width: number;
     readonly dash: readonly [number, number];

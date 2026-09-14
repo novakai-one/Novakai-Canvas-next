@@ -107,9 +107,10 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     typography: typography(resolved),
     contentSizing: contentSizing(values),
     connection: {
+      ...wireOverride(resolved),
       paint: {
         fill: color('surface.base'),
-        stroke: color('text.secondary'),
+        stroke: runtimeStroke(resolved),
         text: color('text.primary'),
       },
       width: tokenNumber(values, 'diagram.edgeStroke'),
@@ -221,12 +222,31 @@ function chromeProjection(resolved: ResolvedTokenSet): Partial<StyleProjection> 
       offsetX: tokenNumber(values, 'elevation.offsetX'),
       offsetY: tokenNumber(values, 'elevation.offsetY'),
       blur: tokenNumber(values, 'elevation.blur'),
+      extent: tokenNumber(values, 'elevation.extent'),
       color: colorText(member(values, 'elevation.color'), 'elevation.color'),
     },
     chromeMetrics: {
       tabWidth: tokenNumber(values, 'chrome.tabWidth'),
       tabHeight: tokenNumber(values, 'chrome.tabHeight'),
       accentWidth: tokenNumber(values, 'chrome.accentWidth'),
+    },
+  };
+}
+
+/** Existing presets retain their original wire paint; chrome presets select runtime ink through tokens. */
+function runtimeStroke(resolved: ResolvedTokenSet): string {
+  const id = resolved.chrome === undefined ? 'text.secondary' : 'chrome.wire';
+  return colorText(member(resolved.values, id), id);
+}
+/** Type-only and external interactions retain their own muted ink without changing marker or routing policy. */
+function wireOverride(resolved: ResolvedTokenSet): Partial<StyleProjection['connection']> {
+  if (resolved.chrome === undefined) return {};
+  const color = (id: string): string => colorText(member(resolved.values, id), id);
+  return {
+    dashedPaint: {
+      fill: color('surface.base'),
+      stroke: color('chrome.externalWire'),
+      text: color('text.primary'),
     },
   };
 }

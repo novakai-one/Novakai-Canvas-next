@@ -65,13 +65,14 @@ export async function composePresentation(
   owners: Owners,
   fonts: unknown,
   nativeRender?: StaticRenderer,
+  chromes?: NodeChromeRegistry,
 ): Promise<Result<ComposedPresentation>> {
   try {
     const [metrics, markup] = await Promise.all([
       import('../adapters/fontkit.js'),
       import('../adapters/static-markup.js'),
     ]);
-    const react = requireValue(await createReactBindings(fonts));
+    const react = requireValue(await createReactBindings(fonts, chromes));
     return protect(() => {
       const measurement = requireValue(metrics.createFontMetrics(react.fonts));
       const renderer = markup.createMarkupRenderer(react, nativeRender);

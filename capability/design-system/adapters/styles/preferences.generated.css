@@ -73,6 +73,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -131,6 +132,8 @@
   --nv-role-warning-stroke: #b42318;
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #355ccd;
+  --nv-chrome-external-wire: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
@@ -213,6 +216,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -271,6 +275,8 @@
   --nv-role-warning-stroke: #b42318;
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #355ccd;
+  --nv-chrome-external-wire: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
@@ -353,6 +359,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -411,6 +418,8 @@
   --nv-role-warning-stroke: #b42318;
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #355ccd;
+  --nv-chrome-external-wire: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -493,6 +502,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -551,6 +561,8 @@
   --nv-role-warning-stroke: #b42318;
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #355ccd;
+  --nv-chrome-external-wire: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -633,6 +645,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -691,6 +704,8 @@
   --nv-role-warning-stroke: #b42318;
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #355ccd;
+  --nv-chrome-external-wire: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
@@ -773,6 +788,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -831,6 +847,8 @@
   --nv-role-warning-stroke: #b42318;
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #355ccd;
+  --nv-chrome-external-wire: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
@@ -913,6 +931,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -971,6 +990,8 @@
   --nv-role-warning-stroke: #ff9c94;
   --nv-role-warning-text: #f1f3f5;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #9cb7ff;
+  --nv-chrome-external-wire: #b8c1ca;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
@@ -1053,6 +1074,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -1111,6 +1133,8 @@
   --nv-role-warning-stroke: #ff9c94;
   --nv-role-warning-text: #f1f3f5;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #9cb7ff;
+  --nv-chrome-external-wire: #b8c1ca;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 18px;
   --nv-diagram-icon-medium: 24px;
@@ -1193,6 +1217,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -1251,6 +1276,8 @@
   --nv-role-warning-stroke: #ff9c94;
   --nv-role-warning-text: #f1f3f5;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #9cb7ff;
+  --nv-chrome-external-wire: #b8c1ca;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -1333,6 +1360,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -1391,6 +1419,8 @@
   --nv-role-warning-stroke: #ff9c94;
   --nv-role-warning-text: #f1f3f5;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #9cb7ff;
+  --nv-chrome-external-wire: #b8c1ca;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -1473,6 +1503,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -1531,6 +1562,8 @@
   --nv-role-warning-stroke: #ff9c94;
   --nv-role-warning-text: #f1f3f5;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #9cb7ff;
+  --nv-chrome-external-wire: #b8c1ca;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;
@@ -1613,6 +1646,7 @@
   --nv-elevation-offset-y: 2px;
   --nv-elevation-blur: 3px;
   --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
   --nv-chrome-tab-width: 58px;
   --nv-chrome-tab-height: 10px;
   --nv-chrome-accent-width: 3px;
@@ -1671,6 +1705,8 @@
   --nv-role-warning-stroke: #ff9c94;
   --nv-role-warning-text: #f1f3f5;
   --nv-role-warning-header: #f2f7fc;
+  --nv-chrome-wire: #9cb7ff;
+  --nv-chrome-external-wire: #b8c1ca;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 36px;
   --nv-diagram-icon-medium: 48px;

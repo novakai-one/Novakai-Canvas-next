@@ -67,9 +67,25 @@ export const contentSizing = z
   .readonly();
 /** Validated width, row and icon measurement policy for projected content. */
 export type ContentSizing = z.infer<typeof contentSizing>;
+/** Frame metrics are resolved from tokens before React sees any node. */
+export const chromeMetrics = z
+  .strictObject({ tabWidth: positive, tabHeight: positive, accentWidth: positive })
+  .readonly();
+export const elevation = z
+  .strictObject({
+    offsetX: z.number().finite(),
+    offsetY: z.number().finite(),
+    blur: z.number().nonnegative(),
+    color,
+  })
+  .readonly();
 /** Numeric/CSS styles come from the same token resolver; no palette or size default is duplicated here. */
 export const resolvedStyle = z
   .strictObject({
+    chrome: z.string().min(1).max(120).optional(),
+    headers: z.record(z.string(), color).readonly().optional(),
+    elevation: elevation.optional(),
+    chromeMetrics: chromeMetrics.optional(),
     digest,
     bodyFont: fontRef,
     monoFont: fontRef,

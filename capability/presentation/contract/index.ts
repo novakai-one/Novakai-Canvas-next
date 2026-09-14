@@ -70,3 +70,5 @@ export { PROJECTION_CAPACITY } from './records/limits.js';
 export { readMeasuredProjection, readMeasuredContent } from './api.js';
 
 export { readSupplementalMeasurements } from './api.js';
+
+export type { NodeChrome, NodeChromeProps, NodeChromeRegistry } from './react-types.js';

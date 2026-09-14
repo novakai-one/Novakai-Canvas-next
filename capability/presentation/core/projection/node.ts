@@ -8,6 +8,7 @@ import { offset } from '../content/text.js';
 import { labelContent } from '../content/headings.js';
 import { visibleBody } from '../content/node-body.js';
 import { composeNodeContent } from '../content/composition.js';
+import { moduleChrome } from '../content/chrome.js';
 import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
 import { parse, reject } from '../validation/outcomes.js';
@@ -77,6 +78,7 @@ export function projectNode(
     scoped,
   );
   return parse(visualNode, {
+    ...chromeStyle(source, context),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -272,4 +274,13 @@ function paintedRole(group: Group | undefined, groups: readonly Group[]): string
 function withinGroup(view: Appearance, parent: Group['parent']): Appearance {
   if (parent === undefined) return view;
   return { ...view, group: parent };
+}
+
+/** Legacy nodes retain their exact transport shape; selected module chromes carry resolved tokens. */
+function chromeStyle(
+  object: DiagramObject,
+  context: ContentContext,
+): Pick<VisualNode, 'chromeStyle'> {
+  if (moduleChrome(object, context) === undefined) return {};
+  return { chromeStyle: context.style };
 }

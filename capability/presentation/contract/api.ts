@@ -16,6 +16,7 @@ export function createPresentation(deps: Dependencies): Presentation {
     project(input: unknown): Result<Projection> {
       return protect(() =>
         projectCollection(input, {
+          chromePolicies: deps.chromePolicies,
           domain: deps.domain,
           themes: deps.themes,
           assets: deps.assets,

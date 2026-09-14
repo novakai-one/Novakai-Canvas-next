@@ -3,6 +3,8 @@ import type { ContentContext } from '../../contract/records/content-context.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { BodySelection } from './node-body.js';
 import { measureNodeBody } from './node-body.js';
+import { moduleChrome } from './chrome.js';
+import { labelContent } from './headings.js';
 import { nodeHeading } from './headings.js';
 import { measureMedia } from './media.js';
 import { measureFigure } from './figures.js';
@@ -53,7 +55,7 @@ function bodyWithoutFigure(request: CompositionRequest, figure: MediaBlock): Bod
 /** Heading and body reuse the same measurements for stacked and side-by-side arrangements. */
 function textColumn(request: CompositionRequest): ComposedNodeContent {
   const heading = nodeHeading(request.object, request.context);
-  const body = measureNodeBody(request.object, request.selection, request.context);
+  const body = labelledBody(request);
   return {
     content: stack([heading, body], request.headingGap),
     headerHeight: heading.height,
@@ -136,4 +138,15 @@ export function composeNodeContent(
   context: ContentContext,
 ): ComposedNodeContent {
   return composers[composition]({ object, selection, headingGap, context });
+}
+
+/** Optional compartment caption belongs to the chrome policy and is measured with shared pinned fonts. */
+function labelledBody(request: CompositionRequest): MeasuredContent {
+  const body = measureNodeBody(request.object, request.selection, request.context);
+  const label = moduleChrome(request.object, request.context)?.sectionLabel;
+  if (label === undefined) return body;
+  return stack(
+    [labelContent(label, request.context, 'annotation'), body],
+    request.context.style.gap,
+  );
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { sceneId, coordinate, dimension } from '../brands.js';
 import type { ConnectionStyle } from './style.js';
-import { fontRef, paint, color } from './style.js';
+import { fontRef, paint, color, resolvedStyle } from './style.js';
 import type {
   LayoutIntent,
   Placement,
@@ -136,6 +136,7 @@ export const visualNode = z
     width: dimension,
     height: dimension,
     headerHeight: dimension,
+    chromeStyle: resolvedStyle.optional(),
     radius: dimension,
     strokeWidth: dimension,
     placement: placement.nullable(),

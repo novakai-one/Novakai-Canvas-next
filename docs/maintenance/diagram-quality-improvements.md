@@ -75,3 +75,23 @@ Noted by Chris reviewing the live demo; parked here until he authorizes work.
    - Nodes read as basic flat green boxes — weakest element; no depth or hierarchy in node treatment.
    - A large white box (panel) sits behind all diagrams — dead visual weight.
    - Font overhang on decision diamonds: "valid?" and "planned?" labels spill past the diamond bounds.
+
+## Capability audit — 14 Sep 2026 (8 families, one each; recorded, no action authorized)
+
+All 8 families created fresh via DSL in a clean workspace: 8/8 `valid:true`, 0 relaxed constraints. Screenshots `.local/audit-shots/`; workspace `.local/capability-audit` on port 5185. Verdict: **mostly visual polish + four targeted functionality gaps**; nothing missing at capability level.
+
+**Functionality gaps (engine cannot currently do).**
+
+1. Grid/table model: no proportional-font prose cells (entire table renders monospace), no column-width control or header emphasis. Grid is furthest from target.
+2. Decision-diamond label sizing: measurement neither grows the diamond nor wraps its label (reproduced: "Both reviews approve?" in flow-research-approval).
+3. Sequence notation: UML pentagon fragment tabs (already in engine backlog); self-message renders as open notch, not a loop arrow; loop tab label wraps and collides with the frame.
+4. State-diagram wire management: long cancel/confirm wires need corridors that keep them off panel borders (state-batch-job: 5 crossings, wire bus at region top).
+
+**Polish gaps (engine can, output needs craft).**
+
+1. Node depth: uniform flat fills, no elevation/hierarchy beyond tint — biggest lever toward the ByteByteGo bar.
+2. Panel air pockets (modules policy panel ~25%, story band 03).
+3. Long guard/effect label pills wrap awkwardly and drift from their wire (state).
+4. Minor: ER vertical-wire label drift from midpoint; tree far-node sprawl (Calibration); story side-stream wires ride band edges.
+
+**Strong:** semantic DSL covers all 8 families first-attempt; hierarchy (eyebrow + strong heading), role tints, pilled labels, numbered badges, figure vocabulary, measured code; sequence compactness; ER/modules engineering correctness.

@@ -8,6 +8,4 @@ Every apply recomputes a complete candidate, checks original client expectations
 
 No production permissive owners exist. Host composition must bridge public Model/Library planning/validation, Assets/Templates admission, Presentation/Layout feasibility and Persistence transactions. The Committer must settle only after the physical attempt is terminal; a detached remote timeout does not satisfy it. Typed request IDs reserve room for generated history keys. Resource lease failures retain recoverable protection and cannot replace a committed receipt.
 
-The 14-case suite uses real SQLite and public Model/Library validation plus explicitly scripted protocol planners/resource/feasibility roles. Those test scripts are not the future UI/DSL production registration. No web service or visible-browser behavior is claimed by this capability slice.
-
-Specs: `docs/specs/authoring`; evidence: `quality/acceptance-evidence/authoring-*`. One bounded A1/A2 audit round and one independently verified fix round are complete. All14 cases pass; file-level evidence remains distinct from future host/browser proof.
+The suite uses real SQLite and public Model/Library validation plus explicitly scripted protocol planners/resource/feasibility roles; production owner registration lives in `apps/service`.

@@ -1,9 +1,7 @@
-# presentation
+# Presentation
 
-Responsibility: Semantic diagram content, notation, resolved styling and measurement.
+Responsibility: semantic diagram content, notation, resolved styling and measurement. Layout consumes its measured projections; Canvas and Export draw through its React and static-markup renderers.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+Public entry: `contract/index.ts`; concrete adapters are wired by `contract/compose.ts`. Core stays framework-free and imports own declaration-only contracts. Drawers cover figures (entity/module/interface/function, store/queue/cloud, container), measured text blocks with emphasis spans, and wire labels; both renderers draw from the same measured projection.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
-
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+Rendered output is versioned (`presentation-N`): any visual change requires a version bump and re-recorded corpus goldens under `quality/agent-diagrams/visual-quality/stage-5/inputs/`.

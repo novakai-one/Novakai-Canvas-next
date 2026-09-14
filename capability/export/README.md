@@ -10,4 +10,4 @@ Public entry: `@novakai/canvas-export`. `initializeRaster(module)` runs once at 
 
 Shared fonts are embedded once per exported scene. Native WOFF2 decoding serializes and copies the decoder's reusable heap; raster font aliases bind actual internal font families. Ambiguous internal names fail explicitly. WebP images are losslessly converted for PDFKit.
 
-Verification: exactly 12 in-process cases; see quality/export-test-budget.md and docs/specs/export. These do not certify application integration or visible-browser UX. File-level standards evidence remains separate from passing tests.
+Verification: in-process contract cases, including the export corpus fixtures under `quality/agent-diagrams/visual-quality/stage-5/inputs/`.

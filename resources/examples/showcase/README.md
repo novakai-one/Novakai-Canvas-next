@@ -1,6 +1,6 @@
 # Agent-authored diagram showcase
 
-24 original diagrams: three structurally distinct examples in each of eight families. Each source creates a separate readable collection. The additional [mixed authoring collection](mixed-authoring-contract.canvas) combines an explanatory infographic and typed module diagram in 60 lines. The former oversized all-in-one source is retired.
+24 original diagrams: three structurally distinct examples in each of eight families. Each source creates a separate readable collection. The additional [mixed authoring collection](mixed-authoring-contract.canvas) combines an explanatory infographic and typed module diagram in 60 lines.
 
 ## Sources
 
@@ -50,7 +50,7 @@ pnpm canvas create resources/examples/showcase/story-water-treatment.canvas --se
 pnpm canvas read story-water-treatment --server http://127.0.0.1:5185 --workspace .local/atlas-demo --out .local/atlas-demo/water-readout.canvas
 ```
 
-Open `http://127.0.0.1:5185/?collection=story-water-treatment`. Create any other source using its table link and a fresh request ID. Select another port consistently if 5185 is occupied. Use Fit collection for context, then zoom/pan for readable detail. The UI redesign remains deferred.
+Open `http://127.0.0.1:5185/?collection=story-water-treatment`. Create any other source using its table link and a fresh request ID. Select another port consistently if 5185 is occupied. Use Fit collection for context, then zoom/pan for readable detail.
 
 For edits, obtain the current revision with `canvas list`, edit readable DSL and run `canvas replace FILE --revision N` with a fresh request ID and the same server/workspace options. Ordered `canvas patch` is also supported. Inspect the committed receipt; process exit alone does not establish admission. Restart with the same workspace path to retain content and resources.
 
@@ -58,4 +58,4 @@ For edits, obtain the current revision with `canvas list`, edit readable DSL and
 
 DSL expresses meaning, grouping, ordering, size classes and optional attachment/routing intent. It contains no authored JSON coordinates. Themes select shared visual roles and pinned fonts; local original SVGs illustrate reusable concepts, never whole reference diagrams. Asset provenance is in [assets/README](assets/README.md). [Eight recipes](../../recipes/) supply starting intent.
 
-[Final gallery and acceptance evidence](../../../quality/agent-diagrams/visual-quality/stage-5/README.md) links actual browser captures, native SVG/PNG, committed receipts and readouts. [Build docs and benchmark targets](../../../docs/agent-diagrams/visual-quality/README.md) preserve the purpose and acceptance criteria.
+Visual acceptance targets: [References](../../../docs/agent-diagrams/visual-quality/References.md).

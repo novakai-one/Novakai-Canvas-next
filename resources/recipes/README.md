@@ -23,5 +23,4 @@ instantiation.
 
 Every source requests the shipped `paper` alias. The service resolves that alias during preset
 admission and expansion, so instantiated source records the exact immutable
-`paper@1.0.0#sha256:<digest>` pin. Recipe and theme pins from the CLI proof are recorded under
-`quality/agent-diagrams/pr6/recipes/`; source aliases are not claims of an exact admitted pin.
+`paper@1.0.0#sha256:<digest>` pin; source aliases are not claims of an exact admitted pin.

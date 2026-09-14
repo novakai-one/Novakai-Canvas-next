@@ -1,5 +1,5 @@
 # web host
 
-Status: scaffold only. Own application integration and host interaction; obtain domain behavior through capability public contracts. Follow the same contract/core/adapters shape and import gates as the capabilities.
+React Flow workspace served by the service. Owns panel layout/chrome, collection selection, camera and human gestures; renders measured scenes from the service and submits edits through Authoring.
 
-UI source inventory and composition: [document 3](../../docs/baseline/03-Repository.md).
+UI color/theme changes use Design System tokens only. Composition follows the same contract/core/adapters shape and import gates as the capabilities.

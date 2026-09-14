@@ -8,4 +8,4 @@ Host drains effects after every dispatch, forwards successful diagnostics, submi
 
 Pointer metadata and reading/camera/selection are session state. Only emitted placement/route intents can become persisted constraints. React Flow records never enter persistence.
 
-16 in-process contract cases include mounted drag/route behavior and real shared renderers. These do not certify browser UX. Visible-browser acceptance and per-file standards release gates remain tracked in WORK-PLAN.md.
+Contract cases include mounted drag/route behavior and real shared renderers.

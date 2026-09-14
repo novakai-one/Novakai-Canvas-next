@@ -1,36 +1,31 @@
 # Novakai Canvas
 
-A local diagram application for engineering, education and communication, designed for human and agent authoring.
+A local diagram application for engineering, education and communication, built for human and agent authoring. Agents author a semantic DSL (never JSON coordinates); humans use the React Flow canvas. All writes pass through one admission gate with receipts and undo.
 
-**Status: ten capabilities implemented; application integration remains in progress.** Model, Library, Persistence, Assets, Templates, Presentation, Layout, Authoring, Language and Design System have public contracts, implementations and bounded audit evidence. `pnpm check` passes 126 tests plus type, lint, format and import-boundary checks. Canvas, Export and the web/service/CLI hosts remain. This is not yet a usable application; browser and restart acceptance are still pending. Follow [the delivery ledger](WORK-PLAN.md).
+## Layout
 
-## Start here
+- `capability/` — 12 domain capabilities: model, library, persistence, assets, templates, presentation, layout, authoring, language, design-system, canvas, export. Each exposes a public `contract/index.ts`; core stays private.
+- `apps/` — hosts: `web` (React Flow workspace), `service` (authenticated local HTTP service), `cli` (`pnpm canvas`).
+- `resources/` — themes, recipes, fonts, example DSL, panel defaults, vendored layout engines.
+- `quality/agent-diagrams/references/` — visual target images. `quality/agent-diagrams/visual-quality/stage-5/inputs/` — export corpus fixtures consumed by `capability/export` tests.
+- `docs/` — standards, agent SOP and visual references, maintenance notes.
 
-1. [Build order — first five folders](BUILD-ORDER.md)
-2. [Functionality](docs/baseline/01-Functionality.md)
-3. [Capability responsibilities](docs/baseline/02-Capabilities.md)
-4. [Repository and planned source tree](docs/baseline/03-Repository.md)
-5. [DSL](docs/baseline/04-DSL.md)
-6. [UI/UX and composable panels](docs/baseline/05-UI-UX.md)
-7. [Design tokens](docs/baseline/06-Design-Tokens.md)
-8. [Development rules](AGENTS.md)
+## Run
 
-## Shape
-
-```text
-canvas/
-├── capability/  # 11 domain capabilities + supporting design-system
-├── apps/        # web, service, CLI integration hosts
-├── resources/   # themes, templates, media, panel layout defaults
-├── examples/
-├── tests/
-├── tools/
-├── quality/
-└── docs/
+```sh
+pnpm install --frozen-lockfile
+pnpm --filter @novakai/canvas-web build
+pnpm dev --port 5185 --workspace .local/demo
+pnpm canvas list --server http://127.0.0.1:5185 --workspace .local/demo
 ```
 
-The contents are intended to move under `novakai/package/canvas/` later. The existing Novakai app is not changed by this scaffold. Native `package.json`/pnpm keys are tooling metadata; internal architectural folders use `capability/`.
+Open `http://127.0.0.1:5185/?collection=<id>` in the browser. Example DSL sources and a full walkthrough: `resources/examples/showcase/README.md`.
 
-[Panel defaults](resources/ui/panels.default.json) specify the starting left/right sections. Feature renderers will be registered by web composition; rearranging layout data does not require modifying the shared panel body.
+## Rules
 
-The first implementation slice must add dependency pins and real import/export/cycle checks. No future per-file score, performance result or UI behavior is certified by this scaffold.
+- Development contract: [AGENTS.md](AGENTS.md)
+- Coding standards: [CODING-STANDARDS.md](CODING-STANDARDS.md) and [docs/standards](docs/standards/)
+- Agent diagram authoring: [SOP](docs/agent-diagrams/visual-quality/SOP.md) and [visual references](docs/agent-diagrams/visual-quality/References.md)
+- Deferred work and findings: [docs/maintenance/diagram-quality-improvements.md](docs/maintenance/diagram-quality-improvements.md)
+
+Gate for every change: `pnpm check` (typecheck, ESLint with Sonar ≤2, Prettier, import boundaries, tests).

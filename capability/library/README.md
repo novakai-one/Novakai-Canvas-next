@@ -6,6 +6,6 @@ Public `contract/index.ts` exposes `validate`, `plan`, `query`, checked ID const
 
 Implemented: folder tree validation; collection membership, ordering, archive/restore via complete entry replacement; explicit folder rehome; coordinated registration/deletion; title/description/object/section search; unplaced-object results; folder/archive filters; recent/title/order ranking; revision/query-bound pagination; detached frozen results and typed failures.
 
-The browser/CLI hosts are not implemented by this capability. Its eight in-process contract tests exercise both consumer-shaped inputs; actual UI/CLI integration is tracked in WORK-PLAN.md. No I/O adapter is needed for this pure projection/planning capability.
+No I/O adapter is needed for this pure projection/planning capability; hosts consume it through the service composition.
 
-Specifications: [docs/specs/library](../../docs/specs/library/Doc1-Target-Repo-Tree.md). All outside imports enter the public index; private core remains inaccessible to consumers.
+All outside imports enter the public index; private core remains inaccessible to consumers.

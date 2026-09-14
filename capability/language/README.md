@@ -17,4 +17,4 @@ Full reads preserve semantic ordering inside each owner scope. Sparse sequence r
 
 Examples: [prototype](../../resources/examples/language/prototype.canvas), [ER](../../resources/examples/language/er.canvas), [modules](../../resources/examples/language/modules.canvas), [sequence](../../resources/examples/language/sequence.canvas), [state/story/grid](../../resources/examples/language/state.canvas), [targeted patch](../../resources/examples/language/change.patch).
 
-Verification: 18 public-contract cases in five suites, using real Model validation/planning/staging. CLI resource admission, browser rendering and final user workflows remain host integration work; these tests do not claim those are implemented.
+Verification: public-contract suites using real Model validation/planning/staging. CLI resource admission and browser rendering are wired in `apps/`.

@@ -10,6 +10,15 @@ export interface HeadlessOptions {
   readonly root: string;
 }
 export interface HeadlessOwners {
+  readonly resourceFiles: import('./resources.js').ResourceFiles;
   readonly service: Awaited<ReturnType<typeof createHeadlessBindings>>;
   readonly readTheme: readThemeConfig;
+}
+
+/** Machine-readable export evidence; Layout validates scenes before they reach this report. */
+export interface HeadlessReport {
+  readonly files: readonly string[];
+  readonly theme: import('@novakai/canvas-model').Collection['theme'];
+  readonly inspection: import('@novakai/canvas-service').InspectionReport;
+  readonly digests: readonly { readonly id: string; readonly digest: string }[];
 }

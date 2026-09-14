@@ -15,7 +15,11 @@ function accepted<T>(result: { readonly ok: true; readonly value: T } | { readon
   return result.value;
 }
 /** Stage exact shipped bytes through Assets' real font codec before constructing a Presentation font source. */
-async function font(root: string, file: string, assets: Assets): Promise<FontSource> {
+async function font(
+  root: string,
+  file: string,
+  assets: Pick<Assets, 'stage' | 'resolve'>,
+): Promise<FontSource> {
   const bytes = await readFile(join(root, 'fonts', file));
   const admission = accepted(
     await assets.stage({
@@ -43,7 +47,7 @@ async function recipe(
 /** Native startup reads/stages resources only; Authoring must admit their preset/workspace bindings atomically afterward. */
 export async function loadBuiltinSources(
   resourceRoot: string,
-  assets: Assets,
+  assets: Pick<Assets, 'stage' | 'resolve'>,
   tokens: TokenFileBindings,
 ): Promise<Result<BuiltinSources>> {
   try {

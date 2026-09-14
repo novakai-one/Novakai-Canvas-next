@@ -59,7 +59,7 @@ function dispatch(options: import('./records/command.js').CliOptions): Promise<R
 /** Headless export binds the same theme grammar and service owners without starting an HTTP server. */
 export async function runHeadless(
   options: import('./records/headless.js').HeadlessOptions,
-): Promise<Result<string>> {
+): Promise<Result<import('./records/headless.js').HeadlessReport>> {
   try {
     const [adapter, service] = await Promise.all([
       import('../adapters/headless.js'),
@@ -67,6 +67,7 @@ export async function runHeadless(
     ]);
     return adapter.renderHeadless(options, {
       service: await service.createHeadlessBindings(),
+      resourceFiles: createResourceFiles(),
       readTheme: readThemeConfig,
     });
   } catch {

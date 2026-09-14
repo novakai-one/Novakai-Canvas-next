@@ -55,3 +55,25 @@ function dispatch(options: import('./records/command.js').CliOptions): Promise<R
   if (options.command.name === 'help') return Promise.resolve({ ok: true, value: usage });
   return run(options);
 }
+
+/** Headless export binds the same theme grammar and service owners without starting an HTTP server. */
+export async function runHeadless(
+  options: import('./records/headless.js').HeadlessOptions,
+): Promise<Result<string>> {
+  try {
+    const [adapter, service] = await Promise.all([
+      import('../adapters/headless.js'),
+      import('@novakai/canvas-service'),
+    ]);
+    return adapter.renderHeadless(options, {
+      service: await service.createHeadlessBindings(),
+      readTheme: readThemeConfig,
+    });
+  } catch {
+    return failure(
+      'render-unavailable',
+      'Headless rendering could not initialize',
+      'Restore local resources and retry.',
+    );
+  }
+}

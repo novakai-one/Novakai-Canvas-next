@@ -389,3 +389,19 @@ export async function readAgentCredential(path: string): Promise<Result<string>>
   const credentials = await import('../adapters/local-credentials.js');
   return credentials.readAgentCredential(path);
 }
+
+/** Read-only headless composition uses the same preparation, measurement and layout adapters as service jobs. */
+export async function createHeadlessBindings() {
+  const [codecs, themes, jobs, rendering] = await Promise.all([
+    import('../adapters/preset-codecs.js'),
+    import('../adapters/theme-preparation.js'),
+    import('../adapters/render-jobs.js'),
+    import('../adapters/rendering.js'),
+  ]);
+  return {
+    createPresetCodecs: codecs.createPresetCodecs,
+    prepareTheme: themes.prepareTheme,
+    createRenderJobs: jobs.createRenderJobs,
+    produceDiagram: rendering.produceDiagram,
+  };
+}

@@ -1,8 +1,0 @@
-{
-  "agent": "kimi",
-  "model": "kimi-code/k3",
-  "status": "finished",
-  "exit": 0,
-  "elapsed_seconds": 120.4,
-  "log": "/Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/quality/agent-diagrams/pressure-kimi.log"
-}

@@ -1,5 +1,0 @@
-committed: heldout-create-state-membership-reinstatement
-Workspace sequence: 5
-$ tsx apps/cli/cli/main.ts create resources/examples/showcase/state-membership-reinstatement.canvas --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-create-state-membership-reinstatement
-(node:10114) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)

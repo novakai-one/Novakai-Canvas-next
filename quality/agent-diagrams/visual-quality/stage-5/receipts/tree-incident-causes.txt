@@ -1,5 +1,0 @@
-committed: vq5-tree-incident-causes
-Workspace sequence: 54
-$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof create resources/examples/showcase/tree-incident-causes.canvas --request vq5-tree-incident-causes
-(node:68167) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)

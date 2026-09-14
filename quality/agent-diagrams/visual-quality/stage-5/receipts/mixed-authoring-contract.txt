@@ -1,5 +1,0 @@
-$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof create resources/examples/showcase/mixed-authoring-contract.canvas --request vq5-mixed-authoring
-(node:70533) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-committed: vq5-mixed-authoring
-Workspace sequence: 61

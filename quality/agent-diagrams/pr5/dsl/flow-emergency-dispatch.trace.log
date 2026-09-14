@@ -1,6 +1,0 @@
-[ELIFECYCLE] Command failed with exit code 1.
-$ tsx apps/cli/cli/main.ts create ../Novakai-Canvas-next-corpus/resources/examples/showcase/flow-emergency-dispatch.canvas --server http://127.0.0.1:5184 --workspace .local/routing-probes --request pr5-trace-flow-emergency-dispatch
-(node:23684) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-constraint-conflict: No valid labelled route within the initial, eight local and one outside candidate budget
-Retain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.

@@ -1,7 +1,0 @@
-[ 'ConnType', 'ConnRef', 'ConnEnd', 'ShapeConnectionPin' ]
-function(...Xe){if(Object.getPrototypeOf(this)!==B)throw new m(`Use 'new' to construct ${l}`);if($.D===void 0)throw new m(`${l} has no accessible constructor`);var Yt=$.D[Xe.length];if(Yt===void 0)throw new m(`Tried to invoke ctor of ${l} with invalid number of parameters (${Xe.length}) - expected (${Object.keys($.D).toString()}) parameters instead!`);return Yt.apply(this,Xe)}
-undefined
-rejected [ 8 ] BindingError: Expected null or instance of ShapeRef, got an instance of Point
-rejected [ 1 ] BindingError: Expected null or instance of ShapeRef, got an instance of Point
-rejected [ {} ] BindingError: Expected null or instance of ShapeRef, got an instance of Point
-rejected [ 1, 1 ] BindingError: Tried to invoke ctor of ConnEnd with invalid number of parameters (3) - expected (1,2) parameters instead!

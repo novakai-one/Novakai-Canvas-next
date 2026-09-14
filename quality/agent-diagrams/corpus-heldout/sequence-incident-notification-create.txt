@@ -1,5 +1,0 @@
-committed: heldout-create-sequence-incident-notification
-Workspace sequence: 4
-$ tsx apps/cli/cli/main.ts create resources/examples/showcase/sequence-incident-notification.canvas --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-create-sequence-incident-notification
-(node:10098) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)

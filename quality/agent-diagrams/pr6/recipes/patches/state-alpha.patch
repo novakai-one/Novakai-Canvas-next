@@ -1,7 +1,0 @@
-patch 1 @state-alpha {
-  set collection title="Experiment decision lifecycle"
-  set node @draft label="Document the hypothesis"
-  set block @draft.@detail text="State the hypothesis, expected signal and stopping condition."
-  set wire @submit label="send evidence for review"
-  set section @lifecycle title="From hypothesis to recorded decision"
-}

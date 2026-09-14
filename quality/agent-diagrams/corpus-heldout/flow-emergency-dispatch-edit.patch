@@ -1,3 +1,0 @@
-patch 1 @flow-emergency-dispatch {
- add block @assign { text @handover "Record the accepting unit and acceptance time." }
-}

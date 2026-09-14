@@ -1,8 +1,0 @@
-{
-  "agent": "astra",
-  "model": "gpt-6-astra",
-  "status": "finished",
-  "exit": 0,
-  "elapsed_seconds": 173.1,
-  "log": "/Users/christopherdasca/Programming/Novakai-Canvas-next-agent-diagrams/quality/agent-diagrams/pressure-astra.log"
-}

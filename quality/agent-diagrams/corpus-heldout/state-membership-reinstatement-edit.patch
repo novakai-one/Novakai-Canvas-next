@@ -1,3 +1,0 @@
-patch 1 @state-membership-reinstatement {
- set wire @restore guard="remedy verified and reviewer independent" effect="restore privileges and record reviewer"
-}

@@ -1,7 +1,5 @@
 # Canvas development contract
 
-Model and Library have pure tested implementations; Persistence has a tested SQLite/backup implementation; Assets has tested media/file/lease implementations. Templates has tested immutable preset policy and required codec seams. Presentation has measured notation and shared React rendering; Layout has tested constrained placement, native routing and independent scene inspection. Authoring has tested atomic admission, receipt reconciliation and inverse history. Language has tested readable DSL creation, ordered patches and faithful full/scoped readouts. Design System has tested token/theme resolution, generated styles, safe scope installation and reusable React/panel primitives. Canvas has tested React Flow interaction and recovery with a still-open file-standards gate. Export now has tested real artifact encoders and portable import preparation, with a still-open file-standards gate. Application integration is in progress: the authenticated local service, CLI DSL creation/editing, React Flow workspace, responsive panels and durable edit recovery are implemented. Human creation and dragging have been exercised in the visible browser; placement survives refresh and service restart. All eight retained host cases now execute. Host A1/A2 audits are recorded; the full UI, independent UI audits, coding gates and final mixed collection acceptance remain incomplete. See docs/integration/Progress.md for current evidence. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
-
 ## Authority and scope
 
 - Model owns diagram validity; Library owns catalog validity; Authoring alone admits/commits workspace and diagram changes; Persistence executes physical transactions.
@@ -14,19 +12,13 @@ Model and Library have pure tested implementations; Persistence has a tested SQL
 ## Standards and imports
 
 - Follow docs/standards/CODING-STANDARDS.md and REPO-FOLDER-STRUCTURE.md. Each first-party source file requires evidence of >144/160; Sonar cognitive complexity <=2 per function. No pre-awarded scores or silent exceptions.
-- Outside imports enter only a capability’s contract/index.ts. Own core imports own core and declaration-only contract modules; never adapters, hosts, React, another capability, api, compose or index.
-- Only contract/compose.ts binds own concrete adapters. No sibling adapter behavior imports under the adopted SOP; inject narrow stable slots. Local CSS assets are build resources.
+- Outside imports enter only a capability's contract/index.ts. Own core imports own core and declaration-only contract modules; never adapters, hosts, React, another capability, api, compose or index.
+- Only contract/compose.ts binds own concrete adapters. Inject narrow stable slots; no sibling adapter behavior imports. Local CSS assets are build resources.
 - React-only declaration types stay out of core. Domain behavior between capabilities is injected through consumer-owned ports.
-- Add restricted-import, export and cycle enforcement across TS/TSX/JS when the first source/tooling slice is introduced, before proliferating modules.
-- Keep CSS values in the centralized token system; follow scopes/layers/contrast rules from document 6.
-- Tests use public contracts; adapter suites share the same behavioral contract. Freeze a justified test budget for each implementation slice. Coverage alone is not correctness.
+- Keep CSS values in the centralized token system.
+- Tests use public contracts; adapter suites share the same behavioral contract. Coverage alone is not correctness.
 
-## Starting work
+## Working agreement
 
-Use BUILD-ORDER.md. Implement thin complete behaviors through contracts rather than completing an entire capability in isolation. Introduce dependency pins, manifests and enforcement honestly with the first slice. Scaffold verification is not an application build/test result.
-
-## Visual-quality mission and final evidence
-
-Read `docs/agent-diagrams/visual-quality/README.md`, `SOP.md`, and `References.md` before resuming the five-stage build. The Docker infographic and AWS architecture images are mandatory target context, alongside retained ER/module references. Each stage has five build docs and a separate file-estimate appendix. User authorization continues through building, corrections, stage PRs and subsequent stages; audit limits prevent endless reviews, not completion work. The Result protocol in root `CODING-STANDARDS.md` section 9 supersedes historical dialect examples. Do not claim all-stage completion from the current Atlas corpus or a green suite.
-
-Five visual-quality stages are implemented. Read `quality/agent-diagrams/visual-quality/stage-5/README.md` and `GALLERY.md` for the 24 original DSL examples, additional mixed collection, browser/export/durability proof and bounded review dispositions. These evidence records do not close the separately deferred UI/panel redesign. Preserve the approved reference images and semantic authoring constraints in future work.
+- Gate every change with `pnpm check`. Do not claim completion from a green suite alone: rendered-output work is done only when inspected against docs/agent-diagrams/visual-quality/References.md and the benchmark gates in docs/maintenance/diagram-quality-improvements.md.
+- Agent diagram work follows docs/agent-diagrams/visual-quality/SOP.md. Preserve the approved reference images and semantic authoring constraints.

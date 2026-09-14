@@ -154,3 +154,14 @@ Deferred by Chris's priority order. Scope when entered: side-panel surfaces (the
 ## P3-1 · Human geometry recovery — PLACEHOLDER, do not start
 
 Evidence: the cost-curve incident — human drags create sticky geometry with no visible recovery. When entered: surface the existing `reset-layout`/`reset-route` Model changes as a section-level "tidy" action (`capability/canvas` interaction + `apps/web` affordance — authoring/model already own the change), and a visual marker for manually placed nodes. Entry trigger: after priority 1.
+
+## Chris's visual findings — 14 Sep 2026 (recorded, no action authorized)
+
+Noted by Chris reviewing the live demo; parked here until he authorizes work.
+
+1. **Module kind-tag noise.** Every module node renders the "MODULE" eyebrow, consuming visual real estate on every box. Candidates when entered: suppress the kind tag when uniform within a section, or demote size/weight. Seam: presentation figure drawers / `adapters/react/NodeContent.tsx`.
+2. **"Who imports who" content inconsistency.** Module nodes mix three content idioms: some list functions, some name an invariant, some show an image (persistence). Chris verified the UI allows adding an interface to a module, so the suspicion is a DSL/docs gap, not an engine gap. When entered: confirm the language construct for module interface/function members, teach it in `docs/agent-diagrams/visual-quality/SOP.md` and `canvas describe` examples, then re-author the section consistently.
+3. **Showcase section critique.** Verdict: clear diagrams, spacing reasonably good, no giant whitespace, wires ~75% OK. Under-developed items:
+   - Nodes read as basic flat green boxes — weakest element; no depth or hierarchy in node treatment.
+   - A large white box (panel) sits behind all diagrams — dead visual weight.
+   - Font overhang on decision diamonds: "valid?" and "planned?" labels spill past the diamond bounds.

@@ -539,6 +539,10 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.neutral}"
       }
     },
     "primary": {
@@ -553,6 +557,10 @@
       "text": {
         "$type": "color",
         "$value": "{action.onAccent}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.primary}"
       }
     },
     "supporting": {
@@ -567,6 +575,10 @@
       "text": {
         "$type": "color",
         "$value": "{text.secondary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.supporting}"
       }
     },
     "decision": {
@@ -581,6 +593,10 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.decision}"
       }
     },
     "success": {
@@ -595,6 +611,10 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.success}"
       }
     },
     "warning": {
@@ -609,6 +629,10 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.warning}"
       }
     }
   }

@@ -1,0 +1,25 @@
+theme 1 @blueprint "Blueprint / module imports" version=1.0.0 base=paper chrome=accent-stripe
+font body source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+font mono source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+font strong source="./fonts/inter-tight-latin-700-normal.woff2"
+set color surface.base="#ffffff"
+set color surface.raised="#ffffff"
+set color text.primary="#263c56"
+set color text.secondary="#465d76"
+set color boundary.essential="#3569a1"
+set color border.default="#91a8bd"
+set color action.accent="#245ba0"
+set color action.onAccent="#ffffff"
+set color rolefill.supporting="#eaf4f1"
+set color rolefill.success="#e8f3ed"
+set color chrome.header.neutral="#eef3fa"
+set color chrome.header.primary="#245ba0"
+set color chrome.header.supporting="#dfefe9"
+set color chrome.header.success="#dfefe5"
+set color chrome.header.decision="#fff3d8"
+set color chrome.header.warning="#ffe9ef"
+set number ratio.title=1.35
+set number ratio.large=2.6
+set number lineHeight.body=1.3
+set dimension elevation.offsetY=2
+set dimension elevation.blur=3

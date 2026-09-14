@@ -42,6 +42,7 @@ export const recipePayload = z
   .readonly();
 export const themePayload = z
   .strictObject({
+    chrome: z.string().min(1).max(120).optional(),
     tokens: z
       .record(z.string().min(1).max(120), token)
       .refine((values) => Object.keys(values).length <= 1000),

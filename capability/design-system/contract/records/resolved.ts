@@ -11,6 +11,7 @@ export interface ContrastEvidence {
 }
 /** Complete detached scope; numeric values, CSS and contrast share one resolved identity. */
 export interface ResolvedTokenSet {
+  readonly chrome?: string | undefined;
   readonly definitionVersion: Version;
   readonly inputDigest: Digest;
   readonly digest: Digest;

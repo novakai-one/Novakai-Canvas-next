@@ -539,5 +539,137 @@
       "$type": "number",
       "$value": 70
     }
+  },
+  "elevation": {
+    "offsetX": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      }
+    },
+    "offsetY": {
+      "$type": "dimension",
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      }
+    },
+    "blur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 3,
+        "unit": "px"
+      }
+    },
+    "color": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.6823529411764706,
+          0.7490196078431373,
+          0.807843137254902
+        ],
+        "alpha": 1
+      }
+    }
+  },
+  "chrome": {
+    "tabWidth": {
+      "$type": "dimension",
+      "$value": {
+        "value": 58,
+        "unit": "px"
+      }
+    },
+    "tabHeight": {
+      "$type": "dimension",
+      "$value": {
+        "value": 10,
+        "unit": "px"
+      }
+    },
+    "accentWidth": {
+      "$type": "dimension",
+      "$value": {
+        "value": 3,
+        "unit": "px"
+      }
+    },
+    "header": {
+      "neutral": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95,
+            0.97,
+            0.99
+          ],
+          "alpha": 1
+        }
+      },
+      "primary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95,
+            0.97,
+            0.99
+          ],
+          "alpha": 1
+        }
+      },
+      "supporting": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95,
+            0.97,
+            0.99
+          ],
+          "alpha": 1
+        }
+      },
+      "decision": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95,
+            0.97,
+            0.99
+          ],
+          "alpha": 1
+        }
+      },
+      "success": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95,
+            0.97,
+            0.99
+          ],
+          "alpha": 1
+        }
+      },
+      "warning": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95,
+            0.97,
+            0.99
+          ],
+          "alpha": 1
+        }
+      }
+    }
   }
 }

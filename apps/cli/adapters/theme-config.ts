@@ -3,7 +3,7 @@ import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 interface Override {
   readonly token: string;
-  readonly value: string | number;
+  readonly value: string | number | { readonly value: number; readonly unit: 'px' };
   readonly line: number;
 }
 /** Theme grammar faults retain a stable reason and exact corrective instruction. */
@@ -43,9 +43,10 @@ function parse(source: string): {
     .split(/\r?\n/)
     .map((text, index) => ({ text: text.trim(), line: index + 1 }))
     .filter((item) => item.text.length > 0 && !item.text.startsWith('#'));
-  const header = /^theme 1 @([\w-]+) "([^"]+)" version=([\w.-]+) base=(\S+)$/.exec(
-    lines[0]?.text ?? '',
-  );
+  const header =
+    /^theme 1 @([\w-]+) "([^"]+)" version=([\w.-]+) base=(\S+)(?: chrome=([\w-]+))?$/.exec(
+      lines[0]?.text ?? '',
+    );
   if (!header) throw new Error('Invalid theme header');
   const entries = lines.slice(1).map(line);
   const resources = entries.flatMap((item) => item.resources);
@@ -62,6 +63,7 @@ function parse(source: string): {
       description: '',
       raw: {
         base: header[4],
+        ...chromeField(header[5]),
         overrides: Object.fromEntries(overrides.map((item) => [item.token, item.value])),
       },
     },
@@ -110,7 +112,7 @@ function numberLine(input: { readonly text: string; readonly line: number }): {
   readonly overrides: readonly Override[];
 } {
   const match = /^set number ([\w.-]+)=(-?\d+(?:\.\d+)?)$/.exec(input.text);
-  if (!match) throw new Error('Invalid theme line');
+  if (!match) return dimensionLine(input);
   const value = Number(required(match, 2));
   if (!Number.isFinite(value)) throw new Error('Theme number must be finite');
   return {
@@ -138,4 +140,29 @@ function required(match: RegExpExecArray, index: number): string {
   const value = match[index];
   if (value === undefined) throw new Error('Missing capture');
   return value;
+}
+
+/** Absent chrome stays absent so existing immutable preset digests remain unchanged. */
+function chromeField(chrome: string | undefined): { readonly chrome?: string } {
+  if (chrome === undefined) return {};
+  return { chrome };
+}
+
+/** Explicit pixel dimensions preserve Design System's typed literal vocabulary. */
+function dimensionLine(input: { readonly text: string; readonly line: number }): {
+  readonly resources: readonly ResourceRequest[];
+  readonly overrides: readonly Override[];
+} {
+  const match = /^set dimension ([\w.-]+)=(-?\d+(?:\.\d+)?)$/.exec(input.text);
+  if (!match) throw new Error('Invalid theme line');
+  return {
+    resources: [],
+    overrides: [
+      {
+        token: required(match, 1),
+        value: { value: Number(required(match, 2)), unit: 'px' },
+        line: input.line,
+      },
+    ],
+  };
 }

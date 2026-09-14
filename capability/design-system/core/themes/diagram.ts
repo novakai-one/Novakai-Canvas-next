@@ -21,6 +21,7 @@ import { validateBounds } from '../tokens/bounds.js';
 import { validateContrast } from '../tokens/contrast.js';
 import { emitVariables } from '../tokens/emit.js';
 import { numeric, colorText } from '../tokens/values.js';
+import { chromeField } from './chrome.js';
 import { fromPortable } from './portable.js';
 import { changedDefinitions } from './overrides.js';
 import { validateFonts, requirePinnedFont } from './fonts.js';
@@ -55,6 +56,7 @@ export function resolveDiagram(
   );
   const digest = accepted(identity.hash(canonical({ scope, values: resolved.values, fonts, pin })));
   return {
+    ...chromeField(portable.theme.chrome),
     definitionVersion: source.definitionVersion,
     inputDigest,
     digest,
@@ -97,6 +99,7 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
   const values = resolved.values;
   const color = (id: string): string => colorText(member(values, id), id);
   return {
+    ...chromeProjection(resolved),
     digest: resolved.digest,
     bodyFont: fontReference(requirePinnedFont('font.body', values, resolved.fonts)),
     monoFont: fontReference(requirePinnedFont('font.mono', values, resolved.fonts)),
@@ -200,4 +203,30 @@ function metricNumber(value: number, path: string): number {
       'Derived diagram metric is outside Presentation bounds',
     );
   return value;
+}
+
+/** Legacy projections stay structurally identical; chrome values only enter explicitly selected presets. */
+function chromeProjection(resolved: ResolvedTokenSet): Partial<StyleProjection> {
+  if (resolved.chrome === undefined) return {};
+  const values = resolved.values;
+  return {
+    chrome: resolved.chrome,
+    headers: Object.fromEntries(
+      resolved.roles.map((role) => [
+        role,
+        colorText(member(values, 'role.' + role + '.header'), role),
+      ]),
+    ),
+    elevation: {
+      offsetX: tokenNumber(values, 'elevation.offsetX'),
+      offsetY: tokenNumber(values, 'elevation.offsetY'),
+      blur: tokenNumber(values, 'elevation.blur'),
+      color: colorText(member(values, 'elevation.color'), 'elevation.color'),
+    },
+    chromeMetrics: {
+      tabWidth: tokenNumber(values, 'chrome.tabWidth'),
+      tabHeight: tokenNumber(values, 'chrome.tabHeight'),
+      accentWidth: tokenNumber(values, 'chrome.accentWidth'),
+    },
+  };
 }

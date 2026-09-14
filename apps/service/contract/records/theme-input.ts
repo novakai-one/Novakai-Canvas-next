@@ -7,6 +7,7 @@ const pin = z.strictObject({
   digest: z.string(),
 });
 export const themeInput = z.strictObject({
+  chrome: z.string().min(1).max(120).optional(),
   base: z.discriminatedUnion('kind', [
     z.strictObject({ kind: z.literal('ui'), pin: z.unknown() }),
     z.strictObject({ kind: z.literal('preset'), pin, payload: z.unknown().optional() }),

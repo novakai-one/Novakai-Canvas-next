@@ -22,6 +22,7 @@ export type PortableToken =
     }
   | { readonly type: 'font'; readonly family: string; readonly digest: string };
 export interface PortableTheme {
+  readonly chrome?: string | undefined;
   readonly tokens: Readonly<Record<string, PortableToken>>;
   readonly roles: readonly string[];
   readonly fonts: readonly string[];
@@ -62,6 +63,19 @@ export interface ContentSizing {
 }
 /** Complete numeric projection; consumers keep the prior scene on validation failure. */
 export interface StyleProjection {
+  readonly chrome?: string | undefined;
+  readonly headers?: Readonly<Record<string, string>>;
+  readonly elevation?: {
+    readonly offsetX: number;
+    readonly offsetY: number;
+    readonly blur: number;
+    readonly color: string;
+  };
+  readonly chromeMetrics?: {
+    readonly tabWidth: number;
+    readonly tabHeight: number;
+    readonly accentWidth: number;
+  };
   readonly digest: string;
   readonly bodyFont: TextMetric['font'];
   readonly monoFont: TextMetric['font'];

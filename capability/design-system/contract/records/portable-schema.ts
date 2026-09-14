@@ -19,6 +19,7 @@ const portableToken = z.discriminatedUnion('type', [
   }),
 ]);
 export const portableTheme = z.strictObject({
+  chrome: z.string().min(1).max(120).optional(),
   tokens: z.record(z.string(), portableToken),
   roles: z
     .array(z.string().regex(/^[a-z][A-Za-z0-9]*$/))

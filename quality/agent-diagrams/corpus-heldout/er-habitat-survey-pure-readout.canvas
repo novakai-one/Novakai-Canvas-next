@@ -1,0 +1,47 @@
+canvas 1
+collection @er-habitat-survey "Habitat survey records" theme="paper@1.0.0#sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9" layout=grid {
+  node @habitat entity "Habitat" role=primary size=medium sources=[] {
+  field @id "habitat_id" type="HabitatId" key=primary
+  field @parent "parent_id" type="HabitatId" key=foreign nullable=true references=@habitat.@id
+  field @code "site_code" type="string" key=unique
+  field @name "name" type="string"
+}
+  node @visit entity "Survey visit" role=neutral size=medium sources=[] {
+  field @id "visit_id" type="VisitId" key=primary
+  field @habitat "habitat_id" type="HabitatId" key=foreign references=@habitat.@id
+  field @date "surveyed_at" type="DateTime"
+}
+  node @observer entity "Observer" role=supporting size=medium sources=[] {
+  field @id "observer_id" type="ObserverId" key=primary
+  field @name "name" type="string"
+}
+  node @species entity "Species" role=neutral size=medium sources=[] {
+  field @id "species_id" type="SpeciesId" key=primary
+  field @name "scientific_name" type="string" key=unique
+}
+  node @observation entity "Observation" role=success size=large sources=[] {
+  field @id "observation_id" type="ObservationId" key=primary
+  field @visit "visit_id" type="VisitId" key=foreign references=@visit.@id
+  field @observer "observer_id" type="ObserverId" key=foreign references=@observer.@id
+  field @species "species_id" type="SpeciesId" key=foreign references=@species.@id
+  field @count "count" type="NonNegativeInt"
+  field @confidence "confidence" type="Confidence"
+}
+  wire @nested @habitat.@id -> @habitat.@parent "contains subhabitats" kind=association from=0..1 to=0..many sources=[]
+  wire @surveyed @habitat.@id -> @visit.@habitat "hosts visits" kind=association from=1 to=0..many sources=[]
+  wire @records @visit.@id -> @observation.@visit "records sightings" kind=association from=1 to=0..many sources=[]
+  wire @reports @observer.@id -> @observation.@observer "reports sightings" kind=association from=1 to=0..many sources=[]
+  wire @identifies @species.@id -> @observation.@species "identified in" kind=association from=1 to=0..many sources=[]
+  section @habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=layered direction=down gap=compact {
+  show @habitat
+  show @visit
+  show @observer
+  show @species
+  show @observation
+  connect @nested
+  connect @surveyed
+  connect @records
+  connect @reports
+  connect @identifies
+}
+}

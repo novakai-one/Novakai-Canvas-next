@@ -1,9 +1,11 @@
-# library
+# Library
 
-Responsibility: Collection catalog, folders and search.
+Responsibility: valid catalog organization and revision-labelled collection/content discovery.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+Public `contract/index.ts` exposes `validate`, `plan`, `query`, checked ID constructors and readonly types. Core is pure: no storage, clock, DOM or imported Model internals. Authoring supplies authoritative original/prospective read projections and owns conditional commits.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
+Implemented: folder tree validation; collection membership, ordering, archive/restore via complete entry replacement; explicit folder rehome; coordinated registration/deletion; title/description/object/section search; unplaced-object results; folder/archive filters; recent/title/order ranking; revision/query-bound pagination; detached frozen results and typed failures.
 
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+The browser/CLI hosts are not implemented by this capability. Its eight in-process contract tests exercise both consumer-shaped inputs; actual UI/CLI integration is tracked in WORK-PLAN.md. No I/O adapter is needed for this pure projection/planning capability.
+
+Specifications: [docs/specs/library](../../docs/specs/library/Doc1-Target-Repo-Tree.md). All outside imports enter the public index; private core remains inaccessible to consumers.

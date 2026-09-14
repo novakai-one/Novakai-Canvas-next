@@ -1,0 +1,40 @@
+canvas 1
+collection @sequence-incident-notification "Incident notification conversation" theme="paper@1.0.0#sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9" layout=grid {
+  node @monitor participant "Monitor" role=primary size=medium sources=[] {
+
+}
+  node @incident participant "Incident service" role=supporting size=medium sources=[] {
+
+}
+  node @directory participant "On-call directory" role=neutral size=medium sources=[] {
+
+}
+  node @pager participant "Pager" role=warning size=medium sources=[] {
+
+}
+  node @responder participant "Responder" role=success size=medium sources=[] {
+
+}
+  section @notification "NOTIFICATION / Deduplicate, optionally page, acknowledge" mode=sequence layout=sequence direction=down gap=compact {
+  show @monitor
+  show @incident
+  show @directory
+  show @pager
+  show @responder
+  event @report @monitor -> @incident "Report alert fingerprint" activate=true
+  event @dedupe @incident -> @incident "Check deduplication window"
+  fragment @page opt "New actionable incident" {
+  event @lookup @incident -> @directory "Resolve current on-call" activate=true
+  event @contact @directory -> @incident "Return contact route" kind=return activate=false
+  event @send @incident -> @pager "Queue incident page" activate=true
+  event @queued @pager -> @incident "Return delivery receipt" kind=return activate=false
+  event @deliver @pager -> @responder "Deliver incident page" kind=async
+}
+  event @receipt @incident -> @monitor "Return incident identity" kind=return activate=false
+  fragment @acknowledge opt "Responder accepts ownership" {
+  event @ack @responder -> @incident "Acknowledge incident" activate=true
+  event @record @incident -> @incident "Record owner and timestamp"
+  event @confirmed @incident -> @responder "Confirm ownership" kind=return activate=false
+}
+}
+}

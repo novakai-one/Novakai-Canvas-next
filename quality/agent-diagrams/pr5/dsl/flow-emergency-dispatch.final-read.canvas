@@ -1,0 +1,69 @@
+# flow-emergency-dispatch revision=0
+canvas 1
+collection @flow-emergency-dispatch "Emergency dispatch escalation" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" description="Illustrative dispatch software workflow, not operational emergency guidance." layout=grid {
+  node @reported start "Incident reported" role=primary size=medium sources=[] {
+
+}
+  node @assess step "Classify incident" role=neutral size=medium sources=[] {
+  text @detail "Record location, incident type and contact."
+}
+  node @eligible decision "Dispatch required?" role=decision size=medium sources=[] {
+
+}
+  node @referred end "Referral recorded" role=supporting size=medium sources=[] {
+
+}
+  node @available decision "Unit available?" role=decision size=medium sources=[] {
+
+}
+  node @escalate step "Escalate to supervisor" role=warning size=medium sources=[] {
+  text @detail "Request mutual aid and record the unmet need."
+}
+  node @aid decision "Aid confirmed?" role=decision size=medium sources=[] {
+
+}
+  node @assign step "Assign responding unit" role=neutral size=medium sources=[] {
+  text @detail "Send incident details and await acceptance."
+}
+  node @accepted end "Response assigned" role=success size=medium sources=[] {
+
+}
+  node @unresolved end "Unresolved escalation" role=warning size=medium sources=[] {
+  text @detail "Keep the incident open in the supervisor queue."
+}
+  wire @open @reported -> @assess "open incident" sources=[]
+  wire @classify @assess -> @eligible "classification ready" sources=[]
+  wire @refer @eligible -> @referred "no: refer service" sources=[]
+  wire @needed @eligible -> @available "yes: seek unit" sources=[]
+  wire @local @available -> @assign "yes: local unit" sources=[]
+  wire @shortage @available -> @escalate "no: resource gap" sources=[]
+  wire @request @escalate -> @aid "check mutual aid" sources=[]
+  wire @mutual @aid -> @assign "yes: aid unit" sources=[]
+  wire @pending @aid -> @unresolved "no: retain ownership" sources=[]
+  wire @dispatch @assign -> @accepted "unit accepts" sources=[]
+  section @dispatch "DISPATCH / Escalation preserves incident ownership" layout=flow direction=down gap=compact {
+  show @reported
+  show @assess
+  show @eligible
+  show @referred
+  show @available
+  show @escalate
+  show @aid
+  show @assign
+  show @accepted
+  show @unresolved
+  connect @open
+  connect @classify
+  connect @refer
+  connect @needed
+  connect @local
+  connect @shortage
+  connect @request
+  connect @mutual
+  connect @pending
+  connect @dispatch
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read flow-emergency-dispatch
+(node:25253) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

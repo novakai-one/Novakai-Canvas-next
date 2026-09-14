@@ -1,0 +1,5 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.body { display:grid; gap:var(--nv-space-3); padding-inline:var(--nv-space-3); padding-block-end:var(--nv-space-3); }
+.body[hidden] { display:none; }
+}

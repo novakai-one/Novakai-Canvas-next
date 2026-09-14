@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "examples": [
+    {
+      "family": "ER",
+      "batch": 1,
+      "collectionId": "er-museum-loans",
+      "source": "er-museum-loans.canvas",
+      "distinguishingStructure": "Movement chain with junction and optional inspections",
+      "purpose": "Explain museum loans and inspections."
+    },
+    {
+      "family": "ER",
+      "batch": 2,
+      "collectionId": "er-course-enrollment",
+      "source": "er-course-enrollment.canvas",
+      "distinguishingStructure": "Five-part composite identity and dependent assessment",
+      "purpose": "Explain course enrollment records."
+    },
+    {
+      "family": "ER",
+      "batch": 3,
+      "collectionId": "er-habitat-survey",
+      "source": "er-habitat-survey.canvas",
+      "distinguishingStructure": "Self-referencing habitat with several evidence contributors",
+      "purpose": "Explain habitat survey records."
+    },
+    {
+      "family": "Modules",
+      "batch": 1,
+      "collectionId": "modules-document-publishing",
+      "source": "modules-document-publishing.canvas",
+      "distinguishingStructure": "Inward interface dependency across an external vendor boundary",
+      "purpose": "Explain document publishing boundary."
+    },
+    {
+      "family": "Modules",
+      "batch": 2,
+      "collectionId": "modules-sensor-gateway",
+      "source": "modules-sensor-gateway.canvas",
+      "distinguishingStructure": "Two transport adapters converge on a typed input port",
+      "purpose": "Explain sensor gateway adapters."
+    },
+    {
+      "family": "Modules",
+      "batch": 3,
+      "collectionId": "modules-payroll-policy",
+      "source": "modules-payroll-policy.canvas",
+      "distinguishingStructure": "Several callable rules implement two contracts",
+      "purpose": "Explain payroll calculation contracts."
+    },
+    {
+      "family": "Flow/SOP",
+      "batch": 1,
+      "collectionId": "flow-research-approval",
+      "source": "flow-research-approval.canvas",
+      "distinguishingStructure": "Parallel reviews converge with a revision loop",
+      "purpose": "Explain research approval workflow."
+    },
+    {
+      "family": "Flow/SOP",
+      "batch": 2,
+      "collectionId": "flow-equipment-return",
+      "source": "flow-equipment-return.canvas",
+      "distinguishingStructure": "Inspection decision and repair recheck",
+      "purpose": "Explain return equipment safely."
+    },
+    {
+      "family": "Flow/SOP",
+      "batch": 3,
+      "collectionId": "flow-emergency-dispatch",
+      "source": "flow-emergency-dispatch.canvas",
+      "distinguishingStructure": "Escalation branches converge at handoff",
+      "purpose": "Explain emergency dispatch escalation."
+    },
+    {
+      "family": "Sequence",
+      "batch": 1,
+      "collectionId": "sequence-payment-settlement",
+      "source": "sequence-payment-settlement.canvas",
+      "distinguishingStructure": "Nested loop and alternatives plus asynchronous confirmation",
+      "purpose": "Explain payment settlement conversation."
+    },
+    {
+      "family": "Sequence",
+      "batch": 2,
+      "collectionId": "sequence-library-reservation",
+      "source": "sequence-library-reservation.canvas",
+      "distinguishingStructure": "Alternative reservation and waitlist paths",
+      "purpose": "Explain library reservation conversation."
+    },
+    {
+      "family": "Sequence",
+      "batch": 3,
+      "collectionId": "sequence-incident-notification",
+      "source": "sequence-incident-notification.canvas",
+      "distinguishingStructure": "Independent optional fragments and self-calls",
+      "purpose": "Explain incident notification conversation."
+    },
+    {
+      "family": "State",
+      "batch": 1,
+      "collectionId": "state-batch-job",
+      "source": "state-batch-job.canvas",
+      "distinguishingStructure": "Retry/cancellation branches and durable outcomes",
+      "purpose": "Explain batch job retry lifecycle."
+    },
+    {
+      "family": "State",
+      "batch": 2,
+      "collectionId": "state-exhibition-lifecycle",
+      "source": "state-exhibition-lifecycle.canvas",
+      "distinguishingStructure": "Publication lifecycle and rollback",
+      "purpose": "Explain exhibition publication lifecycle."
+    },
+    {
+      "family": "State",
+      "batch": 3,
+      "collectionId": "state-membership-reinstatement",
+      "source": "state-membership-reinstatement.canvas",
+      "distinguishingStructure": "Suspension, review and monitored re-entry",
+      "purpose": "Explain membership reinstatement."
+    },
+    {
+      "family": "Tree/mindmap",
+      "batch": 1,
+      "collectionId": "tree-field-research",
+      "source": "tree-field-research.canvas",
+      "distinguishingStructure": "Uneven evidence hierarchy with cross-reference",
+      "purpose": "Explain design a field study."
+    },
+    {
+      "family": "Tree/mindmap",
+      "batch": 2,
+      "collectionId": "tree-course-objectives",
+      "source": "tree-course-objectives.canvas",
+      "distinguishingStructure": "Deep learning prerequisite hierarchy",
+      "purpose": "Explain course learning objectives."
+    },
+    {
+      "family": "Tree/mindmap",
+      "batch": 3,
+      "collectionId": "tree-incident-causes",
+      "source": "tree-incident-causes.canvas",
+      "distinguishingStructure": "Downward causal hypotheses with unequal depth",
+      "purpose": "Explain incident cause hypotheses."
+    },
+    {
+      "family": "Story/infographic",
+      "batch": 1,
+      "collectionId": "story-water-treatment",
+      "source": "story-water-treatment.canvas",
+      "distinguishingStructure": "Serpentine barrier process with monitoring and side streams",
+      "purpose": "Explain how water treatment uses several barriers."
+    },
+    {
+      "family": "Story/infographic",
+      "batch": 2,
+      "collectionId": "story-evidence-lesson",
+      "source": "story-evidence-lesson.canvas",
+      "distinguishingStructure": "Contrasting evidence converges on a principle and transfer check",
+      "purpose": "Explain build an explanation that transfers."
+    },
+    {
+      "family": "Story/infographic",
+      "batch": 3,
+      "collectionId": "story-safe-deployment",
+      "source": "story-safe-deployment.canvas",
+      "distinguishingStructure": "Bounded rollout with healthy/unsafe feedback decisions",
+      "purpose": "Explain deployment is a controlled experiment."
+    },
+    {
+      "family": "Grid/comparison",
+      "batch": 1,
+      "collectionId": "grid-research-methods",
+      "source": "grid-research-methods.canvas",
+      "distinguishingStructure": "Single aligned matrix of shared comparison dimensions",
+      "purpose": "Explain choose evidence for the claim."
+    },
+    {
+      "family": "Grid/comparison",
+      "batch": 2,
+      "collectionId": "grid-archive-comparison",
+      "source": "grid-archive-comparison.canvas",
+      "distinguishingStructure": "Three nested operating-model columns",
+      "purpose": "Explain archive operating models."
+    },
+    {
+      "family": "Grid/comparison",
+      "batch": 3,
+      "collectionId": "grid-feedback-methods",
+      "source": "grid-feedback-methods.canvas",
+      "distinguishingStructure": "Four illustrated method quadrants with paired strengths and limits",
+      "purpose": "Explain feedback methods comparison."
+    }
+  ]
+}

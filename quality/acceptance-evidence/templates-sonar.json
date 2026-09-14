@@ -1,0 +1,74 @@
+[
+  {
+    "file": "adapters/identity.ts",
+    "max": 1
+  },
+  {
+    "file": "contract/api.ts",
+    "max": 2
+  },
+  {
+    "file": "contract/brands.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/compose.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/errors.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/index.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/ports/codecs.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/ports/identity.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/records/preset.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/types.ts",
+    "max": 0
+  },
+  {
+    "file": "core/admission/plan.ts",
+    "max": 2
+  },
+  {
+    "file": "core/discovery/select.ts",
+    "max": 2
+  },
+  {
+    "file": "core/expansion/instantiate.ts",
+    "max": 2
+  },
+  {
+    "file": "core/validation/catalog.ts",
+    "max": 2
+  },
+  {
+    "file": "core/validation/outcomes.ts",
+    "max": 2
+  },
+  {
+    "file": "tests/expansion.test.ts",
+    "max": 0
+  },
+  {
+    "file": "tests/fixtures.ts",
+    "max": 1
+  },
+  {
+    "file": "tests/presets.test.ts",
+    "max": 0
+  }
+]

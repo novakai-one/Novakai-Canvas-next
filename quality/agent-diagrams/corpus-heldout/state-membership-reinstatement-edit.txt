@@ -1,0 +1,5 @@
+committed: heldout-edit-state-membership-reinstatement
+Workspace sequence: 10
+$ tsx apps/cli/cli/main.ts patch quality/agent-diagrams/corpus-heldout/state-membership-reinstatement-edit.patch --revision 0 --server http://127.0.0.1:5180 --workspace .local/workspace-corpus-heldout --request heldout-edit-state-membership-reinstatement
+(node:11160) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

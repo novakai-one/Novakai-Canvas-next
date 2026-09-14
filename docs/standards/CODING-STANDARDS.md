@@ -162,3 +162,10 @@ Automation notes per principle are in section 2; treat tool output as evidence, 
 2. Score all 16 against section 2 anchors; cite line evidence per score.
 3. Report worst 3 findings with no mitigating spin.
 4. Suggest fixes only if the review's owner asks for them.
+
+
+## Repository amendment — approved structured outcomes (PR #24)
+
+The original sixteen scoring anchors above are preserved. Apply the current [builder examples, section 9](../../CODING-STANDARDS.md#9-typed-error-outcomes) when judging public failure contracts. Each capability declares its own identical `Result<T,E>` union locally: success is `{ ok: true, value: T }`; failure is `{ ok: false, error: E }`. Validation errors contain non-empty typed diagnostic tuples. Consumer errors retain originating structured evidence in typed `error.source`; runtime readers validate and preserve it. No optional second error channel, message-string recovery, shared Result kernel, or raw string masquerading as a domain identity. Private typed throws remain legal behind a Result-returning public boundary. Formatting belongs at the terminal/browser display boundary.
+
+The original snapshot hash in README.md describes the source snapshot, before this explicit repository amendment.

@@ -1,9 +1,11 @@
-# canvas
+# Canvas
 
-Responsibility: React Flow view integration and diagram interaction.
+Owns interactive scene viewing and recoverable geometry intents. React Flow renders actual custom nodes and edges; Presentation supplies measured notation.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+Use `createCanvas({sceneAdmission})` for pure operations, `createSession` for an observable session, and explicit `createReactBindings` for browser rendering. Compose once. Scene admission must bind validated Layout/Presentation results; no fallback renderer exists.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
+Host drains effects after every dispatch, forwards successful diagnostics, submits edits through Authoring and retains durable recovery. Identical accepted edit IDs do not enqueue twice; conflicting reuse rejects. Pan/select events remain repeatable. Session admits at most10,000 edit identities; preserve drafts before opening a replacement session.
 
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+Pointer metadata and reading/camera/selection are session state. Only emitted placement/route intents can become persisted constraints. React Flow records never enter persistence.
+
+16 in-process contract cases include mounted drag/route behavior and real shared renderers. These do not certify browser UX. Visible-browser acceptance and per-file standards release gates remain tracked in WORK-PLAN.md.

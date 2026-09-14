@@ -1,0 +1,362 @@
+[
+  {
+    "id": "er-1-museum-loans",
+    "title": "MUSEUM LOANS / Trace every movement",
+    "width": 1162.8203125,
+    "height": 920.2856999999999,
+    "file": "er-museum-loans.png",
+    "zoom": 0.990169,
+    "box": {
+      "x": 224.30587768554688,
+      "y": 139.21307373046875,
+      "width": 1151.38818359375,
+      "height": 911.2337036132812
+    },
+    "minimumText": 15.842704
+  },
+  {
+    "id": "er-2-enrollment-model",
+    "title": "COURSE ENROLLMENT / Composite identities across terms",
+    "width": 1573.75,
+    "height": 1026.79428,
+    "file": "er-course-enrollment.png",
+    "zoom": 0.88746,
+    "box": {
+      "x": 101.679931640625,
+      "y": 139.21266174316406,
+      "width": 1396.6402587890625,
+      "height": 911.234130859375
+    },
+    "minimumText": 14.19936
+  },
+  {
+    "id": "er-3-habitats",
+    "title": "HABITAT SURVEY / Nested places, dated evidence",
+    "width": 1172.921875,
+    "height": 1076.2857,
+    "file": "er-habitat-survey.png",
+    "zoom": 0.846652,
+    "box": {
+      "x": 303.4716796875,
+      "y": 139.21234130859375,
+      "width": 993.056640625,
+      "height": 911.2356567382812
+    },
+    "minimumText": 13.546432
+  },
+  {
+    "id": "modules-1-publishing-boundary",
+    "title": "PUBLISHING / Policy inside, vendor outside",
+    "width": 1367.5484375,
+    "height": 733.4857,
+    "file": "modules-document-publishing.png",
+    "zoom": 1.00473,
+    "box": {
+      "x": 112.99253845214844,
+      "y": 226.13031005859375,
+      "width": 1374.013427734375,
+      "height": 736.9527587890625
+    },
+    "minimumText": 16.07568
+  },
+  {
+    "id": "modules-2-gateway-boundary",
+    "title": "SENSOR GATEWAY / Two transports, one typed core",
+    "width": 1756.38125,
+    "height": 531.1695166666666,
+    "file": "modules-sensor-gateway.png",
+    "zoom": 0.874526,
+    "box": {
+      "x": 31.999755859375,
+      "y": 362.23919677734375,
+      "width": 1535.9951171875,
+      "height": 464.5167236328125
+    },
+    "minimumText": 13.992416
+  },
+  {
+    "id": "modules-3-payroll",
+    "title": "PAYROLL / Callable rules behind two contracts",
+    "width": 1925.7296875000002,
+    "height": 782.45712,
+    "file": "modules-payroll-policy.png",
+    "zoom": 0.797619,
+    "box": {
+      "x": 32,
+      "y": 282.44842529296875,
+      "width": 1535.997314453125,
+      "height": 624.099853515625
+    },
+    "minimumText": 12.761904
+  },
+  {
+    "id": "flow-1-equipment-return",
+    "title": "RETURN / Inspect before restocking",
+    "width": 748.9375,
+    "height": 1073.71424,
+    "file": "flow-equipment-return.png",
+    "zoom": 0.84868,
+    "box": {
+      "x": 482.1960144042969,
+      "y": 139.2125244140625,
+      "width": 635.60791015625,
+      "height": 911.2364501953125
+    },
+    "minimumText": 13.57888
+  },
+  {
+    "id": "flow-2-approval",
+    "title": "RESEARCH APPROVAL / Independent review, one decision",
+    "width": 1219.7086415351562,
+    "height": 904.5713799999999,
+    "file": "flow-research-approval.png",
+    "zoom": 1.00161,
+    "box": {
+      "x": 189.1656494140625,
+      "y": 141.8778076171875,
+      "width": 1221.6629638671875,
+      "height": 906.02392578125
+    },
+    "minimumText": 16.02576
+  },
+  {
+    "id": "flow-3-dispatch",
+    "title": "DISPATCH / Escalation preserves incident ownership",
+    "width": 1875.66063996875,
+    "height": 966.5713800000001,
+    "file": "flow-emergency-dispatch.png",
+    "zoom": 0.818912,
+    "box": {
+      "x": 31.99951171875,
+      "y": 198.731689453125,
+      "width": 1535.997314453125,
+      "height": 791.5360107421875
+    },
+    "minimumText": 13.102592
+  },
+  {
+    "id": "sequence-1-library-reservation",
+    "title": "RESERVATION / Availability decides the path",
+    "width": 1604,
+    "height": 951.1428599999999,
+    "file": "sequence-library-reservation.png",
+    "zoom": 0.956779,
+    "box": {
+      "x": 32.66343307495117,
+      "y": 139.492431640625,
+      "width": 1534.673095703125,
+      "height": 910.03125
+    },
+    "minimumText": 15.308464
+  },
+  {
+    "id": "sequence-2-settlement",
+    "title": "SETTLEMENT / Retry submission, confirm asynchronously",
+    "width": 1664.102616140625,
+    "height": 823.1428599999999,
+    "file": "sequence-payment-settlement.png",
+    "zoom": 0.92302,
+    "box": {
+      "x": 32,
+      "y": 214.611328125,
+      "width": 1535.9990234375,
+      "height": 759.775146484375
+    },
+    "minimumText": 14.76832
+  },
+  {
+    "id": "sequence-3-notification",
+    "title": "NOTIFICATION / Deduplicate, optionally page, acknowledge",
+    "width": 1536,
+    "height": 1119.14286,
+    "file": "sequence-incident-notification.png",
+    "zoom": 0.81423,
+    "box": {
+      "x": 174.671630859375,
+      "y": 139.21240234375,
+      "width": 1250.65673828125,
+      "height": 911.237548828125
+    },
+    "minimumText": 13.02768
+  },
+  {
+    "id": "state-1-lifecycle",
+    "title": "EXHIBITION / Guard publication and recover safely",
+    "width": 1230.64453125,
+    "height": 1104.5713799999999,
+    "file": "state-exhibition-lifecycle.png",
+    "zoom": 0.824971,
+    "box": {
+      "x": 292.3769226074219,
+      "y": 139.21240234375,
+      "width": 1015.242919921875,
+      "height": 911.23876953125
+    },
+    "minimumText": 13.199536
+  },
+  {
+    "id": "state-2-job",
+    "title": "BATCH JOB / Retry transient faults, cancel cleanly",
+    "width": 1891.0234375,
+    "height": 1152.4761533333333,
+    "file": "state-batch-job.png",
+    "zoom": 0.790512,
+    "box": {
+      "x": 52.5618896484375,
+      "y": 139.25830078125,
+      "width": 1494.8760986328125,
+      "height": 911.040283203125
+    },
+    "minimumText": 12.648192
+  },
+  {
+    "id": "state-3-membership",
+    "title": "MEMBERSHIP / Reinstatement is a reviewed return",
+    "width": 1764.6328125,
+    "height": 1138.71425,
+    "file": "state-membership-reinstatement.png",
+    "zoom": 0.800235,
+    "box": {
+      "x": 93.939697265625,
+      "y": 139.212646484375,
+      "width": 1412.12060546875,
+      "height": 911.236328125
+    },
+    "minimumText": 12.80376
+  },
+  {
+    "id": "tree-1-field-research",
+    "title": "FIELD STUDY / Make evidence comparable",
+    "width": 1115.84375,
+    "height": 670.8571199999999,
+    "file": "tree-field-research.png",
+    "zoom": 1.01307,
+    "box": {
+      "x": 234.78858947753906,
+      "y": 254.4619140625,
+      "width": 1130.4228515625,
+      "height": 679.61669921875
+    },
+    "minimumText": 16.20912
+  },
+  {
+    "id": "tree-2-objectives",
+    "title": "COURSE OBJECTIVES / From concepts to observable outcomes",
+    "width": 1327.78125,
+    "height": 972.5713799999999,
+    "file": "tree-course-objectives.png",
+    "zoom": 0.936938,
+    "box": {
+      "x": 176.9754638671875,
+      "y": 139.21240234375,
+      "width": 1244.04931640625,
+      "height": 911.23876953125
+    },
+    "minimumText": 14.991008
+  },
+  {
+    "id": "tree-3-causes",
+    "title": "INCIDENT CAUSES / Test branches against the timeline",
+    "width": 1277.6583184453125,
+    "height": 939.4285399999999,
+    "file": "tree-incident-causes.png",
+    "zoom": 0.969996,
+    "box": {
+      "x": 180.33837890625,
+      "y": 139.2109375,
+      "width": 1239.321044921875,
+      "height": 911.2353515625
+    },
+    "minimumText": 15.519936
+  },
+  {
+    "id": "story-1-evidence-lesson",
+    "title": "TEACHING / From evidence to understanding",
+    "width": 1032,
+    "height": 465.71428,
+    "file": "story-evidence-lesson.png",
+    "zoom": 1.01629,
+    "box": {
+      "x": 275.59478759765625,
+      "y": 358.1796875,
+      "width": 1048.810546875,
+      "height": 473.296875
+    },
+    "minimumText": 16.26064
+  },
+  {
+    "id": "story-2-deployment-story",
+    "title": "SAFE DEPLOYMENT / Confidence grows through evidence",
+    "width": 816,
+    "height": 943.9999599999999,
+    "file": "story-safe-deployment.png",
+    "zoom": 0.965296,
+    "box": {
+      "x": 406.1593017578125,
+      "y": 139.21240234375,
+      "width": 787.681396484375,
+      "height": 911.23193359375
+    },
+    "minimumText": 15.444736
+  },
+  {
+    "id": "story-3-treatment",
+    "title": "WATER TREATMENT / Follow water and its checks",
+    "width": 1020.8748449375,
+    "height": 710.8571199999999,
+    "file": "story-water-treatment.png",
+    "zoom": 1.01146,
+    "box": {
+      "x": 283.711669921875,
+      "y": 235.474609375,
+      "width": 1032.5693359375,
+      "height": 719
+    },
+    "minimumText": 16.18336
+  },
+  {
+    "id": "grid-1-archive-comparison",
+    "title": "ARCHIVE OPTIONS / Choose by the failure you can tolerate",
+    "width": 1176,
+    "height": 643.42854,
+    "file": "grid-archive-comparison.png",
+    "zoom": 1.01091,
+    "box": {
+      "x": 205.58445739746094,
+      "y": 269.6484375,
+      "width": 1188.8310546875,
+      "height": 650.4423828125
+    },
+    "minimumText": 16.17456
+  },
+  {
+    "id": "grid-2-feedback-grid",
+    "title": "FEEDBACK METHODS / Match the method to the question",
+    "width": 760,
+    "height": 779.9999600000001,
+    "file": "grid-feedback-methods.png",
+    "zoom": 1.00765,
+    "box": {
+      "x": 417.0919189453125,
+      "y": 201.24560546875,
+      "width": 765.8162841796875,
+      "height": 785.96142578125
+    },
+    "minimumText": 16.1224
+  },
+  {
+    "id": "grid-3-methods",
+    "title": "RESEARCH METHODS / Compare questions, records and limits",
+    "width": 1382.370452203125,
+    "height": 1080.22854,
+    "file": "grid-research-methods.png",
+    "zoom": 0.843562,
+    "box": {
+      "x": 216.942626953125,
+      "y": 139.21240234375,
+      "width": 1166.111572265625,
+      "height": 911.23779296875
+    },
+    "minimumText": 13.496992
+  }
+]

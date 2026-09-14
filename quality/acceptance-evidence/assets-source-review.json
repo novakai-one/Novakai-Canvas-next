@@ -1,0 +1,967 @@
+[
+  {
+    "file": "capability/assets/adapters/detect.ts",
+    "lines": 46,
+    "functions": [
+      {
+        "name": "detectMedia",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/adapters/files.ts",
+    "lines": 192,
+    "functions": [
+      {
+        "name": "readFile",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hasCode",
+        "line": 60,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireSame",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "writeTemporary",
+        "line": 74,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "removeFile",
+        "line": 88,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "publishFile",
+        "line": 96,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "persistFile",
+        "line": 109,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "writeFile",
+        "line": 126,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "cleanupTemporary",
+        "line": 142,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "listFiles",
+        "line": 152,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createBlobFiles",
+        "line": 160,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "missingOrThrow",
+        "line": 175,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ignoreMissing",
+        "line": 180,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveCollision",
+        "line": 184,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/adapters/font.ts",
+    "lines": 89,
+    "functions": [
+      {
+        "name": "inspectFont",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkFontMetrics",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "normalizeFont",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkExpandedSize",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parseSingleFont",
+        "line": 51,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protectFont",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createFont",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/adapters/identity.ts",
+    "lines": 68,
+    "functions": [
+      {
+        "name": "hashBytes",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hashChecked",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ownerAlive",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isMissingProcess",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "newLease",
+        "line": 57,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createIdentity",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/adapters/raster.ts",
+    "lines": 77,
+    "functions": [
+      {
+        "name": "inspectMetadata",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkDimensions",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "normalizeRaster",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protectRaster",
+        "line": 57,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createRaster",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/adapters/sqlite-files.ts",
+    "lines": 181,
+    "functions": [
+      {
+        "name": "statements",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readMetadata",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "decodeValue",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readBlob",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "writeBlob",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "blobIds",
+        "line": 63,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readDigestKey",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createView",
+        "line": 78,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "failed",
+        "line": 98,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rollback",
+        "line": 103,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "settle",
+        "line": 116,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "transact",
+        "line": 122,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "close",
+        "line": 135,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSchema",
+        "line": 144,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "initialize",
+        "line": 154,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSqliteFiles",
+        "line": 166,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/adapters/svg.ts",
+    "lines": 209,
+    "functions": [
+      {
+        "name": "rejectUnsafe",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "escapeXml",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkAttribute",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkNamespace",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkAttributeValue",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkLocalUrl",
+        "line": 65,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recordId",
+        "line": 70,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recordReference",
+        "line": 75,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspectAttribute",
+        "line": 81,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkElement",
+        "line": 87,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkRoot",
+        "line": 93,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkElementBounds",
+        "line": 98,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rootAttributes",
+        "line": 103,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "serializeTag",
+        "line": 108,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "openTag",
+        "line": 118,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "closeTag",
+        "line": 126,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dimension",
+        "line": 132,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "boundedDimension",
+        "line": 138,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dimensions",
+        "line": 144,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parseSvg",
+        "line": 156,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finishSvg",
+        "line": 168,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "boundedMarkup",
+        "line": 184,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "normalizeSvg",
+        "line": 190,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protectSvg",
+        "line": 199,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createSvg",
+        "line": 207,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/contract/api.ts",
+    "lines": 100,
+    "functions": [
+      {
+        "name": "resolveInput",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readLeaseInput",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "openLease",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "releaseLease",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "acquire",
+        "line": 50,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reserve",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verify",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createAssets",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/contract/brands.ts",
+    "lines": 9,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/compose.ts",
+    "lines": 45,
+    "functions": [
+      {
+        "name": "openAssets",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/contract/errors.ts",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "fail",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/contract/index.ts",
+    "lines": 27,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/ports/identity.ts",
+    "lines": 9,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/ports/media.ts",
+    "lines": 11,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/ports/native.ts",
+    "lines": 19,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/ports/reachability.ts",
+    "lines": 4,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/ports/storage.ts",
+    "lines": 20,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/records/lease.ts",
+    "lines": 12,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/records/media.ts",
+    "lines": 67,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/contract/types.ts",
+    "lines": 36,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/core/admission/stage.ts",
+    "lines": 113,
+    "functions": [
+      {
+        "name": "normalizeInput",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "identifyBlob",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "storeBlob",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkExisting",
+        "line": 58,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "prepareBlob",
+        "line": 70,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stageChecked",
+        "line": 80,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "commitStage",
+        "line": 91,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stageMedia",
+        "line": 107,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/core/admission/validate.ts",
+    "lines": 49,
+    "functions": [
+      {
+        "name": "byteLength",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "missingAlt",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateInput",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkInputSize",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateNormalized",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkMetrics",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkFontMetrics",
+        "line": 45,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/core/reachability/collect.ts",
+    "lines": 63,
+    "functions": [
+      {
+        "name": "readLeases",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recoverOwners",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "removeUnreferenced",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "collectChecked",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "collectBlobs",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/core/reachability/leases.ts",
+    "lines": 164,
+    "functions": [
+      {
+        "name": "verifyMembers",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createLease",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recordLease",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireMember",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkMembership",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readLeased",
+        "line": 73,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "normalizeRestored",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compareRestored",
+        "line": 106,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "prepareRestored",
+        "line": 116,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkRestoredHash",
+        "line": 129,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "installReserved",
+        "line": 142,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stageReserved",
+        "line": 153,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/core/resolution/resolve.ts",
+    "lines": 41,
+    "functions": [
+      {
+        "name": "resolveBlob",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifyStored",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifyLength",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/core/validation/outcomes.ts",
+    "lines": 53,
+    "functions": [
+      {
+        "name": "success",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parse",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protect",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protectAsync",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "freeze",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/tests/admission.test.ts",
+    "lines": 106,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/tests/fixtures.ts",
+    "lines": 59,
+    "functions": [
+      {
+        "name": "encoded",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "submission",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "value",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejects",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unavailable",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "delayedMedia",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/tests/harness.ts",
+    "lines": 88,
+    "functions": [
+      {
+        "name": "harness",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "removeSchema",
+        "line": 82,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/assets/tests/leases.test.ts",
+    "lines": 65,
+    "functions": []
+  },
+  {
+    "file": "capability/assets/tests/storage.test.ts",
+    "lines": 51,
+    "functions": []
+  }
+]

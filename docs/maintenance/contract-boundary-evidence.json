@@ -1,0 +1,27 @@
+{
+  "previousExports": 62,
+  "currentExports": 64,
+  "removed": [],
+  "added": [
+    "TokenId",
+    "tokenId"
+  ],
+  "wildcardRejected": true,
+  "typeOnlyDeepImportChecks": [
+    {
+      "file": "apps/web/adapters/probe.ts",
+      "rejected": true
+    },
+    {
+      "file": "capability/layout/contract/compose.ts",
+      "rejected": true
+    },
+    {
+      "file": "capability/layout/core/probe.ts",
+      "rejected": true
+    }
+  ],
+  "publicTypeImportAllowed": true,
+  "runtimeDeepImportRejected": true,
+  "dependencyCruiserTypeOnlyGapConfirmed": true
+}

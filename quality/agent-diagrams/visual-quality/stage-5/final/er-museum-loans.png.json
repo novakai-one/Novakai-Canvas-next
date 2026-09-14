@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "er-museum-loans",
+    "revision": 2,
+    "title": "Museum loans and inspections",
+    "inputKeySha256": "0ce4c6b15ec00113625cc4c43b74095f871cd4fc950972a58fa56b720a9906e7"
+  },
+  "digest": "d0ae6e6eb66d339d15957b76d9f88a4d3d1661d73ffdad0a985ce99b7fb8d783",
+  "bytes": 71957,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1128.8203125,
+    "height": 1044.2857
+  }
+}

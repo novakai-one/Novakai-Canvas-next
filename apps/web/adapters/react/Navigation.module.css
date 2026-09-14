@@ -1,0 +1,55 @@
+@layer components {
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--nv-space-1);
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-1);
+    width: 100%;
+    min-height: var(--nv-control-height);
+    padding: var(--nv-space-2);
+    border: 0;
+    border-radius: var(--nv-radius-control);
+    background: transparent;
+    color: var(--nv-color-content);
+    text-align: start;
+    cursor: pointer;
+  }
+  .row:hover,
+  .row[aria-current='page'] {
+    background: var(--nv-color-hover);
+  }
+  .row[aria-current='true'] {
+    background: var(--nv-color-hover);
+    box-shadow: inset var(--nv-focus-width) 0 var(--nv-color-action);
+  }
+  .actions {
+    display: flex;
+    gap: var(--nv-space-1);
+    padding-inline: var(--nv-space-2);
+    margin-bottom: var(--nv-space-2);
+  }
+  .row[aria-current='page'] {
+    box-shadow: inset var(--nv-focus-width) 0 var(--nv-color-action);
+  }
+  .row:focus-visible {
+    outline: var(--nv-focus-width) solid var(--nv-color-focus);
+    outline-offset: var(--nv-focus-offset);
+  }
+  .list small {
+    font-size: var(--nv-font-caption);
+    color: var(--nv-color-subtle);
+  }
+  .object {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--nv-space-2);
+    padding: var(--nv-space-2);
+  }
+}

@@ -1,0 +1,18 @@
+@layer components {
+  :global(.react-flow) {
+    --xy-background-color: var(--nv-surface-base);
+    --xy-background-pattern-dots-color: var(--nv-border-default);
+    --xy-node-color: var(--nv-text-primary);
+    --xy-edge-stroke: var(--nv-border-default);
+    --xy-minimap-background-color: var(--nv-surface-raised);
+    --xy-minimap-mask-background-color: var(--nv-surface-base);
+  }
+  :global(.react-flow__node.selected) {
+    outline: var(--nv-focus-width) solid var(--nv-action-accent);
+    outline-offset: var(--nv-focus-offset);
+  }
+  :global(.react-flow__attribution) {
+    background: var(--nv-surface-raised);
+    color: var(--nv-text-secondary);
+  }
+}

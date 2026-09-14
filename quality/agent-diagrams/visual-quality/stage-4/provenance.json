@@ -1,0 +1,83 @@
+{
+  "branch": "feat/visual-quality-stage-4",
+  "parentCommit": "0f40e83",
+  "presentationNotation": "presentation-notation-2",
+  "layoutPolicy": "layout-policy-12",
+  "examples": [
+    {
+      "family": "er",
+      "source": "resources/examples/showcase/er-museum-loans.canvas",
+      "sourceLines": 38,
+      "sourceSha256": "d6b671421a13debecb6cb72b27e0af9880dbd7e3ad6c424e9b8baf7eecba9570",
+      "renderedIdentity": {
+        "collectionId": "er-museum-loans",
+        "revision": 2,
+        "title": "Museum loans and inspections",
+        "inputKeySha256": "da1c1a0a81654b7a32e071b6e82a1e2fc977c8f0e8f23f8b81c34ffb8d4259e0"
+      },
+      "export": "er-final.png",
+      "exportSha256": "d0ae6e6eb66d339d15957b76d9f88a4d3d1661d73ffdad0a985ce99b7fb8d783",
+      "readout": "er-readout.canvas"
+    },
+    {
+      "family": "modules",
+      "source": "resources/examples/showcase/modules-document-publishing.canvas",
+      "sourceLines": 43,
+      "sourceSha256": "df9422e8c334de3089ab3e2029c0fee2a7db1af7b7f10fbac3a20058d5bcda43",
+      "renderedIdentity": {
+        "collectionId": "modules-document-publishing",
+        "revision": 0,
+        "title": "Document publishing boundary",
+        "inputKeySha256": "b77a0ffc10a24845380e2a5f19267ac92ce4e0ead6a6718ff8f484a16a4a9bb7"
+      },
+      "export": "modules-final.png",
+      "exportSha256": "a2a605850be7aed0aa5fa525ca9d294b66c5100d135f773e79c10a2950bb06dd",
+      "readout": "modules-readout.canvas"
+    },
+    {
+      "family": "sequence",
+      "source": "resources/examples/showcase/sequence-payment-settlement.canvas",
+      "sourceLines": 29,
+      "sourceSha256": "bb50b162884169d220d26c25f6feea60b6b1052c19e7b18d8b1cc1d0b7200eb9",
+      "renderedIdentity": {
+        "collectionId": "sequence-payment-settlement",
+        "revision": 1,
+        "title": "Payment settlement conversation",
+        "inputKeySha256": "68808ec8b4ad1c94d450d01513ea59c55dd37e5876dcfb505aa23e3e3a99fe61"
+      },
+      "export": "sequence-final.png",
+      "exportSha256": "8c964d0fb7c28e3878f09b5b4db859de8584c01837a6d02f93bf5790fff6e03f",
+      "readout": "sequence-readout.canvas"
+    },
+    {
+      "family": "state",
+      "source": "resources/examples/showcase/state-batch-job.canvas",
+      "sourceLines": 36,
+      "sourceSha256": "f7ef2f3f14d6cc3430f62ea9a077f5da8c8704a10962d06d0332b7b288f831b6",
+      "renderedIdentity": {
+        "collectionId": "state-batch-job",
+        "revision": 4,
+        "title": "Batch job retry lifecycle",
+        "inputKeySha256": "f180f8a31b16bde0160e54dd0e68d8b9f51190ecda3543051a4f7ef865a181d0"
+      },
+      "export": "state-final.png",
+      "exportSha256": "66d5e1e50293188eccfce71793f71abf197d72747073d3e6b6616d65e4def4f0",
+      "readout": "state-readout.canvas"
+    },
+    {
+      "family": "tree",
+      "source": "resources/examples/showcase/tree-field-research.canvas",
+      "sourceLines": 29,
+      "sourceSha256": "24a4405a1344e27a3251f5dfd89258ec5fb724139439215d71b8d2e449bc4ff8",
+      "renderedIdentity": {
+        "collectionId": "tree-field-research",
+        "revision": 2,
+        "title": "Design a field study",
+        "inputKeySha256": "d7650ff7a6e5140c0d2acf5081dc71f1c644d902900fc7dda8371bb465f3e87a"
+      },
+      "export": "tree-final.png",
+      "exportSha256": "44b764499508d931be5f3a50546272e8155fb5323a34e41d739a35bfb5242db1",
+      "readout": "tree-readout.canvas"
+    }
+  ]
+}

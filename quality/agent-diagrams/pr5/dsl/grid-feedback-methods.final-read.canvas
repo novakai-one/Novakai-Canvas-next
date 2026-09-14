@@ -1,0 +1,53 @@
+# grid-feedback-methods revision=0
+canvas 1
+collection @grid-feedback-methods "Feedback methods comparison" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" layout=grid {
+  asset @evidence image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="A document with a magnifying lens"
+  asset @lesson image source="sha256:48522bf36b79d9b9d678e1bf61828f4d42f38198855b26da9784d5ac2bcf71d8" alt="An open lesson book"
+  asset @reed image source="sha256:6900981bc6ad2134e4762dc43f03488ad5d4028a6861405eaa27669cbce71282" alt="A reed suggesting an in-context observation"
+  asset @water image source="sha256:ace1c762e50de96fdd2ec99c459823bb91635a33a7413de4690444bf5f0892b3" alt="A water drop suggesting a measured signal"
+  node @interview concept "Interview" role=primary size=large sources=[] {
+  icon @symbol asset=@lesson size=medium
+  text @detail "Ask why a recent moment mattered."
+}
+  node @interview-use note "Rich explanation · low scale" role=neutral size=small sources=[] {
+  text @tip "Use after a specific experience, not for predictions."
+}
+  node @survey concept "Survey" role=supporting size=large sources=[] {
+  icon @symbol asset=@evidence size=medium
+  text @detail "Measure a known question across many people."
+}
+  node @survey-use note "Broad pattern · fixed questions" role=neutral size=small sources=[] {
+  text @tip "Pilot wording before comparing responses."
+}
+  node @observation concept "Observation" role=success size=large sources=[] {
+  icon @symbol asset=@reed size=medium
+  text @detail "Watch real work in its normal setting."
+}
+  node @observation-use note "Real behavior · slower analysis" role=neutral size=small sources=[] {
+  text @tip "Record context as well as actions."
+}
+  node @telemetry concept "Telemetry" role=warning size=large sources=[] {
+  icon @symbol asset=@water size=medium
+  text @detail "Track what happened at product scale."
+}
+  node @telemetry-use note "Continuous signal · weak intent" role=neutral size=small sources=[] {
+  text @tip "Pair behavior with a method that explains why."
+}
+  section @feedback-grid "FEEDBACK METHODS / Match the method to the question" mode=grid columns=2 layout=grid gap=compact {
+  group @explain "EXPLAIN" represents=@interview columns=1 layout=grid gap=compact {
+  show @interview-use
+}
+  group @measure "MEASURE" represents=@survey columns=1 layout=grid gap=compact {
+  show @survey-use
+}
+  group @observe "OBSERVE" represents=@observation columns=1 layout=grid gap=compact {
+  show @observation-use
+}
+  group @monitor "MONITOR" represents=@telemetry columns=1 layout=grid gap=compact {
+  show @telemetry-use
+}
+}
+}
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes read grid-feedback-methods
+(node:25516) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

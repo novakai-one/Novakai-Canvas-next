@@ -1,0 +1,42 @@
+# modules-document-publishing revision=0
+canvas 1
+collection @modules-document-publishing "Document publishing boundary" theme="atlas@1.0.0#sha256:e88a64da0915336263953d299d6bfa81653bf09dc6c903e7aac11b5a6672c06f" description="An illustrative software dependency design. Imports and calls show code dependencies; implementation wires show contract conformance, not runtime data flow." layout=grid {
+  node @editor module "Editorial workspace" role=primary size=large sources=[] {
+  text @detail "Validates a draft before asking the publishing port to submit it."
+  port @publish out "publisher" type="PublicationPort"
+}
+  node @publication interface "PublicationPort" role=supporting size=large sources=[] {
+  member @submit "submit" type="(ApprovedDraft) => Promise<Result<PublicationReceipt, PublishError>>"
+  member @withdraw "withdraw" type="(PublicationId, Reason) => Promise<Result<WithdrawalReceipt, PublishError>>"
+}
+  node @validate function "validateApproval" role=neutral size=large sources=[] {
+  signature @call "validateApproval" parameters=["draft: Draft", "policy: EditorialPolicy"] returns="Result<ApprovedDraft, ValidationError>"
+}
+  node @web-adapter module "Web publisher adapter" role=success size=large sources=[] {
+  text @detail "Implements both submit and withdraw; translates vendor failures into PublishError."
+  port @remote out "CMS client" type="CmsClient"
+}
+  node @cms interface "CmsClient / external boundary" role=warning size=large sources=[] {
+  member @create "createPage" type="(CmsPage) => Promise<Result<CmsPageId, CmsError>>"
+  member @remove "removePage" type="(CmsPageId) => Promise<Result<void, CmsError>>"
+}
+  wire @checks @editor -> @validate.@call "calls validation before submit" kind=calls sources=[]
+  wire @imports @editor.@publish -> @publication "imports publishing contract" kind=imports sources=[]
+  wire @implements @web-adapter -> @publication "implements submit and withdraw" kind=implements sources=[]
+  wire @calls-cms @web-adapter.@remote -> @cms "imports vendor contract" kind=imports sources=[]
+  section @publishing-boundary "PUBLISHING / Policy inside, vendor outside" mode=modules columns=2 layout=grid gap=roomy {
+  group @policy "APPLICATION POLICY" columns=1 layout=grid gap=roomy {
+  show @editor
+  show @validate
+  show @publication
+}
+  group @integration "VENDOR INTEGRATION" columns=1 layout=grid gap=roomy {
+  show @web-adapter
+  show @cms
+}
+  connect @checks
+  connect @imports
+  connect @implements source-side=left target-side=right
+  connect @calls-cms source-side=right target-side=right
+}
+}

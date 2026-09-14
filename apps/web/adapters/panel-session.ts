@@ -1,0 +1,104 @@
+import type {
+  PanelBindings,
+  PanelController,
+  PanelState,
+  PanelPreferences,
+  PanelId,
+} from '../contract/panel-types.js';
+import {
+  defaultPanels,
+  panelMode,
+  openPanel,
+  resizePanels,
+  movePanelSection,
+  panelMembership,
+  panelWidth,
+  reconcilePanelPreferences,
+} from '../contract/api.js';
+/** This external store owns only panel presentation. Preference failures are reported; no operation changes a diagram or draft. */
+export function createPanelController(bindings: PanelBindings): PanelController {
+  let state: PanelState = {
+    mode: panelMode(bindings.initialWidth, bindings.sizing),
+    docked: { left: true, right: false },
+    overlay: null,
+    lastOpened: 'left',
+    customize: false,
+    preferences: defaultPanels('', bindings.definitions, bindings.sizing),
+  };
+  const listeners = new Set<() => void>();
+  /** Stable snapshots allow React to subscribe without mirroring props into component state. */
+  function publish(next: PanelState): void {
+    state = next;
+    listeners.forEach((listener) => listener());
+  }
+  /** Persist only preference data; transient modal visibility is local to this session. */
+  function save(preferences: PanelPreferences): void {
+    publish({ ...state, preferences });
+    const saved = bindings.retention.write(`panels.${preferences.workspace}`, preferences);
+    if (!saved.ok) bindings.report(saved.error.message);
+  }
+  /** Workspace identity scopes personal panel preferences independently from diagram theme records. */
+  function restore(workspace: string): void {
+    publish({
+      ...state,
+      preferences: defaultPanels(workspace, bindings.definitions, bindings.sizing),
+    });
+    const stored = bindings.retention.read(`panels.${workspace}`);
+    if (!stored.ok) {
+      bindings.report(stored.error.message);
+      return;
+    }
+    if (stored.value !== null) restoreChecked(stored.value, workspace);
+  }
+  /** Known registrations decide applicability; persisted values can never inject React renderers. */
+  function restoreChecked(input: unknown, workspace: string): void {
+    const checked = bindings.read(input, workspace);
+    if (!checked.ok) {
+      bindings.report(checked.error.message);
+      return;
+    }
+    const preferences = reconcilePanelPreferences(
+      checked.value,
+      bindings.definitions,
+      bindings.sizing,
+    );
+    publish({ ...state, preferences });
+    if (JSON.stringify(preferences.sections) !== JSON.stringify(checked.value.sections))
+      bindings.report('Panel layout was updated for available features');
+  }
+  /** Only trusted registered section IDs may change preference membership. */
+  function membership(id: string, kind: 'collapsed' | 'hidden', present: boolean): void {
+    if (!bindings.definitions.some((item) => item.id === id)) return;
+    save({ ...state.preferences, [kind]: panelMembership(state.preferences[kind], id, present) });
+  }
+  /** Numeric layout inputs are bounded; invalid reorder indices cannot move or duplicate a section. */
+  function move(id: string, side: PanelId, index: number): void {
+    if (!Number.isInteger(index)) return;
+    if (!bindings.definitions.some((item) => item.id === id)) return;
+    save(movePanelSection(state.preferences, id, side, index));
+  }
+  return {
+    getSnapshot: () => state,
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    restore,
+    open: (side, open) => publish(openPanel(state, side, open)),
+    viewport: (width) => publish(resizePanels(state, panelMode(width, bindings.sizing))),
+    resize: (side, width) =>
+      save({
+        ...state.preferences,
+        widths: {
+          ...state.preferences.widths,
+          [side]: panelWidth(width, bindings.sizing.sides[side]),
+        },
+      }),
+    expand: (id, expanded) => membership(id, 'collapsed', !expanded),
+    hide: (id, hidden) => membership(id, 'hidden', hidden),
+    move,
+    customize: (customize) => publish({ ...state, customize }),
+    reset: () =>
+      save(defaultPanels(state.preferences.workspace, bindings.definitions, bindings.sizing)),
+  };
+}

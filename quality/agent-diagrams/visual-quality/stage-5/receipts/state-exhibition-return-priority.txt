@@ -1,0 +1,5 @@
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof replace resources/examples/showcase/state-exhibition-lifecycle.canvas --revision 1 --request vq5-exhibition-return-priority
+(node:70269) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+committed: vq5-exhibition-return-priority
+Workspace sequence: 60

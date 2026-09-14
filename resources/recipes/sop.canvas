@@ -1,0 +1,17 @@
+canvas 1
+collection @procedure "Review a proposed change" theme=paper {
+  node @start start "Change proposed" {}
+  node @inspect step "Inspect the diff" step=1 { text @detail "Check the intended behavior and affected records." }
+  node @decide decision "Does the change satisfy the contract?" step=2 {}
+  node @revise step "Correct the finding" step=3 { text @detail "Reproduce the issue before changing the implementation." }
+  node @done end "Approve the change" {}
+  wire @begin @start -> @inspect "Review" kind=flow
+  wire @check @inspect -> @decide "Compare with requirements" kind=flow
+  wire @reject @decide -> @revise "No — verified defect" kind=flow
+  wire @repeat @revise -> @inspect "Review the correction" kind=flow style=dashed
+  wire @accept @decide -> @done "Yes — evidence passes" kind=flow
+  section @process "A bounded review loop" mode=flow direction=right {
+    show @start @inspect @decide @revise @done
+    connect @begin @check @reject @repeat @accept
+  }
+}

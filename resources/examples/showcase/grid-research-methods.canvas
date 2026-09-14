@@ -1,0 +1,28 @@
+canvas 1
+collection @grid-research-methods "Choose evidence for the claim" theme=studio description="Illustrative method selection aid; evidence strength depends on execution." {
+  asset @evidence image source="./assets/evidence.svg" alt="Inspectable evidence for a research claim"
+  node @question concept "What claim must the evidence support?" frame=none composition=media-left {
+    image @figure asset=@evidence size=small
+    text @caption "Compare the same dimensions across methods. No method removes the need to inspect how the work was done." role=caption
+  }
+  node @matrix concept "Four ways to build evidence" frame=card size=large {
+    table @comparison columns=["Method", "Question", "Record", "Watch for"] {
+      row @experiment cells=["Experiment", "Did the assigned change affect an outcome?", "Groups, assignment and outcomes", "Setting may limit transfer"]
+      row @cohort cells=["Cohort study", "What changes over time?", "Repeated observations of a defined group", "Confounding and attrition"]
+      row @case cells=["Case study", "How did this case unfold?", "Documents, observations and accounts", "Case selection shapes scope"]
+      row @synthesis cells=["Evidence synthesis", "What do studies agree on?", "Included studies and quality checks", "Missing or uneven studies"]
+    }
+  }
+  node @causal note "Before a causal claim" role=warning frame=card {
+    list @checks ["Check the comparison", "Check assignment and missing data", "Consider alternative explanations"]
+  }
+  node @triangulate note "Combine complementary evidence" role=success frame=card {
+    text @caption "Use case context to interpret a pattern; challenge the explanation with a new comparison." role=caption
+  }
+  section @methods "Choosing research evidence" mode=grid layout=grid columns=1 direction=down gap=normal {
+    show @question @matrix
+    before @question @matrix
+    before @matrix group:@interpretation
+    group @interpretation "INTERPRET BEFORE YOU CONCLUDE" frame=none layout=grid columns=2 gap=normal { show @causal @triangulate }
+  }
+}

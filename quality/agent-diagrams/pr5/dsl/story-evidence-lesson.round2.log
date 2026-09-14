@@ -1,0 +1,5 @@
+no-op: pr5-r2-story-evidence-lesson
+Workspace sequence: 30
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/story-evidence-lesson.canvas --revision 0 --request pr5-r2-story-evidence-lesson
+(node:23097) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

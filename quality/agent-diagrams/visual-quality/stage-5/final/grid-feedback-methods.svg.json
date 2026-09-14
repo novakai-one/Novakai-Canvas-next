@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "grid-feedback-methods",
+    "revision": 0,
+    "title": "Feedback methods comparison",
+    "inputKeySha256": "10240d9e7c8cc47a182083dd8d07ae39c293155617bf8c2976b7f01635832e2b"
+  },
+  "digest": "f2c714021914c89943aa954f88beb244c4759ec9eb2e689154cce75381e7e888",
+  "bytes": 124585,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 760,
+    "height": 1004.3199999999999
+  }
+}

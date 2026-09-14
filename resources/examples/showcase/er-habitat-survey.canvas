@@ -1,0 +1,43 @@
+canvas 1
+collection @er-habitat-survey "Habitat survey records" theme=atlas {
+ node @habitat entity "Habitat" {
+  field @id "habitat_id" type="HabitatId" key=primary
+  field @parent "parent_id" type="HabitatId" key=foreign nullable=true references=@habitat.@id
+  field @code "site_code" type="string" key=unique
+  field @name "name" type="string"
+ }
+ node @visit entity "Survey visit" {
+  field @id "visit_id" type="VisitId" key=primary
+  field @habitat "habitat_id" type="HabitatId" key=foreign references=@habitat.@id
+  field @date "surveyed_at" type="DateTime"
+ }
+ node @observer entity "Observer" role=supporting {
+  field @id "observer_id" type="ObserverId" key=primary
+  field @name "name" type="string"
+ }
+ node @species entity "Species" {
+  field @id "species_id" type="SpeciesId" key=primary
+  field @name "scientific_name" type="string" key=unique
+ }
+ node @observation entity "Observation" role=success size=large {
+  field @id "observation_id" type="ObservationId" key=primary
+  field @visit "visit_id" type="VisitId" key=foreign references=@visit.@id
+  field @observer "observer_id" type="ObserverId" key=foreign references=@observer.@id
+  field @species "species_id" type="SpeciesId" key=foreign references=@species.@id
+  field @count "count" type="NonNegativeInt"
+  field @confidence "confidence" type="Confidence"
+ }
+ wire @nested @habitat.@id -> @habitat.@parent "contains subhabitats" kind=association from=0..1 to=0..many
+ wire @surveyed @habitat.@id -> @visit.@habitat "hosts visits" kind=association from=1 to=0..many
+ wire @records @visit.@id -> @observation.@visit "records sightings" kind=association from=1 to=0..many
+ wire @reports @observer.@id -> @observation.@observer "reports sightings" kind=association from=1 to=0..many
+ wire @identifies @species.@id -> @observation.@species "identified in" kind=association from=1 to=0..many
+ section @habitats "HABITAT SURVEY / Nested places, dated evidence" mode=er layout=grid columns=2 direction=right gap=compact {
+  show @habitat @visit @observer @species @observation
+  connect @nested source-side=left target-side=left
+  connect @surveyed source-side=right target-side=left
+  connect @records source-side=right target-side=right
+  connect @reports source-side=left target-side=left
+  connect @identifies source-side=left target-side=right
+ }
+}

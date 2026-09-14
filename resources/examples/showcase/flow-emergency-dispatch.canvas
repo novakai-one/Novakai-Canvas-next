@@ -1,0 +1,29 @@
+canvas 1
+collection @flow-emergency-dispatch "Emergency dispatch escalation" theme=atlas description="Illustrative dispatch software workflow, not operational emergency guidance." {
+ node @reported start "Incident reported" role=primary {}
+ node @assess step "Classify incident" { text @detail "Record location, incident type and contact." }
+ node @eligible decision "Dispatch required?" role=decision {}
+ node @referred end "Referral recorded" role=supporting {}
+ node @available decision "Unit available?" role=decision {}
+ node @escalate step "Escalate to supervisor" role=warning { text @detail "Request mutual aid and record the unmet need." }
+ node @aid decision "Aid confirmed?" role=decision {}
+ node @assign step "Assign responding unit" { text @detail "Send incident details and await acceptance." }
+ node @accepted end "Response assigned" role=success {}
+ node @unresolved end "Unresolved escalation" role=warning { text @detail "Keep the incident open in the supervisor queue." }
+ wire @open @reported -> @assess "open incident" kind=flow
+ wire @classify @assess -> @eligible "classification ready" kind=flow
+ wire @refer @eligible -> @referred "no: refer service" kind=flow
+ wire @needed @eligible -> @available "yes: seek unit" kind=flow
+ wire @local @available -> @assign "yes: local unit" kind=flow
+ wire @shortage @available -> @escalate "no: resource gap" kind=flow
+ wire @request @escalate -> @aid "check mutual aid" kind=flow
+ wire @mutual @aid -> @assign "yes: aid unit" kind=flow
+ wire @pending @aid -> @unresolved "no: retain ownership" kind=flow
+ wire @dispatch @assign -> @accepted "unit accepts" kind=flow
+ section @dispatch "DISPATCH / Escalation preserves incident ownership" mode=flow layout=layered direction=right gap=compact {
+  group @intake "TRIAGE" layout=layered direction=down gap=compact { show @reported @assess @eligible @referred }
+  group @response "FIND A RESPONSE" layout=layered direction=down gap=compact { show @available @escalate @aid @unresolved }
+  group @handoff "TRANSFER OWNERSHIP" layout=layered direction=down gap=compact { show @assign @accepted }
+  connect @open @classify @refer @needed @local @shortage @request @mutual @pending @dispatch
+ }
+}

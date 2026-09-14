@@ -1,6 +1,6 @@
 # Canvas development contract
 
-This repository is a directory scaffold, not a working application. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
+Model and Library have pure tested implementations; Persistence has a tested SQLite/backup implementation; Assets has tested media/file/lease implementations. Templates has tested immutable preset policy and required codec seams. Presentation has measured notation and shared React rendering; Layout has tested constrained placement, native routing and independent scene inspection. Authoring has tested atomic admission, receipt reconciliation and inverse history. Language has tested readable DSL creation, ordered patches and faithful full/scoped readouts. Design System has tested token/theme resolution, generated styles, safe scope installation and reusable React/panel primitives. Canvas has tested React Flow interaction and recovery with a still-open file-standards gate. Export now has tested real artifact encoders and portable import preparation, with a still-open file-standards gate. Application integration is in progress: the authenticated local service, CLI DSL creation/editing, React Flow workspace, responsive panels and durable edit recovery are implemented. Human creation and dragging have been exercised in the visible browser; placement survives refresh and service restart. All eight retained host cases now execute. Host A1/A2 audits are recorded; the full UI, independent UI audits, coding gates and final mixed collection acceptance remain incomplete. See docs/integration/Progress.md for current evidence. Read docs/baseline/ before implementation. The original app’s data/implementation is not copied here. The repository may later live under novakai/package/canvas; use capability/ for its internal architecture.
 
 ## Authority and scope
 
@@ -24,3 +24,9 @@ This repository is a directory scaffold, not a working application. Read docs/ba
 ## Starting work
 
 Use BUILD-ORDER.md. Implement thin complete behaviors through contracts rather than completing an entire capability in isolation. Introduce dependency pins, manifests and enforcement honestly with the first slice. Scaffold verification is not an application build/test result.
+
+## Visual-quality mission and final evidence
+
+Read `docs/agent-diagrams/visual-quality/README.md`, `SOP.md`, and `References.md` before resuming the five-stage build. The Docker infographic and AWS architecture images are mandatory target context, alongside retained ER/module references. Each stage has five build docs and a separate file-estimate appendix. User authorization continues through building, corrections, stage PRs and subsequent stages; audit limits prevent endless reviews, not completion work. The Result protocol in root `CODING-STANDARDS.md` section 9 supersedes historical dialect examples. Do not claim all-stage completion from the current Atlas corpus or a green suite.
+
+Five visual-quality stages are implemented. Read `quality/agent-diagrams/visual-quality/stage-5/README.md` and `GALLERY.md` for the 24 original DSL examples, additional mixed collection, browser/export/durability proof and bounded review dispositions. These evidence records do not close the separately deferred UI/panel redesign. Preserve the approved reference images and semantic authoring constraints in future work.

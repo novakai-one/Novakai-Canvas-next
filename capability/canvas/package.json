@@ -1,0 +1,30 @@
+{
+  "name": "@novakai/canvas-canvas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./contract/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "@xyflow/react": "12.11.6",
+    "@novakai/canvas-model": "workspace:*",
+    "@novakai/canvas-layout": "workspace:*",
+    "@novakai/canvas-presentation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@testing-library/react": "16.3.3",
+    "jsdom": "30.0.1",
+    "@types/jsdom": "30.0.0",
+    "@novakai/canvas-design-system": "workspace:*"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
+}

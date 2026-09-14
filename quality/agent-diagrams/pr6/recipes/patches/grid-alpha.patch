@@ -1,0 +1,10 @@
+patch 1 @grid-alpha {
+  set collection title="Compare customer research formats"
+  set node @guided label="Moderated interview"
+  set block @guided.@summary text="Explore a recent experience with a facilitator asking follow-up questions."
+  set node @self label="Diary study"
+  set block @self.@summary text="Let participants record moments in context over several days."
+  set node @paired label="Paired usability session"
+  set block @paired.@summary text="Observe two participants complete and discuss a realistic task."
+  set section @options title="Research formats at a glance"
+}

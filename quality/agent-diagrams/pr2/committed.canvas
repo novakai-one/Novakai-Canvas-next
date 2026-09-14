@@ -1,0 +1,122 @@
+# composition-baseline revision=0
+canvas 1
+collection @composition-baseline "COMPOSITION LAB / A museum, a library, a decision" theme="paper@1.0.0#sha256:26f6c69a71213b2315ac1000f6dff35d82d819af11e11f6d00fc25696e5be094" description="Original DSL composition probes. Geometry is automatic. These are illustrative systems, not extracted source architecture." layout=grid gap=roomy {
+  node @artifact entity "Artifact" role=primary size=medium sources=[] {
+  field @id "artifact_id" type="ArtifactId" key=primary
+  field @title "title" type="string"
+  field @period "period" type="Period"
+}
+  node @museum entity "Museum" role=primary size=medium sources=[] {
+  field @id "museum_id" type="MuseumId" key=primary
+  field @name "name" type="string"
+}
+  node @loan entity "Loan" role=neutral size=medium sources=[] {
+  field @id "loan_id" type="LoanId" key=primary
+  field @museum "borrower_id" type="MuseumId" key=foreign references=@museum.@id
+  field @due "due_date" type="Date"
+}
+  node @loan-item entity "Loan item" role=supporting size=medium sources=[] {
+  field @loan "loan_id" type="LoanId" key=foreign references=@loan.@id
+  field @artifact "artifact_id" type="ArtifactId" key=foreign references=@artifact.@id
+  keygroup @identity kind=primary fields=[@loan, @artifact]
+}
+  node @inspection entity "Inspection" role=success size=medium sources=[] {
+  field @id "inspection_id" type="InspectionId" key=primary
+  field @artifact "artifact_id" type="ArtifactId" key=foreign references=@artifact.@id
+  field @condition "condition" type="Condition"
+}
+  node @reader participant "Reader" role=primary size=medium sources=[] {
+
+}
+  node @catalog participant "Catalog" role=neutral size=medium sources=[] {
+
+}
+  node @holds participant "Reservations" role=supporting size=medium sources=[] {
+
+}
+  node @notice participant "Notifications" role=neutral size=medium sources=[] {
+
+}
+  node @desk participant "Pickup desk" role=success size=medium sources=[] {
+
+}
+  node @local-policy concept "Local archive" role=primary size=medium sources=[] {
+  text @purpose "Keep the original close to the curator."
+}
+  node @local-speed concept "Fast to inspect" role=neutral size=medium sources=[] {
+  list @points ["No network dependency", "Immediate full-resolution access"]
+}
+  node @local-risk note "One building is one failure domain" role=warning size=medium sources=[] {
+  text @risk "Arrange an independent backup."
+}
+  node @shared-policy concept "Shared repository" role=supporting size=medium sources=[] {
+  text @purpose "Give partner museums one catalog."
+}
+  node @shared-access concept "Easy to collaborate" role=neutral size=medium sources=[] {
+  list @points ["Shared identifiers", "Consistent access policy"]
+}
+  node @shared-risk note "Availability depends on the service" role=warning size=medium sources=[] {
+  text @risk "Keep an offline inventory."
+}
+  node @hybrid-policy concept "Hybrid archive" role=success size=medium sources=[] {
+  text @purpose "Combine local originals and shared discovery."
+}
+  node @hybrid-access concept "Resilient discovery" role=neutral size=medium sources=[] {
+  list @points ["Local preservation copy", "Shared searchable metadata"]
+}
+  node @hybrid-risk note "Synchronization needs ownership" role=warning size=medium sources=[] {
+  text @risk "Name the authoritative record."
+}
+  wire @borrows @museum.@id -> @loan.@museum "borrows" kind=association from=1 to=0..many sources=[]
+  wire @includes @loan.@id -> @loan-item.@loan "includes" kind=association from=1 to=1..many sources=[]
+  wire @travels @artifact.@id -> @loan-item.@artifact "travels on" kind=association from=1 to=0..many sources=[]
+  wire @checked @artifact.@id -> @inspection.@artifact "checked by" kind=association from=1 to=0..many sources=[]
+  section @museum-loans "MUSEUM LOANS / Trace every movement" mode=er layout=layered gap=compact {
+  show @museum
+  show @loan
+  show @artifact
+  show @loan-item
+  show @inspection
+  connect @borrows
+  connect @includes
+  connect @travels
+  connect @checked
+}
+  section @library-reservation "RESERVATION / Availability decides the path" mode=sequence order=1 layout=sequence direction=down gap=compact {
+  show @reader
+  show @catalog
+  show @holds
+  show @notice
+  show @desk
+  event @search @reader -> @catalog "Find a copy" activate=true
+  event @status @catalog -> @reader "Availability" kind=return activate=false
+  fragment @availability alt "Reserve or wait" {
+  branch @available "Copy available" {
+  event @hold @reader -> @holds "Reserve copy" activate=true
+  event @notify @holds -> @notice "Send confirmation" kind=async
+  event @stage @holds -> @desk "Prepare pickup" kind=async
+  event @confirmed @holds -> @reader "Reservation confirmed" kind=return activate=false
+}
+  branch @unavailable "No copy available" {
+  event @queue @reader -> @holds "Join waitlist"
+  event @queued @holds -> @reader "Queue position" kind=return
+}
+}
+}
+  section @archive-comparison "ARCHIVE OPTIONS / Choose by the failure you can tolerate" mode=grid order=2 layout=grid gap=compact {
+  group @options "Three operating models" layout=grid gap=compact {
+  group @local "LOCAL" represents=@local-policy layout=grid gap=compact {
+  show @local-speed
+  show @local-risk
+}
+  group @shared "SHARED" represents=@shared-policy layout=grid gap=compact {
+  show @shared-access
+  show @shared-risk
+}
+  group @hybrid "HYBRID" represents=@hybrid-policy layout=grid gap=compact {
+  show @hybrid-access
+  show @hybrid-risk
+}
+}
+}
+}

@@ -1,0 +1,7 @@
+/* Shared token styling; Design System owns visual correction, host owns behavior recovery. */
+@layer components {
+.panel { position:relative; display:flex; flex-direction:column; min-block-size:0; block-size:100%; border-inline-end:var(--nv-stroke-base) solid var(--nv-border-default); background:var(--nv-color-panel); color:var(--nv-color-content); font-family:var(--nv-font-body); font-size:var(--nv-type-base); line-height:var(--nv-line-height-body); z-index:var(--nv-layer-chrome); }
+.resize { position:absolute; inset-block:0; inset-inline-end:0; inline-size:var(--nv-space-2); cursor:ew-resize; touch-action:none; }
+.panel[data-side="right"] .resize { inset-inline-start:0; inset-inline-end:auto; }
+.resize:focus-visible { outline:var(--nv-focus-width) solid var(--nv-color-focus); outline-offset:var(--nv-focus-offset); }
+}

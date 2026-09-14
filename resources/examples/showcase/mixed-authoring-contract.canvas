@@ -1,0 +1,60 @@
+canvas 1
+collection @mixed-authoring-contract "Two authors / one admission boundary" theme=studio {
+  asset @source image source="./assets/evidence.svg" alt="Readable source inspected before applying changes"
+  asset @gate image source="./assets/shield.svg" alt="The admission boundary protects valid shared data"
+  asset @human image source="./assets/conversation.svg" alt="A human expresses an edit through the interface"
+  node @agent concept "Agent authors DSL" frame=none composition=media-left size=large {
+    image @figure asset=@source size=small
+    text @caption "Readable meaning, grouping and route intent. Language lowers the source into a candidate." role=caption
+  }
+  node @person concept "Human edits the canvas" frame=none composition=media-left size=large {
+    image @figure asset=@human size=small
+    text @caption "UI actions produce intent; they do not bypass admission." role=caption
+  }
+  node @admit concept "Authoring admits the change" frame=none composition=media-top size=large {
+    image @figure asset=@gate size=medium
+    text @caption "Validate the whole candidate, check feasibility and compare the versions read." role=caption
+  }
+  node @saved step "Commit and retain a receipt" role=success {
+    text @caption "Persistence performs the physical transaction. Authoring owns the admission decision and recovery." role=caption
+  }
+  node @reject note "Keep the previous revision" role=warning {
+    text @caption "A conflict or invalid candidate returns a structured error. The draft remains available for correction." role=caption
+  }
+  wire @agent-intent @agent -> @admit "compiled diagram intent" kind=flow
+  wire @human-intent @person -> @admit "human edit intent" kind=flow
+  wire @accepted @admit -> @saved "valid and current" kind=flow step=1
+  wire @rejected @admit -> @reject "invalid or stale" kind=flow
+  section @path "AUTHORING / Shared admission, distinct inputs" mode=story layout=grid columns=3 direction=right gap=roomy {
+    group @inputs "TWO INPUT PATHS" frame=panel layout=grid columns=1 direction=down gap=roomy { show @agent @person }
+    before group:@inputs @admit
+    before @admit group:@outcomes
+    show @admit
+    group @outcomes "EXPLICIT OUTCOME" frame=none layout=grid columns=1 direction=down gap=roomy { show @saved @reject }
+    connect @agent-intent source-side=right target-side=left
+    connect @human-intent source-side=right target-side=bottom
+    connect @accepted source-side=right target-side=left
+    connect @rejected source-side=bottom target-side=left
+  }
+  node @authoring module "Authoring" {
+    port @commits out "commits" type="Committer"
+  }
+  node @committer interface "Committer" {
+    member @commit "commit" type="(request: CommitRequest) => Promise<Result<Receipt>>" visibility=public
+  }
+  node @bridge module "Local commit adapter" {
+    text @detail "Application composition binds the synchronous storage owner to Authoring's asynchronous port." role=caption
+  }
+  node @physical function "Persistence.commit" size=large {
+    signature @call "commit" parameters=["input: unknown"] returns="Result<Receipt>"
+  }
+  wire @depends @authoring.@commits -> @committer "depends on owned port" kind=imports
+  wire @implements @bridge -> @committer.@commit "implements at composition" kind=implements
+  wire @calls @bridge -> @physical "calls physical transaction" kind=calls
+  section @boundary "ENGINEERING / Commit authority crosses a typed port" mode=modules layout=grid columns=2 direction=right gap=roomy {
+    show @authoring @committer @physical @bridge
+    connect @depends source-side=right target-side=left
+    connect @implements source-side=top target-side=right
+    connect @calls source-side=left target-side=right
+  }
+}

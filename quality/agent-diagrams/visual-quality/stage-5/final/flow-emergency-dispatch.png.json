@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "flow-emergency-dispatch",
+    "revision": 0,
+    "title": "Emergency dispatch escalation",
+    "inputKeySha256": "97392001ba2ef3c8bf259edc08253e4d0bbd15221456721b01aa3e2b47c382fb"
+  },
+  "digest": "f2d3dbab06da40f5cf2f2190eb2f8b3d1ed3f2cbf6b75ac570406c493c8b4d40",
+  "bytes": 137652,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1897.40282746875,
+    "height": 966.5713800000001
+  }
+}

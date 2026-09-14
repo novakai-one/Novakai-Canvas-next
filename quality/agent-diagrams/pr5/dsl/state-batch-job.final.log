@@ -1,0 +1,5 @@
+no-op: pr5-final-state-batch-job
+Workspace sequence: 54
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes replace ../Novakai-Canvas-next-corpus/resources/examples/showcase/state-batch-job.canvas --revision 0 --request pr5-final-state-batch-job
+(node:26077) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

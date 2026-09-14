@@ -1,9 +1,9 @@
-# persistence
+# Persistence
 
-Responsibility: Atomic durable records, receipts, recovery and backups.
+Owns atomic versioned storage, receipts, recovery and consistent backup/restore. Semantic document admission belongs to Authoring.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+Use `contract/index.ts`. `openSqlite(location, workspaceId)` creates the Node service; all operations return typed results. Node24.13+ is required; native SQLite currently emits an experimental API warning. File mode uses WAL/FULL durability; `:memory:` deliberately does not survive close.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
+Records are JSON envelopes inside SQLite. Every mutation has explicit expected versions; successful retries return the original receipt. Restore targets a new empty location, requires injected domain validation and protected resource staging, and never switches the host automatically. On an uncertain commit, reopen/reconcile before retrying or activating a restored location.
 
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+Specifications: `docs/specs/persistence/`. Actual host composition, Assets leases and Model/Library restore validation are connected during the remaining capability/UI delivery; in-process injected providers are the present integration evidence.

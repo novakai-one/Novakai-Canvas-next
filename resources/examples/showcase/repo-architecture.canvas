@@ -1,0 +1,182 @@
+canvas 1
+collection @repo-architecture "This repo, drawn by itself" theme=studio description="The canvas repository drawn by the canvas app. Solid edges are real source imports; dashed edges are ports the composition root injects. Three views: capability dependencies, the agent edit and render paths, and one create request." layout=grid columns=2 {
+
+  node @model module "Model" {
+    text @c1 "Owns diagram validity." role=caption
+  }
+  node @library module "Library" {
+    text @c2 "Owns catalog validity." role=caption
+  }
+  node @persistence module "Persistence" {
+    figure @store store size=small
+    text @c3 "Atomic physical transactions." role=caption
+  }
+  node @tokens module "Design System" {
+    text @c4 "Token and theme authority." role=caption
+  }
+  node @language module "Language" {
+    text @c5 "DSL becomes validated intent." role=caption
+  }
+  node @presentation module "Presentation" {
+    text @c6 "Measured notation." role=caption
+  }
+  node @layout module "Layout" {
+    text @c7 "Placement and routing." role=caption
+  }
+  node @authoring module "Authoring" {
+    port @api out "prepare · apply · undo · redo" type="Authoring"
+    port @deps in "planners · validation · commits" type="Dependencies"
+    text @c8 "Imports nothing — every port is *injected*." role=caption
+  }
+  node @canvas module "Canvas" {
+    text @c9 "React Flow interaction." role=caption
+  }
+  node @export module "Export" {
+    text @c10 "SVG · PNG · PDF encoders." role=caption
+  }
+  node @service module "Service" {
+    text @c11 "Composition root." role=caption
+  }
+  node @web module "Web" {
+    text @c12 "Workspace shell." role=caption
+  }
+  node @cli module "Agent CLI" {
+    text @c13 "create · patch · replace · receipt" role=caption
+  }
+  node @leg-a1 module "Host" {
+    text @la1 "apps/cli" role=caption
+  }
+  node @leg-a2 module "Capability" {
+    text @la2 "capability/language" role=caption
+  }
+  node @leg-b1 module "Authoring" {
+    text @lb1 "capability/authoring" role=caption
+  }
+  node @leg-b2 module "Model" {
+    text @lb2 "capability/model" role=caption
+  }
+
+  node @dsl start "DSL source" step=1 {
+    text @d1 "canvas create story.canvas" role=caption
+  }
+  node @parse step "Language — parse + lower" step=2 {
+    text @d2 "Bounded AST becomes checked intent" role=caption
+  }
+  node @valid decision "Valid and planned?" step=3 {}
+  node @diag note "Typed diagnostics" role=warning {
+    text @d4 "Codes and paths survive — agent corrects" role=caption
+  }
+  node @prepare step "Authoring — prepare" step=4 {
+    text @d5 "Hash · feasibility · preview" role=caption
+  }
+  node @apply step "Authoring — apply" step=5 {
+    text @d6 "One *physical* transaction" role=caption
+  }
+  node @receipt end "Receipt — r(n+1)" step=6 {}
+  node @request start "Render request" step=1 composition=media-top {
+    figure @jobs queue level=half size=small
+    text @d7 "Browser · CLI · export job" role=caption
+  }
+  node @project step "Design System — projection" step=3 {
+    text @d8 "Theme tokens become resolved style" role=caption
+  }
+  node @scene step "Layout — readScene" step=4 {
+    text @d9 "Placement + native routing" role=caption
+  }
+  node @measure step "Presentation — measure" step=5 {
+    text @d10 "Admitted fonts, real metrics" role=caption
+  }
+  node @surfaces end "Canvas · SVG · PNG · PDF" step=6 {}
+
+  node @leg-bands note "Rows read upward — hosts, then capabilities, then roots" frame=card {
+    text @lc "Every arrow points at the package being depended on." role=caption
+  }
+
+  node @pin step "Theme pin resolved" step=2 {
+    text @d11 "studio@1.1.0#sha256 — bytes are reproducible" role=caption
+  }
+
+  node @agent participant "Agent CLI" {}
+  node @svc participant "Service" {}
+  node @lang participant "Language" {}
+  node @auth participant "Authoring" {}
+  node @modelp participant "Model (via port)" {}
+  node @db participant "Persistence" {}
+
+  wire @i1 @language -> @model "validate · plan · stage" kind=imports
+  wire @i2 @presentation -> @model "domain records" kind=imports
+  wire @i3 @layout -> @presentation "measured content" kind=imports
+  wire @i4 @canvas -> @layout "scenes" kind=imports
+  wire @i6 @export -> @layout "scenes" kind=imports
+  wire @i8 @service -> @authoring.@deps "injects the ports" kind=imports
+  wire @i9 @service -> @tokens "resolves themes" kind=imports
+  wire @i10 @web -> @canvas "hosts React Flow" kind=imports
+  wire @i11 @cli -> @language "parses DSL" kind=imports
+  wire @p8 @authoring -> @model "port" kind=reference style=dashed
+  wire @p9 @authoring -> @library "port" kind=reference style=dashed
+  wire @p10 @authoring -> @persistence "port" kind=reference style=dashed
+  wire @leg1 @leg-a1 -> @leg-a2 "package import" kind=imports
+  wire @leg2 @leg-b1 -> @leg-b2 "injected port" kind=reference style=dashed
+
+  wire @s1 @dsl -> @parse "source" kind=flow
+  wire @s2 @parse -> @valid "intent" kind=flow
+  wire @s3 @valid -> @prepare "yes" kind=flow
+  wire @s4 @prepare -> @apply "confirmed" kind=flow
+  wire @s5 @apply -> @receipt "committed" kind=flow
+  wire @s6 @valid -> @diag "no" kind=flow
+  wire @s7 @diag -> @dsl "correct + retry" kind=flow style=dashed
+  wire @q1 @request -> @pin "theme pin" kind=flow
+  wire @q1b @pin -> @project "digest" kind=flow
+  wire @q2 @project -> @scene "projection" kind=flow
+  wire @q3 @scene -> @measure "scene" kind=flow
+  wire @q4 @measure -> @surfaces "render" kind=flow
+
+  section @map "Who imports whom" mode=modules direction=right gap=roomy order=1 {
+    show @cli @web @service @language @presentation @layout @authoring @canvas @export @tokens @model @library @persistence
+    connect @i1 @i2 @i3 @i4 @i6 @i8 @i9 @i10 @i11 @p9 @p10
+    connect @p8 source-side=top target-side=bottom
+    rank @cli @web @service @export
+    rank @language @canvas @authoring @tokens
+    rank @layout @library @persistence
+    rank @model @library @persistence @tokens
+  }
+
+  section @paths "An agent edit, and the render that follows" mode=grid layout=grid columns=2 direction=right gap=roomy order=3 {
+    group @write "WRITE — AN AGENT EDIT" frame=panel role=supporting layout=grid columns=1 direction=down gap=normal {
+      show @dsl @parse @valid @diag @prepare @apply @receipt
+    }
+    group @render "RENDER — FOUR SURFACES" frame=panel role=supporting layout=grid columns=1 direction=down gap=normal {
+      show @request @pin @project @scene @measure @surfaces
+    }
+    connect @s1 @s2 @s3 @s4 @s5 source-side=bottom target-side=top
+    connect @s6 source-side=left target-side=left
+    connect @s7 source-side=left target-side=left
+    connect @q1 @q1b @q2 @q3 @q4 source-side=bottom target-side=top
+  }
+
+  section @legend "How to read this map" mode=grid layout=grid columns=2 direction=right gap=normal order=2 {
+    show @leg-a1 @leg-a2 @leg-b1 @leg-b2 @leg-bands
+    connect @leg1 @leg2 source-side=right target-side=left
+  }
+
+  section @create "One create request" mode=sequence gap=compact order=4 {
+    show @agent @svc @lang @auth @modelp @db
+    event @e1 @agent -> @svc "canvas create story.canvas" kind=call
+    event @e2 @svc -> @lang "parse + lower" kind=call
+    event @e3 @lang -> @svc "validated intent" kind=return
+    event @e4 @svc -> @auth "prepare(request)" kind=call activate=true
+    event @e5 @auth -> @modelp "validate + plan" kind=call
+    event @e6 @modelp -> @auth "Result<candidate>" kind=return
+    fragment @outcome alt "Outcome" {
+      branch @committed "Committed" {
+        event @e7 @auth -> @db "one transaction" kind=call
+        event @e8 @db -> @auth "Receipt" kind=return
+        event @e9 @svc -> @agent "receipt · r(n+1)" kind=return
+      }
+      branch "Rejected" {
+        event @f1 @auth -> @svc "typed diagnostics" kind=return
+        event @f2 @svc -> @agent "correct + retry" kind=return
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+@layer components {
+  .node {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .node[data-preview='true'] {
+    outline: var(--nv-stroke-base) dashed var(--nv-action-accent);
+  }
+  .node :global(.react-flow__handle) {
+    background: var(--nv-surface-base);
+    border-color: var(--nv-border-default);
+  }
+}

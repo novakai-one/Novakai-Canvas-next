@@ -1,0 +1,21 @@
+{
+  "name": "@novakai/canvas-authoring",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./contract/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "@novakai/canvas-model": "workspace:*",
+    "@novakai/canvas-library": "workspace:*",
+    "@novakai/canvas-persistence": "workspace:*"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
+}

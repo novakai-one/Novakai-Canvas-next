@@ -1,0 +1,47 @@
+canvas 1
+collection @modules-payroll-policy "Payroll calculation contracts" theme=atlas {
+ node @run module "Payroll run" role=primary {
+  port @policy out "policy" type="PayPolicy"
+  port @rounding out "rounding" type="RoundingPolicy"
+  port @calculate out "calculate" type="PayCalculator"
+ }
+ node @policy interface "PayPolicy" role=supporting {
+  member @gross "gross" type="(WorkPeriod, Rate) => Money" visibility=public
+  member @deduct "deductions" type="(Money, TaxProfile) => Money" visibility=public
+ }
+ node @rounding interface "RoundingPolicy" {
+  member @round "round" type="(Money, Currency) => Money" visibility=public
+ }
+ node @calculate function "calculatePay" size=medium {
+  signature @call "calculatePay" parameters=["period: WorkPeriod", "policy: PayPolicy", "rounding: RoundingPolicy"] returns="PayStatement"
+ }
+ node @gross function "grossPay" {
+  signature @call "grossPay" parameters=["period: WorkPeriod", "rate: Rate"] returns="Money"
+ }
+ node @deduct function "deductions" {
+  signature @call "deductions" parameters=["gross: Money", "profile: TaxProfile"] returns="Money"
+ }
+ node @round function "roundMoney" {
+  signature @call "roundMoney" parameters=["value: Money", "currency: Currency"] returns="Money"
+ }
+ wire @imports-policy @run.@policy -> @policy "imports pay rules" kind=imports
+ wire @imports-rounding @run.@rounding -> @rounding "imports rounding rules" kind=imports
+ wire @imports-calculator @run.@calculate -> @calculate "imports calculator" kind=imports
+ wire @call-gross @calculate -> @gross "calculates gross" kind=calls
+ wire @call-deduct @calculate -> @deduct "calculates deductions" kind=calls
+ wire @call-round @calculate -> @round "rounds net amount" kind=calls
+ wire @gross-policy @gross -> @policy.@gross "implements gross" kind=implements
+ wire @deduct-policy @deduct -> @policy.@deduct "implements deductions" kind=implements
+ wire @round-policy @round -> @rounding.@round "implements round" kind=implements
+ section @payroll "PAYROLL / Callable rules behind two contracts" mode=modules layout=grid columns=3 direction=right gap=roomy {
+  before @run group:@contracts
+  before group:@contracts group:@functions
+  group @contracts "RULE CONTRACTS" layout=grid columns=1 direction=down gap=roomy { show @policy @rounding }
+  group @functions "PURE CALCULATION" layout=layered direction=down gap=roomy { show @calculate @gross @deduct @round }
+  show @run
+  connect @imports-policy @imports-rounding source-side=right target-side=left
+  connect @imports-calculator source-side=right target-side=top
+  connect @call-gross @call-deduct @call-round source-side=bottom target-side=top
+  connect @gross-policy @deduct-policy @round-policy source-side=left target-side=right
+ }
+}

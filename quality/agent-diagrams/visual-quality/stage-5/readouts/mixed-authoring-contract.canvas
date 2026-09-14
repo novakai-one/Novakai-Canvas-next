@@ -1,0 +1,70 @@
+# mixed-authoring-contract revision=0
+canvas 1
+collection @mixed-authoring-contract "Two authors / one admission boundary" theme="studio@1.0.1#sha256:b7c632906dc67c69671c0f8661f43a261bab0d6c1545ddadf6974eea96c5f78a" layout=grid {
+  asset @source image source="sha256:e8f93d29f128f74ec2c949cbffe8a3f6541dc57a42f114caccf94e1c1dda57a8" alt="Readable source inspected before applying changes"
+  asset @gate image source="sha256:0bc044e8e0be3bc07b3538468145e0e7655df95c15dc090a4de041cc08401dc4" alt="The admission boundary protects valid shared data"
+  asset @human image source="sha256:b68211627ad6ec39efcd325f9c068c522208981155884ed59f59a6088a6c386e" alt="A human expresses an edit through the interface"
+  node @agent concept "Agent authors DSL" role=neutral size=large frame=none composition=media-left sources=[] {
+  image @figure asset=@source size=small
+  text @caption "Readable meaning, grouping and route intent. Language lowers the source into a candidate." role=caption
+}
+  node @person concept "Human edits the canvas" role=neutral size=large frame=none composition=media-left sources=[] {
+  image @figure asset=@human size=small
+  text @caption "UI actions produce intent; they do not bypass admission." role=caption
+}
+  node @admit concept "Authoring admits the change" role=neutral size=large frame=none composition=media-top sources=[] {
+  image @figure asset=@gate size=medium
+  text @caption "Validate the whole candidate, check feasibility and compare the versions read." role=caption
+}
+  node @saved step "Commit and retain a receipt" role=success size=medium frame=auto composition=stack sources=[] {
+  text @caption "Persistence performs the physical transaction. Authoring owns the admission decision and recovery." role=caption
+}
+  node @reject note "Keep the previous revision" role=warning size=medium frame=auto composition=stack sources=[] {
+  text @caption "A conflict or invalid candidate returns a structured error. The draft remains available for correction." role=caption
+}
+  node @authoring module "Authoring" role=neutral size=medium frame=auto composition=stack sources=[] {
+  port @commits out "commits" type="Committer"
+}
+  node @committer interface "Committer" role=neutral size=medium frame=auto composition=stack sources=[] {
+  member @commit "commit" type="(request: CommitRequest) => Promise<Result<Receipt>>"
+}
+  node @bridge module "Local commit adapter" role=neutral size=medium frame=auto composition=stack sources=[] {
+  text @detail "Application composition binds the synchronous storage owner to Authoring's asynchronous port." role=caption
+}
+  node @physical function "Persistence.commit" role=neutral size=large frame=auto composition=stack sources=[] {
+  signature @call "commit" parameters=["input: unknown"] returns="Result<Receipt>"
+}
+  wire @agent-intent @agent -> @admit "compiled diagram intent" sources=[]
+  wire @human-intent @person -> @admit "human edit intent" sources=[]
+  wire @accepted @admit -> @saved "valid and current" step=1 sources=[]
+  wire @rejected @admit -> @reject "invalid or stale" sources=[]
+  wire @depends @authoring.@commits -> @committer "depends on owned port" kind=imports sources=[]
+  wire @implements @bridge -> @committer.@commit "implements at composition" kind=implements sources=[]
+  wire @calls @bridge -> @physical "calls physical transaction" kind=calls sources=[]
+  section @path "AUTHORING / Shared admission, distinct inputs" mode=story columns=3 layout=grid gap=roomy {
+  show @admit
+  group @inputs "TWO INPUT PATHS" frame=panel role=neutral columns=1 layout=grid direction=down gap=roomy {
+  show @agent
+  show @person
+}
+  group @outcomes "EXPLICIT OUTCOME" frame=none role=neutral columns=1 layout=grid direction=down gap=roomy {
+  show @saved
+  show @reject
+}
+  connect @agent-intent source-side=right target-side=left
+  connect @human-intent source-side=right target-side=bottom
+  connect @accepted source-side=right target-side=left
+  connect @rejected source-side=bottom target-side=left
+  before group:@inputs @admit
+  before @admit group:@outcomes
+}
+  section @boundary "ENGINEERING / Commit authority crosses a typed port" mode=modules columns=2 layout=grid gap=roomy {
+  show @authoring
+  show @committer
+  show @physical
+  show @bridge
+  connect @depends source-side=right target-side=left
+  connect @implements source-side=top target-side=right
+  connect @calls source-side=left target-side=right
+}
+}

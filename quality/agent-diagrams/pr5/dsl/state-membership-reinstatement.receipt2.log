@@ -1,0 +1,5 @@
+committed: pr5-r2-state-membership-reinstatement
+Workspace sequence: 29
+$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5184 --workspace .local/routing-probes receipt pr5-r2-state-membership-reinstatement
+(node:23065) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

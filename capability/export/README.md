@@ -1,9 +1,13 @@
-# export
+# Export
 
-Responsibility: Revision-consistent export artifacts and prepared imports.
+Responsibility: produce retained-revision SVG, PNG, PDF, offline HTML and editable bundles; prepare uncommitted imports for Authoring.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+Public entry: `@novakai/canvas-export`. `initializeRaster(module)` runs once at host startup. `composeExport(owners)` binds shared Presentation slots and real encoders. Hosts provide a consistent snapshot lease, owner resource inspection, Model/Language document operations and the supplied reader stylesheet. `createExport(dependencies)` supports equivalent in-process hosts with explicit format roles.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
+`exportArtifact({identity:{collectionId,revision},format,scope})` returns detached bytes, content digest and source metadata. PDF tiles ordered sections at a fixed readable scale. Native adapters do not perform filesystem downloads.
 
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+`inspectBundle(bytes)` checks the bounded versioned manifest, hashes and required owner validation. `prepareImport({bytes,targetCollectionId})` reconstructs full DSL plus manual/storage-order sidecar under a new namespace at revision zero. Authoring must revalidate and atomically admit its resources and absent-target precondition. Neither operation commits data.
+
+Shared fonts are embedded once per exported scene. Native WOFF2 decoding serializes and copies the decoder's reusable heap; raster font aliases bind actual internal font families. Ambiguous internal names fail explicitly. WebP images are losslessly converted for PDFKit.
+
+Verification: exactly 12 in-process cases; see quality/export-test-budget.md and docs/specs/export. These do not certify application integration or visible-browser UX. File-level standards evidence remains separate from passing tests.

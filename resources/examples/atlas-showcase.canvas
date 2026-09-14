@@ -1,0 +1,212 @@
+canvas 1
+collection @atlas-showcase "ATLAS / From question to trustworthy answer" theme=paper description="An agent-authored showcase in eight diagram languages. Atlas is an illustrative research platform, not a claim about an existing implementation. All content, relationships and layout intent are authored in this DSL; the app derives geometry." {
+  # 01 / An educational overview: six principles, one visual vocabulary.
+  node @ask concept "01 / Ask a better question" role=primary {
+    text @summary "A useful answer begins with a precise decision."
+    list @checklist ["Who will use the answer?", "What decision will it change?", "What would count as evidence?"]
+  }
+  node @retrieve concept "02 / Bring the right evidence" role=supporting {
+    text @summary "Retrieve a small, relevant body of source material."
+    list @checklist ["Search approved documents", "Keep source identities", "Preserve dates and context"]
+  }
+  node @reason concept "03 / Connect the evidence" role=primary {
+    text @summary "Turn retrieved passages into supported claims."
+    list @checklist ["Compare independent sources", "Explain contradictions", "Distinguish inference from fact"]
+  }
+  node @verify concept "04 / Challenge the answer" role=warning {
+    text @summary "Confidence is not a substitute for checking."
+    list @checklist ["Does each citation support its claim?", "Is important evidence missing?", "Should the system abstain?"]
+  }
+  node @deliver concept "05 / Make it reviewable" role=success {
+    text @summary "Give the reader an answer they can inspect."
+    list @checklist ["Lead with the conclusion", "Attach claim-level citations", "Expose uncertainty"]
+  }
+  node @learn concept "06 / Improve the next run" role=supporting {
+    text @summary "Use observed failures to improve the system."
+    list @checklist ["Capture useful feedback", "Add meaningful counterexamples", "Re-evaluate before release"]
+  }
+  section @principles "01 / THE IDEA - What makes an answer trustworthy?" mode=story gap=compact order=0 {
+    show @ask @retrieve @reason @verify @deliver @learn
+  }
+
+  # 02 / Five real ER tables, typed keys, field-level endpoints and multiplicity.
+  node @workspace entity "Workspace" role=primary {
+    field @id "workspace_id" type="WorkspaceId" key=primary
+    field @name "name" type="string"
+    field @retention "retention_days" type="integer"
+  }
+  node @document entity "Document" {
+    field @id "document_id" type="DocumentId" key=primary
+    field @workspace "workspace_id" type="WorkspaceId" key=foreign references=@workspace.@id
+    field @title "title" type="string"
+    field @digest "content_digest" type="SHA256" key=unique
+  }
+  node @chunk entity "Passage" {
+    field @id "passage_id" type="PassageId" key=primary
+    field @document "document_id" type="DocumentId" key=foreign references=@document.@id
+    field @ordinal "ordinal" type="integer"
+    field @body "body" type="text"
+  }
+  node @answer entity "Answer" role=success {
+    field @id "answer_id" type="AnswerId" key=primary
+    field @workspace "workspace_id" type="WorkspaceId" key=foreign references=@workspace.@id
+    field @question "question" type="text"
+    field @status "status" type="AnswerStatus"
+  }
+  node @citation entity "Citation" role=supporting {
+    field @answer "answer_id" type="AnswerId" key=foreign references=@answer.@id
+    field @passage "passage_id" type="PassageId" key=foreign references=@chunk.@id
+    field @claim "claim_index" type="integer"
+    keygroup @identity kind=primary fields=[@answer,@passage,@claim]
+  }
+  wire @workspace-documents @workspace.@id -> @document.@workspace "contains documents" kind=association from=1 to=0..many
+  wire @document-passages @document.@id -> @chunk.@document "splits into passages" kind=association from=1 to=1..many
+  wire @workspace-answers @workspace.@id -> @answer.@workspace "owns answers" kind=association from=1 to=0..many
+  wire @answer-citations @answer.@id -> @citation.@answer "cites evidence" kind=association from=1 to=0..many
+  wire @passage-citations @chunk.@id -> @citation.@passage "supports claims" kind=association from=1 to=0..many
+  section @data "02 / DATA MODEL - How is an answer traceable?" mode=er direction=down gap=compact order=1 {
+    show @workspace @document @chunk @answer @citation size=large
+    connect @workspace-documents @document-passages @workspace-answers @answer-citations @passage-citations
+  }
+
+  # 03 / Concrete imports, a consumer-owned interface and replaceable adapters.
+  node @research module "Research" role=primary {
+    text @purpose "Owns the question-to-answer workflow."
+    signature @run "runResearch" parameters=["question: Question"] returns="Promise<Result<Answer>>"
+    port @search out "retrieve evidence" type="Retriever"
+  }
+  node @retriever interface "Retriever" role=supporting {
+    signature @search "search" parameters=["query: Query", "limit: Count"] returns="Promise<Result<Passage[]>>"
+    member @failure "failure" type="Unavailable | InvalidQuery"
+  }
+  node @vector module "Vector adapter" {
+    text @purpose "Implements semantic retrieval over indexed passages."
+    signature @search "search" parameters=["query: Query", "limit: Count"] returns="Promise<Result<Passage[]>>"
+  }
+  node @keyword module "Keyword adapter" {
+    text @purpose "Implements lexical retrieval with the same public contract."
+    signature @search "search" parameters=["query: Query", "limit: Count"] returns="Promise<Result<Passage[]>>"
+  }
+  node @grounding module "Grounding" role=success {
+    text @purpose "Owns claim-to-source validation."
+    signature @check "checkClaims" parameters=["draft: Draft", "evidence: Passage[]"] returns="GroundingResult"
+  }
+  node @score function "scoreEvidence" {
+    signature @call "scoreEvidence" parameters=["claims: Claim[]", "links: Citation[]"] returns="Coverage"
+    code @rule "Coverage = supported claims / total claims" language="text"
+  }
+  wire @research-retriever @research.@search -> @retriever "depends on retrieval contract" kind=reference
+  wire @vector-contract @vector -> @retriever "implements Retriever" kind=implements style=dashed
+  wire @keyword-contract @keyword -> @retriever "implements Retriever" kind=implements style=dashed
+  wire @research-grounding @research -> @grounding "imports claim validation" kind=imports
+  wire @grounding-score @grounding -> @score "calls pure scoring function" kind=calls
+  section @architecture "03 / MODULES - What can change independently?" mode=modules direction=down gap=compact order=2 {
+    show @research @retriever @vector @keyword @grounding @score size=large
+    connect @research-retriever source-side=right target-side=left
+    connect @vector-contract @keyword-contract @research-grounding @grounding-score source-side=bottom target-side=top
+  }
+
+  # 04 / Time and alternatives are explicit, not inferred from graph edges.
+  node @reader participant "Reader" role=primary {}
+  node @orchestrator participant "Research" {}
+  node @index participant "Retriever" role=supporting {}
+  node @checker participant "Grounding" role=success {}
+  section @conversation "04 / SEQUENCE - When should the system abstain?" mode=sequence direction=down gap=compact order=3 {
+    show @reader @orchestrator @index @checker
+    event @question @reader -> @orchestrator "Research this question" kind=call activate=true
+    event @lookup @orchestrator -> @index "Find relevant passages" kind=call activate=true
+    event @evidence @index -> @orchestrator "Return source-linked evidence" kind=return activate=false
+    event @check @orchestrator -> @checker "Validate draft claims" kind=call activate=true
+    event @verdict @checker -> @orchestrator "Return coverage and unsupported claims" kind=return activate=false
+    fragment @outcome alt "Evidence determines the outcome" {
+      branch @supported "Sufficient support" {
+        event @answer @orchestrator -> @reader "Answer with claim-level citations" kind=return activate=false
+      }
+      branch @unsupported "Insufficient support" {
+        event @abstain @orchestrator -> @reader "Explain the gap; request clarification" kind=return activate=false
+      }
+    }
+  }
+
+  # 05 / An operational SOP with an honest rejection and a rework loop.
+  node @request start "New source received" role=primary {}
+  node @permission decision "Approved to index?" role=decision { text @rule "Check workspace access and source policy." }
+  node @reject end "Reject the source" role=warning { text @why "Explain which requirement failed." }
+  node @normalize step "Extract and normalize" step=1 { text @detail "Preserve headings, page anchors and source identity." }
+  node @inspect decision "Extraction complete?" role=decision { text @rule "Check missing pages, empty text and broken structure." }
+  node @repair step "Repair the extraction" step=2 { text @detail "Choose another parser or correct the source." }
+  node @publish step "Chunk, embed and publish" step=3 { text @detail "Store immutable passages and update the retrieval index." }
+  node @ready end "Ready for retrieval" role=success {}
+  wire @receive @request -> @permission "check admission" kind=flow
+  wire @denied @permission -> @reject "No - explain rejection" kind=flow
+  wire @allowed @permission -> @normalize "Yes - extract content" kind=flow
+  wire @extracted @normalize -> @inspect "inspect extraction" kind=flow
+  wire @incomplete @inspect -> @repair "No - recover missing content" kind=flow
+  wire @retry @repair -> @normalize "retry extraction" kind=flow style=dashed
+  wire @complete @inspect -> @publish "Yes - admit passages" kind=flow
+  wire @published @publish -> @ready "confirm index update" kind=flow
+  section @ingestion "05 / SOP - How does a document become evidence?" mode=flow direction=down gap=compact order=4 {
+    show @request @permission @reject @normalize @inspect @repair @publish @ready
+    connect @receive @denied @allowed @extracted @incomplete @complete @published source-side=bottom target-side=top
+    connect @retry source-side=left target-side=left
+  }
+
+  # 06 / A lifecycle with guard and effect semantics.
+  node @new start "Created" {}
+  node @draft state "Draft" { text @meaning "Claims may change; nothing is published." }
+  node @review state "In review" role=warning { text @meaning "Evidence and citations are being checked." }
+  node @approved state "Approved" role=success { text @meaning "The evidence threshold has been met." }
+  node @released end "Published" role=primary {}
+  wire @initialize @new -> @draft "initialize" kind=transition effect="allocate answer identity"
+  wire @submit @draft -> @review "submit" kind=transition guard="cited" effect="capture revision"
+  wire @rework @review -> @draft "revise" kind=transition guard="unsupported" effect="record findings"
+  wire @approve @review -> @approved "approve" kind=transition guard="checks pass" effect="record approval"
+  wire @release @approved -> @released "publish" kind=transition guard="unchanged" effect="freeze answer"
+  section @lifecycle "06 / STATE MACHINE - What makes publication legal?" mode=state direction=down gap=compact order=5 {
+    show @new @draft @review @approved @released
+    connect @initialize @submit @approve @release source-side=bottom target-side=top
+    connect @rework source-side=right target-side=right
+  }
+
+  # 07 / Hierarchy plus an explicitly non-hierarchical annotation.
+  node @context concept "A useful context package" role=primary {}
+  node @intent concept "Intent" { list @items ["Decision to support", "Audience", "Success criteria"] }
+  node @knowledge concept "Knowledge" { list @items ["Verified sources", "Relevant history", "Domain vocabulary"] }
+  node @constraints concept "Constraints" { list @items ["Access boundaries", "Time and cost limits", "Required output structure"] }
+  node @examples concept "Examples" { list @items ["A good result", "A known failure", "A boundary case"] }
+  node @uncertainty concept "Uncertainty" role=warning { list @items ["Missing evidence", "Conflicting sources", "Explicit assumptions"] }
+  node @context-note note "More context is not automatically better." role=supporting { text @lesson "Keep what changes the decision. Remove repetition and irrelevant history." }
+  wire @intent-link @context -> @intent "defines the task" kind=parent
+  wire @knowledge-link @context -> @knowledge "grounds the answer" kind=parent
+  wire @constraints-link @context -> @constraints "bounds the work" kind=parent
+  wire @examples-link @context -> @examples "makes quality concrete" kind=parent
+  wire @uncertainty-link @context -> @uncertainty "exposes the unknown" kind=parent
+  section @mindmap "07 / MINDMAP - What belongs in the context?" mode=tree direction=right gap=compact order=6 {
+    show @context @intent @knowledge @constraints @examples @uncertainty
+    show @context-note participation=annotation
+    connect @intent-link @knowledge-link @constraints-link @examples-link @uncertainty-link
+    root @context
+  }
+
+  # 08 / A compact visual field guide, using structured tables and shared objects.
+  node @quality-table concept "Choose evidence, not impressions" role=primary {
+    table @checks columns=["Question", "Observable check"] {
+      row @support cells=["Is it grounded?", "Each claim has supporting evidence"]
+      row @trace cells=["Is it traceable?", "Citations resolve to exact passages"]
+      row @honest cells=["Is it honest?", "Unsupported claims trigger abstention"]
+      row @repeat cells=["Is it repeatable?", "Source versions and inputs are retained"]
+    }
+  }
+  node @failure-table concept "Turn failure into a useful next action" role=warning {
+    table @responses columns=["Observed failure", "Next action"] {
+      row @empty cells=["No relevant passages", "Clarify the question or expand sources"]
+      row @conflict cells=["Sources disagree", "Present the disagreement explicitly"]
+      row @stale cells=["Evidence is outdated", "Retrieve a newer authoritative source"]
+      row @weak cells=["Claim exceeds the evidence", "Narrow the claim or abstain"]
+    }
+  }
+  section @field-guide "08 / FIELD GUIDE - How do you judge the result?" mode=grid gap=compact order=7 {
+    show @quality-table @failure-table
+    show @verify @deliver detail=full
+  }
+}

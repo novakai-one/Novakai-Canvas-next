@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "grid-research-methods",
+    "revision": 1,
+    "title": "Research methods evidence matrix",
+    "inputKeySha256": "f4bb182d6b5837600572ac06eade6d9b193f8ba38a69628ad36be5c93a29cdc4"
+  },
+  "digest": "e22c392c529c45549e350c43527e186304a052949ede88850b41ab86bcbed03e",
+  "bytes": 148535,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1296,
+    "height": 1457.52
+  }
+}

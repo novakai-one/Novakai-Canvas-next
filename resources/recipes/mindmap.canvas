@@ -1,0 +1,19 @@
+canvas 1
+collection @specification "What belongs in a build spec?" theme=paper {
+  node @spec concept "Build specification" {}
+  node @purpose concept "Responsibility" { text @detail "The one outcome this capability owns." }
+  node @contract concept "Public contract" { list @items ["Inputs and outputs", "Typed failures", "Versioning"] }
+  node @rules concept "Invariants" { text @detail "States that must always remain valid." }
+  node @proof concept "Acceptance evidence" { text @detail "Observable examples with independently expected results." }
+  node @note note "Read the contract before choosing the internal implementation." {}
+  wire @owns @spec -> @purpose "defines" kind=parent
+  wire @exposes @spec -> @contract "exposes" kind=parent
+  wire @enforces @spec -> @rules "enforces" kind=parent
+  wire @proves @spec -> @proof "proves" kind=parent
+  section @map "Build spec fundamentals" mode=tree layout=tree {
+    show @spec @purpose @contract @rules @proof
+    show @note participation=annotation
+    connect @owns @exposes @enforces @proves
+    root @spec
+  }
+}

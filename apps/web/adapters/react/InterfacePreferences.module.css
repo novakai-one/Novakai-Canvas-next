@@ -1,0 +1,37 @@
+@layer components {
+  .preferences {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-4);
+  }
+  .preferences p {
+    color: var(--nv-color-subtle);
+    font-size: var(--nv-font-caption);
+  }
+  .preferences fieldset {
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .preferences legend {
+    margin-bottom: var(--nv-space-2);
+  }
+  .preferences input {
+    width: 100%;
+    padding: var(--nv-space-3);
+    color: var(--nv-color-content);
+    background: var(--nv-surface-base);
+    border: var(--nv-stroke-base) solid var(--nv-color-input-boundary);
+    border-radius: var(--nv-radius-control);
+    font: inherit;
+  }
+  .preferences input:focus-visible {
+    outline: var(--nv-focus-width) solid var(--nv-color-focus);
+    outline-offset: var(--nv-focus-offset);
+  }
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-2);
+  }
+}

@@ -1,0 +1,44 @@
+# er-museum-loans revision=2
+canvas 1
+collection @er-museum-loans "Museum loans and inspections" theme="atlas@1.0.0#sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7" layout=grid {
+  node @artifact entity "Artifact" role=neutral size=large frame=auto composition=stack sources=[] {
+  field @id "artifact_id" type="ArtifactId" key=primary
+  field @title "title" type="string"
+  field @period "period" type="Period"
+}
+  node @museum entity "Museum" role=neutral size=medium frame=auto composition=stack sources=[] {
+  field @id "museum_id" type="MuseumId" key=primary
+  field @name "name" type="string"
+}
+  node @loan entity "Loan" role=neutral size=large frame=auto composition=stack sources=[] {
+  field @id "loan_id" type="LoanId" key=primary
+  field @museum "borrower_id" type="MuseumId" key=foreign references=@museum.@id
+  field @due "due_date" type="Date"
+  field @returned "returned_at" type="Timestamp" nullable=true
+}
+  node @loan-item entity "Loan item" role=supporting size=medium frame=auto composition=stack sources=[] {
+  field @loan "loan_id" type="LoanId" key=foreign references=@loan.@id
+  field @artifact "artifact_id" type="ArtifactId" key=foreign references=@artifact.@id
+  keygroup @identity kind=primary fields=[@loan, @artifact]
+}
+  node @inspection entity "Inspection" role=success size=small frame=auto composition=stack sources=[] {
+  field @id "inspection_id" type="InspectionId" key=primary
+  field @artifact "artifact_id" type="ArtifactId" key=foreign references=@artifact.@id
+  field @condition "condition" type="Condition"
+}
+  wire @borrows @museum.@id -> @loan.@museum "borrows" kind=association from=1 to=0..many sources=[]
+  wire @includes @loan.@id -> @loan-item.@loan "includes" kind=association from=1 to=1..many sources=[]
+  wire @travels @artifact.@id -> @loan-item.@artifact "travels on" kind=association from=1 to=0..many sources=[]
+  wire @checked @artifact.@id -> @inspection.@artifact "optionally checked by" kind=association from=1 to=0..many sources=[]
+  section @museum-loans "MUSEUM LOANS / Trace every movement" mode=er columns=2 layout=grid gap=compact {
+  show @museum
+  show @loan
+  show @artifact
+  show @loan-item
+  show @inspection
+  connect @borrows
+  connect @travels
+  connect @includes source-side=right target-side=right
+  connect @checked source-side=left target-side=left
+}
+}

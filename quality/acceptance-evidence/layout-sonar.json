@@ -1,0 +1,322 @@
+[
+  {
+    "file": "adapters/elk.ts",
+    "max": 1,
+    "functionsOverZero": 2
+  },
+  {
+    "file": "adapters/kiwi.ts",
+    "max": 1,
+    "functionsOverZero": 7
+  },
+  {
+    "file": "adapters/libavoid.ts",
+    "max": 2,
+    "functionsOverZero": 10
+  },
+  {
+    "file": "adapters/scheduling.ts",
+    "max": 2,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "adapters/wasm-loader.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/api.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/brands.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/compose.ts",
+    "max": 2,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "contract/errors.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/index.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/ports/placement.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/ports/projection.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/ports/routing.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/ports/scheduling.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/ports/solver.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/records/candidate.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/records/geometry.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/records/input.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/records/problem.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/schemas.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "contract/types.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "core/arrangement/bounds.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "core/arrangement/collection.ts",
+    "max": 2,
+    "functionsOverZero": 4
+  },
+  {
+    "file": "core/arrangement/keys.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "core/arrangement/notices.ts",
+    "max": 1,
+    "functionsOverZero": 7
+  },
+  {
+    "file": "core/arrangement/pipeline.ts",
+    "max": 2,
+    "functionsOverZero": 3
+  },
+  {
+    "file": "core/arrangement/section.ts",
+    "max": 2,
+    "functionsOverZero": 2
+  },
+  {
+    "file": "core/arrangement/sequential.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "core/constraints/compile.ts",
+    "max": 1,
+    "functionsOverZero": 6
+  },
+  {
+    "file": "core/constraints/relative.ts",
+    "max": 1,
+    "functionsOverZero": 6
+  },
+  {
+    "file": "core/constraints/separation.ts",
+    "max": 2,
+    "functionsOverZero": 17
+  },
+  {
+    "file": "core/geometry/bounds.ts",
+    "max": 1,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "core/geometry/coordinates.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "core/geometry/intersections.ts",
+    "max": 1,
+    "functionsOverZero": 6
+  },
+  {
+    "file": "core/placement/groups.ts",
+    "max": 2,
+    "functionsOverZero": 7
+  },
+  {
+    "file": "core/placement/policy.ts",
+    "max": 2,
+    "functionsOverZero": 6
+  },
+  {
+    "file": "core/placement/section.ts",
+    "max": 2,
+    "functionsOverZero": 2
+  },
+  {
+    "file": "core/routing/checks.ts",
+    "max": 2,
+    "functionsOverZero": 10
+  },
+  {
+    "file": "core/routing/endpoints.ts",
+    "max": 2,
+    "functionsOverZero": 9
+  },
+  {
+    "file": "core/routing/labels.ts",
+    "max": 1,
+    "functionsOverZero": 2
+  },
+  {
+    "file": "core/routing/native.ts",
+    "max": 2,
+    "functionsOverZero": 7
+  },
+  {
+    "file": "core/routing/obstacles.ts",
+    "max": 1,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "core/routing/paths.ts",
+    "max": 2,
+    "functionsOverZero": 7
+  },
+  {
+    "file": "core/routing/wires.ts",
+    "max": 2,
+    "functionsOverZero": 8
+  },
+  {
+    "file": "core/sequence/activations.ts",
+    "max": 2,
+    "functionsOverZero": 10
+  },
+  {
+    "file": "core/sequence/events.ts",
+    "max": 1,
+    "functionsOverZero": 3
+  },
+  {
+    "file": "core/sequence/frames.ts",
+    "max": 1,
+    "functionsOverZero": 5
+  },
+  {
+    "file": "core/sequence/participants.ts",
+    "max": 2,
+    "functionsOverZero": 2
+  },
+  {
+    "file": "core/sequence/records.ts",
+    "max": 0,
+    "functionsOverZero": 0
+  },
+  {
+    "file": "core/sequence/scopes.ts",
+    "max": 2,
+    "functionsOverZero": 10
+  },
+  {
+    "file": "core/sequence/sequence.ts",
+    "max": 1,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "core/validation/activations.ts",
+    "max": 2,
+    "functionsOverZero": 7
+  },
+  {
+    "file": "core/validation/equality.ts",
+    "max": 1,
+    "functionsOverZero": 2
+  },
+  {
+    "file": "core/validation/facts.ts",
+    "max": 2,
+    "functionsOverZero": 5
+  },
+  {
+    "file": "core/validation/input.ts",
+    "max": 2,
+    "functionsOverZero": 8
+  },
+  {
+    "file": "core/validation/nodes.ts",
+    "max": 2,
+    "functionsOverZero": 3
+  },
+  {
+    "file": "core/validation/outcomes.ts",
+    "max": 2,
+    "functionsOverZero": 10
+  },
+  {
+    "file": "core/validation/sections.ts",
+    "max": 1,
+    "functionsOverZero": 4
+  },
+  {
+    "file": "core/validation/wires.ts",
+    "max": 2,
+    "functionsOverZero": 5
+  },
+  {
+    "file": "tests/arrangement.test.ts",
+    "max": 1,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "tests/contracts.test.ts",
+    "max": 1,
+    "functionsOverZero": 4
+  },
+  {
+    "file": "tests/fixtures.ts",
+    "max": 1,
+    "functionsOverZero": 3
+  },
+  {
+    "file": "tests/native-fixture.ts",
+    "max": 1,
+    "functionsOverZero": 1
+  },
+  {
+    "file": "tests/routing.test.ts",
+    "max": 2,
+    "functionsOverZero": 8
+  }
+]

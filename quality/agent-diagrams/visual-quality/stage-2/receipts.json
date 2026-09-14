@@ -1,0 +1,26 @@
+{
+  "vq2-studio-theme": {
+    "exit": 0,
+    "stdout": "committed: vq2-studio-theme\nWorkspace sequence: 2\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof receipt vq2-studio-theme\n(node:56920) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  "vq2-water-create": {
+    "exit": 0,
+    "stdout": "committed: vq2-water-create\nWorkspace sequence: 3\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof receipt vq2-water-create\n(node:56936) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  "vq2-modules-create": {
+    "exit": 0,
+    "stdout": "committed: vq2-modules-create\nWorkspace sequence: 4\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof receipt vq2-modules-create\n(node:56952) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  "vq2-comparison-create": {
+    "exit": 0,
+    "stdout": "committed: vq2-comparison-create\nWorkspace sequence: 5\n",
+    "stderr": "$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof receipt vq2-comparison-create\n(node:56973) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  "vq2-comparison-edit": {
+    "exit": 0,
+    "stdout": "committed: vq2-comparison-edit\nWorkspace sequence: 6\n"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@novakai/canvas-layout",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./contract/index.ts"
+  },
+  "dependencies": {
+    "@lume/kiwi": "0.4.4",
+    "@novakai/canvas-presentation": "workspace:*",
+    "elkjs": "0.12.0",
+    "libavoid-js": "0.5.0-beta.5",
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "@novakai/canvas-model": "workspace:*"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
+}

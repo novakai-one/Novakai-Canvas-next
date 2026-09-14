@@ -1,0 +1,6 @@
+$ tsx apps/cli/cli/main.ts preview resources/examples/showcase-collection.canvas --mode create --server http://127.0.0.1:5185 --workspace .local/atlas-proof --request atlas-preflight-capacity-2
+(node:23613) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+constraint-conflict: Native route violates required ports, marker clearance or obstacles
+Retain the draft. Reconcile this request receipt before retry; re-read versions before submitting changed intent under a new request ID.
+[ELIFECYCLE] Command failed with exit code 1.

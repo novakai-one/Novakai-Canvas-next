@@ -1,0 +1,142 @@
+[
+  {
+    "file": "adapters/fontkit.ts",
+    "max": 1
+  },
+  {
+    "file": "adapters/react/ContentBlocks.tsx",
+    "max": 1
+  },
+  {
+    "file": "adapters/react/NodeContent.tsx",
+    "max": 1
+  },
+  {
+    "file": "adapters/static-markup.ts",
+    "max": 1
+  },
+  {
+    "file": "adapters/styles.d.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/api.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/brands.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/compose.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/errors.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/index.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/ports/domain.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/ports/measurement.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/ports/rendering.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/ports/resources.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/react-types.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/records/input.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/records/marker.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/records/style.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/records/visual.ts",
+    "max": 0
+  },
+  {
+    "file": "contract/types.ts",
+    "max": 0
+  },
+  {
+    "file": "core/content/blocks.ts",
+    "max": 2
+  },
+  {
+    "file": "core/content/media.ts",
+    "max": 2
+  },
+  {
+    "file": "core/content/table.ts",
+    "max": 1
+  },
+  {
+    "file": "core/content/text.ts",
+    "max": 2
+  },
+  {
+    "file": "core/notation/markers.ts",
+    "max": 0
+  },
+  {
+    "file": "core/notation/nodes.ts",
+    "max": 0
+  },
+  {
+    "file": "core/notation/wires.ts",
+    "max": 1
+  },
+  {
+    "file": "core/projection/collection.ts",
+    "max": 1
+  },
+  {
+    "file": "core/projection/node.ts",
+    "max": 1
+  },
+  {
+    "file": "core/projection/section.ts",
+    "max": 1
+  },
+  {
+    "file": "core/validation/outcomes.ts",
+    "max": 2
+  },
+  {
+    "file": "tests/fixtures.ts",
+    "max": 1
+  },
+  {
+    "file": "tests/notation.test.ts",
+    "max": 0
+  },
+  {
+    "file": "tests/projection.test.ts",
+    "max": 0
+  },
+  {
+    "file": "tests/rendering.test.ts",
+    "max": 1
+  }
+]

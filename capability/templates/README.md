@@ -1,9 +1,7 @@
-# templates
+# Templates
 
-Responsibility: Versioned recipes and collection theme expansion.
+Own immutable recipe/theme versions, exact pin selection, admission plans and independent recipe expansion. Enter through `contract/index.ts`; `composeTemplates` binds deterministic hashing and requires syntax/token owner ports. No presets or diagram documents are physically written here.
 
-Status: directory scaffold only. No callable contract or implementation exists yet.
+`planAdmission` creates one new version or returns an identical no-op; different content cannot replace an existing version. `instantiate` returns ordinary editable intent with the exact reachable media/theme manifest. It does not create live inheritance.
 
-Outside consumers will import only this capability’s public `contract/index.ts`. Core stays framework-free and imports own declaration-only contracts. Concrete adapters are wired by `contract/compose.ts`; see [repository rules](../../docs/baseline/03-Repository.md) and [root AGENTS](../../AGENTS.md).
-
-Create actual contract/source files with the first complete behavior slice; do not fill this folder with fake success implementations or empty TSX components.
+Five specifications: `docs/specs/templates`. Six starter DSL sources: `resources/recipes`. The eight contract cases test Templates policy with explicit codec fixtures. Production parsing, token resolution and visible preview are later host integrations, not claimed as passing here.

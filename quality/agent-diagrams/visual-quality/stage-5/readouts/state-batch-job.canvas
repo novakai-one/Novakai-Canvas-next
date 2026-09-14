@@ -1,0 +1,59 @@
+# state-batch-job revision=4
+canvas 1
+collection @state-batch-job "Batch job retry lifecycle" theme="atlas@1.0.0#sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7" layout=grid {
+  node @start start "Queued" role=neutral size=small frame=auto composition=stack sources=[] {
+
+}
+  node @running state "Running" role=primary size=large frame=auto composition=stack sources=[] {
+  text @detail "Process the claimed batch under one attempt." role=body
+}
+  node @backoff state "Waiting to retry" role=warning size=medium frame=auto composition=stack sources=[] {
+  text @detail "Keep the failure and schedule the next attempt." role=body
+}
+  node @cancelling state "Cancelling" role=supporting size=medium frame=auto composition=stack sources=[] {
+  text @detail "Stop new work and release held resources." role=body
+}
+  node @failed state "Failed" role=warning size=medium frame=auto composition=stack sources=[] {
+  text @detail "Retry budget is exhausted." role=body
+}
+  node @succeeded state "Succeeded" role=success size=medium frame=auto composition=stack sources=[] {
+  text @detail "Outputs and completion receipt are durable." role=body
+}
+  node @end end "Terminal" role=neutral size=small frame=auto composition=stack sources=[] {
+
+}
+  wire @claim @start -> @running "claim batch" kind=transition guard="worker available" effect="increment attempt" sources=[]
+  wire @retry @running -> @backoff "schedule retry" kind=transition guard="transient failure and attempts remain" effect="record error" sources=[]
+  wire @resume @backoff -> @running "retry batch" kind=transition guard="backoff elapsed" effect="increment attempt" sources=[]
+  wire @exhaust @running -> @failed "mark failed" kind=transition guard="retry budget exhausted" effect="retain diagnostics" sources=[]
+  wire @complete @running -> @succeeded "commit outputs" kind=transition guard="all items processed" effect="write receipt" sources=[]
+  wire @cancel-running @running -> @cancelling "request cancel" kind=transition guard="operator requested" sources=[]
+  wire @cancel-wait @backoff -> @cancelling "cancel scheduled retry" kind=transition guard="operator requested" sources=[]
+  wire @cancelled @cancelling -> @end "confirm cancelled" kind=transition guard="resources released" effect="write cancellation receipt" sources=[]
+  wire @finish-failed @failed -> @end "close failed job" kind=transition effect="publish outcome" sources=[]
+  wire @finish-success @succeeded -> @end "close successful job" kind=transition effect="publish outcome" sources=[]
+  section @job "BATCH JOB / Retry transient faults, cancel cleanly" mode=state layout=layered direction=down gap=compact {
+  show @start
+  group @execution "Execution" frame=auto role=neutral layout=layered gap=compact {
+  show @running
+  show @backoff
+  show @cancelling
+  rank @running @backoff @cancelling
+}
+  group @outcomes "Outcomes" frame=auto role=neutral layout=layered gap=compact {
+  show @failed
+  show @succeeded
+  show @end
+}
+  connect @resume source-side=top target-side=top
+  connect @claim source-side=bottom target-side=left
+  connect @retry source-side=right target-side=left
+  connect @exhaust source-side=left target-side=left
+  connect @complete source-side=bottom target-side=top
+  connect @cancel-running source-side=bottom target-side=bottom
+  connect @cancel-wait source-side=right target-side=left
+  connect @cancelled source-side=right target-side=right
+  connect @finish-failed
+  connect @finish-success
+}
+}

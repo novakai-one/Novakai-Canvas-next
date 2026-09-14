@@ -1,0 +1,283 @@
+{
+  "version": 1,
+  "generation": "5fd9889044cdb75b8ded6149183cc85d",
+  "outcome": {
+    "ok": true,
+    "value": {
+      "request": "heldout-create-state-membership-reinstatement",
+      "fingerprint": "41e23a3f3fb5c38233b6c63b9071876b3157d6d7f47c78302cc05794ed66a400",
+      "sequence": 5,
+      "versions": [
+        {
+          "key": {
+            "kind": "collection",
+            "id": "state-membership-reinstatement"
+          },
+          "version": 0
+        },
+        {
+          "key": {
+            "kind": "catalog",
+            "id": "main"
+          },
+          "version": 4
+        },
+        {
+          "key": {
+            "kind": "history",
+            "id": "tx:heldout-create-state-membership-reinstatement"
+          },
+          "version": 0
+        },
+        {
+          "key": {
+            "kind": "history",
+            "id": "head:heldout-create-state-membership-reinstatement"
+          },
+          "version": 0
+        }
+      ],
+      "outcome": {
+        "status": "committed",
+        "transaction": "heldout-create-state-membership-reinstatement",
+        "pins": {
+          "resources": {
+            "themes": {
+              "paper@1.0.0#sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9": {
+                "id": "paper",
+                "version": "1.0.0",
+                "digest": "sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              },
+              "ink@1.0.0#sha256:d3625931a3a5dca6ddc8e6bdfb2863645931e4b89e25416bb45783654cf12883": {
+                "id": "ink",
+                "version": "1.0.0",
+                "digest": "sha256:d3625931a3a5dca6ddc8e6bdfb2863645931e4b89e25416bb45783654cf12883",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              },
+              "paper": {
+                "id": "paper",
+                "version": "1.0.0",
+                "digest": "sha256:84274780305931de95fcb434258bb9c7f27437adc265839eb7b61bf080e63ac9",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              },
+              "ink": {
+                "id": "ink",
+                "version": "1.0.0",
+                "digest": "sha256:d3625931a3a5dca6ddc8e6bdfb2863645931e4b89e25416bb45783654cf12883",
+                "roles": [
+                  "neutral",
+                  "primary",
+                  "supporting",
+                  "decision",
+                  "success",
+                  "warning"
+                ]
+              }
+            },
+            "assets": {}
+          }
+        },
+        "diff": {
+          "semantic": {
+            "collection": "state-membership-reinstatement"
+          },
+          "geometry": [
+            {
+              "collection": "state-membership-reinstatement",
+              "adjustments": []
+            }
+          ]
+        },
+        "warnings": [
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:suspend",
+              "membership:object:wire:appeal"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:suspend",
+              "membership:object:wire:reject"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:suspend",
+              "membership:object:wire:restore"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:suspend",
+              "membership:object:wire:complete"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:suspend",
+              "membership:object:wire:relapse"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:appeal",
+              "membership:object:wire:reject"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:appeal",
+              "membership:object:wire:restore"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:appeal",
+              "membership:object:wire:complete"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:appeal",
+              "membership:object:wire:relapse"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:reject",
+              "membership:object:wire:restore"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:reject",
+              "membership:object:wire:complete"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:reject",
+              "membership:object:wire:relapse"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:restore",
+              "membership:object:wire:complete"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:restore",
+              "membership:object:wire:relapse"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          },
+          {
+            "code": "constraint-conflict",
+            "path": "state-membership-reinstatement",
+            "targets": [
+              "membership:object:wire:complete",
+              "membership:object:wire:relapse"
+            ],
+            "message": "Connections cross; inspect labelled routes or add route intent if separation is required.",
+            "recovery": "Optional routing improvement: adjust the named wires while retaining the diagram.",
+            "traceId": null
+          }
+        ]
+      }
+    }
+  }
+}

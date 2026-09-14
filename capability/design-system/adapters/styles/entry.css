@@ -1,0 +1,9 @@
+/* Explicit layer ordering precedes all locally composed styles. */
+@layer reset, vendor, tokens, themes, preferences, components, utilities;
+@import './reset.css';
+@import './tokens.generated.css';
+@import './semantics.generated.css';
+@import './themes.generated.css';
+@import './preferences.generated.css';
+@import './layout.generated.css';
+@import './utilities.css';

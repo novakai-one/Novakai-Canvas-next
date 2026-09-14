@@ -1,0 +1,4 @@
+state-alpha	r1	Experiment decision lifecycle	1 sections
+state-beta	r1	Policy exception lifecycle	1 sections
+grid-alpha	r1	Compare customer research formats	1 sections
+grid-beta	r1	Compare incident learning formats	1 sections

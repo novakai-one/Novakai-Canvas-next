@@ -1,0 +1,16 @@
+canvas 1
+collection @commerce "Customer and orders" theme=paper {
+  node @customer entity "Customer" {
+    field @id "id" type="CustomerId" key=primary
+    field @email "email" type="Email" key=unique
+  }
+  node @order entity "Order" {
+    field @id "id" type="OrderId" key=primary
+    field @customer "customerId" type="CustomerId" key=foreign references=@customer.@id
+  }
+  wire @places @customer.@id -> @order.@customer "places" kind=association from=1 to=0..many
+  section @data "Customer and order records" mode=er layout=layered {
+    show @customer @order
+    connect @places
+  }
+}

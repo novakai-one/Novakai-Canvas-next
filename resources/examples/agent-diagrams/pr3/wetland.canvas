@@ -1,0 +1,6 @@
+canvas 1
+collection @wetland "Wetland education" theme=harbor {
+ asset @illustration image source="./wetland.png" alt="Wetlands filter water"
+ node @topic step "Wetlands filter water" { image @illustration asset=@illustration }
+ section @overview "Overview" mode=story { show @topic }
+}

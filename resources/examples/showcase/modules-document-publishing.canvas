@@ -1,0 +1,43 @@
+canvas 1
+collection @modules-document-publishing "Document publishing boundary" theme=studio description="An illustrative software dependency design. Imports and calls show code dependencies; implementation wires show contract conformance, not runtime data flow." {
+  asset @document image source="./assets/evidence.svg" alt="A publishing document"
+  asset @adapter image source="./assets/shield.svg" alt="An integration boundary"
+  node @editor module "Editorial workspace" role=primary size=large frame=none composition=media-left {
+    icon @figure asset=@document size=small
+    port @publish out "publisher" type="PublicationPort"
+    text @detail "Validates a draft before asking the publishing port to submit it."
+  }
+  node @publication interface "PublicationPort" role=supporting size=large {
+    member @submit "submit" type="(ApprovedDraft) => Promise<Result<PublicationReceipt, PublishError>>" visibility=public
+    member @withdraw "withdraw" type="(PublicationId, Reason) => Promise<Result<WithdrawalReceipt, PublishError>>" visibility=public
+  }
+  node @validate function "validateApproval" size=large {
+    signature @call "validateApproval" parameters=["draft: Draft", "policy: EditorialPolicy"] returns="Result<ApprovedDraft, ValidationError>"
+  }
+  node @web-adapter module "Web publisher adapter" role=success size=large frame=card composition=media-top {
+    icon @figure asset=@adapter size=small
+    port @remote out "CMS client" type="CmsClient"
+    text @detail "Implements both submit and withdraw; translates vendor failures into PublishError."
+  }
+  node @cms interface "CmsClient / external boundary" role=warning size=large {
+    member @create "createPage" type="(CmsPage) => Promise<Result<CmsPageId, CmsError>>" visibility=public
+    member @remove "removePage" type="(CmsPageId) => Promise<Result<void, CmsError>>" visibility=public
+  }
+
+  wire @checks @editor -> @validate.@call "calls validation before submit" kind=calls
+  wire @imports @editor.@publish -> @publication "imports publishing contract" kind=imports
+  wire @implements @web-adapter -> @publication "implements submit and withdraw" kind=implements
+  wire @calls-cms @web-adapter.@remote -> @cms "imports vendor contract" kind=imports
+
+  section @publishing-boundary "Publishing boundaries" mode=modules layout=grid columns=2 direction=right gap=normal {
+    group @policy "APPLICATION POLICY" frame=panel role=supporting layout=grid columns=1 gap=normal {
+      show @editor @validate @publication
+    }
+    group @integration "VENDOR INTEGRATION" layout=grid columns=1 gap=normal {
+      show @web-adapter @cms
+    }
+    connect @checks @imports
+    connect @implements source-side=left target-side=right
+    connect @calls-cms source-side=right target-side=right
+  }
+}

@@ -1,0 +1,31 @@
+canvas 1
+collection @state-exhibition-lifecycle "Exhibition publication lifecycle" theme=atlas {
+ node @start start "Begin" size=small {}
+ node @draft state "Draft" role=primary size=medium { text @detail "Objects and interpretation are still changing." }
+ node @review state "Under review" role=supporting size=large { text @detail "Curatorial and rights checks run together." }
+ node @published state "Published" role=success size=medium { text @detail "The approved exhibition is visible." }
+ node @rollback state "Rollback pending" role=warning size=large { text @detail "Restore the last approved release and preserve evidence." }
+ node @withdrawn state "Withdrawn" role=warning size=medium { text @detail "Public access is disabled with a recorded reason." }
+ node @end end "Closed" size=small {}
+ wire @prepare @start -> @draft "create draft" kind=transition effect="open working version"
+ wire @submit @draft -> @review "submit for review" kind=transition guard="required material complete"
+ wire @revise @review -> @draft "request revision" kind=transition guard="changes requested" effect="record findings"
+ wire @publish @review -> @published "publish approved release" kind=transition guard="curator and rights approved" effect="pin release"
+ wire @detect @published -> @rollback "begin rollback" kind=transition guard="material defect found" effect="freeze affected release"
+ wire @restore @rollback -> @published "restore prior release" kind=transition guard="safe release available" effect="record rollback receipt"
+ wire @withdraw @rollback -> @withdrawn "withdraw exhibition" kind=transition guard="no safe release" effect="post public notice"
+ wire @close @withdrawn -> @end "close record" kind=transition guard="retention captured"
+ section @lifecycle "EXHIBITION / Guard publication and recover safely" mode=state layout=layered direction=down gap=roomy {
+  group @authoring "PREPARE & APPROVE" layout=layered direction=right gap=roomy { show @start @draft @review
+   rank @start @draft @review
+  }
+  group @publication "PUBLISH & RECOVER" layout=layered direction=right gap=roomy { show @published @rollback @withdrawn
+   rank @published @rollback @withdrawn
+  }
+  show @end
+  connect @prepare @submit @detect @withdraw source-side=right target-side=left
+  connect @revise @restore source-side=bottom target-side=bottom
+  connect @publish source-side=bottom target-side=left
+  connect @close source-side=bottom target-side=right
+ }
+}

@@ -1,0 +1,15 @@
+canvas 1
+collection @context "What makes context useful?" theme=paper {
+  node @task concept "The task" role=primary { text @detail "State the outcome, audience and constraints." }
+  node @evidence concept "Relevant evidence" { list @items ["Source documents", "Current system state", "Concrete examples"] }
+  node @instructions concept "Clear instructions" { list @items ["Scope and responsibility", "Expected output", "How success is checked"] }
+  node @limits note "Keep uncertainty visible" role=warning { text @detail "Separate verified facts, assumptions and unanswered questions." }
+  node @result concept "A reviewable result" role=success { text @detail "Show the reasoning through evidence and observable behavior." }
+  wire @ground @evidence -> @task "grounds the work" kind=reference
+  wire @guide @instructions -> @task "guides execution" kind=reference
+  wire @produce @task -> @result "produces" kind=flow
+  section @story "Context engineering essentials" mode=story layout=grid {
+    show @task @evidence @instructions @limits @result
+    connect @ground @guide @produce
+  }
+}

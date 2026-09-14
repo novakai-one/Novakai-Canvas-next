@@ -1,0 +1,51 @@
+canvas 1
+collection @story-safe-deployment "Deployment is a controlled experiment" theme=studio {
+  asset @shield image source="./assets/shield.svg" alt="A verified release safety boundary"
+  asset @release image source="./assets/release.svg" alt="A versioned release entering a limited cohort"
+  asset @evidence image source="./assets/evidence.svg" alt="Observed release evidence compared against expectations"
+  node @prepare concept "Prepare a reversible change" frame=none composition=media-left size=large {
+    image @figure asset=@shield size=medium
+    text @caption "Name the owner, rehearse migration and prove the rollback path." role=caption
+  }
+  node @release-stage concept "Release to a small cohort" frame=none composition=media-top size=large {
+    image @figure asset=@release size=medium
+    text @caption "Expose limited traffic and retain the previous version." role=caption
+  }
+  node @learn concept "Compare the signals" frame=none composition=media-left size=large {
+    image @figure asset=@evidence size=medium
+    text @caption "Compare errors, latency and task completion with the expected range." role=caption
+  }
+  node @healthy concept "Expand deliberately" role=success frame=card {
+    text @caption "Increase exposure one step at a time; keep watching the same guardrails." role=caption
+  }
+  node @unsafe concept "Pause and restore" role=warning frame=card {
+    text @caption "Restore the known version, retain diagnostic evidence and assign follow-up." role=caption
+  }
+  node @record note "Record what changed" frame=none {
+    text @caption "The outcome improves the next release plan; a quiet rollout is still evidence." role=caption
+  }
+  wire @admit @prepare -> @release-stage "readiness checks pass" kind=flow step=1
+  wire @observe @release-stage -> @learn "observe a bounded cohort" kind=flow step=2
+  wire @expand @learn -> @healthy "guardrails remain healthy" kind=flow step=3
+  wire @restore @learn -> @unsafe "guardrail breached" kind=flow
+  wire @repeat @healthy -> @release-stage "repeat at wider exposure" kind=reference style=dashed
+  wire @capture @unsafe -> @record "preserve the failure evidence" kind=flow
+  wire @improve @record -> @prepare "revise the release plan" kind=reference style=dashed
+  section @deployment "Safe deployment / learn before expanding" mode=story layout=grid columns=2 direction=right gap=normal {
+    group @delivery "BOUND THE CHANGE" frame=panel role=supporting layout=grid columns=1 direction=down gap=roomy { show @prepare @release-stage }
+    group @feedback "USE EVIDENCE TO CONTROL EXPOSURE" frame=panel layout=grid columns=1 direction=down gap=normal {
+      before @learn group:@outcomes
+      before group:@outcomes @record
+      show @learn
+      group @outcomes "CHOOSE THE NEXT ACTION" frame=none layout=grid columns=2 gap=normal { show @healthy @unsafe }
+      show @record
+    }
+    connect @admit source-side=bottom target-side=top
+    connect @observe source-side=right target-side=left
+    connect @expand source-side=bottom target-side=top
+    connect @restore source-side=right target-side=top
+    connect @repeat source-side=left target-side=bottom
+    connect @capture source-side=bottom target-side=right
+    connect @improve source-side=bottom target-side=left
+  }
+}

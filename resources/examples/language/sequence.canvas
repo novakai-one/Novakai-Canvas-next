@@ -1,0 +1,11 @@
+canvas 1 collection @sequence "Conversation" {
+ node @human participant "Human" {} node @agent participant "Agent" {}
+ section @conversation "Exchange" mode=sequence {
+  show @human @agent
+  event @request @human -> @agent "Request" kind=call activate=true
+  fragment @alternatives alt "Outcome" {
+   branch @success "Success" { fragment @repeat loop "Retry" { event @reply @agent -> @human "Response" kind=return activate=false } }
+   branch "Failure" { fragment @optional opt "Explain" { event @failure @agent -> @human "Failure" kind=return activate=false } }
+  }
+ }
+}

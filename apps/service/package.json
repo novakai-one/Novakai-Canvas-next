@@ -1,0 +1,29 @@
+{
+  "name": "@novakai/canvas-service",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./contract/index.ts"
+  },
+  "dependencies": {
+    "@novakai/canvas-model": "workspace:*",
+    "@novakai/canvas-library": "workspace:*",
+    "@novakai/canvas-persistence": "workspace:*",
+    "@novakai/canvas-assets": "workspace:*",
+    "@novakai/canvas-templates": "workspace:*",
+    "@novakai/canvas-presentation": "workspace:*",
+    "@novakai/canvas-layout": "workspace:*",
+    "@novakai/canvas-authoring": "workspace:*",
+    "@novakai/canvas-language": "workspace:*",
+    "@novakai/canvas-design-system": "workspace:*",
+    "@novakai/canvas-canvas": "workspace:*",
+    "@novakai/canvas-export": "workspace:*",
+    "zod": "4.6.2",
+    "tsx": "4.23.13"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/style-entry.ts"
+  ]
+}

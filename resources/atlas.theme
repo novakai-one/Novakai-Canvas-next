@@ -1,0 +1,6 @@
+theme 1 @atlas "Atlas / readable engineering" version=1.0.0 base=paper
+font body source="./fonts/inter-latin-400-normal.woff2"
+font mono source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+font strong source="./fonts/inter-tight-latin-700-normal.woff2"
+set number ratio.caption=1
+set number lineHeight.body=1.25

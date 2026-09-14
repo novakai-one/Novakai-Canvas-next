@@ -1,0 +1,293 @@
+{
+  "typography": {
+    "sectionHeading": {
+      "font": {
+        "digest": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+        "family": "Inter"
+      },
+      "size": 27.428576,
+      "lineHeight": 41.142864
+    },
+    "nodeHeading": {
+      "font": {
+        "digest": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+        "family": "Inter"
+      },
+      "size": 22.857136,
+      "lineHeight": 34.285704
+    },
+    "body": {
+      "font": {
+        "digest": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+        "family": "Inter"
+      },
+      "size": 16,
+      "lineHeight": 24
+    },
+    "mono": {
+      "font": {
+        "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+        "family": "JetBrains Mono"
+      },
+      "size": 16,
+      "lineHeight": 24
+    },
+    "annotation": {
+      "font": {
+        "digest": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+        "family": "Inter"
+      },
+      "size": 13.714288,
+      "lineHeight": 20.571432
+    }
+  },
+  "contentSizing": {
+    "widths": {
+      "small": {
+        "preferred": 180,
+        "maximum": 240
+      },
+      "medium": {
+        "preferred": 240,
+        "maximum": 320
+      },
+      "large": {
+        "preferred": 320,
+        "maximum": 500
+      }
+    },
+    "rowMinimum": 32,
+    "iconBox": {
+      "small": 24,
+      "medium": 32,
+      "large": 48
+    }
+  },
+  "nodes": [
+    {
+      "id": "customer",
+      "width": 538,
+      "height": 238.285704,
+      "headerHeight": 58.285704,
+      "content": [
+        {
+          "kind": "text",
+          "text": "Customer lifecycle records",
+          "x": 12,
+          "y": 34.1428505,
+          "width": 289.7655380703125,
+          "font": {
+            "digest": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+            "family": "Inter"
+          },
+          "size": 22.857136,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "PK",
+          "x": 20,
+          "y": 90.605704,
+          "width": 19.2,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "customer_id:",
+          "x": 57,
+          "y": 90.605704,
+          "width": 115.2,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "CustomerId",
+          "x": 353,
+          "y": 90.605704,
+          "width": 96,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "rule",
+          "x1": 12,
+          "y1": 114.28570400000001,
+          "x2": 526,
+          "y2": 114.28570400000001,
+          "stroke": "#526170",
+          "width": 1
+        },
+        {
+          "kind": "text",
+          "text": "UQ",
+          "x": 20,
+          "y": 146.605704,
+          "width": 19.2,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "external_customer_identifier:",
+          "x": 57,
+          "y": 146.605704,
+          "width": 278.40000000000003,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "ExternalReference",
+          "x": 353,
+          "y": 146.605704,
+          "width": 163.20000000000002,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "rule",
+          "x1": 12,
+          "y1": 170.285704,
+          "x2": 526,
+          "y2": 170.285704,
+          "stroke": "#526170",
+          "width": 1
+        },
+        {
+          "kind": "text",
+          "text": "",
+          "x": 20,
+          "y": 202.605704,
+          "width": 0,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "email_address:",
+          "x": 57,
+          "y": 202.605704,
+          "width": 134.4,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "Email",
+          "x": 353,
+          "y": 202.605704,
+          "width": 48,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "rule",
+          "x1": 12,
+          "y1": 226.285704,
+          "x2": 526,
+          "y2": 226.285704,
+          "stroke": "#526170",
+          "width": 1
+        }
+      ]
+    },
+    {
+      "id": "dispatch",
+      "width": 360,
+      "height": 166.285704,
+      "headerHeight": 58.285704,
+      "content": [
+        {
+          "kind": "text",
+          "text": "Dispatch a validated request",
+          "x": 12,
+          "y": 34.1428505,
+          "width": 307.075800734375,
+          "font": {
+            "digest": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+            "family": "Inter"
+          },
+          "size": 22.857136,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "dispatch(request: ValidatedRequest,",
+          "x": 12,
+          "y": 90.605704,
+          "width": 336,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "context: ExecutionContext,",
+          "x": 12,
+          "y": 114.605704,
+          "width": 249.6,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        },
+        {
+          "kind": "text",
+          "text": "options: DispatchOptions): Result",
+          "x": 12,
+          "y": 138.605704,
+          "width": 316.8,
+          "font": {
+            "digest": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+            "family": "JetBrains Mono"
+          },
+          "size": 16,
+          "fill": "#17212b"
+        }
+      ]
+    }
+  ]
+}

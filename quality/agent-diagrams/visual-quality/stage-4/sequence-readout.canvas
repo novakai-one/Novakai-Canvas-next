@@ -1,0 +1,44 @@
+# sequence-payment-settlement revision=1
+canvas 1
+collection @sequence-payment-settlement "Payment settlement conversation" theme="atlas@1.0.0#sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7" layout=grid {
+  node @merchant participant "Merchant" role=primary size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @payments participant "Payment service" role=supporting size=large frame=auto composition=stack sources=[] {
+
+}
+  node @ledger participant "Ledger" role=neutral size=medium frame=auto composition=stack sources=[] {
+
+}
+  node @network participant "Bank network" role=warning size=large frame=auto composition=stack sources=[] {
+
+}
+  node @webhook participant "Merchant webhook" role=success size=small frame=auto composition=stack sources=[] {
+
+}
+  section @settlement "SETTLEMENT / Retry submission, confirm asynchronously" mode=sequence layout=sequence direction=down gap=compact {
+  show @merchant
+  show @payments
+  show @ledger
+  show @network
+  show @webhook
+  event @capture @merchant -> @payments "Capture authorized payment" activate=true
+  event @pending @payments -> @ledger "Record pending settlement"
+  fragment @attempts loop "Until accepted or retry limit" {
+  event @submit @payments -> @network "Submit settlement batch" activate=true
+  fragment @result alt "Submission result" {
+  branch @batch-accepted "Accepted" {
+  event @ack @network -> @payments "Return batch acceptance" kind=return activate=false
+}
+  branch @transient "Temporary failure" {
+  event @retry @network -> @payments "Return retry-after interval" kind=return activate=false
+  event @wait @payments -> @payments "Wait before next attempt"
+}
+}
+}
+  event @accepted @payments -> @merchant "Return accepted receipt" kind=return activate=false
+  event @callback @network -> @payments "Settlement completed callback" kind=async activate=true
+  event @post @payments -> @ledger "Post final settlement"
+  event @notify @payments -> @webhook "Publish settlement outcome" kind=async activate=false
+}
+}

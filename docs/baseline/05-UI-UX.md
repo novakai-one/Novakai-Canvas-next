@@ -49,7 +49,7 @@ WorkspaceSidePanel (host: binds one side's view model and actions)
 
 | Default side | Registered body section | React feature content |
 |---|---|---|
-| Left | Collections | `CollectionNavigator` — collection/folder browsing and switching |
+| Left | Collections | `LibraryBrowser` with Filters, Results and Organization slots — collection/folder browsing and switching |
 | Left | Sections | `SectionNavigator` — section order and explicit Locate actions |
 | Left | Objects | `ObjectOutline` — search, canonical objects, unplaced objects |
 | Left | Create | `InsertPalette` — content kinds and entry actions for `AssetPicker` / `TemplatePicker` |
@@ -168,7 +168,7 @@ Document 3 enumerates the actual target files. This table names the controlling 
 |---|---|---|---|
 | Shell panels, responsive changes | `apps/web/core/workspace/panel-state.ts`; generated `breakpoints.ts` | `WorkspaceShell.module.css`; shell dimensions in `layout.generated.css` | U01–U03; keyboard-resizable separators |
 | Gesture precedence | `canvas/core/interaction/gesture-policy.ts`; `contract/interaction-profile.ts` | `CanvasSurface.module.css` handles cursors/touch behavior only | Drag threshold 4px fine / 8px coarse; no JS UA sniffing |
-| Zoom / keyboard nudge | `canvas/contract/interaction-profile.ts` | Controls use Design System tokens | Zoom 0.1–4, 0.1 explicit button step; nudge 8 world units, coarse 32 |
+| Zoom / keyboard nudge | `canvas/contract/interaction-profile.ts` | Controls use Design System tokens | Zoom 0.01–4, 0.1 explicit button step; nudge 8 world units, coarse 32 |
 | Edit/commit/retry | `apps/web/core/editing/edit-session.ts` | `SharedContentEditor.module.css`, `ConflictPanel.module.css`, `ServiceStatus.module.css` | Immediate draft; explicit commit rules above; no magic debounce write |
 | Search | `apps/web/core/search/search-session.ts`; injected scheduler | `CommandPalette.module.css`, `CollectionLibrary.module.css` | 150ms input debounce; stale responses ignored; Enter acts on visible result |
 | Scene subscription | `canvas/adapters/react-flow/use-scene.ts` via injected subscription | Node/edge modules; explicit geometry values from scene | Cached immutable snapshots; revision/input-hash stale rejection |

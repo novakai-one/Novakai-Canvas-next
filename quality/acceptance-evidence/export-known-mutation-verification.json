@@ -1,0 +1,32 @@
+[
+  {
+    "knownFault": "partial-svg",
+    "exitCode": 1,
+    "evidence": [
+      "      Tests  1 failed | 11 passed (12)",
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      " FAIL  .generated/export-known-fault-verification/partial-svg/capability/export/tests/artifact.test.ts > Export revision lifecycle > 2 cancellation and provider failures expose no partial artifacts and release once"
+    ],
+    "log": "/tmp/export-verified-partial-svg.log"
+  },
+  {
+    "knownFault": "wrong-font",
+    "exitCode": 1,
+    "evidence": [
+      "      Tests  1 failed | 11 passed (12)",
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      " FAIL  .generated/export-known-fault-verification/wrong-font/capability/export/tests/native.test.ts > Concrete portable rendering > 5 actual PNG has exact dimensions, font-bearing pixels and bounded allocation"
+    ],
+    "log": "/tmp/export-verified-wrong-font.log"
+  },
+  {
+    "knownFault": "missing-footer",
+    "exitCode": 1,
+    "evidence": [
+      "      Tests  1 failed | 11 passed (12)",
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      " FAIL  .generated/export-known-fault-verification/missing-footer/capability/export/tests/native.test.ts > Concrete portable rendering > 6 actual WebP-bearing PDF paginates with complete overlap and source footer metadata"
+    ],
+    "log": "/tmp/export-verified-missing-footer.log"
+  }
+]

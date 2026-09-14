@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "modules-payroll-policy",
+    "revision": 1,
+    "title": "Payroll calculation contracts",
+    "inputKeySha256": "0c7f1aff1144796e0e3fa7d6fde253b36d16fb29f2ed659e4f30d541c14926b6"
+  },
+  "digest": "54260b500b098c46fcab7fb0b39799433a41df17240a292ecca6732abe18d11c",
+  "bytes": 155395,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 2256.365625,
+    "height": 753.0056999999999
+  }
+}

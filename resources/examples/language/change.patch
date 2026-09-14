@@ -1,0 +1,6 @@
+patch 1 @prototype {
+  set node @build label="Build one realistic journey"
+  set block @build.@detail text="Use realistic content. Keep the scope small."
+  set appearance @journey/@build role=primary size=large
+  set wire @try-task label="Observe a person using it"
+}

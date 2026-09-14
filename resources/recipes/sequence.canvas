@@ -1,0 +1,21 @@
+canvas 1
+collection @submission "Submit a diagram change" theme=paper {
+  node @client participant "Human or agent" {}
+  node @authoring participant "Authoring" {}
+  node @storage participant "Persistence" {}
+  section @request "Conditional commit and recovery" mode=sequence layout=sequence direction=down {
+    show @client @authoring @storage
+    event @submit @client -> @authoring "Apply intent with observed revision" kind=call activate=true
+    event @commit @authoring -> @storage "Compare revisions and commit atomically" kind=call activate=true
+    fragment @outcome alt "Commit outcome" {
+      branch "Committed" {
+        event @receipt @storage -> @authoring "Return durable receipt" kind=return
+        event @success @authoring -> @client "Confirm resulting revision" kind=return
+      }
+      branch "Revision conflict" {
+        event @stale @storage -> @authoring "Reject stale precondition" kind=return
+        event @recover @authoring -> @client "Preserve draft and show conflict" kind=return
+      }
+    }
+  }
+}

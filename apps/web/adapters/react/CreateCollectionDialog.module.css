@@ -1,0 +1,15 @@
+@layer components {
+  .form {
+    display: grid;
+    gap: var(--nv-space-4);
+  }
+  .form p {
+    margin: 0;
+    color: var(--nv-color-subtle);
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--nv-space-2);
+  }
+}

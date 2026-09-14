@@ -1,0 +1,130 @@
+import type { ComponentType, ReactElement } from 'react';
+import type { ContentEditorProps } from '../../contract/inspector-react.js';
+import type { DesignSlots } from '../../contract/react-types.js';
+import type { Collection, ContentBlock } from '../../contract/records/owners.js';
+import styles from './ObjectEditor.module.css';
+/** ER keys and callable signatures have dedicated controls; shared text inputs remain in the content row component. */
+export function createEngineeringFields({
+  Field,
+  Button,
+}: Pick<DesignSlots, 'Field' | 'Button'>): ComponentType<ContentEditorProps> {
+  /** A foreign-key target is selected by semantic identity. The Model owner validates target uniqueness and type compatibility. */
+  function EngineeringFields({ item, collection, edit }: ContentEditorProps): ReactElement | null {
+    if (item.kind === 'signature')
+      return (
+        <div className={styles.editor}>
+          {item.parameters.map((parameter, index) => (
+            <Field
+              key={index}
+              label={`Parameter ${index + 1}`}
+              control={(props) => (
+                <input
+                  {...props}
+                  value={parameter}
+                  onChange={(event) =>
+                    edit({
+                      kind: 'parameters',
+                      id: item.id,
+                      value: item.parameters.map((value, position) =>
+                        position === index ? event.target.value : value,
+                      ),
+                    })
+                  }
+                />
+              )}
+            />
+          ))}
+          <Button
+            label="Add parameter"
+            onClick={() =>
+              edit({
+                kind: 'parameters',
+                id: item.id,
+                value: [...item.parameters, 'input: string'],
+              })
+            }
+          />
+          <Button
+            label="Remove last parameter"
+            disabled={item.parameters.length === 0}
+            onClick={() =>
+              edit({ kind: 'parameters', id: item.id, value: item.parameters.slice(0, -1) })
+            }
+          />
+        </div>
+      );
+    if (item.kind !== 'field') return null;
+    return (
+      <div className={styles.editor}>
+        <Field
+          label="Key"
+          control={(props) => (
+            <select
+              {...props}
+              value={item.key ?? 'none'}
+              onChange={(event) => {
+                const value = keys.find((key) => key === event.target.value);
+                if (value) edit({ kind: 'field-key', id: item.id, value });
+              }}
+            >
+              {keys.map((key) => (
+                <option key={key} value={key}>
+                  {keyLabels[key]}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        {item.key === 'foreign' && (
+          <Field
+            label="References"
+            control={(props) => (
+              <select
+                {...props}
+                value={referenceValue(item)}
+                onChange={(event) => {
+                  const choice = referenceTargets(collection).find(
+                    (choice) => choice.value === event.target.value,
+                  );
+                  if (choice) edit({ kind: 'field-reference', id: item.id, target: choice.target });
+                }}
+              >
+                <option value="">Choose a referenced field</option>
+                {referenceTargets(collection).map((choice) => (
+                  <option key={choice.value} value={choice.value}>
+                    {choice.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+        )}
+      </div>
+    );
+  }
+  return EngineeringFields;
+}
+const keys = ['none', 'primary', 'foreign', 'unique'] as const;
+const keyLabels = {
+  none: 'No key',
+  primary: 'Primary key (PK)',
+  foreign: 'Foreign key (FK)',
+  unique: 'Unique key (UQ)',
+};
+/** UI option identity carries two semantic IDs and never relies on their displayed labels being unique. */
+function referenceTargets(collection: Collection) {
+  return collection.objects.flatMap((object) =>
+    object.content
+      .filter((item) => item.kind === 'field')
+      .map((item) => ({
+        value: JSON.stringify([object.id, item.id]),
+        label: `${object.label}.${item.label}`,
+        target: { object: object.id, member: item.id },
+      })),
+  );
+}
+/** Missing references remain an explicit incomplete choice until the human selects a target. */
+function referenceValue(field: Extract<ContentBlock, { kind: 'field' }>): string {
+  if (!field.references) return '';
+  return JSON.stringify([field.references.object, field.references.member]);
+}

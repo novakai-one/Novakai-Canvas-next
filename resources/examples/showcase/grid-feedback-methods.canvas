@@ -1,0 +1,21 @@
+canvas 1
+collection @grid-feedback-methods "Feedback methods comparison" theme=studio {
+ asset @evidence image source="./assets/survey.svg" alt="A checklist records consistent questions"
+ asset @lesson image source="./assets/conversation.svg" alt="Conversation bubbles exchange an explanation"
+ asset @reed image source="./assets/observation.svg" alt="An eye represents observing real work"
+ asset @water image source="./assets/signal.svg" alt="A monitor records an ongoing signal"
+ node @interview concept "Interview" role=primary size=large frame=none composition=media-top { image @symbol asset=@lesson size=medium text @detail "Ask why a recent moment mattered." }
+ node @interview-use note "Rich explanation · low scale" size=small { text @tip "Use after a specific experience, not for predictions." }
+ node @survey concept "Survey" role=supporting size=large frame=none composition=media-top { image @symbol asset=@evidence size=medium text @detail "Measure a known question across many people." }
+ node @survey-use note "Broad pattern · fixed questions" size=small { text @tip "Pilot wording before comparing responses." }
+ node @observation concept "Observation" role=success size=large frame=none composition=media-top { image @symbol asset=@reed size=medium text @detail "Watch real work in its normal setting." }
+ node @observation-use note "Real behavior · slower analysis" size=small { text @tip "Record context as well as actions." }
+ node @telemetry concept "Telemetry" role=warning size=large frame=none composition=media-top { image @symbol asset=@water size=medium text @detail "Track what happened at product scale." }
+ node @telemetry-use note "Continuous signal · weak intent" size=small { text @tip "Pair behavior with a method that explains why." }
+ section @feedback-grid "FEEDBACK METHODS / Match the method to the question" mode=grid layout=grid columns=2 gap=compact {
+  group @explain "EXPLAIN" represents=@interview frame=panel layout=grid columns=1 gap=compact { show @interview-use }
+  group @measure "MEASURE" represents=@survey frame=panel layout=grid columns=1 gap=compact { show @survey-use }
+  group @observe "OBSERVE" represents=@observation frame=panel layout=grid columns=1 gap=compact { show @observation-use }
+  group @monitor "MONITOR" represents=@telemetry frame=panel layout=grid columns=1 gap=compact { show @telemetry-use }
+ }
+}

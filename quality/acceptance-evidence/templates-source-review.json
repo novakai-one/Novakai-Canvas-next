@@ -1,0 +1,594 @@
+[
+  {
+    "file": "capability/templates/adapters/identity.ts",
+    "lines": 24,
+    "functions": [
+      {
+        "name": "nativeHash",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hash",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createIdentity",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/contract/api.ts",
+    "lines": 70,
+    "functions": [
+      {
+        "name": "withCatalog",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validate",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "planInput",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readInput",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "listInput",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "expandInput",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createTemplates",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/contract/brands.ts",
+    "lines": 23,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/contract/compose.ts",
+    "lines": 11,
+    "functions": [
+      {
+        "name": "composeTemplates",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/contract/errors.ts",
+    "lines": 42,
+    "functions": [
+      {
+        "name": "fail",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/contract/index.ts",
+    "lines": 21,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/contract/ports/codecs.ts",
+    "lines": 15,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/contract/ports/identity.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/contract/records/preset.ts",
+    "lines": 99,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/contract/types.ts",
+    "lines": 36,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/core/admission/plan.ts",
+    "lines": 111,
+    "functions": [
+      {
+        "name": "admit",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveAdmission",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "admitRecipe",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "admitTheme",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finish",
+        "line": 60,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "finishRecord",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "plan",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "existing",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "header",
+        "line": 100,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/core/discovery/select.ts",
+    "lines": 58,
+    "functions": [
+      {
+        "name": "compareVersions",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "select",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifySelection",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "matches",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "searchable",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "compare",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "summarize",
+        "line": 48,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "list",
+        "line": 53,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/core/expansion/instantiate.ts",
+    "lines": 70,
+    "functions": [
+      {
+        "name": "instantiate",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "expandRecipe",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "expandChecked",
+        "line": 37,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "assemble",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/core/validation/catalog.ts",
+    "lines": 181,
+    "functions": [
+      {
+        "name": "key",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "pinOf",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "verifyHash",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hashContent",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "exact",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dependencies",
+        "line": 47,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "baseDependency",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateAncestry",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "advanceAncestry",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "resolveAncestryRound",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateReferences",
+        "line": 90,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "indexedReference",
+        "line": 95,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uniqueRecords",
+        "line": 103,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkPayload",
+        "line": 110,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkTheme",
+        "line": 115,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "themeCorrespondence",
+        "line": 121,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkRecipe",
+        "line": 133,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recipeCorrespondence",
+        "line": 139,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uniqueManifest",
+        "line": 145,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateCatalog",
+        "line": 153,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateRecords",
+        "line": 159,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reachableThemes",
+        "line": 172,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/core/validation/outcomes.ts",
+    "lines": 113,
+    "functions": [
+      {
+        "name": "success",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "parse",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspect",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspectValue",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "isScalar",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "inspectContainer",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "clone",
+        "line": 53,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "freeze",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protect",
+        "line": 67,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "caught",
+        "line": 75,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "ordered",
+        "line": 80,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "orderedRecord",
+        "line": 85,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "canonical",
+        "line": 93,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "firstFailure",
+        "line": 97,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireScalar",
+        "line": 103,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "orderedObject",
+        "line": 109,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/tests/expansion.test.ts",
+    "lines": 82,
+    "functions": []
+  },
+  {
+    "file": "capability/templates/tests/fixtures.ts",
+    "lines": 138,
+    "functions": [
+      {
+        "name": "recipe",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dependencies",
+        "line": 45,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "service",
+        "line": 54,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "input",
+        "line": 59,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "themeInput",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "value",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejects",
+        "line": 90,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "failed",
+        "line": 94,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "appendTheme",
+        "line": 107,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fixtureBase",
+        "line": 123,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "chainedThemes",
+        "line": 133,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/templates/tests/presets.test.ts",
+    "lines": 167,
+    "functions": []
+  }
+]

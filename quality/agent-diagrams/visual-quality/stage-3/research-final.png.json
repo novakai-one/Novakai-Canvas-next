@@ -1,0 +1,16 @@
+{
+  "identity": {
+    "collectionId": "flow-research-approval",
+    "revision": 2,
+    "title": "Research approval workflow",
+    "inputKeySha256": "fec40ee9f0d33668a8a5d1c506bcf026eb51a084cc9b8fbfb625f8fa03b9b3ed"
+  },
+  "digest": "a5bdf7c9ca2ec99021d4743b79b0e6a2922a902096ab76ba10809e135e1a7ae1",
+  "bytes": 116830,
+  "bounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1329.7018616875,
+    "height": 1357.1427999999999
+  }
+}

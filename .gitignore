@@ -9,3 +9,10 @@ coverage/
 .env.*
 !.env.example
 .local/
+
+!capability/*/adapters/build/
+!capability/*/adapters/build/**
+.generated/
+
+# Transient browser automation state; selected audit evidence is retained under output/.
+.playwright-cli/

@@ -1,0 +1,34 @@
+canvas 1
+collection @state-membership-reinstatement "Membership reinstatement" theme=atlas description="Illustrative club policy: review restores access; closure is final." {
+ node @start start "Application" {}
+ node @pending state "Pending approval" role=supporting {}
+ node @active state "Active" role=success { text @detail "Member privileges are enabled." }
+ node @suspended state "Suspended" role=warning { text @detail "Privileges paused; history retained." }
+ node @review state "Reinstatement review" role=primary { text @detail "Verify the remedy and reviewer decision." }
+ node @restored state "Reinstated" role=success { text @detail "Access restored with a monitored review period." }
+ node @closed end "Closed" {}
+ wire @submit @start -> @pending "submit application" kind=transition effect="record applicant"
+ wire @approve @pending -> @active "approve" kind=transition guard="eligibility confirmed" effect="enable privileges"
+ wire @decline @pending -> @closed "decline" kind=transition guard="ineligible" effect="retain decision"
+ wire @suspend @active -> @suspended "suspend" kind=transition guard="policy breach upheld" effect="pause privileges"
+ wire @appeal @suspended -> @review "request reinstatement" kind=transition guard="remedy submitted"
+ wire @reject @review -> @suspended "request more evidence" kind=transition guard="remedy incomplete"
+ wire @restore @review -> @restored "approve reinstatement" kind=transition guard="remedy verified" effect="restore privileges"
+ wire @complete @restored -> @active "complete review period" kind=transition guard="conditions met"
+ wire @relapse @restored -> @suspended "suspend again" kind=transition guard="conditions breached"
+ wire @withdraw @suspended -> @closed "withdraw membership" kind=transition guard="member requests closure"
+ section @membership "MEMBERSHIP / Reinstatement is a reviewed return" mode=state layout=layered direction=down gap=compact {
+  group @application "APPLICATION" layout=layered direction=right gap=compact { show @start @pending
+   rank @start @pending
+  }
+  group @membership "ACTIVE MEMBERSHIP" layout=layered direction=right gap=compact { show @active @restored
+   rank @active @restored
+  }
+  group @reviewing "REVIEW & CLOSURE" layout=layered direction=right gap=compact { show @suspended @review @closed
+   rank @suspended @review @closed
+  }
+  connect @submit @approve @suspend @appeal @restore @complete @relapse @withdraw
+  connect @decline source-side=right target-side=top
+  connect @reject source-side=bottom target-side=bottom
+ }
+}

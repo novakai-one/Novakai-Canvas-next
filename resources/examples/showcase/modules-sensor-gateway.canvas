@@ -1,0 +1,34 @@
+canvas 1
+collection @modules-sensor-gateway "Sensor gateway adapters" theme=atlas {
+ node @gateway module "Sensor gateway" role=primary size=large {
+  port @readings in "readings" type="AsyncIterable<RawReading>"
+  port @normalizer out "normalizer" type="ReadingNormalizer"
+  port @events out "events" type="TelemetrySink"
+ }
+ node @normalizer interface "ReadingNormalizer" role=supporting size=medium {
+  member @normalize "normalize" type="(RawReading, Calibration) => Result<Measurement, ReadingError>" visibility=public
+ }
+ node @normalize function "normalizeReading" size=large {
+  signature @call "normalizeReading" parameters=["reading: RawReading", "calibration: Calibration"] returns="Result<Measurement, ReadingError>"
+ }
+ node @mqtt module "MQTT input adapter" size=medium {
+  port @packets in "packets" type="MqttPacket"
+  port @decoded out "decoded readings" type="AsyncIterable<RawReading>"
+ }
+ node @serial module "Serial input adapter" size=medium {
+  port @frames in "frames" type="SerialFrame"
+  port @decoded out "decoded readings" type="AsyncIterable<RawReading>"
+ }
+ node @sink interface "TelemetrySink" role=success size=small {
+  member @append "append" type="(Measurement) => Promise<Ack>" visibility=public
+ }
+ wire @mqtt-feeds @mqtt.@decoded -> @gateway.@readings "streams decoded MQTT readings" kind=reference
+ wire @serial-feeds @serial.@decoded -> @gateway.@readings "streams decoded serial readings" kind=reference
+ wire @uses-normalizer @gateway.@normalizer -> @normalizer "imports normalization contract" kind=imports
+ wire @implements-normalizer @normalize -> @normalizer.@normalize "implements normalize" kind=implements
+ wire @emits @gateway.@events -> @sink "imports telemetry sink contract" kind=imports
+ section @gateway-boundary "SENSOR GATEWAY / Two transports, one typed core" mode=modules layout=layered direction=right gap=compact {
+  show @mqtt @serial @gateway @normalizer @normalize @sink
+  connect @mqtt-feeds @serial-feeds @uses-normalizer @implements-normalizer @emits
+ }
+}

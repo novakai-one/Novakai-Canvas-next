@@ -1,0 +1,1072 @@
+[
+  {
+    "file": "capability/authoring/adapters/node-identity.ts",
+    "lines": 39,
+    "functions": [
+      {
+        "name": "nativeHash",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createNodeIdentity",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "hashText",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "currentTime",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/contract/api.ts",
+    "lines": 84,
+    "functions": [
+      {
+        "name": "requireKind",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createAuthoring",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "read",
+        "line": 27,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "receipt",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "prepare",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "submit",
+        "line": 56,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "apply",
+        "line": 72,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "undo",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "redo",
+        "line": 80,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/contract/brands.ts",
+    "lines": 25,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/compose.ts",
+    "lines": 8,
+    "functions": [
+      {
+        "name": "composeAuthoring",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/contract/errors.ts",
+    "lines": 54,
+    "functions": [
+      {
+        "name": "failure",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/contract/index.ts",
+    "lines": 46,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/ports/decoding.ts",
+    "lines": 6,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/ports/planning.ts",
+    "lines": 26,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/ports/resources.ts",
+    "lines": 15,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/ports/runtime.ts",
+    "lines": 18,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/ports/store.ts",
+    "lines": 27,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/records/history.ts",
+    "lines": 27,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/records/proposal.ts",
+    "lines": 51,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/records/request.ts",
+    "lines": 37,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/records/storage.ts",
+    "lines": 92,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/contract/types.ts",
+    "lines": 33,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/core/admission/candidate.ts",
+    "lines": 34,
+    "functions": [
+      {
+        "name": "createCandidate",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/admission/dependencies.ts",
+    "lines": 45,
+    "functions": [
+      {
+        "name": "checkRequest",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkProposal",
+        "line": 23,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkDependencies",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkAssetAliases",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/admission/pipeline.ts",
+    "lines": 93,
+    "functions": [
+      {
+        "name": "checkCancellation",
+        "line": 22,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkFeasibility",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "buildCandidate",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/admission/prepare.ts",
+    "lines": 63,
+    "functions": [
+      {
+        "name": "withCandidate",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "reconcileRejected",
+        "line": 31,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "prepareUncommitted",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/admission/registry.ts",
+    "lines": 45,
+    "functions": [
+      {
+        "name": "validateRegistry",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "planChange",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "planIntent",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/admission/resources.ts",
+    "lines": 32,
+    "functions": [
+      {
+        "name": "transitionResources",
+        "line": 7,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkCoverage",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "releaseProtection",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/history/inverse.ts",
+    "lines": 79,
+    "functions": [
+      {
+        "name": "restoreRecord",
+        "line": 10,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkParticipants",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkHead",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "planInverse",
+        "line": 41,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkTransitionIdentity",
+        "line": 70,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkImageIdentity",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/history/journal.ts",
+    "lines": 137,
+    "functions": [
+      {
+        "name": "outcome",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "transition",
+        "line": 45,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "historyWrites",
+        "line": 52,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "retainedResources",
+        "line": 99,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkJournalIdentity",
+        "line": 104,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "createJournal",
+        "line": 110,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "requireAbsent",
+        "line": 130,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/history/read.ts",
+    "lines": 46,
+    "functions": [
+      {
+        "name": "transactionKey",
+        "line": 11,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "headKey",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "retained",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readTransaction",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readHead",
+        "line": 36,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/identity/canonical.ts",
+    "lines": 24,
+    "functions": [
+      {
+        "name": "canonical",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "canonicalScalarOrObject",
+        "line": 14,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "fingerprint",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/identity/receipts.ts",
+    "lines": 19,
+    "functions": [
+      {
+        "name": "reconcile",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/records/changes.ts",
+    "lines": 96,
+    "functions": [
+      {
+        "name": "hasPayloadRevision",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recordFields",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "stampValue",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "normalizePut",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unchangedPut",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "unchanged",
+        "line": 55,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nextVersion",
+        "line": 61,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "netWrite",
+        "line": 68,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "nextRecord",
+        "line": 76,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "installWrites",
+        "line": 89,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/records/keys.ts",
+    "lines": 20,
+    "functions": [
+      {
+        "name": "keyText",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "findRecord",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "versionOf",
+        "line": 16,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/records/versions.ts",
+    "lines": 38,
+    "functions": [
+      {
+        "name": "compareVersions",
+        "line": 6,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "uniqueKeys",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkWriteAuthority",
+        "line": 17,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "mergeVersions",
+        "line": 26,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkMergedVersion",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/transactions/apply.ts",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "checkPreparation",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "applyCandidate",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/transactions/commit.ts",
+    "lines": 38,
+    "functions": [
+      {
+        "name": "checkCommitted",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "commitAndReconcile",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "recoverTerminalCommit",
+        "line": 29,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/transactions/notifications.ts",
+    "lines": 15,
+    "functions": [
+      {
+        "name": "notifyCommitted",
+        "line": 5,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/validation/input.ts",
+    "lines": 43,
+    "functions": [
+      {
+        "name": "readShape",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkVersion",
+        "line": 20,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readRequest",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkObjectVersion",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readOptions",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/validation/outcomes.ts",
+    "lines": 50,
+    "functions": [
+      {
+        "name": "reject",
+        "line": 4,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "accepted",
+        "line": 8,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "freeze",
+        "line": 13,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "boundaryFailure",
+        "line": 19,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "protect",
+        "line": 34,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "copyDiagnostic",
+        "line": 43,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/validation/plain-data.ts",
+    "lines": 109,
+    "functions": [
+      {
+        "name": "propertyValue",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkObject",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "countValues",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readArray",
+        "line": 39,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readObject",
+        "line": 49,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readNumber",
+        "line": 64,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readContainer",
+        "line": 69,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readOther",
+        "line": 74,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readNonNumeric",
+        "line": 79,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readValue",
+        "line": 84,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readPrimitive",
+        "line": 90,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "copyJson",
+        "line": 95,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkArrayIdentity",
+        "line": 104,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/core/validation/snapshot.ts",
+    "lines": 53,
+    "functions": [
+      {
+        "name": "checkTombstone",
+        "line": 9,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readSnapshot",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "readReceipt",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkPayloadRevision",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkDocumentHeader",
+        "line": 46,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/tests/admission.test.ts",
+    "lines": 199,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/tests/domain-fixture.ts",
+    "lines": 100,
+    "functions": [
+      {
+        "name": "readProposal",
+        "line": 25,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkedCollection",
+        "line": 33,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "projection",
+        "line": 42,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateInventory",
+        "line": 58,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "checkedInventory",
+        "line": 71,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "validateCollections",
+        "line": 77,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "dependencies",
+        "line": 86,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/tests/failures.test.ts",
+    "lines": 284,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/tests/fixtures.ts",
+    "lines": 191,
+    "functions": [
+      {
+        "name": "value",
+        "line": 30,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "rejects",
+        "line": 35,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "key",
+        "line": 40,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "diagram",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "catalog",
+        "line": 82,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "put",
+        "line": 92,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "request",
+        "line": 101,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "observed",
+        "line": 125,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "record",
+        "line": 136,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "harness",
+        "line": 149,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "seed",
+        "line": 177,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "liveCollections",
+        "line": 189,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/tests/gates.ts",
+    "lines": 45,
+    "functions": [
+      {
+        "name": "gate",
+        "line": 15,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "open",
+        "line": 21,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "race",
+        "line": 28,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/tests/history-fixtures.ts",
+    "lines": 49,
+    "functions": [
+      {
+        "name": "inverse",
+        "line": 12,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "replaceHistoryBefore",
+        "line": 32,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  },
+  {
+    "file": "capability/authoring/tests/history.test.ts",
+    "lines": 145,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/tests/retries.test.ts",
+    "lines": 135,
+    "functions": []
+  },
+  {
+    "file": "capability/authoring/tests/storage-fixture.ts",
+    "lines": 71,
+    "functions": [
+      {
+        "name": "openStore",
+        "line": 18,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "storageCode",
+        "line": 24,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "convert",
+        "line": 38,
+        "returns": true,
+        "documented": true
+      },
+      {
+        "name": "storageRoles",
+        "line": 44,
+        "returns": true,
+        "documented": true
+      }
+    ]
+  }
+]

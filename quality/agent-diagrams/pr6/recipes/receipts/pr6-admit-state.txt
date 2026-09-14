@@ -1,0 +1,2 @@
+committed: pr6-admit-state
+Workspace sequence: 2

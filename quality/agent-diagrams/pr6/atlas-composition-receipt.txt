@@ -1,0 +1,5 @@
+$ tsx apps/cli/cli/main.ts apply atlas-composition-preview-4 --server http://127.0.0.1:5185 --workspace .local/atlas-proof
+(node:32911) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+committed: atlas-composition-preview-4
+Workspace sequence: 6

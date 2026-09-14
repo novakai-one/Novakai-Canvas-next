@@ -1,0 +1,29 @@
+canvas 1
+collection @sequence-payment-settlement "Payment settlement conversation" theme=atlas {
+ node @merchant participant "Merchant" role=primary size=medium {}
+ node @payments participant "Payment service" role=supporting size=large {}
+ node @ledger participant "Ledger" size=medium {}
+ node @network participant "Bank network" role=warning size=large {}
+ node @webhook participant "Merchant webhook" role=success size=small {}
+ section @settlement "SETTLEMENT / Retry submission, confirm asynchronously" mode=sequence direction=down gap=compact {
+  show @merchant @payments @ledger @network @webhook
+  event @capture @merchant -> @payments "Capture authorized payment" kind=call activate=true
+  event @pending @payments -> @ledger "Record pending settlement" kind=call
+  fragment @attempts loop "Until accepted or retry limit" {
+   event @submit @payments -> @network "Submit settlement batch" kind=call activate=true
+   fragment @result alt "Submission result" {
+    branch @batch-accepted "Accepted" {
+     event @ack @network -> @payments "Return batch acceptance" kind=return activate=false
+    }
+    branch @transient "Temporary failure" {
+     event @retry @network -> @payments "Return retry-after interval" kind=return activate=false
+     event @wait @payments -> @payments "Wait before next attempt" kind=call
+    }
+   }
+  }
+  event @accepted @payments -> @merchant "Return accepted receipt" kind=return activate=false
+  event @callback @network -> @payments "Settlement completed callback" kind=async activate=true
+  event @post @payments -> @ledger "Post final settlement" kind=call
+  event @notify @payments -> @webhook "Publish settlement outcome" kind=async activate=false
+ }
+}

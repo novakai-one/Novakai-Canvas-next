@@ -1,0 +1,69 @@
+@layer components {
+  .library {
+    padding: var(--nv-space-8);
+    overflow: auto;
+    height: 100%;
+  }
+  .heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nv-space-6);
+    margin-block: var(--nv-space-6) var(--nv-space-8);
+  }
+  .heading h2 {
+    margin: var(--nv-space-2) 0;
+    font-size: var(--nv-font-large);
+    font-weight: 600;
+  }
+  .heading p {
+    color: var(--nv-color-subtle);
+    margin-block: var(--nv-space-2);
+  }
+  .eyebrow {
+    font-size: var(--nv-font-caption);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--nv-panel-left), 1fr));
+    gap: var(--nv-space-4);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-3);
+    text-align: start;
+    min-height: calc(var(--nv-control-height) * var(--nv-scalar-four));
+    padding: var(--nv-space-6);
+    background: var(--nv-color-panel);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border-radius: var(--nv-radius-panel);
+    color: var(--nv-color-content);
+    cursor: pointer;
+  }
+  .card:hover {
+    border-color: var(--nv-color-action);
+  }
+  .card:focus-visible {
+    outline: var(--nv-focus-width) solid var(--nv-color-focus);
+    outline-offset: var(--nv-focus-offset);
+  }
+  .card strong {
+    font-size: var(--nv-font-title);
+    font-weight: 600;
+  }
+  .types,
+  .empty {
+    color: var(--nv-color-subtle);
+  }
+  .types {
+    font-family: var(--nv-font-mono);
+    font-size: var(--nv-font-caption);
+  }
+  .open {
+    color: var(--nv-color-action);
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+}

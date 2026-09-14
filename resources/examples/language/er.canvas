@@ -1,0 +1,17 @@
+canvas 1 collection @commerce "Commerce" {
+ node @customer entity "Customer" {
+  field @tenant "tenant" type="TenantId"
+  field @id "id" type="CustomerId"
+  field @email "email" type="Email" key=unique
+  keygroup @pk kind=primary fields=[@tenant,@id]
+ }
+ node @order entity "Order" {
+  field @id "id" type="OrderId" key=primary
+  field @tenant "tenant" type="TenantId"
+  field @customer "customerId" type="CustomerId"
+  field @mail "email" type="Email" key=foreign references=@customer.@email
+  keygroup @fk kind=foreign fields=[@tenant,@customer] references=[@customer.@tenant,@customer.@id]
+ }
+ wire @places @customer.@id -> @order.@customer "places" kind=association from=1 to=0..many
+ section @data "Customer and orders" mode=er { show @customer @order connect @places }
+}

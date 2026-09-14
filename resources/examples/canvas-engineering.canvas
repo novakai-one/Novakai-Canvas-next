@@ -1,0 +1,230 @@
+canvas 1
+collection @canvas-engineering "Canvas · engineering and authoring" theme=paper description="Spec dogfood, 12 September 2026. Capability responsibilities and typed contracts; current integration paths are identified separately from target behavior." {
+  source @architecture "docs/baseline/02-Capabilities.md" status=source-backed
+  source @model-contract "capability/model/contract/index.ts" status=source-backed
+  source @host "apps/service/contract/compose.ts" status=source-backed
+  source @host-plan "docs/integration/Host-Build-Plan.md" status=source-backed
+
+  node @model module "Model" sources=[@architecture,@model-contract] {
+    text @responsibility "Owns valid collection meaning and transitions."
+    signature @validate "validate" parameters=["input: unknown"] returns="Result<Collection>"
+    signature @plan "plan" parameters=["snapshot: unknown", "changes: unknown"] returns="Result<ChangePlan>"
+  }
+  node @authoring module "Authoring" sources=[@architecture] {
+    text @responsibility "The only admission and commit pathway. Owns revisions, receipts and inverse history."
+    signature @apply "apply" parameters=["request: unknown"] returns="Promise<Result<Receipt>>"
+    port @planner out "planners" type="IntentPlanner[]"
+    port @commits out "commits" type="Committer"
+  }
+  node @language module "Language" sources=[@architecture] {
+    text @responsibility "Readable DSL and patches become typed intent; snapshots print back to DSL."
+    signature @lower "lower" parameters=["request: LowerRequest"] returns="Result<LoweredIntent>"
+    signature @print "print" parameters=["request: PrintRequest"] returns="Result<Readout>"
+  }
+  node @library module "Library" sources=[@architecture] {
+    text @responsibility "Owns folders, collection membership, ordering, archive and search rules."
+    port @catalog in "catalog changes" type="CatalogChange"
+  }
+  node @persistence module "Persistence" sources=[@architecture] {
+    text @responsibility "Physical atomic transactions, durable receipts, backup and restore."
+    signature @commit "commit" parameters=["input: unknown"] returns="Result<Receipt>"
+  }
+  node @assets module "Assets" sources=[@architecture] {
+    text @responsibility "Admits immutable media and fonts; resolves digests and manages byte leases."
+    port @resolve in "resolve" type="Digest => Result<Blob>"
+  }
+  node @templates module "Templates" sources=[@architecture] {
+    text @responsibility "Owns immutable recipe and theme versions; expansion creates ordinary editable intent."
+    port @instantiate in "instantiate" type="PinnedRecipe => Result<Intent>"
+  }
+  node @design-system module "Design System" sources=[@architecture] {
+    text @responsibility "Owns UI tokens, theme resolution and reusable React primitives. Personal UI scope is separate from diagram styling."
+    signature @resolve "resolve" parameters=["input: unknown"] returns="Result<ResolvedTokenSet>"
+  }
+  node @presentation module "Presentation" sources=[@architecture] {
+    text @responsibility "Owns readable notation, exact text measurement and shared render content."
+    signature @project "project" parameters=["input: unknown"] returns="Result<Projection>"
+  }
+  node @layout module "Layout" sources=[@architecture] {
+    text @responsibility "Derives positions and routed wires from measured content and authored constraints."
+    port @arrange in "arrange" type="LayoutRequest => Result<Scene>"
+    port @inspect in "inspect" type="InspectionRequest => Result<Inspection>"
+  }
+  node @canvas module "Canvas" sources=[@architecture] {
+    text @responsibility "React Flow interaction: camera, selection, reading, gestures and recoverable drafts."
+    signature @transition "transition" parameters=["state: SessionState", "event: unknown"] returns="Result<Transition>"
+  }
+  node @export module "Export" sources=[@architecture] {
+    text @responsibility "Produces revision-bound artifacts; prepares portable imports for Authoring."
+    port @produce in "produce" type="ExportRequest => Result<Artifact>"
+  }
+  node @service module "Service composition" sources=[@host] {
+    text @responsibility "Current host wiring. Imports public capability contracts and binds consumer-owned ports. These wires are source dependencies."
+  }
+  node @web module "Web composition" sources=[@host-plan] {
+    text @responsibility "Current browser composition. Stable React slots and host sessions; canonical writes go to Authoring through HTTP."
+  }
+  wire @service-model @service -> @model "imports public Model contract" kind=imports
+  wire @service-authoring @service -> @authoring "imports public Authoring contract" kind=imports
+  wire @service-language @service -> @language "imports public Language contract" kind=imports
+  wire @service-library @service -> @library "imports public Library contract" kind=imports
+  wire @service-persistence @service -> @persistence "imports public Persistence contract" kind=imports
+  wire @service-assets @service -> @assets "imports public Assets contract" kind=imports
+  wire @service-templates @service -> @templates "imports public Templates contract" kind=imports
+  wire @service-presentation @service -> @presentation "imports public Presentation contract" kind=imports
+  wire @service-layout @service -> @layout "imports public Layout contract" kind=imports
+  wire @web-design @web -> @design-system "imports token and React contracts" kind=imports
+  wire @web-canvas @web -> @canvas "imports interaction and React Flow bindings" kind=imports
+  wire @web-presentation @web -> @presentation "imports shared render content" kind=imports
+
+  section @write-capabilities "1 · Which capabilities own authored changes?" mode=modules direction=down order=0 {
+    show @service @language @model @library @authoring @persistence
+    connect @service-language @service-model @service-library @service-authoring @service-persistence
+  }
+  section @render-capabilities "2 · Which capabilities derive the visual result?" mode=modules direction=down order=1 {
+    show @service @assets @templates @presentation @layout
+    connect @service-assets @service-templates @service-presentation @service-layout
+  }
+  section @view-capabilities "3 · What belongs to the browser and portable output?" mode=modules direction=down order=2 {
+    show @web @design-system @canvas @presentation @export
+    connect @web-design @web-canvas @web-presentation
+  }
+
+  node @planner interface "IntentPlanner" {
+    member @id "id" type="PlannerId"
+    signature @plan "plan" parameters=["request: Request", "snapshot: Snapshot", "pins: Json"] returns="Promise<Result<Proposal>>"
+  }
+  node @committer interface "Committer" {
+    signature @commit "commit" parameters=["request: CommitRequest"] returns="Promise<Result<Receipt>>"
+  }
+  node @bridge module "Authoring store adapter" {
+    text @responsibility "Current adapter maps physical snapshots and commit receipts to Authoring's consumer-owned roles."
+  }
+  node @validate-function function "validate" sources=[@model-contract] {
+    signature @call "validate" parameters=["input: unknown"] returns="Result<Collection>"
+    text @contract "Pure validation. No database, layout engine or React dependency."
+  }
+  node @plan-function function "plan" sources=[@model-contract] {
+    signature @call "plan" parameters=["snapshot: unknown", "changes: unknown"] returns="Result<ChangePlan>"
+    text @contract "Validates the complete candidate and reports impact. It cannot commit."
+  }
+  wire @authoring-planner @authoring.@planner -> @planner "depends on planning role" kind=reference
+  wire @authoring-committer @authoring.@commits -> @committer "depends on conditional commit role" kind=reference
+  wire @bridge-implements @bridge -> @committer "satisfies Committer" kind=implements style=dashed
+  wire @bridge-persistence @bridge -> @persistence "imports physical storage contract" kind=imports
+  wire @model-validate @model -> @validate-function "exports validate" kind=contains
+  wire @model-plan @model -> @plan-function "exports plan" kind=contains
+  section @typed-boundaries "4 · Where are the typed seams and functions?" mode=modules direction=right order=3 {
+    show @authoring @planner @committer @bridge @persistence
+    connect @authoring-planner @authoring-committer @bridge-implements @bridge-persistence
+  }
+  section @model-functions "5 · What does Model expose?" mode=modules direction=right order=4 {
+    show @model @validate-function @plan-function
+    connect @model-validate @model-plan
+  }
+
+  node @collection-record entity "Collection" {
+    field @id "id" type="CollectionId" key=primary
+    field @revision "revision" type="Revision"
+    field @title "title" type="NonblankLabel"
+    field @theme "theme" type="ThemePin"
+  }
+  node @object-record entity "Object" {
+    field @id "id" type="ObjectId" key=primary
+    field @kind "kind" type="ObjectKind"
+    field @label "label" type="NonblankLabel"
+    field @content "content" type="ContentBlock[]"
+    field @ports "ports" type="TypedPort[]"
+  }
+  node @section-record entity "Section" {
+    field @id "id" type="SectionId" key=primary
+    field @mode "mode" type="DiagramMode"
+    field @layout "layout" type="LayoutIntent"
+  }
+  node @relationship-record entity "Relationship" {
+    field @id "id" type="RelationshipId" key=primary
+    field @source "source" type="Endpoint"
+    field @target "target" type="Endpoint"
+    field @label "label" type="NonblankLabel"
+  }
+  node @appearance-record entity "Appearance" {
+    field @object "object" type="ObjectId" key=foreign references=@object-record.@id
+    field @placement "placement" type="AuthoredPlacement?" nullable=true
+    field @detail "detail" type="full | summary | label"
+  }
+  node @wire-record entity "WireAppearance" {
+    field @relationship "relationship" type="RelationshipId" key=foreign references=@relationship-record.@id
+    field @route "route" type="orthogonal | curve"
+    field @manual "manual" type="Point[]?" nullable=true
+    field @locked "locked" type="boolean"
+  }
+  node @er-legend note "Aggregate ER · nested JSON records" {
+    text @scope "These are domain records, not SQL tables. Object, relationship and section IDs are scoped to one collection. Appearance identity is section + object; wire identity is section + relationship. Every line is labelled; crow's feet show multiplicity."
+  }
+  wire @collection-objects @collection-record -> @object-record "owns" kind=association from=1 to=0..many
+  wire @collection-sections @collection-record -> @section-record "owns" kind=association from=1 to=0..many
+  wire @collection-relationships @collection-record -> @relationship-record "owns" kind=association from=1 to=0..many
+  wire @section-appearances @section-record -> @appearance-record "contains" kind=association from=1 to=0..many
+  wire @object-appearances @object-record.@id -> @appearance-record.@object "appears as" kind=association from=1 to=0..many
+  wire @section-wires @section-record -> @wire-record "contains" kind=association from=1 to=0..many
+  wire @relationship-wires @relationship-record.@id -> @wire-record.@relationship "appears as" kind=association from=1 to=0..many
+  section @entity-model "6 · How can one meaning appear in several diagrams?" mode=er direction=right order=5 {
+    show @collection-record @object-record @section-record @relationship-record @appearance-record @wire-record @er-legend
+    connect @collection-objects @collection-sections @collection-relationships @section-appearances @object-appearances @section-wires @relationship-wires
+  }
+
+  node @human start "Human edits the UI" {}
+  node @agent start "Agent authors readable DSL" {}
+  node @ui-intent step "Capture the displayed revision and typed edit" { text @detail "Drag placement, inspect content or edit a labelled connection. Retain the draft locally." }
+  node @dsl-intent step "Language parses and lowers the DSL" { text @detail "Declare meaning and relationships. Measurement, positioning and routing are app responsibilities." }
+  node @gate step "Authoring prepares one candidate" { text @detail "Resolve planners and resources; ask Model and Library to validate the complete state." }
+  node @valid decision "Valid and feasible?" {}
+  node @commit step "Conditionally commit records and receipt" { text @detail "Persistence compares captured versions. Records, history and receipt share one atomic transaction." }
+  node @conflict decision "Versions still match?" {}
+  node @recover step "Keep the draft; show the exact problem" { text @detail "Correct invalid input. On a conflict, compare current state before preparing a new request. On uncertainty, reconcile the original request ID." }
+  node @render end "Refresh the scene without moving the camera" { text @detail "Read committed state, then Presentation, Layout and Canvas. Preserve unrelated selection and newer human typing." }
+  wire @human-intent @human -> @ui-intent "UI intent" kind=flow
+  wire @agent-intent @agent -> @dsl-intent "DSL document or patch" kind=flow
+  wire @human-gate @ui-intent -> @gate "captured request" kind=flow
+  wire @agent-gate @dsl-intent -> @gate "typed intent" kind=flow
+  wire @gate-valid @gate -> @valid "candidate and diagnostics" kind=flow
+  wire @invalid @valid -> @recover "No · reject without writing" kind=flow
+  wire @valid-commit @valid -> @commit "Yes · commit plan" kind=flow
+  wire @compare @commit -> @conflict "conditional outcome" kind=flow
+  wire @stale @conflict -> @recover "No · revision conflict" kind=flow
+  wire @saved @conflict -> @render "Yes · durable receipt" kind=flow
+  section @authoring-flow "7 · How do human and agent changes meet one gatekeeper?" mode=flow direction=down order=6 {
+    show @human @agent @ui-intent @dsl-intent @gate @valid @commit @conflict @recover @render
+    connect @human-intent @agent-intent @human-gate @agent-gate @gate-valid @invalid @valid-commit @compare @stale @saved
+  }
+
+  node @requester participant "Human / Agent" {}
+  node @admission participant "Authoring" {}
+  node @storage participant "Persistence" {}
+  section @receipt-flow "8 · What happens when confirmation is lost?" mode=sequence direction=down order=7 {
+    show @requester @admission @storage
+    event @submit @requester -> @admission "Apply request R with captured revision" kind=call activate=true
+    event @write @admission -> @storage "Commit records + history + receipt R" kind=call activate=true
+    event @durable @storage -> @admission "Receipt R is durable" kind=return
+    event @lost @admission -> @requester "Response lost · client marks uncertain" kind=return
+    event @lookup @requester -> @admission "Read receipt R before any retry" kind=call
+    event @lookup-store @admission -> @storage "Find the same request R" kind=call
+    event @existing @storage -> @admission "Return committed receipt R" kind=return
+    event @confirm @admission -> @requester "Confirm original result; no second write" kind=return
+  }
+
+  node @fundamentals concept "Diagram fundamentals" {}
+  node @meaning concept "Meaning" { list @items ["Stable objects", "Typed content", "Labelled relationships"] }
+  node @views concept "Views" { list @items ["One collection", "Several sections", "Shared semantic objects"] }
+  node @mechanics concept "Automatic mechanics" { list @items ["Theme and size tokens", "Measured notation", "Layout and routing"] }
+  node @interaction concept "Interaction" { list @items ["Pan and inspect", "Human editing", "Agent DSL patches"] }
+  wire @meaning-map @fundamentals -> @meaning "defines" kind=parent
+  wire @views-map @fundamentals -> @views "presents" kind=parent
+  wire @mechanics-map @fundamentals -> @mechanics "derives" kind=parent
+  wire @interaction-map @fundamentals -> @interaction "enables" kind=parent
+  section @teaching "9 · What do engineering diagrams and SOPs share?" mode=tree direction=down order=8 {
+    show @fundamentals @meaning @views @mechanics @interaction
+    connect @meaning-map @views-map @mechanics-map @interaction-map
+    root @fundamentals
+  }
+}

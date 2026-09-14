@@ -1,0 +1,23 @@
+canvas 1
+collection @decision "Decision record lifecycle" theme=paper {
+  node @start start "Proposal opened" {}
+  node @draft state "Drafting" role=primary {
+    text @detail "Capture the context, options and expected consequences."
+  }
+  node @review state "Peer review" role=supporting {
+    text @detail "Challenge assumptions and request missing evidence."
+  }
+  node @accepted state "Accepted" role=success {
+    text @detail "Publish the decision and assign follow-up work."
+  }
+  node @withdrawn end "Withdrawn" role=warning {}
+  wire @begin @start -> @draft "start proposal" kind=transition effect="name the owner"
+  wire @submit @draft -> @review "request review" kind=transition guard="options documented"
+  wire @revise @review -> @draft "revise proposal" kind=transition guard="changes requested" effect="record findings"
+  wire @approve @review -> @accepted "accept decision" kind=transition guard="review complete" effect="publish record"
+  wire @withdraw @draft -> @withdrawn "withdraw proposal" kind=transition guard="decision no longer needed"
+  section @lifecycle "From proposal to recorded decision" mode=state layout=layered direction=right {
+    show @start @draft @review @accepted @withdrawn
+    connect @begin @submit @revise @approve @withdraw
+  }
+}

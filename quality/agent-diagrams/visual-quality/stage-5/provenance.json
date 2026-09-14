@@ -1,0 +1,1248 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-13",
+  "parentCommit": "f850eab48f1843ed5fa392d303949e007489c701",
+  "codeIdentity": "Parent commit plus exact Stage5 production file hashes below; final PR commit contains this manifest.",
+  "productionFiles": {
+    "capability/layout/core/placement/scope-edges.ts": "7250469f6711321e97a4f64e8546d51e6a1d9ff0961f7e9747f20b4c3efa09ca",
+    "capability/layout/core/placement/groups.ts": "84120e2fc8ac2974f3a23222fc7228b7688bd6144052eafeb60ef873a5d20ee2",
+    "capability/layout/core/placement/spacing.ts": "2a8cc9b754143e8dce49732381ad1ed036c233d4d5970f560ae43bd35671754b",
+    "capability/layout/core/routing/native.ts": "fb94bd105301fcac98cd5796472059666e2882fc32e4e19840d9f307171471a0",
+    "capability/layout/contract/records/engines.ts": "f474510efd814c5c638be97ff9a685c153f53f74ffb1318013f7c8f86b7d161c"
+  },
+  "layoutPolicy": "layout-policy-14",
+  "workspaceSequence": 67,
+  "browser": "Existing visible in-app tab13; no external/headless browser launched",
+  "examples": [
+    {
+      "family": "ER",
+      "batch": 1,
+      "collectionId": "er-museum-loans",
+      "source": "resources/examples/showcase/er-museum-loans.canvas",
+      "distinguishingStructure": "Movement chain with junction and optional inspections",
+      "purpose": "Explain museum loans and inspections.",
+      "revision": 2,
+      "sourceSha256": "d6b671421a13debecb6cb72b27e0af9880dbd7e3ad6c424e9b8baf7eecba9570",
+      "lines": 38,
+      "transactionId": "vq4-er-contrast",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-er-museum-loans.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/er-museum-loans.svg",
+          "sha256": "d4e731bf57663f598a87f45cc3529088bf3f531177d8781721782e3f0c2e6181",
+          "bytes": 147292
+        },
+        "png": {
+          "path": "final/er-museum-loans.png",
+          "sha256": "d0ae6e6eb66d339d15957b76d9f88a4d3d1661d73ffdad0a985ce99b7fb8d783",
+          "bytes": 71957
+        },
+        "overview": {
+          "path": "browser/er-museum-loans-overview.png",
+          "sha256": "b2d7749170b71f97db33710e420a19aa43ab1b339e3130130f1126d3657eabf0",
+          "bytes": 53310
+        },
+        "detail": {
+          "path": "browser/er-museum-loans-detail.png",
+          "sha256": "cf9abc3565c64ca06506d1c1e52ae1c21a5b815c2fcba50ff7c3b884eb69c3f9",
+          "bytes": 43853
+        },
+        "readout": {
+          "path": "readouts/er-museum-loans.canvas",
+          "sha256": "19c4eaa182d495652c702a616d93cadf80679895a3516a03e7cbc45429bb55a1",
+          "bytes": 2358
+        },
+        "input": {
+          "path": "inputs/er-museum-loans.json.gz",
+          "sha256": "148be2f3a0b349480c7a075eefc6a4a2d7e8fa99b9f497abef9134028311047c",
+          "bytes": 105506
+        }
+      }
+    },
+    {
+      "family": "ER",
+      "batch": 2,
+      "collectionId": "er-course-enrollment",
+      "source": "resources/examples/showcase/er-course-enrollment.canvas",
+      "distinguishingStructure": "Five-part composite identity and dependent assessment",
+      "purpose": "Explain course enrollment records.",
+      "revision": 1,
+      "sourceSha256": "824a205c9b611dc17798c66637d112db0d58398292ec875e745f153a15c016ac",
+      "lines": 51,
+      "transactionId": "vq5-enrollment-reference",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-er-course-enrollment.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/er-course-enrollment.svg",
+          "sha256": "d28afc2a496fc2bc8b7b442b0acf16c8f2437295d6d193be098738705e26f322",
+          "bytes": 182867
+        },
+        "png": {
+          "path": "final/er-course-enrollment.png",
+          "sha256": "f1e1ce362be673d17591ac7857748d7882fe619ac5351eccff57e5c5d38d909c",
+          "bytes": 135535
+        },
+        "overview": {
+          "path": "browser/er-course-enrollment-overview.png",
+          "sha256": "a2665702855586c08f6a42ce52f8b363c1717f607cd8b3890992b8a0239b8b28",
+          "bytes": 56950
+        },
+        "detail": {
+          "path": "browser/er-course-enrollment-detail.png",
+          "sha256": "10d34eb82a8eba937f26c41ca011a35d2a9f1b51404dbc8685c4404492cf7b5c",
+          "bytes": 52543
+        },
+        "readout": {
+          "path": "readouts/er-course-enrollment.canvas",
+          "sha256": "9b82bb1d6837a462d5408b6c7933dee6c0b5de46f672133543d339df232c423b",
+          "bytes": 3406
+        },
+        "input": {
+          "path": "inputs/er-course-enrollment.json.gz",
+          "sha256": "7b76bf976a3fd61f46eda58578ecad6d868d5fd5aaac8f1a43ca6b683f920ede",
+          "bytes": 109301
+        }
+      }
+    },
+    {
+      "family": "ER",
+      "batch": 3,
+      "collectionId": "er-habitat-survey",
+      "source": "resources/examples/showcase/er-habitat-survey.canvas",
+      "distinguishingStructure": "Self-referencing habitat with several evidence contributors",
+      "purpose": "Explain habitat survey records.",
+      "revision": 1,
+      "sourceSha256": "9953c9a70e0becf69d18fa8fac915c2cd56f7729d85a8df86a35ba459c7e5931",
+      "lines": 43,
+      "transactionId": "vq5-attachments-er-habitat-survey",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-er-habitat-survey.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/er-habitat-survey.svg",
+          "sha256": "af023153bc37a576a9bf339d03e80d5bf4bf6f587ca8628e06ffadff27ae2712",
+          "bytes": 159469
+        },
+        "png": {
+          "path": "final/er-habitat-survey.png",
+          "sha256": "fcec5ba970a36145c538534041494e546d77fe0aa805a1ee5276e7e113745359",
+          "bytes": 88923
+        },
+        "overview": {
+          "path": "browser/er-habitat-survey-overview.png",
+          "sha256": "92975c7727a559517d9544eb52801a93a6c95615a4a96a603d8f5db1bffbe985",
+          "bytes": 54830
+        },
+        "detail": {
+          "path": "browser/er-habitat-survey-detail.png",
+          "sha256": "91454c2cac74386283f63873c0e384e8e9c7cd78ec912a521e0cf173a345c19d",
+          "bytes": 49326
+        },
+        "readout": {
+          "path": "readouts/er-habitat-survey.canvas",
+          "sha256": "6f1b9f9284660a7f3113c3cc9fbdc5abf36d767eccd093cfc16c92f8fbcaa741",
+          "bytes": 2801
+        },
+        "input": {
+          "path": "inputs/er-habitat-survey.json.gz",
+          "sha256": "26d5348ba539ac47a2273e38e3746fae19aa07ee911f0a364fd530ce46677770",
+          "bytes": 106504
+        }
+      }
+    },
+    {
+      "family": "Modules",
+      "batch": 1,
+      "collectionId": "modules-document-publishing",
+      "source": "resources/examples/showcase/modules-document-publishing.canvas",
+      "distinguishingStructure": "Inward interface dependency across an external vendor boundary",
+      "purpose": "Explain document publishing boundary.",
+      "revision": 0,
+      "sourceSha256": "df9422e8c334de3089ab3e2029c0fee2a7db1af7b7f10fbac3a20058d5bcda43",
+      "lines": 43,
+      "transactionId": "vq2-modules-create",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-modules-document-publishing.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/modules-document-publishing.svg",
+          "sha256": "d380f579ce6873f9b1dd8a7d09e4c412af25ce8e9565033544ac5930fc65bf2a",
+          "bytes": 135527
+        },
+        "png": {
+          "path": "final/modules-document-publishing.png",
+          "sha256": "a2a605850be7aed0aa5fa525ca9d294b66c5100d135f773e79c10a2950bb06dd",
+          "bytes": 133028
+        },
+        "overview": {
+          "path": "browser/modules-document-publishing-overview.png",
+          "sha256": "d5aa894cdc5deb4938a6e27dff4ecd9d001b71bd03d3c72dd89462c825e2705f",
+          "bytes": 51777
+        },
+        "detail": {
+          "path": "browser/modules-document-publishing-detail.png",
+          "sha256": "0534764f487f1d9aa4e3b950fad77e60fc18f4f98da2e1b54e5e9023e36b997a",
+          "bytes": 44684
+        },
+        "readout": {
+          "path": "readouts/modules-document-publishing.canvas",
+          "sha256": "836a0bfa7fa1a9b6bb6bef58a742c77cd1373c596fc6a8d2855bbe2792ed176d",
+          "bytes": 3095
+        },
+        "input": {
+          "path": "inputs/modules-document-publishing.json.gz",
+          "sha256": "3980452fcc1d8662d817571b751a07a4655bd782e48d650181b23e75c81410a5",
+          "bytes": 107918
+        }
+      }
+    },
+    {
+      "family": "Modules",
+      "batch": 2,
+      "collectionId": "modules-sensor-gateway",
+      "source": "resources/examples/showcase/modules-sensor-gateway.canvas",
+      "distinguishingStructure": "Two transport adapters converge on a typed input port",
+      "purpose": "Explain sensor gateway adapters.",
+      "revision": 1,
+      "sourceSha256": "08d1c40e1347dcd34b77293e0d95eeee8d953298cf93b9f3a17f5db3518160a0",
+      "lines": 34,
+      "transactionId": "vq5-sensor-contract",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-modules-sensor-gateway.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/modules-sensor-gateway.svg",
+          "sha256": "1037517a737ee496f8188f2ff3a8218a35c06f9a903061cc2788b68c95017906",
+          "bytes": 133175
+        },
+        "png": {
+          "path": "final/modules-sensor-gateway.png",
+          "sha256": "a4749c6eea688110b584cb1f1f62d4ce75393f192b391a356464acee97a85d8d",
+          "bytes": 113484
+        },
+        "overview": {
+          "path": "browser/modules-sensor-gateway-overview.png",
+          "sha256": "75a5b0d900986229ae1b5048a0d7baed22fe730922fbe4060bc715a470cecb85",
+          "bytes": 46487
+        },
+        "detail": {
+          "path": "browser/modules-sensor-gateway-detail.png",
+          "sha256": "954752df3a8390822ae5510173bc2dbf272996a7834bba9b8f81e8645006a9f6",
+          "bytes": 50071
+        },
+        "readout": {
+          "path": "readouts/modules-sensor-gateway.canvas",
+          "sha256": "3817e23edc82f51d36706ddef92ce20dfb4cc631600d5f105d63d53bf307c7db",
+          "bytes": 2512
+        },
+        "input": {
+          "path": "inputs/modules-sensor-gateway.json.gz",
+          "sha256": "983a77189b193dc9efdb0b59fab7b4ec754f46ca11ce70f1780cf93eff1f288f",
+          "bytes": 105067
+        }
+      }
+    },
+    {
+      "family": "Modules",
+      "batch": 3,
+      "collectionId": "modules-payroll-policy",
+      "source": "resources/examples/showcase/modules-payroll-policy.canvas",
+      "distinguishingStructure": "Several callable rules implement two contracts",
+      "purpose": "Explain payroll calculation contracts.",
+      "revision": 1,
+      "sourceSha256": "0a60ac387139283bcf4ec6165fe2df10537b5ab33c3155345d801fa46fc477e0",
+      "lines": 47,
+      "transactionId": "vq5-attachments-modules-payroll-policy",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-modules-payroll-policy.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/modules-payroll-policy.svg",
+          "sha256": "54260b500b098c46fcab7fb0b39799433a41df17240a292ecca6732abe18d11c",
+          "bytes": 155395
+        },
+        "png": {
+          "path": "final/modules-payroll-policy.png",
+          "sha256": "b031cd2c987213fc07fa57751dadf4a4d2984496509855cb08183abd5e80ecac",
+          "bytes": 128906
+        },
+        "overview": {
+          "path": "browser/modules-payroll-policy-overview.png",
+          "sha256": "b419dbc358e45af7788cf1075c29f51241e18b166276aa3f55b93b441659d508",
+          "bytes": 43991
+        },
+        "detail": {
+          "path": "browser/modules-payroll-policy-detail.png",
+          "sha256": "335f1b3e51eff6579d68edddec613ca100f2bc77fe0241503c1a818b537d30ad",
+          "bytes": 47512
+        },
+        "readout": {
+          "path": "readouts/modules-payroll-policy.canvas",
+          "sha256": "29bad6be242b79fe8c3c8867989c6bf7573805c1d6dbf6df0c242a119738a04e",
+          "bytes": 3614
+        },
+        "input": {
+          "path": "inputs/modules-payroll-policy.json.gz",
+          "sha256": "64d75cba240b2981f13c5aa8982b4df3cf262986df7eac8923402fd00d27771c",
+          "bytes": 107798
+        }
+      }
+    },
+    {
+      "family": "Flow/SOP",
+      "batch": 1,
+      "collectionId": "flow-research-approval",
+      "source": "resources/examples/showcase/flow-research-approval.canvas",
+      "distinguishingStructure": "Parallel reviews converge with a revision loop",
+      "purpose": "Explain research approval workflow.",
+      "revision": 2,
+      "sourceSha256": "6e8b20f345dead1d0e5506a7fdae3d960cb096bcefe931f9907f38970285c129",
+      "lines": 41,
+      "transactionId": "vq3-research-return",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-flow-research-approval.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/flow-research-approval.svg",
+          "sha256": "af7c1d28d6958bcb9e6471f47de09f725d602f8e63a59c0479fe68c5d49d5406",
+          "bytes": 147336
+        },
+        "png": {
+          "path": "final/flow-research-approval.png",
+          "sha256": "a5bdf7c9ca2ec99021d4743b79b0e6a2922a902096ab76ba10809e135e1a7ae1",
+          "bytes": 116830
+        },
+        "overview": {
+          "path": "browser/flow-research-approval-overview.png",
+          "sha256": "9f066924e9653381521f484f3270f6ac0919f88d2eeb895d4ccb0585cb34bc45",
+          "bytes": 47136
+        },
+        "detail": {
+          "path": "browser/flow-research-approval-detail.png",
+          "sha256": "f5a7b6f09af5a0a93250508c70718ad1ad5b22351ebc83a0f9530d641ee4466d",
+          "bytes": 44153
+        },
+        "readout": {
+          "path": "readouts/flow-research-approval.canvas",
+          "sha256": "6072e36e1bdbc0c9fa87715ef2745fa59dbb26e401faad867e690b772497de6e",
+          "bytes": 2960
+        },
+        "input": {
+          "path": "inputs/flow-research-approval.json.gz",
+          "sha256": "6e5c4527a2b16096da163015185b572da7d9f52f40292fba989fd885d49d4dbb",
+          "bytes": 106850
+        }
+      }
+    },
+    {
+      "family": "Flow/SOP",
+      "batch": 2,
+      "collectionId": "flow-equipment-return",
+      "source": "resources/examples/showcase/flow-equipment-return.canvas",
+      "distinguishingStructure": "Inspection decision and repair recheck",
+      "purpose": "Explain return equipment safely.",
+      "revision": 0,
+      "sourceSha256": "d05c2bddc37853a56c38f982744cdd8a14b2b28fafc8c45269a0f611152d6993",
+      "lines": 20,
+      "transactionId": "vq5-flow-equipment-return",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-flow-equipment-return.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/flow-equipment-return.svg",
+          "sha256": "2cb6d2bf8bb0770472e1774eaec9b0a783b4d5e632259f00db62ec61eec111d3",
+          "bytes": 114719
+        },
+        "png": {
+          "path": "final/flow-equipment-return.png",
+          "sha256": "0ca72a0704802d49ef11fb294f01cbdbf5375a6841d40ae57b0d3728bbbe8c3c",
+          "bytes": 62229
+        },
+        "overview": {
+          "path": "browser/flow-equipment-return-overview.png",
+          "sha256": "6b41568f1f1cb2200b0c8258eef2fb64595cdad9c52d3dd18406ecc10130796a",
+          "bytes": 46250
+        },
+        "detail": {
+          "path": "browser/flow-equipment-return-detail.png",
+          "sha256": "4de5cd03646031f49639f9839e14d8196da96374d4c26934d8aa956dcc2a2f46",
+          "bytes": 43555
+        },
+        "readout": {
+          "path": "readouts/flow-equipment-return.canvas",
+          "sha256": "92a51b0137dd991699c2185edecea22ffd8ba5b04fd102fc6519ed3898e3d77c",
+          "bytes": 1821
+        },
+        "input": {
+          "path": "inputs/flow-equipment-return.json.gz",
+          "sha256": "6b17282b3f9d55e5ab0c0e069cdb505871d73912e94e84ebc641f0259869d43a",
+          "bytes": 102660
+        }
+      }
+    },
+    {
+      "family": "Flow/SOP",
+      "batch": 3,
+      "collectionId": "flow-emergency-dispatch",
+      "source": "resources/examples/showcase/flow-emergency-dispatch.canvas",
+      "distinguishingStructure": "Escalation branches converge at handoff",
+      "purpose": "Explain emergency dispatch escalation.",
+      "revision": 0,
+      "sourceSha256": "9683ed081c02e697339c52de5791f626dcc2fbb23f37c178613d606a59bb4466",
+      "lines": 29,
+      "transactionId": "vq5-flow-emergency-dispatch",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-flow-emergency-dispatch.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/flow-emergency-dispatch.svg",
+          "sha256": "dddcc51dc20af1d7883feafa86fde968d47b96816352488e7cf501edfe5779aa",
+          "bytes": 150948
+        },
+        "png": {
+          "path": "final/flow-emergency-dispatch.png",
+          "sha256": "f2d3dbab06da40f5cf2f2190eb2f8b3d1ed3f2cbf6b75ac570406c493c8b4d40",
+          "bytes": 137652
+        },
+        "overview": {
+          "path": "browser/flow-emergency-dispatch-overview.png",
+          "sha256": "3da5edb603af47b08fdfa1d63fe53793d2f535795ded65d26d12be9ab1df7d96",
+          "bytes": 47827
+        },
+        "detail": {
+          "path": "browser/flow-emergency-dispatch-detail.png",
+          "sha256": "55126027971c8769c776d2a3f2ba3b408a80504e36148694b96007d5f0609edc",
+          "bytes": 45472
+        },
+        "readout": {
+          "path": "readouts/flow-emergency-dispatch.canvas",
+          "sha256": "a0083c16ce124f91075ba9bc3dcaede39aa060f1582d4007b85b2f493d50b645",
+          "bytes": 3159
+        },
+        "input": {
+          "path": "inputs/flow-emergency-dispatch.json.gz",
+          "sha256": "a47c5f7df9025d8f706c6f120f8119c8f92b56d15a0f61e13c6fd7c2f5231593",
+          "bytes": 106840
+        }
+      }
+    },
+    {
+      "family": "Sequence",
+      "batch": 1,
+      "collectionId": "sequence-payment-settlement",
+      "source": "resources/examples/showcase/sequence-payment-settlement.canvas",
+      "distinguishingStructure": "Nested loop and alternatives plus asynchronous confirmation",
+      "purpose": "Explain payment settlement conversation.",
+      "revision": 1,
+      "sourceSha256": "bb50b162884169d220d26c25f6feea60b6b1052c19e7b18d8b1cc1d0b7200eb9",
+      "lines": 29,
+      "transactionId": "vq4-sequence-nested-fixed",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-sequence-payment-settlement.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/sequence-payment-settlement.svg",
+          "sha256": "ebcb731e19b457dcf9a1a109abfe4b452c5034969a471c3b3e21233e1784b64c",
+          "bytes": 117963
+        },
+        "png": {
+          "path": "final/sequence-payment-settlement.png",
+          "sha256": "8c964d0fb7c28e3878f09b5b4db859de8584c01837a6d02f93bf5790fff6e03f",
+          "bytes": 101022
+        },
+        "overview": {
+          "path": "browser/sequence-payment-settlement-overview.png",
+          "sha256": "4e2d0d482291e3dfd89e33ae29e7f8b4261dc615b34165d879c0df71e0f15b76",
+          "bytes": 46951
+        },
+        "detail": {
+          "path": "browser/sequence-payment-settlement-detail.png",
+          "sha256": "ca69a5a3d1367a362d48c31b6f2359e572a79617b2e8773572e30fde43a0db5d",
+          "bytes": 43279
+        },
+        "readout": {
+          "path": "readouts/sequence-payment-settlement.canvas",
+          "sha256": "78167ed974348ac3d9ec1724f447b4ddcb709a5ac658a285d5a42776e85ab222",
+          "bytes": 2023
+        },
+        "input": {
+          "path": "inputs/sequence-payment-settlement.json.gz",
+          "sha256": "5f1dfe57bf4e5ac3ae3a55bfeea665cbc67d5a9a42bb8b1000e972a9c39e2db7",
+          "bytes": 103326
+        }
+      }
+    },
+    {
+      "family": "Sequence",
+      "batch": 2,
+      "collectionId": "sequence-library-reservation",
+      "source": "resources/examples/showcase/sequence-library-reservation.canvas",
+      "distinguishingStructure": "Alternative reservation and waitlist paths",
+      "purpose": "Explain library reservation conversation.",
+      "revision": 0,
+      "sourceSha256": "b0d9cf1abcd9034e56ca2d867ecadc50813d9e6cd8e90ef4b2172bea0e2e03d8",
+      "lines": 25,
+      "transactionId": "vq5-sequence-library-reservation",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-sequence-library-reservation.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/sequence-library-reservation.svg",
+          "sha256": "dcda0302c0cab2f6d2a479097d72ae5c977fc31a6e4e542339ef266024a911b1",
+          "bytes": 110274
+        },
+        "png": {
+          "path": "final/sequence-library-reservation.png",
+          "sha256": "9f9d5b8ad9f668e2296a1fefcae56e1ffedf18f82987118e6da4dc1bdd5f4f1a",
+          "bytes": 67275
+        },
+        "overview": {
+          "path": "browser/sequence-library-reservation-overview.png",
+          "sha256": "0872bc37c2844db69be537fb8359d349e64a72119a1c7f09b86f85a54e789ff0",
+          "bytes": 44983
+        },
+        "detail": {
+          "path": "browser/sequence-library-reservation-detail.png",
+          "sha256": "dc7536be0eaf1747e440aea1208e669af981e6e8167c2f23437954bef33439d3",
+          "bytes": 42480
+        },
+        "readout": {
+          "path": "readouts/sequence-library-reservation.canvas",
+          "sha256": "6d951b067c2e3e2d4970cb6941446e59492926be0d506d815fc5a24368e167cd",
+          "bytes": 1677
+        },
+        "input": {
+          "path": "inputs/sequence-library-reservation.json.gz",
+          "sha256": "0e7eb12f2b5925dee4dabc5594f4d8345a273d881947af2653a821c369bc3dc9",
+          "bytes": 102135
+        }
+      }
+    },
+    {
+      "family": "Sequence",
+      "batch": 3,
+      "collectionId": "sequence-incident-notification",
+      "source": "resources/examples/showcase/sequence-incident-notification.canvas",
+      "distinguishingStructure": "Independent optional fragments and self-calls",
+      "purpose": "Explain incident notification conversation.",
+      "revision": 0,
+      "sourceSha256": "5dfb6e8de299281a4466c953f67af7f06b73f9fe3cc152428f8b834ce33d88ad",
+      "lines": 26,
+      "transactionId": "vq5-sequence-incident-notification",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-sequence-incident-notification.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/sequence-incident-notification.svg",
+          "sha256": "7a1e9a7a9791c81e37bb4b983f040dc1726f2ea80636cc214c3cb132552feb35",
+          "bytes": 116873
+        },
+        "png": {
+          "path": "final/sequence-incident-notification.png",
+          "sha256": "5b28f221611ef50a203fa16a8e16935bbcb37b5689bf92d15a8f6c3a9d7c6714",
+          "bytes": 89081
+        },
+        "overview": {
+          "path": "browser/sequence-incident-notification-overview.png",
+          "sha256": "550838e18d285899ad02dd722c09777385fc6b5137431716fc91eea75a8c6376",
+          "bytes": 51065
+        },
+        "detail": {
+          "path": "browser/sequence-incident-notification-detail.png",
+          "sha256": "4d8e60d4ce2993af29c6f23b736d02513643745e4e665da5629a5b045c0e8933",
+          "bytes": 44055
+        },
+        "readout": {
+          "path": "readouts/sequence-incident-notification.canvas",
+          "sha256": "bd133d47c7492b582f604fbe0ee9f781619000a674a50548a2b4c9d18e322c03",
+          "bytes": 2020
+        },
+        "input": {
+          "path": "inputs/sequence-incident-notification.json.gz",
+          "sha256": "390f6d80caa0c0c2987d144c8e1b2d52bb0d1d2d2b214f6c8fe5ab9422f12dfc",
+          "bytes": 102960
+        }
+      }
+    },
+    {
+      "family": "State",
+      "batch": 1,
+      "collectionId": "state-batch-job",
+      "source": "resources/examples/showcase/state-batch-job.canvas",
+      "distinguishingStructure": "Retry/cancellation branches and durable outcomes",
+      "purpose": "Explain batch job retry lifecycle.",
+      "revision": 4,
+      "sourceSha256": "f7ef2f3f14d6cc3430f62ea9a077f5da8c8704a10962d06d0332b7b288f831b6",
+      "lines": 36,
+      "transactionId": "vq4-state-lanes",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-state-batch-job.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/state-batch-job.svg",
+          "sha256": "5837b8601088c7d3585711216e968bf5b1716d3e83d4f46654b5ef6e0d72dc21",
+          "bytes": 150545
+        },
+        "png": {
+          "path": "final/state-batch-job.png",
+          "sha256": "66d5e1e50293188eccfce71793f71abf197d72747073d3e6b6616d65e4def4f0",
+          "bytes": 126317
+        },
+        "overview": {
+          "path": "browser/state-batch-job-overview.png",
+          "sha256": "6cb5e941b386d3e581ae62668bd4f5f03cf6b109de03e2e28eb913b6d522dd96",
+          "bytes": 46514
+        },
+        "detail": {
+          "path": "browser/state-batch-job-detail.png",
+          "sha256": "59cb5afa985371600c95ee96775462ba69ed9f4e07bc0d8c66c45c1a0a5eb2f9",
+          "bytes": 52317
+        },
+        "readout": {
+          "path": "readouts/state-batch-job.canvas",
+          "sha256": "1a4470dd440da9bd21aec80e77887d45866cb78de831264d2bbee3cb602b8c15",
+          "bytes": 3482
+        },
+        "input": {
+          "path": "inputs/state-batch-job.json.gz",
+          "sha256": "4396c9fe8522ea4dffc3e2baaa1f4a32040b19a00346027382705db599be182d",
+          "bytes": 107323
+        }
+      }
+    },
+    {
+      "family": "State",
+      "batch": 2,
+      "collectionId": "state-exhibition-lifecycle",
+      "source": "resources/examples/showcase/state-exhibition-lifecycle.canvas",
+      "distinguishingStructure": "Publication lifecycle and rollback",
+      "purpose": "Explain exhibition publication lifecycle.",
+      "revision": 4,
+      "sourceSha256": "b02711e54be3e2df534f5e618ba50b731ba84abcdccc6c74e7a802779b54b518",
+      "lines": 31,
+      "transactionId": "vq5-final-intent-state-exhibition-lifecycle",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-state-exhibition-lifecycle.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/state-exhibition-lifecycle.svg",
+          "sha256": "a8778ad592a65b8da041ac7256c99fdb62eb4d665e2e108dc0c8f7013b93a796",
+          "bytes": 143110
+        },
+        "png": {
+          "path": "final/state-exhibition-lifecycle.png",
+          "sha256": "062e7cffc767529d80cd542b47fd05d83ad7469a8e7d191613583b35890f434c",
+          "bytes": 123418
+        },
+        "overview": {
+          "path": "browser/state-exhibition-lifecycle-overview.png",
+          "sha256": "ab1a25a5e7a8e2ab2fb2eecf89226b3e23ddb2f3740a11377649e48dd90864cd",
+          "bytes": 45507
+        },
+        "detail": {
+          "path": "browser/state-exhibition-lifecycle-detail.png",
+          "sha256": "e6dfd709c7e7b9cea044b20dfd19fbd4dc6d64e65df8298c60b08364c78d9741",
+          "bytes": 45357
+        },
+        "readout": {
+          "path": "readouts/state-exhibition-lifecycle.canvas",
+          "sha256": "ce4c52618c8a13e90c6c21cf475bf3424a4cbe1972ad976cac0cacc7e08a342f",
+          "bytes": 3284
+        },
+        "input": {
+          "path": "inputs/state-exhibition-lifecycle.json.gz",
+          "sha256": "2030cd97b7b4a79a0ba3e4318a7faa018099eb2fa91bb3d377e5a349e663308c",
+          "bytes": 106599
+        }
+      }
+    },
+    {
+      "family": "State",
+      "batch": 3,
+      "collectionId": "state-membership-reinstatement",
+      "source": "resources/examples/showcase/state-membership-reinstatement.canvas",
+      "distinguishingStructure": "Suspension, review and monitored re-entry",
+      "purpose": "Explain membership reinstatement.",
+      "revision": 1,
+      "sourceSha256": "e83c66dc5264ec454c807c08c60dcbb41be5656d4ec7989655170d80348d58d5",
+      "lines": 34,
+      "transactionId": "vq5-final-intent-state-membership-reinstatement",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-state-membership-reinstatement.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/state-membership-reinstatement.svg",
+          "sha256": "bc8d18a7ce7fc5d60a286e5cf57114f7c7c29156cf0f65d3247cdadc19c83447",
+          "bytes": 152303
+        },
+        "png": {
+          "path": "final/state-membership-reinstatement.png",
+          "sha256": "6492d98ee2ad8241181a9819a3ecc2059f837f962d5b8cd27059c36aa8d8ee52",
+          "bytes": 128628
+        },
+        "overview": {
+          "path": "browser/state-membership-reinstatement-overview.png",
+          "sha256": "8a9f90b483bdee8f74baa2596344f5bf0b273ddef328ffb05cc05df3cb2e4072",
+          "bytes": 52812
+        },
+        "detail": {
+          "path": "browser/state-membership-reinstatement-detail.png",
+          "sha256": "65270c5017a91f41a3b6dbad15a3ef3885d1708ab5cacd4de2e08bfe9e220afb",
+          "bytes": 55891
+        },
+        "readout": {
+          "path": "readouts/state-membership-reinstatement.canvas",
+          "sha256": "bfce942af427874ae312686a4bfd287f2d12ef8a414b66bfabc04dd2d7138b23",
+          "bytes": 3371
+        },
+        "input": {
+          "path": "inputs/state-membership-reinstatement.json.gz",
+          "sha256": "7d55f024c26c6a5b4381a0e5699e1120b585969128df30eabca5c8ba1fb51798",
+          "bytes": 107354
+        }
+      }
+    },
+    {
+      "family": "Tree/mindmap",
+      "batch": 1,
+      "collectionId": "tree-field-research",
+      "source": "resources/examples/showcase/tree-field-research.canvas",
+      "distinguishingStructure": "Uneven evidence hierarchy with cross-reference",
+      "purpose": "Explain design a field study.",
+      "revision": 2,
+      "sourceSha256": "24a4405a1344e27a3251f5dfd89258ec5fb724139439215d71b8d2e449bc4ff8",
+      "lines": 29,
+      "transactionId": "vq4-tree-branches",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-tree-field-research.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/tree-field-research.svg",
+          "sha256": "702625678bc1d00429b7a447c2ac723f9c1497115d924a0a0ae5e0e743e24097",
+          "bytes": 139537
+        },
+        "png": {
+          "path": "final/tree-field-research.png",
+          "sha256": "44b764499508d931be5f3a50546272e8155fb5323a34e41d739a35bfb5242db1",
+          "bytes": 78857
+        },
+        "overview": {
+          "path": "browser/tree-field-research-overview.png",
+          "sha256": "7a324d59ba14005e961122dc317ff5d2fb7c14251f4298d1aa223640b748eea8",
+          "bytes": 47183
+        },
+        "detail": {
+          "path": "browser/tree-field-research-detail.png",
+          "sha256": "be39dd272dd12b1ebc48220ad7800673d69c2e91cc085e81677f0a993f5c1bb7",
+          "bytes": 47190
+        },
+        "readout": {
+          "path": "readouts/tree-field-research.canvas",
+          "sha256": "7a7ee55c40bc0a68d1d5afbec3900822dc6017e12dcdb2f72d1783edd1228a92",
+          "bytes": 2790
+        },
+        "input": {
+          "path": "inputs/tree-field-research.json.gz",
+          "sha256": "9f7025ded2060172aad11761090b96fe7ad29b7914be2bad4cea23ca836651b4",
+          "bytes": 105545
+        }
+      }
+    },
+    {
+      "family": "Tree/mindmap",
+      "batch": 2,
+      "collectionId": "tree-course-objectives",
+      "source": "resources/examples/showcase/tree-course-objectives.canvas",
+      "distinguishingStructure": "Deep learning prerequisite hierarchy",
+      "purpose": "Explain course learning objectives.",
+      "revision": 1,
+      "sourceSha256": "bc2687cde51b7bb7385ff4357214c424d5ece2c36f2f8609e33fa8d72563c64b",
+      "lines": 27,
+      "transactionId": "vq5-final-intent-tree-course-objectives",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-tree-course-objectives.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/tree-course-objectives.svg",
+          "sha256": "470a70f73f8b12e5edc3abec877b9cbb92f2f948ae64d27337ce1a50733f94c1",
+          "bytes": 144509
+        },
+        "png": {
+          "path": "final/tree-course-objectives.png",
+          "sha256": "05f8301db82ca9b75f4c9ff1561eed333809133a4ac596fdcbcfea9c5e4396f8",
+          "bytes": 102225
+        },
+        "overview": {
+          "path": "browser/tree-course-objectives-overview.png",
+          "sha256": "6583ebf1e0fd1f93882afe156b5c7cd9287d6c7fe56bbfd4f17f79e0c8d84fb7",
+          "bytes": 51228
+        },
+        "detail": {
+          "path": "browser/tree-course-objectives-detail.png",
+          "sha256": "a0d165d56400e959db27f7b3e4ff00ce9e2058bec8d06d02fe1554351343afa6",
+          "bytes": 35261
+        },
+        "readout": {
+          "path": "readouts/tree-course-objectives.canvas",
+          "sha256": "96749a5120da6abedecb98b0adc96bb01e01e1c208f319430d65f64d8943d3fd",
+          "bytes": 3412
+        },
+        "input": {
+          "path": "inputs/tree-course-objectives.json.gz",
+          "sha256": "6e9cdf05c0805038f0fe82c21592465004363bbd71843e166ff5bce478518f81",
+          "bytes": 105984
+        }
+      }
+    },
+    {
+      "family": "Tree/mindmap",
+      "batch": 3,
+      "collectionId": "tree-incident-causes",
+      "source": "resources/examples/showcase/tree-incident-causes.canvas",
+      "distinguishingStructure": "Downward causal hypotheses with unequal depth",
+      "purpose": "Explain incident cause hypotheses.",
+      "revision": 1,
+      "sourceSha256": "8c5e0381ec9de58bd81d4d2425118ede23561ee481a016e5dc8d500e495aabac",
+      "lines": 29,
+      "transactionId": "vq5-final-intent-tree-incident-causes",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-tree-incident-causes.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/tree-incident-causes.svg",
+          "sha256": "c50b78e15c1d16c88c8507fd6b12778d68e8996e684efc3448095116e3256315",
+          "bytes": 147841
+        },
+        "png": {
+          "path": "final/tree-incident-causes.png",
+          "sha256": "796c34cdc72e4e59c79079ac7b73e17a4e4b6db9186faf8d9c5d7104aaa5f5f1",
+          "bytes": 101819
+        },
+        "overview": {
+          "path": "browser/tree-incident-causes-overview.png",
+          "sha256": "ea0f9a9be6a843389d124c1be305b3125138b3d3be977b43b5d92cf2cff7d054",
+          "bytes": 55769
+        },
+        "detail": {
+          "path": "browser/tree-incident-causes-detail.png",
+          "sha256": "7a27aefa985db474e377c27ad45586c0919564faf63e3dfca2da1bba7f7ea3c3",
+          "bytes": 53148
+        },
+        "readout": {
+          "path": "readouts/tree-incident-causes.canvas",
+          "sha256": "5b890b5a1253dd5bdaf382d644858d50b22fbcb89c75a1bc13d8f4e50f355915",
+          "bytes": 3750
+        },
+        "input": {
+          "path": "inputs/tree-incident-causes.json.gz",
+          "sha256": "8896d084076dd37700f5d686a38e543d3ae200a43b22eed55338755b7620757d",
+          "bytes": 106306
+        }
+      }
+    },
+    {
+      "family": "Story/infographic",
+      "batch": 1,
+      "collectionId": "story-water-treatment",
+      "source": "resources/examples/showcase/story-water-treatment.canvas",
+      "distinguishingStructure": "Serpentine barrier process with monitoring and side streams",
+      "purpose": "Explain how water treatment uses several barriers.",
+      "revision": 7,
+      "sourceSha256": "73b84582e91f88ff6c67684a9784ab73e53b100bd45fd0d8e216f936c9ff5268",
+      "lines": 74,
+      "transactionId": "vq3-live-label",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-story-water-treatment.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/story-water-treatment.svg",
+          "sha256": "afd540efecf17060799f1bbf36ba2bc4c8b3ed642f449bb8dd4f57b9f049368e",
+          "bytes": 179115
+        },
+        "png": {
+          "path": "final/story-water-treatment.png",
+          "sha256": "8de07574942627436f847ebd0480ba573fffbae1d41843ef421842a20ed2e4b8",
+          "bytes": 155912
+        },
+        "overview": {
+          "path": "browser/story-water-treatment-overview.png",
+          "sha256": "b2764a77128bb7448b5eb978531b1d196fe51f768c6891bd31e88131a1a4e2e0",
+          "bytes": 57052
+        },
+        "detail": {
+          "path": "browser/story-water-treatment-detail.png",
+          "sha256": "5426f9615984ecdde8da72d774c2b1b4f83bd6435f5263ac7276fd1d73882250",
+          "bytes": 42280
+        },
+        "readout": {
+          "path": "readouts/story-water-treatment.canvas",
+          "sha256": "b3a55bad94b3250a707ed18bc2e41dcf326569dee54e3bcb38bfb66740178352",
+          "bytes": 5176
+        },
+        "input": {
+          "path": "inputs/story-water-treatment.json.gz",
+          "sha256": "57ab9cf432b78aa94ee24a9cc54091d7a31c4f788d6b7e6d8847483b78684298",
+          "bytes": 122079
+        }
+      }
+    },
+    {
+      "family": "Story/infographic",
+      "batch": 2,
+      "collectionId": "story-evidence-lesson",
+      "source": "resources/examples/showcase/story-evidence-lesson.canvas",
+      "distinguishingStructure": "Contrasting evidence converges on a principle and transfer check",
+      "purpose": "Explain build an explanation that transfers.",
+      "revision": 3,
+      "sourceSha256": "ef57c6897ffd2de33eee8793c951f9b482d6a4c31fae5021399186abfcf09797",
+      "lines": 44,
+      "transactionId": "vq5-live-longer-explanation",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-story-evidence-lesson.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/story-evidence-lesson.svg",
+          "sha256": "6a64f8b8c66f79b15de576ad7b6e1cec418c8a748552bc5c02f5dffa89e889da",
+          "bytes": 148026
+        },
+        "png": {
+          "path": "final/story-evidence-lesson.png",
+          "sha256": "c5e7909a3ace9acfd1969b7f3ad994bbc9f899b4225f02f0bfdb625109c43395",
+          "bytes": 135907
+        },
+        "overview": {
+          "path": "browser/story-evidence-lesson-overview.png",
+          "sha256": "cc68d22e6bb25b8fbe065e50803f3d724ff5c8318d75e4c5a8e7d066d1a0141d",
+          "bytes": 53451
+        },
+        "detail": {
+          "path": "browser/story-evidence-lesson-detail.png",
+          "sha256": "53a3cf5180b839806365ad40154ae73d75dcf99b58959f682d9dcfe44f8c4d90",
+          "bytes": 54745
+        },
+        "readout": {
+          "path": "readouts/story-evidence-lesson.canvas",
+          "sha256": "1dfd8c09f6fa7db8483432ffe83f36319c74266a86acc00196f6972326dd612e",
+          "bytes": 3616
+        },
+        "input": {
+          "path": "inputs/story-evidence-lesson.json.gz",
+          "sha256": "2f3954ea8ca98fd8238351608df4382a2160c19e520c643cc9c1a6eb7262fd7f",
+          "bytes": 109188
+        }
+      }
+    },
+    {
+      "family": "Story/infographic",
+      "batch": 3,
+      "collectionId": "story-safe-deployment",
+      "source": "resources/examples/showcase/story-safe-deployment.canvas",
+      "distinguishingStructure": "Bounded rollout with healthy/unsafe feedback decisions",
+      "purpose": "Explain deployment is a controlled experiment.",
+      "revision": 3,
+      "sourceSha256": "46bde06f61a74a1ee096da31d3429bd5951b4e566bb65e40ace23528e9352c1f",
+      "lines": 51,
+      "transactionId": "vq5-routing-story-safe-deployment",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-story-safe-deployment.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/story-safe-deployment.svg",
+          "sha256": "36e25550eb587e3e898364a82f852544f7c2c188a70ac849c58a092cf22885bf",
+          "bytes": 152518
+        },
+        "png": {
+          "path": "final/story-safe-deployment.png",
+          "sha256": "12003c9df49ed67b2f1cd723374fa01faeea9822df1051f20a94bbb3d245cebe",
+          "bytes": 139188
+        },
+        "overview": {
+          "path": "browser/story-safe-deployment-overview.png",
+          "sha256": "2587de88989f83b943fbea605e17166f7775383babacbec92d4f11341d78e65e",
+          "bytes": 55419
+        },
+        "detail": {
+          "path": "browser/story-safe-deployment-detail.png",
+          "sha256": "f713449d06b8c807c2b852540e9ae625626061f97320765d3ad6471d73b226ee",
+          "bytes": 50530
+        },
+        "readout": {
+          "path": "readouts/story-safe-deployment.canvas",
+          "sha256": "6aa2da122d10d70e14fb9881612f95aba044e36bd67ac2ae07e81af4a54e4685",
+          "bytes": 3709
+        },
+        "input": {
+          "path": "inputs/story-safe-deployment.json.gz",
+          "sha256": "d030b372064b7239836aaa500b1db58f4c2deab75a997052fdf84a8a965b69d0",
+          "bytes": 110344
+        }
+      }
+    },
+    {
+      "family": "Grid/comparison",
+      "batch": 1,
+      "collectionId": "grid-research-methods",
+      "source": "resources/examples/showcase/grid-research-methods.canvas",
+      "distinguishingStructure": "Single aligned matrix of shared comparison dimensions",
+      "purpose": "Explain choose evidence for the claim.",
+      "revision": 3,
+      "sourceSha256": "50d233347fb42cc87611db031f536f04fd241a7218b70c5e3db121f6ab09bf52",
+      "lines": 28,
+      "transactionId": "vq5-comparison-order",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-grid-research-methods.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/grid-research-methods.svg",
+          "sha256": "ecf853f448fcb77773e4040c0eeb26fc7e5123b348c3553e4eaf1ce9b84dbcec",
+          "bytes": 134837
+        },
+        "png": {
+          "path": "final/grid-research-methods.png",
+          "sha256": "da8b11a6e63451ba3d9161b8a94f0e32748fb8bd854ff94954975cd3f672e368",
+          "bytes": 109768
+        },
+        "overview": {
+          "path": "browser/grid-research-methods-overview.png",
+          "sha256": "5dde0808641957d3d9fe54144d134127f08261322f12298bdb64b177b5b90cda",
+          "bytes": 56013
+        },
+        "detail": {
+          "path": "browser/grid-research-methods-detail.png",
+          "sha256": "6aa5a320bfe73a912c775941d7435f480383163f4a27a60dd0ce2299d1b8704b",
+          "bytes": 63147
+        },
+        "readout": {
+          "path": "readouts/grid-research-methods.canvas",
+          "sha256": "68ed4dbfd86f348dadab2c117b749ab91363b52890324654a9e9265b0fd3edf4",
+          "bytes": 2353
+        },
+        "input": {
+          "path": "inputs/grid-research-methods.json.gz",
+          "sha256": "4b6666b165937cf6ed8a6e0d5371b5a23e4b58ffef1022537974ddc88a123064",
+          "bytes": 106085
+        }
+      }
+    },
+    {
+      "family": "Grid/comparison",
+      "batch": 2,
+      "collectionId": "grid-archive-comparison",
+      "source": "resources/examples/showcase/grid-archive-comparison.canvas",
+      "distinguishingStructure": "Three nested operating-model columns",
+      "purpose": "Explain archive operating models.",
+      "revision": 0,
+      "sourceSha256": "0061a2aac3d3b6a948eaa91fedaf1ebe4945de691b838b852ad9607118760edb",
+      "lines": 19,
+      "transactionId": "vq5-grid-archive-comparison",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-grid-archive-comparison.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/grid-archive-comparison.svg",
+          "sha256": "434c5af328d42a9c24bbd9b3c408d0e34341fe0fce8129522ad24ff10749e37d",
+          "bytes": 120265
+        },
+        "png": {
+          "path": "final/grid-archive-comparison.png",
+          "sha256": "e090885957be6e4df70e9aadcdbcba35477db72c0ec8ce7eb12e9b59cd8b6a81",
+          "bytes": 92702
+        },
+        "overview": {
+          "path": "browser/grid-archive-comparison-overview.png",
+          "sha256": "1c03fadd90d698981fdc76fca65368538525ce5c1e8002e0f6a67cca280a4294",
+          "bytes": 61425
+        },
+        "detail": {
+          "path": "browser/grid-archive-comparison-detail.png",
+          "sha256": "f1e9edfdcdb23640b82debc2206577c98e22146acdd52082121294f134150fa9",
+          "bytes": 63819
+        },
+        "readout": {
+          "path": "readouts/grid-archive-comparison.canvas",
+          "sha256": "bcb5a0d198cf998f684e15def09ab8a4d7d8ebac8b1d26a90675f034ffa7930f",
+          "bytes": 2593
+        },
+        "input": {
+          "path": "inputs/grid-archive-comparison.json.gz",
+          "sha256": "53f2bc4e2678b6b67ba2d7fd91934f5a6d9824a264fa44141860bd4c60ef05f8",
+          "bytes": 102831
+        }
+      }
+    },
+    {
+      "family": "Grid/comparison",
+      "batch": 3,
+      "collectionId": "grid-feedback-methods",
+      "source": "resources/examples/showcase/grid-feedback-methods.canvas",
+      "distinguishingStructure": "Four illustrated method quadrants with paired strengths and limits",
+      "purpose": "Explain feedback methods comparison.",
+      "revision": 0,
+      "sourceSha256": "e4b4e371f13063e9fe32663f141b6553a8b337c5f447daa914b9eb12441e13cf",
+      "lines": 21,
+      "transactionId": "vq5-grid-feedback-methods",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-grid-feedback-methods.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/grid-feedback-methods.svg",
+          "sha256": "f2c714021914c89943aa954f88beb244c4759ec9eb2e689154cce75381e7e888",
+          "bytes": 124585
+        },
+        "png": {
+          "path": "final/grid-feedback-methods.png",
+          "sha256": "8eace0b8fcb62ed708d3cc22998353d77e4f46ea01153f6973c24754041836b1",
+          "bytes": 92709
+        },
+        "overview": {
+          "path": "browser/grid-feedback-methods-overview.png",
+          "sha256": "da48bf2387c33c137215d9c3109bacaa1f89ffa5058af22952b5fdaa9b26085d",
+          "bytes": 60788
+        },
+        "detail": {
+          "path": "browser/grid-feedback-methods-detail.png",
+          "sha256": "2507795cedf05efbe05c7749848fe56cc411e3392983675eb9cda94ef3e76e6c",
+          "bytes": 59677
+        },
+        "readout": {
+          "path": "readouts/grid-feedback-methods.canvas",
+          "sha256": "2f13369da88949a88db916ecae55f249112bf9f5db1159cd515367d98d3716d7",
+          "bytes": 3134
+        },
+        "input": {
+          "path": "inputs/grid-feedback-methods.json.gz",
+          "sha256": "2ac671e02cef38207b961ce793c0a522c50600d53eef9cd7205a2d39a8c1fa44",
+          "bytes": 105820
+        }
+      }
+    },
+    {
+      "collectionId": "mixed-authoring-contract",
+      "source": "resources/examples/showcase/mixed-authoring-contract.canvas",
+      "family": "Mixed infographic + modules",
+      "batch": "additional",
+      "distinguishingStructure": "Shared admission flow beside actual typed Committer boundary",
+      "purpose": "Explain both author pathways and the owned commit port.",
+      "revision": 0,
+      "sourceSha256": "7a802c8bad7d70cf93f441c1bc2c7118e84a74747faa62c693325b516253e538",
+      "lines": 60,
+      "transactionId": "vq5-mixed-authoring",
+      "actor": {
+        "id": "agent:cli",
+        "kind": "agent"
+      },
+      "receipt": "receipts/final-mixed-authoring-contract.txt",
+      "artifacts": {
+        "svg": {
+          "path": "final/mixed-authoring-contract.svg",
+          "sha256": "fd06b91a41d2c63d51aa00fdb4bfa624a008ed7486a8f62c019f740840af1879",
+          "bytes": 167684
+        },
+        "png": {
+          "path": "final/mixed-authoring-contract.png",
+          "sha256": "1b436101fc59179024bf0b2a279de4cbd3b92b47d763d5d46ec43ccbfe7150e5",
+          "bytes": 173078
+        },
+        "overview": {
+          "path": "browser/mixed-authoring-contract-overview.png",
+          "sha256": "4b66bb62d8df4d22493fcda3f65da71b0812223bc575a4ec43c321268f9fe837",
+          "bytes": 43072
+        },
+        "detail": {
+          "path": "browser/mixed-authoring-contract-detail.png",
+          "sha256": "44b9b5eeeeba95f1a5b6f7b8c57e4c862ee5737678e09e9866ca98a9fbdb96db",
+          "bytes": 56880
+        },
+        "readout": {
+          "path": "readouts/mixed-authoring-contract.canvas",
+          "sha256": "5e2a5df28a54dc8871e36cd07bd3977383319f2e40b1085c002e1ea5c141c92e",
+          "bytes": 4409
+        },
+        "input": {
+          "path": "inputs/mixed-authoring-contract.json.gz",
+          "sha256": "8b1b5483c4391925395240f061e1013f86749fd799374cc1217833cb1b02e8e5",
+          "bytes": 114011
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Browser overview establishes whole-diagram context; detail is a reading crop, not all content at once.",
+    "618px browser toolbar/minimap occlusion remains deferred UI scope.",
+    "Original illustrative assets and native encoders; target raster images are reference context only."
+  ]
+}

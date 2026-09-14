@@ -1,0 +1,11 @@
+{
+  "before": {
+    "camera": "matrix(0.759995, 0, 0, 0.759995, -2397.08, -6332.35)",
+    "status": "Ready\nService disconnected"
+  },
+  "after": {
+    "camera": "matrix(0.759995, 0, 0, 0.759995, -2397.08, -6332.35)",
+    "status": "Ready\nService disconnected"
+  },
+  "unchanged": true
+}

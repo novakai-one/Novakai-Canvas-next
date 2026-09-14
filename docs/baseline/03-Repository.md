@@ -150,8 +150,6 @@ capability/design-system/             # supporting library, not another domain c
 │   ├── index.ts
 │   ├── api.ts
 │   ├── compose.ts
-│   ├── token-types.ts
-│   ├── token-schemas.ts
 │   ├── ports/token-source.ts
 │   ├── ports/token-artifacts.ts
 │   ├── react-types.ts              # explicit environment-specific binding types
@@ -219,13 +217,12 @@ capability/presentation/
 ├── core/content/content-model.ts
 └── adapters/react/
     ├── NodeContent.tsx             + NodeContent.module.css
-    ├── EntityTable.tsx             + EntityTable.module.css
-    ├── InterfaceCard.tsx           + InterfaceCard.module.css
-    ├── ContentBlocks.tsx           + ContentBlocks.module.css
-    └── SequenceContent.tsx         + SequenceContent.module.css
+    └── ContentBlocks.tsx           + ContentBlocks.module.css
 ```
 
-The `+` shorthand lists two concrete files in the same folder, not a filename. The inventory contains **51 TSX files and 50 colocated CSS modules**, plus the named shared/generated/vendor styles. WorkspaceApp only composes slots and has no private stylesheet. This is a responsibility inventory, not a minimum LOC or file-count score: later splitting/merging must preserve ownership and update this tree.
+The `+` shorthand lists two concrete files in the same folder, not a filename. The inventory contains **48 TSX files and 47 colocated CSS modules**, plus the named shared/generated/vendor styles. WorkspaceApp only composes slots and has no private stylesheet. This is a responsibility inventory, not a minimum LOC or file-count score: later splitting/merging must preserve ownership and update this tree.
+
+Presentation renderer reconciliation (12 September 2026): EntityTable, InterfaceCard and SequenceContent merge into ContentBlocks, which renders the same measured primitives for all semantic families. Their notation/row/message meaning remains in Presentation core; global sequence geometry remains Layout. NodeContent owns the SVG frame and exact font scope, receiving ContentBlocks as a narrow injected slot. This preserves one measurement/render path and the React/CSS boundary.
 
 Design System's token compiler reads its data through an injected source-reader port; only `adapters/build/token-files.ts` opens token source files and writes generated artifacts. It implements `contract/ports/token-source.ts` and `token-artifacts.ts`, is wired by own compose and invoked by `cli/build-tokens.ts` through the public API. Core resolves/emits in memory; CLI never opens or writes generated files directly. The extra `tokens/` data folder is permitted by the minimum-shape SOP. Authoritative collection theme presets under `resources/themes/` reference a base token version and diagram-theme overrides; they do not copy Design System's global definitions. A UI theme uses Design System's shipped presets; a collection theme is resolved and pinned through Templates/Authoring.
 

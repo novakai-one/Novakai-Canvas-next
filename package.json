@@ -3,5 +3,29 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Canvas capability architecture scaffold. Runtime implementation and dependency pins are not yet present."
+  "scripts": {
+    "dev": "tsx apps/service/cli/serve.ts",
+    "canvas": "tsx apps/cli/cli/main.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "architecture": "depcruise capability apps --config .dependency-cruiser.cjs --output-type err",
+    "test": "vitest run capability apps",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test",
+    "format:check": "prettier --check \"capability/**/*.{ts,tsx}\" \"apps/**/*.{ts,tsx}\" eslint.config.js .dependency-cruiser.cjs",
+    "tokens:build": "tsx capability/design-system/cli/build-tokens.ts --write",
+    "tokens:check": "tsx capability/design-system/cli/build-tokens.ts --check"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@types/node": "25.2.0",
+    "dependency-cruiser": "18.2.0",
+    "eslint": "10.10.0",
+    "eslint-plugin-sonarjs": "4.2.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.0",
+    "tsx": "4.23.13"
+  }
 }

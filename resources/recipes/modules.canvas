@@ -1,0 +1,19 @@
+canvas 1
+collection @engineering "An explicit module boundary" theme=paper {
+  node @authoring module "Authoring" {
+    port @apply in "apply" type="ChangeRequest → Result<Receipt>"
+    port @planner out "planner" type="TransitionPlanner"
+  }
+  node @contract interface "TransitionPlanner" {
+    member @plan "plan" type="(Snapshot, Intent) → Result<Plan>"
+  }
+  node @validate function "validateTransition" {
+    signature @call "validateTransition" parameters=["snapshot: Snapshot", "intent: Intent"] returns="Result<Plan>"
+  }
+  wire @imports @authoring.@planner -> @contract "imports planning interface" kind=imports
+  wire @implements @validate -> @contract.@plan "implements plan" kind=implements
+  section @modules "Modules, interfaces and functions" mode=modules layout=layered {
+    show @authoring @contract @validate
+    connect @imports @implements
+  }
+}

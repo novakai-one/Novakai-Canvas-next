@@ -1,0 +1,431 @@
+{
+  "adapters/elk.ts": [
+    {
+      "13": 5,
+      "10": 8
+    },
+    "Checked hierarchy/native coordinate conversion; concrete engine injected, graph allocation per invocation. Native mutation is local; exported recovery owner unnamed. Outer host owns worker lifetime."
+  ],
+  "adapters/kiwi.ts": [
+    {
+      "13": 5,
+      "10": 8
+    },
+    "Owned linear DTO mapping, new solver/variables per call, patched stable native contradiction code and typed outcomes; local native mutation. Return doc does not name Authoring recovery."
+  ],
+  "adapters/libavoid.ts": [
+    {
+      "13": 5
+    },
+    "Runtime ABI validation; routes copied before reverse temporary cleanup and router disposal; native failures typed. Native per-call state mutates locally. A1 independently samples lifetime behavior."
+  ],
+  "adapters/scheduling.ts": [
+    {
+      "11": 5
+    },
+    "Thin injected host checkpoint/yield boundary; typed cancelled/native failure and explicit host retry ownership; no shared latest-job variable."
+  ],
+  "adapters/wasm-loader.ts": [
+    {
+      "9": 8,
+      "11": 5
+    },
+    "Narrow injected ModuleLoader methods both consumed; static pinned import is the composition default. Native rejection reaches named createRouting boundary; host worker owns the realm."
+  ],
+  "contract/api.ts": [
+    {},
+    "Five checked/protected operations, required owner/native roles consumed across facade; explicit job-key, route-only and recovery documentation."
+  ],
+  "contract/compose.ts": [
+    {
+      "11": 5
+    },
+    "Binding-only composition of exact native adapters; explicit resource and scheduling owners; typed initialization failure, no production token fallback."
+  ],
+  "contract/index.ts": [
+    {},
+    "Explicit public gateway hides all arrangement/routing/inspection implementation. Only named point conversions are public geometry operations."
+  ],
+  "contract/brands.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Bounded coordinates/identities/complete keys; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/errors.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Closed diagnostic/Result vocabulary and structured private fault; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/types.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Readonly requests/options and fully consumed public Layout surface; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/schemas.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Strict unknown request envelopes and supplemental metric presence; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/records/geometry.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Readonly placed nodes/routes/sequence/section origins; constrained numeric geometry; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/records/problem.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Narrow native-free placement/constraint/routing DTOs; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/records/candidate.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Checked owned geometry with foreign content unknown until authoritative comparison; thin declaration knowledge; decoding/recovery is owned by facade."
+  ],
+  "contract/records/input.ts": [
+    {
+      "2": 10,
+      "11": 5,
+      "10": 8
+    },
+    "Type-only Presentation public aliases; no parallel semantic vocabulary or runtime dependency."
+  ],
+  "contract/ports/projection.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Owner-produced Projection/MeasuredContent readers; only required methods, readonly inputs and typed outcomes; facade owns recovery."
+  ],
+  "contract/ports/placement.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "One versioned seed operation; only required methods, readonly inputs and typed outcomes; facade owns recovery."
+  ],
+  "contract/ports/solver.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "One versioned equation solve operation; only required methods, readonly inputs and typed outcomes; facade owns recovery."
+  ],
+  "contract/ports/routing.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "One versioned obstacle route operation; only required methods, readonly inputs and typed outcomes; facade owns recovery."
+  ],
+  "contract/ports/scheduling.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "One host checkpoint and complete job identity; only required methods, readonly inputs and typed outcomes; facade owns recovery."
+  ],
+  "core/geometry/bounds.ts": [
+    {
+      "10": 8
+    },
+    "Negative-safe union/expansion/centre and positive polyline footprints; deterministic numeric operations, no provider failures or hidden state."
+  ],
+  "core/geometry/coordinates.ts": [
+    {
+      "10": 8
+    },
+    "Explicit local/collection/parent transforms without implicit normalization; deterministic numeric operations, no provider failures or hidden state."
+  ],
+  "core/geometry/intersections.ts": [
+    {
+      "10": 8
+    },
+    "Strict-interior intersection, inclusive containment and shared numeric tolerance; deterministic numeric operations, no provider failures or hidden state."
+  ],
+  "core/constraints/compile.ts": [
+    {
+      "10": 8
+    },
+    "One compilation owner for minimum, authored locks and parent containment equations; data-only owned vocabulary, readonly constraints. Recovery exists at facade."
+  ],
+  "core/constraints/relative.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Exhaustive rank/before/below/align registry, namespace-aware target lookup and signed directions; structured private faults, no native types."
+  ],
+  "core/constraints/separation.ts": [
+    {
+      "9": 5
+    },
+    "Exact native variable identities, required solve and bounded backtracking are distinct from infeasibility proof; immutable search state, cancellation checks, named Authoring recovery."
+  ],
+  "core/placement/policy.ts": [
+    {
+      "4": 5,
+      "9": 5,
+      "10": 8
+    },
+    "Grid cells and ELK seeds checked, cancellation bracketed; current PlacementContext chooses full Dependencies but only placement/jobs consumed: author ISP concern, not a passing score."
+  ],
+  "core/placement/groups.ts": [
+    {
+      "4": 5,
+      "9": 5,
+      "10": 8
+    },
+    "Bottom-up branch contraction and own group intent; immutable translation; broad context currently carries unused providers: author ISP concern."
+  ],
+  "core/placement/section.ts": [
+    {
+      "4": 5,
+      "6": 9,
+      "9": 5,
+      "10": 8
+    },
+    "Soft previous seeds, canonical node binding, solver/nonoverlap; measured constraint-box mapping repeats once in direct inspector. Broad context unused reader/router ports noted."
+  ],
+  "core/arrangement/bounds.ts": [
+    {
+      "10": 8
+    },
+    "Full measured title/content/route/sequence extents retained; negative coordinates do not move origin."
+  ],
+  "core/arrangement/keys.ts": [
+    {
+      "4": 5,
+      "10": 8
+    },
+    "Canonical structural identity excludes nested previous keys but includes provider versions; broad Dependencies selected just for versions, ISP5 conservatively."
+  ],
+  "core/arrangement/collection.ts": [
+    {
+      "4": 5,
+      "9": 5,
+      "10": 8
+    },
+    "Section origin-to-bounds lock translation and collection hard constraints; broad context consumes placement/solver/jobs but not reader/router."
+  ],
+  "core/arrangement/section.ts": [
+    {
+      "4": 5,
+      "9": 5,
+      "10": 8
+    },
+    "Current-source independent inspection gates exact local cache reuse; authoritative content rebuild; full Dependencies includes unused ProjectionReader in transitive geometry flow."
+  ],
+  "core/arrangement/pipeline.ts": [
+    {
+      "4": 5,
+      "9": 5
+    },
+    "Complete keyed/cancelled arrangement and fixed-node reroute with independent final inspection; immutable dependent fold. A1 confirmed unused ProjectionReader affects chosen Dependencies bag."
+  ],
+  "core/arrangement/sequential.ts": [
+    {
+      "2": 10,
+      "9": 5,
+      "11": 5
+    },
+    "Single immutable dependent-fold abstraction, variable work entirely injected; error propagation reaches documented public execute recovery; no ambient state."
+  ],
+  "core/arrangement/notices.ts": [
+    {
+      "10": 8
+    },
+    "Soft authored/previous geometry changes and strict crossing warnings are deterministic receipts; candidate cardinality owned separately."
+  ],
+  "core/routing/endpoints.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Named edge/member attachment, self-target policy and native approach points; exact measured anchor lookup, structured missing/contradictory port failures."
+  ],
+  "core/routing/paths.ts": [
+    {
+      "10": 8
+    },
+    "Orthogonal corridor tests and bounded quadratic corner rounding, numeric-only SVG path strings; no text/renderer policy."
+  ],
+  "core/routing/labels.ts": [
+    {
+      "10": 8
+    },
+    "Measured segment-adjacent midpoint/quarter candidates and occupied rectangles; explicit missing placement result, no invented default label location."
+  ],
+  "core/routing/obstacles.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Small but necessary ordinary-node versus container-header obstacle policy; interior children remain routable."
+  ],
+  "core/routing/checks.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Endpoint rays, provider-supplied marker bounds, labels and crossing geometry; private structured conflict caught by public boundary."
+  ],
+  "core/routing/native.ts": [
+    {
+      "4": 5,
+      "9": 5,
+      "10": 8
+    },
+    "Manual lock validation, distinct parallel lanes and native coordinate/identity checks; full PlacementContext is broader than routing/jobs used."
+  ],
+  "core/routing/wires.ts": [
+    {
+      "4": 5,
+      "9": 5,
+      "10": 8
+    },
+    "Label regions become obstacles, outside-lane fallback and final curve paths share checked geometry; immutable dependent accumulation. A1 confirmed full context ISP5."
+  ],
+  "core/sequence/records.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Declaration-only sequence inputs/context/body, no canonical meaning duplicated."
+  ],
+  "core/sequence/participants.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Participant-only baseline/horizontal ordering equations; sequence annotations do not create lifelines."
+  ],
+  "core/sequence/events.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Measured labels, distinct self paths, source/target participant resolution and vertical bands; structured private missing endpoint fault."
+  ],
+  "core/sequence/frames.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Recursive canonical order, measured alt branch headings and inclusive nested frame bounds; no own text measurement, immutable body fold."
+  ],
+  "core/sequence/activations.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Explicit receiver-start/sender-end and reentrant stack geometry. A1 has reproduced cross-alt state leakage; fidelity not approved pending sole verified fix."
+  ],
+  "core/sequence/sequence.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Combines ordered timeline, participant lifelines and activity from shared pure helpers; authoritative source retained for inspection."
+  ],
+  "core/validation/outcomes.ts": [
+    {
+      "13": 5
+    },
+    "Own typed catch/parse/size/finite-JSON boundaries; snapshot then recursive freeze is isolated local mutation; Authoring recovery named."
+  ],
+  "core/validation/equality.ts": [
+    {
+      "11": 5,
+      "10": 8
+    },
+    "Canonical array-preserving/key-sorted JSON equality; no casts, native cache or semantic rules."
+  ],
+  "core/validation/facts.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Exact cardinality, structural equality and independent arithmetic evaluation of required equations; explicit missing-variable failures."
+  ],
+  "core/validation/input.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Owner decode plus consumed bounds/parent/member/scale checks, exact keyed supplemental headings and detached request forms; private structured rejection."
+  ],
+  "core/validation/nodes.ts": [
+    {
+      "6": 9,
+      "9": 5,
+      "10": 8
+    },
+    "Rebind authoritative measured nodes, evaluate equations directly and reject unrelated overlaps; constraint-box mapping repeated once in direct placement collaborator."
+  ],
+  "core/validation/wires.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Exact route identity, metadata/labels, attachments, points, corner paths, manual locks and label-crossing checks; no native success trust."
+  ],
+  "core/validation/sections.ts": [
+    {
+      "9": 5,
+      "10": 8
+    },
+    "Exact scene/section/source identity, measured title/sequence, bounds and required collection constraints. A1 samples this independent approval boundary."
+  ],
+  "tests/fixtures.ts": [
+    {
+      "2": 10,
+      "9": 8,
+      "10": 8,
+      "16": 5
+    },
+    "Model-valid source through public Presentation with explicit deterministic metric fixture; registered owner reader never casts unknown, real native defaults require actual Wasm resource."
+  ],
+  "tests/native-fixture.ts": [
+    {
+      "2": 10,
+      "9": 8,
+      "10": 8,
+      "13": 5
+    },
+    "Deliberately failing native cleanup fixture with per-test allocation and attempt logs. A2 distinguishes attempted destruction from successful release; mutable counters isolated to fixture invocation."
+  ],
+  "tests/arrangement.test.ts": [
+    {
+      "13": 5,
+      "11": 9
+    },
+    "Six public cases; independent directional/coordinate/lock assertions, exact cache counters and typed sequence assertions. Mutable native-call counter local to test."
+  ],
+  "tests/routing.test.ts": [
+    {
+      "11": 9
+    },
+    "Three public/native cases; independent obstacle, marker-length, crossing checks and fixed-node route-only assertions. A2 verified crossing at368,350; curve clearance coverage limited."
+  ],
+  "tests/contracts.test.ts": [
+    {
+      "13": 5,
+      "11": 9
+    },
+    "Three cases; deterministic native-completion cancellation gate, forged candidates, explicit1000/1500 fixture and20s runtime guard. Local test flags/counters only."
+  ]
+}

@@ -1,0 +1,61 @@
+# modules-payroll-policy revision=1
+canvas 1
+collection @modules-payroll-policy "Payroll calculation contracts" theme="atlas@1.0.0#sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7" layout=grid {
+  node @run module "Payroll run" role=primary size=medium frame=auto composition=stack sources=[] {
+  port @policy out "policy" type="PayPolicy"
+  port @rounding out "rounding" type="RoundingPolicy"
+  port @calculate out "calculate" type="PayCalculator"
+}
+  node @policy interface "PayPolicy" role=supporting size=medium frame=auto composition=stack sources=[] {
+  member @gross "gross" type="(WorkPeriod, Rate) => Money"
+  member @deduct "deductions" type="(Money, TaxProfile) => Money"
+}
+  node @rounding interface "RoundingPolicy" role=neutral size=medium frame=auto composition=stack sources=[] {
+  member @round "round" type="(Money, Currency) => Money"
+}
+  node @calculate function "calculatePay" role=neutral size=medium frame=auto composition=stack sources=[] {
+  signature @call "calculatePay" parameters=["period: WorkPeriod", "policy: PayPolicy", "rounding: RoundingPolicy"] returns="PayStatement"
+}
+  node @gross function "grossPay" role=neutral size=medium frame=auto composition=stack sources=[] {
+  signature @call "grossPay" parameters=["period: WorkPeriod", "rate: Rate"] returns="Money"
+}
+  node @deduct function "deductions" role=neutral size=medium frame=auto composition=stack sources=[] {
+  signature @call "deductions" parameters=["gross: Money", "profile: TaxProfile"] returns="Money"
+}
+  node @round function "roundMoney" role=neutral size=medium frame=auto composition=stack sources=[] {
+  signature @call "roundMoney" parameters=["value: Money", "currency: Currency"] returns="Money"
+}
+  wire @imports-policy @run.@policy -> @policy "imports pay rules" kind=imports sources=[]
+  wire @imports-rounding @run.@rounding -> @rounding "imports rounding rules" kind=imports sources=[]
+  wire @imports-calculator @run.@calculate -> @calculate "imports calculator" kind=imports sources=[]
+  wire @call-gross @calculate -> @gross "calculates gross" kind=calls sources=[]
+  wire @call-deduct @calculate -> @deduct "calculates deductions" kind=calls sources=[]
+  wire @call-round @calculate -> @round "rounds net amount" kind=calls sources=[]
+  wire @gross-policy @gross -> @policy.@gross "implements gross" kind=implements sources=[]
+  wire @deduct-policy @deduct -> @policy.@deduct "implements deductions" kind=implements sources=[]
+  wire @round-policy @round -> @rounding.@round "implements round" kind=implements sources=[]
+  section @payroll "PAYROLL / Callable rules behind two contracts" mode=modules columns=3 layout=grid gap=roomy {
+  show @run
+  group @contracts "RULE CONTRACTS" frame=auto role=neutral columns=1 layout=grid direction=down gap=roomy {
+  show @policy
+  show @rounding
+}
+  group @functions "PURE CALCULATION" frame=auto role=neutral layout=layered direction=down gap=roomy {
+  show @calculate
+  show @gross
+  show @deduct
+  show @round
+}
+  connect @imports-policy source-side=right target-side=left
+  connect @imports-rounding source-side=right target-side=left
+  connect @imports-calculator source-side=right target-side=top
+  connect @call-gross source-side=bottom target-side=top
+  connect @call-deduct source-side=bottom target-side=top
+  connect @call-round source-side=bottom target-side=top
+  connect @gross-policy source-side=left target-side=right
+  connect @deduct-policy source-side=left target-side=right
+  connect @round-policy source-side=left target-side=right
+  before @run group:@contracts
+  before group:@contracts group:@functions
+}
+}

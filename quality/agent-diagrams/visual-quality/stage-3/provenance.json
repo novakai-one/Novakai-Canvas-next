@@ -1,0 +1,105 @@
+[
+  {
+    "id": "story-water-treatment",
+    "revision": 7,
+    "theme": {
+      "id": "studio",
+      "version": "1.0.1",
+      "digest": "sha256:b7c632906dc67c69671c0f8661f43a261bab0d6c1545ddadf6974eea96c5f78a",
+      "roles": [
+        "neutral",
+        "primary",
+        "supporting",
+        "decision",
+        "success",
+        "warning"
+      ]
+    },
+    "engineVersions": [
+      "elk-0.12.0/layout-2",
+      "lume-kiwi-0.4.4/layout-1",
+      "libavoid-js-0.5.0-beta.5/layout-2",
+      "layout-policy-12"
+    ],
+    "sceneKeySha256": "0071e48e7a922404e3bc0a3c3dc7ab84cca2923138d15b9496720250053b5983",
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1481.504921875,
+      "height": 1420.7199999999998
+    },
+    "nodes": 13,
+    "wires": 7,
+    "source": "resources/examples/showcase/story-water-treatment.canvas",
+    "sourceSha256": "73b84582e91f88ff6c67684a9784ab73e53b100bd45fd0d8e216f936c9ff5268"
+  },
+  {
+    "id": "flow-research-approval",
+    "revision": 2,
+    "theme": {
+      "id": "atlas",
+      "version": "1.0.0",
+      "digest": "sha256:be96a23d9903616dfbde6b26a427693cf1d2861d7200060dc9817122d1fb77d7",
+      "roles": [
+        "neutral",
+        "primary",
+        "supporting",
+        "decision",
+        "success",
+        "warning"
+      ]
+    },
+    "engineVersions": [
+      "elk-0.12.0/layout-2",
+      "lume-kiwi-0.4.4/layout-1",
+      "libavoid-js-0.5.0-beta.5/layout-2",
+      "layout-policy-12"
+    ],
+    "sceneKeySha256": "fec40ee9f0d33668a8a5d1c506bcf026eb51a084cc9b8fbfb625f8fa03b9b3ed",
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1329.7018616875,
+      "height": 1357.1427999999999
+    },
+    "nodes": 9,
+    "wires": 10,
+    "source": "resources/examples/showcase/flow-research-approval.canvas",
+    "returnClearance": 12,
+    "sourceSha256": "6e8b20f345dead1d0e5506a7fdae3d960cb096bcefe931f9907f38970285c129"
+  },
+  {
+    "id": "modules-document-publishing",
+    "revision": 0,
+    "theme": {
+      "id": "studio",
+      "version": "1.0.0",
+      "digest": "sha256:32c858278187e74523054d6799884b5790ba057815860168e76a91a1d369a9c1",
+      "roles": [
+        "neutral",
+        "primary",
+        "supporting",
+        "decision",
+        "success",
+        "warning"
+      ]
+    },
+    "engineVersions": [
+      "elk-0.12.0/layout-2",
+      "lume-kiwi-0.4.4/layout-1",
+      "libavoid-js-0.5.0-beta.5/layout-2",
+      "layout-policy-12"
+    ],
+    "sceneKeySha256": "a941746491625307cb8301e4610d0eb16cd30861b2dd67db95fa47857a0c32d9",
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1690.48515625,
+      "height": 853.1200000000001
+    },
+    "nodes": 7,
+    "wires": 4,
+    "source": "resources/examples/showcase/modules-document-publishing.canvas",
+    "sourceSha256": "df9422e8c334de3089ab3e2029c0fee2a7db1af7b7f10fbac3a20058d5bcda43"
+  }
+]

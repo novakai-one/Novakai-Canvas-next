@@ -1,0 +1,8 @@
+/* System-color accommodations preserve action boundaries without changing canonical exports. */
+@layer utilities {
+ [data-nv-scope] :focus-visible { outline:var(--nv-focus-width) solid var(--nv-color-focus); outline-offset:var(--nv-focus-offset); }
+ @media (forced-colors:active) {
+  [data-nv-scope="ui"] { --nv-color-panel:Canvas; --nv-surface-base:Canvas; --nv-color-content:CanvasText; --nv-color-subtle:CanvasText; --nv-color-input-boundary:ButtonText; --nv-border-default:ButtonText; --nv-color-action:Highlight; --nv-color-on-action:HighlightText; --nv-color-focus:Highlight; --nv-status-success:CanvasText; --nv-status-warning:CanvasText; --nv-status-error:CanvasText; }
+  [data-nv-scope="ui"] :disabled { color:GrayText; border-color:GrayText; }
+ }
+}

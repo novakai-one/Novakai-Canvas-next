@@ -1,0 +1,184 @@
+{
+  "primary": [
+    "surface.base",
+    "surface.raised",
+    "text.primary",
+    "text.secondary",
+    "border.default",
+    "action.accent",
+    "action.onAccent",
+    "font.body",
+    "font.mono",
+    "type.base",
+    "space.unit",
+    "control.unit",
+    "shape.radius",
+    "stroke.base",
+    "motion.duration",
+    "shadow.strength"
+  ],
+  "roles": [
+    "neutral",
+    "primary",
+    "supporting",
+    "decision",
+    "success",
+    "warning"
+  ],
+  "aliases": [
+    "system-ui",
+    "sans-serif",
+    "ui-monospace",
+    "monospace"
+  ],
+  "densities": {
+    "compact": {
+      "space": 3,
+      "control": 32
+    },
+    "comfortable": {
+      "space": 4,
+      "control": 36
+    },
+    "spacious": {
+      "space": 6,
+      "control": 44
+    }
+  },
+  "bounds": {
+    "type.base": {
+      "min": 12,
+      "max": 20,
+      "diagramMin": 10,
+      "diagramMax": 32
+    },
+    "space.unit": {
+      "min": 2,
+      "max": 8,
+      "diagramMin": 2,
+      "diagramMax": 8
+    },
+    "control.unit": {
+      "min": 24,
+      "max": 64,
+      "diagramMin": 24,
+      "diagramMax": 64
+    },
+    "shape.radius": {
+      "min": 0,
+      "max": 16,
+      "diagramMin": 0,
+      "diagramMax": 16
+    },
+    "stroke.base": {
+      "min": 0.5,
+      "max": 3,
+      "diagramMin": 0.5,
+      "diagramMax": 3
+    },
+    "motion.duration": {
+      "min": 0,
+      "max": 240,
+      "diagramMin": 0,
+      "diagramMax": 240
+    },
+    "shadow.strength": {
+      "min": 0,
+      "max": 0.4,
+      "diagramMin": 0,
+      "diagramMax": 0.4
+    }
+  },
+  "pairs": [
+    {
+      "id": "text.primary-on-surface.base",
+      "foreground": "text.primary",
+      "background": "surface.base",
+      "ratio": 4.5
+    },
+    {
+      "id": "text.primary-on-surface.raised",
+      "foreground": "text.primary",
+      "background": "surface.raised",
+      "ratio": 4.5
+    },
+    {
+      "id": "text.secondary-on-surface.base",
+      "foreground": "text.secondary",
+      "background": "surface.base",
+      "ratio": 4.5
+    },
+    {
+      "id": "text.secondary-on-surface.raised",
+      "foreground": "text.secondary",
+      "background": "surface.raised",
+      "ratio": 4.5
+    },
+    {
+      "id": "action.accent-on-surface.base",
+      "foreground": "action.accent",
+      "background": "surface.base",
+      "ratio": 3
+    },
+    {
+      "id": "action.accent-on-surface.raised",
+      "foreground": "action.accent",
+      "background": "surface.raised",
+      "ratio": 3
+    },
+    {
+      "id": "boundary.essential-on-surface.base",
+      "foreground": "boundary.essential",
+      "background": "surface.base",
+      "ratio": 3
+    },
+    {
+      "id": "boundary.essential-on-surface.raised",
+      "foreground": "boundary.essential",
+      "background": "surface.raised",
+      "ratio": 3
+    },
+    {
+      "id": "status.success-on-surface.base",
+      "foreground": "status.success",
+      "background": "surface.base",
+      "ratio": 4.5
+    },
+    {
+      "id": "status.success-on-surface.raised",
+      "foreground": "status.success",
+      "background": "surface.raised",
+      "ratio": 4.5
+    },
+    {
+      "id": "status.warning-on-surface.base",
+      "foreground": "status.warning",
+      "background": "surface.base",
+      "ratio": 4.5
+    },
+    {
+      "id": "status.warning-on-surface.raised",
+      "foreground": "status.warning",
+      "background": "surface.raised",
+      "ratio": 4.5
+    },
+    {
+      "id": "status.error-on-surface.base",
+      "foreground": "status.error",
+      "background": "surface.base",
+      "ratio": 4.5
+    },
+    {
+      "id": "status.error-on-surface.raised",
+      "foreground": "status.error",
+      "background": "surface.raised",
+      "ratio": 4.5
+    },
+    {
+      "id": "primary-button",
+      "foreground": "action.onAccent",
+      "background": "action.accent",
+      "ratio": 4.5
+    }
+  ]
+}

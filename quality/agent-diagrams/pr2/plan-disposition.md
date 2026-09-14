@@ -1,0 +1,1 @@
+All five findings verified against current scalar consumers, export paths and underspecified formulas; corrected once. Existing body/mono font mapping retained. Browser composition-probe also verified represented-container content overlap; reserve full content region. No second audit.

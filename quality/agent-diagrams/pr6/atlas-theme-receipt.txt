@@ -1,5 +1,0 @@
-$ tsx apps/cli/cli/main.ts theme admit resources/atlas.theme --server http://127.0.0.1:5185 --workspace .local/atlas-proof --request atlas-readable-theme-1
-(node:37230) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-committed: atlas-readable-theme-1
-Workspace sequence: 7

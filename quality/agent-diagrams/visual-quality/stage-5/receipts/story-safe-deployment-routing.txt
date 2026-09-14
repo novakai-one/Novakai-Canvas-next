@@ -1,5 +1,0 @@
-committed: vq5-routing-story-safe-deployment
-Workspace sequence: 56
-$ tsx apps/cli/cli/main.ts --server http://127.0.0.1:5185 --workspace .local/visual-quality-proof replace resources/examples/showcase/story-safe-deployment.canvas --revision 2 --request vq5-routing-story-safe-deployment
-(node:69431) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)

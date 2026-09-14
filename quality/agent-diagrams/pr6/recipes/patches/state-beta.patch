@@ -1,7 +1,0 @@
-patch 1 @state-beta {
-  set collection title="Policy exception lifecycle"
-  set node @review label="Risk and owner review"
-  set block @review.@detail text="Confirm the risk, compensating control and accountable owner."
-  set wire @approve label="grant time-boxed exception"
-  set section @lifecycle title="From exception request to accountable outcome"
-}

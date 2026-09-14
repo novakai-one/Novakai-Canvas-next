@@ -1,3 +1,0 @@
-$ prettier --check "capability/**/*.{ts,tsx}" "apps/**/*.{ts,tsx}" eslint.config.js .dependency-cruiser.cjs
-Checking formatting...
-All matched files use Prettier code style!

@@ -1,7 +1,0 @@
-# Visible browser resource check
-
-Headed Chromium session resource-shots, 1600×1100, service127.0.0.1:5177. CLI requests harbor-browser-1, ember-browser-1, wetland-browser-1, deployment-browser-1 committed. PNG/SVG decoded and two theme surfaces visible. These are transport fixtures, not finished illustrations.
-
-Verified defect: deployment text computed family canvas-6f56409fd3d64bb85f7d070bce20749db2d66b6d63cec586cc22d1c761be2491, but document.fonts contains only canvas-8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc and canvas-14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb, both unloaded. The image visibly uses serif fallback. Web composition binds Presentation once to installation fonts and never mounts returned RenderDocument.fonts. This confirms A2 reported font-fallback counterexample in the actual app. Fix within PR3 findings correction: mount current admitted document fonts through a stable Presentation-owned FontDefinitions component; preserve stable React node registry. Host must not implement duplicate font CSS or remount canvas.
-
-After the correction, the headed browser reports canvas-6f56409fd3d64bb85f7d070bce20749db2d66b6d63cec586cc22d1c761be2491 as loaded and both visible text nodes select it. deployment-corrected.png visibly renders admitted Inter700 instead of serif fallback. Service restarted before verification; registry identity remains composed once.

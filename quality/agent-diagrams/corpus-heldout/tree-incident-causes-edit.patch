@@ -1,6 +1,0 @@
-patch 1 @tree-incident-causes {
- add node @delay concept "Alert evaluated too late" { text @detail "Compare evaluation intervals with the first user error." }
- add wire @late @detection -> @delay "candidate monitoring gap" kind=parent
- show @delay in @causes
- connect @late in @causes
-}

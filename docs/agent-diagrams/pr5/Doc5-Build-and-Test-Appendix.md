@@ -1,6 +1,0 @@
-# Build and verification
-1. Freeze counts, one scoped plan pressure test ≤8min; verify once ≤20% growth; no reaudit.
-2. Implement after PR4. Budget ≤3 new focused cases: local labelled cycle avoids unrelated-scene detour; dense field/member edges retain exact anchors/cardinality and clear labels; parallel/locked routes preserve constraints or fail explicitly. Extend vectors for first-infeasible/later-success, economical parallel lanes with a distant unrelated node, and deterministic candidate budget/cancellation; no E2E.
-3. Assert expected endpoint membership, nonintersection and bounded route lengths on deliberately simple topologies, not copied exact points. Include infeasible locked-label case. Run scoped suites/types/lint/format/architecture. Sonar≤2, clear TSDoc/typed returns, literal >144/160 source evidence.
-4. Real DSL: museum ER, adapter dependencies, return/retry SOP, state rollback. Capture at declared readable zoom; inspect every labelled route and marker. Different subjects/topologies from targets.
-5. A1 spec/coding and A2 test correctness one round, ≤8min each/≤5 source targets. A2 seeks3counterexamples. One verified findings-only fix; no reaudit. Commit PR with receipts/readouts/screenshots and any remaining gates.

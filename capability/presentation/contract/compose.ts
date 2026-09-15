@@ -36,10 +36,15 @@ async function bindReact(pinned: FontSet, injected?: NodeChromeRegistry): Promis
   ]);
   const chromes = injected ?? {
     card: { Component: card.CardChrome, showKind: true },
-    'folder-tab': { Component: folder.createFolderTabChrome(folderPath), showKind: false },
+    'folder-tab': {
+      Component: folder.createFolderTabChrome(folderPath),
+      showKind: false,
+      separateHeading: true,
+    },
     'accent-stripe': {
       Component: accent.AccentStripeChrome,
       showKind: false,
+      separateHeading: true,
       sectionLabel: 'EXPORTS',
     },
   };

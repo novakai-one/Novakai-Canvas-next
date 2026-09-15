@@ -5,7 +5,7 @@ export function createFolderTabChrome(
   outline: (width: number, height: number, tabWidth: number, tabHeight: number) => string,
 ): ComponentType<NodeChromeProps> {
   /** Render only the module shell; measured content, ports and badges remain shared. */
-  function FolderTabChrome({ node, style }: NodeChromeProps): ReactElement | null {
+  function FolderTabChrome({ node, style, heading }: NodeChromeProps): ReactElement | null {
     if (!style?.chromeMetrics) return null;
     const metrics = style.chromeMetrics;
     const header = style.headers?.[node.role] ?? node.paint.fill;
@@ -25,6 +25,7 @@ export function createFolderTabChrome(
           strokeWidth={node.strokeWidth}
           vectorEffect="non-scaling-stroke"
         />
+        {heading}
       </>
     );
   }

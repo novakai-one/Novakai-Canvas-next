@@ -35,8 +35,10 @@ export interface ReactBindings {
 export interface NodeChromeProps {
   readonly node: VisualNode;
   readonly style?: ResolvedStyle | undefined;
+  readonly heading?: ReactNode;
 }
 export interface NodeChrome extends ChromePolicy {
+  readonly separateHeading?: boolean;
   readonly Component: ComponentType<NodeChromeProps>;
 }
 export type NodeChromeRegistry = Readonly<Record<string, NodeChrome>> & {

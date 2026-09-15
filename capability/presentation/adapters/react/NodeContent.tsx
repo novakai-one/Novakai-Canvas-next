@@ -7,7 +7,7 @@ import type {
   FontDefinitionsProps,
 } from '../../contract/react-types.js';
 import type { FontSet } from '../../contract/records/style.js';
-import type { VisualNode } from '../../contract/records/visual.js';
+import type { VisualNode, Primitive } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';
 /** Embedded font rules contain only validated digest/base64/MIME values, never authored CSS. */
 function fontRules(fonts: FontSet): string {
@@ -39,8 +39,9 @@ export function createContentRenderer(
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
-    const Chrome = (slots.chromes[node.chromeStyle?.chrome ?? 'card'] ?? slots.chromes.card)
-      .Component;
+    const chrome = slots.chromes[node.chromeStyle?.chrome ?? 'card'] ?? slots.chromes.card;
+    const Chrome = chrome.Component;
+    const content = compartments(node, chrome.separateHeading);
     return (
       <svg
         display="block"
@@ -57,9 +58,13 @@ export function createContentRenderer(
       >
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}
-        <Chrome node={node} style={node.chromeStyle} />
+        <Chrome
+          node={node}
+          style={node.chromeStyle}
+          heading={<Blocks primitives={content.heading} />}
+        />
         <g transform={`translate(${contentSlack(node)} 0)`}>
-          <Blocks primitives={node.content.primitives} />
+          <Blocks primitives={content.body} />
         </g>
       </svg>
     );
@@ -135,4 +140,17 @@ export function createFontDefinitions(boundFonts: FontSet): ComponentType<FontDe
     return <style>{fontRules(fonts)}</style>;
   }
   return FontDefinitions;
+}
+
+/** Chrome can position shared measured heading text; body primitives and ports never enter its slot. */
+function compartments(
+  node: VisualNode,
+  separate: boolean | undefined,
+): { readonly heading: readonly Primitive[]; readonly body: readonly Primitive[] } {
+  if (!separate) return { heading: [], body: node.content.primitives };
+  const heading = (item: Primitive): boolean => item.kind === 'text' && item.y <= node.headerHeight;
+  return {
+    heading: node.content.primitives.filter(heading),
+    body: node.content.primitives.filter((item) => !heading(item)),
+  };
 }

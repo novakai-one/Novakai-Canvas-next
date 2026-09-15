@@ -31,47 +31,54 @@ import {
   type Documents,
   type Resources,
 } from '../../../capability/export/contract/index.js';
-import { filePath, type FilePath } from '../contract/records/headless.js';
+import { filePath, headlessFault, type FilePath } from '../contract/records/headless.js';
 import type {
   HeadlessOptions,
   HeadlessOwners,
   HeadlessReport,
+  HeadlessSource,
+  HeadlessFailure,
 } from '../contract/records/headless.js';
-import { failure, type Result } from '../contract/errors.js';
+import type { Result } from '../contract/errors.js';
 /** Owner failures remain structured until the CLI prints them; no partial render is reported as success. */
 class RenderFault extends Error {
-  constructor(readonly evidence: unknown) {
+  constructor(readonly evidence: HeadlessSource) {
     super('Headless render rejected');
   }
 }
 /** Private throws terminate one read-only render; runHeadless reports typed failure and cleans temporary resources. */
-function accepted<T>(result: { readonly ok: true; readonly value: T } | { readonly ok: false }): T {
-  if (!result.ok) throw new RenderFault(result);
+function accepted<T>(result: Result<T, HeadlessSource>): T {
+  if (!result.ok) throw new RenderFault(result.error);
   return result.value;
 }
 /** Temporary admission is isolated from workspaces; retry replaces the same named output files. */
 export async function renderHeadless(
   options: HeadlessOptions,
   owners: HeadlessOwners,
-): Promise<Result<HeadlessReport>> {
+): Promise<Result<HeadlessReport, HeadlessFailure>> {
   const directory = filePath.parse(await mkdtemp(join(tmpdir(), 'canvas-render-')));
   try {
     return { ok: true, value: await render(options, owners, directory) };
   } catch (error) {
-    return failure(
-      'render-failed',
-      JSON.stringify(evidence(error)),
-      'Correct the named input or resource and rerun; stored collections were not changed.',
-    );
+    return {
+      ok: false,
+      error: {
+        code: 'render-failed',
+        message: 'Headless render rejected',
+        recovery:
+          'Correct the named input or resource and rerun; stored collections were not changed.',
+        source: evidence(error),
+      },
+    };
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 }
 /** Preserve owner diagnostics; unexpected filesystem failures are terminal CLI evidence. */
-function evidence(error: unknown): unknown {
+function evidence(error: unknown): HeadlessSource {
   if (error instanceof RenderFault) return error.evidence;
-  if (error instanceof Error) return { message: error.message };
-  return error;
+  if (error instanceof Error) return { code: 'provider-failed', message: error.message };
+  return { code: 'provider-failed', message: String(error) };
 }
 /** Create one real language and token environment for all section renders. */
 async function environment(
@@ -224,7 +231,7 @@ async function input(
   ).collection;
   const theme = await selectedTheme(options, owners, original.theme.id);
   const pin = bindings.themes[theme];
-  if (!pin) throw new RenderFault({ code: 'missing-theme', theme });
+  if (!pin) throw new RenderFault(headlessFault.parse({ code: 'missing-theme', theme }));
   return accepted(validate({ ...original, theme: pin }));
 }
 /** Keep every preset and admitted font in the exact export snapshot's resource closure. */

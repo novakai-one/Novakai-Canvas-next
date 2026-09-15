@@ -2,6 +2,8 @@ import { z } from 'zod';
 import type { Catalog } from '../../../../capability/templates/contract/index.js';
 import type { readThemeConfig } from '../theme-reader.js';
 import type { createHeadlessBindings } from '@novakai/canvas-service';
+import type { Diagnostic } from '../errors.js';
+import type { FailureSource } from './failure-source.js';
 /** Filesystem path at the native CLI edge; Node resolves it and resource owners enforce confinement. */
 export const filePath = z.string().brand<'HeadlessFilePath'>();
 /** Checked filesystem text, distinct from a semantic collection or theme selector. */
@@ -23,6 +25,29 @@ export const headlessOptions = z
   .readonly();
 /** Immutable request inferred from the CLI boundary schema. */
 export type HeadlessOptions = z.infer<typeof headlessOptions>;
+/** Local selection/provider failures are distinct from unchanged originating owner records. */
+export const headlessFault = z.discriminatedUnion('code', [
+  z.strictObject({ code: z.literal('missing-theme'), theme: themeSelector }).readonly(),
+  z
+    .strictObject({
+      code: z.literal('collection-selection'),
+      id: collectionSelector,
+      matches: z.number().int().nonnegative(),
+    })
+    .readonly(),
+  z.strictObject({ code: z.literal('collection-required') }).readonly(),
+  z.strictObject({ code: z.literal('collection-title-required') }).readonly(),
+  z.strictObject({ code: z.literal('provider-failed'), message: z.string() }).readonly(),
+]);
+/** Consumer-owned source union retains owner paths, diagnostic tuples and recursive source/cleanup chains. */
+export type HeadlessSource = FailureSource | Diagnostic | z.infer<typeof headlessFault>;
+/** Every adapter rejection carries structured evidence in the existing CLI error channel. */
+export type HeadlessFailure = Readonly<
+  Omit<Diagnostic, 'code' | 'source'> & {
+    readonly code: 'render-failed';
+    readonly source: HeadlessSource;
+  }
+>;
 /** Only confined resource reads and the existing service/theme preparation operations are injected. */
 export interface HeadlessOwners {
   readonly resourceFiles: import('./resources.js').ResourceFiles;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { ChromeName, HexColor } from '../brands.js';
+import type { ChromeName, HexColor, Digest, RoleName } from '../brands.js';
 import { digest, version } from '../brands.js';
 /** Admission metadata supplied by the owner; no network lookup or platform fallback. */
 export const fontPin = z
@@ -14,6 +14,7 @@ export const presetPin = z
   .readonly();
 export type FontPin = z.infer<typeof fontPin>;
 export type PresetPin = z.infer<typeof presetPin>;
+/** Raw serialization envelope: fromPortable admits portableTheme and verifies exact font pins before resolution. */
 export type PortableToken =
   | { readonly type: 'color'; readonly value: string }
   | {
@@ -31,13 +32,13 @@ export interface PortableTheme {
 }
 export interface Paint {
   readonly secondary?: HexColor;
-  readonly fill: string;
-  readonly stroke: string;
-  readonly text: string;
+  readonly fill: HexColor;
+  readonly stroke: HexColor;
+  readonly text: HexColor;
 }
 /** Exact font identity and absolute line box; Presentation rejects invalid projections. */
 export interface TextMetric {
-  readonly font: { readonly family: string; readonly digest: string };
+  readonly font: { readonly family: string; readonly digest: Digest };
   readonly size: number;
   readonly lineHeight: number;
 }
@@ -73,7 +74,7 @@ export interface ChromeMetrics {
 export interface StyleProjection {
   readonly chrome?: ChromeName | undefined;
   /** Theme-defined role name → header band tint; roles are open, matching the roles map. */
-  readonly headers?: Readonly<Record<string, HexColor>>;
+  readonly headers?: Readonly<Record<RoleName, HexColor>>;
   readonly elevation?: {
     readonly offsetX: number;
     readonly offsetY: number;
@@ -82,7 +83,7 @@ export interface StyleProjection {
     readonly color: HexColor;
   };
   readonly chromeMetrics?: ChromeMetrics;
-  readonly digest: string;
+  readonly digest: Digest;
   readonly bodyFont: TextMetric['font'];
   readonly monoFont: TextMetric['font'];
   /** Admitted display-weight face pinned by heading typography roles. */
@@ -100,9 +101,9 @@ export interface StyleProjection {
   readonly gap: number;
   readonly stroke: number;
   readonly radius: number;
-  readonly roles: Readonly<Record<string, Paint>>;
-  readonly surface: string;
-  readonly text: string;
-  readonly secondary: string;
-  readonly border: string;
+  readonly roles: Readonly<Record<RoleName, Paint>>;
+  readonly surface: HexColor;
+  readonly text: HexColor;
+  readonly secondary: HexColor;
+  readonly border: HexColor;
 }

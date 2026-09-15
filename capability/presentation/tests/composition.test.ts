@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import { assert, expect, it } from 'vitest';
 import {
   composePresentation,
+  roleName,
+  paint,
   visualAsset,
   type ComposedPresentation,
   type VisualNode,
@@ -83,10 +85,10 @@ function checkExtent(projected: VisualNode): void {
 it('measures figure orientations and full portrait/caption extents without clipping', async () => {
   const pinned = fonts();
   const tokens = style(pinned);
-  const dark = { fill: '#000000', stroke: '#ffffff', text: '#ffffff' };
+  const dark = paint.parse({ fill: '#000000', stroke: '#ffffff', text: '#ffffff' });
   const setup = value(
     await composePresentation(
-      owners({ ...tokens, roles: { ...tokens.roles, dark } }, asset),
+      owners({ ...tokens, roles: { ...tokens.roles, [roleName.parse('dark')]: dark } }, asset),
       pinned,
     ),
   );

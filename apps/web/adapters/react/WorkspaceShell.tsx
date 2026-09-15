@@ -4,6 +4,8 @@ import { useState, useSyncExternalStore, useEffect } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js';
 import styles from './WorkspaceShell.module.css';
+import { roleName } from '@novakai/canvas-presentation';
+const NEUTRAL = roleName.parse('neutral');
 /** The work surface is the primary content; chrome uses stable injected sections and shared design tokens. */
 export function createWorkspaceShell(slots: ChromeSlots): ComponentType<WorkspaceProps> {
   const { Header, Library, Panel, Source, Recovery, CreateDialog, CanvasSurface, FontDefinitions } =
@@ -36,7 +38,7 @@ export function createWorkspaceShell(slots: ChromeSlots): ComponentType<Workspac
                 paint={{
                   fill: view.active.document.style.surface,
                   stroke:
-                    view.active.document.style.roles.neutral?.stroke ??
+                    view.active.document.style.roles[NEUTRAL]?.stroke ??
                     view.active.document.style.text,
                   text: view.active.document.style.text,
                 }}

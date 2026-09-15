@@ -1,3 +1,4 @@
+import { hexColor } from '../../design-system/contract/index.js';
 import { layoutInputKey } from '../../layout/contract/index.js';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -223,7 +224,11 @@ function placed(projection: Projection, label: MeasuredContent): PlacedSection {
         labelBox: { x: 300, y: 130, width: label.width, height: label.height },
         measuredLabel: label,
         appearance: {
-          paint: { fill: '#ffffff', stroke: '#444444', text: '#222222' },
+          paint: {
+            fill: hexColor.parse('#ffffff'),
+            stroke: hexColor.parse('#444444'),
+            text: hexColor.parse('#222222'),
+          },
           width: 2,
           dash: [8, 4],
         },
@@ -291,7 +296,11 @@ export async function fixture(
   const mono = fonts.at(1);
   const strong = fonts.at(2);
   assert(first && mono && strong);
-  const paint = { fill: '#ffffff', stroke: '#334155', text: '#0f172a' };
+  const paint = {
+    fill: hexColor.parse('#ffffff'),
+    stroke: hexColor.parse('#334155'),
+    text: hexColor.parse('#0f172a'),
+  };
   const style = resolvedStyle.parse({
     digest: encoding.hash(themeBytes),
     bodyFont: { family: first.family, digest: first.digest },

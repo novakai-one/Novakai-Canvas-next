@@ -22,6 +22,7 @@ export type {
   LayoutIntent,
 } from './records/input.js';
 export {
+  roleName,
   resolvedStyle,
   fontSet,
   fontSource,
@@ -30,6 +31,7 @@ export {
   visualAsset,
 } from './records/style.js';
 export type {
+  RoleName,
   TextMetric,
   DiagramTypography,
   SizeBand,

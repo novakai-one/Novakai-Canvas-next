@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { createReactBindings } from '@novakai/canvas-presentation';
+import { createReactBindings, roleName } from '@novakai/canvas-presentation';
 import { requestSchema } from '@novakai/canvas-authoring';
 import { it, assert, expect } from 'vitest';
 import { fileURLToPath } from 'node:url';
@@ -223,7 +223,7 @@ it('PR3 concurrent pins isolate same-family font bytes, measured text and emitte
       assert(media?.kind === 'media');
       expect(markup).toContain(media.dataUri);
       expect(dataDigest(media.dataUri)).toBe(expected.media);
-      expect(result.value.style.roles.neutral).toEqual({
+      expect(result.value.style.roles[roleName.parse('neutral')]).toEqual({
         fill: '#ffffff',
         stroke: '#526170',
         text: '#17212b',

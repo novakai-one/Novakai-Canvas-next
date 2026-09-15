@@ -26,7 +26,7 @@ export const chromeName = z
   .max(60)
   .regex(/^[a-z][a-z0-9-]*$/)
   .brand<'ChromeName'>();
-/** Canonical lowercase sRGB hex with optional alpha byte; reserved for new chrome color fields. */
+/** Canonical lowercase sRGB hex with optional alpha byte; used by resolved style transport. */
 export const hexColor = z
   .string()
   .regex(/^#[0-9a-f]{6}([0-9a-f]{2})?$/)
@@ -35,3 +35,11 @@ export const hexColor = z
 export type ChromeName = z.infer<typeof chromeName>;
 /** Checked canonical six- or eight-digit hexadecimal color. */
 export type HexColor = z.infer<typeof hexColor>;
+
+/** Theme-extensible semantic role vocabulary; new roles require no enum edit. */
+export const roleName = z
+  .string()
+  .regex(/^[a-z][A-Za-z0-9]*$/)
+  .brand<'RoleName'>();
+/** Checked semantic role key shared by role paints and header tints. */
+export type RoleName = z.infer<typeof roleName>;

@@ -1,7 +1,10 @@
 import { z } from 'zod';
-import { chromeName, hexColor } from './chrome.js';
+import { chromeName } from './chrome.js';
 import { digest } from '../brands.js';
-export const color = z.string().regex(/^#[a-fA-F0-9]{6}([a-fA-F0-9]{2})?$/);
+import { hexColor, roleName, type RoleName } from '../../../design-system/contract/index.js';
+/** Design System owns the extensible role grammar; Presentation re-exports it at its boundary. */
+export { roleName, type RoleName };
+export { hexColor };
 export const fontRef = z.strictObject({ digest, family: z.string().min(1).max(256) }).readonly();
 export type FontRef = z.infer<typeof fontRef>;
 /** Exact admitted bytes reach measurement and rendering together; no OS-font alias is accepted here. */
@@ -20,7 +23,12 @@ export type FontSource = z.infer<typeof fontSource>;
 export const fontSet = z.array(fontSource).min(1).max(100).readonly();
 export type FontSet = z.infer<typeof fontSet>;
 export const paint = z
-  .strictObject({ fill: color, stroke: color, text: color, secondary: hexColor.optional() })
+  .strictObject({
+    fill: hexColor,
+    stroke: hexColor,
+    text: hexColor,
+    secondary: hexColor.optional(),
+  })
   .readonly();
 export type Paint = z.infer<typeof paint>;
 const positive = z.number().finite().positive().max(10000);
@@ -90,7 +98,7 @@ export const resolvedStyle = z
   .strictObject({
     chrome: chromeName.optional(),
     /** Theme-defined role name → header band tint; keys match the open roles map. */
-    headers: z.record(z.string(), hexColor).readonly().optional(),
+    headers: z.record(roleName, hexColor).readonly().optional(),
     elevation: elevation.optional(),
     chromeMetrics: chromeMetrics.optional(),
     digest,
@@ -104,11 +112,11 @@ export const resolvedStyle = z
     gap: positive,
     stroke: positive,
     radius: z.number().min(0).max(1000),
-    roles: z.record(z.string(), paint).readonly(),
-    surface: color,
-    text: color,
-    secondary: color,
-    border: color,
+    roles: z.record(roleName, paint).readonly(),
+    surface: hexColor,
+    text: hexColor,
+    secondary: hexColor,
+    border: hexColor,
   })
   .refine(matchingFonts, { message: 'Typography roles must use their pinned body/mono font bytes' })
   .readonly();

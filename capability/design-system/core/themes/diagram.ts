@@ -1,4 +1,11 @@
-import { hexColor, type ChromeName, type TokenId, tokenId } from '../../contract/brands.js';
+import {
+  hexColor,
+  roleName,
+  type HexColor,
+  type ChromeName,
+  type TokenId,
+  tokenId,
+} from '../../contract/brands.js';
 import type { ResolvedTokenSet } from '../../contract/records/resolved.js';
 import type {
   StyleProjection,
@@ -97,7 +104,7 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
       'UI scope cannot measure diagrams',
     );
   const values = resolved.values;
-  const color = (id: string): string => colorText(member(values, id), id);
+  const color = (id: TokenId): HexColor => tokenColor(values, id);
   return {
     ...chromeProjection(resolved),
     digest: resolved.digest,
@@ -109,24 +116,30 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     connection: {
       ...wireOverride(resolved),
       paint: {
-        fill: color('surface.base'),
+        fill: color(tokenId.parse('surface.base')),
         stroke: runtimeStroke(resolved),
-        text: color('text.primary'),
+        text: color(tokenId.parse('text.primary')),
       },
-      width: tokenNumber(values, 'diagram.edgeStroke'),
-      dash: [tokenNumber(values, 'space.2'), tokenNumber(values, 'space.1')],
+      width: tokenNumber(values, tokenId.parse('diagram.edgeStroke')),
+      dash: [
+        tokenNumber(values, tokenId.parse('space.2')),
+        tokenNumber(values, tokenId.parse('space.1')),
+      ],
     },
-    padding: tokenNumber(values, 'space.3'),
-    gap: tokenNumber(values, 'space.2'),
-    stroke: tokenNumber(values, 'stroke.base'),
-    radius: tokenNumber(values, 'shape.radius'),
+    padding: tokenNumber(values, tokenId.parse('space.3')),
+    gap: tokenNumber(values, tokenId.parse('space.2')),
+    stroke: tokenNumber(values, tokenId.parse('stroke.base')),
+    radius: tokenNumber(values, tokenId.parse('shape.radius')),
     roles: Object.fromEntries(
-      resolved.roles.map((role) => [role, rolePaint(role, values, resolved.chrome)]),
+      resolved.roles.map((role) => [
+        parsed(roleName, role, 'roles'),
+        rolePaint(role, values, resolved.chrome),
+      ]),
     ),
-    surface: color('surface.base'),
-    text: color('text.primary'),
-    secondary: color('text.secondary'),
-    border: color('border.default'),
+    surface: color(tokenId.parse('surface.base')),
+    text: color(tokenId.parse('text.primary')),
+    secondary: color(tokenId.parse('text.secondary')),
+    border: color(tokenId.parse('border.default')),
   };
 }
 /** Presentation needs exact bytes and family, not the admission-evidence flag. */
@@ -142,16 +155,16 @@ function rolePaint(
   const prefix = tokenId.parse('role.' + role);
   return {
     ...secondaryPaint(prefix, values, chrome),
-    fill: colorText(member(values, prefix + '.fill'), prefix),
-    stroke: colorText(member(values, prefix + '.stroke'), prefix),
-    text: colorText(member(values, prefix + '.text'), prefix),
+    fill: tokenColor(values, tokenId.parse(prefix + '.fill')),
+    stroke: tokenColor(values, tokenId.parse(prefix + '.stroke')),
+    text: tokenColor(values, tokenId.parse(prefix + '.text')),
   };
 }
 
 /** Resolve one absolute text role; resolver boundary translates missing tokens into typed failure. */
-function metric(resolved: ResolvedTokenSet, font: string, sizeToken: string): TextMetric {
+function metric(resolved: ResolvedTokenSet, font: TokenId, sizeToken: TokenId): TextMetric {
   const size = metricNumber(tokenNumber(resolved.values, sizeToken), sizeToken);
-  const ratio = tokenNumber(resolved.values, 'lineHeight.body');
+  const ratio = tokenNumber(resolved.values, tokenId.parse('lineHeight.body'));
   return {
     font: fontReference(requirePinnedFont(font, resolved.values, resolved.fonts)),
     size,
@@ -161,16 +174,16 @@ function metric(resolved: ResolvedTokenSet, font: string, sizeToken: string): Te
 /** Heading roles carry the admitted strong face; body-family roles keep reading weight. */
 function typography(resolved: ResolvedTokenSet): DiagramTypography {
   return {
-    sectionHeading: metric(resolved, 'font.strong', 'font.large'),
-    nodeHeading: metric(resolved, 'font.strong', 'font.title'),
-    body: metric(resolved, 'font.body', 'type.base'),
-    mono: metric(resolved, 'font.mono', 'type.base'),
-    annotation: metric(resolved, 'font.body', 'font.caption'),
-    caption: metric(resolved, 'font.body', 'font.caption'),
+    sectionHeading: metric(resolved, tokenId.parse('font.strong'), tokenId.parse('font.large')),
+    nodeHeading: metric(resolved, tokenId.parse('font.strong'), tokenId.parse('font.title')),
+    body: metric(resolved, tokenId.parse('font.body'), tokenId.parse('type.base')),
+    mono: metric(resolved, tokenId.parse('font.mono'), tokenId.parse('type.base')),
+    annotation: metric(resolved, tokenId.parse('font.body'), tokenId.parse('font.caption')),
+    caption: metric(resolved, tokenId.parse('font.body'), tokenId.parse('font.caption')),
   };
 }
 /** Width bands describe interior content; token validation owns finite positive values. */
-function band(values: TokenValues, preferred: string, maximum: string): SizeBand {
+function band(values: TokenValues, preferred: TokenId, maximum: TokenId): SizeBand {
   return {
     preferred: tokenNumber(values, preferred),
     maximum: tokenNumber(values, maximum),
@@ -180,25 +193,37 @@ function band(values: TokenValues, preferred: string, maximum: string): SizeBand
 function contentSizing(values: TokenValues): ContentSizing {
   return {
     widths: {
-      small: band(values, 'diagram.widthSmall', 'diagram.widthMedium'),
-      medium: band(values, 'diagram.widthMedium', 'diagram.widthLarge'),
-      large: band(values, 'diagram.widthLarge', 'diagram.widthExtraLarge'),
+      small: band(
+        values,
+        tokenId.parse('diagram.widthSmall'),
+        tokenId.parse('diagram.widthMedium'),
+      ),
+      medium: band(
+        values,
+        tokenId.parse('diagram.widthMedium'),
+        tokenId.parse('diagram.widthLarge'),
+      ),
+      large: band(
+        values,
+        tokenId.parse('diagram.widthLarge'),
+        tokenId.parse('diagram.widthExtraLarge'),
+      ),
     },
     figureBox: {
-      small: tokenNumber(values, 'diagram.figureSmall'),
-      medium: tokenNumber(values, 'diagram.figureMedium'),
-      large: tokenNumber(values, 'diagram.figureLarge'),
+      small: tokenNumber(values, tokenId.parse('diagram.figureSmall')),
+      medium: tokenNumber(values, tokenId.parse('diagram.figureMedium')),
+      large: tokenNumber(values, tokenId.parse('diagram.figureLarge')),
     },
-    rowMinimum: tokenNumber(values, 'diagram.rowMin'),
+    rowMinimum: tokenNumber(values, tokenId.parse('diagram.rowMin')),
     iconBox: {
-      small: tokenNumber(values, 'diagram.iconSmall'),
-      medium: tokenNumber(values, 'diagram.iconMedium'),
-      large: tokenNumber(values, 'diagram.iconLarge'),
+      small: tokenNumber(values, tokenId.parse('diagram.iconSmall')),
+      medium: tokenNumber(values, tokenId.parse('diagram.iconMedium')),
+      large: tokenNumber(values, tokenId.parse('diagram.iconLarge')),
     },
   };
 }
 /** Numeric token extraction has one local policy for projection consumers. */
-function tokenNumber(values: TokenValues, id: string): number {
+function tokenNumber(values: TokenValues, id: TokenId): number {
   return numeric(member(values, id), id);
 }
 /** Presentation-bound metrics must satisfy its finite positive public schema. */
@@ -221,38 +246,34 @@ function chromeProjection(resolved: ResolvedTokenSet): Partial<StyleProjection> 
     chrome: resolved.chrome,
     headers: Object.fromEntries(
       resolved.roles.map((role) => [
-        role,
-        parsed(hexColor, colorText(member(values, 'role.' + role + '.header'), role), role),
+        parsed(roleName, role, 'roles'),
+        tokenColor(values, tokenId.parse('role.' + role + '.header')),
       ]),
     ),
     elevation: {
-      offsetX: tokenNumber(values, 'elevation.offsetX'),
-      offsetY: tokenNumber(values, 'elevation.offsetY'),
-      blur: tokenNumber(values, 'elevation.blur'),
-      extent: tokenNumber(values, 'elevation.extent'),
-      color: parsed(
-        hexColor,
-        colorText(member(values, 'elevation.color'), 'elevation.color'),
-        'elevation.color',
-      ),
+      offsetX: tokenNumber(values, tokenId.parse('elevation.offsetX')),
+      offsetY: tokenNumber(values, tokenId.parse('elevation.offsetY')),
+      blur: tokenNumber(values, tokenId.parse('elevation.blur')),
+      extent: tokenNumber(values, tokenId.parse('elevation.extent')),
+      color: tokenColor(values, tokenId.parse('elevation.color')),
     },
     chromeMetrics: {
-      tabWidth: tokenNumber(values, 'chrome.tabWidth'),
-      tabHeight: tokenNumber(values, 'chrome.tabHeight'),
-      accentWidth: tokenNumber(values, 'chrome.accentWidth'),
+      tabWidth: tokenNumber(values, tokenId.parse('chrome.tabWidth')),
+      tabHeight: tokenNumber(values, tokenId.parse('chrome.tabHeight')),
+      accentWidth: tokenNumber(values, tokenId.parse('chrome.accentWidth')),
     },
   };
 }
 
 /** Existing presets retain their original wire paint; chrome presets select runtime ink through tokens. */
 function runtimeStroke(resolved: ResolvedTokenSet): Paint['stroke'] {
-  const id = resolved.chrome === undefined ? 'text.secondary' : 'chrome.wire';
-  return colorText(member(resolved.values, id), id);
+  const id = tokenId.parse(resolved.chrome === undefined ? 'text.secondary' : 'chrome.wire');
+  return tokenColor(resolved.values, id);
 }
 /** Type-only and external interactions retain their own muted ink without changing marker or routing policy. */
 function wireOverride(resolved: ResolvedTokenSet): Partial<StyleProjection['connection']> {
   if (resolved.chrome === undefined) return {};
-  const color = (id: TokenId): Paint['fill'] => colorText(member(resolved.values, id), id);
+  const color = (id: TokenId): HexColor => tokenColor(resolved.values, id);
   return {
     dashedPaint: {
       fill: color(tokenId.parse('surface.base')),
@@ -270,6 +291,11 @@ function secondaryPaint(
 ): Partial<Paint> {
   if (chrome === undefined) return {};
   return {
-    secondary: parsed(hexColor, colorText(member(values, prefix + '.secondary'), prefix), prefix),
+    secondary: tokenColor(values, tokenId.parse(prefix + '.secondary')),
   };
+}
+
+/** Mint canonical ink at token projection; token emission already lowercases component bytes. */
+function tokenColor(values: TokenValues, id: TokenId): HexColor {
+  return parsed(hexColor, colorText(member(values, id), id), id);
 }

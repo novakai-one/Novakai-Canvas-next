@@ -1,4 +1,4 @@
-import { composePresentation, chromeName, resolvedStyle } from '../contract/index.js';
+import { composePresentation, chromeName, resolvedStyle, roleName } from '../contract/index.js';
 import { owners } from './fixtures.js';
 import type { VisualNode, MeasurementPort, TextRun } from '../contract/index.js';
 import { it, expect, assert } from 'vitest';
@@ -311,7 +311,10 @@ function chromeTokens(
   return resolvedStyle.parse({
     ...tokens,
     chrome,
-    roles: { ...tokens.roles, primary: tokens.roles.neutral },
+    roles: {
+      ...tokens.roles,
+      [roleName.parse('primary')]: tokens.roles[roleName.parse('neutral')],
+    },
     headers: { neutral: '#eeeeee', primary: '#ddeeff' },
     chromeMetrics: {
       tabWidth: tokens.padding + tokens.gap,

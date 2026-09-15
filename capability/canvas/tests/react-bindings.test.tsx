@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { hexColor } from '../../design-system/contract/index.js';
 import { it, expect, afterEach, vi, assert } from 'vitest';
 import { render, screen, fireEvent, cleanup, waitFor, act } from '@testing-library/react';
 import { createReactBindings, createSession } from '../contract/index.js';
@@ -28,7 +29,11 @@ it('15 actual React Flow bindings render measured nodes, labelled crow-foot edge
         reader={setup.canvas}
         nextGestureId={() => 'ui'}
         onError={errors}
-        paint={{ fill: '#ffffff', stroke: '#222222', text: '#222222' }}
+        paint={{
+          fill: hexColor.parse('#ffffff'),
+          stroke: hexColor.parse('#222222'),
+          text: hexColor.parse('#222222'),
+        }}
       />
     </div>,
   );
@@ -135,7 +140,11 @@ it('16 real adapter callbacks coalesce drag, cancel safely, preserve viewport an
       reader={setup.canvas}
       nextGestureId={() => `route-${++id}`}
       onError={errors}
-      paint={{ fill: '#ffffff', stroke: '#222222', text: '#222222' }}
+      paint={{
+        fill: hexColor.parse('#ffffff'),
+        stroke: hexColor.parse('#222222'),
+        text: hexColor.parse('#222222'),
+      }}
     />,
   );
   act(() =>

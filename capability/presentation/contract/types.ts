@@ -4,7 +4,7 @@ import type { MeasurementPort } from './ports/measurement.js';
 import type { RenderPort } from './ports/rendering.js';
 import type { Result } from './errors.js';
 import type { Projection, MeasuredContent, MarkerKind } from './records/visual.js';
-import type { FontRef } from './records/style.js';
+import type { FontRef, Paint } from './records/style.js';
 export interface Dependencies {
   readonly chromePolicies?: import('./records/chrome.js').ChromePolicies | undefined;
   readonly domain: DomainReader;
@@ -20,7 +20,7 @@ export interface TextRequest {
   readonly strong?: FontRef;
   readonly size: number;
   readonly lineHeight: number;
-  readonly fill: string;
+  readonly fill: Paint['text'];
 }
 /** Pure read/render API; Authoring retains committed state when a preview fails. */
 export interface Presentation {

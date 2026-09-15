@@ -1,3 +1,4 @@
+import { hexColor } from '../../design-system/contract/index.js';
 import { layoutInputKey } from '../../layout/contract/index.js';
 import { descendantId, objectId } from '@novakai/canvas-model';
 import { assert } from 'vitest';
@@ -124,7 +125,11 @@ export function scene(revision = 0): Scene {
             labelBox: { x: 240, y: 80, width: 80, height: 20 },
             measuredLabel: measured('owns'),
             appearance: {
-              paint: { fill: '#ffffff', stroke: '#222222', text: '#222222' },
+              paint: {
+                fill: hexColor.parse('#ffffff'),
+                stroke: hexColor.parse('#222222'),
+                text: hexColor.parse('#222222'),
+              },
               width: 2,
               dash: [8, 4],
             },

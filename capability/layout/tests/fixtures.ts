@@ -1,3 +1,4 @@
+import { hexColor } from '../../design-system/contract/index.js';
 import { assert } from 'vitest';
 import { validate } from '@novakai/canvas-model';
 import { createPresentation, resolvedStyle, content } from '@novakai/canvas-presentation';
@@ -172,7 +173,7 @@ function measured(text: string): MeasuredContent {
       font: tokens.bodyFont,
       size: 12,
       lineHeight: 16,
-      fill: '#222222',
+      fill: hexColor.parse('#222222'),
     }),
   );
 }

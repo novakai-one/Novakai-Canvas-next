@@ -1,4 +1,4 @@
-import { tokenId } from '../contract/index.js';
+import { tokenId, roleName } from '../contract/index.js';
 import { describe, it, expect } from 'vitest';
 import { resolvedStyle } from '@novakai/canvas-presentation';
 import { composeTemplates, digest, type ThemePayload } from '@novakai/canvas-templates';
@@ -135,8 +135,16 @@ describe('Design System themes', () => {
       }).success,
     ).toBe(false);
 
-    expect(style.roles.neutral).toEqual({ fill: '#ffffff', stroke: '#526170', text: '#17212b' });
-    expect(style.roles.primary).toEqual({ fill: '#355ccd', stroke: '#355ccd', text: '#ffffff' });
+    expect(style.roles[roleName.parse('neutral')]).toEqual({
+      fill: '#ffffff',
+      stroke: '#526170',
+      text: '#17212b',
+    });
+    expect(style.roles[roleName.parse('primary')]).toEqual({
+      fill: '#355ccd',
+      stroke: '#355ccd',
+      text: '#ffffff',
+    });
     const templates = composeTemplates({
       recipe: {
         inspect: () => {

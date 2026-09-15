@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { sceneId, coordinate, dimension } from '../brands.js';
 import type { ConnectionStyle } from './style.js';
-import { fontRef, paint, color, chromeResolvedStyle } from './style.js';
+import { fontRef, paint, hexColor, roleName, chromeResolvedStyle } from './style.js';
 import type {
   LayoutIntent,
   Placement,
@@ -20,7 +20,7 @@ export const textRun = z
     width: dimension,
     font: fontRef,
     size: z.number().positive().max(1000),
-    fill: color,
+    fill: hexColor,
   })
   .readonly();
 export const mediaRun = z
@@ -43,7 +43,7 @@ export const rule = z
     y1: coordinate,
     x2: coordinate,
     y2: coordinate,
-    stroke: color,
+    stroke: hexColor,
     width: z.number().positive().max(100),
   })
   .readonly();
@@ -56,8 +56,8 @@ export const badgeRun = z
     width: dimension,
     height: dimension,
     radius: dimension,
-    fill: color,
-    stroke: color,
+    fill: hexColor,
+    stroke: hexColor,
     strokeWidth: z.number().positive().max(100),
   })
   .readonly();
@@ -126,7 +126,7 @@ export const visualNode = z
     sectionId: z.string(),
     kind: z.string(),
     label: z.string(),
-    role: z.string(),
+    role: roleName,
     size: z.enum(['small', 'medium', 'large']),
     shape,
     frame: z.enum(['auto', 'none', 'card', 'panel']),

@@ -1,3 +1,4 @@
+import { hexColor } from '../../design-system/contract/index.js';
 import { describe, it, expect, assert } from 'vitest';
 import {
   composePresentation,
@@ -34,7 +35,7 @@ describe('Presentation measured content', () => {
         font,
         size: 16,
         lineHeight: 1,
-        fill: '#000000',
+        fill: hexColor.parse('#000000'),
       }),
     );
     const runs = result.primitives.filter((item) => item.kind === 'text');
@@ -57,7 +58,7 @@ describe('Presentation measured content', () => {
         strong: resolved.strongFont,
         size: 16,
         lineHeight: 1,
-        fill: '#000000',
+        fill: hexColor.parse('#000000'),
       }),
     );
     const runs = emphasized.primitives.filter((item) => item.kind === 'text');
@@ -74,7 +75,7 @@ describe('Presentation measured content', () => {
         strong: resolved.strongFont,
         size: 16,
         lineHeight: 1,
-        fill: '#000000',
+        fill: hexColor.parse('#000000'),
       }),
     );
     expect(literal.primitives.filter((item) => item.kind === 'text')).toHaveLength(1);
@@ -790,7 +791,7 @@ describe('Presentation measured content', () => {
         font: style(pinned).bodyFont,
         size: 16,
         lineHeight: 24,
-        fill: '#000000',
+        fill: hexColor.parse('#000000'),
       }),
     ).toMatchObject({ ok: false, error: { code: 'limit' } });
     const throwing = createPresentation({

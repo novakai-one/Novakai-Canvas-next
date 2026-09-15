@@ -1,5 +1,5 @@
 import type { Appearance, DiagramObject, Group, Section } from '../../contract/records/input.js';
-import { chromeResolvedStyle } from '../../contract/records/style.js';
+import { chromeResolvedStyle, roleName, type RoleName } from '../../contract/records/style.js';
 import { hexColor } from '../../contract/records/chrome.js';
 import type { Paint } from '../../contract/records/style.js';
 import type { MeasuredContent, VisualNode } from '../../contract/records/visual.js';
@@ -14,6 +14,7 @@ import { moduleChrome } from '../content/chrome.js';
 import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
 import { parse, reject } from '../validation/outcomes.js';
+const NEUTRAL = roleName.parse('neutral');
 /** Build a section-scoped scene identity; public project owns rejection and retains the prior scene. */
 export function identity(section: string, kind: 'object' | 'group', id: string): VisualNode['id'] {
   return parse(sceneId, `${section}:${kind}:${id}`);
@@ -60,7 +61,7 @@ export function projectNode(
   context: ContentContext,
 ): VisualNode {
   const source = object(view.object, context);
-  const role = view.role ?? source.role;
+  const role = parse(roleName, view.role ?? source.role);
   const size = view.size ?? source.size;
   const shape = appearanceShape(source.kind, view.frame ?? source.frame);
   const appearance = appearanceContext(view, role, size, shape, { ...context, owner: source });
@@ -121,7 +122,8 @@ function headingGap(shape: VisualNode['shape'], context: ContentContext): number
 /** Reserve represented content or an ordinary title; public project owns rejection and Authoring retains the prior scene. */
 export function projectGroup(group: Group, section: Section, context: ContentContext): VisualNode {
   if (group.represents !== undefined) return represented(group, section, context);
-  const appearance = scopedContext(group.placement, group.role, 'medium', 'container', context);
+  const role = parse(roleName, group.role);
+  const appearance = scopedContext(group.placement, role, 'medium', 'container', context);
   const initial = contentForeground(group.frame, group.parent, section, appearance);
   const scoped = plannedContext(
     { label: group.title, content: [] },
@@ -138,11 +140,11 @@ export function projectGroup(group: Group, section: Section, context: ContentCon
     navigation: [],
     kind: 'group',
     label: group.title,
-    role: group.role,
+    role,
     size: 'medium',
     shape: 'container',
     frame: group.frame,
-    paint: rolePaint(group.role, context),
+    paint: rolePaint(role, context),
     ...frame(heading, 'container', scoped),
     headerHeight: heading.height + context.style.padding * 2,
     radius: context.style.radius,
@@ -177,7 +179,7 @@ function represented(group: Group, section: Section, context: ContentContext): V
 }
 
 /** Role paint supplies content foreground as well as frame colours; missing roles fail at the public boundary. */
-function rolePaint(role: string, context: ContentContext): Paint {
+function rolePaint(role: RoleName, context: ContentContext): Paint {
   const paint = context.style.roles[role];
   if (!paint) return reject('missing-resource', role, 'Appearance role is unavailable');
   return paint;
@@ -185,7 +187,7 @@ function rolePaint(role: string, context: ContentContext): Paint {
 /** View overrides use the same context policy as ordinary and represented groups. */
 function appearanceContext(
   view: Appearance,
-  role: string,
+  role: RoleName,
   size: VisualNode['size'],
   shape: VisualNode['shape'],
   context: ContentContext,
@@ -195,7 +197,7 @@ function appearanceContext(
 /** UI width describes outer bounds; text uses the interior after frame padding and shape inset. */
 function scopedContext(
   placement: Appearance['placement'],
-  role: string,
+  role: RoleName,
   size: 'small' | 'medium' | 'large',
   shape: VisualNode['shape'],
   context: ContentContext,
@@ -264,16 +266,16 @@ function contentForeground(
   return { ...context, style: { ...context.style, text: paint.text } };
 }
 /** Model has already rejected containment cycles; transparent regions inherit from their nearest painted ancestor. */
-function containerRole(id: Group['parent'], groups: readonly Group[]): string {
+function containerRole(id: Group['parent'], groups: readonly Group[]): RoleName {
   return paintedRole(
     groups.find((group) => group.id === id),
     groups,
   );
 }
 /** An absent parent is the section surface; its neutral role supplies the readable foreground. */
-function paintedRole(group: Group | undefined, groups: readonly Group[]): string {
-  if (group === undefined) return 'neutral';
-  if (group.frame !== 'none') return group.role;
+function paintedRole(group: Group | undefined, groups: readonly Group[]): RoleName {
+  if (group === undefined) return NEUTRAL;
+  if (group.frame !== 'none') return parse(roleName, group.role);
   return containerRole(group.parent, groups);
 }
 
@@ -287,7 +289,7 @@ function withinGroup(view: Appearance, parent: Group['parent']): Appearance {
 function chromeStyle(
   object: DiagramObject,
   frame: VisualNode['frame'],
-  role: string,
+  role: RoleName,
   context: ContentContext,
 ): Pick<VisualNode, 'chromeStyle'> {
   if (!['auto', 'card'].includes(frame)) return {};

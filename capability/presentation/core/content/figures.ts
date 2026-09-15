@@ -1,6 +1,12 @@
 import type { ContentBlock } from '../../contract/records/input.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
+import { roleName, type RoleName } from '../../contract/records/style.js';
 import type { ResolvedStyle } from '../../contract/records/style.js';
+
+const NEUTRAL = roleName.parse('neutral');
+const PRIMARY = roleName.parse('primary');
+const DECISION = roleName.parse('decision');
+const SUCCESS = roleName.parse('success');
 
 type FigureBlock = Extract<ContentBlock, { kind: 'figure' }>;
 type FigureForm = FigureBlock['form'];
@@ -398,18 +404,18 @@ function palette(style: ResolvedStyle): Palette {
   return {
     ink: style.text,
     wash: style.surface,
-    tint: rolePaint(style, 'neutral', style.surface).fill,
+    tint: rolePaint(style, NEUTRAL, style.surface).fill,
     soft: style.border,
-    accent: rolePaint(style, 'primary', style.secondary).stroke,
-    accentAlt: rolePaint(style, 'decision', style.secondary).stroke,
-    success: rolePaint(style, 'success', style.secondary).stroke,
+    accent: rolePaint(style, PRIMARY, style.secondary).stroke,
+    accentAlt: rolePaint(style, DECISION, style.secondary).stroke,
+    success: rolePaint(style, SUCCESS, style.secondary).stroke,
   };
 }
 
 /** Named roles fall back to neutral inks when a theme omits them; absence never erases the figure. */
 function rolePaint(
   style: ResolvedStyle,
-  name: string,
+  name: RoleName,
   fallback: string,
 ): { readonly fill: string; readonly stroke: string } {
   const role = style.roles[name];

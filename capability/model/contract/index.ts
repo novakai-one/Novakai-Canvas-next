@@ -5,6 +5,7 @@
  */
 export { validate, plan, stage } from './api.js';
 export {
+  digest,
   objectId,
   collectionId,
   sectionId,

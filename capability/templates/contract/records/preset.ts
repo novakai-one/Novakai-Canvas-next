@@ -72,6 +72,10 @@ export type Preset = z.infer<typeof preset>;
 export type ThemePreset = Extract<Preset, { kind: 'theme' }>;
 export const catalog = z.array(preset).max(1000).readonly();
 export type Catalog = z.infer<typeof catalog>;
+/** Theme admission envelope; token policy remains with the injected theme owner. */
+export const themeInput = z
+  .strictObject({ ...header, kind: z.literal('theme'), raw: z.unknown() })
+  .readonly();
 /** Submitted source or delta is resolved only by the required syntax/token owner. */
 export const admission = z.discriminatedUnion('kind', [
   z
@@ -85,7 +89,7 @@ export const admission = z.discriminatedUnion('kind', [
       family,
     })
     .readonly(),
-  z.strictObject({ ...header, kind: z.literal('theme'), raw: z.unknown() }).readonly(),
+  themeInput,
 ]);
 export type Admission = z.infer<typeof admission>;
 export const selection = z

@@ -391,7 +391,12 @@ export async function readAgentCredential(path: string): Promise<Result<string>>
 }
 
 /** Read-only headless composition shares service adapters. CLI runHeadless catches import failures, reports render-unavailable and owns retry after dependencies are restored. */
-export async function createHeadlessBindings() {
+export async function createHeadlessBindings(): Promise<{
+  readonly createPresetCodecs: typeof import('../adapters/preset-codecs.js').createPresetCodecs;
+  readonly prepareTheme: typeof import('../adapters/theme-preparation.js').prepareTheme;
+  readonly createRenderJobs: typeof import('../adapters/render-jobs.js').createRenderJobs;
+  readonly produceDiagram: typeof import('../adapters/rendering.js').produceDiagram;
+}> {
   const [codecs, themes, jobs, rendering] = await Promise.all([
     import('../adapters/preset-codecs.js'),
     import('../adapters/theme-preparation.js'),

@@ -22,3 +22,11 @@ Theme overrides apply to a temporary source copy using Language's parsed value s
 Absent `chrome` stays absent in preset payloads. New extension tokens are omitted from legacy serialization and hydrated from the token source only during resolution. Missing legacy tokens still reject, and supplied derived tokens still require canonical equality. This preserves paper/ink/atlas/studio preset digests and card SVG output. Unknown chrome names use card measurement and rendering.
 
 Run `pnpm check` and `pnpm tokens:check`; inspect the actual exports as well. The module recipe's pre-existing unsupported Inter arrow glyph remains an independent font/fixture issue; the showcase fixture above is the compatibility reference for this change.
+
+## Inline badges
+
+Use `text @operation "replace-document" role=badge` inside any node for a measured
+capsule. The badge uses the existing wire-label geometry and theme annotation
+metrics. Padding is reserved before wrapping, and the capsule uses the connection
+text colour so primary-role nodes retain readable text. Ordinary text roles and
+existing wire labels retain their previous geometry.

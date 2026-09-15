@@ -107,3 +107,29 @@ collection @parametric "Parametric figures" {
   );
   expect(object(patched, 'basin').content[0]).toMatchObject({ level: 'full', agitator: false });
 });
+
+/** Badge coverage is additive: authored capsules round-trip and patches can enter and leave the role. */
+it('retains badges through create, print, replacement, patch and unset', () => {
+  const original = create(source.replace('role=caption', 'role=badge'));
+  expect(object(original, 'actor').content[1]).toMatchObject({ role: 'badge' });
+  const readout = value(language.print({ collection: original, scope: { kind: 'all' } }));
+  expect(readout.source).toContain('role=badge');
+  const replacement = value(
+    language.lower({
+      source: readout.source,
+      mode: 'replace',
+      snapshot: original,
+      resources: pins(original),
+    }),
+  ).collection;
+  expect(replacement).toEqual(original);
+  const annotated = edit(replacement, 'set block @actor.@caption role=annotation');
+  expect(object(annotated, 'actor').content[1]).toMatchObject({ role: 'annotation' });
+  const badged = edit(annotated, 'set block @actor.@caption role=badge');
+  expect(object(badged, 'actor').content[1]).toMatchObject({
+    role: 'badge',
+    text: 'Collect evidence before deciding',
+  });
+  const reset = edit(badged, 'unset block @actor.@caption role');
+  expect(object(reset, 'actor').content[1]).toMatchObject({ role: 'body' });
+});

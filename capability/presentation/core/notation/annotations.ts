@@ -23,7 +23,7 @@ function numberedLabel(
   const padding = context.style.gap / 2;
   const height = number.height + padding * 2;
   const width = Math.max(height, number.width + padding * 2);
-  const description = pilledLabel(label, context);
+  const description = measureBadge(label, context);
   const blockHeight = Math.max(height, description.height);
   const text = offset(number, (width - number.width) / 2, padding + (blockHeight - height) / 2);
   const detail = offset(
@@ -54,8 +54,8 @@ function numberedLabel(
   };
 }
 
-/** Wire labels rest on a surface capsule; bare text never floats over panel boundaries or whitespace. */
-function pilledLabel(label: MeasuredContent, context: ContentContext): MeasuredContent {
+/** Shared capsule encloses already measured text; callers reserve padding before wrapping. Project owns measurement failures. */
+export function measureBadge(label: MeasuredContent, context: ContentContext): MeasuredContent {
   const padding = context.style.gap / 2;
   const height = label.height + padding * 2;
   const width = label.width + padding * 2;
@@ -87,6 +87,6 @@ export function measureWireAnnotation(
   context: ContentContext,
 ): MeasuredContent {
   const label = labelContent(wireLabel(wire), context, 'annotation');
-  if (wire.step === undefined) return pilledLabel(label, context);
+  if (wire.step === undefined) return measureBadge(label, context);
   return numberedLabel(wire.step, label, context);
 }

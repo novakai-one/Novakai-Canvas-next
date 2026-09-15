@@ -8,6 +8,8 @@ import { measureTable } from './table.js';
 import { measureSignature, measureMember } from './signature.js';
 import { measureMedia } from './media.js';
 import { measureFigure } from './figures.js';
+import { measureBadge } from '../notation/annotations.js';
+import type { DiagramTypography } from '../../contract/records/style.js';
 import { reject } from '../validation/outcomes.js';
 /** Content processor chooses local presentation only; semantic validity remains in Model. */
 type Processor = (block: ContentBlock, context: ContentContext) => MeasuredContent;
@@ -28,16 +30,8 @@ function text(text: string, context: ContentContext, mono = false): MeasuredCont
 const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
   text: (block, context): MeasuredContent => {
     if (block.kind !== 'text') return mismatch(block);
-    return measureText(
-      {
-        text: block.text,
-        width: context.width,
-        ...context.style.typography[block.role],
-        strong: context.style.strongFont,
-        fill: context.style.text,
-      },
-      context.metrics,
-    );
+    if (block.role === 'badge') return badge(block.text, context);
+    return prose(block.text, context, block.role);
   },
   code: (block, context): MeasuredContent => {
     if (block.kind !== 'code') return mismatch(block);
@@ -110,4 +104,36 @@ function fieldLabel(id: string, context: ContentContext): string {
   if (field?.kind !== 'field')
     return reject('invalid-input', id, 'Key group field is missing from its owning entity');
   return field.label;
+}
+
+/** Badge text reserves its capsule padding before wrapping; project owns typed measurement failure. */
+function badge(text: string, context: ContentContext): MeasuredContent {
+  const content = prose(
+    text,
+    {
+      ...context,
+      width: context.width - context.style.gap,
+      style: { ...context.style, text: context.style.connection.paint.text },
+    },
+    'annotation',
+  );
+  return measureBadge(content, context);
+}
+
+/** Ordinary and capsule prose share role metrics and measured emphasis; project owns provider failure. */
+function prose(
+  text: string,
+  context: ContentContext,
+  role: keyof DiagramTypography,
+): MeasuredContent {
+  return measureText(
+    {
+      text,
+      width: context.width,
+      ...context.style.typography[role],
+      strong: context.style.strongFont,
+      fill: context.style.text,
+    },
+    context.metrics,
+  );
 }

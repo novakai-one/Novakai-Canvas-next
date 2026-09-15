@@ -10,7 +10,7 @@ export const compositionSchema = z.enum(['stack', 'media-top', 'media-left']);
 export const containerFrameSchema = z.enum(['auto', 'none', 'panel']);
 
 /** Typography role changes measured text, never its semantic identity or external position. */
-export const textRoleSchema = z.enum(['body', 'caption', 'annotation']);
+export const textRoleSchema = z.enum(['body', 'caption', 'annotation', 'badge']);
 
 /** Closed parametric figure forms; Presentation owns drawing, so new forms ship with the renderer. */
 export const figureFormSchema = z.enum(['vessel', 'layered-bed', 'screen', 'gauge']);

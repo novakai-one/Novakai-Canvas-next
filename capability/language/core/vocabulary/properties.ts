@@ -11,7 +11,7 @@ export const properties = {
   frame: { type: 'word', field: 'frame', values: ['auto', 'none', 'card', 'panel'] },
   containerFrame: { type: 'word', field: 'frame', values: ['auto', 'none', 'panel'] },
   composition: { type: 'word', field: 'composition', values: ['stack', 'media-top', 'media-left'] },
-  textRole: { type: 'word', field: 'role', values: ['body', 'caption', 'annotation'] },
+  textRole: { type: 'word', field: 'role', values: ['body', 'caption', 'annotation', 'badge'] },
   sources: { type: 'ids', field: 'sources' },
   layout: {
     type: 'word',

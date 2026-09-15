@@ -25,6 +25,14 @@ export const headlessOptions = z
   .readonly();
 /** Immutable request inferred from the CLI boundary schema. */
 export type HeadlessOptions = z.infer<typeof headlessOptions>;
+/** Native provider evidence: preserve the failing path, raw OS code (e.g. ENOENT) and syscall (e.g. open) when supplied. */
+const providerDetail = z
+  .strictObject({
+    path: filePath.optional(),
+    systemCode: z.string().optional(),
+    syscall: z.string().optional(),
+  })
+  .readonly();
 /** Local selection/provider failures are distinct from unchanged originating owner records. */
 export const headlessFault = z.discriminatedUnion('code', [
   z.strictObject({ code: z.literal('missing-theme'), theme: themeSelector }).readonly(),
@@ -37,7 +45,13 @@ export const headlessFault = z.discriminatedUnion('code', [
     .readonly(),
   z.strictObject({ code: z.literal('collection-required') }).readonly(),
   z.strictObject({ code: z.literal('collection-title-required') }).readonly(),
-  z.strictObject({ code: z.literal('provider-failed'), message: z.string() }).readonly(),
+  z
+    .strictObject({
+      code: z.literal('provider-failed'),
+      message: z.string(),
+      detail: providerDetail,
+    })
+    .readonly(),
 ]);
 /** Consumer-owned source union retains owner paths, diagnostic tuples and recursive source/cleanup chains. */
 export type HeadlessSource = FailureSource | Diagnostic | z.infer<typeof headlessFault>;

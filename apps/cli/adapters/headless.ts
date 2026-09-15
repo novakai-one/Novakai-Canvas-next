@@ -77,8 +77,31 @@ export async function renderHeadless(
 /** Preserve owner diagnostics; unexpected filesystem failures are terminal CLI evidence. */
 function evidence(error: unknown): HeadlessSource {
   if (error instanceof RenderFault) return error.evidence;
-  if (error instanceof Error) return { code: 'provider-failed', message: error.message };
-  return { code: 'provider-failed', message: String(error) };
+  return headlessFault.parse({
+    code: 'provider-failed',
+    message: providerMessage(error),
+    detail: nativeDetail(error),
+  });
+}
+/** Human context accompanies the structured provider data without supplying machine-readable fields. */
+function providerMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+/** Native errors are untrusted objects; read their data fields without interpreting the human message. */
+const nativeError = z.object({
+  path: filePath.optional(),
+  code: z.string().optional(),
+  syscall: z.string().optional(),
+});
+/** The fault schema checks and freezes these renamed fields; absent OS evidence remains absent. */
+function nativeDetail(error: unknown) {
+  const native = nativeError.safeParse(error);
+  return {
+    path: native.data?.path,
+    systemCode: native.data?.code,
+    syscall: native.data?.syscall,
+  };
 }
 /** Create one real language and token environment for all section renders. */
 async function environment(

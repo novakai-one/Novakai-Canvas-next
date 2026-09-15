@@ -24,4 +24,65 @@ export interface RoadPrototypeScene {
   readonly roads: readonly PrototypeRoad[];
   readonly roadWidth: number;
   readonly drivewayWidth: number;
+  readonly lanes: readonly PrototypeLane[];
+  readonly junctions: readonly PrototypeJunction[];
+  readonly dividers: readonly PrototypeDivider[];
+  readonly connections: readonly PrototypeLaneConnection[];
 }
+
+export interface PrototypePoint {
+  readonly x: number;
+  readonly y: number;
+}
+export type PrototypeDirection = PrototypeRoad['directions'][number];
+/** A lane is an allocated, directed rectangle between junctions, not a visual stripe. */
+export interface PrototypeLane {
+  readonly id: string;
+  readonly roadId: string;
+  readonly direction: PrototypeDirection;
+  readonly bounds: PrototypeBounds;
+  readonly entry: PrototypePoint;
+  readonly exit: PrototypePoint;
+}
+/** Turns and lane crossings are legal only in these explicit road areas. */
+export interface PrototypeJunction {
+  readonly id: string;
+  readonly bounds: PrototypeBounds;
+}
+/** A marking separates opposing straight lanes; it never extends into a junction. */
+export interface PrototypeDivider {
+  readonly id: string;
+  readonly roadId: string;
+  readonly bounds: PrototypeBounds;
+}
+export interface PrototypeLaneConnection {
+  readonly id: string;
+  readonly fromLaneId: string;
+  readonly toLaneId: string;
+  readonly junctionId: string | null;
+}
+export type PrototypeTravel =
+  | {
+      readonly kind: 'lane';
+      readonly laneId: string;
+      readonly from: PrototypePoint;
+      readonly to: PrototypePoint;
+    }
+  | {
+      readonly kind: 'connection';
+      readonly connectionId: string;
+      readonly points: readonly PrototypePoint[];
+    };
+export type PrototypeTravelResult =
+  | { readonly ok: true; readonly value: null }
+  | {
+      readonly ok: false;
+      readonly error: {
+        readonly code:
+          | 'unknown-lane'
+          | 'outside-lane'
+          | 'wrong-direction'
+          | 'unknown-connection'
+          | 'invalid-junction-path';
+      };
+    };

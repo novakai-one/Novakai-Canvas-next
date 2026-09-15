@@ -1,6 +1,15 @@
 /** Layout public boundary: consumers never import its geometry policies or concrete native adapters. */
 export { createLayout } from './api.js';
-export { createRoadPrototypeScene } from './api.js';
+export { createRoadPrototypeScene, inspectRoadTravel } from './api.js';
+export type {
+  PrototypeLane,
+  PrototypeJunction,
+  PrototypeDivider,
+  PrototypeTravel,
+  PrototypeTravelResult,
+  PrototypePoint,
+  PrototypeLaneConnection,
+} from './records/road-prototype.js';
 export type {
   RoadPrototypeScene,
   PrototypeRoad,

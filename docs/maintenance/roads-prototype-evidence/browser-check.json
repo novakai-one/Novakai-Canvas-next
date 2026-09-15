@@ -1,0 +1,8 @@
+{
+  "method": "Actual browser clicks on the lane inspector and driveway arrow; verdict text read from the status element.",
+  "forward": "Allowed: left, inside the lane.",
+  "reverse": "Rejected: travel opposes the lane direction.",
+  "outside": "Rejected: travel leaves the lane.",
+  "driveway": "Allowed: down, inside the lane.",
+  "reverseDriveway": "Rejected: travel opposes the lane direction."
+}

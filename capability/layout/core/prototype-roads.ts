@@ -4,6 +4,7 @@ import type {
   PrototypeRoad,
   RoadPrototypeScene,
 } from '../contract/records/road-prototype.js';
+import { roadNetwork } from './prototype-road-network.js';
 
 const roadWidth = 48;
 const drivewayWidth = 24;
@@ -111,11 +112,13 @@ export function createRoadPrototypeScene(): RoadPrototypeScene {
       height: roadWidth,
     },
   };
+  const roads = [connector, ...sections.flatMap((item) => [...streets(item), ...driveways(item)])];
   return {
     sections,
     nodes: sections.map(node),
-    roads: [connector, ...sections.flatMap((item) => [...streets(item), ...driveways(item)])],
+    roads,
     roadWidth,
     drivewayWidth,
+    ...roadNetwork(roads),
   };
 }

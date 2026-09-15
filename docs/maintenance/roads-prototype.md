@@ -19,10 +19,25 @@ This is an isolated visual prototype, not the normal diagram-rendering path. The
 
 Opened in the browser and inspected at fit zoom. Both sections and nodes are visible; road fills are continuous through the shared connection; driveways touch their nodes; headings and node labels remain readable. The 48-pixel starting width appears reasonable for this sparse case. User judgment remains the milestone acceptance criterion.
 
-No new tests were written. The existing `pnpm check` gate passed (70 test files, 208 tests), alongside the browser inspection.
+No new test files were written. The existing `pnpm check` gate passed (70 test files, 208 tests), alongside browser inspection and a temporary public-interface geometry probe.
+
+## Follow-up: lane semantics and junctions
+
+The baseline in PR #50 drew full-length CSS dividers across overlapping road rectangles. A horizontal arrow could visually encounter a vertical divider inside a junction, appearing to reach a wall. The fix makes markings a projection of explicit lane geometry:
+
+- `scene.lanes`: 30 rectangles with stable IDs, road IDs, direction, entry and exit points. Roads own lane width and orientation; CSS cannot reinterpret them.
+- `scene.junctions`: 12 rectangular turn areas derived from road intersections and driveway mouths. Straight lanes end at these areas.
+- `scene.dividers`: 13 positioned separators between opposing lanes. No separator enters a junction. A solid line means the opposing lane must not be crossed there; the unmarked openings are legal turn/crossing areas.
+- `scene.connections`: 66 directed lane-to-lane handovers. A turn names a junction; a straight continuation joins equal endpoints with the same direction.
+- `inspectRoadTravel(scene, movement)`: the Layout public interface accepts forward movement confined to a lane, rejects reverse/lateral/stationary/out-of-bounds lane movement, and validates named connection paths for endpoint agreement, junction containment, orthogonal segments and entry/exit direction. Errors are structured results.
+- The browser's lane inspector invokes that same interface. Click an arrow, then choose With arrow, Against arrow or Outside lane. The displayed verdict comes from Layout, not a UI approximation.
+
+Validation on the fixed fixture: 30/30 forward lane movements accepted; 30/30 reverse, outside and stationary movements rejected; 66/66 legal junction paths accepted; 66/66 escaping and reversed connection paths rejected. Zero divider intrusions or lane/junction interior overlaps. The directed graph connects Node 1's exit to Node 2's entry. Repeated construction returns identical geometry. These are one-off inspection results, not a new regression suite.
+
+Evidence: [before](roads-prototype-evidence/before.png), [after](roads-prototype-evidence/after.png), [geometry results](roads-prototype-evidence/geometry-check.json).
 
 ## Stop here
 
-The user asked to demonstrate this milestone before adding complexity. Four sections / twelve nodes, wires, routing containment, driveway turn geometry, per-wire lane allocation and deterministic road creation after dragging are not implemented or proven yet. Nodes are deliberately non-draggable in this milestone. The future invariant is that every wire segment must lie within the union of road rectangles; there are no wires to enforce it against yet.
+The user asked to demonstrate this milestone before adding complexity. Four sections / twelve nodes, actual wires, automatic route search, per-wire lane allocation and deterministic road creation after dragging remain unimplemented. Nodes are deliberately non-draggable. Individual lane and junction movements are now validated; this is not yet an end-to-end wire-routing pipeline. Junctions may permit crossings, but no wire occupancy or collision avoidance is claimed.
 
 This prototype remains isolated until the first visual milestone is accepted. It is not a completed production architecture or a claimed standards score. Avoid expanding it into a general-purpose road engine before review.

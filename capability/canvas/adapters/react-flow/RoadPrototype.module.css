@@ -2,7 +2,7 @@
   .page {
     height: 100dvh;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr auto auto;
     background: var(--nv-surface-base);
     color: var(--nv-text-primary);
     font-family: var(--nv-font-body);
@@ -68,25 +68,41 @@
   .road {
     width: 100%;
     height: 100%;
-    display: flex;
+    position: relative;
     background: var(--nv-rolefill-supporting);
     color: var(--nv-text-secondary);
   }
-  .road[data-axis='horizontal'] {
-    flex-direction: column;
-  }
   .lane {
+    position: absolute;
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
     font: calc(var(--nv-type-base) * 1.15) var(--nv-font-mono);
   }
-  .road[data-axis='horizontal'] .lane + .lane {
-    border-top: var(--nv-stroke-base) dashed var(--nv-border-default);
+  .lane:hover,
+  .lane[aria-pressed='true'] {
+    background: color-mix(in srgb, var(--nv-action-accent) 18%, transparent);
+    color: var(--nv-action-accent);
   }
-  .road[data-axis='vertical'] .lane + .lane {
-    border-left: var(--nv-stroke-base) dashed var(--nv-border-default);
+  .lane:focus-visible {
+    outline: calc(var(--nv-stroke-base) * 2) solid var(--nv-action-accent);
+    outline-offset: calc(var(--nv-space-unit) * -1);
+  }
+  .divider {
+    position: absolute;
+    pointer-events: none;
+  }
+  .divider[data-axis='horizontal'] {
+    border-top: var(--nv-stroke-base) solid var(--nv-text-secondary);
+  }
+  .divider[data-axis='vertical'] {
+    border-left: var(--nv-stroke-base) solid var(--nv-text-secondary);
   }
   .road[data-kind='driveway'] {
     background: var(--nv-rolefill-supporting);
@@ -128,6 +144,47 @@
   }
   .canvas[data-roads-visible='false'] .road {
     visibility: hidden;
+  }
+  .proof {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--nv-space-unit) * 4);
+    padding: calc(var(--nv-space-unit) * 4) calc(var(--nv-space-unit) * 8);
+    background: var(--nv-surface-raised);
+    border-top: var(--nv-stroke-base) solid var(--nv-border-default);
+    font-size: var(--nv-type-base);
+  }
+  .proof > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-unit);
+  }
+  .proof span {
+    color: var(--nv-text-secondary);
+  }
+  .probes {
+    display: flex;
+    gap: calc(var(--nv-space-unit) * 2);
+  }
+  .probes button {
+    padding: calc(var(--nv-space-unit) * 2) calc(var(--nv-space-unit) * 3);
+    background: var(--nv-surface-raised);
+    color: var(--nv-text-primary);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border-radius: var(--nv-shape-radius);
+    cursor: pointer;
+  }
+  .probes button[aria-pressed='true'] {
+    border-color: var(--nv-action-accent);
+    color: var(--nv-action-accent);
+  }
+  .proof output[data-allowed='true'] {
+    color: var(--nv-status-success);
+  }
+  .proof output[data-allowed='false'] {
+    color: var(--nv-status-error);
   }
   @media (max-width: 700px) {
     .header,

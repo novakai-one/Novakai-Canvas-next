@@ -39,3 +39,4 @@ export function readScene(input: unknown, owners: SceneReaderOwners): Result<Sce
   return protect(() => admitScene(readInspection(input, owners.projection), owners.engineVersions));
 }
 export { createRoadPrototypeScene } from '../core/prototype-roads.js';
+export { inspectRoadTravel } from '../core/prototype-road-travel.js';

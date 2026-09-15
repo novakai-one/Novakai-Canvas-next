@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { chromeName, type ChromeName } from '../../../design-system/contract/index.js';
 /** Design System owns registry-key validation; Presentation owns registration and card fallback. */
 export { chromeName, type ChromeName };
+/** Checked legacy fallback shared by measurement and rendering. */
+export const CARD_CHROME = chromeName.parse('card');
 /** Canonical lowercase sRGB hex with optional alpha byte for chrome-owned ink. */
 export const hexColor = z
   .string()

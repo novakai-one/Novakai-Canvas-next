@@ -100,6 +100,13 @@ export const shape = z.enum([
   'container',
 ]);
 export type Shape = z.infer<typeof shape>;
+/** Engineering notation shares heading compartments across measurement and rendering. */
+export const COMPARTMENT_SHAPES = [
+  'entity',
+  'module',
+  'interface',
+  'function',
+] as const satisfies readonly Shape[];
 const placement = z
   .strictObject({
     x: coordinate,

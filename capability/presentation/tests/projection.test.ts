@@ -322,6 +322,7 @@ describe('Presentation measured content', () => {
     const pinned = fonts();
     const metrics = value(createFontMetrics(pinned));
     const invalidMetrics = createPresentation({
+      chromePolicies: {},
       ...owners(style(pinned)),
       measurement: {
         version: 'nonfinite-signature',
@@ -771,6 +772,7 @@ describe('Presentation measured content', () => {
     const pinned = fonts();
     const metrics = value(createFontMetrics(pinned));
     const app = createPresentation({
+      chromePolicies: {},
       ...owners(style(pinned)),
       measurement: metrics,
       renderer: {
@@ -795,6 +797,7 @@ describe('Presentation measured content', () => {
       }),
     ).toMatchObject({ ok: false, error: { code: 'limit' } });
     const throwing = createPresentation({
+      chromePolicies: {},
       ...owners(style(pinned)),
       measurement: {
         version: 'broken',

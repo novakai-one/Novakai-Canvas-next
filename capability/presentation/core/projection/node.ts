@@ -4,7 +4,7 @@ import { hexColor } from '../../contract/records/chrome.js';
 import type { Paint } from '../../contract/records/style.js';
 import type { MeasuredContent, VisualNode } from '../../contract/records/visual.js';
 import { sceneId } from '../../contract/brands.js';
-import { visualNode } from '../../contract/records/visual.js';
+import { COMPARTMENT_SHAPES, visualNode } from '../../contract/records/visual.js';
 import type { ContentContext } from '../content/blocks.js';
 import { offset } from '../content/text.js';
 import { labelContent } from '../content/headings.js';
@@ -115,7 +115,7 @@ function appearanceShape(
 }
 /** Engineering cards reserve a padded header compartment; body content starts below its separator. */
 function headingGap(shape: VisualNode['shape'], context: ContentContext): number {
-  if (['entity', 'module', 'interface', 'function'].includes(shape))
+  if (COMPARTMENT_SHAPES.some((compartment) => compartment === shape))
     return context.style.padding + context.style.gap;
   return context.style.gap;
 }

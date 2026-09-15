@@ -9,9 +9,10 @@ import type {
   NodeChromeRegistry,
   NodeChromeProps,
 } from '../../contract/react-types.js';
-import type { ChromeName } from '../../contract/index.js';
+import { CARD_CHROME, type ChromeName } from '../../contract/records/chrome.js';
+import { COMPARTMENT_SHAPES } from '../../contract/records/visual.js';
 import type { FontSet } from '../../contract/records/style.js';
-import type { VisualNode, Primitive } from '../../contract/records/visual.js';
+import type { VisualNode, Primitive, Shape } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';
 /** Embedded font rules contain only validated digest/base64/MIME values, never authored CSS. */
 function fontRules(fonts: FontSet): string {
@@ -22,13 +23,7 @@ function fontRules(fonts: FontSet): string {
     )
     .join('');
 }
-const LEFT_ALIGNED_SHAPES: readonly string[] = [
-  'entity',
-  'module',
-  'interface',
-  'function',
-  'container',
-];
+const LEFT_ALIGNED_SHAPES: readonly Shape[] = [...COMPARTMENT_SHAPES, 'container'];
 /** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
 function contentSlack(node: VisualNode): number {
   if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
@@ -43,7 +38,7 @@ export function createContentRenderer(
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
-    const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
+    const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? CARD_CHROME);
     const content = compartments(node, chrome.separateHeading);
     return (
       <svg
@@ -83,7 +78,7 @@ export function createContentRenderer(
 /** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
 function resolveChrome(
   chromes: NodeChromeRegistry,
-  name: ChromeName | 'card',
+  name: ChromeName,
 ): NodeChrome | NodeChromeRegistry['card'] {
   if (!Object.hasOwn(chromes, name)) return chromes.card;
   return chromes[name] ?? chromes.card;

@@ -9,7 +9,7 @@ function extension(id: TokenId): boolean {
   return /^(elevation\.|chrome\.|role\.[^.]+\.(header|secondary)$)/.test(id);
 }
 /** Legacy serialization retains exactly its original token vocabulary and digest. */
-export function chromeTokens(values: TokenValues, chrome: unknown): TokenValues {
+export function chromeTokens(values: TokenValues, chrome: ChromeName | undefined): TokenValues {
   if (chrome !== undefined) return values;
   return Object.fromEntries(Object.entries(values).filter(([id]) => !extension(tokenId.parse(id))));
 }

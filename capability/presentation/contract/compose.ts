@@ -85,7 +85,7 @@ export async function composePresentation(
       return {
         presentation: createPresentation({
           ...owners,
-          chromePolicies: react.chromePolicies,
+          chromePolicies: react.chromePolicies ?? {},
           measurement,
           renderer,
         }),

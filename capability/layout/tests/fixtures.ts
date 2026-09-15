@@ -97,6 +97,7 @@ function unavailable<T>(): PresentationResult<T> {
 }
 /** Fixed exact fixture metrics isolate Layout from typography; native placement/solver/router remain real. */
 const presentation = createPresentation({
+  chromePolicies: {},
   domain: { read: domain },
   themes: { resolve: () => ({ ok: true, value: tokens }) },
   assets: { read: unavailable },

@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { COMPARTMENT_SHAPES } from '../../contract/records/visual.js';
 import type { VisualNode } from '../../contract/records/visual.js';
 import type { NodeChromeProps } from '../../contract/react-types.js';
 /** Rounded forms use token radii; pills use their geometric half-height. */
@@ -41,11 +42,9 @@ function headerRule(node: VisualNode): ReactElement | null {
   if (node.frame !== 'auto') return null;
   return semanticHeaderRule(node);
 }
-/** Compartment cards keep left-aligned compartments under a separator; panel containers keep left-aligned tab titles. */
-const COMPARTMENT_SHAPES: readonly string[] = ['entity', 'module', 'interface', 'function'];
 /** Only kind-appropriate auto frames receive a separator, after the measured heading region. */
 function semanticHeaderRule(node: VisualNode): ReactElement | null {
-  if (!COMPARTMENT_SHAPES.includes(node.shape)) return null;
+  if (!COMPARTMENT_SHAPES.some((shape) => shape === node.shape)) return null;
   if (node.height <= node.headerHeight) return null;
   return (
     <line

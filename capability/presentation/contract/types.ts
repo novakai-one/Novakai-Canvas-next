@@ -6,7 +6,7 @@ import type { Result } from './errors.js';
 import type { Projection, MeasuredContent, MarkerKind } from './records/visual.js';
 import type { FontRef, Paint } from './records/style.js';
 export interface Dependencies {
-  readonly chromePolicies?: import('./records/chrome.js').ChromePolicies | undefined;
+  readonly chromePolicies: import('./records/chrome.js').ChromePolicies;
   readonly domain: DomainReader;
   readonly themes: ThemeResolver;
   readonly assets: AssetReader;

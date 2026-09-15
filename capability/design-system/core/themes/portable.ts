@@ -19,10 +19,11 @@ export function toPortable(
   base: PresetPin | null,
   chrome?: unknown,
 ): PortableTheme {
+  const selected = chromeField(chrome);
   return {
-    ...chromeField(chrome),
+    ...selected,
     tokens: Object.fromEntries(
-      Object.entries(chromeTokens(values, chrome)).map(([id, value]) => [
+      Object.entries(chromeTokens(values, selected.chrome)).map(([id, value]) => [
         id,
         portableValue(id, value, values, fonts),
       ]),

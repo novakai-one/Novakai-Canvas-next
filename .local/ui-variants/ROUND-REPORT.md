@@ -2,7 +2,9 @@
 
 ## Outcome
 
-Post-audit correction (2026-09-15): the original all-eight-done claim was incorrect. [AUDIT.md, B/C1–C3](AUDIT.md) found inherited-key fallback failure, flattened originating errors and unsupported completion/quality claims. `917f4d7` fixes chrome/policy selection and `c5a8776` preserves typed originating errors. The scoped fixes and compatibility checks now pass; this is module-look acceptance, with full-sheet and companion-section polish still incomplete. The final proofs and clean branch status are in [FIX-REPORT.md](FIX-REPORT.md). Nothing was pushed and main was not changed.
+Post-audit correction (2026-09-15): the original all-eight-done claim was incorrect. [AUDIT.md, B/C1–C3](AUDIT.md) found inherited-key fallback failure, flattened originating errors and unsupported completion/quality claims. `917f4d7` fixed chrome/policy selection; `c5a8776` preserved typed owner Result errors, but did not finish the native provider edge. [VERIFY.md, C2/C3 and V1/V2](VERIFY.md) confirmed C1 and compatibility checks, found native `ENOENT`/path still confined to prose, and rejected this report's claim that the scoped fixes passed. Both audits remain unchanged.
+
+`7c322ef` (`fix(cli): structure provider-edge error detail`) adds strict readonly provider detail populated from native error fields: branded `path`, raw `systemCode`, and `syscall`. Fresh missing-collection JSON exposes `ENOENT` and the exact failing path under `error.source.detail`, retaining `provider-failed`; the invalid-theme owner's complete JSON remains unchanged. `pnpm check` (70 files / 208 tests), `pnpm tokens:check`, and all eight fresh Paper SVG/PNG baseline comparisons pass. The report-truth correction is the separate `docs: correct round report after second audit` commit listed with final proofs in [FIX2-REPORT.md](FIX2-REPORT.md). These results close the two FIX2 findings; they do not establish full-sheet or companion-section visual acceptance, which remains incomplete. Nothing was pushed and main was not changed.
 
 - `card` retains the original SVG bytes for **all four showcase sections**; the main paper PNG is also byte-identical.
 - `onyx` selects a real parametric folder-tab silhouette, tinted header, muted monospace body, dark navy surface and distinct runtime/external ink.
@@ -14,16 +16,16 @@ Post-audit correction (2026-09-15): the original all-eight-done claim was incorr
 
 | Condition | Evidence |
 |---|---|
-| 1. Required checks green | `pnpm check`: 70 test files, 208 tests after the fixes; typecheck, lint, formatting and architecture pass. `pnpm tokens:check` also passes. Full current outputs are pasted in FIX-REPORT.md; the earlier round output below is historical. |
+| 1. Required checks green | `pnpm check`: 70 test files, 208 tests after the fixes; typecheck, lint, formatting and architecture pass. `pnpm tokens:check` also passes. Fresh FIX2 outputs are pasted in FIX2-REPORT.md; earlier outputs below and in FIX-REPORT.md are historical. |
 | 2. Injected chrome seam | `NodeChromeRegistry` in Presentation react-types; composition binds CardChrome, FolderTabChrome and AccentStripeChrome; NodeContent delegates frame/header and keeps shared bodies. The existing rendering suite now exercises ordinary unknown and `constructor` fallback in measurement and direct rendering; the latter failed before `917f4d7`. |
 | 3. Token ownership | No added hex, px or percent style literals in Presentation diff. New elevation, chrome geometry, role header/secondary ink and wire tokens project through Design System; tokens:check passes. |
 | 4. Existing looks unchanged | Empty SVG diff, all four before/after theme digests printed below; all four paper section SVGs equal, main PNG also equal. |
-| 5. Headless CLI works | Exact `pnpm render:png -- --collection … --theme … --out …` interface and `--theme-file`/`--format svg` exercised. Media fixture and unavailable original theme override were exercised in the builder round. After `c5a8776`, owner errors remain unchanged under typed `error.source`; before/after JSON proves code/path, diagnostic tuples and nested sources survive without parsing messages. |
+| 5. Headless CLI works | Exact `pnpm render:png -- --collection … --theme … --out …` interface and `--theme-file`/`--format svg` exercised. Media fixture and unavailable original theme override were exercised in the builder round. After `c5a8776`, typed owner Result errors remain unchanged under `error.source`. VERIFY.md confirmed that preservation but found native provider code/path still lost. `7c322ef` adds structured native detail; FIX2-REPORT.md pastes fresh before/after missing-collection and invalid-theme JSON. |
 | 6. Acceptance artifacts inspected | All six named SVG/PNG outputs exist. Fresh Paper SVG/PNG and Onyx/Blueprint PNGs retain the baseline/manifest bytes. Module-look overview and reading-scale fallback/legend inspections are recorded in FIX-REPORT.md. Full-sheet/companion benchmark acceptance is not claimed. |
-| 7. Local commits, clean tree | The eight builder commits below are historical; the remediation and three fix-round commits are listed in FIX-REPORT.md, with final empty `git status --porcelain` evidence. |
-| 8. Report | This corrected ledger and SOURCE-REVIEW.md supersede the audit-disproved completion/score claims. AUDIT.md is unchanged; FIX-REPORT.md contains the full post-fix proofs. |
+| 7. Local commits, clean tree | The eight builder commits below and the first fix-round commits in FIX-REPORT.md are historical. FIX2-REPORT.md lists the two new commits and final empty `git status --porcelain` evidence. |
+| 8. Report | This ledger acknowledges AUDIT.md and VERIFY.md, including the second audit's remaining provider defect and completion overclaim. Both audits are unchanged. FIX2-REPORT.md contains the new bounded proofs; earlier reports are historical evidence. |
 
-The accompanying [source review](SOURCE-REVIEW.md) evaluates all 45 changed first-party TypeScript/TSX files against the sixteen principles, with evidence and explicit deductions. Its original headless typed-error score was invalidated by B/C2. The affected rows are re-reviewed after these fixes (headless 145/160); unchanged rows retain their earlier self-review, not a new independent audit. Cognitive complexity <=2 is enforced by the passing lint run. No new test files were added.
+The accompanying [source review](SOURCE-REVIEW.md) evaluates all 45 changed first-party TypeScript/TSX files against the sixteen principles, with evidence and explicit deductions. Its original headless typed-error score was invalidated by B/C2. The first fix-round headless review (145/160) did not establish the missing native evidence later found by VERIFY.md C2. FIX2-REPORT.md re-reviews only the two source files changed by `7c322ef`; the other rows remain historical self-review, not a new independent audit. Cognitive complexity <=2 is enforced by the passing lint run. No new test files were added.
 
 ## Acceptance renders
 
@@ -110,11 +112,11 @@ pnpm render:png -- --collection resources/recipes/er.canvas --theme-file resourc
 pnpm render:png -- --collection resources/examples/agent-diagrams/pr3/deployment.canvas --theme paper --out .local/ui-variants/media-smoke
 ```
 
-All final commands succeeded. The ER smoke has zero warnings and retains non-module notation. The media smoke stages a real SVG asset and overrides the fixture's unavailable `ember` theme with paper; its inspection has zero warnings. Theme overrides use parser-provided spans in a transient source copy before ordinary lowering, so an unavailable prior theme does not prevent a requested override.
+The historical builder smoke commands listed above succeeded. The ER smoke has zero warnings and retains non-module notation. The media smoke stages a real SVG asset and overrides the fixture's unavailable `ember` theme with paper; its inspection has zero warnings. Theme overrides use parser-provided spans in a transient source copy before ordinary lowering, so an unavailable prior theme does not prevent a requested override.
 
 Resource reads use the normal bounded/confined CLI reader. Temporary Assets are closed and removed. Export's resource inspector rejects bytes or metadata differing from the owner-admitted snapshot. No server, workspace mutation, external publication or OS-font fallback is used.
 
-### Historical builder `pnpm check` output (current full output: FIX-REPORT.md)
+### Historical builder `pnpm check` output (fresh FIX2 output: FIX2-REPORT.md)
 
 ```text
 $ pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test
@@ -208,7 +210,7 @@ $ vitest run capability apps
    Duration  16.98s (tests 75%, import 14%, transform 10%, environment 2%)
 ```
 
-### Historical builder `pnpm tokens:check` output (current full output: FIX-REPORT.md)
+### Historical builder `pnpm tokens:check` output (fresh FIX2 output: FIX2-REPORT.md)
 
 ```text
 $ node --import tsx capability/design-system/cli/build-tokens.ts --check
@@ -315,7 +317,7 @@ $ node --import tsx capability/design-system/cli/build-tokens.ts --check
 - The main fixture's wide composition and the unrelated flow/diamond/sequence polish remain. This work delivers reusable module chrome, not a re-layout of the reference sheet or the repository showcase.
 - Bare IDs resolve shipped collections or admitted recipes; live workspace lookup is not part of this read-only command. Use a `.canvas` path for other collections.
 - The source review is an evidence-backed self-review, not an independent audit. Native I/O and fixed orchestration steps retain explicit score deductions.
-- The audit-discovered `constructor` fallback and typed-error defects are fixed in `917f4d7` and `c5a8776`, with current scoped verification in FIX-REPORT.md. The earlier blanket no-incomplete-conditions statement was unsupported. Full-sheet and companion visual polish remain incomplete; module-look acceptance does not certify those broader benchmarks.
+- AUDIT.md led to `917f4d7` (constructor fallback) and `c5a8776` (typed owner Result preservation). VERIFY.md then found the remaining native code/path loss and this report's completion overclaim. `7c322ef` supplies native provider detail; this docs correction withdraws the overclaim and records the second audit. FIX2-REPORT.md proves only the two requested fixes and their specified regression checks. Full-sheet and companion visual polish remain incomplete; module-look acceptance does not certify those broader benchmarks.
 
 ## Commit sequence and clean status
 

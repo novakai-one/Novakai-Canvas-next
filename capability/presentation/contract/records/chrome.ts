@@ -1,13 +1,7 @@
 import { z } from 'zod';
-/** Open Presentation registry key; unknown names select card and new chromes require no enum edit. */
-export const chromeName = z
-  .string()
-  .min(1)
-  .max(60)
-  .regex(/^[a-z][a-z0-9-]*$/)
-  .brand<'ChromeName'>();
-/** Checked registry key, structurally compatible with the Design System transport. */
-export type ChromeName = z.infer<typeof chromeName>;
+import { chromeName, type ChromeName } from '../../../design-system/contract/index.js';
+/** Design System owns registry-key validation; Presentation owns registration and card fallback. */
+export { chromeName, type ChromeName };
 /** Canonical lowercase sRGB hex with optional alpha byte for chrome-owned ink. */
 export const hexColor = z
   .string()

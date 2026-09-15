@@ -9,7 +9,7 @@ import type {
   NodeChromeRegistry,
   NodeChromeProps,
 } from '../../contract/react-types.js';
-import type { ChromeName } from '../../contract/records/chrome.js';
+import type { ChromeName } from '../../contract/index.js';
 import type { FontSet } from '../../contract/records/style.js';
 import type { VisualNode, Primitive } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';

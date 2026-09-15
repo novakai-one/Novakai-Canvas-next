@@ -7,5 +7,8 @@ export function moduleChrome(
   context: ContentContext,
 ): ChromePolicy | undefined {
   if (object.kind !== 'module') return undefined;
-  return context.chromePolicies?.[context.style.chrome ?? chromeName.parse('card')];
+  const policies = context.chromePolicies ?? {};
+  const name = context.style.chrome ?? chromeName.parse('card');
+  if (!Object.hasOwn(policies, name)) return undefined;
+  return policies[name];
 }

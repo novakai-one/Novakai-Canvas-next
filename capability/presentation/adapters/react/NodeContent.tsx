@@ -5,7 +5,10 @@ import type {
   MarkerProps,
   MeasuredContentProps,
   FontDefinitionsProps,
+  NodeChrome,
+  NodeChromeRegistry,
 } from '../../contract/react-types.js';
+import type { ChromeName } from '../../contract/records/chrome.js';
 import type { FontSet } from '../../contract/records/style.js';
 import type { VisualNode, Primitive } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';
@@ -39,7 +42,7 @@ export function createContentRenderer(
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
-    const chrome = slots.chromes[node.chromeStyle?.chrome ?? 'card'] ?? slots.chromes.card;
+    const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
     const Chrome = chrome.Component;
     const content = compartments(node, chrome.separateHeading);
     return (
@@ -70,6 +73,11 @@ export function createContentRenderer(
     );
   }
   return NodeContent;
+}
+/** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
+function resolveChrome(chromes: NodeChromeRegistry, name: ChromeName | 'card'): NodeChrome {
+  if (!Object.hasOwn(chromes, name)) return chromes.card;
+  return chromes[name] ?? chromes.card;
 }
 /** Marker geometry is injected from the owned notation policy; hosts only orient the returned local shape. */
 export function createMarkerRenderer(draw: MarkerFactory): ComponentType<MarkerProps> {

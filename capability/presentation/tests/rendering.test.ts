@@ -179,7 +179,7 @@ it('9b centers stretched slack for non-compartment shapes and keeps compartments
 });
 
 /** Chrome variants share content, anchors and host/export markup; unknown names retain the card contract. */
-it.each(['folder-tab', 'accent-stripe', 'unregistered'])(
+it.each(['folder-tab', 'accent-stripe', 'unregistered', 'constructor'])(
   'renders %s through the shared module contract',
   async (chrome) => {
     const pinned = fonts();
@@ -206,13 +206,15 @@ it.each(['folder-tab', 'accent-stripe', 'unregistered'])(
     );
     expect(markup).toContain('input: Request');
     expect(markup).toContain('Result');
-    expect(markup.includes('MODULE')).toBe(chrome === 'unregistered');
+    expect(markup.includes('MODULE')).toBe(['unregistered', 'constructor'].includes(chrome));
     expect(markup.includes('EXPORTS')).toBe(chrome === 'accent-stripe');
     expect(projected.content.anchors.map((anchor) => anchor.member)).toContain('run');
-    const fallback = { ...projected, chromeStyle: { ...tokens, chrome: 'unregistered' } };
-    expect(value(setup.presentation.renderContent(fallback))).toBe(
-      value(setup.presentation.renderContent({ ...projected, chromeStyle: undefined })),
-    );
+    for (const unknown of ['unregistered', 'constructor']) {
+      const fallback = { ...projected, chromeStyle: { ...tokens, chrome: unknown } };
+      expect(value(setup.presentation.renderContent(fallback))).toBe(
+        value(setup.presentation.renderContent({ ...projected, chromeStyle: undefined })),
+      );
+    }
   },
 );
 

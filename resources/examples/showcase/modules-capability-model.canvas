@@ -1,0 +1,169 @@
+canvas 1
+collection @modules-capability-model "capability/model — modules & imports" theme=paper description="Source-verified directory graph. A -> B means A imports or re-exports symbols from B. Shared core contract imports and invariant diagnostic helpers are elided; directory aggregation is not a DAG." {
+  node @index module "index.ts" role=neutral size=large {
+    text @scope "CONTRACT · sole public entry" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["validate · plan · stage\n8 checked ID schemas + ID types\nResult · ValidationError · Diagnostic\nrecord types · endpoint policies\nChangePlan · ChangeStage · Impact · Target"]
+    }
+  }
+  node @api module "api.ts" role=neutral size=large {
+    text @scope "CONTRACT · synchronous · no I/O" role=caption
+    member @validate "validate" type="(input: unknown) => Result<Collection>"
+    member @plan "plan" type="(snapshot: unknown, changes: unknown) => Result<ChangePlan>"
+    member @stage "stage" type="(snapshot: unknown, changes: unknown) => Result<ChangeStage>"
+  }
+  node @records module "records/" role=neutral size=large {
+    text @scope "9 files · content · object · relationship\nlayout · section · collection · change\ncomposition · policies" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["collectionSchema · changesSchema\ncompatibleLayouts · compatibleWires\nmemberEndpoints · targetEndpoints\nZod schemas + readonly record types"]
+    }
+  }
+  node @types module "types.ts" role=neutral size=large {
+    text @scope "CONTRACT · readonly declarations\nChangeStage marks an unchecked candidate" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["ChangePlan · ChangeStage\nImpact · Target"]
+    }
+  }
+  node @errors module "errors.ts" role=neutral size=large {
+    text @scope "CONTRACT · 16 diagnostic codes" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["Result<T, E = ValidationError>\nValidationError · Diagnostic\nDiagnosticCode"]
+    }
+    code @codes "shape · limit · duplicate · reference\ncontent · endpoint · key · group\nlayout · mode · tree · sequence\nidentity · not-found · already-exists\ndelete-referenced"
+  }
+  node @brands module "brands.ts" role=neutral size=large {
+    text @scope "CONTRACT · checked identity schemas" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["collectionId · objectId · sectionId\nrelationshipId · descendantId\nassetId · sourceId · groupId\nidentifier · label · digest · size\n8 branded ID types"]
+    }
+  }
+  node @collection module "collection/" role=neutral size=large {
+    text @scope "CORE · plan · stage · operations\nrecords · removal · cascades · preservation\nPlan validates; stage is unchecked" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["planChanges · stageChanges\napplyOperation · deleteObject\npreserveOverrides · describeImpact"]
+    }
+  }
+  node @invariants module "invariants/" role=neutral size=large {
+    text @scope "CORE · validation · identity · references\ninput safety · diagnostics · freezing" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["validateCollection · validateIdentity\nvalidateReferences · inspectInput\nfreeze · shapeErrors · duplicates\ndiagnoseWhen · referenceIssue\nfailure · success · rejected"]
+    }
+  }
+  node @objects module "objects/" role=neutral size=large {
+    text @scope "CORE · content placement · composite keys\nFigure composition and addressable descendants" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["validateContent · validateKeys\nvalidateComposition · descendants\nObjectDescendant"]
+    }
+  }
+  node @relationships module "relationships/" role=neutral size=large {
+    text @scope "CORE · endpoint kinds and member legality\nCanonical objects · ER cardinalities\nresolveEndpoint is private" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["validateRelationships"]
+    }
+  }
+  node @sections module "sections/" role=neutral size=large {
+    text @scope "CORE · views · groups · modes\ntree · sequence · layout" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["validateSections · validateLayouts\nvisibleObjects · visibleRelationships\nvalidateGroups · validateModes"]
+    }
+  }
+  node @tests module "tests/" role=neutral size=large {
+    text @scope "EXTERNAL / TESTS · 6 suites · 21 tests\nPublic contract imports only; fixtures exported below" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["base · node · section · relation\nvalue · invalid · rejects · rejectsPlan"]
+    }
+  }
+  node @zod module "zod · external package" size=large frame=card {
+    text @scope "Runtime schema dependency" role=caption
+    table @exports columns=["SELECTED EXPORTS"] {
+      row @symbols cells=["z"]
+    }
+  }
+  node @change note "Change contract" frame=panel size=large role=supporting {
+    table @types columns=["READONLY SIGNATURES"] {
+      row @signatures cells=["ChangePlan {\n  candidate: Collection\n  impact: readonly Impact[]\n}\nImpact {\n  target: Target | \"collection\"\n  id: string\n  action: \"added\" | \"updated\" | \"removed\"\n}\nResult<T, E = ValidationError> =\n  {ok: true, value: T} |\n  {ok: false, error: E}\nDiagnostic {\n  code: DiagnosticCode // 16 codes\n  path: string; message: string\n}"]
+    }
+    text @validation "ValidationError: code=\"validation-failed\"; diagnostics: readonly [Diagnostic, ...Diagnostic[]]"
+    text @budget "<= 1000 ops · ordered · atomic\nrevision unchanged"
+    text @guards "create: ID absent\nreplace / remove: ID exists"
+    code @targets "Target = objects | relationships |\nsections | assets | sources"
+  }
+  node @operations note "Operations / payloads" frame=panel size=large role=supporting {
+    text @op0 "replace-document" role=badge
+    code @payload0 "{value: Collection}"
+    text @op1 "create" role=badge
+    code @payload1 "{target, value}"
+    text @op2 "replace" role=badge
+    code @payload2 "{target, value}"
+    text @op3 "remove" role=badge
+    code @payload3 "{target, id}"
+    text @op4 "delete-object" role=badge
+    code @payload4 "{id, cascade=false}"
+    text @op5 "hide" role=badge
+    code @payload5 "{section, object}"
+    text @op6 "reset-layout" role=badge
+    code @payload6 "{section}"
+    text @op7 "reset-route" role=badge
+    code @payload7 "{section, relationship}"
+  }
+  node @preservation note "Guards / preservation" frame=panel size=large role=supporting {
+    text @detail "reset-route: visible wire\nhide: ordinary appearance\nreset-layout clears placements, routes and locks; retains constraints.\nreplace-document retains ID, revision and omitted geometry."
+    text @excluded "Excluded: undo journal · CAS · permissions · timestamps · request fingerprint · receipts" role=caption
+  }
+  node @legend note "Import convention" frame=panel size=large {
+    table @reading columns=["READING THE GRAPH"] {
+      row @convention cells=["A -> B = A imports / re-exports a symbol from B. Solid: runtime. Grey dashed: type-only or external/test-only."]
+    }
+    text @elision "Elided: core imports of records, errors, brands and types; shared invariant diagnostic helpers. Module-local imports stay inside their box. Directory grouping contains reciprocal dependencies; this is not a DAG." role=caption
+    text @rule "Outside consumers enter contract/index.ts. Core never imports api, index, adapters, React or I/O." role=caption
+  }
+  wire @i0 @index -> @api "validate · plan · stage" kind=imports
+  wire @i1 @index -> @types "ChangePlan · Impact" kind=imports style=dashed
+  wire @i2 @index -> @brands "checked ID schemas + types" kind=imports
+  wire @i3 @index -> @records "record types + policies" kind=imports
+  wire @i4 @index -> @errors "Result · diagnostics" kind=imports style=dashed
+  wire @i5 @types -> @records "Collection · Change" kind=imports style=dashed
+  wire @i6 @records -> @brands "ID schemas" kind=imports
+  wire @i7 @records -> @zod "z · schema runtime" kind=imports style=dashed
+  wire @i8 @brands -> @zod "z · ID runtime" kind=imports style=dashed
+  wire @i9 @api -> @collection "planChanges · stageChanges" kind=imports
+  wire @i10 @api -> @invariants "validateCollection" kind=imports
+  wire @i11 @collection -> @invariants "validateCollection · freeze" kind=imports
+  wire @i12 @invariants -> @objects "content · keys · composition" kind=imports
+  wire @i13 @invariants -> @relationships "validateRelationships" kind=imports
+  wire @i14 @invariants -> @sections "sections · layouts · visibility" kind=imports
+  wire @i15 @relationships -> @objects "descendants · ObjectDescendant" kind=imports
+  wire @i16 @tests -> @index "public API only" kind=imports style=dashed
+  section @module-map "capability/model" mode=modules layout=grid columns=2 direction=down gap=compact {
+    group @graph "MODULES & IMPORTS" frame=none layout=grid columns=1 direction=down gap=compact {
+      group @contract "CONTRACT" frame=panel role=supporting layout=grid columns=3 direction=down gap=compact {
+        show @index @api @types @records @errors @brands
+      }
+      group @core "CORE" frame=panel role=success layout=grid columns=3 direction=down gap=compact {
+        show @collection @sections @invariants @relationships @legend @objects
+      }
+      group @external "EXTERNAL / TESTS" frame=panel layout=grid columns=1 direction=down gap=compact {
+        show @tests
+      }
+    }
+    group @reference "SCHEMA / CHANGE CONTRACT" frame=none layout=grid columns=1 direction=down gap=compact {
+      show @zod @change @operations @preservation
+    }
+    connect @i0 source-side=bottom target-side=top
+    connect @i1 source-side=top target-side=top
+    connect @i4 source-side=top target-side=top
+    connect @i2 source-side=top target-side=top
+    connect @i3 source-side=right target-side=left
+    connect @i5 source-side=bottom target-side=top
+    connect @i6 source-side=bottom target-side=bottom
+    connect @i7 source-side=right target-side=left
+    connect @i8 source-side=right target-side=right
+    connect @i9 source-side=bottom target-side=top
+    connect @i10 source-side=right target-side=top
+    connect @i11 source-side=right target-side=top
+    connect @i12 @i13 source-side=bottom target-side=top
+    connect @i14 source-side=left target-side=top
+    connect @i15 source-side=bottom target-side=bottom
+    connect @i16 source-side=left target-side=left
+  }
+}

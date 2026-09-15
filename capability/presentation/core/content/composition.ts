@@ -142,11 +142,20 @@ export function composeNodeContent(
 
 /** Optional compartment caption belongs to the chrome policy and is measured with shared pinned fonts. */
 function labelledBody(request: CompositionRequest): MeasuredContent {
-  const body = measureNodeBody(request.object, request.selection, request.context);
+  const body = measureNodeBody(request.object, request.selection, bodyContext(request));
   const label = moduleChrome(request.object, request.context)?.sectionLabel;
   if (label === undefined) return body;
   return stack(
     [labelContent(label, request.context, 'annotation'), body],
     request.context.style.gap,
   );
+}
+
+/** Module chrome uses resolved secondary ink; heading foreground and shared body measurement remain independent. */
+function bodyContext(request: CompositionRequest): ContentContext {
+  if (moduleChrome(request.object, request.context) === undefined) return request.context;
+  return {
+    ...request.context,
+    style: { ...request.context.style, text: request.context.style.secondary },
+  };
 }

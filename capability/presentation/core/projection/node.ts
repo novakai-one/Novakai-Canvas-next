@@ -208,7 +208,12 @@ function scopedContext(
       shape,
       context.style.padding,
     ),
-    style: { ...context.style, text: paint.text, border: paint.stroke },
+    style: {
+      ...context.style,
+      text: paint.text,
+      border: paint.stroke,
+      secondary: paint.secondary ?? context.style.secondary,
+    },
   };
 }
 /** Preferred token width is used only when there is no authored width override. */

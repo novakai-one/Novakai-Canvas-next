@@ -543,6 +543,10 @@
       "header": {
         "$type": "color",
         "$value": "{chrome.header.neutral}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "primary": {
@@ -561,6 +565,10 @@
       "header": {
         "$type": "color",
         "$value": "{chrome.header.primary}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{action.onAccent}"
       }
     },
     "supporting": {
@@ -579,6 +587,10 @@
       "header": {
         "$type": "color",
         "$value": "{chrome.header.supporting}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "decision": {
@@ -597,6 +609,10 @@
       "header": {
         "$type": "color",
         "$value": "{chrome.header.decision}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "success": {
@@ -615,6 +631,10 @@
       "header": {
         "$type": "color",
         "$value": "{chrome.header.success}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "warning": {
@@ -633,6 +653,10 @@
       "header": {
         "$type": "color",
         "$value": "{chrome.header.warning}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     }
   },

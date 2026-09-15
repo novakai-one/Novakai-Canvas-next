@@ -120,7 +120,9 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
     gap: tokenNumber(values, 'space.2'),
     stroke: tokenNumber(values, 'stroke.base'),
     radius: tokenNumber(values, 'shape.radius'),
-    roles: Object.fromEntries(resolved.roles.map((role) => [role, rolePaint(role, values)])),
+    roles: Object.fromEntries(
+      resolved.roles.map((role) => [role, rolePaint(role, values, resolved.chrome)]),
+    ),
     surface: color('surface.base'),
     text: color('text.primary'),
     secondary: color('text.secondary'),
@@ -132,9 +134,10 @@ function fontReference(font: FontPin): TextMetric['font'] {
   return { family: font.family, digest: font.digest };
 }
 /** The frozen role-token mapping works for built-in and declared additional roles equally. */
-function rolePaint(role: string, values: TokenValues): Paint {
+function rolePaint(role: string, values: TokenValues, chrome: string | undefined): Paint {
   const prefix = 'role.' + role;
   return {
+    ...secondaryPaint(prefix, values, chrome),
     fill: colorText(member(values, prefix + '.fill'), prefix),
     stroke: colorText(member(values, prefix + '.stroke'), prefix),
     text: colorText(member(values, prefix + '.text'), prefix),
@@ -249,4 +252,14 @@ function wireOverride(resolved: ResolvedTokenSet): Partial<StyleProjection['conn
       text: color('text.primary'),
     },
   };
+}
+
+/** Secondary role ink stays absent from legacy paint records and readable on each role's own fill. */
+function secondaryPaint(
+  prefix: string,
+  values: TokenValues,
+  chrome: string | undefined,
+): Partial<Paint> {
+  if (chrome === undefined) return {};
+  return { secondary: colorText(member(values, prefix + '.secondary'), prefix) };
 }

@@ -29,6 +29,7 @@ export interface PortableTheme {
   readonly base: PresetPin | null;
 }
 export interface Paint {
+  readonly secondary?: string;
   readonly fill: string;
   readonly stroke: string;
   readonly text: string;

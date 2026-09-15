@@ -18,7 +18,9 @@ export const fontSource = fontRef
 export type FontSource = z.infer<typeof fontSource>;
 export const fontSet = z.array(fontSource).min(1).max(100).readonly();
 export type FontSet = z.infer<typeof fontSet>;
-export const paint = z.strictObject({ fill: color, stroke: color, text: color }).readonly();
+export const paint = z
+  .strictObject({ fill: color, stroke: color, text: color, secondary: color.optional() })
+  .readonly();
 export type Paint = z.infer<typeof paint>;
 const positive = z.number().finite().positive().max(10000);
 /** Diagram-owned wire paint travels with the scene; UI theme never substitutes its own stroke. */

@@ -5,7 +5,7 @@ import { resolveDefinitions } from '../tokens/resolve.js';
 import { changedDefinitions } from './overrides.js';
 /** Extension membership is a versioned token namespace, not a theme-name switch. */
 function extension(id: string): boolean {
-  return /^(elevation\.|chrome\.|role\.[^.]+\.header$)/.test(id);
+  return /^(elevation\.|chrome\.|role\.[^.]+\.(header|secondary)$)/.test(id);
 }
 /** Legacy serialization retains exactly its original token vocabulary and digest. */
 export function chromeTokens(values: TokenValues, chrome: unknown): TokenValues {

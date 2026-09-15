@@ -6,6 +6,11 @@ import type { SessionState } from './records/state.js';
 import type { SessionStore } from './ports/session.js';
 import { createCanvas } from './api.js';
 import { createStore } from '../adapters/session/store.js';
+/** Explicit opt-in browser prototype; regular Canvas imports do not load its CSS or React Flow. */
+export async function createRoadPrototype() {
+  const { RoadPrototype } = await import('../adapters/react-flow/RoadPrototype.js');
+  return RoadPrototype;
+}
 /** Embedded/headless composition needs only scene admission; host owns effects, display and recovery. */
 export function composeCanvas(dependencies: Dependencies): Canvas {
   return createCanvas(dependencies);

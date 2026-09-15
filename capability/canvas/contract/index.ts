@@ -1,5 +1,6 @@
 /** Sole Canvas public surface; pure imports do not load browser, React Flow or CSS bindings. */
 export { createCanvas } from './api.js';
+export { createRoadPrototype } from './compose.js';
 export { defaultProfile, profile } from './records/profile.js';
 export type { Canvas, Dependencies } from './types.js';
 export type { Result, Diagnostic, ErrorCode } from './errors.js';

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx apps/service/cli/serve.ts",
+    "prototype:roads": "pnpm --dir apps/web exec vite --host 127.0.0.1 --port 5188 --strictPort",
     "canvas": "tsx apps/cli/cli/main.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

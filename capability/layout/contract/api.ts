@@ -38,3 +38,4 @@ export { toCollection, toSection, toParent } from '../core/geometry/coordinates.
 export function readScene(input: unknown, owners: SceneReaderOwners): Result<Scene> {
   return protect(() => admitScene(readInspection(input, owners.projection), owners.engineVersions));
 }
+export { createRoadPrototypeScene } from '../core/prototype-roads.js';

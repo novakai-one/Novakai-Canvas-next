@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { ChromeName, HexColor } from '../brands.js';
 import { digest, version } from '../brands.js';
 /** Admission metadata supplied by the owner; no network lookup or platform fallback. */
 export const fontPin = z
@@ -22,14 +23,14 @@ export type PortableToken =
     }
   | { readonly type: 'font'; readonly family: string; readonly digest: string };
 export interface PortableTheme {
-  readonly chrome?: string | undefined;
+  readonly chrome?: ChromeName | undefined;
   readonly tokens: Readonly<Record<string, PortableToken>>;
   readonly roles: readonly string[];
   readonly fonts: readonly string[];
   readonly base: PresetPin | null;
 }
 export interface Paint {
-  readonly secondary?: string;
+  readonly secondary?: HexColor;
   readonly fill: string;
   readonly stroke: string;
   readonly text: string;
@@ -62,22 +63,25 @@ export interface ContentSizing {
   /** Prominent figure slots scale with the same root spacing policy as content widths. */
   readonly figureBox: Readonly<Record<'small' | 'medium' | 'large', number>>;
 }
+/** Token-resolved frame dimensions in world units (pixels at unit zoom), validated by Presentation. */
+export interface ChromeMetrics {
+  readonly tabWidth: number;
+  readonly tabHeight: number;
+  readonly accentWidth: number;
+}
 /** Complete numeric projection; consumers keep the prior scene on validation failure. */
 export interface StyleProjection {
-  readonly chrome?: string | undefined;
-  readonly headers?: Readonly<Record<string, string>>;
+  readonly chrome?: ChromeName | undefined;
+  /** Theme-defined role name → header band tint; roles are open, matching the roles map. */
+  readonly headers?: Readonly<Record<string, HexColor>>;
   readonly elevation?: {
     readonly offsetX: number;
     readonly offsetY: number;
     readonly blur: number;
     readonly extent: number;
-    readonly color: string;
+    readonly color: HexColor;
   };
-  readonly chromeMetrics?: {
-    readonly tabWidth: number;
-    readonly tabHeight: number;
-    readonly accentWidth: number;
-  };
+  readonly chromeMetrics?: ChromeMetrics;
   readonly digest: string;
   readonly bodyFont: TextMetric['font'];
   readonly monoFont: TextMetric['font'];

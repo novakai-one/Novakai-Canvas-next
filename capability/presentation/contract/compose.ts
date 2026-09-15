@@ -2,6 +2,7 @@ import type { Dependencies, Presentation } from './types.js';
 import type { ReactBindings, StaticRenderer, NodeChromeRegistry } from './react-types.js';
 import type { Result } from './errors.js';
 import { fail } from './errors.js';
+import { chromeName, sectionLabel } from './records/chrome.js';
 import { fontSet } from './records/style.js';
 import type { FontSet } from './records/style.js';
 import { createPresentation } from './api.js';
@@ -34,18 +35,18 @@ async function bindReact(pinned: FontSet, injected?: NodeChromeRegistry): Promis
     import('../adapters/react/FolderTabChrome.js'),
     import('../adapters/react/AccentStripeChrome.js'),
   ]);
-  const chromes = injected ?? {
+  const chromes: NodeChromeRegistry = injected ?? {
     card: { Component: card.CardChrome, showKind: true },
-    'folder-tab': {
+    [chromeName.parse('folder-tab')]: {
       Component: folder.createFolderTabChrome(folderPath),
       showKind: false,
       separateHeading: true,
     },
-    'accent-stripe': {
+    [chromeName.parse('accent-stripe')]: {
       Component: accent.AccentStripeChrome,
       showKind: false,
       separateHeading: true,
-      sectionLabel: 'EXPORTS',
+      sectionLabel: sectionLabel.parse('EXPORTS'),
     },
   };
   const slots = { ContentBlocks: content.ContentBlocks, chromes };
@@ -54,7 +55,7 @@ async function bindReact(pinned: FontSet, injected?: NodeChromeRegistry): Promis
       Object.entries(chromes)
         .filter(([name]) => name !== 'card')
         .map(([name, chrome]) => [
-          name,
+          chromeName.parse(name),
           { showKind: chrome.showKind, sectionLabel: chrome.sectionLabel },
         ]),
     ),

@@ -1,4 +1,4 @@
-import { tokenId } from '../../contract/brands.js';
+import { hexColor, type ChromeName, type TokenId, tokenId } from '../../contract/brands.js';
 import type { ResolvedTokenSet } from '../../contract/records/resolved.js';
 import type {
   StyleProjection,
@@ -13,7 +13,7 @@ import type {
 import type { SourceSet } from '../../contract/records/source.js';
 import type { Identity } from '../../contract/ports/identity.js';
 import type { TokenValues } from '../../contract/records/tokens.js';
-import { member } from '../validation/input.js';
+import { member, parsed } from '../validation/input.js';
 import { accepted, reject } from '../validation/outcomes.js';
 import { canonical } from '../validation/canonical.js';
 import { resolveDefinitions } from '../tokens/resolve.js';
@@ -134,8 +134,12 @@ function fontReference(font: FontPin): TextMetric['font'] {
   return { family: font.family, digest: font.digest };
 }
 /** The frozen role-token mapping works for built-in and declared additional roles equally. */
-function rolePaint(role: string, values: TokenValues, chrome: string | undefined): Paint {
-  const prefix = 'role.' + role;
+function rolePaint(
+  role: ResolvedTokenSet['roles'][number],
+  values: TokenValues,
+  chrome: ChromeName | undefined,
+): Paint {
+  const prefix = tokenId.parse('role.' + role);
   return {
     ...secondaryPaint(prefix, values, chrome),
     fill: colorText(member(values, prefix + '.fill'), prefix),
@@ -218,7 +222,7 @@ function chromeProjection(resolved: ResolvedTokenSet): Partial<StyleProjection> 
     headers: Object.fromEntries(
       resolved.roles.map((role) => [
         role,
-        colorText(member(values, 'role.' + role + '.header'), role),
+        parsed(hexColor, colorText(member(values, 'role.' + role + '.header'), role), role),
       ]),
     ),
     elevation: {
@@ -226,7 +230,11 @@ function chromeProjection(resolved: ResolvedTokenSet): Partial<StyleProjection> 
       offsetY: tokenNumber(values, 'elevation.offsetY'),
       blur: tokenNumber(values, 'elevation.blur'),
       extent: tokenNumber(values, 'elevation.extent'),
-      color: colorText(member(values, 'elevation.color'), 'elevation.color'),
+      color: parsed(
+        hexColor,
+        colorText(member(values, 'elevation.color'), 'elevation.color'),
+        'elevation.color',
+      ),
     },
     chromeMetrics: {
       tabWidth: tokenNumber(values, 'chrome.tabWidth'),
@@ -237,29 +245,31 @@ function chromeProjection(resolved: ResolvedTokenSet): Partial<StyleProjection> 
 }
 
 /** Existing presets retain their original wire paint; chrome presets select runtime ink through tokens. */
-function runtimeStroke(resolved: ResolvedTokenSet): string {
+function runtimeStroke(resolved: ResolvedTokenSet): Paint['stroke'] {
   const id = resolved.chrome === undefined ? 'text.secondary' : 'chrome.wire';
   return colorText(member(resolved.values, id), id);
 }
 /** Type-only and external interactions retain their own muted ink without changing marker or routing policy. */
 function wireOverride(resolved: ResolvedTokenSet): Partial<StyleProjection['connection']> {
   if (resolved.chrome === undefined) return {};
-  const color = (id: string): string => colorText(member(resolved.values, id), id);
+  const color = (id: TokenId): Paint['fill'] => colorText(member(resolved.values, id), id);
   return {
     dashedPaint: {
-      fill: color('surface.base'),
-      stroke: color('chrome.externalWire'),
-      text: color('text.primary'),
+      fill: color(tokenId.parse('surface.base')),
+      stroke: color(tokenId.parse('chrome.externalWire')),
+      text: color(tokenId.parse('text.primary')),
     },
   };
 }
 
 /** Secondary role ink stays absent from legacy paint records and readable on each role's own fill. */
 function secondaryPaint(
-  prefix: string,
+  prefix: TokenId,
   values: TokenValues,
-  chrome: string | undefined,
+  chrome: ChromeName | undefined,
 ): Partial<Paint> {
   if (chrome === undefined) return {};
-  return { secondary: colorText(member(values, prefix + '.secondary'), prefix) };
+  return {
+    secondary: parsed(hexColor, colorText(member(values, prefix + '.secondary'), prefix), prefix),
+  };
 }

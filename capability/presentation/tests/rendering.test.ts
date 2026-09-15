@@ -1,4 +1,4 @@
-import { composePresentation } from '../contract/index.js';
+import { composePresentation, chromeName, resolvedStyle } from '../contract/index.js';
 import { owners } from './fixtures.js';
 import type { VisualNode, MeasurementPort, TextRun } from '../contract/index.js';
 import { it, expect, assert } from 'vitest';
@@ -183,7 +183,7 @@ it.each(['folder-tab', 'accent-stripe', 'unregistered'])(
   'renders %s through the shared module contract',
   async (chrome) => {
     const pinned = fonts();
-    const tokens = chromeTokens(pinned, chrome);
+    const tokens = chromeTokens(pinned, chromeName.parse(chrome));
     const setup = value(await composePresentation(owners(tokens), pinned));
     const source = collection({
       objects: [
@@ -217,9 +217,12 @@ it.each(['folder-tab', 'accent-stripe', 'unregistered'])(
 );
 
 /** Variant fixtures derive their metrics and colors from the existing explicit test token projection. */
-function chromeTokens(pinned: ReturnType<typeof fonts>, chrome: string): ReturnType<typeof style> {
+function chromeTokens(
+  pinned: ReturnType<typeof fonts>,
+  chrome: NonNullable<ReturnType<typeof style>['chrome']>,
+): ReturnType<typeof style> {
   const tokens = style(pinned);
-  return {
+  return resolvedStyle.parse({
     ...tokens,
     chrome,
     headers: { neutral: tokens.surface },
@@ -235,5 +238,5 @@ function chromeTokens(pinned: ReturnType<typeof fonts>, chrome: string): ReturnT
       extent: tokens.padding,
       color: tokens.border,
     },
-  };
+  });
 }

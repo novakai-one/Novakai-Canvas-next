@@ -38,7 +38,10 @@ export function nodeHeading(object: DiagramObject, context: ContentContext): Mea
 }
 
 /** Chrome policy controls the kicker before measurement, preserving accurate header bounds. */
-function kindLabel(object: DiagramObject, context: ContentContext): string | undefined {
+function kindLabel(
+  object: DiagramObject,
+  context: ContentContext,
+): DiagramObject['label'] | undefined {
   if (moduleChrome(object, context)?.showKind === false) return undefined;
   return engineeringKinds[object.kind];
 }

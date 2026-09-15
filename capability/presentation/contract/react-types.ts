@@ -1,6 +1,6 @@
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 import type { VisualNode, Primitive, MarkerKind, MeasuredContent } from './records/visual.js';
-import type { ChromePolicy, ChromePolicies } from './records/chrome.js';
+import type { ChromePolicy, ChromePolicies, ChromeName } from './records/chrome.js';
 import type { FontSet, Paint, ResolvedStyle } from './records/style.js';
 /** React declarations never enter core; stable slots are bound once by composition. */
 export interface ContentBlocksProps {
@@ -37,11 +37,13 @@ export interface NodeChromeProps {
   readonly style?: ResolvedStyle | undefined;
   readonly heading?: ReactNode;
 }
+/** Registered React frame and its immutable measurement policy share one selection key. */
 export interface NodeChrome extends ChromePolicy {
   readonly separateHeading?: boolean;
   readonly Component: ComponentType<NodeChromeProps>;
 }
-export type NodeChromeRegistry = Readonly<Record<string, NodeChrome>> & {
+/** Open checked registry keys select frames; card is the mandatory unknown-name fallback. */
+export type NodeChromeRegistry = Readonly<Record<ChromeName, NodeChrome>> & {
   readonly card: NodeChrome;
 };
 export interface NodeSlots {

@@ -71,3 +71,7 @@ export type {
 
 export type { TokenId } from './brands.js';
 export { tokenId } from './brands.js';
+
+export { chromeName, hexColor } from './brands.js';
+export type { ChromeName, HexColor } from './brands.js';
+export type { ChromeMetrics } from './records/theme.js';

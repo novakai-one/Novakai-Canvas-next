@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { chromeName, type ChromeName } from '@novakai/canvas-design-system';
 import type { Assets } from '@novakai/canvas-assets';
 import type { Catalog, Templates } from '@novakai/canvas-templates';
 import type { LoweredIntent } from '@novakai/canvas-language';
@@ -7,14 +8,14 @@ import type { Result, Json } from '@novakai/canvas-authoring';
 const config = z.looseObject({
   kind: z.literal('theme'),
   raw: z.strictObject({
-    chrome: z.string().min(1).max(120).optional(),
+    chrome: chromeName.optional(),
     base: z.string(),
     overrides: z.record(
       z.string(),
       z.union([
         z.string(),
         z.number(),
-        z.object({ value: z.number().finite(), unit: z.literal('px') }),
+        z.strictObject({ value: z.number().finite(), unit: z.literal('px') }).readonly(),
       ]),
     ),
   }),
@@ -54,9 +55,7 @@ function prepareSourceTheme(
 /** Resolve the two font descriptors only after the base selection is exact. */
 function withFonts(
   admission: Json,
-  overrides: Readonly<
-    Record<string, string | number | { readonly value: number; readonly unit: 'px' }>
-  >,
+  overrides: z.infer<typeof config>['raw']['overrides'],
   base: import('@novakai/canvas-templates').Preset,
   bindings: readonly { readonly alias: string; readonly digest: string }[],
   assets: Pick<Assets, 'resolve'>,
@@ -114,9 +113,7 @@ function font(
 }
 
 /** Numbers retain their owner-defined meaning; colors translate to the existing sRGB record. */
-function tokenValue(
-  value: string | number | { readonly value: number; readonly unit: 'px' },
-): Json {
+function tokenValue(value: z.infer<typeof config>['raw']['overrides'][string]): Json {
   if (typeof value !== 'string') return value;
   return color(value);
 }
@@ -141,8 +138,11 @@ function colorAlpha(hex: string): number {
 }
 
 /** Preserve an explicitly authored chrome selector through resource preparation. */
-function chromeField(raw: unknown): { readonly chrome?: string } {
-  const value = z.object({ chrome: z.string() }).safeParse(raw);
+function chromeField(raw: unknown): { readonly chrome?: ChromeName } {
+  // Project one field from the guarded source envelope; unrelated admission keys stay intact.
+  const record = z.record(z.string(), z.unknown()).safeParse(raw);
+  if (!record.success) return {};
+  const value = chromeName.safeParse(record.data.chrome);
   if (!value.success) return {};
-  return { chrome: value.data.chrome };
+  return { chrome: value.data };
 }

@@ -1,6 +1,6 @@
 import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
-import { runHeadless, type HeadlessOptions } from '../contract/index.js';
+import { runHeadless, headlessOptions, type HeadlessOptions } from '../contract/index.js';
 /** CLI owns malformed arguments and terminal display; render failures retain owner diagnostics. */
 function options(args: readonly string[]): HeadlessOptions {
   const { values } = parseArgs({
@@ -13,21 +13,21 @@ function options(args: readonly string[]): HeadlessOptions {
       format: { type: 'string', default: 'png' },
     },
   });
-  return {
+  return headlessOptions.parse({
     collection: required(values.collection, '--collection'),
     theme: values.theme,
     themeFile: values['theme-file'],
     out: resolve(required(values.out, '--out')),
     format: format(values.format),
     root: new URL('../../../', import.meta.url).pathname,
-  };
+  });
 }
-/** Required arguments fail before any temporary asset store is created; main prints usage and permits retry. */
+/** Raw argv text is guarded for presence here and branded by headlessOptions; required arguments fail before any temporary asset store is created; main prints usage and permits retry. */
 function required(value: string | undefined, name: string): string {
   if (!value) throw new TypeError(name + ' is required');
   return value;
 }
-/** Only the requested artifact encoders are exposed; main handles invalid input without partial output. */
+/** Raw argv format is guarded into a closed literal union; only the requested artifact encoders are exposed; main handles invalid input without partial output. */
 function format(value: string | undefined): 'svg' | 'png' {
   if (value === 'svg' || value === 'png') return value;
   throw new TypeError('--format must be svg or png');

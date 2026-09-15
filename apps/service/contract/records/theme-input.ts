@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { chromeName } from '@novakai/canvas-design-system';
 /** Host selection envelope maps a preset base to authoritative payload; Design System still owns token/delta validation. */
 const pin = z.strictObject({
   kind: z.literal('theme'),
@@ -7,7 +8,7 @@ const pin = z.strictObject({
   digest: z.string(),
 });
 export const themeInput = z.strictObject({
-  chrome: z.string().min(1).max(120).optional(),
+  chrome: chromeName.optional(),
   base: z.discriminatedUnion('kind', [
     z.strictObject({ kind: z.literal('ui'), pin: z.unknown() }),
     z.strictObject({ kind: z.literal('preset'), pin, payload: z.unknown().optional() }),

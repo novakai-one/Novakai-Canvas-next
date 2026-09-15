@@ -1,9 +1,20 @@
 import type { ResourceRequest } from '@novakai/canvas-language';
+import {
+  chromeName,
+  type ChromeName,
+  type PortableToken,
+} from '../../../capability/design-system/contract/index.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 interface Override {
   readonly token: string;
-  readonly value: string | number | { readonly value: number; readonly unit: 'px' };
+  // Existing raw color/scalar syntax stays at the grammar edge; dimensions reuse the owner vocabulary.
+  readonly value:
+    | string
+    | number
+    | (Pick<Extract<PortableToken, { readonly type: 'dimension' }>, 'value'> & {
+        readonly unit: 'px';
+      });
   readonly line: number;
 }
 /** Theme grammar faults retain a stable reason and exact corrective instruction. */
@@ -142,14 +153,14 @@ function required(match: RegExpExecArray, index: number): string {
   return value;
 }
 
-/** Absent chrome stays absent so existing immutable preset digests remain unchanged. */
-function chromeField(chrome: string | undefined): { readonly chrome?: string } {
+/** Raw regex capture is checked by chromeName before transport; absent chrome stays absent so existing immutable preset digests remain unchanged. */
+function chromeField(chrome: string | undefined): { readonly chrome?: ChromeName } {
   if (chrome === undefined) return {};
-  return { chrome };
+  return { chrome: chromeName.parse(chrome) };
 }
 
 /** Explicit pixel dimensions preserve Design System's typed literal vocabulary. */
-function dimensionLine(input: { readonly text: string; readonly line: number }): {
+function dimensionLine(input: Parameters<typeof line>[0]): {
   readonly resources: readonly ResourceRequest[];
   readonly overrides: readonly Override[];
 } {

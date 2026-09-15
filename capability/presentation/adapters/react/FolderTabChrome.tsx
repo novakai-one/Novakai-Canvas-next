@@ -1,8 +1,9 @@
 import type { ComponentType, ReactElement } from 'react';
+import type { ChromeOutline } from '../../contract/records/chrome.js';
 import type { NodeChromeProps } from '../../contract/react-types.js';
 /** Geometry is injected by composition; adapters never reach into core or sibling adapters. */
 export function createFolderTabChrome(
-  outline: (width: number, height: number, tabWidth: number, tabHeight: number) => string,
+  outline: (width: number, height: number, tabWidth: number, tabHeight: number) => ChromeOutline,
 ): ComponentType<NodeChromeProps> {
   /** Render only the module shell; measured content, ports and badges remain shared. */
   function FolderTabChrome({ node, style, heading }: NodeChromeProps): ReactElement | null {

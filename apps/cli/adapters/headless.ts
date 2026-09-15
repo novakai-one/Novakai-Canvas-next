@@ -31,6 +31,7 @@ import {
   type Documents,
   type Resources,
 } from '../../../capability/export/contract/index.js';
+import { filePath, type FilePath } from '../contract/records/headless.js';
 import type {
   HeadlessOptions,
   HeadlessOwners,
@@ -53,7 +54,7 @@ export async function renderHeadless(
   options: HeadlessOptions,
   owners: HeadlessOwners,
 ): Promise<Result<HeadlessReport>> {
-  const directory = await mkdtemp(join(tmpdir(), 'canvas-render-'));
+  const directory = filePath.parse(await mkdtemp(join(tmpdir(), 'canvas-render-')));
   try {
     return { ok: true, value: await render(options, owners, directory) };
   } catch (error) {
@@ -101,7 +102,7 @@ async function environment(
 type Environment = Awaited<ReturnType<typeof environment>>;
 /** Admitted theme files reuse the service preparation path and actual font asset descriptors. */
 async function admitTheme(
-  file: string,
+  file: FilePath,
   catalog: Catalog,
   env: Environment,
   owners: HeadlessOwners,
@@ -120,11 +121,11 @@ async function admitTheme(
 }
 /** Reuse bounded, confined resource reads and exact Assets normalization from normal CLI admission. */
 async function admitResource(
-  file: string,
+  file: FilePath,
   request: ResourceRequest,
   assets: Pick<Assets, 'stage' | 'resolve'>,
   owners: HeadlessOwners,
-): Promise<string> {
+): Promise<NonNullable<import('../contract/records/resources.js').LocalInput['digest']>> {
   const resource = accepted(await owners.resourceFiles.read(file, request));
   if (resource.digest !== null) return resource.digest;
   return accepted(await assets.stage(resource.stage)).descriptor.digest;
@@ -138,11 +139,11 @@ async function themes(
   const root = join(options.root, 'resources');
   const files = (await readdir(root)).filter((name) => name.endsWith('.theme')).sort();
   const catalog = await files.reduce(
-    async (prior, name) => admitTheme(join(root, name), await prior, env, owners),
+    async (prior, name) => admitTheme(filePath.parse(join(root, name)), await prior, env, owners),
     Promise.resolve(env.installation.presets),
   );
   if (!options.themeFile) return catalog;
-  return admitTheme(resolve(options.themeFile), catalog, env, owners);
+  return admitTheme(filePath.parse(resolve(options.themeFile)), catalog, env, owners);
 }
 /** Pins are copied from admitted catalog records; Language and Presentation both verify them. */
 function resources(catalog: Catalog, assets: Collection['assets'] = []): ResolvedResources {
@@ -163,28 +164,29 @@ function resources(catalog: Catalog, assets: Collection['assets'] = []): Resolve
     assets: Object.fromEntries(assets.map((asset) => [asset.id, asset])),
   };
 }
-interface SourceFile {
-  readonly source: string;
-  readonly file: string;
-}
-/** A path supplies DSL; a bare admitted recipe ID resolves its retained semantic source. */
+/** Native file envelope; UTF-8 source is deliberately opaque until the Language parser validates it. */
+const sourceFile = z.strictObject({ source: z.string(), file: filePath }).readonly();
+type SourceFile = z.infer<typeof sourceFile>;
+/** Selector comparison uses its text at the catalog edge; a path supplies DSL; a bare admitted recipe ID resolves its retained semantic source. */
 async function collectionSource(
   options: HeadlessOptions,
   env: Environment,
   catalog: Catalog,
 ): Promise<SourceFile> {
   const recipe = catalog.find(
-    (preset) => preset.kind === 'recipe' && preset.id === options.collection,
+    (preset) => preset.kind === 'recipe' && preset.id === String(options.collection),
   );
   if (recipe?.kind === 'recipe')
     return {
       source: recipe.payload.source,
-      file: join(options.root, 'resources/recipes', recipe.payload.family + '.canvas'),
+      file: filePath.parse(
+        join(options.root, 'resources/recipes', recipe.payload.family + '.canvas'),
+      ),
     };
   if (options.collection.endsWith('.canvas'))
     return {
       source: await readFile(resolve(options.collection), 'utf8'),
-      file: resolve(options.collection),
+      file: filePath.parse(resolve(options.collection)),
     };
   return sourceFromId(options, env);
 }
@@ -192,12 +194,13 @@ async function collectionSource(
 async function selectedTheme(
   options: HeadlessOptions,
   owners: HeadlessOwners,
-  original: string,
-): Promise<string> {
+  original: Collection['theme']['id'],
+): Promise<Collection['theme']['id']> {
   if (options.theme) return options.theme;
   if (!options.themeFile) return original;
   const parsed = accepted(owners.readTheme(await readFile(resolve(options.themeFile), 'utf8')));
-  return z.object({ id: z.string() }).parse(parsed.admission).id;
+  // Admission is opaque at this system edge; guard its envelope before reading the owner-validated ID.
+  return z.string().parse(z.record(z.string(), z.unknown()).parse(parsed.admission).id);
 }
 /** Override an ephemeral validated copy; never write or mutate the source collection or its pin. */
 async function input(
@@ -296,7 +299,7 @@ async function output(
   document: RenderDocument,
   env: Environment,
   catalog: Catalog,
-): Promise<readonly string[]> {
+): Promise<HeadlessReport['files']> {
   const presentation = accepted(await createReactBindings(document.fonts));
   const exporter = composeExport({
     presentation,
@@ -329,7 +332,7 @@ async function output(
         section.id.replace(/[^a-zA-Z0-9_-]/g, '-') + '.' + options.format,
       );
       await writeFile(file, artifact.bytes);
-      return file;
+      return filePath.parse(file);
     }),
   );
 }
@@ -337,7 +340,7 @@ async function output(
 async function render(
   options: HeadlessOptions,
   owners: HeadlessOwners,
-  directory: string,
+  directory: FilePath,
 ): Promise<HeadlessReport> {
   const assets = accepted(openAssets(directory));
   try {
@@ -424,7 +427,7 @@ async function sourceFromId(options: HeadlessOptions, env: Environment): Promise
   const sources = await Promise.all(
     names.map(async (name) => ({
       source: await readFile(join(root, name), 'utf8'),
-      file: join(root, name),
+      file: filePath.parse(join(root, name)),
     })),
   );
   const matches = sources.filter((source) => sourceMatches(source.source, options.collection, env));
@@ -434,10 +437,14 @@ async function sourceFromId(options: HeadlessOptions, env: Environment): Promise
       id: options.collection,
       matches: matches.length,
     });
-  return z.object({ source: z.string(), file: z.string() }).parse(matches[0]);
+  return sourceFile.parse(matches[0]);
 }
-/** Parsing resolves semantic identity without running layout, trusting filenames or mutating collections. */
-function sourceMatches(source: string, id: string, env: Environment): boolean {
+/** Raw UTF-8 text stays unbranded at the Language parsing edge; parsing resolves semantic identity without running layout, trusting filenames or mutating collections. */
+function sourceMatches(
+  source: string,
+  id: HeadlessOptions['collection'],
+  env: Environment,
+): boolean {
   const parsed = env.language.parse(source);
   if (!parsed.ok) return false;
   return parsed.value.collection === id;
@@ -523,8 +530,12 @@ async function overrideSource(
   if (!selected) return source;
   return { ...source, source: sourceWithTheme(source.source, selected, env) };
 }
-/** Parser-provided UTF16 spans preserve all authored content; the chosen pin is verified normally during lowering. */
-function sourceWithTheme(source: string, theme: string, env: Environment): string {
+/** Raw UTF-8 source stays text at the Language serialization edge; parser-provided UTF16 spans preserve all authored content; the chosen pin is verified normally during lowering. */
+function sourceWithTheme(
+  source: string,
+  theme: Collection['theme']['id'],
+  env: Environment,
+): string {
   const parsed = accepted(env.language.parse(source));
   if (parsed.kind !== 'canvas') throw new RenderFault({ code: 'collection-required' });
   const field = parsed.declaration.fields.theme;
@@ -536,8 +547,12 @@ function sourceWithTheme(source: string, theme: string, env: Environment): strin
     source.slice(field.span.end.offset)
   );
 }
-/** Theme omission means paper in stored DSL; an explicit render override is inserted after its parsed title. */
-function insertTheme(source: string, theme: string, offset: number | undefined): string {
+/** Raw DSL text is serialized without normalization; theme omission means paper in stored DSL; an explicit render override is inserted after its parsed title. */
+function insertTheme(
+  source: string,
+  theme: Collection['theme']['id'],
+  offset: number | undefined,
+): string {
   if (offset === undefined) throw new RenderFault({ code: 'collection-title-required' });
   return source.slice(0, offset) + ' theme=' + JSON.stringify(theme) + source.slice(offset);
 }

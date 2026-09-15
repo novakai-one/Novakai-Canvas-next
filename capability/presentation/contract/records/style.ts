@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { chromeName, hexColor } from './chrome.js';
 import { digest } from '../brands.js';
 export const color = z.string().regex(/^#[a-fA-F0-9]{6}([a-fA-F0-9]{2})?$/);
 export const fontRef = z.strictObject({ digest, family: z.string().min(1).max(256) }).readonly();
@@ -19,7 +20,7 @@ export type FontSource = z.infer<typeof fontSource>;
 export const fontSet = z.array(fontSource).min(1).max(100).readonly();
 export type FontSet = z.infer<typeof fontSet>;
 export const paint = z
-  .strictObject({ fill: color, stroke: color, text: color, secondary: color.optional() })
+  .strictObject({ fill: color, stroke: color, text: color, secondary: hexColor.optional() })
   .readonly();
 export type Paint = z.infer<typeof paint>;
 const positive = z.number().finite().positive().max(10000);
@@ -74,20 +75,22 @@ export type ContentSizing = z.infer<typeof contentSizing>;
 export const chromeMetrics = z
   .strictObject({ tabWidth: positive, tabHeight: positive, accentWidth: positive })
   .readonly();
+/** Token-derived shadow offsets, blur and extent in world units, with canonical chrome ink. */
 export const elevation = z
   .strictObject({
     offsetX: z.number().finite(),
     offsetY: z.number().finite(),
     blur: z.number().nonnegative(),
     extent: positive,
-    color,
+    color: hexColor,
   })
   .readonly();
 /** Numeric/CSS styles come from the same token resolver; no palette or size default is duplicated here. */
 export const resolvedStyle = z
   .strictObject({
-    chrome: z.string().min(1).max(120).optional(),
-    headers: z.record(z.string(), color).readonly().optional(),
+    chrome: chromeName.optional(),
+    /** Theme-defined role name → header band tint; keys match the open roles map. */
+    headers: z.record(z.string(), hexColor).readonly().optional(),
     elevation: elevation.optional(),
     chromeMetrics: chromeMetrics.optional(),
     digest,

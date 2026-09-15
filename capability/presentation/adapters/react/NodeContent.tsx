@@ -7,6 +7,7 @@ import type {
   FontDefinitionsProps,
   NodeChrome,
   NodeChromeRegistry,
+  NodeChromeProps,
 } from '../../contract/react-types.js';
 import type { ChromeName } from '../../contract/records/chrome.js';
 import type { FontSet } from '../../contract/records/style.js';
@@ -43,7 +44,6 @@ export function createContentRenderer(
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
     const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
-    const Chrome = chrome.Component;
     const content = compartments(node, chrome.separateHeading);
     return (
       <svg
@@ -61,21 +61,30 @@ export function createContentRenderer(
       >
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}
-        <Chrome
-          node={node}
-          style={node.chromeStyle}
-          heading={<Blocks primitives={content.heading} />}
-        />
+        <Frame node={node} heading={<Blocks primitives={content.heading} />} />
         <g transform={`translate(${contentSlack(node)} 0)`}>
           <Blocks primitives={content.body} />
         </g>
       </svg>
     );
   }
+  /** Legacy cards need no chrome tokens; selected frames receive projection's required style. */
+  function Frame({ node, heading }: Pick<NodeChromeProps, 'node' | 'heading'>): ReactElement {
+    const style = node.chromeStyle;
+    if (style === undefined) {
+      const Card = slots.chromes.card.Component;
+      return <Card node={node} heading={heading} />;
+    }
+    const Chrome = resolveChrome(slots.chromes, style.chrome).Component;
+    return <Chrome node={node} style={style} heading={heading} />;
+  }
   return NodeContent;
 }
 /** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
-function resolveChrome(chromes: NodeChromeRegistry, name: ChromeName | 'card'): NodeChrome {
+function resolveChrome(
+  chromes: NodeChromeRegistry,
+  name: ChromeName | 'card',
+): NodeChrome | NodeChromeRegistry['card'] {
   if (!Object.hasOwn(chromes, name)) return chromes.card;
   return chromes[name] ?? chromes.card;
 }

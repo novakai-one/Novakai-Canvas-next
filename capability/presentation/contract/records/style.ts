@@ -138,7 +138,10 @@ export type ResolvedStyle = z.infer<typeof resolvedStyle>;
 export const chromeResolvedStyle = resolvedStyle
   .unwrap()
   .required({ chrome: true, headers: true, elevation: true, chromeMetrics: true })
+  .safeExtend({ headerTint: hexColor })
   .readonly();
+/** Complete per-node chrome data; projection validates the selected role's header tint. */
+export type ChromeResolvedStyle = z.infer<typeof chromeResolvedStyle>;
 /** Reader returns safe local bytes and mechanically verified dimensions; no remote URLs. */
 export const visualAsset = z
   .strictObject({

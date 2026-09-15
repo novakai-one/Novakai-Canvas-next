@@ -1,5 +1,6 @@
 import type { Appearance, DiagramObject, Group, Section } from '../../contract/records/input.js';
 import { chromeResolvedStyle } from '../../contract/records/style.js';
+import { hexColor } from '../../contract/records/chrome.js';
 import type { Paint } from '../../contract/records/style.js';
 import type { MeasuredContent, VisualNode } from '../../contract/records/visual.js';
 import { sceneId } from '../../contract/brands.js';
@@ -79,7 +80,7 @@ export function projectNode(
     scoped,
   );
   return parse(visualNode, {
-    ...chromeStyle(source, view.frame ?? source.frame, context),
+    ...chromeStyle(source, view.frame ?? source.frame, role, context),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -286,9 +287,15 @@ function withinGroup(view: Appearance, parent: Group['parent']): Appearance {
 function chromeStyle(
   object: DiagramObject,
   frame: VisualNode['frame'],
+  role: string,
   context: ContentContext,
 ): Pick<VisualNode, 'chromeStyle'> {
   if (!['auto', 'card'].includes(frame)) return {};
   if (moduleChrome(object, context) === undefined) return {};
-  return { chromeStyle: parse(chromeResolvedStyle, context.style) };
+  return {
+    chromeStyle: parse(chromeResolvedStyle, {
+      ...context.style,
+      headerTint: parse(hexColor, context.style.headers?.[role]),
+    }),
+  };
 }

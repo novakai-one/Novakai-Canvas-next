@@ -60,7 +60,7 @@ function semanticHeaderRule(node: VisualNode): ReactElement | null {
   );
 }
 /** Original frame and separator preserve exact SVG element order and attributes. */
-export function CardChrome({ node }: NodeChromeProps): ReactElement {
+export function CardChrome({ node }: Pick<NodeChromeProps, 'node'>): ReactElement {
   return (
     <>
       {frame(node)}

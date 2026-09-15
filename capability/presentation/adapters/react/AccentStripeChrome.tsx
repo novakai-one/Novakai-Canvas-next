@@ -1,8 +1,7 @@
 import type { ReactElement } from 'react';
 import type { NodeChromeProps } from '../../contract/react-types.js';
 /** A token-colored spine and restrained elevation distinguish the light module chrome. */
-export function AccentStripeChrome({ node, style, heading }: NodeChromeProps): ReactElement | null {
-  if (!style?.chromeMetrics) return null;
+export function AccentStripeChrome({ node, style, heading }: NodeChromeProps): ReactElement {
   const shadow = style.elevation;
   const filter = `chrome-shadow-${node.id}`;
   return (
@@ -42,7 +41,7 @@ export function AccentStripeChrome({ node, style, heading }: NodeChromeProps): R
         width={node.width - node.strokeWidth * 2}
         height={node.headerHeight - node.strokeWidth}
         rx={node.radius}
-        fill={style.headers?.[node.role] ?? node.paint.fill}
+        fill={style.headerTint}
       />
       <path
         d={`M${style.chromeMetrics.accentWidth / 2} ${node.radius} V${node.height - node.radius}`}

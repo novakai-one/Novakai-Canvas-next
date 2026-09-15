@@ -210,11 +210,95 @@ it.each(['folder-tab', 'accent-stripe', 'unregistered', 'constructor'])(
     expect(markup.includes('EXPORTS')).toBe(chrome === 'accent-stripe');
     expect(projected.content.anchors.map((anchor) => anchor.member)).toContain('run');
     for (const unknown of ['unregistered', 'constructor']) {
-      const fallback = { ...projected, chromeStyle: { ...tokens, chrome: unknown } };
+      const fallback = {
+        ...projected,
+        chromeStyle: { ...tokens, chrome: unknown, headerTint: tokens.surface },
+      };
       expect(value(setup.presentation.renderContent(fallback))).toBe(
         value(setup.presentation.renderContent({ ...projected, chromeStyle: undefined })),
       );
     }
+  },
+);
+
+/** Transport breaches reject before React can emit an empty shell or substitute the body fill. */
+it.each(['folder-tab', 'accent-stripe'])(
+  'rejects malformed transported %s chrome',
+  async (chrome) => {
+    const pinned = fonts();
+    const setup = value(
+      await composePresentation(owners(chromeTokens(pinned, chromeName.parse(chrome))), pinned),
+    );
+    const source = collection({
+      objects: [object('Module', 'module')],
+      sections: [section('modules', ['Module'])],
+    });
+    const projected = node(value(setup.presentation.project(source)), 'Module');
+    assert(projected.chromeStyle);
+    const malformed = [
+      { chrome: undefined },
+      { chromeMetrics: undefined },
+      { headers: undefined },
+      { elevation: undefined },
+      { headerTint: undefined },
+      { headerTint: 'url(https://evil.invalid)' },
+    ];
+    for (const defect of malformed) {
+      expect(
+        setup.presentation.renderContent({
+          ...projected,
+          chromeStyle: { ...projected.chromeStyle, ...defect },
+        }),
+      ).toMatchObject({
+        ok: false,
+        error: { code: 'invalid-input', path: `chromeStyle.${Object.keys(defect)[0]}` },
+      });
+    }
+  },
+);
+
+/** Object and appearance roles resolve different tints; a missing role tint fails at projection. */
+it.each(['folder-tab', 'accent-stripe'])(
+  'projects %s header tint for the effective role',
+  async (chrome) => {
+    const pinned = fonts();
+    const tokens = chromeTokens(pinned, chromeName.parse(chrome));
+    const setup = value(await composePresentation(owners(tokens), pinned));
+    const source = collection({
+      theme: {
+        id: 'paper',
+        version: '1.0.0',
+        digest: `sha256:${tokens.digest}`,
+        roles: ['neutral', 'primary'],
+      },
+      objects: [
+        object('Neutral', 'module'),
+        object('Primary', 'module', [], { role: 'primary' }),
+        object('Override', 'module'),
+      ],
+      sections: [
+        section('modules', [], {
+          appearances: [
+            { object: 'Neutral' },
+            { object: 'Primary' },
+            { object: 'Override', role: 'primary' },
+          ],
+        }),
+      ],
+    });
+    const projection = value(setup.presentation.project(source));
+    expect(node(projection, 'Neutral').chromeStyle?.headerTint).toBe('#eeeeee');
+    for (const id of ['Primary', 'Override']) {
+      const projected = node(projection, id);
+      expect(projected.chromeStyle?.headerTint).toBe('#ddeeff');
+      expect(value(setup.presentation.renderContent(projected))).toContain('fill="#ddeeff"');
+    }
+    const incomplete = resolvedStyle.parse({ ...tokens, headers: { neutral: '#eeeeee' } });
+    const broken = value(await composePresentation(owners(incomplete), pinned));
+    expect(broken.presentation.project(source)).toMatchObject({
+      ok: false,
+      error: { code: 'invalid-input' },
+    });
   },
 );
 
@@ -227,7 +311,8 @@ function chromeTokens(
   return resolvedStyle.parse({
     ...tokens,
     chrome,
-    headers: { neutral: tokens.surface },
+    roles: { ...tokens.roles, primary: tokens.roles.neutral },
+    headers: { neutral: '#eeeeee', primary: '#ddeeff' },
     chromeMetrics: {
       tabWidth: tokens.padding + tokens.gap,
       tabHeight: tokens.gap,

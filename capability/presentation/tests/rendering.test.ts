@@ -1,3 +1,5 @@
+import { composePresentation, chromeName, resolvedStyle } from '../contract/index.js';
+import { owners } from './fixtures.js';
 import type { VisualNode, MeasurementPort, TextRun } from '../contract/index.js';
 import { it, expect, assert } from 'vitest';
 import { createElement } from 'react';
@@ -175,3 +177,68 @@ it('9b centers stretched slack for non-compartment shapes and keeps compartments
   );
   expect(typedMarkup).toContain('translate(0 0)');
 });
+
+/** Chrome variants share content, anchors and host/export markup; unknown names retain the card contract. */
+it.each(['folder-tab', 'accent-stripe', 'unregistered', 'constructor'])(
+  'renders %s through the shared module contract',
+  async (chrome) => {
+    const pinned = fonts();
+    const tokens = chromeTokens(pinned, chromeName.parse(chrome));
+    const setup = value(await composePresentation(owners(tokens), pinned));
+    const source = collection({
+      objects: [
+        object('Module', 'module', [
+          {
+            kind: 'signature',
+            id: 'run',
+            label: 'run',
+            parameters: ['input: Request'],
+            returns: 'Result',
+          },
+        ]),
+      ],
+      sections: [section('modules', ['Module'])],
+    });
+    const projected = node(value(setup.presentation.project(source)), 'Module');
+    const markup = value(setup.presentation.renderContent(projected));
+    expect(markup).toBe(
+      renderToStaticMarkup(createElement(setup.react.NodeContent, { node: projected })),
+    );
+    expect(markup).toContain('input: Request');
+    expect(markup).toContain('Result');
+    expect(markup.includes('MODULE')).toBe(['unregistered', 'constructor'].includes(chrome));
+    expect(markup.includes('EXPORTS')).toBe(chrome === 'accent-stripe');
+    expect(projected.content.anchors.map((anchor) => anchor.member)).toContain('run');
+    for (const unknown of ['unregistered', 'constructor']) {
+      const fallback = { ...projected, chromeStyle: { ...tokens, chrome: unknown } };
+      expect(value(setup.presentation.renderContent(fallback))).toBe(
+        value(setup.presentation.renderContent({ ...projected, chromeStyle: undefined })),
+      );
+    }
+  },
+);
+
+/** Variant fixtures derive their metrics and colors from the existing explicit test token projection. */
+function chromeTokens(
+  pinned: ReturnType<typeof fonts>,
+  chrome: NonNullable<ReturnType<typeof style>['chrome']>,
+): ReturnType<typeof style> {
+  const tokens = style(pinned);
+  return resolvedStyle.parse({
+    ...tokens,
+    chrome,
+    headers: { neutral: tokens.surface },
+    chromeMetrics: {
+      tabWidth: tokens.padding + tokens.gap,
+      tabHeight: tokens.gap,
+      accentWidth: tokens.stroke,
+    },
+    elevation: {
+      offsetX: tokens.stroke,
+      offsetY: tokens.stroke,
+      blur: tokens.stroke,
+      extent: tokens.padding,
+      color: tokens.border,
+    },
+  });
+}

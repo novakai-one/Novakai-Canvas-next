@@ -11,7 +11,8 @@ import { createRequestFiles } from '../adapters/files.js';
 import { createTransport } from '../adapters/transport.js';
 import { createSemanticInputs } from '../adapters/semantic-inputs.js';
 import { executeCommand, usage } from './api.js';
-import type { Result } from './errors.js';
+import type { Diagnostic, Result } from './errors.js';
+import type { HeadlessFailure, HeadlessOptions, HeadlessReport } from './records/headless.js';
 import { failure } from './errors.js';
 /** Bind the actual CLI to protected credentials and real HTTP; failed setup cannot submit a diagram mutation. */
 export async function runCli(
@@ -54,4 +55,27 @@ async function run(options: import('./records/command.js').CliOptions): Promise<
 function dispatch(options: import('./records/command.js').CliOptions): Promise<Result<string>> {
   if (options.command.name === 'help') return Promise.resolve({ ok: true, value: usage });
   return run(options);
+}
+
+/** Headless export binds the same theme grammar and service owners without starting an HTTP server. */
+export async function runHeadless(
+  options: HeadlessOptions,
+): Promise<Result<HeadlessReport, HeadlessFailure | Diagnostic>> {
+  try {
+    const [adapter, service] = await Promise.all([
+      import('../adapters/headless.js'),
+      import('@novakai/canvas-service'),
+    ]);
+    return adapter.renderHeadless(options, {
+      service: await service.createHeadlessBindings(),
+      resourceFiles: createResourceFiles(),
+      readTheme: readThemeConfig,
+    });
+  } catch {
+    return failure(
+      'render-unavailable',
+      'Headless rendering could not initialize',
+      'Restore local resources and retry.',
+    );
+  }
 }

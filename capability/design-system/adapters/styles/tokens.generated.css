@@ -69,5 +69,19 @@
   --nv-layer-modal: 50;
   --nv-layer-toast: 60;
   --nv-layer-tooltip: 70;
+  --nv-elevation-offset-x: 0px;
+  --nv-elevation-offset-y: 2px;
+  --nv-elevation-blur: 3px;
+  --nv-elevation-color: #aebfce;
+  --nv-elevation-extent: 12px;
+  --nv-chrome-tab-width: 58px;
+  --nv-chrome-tab-height: 10px;
+  --nv-chrome-accent-width: 3px;
+  --nv-chrome-header-neutral: #f2f7fc;
+  --nv-chrome-header-primary: #f2f7fc;
+  --nv-chrome-header-supporting: #f2f7fc;
+  --nv-chrome-header-decision: #f2f7fc;
+  --nv-chrome-header-success: #f2f7fc;
+  --nv-chrome-header-warning: #f2f7fc;
 }
 }

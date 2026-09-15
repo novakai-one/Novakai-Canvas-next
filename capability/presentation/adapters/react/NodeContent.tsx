@@ -5,9 +5,12 @@ import type {
   MarkerProps,
   MeasuredContentProps,
   FontDefinitionsProps,
+  NodeChrome,
+  NodeChromeRegistry,
 } from '../../contract/react-types.js';
+import type { ChromeName } from '../../contract/records/chrome.js';
 import type { FontSet } from '../../contract/records/style.js';
-import type { VisualNode } from '../../contract/records/visual.js';
+import type { VisualNode, Primitive } from '../../contract/records/visual.js';
 import type { MarkerFactory } from '../../contract/records/marker.js';
 /** Embedded font rules contain only validated digest/base64/MIME values, never authored CSS. */
 function fontRules(fonts: FontSet): string {
@@ -18,65 +21,13 @@ function fontRules(fonts: FontSet): string {
     )
     .join('');
 }
-/** Rounded forms use token radii; pills use their geometric half-height. */
-function radius(node: VisualNode): number {
-  if (node.frame !== 'auto') return node.radius;
-  if (node.shape === 'pill') return node.height / 2;
-  return node.radius;
-}
-/** Diamond bounds expand around the measured inscribed content rectangle. */
-function frame(node: VisualNode): ReactElement | null {
-  if (node.frame === 'none') return null;
-  return visibleFrame(node);
-}
-/** Explicit cards/panels use rounded regions; auto retains semantic shape notation. */
-function visibleFrame(node: VisualNode): ReactElement {
-  if (node.shape === 'diamond' && node.frame === 'auto')
-    return (
-      <polygon
-        vectorEffect="non-scaling-stroke"
-        points={`${node.width / 2},0 ${node.width},${node.height / 2} ${node.width / 2},${node.height} 0,${node.height / 2}`}
-        fill={node.paint.fill}
-        stroke={node.paint.stroke}
-        strokeWidth={node.strokeWidth}
-      />
-    );
-  return (
-    <rect
-      vectorEffect="non-scaling-stroke"
-      width={node.width}
-      height={node.height}
-      rx={radius(node)}
-      fill={node.paint.fill}
-      stroke={node.paint.stroke}
-      strokeWidth={node.strokeWidth}
-    />
-  );
-}
-/** Engineering notation has a distinct title compartment; ordinary process cards retain their simpler frame. */
-function headerRule(node: VisualNode): ReactElement | null {
-  if (node.frame !== 'auto') return null;
-  return semanticHeaderRule(node);
-}
-/** Compartment cards keep left-aligned compartments under a separator; panel containers keep left-aligned tab titles. */
-const COMPARTMENT_SHAPES: readonly string[] = ['entity', 'module', 'interface', 'function'];
-const LEFT_ALIGNED_SHAPES: readonly string[] = [...COMPARTMENT_SHAPES, 'container'];
-/** Only kind-appropriate auto frames receive a separator, after the measured heading region. */
-function semanticHeaderRule(node: VisualNode): ReactElement | null {
-  if (!COMPARTMENT_SHAPES.includes(node.shape)) return null;
-  if (node.height <= node.headerHeight) return null;
-  return (
-    <line
-      x1={0}
-      x2={node.width}
-      y1={node.headerHeight}
-      y2={node.headerHeight}
-      stroke={node.paint.stroke}
-      strokeWidth={node.strokeWidth}
-      vectorEffect="non-scaling-stroke"
-    />
-  );
-}
+const LEFT_ALIGNED_SHAPES: readonly string[] = [
+  'entity',
+  'module',
+  'interface',
+  'function',
+  'container',
+];
 /** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
 function contentSlack(node: VisualNode): number {
   if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
@@ -91,6 +42,9 @@ export function createContentRenderer(
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
+    const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
+    const Chrome = chrome.Component;
+    const content = compartments(node, chrome.separateHeading);
     return (
       <svg
         display="block"
@@ -107,15 +61,23 @@ export function createContentRenderer(
       >
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}
-        {frame(node)}
-        {headerRule(node)}
+        <Chrome
+          node={node}
+          style={node.chromeStyle}
+          heading={<Blocks primitives={content.heading} />}
+        />
         <g transform={`translate(${contentSlack(node)} 0)`}>
-          <Blocks primitives={node.content.primitives} />
+          <Blocks primitives={content.body} />
         </g>
       </svg>
     );
   }
   return NodeContent;
+}
+/** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
+function resolveChrome(chromes: NodeChromeRegistry, name: ChromeName | 'card'): NodeChrome {
+  if (!Object.hasOwn(chromes, name)) return chromes.card;
+  return chromes[name] ?? chromes.card;
 }
 /** Marker geometry is injected from the owned notation policy; hosts only orient the returned local shape. */
 export function createMarkerRenderer(draw: MarkerFactory): ComponentType<MarkerProps> {
@@ -186,4 +148,17 @@ export function createFontDefinitions(boundFonts: FontSet): ComponentType<FontDe
     return <style>{fontRules(fonts)}</style>;
   }
   return FontDefinitions;
+}
+
+/** Chrome can position shared measured heading text; body primitives and ports never enter its slot. */
+function compartments(
+  node: VisualNode,
+  separate: boolean | undefined,
+): { readonly heading: readonly Primitive[]; readonly body: readonly Primitive[] } {
+  if (!separate) return { heading: [], body: node.content.primitives };
+  const heading = (item: Primitive): boolean => item.kind === 'text' && item.y <= node.headerHeight;
+  return {
+    heading: node.content.primitives.filter(heading),
+    body: node.content.primitives.filter((item) => !heading(item)),
+  };
 }

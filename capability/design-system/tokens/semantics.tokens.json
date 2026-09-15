@@ -539,6 +539,14 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.neutral}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "primary": {
@@ -551,6 +559,14 @@
         "$value": "{action.accent}"
       },
       "text": {
+        "$type": "color",
+        "$value": "{action.onAccent}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.primary}"
+      },
+      "secondary": {
         "$type": "color",
         "$value": "{action.onAccent}"
       }
@@ -567,6 +583,14 @@
       "text": {
         "$type": "color",
         "$value": "{text.secondary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.supporting}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "decision": {
@@ -581,6 +605,14 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.decision}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "success": {
@@ -595,6 +627,14 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.success}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
     },
     "warning": {
@@ -609,7 +649,25 @@
       "text": {
         "$type": "color",
         "$value": "{text.primary}"
+      },
+      "header": {
+        "$type": "color",
+        "$value": "{chrome.header.warning}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{text.secondary}"
       }
+    }
+  },
+  "chrome": {
+    "wire": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    },
+    "externalWire": {
+      "$type": "color",
+      "$value": "{text.secondary}"
     }
   }
 }

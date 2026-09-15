@@ -1,6 +1,7 @@
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 import type { VisualNode, Primitive, MarkerKind, MeasuredContent } from './records/visual.js';
-import type { FontSet, Paint } from './records/style.js';
+import type { ChromePolicy, ChromePolicies, ChromeName } from './records/chrome.js';
+import type { FontSet, Paint, ResolvedStyle } from './records/style.js';
 /** React declarations never enter core; stable slots are bound once by composition. */
 export interface ContentBlocksProps {
   readonly primitives: readonly Primitive[];
@@ -23,13 +24,30 @@ export interface FontDefinitionsProps {
   readonly fonts?: FontSet | undefined;
 }
 export interface ReactBindings {
+  readonly chromePolicies?: ChromePolicies;
   readonly NodeContent: ComponentType<NodeContentProps>;
   readonly MeasuredContent: ComponentType<MeasuredContentProps>;
   readonly Marker: ComponentType<MarkerProps>;
   readonly fonts: FontSet;
   readonly FontDefinitions: ComponentType<FontDefinitionsProps>;
 }
+/** A chrome owns frame and heading treatment; shared primitives retain content and ports. */
+export interface NodeChromeProps {
+  readonly node: VisualNode;
+  readonly style?: ResolvedStyle | undefined;
+  readonly heading?: ReactNode;
+}
+/** Registered React frame and its immutable measurement policy share one selection key. */
+export interface NodeChrome extends ChromePolicy {
+  readonly separateHeading?: boolean;
+  readonly Component: ComponentType<NodeChromeProps>;
+}
+/** Open checked registry keys select frames; card is the mandatory unknown-name fallback. */
+export type NodeChromeRegistry = Readonly<Record<ChromeName, NodeChrome>> & {
+  readonly card: NodeChrome;
+};
 export interface NodeSlots {
+  readonly chromes: NodeChromeRegistry;
   readonly ContentBlocks: ComponentType<ContentBlocksProps>;
 }
 export type StaticRenderer = (element: ReactNode) => string;

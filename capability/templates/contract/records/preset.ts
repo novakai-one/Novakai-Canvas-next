@@ -1,4 +1,11 @@
 import { z } from 'zod';
+/** Open chrome key retained in the immutable preset; Presentation owns registration and card fallback. */
+const chromeName = z
+  .string()
+  .min(1)
+  .max(60)
+  .regex(/^[a-z][a-z0-9-]*$/)
+  .brand<'ChromeName'>();
 import { digest, presetId, version } from '../brands.js';
 export const kind = z.enum(['recipe', 'theme']);
 export const family = z.enum(['er', 'modules', 'sop', 'mindmap', 'sequence', 'infographic']);
@@ -42,6 +49,7 @@ export const recipePayload = z
   .readonly();
 export const themePayload = z
   .strictObject({
+    chrome: chromeName.optional(),
     tokens: z
       .record(z.string().min(1).max(120), token)
       .refine((values) => Object.keys(values).length <= 1000),

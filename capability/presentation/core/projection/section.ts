@@ -41,7 +41,7 @@ function wire(
     source: endpoint(source.source, nodes),
     target: endpoint(source.target, nodes),
     label: measureWireAnnotation(source, context),
-    appearance: context.style.connection,
+    appearance: connectionPaint(context.style.connection, notation.style),
     sourceMarker: notation.source,
     targetMarker: notation.target,
     style: notation.style,
@@ -76,4 +76,14 @@ export function projectSection(section: Section, context: ContentContext): Visua
 function sectionTitle(title: string, context: ContentContext): VisualSection['title'] {
   const width = context.style.contentSizing.widths.large.maximum;
   return labelContent(title, { ...context, width }, 'sectionHeading');
+}
+
+/** Optional theme ink varies appearance only; semantic routing and marker geometry remain shared. */
+function connectionPaint(
+  connection: ContentContext['style']['connection'],
+  style: VisualWire['style'],
+): ContentContext['style']['connection'] {
+  if (style !== 'dashed') return connection;
+  if (connection.dashedPaint === undefined) return connection;
+  return { ...connection, paint: connection.dashedPaint };
 }

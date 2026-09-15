@@ -1,4 +1,4 @@
-import type { Digest, Version } from '../brands.js';
+import type { Digest, Version, ChromeName } from '../brands.js';
 import type { TokenValues, Dependencies } from './tokens.js';
 import type { FontPin, PresetPin } from './theme.js';
 import type { UiThemePin } from './preferences.js';
@@ -11,6 +11,7 @@ export interface ContrastEvidence {
 }
 /** Complete detached scope; numeric values, CSS and contrast share one resolved identity. */
 export interface ResolvedTokenSet {
+  readonly chrome?: ChromeName | undefined;
   readonly definitionVersion: Version;
   readonly inputDigest: Digest;
   readonly digest: Digest;

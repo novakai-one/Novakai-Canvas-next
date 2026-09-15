@@ -24,7 +24,7 @@ export function resolveThemeData(
   identity: Identity,
 ): PortableTheme {
   const data = record(input, 'theme-request');
-  keys(data, ['base', 'overrides', 'fonts'], 'theme-request');
+  keys(data, ['base', 'overrides', 'fonts', 'chrome'], 'theme-request');
   const selectedFonts = record(data.fonts, 'fonts');
   keys(selectedFonts, ['body', 'mono', 'strong'], 'fonts');
   const body = parsed(fontPin, selectedFonts.body, 'font.body');
@@ -45,7 +45,7 @@ export function resolveThemeData(
   validateBounds(source, resolved.values, 'diagram');
   validateFonts(source, resolved.values, fonts, 'diagram');
   validateContrast(source, resolved.values, base.roles);
-  return toPortable(resolved.values, base.roles, fonts, base.pin);
+  return toPortable(resolved.values, base.roles, fonts, base.pin, data.chrome);
 }
 /** Repeated identical admission evidence is one pin; conflicting same-family digests remain detectable. */
 function uniqueFonts(fonts: readonly FontPin[]): readonly FontPin[] {

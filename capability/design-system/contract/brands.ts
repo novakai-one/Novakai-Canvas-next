@@ -18,3 +18,20 @@ export const version = z
 export type TokenId = z.infer<typeof tokenId>;
 export type Digest = z.infer<typeof digest>;
 export type Version = z.infer<typeof version>;
+
+/** Registry key resolved by Presentation; unknown names fall back to card, and new chromes need no enum edit. */
+export const chromeName = z
+  .string()
+  .min(1)
+  .max(60)
+  .regex(/^[a-z][a-z0-9-]*$/)
+  .brand<'ChromeName'>();
+/** Canonical lowercase sRGB hex with optional alpha byte; reserved for new chrome color fields. */
+export const hexColor = z
+  .string()
+  .regex(/^#[0-9a-f]{6}([0-9a-f]{2})?$/)
+  .brand<'HexColor'>();
+/** Checked open chrome registry key; never a display label. */
+export type ChromeName = z.infer<typeof chromeName>;
+/** Checked canonical six- or eight-digit hexadecimal color. */
+export type HexColor = z.infer<typeof hexColor>;

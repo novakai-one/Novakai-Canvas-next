@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { digest } from '../brands.js';
+import { chromeName, digest } from '../brands.js';
 import { presetPin } from './theme.js';
 /** Existing consumer vocabulary is decoded at this capability's own boundary. */
 const portableToken = z.discriminatedUnion('type', [
@@ -19,6 +19,7 @@ const portableToken = z.discriminatedUnion('type', [
   }),
 ]);
 export const portableTheme = z.strictObject({
+  chrome: chromeName.optional(),
   tokens: z.record(z.string(), portableToken),
   roles: z
     .array(z.string().regex(/^[a-z][A-Za-z0-9]*$/))

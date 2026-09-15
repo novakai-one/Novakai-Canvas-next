@@ -9,7 +9,7 @@ import { requireProjectionCapacity } from '../validation/capacity.js';
 /** Projection consumes renderer identity only; rendering operations remain at their own public boundary. */
 interface ProjectionDependencies extends Pick<
   Dependencies,
-  'domain' | 'themes' | 'assets' | 'measurement'
+  'domain' | 'themes' | 'assets' | 'measurement' | 'chromePolicies'
 > {
   readonly rendererVersion: string;
 }
@@ -40,6 +40,7 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
     );
   const context: ContentContext = {
     collection,
+    chromePolicies: deps.chromePolicies,
     style,
     width: style.contentSizing.widths.medium.preferred,
     metrics: deps.measurement,

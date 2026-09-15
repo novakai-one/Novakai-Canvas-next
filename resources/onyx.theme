@@ -1,0 +1,27 @@
+theme 1 @onyx "Onyx / module imports" version=1.0.0 base=ink chrome=folder-tab
+font body source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+font mono source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+font strong source="./fonts/inter-tight-latin-700-normal.woff2"
+set color surface.base="#0f1420"
+set color surface.raised="#181f2b"
+set color text.primary="#e7edf6"
+set color text.secondary="#abbad0"
+set color boundary.essential="#7188a4"
+set color border.default="#536985"
+set color action.accent="#93b5dc"
+set color action.onAccent="#101823"
+set color rolefill.supporting="#182a28"
+set color rolefill.success="#172e27"
+set color rolefill.decision="#302b1d"
+set color rolefill.warning="#331e28"
+set color chrome.header.neutral="#232d3d"
+set color chrome.header.supporting="#203630"
+set color chrome.header.success="#203c30"
+set color chrome.header.primary="#93b5dc"
+set color chrome.header.decision="#3c3420"
+set color chrome.header.warning="#402838"
+set number ratio.title=1.35
+set number ratio.large=2.6
+set number lineHeight.body=1.3
+set dimension elevation.offsetY=0
+set dimension elevation.blur=0

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { digest, version, tokenId } from '../brands.js';
+import { chromeName, digest, version, tokenId } from '../brands.js';
 import { fontPin, presetPin } from './theme.js';
 import { uiThemePin } from './preferences.js';
 const numeric = z.number().finite();
@@ -18,6 +18,7 @@ const tokenValue = z.discriminatedUnion('type', [
 ]);
 /** Resolved output crosses the DOM boundary only as a complete safe vocabulary and CSS-equivalent snapshot. */
 export const resolvedScope = z.strictObject({
+  chrome: chromeName.optional(),
   definitionVersion: version,
   inputDigest: digest,
   digest,

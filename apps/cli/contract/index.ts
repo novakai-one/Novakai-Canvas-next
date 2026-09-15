@@ -10,3 +10,6 @@ export type {
   RequestDraft,
 } from './ports/runtime.js';
 export type { Result, Diagnostic } from './errors.js';
+export { runHeadless } from './compose.js';
+export type { HeadlessOptions } from './records/headless.js';
+export { headlessOptions } from './records/headless.js';

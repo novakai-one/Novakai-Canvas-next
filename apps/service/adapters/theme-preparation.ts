@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { chromeName, type ChromeName } from '@novakai/canvas-design-system';
 import type { Assets } from '@novakai/canvas-assets';
 import type { Catalog, Templates } from '@novakai/canvas-templates';
 import type { LoweredIntent } from '@novakai/canvas-language';
@@ -7,8 +8,16 @@ import type { Result, Json } from '@novakai/canvas-authoring';
 const config = z.looseObject({
   kind: z.literal('theme'),
   raw: z.strictObject({
+    chrome: chromeName.optional(),
     base: z.string(),
-    overrides: z.record(z.string(), z.union([z.string(), z.number()])),
+    overrides: z.record(
+      z.string(),
+      z.union([
+        z.string(),
+        z.number(),
+        z.strictObject({ value: z.number().finite(), unit: z.literal('px') }).readonly(),
+      ]),
+    ),
   }),
 });
 type ThemeOwners = {
@@ -46,7 +55,7 @@ function prepareSourceTheme(
 /** Resolve the two font descriptors only after the base selection is exact. */
 function withFonts(
   admission: Json,
-  overrides: Readonly<Record<string, string | number>>,
+  overrides: z.infer<typeof config>['raw']['overrides'],
   base: import('@novakai/canvas-templates').Preset,
   bindings: readonly { readonly alias: string; readonly digest: string }[],
   assets: Pick<Assets, 'resolve'>,
@@ -66,6 +75,7 @@ function withFonts(
     value: {
       ...header,
       raw: {
+        ...chromeField(header.raw),
         base: { kind: 'preset', pin },
         fonts: Object.fromEntries(fonts.filter((item) => item.ok).map((item) => item.value)),
         overrides: Object.fromEntries(
@@ -103,8 +113,8 @@ function font(
 }
 
 /** Numbers retain their owner-defined meaning; colors translate to the existing sRGB record. */
-function tokenValue(value: string | number): Json {
-  if (typeof value === 'number') return value;
+function tokenValue(value: z.infer<typeof config>['raw']['overrides'][string]): Json {
+  if (typeof value !== 'string') return value;
   return color(value);
 }
 
@@ -125,4 +135,14 @@ function color(value: string): Json {
 function colorAlpha(hex: string): number {
   if (hex.length !== 9) return 1;
   return Number.parseInt(hex.slice(7, 9), 16) / 255;
+}
+
+/** Preserve an explicitly authored chrome selector through resource preparation. */
+function chromeField(raw: unknown): { readonly chrome?: ChromeName } {
+  // Project one field from the guarded source envelope; unrelated admission keys stay intact.
+  const record = z.record(z.string(), z.unknown()).safeParse(raw);
+  if (!record.success) return {};
+  const value = chromeName.safeParse(record.data.chrome);
+  if (!value.success) return {};
+  return { chrome: value.data };
 }

@@ -6,6 +6,7 @@ import type {
 } from '../../contract/records/theme.js';
 import type { TokenValue, TokenValues } from '../../contract/records/tokens.js';
 import type { SourceSet } from '../../contract/records/source.js';
+import { chromeTokens, completeChromeTokens, chromeField } from './chrome.js';
 import { portableTheme } from '../../contract/records/portable-schema.js';
 import { parsed, member } from '../validation/input.js';
 import { reject } from '../validation/outcomes.js';
@@ -16,10 +17,15 @@ export function toPortable(
   roles: readonly string[],
   fonts: readonly FontPin[],
   base: PresetPin | null,
+  chrome?: unknown,
 ): PortableTheme {
   return {
+    ...chromeField(chrome),
     tokens: Object.fromEntries(
-      Object.entries(values).map(([id, value]) => [id, portableValue(id, value, values, fonts)]),
+      Object.entries(chromeTokens(values, chrome)).map(([id, value]) => [
+        id,
+        portableValue(id, value, values, fonts),
+      ]),
     ),
     roles,
     fonts: [...new Set(fonts.map((font) => font.digest))],
@@ -59,9 +65,10 @@ export function fromPortable(
   fonts: readonly FontPin[],
 ): { readonly theme: PortableTheme; readonly values: TokenValues } {
   const theme = parsed(portableTheme, input, 'theme');
-  const values = Object.fromEntries(
+  const supplied = Object.fromEntries(
     Object.entries(theme.tokens).map(([id, value]) => [id, unpackValue(id, value, fonts)]),
   );
+  const values = completeChromeTokens(supplied, source, theme.chrome);
   validateMembers(values, source, theme.roles);
   const actual = [
     ...new Set(

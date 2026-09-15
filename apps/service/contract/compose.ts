@@ -63,7 +63,7 @@ export async function createDiagramProducer(timeoutMs = 30000): Promise<Result<D
 async function prepareInstallationInputs(
   resourceRoot: string,
   tokenRoot: string,
-  assets: Assets,
+  assets: Pick<Assets, 'stage' | 'resolve'>,
 ): Promise<Result<BuiltinResources>> {
   const files = await createTokenFileBindings(tokenRoot);
   if (!files.ok) return failure('unavailable', 'tokens', files.error.message, files.error);
@@ -90,7 +90,7 @@ async function prepareInstallationInputs(
 export async function prepareInstallation(
   resourceRoot: string,
   tokenRoot: string,
-  assets: Assets,
+  assets: Pick<Assets, 'stage' | 'resolve'>,
 ): Promise<Result<BuiltinResources>> {
   try {
     return await prepareInstallationInputs(resourceRoot, tokenRoot, assets);
@@ -388,4 +388,20 @@ export async function serveWorkspace(
 export async function readAgentCredential(path: string): Promise<Result<string>> {
   const credentials = await import('../adapters/local-credentials.js');
   return credentials.readAgentCredential(path);
+}
+
+/** Read-only headless composition shares service adapters. CLI runHeadless catches import failures, reports render-unavailable and owns retry after dependencies are restored. */
+export async function createHeadlessBindings() {
+  const [codecs, themes, jobs, rendering] = await Promise.all([
+    import('../adapters/preset-codecs.js'),
+    import('../adapters/theme-preparation.js'),
+    import('../adapters/render-jobs.js'),
+    import('../adapters/rendering.js'),
+  ]);
+  return {
+    createPresetCodecs: codecs.createPresetCodecs,
+    prepareTheme: themes.prepareTheme,
+    createRenderJobs: jobs.createRenderJobs,
+    produceDiagram: rendering.produceDiagram,
+  };
 }

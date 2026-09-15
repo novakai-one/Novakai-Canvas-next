@@ -2,6 +2,7 @@ import type { DiagramObject } from '../../contract/records/input.js';
 import type { DiagramTypography } from '../../contract/records/style.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
+import { moduleChrome } from './chrome.js';
 import { measureText, stack } from './text.js';
 /** Measure a semantic text role; public project owns provider failure and retains the prior scene. */
 export function labelContent(
@@ -30,8 +31,17 @@ const engineeringKinds: Readonly<Partial<Record<DiagramObject['kind'], string>>>
 /** Measure kind and title together so body separators and member anchors start below both. Public project owns failure; Authoring retains the prior scene. */
 export function nodeHeading(object: DiagramObject, context: ContentContext): MeasuredContent {
   const title = labelContent(object.label, context, 'nodeHeading');
-  const kind = engineeringKinds[object.kind];
+  const kind = kindLabel(object, context);
   if (kind === undefined) return title;
   const category = labelContent(kind, context, 'annotation');
   return stack([category, title], context.style.gap / 2);
+}
+
+/** Chrome policy controls the kicker before measurement, preserving accurate header bounds. */
+function kindLabel(
+  object: DiagramObject,
+  context: ContentContext,
+): DiagramObject['label'] | undefined {
+  if (moduleChrome(object, context)?.showKind === false) return undefined;
+  return engineeringKinds[object.kind];
 }

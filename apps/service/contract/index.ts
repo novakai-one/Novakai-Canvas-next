@@ -37,3 +37,4 @@ export type {
 } from './records/protocol.js';
 
 export { projectCollection } from './api.js';
+export { createHeadlessBindings } from './compose.js';

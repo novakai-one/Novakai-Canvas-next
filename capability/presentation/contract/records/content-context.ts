@@ -4,6 +4,7 @@ import type { MeasurementPort } from '../ports/measurement.js';
 import type { AssetReader } from '../ports/resources.js';
 /** Shared local measurement inputs; field columns derive from sibling fields inside the same node. */
 export interface ContentContext {
+  readonly chromePolicies?: import('./chrome.js').ChromePolicies | undefined;
   readonly collection: InputCollection;
   readonly width: number;
   readonly style: ResolvedStyle;

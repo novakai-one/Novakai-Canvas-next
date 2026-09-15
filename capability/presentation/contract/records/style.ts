@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { chromeName, hexColor } from './chrome.js';
 import { digest } from '../brands.js';
 export const color = z.string().regex(/^#[a-fA-F0-9]{6}([a-fA-F0-9]{2})?$/);
 export const fontRef = z.strictObject({ digest, family: z.string().min(1).max(256) }).readonly();
@@ -18,13 +19,16 @@ export const fontSource = fontRef
 export type FontSource = z.infer<typeof fontSource>;
 export const fontSet = z.array(fontSource).min(1).max(100).readonly();
 export type FontSet = z.infer<typeof fontSet>;
-export const paint = z.strictObject({ fill: color, stroke: color, text: color }).readonly();
+export const paint = z
+  .strictObject({ fill: color, stroke: color, text: color, secondary: hexColor.optional() })
+  .readonly();
 export type Paint = z.infer<typeof paint>;
 const positive = z.number().finite().positive().max(10000);
 /** Diagram-owned wire paint travels with the scene; UI theme never substitutes its own stroke. */
 export const connectionStyle = z
   .strictObject({
     paint,
+    dashedPaint: paint.optional(),
     width: positive,
     dash: z.tuple([positive, positive]).readonly(),
   })
@@ -67,9 +71,28 @@ export const contentSizing = z
   .readonly();
 /** Validated width, row and icon measurement policy for projected content. */
 export type ContentSizing = z.infer<typeof contentSizing>;
+/** Frame metrics are resolved from tokens before React sees any node. */
+export const chromeMetrics = z
+  .strictObject({ tabWidth: positive, tabHeight: positive, accentWidth: positive })
+  .readonly();
+/** Token-derived shadow offsets, blur and extent in world units, with canonical chrome ink. */
+export const elevation = z
+  .strictObject({
+    offsetX: z.number().finite(),
+    offsetY: z.number().finite(),
+    blur: z.number().nonnegative(),
+    extent: positive,
+    color: hexColor,
+  })
+  .readonly();
 /** Numeric/CSS styles come from the same token resolver; no palette or size default is duplicated here. */
 export const resolvedStyle = z
   .strictObject({
+    chrome: chromeName.optional(),
+    /** Theme-defined role name → header band tint; keys match the open roles map. */
+    headers: z.record(z.string(), hexColor).readonly().optional(),
+    elevation: elevation.optional(),
+    chromeMetrics: chromeMetrics.optional(),
     digest,
     bodyFont: fontRef,
     monoFont: fontRef,
@@ -111,6 +134,11 @@ function matchingFonts(style: {
   });
 }
 export type ResolvedStyle = z.infer<typeof resolvedStyle>;
+/** A selected frame must receive complete token data; malformed transported chrome never renders an empty shell. */
+export const chromeResolvedStyle = resolvedStyle
+  .unwrap()
+  .required({ chrome: true, headers: true, elevation: true, chromeMetrics: true })
+  .readonly();
 /** Reader returns safe local bytes and mechanically verified dimensions; no remote URLs. */
 export const visualAsset = z
   .strictObject({

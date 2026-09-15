@@ -1,4 +1,5 @@
 import type { Appearance, DiagramObject, Group, Section } from '../../contract/records/input.js';
+import { chromeResolvedStyle } from '../../contract/records/style.js';
 import type { Paint } from '../../contract/records/style.js';
 import type { MeasuredContent, VisualNode } from '../../contract/records/visual.js';
 import { sceneId } from '../../contract/brands.js';
@@ -8,6 +9,7 @@ import { offset } from '../content/text.js';
 import { labelContent } from '../content/headings.js';
 import { visibleBody } from '../content/node-body.js';
 import { composeNodeContent } from '../content/composition.js';
+import { moduleChrome } from '../content/chrome.js';
 import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
 import { parse, reject } from '../validation/outcomes.js';
@@ -77,6 +79,7 @@ export function projectNode(
     scoped,
   );
   return parse(visualNode, {
+    ...chromeStyle(source, view.frame ?? source.frame, context),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -205,7 +208,12 @@ function scopedContext(
       shape,
       context.style.padding,
     ),
-    style: { ...context.style, text: paint.text, border: paint.stroke },
+    style: {
+      ...context.style,
+      text: paint.text,
+      border: paint.stroke,
+      secondary: paint.secondary ?? context.style.secondary,
+    },
   };
 }
 /** Preferred token width is used only when there is no authored width override. */
@@ -272,4 +280,15 @@ function paintedRole(group: Group | undefined, groups: readonly Group[]): string
 function withinGroup(view: Appearance, parent: Group['parent']): Appearance {
   if (parent === undefined) return view;
   return { ...view, group: parent };
+}
+
+/** Legacy nodes retain their exact transport shape; selected module chromes carry resolved tokens. */
+function chromeStyle(
+  object: DiagramObject,
+  frame: VisualNode['frame'],
+  context: ContentContext,
+): Pick<VisualNode, 'chromeStyle'> {
+  if (!['auto', 'card'].includes(frame)) return {};
+  if (moduleChrome(object, context) === undefined) return {};
+  return { chromeStyle: parse(chromeResolvedStyle, context.style) };
 }

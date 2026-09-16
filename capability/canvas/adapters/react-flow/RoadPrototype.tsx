@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { ReactElement, CSSProperties } from 'react';
 import { ReactFlow, Background, Controls, ViewportPortal, useReactFlow } from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
@@ -38,6 +38,8 @@ type BlockNode = Node<
   {
     block: PrototypeBlock;
     kind: 'section' | 'node';
+    selectionClass?: string;
+    selectionActive?: boolean;
     ports: readonly PrototypeNodePort[];
     selected: string;
     select: (id: string) => void;
@@ -48,6 +50,7 @@ type JunctionNode = Node<
   { junction: PrototypeJunction; selected: string; select: (id: string) => void },
   'junction'
 >;
+const noProofs: readonly PrototypeRoadProof[] = [];
 const arrows = { left: '←', right: '→', up: '↑', down: '↓' };
 const accessLabels = { entry: 'IN', exit: 'OUT' };
 
@@ -118,14 +121,14 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
       </div>
     );
   return (
-    <div className={styles.node} data-node-id={data.block.id}>
+    <div className={`${styles.node} ${data.selectionClass ?? ''}`} data-node-id={data.block.id}>
       <strong>{data.block.label}</strong>
       <span>Owns 4 ports</span>
       {data.ports.map((port) => (
         <button
           key={port.id}
           type="button"
-          className={`${styles.port} nodrag nopan`}
+          className={`${styles.port} ${data.selectionActive ? styles.dim : ''} nodrag nopan`}
           style={{ left: port.offset.x, top: port.offset.y }}
           data-port-id={port.id}
           data-side={port.side}
@@ -537,7 +540,7 @@ export function RoadPrototype({
   inspectTravel,
   coverage,
   onReady,
-  proofs = [],
+  proofs = noProofs,
   initialProof = -1,
 }: {
   readonly proofs?: readonly PrototypeRoadProof[];
@@ -551,7 +554,12 @@ export function RoadPrototype({
   const [proofIndex, setProofIndex] = useState(initialProof);
   const proof = proofs[proofIndex];
   const [focus, setFocus] = useState('');
-  const wires = scene.wiring?.ok ? scene.wiring.value : [];
+  const wires = useMemo(() => (scene.wiring?.ok ? scene.wiring.value : []), [scene]);
+  const [primary, setPrimary] = useState('');
+  const secondary = useMemo(() => selectionNeighbours(wires, primary), [wires, primary]);
+  const togglePrimary = useCallback((id: string) => {
+    setPrimary((previous) => (previous === id ? '' : id));
+  }, []);
   const focusedWire = wires.find((w) => w.id === focus);
   function chooseProof(index: number): void {
     setProofIndex(index);
@@ -563,23 +571,37 @@ export function RoadPrototype({
   const lane = scene.lanes.find((item) => item.id === selected);
   const junction = scene.junctions.find((item) => item.id === selected);
   const link = choice(scene, selected, movementId);
-  function selectRegion(id: string): void {
-    select(id);
-    setProofIndex(proofs.findIndex((p) => p.junctionId === id || p.portId === id));
-    setFocus('');
-    selectMovement('');
-  }
-  const nodes = [
-    ...scene.sections.map((item) =>
-      blockNode(item, 'section', sectionLayer(item), selected, selectRegion),
-    ),
-    ...scene.roads.map((road) => roadNode(road, scene, selected, selectRegion)),
-    ...scene.junctions.map((item) => junctionNode(item, selected, selectRegion)),
-    ...scene.nodes.map((item) => blockNode(item, 'node', 2, selected, selectRegion)),
-    ...scene.ports
-      .filter((p) => p.nodeId.startsWith('section-'))
-      .map((p) => gateNode(p, selectRegion)),
-  ];
+  const selectRegion = useCallback(
+    (id: string): void => {
+      select(id);
+      setProofIndex(proofs.findIndex((p) => p.junctionId === id || p.portId === id));
+      setFocus('');
+      selectMovement('');
+    },
+    [proofs],
+  );
+  const baseNodes = useMemo(
+    () => [
+      ...scene.sections.map((item) =>
+        blockNode(item, 'section', sectionLayer(item), selected, selectRegion),
+      ),
+      ...scene.roads.map((road) => roadNode(road, scene, selected, selectRegion)),
+      ...scene.junctions.map((item) => junctionNode(item, selected, selectRegion)),
+      ...scene.nodes.map((item) => blockNode(item, 'node', 2, selected, selectRegion)),
+      ...scene.ports
+        .filter((p) => p.nodeId.startsWith('section-'))
+        .map((p) => gateNode(p, selectRegion)),
+    ],
+    [scene, selected, selectRegion],
+  );
+  const nodes = useMemo(
+    () => baseNodes.map((node) => selectionNode(node, primary, secondary)),
+    [baseNodes, primary, secondary],
+  );
+  const cameraFocus = useMemo(
+    () => wireFocus(focusedWire) ?? scene.sections.find((s) => s.id === focus),
+    [focusedWire, scene, focus],
+  );
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -674,13 +696,19 @@ export function RoadPrototype({
           nodesDraggable={false}
           nodesConnectable={false}
           elementsSelectable={false}
+          onNodeClick={(_event, node) => {
+            if (node.id.startsWith('node-')) togglePrimary(node.id);
+          }}
+          onPaneClick={() => setPrimary('')}
         >
           <ReadySignal onReady={onReady} />
-          <ProofCamera
-            proof={proof}
-            focus={wireFocus(focusedWire) ?? scene.sections.find((s) => s.id === focus)}
+          <ProofCamera proof={proof} focus={cameraFocus} />
+          <NestedWirePaths
+            wires={wires}
+            primary={primary}
+            secondary={secondary}
+            select={togglePrimary}
           />
-          <NestedWirePaths wires={wires} focus={focus} />
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
           {proof && <ProofPaths proof={proof} />}
@@ -1042,11 +1070,16 @@ function wireFocus(wire: NestedWire | undefined): PrototypeBlock | undefined {
 }
 function NestedWirePaths({
   wires,
-  focus,
+  primary,
+  secondary,
+  select,
 }: {
   readonly wires: readonly NestedWire[];
-  readonly focus: string;
+  readonly primary: string;
+  readonly secondary: ReadonlySet<string>;
+  readonly select: (id: string) => void;
 }): ReactElement {
+  const midpoints = useMemo(() => wires.map(wireMidpoint), [wires]);
   return (
     <ViewportPortal>
       <svg className={styles.nestedWires} aria-label="Twelve law-routed wires">
@@ -1055,7 +1088,7 @@ function NestedWirePaths({
             key={wire.id}
             data-wire-id={wire.id}
             data-tone={i % 3}
-            data-muted={focus.startsWith('w') && focus !== wire.id}
+            className={selectionClass(wire.id, primary, secondary)}
           >
             <title>
               {wire.id}: {wire.from} → {wire.to}
@@ -1079,13 +1112,26 @@ function NestedWirePaths({
               points={pointsAttribute(wirePoints(wire))}
               markerEnd={`url(#arrow-${wire.id})`}
             />
-            <text
-              className={styles.nestedLabel}
-              x={(wire.segments[0]?.from.x ?? 0) + 12}
-              y={(wire.segments[0]?.from.y ?? 0) + wireLabelOffset(wire)}
-            >
-              {wire.id}
-            </text>
+            <polyline
+              className={`${styles.wireHit} nodrag nopan`}
+              data-wire-hit={wire.id}
+              points={pointsAttribute(wirePoints(wire))}
+              onClick={(event) => {
+                event.stopPropagation();
+                select(wire.id);
+              }}
+            />
+            {primary === wire.id && (
+              <text
+                className={styles.nestedLabel}
+                data-wire-label={wire.id}
+                x={midpoints[i]?.x}
+                y={midpoints[i]?.y}
+                textAnchor="middle"
+              >
+                {wire.id}
+              </text>
+            )}
           </g>
         ))}
       </svg>
@@ -1093,6 +1139,53 @@ function NestedWirePaths({
   );
 }
 
-function wireLabelOffset(wire: NestedWire): number {
-  return wire.sourcePortId.endsWith('bottom') ? 24 : -14;
+/** Fresh one-hop view state: wire selections stop at their two endpoints. */
+function selectionNeighbours(wires: readonly NestedWire[], primary: string): ReadonlySet<string> {
+  const selectedWire = wires.find((wire) => wire.id === primary);
+  if (selectedWire) return new Set([selectedWire.from, selectedWire.to]);
+  const incident = wires.filter((wire) => [wire.from, wire.to].includes(primary));
+  return new Set(
+    incident.flatMap((wire) => [wire.id, wire.from, wire.to]).filter((id) => id !== primary),
+  );
+}
+function selectionClass(id: string, primary: string, secondary: ReadonlySet<string>): string {
+  if (primary === '') return '';
+  if (id === primary) return styles.primary ?? '';
+  return secondaryClass(id, secondary);
+}
+function secondaryClass(id: string, secondary: ReadonlySet<string>): string {
+  return secondary.has(id) ? (styles.secondary ?? '') : (styles.dim ?? '');
+}
+/** Geometry and cached road/lane membership are retained; only paint records change. */
+function selectionNode(node: Node, primary: string, secondary: ReadonlySet<string>): Node {
+  if (node.type === 'block')
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        selectionClass: selectionClass(node.id, primary, secondary),
+        selectionActive: primary !== '',
+      },
+    };
+  return { ...node, className: primary === '' ? '' : (styles.dim ?? '') };
+}
+function segmentLength(segment: NestedWire['segments'][number]): number {
+  return Math.abs(segment.to.x - segment.from.x) + Math.abs(segment.to.y - segment.from.y);
+}
+/** Arc-length midpoint, computed once per frozen wire; CSS lifts the label above the path. */
+function wireMidpoint(wire: NestedWire): PrototypePoint {
+  const lengths = wire.segments.map(segmentLength);
+  let remaining = lengths.reduce((sum, length) => sum + length, 0) / 2;
+  const segment = wire.segments.find((_segment, index) => {
+    const length = lengths[index] ?? 0;
+    if (remaining <= length) return true;
+    remaining -= length;
+    return false;
+  });
+  if (!segment) return { x: 0, y: 0 };
+  const ratio = remaining / segmentLength(segment);
+  return {
+    x: segment.from.x + (segment.to.x - segment.from.x) * ratio,
+    y: segment.from.y + (segment.to.y - segment.from.y) * ratio,
+  };
 }

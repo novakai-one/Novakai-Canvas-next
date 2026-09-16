@@ -84,6 +84,9 @@
   --nv-chrome-header-success: #f2f7fc;
   --nv-chrome-header-warning: #f2f7fc;
   --nv-opacity-context: 0.12;
+  --nv-opacity-selection-dim: 0.28;
+  --nv-opacity-selection-secondary: 0.7;
+  --nv-opacity-selection-road: 0.55;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -234,6 +237,9 @@
   --nv-chrome-header-success: #f2f7fc;
   --nv-chrome-header-warning: #f2f7fc;
   --nv-opacity-context: 0.12;
+  --nv-opacity-selection-dim: 0.28;
+  --nv-opacity-selection-secondary: 0.7;
+  --nv-opacity-selection-road: 0.55;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;

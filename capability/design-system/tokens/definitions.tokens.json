@@ -683,6 +683,18 @@
     "context": {
       "$type": "number",
       "$value": 0.12
+    },
+    "selectionDim": {
+      "$type": "number",
+      "$value": 0.28
+    },
+    "selectionSecondary": {
+      "$type": "number",
+      "$value": 0.7
+    },
+    "selectionRoad": {
+      "$type": "number",
+      "$value": 0.55
     }
   }
 }

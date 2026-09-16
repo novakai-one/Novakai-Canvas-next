@@ -382,9 +382,6 @@
   .nestedWires [data-tone='2'] {
     color: var(--nv-status-success);
   }
-  .nestedWires [data-muted='true'] {
-    opacity: var(--nv-opacity-context);
-  }
   .nestedWires marker {
     fill: currentColor;
   }
@@ -401,10 +398,51 @@
     stroke-width: calc(var(--nv-stroke-base) * 6);
   }
   .nestedLabel {
+    transform: translateY(calc(var(--nv-space-unit) * -3));
     fill: currentColor;
     font: bold var(--nv-type-base) var(--nv-font-mono);
     paint-order: stroke;
     stroke: var(--nv-surface-raised);
     stroke-width: calc(var(--nv-stroke-base) * 4);
+  }
+}
+
+@layer components {
+  .primary {
+    opacity: 1;
+  }
+  .secondary {
+    opacity: var(--nv-opacity-selection-secondary);
+  }
+  .dim {
+    opacity: var(--nv-opacity-selection-dim);
+  }
+  :global(.react-flow__node-road).dim,
+  :global(.react-flow__node-junction).dim {
+    opacity: var(--nv-opacity-selection-road);
+  }
+  .node.primary {
+    background: var(--nv-action-accent);
+    color: var(--nv-action-on-accent);
+    outline: calc(var(--nv-stroke-base) * 3) solid var(--nv-action-accent);
+    outline-offset: calc(var(--nv-space-unit) * 2);
+  }
+  .node.primary > span {
+    color: inherit;
+  }
+  .node.secondary {
+    background: var(--nv-rolefill-supporting);
+    outline: var(--nv-stroke-base) solid var(--nv-action-accent);
+    outline-offset: var(--nv-space-unit);
+  }
+  .primary .nestedPath {
+    stroke-width: calc(var(--nv-stroke-base) * 5);
+  }
+  .wireHit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: calc(var(--nv-stroke-base) * 16);
+    pointer-events: stroke;
+    cursor: pointer;
   }
 }

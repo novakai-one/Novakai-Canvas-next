@@ -1,0 +1,9 @@
+PASS 2 geometry diff: 0 differences; all original scene fields byte-identical (nodes, sections, ports, roads, driveways, lane network).
+PASS 3a exactly 12 wires with all prescribed IDs and endpoints.
+PASS 3b all 12 start in right/bottom source driveways and end in top/left target driveways.
+PASS 3c every one of 105 segments independently covered by a road/driveway rectangle; all paths continuous.
+PASS 3d zero segments intersect node body interiors.
+PASS 3e zero section-boundary crossings at non-gate locations.
+PASS 3f two consecutive scene generations have byte-identical wire path data.
+PASS retained six fixture cases: 12-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.
+PASS inherited M1.5: 417 routing operations; max leg 43 <= 60; road-pair discovery 0; instrumented scene identical

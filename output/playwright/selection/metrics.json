@@ -1,0 +1,58 @@
+{
+  "messages": [
+    "PASS 2a load: 0 visible labels; all 22 nodes / 12 wires unselected",
+    "PASS 2b node-7 primary; only w12 + node-12 secondary; every other node/wire dim; 0 labels (34/34 class assertions)",
+    "PASS 3/b layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (34/34 class assertions)",
+    "PASS 3/c layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2d empty canvas: 0 labels; 0 primary/secondary/dim classes anywhere",
+    "PASS 3/d layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (34/34 class assertions)",
+    "PASS 3/e layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2f node-5 twice: 0 labels; 0 primary/secondary/dim classes anywhere",
+    "PASS 3/f layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (34/34 class assertions)",
+    "PASS 3/g layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS extra: primary wire toggles off; secondary node becomes primary with fresh one-hop neighbourhood",
+    "PASS 3/extra layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 4 five loads=[278.7999999523163, 235, 243.69999992847443, 251.89999997615814, 223.19999992847443]; median=243.700 ms; M1=239.200 ms; ceiling=275.080 ms",
+    "PASS 5 default.png exists (236871 bytes)",
+    "PASS 5 node-selected.png exists (236794 bytes)",
+    "PASS 5 wire-selected.png exists (235909 bytes)",
+    "PASS 5 cleared.png exists (236871 bytes)",
+    "PASS 5 default.png and cleared.png byte-identical"
+  ],
+  "performance": {
+    "loads": [
+      278.7999999523163,
+      235,
+      243.69999992847443,
+      251.89999997615814,
+      223.19999992847443
+    ],
+    "median": 243.69999992847443,
+    "m1Median": 239.19999992847443,
+    "ceiling": 275.07999991774557
+  },
+  "counterBefore": 1,
+  "counterAfter": 1,
+  "midpoint": {
+    "x": 1680,
+    "y": 670.5,
+    "middle": {
+      "x": 1680,
+      "y": 670.5
+    },
+    "lift": -12,
+    "bounds": {
+      "x": 1158.6451416015625,
+      "y": 504.462646484375,
+      "width": 15.5390625,
+      "height": 10,
+      "top": 504.462646484375,
+      "right": 1174.1842041015625,
+      "bottom": 514.462646484375,
+      "left": 1158.6451416015625
+    }
+  }
+}

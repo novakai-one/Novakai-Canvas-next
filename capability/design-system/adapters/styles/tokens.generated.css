@@ -84,5 +84,8 @@
   --nv-chrome-header-success: #f2f7fc;
   --nv-chrome-header-warning: #f2f7fc;
   --nv-opacity-context: 0.12;
+  --nv-opacity-selection-dim: 0.28;
+  --nv-opacity-selection-secondary: 0.7;
+  --nv-opacity-selection-road: 0.55;
 }
 }

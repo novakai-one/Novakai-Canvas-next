@@ -16,6 +16,13 @@ import type {
 import { createRoadPrototype } from '@novakai/canvas-canvas';
 import { createReactBindings } from '@novakai/canvas-design-system';
 
+declare global {
+  interface Window {
+    __layoutRecalcCount: number;
+  }
+}
+window.__layoutRecalcCount = 0;
+
 const measure: PrototypeLayoutMeasure = (stage, operation) => {
   const start = performance.now();
   const result = operation();
@@ -48,6 +55,7 @@ async function main(): Promise<void> {
   performance.measure('roads:renderer-import', { start: importStart });
   const layoutStart = performance.now();
   const build = builder();
+  window.__layoutRecalcCount += 1;
   const scene = build({ measure });
   performance.measure('roads:layout-total', { start: layoutStart });
   const auditStart = performance.now();

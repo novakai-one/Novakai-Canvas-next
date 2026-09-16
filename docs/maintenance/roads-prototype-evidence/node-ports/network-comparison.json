@@ -1,0 +1,7 @@
+{
+  "same90ConnectionsAndPaths": true,
+  "beforeJunctionChecks": 26871,
+  "afterEndpointMembershipChecks": 1344,
+  "endpointIndexBuilds": 42,
+  "endpointIndexLookups": 42
+}

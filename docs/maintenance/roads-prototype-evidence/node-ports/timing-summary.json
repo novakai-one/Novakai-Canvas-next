@@ -1,0 +1,74 @@
+{
+  "warmStagesMeanMs": {
+    "capacity": 0.00020000004768371585,
+    "nodes": 0.0006333333849906921,
+    "ports": 0.0001999999483426412,
+    "main-roads": 0.0004333333770434062,
+    "driveways": 0.001366666615009308,
+    "network": 0.09699999992052714
+  },
+  "warmLayoutMedianMs": 0.10099999994039535,
+  "beforeWarmLayoutMedianMs": 0.17849999994039537,
+  "reloads": {
+    "roads:navigation-to-ready": {
+      "medianMs": 95.59999999403954,
+      "minMs": 79.70000004768372,
+      "maxMs": 97.19999998807907
+    },
+    "roads:styles-import": {
+      "medianMs": 9.449999988079071,
+      "minMs": 5.300000011920929,
+      "maxMs": 15.900000035762787
+    },
+    "roads:renderer-import": {
+      "medianMs": 2.75,
+      "minMs": 1.899999976158142,
+      "maxMs": 7.800000011920929
+    },
+    "roads:capacity": {
+      "medianMs": 0.0,
+      "minMs": 0,
+      "maxMs": 0.09999996423721313
+    },
+    "roads:nodes": {
+      "medianMs": 0.0,
+      "minMs": 0,
+      "maxMs": 0
+    },
+    "roads:ports": {
+      "medianMs": 0.0,
+      "minMs": 0,
+      "maxMs": 0.10000002384185791
+    },
+    "roads:main-roads": {
+      "medianMs": 0.0,
+      "minMs": 0,
+      "maxMs": 0
+    },
+    "roads:driveways": {
+      "medianMs": 0.09999999403953552,
+      "minMs": 0,
+      "maxMs": 0.10000002384185791
+    },
+    "roads:layout-total": {
+      "medianMs": 0.800000011920929,
+      "minMs": 0.699999988079071,
+      "maxMs": 0.8999999761581421
+    },
+    "roads:network": {
+      "medianMs": 0.699999988079071,
+      "minMs": 0.5999999642372131,
+      "maxMs": 0.8999999761581421
+    },
+    "roads:coverage-audit": {
+      "medianMs": 0.5999999940395355,
+      "minMs": 0.40000003576278687,
+      "maxMs": 0.7000000476837158
+    },
+    "roads:render-to-ready": {
+      "medianMs": 33.85000002384186,
+      "minMs": 24.30000001192093,
+      "maxMs": 40.39999997615814
+    }
+  }
+}

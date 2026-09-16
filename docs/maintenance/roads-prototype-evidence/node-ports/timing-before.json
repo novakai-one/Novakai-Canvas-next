@@ -1,0 +1,1782 @@
+{
+  "initialLoad": [
+    {
+      "name": "roads:styles-import",
+      "start": 91.40000003576279,
+      "ms": 6.800000011920929
+    },
+    {
+      "name": "roads:renderer-import",
+      "start": 98.20000004768372,
+      "ms": 9
+    },
+    {
+      "name": "roads:capacity",
+      "start": 107.20000004768372,
+      "ms": 0
+    },
+    {
+      "name": "roads:layout-total",
+      "start": 107.20000004768372,
+      "ms": 4.599999964237213
+    },
+    {
+      "name": "roads:nodes",
+      "start": 107.30000001192093,
+      "ms": 0
+    },
+    {
+      "name": "roads:ports",
+      "start": 107.30000001192093,
+      "ms": 0
+    },
+    {
+      "name": "roads:main-roads",
+      "start": 107.30000001192093,
+      "ms": 0
+    },
+    {
+      "name": "roads:driveways",
+      "start": 107.30000001192093,
+      "ms": 0
+    },
+    {
+      "name": "roads:network",
+      "start": 107.30000001192093,
+      "ms": 4.5
+    },
+    {
+      "name": "roads:coverage-audit",
+      "start": 111.80000001192093,
+      "ms": 1.100000023841858
+    }
+  ],
+  "series": [
+    {
+      "roadWidth": 48,
+      "samples": [
+        {
+          "total": 0.21800000011920928,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0020000004768371583,
+            "driveways": 0,
+            "network": 0.215
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.2210000002384186,
+          "stages": {
+            "capacity": 0.0009999996423721313,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999992847442626,
+            "network": 0.21700000166893005
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.2030000001192093,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0.0019999998807907105,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999998807907105,
+            "network": 0.19599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.19,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.18699999928474426
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18800000011920928,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.004000000357627868,
+            "network": 0.18199999928474425
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18300000011920928,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0.0019999998807907105,
+            "driveways": 0.0010000002384185792,
+            "network": 0.1780000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0009999996423721313,
+            "network": 0.17600000023841858
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17599999964237212,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0020000004768371583,
+            "main-roads": 0,
+            "driveways": 0.0019999992847442626,
+            "network": 0.17100000023841858
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.19600000023841857,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.0019999992847442626,
+            "network": 0.19300000071525575
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18299999952316284,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.18199999928474425
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.19200000047683716,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0009999996423721313,
+            "network": 0.18600000083446502
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0009999996423721313,
+            "network": 0.17600000083446501
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.185,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.005,
+            "network": 0.17700000047683717
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18300000011920928,
+          "stages": {
+            "capacity": 0.0009999996423721313,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0030000001192092896,
+            "network": 0.1770000010728836
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.1780000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.175,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.17300000071525573
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17100000023841858,
+          "stages": {
+            "capacity": 0.0020000004768371583,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0020000004768371583,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1769999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0019999998807907105,
+            "network": 0.1730000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17400000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0020000004768371583,
+            "network": 0.17099999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17399999976158143,
+          "stages": {
+            "capacity": 0.0009999996423721313,
+            "nodes": 0.0020000004768371583,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16799999952316283
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1780000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999992847442626,
+            "network": 0.1719999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17899999976158143,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0019999998807907105,
+            "network": 0.17599999964237212
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1780000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0019999998807907105,
+            "network": 0.17400000095367432
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.16500000059604644
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16799999952316283,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16399999916553498
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16900000035762786
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.175,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0030000001192092896,
+            "network": 0.17100000023841858
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1730000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.17100000023841858
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17100000023841858,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.17
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16799999952316283
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        }
+      ]
+    },
+    {
+      "roadWidth": 96,
+      "samples": [
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17799999952316284,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.17599999904632568
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.0029999995231628418,
+            "network": 0.17400000095367432
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1719999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0020000004768371583,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16799999952316283
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.18699999988079072,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.18599999964237213
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17399999976158143,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999998807907105,
+            "network": 0.17
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17100000023841858,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0030000001192092896,
+            "network": 0.165
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16899999976158142,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16299999952316285
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.1680000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0019999998807907105,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.1630000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16899999976158142,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0019999998807907105,
+            "network": 0.16399999976158142
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17100000023841858,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0030000001192092896,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16700000047683716
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17099999964237214,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0019999998807907105,
+            "driveways": 0.0019999992847442626,
+            "network": 0.16600000083446503
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16800000071525573
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1669999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0030000001192092896,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16199999988079072
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1669999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16600000023841857
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1669999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.165
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16600000023841857,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16400000035762788
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0019999998807907105,
+            "network": 0.1669999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16599999964237214,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0019999998807907105,
+            "network": 0.15999999940395354
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16600000023841857,
+          "stages": {
+            "capacity": 0.0009999996423721313,
+            "nodes": 0,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.1640000009536743
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16600000023841857,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16099999964237213
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16600000023841857,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16099999964237213
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999998807907105,
+            "network": 0.1630000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16899999976158142
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1669999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0029999995231628418,
+            "network": 0.1630000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16899999976158142,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.006999999284744263,
+            "network": 0.15700000107288362
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16600000023841857,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0029999995231628418,
+            "network": 0.16200000047683716
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16799999952316283,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.003999999761581421,
+            "network": 0.16099999904632567
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        }
+      ]
+    },
+    {
+      "roadWidth": 192,
+      "samples": [
+        {
+          "total": 0.16899999976158142,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16600000023841857,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0,
+            "driveways": 0.0030000001192092896,
+            "network": 0.16100000023841857
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0019999998807907105,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0029999995231628418,
+            "network": 0.16100000083446503
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1669999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.165
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1719999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0.0009999996423721313,
+            "driveways": 0.0029999995231628418,
+            "network": 0.16600000083446503
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1719999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0029999995231628418,
+            "network": 0.1669999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.165,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0019999998807907105,
+            "network": 0.16
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0009999996423721313,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16500000059604644
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16599999964237214,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16499999940395355
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.1650000011920929
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.1680000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0.0009999996423721313,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0020000004768371583,
+            "network": 0.16399999976158142
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0.0019999998807907105,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.1669999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16900000035762786
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16799999952316283,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.1649999988079071
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.1630000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1669999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0009999996423721313,
+            "network": 0.1630000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.1669999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1680000001192093,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0019999998807907105,
+            "network": 0.16400000035762788
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.1669999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1719999998807907,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0.0020000004768371583,
+            "driveways": 0.0009999996423721313,
+            "network": 0.16199999988079072
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0.0010000002384185792,
+            "ports": 0.0019999992847442626,
+            "main-roads": 0,
+            "driveways": 0,
+            "network": 0.1630000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.1730000001192093,
+          "stages": {
+            "capacity": 0.0010000002384185792,
+            "nodes": 0,
+            "ports": 0.0010000002384185792,
+            "main-roads": 0,
+            "driveways": 0.0010000002384185792,
+            "network": 0.16899999976158142
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0020000004768371583,
+            "driveways": 0.0009999996423721313,
+            "network": 0.1669999998807907
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16899999976158142,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0.0009999996423721313,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999992847442626,
+            "network": 0.16600000083446503
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0,
+            "network": 0.16699999928474427
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.16900000035762786,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0.0010000002384185792,
+            "driveways": 0.0020000004768371583,
+            "network": 0.16599999964237214
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        },
+        {
+          "total": 0.17,
+          "stages": {
+            "capacity": 0,
+            "nodes": 0,
+            "ports": 0,
+            "main-roads": 0,
+            "driveways": 0.0019999998807907105,
+            "network": 0.1680000001192093
+          },
+          "calls": {
+            "capacity": 100,
+            "nodes": 100,
+            "ports": 100,
+            "main-roads": 100,
+            "driveways": 100,
+            "network": 100
+          }
+        }
+      ]
+    }
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36"
+}

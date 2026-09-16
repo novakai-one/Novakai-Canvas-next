@@ -1,0 +1,992 @@
+{
+  "method": "12 same-session reloads of local Vite development server. Ready = initial React commit + font readiness + two animation frames; not GPU paint duration.",
+  "loads": [
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 86.59999996423721,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 8.899999976158142,
+          "start": 49.5
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 2.399999976158142,
+          "start": 58.39999997615814
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 60.799999952316284
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 60.799999952316284
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 60.799999952316284
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 60.799999952316284
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.10000002384185791,
+          "start": 60.799999952316284
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.800000011920929,
+          "start": 60.799999952316284
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 60.89999997615814
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.699999988079071,
+          "start": 61.59999996423721
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 24.30000001192093,
+          "start": 62.299999952316284
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 49.69999998807907,
+          "load": 49.69999998807907
+        }
+      ],
+      "paints": [],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 91,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 15.900000035762787,
+          "start": 40.89999997615814
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 2,
+          "start": 56.80000001192093
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 58.80000001192093
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.8999999761581421,
+          "start": 58.80000001192093
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.800000011920929,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.699999988079071,
+          "start": 59.69999998807907
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 30.600000023841858,
+          "start": 60.39999997615814
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 41.09999996423721,
+          "load": 41.19999998807907
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 84
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 84
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 79.70000004768372,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 5.300000011920929,
+          "start": 40.30000001192093
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 7,
+          "start": 45.60000002384186
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 52.60000002384186
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 52.60000002384186
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 52.60000002384186
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 52.60000002384186
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.10000002384185791,
+          "start": 52.60000002384186
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.800000011920929,
+          "start": 52.60000002384186
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 52.700000047683716
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.5999999642372131,
+          "start": 53.40000003576279
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 25.700000047683716,
+          "start": 54
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 40.5,
+          "load": 40.5
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 80
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 80
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 95.19999998807907,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 10.5,
+          "start": 40.69999998807907
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 2.300000011920929,
+          "start": 51.19999998807907
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 53.5
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 53.5
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 53.5
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 53.5
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0,
+          "start": 53.5
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.8999999761581421,
+          "start": 53.5
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.8999999761581421,
+          "start": 53.5
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.40000003576278687,
+          "start": 54.39999997615814
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 40.39999997615814,
+          "start": 54.80000001192093
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 40.80000001192093,
+          "load": 40.89999997615814
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 68
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 68
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 96,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 10.599999964237213,
+          "start": 44.69999998807907
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 2,
+          "start": 55.299999952316284
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 57.299999952316284
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 57.299999952316284
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 57.299999952316284
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 57.299999952316284
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.10000002384185791,
+          "start": 57.299999952316284
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.800000011920929,
+          "start": 57.299999952316284
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 57.39999997615814
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.5,
+          "start": 58.09999996423721
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 37.40000003576279,
+          "start": 58.59999996423721
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 44.89999997615814,
+          "load": 44.89999997615814
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 72
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 72
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 97.10000002384186,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 10,
+          "start": 44.19999998807907
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 1.899999976158142,
+          "start": 54.30000001192093
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 56.19999998807907
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 56.19999998807907
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 56.19999998807907
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 56.19999998807907
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.10000002384185791,
+          "start": 56.19999998807907
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.800000011920929,
+          "start": 56.19999998807907
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 56.30000001192093
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.5,
+          "start": 57
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 39.60000002384186,
+          "start": 57.5
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 44.30000001192093,
+          "load": 44.30000001192093
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 72
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 72
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 79.90000003576279,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 6.300000011920929,
+          "start": 41.19999998807907
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 6.199999988079071,
+          "start": 47.60000002384186
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 53.80000001192093
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 53.80000001192093
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0.10000002384185791,
+          "start": 53.80000001192093
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.699999988079071,
+          "start": 53.80000001192093
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 53.90000003576279
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0,
+          "start": 53.90000003576279
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.5999999642372131,
+          "start": 53.90000003576279
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.6000000238418579,
+          "start": 54.5
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 24.80000001192093,
+          "start": 55.10000002384186
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 41.40000003576279,
+          "load": 41.40000003576279
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 84
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 84
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 96.80000001192093,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 7.900000035762787,
+          "start": 41.69999998807907
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 5.5,
+          "start": 49.60000002384186
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 55.10000002384186
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 55.10000002384186
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.8999999761581421,
+          "start": 55.10000002384186
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.10000002384185791,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.6000000238418579,
+          "start": 55.30000001192093
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.6000000238418579,
+          "start": 56
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 40.19999998807907,
+          "start": 56.60000002384186
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 42,
+          "load": 42
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 72
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 72
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 96.80000001192093,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 6.299999952316284,
+          "start": 41.10000002384186
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 7.800000011920929,
+          "start": 47.39999997615814
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.10000002384185791,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.699999988079071,
+          "start": 55.19999998807907
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.5999999642372131,
+          "start": 55.30000001192093
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.7000000476837158,
+          "start": 55.89999997615814
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 40.19999998807907,
+          "start": 56.60000002384186
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 41.19999998807907,
+          "load": 41.30000001192093
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 68
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 68
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 80.29999995231628,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 10.899999976158142,
+          "start": 40.89999997615814
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 2.200000047683716,
+          "start": 51.799999952316284
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 54
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 54
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 54
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 54
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0.09999996423721313,
+          "start": 54
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.7999999523162842,
+          "start": 54
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 54.09999996423721
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.5,
+          "start": 54.799999952316284
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 25,
+          "start": 55.299999952316284
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 41,
+          "load": 41
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 84
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 84
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 97.19999998807907,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 7.199999988079071,
+          "start": 45.69999998807907
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 5.900000035762787,
+          "start": 52.89999997615814
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0.09999996423721313,
+          "start": 58.80000001192093
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.7999999523162842,
+          "start": 58.80000001192093
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 58.89999997615814
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.5,
+          "start": 59.59999996423721
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 37.10000002384186,
+          "start": 60.09999996423721
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 45.89999997615814,
+          "load": 46
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 72
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 72
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    },
+    {
+      "measures": [
+        {
+          "name": "roads:navigation-to-ready",
+          "ms": 96.5,
+          "start": 0
+        },
+        {
+          "name": "roads:styles-import",
+          "ms": 13,
+          "start": 51.39999997615814
+        },
+        {
+          "name": "roads:renderer-import",
+          "ms": 3.100000023841858,
+          "start": 64.39999997615814
+        },
+        {
+          "name": "roads:capacity",
+          "ms": 0,
+          "start": 67.5
+        },
+        {
+          "name": "roads:nodes",
+          "ms": 0,
+          "start": 67.5
+        },
+        {
+          "name": "roads:ports",
+          "ms": 0,
+          "start": 67.5
+        },
+        {
+          "name": "roads:main-roads",
+          "ms": 0,
+          "start": 67.5
+        },
+        {
+          "name": "roads:driveways",
+          "ms": 0,
+          "start": 67.5
+        },
+        {
+          "name": "roads:network",
+          "ms": 0.699999988079071,
+          "start": 67.5
+        },
+        {
+          "name": "roads:layout-total",
+          "ms": 0.699999988079071,
+          "start": 67.5
+        },
+        {
+          "name": "roads:coverage-audit",
+          "ms": 0.6000000238418579,
+          "start": 68.19999998807907
+        },
+        {
+          "name": "roads:render-to-ready",
+          "ms": 27.69999998807907,
+          "start": 68.80000001192093
+        }
+      ],
+      "navigation": [
+        {
+          "domContentLoaded": 51.59999996423721,
+          "load": 51.69999998807907
+        }
+      ],
+      "paints": [
+        {
+          "name": "first-paint",
+          "ms": 92
+        },
+        {
+          "name": "first-contentful-paint",
+          "ms": 92
+        }
+      ],
+      "ports": 8,
+      "visibleNodes": 37,
+      "fonts": "loaded"
+    }
+  ]
+}

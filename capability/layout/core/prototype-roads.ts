@@ -3,37 +3,49 @@ import type {
   PrototypeBlock,
   PrototypeRoad,
   RoadPrototypeScene,
+  PrototypeLayoutOptions,
+  PrototypeLayoutMeasure,
 } from '../contract/records/road-prototype.js';
 import { roadNetwork } from './prototype-road-network.js';
+import {
+  placePrototypeNode,
+  readPrototypeNodePorts,
+  prototypeNodeSize,
+} from './prototype-road-nodes.js';
+import { attachPrototypeDriveways } from './prototype-road-driveways.js';
 
-const roadWidth = 48;
-const drivewayWidth = 24;
-const blockWidth = 400;
-const blockHeight = 384;
-const blockGap = 80;
-const margin = 48;
-const inset = 24;
-const streetTop = 80;
-const streetBottom = 312;
-const nodeWidth = 192;
-const nodeHeight = 96;
-const nodeTop = 180;
-
-/** Fixed two-column semantic fixture; coordinates are calculated here, never authored in the host. */
-function section(label: string, index: number): PrototypeBlock {
+const drivewayWidth = 24,
+  drivewayLength = 48,
+  blockGap = 80,
+  margin = 48,
+  inset = 24,
+  streetTop = 80;
+/** Capacity is chosen once. Wider roads reserve more space before any node is placed. */
+function capacity(roadWidth: number) {
+  if (!Number.isFinite(roadWidth) || roadWidth < 48)
+    throw new Error('Road width must be finite and at least 48');
+  return {
+    roadWidth,
+    blockWidth: inset * 2 + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.width,
+    blockHeight: streetTop + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.height + inset,
+    nodeLeft: inset + roadWidth + drivewayLength,
+    nodeTop: streetTop + roadWidth + drivewayLength,
+    streetBottom: streetTop + roadWidth + drivewayLength * 2 + prototypeNodeSize.height,
+  };
+}
+type Capacity = ReturnType<typeof capacity>;
+function section(label: string, index: number, plan: Capacity): PrototypeBlock {
   return {
     id: `section-${index + 1}`,
     label,
     bounds: {
-      x: margin + index * (blockWidth + blockGap),
+      x: margin + index * (plan.blockWidth + blockGap),
       y: margin,
-      width: blockWidth,
-      height: blockHeight,
+      width: plan.blockWidth,
+      height: plan.blockHeight,
     },
   };
 }
-
-/** Every local rectangle is translated through the same section origin. */
 function placed(
   section: PrototypeBlock,
   x: number,
@@ -43,77 +55,35 @@ function placed(
 ): PrototypeBounds {
   return { x: section.bounds.x + x, y: section.bounds.y + y, width, height };
 }
-
-/** Pure geometry is repeatable; the browser can reload safely and owns remount recovery. */
-function streets(section: PrototypeBlock): readonly PrototypeRoad[] {
-  const span = blockWidth - inset * 2;
+function streets(section: PrototypeBlock, plan: Capacity): readonly PrototypeRoad[] {
   return [
-    ...[streetTop, streetBottom].map((y, index): PrototypeRoad => ({
+    ...[streetTop, plan.streetBottom].map((y, index): PrototypeRoad => ({
       id: `${section.id}-street-horizontal-${index}`,
       sectionId: section.id,
       kind: 'street',
       access: null,
       axis: 'horizontal',
       directions: ['left', 'right'],
-      bounds: placed(section, inset, y, span, roadWidth),
+      bounds: placed(section, inset, y, plan.blockWidth - inset * 2, plan.roadWidth),
     })),
-    ...[inset, blockWidth - inset - roadWidth].map((x, index): PrototypeRoad => ({
+    ...[inset, plan.blockWidth - inset - plan.roadWidth].map((x, index): PrototypeRoad => ({
       id: `${section.id}-street-vertical-${index}`,
       sectionId: section.id,
       kind: 'street',
       access: null,
       axis: 'vertical',
       directions: ['down', 'up'],
-      bounds: placed(section, x, streetTop, roadWidth, streetBottom + roadWidth - streetTop),
+      bounds: placed(
+        section,
+        x,
+        streetTop,
+        plan.roadWidth,
+        plan.streetBottom + plan.roadWidth - streetTop,
+      ),
     })),
   ];
 }
-
-/** Driveways touch the node's top/bottom and their street, with no unallocated gap. */
-function driveways(section: PrototypeBlock): readonly PrototypeRoad[] {
-  const topEnd = streetTop + roadWidth;
-  const bottomStart = nodeTop + nodeHeight;
-  return [
-    {
-      name: 'entry-top',
-      role: 'entry' as const,
-      side: 'top' as const,
-      y: topEnd,
-      height: nodeTop - topEnd,
-    },
-    {
-      name: 'exit-bottom',
-      role: 'exit' as const,
-      side: 'bottom' as const,
-      y: bottomStart,
-      height: streetBottom - bottomStart,
-    },
-  ].map((item): PrototypeRoad => ({
-    id: `${section.id}-${item.name}`,
-    sectionId: section.id,
-    kind: 'driveway',
-    access: { nodeId: section.id.replace('section-', 'node-'), role: item.role, side: item.side },
-    axis: 'vertical',
-    directions: ['down'],
-    bounds: placed(section, (blockWidth - drivewayWidth) / 2, item.y, drivewayWidth, item.height),
-  }));
-}
-
-/** One node is centred in the road block; its size is independent of road paint. */
-function node(section: PrototypeBlock, index: number): RoadPrototypeScene['nodes'][number] {
-  return {
-    id: `node-${index + 1}`,
-    sectionId: section.id,
-    label: `Node ${index + 1}`,
-    bounds: placed(section, (blockWidth - nodeWidth) / 2, nodeTop, nodeWidth, nodeHeight),
-  };
-}
-
-/** Milestone one only: two sections, one node each, independent positioned roads, no wires.
- * No clock, randomness, DOM measurement, solver or stored geometry. Reload regenerates the same scene.
- */
-export function createRoadPrototypeScene(): RoadPrototypeScene {
-  const sections = ['Section A', 'Section B'].map(section);
+function mainRoads(sections: readonly PrototypeBlock[], plan: Capacity): readonly PrototypeRoad[] {
   const connector: PrototypeRoad = {
     id: 'road-between-sections',
     sectionId: null,
@@ -122,19 +92,36 @@ export function createRoadPrototypeScene(): RoadPrototypeScene {
     axis: 'horizontal',
     directions: ['left', 'right'],
     bounds: {
-      x: margin + blockWidth - inset,
+      x: margin + plan.blockWidth - inset,
       y: margin + streetTop,
       width: blockGap + inset * 2,
-      height: roadWidth,
+      height: plan.roadWidth,
     },
   };
-  const roads = [connector, ...sections.flatMap((item) => [...streets(item), ...driveways(item)])];
-  return {
-    sections,
-    nodes: sections.map(node),
-    roads,
-    roadWidth,
-    drivewayWidth,
-    ...roadNetwork(roads),
-  };
+  return [connector, ...sections.flatMap((item) => streets(item, plan))];
+}
+const unmeasured: PrototypeLayoutMeasure = (_stage, operation) => operation();
+/** One forward pass: capacity → nodes → owned ports → main roads → driveways → lane network.
+ * There is no geometry feedback, convergence loop or DOM measurement. Caller owns any timing.
+ */
+export function createRoadPrototypeScene(options: PrototypeLayoutOptions = {}): RoadPrototypeScene {
+  const measure = options.measure ?? unmeasured;
+  const plan = measure('capacity', () => capacity(options.roadWidth ?? 48));
+  const sections = ['Section A', 'Section B'].map((label, index) => section(label, index, plan));
+  const nodes = measure('nodes', () =>
+    sections.map((item, index) =>
+      placePrototypeNode(item.id, index, {
+        x: item.bounds.x + plan.nodeLeft,
+        y: item.bounds.y + plan.nodeTop,
+      }),
+    ),
+  );
+  const ports = measure('ports', () => nodes.flatMap(readPrototypeNodePorts));
+  const main = measure('main-roads', () => mainRoads(sections, plan));
+  const driveways = measure('driveways', () =>
+    attachPrototypeDriveways(ports, main, drivewayWidth),
+  );
+  const roads = [...main, ...driveways];
+  const network = measure('network', () => roadNetwork(roads));
+  return { sections, nodes, ports, roads, roadWidth: plan.roadWidth, drivewayWidth, ...network };
 }

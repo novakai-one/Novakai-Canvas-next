@@ -144,26 +144,44 @@ function roadParts(road: PrototypeRoad, junctions: readonly PrototypeJunction[])
   };
 }
 
-function connection(
-  from: PrototypeLane,
-  to: PrototypeLane,
-  junctions: readonly PrototypeJunction[],
+/** Join only lanes touching this junction, instead of searching every junction for every lane pair. */
+function junctionConnections(
+  junction: PrototypeJunction,
+  lanes: readonly PrototypeLane[],
 ): readonly PrototypeLaneConnection[] {
-  if (from.id === to.id) return [];
-  const shared = junctions.find(
-    (item) => contains(item.bounds, from.exit) && contains(item.bounds, to.entry),
-  );
-  if (shared !== undefined)
-    return [
-      {
+  const incoming = lanes.filter((lane) => contains(junction.bounds, lane.exit));
+  const outgoing = lanes.filter((lane) => contains(junction.bounds, lane.entry));
+  return incoming.flatMap((from) =>
+    outgoing
+      .filter((to) => to.id !== from.id)
+      .map((to) => ({
         id: `${from.id}>${to.id}`,
         fromLaneId: from.id,
         toLaneId: to.id,
-        junctionId: shared.id,
-        points: connectionPoints(from, to, shared),
-      },
-    ];
-  return straightConnection(from, to);
+        junctionId: junction.id,
+        points: connectionPoints(from, to, junction),
+      })),
+  );
+}
+function endpointKey(lane: PrototypeLane, endpoint: 'entry' | 'exit'): string {
+  return `${lane[endpoint].x},${lane[endpoint].y}:${lane.direction}`;
+}
+/** Index coincident straight endpoints; junction connections retain ownership when both apply. */
+function connections(
+  lanes: readonly PrototypeLane[],
+  junctions: readonly PrototypeJunction[],
+): readonly PrototypeLaneConnection[] {
+  const turns = junctions.flatMap((junction) => junctionConnections(junction, lanes));
+  const known = new Set(turns.map((link) => link.id));
+  const entries = new Map<string, PrototypeLane[]>();
+  lanes.forEach((lane) => {
+    const key = endpointKey(lane, 'entry');
+    entries.set(key, [...(entries.get(key) ?? []), lane]);
+  });
+  const straight = lanes.flatMap((from) =>
+    (entries.get(endpointKey(from, 'exit')) ?? []).flatMap((to) => straightConnection(from, to)),
+  );
+  return [...turns, ...straight.filter((link) => !known.has(link.id))];
 }
 
 function straightConnection(
@@ -226,14 +244,12 @@ export function roadNetwork(roads: readonly PrototypeRoad[]) {
   const parts = roads.map((road) => roadParts(road, areas));
   const lanes = parts.flatMap((part) => part.lanes);
   const junctions = areas.map((area, index) => describedJunction(area, index, lanes, roads));
-  const connections = lanes.flatMap((from) =>
-    lanes.flatMap((to) => connection(from, to, junctions)),
-  );
+  const links = connections(lanes, junctions);
   return {
     junctions,
     lanes,
     dividers: parts.flatMap((part) => part.dividers),
-    connections,
-    crossingExamples: crossingExamples(junctions, roads, lanes, connections),
+    connections: links,
+    crossingExamples: crossingExamples(junctions, roads, lanes, links),
   };
 }

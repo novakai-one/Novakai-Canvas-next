@@ -200,19 +200,45 @@
     font-size: calc(var(--nv-type-base) * 0.85);
     color: var(--nv-text-secondary);
   }
-  .node .entry,
-  .node .exit {
+  .port {
     position: absolute;
+    width: calc(var(--nv-space-unit) * 3);
+    height: calc(var(--nv-space-unit) * 3);
+    padding: 0;
+    margin-left: calc(var(--nv-stroke-base) * -2);
+    margin-top: calc(var(--nv-stroke-base) * -2);
+    transform: translate(-50%, -50%);
+    border: calc(var(--nv-stroke-base) * 2) solid var(--nv-action-accent);
+    border-radius: 50%;
     background: var(--nv-surface-raised);
-    padding: 0 var(--nv-space-unit);
     color: var(--nv-action-accent);
-    font: calc(var(--nv-type-base) * 0.8) var(--nv-font-mono);
+    pointer-events: auto;
+    cursor: pointer;
   }
-  .entry {
-    top: calc(var(--nv-space-unit) * -2);
+  .port span {
+    position: absolute;
+    font: calc(var(--nv-type-base) * 0.7) var(--nv-font-mono);
+    background: var(--nv-surface-raised);
+    pointer-events: none;
   }
-  .exit {
-    bottom: calc(var(--nv-space-unit) * -2);
+  .port[data-side='top'] span {
+    left: calc(var(--nv-space-unit) * 3);
+    top: 0;
+  }
+  .port[data-side='bottom'] span {
+    left: calc(var(--nv-space-unit) * 3);
+    bottom: 0;
+  }
+  .port[data-side='left'] span {
+    left: calc(var(--nv-space-unit) * 3);
+    top: 0;
+  }
+  .port[data-side='right'] span {
+    right: calc(var(--nv-space-unit) * 3);
+    top: 0;
+  }
+  .port[aria-pressed='true'] {
+    background: var(--nv-action-accent);
   }
   .canvas[data-roads-visible='false'] .road,
   .canvas[data-roads-visible='false'] .junction,

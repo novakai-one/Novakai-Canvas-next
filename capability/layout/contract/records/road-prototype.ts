@@ -10,6 +10,34 @@ export interface PrototypeBlock {
   readonly label: string;
   readonly bounds: PrototypeBounds;
 }
+export type PrototypePortSide = 'top' | 'left' | 'bottom' | 'right';
+/** Local port positions belong exclusively to the node definition. */
+export interface PrototypeNodePort {
+  readonly id: string;
+  readonly role: 'entry' | 'exit';
+  readonly side: PrototypePortSide;
+  readonly offset: PrototypePoint;
+}
+export interface PrototypeNode extends PrototypeBlock {
+  readonly sectionId: string;
+  readonly ports: readonly PrototypeNodePort[];
+}
+export interface PrototypePortLocation {
+  readonly nodeId: string;
+  readonly sectionId: string;
+  readonly portId: string;
+  readonly role: 'entry' | 'exit';
+  readonly side: PrototypePortSide;
+  readonly point: PrototypePoint;
+}
+export type PrototypeLayoutStage =
+  'capacity' | 'nodes' | 'ports' | 'main-roads' | 'driveways' | 'network';
+/** Optional caller-owned measurement; geometry never reads a clock. */
+export type PrototypeLayoutMeasure = <T>(stage: PrototypeLayoutStage, operation: () => T) => T;
+export interface PrototypeLayoutOptions {
+  readonly roadWidth?: number;
+  readonly measure?: PrototypeLayoutMeasure;
+}
 export interface PrototypeRoad {
   readonly id: string;
   readonly sectionId: string | null;
@@ -20,12 +48,14 @@ export interface PrototypeRoad {
   readonly access: {
     readonly nodeId: string;
     readonly role: 'entry' | 'exit';
-    readonly side: 'top' | 'bottom';
+    readonly side: PrototypePortSide;
+    readonly portId: string;
   } | null;
 }
 export interface RoadPrototypeScene {
   readonly sections: readonly PrototypeBlock[];
-  readonly nodes: readonly (PrototypeBlock & { readonly sectionId: string })[];
+  readonly nodes: readonly PrototypeNode[];
+  readonly ports: readonly PrototypePortLocation[];
   readonly roads: readonly PrototypeRoad[];
   readonly roadWidth: number;
   readonly drivewayWidth: number;

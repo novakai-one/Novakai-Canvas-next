@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ReactElement, CSSProperties } from 'react';
 import { ReactFlow, Background, Controls, ViewportPortal } from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
@@ -15,6 +15,8 @@ import type {
   PrototypeLaneConnection,
   PrototypePoint,
   PrototypeRoadCoverage,
+  PrototypeNodePort,
+  PrototypePortLocation,
 } from '@novakai/canvas-layout';
 import '@xyflow/react/dist/style.css';
 import styles from './RoadPrototype.module.css';
@@ -30,7 +32,16 @@ type RoadNode = Node<
   },
   'road'
 >;
-type BlockNode = Node<{ block: PrototypeBlock; kind: 'section' | 'node' }, 'block'>;
+type BlockNode = Node<
+  {
+    block: PrototypeBlock;
+    kind: 'section' | 'node';
+    ports: readonly PrototypeNodePort[];
+    selected: string;
+    select: (id: string) => void;
+  },
+  'block'
+>;
 type JunctionNode = Node<
   { junction: PrototypeJunction; selected: string; select: (id: string) => void },
   'junction'
@@ -102,10 +113,23 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
     );
   return (
     <div className={styles.node} data-node-id={data.block.id}>
-      <span className={styles.entry}>IN ↓</span>
       <strong>{data.block.label}</strong>
-      <span>Top entry · bottom exit</span>
-      <span className={styles.exit}>OUT ↓</span>
+      <span>Owns 4 ports</span>
+      {data.ports.map((port) => (
+        <button
+          key={port.id}
+          type="button"
+          className={`${styles.port} nodrag nopan`}
+          style={{ left: port.offset.x, top: port.offset.y }}
+          data-port-id={port.id}
+          data-side={port.side}
+          aria-label={`Inspect ${data.block.label} ${port.side} ${port.role} port`}
+          aria-pressed={data.selected === port.id}
+          onClick={() => data.select(port.id)}
+        >
+          <span>{accessLabels[port.role]}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -139,6 +163,8 @@ function junctionNode(
     id: junction.id,
     type: 'junction',
     position: junction.bounds,
+    width: junction.bounds.width,
+    height: junction.bounds.height,
     data: { junction, selected, select },
     style: { width: junction.bounds.width, height: junction.bounds.height },
     zIndex: 2,
@@ -148,12 +174,20 @@ function junctionNode(
 }
 
 /** The renderer consumes finished geometry; it cannot reposition semantic objects. */
-function blockNode(block: PrototypeBlock, kind: 'section' | 'node', zIndex: number): BlockNode {
+function blockNode(
+  block: PrototypeBlock & { readonly ports?: readonly PrototypeNodePort[] },
+  kind: 'section' | 'node',
+  zIndex: number,
+  selected: string,
+  select: (id: string) => void,
+): BlockNode {
   return {
     id: block.id,
     type: 'block',
     position: block.bounds,
-    data: { block, kind },
+    width: block.bounds.width,
+    height: block.bounds.height,
+    data: { block, kind, ports: block.ports ?? [], selected, select },
     style: { width: block.bounds.width, height: block.bounds.height },
     zIndex,
     draggable: false,
@@ -172,6 +206,8 @@ function roadNode(
     id: road.id,
     type: 'road',
     position: road.bounds,
+    width: road.bounds.width,
+    height: road.bounds.height,
     data: {
       road,
       lanes: scene.lanes.filter((lane) => lane.roadId === road.id),
@@ -262,8 +298,11 @@ function laneName(road: PrototypeRoad | undefined): string {
 }
 function laneDetail(road: PrototypeRoad | undefined): string {
   if (road?.access == null) return 'One-way travel within this lane. Click any lane or junction.';
-  const roles = { entry: 'Road → top of node', exit: 'Bottom of node → road' };
-  return roles[road.access.role];
+  const roles = {
+    entry: `Road → ${road.access.side} input`,
+    exit: `${road.access.side} output → road`,
+  };
+  return `${roles[road.access.role]} · attaches to ${road.access.portId}`;
 }
 function boundsLabel(bounds: PrototypeBounds): string {
   return `x ${bounds.x} · y ${bounds.y} · ${bounds.width} × ${bounds.height}`;
@@ -491,10 +530,12 @@ export function RoadPrototype({
   scene,
   inspectTravel,
   coverage,
+  onReady,
 }: {
   readonly scene: RoadPrototypeScene;
   readonly inspectTravel: InspectTravel;
   readonly coverage: PrototypeRoadCoverage;
+  readonly onReady: () => void;
 }): ReactElement {
   const [visible, setVisible] = useState(true);
   const [selected, select] = useState(scene.crossingExamples[0]?.junctionId ?? '');
@@ -507,10 +548,10 @@ export function RoadPrototype({
     selectMovement('');
   }
   const nodes = [
-    ...scene.sections.map((item) => blockNode(item, 'section', 0)),
+    ...scene.sections.map((item) => blockNode(item, 'section', 0, selected, selectRegion)),
     ...scene.roads.map((road) => roadNode(road, scene, selected, selectRegion)),
     ...scene.junctions.map((item) => junctionNode(item, selected, selectRegion)),
-    ...scene.nodes.map((item) => blockNode(item, 'node', 2)),
+    ...scene.nodes.map((item) => blockNode(item, 'node', 2, selected, selectRegion)),
   ];
   return (
     <main className={styles.page}>
@@ -541,6 +582,7 @@ export function RoadPrototype({
           nodesConnectable={false}
           elementsSelectable={false}
         >
+          <ReadySignal onReady={onReady} />
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
           {junction !== undefined && link !== undefined && (
@@ -549,6 +591,7 @@ export function RoadPrototype({
         </ReactFlow>
       </div>
       <Inspection
+        port={scene.ports.find((port) => port.portId === selected)}
         scene={scene}
         lane={lane}
         junction={junction}
@@ -567,6 +610,7 @@ export function RoadPrototype({
 }
 
 function Inspection({
+  port,
   scene,
   lane,
   junction,
@@ -575,12 +619,14 @@ function Inspection({
   inspect,
 }: {
   readonly scene: RoadPrototypeScene;
+  readonly port: PrototypePortLocation | undefined;
   readonly lane: PrototypeLane | undefined;
   readonly junction: PrototypeJunction | undefined;
   readonly link: PrototypeLaneConnection | undefined;
   readonly select: (id: string) => void;
   readonly inspect: InspectTravel;
 }): ReactElement | null {
+  if (port !== undefined) return <PortProof port={port} />;
   if (lane !== undefined)
     return (
       <LaneProof
@@ -616,4 +662,33 @@ function JunctionInspection({
       inspect={inspect}
     />
   );
+}
+
+/** Read-only node inspection; no road can change the port's offset. */
+function PortProof({ port }: { readonly port: PrototypePortLocation }): ReactElement {
+  return (
+    <aside
+      className={styles.proof}
+      aria-label="Node port inspector"
+      data-inspected-id={port.portId}
+    >
+      <div>
+        <strong>
+          {port.nodeId} · {port.side} {port.role}
+        </strong>
+        <span>{port.portId}</span>
+      </div>
+      <span>
+        Node-owned port · x {port.point.x} · y {port.point.y}
+      </span>
+      <span>Driveway attaches here; the node owns this position.</span>
+    </aside>
+  );
+}
+/** After React commits, the host waits for fonts and two animation frames. Geometry is already explicit. */
+function ReadySignal({ onReady }: { readonly onReady: () => void }): null {
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+  return null;
 }

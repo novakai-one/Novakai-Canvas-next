@@ -41,3 +41,5 @@ export function readScene(input: unknown, owners: SceneReaderOwners): Result<Sce
 export { createRoadPrototypeScene } from '../core/prototype-roads.js';
 export { inspectRoadTravel } from '../core/prototype-road-travel.js';
 export { auditRoadCoverage } from '../core/prototype-road-coverage.js';
+
+export { readPrototypeNodePorts } from '../core/prototype-road-nodes.js';

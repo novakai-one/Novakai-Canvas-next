@@ -1,6 +1,20 @@
+export type {
+  PrototypeNode,
+  PrototypeNodePort,
+  PrototypePortLocation,
+  PrototypePortSide,
+  PrototypeLayoutMeasure,
+  PrototypeLayoutStage,
+  PrototypeLayoutOptions,
+} from './records/road-prototype.js';
 /** Layout public boundary: consumers never import its geometry policies or concrete native adapters. */
 export { createLayout } from './api.js';
-export { createRoadPrototypeScene, inspectRoadTravel, auditRoadCoverage } from './api.js';
+export {
+  createRoadPrototypeScene,
+  inspectRoadTravel,
+  auditRoadCoverage,
+  readPrototypeNodePorts,
+} from './api.js';
 export type { PrototypeCrossingExample, PrototypeRoadCoverage } from './records/road-prototype.js';
 export type {
   PrototypeLane,

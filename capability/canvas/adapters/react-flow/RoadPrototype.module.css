@@ -107,6 +107,78 @@
   .road[data-kind='driveway'] {
     background: var(--nv-rolefill-supporting);
   }
+  .road[data-access='entry'] {
+    background: var(--nv-rolefill-success);
+  }
+  .road[data-access='exit'] {
+    background: var(--nv-rolefill-decision);
+  }
+  .road[data-kind='driveway'] .lane {
+    font-size: calc(var(--nv-type-base) * 0.65);
+  }
+  .road[data-kind='driveway'] .lane span {
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
+  }
+  .junction {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+    padding: 0;
+    pointer-events: auto;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--nv-action-accent) 7%, var(--nv-rolefill-supporting));
+    color: var(--nv-text-secondary);
+  }
+  .junction span {
+    position: absolute;
+    right: var(--nv-space-unit);
+    bottom: var(--nv-space-unit);
+    font: calc(var(--nv-type-base) * 0.62) var(--nv-font-mono);
+  }
+  .junction:hover,
+  .junction[aria-pressed='true'] {
+    background: color-mix(in srgb, var(--nv-action-accent) 22%, var(--nv-rolefill-supporting));
+  }
+  .junction:focus-visible {
+    outline: calc(var(--nv-stroke-base) * 2) solid var(--nv-action-accent);
+    outline-offset: calc(var(--nv-space-unit) * -1);
+  }
+  .routePreview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .routePreview * {
+    pointer-events: none;
+  }
+  .primaryPath,
+  .throughPath {
+    fill: none;
+    stroke-width: 3;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .primaryPath {
+    stroke: var(--nv-action-accent);
+  }
+  .throughPath {
+    stroke: var(--nv-status-warning);
+    stroke-dasharray: 6 3;
+  }
+  .crossingMark {
+    fill: var(--nv-surface-raised);
+    stroke: var(--nv-status-warning);
+    stroke-width: 2;
+  }
   .node {
     width: 100%;
     height: 100%;
@@ -142,7 +214,9 @@
   .exit {
     bottom: calc(var(--nv-space-unit) * -2);
   }
-  .canvas[data-roads-visible='false'] .road {
+  .canvas[data-roads-visible='false'] .road,
+  .canvas[data-roads-visible='false'] .junction,
+  .canvas[data-roads-visible='false'] .routePreview {
     visibility: hidden;
   }
   .proof {
@@ -163,6 +237,36 @@
   }
   .proof span {
     color: var(--nv-text-secondary);
+  }
+  .proof small {
+    font-family: var(--nv-font-mono);
+    color: var(--nv-text-secondary);
+  }
+  .probes label {
+    display: flex;
+    gap: calc(var(--nv-space-unit) * 2);
+    align-items: center;
+  }
+  .probes select {
+    color: var(--nv-text-primary);
+    background: var(--nv-surface-raised);
+    padding: calc(var(--nv-space-unit) * 2);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border-radius: var(--nv-shape-radius);
+  }
+  .legend {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: var(--nv-type-base);
+    color: var(--nv-text-secondary);
+  }
+  .legend b {
+    color: var(--nv-action-accent);
+    font-weight: 500;
+  }
+  .legend em {
+    color: var(--nv-status-warning);
+    font-style: normal;
   }
   .probes {
     display: flex;

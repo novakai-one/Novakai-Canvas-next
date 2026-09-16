@@ -1,0 +1,9 @@
+{
+  "method": "Hit-test the center of every 1\u00d71 layout-pixel square in the road union at fit zoom.",
+  "samples": 113280,
+  "failures": 0,
+  "adjacentBoundaryHits": 2451,
+  "maxBoundaryDistance": 0.5,
+  "regions": 42,
+  "misses": []
+}

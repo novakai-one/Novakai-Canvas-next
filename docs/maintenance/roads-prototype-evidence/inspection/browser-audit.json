@@ -1,0 +1,217 @@
+{
+  "regions": 42,
+  "realClicks": 378,
+  "failures": [],
+  "results": [
+    {
+      "id": "road-between-sections:part-0:left",
+      "label": "Inspect left lane on road-between-sections",
+      "clicksPassed": 9
+    },
+    {
+      "id": "road-between-sections:part-0:right",
+      "label": "Inspect right lane on road-between-sections",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-0:part-0:left",
+      "label": "Inspect left lane on section-1-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-0:part-0:right",
+      "label": "Inspect right lane on section-1-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-0:part-1:left",
+      "label": "Inspect left lane on section-1-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-0:part-1:right",
+      "label": "Inspect right lane on section-1-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-1:part-0:left",
+      "label": "Inspect left lane on section-1-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-1:part-0:right",
+      "label": "Inspect right lane on section-1-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-1:part-1:left",
+      "label": "Inspect left lane on section-1-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-horizontal-1:part-1:right",
+      "label": "Inspect right lane on section-1-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-vertical-0:part-0:down",
+      "label": "Inspect down lane on section-1-street-vertical-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-vertical-0:part-0:up",
+      "label": "Inspect up lane on section-1-street-vertical-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-vertical-1:part-0:down",
+      "label": "Inspect down lane on section-1-street-vertical-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-street-vertical-1:part-0:up",
+      "label": "Inspect up lane on section-1-street-vertical-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-entry-top:part-0:down",
+      "label": "Inspect down lane on section-1-entry-top",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-1-exit-bottom:part-0:down",
+      "label": "Inspect down lane on section-1-exit-bottom",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-0:part-0:left",
+      "label": "Inspect left lane on section-2-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-0:part-0:right",
+      "label": "Inspect right lane on section-2-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-0:part-1:left",
+      "label": "Inspect left lane on section-2-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-0:part-1:right",
+      "label": "Inspect right lane on section-2-street-horizontal-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-1:part-0:left",
+      "label": "Inspect left lane on section-2-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-1:part-0:right",
+      "label": "Inspect right lane on section-2-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-1:part-1:left",
+      "label": "Inspect left lane on section-2-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-horizontal-1:part-1:right",
+      "label": "Inspect right lane on section-2-street-horizontal-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-vertical-0:part-0:down",
+      "label": "Inspect down lane on section-2-street-vertical-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-vertical-0:part-0:up",
+      "label": "Inspect up lane on section-2-street-vertical-0",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-vertical-1:part-0:down",
+      "label": "Inspect down lane on section-2-street-vertical-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-street-vertical-1:part-0:up",
+      "label": "Inspect up lane on section-2-street-vertical-1",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-entry-top:part-0:down",
+      "label": "Inspect down lane on section-2-entry-top",
+      "clicksPassed": 9
+    },
+    {
+      "id": "section-2-exit-bottom:part-0:down",
+      "label": "Inspect down lane on section-2-exit-bottom",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-1-street-horizontal-0:section-1-street-vertical-0",
+      "label": "Inspect J1 bend",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-1-street-horizontal-0:section-1-street-vertical-1",
+      "label": "Inspect J2 intersection",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-1-street-horizontal-0:section-1-entry-top",
+      "label": "Inspect J3 entry",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-1-street-horizontal-1:section-1-street-vertical-0",
+      "label": "Inspect J4 bend",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-1-street-horizontal-1:section-1-street-vertical-1",
+      "label": "Inspect J5 bend",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-1-street-horizontal-1:section-1-exit-bottom",
+      "label": "Inspect J6 exit",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-2-street-horizontal-0:section-2-street-vertical-0",
+      "label": "Inspect J7 intersection",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-2-street-horizontal-0:section-2-street-vertical-1",
+      "label": "Inspect J8 bend",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-2-street-horizontal-0:section-2-entry-top",
+      "label": "Inspect J9 entry",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-2-street-horizontal-1:section-2-street-vertical-0",
+      "label": "Inspect J10 bend",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-2-street-horizontal-1:section-2-street-vertical-1",
+      "label": "Inspect J11 bend",
+      "clicksPassed": 9
+    },
+    {
+      "id": "junction:section-2-street-horizontal-1:section-2-exit-bottom",
+      "label": "Inspect J12 exit",
+      "clicksPassed": 9
+    }
+  ]
+}

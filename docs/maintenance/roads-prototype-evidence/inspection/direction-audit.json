@@ -1,0 +1,20 @@
+{
+  "roads": 13,
+  "lanes": 30,
+  "junctions": 12,
+  "connections": 66,
+  "cases": {
+    "forward": 30,
+    "reverseRejected": 30,
+    "outsideRejected": 30,
+    "stationaryRejected": 30,
+    "transitions": 66,
+    "escapingTurnsRejected": 66,
+    "reversedTurnsRejected": 66
+  },
+  "dividerIntrusions": 0,
+  "laneJunctionOverlaps": 0,
+  "node1ExitReachesNode2Entry": true,
+  "deterministic": true,
+  "failures": []
+}

@@ -52,6 +52,7 @@ function streets(section: PrototypeBlock): readonly PrototypeRoad[] {
       id: `${section.id}-street-horizontal-${index}`,
       sectionId: section.id,
       kind: 'street',
+      access: null,
       axis: 'horizontal',
       directions: ['left', 'right'],
       bounds: placed(section, inset, y, span, roadWidth),
@@ -60,6 +61,7 @@ function streets(section: PrototypeBlock): readonly PrototypeRoad[] {
       id: `${section.id}-street-vertical-${index}`,
       sectionId: section.id,
       kind: 'street',
+      access: null,
       axis: 'vertical',
       directions: ['down', 'up'],
       bounds: placed(section, x, streetTop, roadWidth, streetBottom + roadWidth - streetTop),
@@ -72,12 +74,25 @@ function driveways(section: PrototypeBlock): readonly PrototypeRoad[] {
   const topEnd = streetTop + roadWidth;
   const bottomStart = nodeTop + nodeHeight;
   return [
-    { name: 'entry-top', y: topEnd, height: nodeTop - topEnd },
-    { name: 'exit-bottom', y: bottomStart, height: streetBottom - bottomStart },
+    {
+      name: 'entry-top',
+      role: 'entry' as const,
+      side: 'top' as const,
+      y: topEnd,
+      height: nodeTop - topEnd,
+    },
+    {
+      name: 'exit-bottom',
+      role: 'exit' as const,
+      side: 'bottom' as const,
+      y: bottomStart,
+      height: streetBottom - bottomStart,
+    },
   ].map((item): PrototypeRoad => ({
     id: `${section.id}-${item.name}`,
     sectionId: section.id,
     kind: 'driveway',
+    access: { nodeId: section.id.replace('section-', 'node-'), role: item.role, side: item.side },
     axis: 'vertical',
     directions: ['down'],
     bounds: placed(section, (blockWidth - drivewayWidth) / 2, item.y, drivewayWidth, item.height),
@@ -103,6 +118,7 @@ export function createRoadPrototypeScene(): RoadPrototypeScene {
     id: 'road-between-sections',
     sectionId: null,
     kind: 'street',
+    access: null,
     axis: 'horizontal',
     directions: ['left', 'right'],
     bounds: {

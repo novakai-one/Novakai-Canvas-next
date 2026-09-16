@@ -36,6 +36,18 @@ Validation on the fixed fixture: 30/30 forward lane movements accepted; 30/30 re
 
 Evidence: [before](roads-prototype-evidence/before.png), [after](roads-prototype-evidence/after.png), [geometry results](roads-prototype-evidence/geometry-check.json).
 
+## Complete road inspection and crossing proof
+
+All road areas now have inspectable controls, including the previously inert bends. Junctions are labelled J1–J12 and distinguish bends, intersections, node entries and node exits. Click any lane or junction to see its coordinates and legal directions; junctions also show permitted movement paths and reject reversed traversal.
+
+Driveways name their node, entry/exit role and attachment side. Their arrows both point down because this fixture enters through the top and exits through the bottom. IN/OUT labels and different fills distinguish their roles. Clicking J3/J9 demonstrates entry crossing through traffic; J6/J12 demonstrates exit crossing through traffic. The blue solid and amber dashed diagnostic paths come from actual permitted connection records, and a circle marks each perpendicular crossing. They do not share a collinear segment.
+
+`auditRoadCoverage(scene)` partitions the rectangle union exactly. This fixture has 113,280 square layout pixels: no gaps, overlapping inspection areas or inspection areas outside roads. The footer uses that result rather than a fixed success message.
+
+Browser verification: 42/42 regions passed nine real pointer clicks each (378 total); every one of 113,280 unit-square centers hit an inspection control; all 66 movement choices passed. Geometry verification includes all 4 driveway crossings and their incoming/outgoing lanes. The full existing gate passed (70 files / 208 tests).
+
+See the [complete trace, per-road and per-region inventory, screenshots and raw evidence](roads-prototype-evidence/inspection/README.md). This is a bounded proof of the current fixture, not a guarantee for every future layout.
+
 ## Stop here
 
 The user asked to demonstrate this milestone before adding complexity. Four sections / twelve nodes, actual wires, automatic route search, per-wire lane allocation and deterministic road creation after dragging remain unimplemented. Nodes are deliberately non-draggable. Individual lane and junction movements are now validated; this is not yet an end-to-end wire-routing pipeline. Junctions may permit crossings, but no wire occupancy or collision avoidance is claimed.

@@ -1,6 +1,10 @@
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createRoadPrototypeScene, inspectRoadTravel } from '@novakai/canvas-layout';
+import {
+  createRoadPrototypeScene,
+  inspectRoadTravel,
+  auditRoadCoverage,
+} from '@novakai/canvas-layout';
 import type { PrototypeTravel } from '@novakai/canvas-layout';
 import { createRoadPrototype } from '@novakai/canvas-canvas';
 import { createReactBindings } from '@novakai/canvas-design-system';
@@ -19,6 +23,7 @@ async function main(): Promise<void> {
   createRoot(target).render(
     createElement(Prototype, {
       scene,
+      coverage: auditRoadCoverage(scene),
       inspectTravel: (travel: PrototypeTravel) => inspectRoadTravel(scene, travel),
     }),
   );

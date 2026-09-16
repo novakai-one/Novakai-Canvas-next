@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ReactElement, CSSProperties } from 'react';
-import { ReactFlow, Background, Controls } from '@xyflow/react';
+import { ReactFlow, Background, Controls, ViewportPortal } from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
 import type {
   RoadPrototypeScene,
@@ -11,6 +11,10 @@ import type {
   PrototypeDivider,
   PrototypeTravel,
   PrototypeTravelResult,
+  PrototypeJunction,
+  PrototypeLaneConnection,
+  PrototypePoint,
+  PrototypeRoadCoverage,
 } from '@novakai/canvas-layout';
 import '@xyflow/react/dist/style.css';
 import styles from './RoadPrototype.module.css';
@@ -27,7 +31,12 @@ type RoadNode = Node<
   'road'
 >;
 type BlockNode = Node<{ block: PrototypeBlock; kind: 'section' | 'node' }, 'block'>;
+type JunctionNode = Node<
+  { junction: PrototypeJunction; selected: string; select: (id: string) => void },
+  'junction'
+>;
 const arrows = { left: '←', right: '→', up: '↑', down: '↓' };
+const accessLabels = { entry: 'IN', exit: 'OUT' };
 
 /** Paint uses the same world rectangles checked by the travel validator. */
 function relative(bounds: PrototypeBounds, origin: PrototypeBounds): CSSProperties {
@@ -48,6 +57,7 @@ function Road({ data }: NodeProps<RoadNode>): ReactElement {
       data-road-id={road.id}
       data-axis={road.axis}
       data-kind={road.kind}
+      data-access={road.access?.role}
       title={`${road.id} · ${road.bounds.width} × ${road.bounds.height}`}
     >
       {data.lanes.map((lane) => (
@@ -57,12 +67,15 @@ function Road({ data }: NodeProps<RoadNode>): ReactElement {
           className={`${styles.lane} nodrag nopan`}
           style={relative(lane.bounds, road.bounds)}
           data-lane-id={lane.id}
+          data-region-id={lane.id}
           data-direction={lane.direction}
           aria-label={`Inspect ${lane.direction} lane on ${road.id}`}
           aria-pressed={data.selected === lane.id}
           onClick={() => data.select(lane.id)}
         >
-          {arrows[lane.direction]}
+          <span>
+            {road.access && accessLabels[road.access.role]} {arrows[lane.direction]}
+          </span>
         </button>
       ))}
       {data.dividers.map((divider) => (
@@ -97,7 +110,42 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
   );
 }
 
-const nodeTypes: NodeTypes = { road: Road, block: Block };
+/** The entire turn rectangle is an inspectable hit target, including its unmarked corners. */
+function Junction({ data }: NodeProps<JunctionNode>): ReactElement {
+  const j = data.junction;
+  return (
+    <button
+      type="button"
+      className={`${styles.junction} nodrag nopan`}
+      data-junction-id={j.id}
+      data-region-id={j.id}
+      data-kind={j.kind}
+      aria-label={`Inspect ${j.label} ${j.kind}`}
+      aria-pressed={data.selected === j.id}
+      onClick={() => data.select(j.id)}
+    >
+      <span>{j.label}</span>
+    </button>
+  );
+}
+const nodeTypes: NodeTypes = { road: Road, block: Block, junction: Junction };
+
+function junctionNode(
+  junction: PrototypeJunction,
+  selected: string,
+  select: (id: string) => void,
+): JunctionNode {
+  return {
+    id: junction.id,
+    type: 'junction',
+    position: junction.bounds,
+    data: { junction, selected, select },
+    style: { width: junction.bounds.width, height: junction.bounds.height },
+    zIndex: 2,
+    draggable: false,
+    selectable: false,
+  };
+}
 
 /** The renderer consumes finished geometry; it cannot reposition semantic objects. */
 function blockNode(block: PrototypeBlock, kind: 'section' | 'node', zIndex: number): BlockNode {
@@ -161,19 +209,22 @@ function verdict(result: PrototypeTravelResult, direction: PrototypeLane['direct
 function LaneProof({
   lane,
   inspect,
+  road,
 }: {
   readonly lane: PrototypeLane;
   readonly inspect: InspectTravel;
+  readonly road: PrototypeRoad | undefined;
 }): ReactElement {
   const [probe, setProbe] = useState<Probe>('forward');
   const result = inspect(movement(lane, probe));
   return (
-    <aside className={styles.proof} aria-label="Lane travel inspector">
+    <aside className={styles.proof} aria-label="Lane travel inspector" data-inspected-id={lane.id}>
       <div>
-        <strong>Inspect a lane</strong>
-        <span>
-          Click any road arrow · selected: {arrows[lane.direction]} {lane.direction}
-        </span>
+        <strong>
+          {laneName(road)} · {arrows[lane.direction]} {lane.direction}
+        </strong>
+        <span>{laneDetail(road)}</span>
+        <small>{boundsLabel(lane.bounds)}</small>
       </div>
       <div className={styles.probes}>
         <button
@@ -205,20 +256,260 @@ function LaneProof({
   );
 }
 
+function laneName(road: PrototypeRoad | undefined): string {
+  if (road?.access == null) return 'Through lane';
+  return `${road.access.role.toUpperCase()} · ${road.access.nodeId}`;
+}
+function laneDetail(road: PrototypeRoad | undefined): string {
+  if (road?.access == null) return 'One-way travel within this lane. Click any lane or junction.';
+  const roles = { entry: 'Road → top of node', exit: 'Bottom of node → road' };
+  return roles[road.access.role];
+}
+function boundsLabel(bounds: PrototypeBounds): string {
+  return `x ${bounds.x} · y ${bounds.y} · ${bounds.width} × ${bounds.height}`;
+}
+
+function connectionName(link: PrototypeLaneConnection, scene: RoadPrototypeScene): string {
+  const from = scene.lanes.find((l) => l.id === link.fromLaneId),
+    to = scene.lanes.find((l) => l.id === link.toLaneId);
+  return `${from?.direction} → ${to?.direction}`;
+}
+function choice(
+  scene: RoadPrototypeScene,
+  junctionId: string,
+  selected: string,
+): PrototypeLaneConnection | undefined {
+  const example = scene.crossingExamples.find((e) => e.junctionId === junctionId);
+  return (
+    scene.connections.find((link) => link.id === selected) ??
+    scene.connections.find((link) => link.id === example?.primaryConnectionId) ??
+    scene.connections.find(
+      (link) => link.junctionId === junctionId && isQuarterTurn(link, scene),
+    ) ??
+    scene.connections.find((link) => link.junctionId === junctionId)
+  );
+}
+function isQuarterTurn(link: PrototypeLaneConnection, scene: RoadPrototypeScene): boolean {
+  const horizontal = (id: string): boolean =>
+    ['left', 'right'].includes(scene.lanes.find((lane) => lane.id === id)?.direction ?? '');
+  return horizontal(link.fromLaneId) !== horizontal(link.toLaneId);
+}
+function paired(
+  scene: RoadPrototypeScene,
+  link: PrototypeLaneConnection | undefined,
+): PrototypeLaneConnection | undefined {
+  const example = scene.crossingExamples.find((item) => item.primaryConnectionId === link?.id);
+  return scene.connections.find((item) => item.id === example?.throughConnectionId);
+}
+function connectionRequest(link: PrototypeLaneConnection, reverse: boolean): PrototypeTravel {
+  return {
+    kind: 'connection',
+    connectionId: link.id,
+    points: reverse ? link.points.toReversed() : link.points,
+  };
+}
+function junctionVerdict(result: PrototypeTravelResult): string {
+  if (!result.ok) return explanations[result.error.code];
+  return 'Allowed: connected lanes, correct directions, path stays inside junction.';
+}
+
+/** Every turn is inspected using the same public movement validator as straight lanes. */
+function JunctionProof({
+  junction,
+  scene,
+  link,
+  select,
+  inspect,
+}: {
+  readonly junction: PrototypeJunction;
+  readonly scene: RoadPrototypeScene;
+  readonly link: PrototypeLaneConnection;
+  readonly select: (id: string) => void;
+  readonly inspect: InspectTravel;
+}): ReactElement {
+  const [reverse, setReverse] = useState(false);
+  const result = inspect(connectionRequest(link, reverse));
+  const other = paired(scene, link);
+  return (
+    <aside
+      className={`${styles.proof} ${styles.junctionProof}`}
+      aria-label="Junction travel inspector"
+      data-inspected-id={junction.id}
+    >
+      <div>
+        <strong>
+          {junction.label} · {junction.kind.toUpperCase()}
+        </strong>
+        <span>{boundsLabel(junction.bounds)}</span>
+        <small>
+          {scene.connections.filter((item) => item.junctionId === junction.id).length} permitted
+          movements · {junction.roadIds.length} roads
+        </small>
+      </div>
+      <div className={styles.probes}>
+        <label>
+          Movement{' '}
+          <select
+            aria-label="Junction movement"
+            value={link.id}
+            onChange={(e) => select(e.target.value)}
+          >
+            {scene.connections
+              .filter((item) => item.junctionId === junction.id)
+              .map((item) => (
+                <option key={item.id} value={item.id}>
+                  {connectionName(item, scene)}
+                </option>
+              ))}
+          </select>
+        </label>
+        <button type="button" aria-pressed={reverse} onClick={() => setReverse(!reverse)}>
+          Reverse movement
+        </button>
+      </div>
+      <output role="status" data-allowed={result.ok}>
+        {junctionVerdict(result)}
+      </output>
+      <CrossingExplanation scene={scene} link={link} other={other} inspect={inspect} />
+    </aside>
+  );
+}
+
+function CrossingExplanation({
+  scene,
+  link,
+  other,
+  inspect,
+}: {
+  readonly scene: RoadPrototypeScene;
+  readonly link: PrototypeLaneConnection;
+  readonly other: PrototypeLaneConnection | undefined;
+  readonly inspect: InspectTravel;
+}): ReactElement {
+  const example = scene.crossingExamples.find((item) => item.primaryConnectionId === link.id);
+  if (other === undefined || example === undefined)
+    return (
+      <p className={styles.legend}>
+        <b>Blue</b> shows this permitted turn. Select an IN or OUT junction to inspect a
+        perpendicular crossing.
+      </p>
+    );
+  const accepted = inspect(connectionRequest(other, false)).ok;
+  return (
+    <p className={styles.legend} data-crossing-count={example.crossings.length}>
+      <b>Blue: node {example.role}.</b> <em>Amber: perpendicular through traffic.</em>{' '}
+      {example.crossings.length} marked crossing inside{' '}
+      {scene.junctions.find((j) => j.id === example.junctionId)?.label}. Through movement:{' '}
+      {accepted ? 'allowed' : 'rejected'}. Lines cross; they do not join or stack.
+    </p>
+  );
+}
+
+function routePoints(
+  link: PrototypeLaneConnection,
+  scene: RoadPrototypeScene,
+): readonly PrototypePoint[] {
+  const from = scene.lanes.find((l) => l.id === link.fromLaneId),
+    to = scene.lanes.find((l) => l.id === link.toLaneId);
+  if (from === undefined || to === undefined) return link.points;
+  return [from.entry, ...link.points, to.exit];
+}
+function pointsAttribute(points: readonly PrototypePoint[]): string {
+  return points.map((p) => `${p.x},${p.y}`).join(' ');
+}
+/** Diagnostic paths come from model connection records; they are not fabricated diagram wires. */
+function RoutePreview({
+  scene,
+  link,
+}: {
+  readonly scene: RoadPrototypeScene;
+  readonly link: PrototypeLaneConnection;
+}): ReactElement {
+  const other = paired(scene, link),
+    example = scene.crossingExamples.find((e) => e.primaryConnectionId === link.id);
+  return (
+    <ViewportPortal>
+      <svg className={styles.routePreview} aria-hidden="true">
+        <defs>
+          <marker
+            id="road-primary-arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="4"
+            markerHeight="4"
+            orient="auto"
+          >
+            <path d="M0 0 L10 5 L0 10z" fill="var(--nv-action-accent)" />
+          </marker>
+          <marker
+            id="road-through-arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="4"
+            markerHeight="4"
+            orient="auto"
+          >
+            <path d="M0 0 L10 5 L0 10z" fill="var(--nv-status-warning)" />
+          </marker>
+        </defs>
+        {other !== undefined && (
+          <polyline
+            data-preview="through"
+            points={pointsAttribute(routePoints(other, scene))}
+            className={styles.throughPath}
+            markerEnd="url(#road-through-arrow)"
+          />
+        )}
+        <polyline
+          data-preview="primary"
+          points={pointsAttribute(routePoints(link, scene))}
+          className={styles.primaryPath}
+          markerEnd="url(#road-primary-arrow)"
+        />
+        {example?.crossings.map((p, index) => (
+          <circle key={index} cx={p.x} cy={p.y} r="5" className={styles.crossingMark} />
+        ))}
+      </svg>
+    </ViewportPortal>
+  );
+}
+
+function coverageLabel(coverage: PrototypeRoadCoverage): string {
+  if (
+    [coverage.uncoveredArea, coverage.multiplyOwnedArea, coverage.outsideRoadArea].some(
+      (area) => area !== 0,
+    )
+  )
+    return 'Road coverage needs correction';
+  return `100% road area accounted for · ${coverage.roadArea.toLocaleString('en-US')} px²`;
+}
+
 /** Visual proof only. No wire or dragging behavior is claimed; reload safely rebuilds the fixed scene. */
 export function RoadPrototype({
   scene,
   inspectTravel,
+  coverage,
 }: {
   readonly scene: RoadPrototypeScene;
   readonly inspectTravel: InspectTravel;
+  readonly coverage: PrototypeRoadCoverage;
 }): ReactElement {
   const [visible, setVisible] = useState(true);
-  const [selected, select] = useState(scene.lanes[0]?.id ?? '');
+  const [selected, select] = useState(scene.crossingExamples[0]?.junctionId ?? '');
+  const [movementId, selectMovement] = useState('');
   const lane = scene.lanes.find((item) => item.id === selected);
+  const junction = scene.junctions.find((item) => item.id === selected);
+  const link = choice(scene, selected, movementId);
+  function selectRegion(id: string): void {
+    select(id);
+    selectMovement('');
+  }
   const nodes = [
     ...scene.sections.map((item) => blockNode(item, 'section', 0)),
-    ...scene.roads.map((road) => roadNode(road, scene, selected, select)),
+    ...scene.roads.map((road) => roadNode(road, scene, selected, selectRegion)),
+    ...scene.junctions.map((item) => junctionNode(item, selected, selectRegion)),
     ...scene.nodes.map((item) => blockNode(item, 'node', 2)),
   ];
   return (
@@ -252,15 +543,77 @@ export function RoadPrototype({
         >
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
+          {junction !== undefined && link !== undefined && (
+            <RoutePreview scene={scene} link={link} />
+          )}
         </ReactFlow>
       </div>
-      {lane !== undefined && <LaneProof key={lane.id} lane={lane} inspect={inspectTravel} />}
+      <Inspection
+        scene={scene}
+        lane={lane}
+        junction={junction}
+        link={link}
+        select={selectMovement}
+        inspect={inspectTravel}
+      />
       <footer className={styles.footer}>
-        <span>Lines separate opposing lanes · Open junctions allow turns</span>
+        <span data-coverage="road-area">{coverageLabel(coverage)}</span>
         <span>
-          {scene.lanes.length} lanes · {scene.junctions.length} junctions · 0 wires
+          {scene.lanes.length + scene.junctions.length} inspectable areas · 0 diagram wires
         </span>
       </footer>
     </main>
+  );
+}
+
+function Inspection({
+  scene,
+  lane,
+  junction,
+  link,
+  select,
+  inspect,
+}: {
+  readonly scene: RoadPrototypeScene;
+  readonly lane: PrototypeLane | undefined;
+  readonly junction: PrototypeJunction | undefined;
+  readonly link: PrototypeLaneConnection | undefined;
+  readonly select: (id: string) => void;
+  readonly inspect: InspectTravel;
+}): ReactElement | null {
+  if (lane !== undefined)
+    return (
+      <LaneProof
+        key={lane.id}
+        lane={lane}
+        road={scene.roads.find((road) => road.id === lane.roadId)}
+        inspect={inspect}
+      />
+    );
+  return JunctionInspection({ scene, junction, link, select, inspect });
+}
+function JunctionInspection({
+  scene,
+  junction,
+  link,
+  select,
+  inspect,
+}: {
+  readonly scene: RoadPrototypeScene;
+  readonly junction: PrototypeJunction | undefined;
+  readonly link: PrototypeLaneConnection | undefined;
+  readonly select: (id: string) => void;
+  readonly inspect: InspectTravel;
+}): ReactElement | null {
+  if (junction === undefined || link === undefined) return null;
+  return (
+    <JunctionProof
+      key={junction.id}
+      junction={junction}
+      scene={scene}
+      link={link}
+      select={select}
+      inspect={inspect}
+    />
   );
 }

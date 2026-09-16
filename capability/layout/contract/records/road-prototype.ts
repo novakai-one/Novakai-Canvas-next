@@ -17,6 +17,11 @@ export interface PrototypeRoad {
   readonly axis: 'horizontal' | 'vertical';
   readonly directions: readonly ('left' | 'right' | 'up' | 'down')[];
   readonly bounds: PrototypeBounds;
+  readonly access: {
+    readonly nodeId: string;
+    readonly role: 'entry' | 'exit';
+    readonly side: 'top' | 'bottom';
+  } | null;
 }
 export interface RoadPrototypeScene {
   readonly sections: readonly PrototypeBlock[];
@@ -28,6 +33,7 @@ export interface RoadPrototypeScene {
   readonly junctions: readonly PrototypeJunction[];
   readonly dividers: readonly PrototypeDivider[];
   readonly connections: readonly PrototypeLaneConnection[];
+  readonly crossingExamples: readonly PrototypeCrossingExample[];
 }
 
 export interface PrototypePoint {
@@ -48,6 +54,9 @@ export interface PrototypeLane {
 export interface PrototypeJunction {
   readonly id: string;
   readonly bounds: PrototypeBounds;
+  readonly label: string;
+  readonly kind: 'bend' | 'intersection' | 'entry' | 'exit';
+  readonly roadIds: readonly string[];
 }
 /** A marking separates opposing straight lanes; it never extends into a junction. */
 export interface PrototypeDivider {
@@ -60,6 +69,28 @@ export interface PrototypeLaneConnection {
   readonly fromLaneId: string;
   readonly toLaneId: string;
   readonly junctionId: string | null;
+  readonly points: readonly PrototypePoint[];
+}
+/** Two individually valid paths cross at a known perpendicular point inside a junction. */
+export interface PrototypeCrossingExample {
+  readonly junctionId: string;
+  readonly role: 'entry' | 'exit';
+  readonly primaryConnectionId: string;
+  readonly throughConnectionId: string;
+  readonly crossings: readonly PrototypePoint[];
+}
+export interface PrototypeRoadCoverage {
+  readonly roadArea: number;
+  readonly coveredArea: number;
+  readonly uncoveredArea: number;
+  readonly multiplyOwnedArea: number;
+  readonly outsideRoadArea: number;
+  readonly perRoad: readonly {
+    readonly roadId: string;
+    readonly area: number;
+    readonly uncoveredArea: number;
+    readonly regionIds: readonly string[];
+  }[];
 }
 export type PrototypeTravel =
   | {

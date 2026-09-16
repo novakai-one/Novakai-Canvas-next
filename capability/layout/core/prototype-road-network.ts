@@ -14,6 +14,7 @@ import {
   contains,
   samePoint,
 } from './prototype-road-geometry.js';
+import { connectionPoints, crossingExamples } from './prototype-road-paths.js';
 
 interface Span {
   readonly start: number;
@@ -56,7 +57,7 @@ function junction(a: PrototypeRoad, b: PrototypeRoad): readonly PrototypeJunctio
 }
 function junctionRecord(id: string, bounds: PrototypeBounds | null): readonly PrototypeJunction[] {
   if (bounds === null) return [];
-  return [{ id, bounds }];
+  return [{ id, bounds, kind: 'bend', label: '', roadIds: [] }];
 }
 
 function merge(spans: readonly Span[], next: Span): readonly Span[] {
@@ -154,7 +155,13 @@ function connection(
   );
   if (shared !== undefined)
     return [
-      { id: `${from.id}>${to.id}`, fromLaneId: from.id, toLaneId: to.id, junctionId: shared.id },
+      {
+        id: `${from.id}>${to.id}`,
+        fromLaneId: from.id,
+        toLaneId: to.id,
+        junctionId: shared.id,
+        points: connectionPoints(from, to, shared),
+      },
     ];
   return straightConnection(from, to);
 }
@@ -165,20 +172,68 @@ function straightConnection(
 ): readonly PrototypeLaneConnection[] {
   if (!samePoint(from.exit, to.entry)) return [];
   if (from.direction !== to.direction) return [];
-  return [{ id: `${from.id}>${to.id}`, fromLaneId: from.id, toLaneId: to.id, junctionId: null }];
+  return [
+    {
+      id: `${from.id}>${to.id}`,
+      fromLaneId: from.id,
+      toLaneId: to.id,
+      junctionId: null,
+      points: connectionPoints(from, to, undefined),
+    },
+  ];
+}
+
+function describedJunction(
+  junction: PrototypeJunction,
+  index: number,
+  lanes: readonly PrototypeLane[],
+  roads: readonly PrototypeRoad[],
+): PrototypeJunction {
+  const adjacent = lanes.filter((lane) =>
+    [lane.entry, lane.exit].some((point) => contains(junction.bounds, point)),
+  );
+  const roadIds = [...new Set(adjacent.map((lane) => lane.roadId))];
+  const access = roads.find((road) => roadIds.includes(road.id) && road.access !== null)?.access;
+  const arms = new Set(
+    adjacent
+      .flatMap((lane) => [lane.entry, lane.exit])
+      .filter((point) => contains(junction.bounds, point))
+      .map((point) => side(junction.bounds, point)),
+  );
+  return {
+    ...junction,
+    label: `J${index + 1}`,
+    roadIds,
+    kind: access?.role ?? junctionKind(arms.size),
+  };
+}
+function junctionKind(arms: number): 'bend' | 'intersection' {
+  return arms > 2 ? 'intersection' : 'bend';
+}
+function side(box: PrototypeBounds, point: { readonly x: number; readonly y: number }): string {
+  const edges = [
+    { name: 'left', at: point.x === box.x },
+    { name: 'right', at: point.x === box.x + box.width },
+    { name: 'top', at: point.y === box.y },
+    { name: 'bottom', at: point.y === box.y + box.height },
+  ];
+  return edges.find((edge) => edge.at)?.name ?? 'inside';
 }
 
 /** Pure, repeatable compilation of this prototype's roads into enforceable lanes and turn areas. */
 export function roadNetwork(roads: readonly PrototypeRoad[]) {
-  const junctions = roads.flatMap((a, index) =>
-    roads.slice(index + 1).flatMap((b) => junction(a, b)),
-  );
-  const parts = roads.map((road) => roadParts(road, junctions));
+  const areas = roads.flatMap((a, index) => roads.slice(index + 1).flatMap((b) => junction(a, b)));
+  const parts = roads.map((road) => roadParts(road, areas));
   const lanes = parts.flatMap((part) => part.lanes);
+  const junctions = areas.map((area, index) => describedJunction(area, index, lanes, roads));
+  const connections = lanes.flatMap((from) =>
+    lanes.flatMap((to) => connection(from, to, junctions)),
+  );
   return {
     junctions,
     lanes,
     dividers: parts.flatMap((part) => part.dividers),
-    connections: lanes.flatMap((from) => lanes.flatMap((to) => connection(from, to, junctions))),
+    connections,
+    crossingExamples: crossingExamples(junctions, roads, lanes, connections),
   };
 }

@@ -97,3 +97,10 @@ export { defaultEngineVersions } from './records/engines.js';
 
 export type { LayoutInputKey } from './brands.js';
 export { inputKey as layoutInputKey } from './brands.js';
+
+export { createSevenRoadScene } from './api.js';
+
+export { createRoadProofs } from './api.js';
+export type { PrototypeRoadProof, PrototypeProofPath } from './records/road-proof.js';
+
+export { createNestedRoadScene } from './api.js';

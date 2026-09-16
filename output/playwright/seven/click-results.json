@@ -1,0 +1,2007 @@
+[
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-0:left",
+    "selected": "world:h:64:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-0:right",
+    "selected": "world:h:64:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-1:left",
+    "selected": "world:h:64:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-1:right",
+    "selected": "world:h:64:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-2:left",
+    "selected": "world:h:64:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-2:right",
+    "selected": "world:h:64:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-3:left",
+    "selected": "world:h:64:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-3:right",
+    "selected": "world:h:64:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-4:left",
+    "selected": "world:h:64:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-4:right",
+    "selected": "world:h:64:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-5:left",
+    "selected": "world:h:64:part-5:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:64:part-5:right",
+    "selected": "world:h:64:part-5:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-0:left",
+    "selected": "world:h:1184:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-0:right",
+    "selected": "world:h:1184:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-1:left",
+    "selected": "world:h:1184:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-1:right",
+    "selected": "world:h:1184:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-2:left",
+    "selected": "world:h:1184:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-2:right",
+    "selected": "world:h:1184:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-3:left",
+    "selected": "world:h:1184:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-3:right",
+    "selected": "world:h:1184:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-4:left",
+    "selected": "world:h:1184:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-4:right",
+    "selected": "world:h:1184:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-5:left",
+    "selected": "world:h:1184:part-5:left"
+  },
+  {
+    "kind": "lane",
+    "id": "world:h:1184:part-5:right",
+    "selected": "world:h:1184:part-5:right"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:64:part-0:down",
+    "selected": "world:v:64:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:64:part-0:up",
+    "selected": "world:v:64:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:64:part-1:down",
+    "selected": "world:v:64:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:64:part-1:up",
+    "selected": "world:v:64:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:1240:part-0:down",
+    "selected": "world:v:1240:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:1240:part-0:up",
+    "selected": "world:v:1240:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:1240:part-1:down",
+    "selected": "world:v:1240:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:1240:part-1:up",
+    "selected": "world:v:1240:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:1240:part-2:down",
+    "selected": "world:v:1240:part-2:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:1240:part-2:up",
+    "selected": "world:v:1240:part-2:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:2568:part-0:down",
+    "selected": "world:v:2568:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:2568:part-0:up",
+    "selected": "world:v:2568:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:2568:part-1:down",
+    "selected": "world:v:2568:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:2568:part-1:up",
+    "selected": "world:v:2568:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:2568:part-2:down",
+    "selected": "world:v:2568:part-2:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:2568:part-2:up",
+    "selected": "world:v:2568:part-2:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:3472:part-0:down",
+    "selected": "world:v:3472:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:3472:part-0:up",
+    "selected": "world:v:3472:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:3472:part-1:down",
+    "selected": "world:v:3472:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "world:v:3472:part-1:up",
+    "selected": "world:v:3472:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-0:left",
+    "selected": "section-1:h:272:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-0:right",
+    "selected": "section-1:h:272:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-1:left",
+    "selected": "section-1:h:272:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-1:right",
+    "selected": "section-1:h:272:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-2:left",
+    "selected": "section-1:h:272:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-2:right",
+    "selected": "section-1:h:272:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-3:left",
+    "selected": "section-1:h:272:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:272:part-3:right",
+    "selected": "section-1:h:272:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-0:left",
+    "selected": "section-1:h:512:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-0:right",
+    "selected": "section-1:h:512:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-1:left",
+    "selected": "section-1:h:512:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-1:right",
+    "selected": "section-1:h:512:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-2:left",
+    "selected": "section-1:h:512:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-2:right",
+    "selected": "section-1:h:512:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-3:left",
+    "selected": "section-1:h:512:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-3:right",
+    "selected": "section-1:h:512:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-4:left",
+    "selected": "section-1:h:512:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-4:right",
+    "selected": "section-1:h:512:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-5:left",
+    "selected": "section-1:h:512:part-5:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-5:right",
+    "selected": "section-1:h:512:part-5:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-6:left",
+    "selected": "section-1:h:512:part-6:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:512:part-6:right",
+    "selected": "section-1:h:512:part-6:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-0:left",
+    "selected": "section-1:h:752:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-0:right",
+    "selected": "section-1:h:752:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-1:left",
+    "selected": "section-1:h:752:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-1:right",
+    "selected": "section-1:h:752:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-2:left",
+    "selected": "section-1:h:752:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-2:right",
+    "selected": "section-1:h:752:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-3:left",
+    "selected": "section-1:h:752:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-3:right",
+    "selected": "section-1:h:752:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-4:left",
+    "selected": "section-1:h:752:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-4:right",
+    "selected": "section-1:h:752:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-5:left",
+    "selected": "section-1:h:752:part-5:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-5:right",
+    "selected": "section-1:h:752:part-5:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-6:left",
+    "selected": "section-1:h:752:part-6:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:752:part-6:right",
+    "selected": "section-1:h:752:part-6:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-0:left",
+    "selected": "section-1:h:992:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-0:right",
+    "selected": "section-1:h:992:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-1:left",
+    "selected": "section-1:h:992:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-1:right",
+    "selected": "section-1:h:992:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-2:left",
+    "selected": "section-1:h:992:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-2:right",
+    "selected": "section-1:h:992:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-3:left",
+    "selected": "section-1:h:992:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-3:right",
+    "selected": "section-1:h:992:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-4:left",
+    "selected": "section-1:h:992:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:h:992:part-4:right",
+    "selected": "section-1:h:992:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-0:down",
+    "selected": "section-1:perimeter:224:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-0:up",
+    "selected": "section-1:perimeter:224:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-1:down",
+    "selected": "section-1:perimeter:224:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-1:up",
+    "selected": "section-1:perimeter:224:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-2:down",
+    "selected": "section-1:perimeter:224:part-2:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-2:up",
+    "selected": "section-1:perimeter:224:part-2:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-3:down",
+    "selected": "section-1:perimeter:224:part-3:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:224:part-3:up",
+    "selected": "section-1:perimeter:224:part-3:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-0:down",
+    "selected": "section-1:perimeter:1056:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-0:up",
+    "selected": "section-1:perimeter:1056:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-1:down",
+    "selected": "section-1:perimeter:1056:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-1:up",
+    "selected": "section-1:perimeter:1056:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-2:down",
+    "selected": "section-1:perimeter:1056:part-2:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-2:up",
+    "selected": "section-1:perimeter:1056:part-2:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-3:down",
+    "selected": "section-1:perimeter:1056:part-3:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:perimeter:1056:part-3:up",
+    "selected": "section-1:perimeter:1056:part-3:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:328:272:part-0:down",
+    "selected": "section-1:v:328:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:328:272:part-0:up",
+    "selected": "section-1:v:328:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:328:272:part-1:down",
+    "selected": "section-1:v:328:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:328:272:part-1:up",
+    "selected": "section-1:v:328:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:664:272:part-0:down",
+    "selected": "section-1:v:664:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:664:272:part-0:up",
+    "selected": "section-1:v:664:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:664:272:part-1:down",
+    "selected": "section-1:v:664:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:664:272:part-1:up",
+    "selected": "section-1:v:664:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:424:512:part-0:down",
+    "selected": "section-1:v:424:512:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:424:512:part-0:up",
+    "selected": "section-1:v:424:512:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:424:512:part-1:down",
+    "selected": "section-1:v:424:512:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:424:512:part-1:up",
+    "selected": "section-1:v:424:512:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:760:512:part-0:down",
+    "selected": "section-1:v:760:512:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:760:512:part-0:up",
+    "selected": "section-1:v:760:512:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:760:512:part-1:down",
+    "selected": "section-1:v:760:512:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:760:512:part-1:up",
+    "selected": "section-1:v:760:512:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:520:752:part-0:down",
+    "selected": "section-1:v:520:752:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:520:752:part-0:up",
+    "selected": "section-1:v:520:752:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:520:752:part-1:down",
+    "selected": "section-1:v:520:752:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:520:752:part-1:up",
+    "selected": "section-1:v:520:752:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:856:752:part-0:down",
+    "selected": "section-1:v:856:752:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:856:752:part-0:up",
+    "selected": "section-1:v:856:752:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:856:752:part-1:down",
+    "selected": "section-1:v:856:752:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-1:v:856:752:part-1:up",
+    "selected": "section-1:v:856:752:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-0:left",
+    "selected": "section-2:h:272:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-0:right",
+    "selected": "section-2:h:272:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-1:left",
+    "selected": "section-2:h:272:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-1:right",
+    "selected": "section-2:h:272:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-2:left",
+    "selected": "section-2:h:272:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-2:right",
+    "selected": "section-2:h:272:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-3:left",
+    "selected": "section-2:h:272:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-3:right",
+    "selected": "section-2:h:272:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-4:left",
+    "selected": "section-2:h:272:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-4:right",
+    "selected": "section-2:h:272:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-5:left",
+    "selected": "section-2:h:272:part-5:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-5:right",
+    "selected": "section-2:h:272:part-5:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-6:left",
+    "selected": "section-2:h:272:part-6:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:272:part-6:right",
+    "selected": "section-2:h:272:part-6:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-0:left",
+    "selected": "section-2:h:512:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-0:right",
+    "selected": "section-2:h:512:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-1:left",
+    "selected": "section-2:h:512:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-1:right",
+    "selected": "section-2:h:512:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-2:left",
+    "selected": "section-2:h:512:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-2:right",
+    "selected": "section-2:h:512:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-3:left",
+    "selected": "section-2:h:512:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-3:right",
+    "selected": "section-2:h:512:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-4:left",
+    "selected": "section-2:h:512:part-4:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-4:right",
+    "selected": "section-2:h:512:part-4:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-5:left",
+    "selected": "section-2:h:512:part-5:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-5:right",
+    "selected": "section-2:h:512:part-5:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-6:left",
+    "selected": "section-2:h:512:part-6:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:h:512:part-6:right",
+    "selected": "section-2:h:512:part-6:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:1424:part-0:down",
+    "selected": "section-2:perimeter:1424:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:1424:part-0:up",
+    "selected": "section-2:perimeter:1424:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:1424:part-1:down",
+    "selected": "section-2:perimeter:1424:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:1424:part-1:up",
+    "selected": "section-2:perimeter:1424:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:2384:part-0:down",
+    "selected": "section-2:perimeter:2384:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:2384:part-0:up",
+    "selected": "section-2:perimeter:2384:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:2384:part-1:down",
+    "selected": "section-2:perimeter:2384:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:perimeter:2384:part-1:up",
+    "selected": "section-2:perimeter:2384:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1528:272:part-0:down",
+    "selected": "section-2:v:1528:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1528:272:part-0:up",
+    "selected": "section-2:v:1528:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1528:272:part-1:down",
+    "selected": "section-2:v:1528:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1528:272:part-1:up",
+    "selected": "section-2:v:1528:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1864:272:part-0:down",
+    "selected": "section-2:v:1864:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1864:272:part-0:up",
+    "selected": "section-2:v:1864:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1864:272:part-1:down",
+    "selected": "section-2:v:1864:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:1864:272:part-1:up",
+    "selected": "section-2:v:1864:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:2200:272:part-0:down",
+    "selected": "section-2:v:2200:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:2200:272:part-0:up",
+    "selected": "section-2:v:2200:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:2200:272:part-1:down",
+    "selected": "section-2:v:2200:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-2:v:2200:272:part-1:up",
+    "selected": "section-2:v:2200:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-0:left",
+    "selected": "section-3:h:272:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-0:right",
+    "selected": "section-3:h:272:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-1:left",
+    "selected": "section-3:h:272:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-1:right",
+    "selected": "section-3:h:272:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-2:left",
+    "selected": "section-3:h:272:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-2:right",
+    "selected": "section-3:h:272:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-3:left",
+    "selected": "section-3:h:272:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:272:part-3:right",
+    "selected": "section-3:h:272:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-0:left",
+    "selected": "section-3:h:512:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-0:right",
+    "selected": "section-3:h:512:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-1:left",
+    "selected": "section-3:h:512:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-1:right",
+    "selected": "section-3:h:512:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-2:left",
+    "selected": "section-3:h:512:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-2:right",
+    "selected": "section-3:h:512:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-3:left",
+    "selected": "section-3:h:512:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:512:part-3:right",
+    "selected": "section-3:h:512:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-0:left",
+    "selected": "section-3:h:752:part-0:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-0:right",
+    "selected": "section-3:h:752:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-1:left",
+    "selected": "section-3:h:752:part-1:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-1:right",
+    "selected": "section-3:h:752:part-1:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-2:left",
+    "selected": "section-3:h:752:part-2:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-2:right",
+    "selected": "section-3:h:752:part-2:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-3:left",
+    "selected": "section-3:h:752:part-3:left"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:h:752:part-3:right",
+    "selected": "section-3:h:752:part-3:right"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:2752:part-0:down",
+    "selected": "section-3:perimeter:2752:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:2752:part-0:up",
+    "selected": "section-3:perimeter:2752:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:2752:part-1:down",
+    "selected": "section-3:perimeter:2752:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:2752:part-1:up",
+    "selected": "section-3:perimeter:2752:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:3296:part-0:down",
+    "selected": "section-3:perimeter:3296:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:3296:part-0:up",
+    "selected": "section-3:perimeter:3296:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:3296:part-1:down",
+    "selected": "section-3:perimeter:3296:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:perimeter:3296:part-1:up",
+    "selected": "section-3:perimeter:3296:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:272:part-0:down",
+    "selected": "section-3:v:2840:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:272:part-0:up",
+    "selected": "section-3:v:2840:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:272:part-1:down",
+    "selected": "section-3:v:2840:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:272:part-1:up",
+    "selected": "section-3:v:2840:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:272:part-0:down",
+    "selected": "section-3:v:3176:272:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:272:part-0:up",
+    "selected": "section-3:v:3176:272:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:272:part-1:down",
+    "selected": "section-3:v:3176:272:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:272:part-1:up",
+    "selected": "section-3:v:3176:272:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:512:part-0:down",
+    "selected": "section-3:v:2840:512:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:512:part-0:up",
+    "selected": "section-3:v:2840:512:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:512:part-1:down",
+    "selected": "section-3:v:2840:512:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:2840:512:part-1:up",
+    "selected": "section-3:v:2840:512:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:512:part-0:down",
+    "selected": "section-3:v:3176:512:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:512:part-0:up",
+    "selected": "section-3:v:3176:512:part-0:up"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:512:part-1:down",
+    "selected": "section-3:v:3176:512:part-1:down"
+  },
+  {
+    "kind": "lane",
+    "id": "section-3:v:3176:512:part-1:up",
+    "selected": "section-3:v:3176:512:part-1:up"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-1:entry-top:part-0:down",
+    "selected": "drive:node-1:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-1:entry-left:part-0:right",
+    "selected": "drive:node-1:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-1:exit-bottom:part-0:down",
+    "selected": "drive:node-1:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-1:exit-right:part-0:right",
+    "selected": "drive:node-1:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-2:entry-top:part-0:down",
+    "selected": "drive:node-2:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-2:entry-left:part-0:right",
+    "selected": "drive:node-2:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-2:exit-bottom:part-0:down",
+    "selected": "drive:node-2:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-2:exit-right:part-0:right",
+    "selected": "drive:node-2:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-3:entry-top:part-0:down",
+    "selected": "drive:node-3:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-3:entry-left:part-0:right",
+    "selected": "drive:node-3:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-3:exit-bottom:part-0:down",
+    "selected": "drive:node-3:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-3:exit-right:part-0:right",
+    "selected": "drive:node-3:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-4:entry-top:part-0:down",
+    "selected": "drive:node-4:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-4:entry-left:part-0:right",
+    "selected": "drive:node-4:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-4:exit-bottom:part-0:down",
+    "selected": "drive:node-4:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-4:exit-right:part-0:right",
+    "selected": "drive:node-4:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-5:entry-top:part-0:down",
+    "selected": "drive:node-5:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-5:entry-left:part-0:right",
+    "selected": "drive:node-5:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-5:exit-bottom:part-0:down",
+    "selected": "drive:node-5:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-5:exit-right:part-0:right",
+    "selected": "drive:node-5:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-6:entry-top:part-0:down",
+    "selected": "drive:node-6:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-6:entry-left:part-0:right",
+    "selected": "drive:node-6:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-6:exit-bottom:part-0:down",
+    "selected": "drive:node-6:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-6:exit-right:part-0:right",
+    "selected": "drive:node-6:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-7:entry-top:part-0:down",
+    "selected": "drive:node-7:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-7:entry-left:part-0:right",
+    "selected": "drive:node-7:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-7:exit-bottom:part-0:down",
+    "selected": "drive:node-7:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:node-7:exit-right:part-0:right",
+    "selected": "drive:node-7:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-1:entry-top:part-0:down",
+    "selected": "drive:section-1:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-1:entry-left:part-0:right",
+    "selected": "drive:section-1:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-1:exit-bottom:part-0:down",
+    "selected": "drive:section-1:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-1:exit-right:part-0:right",
+    "selected": "drive:section-1:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-2:entry-top:part-0:down",
+    "selected": "drive:section-2:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-2:entry-left:part-0:right",
+    "selected": "drive:section-2:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-2:exit-bottom:part-0:down",
+    "selected": "drive:section-2:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-2:exit-right:part-0:right",
+    "selected": "drive:section-2:exit-right:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-3:entry-top:part-0:down",
+    "selected": "drive:section-3:entry-top:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-3:entry-left:part-0:right",
+    "selected": "drive:section-3:entry-left:part-0:right"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-3:exit-bottom:part-0:down",
+    "selected": "drive:section-3:exit-bottom:part-0:down"
+  },
+  {
+    "kind": "lane",
+    "id": "drive:section-3:exit-right:part-0:right",
+    "selected": "drive:section-3:exit-right:part-0:right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:world:v:64",
+    "selected": "junction:world:h:64:world:v:64"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:world:v:1240",
+    "selected": "junction:world:h:64:world:v:1240"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:world:v:2568",
+    "selected": "junction:world:h:64:world:v:2568"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:world:v:3472",
+    "selected": "junction:world:h:64:world:v:3472"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:drive:section-1:entry-top",
+    "selected": "junction:world:h:64:drive:section-1:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:drive:section-2:entry-top",
+    "selected": "junction:world:h:64:drive:section-2:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:64:drive:section-3:entry-top",
+    "selected": "junction:world:h:64:drive:section-3:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:world:v:64",
+    "selected": "junction:world:h:1184:world:v:64"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:world:v:1240",
+    "selected": "junction:world:h:1184:world:v:1240"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:world:v:2568",
+    "selected": "junction:world:h:1184:world:v:2568"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:world:v:3472",
+    "selected": "junction:world:h:1184:world:v:3472"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:drive:section-1:exit-bottom",
+    "selected": "junction:world:h:1184:drive:section-1:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:drive:section-2:exit-bottom",
+    "selected": "junction:world:h:1184:drive:section-2:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:h:1184:drive:section-3:exit-bottom",
+    "selected": "junction:world:h:1184:drive:section-3:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:v:64:drive:section-1:entry-left",
+    "selected": "junction:world:v:64:drive:section-1:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:v:1240:drive:section-1:exit-right",
+    "selected": "junction:world:v:1240:drive:section-1:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:v:1240:drive:section-2:entry-left",
+    "selected": "junction:world:v:1240:drive:section-2:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:v:2568:drive:section-2:exit-right",
+    "selected": "junction:world:v:2568:drive:section-2:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:v:2568:drive:section-3:entry-left",
+    "selected": "junction:world:v:2568:drive:section-3:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:world:v:3472:drive:section-3:exit-right",
+    "selected": "junction:world:v:3472:drive:section-3:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:272:section-1:perimeter:224",
+    "selected": "junction:section-1:h:272:section-1:perimeter:224"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:272:section-1:perimeter:1056",
+    "selected": "junction:section-1:h:272:section-1:perimeter:1056"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:272:section-1:v:328:272",
+    "selected": "junction:section-1:h:272:section-1:v:328:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:272:drive:node-1:entry-top",
+    "selected": "junction:section-1:h:272:drive:node-1:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:272:section-1:v:664:272|junction:section-1:h:272:drive:section-1:entry-top",
+    "selected": "junction:section-1:h:272:section-1:v:664:272|junction:section-1:h:272:drive:section-1:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:section-1:perimeter:224",
+    "selected": "junction:section-1:h:512:section-1:perimeter:224"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:section-1:perimeter:1056",
+    "selected": "junction:section-1:h:512:section-1:perimeter:1056"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:section-1:v:328:272",
+    "selected": "junction:section-1:h:512:section-1:v:328:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:section-1:v:664:272",
+    "selected": "junction:section-1:h:512:section-1:v:664:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:section-1:v:424:512",
+    "selected": "junction:section-1:h:512:section-1:v:424:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:section-1:v:760:512",
+    "selected": "junction:section-1:h:512:section-1:v:760:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:drive:node-1:exit-bottom",
+    "selected": "junction:section-1:h:512:drive:node-1:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:512:drive:node-2:entry-top",
+    "selected": "junction:section-1:h:512:drive:node-2:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:section-1:perimeter:224",
+    "selected": "junction:section-1:h:752:section-1:perimeter:224"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:section-1:perimeter:1056",
+    "selected": "junction:section-1:h:752:section-1:perimeter:1056"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:section-1:v:424:512",
+    "selected": "junction:section-1:h:752:section-1:v:424:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:section-1:v:760:512",
+    "selected": "junction:section-1:h:752:section-1:v:760:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:section-1:v:520:752",
+    "selected": "junction:section-1:h:752:section-1:v:520:752"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:section-1:v:856:752",
+    "selected": "junction:section-1:h:752:section-1:v:856:752"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:drive:node-2:exit-bottom",
+    "selected": "junction:section-1:h:752:drive:node-2:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:752:drive:node-3:entry-top",
+    "selected": "junction:section-1:h:752:drive:node-3:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:992:section-1:perimeter:224",
+    "selected": "junction:section-1:h:992:section-1:perimeter:224"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:992:section-1:perimeter:1056",
+    "selected": "junction:section-1:h:992:section-1:perimeter:1056"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:992:section-1:v:520:752",
+    "selected": "junction:section-1:h:992:section-1:v:520:752"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:992:section-1:v:856:752",
+    "selected": "junction:section-1:h:992:section-1:v:856:752"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:992:drive:node-3:exit-bottom",
+    "selected": "junction:section-1:h:992:drive:node-3:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:h:992:drive:section-1:exit-bottom",
+    "selected": "junction:section-1:h:992:drive:section-1:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:perimeter:224:drive:section-1:entry-left",
+    "selected": "junction:section-1:perimeter:224:drive:section-1:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:perimeter:1056:drive:section-1:exit-right",
+    "selected": "junction:section-1:perimeter:1056:drive:section-1:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:v:328:272:drive:node-1:entry-left",
+    "selected": "junction:section-1:v:328:272:drive:node-1:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:v:664:272:drive:node-1:exit-right",
+    "selected": "junction:section-1:v:664:272:drive:node-1:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:v:424:512:drive:node-2:entry-left",
+    "selected": "junction:section-1:v:424:512:drive:node-2:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:v:760:512:drive:node-2:exit-right",
+    "selected": "junction:section-1:v:760:512:drive:node-2:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:v:520:752:drive:node-3:entry-left",
+    "selected": "junction:section-1:v:520:752:drive:node-3:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-1:v:856:752:drive:node-3:exit-right",
+    "selected": "junction:section-1:v:856:752:drive:node-3:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:section-2:perimeter:1424",
+    "selected": "junction:section-2:h:272:section-2:perimeter:1424"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:section-2:perimeter:2384",
+    "selected": "junction:section-2:h:272:section-2:perimeter:2384"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:section-2:v:1528:272",
+    "selected": "junction:section-2:h:272:section-2:v:1528:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:section-2:v:1864:272",
+    "selected": "junction:section-2:h:272:section-2:v:1864:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:section-2:v:2200:272",
+    "selected": "junction:section-2:h:272:section-2:v:2200:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:drive:node-4:entry-top",
+    "selected": "junction:section-2:h:272:drive:node-4:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:drive:node-5:entry-top",
+    "selected": "junction:section-2:h:272:drive:node-5:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:272:drive:section-2:entry-top",
+    "selected": "junction:section-2:h:272:drive:section-2:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:section-2:perimeter:1424",
+    "selected": "junction:section-2:h:512:section-2:perimeter:1424"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:section-2:perimeter:2384",
+    "selected": "junction:section-2:h:512:section-2:perimeter:2384"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:section-2:v:1528:272",
+    "selected": "junction:section-2:h:512:section-2:v:1528:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:section-2:v:1864:272",
+    "selected": "junction:section-2:h:512:section-2:v:1864:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:section-2:v:2200:272",
+    "selected": "junction:section-2:h:512:section-2:v:2200:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:drive:node-4:exit-bottom",
+    "selected": "junction:section-2:h:512:drive:node-4:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:drive:node-5:exit-bottom",
+    "selected": "junction:section-2:h:512:drive:node-5:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:h:512:drive:section-2:exit-bottom",
+    "selected": "junction:section-2:h:512:drive:section-2:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:perimeter:1424:drive:section-2:entry-left",
+    "selected": "junction:section-2:perimeter:1424:drive:section-2:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:perimeter:2384:drive:section-2:exit-right",
+    "selected": "junction:section-2:perimeter:2384:drive:section-2:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:v:1528:272:drive:node-4:entry-left",
+    "selected": "junction:section-2:v:1528:272:drive:node-4:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:v:1864:272:drive:node-4:exit-right|junction:section-2:v:1864:272:drive:node-5:entry-left",
+    "selected": "junction:section-2:v:1864:272:drive:node-4:exit-right|junction:section-2:v:1864:272:drive:node-5:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-2:v:2200:272:drive:node-5:exit-right",
+    "selected": "junction:section-2:v:2200:272:drive:node-5:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:272:section-3:perimeter:2752",
+    "selected": "junction:section-3:h:272:section-3:perimeter:2752"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:272:section-3:perimeter:3296",
+    "selected": "junction:section-3:h:272:section-3:perimeter:3296"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:272:section-3:v:2840:272",
+    "selected": "junction:section-3:h:272:section-3:v:2840:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:272:section-3:v:3176:272",
+    "selected": "junction:section-3:h:272:section-3:v:3176:272"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:272:drive:node-6:entry-top|junction:section-3:h:272:drive:section-3:entry-top",
+    "selected": "junction:section-3:h:272:drive:node-6:entry-top|junction:section-3:h:272:drive:section-3:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:512:section-3:v:2840:272|junction:section-3:h:512:section-3:v:2840:512",
+    "selected": "junction:section-3:h:512:section-3:v:2840:272|junction:section-3:h:512:section-3:v:2840:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:512:section-3:v:3176:272|junction:section-3:h:512:section-3:v:3176:512",
+    "selected": "junction:section-3:h:512:section-3:v:3176:272|junction:section-3:h:512:section-3:v:3176:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:512:drive:node-6:exit-bottom|junction:section-3:h:512:drive:node-7:entry-top",
+    "selected": "junction:section-3:h:512:drive:node-6:exit-bottom|junction:section-3:h:512:drive:node-7:entry-top"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:752:section-3:perimeter:2752",
+    "selected": "junction:section-3:h:752:section-3:perimeter:2752"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:752:section-3:perimeter:3296",
+    "selected": "junction:section-3:h:752:section-3:perimeter:3296"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:752:section-3:v:2840:512",
+    "selected": "junction:section-3:h:752:section-3:v:2840:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:752:section-3:v:3176:512",
+    "selected": "junction:section-3:h:752:section-3:v:3176:512"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:752:drive:node-7:exit-bottom|junction:section-3:h:752:drive:section-3:exit-bottom",
+    "selected": "junction:section-3:h:752:drive:node-7:exit-bottom|junction:section-3:h:752:drive:section-3:exit-bottom"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:512:section-3:perimeter:2752|junction:section-3:perimeter:2752:drive:section-3:entry-left",
+    "selected": "junction:section-3:h:512:section-3:perimeter:2752|junction:section-3:perimeter:2752:drive:section-3:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:h:512:section-3:perimeter:3296|junction:section-3:perimeter:3296:drive:section-3:exit-right",
+    "selected": "junction:section-3:h:512:section-3:perimeter:3296|junction:section-3:perimeter:3296:drive:section-3:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:v:2840:272:drive:node-6:entry-left",
+    "selected": "junction:section-3:v:2840:272:drive:node-6:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:v:3176:272:drive:node-6:exit-right",
+    "selected": "junction:section-3:v:3176:272:drive:node-6:exit-right"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:v:2840:512:drive:node-7:entry-left",
+    "selected": "junction:section-3:v:2840:512:drive:node-7:entry-left"
+  },
+  {
+    "kind": "junction",
+    "id": "junction:section-3:v:3176:512:drive:node-7:exit-right",
+    "selected": "junction:section-3:v:3176:512:drive:node-7:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "node-1:entry-top",
+    "selected": "junction:section-1:h:272:drive:node-1:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-1:entry-left",
+    "selected": "junction:section-1:v:328:272:drive:node-1:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-1:exit-bottom",
+    "selected": "junction:section-1:h:512:drive:node-1:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "node-1:exit-right",
+    "selected": "junction:section-1:v:664:272:drive:node-1:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "node-2:entry-top",
+    "selected": "junction:section-1:h:512:drive:node-2:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-2:entry-left",
+    "selected": "junction:section-1:v:424:512:drive:node-2:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-2:exit-bottom",
+    "selected": "junction:section-1:h:752:drive:node-2:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "node-2:exit-right",
+    "selected": "junction:section-1:v:760:512:drive:node-2:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "node-3:entry-top",
+    "selected": "junction:section-1:h:752:drive:node-3:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-3:entry-left",
+    "selected": "junction:section-1:v:520:752:drive:node-3:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-3:exit-bottom",
+    "selected": "junction:section-1:h:992:drive:node-3:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "node-3:exit-right",
+    "selected": "junction:section-1:v:856:752:drive:node-3:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "node-4:entry-top",
+    "selected": "junction:section-2:h:272:drive:node-4:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-4:entry-left",
+    "selected": "junction:section-2:v:1528:272:drive:node-4:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-4:exit-bottom",
+    "selected": "junction:section-2:h:512:drive:node-4:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "node-4:exit-right",
+    "selected": "junction:section-2:v:1864:272:drive:node-4:exit-right|junction:section-2:v:1864:272:drive:node-5:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-5:entry-top",
+    "selected": "junction:section-2:h:272:drive:node-5:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-5:entry-left",
+    "selected": "junction:section-2:v:1864:272:drive:node-4:exit-right|junction:section-2:v:1864:272:drive:node-5:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-5:exit-bottom",
+    "selected": "junction:section-2:h:512:drive:node-5:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "node-5:exit-right",
+    "selected": "junction:section-2:v:2200:272:drive:node-5:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "node-6:entry-top",
+    "selected": "junction:section-3:h:272:drive:node-6:entry-top|junction:section-3:h:272:drive:section-3:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-6:entry-left",
+    "selected": "junction:section-3:v:2840:272:drive:node-6:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-6:exit-bottom",
+    "selected": "junction:section-3:h:512:drive:node-6:exit-bottom|junction:section-3:h:512:drive:node-7:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-6:exit-right",
+    "selected": "junction:section-3:v:3176:272:drive:node-6:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "node-7:entry-top",
+    "selected": "junction:section-3:h:512:drive:node-6:exit-bottom|junction:section-3:h:512:drive:node-7:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "node-7:entry-left",
+    "selected": "junction:section-3:v:2840:512:drive:node-7:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "node-7:exit-bottom",
+    "selected": "junction:section-3:h:752:drive:node-7:exit-bottom|junction:section-3:h:752:drive:section-3:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "node-7:exit-right",
+    "selected": "junction:section-3:v:3176:512:drive:node-7:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "section-1:entry-top",
+    "selected": "junction:world:h:64:drive:section-1:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "section-1:entry-left",
+    "selected": "junction:world:v:64:drive:section-1:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "section-1:exit-bottom",
+    "selected": "junction:world:h:1184:drive:section-1:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "section-1:exit-right",
+    "selected": "junction:world:v:1240:drive:section-1:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "section-2:entry-top",
+    "selected": "junction:world:h:64:drive:section-2:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "section-2:entry-left",
+    "selected": "junction:world:v:1240:drive:section-2:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "section-2:exit-bottom",
+    "selected": "junction:world:h:1184:drive:section-2:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "section-2:exit-right",
+    "selected": "junction:world:v:2568:drive:section-2:exit-right"
+  },
+  {
+    "kind": "port",
+    "id": "section-3:entry-top",
+    "selected": "junction:world:h:64:drive:section-3:entry-top"
+  },
+  {
+    "kind": "port",
+    "id": "section-3:entry-left",
+    "selected": "junction:world:v:2568:drive:section-3:entry-left"
+  },
+  {
+    "kind": "port",
+    "id": "section-3:exit-bottom",
+    "selected": "junction:world:h:1184:drive:section-3:exit-bottom"
+  },
+  {
+    "kind": "port",
+    "id": "section-3:exit-right",
+    "selected": "junction:world:v:3472:drive:section-3:exit-right"
+  }
+]

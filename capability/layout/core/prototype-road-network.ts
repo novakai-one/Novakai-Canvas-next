@@ -1,3 +1,5 @@
+import { roadJunctionIndex, laneAdjacency } from './prototype-road-adjacency.js';
+import { mergePrototypeJunctions } from './prototype-road-junction-union.js';
 import type {
   PrototypeBounds,
   PrototypeRoad,
@@ -53,7 +55,10 @@ function junction(a: PrototypeRoad, b: PrototypeRoad): readonly PrototypeJunctio
   if (a.axis === b.axis) return [];
   const overlap = intersection(a.bounds, b.bounds);
   const bounds = hasArea(overlap) ? overlap : mouth(a, b, overlap);
-  return junctionRecord(`junction:${a.id}:${b.id}`, bounds);
+  return junctionRecord(`junction:${a.id}:${b.id}`, bounds).map((j) => ({
+    ...j,
+    roadIds: [a.id, b.id],
+  }));
 }
 function junctionRecord(id: string, bounds: PrototypeBounds | null): readonly PrototypeJunction[] {
   if (bounds === null) return [];
@@ -147,10 +152,9 @@ function roadParts(road: PrototypeRoad, junctions: readonly PrototypeJunction[])
 /** Join only lanes touching this junction, instead of searching every junction for every lane pair. */
 function junctionConnections(
   junction: PrototypeJunction,
-  lanes: readonly PrototypeLane[],
+  incoming: readonly PrototypeLane[],
+  outgoing: readonly PrototypeLane[],
 ): readonly PrototypeLaneConnection[] {
-  const incoming = lanes.filter((lane) => contains(junction.bounds, lane.exit));
-  const outgoing = lanes.filter((lane) => contains(junction.bounds, lane.entry));
   return incoming.flatMap((from) =>
     outgoing
       .filter((to) => to.id !== from.id)
@@ -170,8 +174,15 @@ function endpointKey(lane: PrototypeLane, endpoint: 'entry' | 'exit'): string {
 function connections(
   lanes: readonly PrototypeLane[],
   junctions: readonly PrototypeJunction[],
+  adjacency: ReturnType<typeof laneAdjacency>,
 ): readonly PrototypeLaneConnection[] {
-  const turns = junctions.flatMap((junction) => junctionConnections(junction, lanes));
+  const turns = junctions.flatMap((junction) =>
+    junctionConnections(
+      junction,
+      adjacency.incoming.get(junction.id) ?? [],
+      adjacency.outgoing.get(junction.id) ?? [],
+    ),
+  );
   const known = new Set(turns.map((link) => link.id));
   const entries = new Map<string, PrototypeLane[]>();
   lanes.forEach((lane) => {
@@ -204,12 +215,9 @@ function straightConnection(
 function describedJunction(
   junction: PrototypeJunction,
   index: number,
-  lanes: readonly PrototypeLane[],
+  adjacent: readonly PrototypeLane[],
   roads: readonly PrototypeRoad[],
 ): PrototypeJunction {
-  const adjacent = lanes.filter((lane) =>
-    [lane.entry, lane.exit].some((point) => contains(junction.bounds, point)),
-  );
   const roadIds = [...new Set(adjacent.map((lane) => lane.roadId))];
   const access = roads.find((road) => roadIds.includes(road.id) && road.access !== null)?.access;
   const arms = new Set(
@@ -240,11 +248,22 @@ function side(box: PrototypeBounds, point: { readonly x: number; readonly y: num
 
 /** Pure, repeatable compilation of this prototype's roads into enforceable lanes and turn areas. */
 export function roadNetwork(roads: readonly PrototypeRoad[]) {
-  const areas = roads.flatMap((a, index) => roads.slice(index + 1).flatMap((b) => junction(a, b)));
-  const parts = roads.map((road) => roadParts(road, areas));
+  const areas = mergePrototypeJunctions(
+    roads.flatMap((a, index) => roads.slice(index + 1).flatMap((b) => junction(a, b))),
+  );
+  const ownership = roadJunctionIndex(areas);
+  const parts = roads.map((road) => roadParts(road, ownership.get(road.id) ?? []));
   const lanes = parts.flatMap((part) => part.lanes);
-  const junctions = areas.map((area, index) => describedJunction(area, index, lanes, roads));
-  const links = connections(lanes, junctions);
+  const adjacency = laneAdjacency(roads, areas, lanes);
+  const junctions = areas.map((area, index) =>
+    describedJunction(
+      area,
+      index,
+      [...(adjacency.incoming.get(area.id) ?? []), ...(adjacency.outgoing.get(area.id) ?? [])],
+      roads,
+    ),
+  );
+  const links = connections(lanes, junctions, adjacency);
   return {
     junctions,
     lanes,

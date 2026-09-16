@@ -29,7 +29,7 @@ function parallelPath(
   to: PrototypeLane,
   junction: PrototypeJunction,
 ): readonly PrototypePoint[] {
-  if (from.direction === to.direction) return [from.exit, to.entry];
+  if (alignedForward(from, to)) return [from.exit, to.entry];
   const center = {
     x: junction.bounds.x + junction.bounds.width / 2,
     y: junction.bounds.y + junction.bounds.height / 2,
@@ -118,4 +118,9 @@ export function crossingExamples(
   connections: readonly PrototypeLaneConnection[],
 ): readonly PrototypeCrossingExample[] {
   return junctions.flatMap((junction) => example(junction, roads, lanes, connections));
+}
+
+function alignedForward(from: PrototypeLane, to: PrototypeLane): boolean {
+  const across = directionVector[from.direction].x === 0 ? 'x' : 'y';
+  return from.direction === to.direction && from.exit[across] === to.entry[across];
 }

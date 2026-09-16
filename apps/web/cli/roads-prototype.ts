@@ -2,10 +2,17 @@ import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   createRoadPrototypeScene,
+  createSevenRoadScene,
+  createNestedRoadScene,
+  createRoadProofs,
   inspectRoadTravel,
   auditRoadCoverage,
 } from '@novakai/canvas-layout';
-import type { PrototypeTravel, PrototypeLayoutMeasure } from '@novakai/canvas-layout';
+import type {
+  PrototypeTravel,
+  PrototypeLayoutMeasure,
+  RoadPrototypeScene,
+} from '@novakai/canvas-layout';
 import { createRoadPrototype } from '@novakai/canvas-canvas';
 import { createReactBindings } from '@novakai/canvas-design-system';
 
@@ -40,16 +47,22 @@ async function main(): Promise<void> {
   const Prototype = await createRoadPrototype();
   performance.measure('roads:renderer-import', { start: importStart });
   const layoutStart = performance.now();
-  const scene = createRoadPrototypeScene({ measure });
+  const build = builder();
+  const scene = build({ measure });
   performance.measure('roads:layout-total', { start: layoutStart });
   const auditStart = performance.now();
   const coverage = auditRoadCoverage(scene);
   performance.measure('roads:coverage-audit', { start: auditStart });
+  const proofStart = performance.now();
+  const proofs = catalog(scene);
+  performance.measure('roads:proof-catalog', { start: proofStart });
   performance.mark('roads:render-request');
   createRoot(target).render(
     createElement(Prototype, {
       scene,
       coverage,
+      proofs,
+      initialProof: Number(new URLSearchParams(location.search).get('proof') ?? -1),
       onReady: recordReady,
       inspectTravel: (travel: PrototypeTravel) => inspectRoadTravel(scene, travel),
     }),
@@ -58,3 +71,13 @@ async function main(): Promise<void> {
 void main().catch(() => {
   document.body.textContent = 'Road prototype could not start. Reload to retry.';
 });
+
+function builder() {
+  if (new URLSearchParams(location.search).has('nested')) return createNestedRoadScene;
+  return new URLSearchParams(location.search).has('seven')
+    ? createSevenRoadScene
+    : createRoadPrototypeScene;
+}
+function catalog(scene: RoadPrototypeScene) {
+  return new URLSearchParams(location.search).has('seven') ? createRoadProofs(scene) : [];
+}

@@ -1,0 +1,45 @@
+{
+  "direct": {
+    "section-1": 4,
+    "section-2": 6,
+    "section-3": 6,
+    "section-4": 6
+  },
+  "contained": {
+    "section-1": 10,
+    "section-2": 6,
+    "section-3": 6,
+    "section-4": 6
+  },
+  "nodePortCount": 88,
+  "sectionPortCount": 16,
+  "childContained": true,
+  "nodeClashes": [],
+  "roadNodeClashes": [],
+  "boundaryCrossings": {
+    "section-1": [
+      "drive:section-1:entry-top",
+      "drive:section-1:entry-left",
+      "drive:section-1:exit-bottom",
+      "drive:section-1:exit-right"
+    ],
+    "section-2": [
+      "drive:section-2:entry-top",
+      "drive:section-2:entry-left",
+      "drive:section-2:exit-bottom",
+      "drive:section-2:exit-right"
+    ],
+    "section-3": [
+      "drive:section-3:entry-top",
+      "drive:section-3:entry-left",
+      "drive:section-3:exit-bottom",
+      "drive:section-3:exit-right"
+    ],
+    "section-4": [
+      "drive:section-4:entry-top",
+      "drive:section-4:entry-left",
+      "drive:section-4:exit-bottom",
+      "drive:section-4:exit-right"
+    ]
+  }
+}

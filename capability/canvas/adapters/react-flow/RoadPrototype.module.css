@@ -328,3 +328,38 @@
     }
   }
 }
+
+@layer components {
+  .gate {
+    pointer-events: auto;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: var(--nv-stroke-base) solid var(--nv-text-primary);
+    background: var(--nv-surface-raised);
+    color: var(--nv-text-primary);
+    font: calc(var(--nv-type-base) * 0.65) var(--nv-font-body);
+    cursor: pointer;
+  }
+  .safeMark {
+    fill: var(--nv-surface-raised);
+    stroke: var(--nv-text-primary);
+    stroke-width: 1;
+  }
+  .safeLabel {
+    fill: var(--nv-text-primary);
+    font: var(--nv-type-base) var(--nv-font-body);
+    paint-order: stroke;
+    stroke: var(--nv-surface-raised);
+    stroke-width: 3;
+  }
+}
+
+@layer components {
+  .wireHalo {
+    fill: none;
+    stroke: var(--nv-surface-raised);
+    stroke-width: 7;
+    stroke-linejoin: round;
+  }
+}

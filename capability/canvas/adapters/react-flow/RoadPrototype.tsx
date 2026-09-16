@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { ReactElement, CSSProperties } from 'react';
-import { ReactFlow, Background, Controls, ViewportPortal } from '@xyflow/react';
+import { ReactFlow, Background, Controls, ViewportPortal, useReactFlow } from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
 import type {
   RoadPrototypeScene,
+  PrototypeRoadProof,
   PrototypeRoad,
   PrototypeBlock,
   PrototypeBounds,
@@ -106,9 +107,13 @@ function Road({ data }: NodeProps<RoadNode>): ReactElement {
 function Block({ data }: NodeProps<BlockNode>): ReactElement {
   if (data.kind === 'section')
     return (
-      <div className={styles.section}>
+      <div
+        className={styles.section}
+        data-section-id={data.block.id}
+        data-parent-section={data.block.parentSectionId}
+      >
         <strong>{data.block.label}</strong>
-        <span>1 node</span>
+        <span>{data.block.description ?? 'Four boundary gates'}</span>
       </div>
     );
   return (
@@ -152,7 +157,7 @@ function Junction({ data }: NodeProps<JunctionNode>): ReactElement {
     </button>
   );
 }
-const nodeTypes: NodeTypes = { road: Road, block: Block, junction: Junction };
+const nodeTypes: NodeTypes = { road: Road, block: Block, junction: Junction, gate: Gate };
 
 function junctionNode(
   junction: PrototypeJunction,
@@ -531,35 +536,100 @@ export function RoadPrototype({
   inspectTravel,
   coverage,
   onReady,
+  proofs = [],
+  initialProof = -1,
 }: {
+  readonly proofs?: readonly PrototypeRoadProof[];
+  readonly initialProof?: number;
   readonly scene: RoadPrototypeScene;
   readonly inspectTravel: InspectTravel;
   readonly coverage: PrototypeRoadCoverage;
   readonly onReady: () => void;
 }): ReactElement {
   const [visible, setVisible] = useState(true);
-  const [selected, select] = useState(scene.crossingExamples[0]?.junctionId ?? '');
+  const [proofIndex, setProofIndex] = useState(initialProof);
+  const proof = proofs[proofIndex];
+  const [focus, setFocus] = useState('');
+  function chooseProof(index: number): void {
+    setProofIndex(index);
+    select('');
+    setFocus('');
+  }
+  const [selected, select] = useState(() => initialRegion(scene, proofs));
   const [movementId, selectMovement] = useState('');
   const lane = scene.lanes.find((item) => item.id === selected);
   const junction = scene.junctions.find((item) => item.id === selected);
   const link = choice(scene, selected, movementId);
   function selectRegion(id: string): void {
     select(id);
+    setProofIndex(proofs.findIndex((p) => p.junctionId === id || p.portId === id));
+    setFocus('');
     selectMovement('');
   }
   const nodes = [
-    ...scene.sections.map((item) => blockNode(item, 'section', 0, selected, selectRegion)),
+    ...scene.sections.map((item) =>
+      blockNode(item, 'section', sectionLayer(item), selected, selectRegion),
+    ),
     ...scene.roads.map((road) => roadNode(road, scene, selected, selectRegion)),
     ...scene.junctions.map((item) => junctionNode(item, selected, selectRegion)),
     ...scene.nodes.map((item) => blockNode(item, 'node', 2, selected, selectRegion)),
+    ...scene.ports
+      .filter((p) => p.nodeId.startsWith('section-'))
+      .map((p) => gateNode(p, selectRegion)),
   ];
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ROAD LAYOUT · MILESTONE 1</p>
-          <h1>Two sections. Space for roads.</h1>
+          <p>ROAD LAYOUT · DIRECTIONAL LANES</p>
+          <h1>
+            {scene.nodes.length} nodes · {scene.sections.length} sections
+          </h1>
         </div>
+        {scene.sections.length > 0 && (
+          <div className={styles.probes}>
+            <button onClick={() => chooseProof(-1)}>Overview</button>
+            {scene.sections.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => {
+                  setProofIndex(-1);
+                  setFocus(s.id);
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+            {proofs.length > 0 && (
+              <>
+                <button
+                  aria-label="Previous proof"
+                  onClick={() => chooseProof((proofIndex - 1 + proofs.length) % proofs.length)}
+                >
+                  ←
+                </button>
+                <select
+                  aria-label="Road proof"
+                  value={proofIndex}
+                  onChange={(e) => chooseProof(Number(e.target.value))}
+                >
+                  <option value={-1}>Choose a crossing or bend</option>
+                  {proofs.map((p, i) => (
+                    <option key={p.id} value={i}>
+                      {i + 1}/{proofs.length} · {p.title}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  aria-label="Next proof"
+                  onClick={() => chooseProof((proofIndex + 1) % proofs.length)}
+                >
+                  →
+                </button>
+              </>
+            )}
+          </div>
+        )}
         <label>
           <input
             type="checkbox"
@@ -574,35 +644,45 @@ export function RoadPrototype({
           nodes={nodes}
           edges={[]}
           nodeTypes={nodeTypes}
-          fitView
+          fitView={initialProof < 0}
+          onInit={(camera) => focusProof(camera, proofs[initialProof], undefined)}
           fitViewOptions={{ padding: 0.12 }}
-          minZoom={0.25}
+          minZoom={0.1}
           maxZoom={2}
           nodesDraggable={false}
           nodesConnectable={false}
           elementsSelectable={false}
         >
           <ReadySignal onReady={onReady} />
+          <ProofCamera proof={proof} focus={scene.sections.find((s) => s.id === focus)} />
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
-          {junction !== undefined && link !== undefined && (
+          {proof && <ProofPaths proof={proof} />}
+          {proofs.length === 0 && junction !== undefined && link !== undefined && (
             <RoutePreview scene={scene} link={link} />
           )}
         </ReactFlow>
       </div>
-      <Inspection
-        port={scene.ports.find((port) => port.portId === selected)}
-        scene={scene}
-        lane={lane}
-        junction={junction}
-        link={link}
-        select={selectMovement}
-        inspect={inspectTravel}
-      />
+      {proof ? (
+        <AtlasInspector proof={proof} scene={scene} inspect={inspectTravel} />
+      ) : (
+        <ProofHint enabled={proofs.length > 0 && selected === ''}>
+          <Inspection
+            port={scene.ports.find((port) => port.portId === selected)}
+            scene={scene}
+            lane={lane}
+            junction={junction}
+            link={link}
+            select={selectMovement}
+            inspect={inspectTravel}
+          />
+        </ProofHint>
+      )}
       <footer className={styles.footer}>
         <span data-coverage="road-area">{coverageLabel(coverage)}</span>
         <span>
-          {scene.lanes.length + scene.junctions.length} inspectable areas · 0 diagram wires
+          {scene.lanes.length + scene.junctions.length} inspectable areas · {proofs.length} two-wire
+          demonstrations
         </span>
       </footer>
     </main>
@@ -691,4 +771,226 @@ function ReadySignal({ onReady }: { readonly onReady: () => void }): null {
     onReady();
   }, [onReady]);
   return null;
+}
+
+type GateNode = Node<{ port: PrototypePortLocation; select: (id: string) => void }, 'gate'>;
+function Gate({ data }: NodeProps<GateNode>): ReactElement {
+  return (
+    <button
+      className={`${styles.gate} nodrag nopan`}
+      data-port-id={data.port.portId}
+      onClick={() => data.select(data.port.portId)}
+      aria-label={`Inspect ${data.port.portId}`}
+      title={data.port.portId}
+    >
+      {data.port.role === 'entry' ? 'IN' : 'OUT'}
+    </button>
+  );
+}
+function gateNode(port: PrototypePortLocation, select: (id: string) => void): GateNode {
+  return {
+    id: port.portId,
+    type: 'gate',
+    position: { x: port.point.x - 16, y: port.point.y - 12 },
+    width: 32,
+    height: 24,
+    style: { width: 32, height: 24 },
+    data: { port, select },
+    zIndex: 6,
+    draggable: false,
+    selectable: false,
+  };
+}
+function proofBounds(proof: PrototypeRoadProof): PrototypeBounds {
+  const points = [...proof.primary.points, ...proof.through.points];
+  const xs = points.map((p) => p.x),
+    ys = points.map((p) => p.y);
+  return {
+    x: Math.min(...xs) - 140,
+    y: Math.min(...ys) - 140,
+    width: Math.max(...xs) - Math.min(...xs) + 280,
+    height: Math.max(...ys) - Math.min(...ys) + 280,
+  };
+}
+function ProofCamera({
+  proof,
+  focus,
+}: {
+  readonly proof: PrototypeRoadProof | undefined;
+  readonly focus: PrototypeBlock | undefined;
+}): null {
+  const { fitBounds, fitView } = useReactFlow();
+  useEffect(() => {
+    focusProof({ fitBounds, fitView }, proof, focus);
+  }, [proof, focus, fitBounds, fitView]);
+  return null;
+}
+function ProofPaths({ proof }: { readonly proof: PrototypeRoadProof }): ReactElement {
+  return (
+    <ViewportPortal>
+      <svg
+        className={styles.routePreview}
+        aria-label="Two legal wire paths"
+        data-proof-id={proof.id}
+      >
+        <defs>
+          <marker
+            id="proof-a"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="4"
+            markerHeight="4"
+            orient="auto"
+          >
+            <path d="M0 0 L10 5 L0 10z" fill="var(--nv-action-accent)" />
+          </marker>
+          <marker
+            id="proof-b"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="4"
+            markerHeight="4"
+            orient="auto"
+          >
+            <path d="M0 0 L10 5 L0 10z" fill="var(--nv-status-warning)" />
+          </marker>
+        </defs>
+        <polyline
+          data-preview="through"
+          points={pointsAttribute(proof.through.points)}
+          className={styles.throughPath}
+          markerEnd="url(#proof-b)"
+        />
+        <polyline points={pointsAttribute(proof.primary.points)} className={styles.wireHalo} />
+        <polyline
+          data-preview="primary"
+          points={pointsAttribute(proof.primary.points)}
+          className={styles.primaryPath}
+          markerEnd="url(#proof-a)"
+        />
+
+        {[proof.primary, proof.through].map((path, i) => (
+          <g key={i}>
+            {[path.points[0], path.points.at(-1)].map((p, j) => (
+              <SafeEndpoint key={j} point={p} wire={i} end={j} />
+            ))}
+          </g>
+        ))}
+      </svg>
+    </ViewportPortal>
+  );
+}
+function proofAllowed(
+  proof: PrototypeRoadProof,
+  scene: RoadPrototypeScene,
+  inspect: InspectTravel,
+): boolean {
+  return [...proof.primary.connectionIds, ...proof.through.connectionIds].every((id) => {
+    const c = scene.connections.find((c) => c.id === id);
+    return (
+      c !== undefined && inspect({ kind: 'connection', connectionId: id, points: c.points }).ok
+    );
+  });
+}
+function AtlasInspector({
+  proof,
+  scene,
+  inspect,
+}: {
+  readonly proof: PrototypeRoadProof;
+  readonly scene: RoadPrototypeScene;
+  readonly inspect: InspectTravel;
+}): ReactElement {
+  return (
+    <aside
+      className={styles.proof}
+      data-inspected-id={proof.junctionId}
+      aria-label="Two-wire proof"
+    >
+      <div>
+        <strong>{proof.title}</strong>
+        <span>A solid: demonstration wire · B dashed: legal nearby traffic</span>
+      </div>
+      <output data-allowed={proofAllowed(proof, scene, inspect)}>
+        {proofAllowed(proof, scene, inspect) ? 'Both paths legal' : 'Validation failed'}
+      </output>
+      <span>
+        {proof.crossings.length} crossings (white gap = no join) · no shared segments · endpoints
+        inside safe lanes or at ports
+      </span>
+    </aside>
+  );
+}
+
+function SafeEndpoint({
+  point: p,
+  wire,
+  end,
+}: {
+  readonly point: PrototypePoint | undefined;
+  readonly wire: number;
+  readonly end: number;
+}): ReactElement | null {
+  if (!p) return null;
+  const labels = ['start', 'safe'],
+    names = ['A', 'B'],
+    dy = [-12, 20];
+  return (
+    <g>
+      <circle cx={p.x} cy={p.y} r={6} className={styles.safeMark} />
+      <text x={p.x + 10} y={p.y + (dy[end] ?? 0)} className={styles.safeLabel}>
+        {names[wire]} {labels[end]}
+      </text>
+    </g>
+  );
+}
+
+function ProofHint({
+  enabled,
+  children,
+}: {
+  readonly enabled: boolean;
+  readonly children: ReactElement;
+}): ReactElement {
+  if (!enabled) return children;
+  return (
+    <aside className={styles.proof}>
+      Select a road opening or bend to see two legal wires. Top/left: IN. Bottom/right: OUT. Section
+      boundaries can only be crossed at their four gates.
+    </aside>
+  );
+}
+
+function focusProof(
+  camera: {
+    fitBounds: (
+      bounds: PrototypeBounds,
+      options: { padding: number; duration: number },
+    ) => Promise<boolean>;
+    fitView: (options: { padding: number; duration: number }) => Promise<boolean>;
+  },
+  proof: PrototypeRoadProof | undefined,
+  focus: PrototypeBlock | undefined,
+): void {
+  if (proof) {
+    void camera.fitBounds(proofBounds(proof), { padding: 0.08, duration: 0 });
+    return;
+  }
+  if (focus) {
+    void camera.fitBounds(focus.bounds, { padding: 0.12, duration: 0 });
+    return;
+  }
+  void camera.fitView({ padding: 0.07, duration: 0 });
+}
+
+function sectionLayer(section: PrototypeBlock): number {
+  return section.parentSectionId ? 0 : -1;
+}
+
+function initialRegion(scene: RoadPrototypeScene, proofs: readonly PrototypeRoadProof[]): string {
+  if (proofs.length > 0) return '';
+  if (scene.sections.some((section) => section.parentSectionId)) return '';
+  return scene.crossingExamples[0]?.junctionId ?? '';
 }

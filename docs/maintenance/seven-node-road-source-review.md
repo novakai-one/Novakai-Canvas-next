@@ -1,0 +1,24 @@
+# Seven-node prototype: source review evidence
+
+Manual review, not a tool-generated certification. Scope: changed TypeScript files and their direct collaborators.
+
+Vectors follow the repository sixteen anchors: SRP, OCP, LSP, ISP, DIP, DRY, KISS, YAGNI, typed outcomes, idempotency, deep module, Demeter, immutability, type safety, cognitive complexity, testability. These scores assess the bounded prototype contract, not production arbitrary-input support.
+
+| File | Scores /160 | Evidence and deductions |
+|---|---|---|
+| `capability/layout/core/prototype-road-adjacency.ts` | 10, 9, 9, 10, 10, 9, 9, 10, 8, 10, 9, 9, 9, 10, 10, 10 = **151** | roadJunctionIndex/laneAdjacency expose ownership internally; endpointIndex/attach hide coordinate keys. Missing-owner tolerance is the typed-outcome deduction. |
+| `capability/layout/core/prototype-road-junction-union.ts` | 10, 9, 9, 10, 10, 9, 9, 9, 8, 10, 9, 9, 10, 10, 10, 10 = **151** | mergePrototypeJunctions is a pure fold; union/intersection helpers isolate rectangle arithmetic. General nonrectangular inputs require the independent coverage audit. |
+| `capability/layout/core/prototype-road-proofs.ts` | 9, 9, 9, 9, 10, 9, 9, 9, 8, 10, 9, 9, 10, 10, 10, 10 = **149** | createRoadProofs hides candidate selection and expansion behind one scene input; generated records are immutable. Unsupported cases return an empty list; exhaustive coverage checks catch omissions. |
+| `capability/layout/core/prototype-seven-roads.ts` | 9, 8, 9, 9, 10, 9, 9, 9, 8, 10, 9, 9, 10, 10, 10, 10 = **148** | createSevenRoadScene sequences six measured stages; node-owned geometry imported from its owner; section definitions are deliberately fixed. OCP/typed outcomes lose points for fixed-fixture scope. |
+| `capability/layout/core/prototype-road-network.ts` | 9, 9, 9, 9, 10, 9, 9, 9, 8, 10, 9, 9, 10, 10, 10, 10 = **149** | roadNetwork composes union, ownership and lane allocation; no I/O or public index imports. Pairwise discovery remains deliberately unoptimized. |
+| `capability/layout/core/prototype-road-paths.ts` | 9, 9, 9, 10, 10, 9, 9, 10, 8, 10, 9, 9, 10, 10, 10, 10 = **151** | alignedForward distinguishes straight geometry from dogleg construction; typed lane inputs and pure returned points preserve deterministic behavior. |
+| `capability/canvas/adapters/react-flow/RoadPrototype.tsx` | 8, 9, 9, 9, 10, 9, 9, 9, 8, 10, 9, 9, 9, 10, 10, 10 = **147** | Presentation-only, injected travel validator and scene contracts; camera fits supplied coordinates. SRP loses points for the long combined old/new inspector file; typed outcomes and immutability lose points for UI fallback/state. Per-render searches remain a limitation. |
+| `apps/web/cli/roads-prototype.ts` | 9, 9, 9, 10, 10, 9, 9, 10, 8, 9, 9, 9, 9, 10, 10, 9 = **148** | Thin host composes public interfaces; measure/recordReady isolate the ambient browser clock. URL mode and terminal catch are host responsibilities. Real browser dependency reduces testability. |
+| `capability/layout/contract/api.ts` | 10, 9, 10, 9, 10, 9, 10, 10, 9, 10, 9, 10, 10, 10, 10, 10 = **155** | Explicit named exports/readonly declarations preserve the public import boundary; new fields are additive. Breadth of the existing prototype contract prevents full ISP/deep-module scores. |
+| `capability/layout/contract/index.ts` | 10, 9, 10, 9, 10, 9, 10, 10, 9, 10, 9, 10, 10, 10, 10, 10 = **155** | Explicit named exports/readonly declarations preserve the public import boundary; new fields are additive. Breadth of the existing prototype contract prevents full ISP/deep-module scores. |
+| `capability/layout/contract/records/road-prototype.ts` | 10, 9, 10, 9, 10, 9, 10, 10, 9, 10, 9, 10, 10, 10, 10, 10 = **155** | Explicit named exports/readonly declarations preserve the public import boundary; new fields are additive. Breadth of the existing prototype contract prevents full ISP/deep-module scores. |
+| `capability/layout/contract/records/road-proof.ts` | 10, 9, 10, 9, 10, 9, 10, 10, 9, 10, 9, 10, 10, 10, 10, 10 = **155** | Explicit named exports/readonly declarations preserve the public import boundary; new fields are additive. Breadth of the existing prototype contract prevents full ISP/deep-module scores. |
+
+Worst three remaining findings: fixed-width/fixed-placement fixture does not handle arbitrary dragging; renderer keeps both milestone inspectors in one long presentation file; diagnostic union audit is quadratic in its coordinate partition and dominates numeric work. None is represented as completed production routing.
+
+CSS uses the existing centralized palette and type/spacing tokens; route strokes and port dimensions are diagnostic mark geometry. HTML changes only the page title. `pnpm check` independently enforces the <=2 cognitive-complexity/import/type/format gates. Browser and geometry evidence are described in the accompanying maintenance document.

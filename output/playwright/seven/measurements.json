@@ -1,0 +1,1036 @@
+{
+  "definition": "Numeric + - * / % < <= > >= === !== evaluations and Math function calls in actual prototype core modules. Each Math min/max call counts as one, regardless of argument count. Excludes runtime/library internals, map/set operations, string comparisons, loop/array bookkeeping, allocation and rendering. Not CPU instructions. Instrumented time is not performance evidence.",
+  "calculations": {
+    "setup": {
+      "/": 1
+    },
+    "capacity": {
+      "*": 3,
+      "+": 9,
+      "/": 12
+    },
+    "nodes": {
+      "*": 10,
+      "+": 28
+    },
+    "ports": {
+      "+": 80
+    },
+    "main-roads": {
+      "-": 156,
+      "+": 125
+    },
+    "driveways": {
+      "-": 208,
+      "+": 124
+    },
+    "network": {
+      "+": 36573,
+      "Math.max": 15612,
+      "Math.min": 15730,
+      "-": 16601,
+      ">": 8886,
+      ">=": 4578,
+      "/": 1639,
+      "*": 2680,
+      "!==": 74,
+      "<=": 2016,
+      "===": 7096,
+      "<": 422
+    },
+    "coverage-audit": {
+      "+": 2661382,
+      "-": 708,
+      "/": 6090,
+      ">=": 2649150,
+      "<=": 2649150,
+      ">": 7750,
+      "*": 5272,
+      "===": 6657
+    },
+    "proof-catalog": {
+      "===": 137399,
+      "*": 13750,
+      "+": 21795,
+      "-": 20185,
+      "/": 14920,
+      "!==": 69540,
+      "Math.max": 63342,
+      "Math.min": 63342,
+      ">": 29717,
+      "<": 12564
+    }
+  },
+  "totals": {
+    "setup": 1,
+    "capacity": 24,
+    "nodes": 38,
+    "ports": 80,
+    "main-roads": 281,
+    "driveways": 332,
+    "network": 111907,
+    "coverage-audit": 7986159,
+    "proof-catalog": 446554
+  },
+  "coverage": {
+    "roadArea": 1209216,
+    "coveredArea": 1209216,
+    "uncoveredArea": 0,
+    "multiplyOwnedArea": 0,
+    "outsideRoadArea": 0,
+    "perRoad": [
+      {
+        "roadId": "world:h:64",
+        "area": 165888,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:world:h:64:world:v:64",
+          "world:h:64:part-0:left",
+          "world:h:64:part-0:right",
+          "junction:world:h:64:drive:section-1:entry-top",
+          "world:h:64:part-1:left",
+          "world:h:64:part-1:right",
+          "junction:world:h:64:world:v:1240",
+          "world:h:64:part-2:left",
+          "world:h:64:part-2:right",
+          "junction:world:h:64:drive:section-2:entry-top",
+          "world:h:64:part-3:left",
+          "world:h:64:part-3:right",
+          "junction:world:h:64:world:v:2568",
+          "world:h:64:part-4:left",
+          "world:h:64:part-4:right",
+          "junction:world:h:64:drive:section-3:entry-top",
+          "world:h:64:part-5:left",
+          "world:h:64:part-5:right",
+          "junction:world:h:64:world:v:3472"
+        ]
+      },
+      {
+        "roadId": "world:h:1184",
+        "area": 165888,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:world:h:1184:world:v:64",
+          "world:h:1184:part-0:left",
+          "world:h:1184:part-0:right",
+          "junction:world:h:1184:drive:section-1:exit-bottom",
+          "world:h:1184:part-1:left",
+          "world:h:1184:part-1:right",
+          "junction:world:h:1184:world:v:1240",
+          "world:h:1184:part-2:left",
+          "world:h:1184:part-2:right",
+          "junction:world:h:1184:drive:section-2:exit-bottom",
+          "world:h:1184:part-3:left",
+          "world:h:1184:part-3:right",
+          "junction:world:h:1184:world:v:2568",
+          "world:h:1184:part-4:left",
+          "world:h:1184:part-4:right",
+          "junction:world:h:1184:drive:section-3:exit-bottom",
+          "world:h:1184:part-5:left",
+          "world:h:1184:part-5:right",
+          "junction:world:h:1184:world:v:3472"
+        ]
+      },
+      {
+        "roadId": "world:v:64",
+        "area": 56064,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:world:h:64:world:v:64",
+          "world:v:64:part-0:down",
+          "junction:world:v:64:drive:section-1:entry-left",
+          "world:v:64:part-1:down",
+          "junction:world:h:1184:world:v:64",
+          "world:v:64:part-0:up",
+          "world:v:64:part-1:up"
+        ]
+      },
+      {
+        "roadId": "world:v:1240",
+        "area": 56064,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:world:h:64:world:v:1240",
+          "world:v:1240:part-0:down",
+          "junction:world:v:1240:drive:section-2:entry-left",
+          "world:v:1240:part-1:down",
+          "junction:world:v:1240:drive:section-1:exit-right",
+          "world:v:1240:part-2:down",
+          "junction:world:h:1184:world:v:1240",
+          "world:v:1240:part-0:up",
+          "world:v:1240:part-1:up",
+          "world:v:1240:part-2:up"
+        ]
+      },
+      {
+        "roadId": "world:v:2568",
+        "area": 56064,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:world:h:64:world:v:2568",
+          "world:v:2568:part-0:down",
+          "junction:world:v:2568:drive:section-2:exit-right",
+          "world:v:2568:part-1:down",
+          "junction:world:v:2568:drive:section-3:entry-left",
+          "world:v:2568:part-2:down",
+          "junction:world:h:1184:world:v:2568",
+          "world:v:2568:part-0:up",
+          "world:v:2568:part-1:up",
+          "world:v:2568:part-2:up"
+        ]
+      },
+      {
+        "roadId": "world:v:3472",
+        "area": 56064,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:world:h:64:world:v:3472",
+          "world:v:3472:part-0:down",
+          "junction:world:v:3472:drive:section-3:exit-right",
+          "world:v:3472:part-1:down",
+          "junction:world:h:1184:world:v:3472",
+          "world:v:3472:part-0:up",
+          "world:v:3472:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-1:h:272",
+        "area": 42240,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:272:section-1:perimeter:224",
+          "section-1:h:272:part-0:left",
+          "section-1:h:272:part-0:right",
+          "junction:section-1:h:272:section-1:v:328:272",
+          "section-1:h:272:part-1:left",
+          "section-1:h:272:part-1:right",
+          "junction:section-1:h:272:drive:node-1:entry-top",
+          "section-1:h:272:part-2:left",
+          "section-1:h:272:part-2:right",
+          "junction:section-1:h:272:section-1:v:664:272|junction:section-1:h:272:drive:section-1:entry-top",
+          "section-1:h:272:part-3:left",
+          "section-1:h:272:part-3:right",
+          "junction:section-1:h:272:section-1:perimeter:1056"
+        ]
+      },
+      {
+        "roadId": "section-1:h:512",
+        "area": 42240,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:512:section-1:perimeter:224",
+          "section-1:h:512:part-0:left",
+          "section-1:h:512:part-0:right",
+          "junction:section-1:h:512:section-1:v:328:272",
+          "section-1:h:512:part-1:left",
+          "section-1:h:512:part-1:right",
+          "junction:section-1:h:512:section-1:v:424:512",
+          "section-1:h:512:part-2:left",
+          "section-1:h:512:part-2:right",
+          "junction:section-1:h:512:drive:node-1:exit-bottom",
+          "section-1:h:512:part-3:left",
+          "section-1:h:512:part-3:right",
+          "junction:section-1:h:512:drive:node-2:entry-top",
+          "section-1:h:512:part-4:left",
+          "section-1:h:512:part-4:right",
+          "junction:section-1:h:512:section-1:v:664:272",
+          "section-1:h:512:part-5:left",
+          "section-1:h:512:part-5:right",
+          "junction:section-1:h:512:section-1:v:760:512",
+          "section-1:h:512:part-6:left",
+          "section-1:h:512:part-6:right",
+          "junction:section-1:h:512:section-1:perimeter:1056"
+        ]
+      },
+      {
+        "roadId": "section-1:h:752",
+        "area": 42240,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:752:section-1:perimeter:224",
+          "section-1:h:752:part-0:left",
+          "section-1:h:752:part-0:right",
+          "junction:section-1:h:752:section-1:v:424:512",
+          "section-1:h:752:part-1:left",
+          "section-1:h:752:part-1:right",
+          "junction:section-1:h:752:section-1:v:520:752",
+          "section-1:h:752:part-2:left",
+          "section-1:h:752:part-2:right",
+          "junction:section-1:h:752:drive:node-2:exit-bottom",
+          "section-1:h:752:part-3:left",
+          "section-1:h:752:part-3:right",
+          "junction:section-1:h:752:drive:node-3:entry-top",
+          "section-1:h:752:part-4:left",
+          "section-1:h:752:part-4:right",
+          "junction:section-1:h:752:section-1:v:760:512",
+          "section-1:h:752:part-5:left",
+          "section-1:h:752:part-5:right",
+          "junction:section-1:h:752:section-1:v:856:752",
+          "section-1:h:752:part-6:left",
+          "section-1:h:752:part-6:right",
+          "junction:section-1:h:752:section-1:perimeter:1056"
+        ]
+      },
+      {
+        "roadId": "section-1:h:992",
+        "area": 42240,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:992:section-1:perimeter:224",
+          "section-1:h:992:part-0:left",
+          "section-1:h:992:part-0:right",
+          "junction:section-1:h:992:section-1:v:520:752",
+          "section-1:h:992:part-1:left",
+          "section-1:h:992:part-1:right",
+          "junction:section-1:h:992:drive:section-1:exit-bottom",
+          "section-1:h:992:part-2:left",
+          "section-1:h:992:part-2:right",
+          "junction:section-1:h:992:drive:node-3:exit-bottom",
+          "section-1:h:992:part-3:left",
+          "section-1:h:992:part-3:right",
+          "junction:section-1:h:992:section-1:v:856:752",
+          "section-1:h:992:part-4:left",
+          "section-1:h:992:part-4:right",
+          "junction:section-1:h:992:section-1:perimeter:1056"
+        ]
+      },
+      {
+        "roadId": "section-1:perimeter:224",
+        "area": 36864,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:272:section-1:perimeter:224",
+          "section-1:perimeter:224:part-0:down",
+          "junction:section-1:h:512:section-1:perimeter:224",
+          "section-1:perimeter:224:part-1:down",
+          "junction:section-1:perimeter:224:drive:section-1:entry-left",
+          "section-1:perimeter:224:part-2:down",
+          "junction:section-1:h:752:section-1:perimeter:224",
+          "section-1:perimeter:224:part-3:down",
+          "junction:section-1:h:992:section-1:perimeter:224",
+          "section-1:perimeter:224:part-0:up",
+          "section-1:perimeter:224:part-1:up",
+          "section-1:perimeter:224:part-2:up",
+          "section-1:perimeter:224:part-3:up"
+        ]
+      },
+      {
+        "roadId": "section-1:perimeter:1056",
+        "area": 36864,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:272:section-1:perimeter:1056",
+          "section-1:perimeter:1056:part-0:down",
+          "junction:section-1:h:512:section-1:perimeter:1056",
+          "section-1:perimeter:1056:part-1:down",
+          "junction:section-1:perimeter:1056:drive:section-1:exit-right",
+          "section-1:perimeter:1056:part-2:down",
+          "junction:section-1:h:752:section-1:perimeter:1056",
+          "section-1:perimeter:1056:part-3:down",
+          "junction:section-1:h:992:section-1:perimeter:1056",
+          "section-1:perimeter:1056:part-0:up",
+          "section-1:perimeter:1056:part-1:up",
+          "section-1:perimeter:1056:part-2:up",
+          "section-1:perimeter:1056:part-3:up"
+        ]
+      },
+      {
+        "roadId": "section-1:v:328:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:272:section-1:v:328:272",
+          "section-1:v:328:272:part-0:down",
+          "junction:section-1:v:328:272:drive:node-1:entry-left",
+          "section-1:v:328:272:part-1:down",
+          "junction:section-1:h:512:section-1:v:328:272",
+          "section-1:v:328:272:part-0:up",
+          "section-1:v:328:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-1:v:664:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:272:section-1:v:664:272|junction:section-1:h:272:drive:section-1:entry-top",
+          "section-1:v:664:272:part-0:down",
+          "junction:section-1:v:664:272:drive:node-1:exit-right",
+          "section-1:v:664:272:part-1:down",
+          "junction:section-1:h:512:section-1:v:664:272",
+          "section-1:v:664:272:part-0:up",
+          "section-1:v:664:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-1:v:424:512",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:512:section-1:v:424:512",
+          "section-1:v:424:512:part-0:down",
+          "junction:section-1:v:424:512:drive:node-2:entry-left",
+          "section-1:v:424:512:part-1:down",
+          "junction:section-1:h:752:section-1:v:424:512",
+          "section-1:v:424:512:part-0:up",
+          "section-1:v:424:512:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-1:v:760:512",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:512:section-1:v:760:512",
+          "section-1:v:760:512:part-0:down",
+          "junction:section-1:v:760:512:drive:node-2:exit-right",
+          "section-1:v:760:512:part-1:down",
+          "junction:section-1:h:752:section-1:v:760:512",
+          "section-1:v:760:512:part-0:up",
+          "section-1:v:760:512:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-1:v:520:752",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:752:section-1:v:520:752",
+          "section-1:v:520:752:part-0:down",
+          "junction:section-1:v:520:752:drive:node-3:entry-left",
+          "section-1:v:520:752:part-1:down",
+          "junction:section-1:h:992:section-1:v:520:752",
+          "section-1:v:520:752:part-0:up",
+          "section-1:v:520:752:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-1:v:856:752",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-1:h:752:section-1:v:856:752",
+          "section-1:v:856:752:part-0:down",
+          "junction:section-1:v:856:752:drive:node-3:exit-right",
+          "section-1:v:856:752:part-1:down",
+          "junction:section-1:h:992:section-1:v:856:752",
+          "section-1:v:856:752:part-0:up",
+          "section-1:v:856:752:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-2:h:272",
+        "area": 48384,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:272:section-2:perimeter:1424",
+          "section-2:h:272:part-0:left",
+          "section-2:h:272:part-0:right",
+          "junction:section-2:h:272:section-2:v:1528:272",
+          "section-2:h:272:part-1:left",
+          "section-2:h:272:part-1:right",
+          "junction:section-2:h:272:drive:node-4:entry-top",
+          "section-2:h:272:part-2:left",
+          "section-2:h:272:part-2:right",
+          "junction:section-2:h:272:section-2:v:1864:272",
+          "section-2:h:272:part-3:left",
+          "section-2:h:272:part-3:right",
+          "junction:section-2:h:272:drive:section-2:entry-top",
+          "section-2:h:272:part-4:left",
+          "section-2:h:272:part-4:right",
+          "junction:section-2:h:272:drive:node-5:entry-top",
+          "section-2:h:272:part-5:left",
+          "section-2:h:272:part-5:right",
+          "junction:section-2:h:272:section-2:v:2200:272",
+          "section-2:h:272:part-6:left",
+          "section-2:h:272:part-6:right",
+          "junction:section-2:h:272:section-2:perimeter:2384"
+        ]
+      },
+      {
+        "roadId": "section-2:h:512",
+        "area": 48384,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:512:section-2:perimeter:1424",
+          "section-2:h:512:part-0:left",
+          "section-2:h:512:part-0:right",
+          "junction:section-2:h:512:section-2:v:1528:272",
+          "section-2:h:512:part-1:left",
+          "section-2:h:512:part-1:right",
+          "junction:section-2:h:512:drive:node-4:exit-bottom",
+          "section-2:h:512:part-2:left",
+          "section-2:h:512:part-2:right",
+          "junction:section-2:h:512:section-2:v:1864:272",
+          "section-2:h:512:part-3:left",
+          "section-2:h:512:part-3:right",
+          "junction:section-2:h:512:drive:section-2:exit-bottom",
+          "section-2:h:512:part-4:left",
+          "section-2:h:512:part-4:right",
+          "junction:section-2:h:512:drive:node-5:exit-bottom",
+          "section-2:h:512:part-5:left",
+          "section-2:h:512:part-5:right",
+          "junction:section-2:h:512:section-2:v:2200:272",
+          "section-2:h:512:part-6:left",
+          "section-2:h:512:part-6:right",
+          "junction:section-2:h:512:section-2:perimeter:2384"
+        ]
+      },
+      {
+        "roadId": "section-2:perimeter:1424",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:272:section-2:perimeter:1424",
+          "section-2:perimeter:1424:part-0:down",
+          "junction:section-2:perimeter:1424:drive:section-2:entry-left",
+          "section-2:perimeter:1424:part-1:down",
+          "junction:section-2:h:512:section-2:perimeter:1424",
+          "section-2:perimeter:1424:part-0:up",
+          "section-2:perimeter:1424:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-2:perimeter:2384",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:272:section-2:perimeter:2384",
+          "section-2:perimeter:2384:part-0:down",
+          "junction:section-2:perimeter:2384:drive:section-2:exit-right",
+          "section-2:perimeter:2384:part-1:down",
+          "junction:section-2:h:512:section-2:perimeter:2384",
+          "section-2:perimeter:2384:part-0:up",
+          "section-2:perimeter:2384:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-2:v:1528:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:272:section-2:v:1528:272",
+          "section-2:v:1528:272:part-0:down",
+          "junction:section-2:v:1528:272:drive:node-4:entry-left",
+          "section-2:v:1528:272:part-1:down",
+          "junction:section-2:h:512:section-2:v:1528:272",
+          "section-2:v:1528:272:part-0:up",
+          "section-2:v:1528:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-2:v:1864:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:272:section-2:v:1864:272",
+          "section-2:v:1864:272:part-0:down",
+          "junction:section-2:v:1864:272:drive:node-4:exit-right|junction:section-2:v:1864:272:drive:node-5:entry-left",
+          "section-2:v:1864:272:part-1:down",
+          "junction:section-2:h:512:section-2:v:1864:272",
+          "section-2:v:1864:272:part-0:up",
+          "section-2:v:1864:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-2:v:2200:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-2:h:272:section-2:v:2200:272",
+          "section-2:v:2200:272:part-0:down",
+          "junction:section-2:v:2200:272:drive:node-5:exit-right",
+          "section-2:v:2200:272:part-1:down",
+          "junction:section-2:h:512:section-2:v:2200:272",
+          "section-2:v:2200:272:part-0:up",
+          "section-2:v:2200:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-3:h:272",
+        "area": 28416,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:272:section-3:perimeter:2752",
+          "section-3:h:272:part-0:left",
+          "section-3:h:272:part-0:right",
+          "junction:section-3:h:272:section-3:v:2840:272",
+          "section-3:h:272:part-1:left",
+          "section-3:h:272:part-1:right",
+          "junction:section-3:h:272:drive:node-6:entry-top|junction:section-3:h:272:drive:section-3:entry-top",
+          "section-3:h:272:part-2:left",
+          "section-3:h:272:part-2:right",
+          "junction:section-3:h:272:section-3:v:3176:272",
+          "section-3:h:272:part-3:left",
+          "section-3:h:272:part-3:right",
+          "junction:section-3:h:272:section-3:perimeter:3296"
+        ]
+      },
+      {
+        "roadId": "section-3:h:512",
+        "area": 28416,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:512:section-3:perimeter:2752|junction:section-3:perimeter:2752:drive:section-3:entry-left",
+          "section-3:h:512:part-0:left",
+          "section-3:h:512:part-0:right",
+          "junction:section-3:h:512:section-3:v:2840:272|junction:section-3:h:512:section-3:v:2840:512",
+          "section-3:h:512:part-1:left",
+          "section-3:h:512:part-1:right",
+          "junction:section-3:h:512:drive:node-6:exit-bottom|junction:section-3:h:512:drive:node-7:entry-top",
+          "section-3:h:512:part-2:left",
+          "section-3:h:512:part-2:right",
+          "junction:section-3:h:512:section-3:v:3176:272|junction:section-3:h:512:section-3:v:3176:512",
+          "section-3:h:512:part-3:left",
+          "section-3:h:512:part-3:right",
+          "junction:section-3:h:512:section-3:perimeter:3296|junction:section-3:perimeter:3296:drive:section-3:exit-right"
+        ]
+      },
+      {
+        "roadId": "section-3:h:752",
+        "area": 28416,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:752:section-3:perimeter:2752",
+          "section-3:h:752:part-0:left",
+          "section-3:h:752:part-0:right",
+          "junction:section-3:h:752:section-3:v:2840:512",
+          "section-3:h:752:part-1:left",
+          "section-3:h:752:part-1:right",
+          "junction:section-3:h:752:drive:node-7:exit-bottom|junction:section-3:h:752:drive:section-3:exit-bottom",
+          "section-3:h:752:part-2:left",
+          "section-3:h:752:part-2:right",
+          "junction:section-3:h:752:section-3:v:3176:512",
+          "section-3:h:752:part-3:left",
+          "section-3:h:752:part-3:right",
+          "junction:section-3:h:752:section-3:perimeter:3296"
+        ]
+      },
+      {
+        "roadId": "section-3:perimeter:2752",
+        "area": 25344,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:272:section-3:perimeter:2752",
+          "section-3:perimeter:2752:part-0:down",
+          "junction:section-3:h:512:section-3:perimeter:2752|junction:section-3:perimeter:2752:drive:section-3:entry-left",
+          "section-3:perimeter:2752:part-1:down",
+          "junction:section-3:h:752:section-3:perimeter:2752",
+          "section-3:perimeter:2752:part-0:up",
+          "section-3:perimeter:2752:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-3:perimeter:3296",
+        "area": 25344,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:272:section-3:perimeter:3296",
+          "section-3:perimeter:3296:part-0:down",
+          "junction:section-3:h:512:section-3:perimeter:3296|junction:section-3:perimeter:3296:drive:section-3:exit-right",
+          "section-3:perimeter:3296:part-1:down",
+          "junction:section-3:h:752:section-3:perimeter:3296",
+          "section-3:perimeter:3296:part-0:up",
+          "section-3:perimeter:3296:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-3:v:2840:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:272:section-3:v:2840:272",
+          "section-3:v:2840:272:part-0:down",
+          "junction:section-3:v:2840:272:drive:node-6:entry-left",
+          "section-3:v:2840:272:part-1:down",
+          "junction:section-3:h:512:section-3:v:2840:272|junction:section-3:h:512:section-3:v:2840:512",
+          "section-3:v:2840:272:part-0:up",
+          "section-3:v:2840:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-3:v:3176:272",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:272:section-3:v:3176:272",
+          "section-3:v:3176:272:part-0:down",
+          "junction:section-3:v:3176:272:drive:node-6:exit-right",
+          "section-3:v:3176:272:part-1:down",
+          "junction:section-3:h:512:section-3:v:3176:272|junction:section-3:h:512:section-3:v:3176:512",
+          "section-3:v:3176:272:part-0:up",
+          "section-3:v:3176:272:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-3:v:2840:512",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:512:section-3:v:2840:272|junction:section-3:h:512:section-3:v:2840:512",
+          "section-3:v:2840:512:part-0:down",
+          "junction:section-3:v:2840:512:drive:node-7:entry-left",
+          "section-3:v:2840:512:part-1:down",
+          "junction:section-3:h:752:section-3:v:2840:512",
+          "section-3:v:2840:512:part-0:up",
+          "section-3:v:2840:512:part-1:up"
+        ]
+      },
+      {
+        "roadId": "section-3:v:3176:512",
+        "area": 13824,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "junction:section-3:h:512:section-3:v:3176:272|junction:section-3:h:512:section-3:v:3176:512",
+          "section-3:v:3176:512:part-0:down",
+          "junction:section-3:v:3176:512:drive:node-7:exit-right",
+          "section-3:v:3176:512:part-1:down",
+          "junction:section-3:h:752:section-3:v:3176:512",
+          "section-3:v:3176:512:part-0:up",
+          "section-3:v:3176:512:part-1:up"
+        ]
+      },
+      {
+        "roadId": "drive:node-1:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-1:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-1:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-1:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-1:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-1:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-1:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-1:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-2:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-2:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-2:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-2:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-2:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-2:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-2:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-2:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-3:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-3:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-3:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-3:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-3:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-3:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-3:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-3:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-4:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-4:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-4:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-4:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-4:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-4:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-4:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-4:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-5:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-5:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-5:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-5:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-5:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-5:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-5:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-5:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-6:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-6:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-6:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-6:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-6:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-6:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-6:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-6:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-7:entry-top",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-7:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-7:entry-left",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-7:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:node-7:exit-bottom",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-7:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:node-7:exit-right",
+        "area": 1152,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:node-7:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:section-1:entry-top",
+        "area": 3840,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-1:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:section-1:entry-left",
+        "area": 2688,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-1:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:section-1:exit-bottom",
+        "area": 3456,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-1:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:section-1:exit-right",
+        "area": 3264,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-1:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:section-2:entry-top",
+        "area": 3840,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-2:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:section-2:entry-left",
+        "area": 3264,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-2:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:section-2:exit-bottom",
+        "area": 14976,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-2:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:section-2:exit-right",
+        "area": 3264,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-2:exit-right:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:section-3:entry-top",
+        "area": 3840,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-3:entry-top:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:section-3:entry-left",
+        "area": 3264,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-3:entry-left:part-0:right"
+        ]
+      },
+      {
+        "roadId": "drive:section-3:exit-bottom",
+        "area": 9216,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-3:exit-bottom:part-0:down"
+        ]
+      },
+      {
+        "roadId": "drive:section-3:exit-right",
+        "area": 3072,
+        "uncoveredArea": 0,
+        "regionIds": [
+          "drive:section-3:exit-right:part-0:right"
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "forwardLanes": 266,
+    "reverseRejected": 266,
+    "validConnections": 675,
+    "reversedConnectionsRejected": 675
+  },
+  "inventory": {
+    "nodes": 7,
+    "sectionPorts": 12,
+    "nodePorts": 28,
+    "roads": 74,
+    "lanes": 266,
+    "junctions": 95,
+    "connections": 675,
+    "proofs": 99
+  },
+  "endpointComparison": {
+    "previous": 50540,
+    "indexedLaneEndpointLookups": 532,
+    "indexEndpointWrites": 398
+  }
+}

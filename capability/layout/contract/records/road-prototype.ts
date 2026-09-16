@@ -6,6 +6,9 @@ export interface PrototypeBounds {
   readonly height: number;
 }
 export interface PrototypeBlock {
+  readonly parentSectionId?: string | null;
+  readonly description?: string;
+  readonly ports?: readonly PrototypeNodePort[];
   readonly id: string;
   readonly label: string;
   readonly bounds: PrototypeBounds;

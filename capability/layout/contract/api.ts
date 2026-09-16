@@ -43,3 +43,9 @@ export { inspectRoadTravel } from '../core/prototype-road-travel.js';
 export { auditRoadCoverage } from '../core/prototype-road-coverage.js';
 
 export { readPrototypeNodePorts } from '../core/prototype-road-nodes.js';
+
+export { createSevenRoadScene } from '../core/prototype-seven-roads.js';
+
+export { createRoadProofs } from '../core/prototype-road-proofs.js';
+
+export { createNestedRoadScene } from '../core/prototype-nested-scene.js';

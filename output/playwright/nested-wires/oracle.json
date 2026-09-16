@@ -1,0 +1,90 @@
+{
+  "method": "Independent rectilinear visibility graph: full street rectangles, directed driveway centerlines.\n\nRoad rectangle edges, port axes, and wire coordinates form a Hanan grid. Street\narcs are bidirectional; driveway arcs follow the admitted down/right direction.\nNo routing law, contact registry, selected gate list, or application graph is read.\nNode bodies have no arcs. Crossing a section wall requires its gate centerline.\nWire vertices only refine the grid; they do not privilege or remove any path.\nDijkstra therefore considers alternative gates and all positions across each street.",
+  "graphVertices": 5982,
+  "wires": [
+    {
+      "wire": "w01",
+      "length": 144.0,
+      "oracle": 144.0,
+      "detourPercent": 0.0,
+      "beforeLength": 144
+    },
+    {
+      "wire": "w02",
+      "length": 304.0,
+      "oracle": 304.0,
+      "detourPercent": 0.0,
+      "beforeLength": 304
+    },
+    {
+      "wire": "w03",
+      "length": 304.0,
+      "oracle": 304.0,
+      "detourPercent": 0.0,
+      "beforeLength": 304
+    },
+    {
+      "wire": "w04",
+      "length": 144.0,
+      "oracle": 144.0,
+      "detourPercent": 0.0,
+      "beforeLength": 144
+    },
+    {
+      "wire": "w05",
+      "length": 144.0,
+      "oracle": 144.0,
+      "detourPercent": 0.0,
+      "beforeLength": 144
+    },
+    {
+      "wire": "w06",
+      "length": 723.0,
+      "oracle": 672.0,
+      "detourPercent": 7.589285714285721,
+      "beforeLength": 1203.0
+    },
+    {
+      "wire": "w07",
+      "length": 717.0,
+      "oracle": 672.0,
+      "detourPercent": 6.696428571428581,
+      "beforeLength": 717.0
+    },
+    {
+      "wire": "w08",
+      "length": 144.0,
+      "oracle": 144.0,
+      "detourPercent": 0.0,
+      "beforeLength": 144
+    },
+    {
+      "wire": "w09",
+      "length": 576.0,
+      "oracle": 576.0,
+      "detourPercent": 0.0,
+      "beforeLength": 576.0
+    },
+    {
+      "wire": "w10",
+      "length": 1912.0,
+      "oracle": 1912.0,
+      "detourPercent": 0.0,
+      "beforeLength": 1912.0
+    },
+    {
+      "wire": "w11",
+      "length": 656.0,
+      "oracle": 656.0,
+      "detourPercent": 0.0,
+      "beforeLength": 656.0
+    },
+    {
+      "wire": "w12",
+      "length": 5302.0,
+      "oracle": 4856.0,
+      "detourPercent": 9.184514003294897,
+      "beforeLength": 5974.0
+    }
+  ]
+}

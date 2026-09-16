@@ -82,6 +82,7 @@ export const tokenNames = [
   '--nv-chrome-header-decision',
   '--nv-chrome-header-success',
   '--nv-chrome-header-warning',
+  '--nv-opacity-context',
   '--nv-color-panel',
   '--nv-color-content',
   '--nv-color-subtle',

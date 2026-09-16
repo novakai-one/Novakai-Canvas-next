@@ -4,6 +4,7 @@ import { ReactFlow, Background, Controls, ViewportPortal, useReactFlow } from '@
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
 import type {
   RoadPrototypeScene,
+  NestedWire,
   PrototypeRoadProof,
   PrototypeRoad,
   PrototypeBlock,
@@ -530,7 +531,7 @@ function coverageLabel(coverage: PrototypeRoadCoverage): string {
   return `100% road area accounted for · ${coverage.roadArea.toLocaleString('en-US')} px²`;
 }
 
-/** Visual proof only. No wire or dragging behavior is claimed; reload safely rebuilds the fixed scene. */
+/** Inspect frozen roads and committed wire data; reload safely rebuilds the deterministic scene. */
 export function RoadPrototype({
   scene,
   inspectTravel,
@@ -550,6 +551,8 @@ export function RoadPrototype({
   const [proofIndex, setProofIndex] = useState(initialProof);
   const proof = proofs[proofIndex];
   const [focus, setFocus] = useState('');
+  const wires = scene.wiring?.ok ? scene.wiring.value : [];
+  const focusedWire = wires.find((w) => w.id === focus);
   function chooseProof(index: number): void {
     setProofIndex(index);
     select('');
@@ -584,6 +587,7 @@ export function RoadPrototype({
           <p>ROAD LAYOUT · DIRECTIONAL LANES</p>
           <h1>
             {scene.nodes.length} nodes · {scene.sections.length} sections
+            {wires.length > 0 && ` · ${wires.length} wires`}
           </h1>
         </div>
         {scene.sections.length > 0 && (
@@ -600,6 +604,24 @@ export function RoadPrototype({
                 {s.label}
               </button>
             ))}
+            {wires.length > 0 && (
+              <select
+                aria-label="Wire focus"
+                value={focusedWire?.id ?? ''}
+                onChange={(e) => {
+                  setProofIndex(-1);
+                  select('');
+                  setFocus(e.target.value);
+                }}
+              >
+                <option value="">All 12 wires</option>
+                {wires.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.id} · {w.from} → {w.to}
+                  </option>
+                ))}
+              </select>
+            )}
             {proofs.length > 0 && (
               <>
                 <button
@@ -654,7 +676,11 @@ export function RoadPrototype({
           elementsSelectable={false}
         >
           <ReadySignal onReady={onReady} />
-          <ProofCamera proof={proof} focus={scene.sections.find((s) => s.id === focus)} />
+          <ProofCamera
+            proof={proof}
+            focus={wireFocus(focusedWire) ?? scene.sections.find((s) => s.id === focus)}
+          />
+          <NestedWirePaths wires={wires} focus={focus} />
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
           {proof && <ProofPaths proof={proof} />}
@@ -993,4 +1019,80 @@ function initialRegion(scene: RoadPrototypeScene, proofs: readonly PrototypeRoad
   if (proofs.length > 0) return '';
   if (scene.sections.some((section) => section.parentSectionId)) return '';
   return scene.crossingExamples[0]?.junctionId ?? '';
+}
+
+function wirePoints(wire: NestedWire): readonly PrototypePoint[] {
+  return [wire.segments[0]?.from ?? { x: 0, y: 0 }, ...wire.segments.map((s) => s.to)];
+}
+function wireFocus(wire: NestedWire | undefined): PrototypeBlock | undefined {
+  if (wire === undefined) return undefined;
+  const points = wirePoints(wire),
+    xs = points.map((p) => p.x),
+    ys = points.map((p) => p.y);
+  return {
+    id: wire.id,
+    label: wire.id,
+    bounds: {
+      x: Math.min(...xs) - 160,
+      y: Math.min(...ys) - 120,
+      width: Math.max(...xs) - Math.min(...xs) + 320,
+      height: Math.max(...ys) - Math.min(...ys) + 240,
+    },
+  };
+}
+function NestedWirePaths({
+  wires,
+  focus,
+}: {
+  readonly wires: readonly NestedWire[];
+  readonly focus: string;
+}): ReactElement {
+  return (
+    <ViewportPortal>
+      <svg className={styles.nestedWires} aria-label="Twelve law-routed wires">
+        {wires.map((wire, i) => (
+          <g
+            key={wire.id}
+            data-wire-id={wire.id}
+            data-tone={i % 3}
+            data-muted={focus.startsWith('w') && focus !== wire.id}
+          >
+            <title>
+              {wire.id}: {wire.from} → {wire.to}
+            </title>
+            <defs>
+              <marker
+                id={`arrow-${wire.id}`}
+                viewBox="0 0 10 10"
+                refX="10"
+                refY="5"
+                markerWidth="4"
+                markerHeight="4"
+                orient="auto"
+              >
+                <path d="M0 0 L10 5 L0 10z" />
+              </marker>
+            </defs>
+            <polyline className={styles.nestedHalo} points={pointsAttribute(wirePoints(wire))} />
+            <polyline
+              className={styles.nestedPath}
+              points={pointsAttribute(wirePoints(wire))}
+              markerEnd={`url(#arrow-${wire.id})`}
+            />
+            <text
+              className={styles.nestedLabel}
+              x={(wire.segments[0]?.from.x ?? 0) + 12}
+              y={(wire.segments[0]?.from.y ?? 0) + wireLabelOffset(wire)}
+            >
+              {wire.id}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </ViewportPortal>
+  );
+}
+
+function wireLabelOffset(wire: NestedWire): number {
+  return wire.sourcePortId.endsWith('bottom') ? 24 : -14;
 }

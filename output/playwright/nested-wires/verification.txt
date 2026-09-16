@@ -1,0 +1,511 @@
+$ pnpm exec tsx apps/web/cli/verify-nested-wires.ts
+PASS 2 geometry diff: 0 differences; all original scene fields byte-identical (nodes, sections, ports, roads, driveways, lane network).
+PASS 3a exactly 12 wires with all prescribed IDs and endpoints.
+PASS 3b all 12 start in right/bottom source driveways and end in top/left target driveways.
+PASS 3c every one of 105 segments independently covered by a road/driveway rectangle; all paths continuous.
+PASS 3d zero segments intersect node body interiors.
+PASS 3e zero section-boundary crossings at non-gate locations.
+PASS 3f two consecutive scene generations have byte-identical wire path data.
+exit 0
+
+$ pnpm exec tsx output/playwright/nested-wires/verify-invariants.mjs
+PASS retained six fixture cases: 12-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.
+exit 0
+
+$ pnpm exec tsx output/playwright/nested-wires/count-operations.mjs
+{
+  "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
+  "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
+  "stages": {
+    "module-initialization": {
+      "arithmetic": 3,
+      "comparisons": 0,
+      "total": 3
+    },
+    "capacity": {
+      "arithmetic": 41,
+      "comparisons": 7,
+      "total": 48
+    },
+    "nodes": {
+      "arithmetic": 262,
+      "comparisons": 5,
+      "total": 267
+    },
+    "ports": {
+      "arithmetic": 208,
+      "comparisons": 0,
+      "total": 208
+    },
+    "main-roads": {
+      "arithmetic": 244,
+      "comparisons": 20,
+      "total": 264
+    },
+    "driveways": {
+      "arithmetic": 1180,
+      "comparisons": 0,
+      "total": 1180
+    },
+    "network": {
+      "arithmetic": 6173,
+      "comparisons": 5402,
+      "total": 11575
+    },
+    "wire-registry": {
+      "arithmetic": 868,
+      "comparisons": 0,
+      "total": 868
+    },
+    "unattributed-setup": {
+      "arithmetic": 12,
+      "comparisons": 1,
+      "total": 13
+    },
+    "wire:w01": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "wire:w02": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w03": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w04": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "wire:w05": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w06": {
+      "arithmetic": 25,
+      "comparisons": 11,
+      "total": 36
+    },
+    "wire:w07": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "wire:w08": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w09": {
+      "arithmetic": 12,
+      "comparisons": 16,
+      "total": 28
+    },
+    "wire:w10": {
+      "arithmetic": 26,
+      "comparisons": 48,
+      "total": 74
+    },
+    "wire:w11": {
+      "arithmetic": 19,
+      "comparisons": 24,
+      "total": 43
+    },
+    "wire:w12": {
+      "arithmetic": 53,
+      "comparisons": 55,
+      "total": 108
+    },
+    "probe:capacity": {
+      "arithmetic": 41,
+      "comparisons": 7,
+      "total": 48
+    },
+    "probe:nodes": {
+      "arithmetic": 524,
+      "comparisons": 11,
+      "total": 535
+    },
+    "probe:ports": {
+      "arithmetic": 416,
+      "comparisons": 0,
+      "total": 416
+    },
+    "probe:main-roads": {
+      "arithmetic": 482,
+      "comparisons": 47,
+      "total": 529
+    },
+    "probe:driveways": {
+      "arithmetic": 2360,
+      "comparisons": 0,
+      "total": 2360
+    },
+    "probe:network": {
+      "arithmetic": 12524,
+      "comparisons": 11073,
+      "total": 23597
+    },
+    "probe:wire-registry": {
+      "arithmetic": 1734,
+      "comparisons": 0,
+      "total": 1734
+    },
+    "probe:setup": {
+      "arithmetic": 12,
+      "comparisons": 1,
+      "total": 13
+    },
+    "probe:wire:w01": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "probe:wire:w02": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w03": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w04": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "probe:wire:w05": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w06": {
+      "arithmetic": 25,
+      "comparisons": 11,
+      "total": 36
+    },
+    "probe:wire:w07": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "probe:wire:w08": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w09": {
+      "arithmetic": 12,
+      "comparisons": 16,
+      "total": 28
+    },
+    "probe:wire:w10": {
+      "arithmetic": 26,
+      "comparisons": 48,
+      "total": 74
+    },
+    "probe:wire:w11": {
+      "arithmetic": 19,
+      "comparisons": 24,
+      "total": 43
+    },
+    "probe:wire:w12": {
+      "arithmetic": 53,
+      "comparisons": 55,
+      "total": 108
+    }
+  },
+  "wireRouting": {
+    "perWire": {
+      "w01": {
+        "arithmetic": 5,
+        "comparisons": 8,
+        "total": 13
+      },
+      "w02": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w03": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w04": {
+        "arithmetic": 5,
+        "comparisons": 8,
+        "total": 13
+      },
+      "w05": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w06": {
+        "arithmetic": 25,
+        "comparisons": 11,
+        "total": 36
+      },
+      "w07": {
+        "arithmetic": 23,
+        "comparisons": 11,
+        "total": 34
+      },
+      "w08": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w09": {
+        "arithmetic": 12,
+        "comparisons": 16,
+        "total": 28
+      },
+      "w10": {
+        "arithmetic": 26,
+        "comparisons": 48,
+        "total": 74
+      },
+      "w11": {
+        "arithmetic": 19,
+        "comparisons": 24,
+        "total": 43
+      },
+      "w12": {
+        "arithmetic": 53,
+        "comparisons": 55,
+        "total": 108
+      }
+    },
+    "total": 417
+  },
+  "laneNetwork": {
+    "total": 11575,
+    "roadCount": 138,
+    "pairwiseRoadCandidates": 0,
+    "roadPairDiscoveryChecks": 0,
+    "proof": "Compiler consumes construction contacts; forbidden all-road discovery forms asserted absent. See static-proof.txt."
+  },
+  "scalingProbe": {
+    "nodes": [
+      22,
+      44
+    ],
+    "southOffset": 1920,
+    "exactCloneVerified": true,
+    "laneCompile": [
+      11575,
+      23597
+    ],
+    "ratio": 2.0386177105831536
+  },
+  "perLeg": [
+    {
+      "stage": "wire:w01",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w02",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w03",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w04",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w05",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w06",
+      "operations": 33,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 31,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 13,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 13,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 3,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 13,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 3,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 43,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 3,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 13,
+      "admitted": true
+    }
+  ],
+  "instrumentedSceneIdentical": true
+}
+exit 0
+
+$ python3 output/playwright/nested-wires/verify-static.py
+$ grep -nE 'scene\.roads|roads\.(map|filter|find|some|flatMap|slice)' capability/layout/core/nested-wire-access.ts capability/layout/core/nested-wire-corridors.ts capability/layout/core/nested-wire-law.ts capability/layout/core/nested-wire-routing.ts
+[no matches; exit 1]
+$ grep -nE 'roads\.(slice|flatMap)|for.*of roads' capability/layout/core/prototype-road-network.ts
+[no matches; exit 1]
+$ grep -nE 'scene\.roads|roads\.(map|filter|find|some|flatMap|slice)' capability/layout/core/nested-wire-access.ts capability/layout/core/nested-wire-corridors.ts capability/layout/core/nested-wire-inspection.ts capability/layout/core/nested-wire-law.ts capability/layout/core/nested-wire-registry.ts capability/layout/core/nested-wire-routing.ts capability/layout/core/prototype-road-network.ts
+capability/layout/core/nested-wire-inspection.ts:88:  const roads = new Map(scene.roads.map((r) => [r.id, r]));
+capability/layout/core/nested-wire-registry.ts:64:  const registry = roadRegistry(scene.roads);
+capability/layout/core/nested-wire-registry.ts:88:  return { roads: new Map(scene.roads.map((r) => [r.id, r])), crossings, accesses, terminals };
+capability/layout/core/prototype-road-network.ts:225:  const parts = roads.map((road) => roadParts(road, ownership.get(road.id) ?? []));
+capability/layout/core/prototype-road-network.ts:248:  const order = new Map(roads.map((r, i) => [r.id, i]));
+$ grep -nE 'constructedContacts|nestedCrossings|registeredEndpoints|registry\.crossings\.get|roads\.get' capability/layout/core/prototype-nested-scene.ts capability/layout/core/prototype-road-network.ts capability/layout/core/nested-wire-law.ts capability/layout/core/nested-wire-corridors.ts
+capability/layout/core/prototype-nested-scene.ts:2:import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
+capability/layout/core/prototype-nested-scene.ts:17:  nestedCrossings,
+capability/layout/core/prototype-nested-scene.ts:40:    const contacts = constructedContacts(
+capability/layout/core/prototype-nested-scene.ts:42:      [...frameEnds(main), ...nestedCrossings(placement)],
+capability/layout/core/prototype-road-network.ts:227:  const adjacency = laneAdjacency(roads, registeredEndpoints(parts), lanes);
+capability/layout/core/prototype-road-network.ts:260:function registeredEndpoints(parts: readonly ReturnType<typeof roadParts>[]) {
+capability/layout/core/nested-wire-law.ts:46:  const destination = new Set((registry.crossings.get(b.roadId) ?? []).map((c) => c.roadId));
+capability/layout/core/nested-wire-law.ts:48:  const candidates = (registry.crossings.get(a.roadId) ?? []).filter((c) =>
+capability/layout/core/nested-wire-law.ts:110:  if (!(registry.crossings.get(a.roadId) ?? []).some((c) => c.roadId === b.roadId)) return null;
+capability/layout/core/nested-wire-corridors.ts:13:  const road = roads.get(line.roadId);
+PASS pair law unchanged: band -> shared road -> quadrant.
+PASS routing call chain has no all-road scan; compiler has no road-pair discovery loop.
+The remaining matches are compile-once road indexing and the independent inspector once-per-inspection index. roadNetwork maps roads once to their owned events and ranks construction contacts; neither traversal is per wire.
+Construction contacts enumerate registered grid/frame crossings and driveway endpoints; the lane compiler consumes only those contacts. No shifted scan or hidden road-pair helper remains.
+exit 0
+
+$ python3 output/playwright/nested-wires/verify-oracle.py
+PASS w01 length=144 oracle=144 detour=0.0000% <= 10%
+PASS w02 length=304 oracle=304 detour=0.0000% <= 10%
+PASS w03 length=304 oracle=304 detour=0.0000% <= 10%
+PASS w04 length=144 oracle=144 detour=0.0000% <= 10%
+PASS w05 length=144 oracle=144 detour=0.0000% <= 10%
+PASS w06 length=723 oracle=672 detour=7.5893% <= 10%
+PASS w07 length=717 oracle=672 detour=6.6964% <= 10%
+PASS w08 length=144 oracle=144 detour=0.0000% <= 10%
+PASS w09 length=576 oracle=576 detour=0.0000% <= 10%
+PASS w10 length=1912 oracle=1912 detour=0.0000% <= 10%
+PASS w11 length=656 oracle=656 detour=0.0000% <= 10%
+PASS w12 length=5302 oracle=4856 detour=9.1845% <= 10%
+PASS all named corridors contain their segments; ports/gates unchanged; every path equal or shorter than M1.
+exit 0
+
+$ python3 output/playwright/nested-wires/verify-evidence.py
+PASS w01: 13 <= 60 routing ops
+PASS w02: 17 <= 60 routing ops
+PASS w03: 17 <= 60 routing ops
+PASS w04: 13 <= 60 routing ops
+PASS w05: 17 <= 60 routing ops
+PASS w06: 36 <= 60 routing ops
+PASS w07: 34 <= 60 routing ops
+PASS w08: 17 <= 60 routing ops
+PASS w09: 28 <= 120 routing ops
+PASS w10: 74 <= 180 routing ops
+PASS w11: 43 <= 120 routing ops
+PASS w12: 108 <= 180 routing ops
+PASS 4 metrics.json matches raw operation counts, five browser loads, and README summary.
+Node positioning: 267 | Roads: 264 | Driveways: 1180
+Wire routing per wire: {'w01': 13, 'w02': 17, 'w03': 17, 'w04': 13, 'w05': 17, 'w06': 36, 'w07': 34, 'w08': 17, 'w09': 28, 'w10': 74, 'w11': 43, 'w12': 108}
+Wire routing total: 417 | Lane-network total: 11575
+Browser loads (ms): [308.5, 250.4, 226.3, 218.3, 220.7] | Median: 226.3 ms
+PASS 5 overview.png + w01.png through w12.png: 13 valid 1920x1440 PNGs; all 12 complete paths inside their screenshot viewport.
+PASS visual geometry: {"wireOverlapCount": 0, "selfOverlapCount": 0, "crossings": [["w05", "w06", 1680, 670.5]], "labelCollisionCount": 0, "labelNodeCollisionCount": 0, "minimumLabelHaloContrast": 5.892601677370216, "headingBodyRatio": 1.4875}
+PASS hard ceilings: routing total 417 <= 1200; lane compile 11575 <= 12000; road-pair discovery checks == 0
+PASS maximum leg: 43 <= 60 ops
+PASS scaling: 22 nodes = 11575 ops; 44 nodes = 23597 ops; ratio = 2.0386177105831536 <= 2.5
+PASS median load: 226.30000007152557 <= 239.2 ms
+PASS pinned M1 before metrics unchanged; exact 44-node clone verified at +1920 south.
+PASS nested-wires.test.ts deleted; new test files = 0; pnpm check test count = 208
+exit 0
+
+PASS pnpm check exits 0: 70 test files, 208 tests; see checks.txt.
+PASS manual visual inspection: overview plus w01–w12; M1 section structure and wire families preserved; w06 and w12 shorter.
+PASS Vite remains available on port 5188 (HTTP 200); no push or PR.

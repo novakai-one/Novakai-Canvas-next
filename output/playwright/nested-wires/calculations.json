@@ -1,0 +1,419 @@
+{
+  "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
+  "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
+  "stages": {
+    "module-initialization": {
+      "arithmetic": 3,
+      "comparisons": 0,
+      "total": 3
+    },
+    "capacity": {
+      "arithmetic": 41,
+      "comparisons": 7,
+      "total": 48
+    },
+    "nodes": {
+      "arithmetic": 262,
+      "comparisons": 5,
+      "total": 267
+    },
+    "ports": {
+      "arithmetic": 208,
+      "comparisons": 0,
+      "total": 208
+    },
+    "main-roads": {
+      "arithmetic": 244,
+      "comparisons": 20,
+      "total": 264
+    },
+    "driveways": {
+      "arithmetic": 1180,
+      "comparisons": 0,
+      "total": 1180
+    },
+    "network": {
+      "arithmetic": 6173,
+      "comparisons": 5402,
+      "total": 11575
+    },
+    "wire-registry": {
+      "arithmetic": 868,
+      "comparisons": 0,
+      "total": 868
+    },
+    "unattributed-setup": {
+      "arithmetic": 12,
+      "comparisons": 1,
+      "total": 13
+    },
+    "wire:w01": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "wire:w02": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w03": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w04": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "wire:w05": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w06": {
+      "arithmetic": 25,
+      "comparisons": 11,
+      "total": 36
+    },
+    "wire:w07": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "wire:w08": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "wire:w09": {
+      "arithmetic": 12,
+      "comparisons": 16,
+      "total": 28
+    },
+    "wire:w10": {
+      "arithmetic": 26,
+      "comparisons": 48,
+      "total": 74
+    },
+    "wire:w11": {
+      "arithmetic": 19,
+      "comparisons": 24,
+      "total": 43
+    },
+    "wire:w12": {
+      "arithmetic": 53,
+      "comparisons": 55,
+      "total": 108
+    },
+    "probe:capacity": {
+      "arithmetic": 41,
+      "comparisons": 7,
+      "total": 48
+    },
+    "probe:nodes": {
+      "arithmetic": 524,
+      "comparisons": 11,
+      "total": 535
+    },
+    "probe:ports": {
+      "arithmetic": 416,
+      "comparisons": 0,
+      "total": 416
+    },
+    "probe:main-roads": {
+      "arithmetic": 482,
+      "comparisons": 47,
+      "total": 529
+    },
+    "probe:driveways": {
+      "arithmetic": 2360,
+      "comparisons": 0,
+      "total": 2360
+    },
+    "probe:network": {
+      "arithmetic": 12524,
+      "comparisons": 11073,
+      "total": 23597
+    },
+    "probe:wire-registry": {
+      "arithmetic": 1734,
+      "comparisons": 0,
+      "total": 1734
+    },
+    "probe:setup": {
+      "arithmetic": 12,
+      "comparisons": 1,
+      "total": 13
+    },
+    "probe:wire:w01": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "probe:wire:w02": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w03": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w04": {
+      "arithmetic": 5,
+      "comparisons": 8,
+      "total": 13
+    },
+    "probe:wire:w05": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w06": {
+      "arithmetic": 25,
+      "comparisons": 11,
+      "total": 36
+    },
+    "probe:wire:w07": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "probe:wire:w08": {
+      "arithmetic": 5,
+      "comparisons": 12,
+      "total": 17
+    },
+    "probe:wire:w09": {
+      "arithmetic": 12,
+      "comparisons": 16,
+      "total": 28
+    },
+    "probe:wire:w10": {
+      "arithmetic": 26,
+      "comparisons": 48,
+      "total": 74
+    },
+    "probe:wire:w11": {
+      "arithmetic": 19,
+      "comparisons": 24,
+      "total": 43
+    },
+    "probe:wire:w12": {
+      "arithmetic": 53,
+      "comparisons": 55,
+      "total": 108
+    }
+  },
+  "wireRouting": {
+    "perWire": {
+      "w01": {
+        "arithmetic": 5,
+        "comparisons": 8,
+        "total": 13
+      },
+      "w02": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w03": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w04": {
+        "arithmetic": 5,
+        "comparisons": 8,
+        "total": 13
+      },
+      "w05": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w06": {
+        "arithmetic": 25,
+        "comparisons": 11,
+        "total": 36
+      },
+      "w07": {
+        "arithmetic": 23,
+        "comparisons": 11,
+        "total": 34
+      },
+      "w08": {
+        "arithmetic": 5,
+        "comparisons": 12,
+        "total": 17
+      },
+      "w09": {
+        "arithmetic": 12,
+        "comparisons": 16,
+        "total": 28
+      },
+      "w10": {
+        "arithmetic": 26,
+        "comparisons": 48,
+        "total": 74
+      },
+      "w11": {
+        "arithmetic": 19,
+        "comparisons": 24,
+        "total": 43
+      },
+      "w12": {
+        "arithmetic": 53,
+        "comparisons": 55,
+        "total": 108
+      }
+    },
+    "total": 417
+  },
+  "laneNetwork": {
+    "total": 11575,
+    "roadCount": 138,
+    "pairwiseRoadCandidates": 0,
+    "roadPairDiscoveryChecks": 0,
+    "proof": "Compiler consumes construction contacts; forbidden all-road discovery forms asserted absent. See static-proof.txt."
+  },
+  "scalingProbe": {
+    "nodes": [
+      22,
+      44
+    ],
+    "southOffset": 1920,
+    "exactCloneVerified": true,
+    "laneCompile": [
+      11575,
+      23597
+    ],
+    "ratio": 2.0386177105831536
+  },
+  "perLeg": [
+    {
+      "stage": "wire:w01",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w02",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w03",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w04",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w05",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w06",
+      "operations": 33,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 31,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 13,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 13,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 3,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 13,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 10,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 3,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 43,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 3,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 14,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 13,
+      "admitted": true
+    }
+  ],
+  "instrumentedSceneIdentical": true
+}

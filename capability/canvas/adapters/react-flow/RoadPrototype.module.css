@@ -363,3 +363,48 @@
     stroke-linejoin: round;
   }
 }
+
+@layer components {
+  .nestedWires {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--nv-stroke-base);
+    height: var(--nv-stroke-base);
+    overflow: visible;
+    pointer-events: none;
+    z-index: 5;
+    color: var(--nv-action-accent);
+  }
+  .nestedWires [data-tone='1'] {
+    color: var(--nv-text-primary);
+  }
+  .nestedWires [data-tone='2'] {
+    color: var(--nv-status-success);
+  }
+  .nestedWires [data-muted='true'] {
+    opacity: var(--nv-opacity-context);
+  }
+  .nestedWires marker {
+    fill: currentColor;
+  }
+  .nestedPath,
+  .nestedHalo {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(var(--nv-stroke-base) * 3);
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .nestedHalo {
+    stroke: var(--nv-surface-raised);
+    stroke-width: calc(var(--nv-stroke-base) * 6);
+  }
+  .nestedLabel {
+    fill: currentColor;
+    font: bold var(--nv-type-base) var(--nv-font-mono);
+    paint-order: stroke;
+    stroke: var(--nv-surface-raised);
+    stroke-width: calc(var(--nv-stroke-base) * 4);
+  }
+}

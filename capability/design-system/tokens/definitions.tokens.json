@@ -678,5 +678,11 @@
         }
       }
     }
+  },
+  "opacity": {
+    "context": {
+      "$type": "number",
+      "$value": 0.12
+    }
   }
 }

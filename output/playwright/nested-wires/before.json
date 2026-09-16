@@ -1,0 +1,364 @@
+{
+  "calculations": {
+    "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
+    "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
+    "stages": {
+      "module-initialization": {
+        "arithmetic": 3,
+        "comparisons": 0,
+        "total": 3
+      },
+      "capacity": {
+        "arithmetic": 41,
+        "comparisons": 7,
+        "total": 48
+      },
+      "nodes": {
+        "arithmetic": 258,
+        "comparisons": 5,
+        "total": 263
+      },
+      "ports": {
+        "arithmetic": 208,
+        "comparisons": 0,
+        "total": 208
+      },
+      "main-roads": {
+        "arithmetic": 244,
+        "comparisons": 20,
+        "total": 264
+      },
+      "driveways": {
+        "arithmetic": 1180,
+        "comparisons": 0,
+        "total": 1180
+      },
+      "network": {
+        "arithmetic": 139030,
+        "comparisons": 141103,
+        "total": 280133
+      },
+      "unattributed-setup": {
+        "arithmetic": 12,
+        "comparisons": 1,
+        "total": 13
+      },
+      "wire:w01": {
+        "arithmetic": 186,
+        "comparisons": 824,
+        "total": 1010
+      },
+      "wire:w02": {
+        "arithmetic": 187,
+        "comparisons": 813,
+        "total": 1000
+      },
+      "wire:w03": {
+        "arithmetic": 219,
+        "comparisons": 853,
+        "total": 1072
+      },
+      "wire:w04": {
+        "arithmetic": 256,
+        "comparisons": 962,
+        "total": 1218
+      },
+      "wire:w05": {
+        "arithmetic": 327,
+        "comparisons": 1029,
+        "total": 1356
+      },
+      "wire:w06": {
+        "arithmetic": 819,
+        "comparisons": 3806,
+        "total": 4625
+      },
+      "wire:w07": {
+        "arithmetic": 899,
+        "comparisons": 3972,
+        "total": 4871
+      },
+      "wire:w08": {
+        "arithmetic": 419,
+        "comparisons": 1217,
+        "total": 1636
+      },
+      "wire:w09": {
+        "arithmetic": 905,
+        "comparisons": 4323,
+        "total": 5228
+      },
+      "wire:w10": {
+        "arithmetic": 1632,
+        "comparisons": 6258,
+        "total": 7890
+      },
+      "wire:w11": {
+        "arithmetic": 1529,
+        "comparisons": 5743,
+        "total": 7272
+      },
+      "wire:w12": {
+        "arithmetic": 2066,
+        "comparisons": 9633,
+        "total": 11699
+      }
+    },
+    "wireRouting": {
+      "perWire": {
+        "w01": {
+          "arithmetic": 186,
+          "comparisons": 824,
+          "total": 1010
+        },
+        "w02": {
+          "arithmetic": 187,
+          "comparisons": 813,
+          "total": 1000
+        },
+        "w03": {
+          "arithmetic": 219,
+          "comparisons": 853,
+          "total": 1072
+        },
+        "w04": {
+          "arithmetic": 256,
+          "comparisons": 962,
+          "total": 1218
+        },
+        "w05": {
+          "arithmetic": 327,
+          "comparisons": 1029,
+          "total": 1356
+        },
+        "w06": {
+          "arithmetic": 819,
+          "comparisons": 3806,
+          "total": 4625
+        },
+        "w07": {
+          "arithmetic": 899,
+          "comparisons": 3972,
+          "total": 4871
+        },
+        "w08": {
+          "arithmetic": 419,
+          "comparisons": 1217,
+          "total": 1636
+        },
+        "w09": {
+          "arithmetic": 905,
+          "comparisons": 4323,
+          "total": 5228
+        },
+        "w10": {
+          "arithmetic": 1632,
+          "comparisons": 6258,
+          "total": 7890
+        },
+        "w11": {
+          "arithmetic": 1529,
+          "comparisons": 5743,
+          "total": 7272
+        },
+        "w12": {
+          "arithmetic": 2066,
+          "comparisons": 9633,
+          "total": 11699
+        }
+      },
+      "total": 48877
+    },
+    "laneNetwork": {
+      "total": 280133,
+      "roadCount": 138,
+      "pairwiseRoadCandidates": 9453
+    },
+    "instrumentedSceneIdentical": true
+  },
+  "browser": {
+    "url": "http://127.0.0.1:5188/roads-prototype.html?nested",
+    "loads": [
+      {
+        "roads:navigation-to-ready": 273.2999999523163,
+        "roads:styles-import": 17.199999928474426,
+        "roads:renderer-import": 8.5,
+        "roads:capacity": 0,
+        "roads:nodes": 0,
+        "roads:ports": 0,
+        "roads:main-roads": 0.10000002384185791,
+        "roads:layout-total": 6.800000071525574,
+        "roads:driveways": 0,
+        "roads:network": 5.5,
+        "roads:wire:w01": 0.20000004768371582,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0.10000002384185791,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0.09999990463256836,
+        "roads:wire:w06": 0.10000002384185791,
+        "roads:wire:w07": 0.10000002384185791,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0.10000002384185791,
+        "roads:wire:w10": 0.19999992847442627,
+        "roads:wire:w11": 0.10000002384185791,
+        "roads:wire:w12": 0.20000004768371582,
+        "roads:coverage-audit": 47.699999928474426,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 126
+      },
+      {
+        "roads:navigation-to-ready": 245,
+        "roads:styles-import": 23.5,
+        "roads:renderer-import": 2.399999976158142,
+        "roads:capacity": 0,
+        "roads:nodes": 0,
+        "roads:ports": 0.10000002384185791,
+        "roads:layout-total": 6.600000023841858,
+        "roads:main-roads": 0,
+        "roads:driveways": 0,
+        "roads:network": 5.399999976158142,
+        "roads:wire:w01": 0.10000002384185791,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0.10000002384185791,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0.10000002384185791,
+        "roads:wire:w07": 0.20000004768371582,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0.09999990463256836,
+        "roads:wire:w10": 0.10000002384185791,
+        "roads:wire:w11": 0.20000004768371582,
+        "roads:wire:w12": 0.10000002384185791,
+        "roads:coverage-audit": 42.799999952316284,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 119.20000004768372
+      },
+      {
+        "roads:navigation-to-ready": 239.19999992847443,
+        "roads:styles-import": 6.300000071525574,
+        "roads:renderer-import": 2.299999952316284,
+        "roads:capacity": 0,
+        "roads:nodes": 0.10000002384185791,
+        "roads:layout-total": 6.899999976158142,
+        "roads:ports": 0,
+        "roads:main-roads": 0.10000002384185791,
+        "roads:driveways": 0.09999990463256836,
+        "roads:network": 5.400000095367432,
+        "roads:wire:w01": 0.09999990463256836,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0.10000002384185791,
+        "roads:wire:w04": 0.10000002384185791,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0.10000002384185791,
+        "roads:wire:w07": 0.10000002384185791,
+        "roads:wire:w08": 0.09999990463256836,
+        "roads:wire:w09": 0.10000002384185791,
+        "roads:wire:w10": 0.20000004768371582,
+        "roads:wire:w11": 0.10000002384185791,
+        "roads:wire:w12": 0.19999992847442627,
+        "roads:coverage-audit": 42.89999997615814,
+        "roads:proof-catalog": 0.10000002384185791,
+        "roads:render-to-ready": 133.89999997615814
+      },
+      {
+        "roads:navigation-to-ready": 224.69999992847443,
+        "roads:styles-import": 6.799999952316284,
+        "roads:renderer-import": 2.4000000953674316,
+        "roads:capacity": 0,
+        "roads:nodes": 0.09999990463256836,
+        "roads:layout-total": 7.099999904632568,
+        "roads:ports": 0,
+        "roads:main-roads": 0.10000002384185791,
+        "roads:driveways": 0,
+        "roads:network": 5.600000023841858,
+        "roads:wire:w01": 0.10000002384185791,
+        "roads:wire:w02": 0.09999990463256836,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0.10000002384185791,
+        "roads:wire:w06": 0.20000004768371582,
+        "roads:wire:w07": 0.10000002384185791,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0.09999990463256836,
+        "roads:wire:w10": 0.10000002384185791,
+        "roads:wire:w11": 0.30000007152557373,
+        "roads:wire:w12": 0.09999990463256836,
+        "roads:coverage-audit": 43.300000071525574,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 115.79999995231628
+      },
+      {
+        "roads:navigation-to-ready": 226.5,
+        "roads:styles-import": 6.699999928474426,
+        "roads:renderer-import": 1.5,
+        "roads:capacity": 0,
+        "roads:nodes": 0,
+        "roads:layout-total": 6.899999976158142,
+        "roads:ports": 0,
+        "roads:main-roads": 0,
+        "roads:driveways": 0.10000002384185791,
+        "roads:network": 5.5,
+        "roads:wire:w01": 0.09999990463256836,
+        "roads:wire:w02": 0.10000002384185791,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0.20000004768371582,
+        "roads:wire:w07": 0.10000002384185791,
+        "roads:wire:w08": 0.09999990463256836,
+        "roads:wire:w09": 0.10000002384185791,
+        "roads:wire:w10": 0.20000004768371582,
+        "roads:wire:w11": 0.10000002384185791,
+        "roads:wire:w12": 0.09999990463256836,
+        "roads:coverage-audit": 42.700000047683716,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 124.89999997615814
+      }
+    ],
+    "medianMilliseconds": 239.19999992847443,
+    "method": "Five consecutive warm-cache Chromium development navigations; Navigation start \u2192 fonts ready + two animation frames. No GPU paint-duration claim."
+  },
+  "visual": {
+    "wireOverlapCount": 0,
+    "selfOverlapCount": 0,
+    "crossings": [
+      [
+        "w04",
+        "w06",
+        1510.5,
+        552
+      ],
+      [
+        "w06",
+        "w12",
+        1680,
+        430.5
+      ],
+      [
+        "w06",
+        "w12",
+        1846.5,
+        448.5
+      ]
+    ],
+    "labelCollisionCount": 0,
+    "labelNodeCollisionCount": 0,
+    "minimumLabelHaloContrast": 5.892601677370216,
+    "headingBodyRatio": 1.4875
+  },
+  "screenshots": {
+    "overview": "a82a0a5bf8b683b6461b69de21422f965f7b994cb6fe921a740bb9bc4b10b424",
+    "w01": "a3898af3d973704582df3b3774f2a8b52a9bc98ce03e3940081d5be933b65ec7",
+    "w02": "c1a915412b109c7604834dd0354cd17107c3ffc7dcd67de43e25da3ceda37ede",
+    "w03": "f42c7c32e4667f8537aa06be6434f901db6c6044b026a4234eeaf9315bcbac00",
+    "w04": "afaf34917e88e0363f800f4bdf0d566e9fadac3872f0041f3e85f34dd3c25d0f",
+    "w05": "bf81d96eed8426a18f8c69df7df4836c60263a331ba5064eb21585f14e13e010",
+    "w06": "470f6dc8ab14108e1c2e2e60def6ac100bdcd7d65cc509dbbf12f058a78d8d51",
+    "w07": "65dd05ac978f402e087396d40946598589f81a80e26d89739f0a8a94b0c1d217",
+    "w08": "f153160d4f796f685bc9a835bc7d44d5ede021a1c5fad93c06f67847b380cc2e",
+    "w09": "1eb98eefb1cd6a4bce48fb2b462d98d15f3d5c52d7c20b07cffd04eda0f333d8",
+    "w10": "b29c6a8ee6ba06dbbbbcaf91e89dccc36cc4210365664578b54d478af3d809b0",
+    "w11": "12466ecf44f7c721554b88111a3139e2ad630355dd0c960e83d14e952022280b",
+    "w12": "0280b1cf97e2eec3ed4613b19e40a66b23e85446574211893774cffd0be95371"
+  }
+}

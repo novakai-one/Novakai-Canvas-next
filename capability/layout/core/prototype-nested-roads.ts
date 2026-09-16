@@ -181,3 +181,15 @@ function accessDirection(vertical: boolean): Pick<PrototypeRoad, 'axis' | 'direc
   if (vertical) return { axis: 'vertical', directions: ['down'] };
   return { axis: 'horizontal', directions: ['right'] };
 }
+
+/** Interior grid crossings are emitted with the grid, not discovered by pairing roads. */
+export function nestedCrossings(placements: readonly SectionPlacement[]) {
+  return placements.flatMap((p) =>
+    Array.from({ length: p.size.rows - 1 }, (_, row) =>
+      Array.from({ length: p.size.columns + 1 }, (_, column) => ({
+        x: p.interior.x + (column * p.size.ownWidth) / p.size.columns,
+        y: p.interior.y + ((row + 1) * p.interior.height) / p.size.rows,
+      })),
+    ).flat(),
+  );
+}

@@ -1,3 +1,4 @@
+import type { NestedWireResult } from './nested-wires.js';
 /** Milestone-one records only. Roads own geometry independently of nodes and future wires. */
 export interface PrototypeBounds {
   readonly x: number;
@@ -34,7 +35,14 @@ export interface PrototypePortLocation {
   readonly point: PrototypePoint;
 }
 export type PrototypeLayoutStage =
-  'capacity' | 'nodes' | 'ports' | 'main-roads' | 'driveways' | 'network';
+  | 'wire-registry'
+  | 'capacity'
+  | 'nodes'
+  | 'ports'
+  | 'main-roads'
+  | 'driveways'
+  | 'network'
+  | `wire:${string}`;
 /** Optional caller-owned measurement; geometry never reads a clock. */
 export type PrototypeLayoutMeasure = <T>(stage: PrototypeLayoutStage, operation: () => T) => T;
 export interface PrototypeLayoutOptions {
@@ -56,6 +64,7 @@ export interface PrototypeRoad {
   } | null;
 }
 export interface RoadPrototypeScene {
+  readonly wiring?: NestedWireResult;
   readonly sections: readonly PrototypeBlock[];
   readonly nodes: readonly PrototypeNode[];
   readonly ports: readonly PrototypePortLocation[];

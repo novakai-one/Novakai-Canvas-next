@@ -104,3 +104,6 @@ export { createRoadProofs } from './api.js';
 export type { PrototypeRoadProof, PrototypeProofPath } from './records/road-proof.js';
 
 export { createNestedRoadScene } from './api.js';
+
+export type { NestedWire, NestedWireSegment, NestedWireResult } from './records/nested-wires.js';
+export { inspectNestedWires } from './api.js';

@@ -167,7 +167,13 @@ function sectionDescription(size: SizedSection): string {
     return `${size.count} nodes · ${size.columns} × ${size.rows} grid`;
   return `${size.count} direct + ${size.total - size.count} nested = ${size.total} nodes`;
 }
-export function positionNestedSections(rows: readonly Row[]): readonly SectionPlacement[] {
+export function positionNestedSections(
+  original: readonly Row[],
+  copies = 1,
+): readonly SectionPlacement[] {
+  const rows = Array.from({ length: copies }, (_, copy) =>
+    original.map((row) => ({ ...row, items: row.items.map((s) => numbered(s, copy * 4)) })),
+  ).flat();
   const width = Math.max(...rows.map((row) => row.width));
   let y: number = nestedSpacing.side;
   let first = 0;
@@ -184,4 +190,14 @@ export function positionNestedSections(rows: readonly Row[]): readonly SectionPl
     y += row.height;
     return result;
   });
+}
+
+function numbered(size: SizedSection, offset: number): SizedSection {
+  const number = Number(size.id.slice('section-'.length)) + offset;
+  return {
+    ...size,
+    id: `section-${number}`,
+    label: `Section ${number}`,
+    children: size.children.map((child) => numbered(child, offset)),
+  };
 }

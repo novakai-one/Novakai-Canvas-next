@@ -1,21 +1,14 @@
-import { roadJunctionIndex, laneAdjacency } from './prototype-road-adjacency.js';
+import type { RoadContact } from './prototype-road-registry.js';
+import { roadJunctionIndex, laneAdjacency, junctionAccess } from './prototype-road-adjacency.js';
 import { mergePrototypeJunctions } from './prototype-road-junction-union.js';
 import type {
-  PrototypeBounds,
   PrototypeRoad,
   PrototypeLane,
   PrototypeJunction,
   PrototypeDivider,
   PrototypeLaneConnection,
 } from '../contract/records/road-prototype.js';
-import {
-  axes,
-  directionVector,
-  intersection,
-  hasArea,
-  contains,
-  samePoint,
-} from './prototype-road-geometry.js';
+import { axes, samePoint } from './prototype-road-geometry.js';
 import { connectionPoints, crossingExamples } from './prototype-road-paths.js';
 
 interface Span {
@@ -23,71 +16,48 @@ interface Span {
   readonly end: number;
 }
 
-/** A driveway touching a perpendicular street opens a turn area across that street's full width. */
-function mouth(
-  a: PrototypeRoad,
-  b: PrototypeRoad,
-  overlap: PrototypeBounds,
-): PrototypeBounds | null {
-  if (![overlap.width >= 0, overlap.height >= 0].every(Boolean)) return null;
-  const driveway = [a, b].find((road) => road.kind === 'driveway');
-  if (driveway === undefined) return null;
-  return mouthBounds(
-    [a, b].find((road) => road.kind === 'street'),
-    overlap,
-  );
-}
-function mouthBounds(
-  street: PrototypeRoad | undefined,
-  overlap: PrototypeBounds,
-): PrototypeBounds | null {
-  if (street === undefined) return null;
-  const axis = axes[street.axis];
-  return {
-    ...overlap,
-    [axis.across]: street.bounds[axis.across],
-    [axis.breadth]: street.bounds[axis.breadth],
-  };
-}
-
-/** Intersections derive from positioned roads; the renderer does not guess where to hide paint. */
+/** A construction contact already owns the perpendicular rectangles and their full turn area. */
 function junction(a: PrototypeRoad, b: PrototypeRoad): readonly PrototypeJunction[] {
-  if (a.axis === b.axis) return [];
-  const overlap = intersection(a.bounds, b.bounds);
-  const bounds = hasArea(overlap) ? overlap : mouth(a, b, overlap);
-  return junctionRecord(`junction:${a.id}:${b.id}`, bounds).map((j) => ({
-    ...j,
-    roadIds: [a.id, b.id],
-  }));
-}
-function junctionRecord(id: string, bounds: PrototypeBounds | null): readonly PrototypeJunction[] {
-  if (bounds === null) return [];
-  return [{ id, bounds, kind: 'bend', label: '', roadIds: [] }];
-}
-
-function merge(spans: readonly Span[], next: Span): readonly Span[] {
-  const last = spans.at(-1);
-  if (last === undefined) return [next];
-  if (next.start > last.end) return [...spans, next];
-  return [...spans.slice(0, -1), { start: last.start, end: Math.max(last.end, next.end) }];
+  const horizontal = a.axis === 'horizontal' ? a : b;
+  const vertical = a.axis === 'vertical' ? a : b;
+  return [
+    {
+      id: `junction:${a.id}:${b.id}`,
+      bounds: {
+        x: vertical.bounds.x,
+        y: horizontal.bounds.y,
+        width: vertical.bounds.width,
+        height: horizontal.bounds.height,
+      },
+      kind: 'bend',
+      label: '',
+      roadIds: [a.id, b.id],
+    },
+  ];
 }
 
 /** Remove all junction intervals before allocating straight lanes or their dividers. */
-function clearSpans(road: PrototypeRoad, junctions: readonly PrototypeJunction[]): readonly Span[] {
+function clearSpans(road: PrototypeRoad, junctions: readonly PrototypeJunction[]) {
   const axis = axes[road.axis];
   const start = road.bounds[axis.along],
     end = start + road.bounds[axis.length];
   const cuts = junctions
-    .map((item) => intersection(road.bounds, item.bounds))
-    .filter(hasArea)
-    .map((box) => ({ start: box[axis.along], end: box[axis.along] + box[axis.length] }))
-    .toSorted((a, b) => a.start - b.start)
-    .reduce<readonly Span[]>(merge, []);
-  const starts = [start, ...cuts.map((cut) => cut.end)];
-  const ends = [...cuts.map((cut) => cut.start), end];
-  return starts
-    .map((start, index) => ({ start, end: ends[index] ?? start }))
-    .filter((span) => span.end > span.start);
+    .map((item) => ({
+      junction: item,
+      id: item.id,
+      start: Math.max(start, item.bounds[axis.along]),
+      end: Math.min(end, item.bounds[axis.along] + item.bounds[axis.length]),
+    }))
+    .toSorted((a, b) => a.start - b.start);
+  const areas = cuts.filter((c) => c.end > c.start);
+  const starts = [start, ...areas.map((cut) => cut.end)];
+  const ends = [...areas.map((cut) => cut.start), end];
+  return {
+    events: cuts,
+    spans: starts
+      .map((start, index) => ({ start, end: ends[index] ?? start }))
+      .filter((span) => span.end > span.start),
+  };
 }
 
 function lane(
@@ -106,16 +76,18 @@ function lane(
     [axis.across]: road.bounds[axis.across] + index * breadth,
     [axis.breadth]: breadth,
   };
-  const center = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
-  const vector = directionVector[direction];
-  const half = (span.end - span.start) / 2;
+  const across = bounds[axis.across] + breadth / 2;
+  const forward = direction === 'right' || direction === 'down';
+  const ends = forward ? [span.start, span.end] : [span.end, span.start];
+  const point = (along: number) =>
+    road.axis === 'horizontal' ? { x: along, y: across } : { x: across, y: along };
   return {
     id: `${road.id}:part-${part}:${direction}`,
     roadId: road.id,
     direction,
     bounds,
-    entry: { x: center.x - vector.x * half, y: center.y - vector.y * half },
-    exit: { x: center.x + vector.x * half, y: center.y + vector.y * half },
+    entry: point(ends[0] ?? span.start),
+    exit: point(ends[1] ?? span.end),
   };
 }
 
@@ -140,11 +112,14 @@ function dividers(road: PrototypeRoad, spans: readonly Span[]): readonly Prototy
 }
 
 function roadParts(road: PrototypeRoad, junctions: readonly PrototypeJunction[]) {
-  const spans = clearSpans(road, junctions);
+  const { spans, events } = clearSpans(road, junctions);
+  const lanes = spans.flatMap((span, part) =>
+    road.directions.map((direction, index) => lane(road, span, part, direction, index)),
+  );
   return {
-    lanes: spans.flatMap((span, part) =>
-      road.directions.map((direction, index) => lane(road, span, part, direction, index)),
-    ),
+    road,
+    events,
+    lanes,
     dividers: dividers(road, spans),
   };
 }
@@ -216,16 +191,10 @@ function describedJunction(
   junction: PrototypeJunction,
   index: number,
   adjacent: readonly PrototypeLane[],
-  roads: readonly PrototypeRoad[],
+  access: PrototypeRoad['access'] | undefined,
+  arms: ReadonlySet<string>,
 ): PrototypeJunction {
   const roadIds = [...new Set(adjacent.map((lane) => lane.roadId))];
-  const access = roads.find((road) => roadIds.includes(road.id) && road.access !== null)?.access;
-  const arms = new Set(
-    adjacent
-      .flatMap((lane) => [lane.entry, lane.exit])
-      .filter((point) => contains(junction.bounds, point))
-      .map((point) => side(junction.bounds, point)),
-  );
   return {
     ...junction,
     label: `J${index + 1}`,
@@ -236,31 +205,33 @@ function describedJunction(
 function junctionKind(arms: number): 'bend' | 'intersection' {
   return arms > 2 ? 'intersection' : 'bend';
 }
-function side(box: PrototypeBounds, point: { readonly x: number; readonly y: number }): string {
-  const edges = [
-    { name: 'left', at: point.x === box.x },
-    { name: 'right', at: point.x === box.x + box.width },
-    { name: 'top', at: point.y === box.y },
-    { name: 'bottom', at: point.y === box.y + box.height },
-  ];
-  return edges.find((edge) => edge.at)?.name ?? 'inside';
+const incomingArm = { right: 'left', left: 'right', down: 'top', up: 'bottom' } as const;
+const outgoingArm = { right: 'right', left: 'left', down: 'bottom', up: 'top' } as const;
+function arms(id: string, adjacency: ReturnType<typeof laneAdjacency>) {
+  return new Set([
+    ...(adjacency.incoming.get(id) ?? []).map((l) => incomingArm[l.direction]),
+    ...(adjacency.outgoing.get(id) ?? []).map((l) => outgoingArm[l.direction]),
+  ]);
 }
 
 /** Pure, repeatable compilation of this prototype's roads into enforceable lanes and turn areas. */
-export function roadNetwork(roads: readonly PrototypeRoad[]) {
+export function roadNetwork(roads: readonly PrototypeRoad[], contacts: readonly RoadContact[]) {
   const areas = mergePrototypeJunctions(
-    roads.flatMap((a, index) => roads.slice(index + 1).flatMap((b) => junction(a, b))),
+    orderedContacts(roads, contacts).flatMap(({ a, b }) => junction(a, b)),
+    roads,
   );
   const ownership = roadJunctionIndex(areas);
+  const accessByJunction = junctionAccess(roads, ownership);
   const parts = roads.map((road) => roadParts(road, ownership.get(road.id) ?? []));
   const lanes = parts.flatMap((part) => part.lanes);
-  const adjacency = laneAdjacency(roads, areas, lanes);
+  const adjacency = laneAdjacency(roads, registeredEndpoints(parts), lanes);
   const junctions = areas.map((area, index) =>
     describedJunction(
       area,
       index,
       [...(adjacency.incoming.get(area.id) ?? []), ...(adjacency.outgoing.get(area.id) ?? [])],
-      roads,
+      accessByJunction.get(area.id)?.access,
+      arms(area.id, adjacency),
     ),
   );
   const links = connections(lanes, junctions, adjacency);
@@ -269,6 +240,33 @@ export function roadNetwork(roads: readonly PrototypeRoad[]) {
     lanes,
     dividers: parts.flatMap((part) => part.dividers),
     connections: links,
-    crossingExamples: crossingExamples(junctions, roads, lanes, links),
+    crossingExamples: crossingExamples(junctions, accessByJunction, lanes, links),
   };
+}
+
+function orderedContacts(roads: readonly PrototypeRoad[], contacts: readonly RoadContact[]) {
+  const order = new Map(roads.map((r, i) => [r.id, i]));
+  const normalized = contacts.map((c) =>
+    (order.get(c.a.id) ?? 0) < (order.get(c.b.id) ?? 0) ? c : { a: c.b, b: c.a },
+  );
+  return [...new Map(normalized.map((c) => [`${c.a.id}:${c.b.id}`, c])).values()].toSorted(
+    (a, b) =>
+      (order.get(a.a.id) ?? 0) - (order.get(b.a.id) ?? 0) ||
+      (order.get(a.b.id) ?? 0) - (order.get(b.b.id) ?? 0),
+  );
+}
+
+/** Ordered per-road junction/mouth events register their lane endpoints without rediscovery. */
+function registeredEndpoints(parts: readonly ReturnType<typeof roadParts>[]) {
+  return new Map(
+    parts.flatMap((p) =>
+      p.events.flatMap(
+        (e) =>
+          [
+            [`${p.road.id}:${e.start}`, e.junction.id],
+            [`${p.road.id}:${e.end}`, e.junction.id],
+          ] as const,
+      ),
+    ),
+  );
 }

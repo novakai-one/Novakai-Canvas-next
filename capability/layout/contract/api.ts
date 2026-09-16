@@ -49,3 +49,4 @@ export { createSevenRoadScene } from '../core/prototype-seven-roads.js';
 export { createRoadProofs } from '../core/prototype-road-proofs.js';
 
 export { createNestedRoadScene } from '../core/prototype-nested-scene.js';
+export { inspectNestedWires } from '../core/nested-wire-inspection.js';

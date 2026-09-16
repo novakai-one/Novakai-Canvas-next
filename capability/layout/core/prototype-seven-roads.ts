@@ -1,3 +1,4 @@
+import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
 /** Seven-node geometry experiment: rows reserve roads before node-owned ports are read. */
 import type {
   PrototypeBlock,
@@ -194,7 +195,10 @@ export function createSevenRoadScene(options: PrototypeLayoutOptions = {}) {
     ),
   ]);
   const roads = [...main, ...drives];
-  const network = measure('network', () => roadNetwork(roads));
+  const network = measure('network', () => {
+    const registry = roadRegistry(roads);
+    return roadNetwork(roads, constructedContacts(registry, frameEnds(main), drives, half));
+  });
   return {
     sections,
     nodes,

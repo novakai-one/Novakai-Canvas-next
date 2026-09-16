@@ -1,3 +1,4 @@
+import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
 import type {
   PrototypeBounds,
   PrototypeBlock,
@@ -23,7 +24,7 @@ const drivewayWidth = 24,
 /** Capacity is chosen once. Wider roads reserve more space before any node is placed. */
 function capacity(roadWidth: number) {
   if (!Number.isFinite(roadWidth) || roadWidth < 48)
-    throw new Error('Road width must be finite and at least 48');
+    throw new RangeError('Road width must be finite and at least 48');
   return {
     roadWidth,
     blockWidth: inset * 2 + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.width,
@@ -103,6 +104,7 @@ function mainRoads(sections: readonly PrototypeBlock[], plan: Capacity): readonl
 const unmeasured: PrototypeLayoutMeasure = (_stage, operation) => operation();
 /** One forward pass: capacity → nodes → owned ports → main roads → driveways → lane network.
  * There is no geometry feedback, convergence loop or DOM measurement. Caller owns any timing.
+ * Invalid roadWidth throws RangeError; callers correct the option and safely retry.
  */
 export function createRoadPrototypeScene(options: PrototypeLayoutOptions = {}): RoadPrototypeScene {
   const measure = options.measure ?? unmeasured;
@@ -122,6 +124,12 @@ export function createRoadPrototypeScene(options: PrototypeLayoutOptions = {}): 
     attachPrototypeDriveways(ports, main, drivewayWidth),
   );
   const roads = [...main, ...driveways];
-  const network = measure('network', () => roadNetwork(roads));
+  const network = measure('network', () => {
+    const registry = roadRegistry(roads);
+    return roadNetwork(
+      roads,
+      constructedContacts(registry, frameEnds(main), driveways, plan.roadWidth / 2),
+    );
+  });
   return { sections, nodes, ports, roads, roadWidth: plan.roadWidth, drivewayWidth, ...network };
 }

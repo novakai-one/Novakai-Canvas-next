@@ -8,7 +8,7 @@ import {
 const scene = createNestedRoadScene();
 assert(scene.wiring?.ok);
 const wires = scene.wiring.value;
-assert.equal(wires.length, 12);
+assert.equal(wires.length, 18);
 assert.deepEqual(inspectNestedWires(scene, wires), {
   corridors: [],
   nodeBodies: [],
@@ -52,5 +52,13 @@ assert(
   }).continuity.includes('w01'),
 );
 console.log(
-  'PASS retained six fixture cases: 12-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.',
+  'PASS retained six fixture cases: 18-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.',
 );
+
+const gateWire = wires.find((wire) => wire.id === 'w10');
+const gateSegment = gateWire.segments.find((segment) => segment.corridorId === 'drive:section-2:exit-bottom');
+const shifted = { ...gateSegment, from: { ...gateSegment.from, x: gateSegment.from.x + 1 }, to: { ...gateSegment.to, x: gateSegment.to.x + 1 } };
+const illegal = inspectNestedWires(scene, [{ ...gateWire, segments: [shifted] }]);
+assert.equal(illegal.corridors.length, 0);
+assert(illegal.boundaries.length > 0);
+console.log('PASS gate mouth refinement: wrong lane inside the permitted mouth is rejected; exact assigned lanes accepted.');

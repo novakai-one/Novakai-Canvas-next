@@ -57,7 +57,7 @@ async function state(page, primary, secondary, labelIds = []) {
     })),
   );
   assert(actual.filter((item) => item.id.startsWith('node-')).length === 22, '22 nodes');
-  assert(actual.filter((item) => item.id.startsWith('w')).length === 12, '12 wires');
+  assert(actual.filter((item) => item.id.startsWith('w')).length === 18, '18 wires');
   actual.forEach((item) => checkObject(item, primary, secondary));
   await labels(page, labelIds);
   await decorations(page, primary !== '');
@@ -170,12 +170,12 @@ export async function verify(page) {
   assert(before === 1, `instrumented pipeline executes once (actual ${before})`);
   const baseline = await geometry(page);
   await state(page, '', []);
-  pass('2a load: 0 visible labels; all 22 nodes / 12 wires unselected');
+  pass('2a load: 0 visible labels; all 22 nodes / 18 wires unselected');
   await page.screenshot({ path: `${directory}default.png` });
   await clickNode(page, 'node-7');
-  await state(page, 'node-7', ['w12', 'node-12']);
+  await state(page, 'node-7', ['w12', 'w13', 'node-12', 'node-5']);
   pass(
-    '2b node-7 primary; only w12 + node-12 secondary; every other node/wire dim; 0 labels (34/34 class assertions)',
+    '2b node-7 primary; only w12 + w13 + node-12 + node-5 secondary; every other node/wire dim; 0 labels (40/40 class assertions)',
   );
   await unchanged(page, before, baseline, 'b');
   await page.screenshot({ path: `${directory}node-selected.png` });
@@ -183,7 +183,7 @@ export async function verify(page) {
   await state(page, 'w06', ['node-8', 'node-10'], ['w06']);
   const label = await midpoint(page);
   pass(
-    '2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (34/34 class assertions)',
+    '2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (40/40 class assertions)',
   );
   await unchanged(page, before, baseline, 'c');
   await page.screenshot({ path: `${directory}wire-selected.png` });
@@ -193,25 +193,25 @@ export async function verify(page) {
   await unchanged(page, before, baseline, 'd');
   await page.screenshot({ path: `${directory}cleared.png` });
   await clickNode(page, 'node-1');
-  await state(page, 'node-1', ['w01', 'w02', 'node-2', 'node-3']);
+  await state(page, 'node-1', ['w01', 'w02', 'w15', 'node-2', 'node-3', 'node-4']);
   await clickNode(page, 'node-22');
   await state(page, 'node-22', []);
   pass(
-    '2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (34/34 class assertions)',
+    '2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (40/40 class assertions)',
   );
   await unchanged(page, before, baseline, 'e');
   await clickNode(page, 'node-5');
-  await state(page, 'node-5', ['w04', 'w09', 'node-6', 'node-4']);
+  await state(page, 'node-5', ['w04', 'w09', 'w13', 'node-6', 'node-4', 'node-7']);
   await clickNode(page, 'node-5');
   await state(page, '', []);
   pass('2f node-5 twice: 0 labels; 0 primary/secondary/dim classes anywhere');
   await unchanged(page, before, baseline, 'f');
   await clickNode(page, 'node-5');
-  await state(page, 'node-5', ['w04', 'w09', 'node-6', 'node-4']);
+  await state(page, 'node-5', ['w04', 'w09', 'w13', 'node-6', 'node-4', 'node-7']);
   await clickWire(page, 'w04');
   await state(page, 'w04', ['node-5', 'node-6'], ['w04']);
   pass(
-    '2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (34/34 class assertions)',
+    '2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (40/40 class assertions)',
   );
   await unchanged(page, before, baseline, 'g');
   await clickWire(page, 'w04');

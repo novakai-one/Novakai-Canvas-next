@@ -19,6 +19,7 @@ const binary = {
 };
 let stage = 'module-initialization';
 const counts = {};
+const calls = new Map();
 const legs = [];
 function record(kind, n = 1) {
   counts[stage] ??= { arithmetic: 0, comparisons: 0, total: 0 };
@@ -165,6 +166,7 @@ const { createNestedRoadScene: instrumented } =
 stage = 'unattributed-setup';
 const scene = instrumented({
   measure: (name, run) => {
+    calls.set(name, (calls.get(name) ?? 0) + 1);
     stage = name;
     const result = run();
     stage = 'unattributed-setup';
@@ -182,6 +184,10 @@ const probe = instrumented({
   },
 });
 assert.equal(JSON.stringify(probe), JSON.stringify(createNestedRoadScene({ copies: 2 })));
+assert(
+  [...calls.values()].every((count) => count === 1),
+  'Every stage must execute exactly once',
+);
 assert.equal(scene.nodes.length, 22);
 assert.equal(probe.nodes.length, 44);
 assert.equal(probe.sections.length, 8);
@@ -218,6 +224,13 @@ const wireCounts = Object.fromEntries(
     .map(([key, value]) => [key.slice(5), value]),
 );
 const wireTotal = Object.values(wireCounts).reduce((sum, value) => sum + value.total, 0);
+const compilationStages = ['wire-registry', 'lane-allocation', 'network', 'lane-projection'];
+const compiledTotal = (prefix = '') =>
+  compilationStages.reduce((sum, name) => sum + counts[`${prefix}${name}`].total, 0);
+const sceneTotal = (probe) =>
+  Object.entries(counts)
+    .filter(([name]) => name.startsWith('probe:') === probe && name !== 'module-initialization')
+    .reduce((sum, [, value]) => sum + value.total, 0);
 const report = {
   definition:
     'One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.',
@@ -226,7 +239,8 @@ const report = {
   stages: counts,
   wireRouting: { perWire: wireCounts, total: wireTotal },
   laneNetwork: {
-    total: counts.network.total,
+    total: compiledTotal(),
+    components: Object.fromEntries(compilationStages.map((name) => [name, counts[name].total])),
     roadCount: scene.roads.length,
     pairwiseRoadCandidates: discoveryLoops.length,
     roadPairDiscoveryChecks: discoveryLoops.length,
@@ -237,22 +251,46 @@ const report = {
     nodes: [scene.nodes.length, probe.nodes.length],
     southOffset,
     exactCloneVerified: true,
-    laneCompile: [counts.network.total, counts['probe:network'].total],
-    ratio: counts['probe:network'].total / counts.network.total,
+    laneCompile: [compiledTotal(), compiledTotal('probe:')],
+    totalOperations: [sceneTotal(false), sceneTotal(true)],
+    ratio: sceneTotal(true) / sceneTotal(false),
   },
   perLeg: legs.filter((l) => !l.stage.startsWith('probe:')),
   instrumentedSceneIdentical: true,
+  stageInvocations: Object.fromEntries(calls),
 };
 for (const [id, value] of Object.entries(wireCounts)) {
-  const ceiling = { w09: 120, w10: 180, w11: 120, w12: 180 }[id] ?? 60;
+  const wire = scene.wiring.value.find((w) => w.id === id);
+  const ceiling = (wire.gates.length + 1) * 60;
   assert(value.total <= ceiling, `${id}: ${value.total} > ${ceiling}`);
 }
-assert(wireTotal <= 1200);
-assert(counts.network.total <= 12000);
+assert(wireTotal <= 700);
+assert(compiledTotal() <= 15000);
 assert(report.perLeg.every((l) => l.operations <= 60));
 assert(report.scalingProbe.ratio <= 2.5);
 await writeFile(
   'output/playwright/nested-wires/calculations.json',
   JSON.stringify(report, null, 2) + '\n',
 );
-console.log(JSON.stringify(report, null, 2));
+Object.entries(wireCounts).forEach(([id, value]) =>
+  console.log(
+    `PASS ${id}: ${value.total} routing ops; executed legs ${report.perLeg
+      .filter((l) => l.stage === `wire:${id}`)
+      .map((l) => l.operations)
+      .join(',')}`,
+  ),
+);
+console.log(
+  `PASS routing total=${wireTotal} <=700; maximum law leg=${Math.max(...report.perLeg.map((l) => l.operations))} <=60`,
+);
+console.log(
+  `PASS lane allocation + registry compilation=${compiledTotal()} <=15000; components=${JSON.stringify(report.laneNetwork.components)}`,
+);
+console.log(`PASS per-wire road-pair discovery checks=${discoveryLoops.length}`);
+console.log(
+  `PASS 22/44 nodes: total ops=${report.scalingProbe.totalOperations.join('/')}; growth=${report.scalingProbe.ratio} <=2.5; byte-identical instrumented scenes`,
+);
+
+console.log(
+  'PASS one-way pipeline: every recorded construction/allocation/projection stage executes exactly once',
+);

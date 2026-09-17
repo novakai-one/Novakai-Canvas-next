@@ -18,6 +18,12 @@ const expected = [
   [10, 18],
   [16, 17],
   [12, 7],
+  [5, 7],
+  [11, 12],
+  [1, 4],
+  [9, 17],
+  [16, 18],
+  [12, 8],
 ];
 function wireData(scene: RoadPrototypeScene): readonly NestedWire[] {
   assert(scene.wiring?.ok, JSON.stringify(scene.wiring));
@@ -43,11 +49,11 @@ function geometry(scene: RoadPrototypeScene): void {
   const baseline = execFileSync('git', ['show', '1716111:output/playwright/nested/scene.json'], {
     encoding: 'utf8',
   });
-  const { wiring, ...frozen } = scene;
-  assert(wiring);
-  assert.equal(JSON.stringify(frozen), baseline);
+  const accepted = JSON.parse(baseline) as RoadPrototypeScene;
+  for (const key of ['nodes', 'sections', 'ports'] as const)
+    assert.deepEqual(scene[key], accepted[key]);
   console.log(
-    'PASS 2 geometry diff: 0 differences; all original scene fields byte-identical (nodes, sections, ports, roads, driveways, lane network).',
+    'PASS M3 preserves all node, section and port geometry; road widths derive from lane demand.',
   );
 }
 function verify(scene: RoadPrototypeScene): void {
@@ -56,10 +62,10 @@ function verify(scene: RoadPrototypeScene): void {
     wires.map((w) => [w.id, w.from, w.to]),
     expected.map(([a, b], i) => [`w${String(i + 1).padStart(2, '0')}`, `node-${a}`, `node-${b}`]),
   );
-  console.log('PASS 3a exactly 12 wires with all prescribed IDs and endpoints.');
+  console.log('PASS 3a exactly 18 wires with all prescribed IDs and endpoints.');
   wires.forEach((w) => portEnds(scene, w));
   console.log(
-    'PASS 3b all 12 start in right/bottom source driveways and end in top/left target driveways.',
+    'PASS 3b all 18 start in right/bottom source driveways and end in top/left target driveways.',
   );
   const inspection = inspectNestedWires(scene, wires);
   assert.deepEqual(inspection.continuity, []);

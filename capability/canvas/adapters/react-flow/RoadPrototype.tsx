@@ -636,7 +636,7 @@ export function RoadPrototype({
                   setFocus(e.target.value);
                 }}
               >
-                <option value="">All 12 wires</option>
+                <option value="">All {wires.length} wires</option>
                 {wires.map((w) => (
                   <option key={w.id} value={w.id}>
                     {w.id} · {w.from} → {w.to}

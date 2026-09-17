@@ -37,6 +37,8 @@ for (const [first, second] of [
   console.log(`PASS DoD 2: ${first}/${second} gates=${JSON.stringify(wire(first).gates)}`);
 }
 function roads(id) {
+  if (scene.wireLanes)
+    return new Set(scene.wireLanes.filter((lane) => lane.wireId === id).map((lane) => lane.roadId));
   return new Set(
     wire(id)
       .segments.filter(parallel)

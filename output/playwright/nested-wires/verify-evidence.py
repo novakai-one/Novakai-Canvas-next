@@ -60,7 +60,11 @@ def shape_quality(scene, browser):
     assert [overlap_count, self_count, label_collisions, body_collisions] == [0, 0, 0, 0], result
     assert result['minimumLabelHaloContrast'] >= 4.5, result
     assert heading_ratio >= 1.3, result
-    assert len(crossings) <= 6, result
+    # Ruling #14: M4.5 certification supersedes the historical crossings ceiling.
+    proof = read('m45-topological-bound.json')
+    certified = {(*record['wires'], *record['point']) for record in proof['certifiedCrossings']}
+    assert (proof['sceneSha256'] == hashlib.sha256((ROOT / 'scene.json').read_bytes()).hexdigest()
+            and proof['uncertifiedCrossings'] == [] and set(crossings) == certified), result
     return result
 
 

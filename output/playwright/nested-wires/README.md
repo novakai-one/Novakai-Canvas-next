@@ -487,3 +487,91 @@ runner passes are claimed. Still visually weak, per the unchanged M6 review:
 sparse panel air, small overview labels, long perimeter routes, strong default
 wires and busy convergence. No browser or server was launched; 5190 was not
 contacted. No push or PR.
+
+## M6.5a amended — styling only
+
+Orchestrator ruling #3 withdraws all compacting from M6.5. The two committed
+STOP-evidence commits and [compacting STOP report](presentation/stop-report.md)
+remain intact. Sparse-section space carries midpoint-mouth turn geometry;
+compacting and that routing-topology mechanism are deferred to **M7**.
+
+This pass changes only renderer paint and Design System token assets. A neutral
+stroke at 1.75 units replaces the strong three-tone 3-unit default. Nodes and
+section hierarchy now read before wires. Every wire keeps its separate SVG path,
+arrow, title and 16-unit hit target. Labels remain hidden until primary selection.
+
+Convergence is deterministic: count **distinct wire IDs** at each source port,
+target port and section gate ID. A node port ID identifies its owned pin-row side;
+a gate ID identifies its mouth. If any such ID has **>=3 wires**, quiet the whole
+participating wire to 1.25 units at 0.72 path opacity. Applying the treatment to
+the whole path avoids a style seam or segmentation at the mouth. No coordinates,
+proximity heuristic, new SVG route or scene mutation are involved. A memoized
+renderer-only set derives from finished wires. This marks **15 mouths / 24 wires**
+in templates and **7 mouths / 13 wires** in nested; the
+[independent membership audit](presentation/styling/convergence-memberships.json)
+includes all groups and IDs.
+
+Primary selection overrides convergence with a full-opacity 5-unit accent path,
+6-unit separating halo and its original label. Secondary/dim group opacity stays
+**0.7 / 0.28**, primary stays **1**, and roads stay **0.55** during selection.
+Selected-node neighborhoods, selection toggling, label text/midpoint and camera
+behavior are unchanged. Both M4 and M5 use the same selection assertion body:
+[byte identity to M5 df05931](presentation/styling/selection-runner-identity.txt).
+The separate M5 drag/swap feature is not part of this branch or styling pass.
+
+| Published CSS token | Role / value |
+| --- | --- |
+| `--nv-wire-default-color` | Alias of theme-aware `text.secondary`; quiet neutral stroke/arrow |
+| `--nv-wire-default-width` | Ordinary wire stroke, 1.75px in world coordinates |
+| `--nv-wire-convergence-width` | Participating bundle wire stroke, 1.25px |
+| `--nv-wire-convergence-opacity` | Participating path/arrow opacity, 0.72 |
+| `--nv-wire-halo-width` | Default background separator, 4px |
+| `--nv-wire-primary-color` | Alias of theme-aware `action.accent`; selected path, arrow and label |
+| `--nv-wire-primary-width` | Selected stroke, 5px |
+| `--nv-wire-primary-opacity` | Selected path/arrow opacity, 1 |
+| `--nv-wire-primary-halo-width` | Selected background separator, 6px |
+
+Existing `--nv-surface-raised` supplies halos/label outlines;
+`--nv-opacity-selection-secondary`, `--nv-opacity-selection-dim` and
+`--nv-opacity-selection-road` retain the selection ladder. No CSS paint literal
+was added. Token compiler outputs, including theme/preference scopes, are committed.
+
+Fresh geometry is byte-identical to committed M6 `b20053d` for **both complete
+scenes**. Every field of both republished ops objects equals its M6 artifact:
+
+| Scene | Compile | Routing | Road-pair discovery | Delta, every ops field |
+| --- | ---: | ---: | ---: | --- |
+| templates | 28,407 | 1,626 | 0 | Exactly zero |
+| nested | 19,732 | 992 | 0 | Exactly zero |
+
+Reproduce from this worktree, with an owned headless server on **5191**:
+
+```sh
+pnpm check
+python3 output/playwright/nested-wires/presentation/styling/verify-offline.py
+pnpm --dir apps/web exec vite --host 127.0.0.1 --port 5191 --strictPort
+python3 output/playwright/nested-wires/presentation/styling/verify-browser.py
+```
+
+The offline wrapper invokes all inherited M6 regression commands unchanged and
+republishes fresh ops while preserving historical artifacts. The explicit M6
+geometry path is `createNestedRoadScene({ spec })` from committed `scene-spec.json`,
+serialized as `JSON.stringify(scene, null, 2) + '\n'` and byte-compared to M6:
+
+```sh
+node --import tsx output/playwright/nested-wires/presentation/styling/verify-identity.mjs
+```
+
+All six **1920×1440 headless Chrome** captures and pasted output are linked in the
+[binary DoD report](presentation/styling/report.md). Browser checks use **5191
+only**; 5190 is never started, stopped, killed or contacted. Nothing was pushed
+and no PR was opened.
+
+**Still visually weak:** sparse panels and overview label scale are known,
+explicitly deferred to **M7**. The long adapters perimeter route, 130 certified
+crossings, identical plain actor cards and diagnostic-road clutter remain. The
+validation closeup has readable node titles and distinctly lighter bundles;
+the fit overview still needs reading zoom to trace tiny endpoints. The broad
+AWS/Docker reference density/polish bar is not claimed met by this styling pass.
+[Personal visual review](presentation/styling/visual-review.md) distinguishes the
+verified paint improvement from these frozen geometry and presentation limits.

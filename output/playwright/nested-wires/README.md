@@ -290,3 +290,15 @@ python3 output/playwright/nested-wires/verify-m45-evidence.py --write
 ```
 
 Run timing after checks, without concurrent browser runners/source edits. Full stdout, all ten DoD statuses, load samples, operation totals, clone interpretation and local commit log are in [m45-completion-report.md](m45-completion-report.md). [Visual inspection](m45-visual-review.md) records the reference comparison and retained fixture limitations. [Source review](m45-source-review.md) records scores 146–152/160 and the enforced Sonar ≤2 gate.
+
+## M6 templates scene — STOP at nested-only section placement (2026-09-17)
+
+The required real directory tree has 16 production nodes and nine sections;
+`core` contains four child sections and zero direct nodes. The existing public
+builder computes `rows = Math.ceil(0 / 0)` for that section, propagating `NaN`
+into all 16 node bounds, all nine section bounds, and 142 road bounds. Feature
+spec 2 explicitly requires STOP if this tree cannot be expressed. No layout or
+routing changes were made. Extraction, real-wire routing, browser capture,
+invariant certification, ops/scaling, and visual acceptance remain unverified.
+See the [STOP report and exact reproduction](templates-scene/stop-report.md).
+No browser/server was started, port 5188 was untouched, and no push or PR occurred.

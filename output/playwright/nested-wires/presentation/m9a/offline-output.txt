@@ -1,0 +1,19 @@
+identity: exit 0
+verify-nested-wires: exit 0
+verify-invariants: exit 0
+verify-m3-topology: exit 0
+verify-m45-pins: exit 0
+verify-m45-geometry: exit 0
+verify-structural-identity: exit 0
+verify-lanes: exit 0
+verify-static: exit 0
+verify-oracle: exit 0
+verify-m45-topological-bound: exit 0
+templates-invariants: exit 0
+scale-invariants: exit 0
+nested-ops-amended: exit 0
+PASS nested: exact compile/routing/discovery [19768, 992, 0]
+templates-ops-amended: exit 0
+PASS templates: exact compile/routing/discovery [28443, 1626, 0]
+scale-ops-amended: exit 0
+PASS scale: exact compile/routing/discovery [43876, 2088, 0]

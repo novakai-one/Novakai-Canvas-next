@@ -855,3 +855,34 @@ is distinct from the passing required live suites. The original dirty operation
 artifacts were preserved. See [source review](presentation/m76/source-review.md),
 [behavior and timing output](presentation/m76/browser-output.txt), and
 [offline output](presentation/m76/offline-output.txt).
+
+## M9a — quiet idle wires and hover spotlight
+
+Implemented on `feat/m9a-spotlight` from `9bfe1d9`, paint/token layer only.
+Published tokens: **`wire.idleOpacity = 0.65`** (multiplies existing idle alpha)
+and **`wire.spotlightDimOpacity = 0.16`**. Node hover highlights its existing
+one-hop net; wire hover highlights that wire and both endpoints. Full-opacity
+accent strokes and supporting node outlines appear after a cancellable **100 ms**
+enter/leave dwell. Hover changes no selection and adds no labels or native tooltips.
+M2 selection wins unchanged. SVG exports one unchanged route path with static idle
+opacity on path/markers, with no hover state.
+
+Final five-load medians on **5191**, headless: scale roads-off **229.4 ms**
+(ceiling 300 ms), templates **190.2 ms** (ceiling 250 ms).
+`pnpm check` ran alone: **208/208** tests; zero new `*.test.ts`.
+Fresh scenes are byte-identical to `9bfe1d9`; structural and invariant suites pass
+at templates **130/0** and scale **112/0**, with zero overlaps.
+Exact compile/routing/discovery remains **19,768/992/0**, **28,443/1,626/0**,
+**43,876/2,088/0**. All unchanged M2 assertions pass; both hover and selection
+retain exact geometry/camera with **zero layout recalculations**.
+
+[Binary report and reproduction](presentation/m9a/report.md),
+[hover evidence](presentation/m9a/spotlight.json),
+[source review](presentation/m9a/source-review.md), and
+[visual review/screenshots](presentation/m9a/visual-review.md).
+Idle connectivity remains visible at overview and contract reading zoom.
+Honest limits: 100 ms is the dwell timer, while observed event-to-class latency
+was 132.7 ms; readiness is not GPU paint time. Inherited density/empty-space
+and general reference-parity gaps remain, and quiet converging strokes fall below
+the generic 3:1 stroke floor under the requested idle multiplier.
+No layout/routing/placement changes, no push, no PR; no STOP condition fired.

@@ -1,0 +1,8 @@
+PASS DoD 1: pnpm check, 208 tests; zero new .test.ts files
+PASS DoD 2: ok=true; 24 nodes, 26 wires; node-23 six imports; node-24 two exports
+PASS DoD 3f: budgeted={"section-1": 0, "section-2": 0, "section-3": 0, "section-4": 0, "world": 0}; junction health={"section-1": 28, "section-2": 4, "section-3": 2, "section-4": 4, "world": 8}
+PASS DoD 4: routing=992; compilation=16376; max leg=41; discovery=0; every stage=1
+PASS DoD 5: loads=[291.7000000476837, 247.60000002384186, 249.5, 249.39999997615814, 249.5]; median=249.500 ms; clone ops=[22800, 40813]; growth=1.7900438596491228
+PASS DoD 6: every selection item PASS, hub/api neighborhoods; layout counter 1 -> 1
+PASS DoD 8: three required PNG hashes recorded; roads-off captured via checkbox
+PASS DoD 9: canonical scene/oracle/calculations/metrics reconciled for 26 wires

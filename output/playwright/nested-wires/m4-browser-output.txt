@@ -1,0 +1,2 @@
+PASS M4 five loads=[291.7000000476837, 247.60000002384186, 249.5, 249.39999997615814, 249.5]; median=249.500 ms; M2=243.7 ms; ceiling=300 ms
+PASS 24 nodes, 26 wires, one layout calculation; three M4 screenshots captured

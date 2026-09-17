@@ -1,0 +1,27 @@
+PASS w01 length=153 oracle=147 detour=4.0816%
+PASS w02 length=895 oracle=811 detour=10.3576% FLAG >10%: orchestrator visual review
+PASS w03 length=652 oracle=640 detour=1.8750%
+PASS w04 length=153 oracle=147 detour=4.0816%
+PASS w05 length=150 oracle=144 detour=4.1667%
+PASS w06 length=726 oracle=684 detour=6.1404%
+PASS w07 length=729 oracle=687 detour=6.1135%
+PASS w08 length=150 oracle=144 detour=4.1667%
+PASS w09 length=2567 oracle=2495 detour=2.8858%
+PASS w10 length=2092 oracle=2092 detour=0.0000%
+PASS w11 length=665 oracle=653 detour=1.8377%
+PASS w12 length=5497 oracle=5329 detour=3.1526%
+PASS w13 length=723 oracle=663 detour=9.0498%
+PASS w14 length=159 oracle=147 detour=8.1633%
+PASS w15 length=319 oracle=307 detour=3.9088%
+PASS w16 length=2086 oracle=2080 detour=0.2885%
+PASS w17 length=1286 oracle=1232 detour=4.3831%
+PASS w18 length=5968 oracle=5770 detour=3.4315%
+PASS w19 length=322 oracle=310 detour=3.8710%
+PASS w20 length=168 oracle=156 detour=7.6923%
+PASS w21 length=2865 oracle=2763 detour=3.6916%
+PASS w22 length=2038 oracle=1978 detour=3.0334%
+PASS w23 length=3333 oracle=3285 detour=1.4612%
+PASS w24 length=4825 oracle=4663 detour=3.4742%
+PASS w25 length=639 oracle=621 detour=2.8986%
+PASS w26 length=2340 oracle=2274 detour=2.9024%
+PASS all named corridors contain their segments; 26 assigned-gate oracle measurements; >10% flagged for visual review.

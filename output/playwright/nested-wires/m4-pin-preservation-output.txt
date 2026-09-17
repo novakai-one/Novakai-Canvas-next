@@ -1,0 +1,7 @@
+PASS 3b node-1:exit-right: order=w01,w15; exact pins=[{"x":632,"y":445},{"x":632,"y":451}]; pitch=6; centered
+PASS 3b node-5:exit-right: order=w04,w13; exact pins=[{"x":1440,"y":549},{"x":1440,"y":555}]; pitch=6; centered
+PASS 3b node-11:exit-right: order=w07,w14; exact pins=[{"x":464,"y":1485},{"x":464,"y":1491}]; pitch=6; centered
+PASS 3b node-12:exit-bottom: order=w12,w18; exact pins=[{"x":707,"y":1536},{"x":701,"y":1536}]; pitch=6; centered
+PASS 3b node-16:exit-right: order=w11,w17; exact pins=[{"x":1136,"y":1725},{"x":1136,"y":1731}]; pitch=6; centered
+PASS 3b node-18:entry-top: order=w10,w17; exact pins=[{"x":1987,"y":1440},{"x":1981,"y":1440}]; pitch=6; centered
+PASS 3b complete default serialization equals immutable M3 plus ONLY the six exact computed terminal fans; every other byte preserved

@@ -1,0 +1,32 @@
+MEASURE routing=992; compile=16376; total=22800,40813; maxLeg=41; stages={"capacity":1,"nodes":1,"ports":1,"topology":1,"wire-registry":1,"wire:w01":1,"wire:w02":1,"wire:w03":1,"wire:w04":1,"wire:w05":1,"wire:w06":1,"wire:w07":1,"wire:w08":1,"wire:w09":1,"wire:w10":1,"wire:w11":1,"wire:w12":1,"wire:w13":1,"wire:w14":1,"wire:w15":1,"wire:w16":1,"wire:w17":1,"wire:w18":1,"wire:w19":1,"wire:w20":1,"wire:w21":1,"wire:w22":1,"wire:w23":1,"wire:w24":1,"wire:w25":1,"wire:w26":1,"lane-allocation":1,"main-roads":1,"driveways":1,"network":1,"lane-projection":1}
+PASS w01: 11 routing ops; executed legs 8
+PASS w02: 32 routing ops; executed legs 29
+PASS w03: 14 routing ops; executed legs 11
+PASS w04: 11 routing ops; executed legs 8
+PASS w05: 15 routing ops; executed legs 12
+PASS w06: 34 routing ops; executed legs 31
+PASS w07: 32 routing ops; executed legs 29
+PASS w08: 15 routing ops; executed legs 12
+PASS w09: 34 routing ops; executed legs 11,11
+PASS w10: 71 routing ops; executed legs 11,11,11,12
+PASS w11: 42 routing ops; executed legs 8,8,8
+PASS w12: 103 routing ops; executed legs 41,11,11,11
+PASS w13: 32 routing ops; executed legs 29
+PASS w14: 11 routing ops; executed legs 8
+PASS w15: 15 routing ops; executed legs 12
+PASS w16: 72 routing ops; executed legs 12,11,11,11
+PASS w17: 46 routing ops; executed legs 8,8,11
+PASS w18: 104 routing ops; executed legs 41,11,11,11
+PASS w19: 15 routing ops; executed legs 12
+PASS w20: 11 routing ops; executed legs 8
+PASS w21: 43 routing ops; executed legs 8,23
+PASS w22: 33 routing ops; executed legs 11,11
+PASS w23: 65 routing ops; executed legs 8,2,23,11
+PASS w24: 51 routing ops; executed legs 8,11,11
+PASS w25: 27 routing ops; executed legs 8,8
+PASS w26: 53 routing ops; executed legs 11,11,11
+PASS routing total=992 <=1000; maximum law leg=41 <=60
+PASS lane allocation + registry compilation=16376 <=20000; components={"wire-registry":928,"lane-allocation":1414,"network":11021,"lane-projection":3013}
+PASS per-wire road-pair discovery checks=0
+PASS 24/48 nodes: total ops=22800/40813; growth=1.7900438596491228 <=2.5; byte-identical instrumented scenes
+PASS one-way pipeline: every recorded construction/allocation/projection stage executes exactly once

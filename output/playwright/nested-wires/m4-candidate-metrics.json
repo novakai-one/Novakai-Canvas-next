@@ -1,16 +1,13 @@
 {
   "milestone": "M4",
-  "status": "PASS",
+  "status": "STOP: retained visual crossing budget exceeded",
   "scene": {
     "nodes": 24,
-    "sections": 4,
     "wires": 26
   },
   "widthFunction": "12 + 12 * laneCount",
   "lanePitch": 6,
-  "preservationBaseline": "2f9b762",
-  "preservationException": "six exact terminal pin-row fans",
-  "calculations": {
+  "operations": {
     "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
     "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
     "stages": {
@@ -865,27 +862,27 @@
   "browser": {
     "loads": [
       {
-        "roads:navigation-to-ready": 291.7000000476837,
-        "roads:styles-import": 19.5,
-        "roads:renderer-import": 2.5,
+        "roads:navigation-to-ready": 299.1999999284744,
+        "roads:styles-import": 25.700000047683716,
+        "roads:renderer-import": 2.899999976158142,
         "roads:capacity": 0,
-        "roads:nodes": 0.19999992847442627,
-        "roads:layout-total": 3.399999976158142,
-        "roads:ports": 0,
-        "roads:topology": 0.20000004768371582,
-        "roads:wire-registry": 0.2999999523162842,
-        "roads:wire:w01": 0,
+        "roads:nodes": 0,
+        "roads:ports": 0.10000002384185791,
+        "roads:layout-total": 3.600000023841858,
+        "roads:topology": 0.3999999761581421,
+        "roads:wire-registry": 0.20000004768371582,
+        "roads:wire:w01": 0.10000002384185791,
         "roads:wire:w02": 0,
         "roads:wire:w03": 0,
         "roads:wire:w04": 0,
         "roads:wire:w05": 0,
         "roads:wire:w06": 0,
-        "roads:wire:w07": 0.10000002384185791,
+        "roads:wire:w07": 0,
         "roads:wire:w08": 0,
-        "roads:wire:w09": 0,
+        "roads:wire:w09": 0.09999990463256836,
         "roads:wire:w10": 0,
         "roads:wire:w11": 0,
-        "roads:wire:w12": 0,
+        "roads:wire:w12": 0.10000002384185791,
         "roads:wire:w13": 0,
         "roads:wire:w14": 0,
         "roads:wire:w15": 0,
@@ -896,26 +893,26 @@
         "roads:wire:w20": 0,
         "roads:wire:w21": 0,
         "roads:wire:w22": 0,
-        "roads:wire:w23": 0.10000002384185791,
+        "roads:wire:w23": 0,
         "roads:wire:w24": 0,
         "roads:wire:w25": 0,
         "roads:wire:w26": 0,
-        "roads:lane-allocation": 0.19999992847442627,
+        "roads:lane-allocation": 0.10000002384185791,
         "roads:main-roads": 0,
-        "roads:driveways": 0.10000002384185791,
-        "roads:network": 1.7000000476837158,
-        "roads:lane-projection": 0.2999999523162842,
-        "roads:coverage-audit": 82.10000002384186,
+        "roads:driveways": 0.19999992847442627,
+        "roads:network": 2.100000023841858,
+        "roads:lane-projection": 0.10000002384185791,
+        "roads:coverage-audit": 81,
         "roads:proof-catalog": 0,
-        "roads:render-to-ready": 117.5
+        "roads:render-to-ready": 114.29999995231628
       },
       {
-        "roads:navigation-to-ready": 247.60000002384186,
-        "roads:styles-import": 12.5,
-        "roads:renderer-import": 1.899999976158142,
+        "roads:navigation-to-ready": 246.60000002384186,
+        "roads:styles-import": 12.399999976158142,
+        "roads:renderer-import": 1.6999999284744263,
         "roads:capacity": 0,
         "roads:nodes": 0.10000002384185791,
-        "roads:layout-total": 3.600000023841858,
+        "roads:layout-total": 3.3000000715255737,
         "roads:ports": 0,
         "roads:topology": 0.30000007152557373,
         "roads:wire-registry": 0.2999999523162842,
@@ -927,11 +924,11 @@
         "roads:wire:w06": 0,
         "roads:wire:w07": 0,
         "roads:wire:w08": 0,
-        "roads:wire:w09": 0.10000002384185791,
+        "roads:wire:w09": 0,
         "roads:wire:w10": 0,
         "roads:wire:w11": 0,
         "roads:wire:w12": 0,
-        "roads:wire:w13": 0.09999990463256836,
+        "roads:wire:w13": 0.10000002384185791,
         "roads:wire:w14": 0,
         "roads:wire:w15": 0,
         "roads:wire:w16": 0,
@@ -940,120 +937,30 @@
         "roads:wire:w19": 0,
         "roads:wire:w20": 0,
         "roads:wire:w21": 0,
-        "roads:wire:w22": 0,
-        "roads:wire:w23": 0,
-        "roads:wire:w24": 0.10000002384185791,
-        "roads:wire:w25": 0,
-        "roads:wire:w26": 0,
-        "roads:lane-allocation": 0.10000002384185791,
-        "roads:main-roads": 0.10000002384185791,
-        "roads:driveways": 0.10000002384185791,
-        "roads:network": 1.899999976158142,
-        "roads:lane-projection": 0.2999999523162842,
-        "roads:coverage-audit": 77.5,
-        "roads:proof-catalog": 0,
-        "roads:render-to-ready": 113.10000002384186
-      },
-      {
-        "roads:navigation-to-ready": 249.5,
-        "roads:styles-import": 10.200000047683716,
-        "roads:renderer-import": 1.5999999046325684,
-        "roads:capacity": 0,
-        "roads:nodes": 0.10000002384185791,
-        "roads:layout-total": 3.3000000715255737,
-        "roads:ports": 0,
-        "roads:topology": 0.30000007152557373,
-        "roads:wire-registry": 0.2999999523162842,
-        "roads:wire:w01": 0,
-        "roads:wire:w02": 0,
-        "roads:wire:w03": 0,
-        "roads:wire:w04": 0,
-        "roads:wire:w05": 0,
-        "roads:wire:w06": 0,
-        "roads:wire:w07": 0,
-        "roads:wire:w08": 0,
-        "roads:wire:w09": 0.10000002384185791,
-        "roads:wire:w10": 0,
-        "roads:wire:w11": 0.10000002384185791,
-        "roads:wire:w12": 0,
-        "roads:wire:w13": 0,
-        "roads:wire:w14": 0,
-        "roads:wire:w15": 0,
-        "roads:wire:w16": 0,
-        "roads:wire:w17": 0,
-        "roads:wire:w18": 0,
-        "roads:wire:w19": 0,
-        "roads:wire:w20": 0,
-        "roads:wire:w21": 0,
-        "roads:wire:w22": 0,
+        "roads:wire:w22": 0.09999990463256836,
         "roads:wire:w23": 0,
         "roads:wire:w24": 0,
         "roads:wire:w25": 0,
         "roads:wire:w26": 0,
-        "roads:lane-allocation": 0.09999990463256836,
+        "roads:lane-allocation": 0.10000002384185791,
         "roads:main-roads": 0.10000002384185791,
         "roads:driveways": 0,
-        "roads:network": 1.7999999523162842,
-        "roads:lane-projection": 0.30000007152557373,
-        "roads:coverage-audit": 75.79999995231628,
-        "roads:proof-catalog": 0,
-        "roads:render-to-ready": 118.20000004768372
-      },
-      {
-        "roads:navigation-to-ready": 249.39999997615814,
-        "roads:styles-import": 10.599999904632568,
-        "roads:renderer-import": 1.9000000953674316,
-        "roads:capacity": 0.09999990463256836,
-        "roads:layout-total": 3.399999976158142,
-        "roads:nodes": 0.10000002384185791,
-        "roads:ports": 0,
-        "roads:topology": 0.30000007152557373,
-        "roads:wire-registry": 0.2999999523162842,
-        "roads:wire:w01": 0,
-        "roads:wire:w02": 0.10000002384185791,
-        "roads:wire:w03": 0,
-        "roads:wire:w04": 0,
-        "roads:wire:w05": 0,
-        "roads:wire:w06": 0,
-        "roads:wire:w07": 0,
-        "roads:wire:w08": 0,
-        "roads:wire:w09": 0.10000002384185791,
-        "roads:wire:w10": 0,
-        "roads:wire:w11": 0,
-        "roads:wire:w12": 0,
-        "roads:wire:w13": 0,
-        "roads:wire:w14": 0,
-        "roads:wire:w15": 0,
-        "roads:wire:w16": 0,
-        "roads:wire:w17": 0,
-        "roads:wire:w18": 0,
-        "roads:wire:w19": 0,
-        "roads:wire:w20": 0,
-        "roads:wire:w21": 0.09999990463256836,
-        "roads:wire:w22": 0,
-        "roads:wire:w23": 0,
-        "roads:wire:w24": 0,
-        "roads:wire:w25": 0,
-        "roads:wire:w26": 0,
-        "roads:lane-allocation": 0.10000002384185791,
-        "roads:main-roads": 0.10000002384185791,
-        "roads:driveways": 0.10000002384185791,
-        "roads:network": 1.7999999523162842,
+        "roads:network": 1.899999976158142,
         "roads:lane-projection": 0.20000004768371582,
-        "roads:coverage-audit": 77.29999995231628,
-        "roads:proof-catalog": 0,
-        "roads:render-to-ready": 115.39999997615814
+        "roads:coverage-audit": 74.69999992847443,
+        "roads:proof-catalog": 0.10000002384185791,
+        "roads:render-to-ready": 111.70000004768372
       },
       {
-        "roads:navigation-to-ready": 249.5,
-        "roads:styles-import": 10.5,
-        "roads:renderer-import": 1.7000000476837158,
+        "roads:navigation-to-ready": 246.20000004768372,
+        "roads:styles-import": 5,
+        "roads:renderer-import": 6.599999904632568,
+        "roads:layout-total": 3.3000000715255737,
         "roads:capacity": 0,
         "roads:nodes": 0,
         "roads:ports": 0.10000002384185791,
-        "roads:layout-total": 3.200000047683716,
-        "roads:topology": 0.19999992847442627,
-        "roads:wire-registry": 0.40000009536743164,
+        "roads:topology": 0.2999999523162842,
+        "roads:wire-registry": 0.30000007152557373,
         "roads:wire:w01": 0,
         "roads:wire:w02": 0,
         "roads:wire:w03": 0,
@@ -1062,7 +969,7 @@
         "roads:wire:w06": 0,
         "roads:wire:w07": 0,
         "roads:wire:w08": 0,
-        "roads:wire:w09": 0,
+        "roads:wire:w09": 0.10000002384185791,
         "roads:wire:w10": 0.09999990463256836,
         "roads:wire:w11": 0,
         "roads:wire:w12": 0,
@@ -1076,7 +983,97 @@
         "roads:wire:w20": 0,
         "roads:wire:w21": 0,
         "roads:wire:w22": 0,
-        "roads:wire:w23": 0.10000002384185791,
+        "roads:wire:w23": 0,
+        "roads:wire:w24": 0,
+        "roads:wire:w25": 0,
+        "roads:wire:w26": 0,
+        "roads:lane-allocation": 0.30000007152557373,
+        "roads:main-roads": 0,
+        "roads:driveways": 0,
+        "roads:network": 1.6999999284744263,
+        "roads:lane-projection": 0.20000004768371582,
+        "roads:coverage-audit": 76,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 116.89999997615814
+      },
+      {
+        "roads:navigation-to-ready": 250.29999995231628,
+        "roads:styles-import": 9.799999952316284,
+        "roads:renderer-import": 2,
+        "roads:layout-total": 3.200000047683716,
+        "roads:capacity": 0,
+        "roads:nodes": 0,
+        "roads:ports": 0,
+        "roads:topology": 0.2999999523162842,
+        "roads:wire-registry": 0.30000007152557373,
+        "roads:wire:w01": 0,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0,
+        "roads:wire:w10": 0.10000002384185791,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0.09999990463256836,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0,
+        "roads:wire:w17": 0,
+        "roads:wire:w18": 0,
+        "roads:wire:w19": 0,
+        "roads:wire:w20": 0.10000002384185791,
+        "roads:wire:w21": 0,
+        "roads:wire:w22": 0,
+        "roads:wire:w23": 0,
+        "roads:wire:w24": 0,
+        "roads:wire:w25": 0,
+        "roads:wire:w26": 0,
+        "roads:lane-allocation": 0.10000002384185791,
+        "roads:main-roads": 0.10000002384185791,
+        "roads:driveways": 0.10000002384185791,
+        "roads:network": 1.6999999284744263,
+        "roads:lane-projection": 0.20000004768371582,
+        "roads:coverage-audit": 81.39999997615814,
+        "roads:proof-catalog": 0.10000002384185791,
+        "roads:render-to-ready": 112.89999997615814
+      },
+      {
+        "roads:navigation-to-ready": 241.39999997615814,
+        "roads:styles-import": 9.5,
+        "roads:renderer-import": 1.600000023841858,
+        "roads:capacity": 0,
+        "roads:nodes": 0.10000002384185791,
+        "roads:layout-total": 3.200000047683716,
+        "roads:ports": 0,
+        "roads:topology": 0.2999999523162842,
+        "roads:wire-registry": 0.30000007152557373,
+        "roads:wire:w01": 0,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0.09999990463256836,
+        "roads:wire:w10": 0,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0,
+        "roads:wire:w17": 0,
+        "roads:wire:w18": 0,
+        "roads:wire:w19": 0.10000002384185791,
+        "roads:wire:w20": 0,
+        "roads:wire:w21": 0,
+        "roads:wire:w22": 0,
+        "roads:wire:w23": 0,
         "roads:wire:w24": 0,
         "roads:wire:w25": 0,
         "roads:wire:w26": 0,
@@ -1085,12 +1082,12 @@
         "roads:driveways": 0.10000002384185791,
         "roads:network": 1.7999999523162842,
         "roads:lane-projection": 0.20000004768371582,
-        "roads:coverage-audit": 80.59999990463257,
+        "roads:coverage-audit": 76.29999995231628,
         "roads:proof-catalog": 0,
-        "roads:render-to-ready": 115.5
+        "roads:render-to-ready": 112.10000002384186
       }
     ],
-    "medianMilliseconds": 249.5,
+    "medianMilliseconds": 246.60000002384186,
     "screenshots": [
       "m4-overview",
       "m4-roads-off",
@@ -1122,17 +1119,17 @@
       "PASS 3/hub layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
       "PASS api node-24: exactly w25/w26 and node-8/node-20 secondary; no labels",
       "PASS 3/api layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
-      "PASS M4 timing loads=[275.60000002384186, 247.39999997615814, 250.39999997615814, 248.70000004768372, 244.89999997615814]; median=248.700 ms <=300; M2=243.7 ms"
+      "PASS M4 timing loads=[297.39999997615814, 248.20000004768372, 247.29999995231628, 248.69999992847443, 252.39999997615814]; median=248.700 ms <=300; M2=243.7 ms"
     ],
     "performance": {
       "loads": [
-        275.60000002384186,
-        247.39999997615814,
-        250.39999997615814,
-        248.70000004768372,
-        244.89999997615814
+        297.39999997615814,
+        248.20000004768372,
+        247.29999995231628,
+        248.69999992847443,
+        252.39999997615814
       ],
-      "median": 248.70000004768372,
+      "median": 248.69999992847443,
       "m2Median": 243.7,
       "ceiling": 300
     },
@@ -1347,22 +1344,7 @@
     ]
   },
   "visual": {
-    "ruling": "M4 orchestrator ruling #3 (2026-09-17)",
     "counts": {
-      "section-1": 28,
-      "section-2": 4,
-      "section-3": 2,
-      "section-4": 4,
-      "world": 8
-    },
-    "budgetedCounts": {
-      "section-1": 0,
-      "section-2": 0,
-      "section-3": 0,
-      "section-4": 0,
-      "world": 0
-    },
-    "junctionCrossingCounts": {
       "section-1": 28,
       "section-2": 4,
       "section-3": 2,
@@ -1371,834 +1353,282 @@
     },
     "ceiling": 6,
     "crossings": [
-      {
-        "wires": [
-          "w01",
-          "w02"
-        ],
-        "point": [
-          539.0,
-          451.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-1:exit-right|junction:section-1:vertical:536:248:drive:node-2:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w01",
-          "w09"
-        ],
-        "point": [
-          545.0,
-          451.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-1:exit-right|junction:section-1:vertical:536:248:drive:node-2:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w01",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          451.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-1:exit-right|junction:section-1:vertical:536:248:drive:node-2:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w02",
-          "w09"
-        ],
-        "point": [
-          869.0,
-          257.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:872:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w02",
-          "w12"
-        ],
-        "point": [
-          539.0,
-          263.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w02",
-          "w12"
-        ],
-        "point": [
-          869.0,
-          263.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:872:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w02",
-          "w18"
-        ],
-        "point": [
-          539.0,
-          269.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w02",
-          "w18"
-        ],
-        "point": [
-          869.0,
-          269.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:872:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w02",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          457.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-1:exit-right|junction:section-1:vertical:536:248:drive:node-2:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w03",
-          "w09"
-        ],
-        "point": [
-          545.0,
-          645.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w03",
-          "w19"
-        ],
-        "point": [
-          698.0,
-          645.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:drive:node-2:exit-bottom|junction:section-1:horizontal:648:200:drive:node-23:entry-top"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w03",
-          "w23"
-        ],
-        "point": [
-          365.0,
-          651.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:drive:node-1:exit-bottom|junction:section-1:horizontal:648:200:drive:node-4:entry-top"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w03",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          645.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w04",
-          "w13"
-        ],
-        "point": [
-          1689.0,
-          555.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-2:vertical:1680:432:drive:node-5:exit-right|junction:section-2:vertical:1680:432:drive:node-6:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-2",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w05",
-          "w06"
-        ],
-        "point": [
-          1845.0,
-          675.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-2:horizontal:672:1344:drive:node-6:exit-bottom|junction:section-2:horizontal:672:1344:drive:node-9:entry-top"
-        ],
-        "excluded": true,
-        "section": "section-2",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w09",
-          "w12"
-        ],
-        "point": [
-          545.0,
-          263.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w09",
-          "w12"
-        ],
-        "point": [
-          1839.0,
-          429.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-2:horizontal:432:1344:drive:node-6:entry-top|junction:section-2:horizontal:432:1344:drive:section-2:entry-top"
-        ],
-        "excluded": true,
-        "section": "section-2",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w09",
-          "w18"
-        ],
-        "point": [
-          545.0,
-          269.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w09",
-          "w23"
-        ],
-        "point": [
-          545.0,
-          651.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w09",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          851.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-4:exit-right|junction:section-1:vertical:536:248:drive:node-23:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w10",
-          "w21"
-        ],
-        "point": [
-          1845.0,
-          1033.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:1048:200:drive:section-2:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w10",
-          "w23"
-        ],
-        "point": [
-          1341.0,
-          1181.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:horizontal:1184:64:world:vertical:1344:1184|junction:world:horizontal:1184:64:drive:section-1:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w10",
-          "w23"
-        ],
-        "point": [
-          1347.0,
-          1187.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:horizontal:1184:64:world:vertical:1344:1184|junction:world:horizontal:1184:64:drive:section-1:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w11",
-          "w17"
-        ],
-        "point": [
-          1489.0,
-          1491.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-4:vertical:1480:1368:drive:node-17:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-4",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w11",
-          "w23"
-        ],
-        "point": [
-          1211.0,
-          1599.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-3:vertical:1208:1368:section-3:horizontal:1608:200|junction:section-3:vertical:1208:1368:drive:section-3:exit-right"
-        ],
-        "excluded": true,
-        "section": "section-3",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w11",
-          "w23"
-        ],
-        "point": [
-          1347.0,
-          1587.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:vertical:1344:1184:drive:section-3:exit-right|junction:world:vertical:1344:1184:drive:section-4:entry-left"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w11",
-          "w26"
-        ],
-        "point": [
-          1477.0,
-          1587.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-4:vertical:1480:1368:drive:section-4:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-4",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w12",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          263.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w15",
-          "w23"
-        ],
-        "point": [
-          359.0,
-          651.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:drive:node-1:exit-bottom|junction:section-1:horizontal:648:200:drive:node-4:entry-top"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w16",
-          "w17"
-        ],
-        "point": [
-          1645.0,
-          1371.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-4:horizontal:1368:1480:drive:node-17:entry-top"
-        ],
-        "excluded": true,
-        "section": "section-4",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w16",
-          "w21"
-        ],
-        "point": [
-          1839.0,
-          1033.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:1048:200:drive:section-2:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w16",
-          "w22"
-        ],
-        "point": [
-          1839.0,
-          903.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-2:horizontal:912:1344:drive:node-9:exit-bottom|junction:section-2:horizontal:912:1344:drive:section-2:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "section-2",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w16",
-          "w23"
-        ],
-        "point": [
-          1335.0,
-          1181.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:horizontal:1184:64:world:vertical:1344:1184|junction:world:horizontal:1184:64:drive:section-1:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w16",
-          "w23"
-        ],
-        "point": [
-          1347.0,
-          1193.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:horizontal:1184:64:world:vertical:1344:1184|junction:world:horizontal:1184:64:drive:section-1:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w17",
-          "w23"
-        ],
-        "point": [
-          1217.0,
-          1599.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-3:vertical:1208:1368:section-3:horizontal:1608:200|junction:section-3:vertical:1208:1368:drive:section-3:exit-right"
-        ],
-        "excluded": true,
-        "section": "section-3",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w17",
-          "w23"
-        ],
-        "point": [
-          1347.0,
-          1593.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:vertical:1344:1184:drive:section-3:exit-right|junction:world:vertical:1344:1184:drive:section-4:entry-left"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w17",
-          "w26"
-        ],
-        "point": [
-          1477.0,
-          1593.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-4:vertical:1480:1368:drive:section-4:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-4",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w18",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          269.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:248:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w20",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          854.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-4:exit-right|junction:section-1:vertical:536:248:drive:node-23:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w21",
-          "w24"
-        ],
-        "point": [
-          551.0,
-          869.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-4:exit-right|junction:section-1:vertical:536:248:drive:node-23:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w21",
-          "w26"
-        ],
-        "point": [
-          1037.0,
-          1033.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:1048:200:drive:node-24:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w22",
-          "w24"
-        ],
-        "point": [
-          557.0,
-          869.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:vertical:536:248:drive:node-4:exit-right|junction:section-1:vertical:536:248:drive:node-23:entry-left"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w22",
-          "w26"
-        ],
-        "point": [
-          1037.0,
-          1027.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:1048:200:drive:node-24:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w23",
-          "w24"
-        ],
-        "point": [
-          533.0,
-          651.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:section-1:horizontal:648:200:section-1:vertical:536:248"
-        ],
-        "excluded": true,
-        "section": "section-1",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w23",
-          "w26"
-        ],
-        "point": [
-          1329.0,
-          1181.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:horizontal:1184:64:world:vertical:1344:1184|junction:world:horizontal:1184:64:drive:section-1:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      },
-      {
-        "wires": [
-          "w23",
-          "w26"
-        ],
-        "point": [
-          1347.0,
-          1199.0
-        ],
-        "angleDegrees": 90.0,
-        "singlePoint": true,
-        "registeredJunctions": [
-          "junction:world:horizontal:1184:64:world:vertical:1344:1184|junction:world:horizontal:1184:64:drive:section-1:exit-bottom"
-        ],
-        "excluded": true,
-        "section": "world",
-        "reason": "perpendicular (>=60 degrees) single-point crossing at registered junction"
-      }
+      [
+        "w01",
+        "w02",
+        539,
+        451
+      ],
+      [
+        "w01",
+        "w09",
+        545,
+        451
+      ],
+      [
+        "w01",
+        "w24",
+        533,
+        451
+      ],
+      [
+        "w02",
+        "w09",
+        869,
+        257
+      ],
+      [
+        "w02",
+        "w12",
+        539,
+        263
+      ],
+      [
+        "w02",
+        "w12",
+        869,
+        263
+      ],
+      [
+        "w02",
+        "w18",
+        539,
+        269
+      ],
+      [
+        "w02",
+        "w18",
+        869,
+        269
+      ],
+      [
+        "w02",
+        "w24",
+        533,
+        457
+      ],
+      [
+        "w03",
+        "w09",
+        545,
+        645
+      ],
+      [
+        "w03",
+        "w19",
+        698,
+        645
+      ],
+      [
+        "w03",
+        "w23",
+        365,
+        651
+      ],
+      [
+        "w03",
+        "w24",
+        533,
+        645
+      ],
+      [
+        "w04",
+        "w13",
+        1689,
+        555
+      ],
+      [
+        "w05",
+        "w06",
+        1845,
+        675
+      ],
+      [
+        "w09",
+        "w12",
+        545,
+        263
+      ],
+      [
+        "w09",
+        "w12",
+        1839,
+        429
+      ],
+      [
+        "w09",
+        "w18",
+        545,
+        269
+      ],
+      [
+        "w09",
+        "w23",
+        545,
+        651
+      ],
+      [
+        "w09",
+        "w24",
+        533,
+        851
+      ],
+      [
+        "w10",
+        "w21",
+        1845,
+        1033
+      ],
+      [
+        "w10",
+        "w23",
+        1341,
+        1181
+      ],
+      [
+        "w10",
+        "w23",
+        1347,
+        1187
+      ],
+      [
+        "w11",
+        "w17",
+        1489,
+        1491
+      ],
+      [
+        "w11",
+        "w23",
+        1211,
+        1599
+      ],
+      [
+        "w11",
+        "w23",
+        1347,
+        1587
+      ],
+      [
+        "w11",
+        "w26",
+        1477,
+        1587
+      ],
+      [
+        "w12",
+        "w24",
+        533,
+        263
+      ],
+      [
+        "w15",
+        "w23",
+        359,
+        651
+      ],
+      [
+        "w16",
+        "w17",
+        1645,
+        1371
+      ],
+      [
+        "w16",
+        "w21",
+        1839,
+        1033
+      ],
+      [
+        "w16",
+        "w22",
+        1839,
+        903
+      ],
+      [
+        "w16",
+        "w23",
+        1335,
+        1181
+      ],
+      [
+        "w16",
+        "w23",
+        1347,
+        1193
+      ],
+      [
+        "w17",
+        "w23",
+        1217,
+        1599
+      ],
+      [
+        "w17",
+        "w23",
+        1347,
+        1593
+      ],
+      [
+        "w17",
+        "w26",
+        1477,
+        1593
+      ],
+      [
+        "w18",
+        "w24",
+        533,
+        269
+      ],
+      [
+        "w20",
+        "w24",
+        533,
+        854
+      ],
+      [
+        "w21",
+        "w24",
+        551,
+        869
+      ],
+      [
+        "w21",
+        "w26",
+        1037,
+        1033
+      ],
+      [
+        "w22",
+        "w24",
+        557,
+        869
+      ],
+      [
+        "w22",
+        "w26",
+        1037,
+        1027
+      ],
+      [
+        "w23",
+        "w24",
+        533,
+        651
+      ],
+      [
+        "w23",
+        "w26",
+        1329,
+        1181
+      ],
+      [
+        "w23",
+        "w26",
+        1347,
+        1199
+      ]
     ],
     "alternatingBoundaryWitnesses": [
       {
@@ -2734,12 +2164,5 @@
         ]
       }
     ]
-  },
-  "screenshots": {
-    "m4-overview": "06c505405162a828e67a8cf79b5ea41565389f3fc6b5c1468c54e984224f8d70",
-    "m4-roads-off": "1841578ba88882f6c30836867b86355efaa13d71354c11f19d8005591cb255e2",
-    "m4-hub-closeup": "66d0c7f67fa11f477fde333b2108c231999d5f37f4abd4f6d1255708805c3e13"
-  },
-  "tests": 208,
-  "newTestFiles": 0
+  }
 }

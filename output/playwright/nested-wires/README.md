@@ -1,3 +1,5 @@
+> **Current acceptance: M4 completed under orchestrator ruling #3.** Canonical JSON now describes 24 nodes / 26 wires. Earlier STOP narratives and candidate snapshots below are retained as history; see the final M4 section and [end-to-end DoD report](m4-completion-report.md).
+
 # M3 — wire capacity and deterministic lanes
 
 Implementation on `feat/wire-lanes`, based on M2 `2c8ca32`. The amended 2026-09-17 brief admits clean perpendicular junction crossings whether turning or straight-through; same-axis overlap and parallel touching remain forbidden. The earlier STOP reports and candidate patch are historical evidence, superseded by the installed implementation and the M3 results below. No push, PR, new test file, Vite restart, or subagent.
@@ -91,3 +93,148 @@ python3 output/playwright/nested-wires/verify-m3-evidence.py --write
 ```
 
 Run browser measurements without the concurrent full test suite. Replacing timing/screenshots requires refreshing metrics and their recorded sample. The original `before.json`, M1/M1.5 outputs and named historical STOP evidence remain provenance, not current acceptance results.
+
+
+## Historical M4 attempt — STOP at global lane geometry (2026-09-17)
+
+**Resumption under ruling #2:** stopped on a separate acceptance contradiction before changing source. The immutable M3 scene has six shared node sides, but the amended preservation exception covers only `node-12:exit-bottom`. Five other shared sides must change to satisfy universal distinct pins. See [the current STOP report](m4-pin-ruling-stop-report.md), [standalone witness](verify-m4-pin-preservation.mjs), and [pasted output](m4-pin-preservation-output.txt). The law extension and complete default preservation remain intact; all 26 hub wires still route. The narrative below records the previous attempt.
+
+The revised opt-in semantic spec and admitted-direction law extension are present as **uncommitted candidate code**, not an accepted milestone. Default input remains 22 nodes / 18 wires and its complete pretty-printed JSON plus trailing newline equals `2f9b762:output/playwright/nested-wires/scene.json` byte-for-byte. The opt-in `fanInHubSceneSpec` routes all 26 prescribed wires across 24 nodes. Construction contains no node-23/24 branch: additions are semantic spec membership. Gate selection retains the existing ordered candidate traversal, preferring legacy-admitted pairs; the extension resolves fixed-terminal access directions and mirrors corners by axis. It adds no road/path search.
+
+**STOP:** `verify-lanes.mjs` exits 1. It reports a 12-unit `w19/w23` overlap at `(695,651)` and the left hub fan's nonjunction crossing at `(596,848)`. A separate final-segment witness proves `w20/w21` share 12 units ending at `(608,848)`. Left-port arrivals are `w20,w21,w22,w24`: four distinct lanes, offsets in wire-ID order, driveway width **60 = 12 + 12×4**. The top port receives `w19,w23` (two lanes, width 36). Correct widening does not resolve convergence at an exact terminal.
+
+For this selected left port, orthogonal paths avoiding the node interior can approach its boundary point only from west, north or south. Four positive-length final segments therefore necessarily share a ray and overlap. This is a proof about **the current four-at-one-port assignment**, not a proof that every alternative law for the six-wire scene is impossible. The existing M3 fan formula was only sufficient for up to two arrivals. Merely changing its bend spacing cannot fix four arrivals while retaining exact terminals, orthogonality and no merging. No invariant was weakened, no extra hub port added, and no pair substituted. Also, a future 25-import hub with two exact entry points exceeds the geometric maximum of six separate orthogonal terminal approaches regardless of widening; a cost estimate alone would hide that limitation.
+
+Evidence: `m4-lanes-output.txt`, `m4-candidate-scene.json`, `m4-checks.txt`, and `m4-stop-report.md`. The canonical accepted scene/oracle/calculations/metrics remain M3 evidence. Operation, load, selection, oracle and visual acceptance were not pursued after this STOP, and no M4 scaling-cost claim is made. No browser was opened or attached; port 5188 was left running. The four selection PNG modifications predate this attempt and were retained untouched.
+
+## Historical M4 corrected six-side ruling — STOP at visual crossing budget (2026-09-17)
+
+The earlier terminal and preservation STOPs are resolved. **M4 remains incomplete.** The current blocker is the retained visual benchmark in `docs/maintenance/diagram-quality-improvements.md`: at most six crossings per dense section. M3 enforced that threshold in `verify-m3-evidence.py`. The 24-node scene has **S1=28, S2=4, S3=2, S4=4, world=8**. The new standalone `verify-m4-visual-budget.py` exits 1; all 28 S1 crossings also have alternating boundary endpoints at their assigned junctions. Local bend changes cannot remove these crossings while preserving the current lane approaches. This is a lower bound for the current placement and assignments, not a claim that every possible semantic placement is impossible. The brief permits perpendicular junction crossings, but does not explicitly retire this separate repository quality budget; it has not been silently removed.
+
+Full binary status, pasted output and next decision: [current STOP report](m4-visual-budget-stop-report.md). Complete runner output: [m4-verification.txt](m4-verification.txt). The new source and scripts remain uncommitted candidate work on `feat/fan-in-hub`. No push, PR, headed browser or real-browser attachment. Port 5188 remains the original PID 13216. The four pre-existing `output/playwright/selection/*.png` modifications remain untouched; M4 selection captures use distinct filenames here.
+
+### Implemented and verified candidate
+
+- Semantic opt-in `fanInHubSceneSpec`: 24 ordinary nodes, 26 exact requests. The public builder still defaults to M3's 22/18 input; the isolated browser prototype opts into M4.
+- Admitted-direction law extension retains valid legacy choices. Gate alignment computes its direction scores once instead of recomputing the same numeric differences per comparator; this saves 52 routing ops without changing geometry.
+- Every shared side uses a centered row of unique pins at pitch 6, in its right-hand lane order. Single-wire terminals remain exact legacy points. All nodes remain 192×96; all row margins are at least 6. Hub left: four lanes, width 60, pin coordinates `(608,839)`, `(608,845)`, `(608,851)`, `(608,857)` for w20,w21,w22,w24; margins 39. Hub top: two lanes, width 36, pins `(707,800)`, `(701,800)` for w19,w23; margins 93.
+- An inward rank change through an occupied destination rank uses a fixed median dogleg inside the existing junction. This avoids collinear approach overlap in the new scene. It uses assignment ranks, with no collision search, retries, hub IDs or new road scans. Every default-scene byte outside the six independently calculated terminal fans remains identical to immutable M3 evidence.
+- `verify-lanes.mjs --oracle` passes all geometry, distinct lanes/pins, right-hand traffic, assigned-mouth crossing, containment, planar fan and full determinism assertions. The former shared-terminal exemption is removed. The six permitted default fans are asserted as complete exact segment replacements, not omitted from comparison.
+
+| Metric | Candidate measurement |
+| --- | ---: |
+| Full gate | `pnpm check` exit 0; 70 files, 208 tests; zero new `.test.ts` files |
+| Routing operations | 992 / 1,000 |
+| Maximum executed law leg | 41 / 60 |
+| Wire registry | 928 |
+| Lane allocation | 1,414 |
+| Network compile | 11,021 |
+| Lane projection | 3,013 |
+| Lane allocation + registry/network/projection | 16,376 / 20,000 |
+| Per-wire road-pair discovery | 0 |
+| One-way stages | Every recorded stage exactly once |
+| Full 24/48-node probe operations | 22,800 → 40,813; **1.7900438596×** / 2.5× |
+| Headless capture load samples (ms) | 299.2, 246.6, 246.2, 250.3, 241.4 |
+| Capture median (ms) | **246.6** / 300 |
+| Separate headless selection loads (ms) | 297.4, 248.2, 247.3, 248.7, 252.4 |
+| Selection median (ms) | **248.7** / 300 |
+| Selection | Every item PASS, including hub/api neighborhoods; counter 1 → 1, camera/geometry unchanged |
+
+| Wire | Length | Assigned-gate oracle | Detour |
+| --- | ---: | ---: | ---: |
+| w19 | 322 | 310 | 3.8710% |
+| w20 | 168 | 156 | 7.6923% |
+| w21 | 2,865 | 2,763 | 3.6916% |
+| w22 | 2,038 | 1,978 | 3.0334% |
+| w23 | 3,333 | 3,285 | 1.4612% |
+| w24 | 4,825 | 4,663 | 3.4742% |
+| w25 | 639 | 621 | 2.8986% |
+| w26 | 2,340 | 2,274 | 2.9024% |
+
+None of w19–w26 exceeds 10%. For transparency the entire 26-wire oracle is retained: existing w02 is **FLAG 10.3576%** on re-gridded geometry. M4 withdraws original-wire coordinate preservation on this scene. The oracle still independently searches directed road rectangles at assigned gate-lane crossings; it does not import routing code.
+
+### Scaling answer
+
+**A hub receiving 25 wires at 150 nodes / 300 wires costs what, and why doesn't it compound?** Pin placement and terminal fan materialization cost O(25) for that hub. Grouping demands happens once; wire-ID ordering costs `Σ k_r log k_r` across occupied roads, so a concentrated 25-wire bucket has O(25 log 25) ordering work rather than 25 reruns of layout. The numeric-op meter excludes native/string sort comparisons, so that complexity term is stated separately, not smuggled into the measured numeric-op estimate. There is no per-wire road-pair search or repeated geometry pass.
+
+At the fixture's measured average road-leg count, lane allocation plus projection extrapolates to `(1414 + 3013) × 300/26 ≈ 51,081` numeric ops; registry/network construction to `(928 + 11021) ×150/24 = 74,681`, or approximately **125,762 combined numeric ops**. Routing separately extrapolates to `992 ×300/26 ≈11,446`. Allocating/projecting 25 average fixture wires would be about **4,257 ops**, but a real concentrated hub's path lengths and bucket congestion can differ. These are explicit extrapolations, not a measured 150-node fixture or a universal capacity guarantee. The measured 24→48 clone is 1.79× and retains 26 requests; it isolates construction growth, not doubled traffic.
+
+Finite geometry remains a hard limit: pitch 6 plus one-pitch end margins permits **15 pins on a 96-unit side** and **31 on a 192-unit side**. Thus 25 arrivals cannot all use a left side; a 25-pin top row fits its side (144-unit span, 24-unit margins), but its **312-unit driveway width** and fan depth still require a full capacity/containment check. No resizing or future 25-wire capacity promise is hidden in the cost answer.
+
+### Visual inspection and evidence policy
+
+Personally inspected `m4-overview.png`, `m4-hub-closeup.png` and `m4-roads-off.png`, all captured headlessly. **With roads off, the hub reads as an organised fan, not a knot:** four distinct stair-step left arrivals and two distinct top arrivals. Closeup shows their separate terminal stems. No terminal merging or co-terminal stem crossing remains. The node card still describes four port sides; pins subdivide those sides without adding ports.
+
+The broader scene nevertheless exceeds the inherited crossing budget, so these screenshots are candidate evidence, not complete visual acceptance. Plain node cards, sparse fixture padding and hidden-by-default labels retain the earlier prototype presentation scope; no reference images, design tokens or visual floors were rewritten. No subagent review was run, following the explicit project prohibition.
+
+Canonical `scene.json`, `oracle.json`, `calculations.json`, `metrics.json` remain the accepted M3 files. Current 26-wire data is preserved as `m4-candidate-{scene,oracle,calculations,metrics}.json`, with status STOP. DoD 9 and the clean-commit part of DoD 10 remain incomplete. Run current geometry with `node output/playwright/nested-wires/verify-lanes.mjs --oracle`; the deliberately failing visual gate is `python3 output/playwright/nested-wires/verify-m4-visual-budget.py`. Headless browser runners are `capture-m4.py` and `verify-m4-selection.py`; neither starts or stops Vite.
+
+
+## M4 completed under crossing-budget ruling #3 — 2026-09-17
+
+All executable milestone gates pass, including the retained crossing ceiling. The earlier visual-budget STOP is superseded by the explicit orchestrator ruling: only perpendicular (≥60°) single-point crossings inside registered junctions are excluded. Every excluded intersection is listed with its wire pair, coordinates, angle, registered junction IDs and reason in `m4-visual-budget.json` and `m4-visual-budget-output.txt`. Shallow intersections, collinear contacts/overlaps and crossings outside registered junctions stay budgeted. The same verifier checks negative controls and rejects seven budgeted crossings. Legal junction totals remain an uncapped M4 health metric for the M4.5 reduction target.
+
+| Region | All crossings | Excluded legal junction crossings | Budgeted crossings / ceiling |
+| --- | ---: | ---: | ---: |
+| Section 1 | 28 | 28 | 0 / 6 |
+| Section 2 | 4 | 4 | 0 / 6 |
+| Section 3 | 2 | 2 | 0 / 6 |
+| Section 4 | 4 | 4 | 0 / 6 |
+| World | 8 | 8 | 0 / 6 |
+
+| Final metric | Re-verified result |
+| --- | --- |
+| Full repository gate | `pnpm check` exit 0; 70 files / 208 tests; zero new `.test.ts` files |
+| Semantic topology | 24 nodes / 26 wires; node-23 receives exactly w19–w24; node-24 sends w25/w26 |
+| Default preservation | Complete immutable M3 serialization, except the six exact independently computed terminal fans |
+| Hub left driveway | 4 ordered lanes; width 60 = 12 + 12×4; unique pins and planar stems |
+| Pin capacity | Every side centered/ordered at pitch 6; ≥6 end margins; nodes unchanged at 192×96 |
+| Routing | 992 / 1,000 numeric ops; maximum executed law leg 41 / 60 |
+| Registry + allocation + network + projection | 928 + 1,414 + 11,021 + 3,013 = **16,376 / 20,000** |
+| Road-pair discovery | 0 per wire |
+| One-way stages | Each capacity/placement/ports/topology/registry/wire/allocation/roads/driveways/network/projection stage exactly once |
+| 24→48 node clone | 22,800 → 40,813 total numeric ops; **1.7900438596× / 2.5×** |
+| Five headless capture loads | [291.7, 247.6, 249.5, 249.4, 249.5] ms; **median 249.5 ms / 300** |
+| Five separate headless selection loads | [275.6, 247.4, 250.4, 248.7, 244.9] ms; **median 248.7 ms / 300** |
+| Selection | Every assertion PASS, including both new neighborhoods; counter 1→1; geometry and camera unchanged; labels hidden initially |
+| Source review | All 12 changed application files >144/160 (minimum 145); Sonar ≤2 and import gate passed; see `m4-source-review.md` |
+| Canonical evidence | `scene.json`, `oracle.json`, `calculations.json`, `metrics.json` regenerated and reconciled for M4 |
+
+| Wire | Length | Assigned-gate oracle | Detour |
+| --- | ---: | ---: | ---: |
+| w19 | 322 | 310 | 3.8710% |
+| w20 | 168 | 156 | 7.6923% |
+| w21 | 2,865 | 2,763 | 3.6916% |
+| w22 | 2,038 | 1,978 | 3.0334% |
+| w23 | 3,333 | 3,285 | 1.4612% |
+| w24 | 4,825 | 4,663 | 3.4742% |
+| w25 | 639 | 621 | 2.8986% |
+| w26 | 2,340 | 2,274 | 2.9024% |
+
+No w19–w26 detour exceeds 10%. Existing w02 remains transparently flagged at 10.3576% on the re-gridded M4 scene; flags request orchestrator visual review and do not automatically fail this milestone.
+
+**Scaling answer re-verified:** a hub receiving 25 wires at 150 nodes / 300 wires has O(25) pin/fan materialization and an O(25 log 25) concentrated ordering bucket, with no per-wire road-pair discovery or rerun of layout. At the measured average wire/road-leg mix, 25 wires extrapolate to ~4,257 allocation/projection ops. Whole-scene construction/allocation/projection extrapolates to ~125,762 numeric ops and routing to ~11,446; these are estimates, not a measured 150/300 fixture. Native string-sort comparisons are outside the defined numeric-op meter and are accounted for by the explicit sorting term. The measured clone doubles nodes, retains 26 requests, and isolates construction growth. A 25-wire row fits a top side (31-pin limit) but not a left side (15-pin limit); its 312-unit driveway still needs geometry admission. Concentration therefore adds local demand/order work rather than repeated global passes, but finite geometry and increasing legal junction crossings still need structural follow-up.
+
+**Visual judgment:** personally inspected the regenerated overview, roads-off view and hub closeup alongside the retained AWS and Docker references. **The roads-off hub reads as an organised fan, not a knot.** Four distinct stair-step left arrivals and two top arrivals remain traceable, with unique stems at the terminal row. The orchestrator's supplied inspection agrees. Nested hierarchy and aligned actors are clear; sparse prototype spacing/plain cards and labels hidden by default remain the inherited prototype presentation scope, not a claim of full infographic polish. Reference images and design tokens are preserved. No subagent review was run under the explicit user/project prohibition.
+
+The screenshots were regenerated through isolated headless Playwright sessions. `m4-roads-off.png` comes from unchecking the visible “Show roads” control. Browser runners do not start/stop Vite. The inherited PID 13216 served all browser evidence but was found absent during the final post-commit health check. No stop/kill command was issued. Vite was restored with `pnpm prototype:roads` on port 5188 and an HTTP 200 health check passed; the reason for the inherited process exit is unknown. No user browser was opened or attached, and nothing was pushed or submitted as a PR. The inherited `output/playwright/selection/*.png` changes are retained in the evidence commit; current M4 selection evidence uses the dedicated `m4-selection-*` names. Candidate JSON and named STOP reports remain historical snapshots, never inputs to current acceptance.
+
+### Reproduce final M4 acceptance
+
+From the repository root, with the existing Vite on port 5188:
+
+```sh
+pnpm check
+pnpm exec tsx apps/web/cli/verify-nested-wires.ts
+node --import tsx output/playwright/nested-wires/count-operations.mjs
+node --import tsx output/playwright/nested-wires/verify-invariants.mjs
+python3 output/playwright/nested-wires/verify-static.py
+python3 output/playwright/nested-wires/verify-oracle.py
+node output/playwright/nested-wires/verify-lanes.mjs --oracle
+python3 output/playwright/nested-wires/verify-m4-visual-budget.py
+python3 output/playwright/nested-wires/capture-m4.py
+python3 output/playwright/nested-wires/verify-m4-selection.py
+python3 output/playwright/nested-wires/verify-m4-evidence.py --write
+```
+
+Run browser loads after the CPU-heavy gate completes. Preserve `pnpm check` output in `m4-final-checks.txt` when updating acceptance evidence. `verify-m4-evidence.py` without `--write` checks canonical metrics rather than replacing them; `--final` additionally requires the requested branch and a clean working tree and prints the six-commit log. Full output and the binary DoD table are in [m4-completion-report.md](m4-completion-report.md).

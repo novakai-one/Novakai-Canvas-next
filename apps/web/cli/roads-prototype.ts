@@ -16,6 +16,7 @@ import type {
 } from '@novakai/canvas-layout';
 import { createRoadPrototype } from '@novakai/canvas-canvas';
 import { createReactBindings } from '@novakai/canvas-design-system';
+import { buildTemplatesScene } from './templates-scene.js';
 
 declare global {
   interface Window {
@@ -82,10 +83,13 @@ void main().catch(() => {
 });
 
 function builder() {
-  if (new URLSearchParams(location.search).has('nested')) return buildHubScene;
-  return new URLSearchParams(location.search).has('seven')
-    ? createSevenRoadScene
-    : createRoadPrototypeScene;
+  const parameters = new URLSearchParams(location.search);
+  const choices = [
+    { key: 'templates', build: buildTemplatesScene },
+    { key: 'nested', build: buildHubScene },
+    { key: 'seven', build: createSevenRoadScene },
+  ];
+  return choices.find(({ key }) => parameters.has(key))?.build ?? createRoadPrototypeScene;
 }
 function catalog(scene: RoadPrototypeScene) {
   return new URLSearchParams(location.search).has('seven') ? createRoadProofs(scene) : [];

@@ -1,6 +1,12 @@
-# M3 status — STOP at topology prerequisite (2026-09-17)
+# M3 status — STOP on straight-through junction crossing (2026-09-17)
 
-The six requested wires are implemented in tracked source, but **DoD 3c fails: w02 and w15 share no road or driveway under the unchanged law**. All 18 routes and all three gate-sequence equalities pass. See [the blocker report](m3-blocker.md) and [actual preflight output](m3-topology-output.txt). The gate-mouth ruling is accepted; it is not the blocker. Lane/width implementation stopped as required. The metrics and artifacts below describe the historical M1.5 scene, not completed M3 evidence.
+The corrected **w01/w15** prerequisite and parallel-travel interpretation now pass, as do all 18 routes and the three gate-sequence equalities. The old w02/w15 STOP is resolved.
+
+The resumed lane candidate exposed a different conflict with Part 2.6: **w05 and w06 cross at a junction where neither wire turns**. This is reproduced in the accepted M2 fixture, current 18-wire source, and capacity/lane candidate. Separate offsets move the intersection but cannot remove it under the unchanged law. The brief permits junction crossings only where wires genuinely turn; implementation stopped without silently broadening that exemption.
+
+Read [the current STOP report](m3-junction-blocker.md), [executable reproduction output](m3-junction-output.txt), and [corrected topology output](m3-topology-output.txt). The unaccepted candidate is preserved in [m3-lane-candidate.patch](m3-lane-candidate.patch), with a separate [candidate scene](m3-candidate-scene.json) and [candidate verification](m3-candidate-verification.txt). It is **not installed in application source**. The two accepted commits remain intact. No new test files, push, PR or Vite restart.
+
+The candidate used lane pitch 6 and **width = 12 + 12 × lane count**, equally for streets and driveways, with no extra driveway margin. This is candidate design evidence, not a completed M3 implementation or scaling claim. The canonical `scene.json`, `oracle.json`, `calculations.json`, `metrics.json` and the M1.5 measurements below remain historical; none is presented as completed M3 evidence.
 
 # M1.5 — construction-owned routing
 

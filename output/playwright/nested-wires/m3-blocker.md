@@ -1,3 +1,5 @@
+> **Historical, resolved 2026-09-17:** the corrected brief requires w01/w15. All six corrected sharing prerequisites pass. Current STOP: [straight-through junction conflict](m3-junction-blocker.md). The text below records the previous attempt.
+
 # M3 STOP — prescribed w02/w15 road sharing is absent
 
 The 2026-09-17 gate-mouth ruling is accepted. It resolves the previous exact-point gate conflict. This STOP is a different, reproduced topology prerequisite failure in Part 1 / DoD 3c.

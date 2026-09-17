@@ -1,0 +1,882 @@
+diff --git a/apps/web/cli/verify-selection.mjs b/apps/web/cli/verify-selection.mjs
+index 23efc1f..c9fe336 100644
+--- a/apps/web/cli/verify-selection.mjs
++++ b/apps/web/cli/verify-selection.mjs
+@@ -57,7 +57,7 @@ async function state(page, primary, secondary, labelIds = []) {
+     })),
+   );
+   assert(actual.filter((item) => item.id.startsWith('node-')).length === 22, '22 nodes');
+-  assert(actual.filter((item) => item.id.startsWith('w')).length === 12, '12 wires');
++  assert(actual.filter((item) => item.id.startsWith('w')).length === 18, '18 wires');
+   actual.forEach((item) => checkObject(item, primary, secondary));
+   await labels(page, labelIds);
+   await decorations(page, primary !== '');
+@@ -170,12 +170,12 @@ export async function verify(page) {
+   assert(before === 1, `instrumented pipeline executes once (actual ${before})`);
+   const baseline = await geometry(page);
+   await state(page, '', []);
+-  pass('2a load: 0 visible labels; all 22 nodes / 12 wires unselected');
++  pass('2a load: 0 visible labels; all 22 nodes / 18 wires unselected');
+   await page.screenshot({ path: `${directory}default.png` });
+   await clickNode(page, 'node-7');
+-  await state(page, 'node-7', ['w12', 'node-12']);
++  await state(page, 'node-7', ['w12', 'w13', 'node-12', 'node-5']);
+   pass(
+-    '2b node-7 primary; only w12 + node-12 secondary; every other node/wire dim; 0 labels (34/34 class assertions)',
++    '2b node-7 primary; only w12 + w13 + node-12 + node-5 secondary; every other node/wire dim; 0 labels (40/40 class assertions)',
+   );
+   await unchanged(page, before, baseline, 'b');
+   await page.screenshot({ path: `${directory}node-selected.png` });
+@@ -183,7 +183,7 @@ export async function verify(page) {
+   await state(page, 'w06', ['node-8', 'node-10'], ['w06']);
+   const label = await midpoint(page);
+   pass(
+-    '2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (34/34 class assertions)',
++    '2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (40/40 class assertions)',
+   );
+   await unchanged(page, before, baseline, 'c');
+   await page.screenshot({ path: `${directory}wire-selected.png` });
+@@ -193,25 +193,25 @@ export async function verify(page) {
+   await unchanged(page, before, baseline, 'd');
+   await page.screenshot({ path: `${directory}cleared.png` });
+   await clickNode(page, 'node-1');
+-  await state(page, 'node-1', ['w01', 'w02', 'node-2', 'node-3']);
++  await state(page, 'node-1', ['w01', 'w02', 'w15', 'node-2', 'node-3', 'node-4']);
+   await clickNode(page, 'node-22');
+   await state(page, 'node-22', []);
+   pass(
+-    '2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (34/34 class assertions)',
++    '2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (40/40 class assertions)',
+   );
+   await unchanged(page, before, baseline, 'e');
+   await clickNode(page, 'node-5');
+-  await state(page, 'node-5', ['w04', 'w09', 'node-6', 'node-4']);
++  await state(page, 'node-5', ['w04', 'w09', 'w13', 'node-6', 'node-4', 'node-7']);
+   await clickNode(page, 'node-5');
+   await state(page, '', []);
+   pass('2f node-5 twice: 0 labels; 0 primary/secondary/dim classes anywhere');
+   await unchanged(page, before, baseline, 'f');
+   await clickNode(page, 'node-5');
+-  await state(page, 'node-5', ['w04', 'w09', 'node-6', 'node-4']);
++  await state(page, 'node-5', ['w04', 'w09', 'w13', 'node-6', 'node-4', 'node-7']);
+   await clickWire(page, 'w04');
+   await state(page, 'w04', ['node-5', 'node-6'], ['w04']);
+   pass(
+-    '2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (34/34 class assertions)',
++    '2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (40/40 class assertions)',
+   );
+   await unchanged(page, before, baseline, 'g');
+   await clickWire(page, 'w04');
+diff --git a/capability/layout/contract/records/nested-wires.ts b/capability/layout/contract/records/nested-wires.ts
+index 80f9925..fdc092e 100644
+--- a/capability/layout/contract/records/nested-wires.ts
++++ b/capability/layout/contract/records/nested-wires.ts
+@@ -1,10 +1,20 @@
+ import type { PrototypePoint } from './road-prototype.js';
+ 
++/** One continuous parallel stretch; connectors inside junctions have no lane identity. */
++export interface NestedWireLane {
++  readonly id: string;
++  readonly wireId: string;
++  readonly roadId: string;
++  readonly direction: 1 | -1;
++  readonly index: number;
++  readonly offset: number;
++}
+ /** A wire retains explicit corridor ownership for every orthogonal segment. */
+ export interface NestedWireSegment {
+   readonly from: PrototypePoint;
+   readonly to: PrototypePoint;
+   readonly corridorId: string;
++  readonly laneId?: string;
+ }
+ /** Gates are ordered along the source-to-target traversal. */
+ export interface NestedWire {
+diff --git a/capability/layout/contract/records/road-prototype.ts b/capability/layout/contract/records/road-prototype.ts
+index 265dff9..4f27884 100644
+--- a/capability/layout/contract/records/road-prototype.ts
++++ b/capability/layout/contract/records/road-prototype.ts
+@@ -1,4 +1,4 @@
+-import type { NestedWireResult } from './nested-wires.js';
++import type { NestedWireResult, NestedWireLane } from './nested-wires.js';
+ /** Milestone-one records only. Roads own geometry independently of nodes and future wires. */
+ export interface PrototypeBounds {
+   readonly x: number;
+@@ -36,6 +36,9 @@ export interface PrototypePortLocation {
+ }
+ export type PrototypeLayoutStage =
+   | 'wire-registry'
++  | 'topology'
++  | 'lane-allocation'
++  | 'lane-projection'
+   | 'capacity'
+   | 'nodes'
+   | 'ports'
+@@ -50,6 +53,7 @@ export interface PrototypeLayoutOptions {
+   readonly measure?: PrototypeLayoutMeasure;
+ }
+ export interface PrototypeRoad {
++  readonly wireLaneCount?: number;
+   readonly id: string;
+   readonly sectionId: string | null;
+   readonly kind: 'street' | 'driveway';
+@@ -64,6 +68,7 @@ export interface PrototypeRoad {
+   } | null;
+ }
+ export interface RoadPrototypeScene {
++  readonly wireLanes?: readonly NestedWireLane[];
+   readonly wiring?: NestedWireResult;
+   readonly sections: readonly PrototypeBlock[];
+   readonly nodes: readonly PrototypeNode[];
+diff --git a/capability/layout/core/nested-wire-inspection.ts b/capability/layout/core/nested-wire-inspection.ts
+index 6e23c46..dc24b98 100644
+--- a/capability/layout/core/nested-wire-inspection.ts
++++ b/capability/layout/core/nested-wire-inspection.ts
+@@ -70,13 +70,64 @@ function touches(s: NestedWireSegment, b: PrototypeBounds): readonly PrototypePo
+ function same(a: PrototypePoint, b: PrototypePoint): boolean {
+   return a.x === b.x && a.y === b.y;
+ }
+-function nongate(s: NestedWireSegment, scene: RoadPrototypeScene): boolean {
++function gatePosition(
++  scene: RoadPrototypeScene,
++  wire: NestedWire,
++  gate: string,
++): PrototypePoint | undefined {
++  const port = scene.ports.find((p) => p.portId === gate);
++  const lane = scene.wireLanes?.find((l) => l.wireId === wire.id && l.roadId === `drive:${gate}`);
++  if (port === undefined || lane === undefined) return undefined;
++  const horizontal = port.side === 'left' || port.side === 'right';
++  return horizontal
++    ? { x: port.point.x, y: port.point.y + lane.offset }
++    : { x: port.point.x + lane.offset, y: port.point.y };
++}
++function permitted(
++  point: PrototypePoint,
++  scene: RoadPrototypeScene,
++  wire: NestedWire,
++  sectionId: string,
++): boolean {
++  return wire.gates.some((gate) => permittedGate(point, scene, wire, gate, sectionId));
++}
++function permittedGate(
++  point: PrototypePoint,
++  scene: RoadPrototypeScene,
++  wire: NestedWire,
++  gate: string,
++  sectionId: string,
++): boolean {
++  const road = scene.roads.find((r) => r.id === `drive:${gate}`);
++  const expected = gatePosition(scene, wire, gate);
++  if (road === undefined || expected === undefined) return false;
++  return [
++    road.access?.nodeId === sectionId,
++    containsPoint(road.bounds, point),
++    same(point, expected),
++  ].every(Boolean);
++}
++function nongate(s: NestedWireSegment, scene: RoadPrototypeScene, wire: NestedWire): boolean {
+   return scene.sections.some((section) =>
+-    touches(s, section.bounds).some(
+-      (p) => !scene.ports.some((g) => g.nodeId === section.id && same(g.point, p)),
+-    ),
++    touches(s, section.bounds).some((p) => !permitted(p, scene, wire, section.id)),
+   );
+ }
++function terminals(wire: NestedWire, scene: RoadPrototypeScene): boolean {
++  const ends = [
++    [wire.sourcePortId, wire.segments[0]?.from],
++    [wire.targetPortId, wire.segments.at(-1)?.to],
++  ] as const;
++  return ends.every(([id, point]) => terminal(id, point, scene));
++}
++function terminal(
++  id: string,
++  point: PrototypePoint | undefined,
++  scene: RoadPrototypeScene,
++): boolean {
++  const port = scene.ports.find((p) => p.portId === id);
++  if (port === undefined || point === undefined) return false;
++  return same(port.point, point);
++}
+ function disconnected(w: NestedWire): boolean {
+   return w.segments.slice(1).some((s, i) => !same(w.segments[i]?.to ?? s.from, s.from));
+ }
+@@ -87,14 +138,14 @@ export function inspectNestedWires(
+ ): NestedWireInspection {
+   const roads = new Map(scene.roads.map((r) => [r.id, r]));
+   const all = wires.flatMap((w) =>
+-    w.segments.map((segment, i) => ({ id: `${w.id}:${i + 1}`, segment })),
++    w.segments.map((segment, i) => ({ id: `${w.id}:${i + 1}`, segment, wire: w })),
+   );
+   return {
+     corridors: all.filter((s) => !covered(s.segment, roads)).map((s) => s.id),
+     nodeBodies: all
+       .filter((s) => scene.nodes.some((n) => bodyIntersection(s.segment, n.bounds)))
+       .map((s) => s.id),
+-    boundaries: all.filter((s) => nongate(s.segment, scene)).map((s) => s.id),
+-    continuity: wires.filter(disconnected).map((w) => w.id),
++    boundaries: all.filter((s) => nongate(s.segment, scene, s.wire)).map((s) => s.id),
++    continuity: wires.filter((w) => disconnected(w) || !terminals(w, scene)).map((w) => w.id),
+   };
+ }
+diff --git a/capability/layout/core/nested-wire-routing.ts b/capability/layout/core/nested-wire-routing.ts
+index 5918bb2..d52ac23 100644
+--- a/capability/layout/core/nested-wire-routing.ts
++++ b/capability/layout/core/nested-wire-routing.ts
+@@ -186,7 +186,7 @@ export function routeNestedWires(
+         `w${String(i + 1).padStart(2, '0')}`,
+         `node-${from}`,
+         `node-${to}`,
+-        (i - (requests.length - 1) / 2) * 3,
++        0,
+       ),
+     ),
+   );
+diff --git a/capability/layout/core/prototype-nested-placement.ts b/capability/layout/core/prototype-nested-placement.ts
+index 29a41c8..9573479 100644
+--- a/capability/layout/core/prototype-nested-placement.ts
++++ b/capability/layout/core/prototype-nested-placement.ts
+@@ -7,6 +7,11 @@ import type {
+ import { placePrototypeNode, prototypeNodeSize } from './prototype-road-nodes.js';
+ 
+ export const nestedSpacing = { road: 48, driveway: 24, clearance: 72, side: 64, top: 112 } as const;
++export const nestedLanePitch = 6;
++/** Symmetric capacity reserves both traffic sides; reconstruction is pure and retry-safe. */
++export function nestedLaneWidth(lanes: number): number {
++  return nestedLanePitch * 2 + lanes * nestedLanePitch * 2;
++}
+ const clearancePair = nestedSpacing.clearance * 2;
+ const horizontalPadding = nestedSpacing.side * 2;
+ const verticalPadding = nestedSpacing.top + nestedSpacing.side;
+diff --git a/capability/layout/core/prototype-nested-scene.ts b/capability/layout/core/prototype-nested-scene.ts
+index d408123..2db7598 100644
+--- a/capability/layout/core/prototype-nested-scene.ts
++++ b/capability/layout/core/prototype-nested-scene.ts
+@@ -1,6 +1,9 @@
+ import { wireRegistry } from './nested-wire-registry.js';
+ import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
+ import { routeNestedWires } from './nested-wire-routing.js';
++import { allocateNestedLanes } from './nested-wire-lanes.js';
++import { capacityRoads } from './nested-road-capacity.js';
++import { projectNestedWire } from './nested-lane-projection.js';
+ import type {
+   PrototypeLayoutOptions,
+   RoadPrototypeScene,
+@@ -9,6 +12,7 @@ import {
+   sizeNestedSections,
+   positionNestedSections,
+   nestedSpacing,
++  nestedLaneWidth,
+ } from './prototype-nested-placement.js';
+ import {
+   nestedMainRoads,
+@@ -19,43 +23,62 @@ import {
+ import { readPrototypeNodePorts } from './prototype-road-nodes.js';
+ import { roadNetwork } from './prototype-road-network.js';
+ 
+-/** Four-section creation milestone: semantic counts → capacity → placement → owner ports → roads. */
++/** Reservation topology → law demand → final geometry → network → lane projection, each once.
++ * The caller owns reconstruction; no committed scene or shared state is mutated on failure.
++ */
+ export function createNestedRoadScene(
+   options: Pick<PrototypeLayoutOptions, 'measure'> & { readonly copies?: 1 | 2 } = {},
+ ): RoadPrototypeScene {
+   const measure = options.measure ?? ((_stage, run) => run());
+   const capacity = measure('capacity', sizeNestedSections);
+   const placement = measure('nodes', () => positionNestedSections(capacity, options.copies));
+-  const sections = placement.map((p) => p.section);
+-  const nodes = placement.flatMap((p) => p.nodes);
++  const sections = placement.map((p) => p.section),
++    nodes = placement.flatMap((p) => p.nodes);
+   const ports = measure('ports', () => [
+     ...nodes.flatMap(readPrototypeNodePorts),
+     ...placement.flatMap(nestedSectionPorts),
+   ]);
+-  const main = measure('main-roads', () => nestedMainRoads(placement));
+-  const drives = measure('driveways', () => placement.flatMap(nestedDriveways));
+-  const roads = [...main, ...drives];
+-  const compiled = measure('network', () => {
+-    const registry = roadRegistry(roads);
++  const topology = measure('topology', () => {
++    const main = nestedMainRoads(placement),
++      drives = placement.flatMap(nestedDriveways);
++    const roads = [...main, ...drives];
+     const contacts = constructedContacts(
+-      registry,
++      roadRegistry(roads),
+       [...frameEnds(main), ...nestedCrossings(placement)],
+       drives,
+       nestedSpacing.road / 2,
+     );
+-    return { contacts, network: roadNetwork(roads, contacts) };
++    return { roads, contacts };
+   });
+-  const scene = {
++  const reserved: RoadPrototypeScene = {
+     sections,
+     nodes,
+     ports,
+-    roads,
+-    roadWidth: nestedSpacing.road,
+-    drivewayWidth: nestedSpacing.driveway,
+-    ...compiled.network,
++    roads: topology.roads,
++    roadWidth: nestedLaneWidth(0),
++    drivewayWidth: nestedLaneWidth(0),
++    lanes: [],
++    junctions: [],
++    dividers: [],
++    connections: [],
++    crossingExamples: [],
+   };
++  const registry = wireRegistry(reserved, topology.contacts, measure);
++  const plan = routeNestedWires(reserved, registry, measure);
++  if (!plan.ok) return { ...reserved, wiring: plan };
++  const allocation = measure('lane-allocation', () =>
++    allocateNestedLanes(plan.value, registry.roads),
++  );
++  const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure);
++  const network = measure('network', () => roadNetwork(final.roads, final.contacts));
++  const wires = measure('lane-projection', () =>
++    plan.value.map((w) => projectNestedWire(w, allocation.byWire.get(w.id) ?? [], final.byId)),
++  );
+   return {
+-    ...scene,
+-    wiring: routeNestedWires(scene, wireRegistry(scene, compiled.contacts, measure), measure),
++    ...reserved,
++    roads: final.roads,
++    ...network,
++    wireLanes: allocation.lanes,
++    wiring: { ok: true, value: wires },
+   };
+ }
+diff --git a/output/playwright/nested-wires/verify-invariants.mjs b/output/playwright/nested-wires/verify-invariants.mjs
+index b77ba36..7db5f74 100644
+--- a/output/playwright/nested-wires/verify-invariants.mjs
++++ b/output/playwright/nested-wires/verify-invariants.mjs
+@@ -8,7 +8,7 @@ import {
+ const scene = createNestedRoadScene();
+ assert(scene.wiring?.ok);
+ const wires = scene.wiring.value;
+-assert.equal(wires.length, 12);
++assert.equal(wires.length, 18);
+ assert.deepEqual(inspectNestedWires(scene, wires), {
+   corridors: [],
+   nodeBodies: [],
+@@ -52,5 +52,13 @@ assert(
+   }).continuity.includes('w01'),
+ );
+ console.log(
+-  'PASS retained six fixture cases: 12-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.',
++  'PASS retained six fixture cases: 18-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.',
+ );
++
++const gateWire = wires.find((wire) => wire.id === 'w10');
++const gateSegment = gateWire.segments.find((segment) => segment.corridorId === 'drive:section-2:exit-bottom');
++const shifted = { ...gateSegment, from: { ...gateSegment.from, x: gateSegment.from.x + 1 }, to: { ...gateSegment.to, x: gateSegment.to.x + 1 } };
++const illegal = inspectNestedWires(scene, [{ ...gateWire, segments: [shifted] }]);
++assert.equal(illegal.corridors.length, 0);
++assert(illegal.boundaries.length > 0);
++console.log('PASS gate mouth refinement: wrong lane inside the permitted mouth is rejected; exact assigned lanes accepted.');
+diff --git a/capability/layout/core/nested-lane-projection.ts b/capability/layout/core/nested-lane-projection.ts
+new file mode 100644
+index 0000000..778b9e1
+--- /dev/null
++++ b/capability/layout/core/nested-lane-projection.ts
+@@ -0,0 +1,175 @@
++import type { NestedWire, NestedWireSegment } from '../contract/records/nested-wires.js';
++import type { PrototypePoint, PrototypeRoad } from '../contract/records/road-prototype.js';
++import type { AssignedTravel } from './nested-wire-lanes.js';
++import { axes, samePoint } from './prototype-road-geometry.js';
++import { nestedLanePitch } from './prototype-nested-placement.js';
++
++interface Connection {
++  readonly from: PrototypePoint;
++  readonly to: PrototypePoint;
++  readonly roadId: string;
++}
++function line(
++  from: PrototypePoint,
++  to: PrototypePoint,
++  corridorId: string,
++  laneId?: string,
++): readonly NestedWireSegment[] {
++  if (samePoint(from, to)) return [];
++  return [{ from, to, corridorId, ...laneProperty(laneId) }];
++}
++function laneProperty(laneId: string | undefined) {
++  return laneId === undefined ? {} : { laneId };
++}
++function point(t: AssignedTravel, along: number): PrototypePoint {
++  return t.road.axis === 'horizontal' ? { x: along, y: t.at } : { x: t.at, y: along };
++}
++function corner(t: AssignedTravel, next: AssignedTravel): Connection {
++  const p = t.road.axis === 'horizontal' ? { x: next.at, y: t.at } : { x: t.at, y: next.at };
++  return { from: p, to: p, roadId: next.road.id };
++}
++function crossing(
++  t: AssignedTravel,
++  next: AssignedTravel,
++  wire: NestedWire,
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): PrototypeRoad | undefined {
++  return wire.segments
++    .slice(t.last + 1, next.first)
++    .map((s) => roads.get(s.corridorId))
++    .find((r) => r?.axis !== t.road.axis);
++}
++function bridge(
++  t: AssignedTravel,
++  next: AssignedTravel,
++  wire: NestedWire,
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): Connection {
++  const road = crossing(t, next, wire, roads);
++  if (road === undefined) return gateJoin(t, next, wire);
++  const a = axes[t.road.axis],
++    b = road.bounds;
++  const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
++  const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - nestedLanePitch / 2);
++  return { from: point(t, at), to: point(next, at), roadId: road.id };
++}
++function gateJoin(t: AssignedTravel, next: AssignedTravel, wire: NestedWire): Connection {
++  const at = wire.segments[t.last]?.to[axes[t.road.axis].along] ?? 0;
++  return { from: point(t, at), to: point(next, at), roadId: t.road.id };
++}
++function connect(
++  t: AssignedTravel,
++  next: AssignedTravel,
++  wire: NestedWire,
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): Connection {
++  if (t.road.axis !== next.road.axis) return corner(t, next);
++  return bridge(t, next, wire, roads);
++}
++function fan(t: AssignedTravel, endpoint: PrototypePoint, sign: number) {
++  const a = axes[t.road.axis];
++  const along =
++    endpoint[a.along] + sign * t.direction * (t.count - t.lane.index - 1) * nestedLanePitch;
++  return { bend: { ...endpoint, [a.along]: along }, end: point(t, along) };
++}
++function clipped(p: PrototypePoint, road: PrototypeRoad): PrototypePoint {
++  const a = axes[road.axis],
++    b = road.bounds;
++  return { ...p, [a.along]: Math.max(b[a.along], Math.min(b[a.along] + b[a.length], p[a.along])) };
++}
++function owned(
++  t: AssignedTravel,
++  road: PrototypeRoad,
++  from: PrototypePoint,
++  to: PrototypePoint,
++  before: string,
++  after: string,
++): readonly NestedWireSegment[] {
++  const p = clipped(from, road),
++    q = clipped(to, road);
++  return [...line(from, p, before), ...line(p, q, road.id, t.lane.id), ...line(q, to, after)];
++}
++function piece(
++  t: AssignedTravel,
++  index: number,
++  joins: readonly Connection[],
++  travels: readonly AssignedTravel[],
++  ends: readonly PrototypePoint[],
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): readonly NestedWireSegment[] {
++  const previous = joins[index - 1],
++    next = joins[index];
++  const start = previous?.to ?? ends[0],
++    end = next?.from ?? ends[1];
++  const road = roads.get(t.road.id);
++  if (road === undefined || start === undefined || end === undefined) return [];
++  const before = previous?.roadId ?? t.road.id;
++  const after = nextOwner(t, travels[index + 1], next);
++  return [
++    ...owned(t, road, start, end, beforeOwner(t, travels[index - 1], before), after),
++    ...connectionLine(next),
++  ];
++}
++function beforeOwner(
++  t: AssignedTravel,
++  previous: AssignedTravel | undefined,
++  bridgeId: string,
++): string {
++  if (previous?.road.axis !== t.road.axis) return previous?.road.id ?? t.road.id;
++  return bridgeId;
++}
++function nextOwner(
++  t: AssignedTravel,
++  next: AssignedTravel | undefined,
++  connection: Connection | undefined,
++): string {
++  if (next?.road.axis !== t.road.axis) return next?.road.id ?? t.road.id;
++  return connection?.roadId ?? t.road.id;
++}
++function connectionLine(c: Connection | undefined): readonly NestedWireSegment[] {
++  return c === undefined ? [] : line(c.from, c.to, c.roadId);
++}
++function joinsFor(
++  travels: readonly AssignedTravel[],
++  wire: NestedWire,
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): readonly Connection[] {
++  return travels.slice(0, -1).flatMap((t, i) => joined(t, travels[i + 1], wire, roads));
++}
++function joined(
++  t: AssignedTravel,
++  next: AssignedTravel | undefined,
++  wire: NestedWire,
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): readonly Connection[] {
++  return next === undefined ? [] : [connect(t, next, wire, roads)];
++}
++/** Materialize retained assignments, never reroute. Missing plans leave the original typed failure owner intact. */
++export function projectNestedWire(
++  wire: NestedWire,
++  travels: readonly AssignedTravel[],
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): NestedWire {
++  const first = travels[0],
++    last = travels.at(-1),
++    source = wire.segments[0]?.from,
++    target = wire.segments.at(-1)?.to;
++  if (first === undefined || last === undefined || source === undefined || target === undefined)
++    return wire;
++  const start = fan(first, source, 1),
++    end = fan(last, target, -1);
++  const joins = joinsFor(travels, wire, roads);
++  const middle = travels.flatMap((t, i) =>
++    piece(t, i, joins, travels, [start.end, end.end], roads),
++  );
++  return {
++    ...wire,
++    segments: [
++      ...line(source, start.bend, first.road.id),
++      ...line(start.bend, start.end, first.road.id),
++      ...middle,
++      ...line(end.end, end.bend, last.road.id),
++      ...line(end.bend, target, last.road.id),
++    ],
++  };
++}
+diff --git a/capability/layout/core/nested-road-capacity.ts b/capability/layout/core/nested-road-capacity.ts
+new file mode 100644
+index 0000000..eab6629
+--- /dev/null
++++ b/capability/layout/core/nested-road-capacity.ts
+@@ -0,0 +1,77 @@
++import type { PrototypeRoad, PrototypeLayoutMeasure } from '../contract/records/road-prototype.js';
++import type { RoadContact } from './prototype-road-registry.js';
++import { axes } from './prototype-road-geometry.js';
++import { nestedLaneWidth } from './prototype-nested-placement.js';
++
++function sized(road: PrototypeRoad, count: number): PrototypeRoad {
++  const a = axes[road.axis],
++    b = road.bounds,
++    width = nestedLaneWidth(count);
++  return {
++    ...road,
++    wireLaneCount: count,
++    bounds: { ...b, [a.across]: b[a.across] + (b[a.breadth] - width) / 2, [a.breadth]: width },
++  };
++}
++function contactDrive(c: RoadContact): RoadContact | undefined {
++  if (c.a.kind === 'driveway') return { a: c.b, b: c.a };
++  if (c.b.kind === 'driveway') return c;
++  return undefined;
++}
++function attached(drive: PrototypeRoad, street: PrototypeRoad): PrototypeRoad {
++  const a = axes[drive.axis],
++    b = drive.bounds,
++    s = street.bounds;
++  const center = s[a.along] + s[a.length] / 2;
++  const high = b[a.along] > center;
++  const interval = high
++    ? [s[a.along] + s[a.length], b[a.along] + b[a.length]]
++    : [b[a.along], s[a.along]];
++  const [start = 0, end = 0] = interval;
++  return { ...drive, bounds: { ...b, [a.along]: start, [a.length]: end - start } };
++}
++function attach(roads: Map<string, PrototypeRoad>, contact: RoadContact): void {
++  const pair = contactDrive(contact);
++  if (pair === undefined) return;
++  const drive = roads.get(pair.b.id),
++    street = roads.get(pair.a.id);
++  attachKnown(roads, drive, street);
++}
++function attachKnown(
++  roads: Map<string, PrototypeRoad>,
++  drive: PrototypeRoad | undefined,
++  street: PrototypeRoad | undefined,
++): void {
++  if (drive === undefined || street === undefined) return;
++  roads.set(drive.id, attached(drive, street));
++}
++/** Final width geometry consumes demand and construction contacts; it never reruns a builder. */
++export function capacityRoads(
++  templates: readonly PrototypeRoad[],
++  demand: ReadonlyMap<string, number>,
++  contacts: readonly RoadContact[],
++  measure: PrototypeLayoutMeasure,
++) {
++  const streets = measure('main-roads', () =>
++    templates.filter((r) => r.kind === 'street').map((r) => sized(r, demand.get(r.id) ?? 0)),
++  );
++  const roads = measure('driveways', () => {
++    const drives = templates
++      .filter((r) => r.kind === 'driveway')
++      .map((r) => sized(r, demand.get(r.id) ?? 0));
++    const result = new Map([...streets, ...drives].map((r) => [r.id, r]));
++    contacts.forEach((c) => attach(result, c));
++    return result;
++  });
++  const finalContacts = contacts.flatMap((c) => finalContact(roads, c));
++  return { roads: [...roads.values()], byId: roads, contacts: finalContacts };
++}
++function finalContact(
++  roads: ReadonlyMap<string, PrototypeRoad>,
++  c: RoadContact,
++): readonly RoadContact[] {
++  const a = roads.get(c.a.id),
++    b = roads.get(c.b.id);
++  if (a === undefined || b === undefined) return [];
++  return [{ a, b }];
++}
+diff --git a/capability/layout/core/nested-wire-lanes.ts b/capability/layout/core/nested-wire-lanes.ts
+new file mode 100644
+index 0000000..b64d5d0
+--- /dev/null
++++ b/capability/layout/core/nested-wire-lanes.ts
+@@ -0,0 +1,105 @@
++import type {
++  NestedWire,
++  NestedWireLane,
++  NestedWireSegment,
++} from '../contract/records/nested-wires.js';
++import type { PrototypeRoad } from '../contract/records/road-prototype.js';
++import { axes } from './prototype-road-geometry.js';
++import { nestedLanePitch } from './prototype-nested-placement.js';
++
++export interface Travel {
++  readonly road: PrototypeRoad;
++  readonly wireId: string;
++  readonly first: number;
++  readonly last: number;
++  readonly direction: 1 | -1;
++}
++export interface AssignedTravel extends Travel {
++  readonly lane: NestedWireLane;
++  readonly at: number;
++  readonly count: number;
++}
++function travel(
++  wireId: string,
++  segment: NestedWireSegment,
++  first: number,
++  road: PrototypeRoad,
++): readonly Travel[] {
++  const a = axes[road.axis].along;
++  if (segment.from[a] === segment.to[a]) return [];
++  const direction = segment.to[a] > segment.from[a] ? 1 : -1;
++  return [{ road, wireId, first, last: first, direction }];
++}
++function append(parts: readonly Travel[], next: Travel): readonly Travel[] {
++  const last = parts.at(-1);
++  if (last?.road.id !== next.road.id) return [...parts, next];
++  return [...parts.slice(0, -1), { ...next, first: last.first }];
++}
++function wireTravels(
++  wire: NestedWire,
++  roads: ReadonlyMap<string, PrototypeRoad>,
++): readonly Travel[] {
++  return wire.segments
++    .flatMap((s, i) => knownTravel(wire.id, s, i, roads.get(s.corridorId)))
++    .reduce(append, []);
++}
++function knownTravel(
++  wire: string,
++  segment: NestedWireSegment,
++  first: number,
++  road: PrototypeRoad | undefined,
++): readonly Travel[] {
++  if (road === undefined) return [];
++  return travel(wire, segment, first, road);
++}
++function rightHand(road: PrototypeRoad): number {
++  return road.axis === 'horizontal' ? 1 : -1;
++}
++function assign(t: Travel, index: number, count: number): AssignedTravel {
++  const offset = (index + 0.5) * nestedLanePitch * t.direction * rightHand(t.road);
++  const a = axes[t.road.axis],
++    b = t.road.bounds;
++  return {
++    ...t,
++    count,
++    at: b[a.across] + b[a.breadth] / 2 + offset,
++    lane: {
++      id: `${t.wireId}:${t.first}`,
++      wireId: t.wireId,
++      roadId: t.road.id,
++      direction: t.direction,
++      index,
++      offset,
++    },
++  };
++}
++function assignedRoad(travels: readonly Travel[]): readonly AssignedTravel[] {
++  const sorted = travels.toSorted((a, b) => a.wireId.localeCompare(b.wireId));
++  return [1, -1].flatMap((direction) => {
++    const group = sorted.filter((t) => t.direction === direction);
++    return group.map((t, index) => assign(t, index, group.length));
++  });
++}
++/** Compiles retained law assignments once. Fresh indexes make caller-owned reconstruction safe. */
++export function allocateNestedLanes(
++  wires: readonly NestedWire[],
++  roads: ReadonlyMap<string, PrototypeRoad>,
++) {
++  const travels = wires.flatMap((wire) => wireTravels(wire, roads));
++  const byRoad = new Map<string, Travel[]>();
++  travels.forEach((t) => byRoad.set(t.road.id, [...(byRoad.get(t.road.id) ?? []), t]));
++  const assigned = [...byRoad.values()].flatMap(assignedRoad);
++  const byWire = new Map<string, AssignedTravel[]>();
++  assigned.forEach((t) => byWire.set(t.wireId, [...(byWire.get(t.wireId) ?? []), t]));
++  byWire.forEach((ts, id) =>
++    byWire.set(
++      id,
++      ts.toSorted((a, b) => a.first - b.first),
++    ),
++  );
++  return {
++    byWire,
++    demand: new Map([...byRoad].map(([id, ts]) => [id, ts.length])),
++    lanes: assigned.map((t) => t.lane),
++  };
++}
+diff --git a/output/playwright/nested-wires/verify-lanes.mjs b/output/playwright/nested-wires/verify-lanes.mjs
+new file mode 100644
+index 0000000..01542ab
+--- /dev/null
++++ b/output/playwright/nested-wires/verify-lanes.mjs
+@@ -0,0 +1,121 @@
++/** Standalone M3 geometry acceptance. Node owns assertion failures; no scene mutation or test files.
++ * Run: node --import tsx output/playwright/nested-wires/verify-lanes.mjs
++ */
++import assert from 'node:assert/strict';
++import { createNestedRoadScene, inspectNestedWires } from '../../../capability/layout/contract/index.ts';
++import './verify-m3-topology.mjs';
++const scene = createNestedRoadScene();
++assert(scene.wiring?.ok);
++const wires = scene.wiring.value;
++const roads = new Map(scene.roads.map((r) => [r.id, r]));
++const lanes = scene.wireLanes;
++function check(name, run) {
++  try { run(); console.log(`PASS ${name}`); }
++  catch (error) { console.error(`FAIL ${name}: ${error.message}`); process.exitCode = 1; }
++}
++const across = (road) => road.axis === 'horizontal' ? 'y' : 'x';
++const along = (road) => road.axis === 'horizontal' ? 'x' : 'y';
++const width = (road) => road.bounds[road.axis === 'horizontal' ? 'height' : 'width'];
++const contains = (p, b) => p.x >= b.x && p.x <= b.x + b.width && p.y >= b.y && p.y <= b.y + b.height;
++function laneGeometry(lane) {
++  const road = roads.get(lane.roadId), c = across(road), a = along(road);
++  const at = road.bounds[c] + width(road) / 2 + lane.offset;
++  const wire = wires.find((w) => w.id === lane.wireId);
++  const segments = wire.segments.filter((s) => s.laneId === lane.id);
++  assert(segments.length > 0, lane.id);
++  segments.forEach((s) => {
++    assert.equal(s.from[c], at, lane.id);
++    assert.equal(s.to[c], at, lane.id);
++    assert.equal(Math.sign(s.to[a] - s.from[a]), lane.direction, lane.id);
++  });
++}
++function roadLanes(road) { return lanes.filter((l) => l.roadId === road.id); }
++function pairs(items) { return items.flatMap((a, i) => items.slice(i + 1).map((b) => [a, b])); }
++function crossing(segment, port, road) {
++  const a = along(road), c = across(road), at = port.point[a];
++  if (segment.from[a] === segment.to[a]) return [];
++  if (at < Math.min(segment.from[a], segment.to[a]) || at > Math.max(segment.from[a], segment.to[a])) return [];
++  return [{ ...port.point, [c]: segment.from[c] }];
++}
++check('3a every assigned road/driveway lane distinct; actual centrelines match the assignment; shared gate positions distinct inside mouths', () => {
++  scene.roads.forEach((road) => assert.equal(new Set(roadLanes(road).map((l) => l.offset)).size, roadLanes(road).length, road.id));
++  lanes.forEach(laneGeometry);
++  const gates = scene.roads.filter((r) => r.access?.nodeId.startsWith('section-'));
++  gates.forEach((road) => {
++    const port = scene.ports.find((p) => p.portId === road.access.portId);
++    const hits = roadLanes(road).map((lane) => {
++      const wire = wires.find((w) => w.id === lane.wireId);
++      const points = wire.segments.filter((s) => s.corridorId === road.id).flatMap((s) => crossing(s, port, road));
++      assert(points.length > 0, lane.id);
++      points.forEach((p) => { assert(contains(p, road.bounds)); assert.equal(p[across(road)], port.point[across(road)] + lane.offset); });
++      return JSON.stringify(points[0]);
++    });
++    assert.equal(new Set(hits).size, hits.length, road.id);
++  });
++});
++check('3b opposite directions occupy opposite sides; same-direction lanes stack outward in wire-ID order at pitch 6', () => {
++  scene.roads.forEach((road) => {
++    pairs(roadLanes(road)).filter(([a, b]) => a.direction !== b.direction).forEach(([a, b]) => assert(a.offset * b.offset < 0, road.id));
++    [1, -1].forEach((direction) => {
++      const group = roadLanes(road).filter((l) => l.direction === direction).sort((a, b) => a.wireId.localeCompare(b.wireId));
++      group.forEach((lane, index) => assert.equal(lane.offset, (index + 0.5) * 6 * direction * (road.axis === 'horizontal' ? 1 : -1)));
++    });
++  });
++});
++check('3d every road and every node/gate driveway width = 12 + 12 × lane count', () => {
++  scene.roads.forEach((road) => { assert.equal(road.wireLaneCount, roadLanes(road).length, road.id); assert.equal(width(road), 12 + 12 * road.wireLaneCount, road.id); });
++});
++function overlap(a, b) {
++  const left = Math.max(a.x, b.x), right = Math.min(a.x + a.width, b.x + b.width);
++  const top = Math.max(a.y, b.y), bottom = Math.min(a.y + a.height, b.y + b.height);
++  return left < right && top < bottom;
++}
++function boundary(road, section) {
++  const b = road.bounds, s = section.bounds;
++  return ((b.x < s.x && b.x + b.width > s.x) || (b.x < s.x + s.width && b.x + b.width > s.x + s.width)) && b.y < s.y + s.height && b.y + b.height > s.y ||
++    ((b.y < s.y && b.y + b.height > s.y) || (b.y < s.y + s.height && b.y + b.height > s.y + s.height)) && b.x < s.x + s.width && b.x + b.width > s.x;
++}
++check('3e no road/driveway node overlap; streets respect boundaries; only registered junctions overlap; all wire containment, terminal and gate-lane invariants', () => {
++  scene.roads.forEach((r) => scene.nodes.forEach((n) => assert(!overlap(r.bounds, n.bounds), `${r.id}/${n.id}`)));
++  scene.roads.forEach((r) => scene.sections.filter((s) => boundary(r, s)).forEach((s) => assert.equal(r.access?.nodeId, s.id, r.id)));
++  pairs(scene.roads).filter(([a, b]) => overlap(a.bounds, b.bounds)).forEach(([a, b]) => {
++    assert.notEqual(a.axis, b.axis, `${a.id}/${b.id}`);
++    assert(scene.junctions.some((j) => j.roadIds.includes(a.id) && j.roadIds.includes(b.id)), `${a.id}/${b.id}`);
++  });
++  assert.deepEqual(inspectNestedWires(scene, wires), { corridors: [], nodeBodies: [], boundaries: [], continuity: [] });
++});
++function intersection(a, b) {
++  const x0 = Math.max(Math.min(a.from.x, a.to.x), Math.min(b.from.x, b.to.x));
++  const x1 = Math.min(Math.max(a.from.x, a.to.x), Math.max(b.from.x, b.to.x));
++  const y0 = Math.max(Math.min(a.from.y, a.to.y), Math.min(b.from.y, b.to.y));
++  const y1 = Math.min(Math.max(a.from.y, a.to.y), Math.max(b.from.y, b.to.y));
++  if (x0 > x1 || y0 > y1) return null;
++  return { x: x0, y: y0, length: x1 - x0 + y1 - y0 };
++}
++function terminalPoint(wire, p) {
++  return [wire.segments[0].from, wire.segments.at(-1).to].some((q) => q.x === p.x && q.y === p.y);
++}
++function turnsInside(wire, junction) {
++  return wire.segments.slice(1).some((s, i) => contains(s.from, junction.bounds) && (s.from.x === s.to.x) !== (wire.segments[i].from.x === wire.segments[i].to.x));
++}
++function collisions(a, b) {
++  return a.segments.flatMap((sa) => b.segments.flatMap((sb) => {
++    const hit = intersection(sa, sb);
++    if (hit === null) return [];
++    assert.equal(hit.length, 0, `${a.id}/${b.id} overlap ${JSON.stringify(hit)}`);
++    if (terminalPoint(a, hit) && terminalPoint(b, hit)) return [hit];
++    assert(scene.junctions.some((j) => contains(hit, j.bounds) && (turnsInside(a, j) || turnsInside(b, j))), `${a.id}/${b.id} nonturn crossing ${JSON.stringify(hit)}`);
++    return [hit];
++  }));
++}
++check('3f no shared positive-length segments or nonjunction crossings; w12/w18 share only the exact node-12 terminal inside its driveway', () => {
++  pairs(wires).forEach(([a, b]) => collisions(a, b));
++  const shared = ['w12', 'w18'].map((id) => wires.find((w) => w.id === id));
++  const driveway = 'drive:node-12:exit-bottom';
++  const first = shared[0].segments.filter((s) => s.corridorId === driveway), second = shared[1].segments.filter((s) => s.corridorId === driveway);
++  const hits = first.flatMap((a) => second.map((b) => intersection(a, b)).filter(Boolean));
++  const port = scene.ports.find((p) => p.portId === 'node-12:exit-bottom');
++  assert(hits.length > 0);
++  hits.forEach((p) => assert.deepEqual(p, { ...port.point, length: 0 }));
++});
++check('3g two complete scene JSON serialisations are byte-identical', () => assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene())));

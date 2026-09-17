@@ -1,0 +1,8 @@
+PASS routing law byte-identical to accepted M2 commit 2c8ca32
+FAIL Part 2.6 (accepted M2: 12 wires): w05/w06 cross at {"x":1680,"y":670.5}; both have 0 turns inside J71
+{"label":"accepted M2: 12 wires","junction":{"x":1668,"y":648,"width":24,"height":48},"horizontal":{"from":{"x":1510.5,"y":670.5},"to":{"x":1846.5,"y":670.5},"corridorId":"section-2:horizontal:672:1176"},"vertical":{"from":{"x":1680,"y":667.5},"to":{"x":1680,"y":696},"corridorId":"section-2:horizontal:672:1176"}}
+FAIL Part 2.6 (tracked source: 18 wires): w05/w06 cross at {"x":1680,"y":661.5}; both have 0 turns inside J71
+{"label":"tracked source: 18 wires","junction":{"x":1668,"y":648,"width":24,"height":48},"horizontal":{"from":{"x":1501.5,"y":661.5},"to":{"x":1837.5,"y":661.5},"corridorId":"section-2:horizontal:672:1176"},"vertical":{"from":{"x":1680,"y":658.5},"to":{"x":1680,"y":696},"corridorId":"section-2:horizontal:672:1176"}}
+FAIL Part 2.6 (saved lane candidate: 18 wires): w05/w06 cross at {"x":1677,"y":675}; both have 0 turns inside J74
+{"label":"saved lane candidate: 18 wires","junction":{"x":1668,"y":660,"width":24,"height":24},"horizontal":{"from":{"x":1515,"y":675},"to":{"x":1845,"y":675},"corridorId":"section-2:horizontal:672:1176","laneId":"w06:3"},"vertical":{"from":{"x":1677,"y":672},"to":{"x":1677,"y":684},"corridorId":"section-2:horizontal:672:1176"}}
+STOP: fixed band/shared-road law crosses w05 straight through the horizontal road used by w06. Separate lane offsets cannot remove this crossing. A straight-through junction exemption or routing-law change is required.

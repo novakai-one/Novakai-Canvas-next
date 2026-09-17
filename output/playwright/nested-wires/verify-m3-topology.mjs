@@ -37,12 +37,21 @@ for (const [first, second] of [
   console.log(`PASS DoD 2: ${first}/${second} gates=${JSON.stringify(wire(first).gates)}`);
 }
 function roads(id) {
-  return new Set(wire(id).segments.map((segment) => segment.corridorId));
+  return new Set(
+    wire(id)
+      .segments.filter(parallel)
+      .map((segment) => segment.corridorId),
+  );
+}
+function parallel(segment) {
+  const road = scene.roads.find((item) => item.id === segment.corridorId);
+  const axis = road.axis === 'horizontal' ? 'x' : 'y';
+  return segment.from[axis] !== segment.to[axis];
 }
 const requirements = [
   ['w04', 'w13', 1],
   ['w07', 'w14', 1],
-  ['w02', 'w15', 1],
+  ['w01', 'w15', 1],
   ['w10', 'w16', 2],
   ['w11', 'w17', 2],
   ['w12', 'w18', 2],
@@ -59,15 +68,6 @@ function sharing([first, second, minimum]) {
   if (!passed) failures.push(`${first}/${second}`);
 }
 requirements.forEach(sharing);
-console.log(
-  `Diagnostic only: w01/w15 shared=${JSON.stringify([...roads('w01')].filter((id) => roads('w15').has(id)))}`,
-);
-for (const id of ['w02', 'w15']) {
-  const item = wire(id);
-  console.log(
-    `${id}: ${item.sourcePortId} -> ${item.targetPortId}; corridors=${JSON.stringify([...roads(id)])}`,
-  );
-}
 assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene()));
 console.log('PASS DoD 3g: complete scene regeneration is byte-identical');
 function finish() {

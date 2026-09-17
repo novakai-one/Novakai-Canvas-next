@@ -1,0 +1,9 @@
+PASS frozen nodes: byte-identical to 0e5f21e
+PASS frozen sections: byte-identical to 0e5f21e
+PASS frozen road ids + bounds: byte-identical to 0e5f21e
+PASS frozen wire routes (ordered road sequences): byte-identical to 0e5f21e
+PASS frozen gates: byte-identical to 0e5f21e
+MEASURE per-wire lane-index diffs=0
+PASS deterministic regeneration: two fresh scene serializations byte-identical
+PASS current canonical scene matches fresh public builder: 24 nodes / 26 wires
+PASS zero new tracked *.test.ts files

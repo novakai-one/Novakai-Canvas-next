@@ -1,6 +1,6 @@
 /** Real pointer acceptance against frozen scene relationships; no test runner or scene mutations. */
 export async function spotlightCapture(page, wires) {
-  const out='output/playwright/nested-wires/presentation/m9a/';
+  const out='output/playwright/nested-wires/presentation/m9a-fix/';
   const assert=(ok,message)=>{if(!ok)throw new Error(message);};
   const report={messages:[],timing:[]};
   const errors=[];
@@ -9,7 +9,27 @@ export async function spotlightCapture(page, wires) {
   await page.goto('http://127.0.0.1:5191/roads-prototype.html?scale');
   await page.waitForFunction(()=>performance.getEntriesByName('roads:navigation-to-ready').length);
   await page.mouse.move(5,5);
-  await page.waitForTimeout(180);
+  const objectIds=await page.locator('[data-node-id],[data-wire-id]').evaluateAll(elements=>elements.map(e=>e.dataset.nodeId??e.dataset.wireId));
+  // React Flow propagates controlled node paint after the wire commit. Require the whole
+  // expected state on two consecutive animation-frame polls, never just the first wire.
+  async function waitForPaint(classFor) {
+    const expected=objectIds.map(id=>id+':'+classFor(id));
+    await page.waitForFunction(state=>{
+      const actual=[...document.querySelectorAll('[data-node-id],[data-wire-id]')].map(e=>{
+        const classes=[...e.classList].map(c=>c.match(/^_(primary|secondary|dim|spotlit|spotlightDim)_/)?.[1]).filter(Boolean);
+        return (e.dataset.nodeId??e.dataset.wireId)+':'+classes.join();
+      });
+      state.frames=JSON.stringify(actual)===JSON.stringify(state.expected)?state.frames+1:0;
+      return state.frames>=2;
+    },{expected,frames:0},{polling:'raf',timeout:5000});
+  }
+  // Negative assertions must observe beyond the original 180ms cancellation window.
+  // This is an observation deadline, not a substitute for settling rendered state.
+  async function observeDwell() {
+    const start=await page.evaluate(()=>performance.now());
+    await page.waitForFunction(start=>performance.now()-start>=180,start,{polling:'raf',timeout:5000});
+  }
+  await waitForPaint(()=>'');
   const geometry=()=>page.evaluate(()=>[...document.querySelectorAll('.react-flow__viewport,.react-flow__node,[data-port-id],[data-wire-id] polyline')].map(e=>({style:e.getAttribute('style'),points:e.getAttribute('points'),bounds:e.getBoundingClientRect().toJSON()})));
   const baseline=JSON.stringify(await geometry());
   const read=()=>page.evaluate(()=>({
@@ -32,6 +52,7 @@ export async function spotlightCapture(page, wires) {
     report.messages.push('PASS '+label+': layout delta=0; exact geometry/camera retained');
   }
   async function idle() {
+    await waitForPaint(()=>'');
     const state=await read();
     assert(state.labels.length===0,'idle labels');
     state.objects.forEach(checkIdle);
@@ -66,6 +87,7 @@ export async function spotlightCapture(page, wires) {
   }
   async function net(id) {
     const members=membersFor(id);
+    await waitForPaint(id=>members.has(id)?'spotlit':'spotlightDim');
     const state=await read();
     assert(state.labels.length===0,'hover labels');
     state.objects.forEach(obj=>checkNetObject(obj,members.has(obj.id)));
@@ -91,7 +113,6 @@ export async function spotlightCapture(page, wires) {
   await unchanged('hover node');
   await page.screenshot({path:out+'scale-hover-hub.png'});
   await page.mouse.move(5,5);
-  await page.waitForTimeout(180);
   await idle();
   await unchanged('hover off');
   // A 25ms real pointer pass must never commit a spotlight, including after its stale timer would fire.
@@ -104,19 +125,19 @@ export async function spotlightCapture(page, wires) {
   await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
   await page.waitForTimeout(25);
   await page.mouse.move(5,5);
-  await page.waitForTimeout(180);
+  await observeDwell();
   assert(!await page.evaluate(()=>{window.__flashObserver.disconnect();return window.__spotlightFlashed;}),'rapid pass flickered');
   await idle();
   report.messages.push('PASS 25ms pointer pass: zero transient spotlight, cancelled timer stays cancelled');
   // Briefly leave a settled net, then reenter: it must not disappear between targets.
-  await hubLocator.hover();await page.waitForTimeout(180);
+  await hubLocator.hover();await net(hub);
   await page.evaluate(()=>{
     window.__netDropped=false;
     window.__dropObserver=new MutationObserver(()=>{if(!document.querySelector('[class*="_spotlit_"]'))window.__netDropped=true;});
     window.__dropObserver.observe(document.getElementById('app'),{subtree:true,attributes:true,attributeFilter:['class']});
   });
   await page.mouse.move(5,5);await page.waitForTimeout(25);
-  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);await page.waitForTimeout(180);
+  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);await observeDwell();
   assert(!await page.evaluate(()=>{window.__dropObserver.disconnect();return window.__netDropped;}),'brief leave flickered');
   await net(hub);
   report.messages.push('PASS 25ms leave/reenter: settled net never drops');
@@ -130,25 +151,32 @@ export async function spotlightCapture(page, wires) {
     return points.find(p=>document.elementFromPoint(p.x,p.y)===e);
   });
   assert(point,'wire real hit target');
-  await page.mouse.move(point.x,point.y);await page.waitForTimeout(180);
+  await page.mouse.move(point.x,point.y);
   await net(wire.id);await unchanged('hover wire');
   await page.screenshot({path:out+'scale-hover-wire.png'});
-  await page.mouse.click(point.x,point.y);await page.waitForTimeout(180);
+  await page.mouse.click(point.x,point.y);
+  const selectedMembers=membersFor(wire.id);
+  function selectedClass(id) {
+    if(id===wire.id)return 'primary';
+    return selectedMembers.has(id)?'secondary':'dim';
+  }
+  await waitForPaint(selectedClass);
   const selected=await read();
   assert(selected.labels.join()===wire.id,'primary wire label');
   assert(selected.objects.find(o=>o.id===wire.id).classes.join()==='primary','wire primary');
   await page.screenshot({path:out+'scale-primary-wire.png'});
-  await hubLocator.hover();await page.waitForTimeout(180);
+  await hubLocator.hover();await observeDwell();
   assert(JSON.stringify((await read()).objects)===JSON.stringify(selected.objects),'hover overrides selection');
   assert((await read()).labels.join()===wire.id,'hover modifies selected labels');
   await unchanged('selection wins over hover');
-  await page.locator('.react-flow__pane').click({position:{x:12,y:12}});await page.mouse.move(5,5);await page.waitForTimeout(180);
+  await page.locator('.react-flow__pane').click({position:{x:12,y:12}});await page.mouse.move(5,5);
   await idle();
   await page.getByRole('checkbox',{name:'Show roads'}).check();
   await page.locator('[data-coverage]').waitFor();
-  await page.mouse.move(5,5);await page.waitForTimeout(180);
+  await page.mouse.move(5,5);
+  await idle();
   await page.screenshot({path:out+'scale-roads-on.png'});
-  await hubLocator.hover();await page.waitForTimeout(180);await net(hub);
+  await hubLocator.hover();await net(hub);
   await unchanged('roads-on spotlight');
   await page.screenshot({path:out+'scale-roads-on-hover.png'});
   report.errors=errors;assert(errors.length===0,'browser errors');

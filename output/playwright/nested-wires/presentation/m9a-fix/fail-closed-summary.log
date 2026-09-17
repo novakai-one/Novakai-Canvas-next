@@ -1,0 +1,1 @@
+PASS deliberately wrong wire net (extra node-3) times out at the exact-membership wait; app unchanged

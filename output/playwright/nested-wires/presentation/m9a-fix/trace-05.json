@@ -1,0 +1,768 @@
+{
+  "ok": true,
+  "report": {
+    "messages": [
+      "PASS node-1: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+      "PASS hover node: layout delta=0; exact geometry/camera retained",
+      "PASS hover off: layout delta=0; exact geometry/camera retained",
+      "PASS 25ms pointer pass: zero transient spotlight, cancelled timer stays cancelled",
+      "PASS node-1: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+      "PASS 25ms leave/reenter: settled net never drops",
+      "PASS w01: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+      "PASS hover wire: layout delta=0; exact geometry/camera retained",
+      "PASS selection wins over hover: layout delta=0; exact geometry/camera retained",
+      "PASS node-1: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+      "PASS roads-on spotlight: layout delta=0; exact geometry/camera retained"
+    ],
+    "timing": [
+      140.79999995231628
+    ],
+    "tokens": {
+      "idle-opacity": "0.65",
+      "spotlight-dim-opacity": "0.16",
+      "primary-color": "#355ccd"
+    },
+    "hub": "node-1",
+    "errors": []
+  },
+  "trace": [
+    {
+      "kind": "mouseover",
+      "t": 285.2999999523163,
+      "target": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "sample",
+      "t": 568.8999999761581
+    },
+    {
+      "kind": "mouseout",
+      "t": 668.6000000238419,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "schedule",
+      "t": 668.7000000476837,
+      "timer": 12,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 668.7000000476837,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 770.2000000476837,
+      "timer": 12
+    },
+    {
+      "kind": "commit",
+      "t": 809.3999999761581,
+      "ids": [
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 839.8999999761581,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "sample",
+      "t": 841
+    },
+    {
+      "kind": "sample",
+      "t": 845.2999999523163
+    },
+    {
+      "kind": "mouseout",
+      "t": 951.5,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "cancel",
+      "t": 951.7000000476837,
+      "timer": 12
+    },
+    {
+      "kind": "schedule",
+      "t": 951.7000000476837,
+      "timer": 13,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 951.7000000476837,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "fire",
+      "t": 1053,
+      "timer": 13
+    },
+    {
+      "kind": "commit",
+      "t": 1111.8999999761581,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 1157.6000000238419,
+      "ids": []
+    },
+    {
+      "kind": "sample",
+      "t": 1157.7999999523163
+    },
+    {
+      "kind": "sample",
+      "t": 1185.2000000476837
+    },
+    {
+      "kind": "mouseout",
+      "t": 1243.8999999761581,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 1243.8999999761581,
+      "timer": 13
+    },
+    {
+      "kind": "schedule",
+      "t": 1243.8999999761581,
+      "timer": 14,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1244,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "mouseout",
+      "t": 1285.3999999761581,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "cancel",
+      "t": 1285.3999999761581,
+      "timer": 14
+    },
+    {
+      "kind": "schedule",
+      "t": 1285.3999999761581,
+      "timer": 15,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1285.3999999761581,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "fire",
+      "t": 1388,
+      "timer": 15
+    },
+    {
+      "kind": "sample",
+      "t": 1470.7999999523163
+    },
+    {
+      "kind": "mouseout",
+      "t": 1520.7000000476837,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 1520.7999999523163,
+      "timer": 15
+    },
+    {
+      "kind": "schedule",
+      "t": 1520.7999999523163,
+      "timer": 16,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1520.7999999523163,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 1623.7000000476837,
+      "timer": 16
+    },
+    {
+      "kind": "commit",
+      "t": 1675.5,
+      "ids": [
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 1706.2000000476837,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "mouseout",
+      "t": 1719.7999999523163,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "cancel",
+      "t": 1719.7999999523163,
+      "timer": 16
+    },
+    {
+      "kind": "schedule",
+      "t": 1719.7999999523163,
+      "timer": 17,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1719.7999999523163,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "mouseout",
+      "t": 1753,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 1753,
+      "timer": 17
+    },
+    {
+      "kind": "schedule",
+      "t": 1753,
+      "timer": 18,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1753,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 1855.2999999523163,
+      "timer": 18
+    },
+    {
+      "kind": "sample",
+      "t": 1939.7000000476837
+    },
+    {
+      "kind": "mouseout",
+      "t": 1968,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "<polyline class=\"_wireHit_1xy0c_454 nodrag nopan\" data-wire-hit=\"w01\" points=\"904,379 940,379 940,409 959.5,409 1039,409 1039,391 1042,391 1048,391 1048,388\"",
+      "x": 509,
+      "y": 311
+    },
+    {
+      "kind": "cancel",
+      "t": 1968,
+      "timer": 18
+    },
+    {
+      "kind": "schedule",
+      "t": 1968,
+      "timer": 19,
+      "delay": 100
+    },
+    {
+      "kind": "cancel",
+      "t": 1968,
+      "timer": 19
+    },
+    {
+      "kind": "schedule",
+      "t": 1968.1000000238419,
+      "timer": 20,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1968.1000000238419,
+      "target": "<polyline class=\"_wireHit_1xy0c_454 nodrag nopan\" data-wire-hit=\"w01\" points=\"904,379 940,379 940,409 959.5,409 1039,409 1039,391 1042,391 1048,391 1048,388\"",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 509,
+      "y": 311
+    },
+    {
+      "kind": "fire",
+      "t": 2069.7000000476837,
+      "timer": 20
+    },
+    {
+      "kind": "commit",
+      "t": 2141.7999999523163,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 2189.100000023842,
+      "ids": [
+        "node-1",
+        "node-2",
+        "w01"
+      ]
+    },
+    {
+      "kind": "sample",
+      "t": 2189.2000000476837
+    },
+    {
+      "kind": "sample",
+      "t": 2212.7999999523163
+    },
+    {
+      "kind": "commit",
+      "t": 2344.899999976158,
+      "ids": []
+    },
+    {
+      "kind": "sample",
+      "t": 2532.100000023842
+    },
+    {
+      "kind": "mouseout",
+      "t": 2636.5,
+      "target": "<polyline class=\"_wireHit_1xy0c_454 nodrag nopan\" data-wire-hit=\"w01\" points=\"904,379 940,379 940,409 959.5,409 1039,409 1039,391 1042,391 1048,391 1048,388\"",
+      "related": "<div class=\"_node_1xy0c_184 _secondary_1xy0c_420\" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 2636.5,
+      "timer": 20
+    },
+    {
+      "kind": "schedule",
+      "t": 2636.5,
+      "timer": 21,
+      "delay": 100
+    },
+    {
+      "kind": "cancel",
+      "t": 2636.600000023842,
+      "timer": 21
+    },
+    {
+      "kind": "schedule",
+      "t": 2636.600000023842,
+      "timer": 22,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 2636.600000023842,
+      "target": "<div class=\"_node_1xy0c_184 _secondary_1xy0c_420\" data-node-id=\"node-1\"",
+      "related": "<polyline class=\"_wireHit_1xy0c_454 nodrag nopan\" data-wire-hit=\"w01\" points=\"904,379 940,379 940,409 959.5,409 1039,409 1039,391 1042,391 1048,391 1048,388\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 2739.5,
+      "timer": 22
+    },
+    {
+      "kind": "sample",
+      "t": 2835.899999976158
+    },
+    {
+      "kind": "sample",
+      "t": 2842.399999976158
+    },
+    {
+      "kind": "sample",
+      "t": 2846
+    },
+    {
+      "kind": "mouseout",
+      "t": 2903,
+      "target": "<div class=\"_node_1xy0c_184 _secondary_1xy0c_420\" data-node-id=\"node-1\"",
+      "related": "DIV",
+      "x": 12,
+      "y": 135
+    },
+    {
+      "kind": "cancel",
+      "t": 2903.100000023842,
+      "timer": 22
+    },
+    {
+      "kind": "schedule",
+      "t": 2903.100000023842,
+      "timer": 23,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 2903.100000023842,
+      "target": "DIV",
+      "related": "<div class=\"_node_1xy0c_184 _secondary_1xy0c_420\" data-node-id=\"node-1\"",
+      "x": 12,
+      "y": 135
+    },
+    {
+      "kind": "commit",
+      "t": 2954.399999976158,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "mouseout",
+      "t": 2985.7999999523163,
+      "target": "DIV",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "mouseover",
+      "t": 2985.7999999523163,
+      "target": "HEADER",
+      "related": "DIV",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "fire",
+      "t": 3005.2000000476837,
+      "timer": 23
+    },
+    {
+      "kind": "commit",
+      "t": 3026.600000023842,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 3052.2000000476837,
+      "ids": []
+    },
+    {
+      "kind": "sample",
+      "t": 3167.600000023842
+    },
+    {
+      "kind": "mouseout",
+      "t": 3186.100000023842,
+      "target": "HEADER",
+      "related": "INPUT",
+      "x": 1785,
+      "y": 61
+    },
+    {
+      "kind": "mouseover",
+      "t": 3186.100000023842,
+      "target": "INPUT",
+      "related": "HEADER",
+      "x": 1785,
+      "y": 61
+    },
+    {
+      "kind": "mouseout",
+      "t": 3835.399999976158,
+      "target": "INPUT",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "mouseover",
+      "t": 3835.399999976158,
+      "target": "HEADER",
+      "related": "INPUT",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "mouseout",
+      "t": 4151.399999976158,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 4151.399999976158,
+      "timer": 23
+    },
+    {
+      "kind": "schedule",
+      "t": 4151.399999976158,
+      "timer": 25,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 4151.399999976158,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 4253.799999952316,
+      "timer": 25
+    },
+    {
+      "kind": "commit",
+      "t": 4334.799999952316,
+      "ids": [
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 4381.899999976158,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "sample",
+      "t": 4381.899999976158
+    },
+    {
+      "kind": "sample",
+      "t": 4403.200000047684
+    }
+  ]
+}

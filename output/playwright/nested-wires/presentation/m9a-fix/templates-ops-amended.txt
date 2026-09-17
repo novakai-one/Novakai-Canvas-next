@@ -1,0 +1,6 @@
+$ node --import tsx output/playwright/nested-wires/templates-scene/count-operations.mjs {"specFile": "output/playwright/nested-wires/templates-scene/scene-spec.json", "directory": "output/playwright/nested-wires/presentation/m9a", "outputFile": "templates-operations.json"}
+MEASURE routing=1626; maxLawLeg=38; compile=28443; stages={"wire-registry":907,"lane-allocation":9430,"network":11941,"lane-projection":6165}; roadPairDiscovery=0
+MEASURE 16/32 nodes, 29/58 wires: total ops=36850/74331; growth=2.017123473541384
+PASS max law leg <=60; per-wire ceiling; clone total growth <=2.5; instrumented byte identity; every stage once
+
+exit 0

@@ -1,0 +1,26 @@
+[
+  {
+    "path": "capability/canvas/adapters/react-flow/RoadPrototype.tsx",
+    "base": "94c605f",
+    "sha256": "87a568c8afe9c27ff0cd9a6da114532c81ccaf9db0be03b27665fb73ee5cb643",
+    "unchanged": true
+  },
+  {
+    "path": "apps/web/cli/roads-prototype.ts",
+    "base": "94c605f",
+    "sha256": "51302636bf5ecfff4b7d3f3a72a5857e5ba62c1211072b15365c2cfd707f8b50",
+    "unchanged": true
+  },
+  {
+    "path": "capability/export/adapters/svg/wires.tsx",
+    "base": "94c605f",
+    "sha256": "4926f9dbf592496a54d21e3344410ccfc20cfe4b37612d2e32d14e5479b20011",
+    "unchanged": true
+  },
+  {
+    "path": "apps/web/cli/verify-selection.mjs",
+    "base": "94c605f",
+    "sha256": "27e28c39cf1c50017483ede1954588d21e97ed4a2eadf1d01d482afdaa1eb11e",
+    "unchanged": true
+  }
+]

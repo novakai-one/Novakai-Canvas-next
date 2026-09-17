@@ -1,0 +1,56 @@
+{
+  "messages": [
+    "PASS 2a load: 0 visible labels; all 24 nodes / 26 wires unselected",
+    "PASS 2b node-7 primary; only w12 + w13 + w21 + node-12 + node-5 + node-23 secondary; every other node/wire dim; 0 labels (50/50 class assertions)",
+    "PASS 3/b layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (50/50 class assertions)",
+    "PASS 3/c layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2d empty canvas: 0 labels; 0 primary/secondary/dim classes anywhere",
+    "PASS 3/d layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (50/50 class assertions)",
+    "PASS 3/e layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2f node-5 twice: 0 labels; 0 primary/secondary/dim classes anywhere",
+    "PASS 3/f layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS 2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (50/50 class assertions)",
+    "PASS 3/g layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS extra: primary wire toggles off; secondary node becomes primary with fresh one-hop neighbourhood",
+    "PASS 3/extra layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS hub node-23: exactly w19\u2013w24 and their six sources secondary; no labels",
+    "PASS 3/hub layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+    "PASS api node-24: exactly w25/w26 and node-8/node-20 secondary; no labels",
+    "PASS 3/api layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged"
+  ],
+  "performance": {
+    "loads": [
+      189.70000004768372,
+      183.20000004768372,
+      179.20000004768372,
+      180.10000002384186,
+      183.89999997615814
+    ],
+    "median": 183.20000004768372
+  },
+  "counterBefore": 1,
+  "counterAfter": 1,
+  "midpoint": {
+    "x": 1848,
+    "y": 675,
+    "middle": {
+      "x": 1848,
+      "y": 675
+    },
+    "lift": -12,
+    "bounds": {
+      "x": 1268.146484375,
+      "y": 502.8200378417969,
+      "width": 15.8740234375,
+      "height": 10.000030517578125,
+      "top": 502.8200378417969,
+      "right": 1284.0205078125,
+      "bottom": 512.820068359375,
+      "left": 1268.146484375
+    }
+  },
+  "runnerSha256": "27e28c39cf1c50017483ede1954588d21e97ed4a2eadf1d01d482afdaa1eb11e",
+  "transport": "5191 only; unchanged assertion body; screenshots redirected; ruling #7 ceiling 450ms"
+}

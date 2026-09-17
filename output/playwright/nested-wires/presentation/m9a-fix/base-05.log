@@ -1,0 +1,26 @@
+{
+  "messages": [
+    "PASS node-1: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+    "PASS hover node: layout delta=0; exact geometry/camera retained",
+    "PASS hover off: layout delta=0; exact geometry/camera retained",
+    "PASS 25ms pointer pass: zero transient spotlight, cancelled timer stays cancelled",
+    "PASS node-1: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+    "PASS 25ms leave/reenter: settled net never drops",
+    "PASS w01: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+    "PASS hover wire: layout delta=0; exact geometry/camera retained",
+    "PASS selection wins over hover: layout delta=0; exact geometry/camera retained",
+    "PASS node-1: exact one-hop net, full contrast, dim 0.16, zero labels or primary selection",
+    "PASS roads-on spotlight: layout delta=0; exact geometry/camera retained"
+  ],
+  "timing": [
+    135.89999997615814
+  ],
+  "tokens": {
+    "idle-opacity": "0.65",
+    "spotlight-dim-opacity": "0.16",
+    "primary-color": "#355ccd"
+  },
+  "hub": "node-1",
+  "errors": []
+}
+exit 0

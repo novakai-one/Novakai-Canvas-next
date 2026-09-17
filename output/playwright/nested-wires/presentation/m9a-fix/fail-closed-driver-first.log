@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m9a-fix/verify-fail-closed.py", line 19, in <module>
+    result=command('run-code','async () => {\n'+source+'\nreturn spotlightCapture(page,'+json.dumps(wires)+');\n}')
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m9a-fix/verify-fail-closed.py", line 9, in command
+    if result.returncode: raise RuntimeError(result.stdout+result.stderr)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ### Error
+TimeoutError: page.waitForFunction: Timeout 5000ms exceeded.
+
+exit 1 (expected timeout surfaced as driver exception; see report)

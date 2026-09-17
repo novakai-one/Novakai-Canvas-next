@@ -1,0 +1,4 @@
+PASS branch feat/m9a-spotlight-fix
+PASS all capability/ and apps/ source bytes unchanged from 94c605f
+PASS no new tracked or untracked *.test.ts
+PASS no push, no PR, no server lifecycle commands

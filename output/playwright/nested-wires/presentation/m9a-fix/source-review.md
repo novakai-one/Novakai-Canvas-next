@@ -1,0 +1,15 @@
+# Scope and review
+
+No first-party runtime source file changes: `capability/`, `apps/`, scene specs, tokens, exported SVG implementation, and invariant/selection assertion bodies remain byte-identical to base 94c605f. Consequently no runtime source is assigned a new or inherited >144/160 score. Changed acceptance artifacts are under `output/`, as in the original M9a source review's explicit evidence-script classification; they are still subject to the repository's ESLint cognitive-complexity <=2 gate. No exemptions or lint suppressions were added.
+
+Reviewed the complete changed `m9a/spotlight.mjs` and `m9a/verify-spotlight.py`, their browser/scene collaborators, the renderer's controlled-node and direct-wire paths, host scheduler, and installed React Flow StoreUpdater.
+
+- Polling helper (spotlight.mjs:15–25): expected classes are computed from the frozen input graph, separately from the DOM under observation. It compares the complete ordered node/wire identity/class collection, requires two consecutive RAF polls, resets stability on mismatch, and has a 5000ms deadline. It cannot accept merely the existence of one spotlight element. A genuine wrong final net still fails.
+- Assertions (67–95): unchanged one-hop membership oracle, exact class check, exact 1/0.16 path contrast, accent equality, no primary classes, no labels. Idle still checks 0.65 times the converging factor. Polling is synchronization, not a softened oracle.
+- Negative temporal checks (26–31, 119–144): MutationObservers remain active through the original 180ms observation interval beyond the 25ms pointer stimulus. Settling to an already-correct net cannot prematurely end the cancellation/flicker observation.
+- Selection (158–173): new exact full-paint settling before snapshot; original selected-wire label and primary assertions, hover-overrides-selection comparison and geometry/recalc checks retained.
+- Driver: resolves source separately from evidence destination and keeps `finally: close`; all sessions headless, only 5191. Detail screenshots now await visible node paint instead of fixed sleeps; camera's existing focus duration is zero.
+- Diagnostic Python script: explicitly labelled diagnostic-only, reads base probe via `git show`, traces in-page timer/event/class boundaries without editing runtime source; browser override lifetime ends with session close.
+- Batch Python script: serial runner calls, persists every exit/log, stops immediately on any nonzero status. No retry hides a failed hard-gate run. First ten final runs form the matched after sample; all twenty form the consecutive reliability gate.
+
+Retained limitations: the complete state wait checks private CSS module class names, inherited from the original acceptance oracle; fixed UI step sequence must be maintained as acceptance requirements evolve; Python/JS acceptance failures are terminal exceptions rather than typed domain outcomes. These are evidence harnesses, not newly admitted capability contracts. No new test file or runtime architecture is introduced.

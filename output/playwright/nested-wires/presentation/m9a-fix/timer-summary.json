@@ -1,0 +1,76 @@
+[
+  {
+    "trace": "trace-01.json",
+    "outcome": "PASS",
+    "firedTimerDelaysMs": [
+      100.6,
+      102.1,
+      102.7,
+      101.3,
+      102.3,
+      101.7,
+      102.9,
+      102.3,
+      102.3
+    ],
+    "cancelledBeforeFireButFired": []
+  },
+  {
+    "trace": "trace-02.json",
+    "outcome": "Error: net membership node-3 expected spotlightDim actual spotlit",
+    "firedTimerDelaysMs": [
+      100.7,
+      102.0,
+      102.7,
+      102.8,
+      102.2,
+      101.6
+    ],
+    "cancelledBeforeFireButFired": []
+  },
+  {
+    "trace": "trace-03.json",
+    "outcome": "PASS",
+    "firedTimerDelaysMs": [
+      101.1,
+      102.9,
+      102.7,
+      102.0,
+      102.2,
+      101.2,
+      102.8,
+      102.5,
+      102.9
+    ],
+    "cancelledBeforeFireButFired": []
+  },
+  {
+    "trace": "trace-04.json",
+    "outcome": "Error: net membership node-3 expected spotlightDim actual spotlit",
+    "firedTimerDelaysMs": [
+      100.5,
+      101.9,
+      102.8,
+      102.1,
+      102.2,
+      102.0
+    ],
+    "cancelledBeforeFireButFired": []
+  },
+  {
+    "trace": "trace-05.json",
+    "outcome": "PASS",
+    "firedTimerDelaysMs": [
+      101.5,
+      101.3,
+      102.6,
+      102.9,
+      102.3,
+      101.6,
+      102.9,
+      102.1,
+      102.4
+    ],
+    "cancelledBeforeFireButFired": []
+  }
+]

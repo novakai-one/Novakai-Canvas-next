@@ -1,0 +1,20 @@
+[
+  {
+    "path": "output/playwright/nested-wires/scene.json",
+    "bytes": 1154689,
+    "baseSha256": "946bb1e9836c4242382a534ab97f4752b24d7bcc230e85be2835f720145a8e8a",
+    "currentSha256": "946bb1e9836c4242382a534ab97f4752b24d7bcc230e85be2835f720145a8e8a"
+  },
+  {
+    "path": "output/playwright/nested-wires/templates-scene/scene.json",
+    "bytes": 1258263,
+    "baseSha256": "1940f9b9619a98fd600299aac5f40376184f9d8915d04e8bcbad0b43b4743253",
+    "currentSha256": "1940f9b9619a98fd600299aac5f40376184f9d8915d04e8bcbad0b43b4743253"
+  },
+  {
+    "path": "output/playwright/nested-wires/scale-scene/scene.json",
+    "bytes": 2372099,
+    "baseSha256": "5779c71c97d40fd0ae8b64fb903d603b019f4ccb528aa9dbc84b5a57fb50fd74",
+    "currentSha256": "5779c71c97d40fd0ae8b64fb903d603b019f4ccb528aa9dbc84b5a57fb50fd74"
+  }
+]

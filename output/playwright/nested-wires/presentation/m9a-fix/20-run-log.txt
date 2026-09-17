@@ -1,0 +1,25 @@
+Command for every run: python3 output/playwright/nested-wires/presentation/m9a/verify-spotlight.py
+Serial, headless, unchanged running server 5191; stop on first nonzero; no retries.
+
+run 01: exit 0 — spotlight-01.log
+run 02: exit 0 — spotlight-02.log
+run 03: exit 0 — spotlight-03.log
+run 04: exit 0 — spotlight-04.log
+run 05: exit 0 — spotlight-05.log
+run 06: exit 0 — spotlight-06.log
+run 07: exit 0 — spotlight-07.log
+run 08: exit 0 — spotlight-08.log
+run 09: exit 0 — spotlight-09.log
+run 10: exit 0 — spotlight-10.log
+run 11: exit 0 — spotlight-11.log
+run 12: exit 0 — spotlight-12.log
+run 13: exit 0 — spotlight-13.log
+run 14: exit 0 — spotlight-14.log
+run 15: exit 0 — spotlight-15.log
+run 16: exit 0 — spotlight-16.log
+run 17: exit 0 — spotlight-17.log
+run 18: exit 0 — spotlight-18.log
+run 19: exit 0 — spotlight-19.log
+run 20: exit 0 — spotlight-20.log
+
+All 20 exit codes: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

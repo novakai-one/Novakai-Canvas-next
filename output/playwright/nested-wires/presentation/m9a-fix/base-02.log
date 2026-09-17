@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m9a/verify-spotlight.py", line 20, in <module>
+    report=parsed(command('run-code','async () => {\n'+source+'\nreturn spotlightCapture(page,'+json.dumps(wires)+');\n}'))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m9a/verify-spotlight.py", line 10, in command
+    raise RuntimeError(result.stdout+result.stderr)
+RuntimeError: ### Error
+Error: net membership node-1
+
+exit 1

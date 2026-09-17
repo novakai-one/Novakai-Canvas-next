@@ -1,0 +1,1019 @@
+### Page
+- Page URL: http://127.0.0.1:5191/roads-prototype.html?scale
+- Page Title: Roads · Directional proof
+### Snapshot
+```yaml
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: ROAD LAYOUT · DIRECTIONAL LANES
+      - heading "40 nodes · 12 sections · 75 wires" [level=1] [ref=e7]
+    - generic [ref=e8]:
+      - button "Overview" [ref=e9] [cursor=pointer]
+      - button "contract" [ref=e10] [cursor=pointer]
+      - button "contract/ports" [ref=e11] [cursor=pointer]
+      - button "contract/records" [ref=e12] [cursor=pointer]
+      - button "core" [ref=e13] [cursor=pointer]
+      - button "core/admission" [ref=e14] [cursor=pointer]
+      - button "core/discovery" [ref=e15] [cursor=pointer]
+      - button "core/expansion" [ref=e16] [cursor=pointer]
+      - button "core/validation" [ref=e17] [cursor=pointer]
+      - button "adapters" [ref=e18] [cursor=pointer]
+      - button "service" [ref=e19] [cursor=pointer]
+      - button "web" [ref=e20] [cursor=pointer]
+      - button "cli" [ref=e21] [cursor=pointer]
+      - combobox "Wire focus" [ref=e22]:
+        - option "All 75 wires" [selected]
+        - option "w01 · kernel.ts → brands.ts"
+        - option "w02 · kernel.ts → errors.ts"
+        - option "w03 · kernel.ts → types.ts"
+        - option "w04 · kernel.ts → api.ts"
+        - option "w05 · kernel.ts → store-port.ts"
+        - option "w06 · kernel.ts → request.ts"
+        - option "w07 · kernel.ts → admit.ts"
+        - option "w08 · kernel.ts → discover.ts"
+        - option "w09 · kernel.ts → expand.ts"
+        - option "w10 · kernel.ts → validate.ts"
+        - option "w11 · api.ts → index.ts"
+        - option "w12 · store-port.ts → index.ts"
+        - option "w13 · clock-port.ts → index.ts"
+        - option "w14 · request.ts → index.ts"
+        - option "w15 · receipt.ts → index.ts"
+        - option "w16 · plan.ts → index.ts"
+        - option "w17 · select.ts → index.ts"
+        - option "w18 · assemble.ts → index.ts"
+        - option "w19 · result.ts → index.ts"
+        - option "w20 · plan.ts → discover.ts"
+        - option "w21 · select.ts → expand.ts"
+        - option "w22 · assemble.ts → validate.ts"
+        - option "w23 · result.ts → memory-store.ts"
+        - option "w24 · registry.ts → resource.ts"
+        - option "w25 · server.ts → client.ts"
+        - option "w26 · shell.ts → parse.ts"
+        - option "w27 · kernel.ts → resource.ts"
+        - option "w28 · api.ts → client.ts"
+        - option "w29 · store-port.ts → parse.ts"
+        - option "w30 · receipt.ts → main.ts"
+        - option "w31 · brands.ts → errors.ts"
+        - option "w32 · errors.ts → types.ts"
+        - option "w33 · types.ts → api.ts"
+        - option "w34 · store-port.ts → clock-port.ts"
+        - option "w35 · request.ts → receipt.ts"
+        - option "w36 · admit.ts → normalize.ts"
+        - option "w37 · normalize.ts → authorize.ts"
+        - option "w38 · authorize.ts → plan.ts"
+        - option "w39 · discover.ts → catalog.ts"
+        - option "w40 · catalog.ts → match.ts"
+        - option "w41 · match.ts → select.ts"
+        - option "w42 · expand.ts → instantiate.ts"
+        - option "w43 · instantiate.ts → bind.ts"
+        - option "w44 · bind.ts → assemble.ts"
+        - option "w45 · validate.ts → diagnose.ts"
+        - option "w46 · diagnose.ts → check.ts"
+        - option "w47 · check.ts → result.ts"
+        - option "w48 · memory-store.ts → disk-store.ts"
+        - option "w49 · disk-store.ts → system-clock.ts"
+        - option "w50 · system-clock.ts → registry.ts"
+        - option "w51 · resource.ts → transaction.ts"
+        - option "w52 · transaction.ts → endpoint.ts"
+        - option "w53 · endpoint.ts → server.ts"
+        - option "w54 · client.ts → presenter.ts"
+        - option "w55 · presenter.ts → shell.ts"
+        - option "w56 · parse.ts → execute.ts"
+        - option "w57 · execute.ts → main.ts"
+        - option "w58 · kernel.ts → index.ts"
+        - option "w59 · errors.ts → api.ts"
+        - option "w60 · errors.ts → index.ts"
+        - option "w61 · brands.ts → types.ts"
+        - option "w62 · brands.ts → api.ts"
+        - option "w63 · brands.ts → index.ts"
+        - option "w64 · types.ts → index.ts"
+        - option "w65 · admit.ts → plan.ts"
+        - option "w66 · normalize.ts → plan.ts"
+        - option "w67 · admit.ts → authorize.ts"
+        - option "w68 · instantiate.ts → assemble.ts"
+        - option "w69 · expand.ts → assemble.ts"
+        - option "w70 · expand.ts → bind.ts"
+        - option "w71 · discover.ts → match.ts"
+        - option "w72 · catalog.ts → select.ts"
+        - option "w73 · memory-store.ts → registry.ts"
+        - option "w74 · discover.ts → select.ts"
+        - option "w75 · memory-store.ts → system-clock.ts"
+    - generic [ref=e23]:
+      - checkbox "Show roads" [ref=e24]
+      - text: Show roads
+  - application [ref=e26]:
+    - generic [ref=e28]:
+      - generic:
+        - generic:
+          - group [ref=e29]:
+            - strong [ref=e31]: contract
+          - group [ref=e32]:
+            - strong [ref=e34]: contract/ports
+          - group [ref=e35]:
+            - strong [ref=e37]: contract/records
+          - group [ref=e38]:
+            - strong [ref=e40]: core
+          - group [ref=e41]:
+            - strong [ref=e43]: core/admission
+          - group [ref=e44]:
+            - strong [ref=e46]: core/discovery
+          - group [ref=e47]:
+            - strong [ref=e49]: core/expansion
+          - group [ref=e50]:
+            - strong [ref=e52]: core/validation
+          - group [ref=e53]:
+            - strong [ref=e55]: adapters
+          - group [ref=e56]:
+            - strong [ref=e58]: service
+          - group [ref=e59]:
+            - strong [ref=e61]: web
+          - group [ref=e62]:
+            - strong [ref=e64]: cli
+          - group [ref=e65]
+          - group [ref=e66]
+          - group [ref=e67]
+          - group [ref=e68]
+          - group [ref=e69]
+          - group [ref=e70]
+          - group [ref=e71]
+          - group [ref=e72]
+          - group [ref=e73]
+          - group [ref=e74]
+          - group [ref=e75]
+          - group [ref=e76]
+          - group [ref=e77]
+          - group [ref=e78]
+          - group [ref=e79]
+          - group [ref=e80]
+          - group [ref=e81]
+          - group [ref=e82]
+          - group [ref=e83]
+          - group [ref=e84]
+          - group [ref=e85]
+          - group [ref=e86]
+          - group [ref=e87]
+          - group [ref=e88]
+          - group [ref=e89]
+          - group [ref=e90]
+          - group [ref=e91]
+          - group [ref=e92]
+          - group [ref=e93]
+          - group [ref=e94]
+          - group [ref=e95]
+          - group [ref=e96]
+          - group [ref=e97]
+          - group [ref=e98]
+          - group [ref=e99]
+          - group [ref=e100]
+          - group [ref=e101]
+          - group [ref=e102]
+          - group [ref=e103]
+          - group [ref=e104]
+          - group [ref=e105]
+          - group [ref=e106]
+          - group [ref=e107]
+          - group [ref=e108]
+          - group [ref=e109]
+          - group [ref=e110]
+          - group [ref=e111]
+          - group [ref=e112]
+          - group [ref=e113]
+          - group [ref=e114]
+          - group [ref=e115]
+          - group [ref=e116]
+          - group [ref=e117]
+          - group [ref=e118]
+          - group [ref=e119]
+          - group [ref=e120]
+          - group [ref=e121]
+          - group [ref=e122]
+          - group [ref=e123]
+          - group [ref=e124]
+          - group [ref=e125]
+          - group [ref=e126]
+          - group [ref=e127]
+          - group [ref=e128]
+          - group [ref=e129]
+          - group [ref=e130]
+          - group [ref=e131]
+          - group [ref=e132]
+          - group [ref=e133]
+          - group [ref=e134]
+          - group [ref=e135]
+          - group [ref=e136]
+          - group [ref=e137]
+          - group [ref=e138]
+          - group [ref=e139]
+          - group [ref=e140]
+          - group [ref=e141]
+          - group [ref=e142]
+          - group [ref=e143]
+          - group [ref=e144]
+          - group [ref=e145]
+          - group [ref=e146]
+          - group [ref=e147]
+          - group [ref=e148]
+          - group [ref=e149]
+          - group [ref=e150]
+          - group [ref=e151]
+          - group [ref=e152]
+          - group [ref=e153]
+          - group [ref=e154]
+          - group [ref=e155]
+          - group [ref=e156]
+          - group [ref=e157]
+          - group [ref=e158]
+          - group [ref=e159]
+          - group [ref=e160]
+          - group [ref=e161]
+          - group [ref=e162]
+          - group [ref=e163]
+          - group [ref=e164]
+          - group [ref=e165]
+          - group [ref=e166]
+          - group [ref=e167]
+          - group [ref=e168]
+          - group [ref=e169]
+          - group [ref=e170]
+          - group [ref=e171]
+          - group [ref=e172]
+          - group [ref=e173]
+          - group [ref=e174]
+          - group [ref=e175]
+          - group [ref=e176]
+          - group [ref=e177]
+          - group [ref=e178]
+          - group [ref=e179]
+          - group [ref=e180]
+          - group [ref=e181]
+          - group [ref=e182]
+          - group [ref=e183]
+          - group [ref=e184]
+          - group [ref=e185]
+          - group [ref=e186]
+          - group [ref=e187]
+          - group [ref=e188]
+          - group [ref=e189]
+          - group [ref=e190]
+          - group [ref=e191]
+          - group [ref=e192]
+          - group [ref=e193]
+          - group [ref=e194]
+          - group [ref=e195]
+          - group [ref=e196]
+          - group [ref=e197]
+          - group [ref=e198]
+          - group [ref=e199]
+          - group [ref=e200]
+          - group [ref=e201]
+          - group [ref=e202]
+          - group [ref=e203]
+          - group [ref=e204]
+          - group [ref=e205]
+          - group [ref=e206]
+          - group [ref=e207]
+          - group [ref=e208]
+          - group [ref=e209]
+          - group [ref=e210]
+          - group [ref=e211]
+          - group [ref=e212]
+          - group [ref=e213]
+          - group [ref=e214]
+          - group [ref=e215]
+          - group [ref=e216]
+          - group [ref=e217]
+          - group [ref=e218]
+          - group [ref=e219]
+          - group [ref=e220]
+          - group [ref=e221]
+          - group [ref=e222]
+          - group [ref=e223]
+          - group [ref=e224]
+          - group [ref=e225]
+          - group [ref=e226]
+          - group [ref=e227]
+          - group [ref=e228]
+          - group [ref=e229]
+          - group [ref=e230]
+          - group [ref=e231]
+          - group [ref=e232]
+          - group [ref=e233]
+          - group [ref=e234]
+          - group [ref=e235]
+          - group [ref=e236]
+          - group [ref=e237]
+          - group [ref=e238]
+          - group [ref=e239]
+          - group [ref=e240]
+          - group [ref=e241]
+          - group [ref=e242]
+          - group [ref=e243]
+          - group [ref=e244]
+          - group [ref=e245]
+          - group [ref=e246]
+          - group [ref=e247]
+          - group [ref=e248]
+          - group [ref=e249]
+          - group [ref=e250]
+          - group [ref=e251]
+          - group [ref=e252]
+          - group [ref=e253]
+          - group [ref=e254]
+          - group [ref=e255]
+          - group [ref=e256]
+          - group [ref=e257]
+          - group [ref=e258]
+          - group [ref=e259]
+          - group [ref=e260]
+          - group [ref=e261]
+          - group [ref=e262]
+          - group [ref=e263]
+          - group [ref=e264]
+          - group [ref=e265]
+          - group [ref=e266]
+          - group [ref=e267]
+          - group [ref=e268]
+          - group [ref=e269]
+          - group [ref=e270]
+          - group [ref=e271]
+          - group [ref=e272]
+          - group [ref=e273]
+          - group [ref=e274]
+          - group [ref=e275]
+          - group [ref=e276]
+          - group [ref=e277]
+          - group [ref=e278]
+          - group [ref=e279]
+          - group [ref=e280]
+          - group [ref=e281]
+          - group [ref=e282]
+          - group [ref=e283]
+          - group [ref=e284]
+          - group [ref=e285]
+          - group [ref=e286]
+          - group [ref=e287]
+          - group [ref=e288]
+          - group [ref=e289]
+          - group [ref=e290]
+          - group [ref=e291]
+          - group [ref=e292]
+          - group [ref=e293]
+          - group [ref=e294]
+          - group [ref=e295]
+          - group [ref=e296]
+          - group [ref=e297]
+          - group [ref=e298]
+          - group [ref=e299]
+          - group [ref=e300]
+          - group [ref=e301]
+          - group [ref=e302]
+          - group [ref=e303]
+          - group [ref=e304]
+          - group [ref=e305]
+          - group [ref=e306]
+          - group [ref=e307]
+          - group [ref=e308]
+          - group [ref=e309]
+          - group [ref=e310]
+          - group [ref=e311]
+          - group [ref=e312]
+          - group [ref=e313]
+          - group [ref=e314]
+          - group [ref=e315]
+          - group [ref=e316]
+          - group [ref=e317]
+          - group [ref=e318]
+          - group [ref=e319]
+          - group [ref=e320]
+          - group [ref=e321]
+          - group [ref=e322]
+          - group [ref=e323]
+          - group [ref=e324]
+          - group [ref=e325]
+          - group [ref=e326]
+          - group [ref=e327]
+          - group [ref=e328]
+          - group [ref=e329]
+          - group [ref=e330]
+          - group [ref=e331]
+          - group [ref=e332]
+          - group [ref=e333]
+          - group [ref=e334]
+          - group [ref=e335]
+          - group [ref=e336]
+          - group [ref=e337]
+          - group [ref=e338]
+          - group [ref=e339]
+          - group [ref=e340]
+          - group [ref=e341]
+          - group [ref=e342]
+          - group [ref=e343]
+          - group [ref=e344]
+          - group [ref=e345]
+          - group [ref=e346]
+          - group [ref=e347]
+          - group [ref=e348]
+          - group [ref=e349]
+          - group [ref=e350]
+          - group [ref=e351]
+          - group [ref=e352]
+          - group [ref=e353]
+          - group [ref=e354]
+          - group [ref=e355]
+          - group [ref=e356]
+          - group [ref=e357]
+          - group [ref=e358]
+          - group [ref=e359]
+          - group [ref=e360]
+          - group [ref=e361]
+          - group [ref=e362]
+          - group [ref=e363]
+          - group [ref=e364]
+          - group [ref=e365]
+          - group [ref=e366]
+          - group [ref=e367]
+          - group [ref=e368]
+          - group [ref=e369]
+          - group [ref=e370]
+          - group [ref=e371]
+          - group [ref=e372]
+          - group [ref=e373]
+          - group [ref=e374]
+          - group [ref=e375]
+          - group [ref=e376]
+          - group [ref=e377]
+          - group [ref=e378]
+          - group [ref=e379]
+          - group [ref=e380]
+          - group [ref=e381]
+          - group [ref=e382]
+          - group [ref=e383]
+          - group [ref=e384]
+          - group [ref=e385]
+          - group [ref=e386]
+          - group [ref=e387]
+          - group [ref=e388]
+          - group [ref=e389]
+          - group [ref=e390]
+          - group [ref=e391]
+          - group [ref=e392]
+          - group [ref=e393]
+          - group [ref=e394]
+          - group [ref=e395]
+          - group [ref=e396]
+          - group [ref=e397]
+          - group [ref=e398]
+          - group [ref=e399]
+          - group [ref=e400]
+          - group [ref=e401]
+          - group [ref=e402]
+          - group [ref=e403]
+          - group [ref=e404]
+          - group [ref=e405]
+          - group [ref=e406]
+          - group [ref=e407]
+          - group [ref=e408]
+          - group [ref=e409]
+          - group [ref=e410]
+          - group [ref=e411]
+          - group [ref=e412]
+          - group [ref=e413]
+          - group [ref=e414]
+          - group [ref=e415]
+          - group [ref=e416]
+          - group [ref=e417]
+          - group [ref=e418]
+          - group [ref=e419]
+          - group [ref=e420]
+          - group [ref=e421]
+          - group [ref=e422]
+          - group [ref=e423]
+          - group [ref=e424]
+          - group [ref=e425]
+          - group [ref=e426]
+          - group [ref=e427]
+          - group [ref=e428]
+          - group [ref=e429]
+          - group [ref=e430]
+          - group [ref=e431]
+          - group [ref=e432]
+          - group [ref=e433]
+          - group [ref=e434]
+          - group [ref=e435]
+          - group [ref=e436]
+          - group [ref=e437]
+          - group [ref=e438]
+          - group [ref=e439]
+          - group [ref=e440]
+          - group [ref=e441]
+          - group [ref=e442]
+          - group [ref=e443]
+          - group [ref=e444]
+          - group [ref=e445]
+          - group [ref=e446]
+          - group [ref=e447]
+          - group [ref=e448]
+          - group [ref=e449]
+          - group [ref=e450]
+          - group [ref=e451]
+          - group [ref=e452]
+          - group [ref=e453]
+          - group [ref=e454]
+          - group [ref=e455]
+          - group [ref=e456]
+          - group [ref=e457]
+          - group [ref=e458]
+          - group [ref=e459]
+          - group [ref=e460]
+          - group [ref=e461]
+          - group [ref=e462]
+          - group [ref=e463]
+          - group [ref=e464]
+          - group [ref=e465]
+          - group [ref=e466]
+          - group [ref=e467]
+          - group [ref=e468]
+          - group [ref=e469]
+          - group [ref=e470]
+          - group [ref=e471]
+          - group [ref=e472]
+          - group [ref=e473]
+          - group [ref=e474]
+          - group [ref=e475]
+          - group [ref=e476]
+          - group [ref=e477]
+          - group [ref=e478]
+          - group [ref=e479]
+          - group [ref=e480]
+          - group [ref=e481]
+          - group [ref=e482]
+          - group [ref=e483]
+          - group [ref=e484]
+          - group [ref=e485]
+          - group [ref=e486]
+          - group [ref=e487]
+          - group [ref=e488]
+          - group [ref=e489]
+          - group [ref=e490]
+          - group [ref=e491]
+          - group [ref=e492]
+          - group [ref=e493]
+          - group [ref=e494]
+          - group [ref=e495]
+          - group [ref=e496]
+          - group [ref=e497]
+          - group [ref=e498]
+          - group [ref=e499]
+          - group [ref=e500]
+          - group [ref=e501]
+          - group [ref=e502]
+          - group [ref=e503]
+          - group [ref=e504]
+          - group [ref=e505]
+          - group [ref=e506]
+          - group [ref=e507]
+          - group [ref=e508]
+          - group [ref=e509]
+          - group [ref=e510]
+          - group [ref=e511]
+          - group [ref=e512]
+          - group [ref=e513]
+          - group [ref=e514]
+          - group [ref=e515]
+          - group [ref=e516]
+          - group [ref=e517]
+          - group [ref=e518]
+          - group [ref=e519]
+          - group [ref=e520]
+          - group [ref=e521]
+          - group [ref=e522]
+          - group [ref=e523]
+          - group [ref=e524]
+          - group [ref=e525]
+          - group [ref=e526]
+          - group [ref=e527]
+          - group [ref=e528]
+          - group [ref=e529]
+          - group [ref=e530]
+          - group [ref=e531]
+          - group [ref=e532]
+          - group [ref=e533]
+          - group [ref=e534]
+          - group [ref=e535]
+          - group [ref=e536]
+          - group [ref=e537]
+          - group [ref=e538]
+          - group [ref=e539]
+          - group [ref=e540]
+          - group [ref=e541]
+          - group [ref=e542]
+          - group [ref=e543]
+          - group [ref=e544]
+          - group [ref=e545]
+          - group [ref=e546]
+          - group [ref=e547]
+          - group [ref=e548]
+          - group [ref=e549]
+          - group [ref=e550]
+          - group [ref=e551]
+          - group [ref=e552]
+          - group [ref=e553]
+          - group [ref=e554]
+          - group [ref=e555]
+          - group [ref=e556]
+          - group [ref=e557]
+          - group [ref=e558]
+          - group [ref=e559]
+          - group [ref=e560]
+          - group [ref=e561]
+          - group [ref=e562]
+          - group [ref=e563]
+          - group [ref=e564]
+          - group [ref=e565]
+          - group [ref=e566]
+          - group [ref=e567]
+          - group [ref=e568]
+          - group [ref=e569]
+          - group [ref=e570]
+          - group [ref=e571]
+          - group [ref=e572]
+          - group [ref=e573]
+          - group [ref=e574]
+          - group [ref=e575]
+          - group [ref=e576]
+          - group [ref=e577]
+          - group [ref=e578]
+          - group [ref=e579]
+          - group [ref=e580]
+          - group [ref=e581]
+          - group [ref=e582]
+          - group [ref=e583]
+          - group [ref=e584]
+          - group [ref=e585]
+          - group [ref=e586]
+          - group [ref=e587]
+          - group [ref=e588]
+          - group [ref=e589]
+          - group [ref=e590]
+          - group [ref=e591]
+          - group [ref=e592]
+          - group [ref=e593]
+          - group [ref=e594]
+          - group [ref=e595]
+          - group [ref=e596]
+          - group [ref=e597]
+          - group [ref=e598]
+          - group [ref=e599]
+          - group [ref=e600]
+          - group [ref=e601]
+          - group [ref=e602]
+          - group [ref=e603]
+          - group [ref=e604]
+          - group [ref=e605]
+          - group [ref=e606]
+          - group [ref=e607]
+          - group [ref=e608]
+          - group [ref=e609]
+          - group [ref=e610]
+          - group [ref=e611]
+          - group [ref=e612]
+          - group [ref=e613]
+          - group [ref=e614]
+          - group [ref=e615]
+          - group [ref=e616]
+          - group [ref=e617]
+          - group [ref=e618]
+          - group [ref=e619]
+          - group [ref=e620]
+          - group [ref=e621]
+          - group [ref=e622]
+          - group [ref=e623]
+          - group [ref=e624]
+          - group [ref=e625]
+          - group [ref=e626]
+          - group [ref=e627]
+          - group [ref=e628]
+          - group [ref=e629]
+          - group [ref=e630]
+          - group [ref=e631]
+          - group [ref=e632]
+          - group [ref=e633]
+          - group [ref=e634]
+          - group [ref=e635]
+          - group [ref=e636]
+          - group [ref=e637]
+          - group [ref=e638]
+          - group [ref=e639]
+          - group [ref=e640]
+          - group [ref=e641]
+          - group [ref=e642]
+          - group [ref=e643]
+          - group [ref=e644]
+          - group [ref=e645]
+          - group [ref=e646]
+          - group [ref=e647]
+          - group [ref=e648]
+          - group [ref=e649]
+          - group [ref=e650]
+          - group [ref=e651]
+          - group [ref=e652]
+          - group [ref=e653]
+          - group [ref=e654]
+          - group [ref=e655]
+          - group [ref=e656]
+          - group [ref=e657]
+          - group [ref=e658]
+          - group [ref=e659]
+          - group [ref=e660]
+          - group [ref=e661]
+          - group [ref=e662]
+          - group [ref=e663]:
+            - strong [ref=e665]: kernel.ts
+          - group [ref=e666]:
+            - strong [ref=e668]: brands.ts
+          - group [ref=e669]:
+            - strong [ref=e671]: errors.ts
+          - group [ref=e672]:
+            - strong [ref=e674]: types.ts
+          - group [ref=e675]:
+            - strong [ref=e677]: api.ts
+          - group [ref=e678]:
+            - strong [ref=e680]: index.ts
+          - group [ref=e681]:
+            - strong [ref=e683]: store-port.ts
+          - group [ref=e684]:
+            - strong [ref=e686]: clock-port.ts
+          - group [ref=e687]:
+            - strong [ref=e689]: request.ts
+          - group [ref=e690]:
+            - strong [ref=e692]: receipt.ts
+          - group [ref=e693]:
+            - strong [ref=e695]: admit.ts
+          - group [ref=e696]:
+            - strong [ref=e698]: normalize.ts
+          - group [ref=e699]:
+            - strong [ref=e701]: authorize.ts
+          - group [ref=e702]:
+            - strong [ref=e704]: plan.ts
+          - group [ref=e705]:
+            - strong [ref=e707]: discover.ts
+          - group [ref=e708]:
+            - strong [ref=e710]: catalog.ts
+          - group [ref=e711]:
+            - strong [ref=e713]: match.ts
+          - group [ref=e714]:
+            - strong [ref=e716]: select.ts
+          - group [ref=e717]:
+            - strong [ref=e719]: expand.ts
+          - group [ref=e720]:
+            - strong [ref=e722]: instantiate.ts
+          - group [ref=e723]:
+            - strong [ref=e725]: bind.ts
+          - group [ref=e726]:
+            - strong [ref=e728]: assemble.ts
+          - group [ref=e729]:
+            - strong [ref=e731]: validate.ts
+          - group [ref=e732]:
+            - strong [ref=e734]: diagnose.ts
+          - group [ref=e735]:
+            - strong [ref=e737]: check.ts
+          - group [ref=e738]:
+            - strong [ref=e740]: result.ts
+          - group [ref=e741]:
+            - strong [ref=e743]: memory-store.ts
+          - group [ref=e744]:
+            - strong [ref=e746]: disk-store.ts
+          - group [ref=e747]:
+            - strong [ref=e749]: system-clock.ts
+          - group [ref=e750]:
+            - strong [ref=e752]: registry.ts
+          - group [ref=e753]:
+            - strong [ref=e755]: resource.ts
+          - group [ref=e756]:
+            - strong [ref=e758]: transaction.ts
+          - group [ref=e759]:
+            - strong [ref=e761]: endpoint.ts
+          - group [ref=e762]:
+            - strong [ref=e764]: server.ts
+          - group [ref=e765]:
+            - strong [ref=e767]: client.ts
+          - group [ref=e768]:
+            - strong [ref=e770]: presenter.ts
+          - group [ref=e771]:
+            - strong [ref=e773]: shell.ts
+          - group [ref=e774]:
+            - strong [ref=e776]: parse.ts
+          - group [ref=e777]:
+            - strong [ref=e779]: execute.ts
+          - group [ref=e780]:
+            - strong [ref=e782]: main.ts
+          - group [ref=e783]
+          - group [ref=e784]
+          - group [ref=e785]
+          - group [ref=e786]
+          - group [ref=e787]
+          - group [ref=e788]
+          - group [ref=e789]
+          - group [ref=e790]
+          - group [ref=e791]
+          - group [ref=e792]
+          - group [ref=e793]
+          - group [ref=e794]
+          - group [ref=e795]
+          - group [ref=e796]
+          - group [ref=e797]
+          - group [ref=e798]
+          - group [ref=e799]
+          - group [ref=e800]
+          - group [ref=e801]
+          - group [ref=e802]
+          - group [ref=e803]
+          - group [ref=e804]
+          - group [ref=e805]
+          - group [ref=e806]
+          - group [ref=e807]
+          - group [ref=e808]
+          - group [ref=e809]
+          - group [ref=e810]
+          - group [ref=e811]
+          - group [ref=e812]
+          - group [ref=e813]
+          - group [ref=e814]
+          - group [ref=e815]
+          - group [ref=e816]
+          - group [ref=e817]
+          - group [ref=e818]
+          - group [ref=e819]
+          - group [ref=e820]
+          - group [ref=e821]
+          - group [ref=e822]
+          - group [ref=e823]
+          - group [ref=e824]
+          - group [ref=e825]
+          - group [ref=e826]
+          - group [ref=e827]
+          - group [ref=e828]
+          - group [ref=e829]
+          - group [ref=e830]
+        - generic:
+          - img "Twelve law-routed wires":
+            - 'generic "w01: node-1 → node-2"':
+              - generic [ref=e831] [cursor=pointer]
+            - 'generic "w02: node-1 → node-3"':
+              - generic [ref=e832] [cursor=pointer]
+            - 'generic "w03: node-1 → node-4"':
+              - generic [ref=e833] [cursor=pointer]
+            - 'generic "w04: node-1 → node-5"':
+              - generic [ref=e834] [cursor=pointer]
+            - 'generic "w05: node-1 → node-7"':
+              - generic [ref=e835] [cursor=pointer]
+            - 'generic "w06: node-1 → node-9"':
+              - generic [ref=e836] [cursor=pointer]
+            - 'generic "w07: node-1 → node-11"':
+              - generic [ref=e837] [cursor=pointer]
+            - 'generic "w08: node-1 → node-15"':
+              - generic [ref=e838] [cursor=pointer]
+            - 'generic "w09: node-1 → node-19"':
+              - generic [ref=e839] [cursor=pointer]
+            - 'generic "w10: node-1 → node-23"':
+              - generic [ref=e840] [cursor=pointer]
+            - 'generic "w11: node-5 → node-6"':
+              - generic [ref=e841] [cursor=pointer]
+            - 'generic "w12: node-7 → node-6"':
+              - generic [ref=e842] [cursor=pointer]
+            - 'generic "w13: node-8 → node-6"':
+              - generic [ref=e843] [cursor=pointer]
+            - 'generic "w14: node-9 → node-6"':
+              - generic [ref=e844] [cursor=pointer]
+            - 'generic "w15: node-10 → node-6"':
+              - generic [ref=e845] [cursor=pointer]
+            - 'generic "w16: node-14 → node-6"':
+              - generic [ref=e846] [cursor=pointer]
+            - 'generic "w17: node-18 → node-6"':
+              - generic [ref=e847] [cursor=pointer]
+            - 'generic "w18: node-22 → node-6"':
+              - generic [ref=e848] [cursor=pointer]
+            - 'generic "w19: node-26 → node-6"':
+              - generic [ref=e849] [cursor=pointer]
+            - 'generic "w20: node-14 → node-15"':
+              - generic [ref=e850] [cursor=pointer]
+            - 'generic "w21: node-18 → node-19"':
+              - generic [ref=e851] [cursor=pointer]
+            - 'generic "w22: node-22 → node-23"':
+              - generic [ref=e852] [cursor=pointer]
+            - 'generic "w23: node-26 → node-27"':
+              - generic [ref=e853] [cursor=pointer]
+            - 'generic "w24: node-30 → node-31"':
+              - generic [ref=e854] [cursor=pointer]
+            - 'generic "w25: node-34 → node-35"':
+              - generic [ref=e855] [cursor=pointer]
+            - 'generic "w26: node-37 → node-38"':
+              - generic [ref=e856] [cursor=pointer]
+            - 'generic "w27: node-1 → node-31"':
+              - generic [ref=e857] [cursor=pointer]
+            - 'generic "w28: node-5 → node-35"':
+              - generic [ref=e858] [cursor=pointer]
+            - 'generic "w29: node-7 → node-38"':
+              - generic [ref=e859] [cursor=pointer]
+            - 'generic "w30: node-10 → node-40"':
+              - generic [ref=e860] [cursor=pointer]
+            - 'generic "w31: node-2 → node-3"':
+              - generic [ref=e861] [cursor=pointer]
+            - 'generic "w32: node-3 → node-4"':
+              - generic [ref=e862] [cursor=pointer]
+            - 'generic "w33: node-4 → node-5"':
+              - generic [ref=e863] [cursor=pointer]
+            - 'generic "w34: node-7 → node-8"':
+              - generic [ref=e864] [cursor=pointer]
+            - 'generic "w35: node-9 → node-10"':
+              - generic [ref=e865] [cursor=pointer]
+            - 'generic "w36: node-11 → node-12"':
+              - generic [ref=e866] [cursor=pointer]
+            - 'generic "w37: node-12 → node-13"':
+              - generic [ref=e867] [cursor=pointer]
+            - 'generic "w38: node-13 → node-14"':
+              - generic [ref=e868] [cursor=pointer]
+            - 'generic "w39: node-15 → node-16"':
+              - generic [ref=e869] [cursor=pointer]
+            - 'generic "w40: node-16 → node-17"':
+              - generic [ref=e870] [cursor=pointer]
+            - 'generic "w41: node-17 → node-18"':
+              - generic [ref=e871] [cursor=pointer]
+            - 'generic "w42: node-19 → node-20"':
+              - generic [ref=e872] [cursor=pointer]
+            - 'generic "w43: node-20 → node-21"':
+              - generic [ref=e873] [cursor=pointer]
+            - 'generic "w44: node-21 → node-22"':
+              - generic [ref=e874] [cursor=pointer]
+            - 'generic "w45: node-23 → node-24"':
+              - generic [ref=e875] [cursor=pointer]
+            - 'generic "w46: node-24 → node-25"':
+              - generic [ref=e876] [cursor=pointer]
+            - 'generic "w47: node-25 → node-26"':
+              - generic [ref=e877] [cursor=pointer]
+            - 'generic "w48: node-27 → node-28"':
+              - generic [ref=e878] [cursor=pointer]
+            - 'generic "w49: node-28 → node-29"':
+              - generic [ref=e879] [cursor=pointer]
+            - 'generic "w50: node-29 → node-30"':
+              - generic [ref=e880] [cursor=pointer]
+            - 'generic "w51: node-31 → node-32"':
+              - generic [ref=e881] [cursor=pointer]
+            - 'generic "w52: node-32 → node-33"':
+              - generic [ref=e882] [cursor=pointer]
+            - 'generic "w53: node-33 → node-34"':
+              - generic [ref=e883] [cursor=pointer]
+            - 'generic "w54: node-35 → node-36"':
+              - generic [ref=e884] [cursor=pointer]
+            - 'generic "w55: node-36 → node-37"':
+              - generic [ref=e885] [cursor=pointer]
+            - 'generic "w56: node-38 → node-39"':
+              - generic [ref=e886] [cursor=pointer]
+            - 'generic "w57: node-39 → node-40"':
+              - generic [ref=e887] [cursor=pointer]
+            - 'generic "w58: node-1 → node-6"':
+              - generic [ref=e888] [cursor=pointer]
+            - 'generic "w59: node-3 → node-5"':
+              - generic [ref=e889] [cursor=pointer]
+            - 'generic "w60: node-3 → node-6"':
+              - generic [ref=e890] [cursor=pointer]
+            - 'generic "w61: node-2 → node-4"':
+              - generic [ref=e891] [cursor=pointer]
+            - 'generic "w62: node-2 → node-5"':
+              - generic [ref=e892] [cursor=pointer]
+            - 'generic "w63: node-2 → node-6"':
+              - generic [ref=e893] [cursor=pointer]
+            - 'generic "w64: node-4 → node-6"':
+              - generic [ref=e894] [cursor=pointer]
+            - 'generic "w65: node-11 → node-14"':
+              - generic [ref=e895] [cursor=pointer]
+            - 'generic "w66: node-12 → node-14"':
+              - generic [ref=e896] [cursor=pointer]
+            - 'generic "w67: node-11 → node-13"':
+              - generic [ref=e897] [cursor=pointer]
+            - 'generic "w68: node-20 → node-22"':
+              - generic [ref=e898] [cursor=pointer]
+            - 'generic "w69: node-19 → node-22"':
+              - generic [ref=e899] [cursor=pointer]
+            - 'generic "w70: node-19 → node-21"':
+              - generic [ref=e900] [cursor=pointer]
+            - 'generic "w71: node-15 → node-17"':
+              - generic [ref=e901] [cursor=pointer]
+            - 'generic "w72: node-16 → node-18"':
+              - generic [ref=e902] [cursor=pointer]
+            - 'generic "w73: node-27 → node-30"':
+              - generic [ref=e903] [cursor=pointer]
+            - 'generic "w74: node-15 → node-18"':
+              - generic [ref=e904] [cursor=pointer]
+            - 'generic "w75: node-27 → node-29"':
+              - generic [ref=e905] [cursor=pointer]
+    - generic "Control Panel" [ref=e906]:
+      - button "Zoom In" [ref=e907] [cursor=pointer]
+      - button "Zoom Out" [ref=e910] [cursor=pointer]
+      - button "Fit View" [ref=e913] [cursor=pointer]
+    - link "React Flow attribution" [ref=e917] [cursor=pointer]:
+      - /url: https://reactflow.dev/attribution
+      - text: React Flow
+  - generic [ref=e919]: 1193 inspectable areas · 0 two-wire demonstrations
+```

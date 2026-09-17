@@ -1,0 +1,448 @@
+{
+  "ok": false,
+  "error": "Error: net membership node-3 expected spotlightDim actual spotlit",
+  "trace": [
+    {
+      "kind": "mouseover",
+      "t": 288.3000000715256,
+      "target": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "sample",
+      "t": 554.9000000953674
+    },
+    {
+      "kind": "mouseout",
+      "t": 654.4000000953674,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "schedule",
+      "t": 654.5,
+      "timer": 14,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 654.5,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 755,
+      "timer": 14
+    },
+    {
+      "kind": "commit",
+      "t": 790.1000000238419,
+      "ids": [
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 819.8000000715256,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "sample",
+      "t": 841.2000000476837
+    },
+    {
+      "kind": "sample",
+      "t": 848.3000000715256
+    },
+    {
+      "kind": "mouseout",
+      "t": 937.5,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "cancel",
+      "t": 937.6000000238419,
+      "timer": 14
+    },
+    {
+      "kind": "schedule",
+      "t": 937.6000000238419,
+      "timer": 15,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 937.6000000238419,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "fire",
+      "t": 1039.5,
+      "timer": 15
+    },
+    {
+      "kind": "commit",
+      "t": 1096.7000000476837,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 1143.7000000476837,
+      "ids": []
+    },
+    {
+      "kind": "sample",
+      "t": 1143.8000000715256
+    },
+    {
+      "kind": "sample",
+      "t": 1169.7000000476837
+    },
+    {
+      "kind": "mouseout",
+      "t": 1231.7000000476837,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 1231.7000000476837,
+      "timer": 15
+    },
+    {
+      "kind": "schedule",
+      "t": 1231.7000000476837,
+      "timer": 16,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1231.7000000476837,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "mouseout",
+      "t": 1271.1000000238419,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "cancel",
+      "t": 1271.1000000238419,
+      "timer": 16
+    },
+    {
+      "kind": "schedule",
+      "t": 1271.1000000238419,
+      "timer": 17,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1271.1000000238419,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "fire",
+      "t": 1373.9000000953674,
+      "timer": 17
+    },
+    {
+      "kind": "sample",
+      "t": 1456.5
+    },
+    {
+      "kind": "mouseout",
+      "t": 1504.7000000476837,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 1504.8000000715256,
+      "timer": 17
+    },
+    {
+      "kind": "schedule",
+      "t": 1504.8000000715256,
+      "timer": 18,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1504.9000000953674,
+      "target": "<div class=\"_node_1xy0c_184 \" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 1606.9000000953674,
+      "timer": 18
+    },
+    {
+      "kind": "commit",
+      "t": 1642.4000000953674,
+      "ids": [
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "commit",
+      "t": 1672,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01",
+        "w02",
+        "w03",
+        "w04",
+        "w05",
+        "w06",
+        "w07",
+        "w08",
+        "w09",
+        "w10",
+        "w27",
+        "w58"
+      ]
+    },
+    {
+      "kind": "mouseout",
+      "t": 1703.5,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "cancel",
+      "t": 1703.5,
+      "timer": 18
+    },
+    {
+      "kind": "schedule",
+      "t": 1703.5,
+      "timer": 19,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1703.6000000238419,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "kind": "mouseout",
+      "t": 1731.6000000238419,
+      "target": "HEADER",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "cancel",
+      "t": 1731.6000000238419,
+      "timer": 19
+    },
+    {
+      "kind": "schedule",
+      "t": 1731.6000000238419,
+      "timer": 20,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1731.6000000238419,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "HEADER",
+      "x": 429,
+      "y": 302
+    },
+    {
+      "kind": "fire",
+      "t": 1833.8000000715256,
+      "timer": 20
+    },
+    {
+      "kind": "sample",
+      "t": 1918.5
+    },
+    {
+      "kind": "mouseout",
+      "t": 1947.2000000476837,
+      "target": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "related": "<polyline class=\"_wireHit_1xy0c_454 nodrag nopan\" data-wire-hit=\"w01\" points=\"904,379 940,379 940,409 959.5,409 1039,409 1039,391 1042,391 1048,391 1048,388\"",
+      "x": 509,
+      "y": 311
+    },
+    {
+      "kind": "cancel",
+      "t": 1947.4000000953674,
+      "timer": 20
+    },
+    {
+      "kind": "schedule",
+      "t": 1947.4000000953674,
+      "timer": 21,
+      "delay": 100
+    },
+    {
+      "kind": "cancel",
+      "t": 1947.4000000953674,
+      "timer": 21
+    },
+    {
+      "kind": "schedule",
+      "t": 1947.4000000953674,
+      "timer": 22,
+      "delay": 100
+    },
+    {
+      "kind": "mouseover",
+      "t": 1947.4000000953674,
+      "target": "<polyline class=\"_wireHit_1xy0c_454 nodrag nopan\" data-wire-hit=\"w01\" points=\"904,379 940,379 940,409 959.5,409 1039,409 1039,391 1042,391 1048,391 1048,388\"",
+      "related": "<div class=\"_node_1xy0c_184 _spotlit_1xy0c_465\" data-node-id=\"node-1\"",
+      "x": 509,
+      "y": 311
+    },
+    {
+      "kind": "fire",
+      "t": 2049.4000000953674,
+      "timer": 22
+    },
+    {
+      "kind": "commit",
+      "t": 2131.600000023842,
+      "ids": [
+        "node-1",
+        "node-2",
+        "node-3",
+        "node-4",
+        "node-5",
+        "node-6",
+        "node-7",
+        "node-9",
+        "node-11",
+        "node-15",
+        "node-19",
+        "node-23",
+        "node-31",
+        "w01"
+      ]
+    },
+    {
+      "kind": "sample",
+      "t": 2132.8000000715256
+    },
+    {
+      "kind": "commit",
+      "t": 2178.2000000476837,
+      "ids": [
+        "node-1",
+        "node-2",
+        "w01"
+      ]
+    }
+  ]
+}

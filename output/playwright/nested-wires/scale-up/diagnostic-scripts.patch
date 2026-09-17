@@ -1,0 +1,155 @@
+--- /dev/null
++++ b/output/playwright/nested-wires/scale-up/probe-demand-clearance.mjs
+@@ -0,0 +1,114 @@
++/** Offline Part A feasibility probe, not a runtime layout implementation.
++ * Node owns assertion/I/O failures; rerun after correcting inputs. Writes replace
++ * diagnostic files deterministically; production geometry is never mutated.
++ */
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { createNestedRoadScene } from '../../../../capability/layout/contract/index.ts';
++
++const directory = new URL('./', import.meta.url);
++const spec = JSON.parse(readFileSync(new URL('../templates-scene/scene-spec.json', directory)));
++const scene = createNestedRoadScene({ spec });
++assert(scene.wiring.ok);
++const placement = readFileSync('capability/layout/core/prototype-nested-placement.ts', 'utf8');
++const pitch = Number(placement.match(/export const nestedLanePitch = (\d+);/)[1]);
++const stem = pitch / 4;
++const roads = new Map(scene.roads.map((road) => [road.id, road]));
++const coordinate = (road) => road.axis === 'horizontal' ? 'y' : 'x';
++const breadth = (road) => road.axis === 'horizontal' ? 'height' : 'width';
++const center = (road) => road.bounds[coordinate(road)] + road.bounds[breadth(road)] / 2;
++const dimension = { x: 'width', y: 'height' };
++const occupancyLimits = { 1: 60, 2: 65 };
++const sideRole = { top: 'entry', left: 'entry', bottom: 'exit', right: 'exit' };
++
++function compactSection(directNodeCount) {
++  return directNodeCount <= 2;
++}
++function radius(road) {
++  assert(road, 'missing demanded road');
++  const count = road.wireLaneCount;
++  assert.equal(road.bounds[breadth(road)], 2 * pitch * (count + 1));
++  return pitch * (count + 1);
++}
++function drive(owner, side) {
++  return roads.get(`drive:${owner}:${sideRole[side]}-${side}`);
++}
++function fanDepth(road) {
++  return Math.max(0, road.wireLaneCount - 0.75) * pitch;
++}
++function streetAt(streets, node, side) {
++  const axis = ['top', 'bottom'].includes(side) ? 'y' : 'x';
++  const at = node.bounds[axis] + node.bounds[dimension[axis]] / 2;
++  const sign = ['top', 'left'].includes(side) ? -1 : 1;
++  const candidates = streets.filter((road) => coordinate(road) === axis);
++  return candidates.filter((road) => sign * (center(road) - at) > 0)
++    .toSorted((a, b) => Math.abs(center(a) - at) - Math.abs(center(b) - at))[0];
++}
++function nodeDemand(streets, node) {
++  return Object.fromEntries(Object.keys(sideRole).map((side) => {
++    const street = streetAt(streets, node, side);
++    const terminal = drive(node.id, side);
++    return [side, {
++      street: street.id,
++      streetLanes: street.wireLaneCount,
++      streetRadius: radius(street),
++      terminalLanes: terminal.wireLaneCount,
++      terminalRadius: radius(terminal),
++      fanDepth: fanDepth(terminal),
++      innerClearance: radius(street) + fanDepth(terminal) + stem,
++    }];
++  }));
++}
++function empty(contentArea, width, height) {
++  return 100 * (1 - contentArea / (width * height));
++}
++function leaf(section, nodes) {
++  const streets = scene.roads.filter((road) => road.kind === 'street' && road.sectionId === section.id);
++  const demands = nodes.map((node) => nodeDemand(streets, node));
++  const first = demands[0], last = demands.at(-1);
++  const left = first.left.streetRadius + stem;
++  const right = last.right.streetRadius + stem;
++  const top = Math.max(...demands.map((d) => d.top.streetRadius)) + stem;
++  const bottom = Math.max(...demands.map((d) => d.bottom.streetRadius)) + stem;
++  const contentTop = Math.max(...demands.map((d) => d.top.innerClearance));
++  const contentBottom = Math.max(...demands.map((d) => d.bottom.innerClearance));
++  // The two proof rectangles on each side street cannot overlap. Asymmetry is
++  // derived from their demanded radii, instead of preserving the old 24-unit bias.
++  const mouthSeparation = Math.max(...['left', 'right'].map((side) =>
++    radius(drive(section.id, side)) + Math.max(...demands.map((d) => d[side].terminalRadius)) + stem));
++  const requiredTop = top + contentTop;
++  const requiredBottom = bottom + contentBottom;
++  const extra = Math.max(0, 2 * mouthSeparation - Math.abs(requiredTop - requiredBottom));
++  const topMargin = requiredTop + (requiredTop >= requiredBottom ? extra : 0);
++  const bottomMargin = requiredBottom + (requiredTop < requiredBottom ? extra : 0);
++  const width = left + right + nodes.reduce((sum, node, i) =>
++    sum + node.bounds.width + demands[i].left.innerClearance + demands[i].right.innerClearance, 0);
++  const height = Math.max(...nodes.map((n) => n.bounds.height)) + topMargin + bottomMargin;
++  const area = nodes.reduce((sum, node) => sum + node.bounds.width * node.bounds.height, 0);
++  const threshold = occupancyLimits[nodes.length];
++  return {
++    section: section.id, nodes: nodes.map((n) => n.id), demands,
++    boundaryPadding: { left, right, top, bottom }, mouthSeparation,
++    contentTop, contentBottom, topMargin, bottomMargin,
++    original: { ...section.bounds, emptyPercent: empty(area, section.bounds.width, section.bounds.height) },
++    candidate: { width, height, emptyPercent: empty(area, width, height) }, threshold,
++    occupancyPass: empty(area, width, height) <= threshold,
++  };
++}
++const enumeration = scene.sections.map((section) => {
++  const nodes = scene.nodes.filter((node) => node.sectionId === section.id);
++  return { section: section.id, directNodeCount: nodes.length, compact: compactSection(nodes.length) };
++});
++const leaves = scene.sections.filter((section) => !scene.sections.some((child) => child.parentSectionId === section.id));
++const candidates = leaves.filter((section) => compactSection(scene.nodes.filter((n) => n.sectionId === section.id).length))
++  .map((section) => leaf(section, scene.nodes.filter((n) => n.sectionId === section.id)));
++const result = {
++  policy: 'full-demand street, terminal-fan, and disjoint midpoint-mouth reservations',
++  limitation: 'Conservative sizing feasibility only; no new route projection or safety proof. Not a lower bound for other topologies.',
++  lanePitch: pitch, positiveStem: stem, enumeration, candidates,
++};
++writeFileSync(new URL('demand-clearance-probe.json', directory), JSON.stringify(result, null, 2) + '\n');
++for (const c of candidates) console.log(`${c.occupancyPass ? 'PASS' : 'FAIL'} ${c.section} nodes=${c.nodes.length} before=${c.original.emptyPercent.toFixed(4)}% candidate=${c.candidate.emptyPercent.toFixed(4)}% limit=${c.threshold}% size=${c.candidate.width}x${c.candidate.height} mouth-separation=${c.mouthSeparation}`);
++const failures = candidates.filter((c) => !c.occupancyPass);
++console.log(`RESULT ${failures.length}/${candidates.length} leaf occupancy gates fail; no candidate installed`);
++if (failures.length) process.exitCode = 1;
+--- /dev/null
++++ b/output/playwright/nested-wires/scale-up/verify-baseline-proof.mjs
+@@ -0,0 +1,35 @@
++/** Read-only M7 STOP proof. Node owns assertion/I/O errors; correct and rerun. */
++import assert from 'node:assert/strict';
++import { execFileSync } from 'node:child_process';
++import { readFileSync } from 'node:fs';
++import { runInNewContext } from 'node:vm';
++import { createNestedRoadScene, fanInHubSceneSpec } from '../../../../capability/layout/contract/index.ts';
++
++const directory = new URL('./', import.meta.url);
++const source = readFileSync(new URL('probe-demand-clearance.mjs', directory), 'utf8');
++const predicate = source.match(/function compactSection\(directNodeCount\) \{\n  return directNodeCount <= 2;\n\}/)?.[0];
++assert(predicate, 'probe predicate must depend on direct-node count alone');
++const compact = runInNewContext(predicate + '\ncompactSection');
++const nested = createNestedRoadScene({ spec: fanInHubSceneSpec });
++const rows = nested.sections.map((section) => {
++  const directNodeCount = nested.nodes.filter((node) => node.sectionId === section.id).length;
++  return { section: section.id, directNodeCount, compact: compact(directNodeCount) };
++});
++for (const row of rows) console.log('ENUMERATION ' + JSON.stringify(row));
++assert.deepEqual(rows.map((row) => row.directNodeCount), [6, 6, 6, 6]);
++assert.equal(rows.filter((row) => row.compact).length, 0);
++console.log('PASS rejected sizing-policy trigger matches zero nested sections (no runtime compact path installed)');
++function original(path) {
++  return execFileSync('git', ['show', `f77907c:${path}`], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
++}
++assert.equal(JSON.stringify(nested, null, 2) + '\n', original('output/playwright/nested-wires/scene.json'));
++console.log('PASS fresh full nested serialization byte-identical to f77907c');
++const spec = JSON.parse(readFileSync(new URL('../templates-scene/scene-spec.json', directory)));
++assert.equal(JSON.stringify(createNestedRoadScene({ spec }), null, 2) + '\n', original('output/playwright/nested-wires/templates-scene/scene.json'));
++console.log('PASS fresh full templates serialization byte-identical to f77907c');
++assert.equal(execFileSync('git', ['diff', '--name-only', 'f77907c', '--', 'capability', 'apps'], { encoding: 'utf8' }), '');
++console.log('PASS production source unchanged from f77907c');
++const tracked = execFileSync('git', ['diff', '--name-only', '--diff-filter=A', 'f77907c', '--', '*.test.ts'], { encoding: 'utf8' });
++const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '--', '*.test.ts'], { encoding: 'utf8' });
++assert.equal(tracked + untracked, '');
++console.log('PASS zero new tracked or untracked *.test.ts files');

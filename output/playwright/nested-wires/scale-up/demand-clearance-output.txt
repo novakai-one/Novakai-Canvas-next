@@ -1,0 +1,8 @@
+PASS section-2 nodes=2 before=88.9231% candidate=43.8366% limit=65% size=429x153 mouth-separation=13.5
+PASS section-3 nodes=2 before=88.9231% candidate=54.5344% limit=65% size=429x189 mouth-separation=13.5
+FAIL section-5 nodes=1 before=90.4509% candidate=65.6549% limit=60% size=267x201 mouth-separation=37.5
+FAIL section-6 nodes=1 before=90.4509% candidate=65.6549% limit=60% size=267x201 mouth-separation=37.5
+FAIL section-7 nodes=1 before=90.4509% candidate=64.3578% limit=60% size=253.5x204 mouth-separation=37.5
+FAIL section-8 nodes=2 before=88.9231% candidate=74.3358% limit=65% size=456x315 mouth-separation=19.5
+PASS section-9 nodes=1 before=90.4509% candidate=55.7811% limit=60% size=235.5x177 mouth-separation=25.5
+RESULT 4/7 leaf occupancy gates fail; no candidate installed

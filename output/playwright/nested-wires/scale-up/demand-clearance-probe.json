@@ -1,0 +1,669 @@
+{
+  "policy": "full-demand street, terminal-fan, and disjoint midpoint-mouth reservations",
+  "limitation": "Conservative sizing feasibility only; no new route projection or safety proof. Not a lower bound for other topologies.",
+  "lanePitch": 6,
+  "positiveStem": 1.5,
+  "enumeration": [
+    {
+      "section": "section-1",
+      "directNodeCount": 6,
+      "compact": false
+    },
+    {
+      "section": "section-2",
+      "directNodeCount": 2,
+      "compact": true
+    },
+    {
+      "section": "section-3",
+      "directNodeCount": 2,
+      "compact": true
+    },
+    {
+      "section": "section-4",
+      "directNodeCount": 0,
+      "compact": true
+    },
+    {
+      "section": "section-5",
+      "directNodeCount": 1,
+      "compact": true
+    },
+    {
+      "section": "section-6",
+      "directNodeCount": 1,
+      "compact": true
+    },
+    {
+      "section": "section-7",
+      "directNodeCount": 1,
+      "compact": true
+    },
+    {
+      "section": "section-8",
+      "directNodeCount": 2,
+      "compact": true
+    },
+    {
+      "section": "section-9",
+      "directNodeCount": 1,
+      "compact": true
+    }
+  ],
+  "candidates": [
+    {
+      "section": "section-2",
+      "nodes": [
+        "node-7",
+        "node-8"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-2:horizontal:432:1344",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "left": {
+            "street": "section-2:vertical:1344:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "bottom": {
+            "street": "section-2:horizontal:672:1344",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "right": {
+            "street": "section-2:vertical:1680:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          }
+        },
+        {
+          "top": {
+            "street": "section-2:horizontal:432:1344",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "left": {
+            "street": "section-2:vertical:1680:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "bottom": {
+            "street": "section-2:horizontal:672:1344",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "right": {
+            "street": "section-2:vertical:2016:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 7.5,
+        "right": 7.5,
+        "top": 7.5,
+        "bottom": 7.5
+      },
+      "mouthSeparation": 13.5,
+      "contentTop": 7.5,
+      "contentBottom": 7.5,
+      "topMargin": 42,
+      "bottomMargin": 15,
+      "original": {
+        "x": 1280,
+        "y": 320,
+        "width": 800,
+        "height": 416,
+        "emptyPercent": 88.92307692307693
+      },
+      "candidate": {
+        "width": 429,
+        "height": 153,
+        "emptyPercent": 43.83655560126149
+      },
+      "threshold": 65,
+      "occupancyPass": true
+    },
+    {
+      "section": "section-3",
+      "nodes": [
+        "node-9",
+        "node-10"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-3:horizontal:432:2288",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 13.5
+          },
+          "left": {
+            "street": "section-3:vertical:2288:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "bottom": {
+            "street": "section-3:horizontal:672:2288",
+            "streetLanes": 3,
+            "streetRadius": 24,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 25.5
+          },
+          "right": {
+            "street": "section-3:vertical:2624:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          }
+        },
+        {
+          "top": {
+            "street": "section-3:horizontal:432:2288",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 15
+          },
+          "left": {
+            "street": "section-3:vertical:2624:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "bottom": {
+            "street": "section-3:horizontal:672:2288",
+            "streetLanes": 3,
+            "streetRadius": 24,
+            "terminalLanes": 3,
+            "terminalRadius": 24,
+            "fanDepth": 13.5,
+            "innerClearance": 39
+          },
+          "right": {
+            "street": "section-3:vertical:2960:432",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 7.5,
+        "right": 7.5,
+        "top": 13.5,
+        "bottom": 25.5
+      },
+      "mouthSeparation": 13.5,
+      "contentTop": 15,
+      "contentBottom": 39,
+      "topMargin": 28.5,
+      "bottomMargin": 64.5,
+      "original": {
+        "x": 2224,
+        "y": 320,
+        "width": 800,
+        "height": 416,
+        "emptyPercent": 88.92307692307693
+      },
+      "candidate": {
+        "width": 429,
+        "height": 189,
+        "emptyPercent": 54.534354534354534
+      },
+      "threshold": 65,
+      "occupancyPass": true
+    },
+    {
+      "section": "section-5",
+      "nodes": [
+        "node-12"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-5:horizontal:1312:400",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 2,
+            "terminalRadius": 18,
+            "fanDepth": 7.5,
+            "innerClearance": 15
+          },
+          "left": {
+            "street": "section-5:vertical:400:1312",
+            "streetLanes": 2,
+            "streetRadius": 18,
+            "terminalLanes": 2,
+            "terminalRadius": 18,
+            "fanDepth": 7.5,
+            "innerClearance": 27
+          },
+          "bottom": {
+            "street": "section-5:horizontal:1552:400",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "right": {
+            "street": "section-5:vertical:736:1312",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 15
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 19.5,
+        "right": 13.5,
+        "top": 7.5,
+        "bottom": 7.5
+      },
+      "mouthSeparation": 37.5,
+      "contentTop": 15,
+      "contentBottom": 7.5,
+      "topMargin": 90,
+      "bottomMargin": 15,
+      "original": {
+        "x": 336,
+        "y": 1200,
+        "width": 464,
+        "height": 416,
+        "emptyPercent": 90.45092838196287
+      },
+      "candidate": {
+        "width": 267,
+        "height": 201,
+        "emptyPercent": 65.65487170887137
+      },
+      "threshold": 60,
+      "occupancyPass": false
+    },
+    {
+      "section": "section-6",
+      "nodes": [
+        "node-13"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-6:horizontal:1312:1008",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 9
+          },
+          "left": {
+            "street": "section-6:vertical:1008:1312",
+            "streetLanes": 2,
+            "streetRadius": 18,
+            "terminalLanes": 2,
+            "terminalRadius": 18,
+            "fanDepth": 7.5,
+            "innerClearance": 27
+          },
+          "bottom": {
+            "street": "section-6:horizontal:1552:1008",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "right": {
+            "street": "section-6:vertical:1344:1312",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 15
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 19.5,
+        "right": 13.5,
+        "top": 7.5,
+        "bottom": 7.5
+      },
+      "mouthSeparation": 37.5,
+      "contentTop": 9,
+      "contentBottom": 7.5,
+      "topMargin": 90,
+      "bottomMargin": 15,
+      "original": {
+        "x": 944,
+        "y": 1200,
+        "width": 464,
+        "height": 416,
+        "emptyPercent": 90.45092838196287
+      },
+      "candidate": {
+        "width": 267,
+        "height": 201,
+        "emptyPercent": 65.65487170887137
+      },
+      "threshold": 60,
+      "occupancyPass": false
+    },
+    {
+      "section": "section-7",
+      "nodes": [
+        "node-14"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-7:horizontal:1312:1616",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 9
+          },
+          "left": {
+            "street": "section-7:vertical:1616:1312",
+            "streetLanes": 2,
+            "streetRadius": 18,
+            "terminalLanes": 2,
+            "terminalRadius": 18,
+            "fanDepth": 7.5,
+            "innerClearance": 27
+          },
+          "bottom": {
+            "street": "section-7:horizontal:1552:1616",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 9
+          },
+          "right": {
+            "street": "section-7:vertical:1952:1312",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 19.5,
+        "right": 7.5,
+        "top": 7.5,
+        "bottom": 7.5
+      },
+      "mouthSeparation": 37.5,
+      "contentTop": 9,
+      "contentBottom": 9,
+      "topMargin": 91.5,
+      "bottomMargin": 16.5,
+      "original": {
+        "x": 1552,
+        "y": 1200,
+        "width": 464,
+        "height": 416,
+        "emptyPercent": 90.45092838196287
+      },
+      "candidate": {
+        "width": 253.5,
+        "height": 204,
+        "emptyPercent": 64.35781413156978
+      },
+      "threshold": 60,
+      "occupancyPass": false
+    },
+    {
+      "section": "section-8",
+      "nodes": [
+        "node-15",
+        "node-16"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-8:horizontal:1312:2224",
+            "streetLanes": 5,
+            "streetRadius": 36,
+            "terminalLanes": 3,
+            "terminalRadius": 24,
+            "fanDepth": 13.5,
+            "innerClearance": 51
+          },
+          "left": {
+            "street": "section-8:vertical:2224:1312",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 15
+          },
+          "bottom": {
+            "street": "section-8:horizontal:1552:2224",
+            "streetLanes": 8,
+            "streetRadius": 54,
+            "terminalLanes": 4,
+            "terminalRadius": 30,
+            "fanDepth": 19.5,
+            "innerClearance": 75
+          },
+          "right": {
+            "street": "section-8:vertical:2560:1312",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          }
+        },
+        {
+          "top": {
+            "street": "section-8:horizontal:1312:2224",
+            "streetLanes": 5,
+            "streetRadius": 36,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 39
+          },
+          "left": {
+            "street": "section-8:vertical:2560:1312",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "bottom": {
+            "street": "section-8:horizontal:1552:2224",
+            "streetLanes": 8,
+            "streetRadius": 54,
+            "terminalLanes": 4,
+            "terminalRadius": 30,
+            "fanDepth": 19.5,
+            "innerClearance": 75
+          },
+          "right": {
+            "street": "section-8:vertical:2896:1312",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 15
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 13.5,
+        "right": 13.5,
+        "top": 37.5,
+        "bottom": 55.5
+      },
+      "mouthSeparation": 19.5,
+      "contentTop": 51,
+      "contentBottom": 75,
+      "topMargin": 88.5,
+      "bottomMargin": 130.5,
+      "original": {
+        "x": 2160,
+        "y": 1200,
+        "width": 800,
+        "height": 416,
+        "emptyPercent": 88.92307692307693
+      },
+      "candidate": {
+        "width": 456,
+        "height": 315,
+        "emptyPercent": 74.3358395989975
+      },
+      "threshold": 65,
+      "occupancyPass": false
+    },
+    {
+      "section": "section-9",
+      "nodes": [
+        "node-1"
+      ],
+      "demands": [
+        {
+          "top": {
+            "street": "section-9:horizontal:2008:1480",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 2,
+            "terminalRadius": 18,
+            "fanDepth": 7.5,
+            "innerClearance": 15
+          },
+          "left": {
+            "street": "section-9:vertical:1480:2008",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "bottom": {
+            "street": "section-9:horizontal:2248:1480",
+            "streetLanes": 0,
+            "streetRadius": 6,
+            "terminalLanes": 0,
+            "terminalRadius": 6,
+            "fanDepth": 0,
+            "innerClearance": 7.5
+          },
+          "right": {
+            "street": "section-9:vertical:1816:2008",
+            "streetLanes": 1,
+            "streetRadius": 12,
+            "terminalLanes": 1,
+            "terminalRadius": 12,
+            "fanDepth": 1.5,
+            "innerClearance": 15
+          }
+        }
+      ],
+      "boundaryPadding": {
+        "left": 7.5,
+        "right": 13.5,
+        "top": 7.5,
+        "bottom": 7.5
+      },
+      "mouthSeparation": 25.5,
+      "contentTop": 15,
+      "contentBottom": 7.5,
+      "topMargin": 66,
+      "bottomMargin": 15,
+      "original": {
+        "x": 1416,
+        "y": 1896,
+        "width": 464,
+        "height": 416,
+        "emptyPercent": 90.45092838196287
+      },
+      "candidate": {
+        "width": 235.5,
+        "height": 177,
+        "emptyPercent": 55.781064449962216
+      },
+      "threshold": 60,
+      "occupancyPass": true
+    }
+  ]
+}

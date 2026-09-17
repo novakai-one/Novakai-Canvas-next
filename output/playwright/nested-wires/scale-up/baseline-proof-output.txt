@@ -1,0 +1,9 @@
+ENUMERATION {"section":"section-1","directNodeCount":6,"compact":false}
+ENUMERATION {"section":"section-2","directNodeCount":6,"compact":false}
+ENUMERATION {"section":"section-3","directNodeCount":6,"compact":false}
+ENUMERATION {"section":"section-4","directNodeCount":6,"compact":false}
+PASS rejected sizing-policy trigger matches zero nested sections (no runtime compact path installed)
+PASS fresh full nested serialization byte-identical to f77907c
+PASS fresh full templates serialization byte-identical to f77907c
+PASS production source unchanged from f77907c
+PASS zero new tracked or untracked *.test.ts files

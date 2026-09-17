@@ -630,3 +630,24 @@ lane arrows/labels; cards lack the richer imagery of the approved references.
 The shortened label does not expand the remaining names in the UI. Those names
 remain in the extraction report/source evidence. General reference parity is not
 claimed by this scoped declutter pass. Geometry work remains deferred to M7.
+
+
+## M7 — STOP during demand-derived compact sizing
+
+M7 is incomplete. The [STOP report](scale-up/stop-report.md) retains a
+reproducible demand-reservation sizing probe and its occupancy table. Four of
+seven templates leaf sections miss the target: admission/discovery 65.6549%
+empty, expansion 64.3578% (limit 60%), validation 74.3358% (limit 65%). This
+rejects that conservative policy; it does not establish general infeasibility.
+
+No runtime compaction, `?scale`, generator, or section IN-port A/B was installed.
+Parts B/C were not started after the Part A gate failed. Production and both
+canonical scenes remain byte-identical to `f77907c`; baseline templates still
+certifies 130 crossings with zero uncertified. Nested's proposed predicate
+enumeration is 6/6/6/6, zero matches. Fresh baseline checks pass 208 tests.
+
+There are no new screenshots, timing/ops/clone measurements, scale visual
+judgment, A/B recommendation, or passing interaction-regression claims. No
+browser/server was launched; port 5190 was untouched. The inherited missing
+M5 drag-runner issue remains unverified. See the report for all nine binary
+DoD statuses and command outputs.

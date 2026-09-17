@@ -21,7 +21,7 @@ def command(*args):
 
 
 OUT.mkdir(parents=True, exist_ok=True)
-command('open', 'http://127.0.0.1:5188/roads-prototype.html?nested', '--headed')
+command('open', 'http://127.0.0.1:5188/roads-prototype.html?nested')
 command('snapshot')
 source = Path(__file__).with_suffix('.mjs').read_text().replace('export async function', 'async function')
 output = command('run-code', 'async () => {\n' + source + '\nreturn verify(page);\n}')

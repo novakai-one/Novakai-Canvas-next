@@ -14,7 +14,7 @@ def command(*args):
     result = subprocess.run([str(CLI), '-s=m3-selection', *args], cwd=ROOT, text=True, capture_output=True, check=True)
     if '### Error' in result.stdout:raise RuntimeError(result.stdout)
     return result.stdout
-command('open','http://127.0.0.1:5188/roads-prototype.html?nested','--headed')
+command('open','http://127.0.0.1:5188/roads-prototype.html?nested')
 command('snapshot')
 source = (ROOT / 'apps/web/cli/verify-selection.mjs').read_text().replace('export async function','async function')
 output = command('run-code','async () => {\n'+source+'\nreturn verify(page);\n}')

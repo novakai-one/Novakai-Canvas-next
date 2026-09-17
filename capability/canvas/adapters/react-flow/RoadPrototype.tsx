@@ -1080,6 +1080,7 @@ function NestedWirePaths({
   readonly select: (id: string) => void;
 }): ReactElement {
   const midpoints = useMemo(() => wires.map(wireMidpoint), [wires]);
+  const converging = useMemo(() => convergingWireIds(wires), [wires]);
   return (
     <ViewportPortal>
       <svg className={styles.nestedWires} aria-label="Twelve law-routed wires">
@@ -1088,6 +1089,7 @@ function NestedWirePaths({
             key={wire.id}
             data-wire-id={wire.id}
             data-tone={i % 3}
+            data-converging={converging.has(wire.id)}
             className={selectionClass(wire.id, primary, secondary)}
           >
             <title>
@@ -1136,6 +1138,21 @@ function NestedWirePaths({
         ))}
       </svg>
     </ViewportPortal>
+  );
+}
+
+/** Count distinct wires per owned pin-row side or gate mouth; never infer from coordinates. */
+function wireMouths(wire: NestedWire): readonly string[] {
+  return [...new Set([wire.sourcePortId, wire.targetPortId, ...wire.gates])];
+}
+/** Paint-only membership is rebuilt from frozen input; selection never changes the grouping. */
+function convergingWireIds(wires: readonly NestedWire[]): ReadonlySet<string> {
+  const counts = new Map<string, number>();
+  wires.flatMap(wireMouths).forEach((mouth) => counts.set(mouth, (counts.get(mouth) ?? 0) + 1));
+  return new Set(
+    wires
+      .filter((wire) => wireMouths(wire).some((mouth) => (counts.get(mouth) ?? 0) >= 3))
+      .map((wire) => wire.id),
   );
 }
 

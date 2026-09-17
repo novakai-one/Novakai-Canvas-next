@@ -374,13 +374,7 @@
     overflow: visible;
     pointer-events: none;
     z-index: 5;
-    color: var(--nv-action-accent);
-  }
-  .nestedWires [data-tone='1'] {
-    color: var(--nv-text-primary);
-  }
-  .nestedWires [data-tone='2'] {
-    color: var(--nv-status-success);
+    color: var(--nv-wire-default-color);
   }
   .nestedWires marker {
     fill: currentColor;
@@ -389,13 +383,17 @@
   .nestedHalo {
     fill: none;
     stroke: currentColor;
-    stroke-width: calc(var(--nv-stroke-base) * 3);
+    stroke-width: var(--nv-wire-default-width);
     stroke-linejoin: round;
     stroke-linecap: round;
   }
   .nestedHalo {
     stroke: var(--nv-surface-raised);
-    stroke-width: calc(var(--nv-stroke-base) * 6);
+    stroke-width: var(--nv-wire-halo-width);
+  }
+  [data-converging='true'] .nestedPath {
+    stroke-width: var(--nv-wire-convergence-width);
+    opacity: var(--nv-wire-convergence-opacity);
   }
   .nestedLabel {
     transform: translateY(calc(var(--nv-space-unit) * -3));
@@ -436,7 +434,14 @@
     outline-offset: var(--nv-space-unit);
   }
   .primary .nestedPath {
-    stroke-width: calc(var(--nv-stroke-base) * 5);
+    stroke-width: var(--nv-wire-primary-width);
+    opacity: var(--nv-wire-primary-opacity);
+  }
+  .nestedWires .primary {
+    color: var(--nv-wire-primary-color);
+  }
+  .primary .nestedHalo {
+    stroke-width: var(--nv-wire-primary-halo-width);
   }
   .wireHit {
     fill: none;

@@ -1,3 +1,7 @@
+# M3 status — STOP at topology prerequisite (2026-09-17)
+
+The six requested wires are implemented in tracked source, but **DoD 3c fails: w02 and w15 share no road or driveway under the unchanged law**. All 18 routes and all three gate-sequence equalities pass. See [the blocker report](m3-blocker.md) and [actual preflight output](m3-topology-output.txt). The gate-mouth ruling is accepted; it is not the blocker. Lane/width implementation stopped as required. The metrics and artifacts below describe the historical M1.5 scene, not completed M3 evidence.
+
 # M1.5 — construction-owned routing
 
 Branch `feat/nested-wires-efficient`, based on `feat/nested-wires` / `266a96c`. No push or PR. The original Vite server remains on http://127.0.0.1:5188/roads-prototype.html?nested.

@@ -1,0 +1,24 @@
+PASS builder-only preflight: semantic order [4,2,3,1,23,24]; exactly two nodes exchange bounds; other 22 unchanged
+PASS builder-only preflight: all 26 wires route; corridors/nodeBodies/boundaries/continuity empty; deterministic build and exact round-trip
+NOTE no UI drag, selection, render timing or screenshot claim; preflight precedes interaction implementation
+MEASURE node-1 {"x":272,"y":400,"width":192,"height":96} -> {"x":272,"y":800,"width":192,"height":96}
+MEASURE node-4 {"x":272,"y":800,"width":192,"height":96} -> {"x":272,"y":400,"width":192,"height":96}
+MEASURE routing=1025; compile=20107; total=26564,44577; maxLeg=44; stages={"capacity":1,"nodes":1,"ports":1,"topology":1,"wire-registry":1,"wire:w01":1,"wire:w02":1,"wire:w03":1,"wire:w04":1,"wire:w05":1,"wire:w06":1,"wire:w07":1,"wire:w08":1,"wire:w09":1,"wire:w10":1,"wire:w11":1,"wire:w12":1,"wire:w13":1,"wire:w14":1,"wire:w15":1,"wire:w16":1,"wire:w17":1,"wire:w18":1,"wire:w19":1,"wire:w20":1,"wire:w21":1,"wire:w22":1,"wire:w23":1,"wire:w24":1,"wire:w25":1,"wire:w26":1,"lane-allocation":1,"main-roads":1,"driveways":1,"network":1,"lane-projection":1}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(compiledTotal() <= 20000)
+
+    at <anonymous> (/Users/christopherdasca/Programming/Novakai-Canvas-next-roads/output/playwright/nested-wires/count-operations.mjs:292:1) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.13.0

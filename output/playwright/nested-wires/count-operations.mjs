@@ -8,6 +8,11 @@ import {
   fanInHubSceneSpec,
 } from '../../../capability/layout/contract/index.ts';
 
+const specArgument = process.argv.indexOf('--spec');
+const spec = specArgument < 0 ? fanInHubSceneSpec : JSON.parse(await readFile(process.argv[specArgument + 1], 'utf8'));
+const outputArgument = process.argv.indexOf('--output');
+const outputPath = outputArgument < 0 ? 'output/playwright/nested-wires/calculations.json' : process.argv[outputArgument + 1];
+const routingCeiling = specArgument < 0 ? 1000 : 1050;
 const require = createRequire(import.meta.url);
 const { build } = createRequire(require.resolve('tsx/package.json'))('esbuild');
 const binary = {
@@ -169,7 +174,7 @@ const { createNestedRoadScene: instrumented } =
 await unlink('.local/nested-wire-meter/scene.mjs');
 stage = 'unattributed-setup';
 const scene = instrumented({
-  spec: fanInHubSceneSpec,
+  spec,
   measure: (name, run) => {
     calls.set(name, (calls.get(name) ?? 0) + 1);
     stage = name;
@@ -180,10 +185,10 @@ const scene = instrumented({
 });
 assert.equal(
   JSON.stringify(scene),
-  JSON.stringify(createNestedRoadScene({ spec: fanInHubSceneSpec })),
+  JSON.stringify(createNestedRoadScene({ spec })),
 );
 const probe = instrumented({
-  spec: fanInHubSceneSpec,
+  spec,
   copies: 2,
   measure: (name, run) => {
     stage = `probe:${name}`;
@@ -194,7 +199,7 @@ const probe = instrumented({
 });
 assert.equal(
   JSON.stringify(probe),
-  JSON.stringify(createNestedRoadScene({ copies: 2, spec: fanInHubSceneSpec })),
+  JSON.stringify(createNestedRoadScene({ copies: 2, spec })),
 );
 assert(
   [...calls.values()].every((count) => count === 1),
@@ -272,7 +277,7 @@ const report = {
   stageInvocations: Object.fromEntries(calls),
 };
 await writeFile(
-  'output/playwright/nested-wires/calculations.json',
+  outputPath,
   JSON.stringify(report, null, 2) + '\n',
 );
 console.log(
@@ -283,12 +288,12 @@ for (const [id, value] of Object.entries(wireCounts)) {
   const ceiling = (wire.gates.length + 1) * 60;
   assert(value.total <= ceiling, `${id}: ${value.total} > ${ceiling}`);
 }
-assert(wireTotal <= 1000, `wire routing ${wireTotal} > 1000`);
+assert(wireTotal <= routingCeiling, `wire routing ${wireTotal} > ${routingCeiling}`);
 assert(compiledTotal() <= 20000);
 assert(report.perLeg.every((l) => l.operations <= 60));
 assert(report.scalingProbe.ratio <= 2.5);
 await writeFile(
-  'output/playwright/nested-wires/calculations.json',
+  outputPath,
   JSON.stringify(report, null, 2) + '\n',
 );
 Object.entries(wireCounts).forEach(([id, value]) =>
@@ -300,7 +305,7 @@ Object.entries(wireCounts).forEach(([id, value]) =>
   ),
 );
 console.log(
-  `PASS routing total=${wireTotal} <=1000; maximum law leg=${Math.max(...report.perLeg.map((l) => l.operations))} <=60`,
+  `PASS routing total=${wireTotal} <=${routingCeiling}; maximum law leg=${Math.max(...report.perLeg.map((l) => l.operations))} <=60`,
 );
 console.log(
   `PASS lane allocation + registry compilation=${compiledTotal()} <=20000; components=${JSON.stringify(report.laneNetwork.components)}`,

@@ -1,0 +1,200 @@
+{
+  "scene": "baseline/scene.json",
+  "definitions": {
+    "wireLength": "sum over segments of |dx| + |dy| (axis-aligned Manhattan legs)",
+    "bends": "direction changes between consecutive segments of a wire",
+    "perSectionWireLength": "segment length attributed to the smallest section containing the segment midpoint (owner() rule from verify-templates-scene.mjs); \"world\" = outside all sections"
+  },
+  "wires": 29,
+  "totalWireLength": 100846,
+  "totalBends": 441,
+  "totalSegments": 652,
+  "perSectionWireLength": {
+    "world": 38884,
+    "section-1": 22784,
+    "section-2": 0,
+    "section-3": 1342,
+    "section-4": 29968,
+    "section-5": 1019,
+    "section-6": 656,
+    "section-7": 584,
+    "section-8": 5070,
+    "section-9": 539
+  },
+  "perWire": [
+    {
+      "wire": "w01",
+      "length": 7604,
+      "bends": 19,
+      "segments": 26
+    },
+    {
+      "wire": "w02",
+      "length": 757,
+      "bends": 11,
+      "segments": 14
+    },
+    {
+      "wire": "w03",
+      "length": 427,
+      "bends": 6,
+      "segments": 9
+    },
+    {
+      "wire": "w04",
+      "length": 5693,
+      "bends": 16,
+      "segments": 24
+    },
+    {
+      "wire": "w05",
+      "length": 199,
+      "bends": 4,
+      "segments": 7
+    },
+    {
+      "wire": "w06",
+      "length": 2370,
+      "bends": 12,
+      "segments": 17
+    },
+    {
+      "wire": "w07",
+      "length": 6580,
+      "bends": 25,
+      "segments": 34
+    },
+    {
+      "wire": "w08",
+      "length": 529,
+      "bends": 7,
+      "segments": 10
+    },
+    {
+      "wire": "w09",
+      "length": 5812,
+      "bends": 14,
+      "segments": 21
+    },
+    {
+      "wire": "w10",
+      "length": 3034,
+      "bends": 13,
+      "segments": 22
+    },
+    {
+      "wire": "w11",
+      "length": 2423,
+      "bends": 13,
+      "segments": 22
+    },
+    {
+      "wire": "w12",
+      "length": 2105,
+      "bends": 13,
+      "segments": 22
+    },
+    {
+      "wire": "w13",
+      "length": 6675,
+      "bends": 23,
+      "segments": 31
+    },
+    {
+      "wire": "w14",
+      "length": 6687,
+      "bends": 23,
+      "segments": 31
+    },
+    {
+      "wire": "w15",
+      "length": 3163,
+      "bends": 9,
+      "segments": 14
+    },
+    {
+      "wire": "w16",
+      "length": 3023,
+      "bends": 16,
+      "segments": 29
+    },
+    {
+      "wire": "w17",
+      "length": 6688,
+      "bends": 28,
+      "segments": 39
+    },
+    {
+      "wire": "w18",
+      "length": 4469,
+      "bends": 19,
+      "segments": 28
+    },
+    {
+      "wire": "w19",
+      "length": 3903,
+      "bends": 19,
+      "segments": 28
+    },
+    {
+      "wire": "w20",
+      "length": 3639,
+      "bends": 14,
+      "segments": 24
+    },
+    {
+      "wire": "w21",
+      "length": 4574,
+      "bends": 19,
+      "segments": 28
+    },
+    {
+      "wire": "w22",
+      "length": 2992,
+      "bends": 14,
+      "segments": 21
+    },
+    {
+      "wire": "w23",
+      "length": 2414,
+      "bends": 14,
+      "segments": 21
+    },
+    {
+      "wire": "w24",
+      "length": 1788,
+      "bends": 13,
+      "segments": 20
+    },
+    {
+      "wire": "w25",
+      "length": 4652,
+      "bends": 19,
+      "segments": 28
+    },
+    {
+      "wire": "w26",
+      "length": 3118,
+      "bends": 15,
+      "segments": 22
+    },
+    {
+      "wire": "w27",
+      "length": 2516,
+      "bends": 15,
+      "segments": 22
+    },
+    {
+      "wire": "w28",
+      "length": 1890,
+      "bends": 14,
+      "segments": 21
+    },
+    {
+      "wire": "w29",
+      "length": 1122,
+      "bends": 14,
+      "segments": 17
+    }
+  ]
+}

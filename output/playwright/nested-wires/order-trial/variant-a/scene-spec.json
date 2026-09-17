@@ -1,0 +1,359 @@
+{
+  "sections": [
+    {
+      "number": 1,
+      "nodes": [
+        {
+          "number": 6,
+          "label": "index.ts"
+        },
+        {
+          "number": 2,
+          "label": "api.ts"
+        },
+        {
+          "number": 4,
+          "label": "compose.ts"
+        },
+        {
+          "number": 3,
+          "label": "brands.ts"
+        },
+        {
+          "number": 5,
+          "label": "errors.ts"
+        },
+        {
+          "number": 11,
+          "label": "types.ts"
+        }
+      ],
+      "children": [
+        {
+          "number": 2,
+          "nodes": [
+            {
+              "number": 7,
+              "label": "codecs.ts"
+            },
+            {
+              "number": 8,
+              "label": "identity.ts"
+            }
+          ],
+          "children": []
+        },
+        {
+          "number": 3,
+          "nodes": [
+            {
+              "number": 10,
+              "label": "preset.ts"
+            },
+            {
+              "number": 9,
+              "label": "failure-source.ts"
+            }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "nodes": [],
+      "children": [
+        {
+          "number": 5,
+          "nodes": [
+            {
+              "number": 12,
+              "label": "plan.ts"
+            }
+          ],
+          "children": []
+        },
+        {
+          "number": 6,
+          "nodes": [
+            {
+              "number": 13,
+              "label": "select.ts"
+            }
+          ],
+          "children": []
+        },
+        {
+          "number": 7,
+          "nodes": [
+            {
+              "number": 14,
+              "label": "instantiate.ts"
+            }
+          ],
+          "children": []
+        },
+        {
+          "number": 8,
+          "nodes": [
+            {
+              "number": 15,
+              "label": "catalog.ts"
+            },
+            {
+              "number": 16,
+              "label": "outcomes.ts"
+            }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "nodes": [
+        {
+          "number": 1,
+          "label": "identity.ts"
+        }
+      ],
+      "children": []
+    }
+  ],
+  "requests": [
+    [
+      1,
+      4
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      3,
+      1
+    ],
+    [
+      3,
+      6
+    ],
+    [
+      3,
+      10
+    ],
+    [
+      3,
+      15
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      5,
+      1
+    ],
+    [
+      5,
+      12
+    ],
+    [
+      5,
+      13
+    ],
+    [
+      5,
+      14
+    ],
+    [
+      5,
+      15
+    ],
+    [
+      5,
+      16
+    ],
+    [
+      10,
+      2
+    ],
+    [
+      10,
+      12
+    ],
+    [
+      10,
+      15
+    ],
+    [
+      12,
+      2
+    ],
+    [
+      13,
+      2
+    ],
+    [
+      14,
+      2
+    ],
+    [
+      15,
+      2
+    ],
+    [
+      15,
+      12
+    ],
+    [
+      15,
+      13
+    ],
+    [
+      15,
+      14
+    ],
+    [
+      16,
+      2
+    ],
+    [
+      16,
+      12
+    ],
+    [
+      16,
+      13
+    ],
+    [
+      16,
+      14
+    ],
+    [
+      16,
+      15
+    ]
+  ],
+  "wires": [
+    {
+      "id": "w01",
+      "label": "createIdentity"
+    },
+    {
+      "id": "w02",
+      "label": "createTemplates"
+    },
+    {
+      "id": "w03",
+      "label": "createTemplates"
+    },
+    {
+      "id": "w04",
+      "label": "digest"
+    },
+    {
+      "id": "w05",
+      "label": "presetId + 2 more"
+    },
+    {
+      "id": "w06",
+      "label": "digest + 2 more"
+    },
+    {
+      "id": "w07",
+      "label": "digest"
+    },
+    {
+      "id": "w08",
+      "label": "composeTemplates"
+    },
+    {
+      "id": "w09",
+      "label": "fail"
+    },
+    {
+      "id": "w10",
+      "label": "fail"
+    },
+    {
+      "id": "w11",
+      "label": "fail"
+    },
+    {
+      "id": "w12",
+      "label": "fail"
+    },
+    {
+      "id": "w13",
+      "label": "fail"
+    },
+    {
+      "id": "w14",
+      "label": "fail, InputFault"
+    },
+    {
+      "id": "w15",
+      "label": "selection + 2 more"
+    },
+    {
+      "id": "w16",
+      "label": "admission + 3 more"
+    },
+    {
+      "id": "w17",
+      "label": "catalog + 2 more"
+    },
+    {
+      "id": "w18",
+      "label": "admit, plan"
+    },
+    {
+      "id": "w19",
+      "label": "select, list"
+    },
+    {
+      "id": "w20",
+      "label": "instantiate"
+    },
+    {
+      "id": "w21",
+      "label": "validateCatalog"
+    },
+    {
+      "id": "w22",
+      "label": "hashContent + 4 more"
+    },
+    {
+      "id": "w23",
+      "label": "pinOf"
+    },
+    {
+      "id": "w24",
+      "label": "exact + 2 more"
+    },
+    {
+      "id": "w25",
+      "label": "protect + 3 more"
+    },
+    {
+      "id": "w26",
+      "label": "parse + 2 more"
+    },
+    {
+      "id": "w27",
+      "label": "success"
+    },
+    {
+      "id": "w28",
+      "label": "success + 2 more"
+    },
+    {
+      "id": "w29",
+      "label": "canonical + 4 more"
+    }
+  ]
+}

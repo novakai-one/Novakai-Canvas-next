@@ -1,0 +1,4 @@
+output/playwright/nested-wires/order-trial/baseline/scene.json
+  COVERAGE {"roadArea":3074472,"uncoveredArea":0,"multiplyOwnedArea":0,"outsideRoadArea":0}
+output/playwright/nested-wires/order-trial/variant-a/scene.json
+  COVERAGE {"roadArea":3330128,"uncoveredArea":0,"multiplyOwnedArea":1240,"outsideRoadArea":0}

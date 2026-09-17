@@ -1,0 +1,13 @@
+SPEC output/playwright/nested-wires/order-trial/baseline/scene-spec.json
+ORDER output/playwright/nested-wires/order-trial/variant-a-order.json
+APPLIED section-1: [6:index.ts, 2:api.ts, 4:compose.ts, 3:brands.ts, 5:errors.ts, 11:types.ts]
+APPLIED section-2: [7:codecs.ts, 8:identity.ts]
+APPLIED section-3: [10:preset.ts, 9:failure-source.ts]
+APPLIED section-4: []
+APPLIED section-5: [12:plan.ts]
+APPLIED section-6: [13:select.ts]
+APPLIED section-7: [14:instantiate.ts]
+APPLIED section-8: [15:catalog.ts, 16:outcomes.ts]
+APPLIED section-9: [1:identity.ts]
+DETERMINISM byte-identical two builds: true (scene.json 770866 bytes)
+WROTE output/playwright/nested-wires/order-trial/variant-a/scene-spec.json and scene.json

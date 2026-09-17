@@ -122,7 +122,9 @@ function streetBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRo
     b = road.bounds;
   if (occupiedRank(t, next)) return medianBridge(t, next, road);
   const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
-  const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - nestedLanePitch / 2);
+  // Distinct destination ranks reserve nested turn rows instead of sharing the outer row.
+  const depth = (next.count - next.lane.index - 0.5) * nestedLanePitch;
+  const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - depth);
   return { from: point(t, at), to: point(next, at), roadId: road.id };
 }
 /** An inward change across an occupied destination rank needs two separate turn columns.
@@ -235,10 +237,12 @@ function joinsFor(
   wire: NestedWire,
   roads: ReadonlyMap<string, PrototypeRoad>,
   turns: ReadonlySet<string>,
+  start: PrototypePoint,
 ): readonly Connection[] {
+  const source = { from: start, to: start, roadId: travels[0]?.road.id ?? '' };
   return travels.slice(0, -1).reduce<Connection[]>((joins, t, i) => {
     const next = joined(t, travels[i + 1], wire, roads, turns);
-    return [...joins, ...next.map((c) => forwardConnection(c, t, joins.at(-1)))];
+    return [...joins, ...next.map((c) => forwardConnection(c, t, joins.at(-1) ?? source))];
   }, []);
 }
 /** A widened neighboring mouth may consume the approach: retain a positive
@@ -283,7 +287,7 @@ function projectNestedWire(
     return wire;
   const start = fan(first, source, 1),
     end = fan(last, target, -1);
-  const joins = joinsFor(travels, wire, roads, turns);
+  const joins = joinsFor(travels, wire, roads, turns, start.end);
   const middle = travels.flatMap((t, i) =>
     piece(t, i, joins, travels, [start.end, end.end], roads),
   );

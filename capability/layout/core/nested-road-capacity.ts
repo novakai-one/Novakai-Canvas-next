@@ -1,7 +1,32 @@
-import type { PrototypeRoad, PrototypeLayoutMeasure } from '../contract/records/road-prototype.js';
+import type {
+  PrototypeRoad,
+  PrototypeLayoutMeasure,
+  PrototypePortLocation,
+} from '../contract/records/road-prototype.js';
 import type { RoadContact } from './prototype-road-registry.js';
 import { axes } from './prototype-road-geometry.js';
-import { nestedLaneWidth, nestedSpacing } from './prototype-nested-placement.js';
+import { nestedLaneWidth, nestedLanePitch, nestedSpacing } from './prototype-nested-placement.js';
+
+/** Preserve the mouth and the full terminal fan even when a street consumes its approach. */
+function terminalExtent(road: PrototypeRoad, port: PrototypePortLocation): PrototypeRoad {
+  const a = axes[road.axis],
+    b = road.bounds;
+  // (count - 1) fan rows plus a quarter-pitch forward stem; gates retain their port plane.
+  const depth =
+    port.nodeId === port.sectionId
+      ? 0
+      : Math.max(0, (road.wireLaneCount ?? 0) - 0.75) * nestedLanePitch;
+  const sign = ['top', 'left'].includes(port.side) ? -1 : 1;
+  const pin = port.point[a.along],
+    fan = pin + sign * depth;
+  const start = Math.min(b[a.along], pin, fan),
+    end = Math.max(b[a.along] + b[a.length], pin, fan);
+  return { ...road, bounds: { ...b, [a.along]: start, [a.length]: end - start } };
+}
+function admitTerminal(roads: Map<string, PrototypeRoad>, port: PrototypePortLocation): void {
+  const road = roads.get(`drive:${port.portId}`);
+  if (road !== undefined) roads.set(road.id, terminalExtent(road, port));
+}
 
 function sized(road: PrototypeRoad, count: number): PrototypeRoad {
   const a = axes[road.axis],
@@ -45,12 +70,15 @@ function attachKnown(
   if (drive === undefined || street === undefined) return;
   roads.set(drive.id, attached(drive, street));
 }
-/** Final width geometry consumes demand and construction contacts; it never reruns a builder. */
+/** Final geometry consumes demand and construction contacts without rerunning a builder.
+ * Every map is invocation-local; callers own reconstruction after an interrupted build.
+ */
 export function capacityRoads(
   templates: readonly PrototypeRoad[],
   demand: ReadonlyMap<string, number>,
   contacts: readonly RoadContact[],
   measure: PrototypeLayoutMeasure,
+  ports: readonly PrototypePortLocation[],
 ) {
   const streets = measure('main-roads', () => {
     const result = new Map(
@@ -67,6 +95,7 @@ export function capacityRoads(
       .map((r) => sized(r, demand.get(r.id) ?? 0));
     const result = new Map([...streets, ...drives].map((r) => [r.id, r]));
     contacts.forEach((c) => attach(result, c));
+    ports.forEach((port) => admitTerminal(result, port));
     return result;
   });
   const finalContacts = contacts.flatMap((c) => finalContact(roads, c));

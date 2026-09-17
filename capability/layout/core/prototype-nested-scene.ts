@@ -75,7 +75,7 @@ export function createNestedRoadScene(
   const allocation = measure('lane-allocation', () =>
     allocateNestedLanes(plan.value, registry.roads),
   );
-  const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure);
+  const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure, ports);
   const network = measure('network', () => roadNetwork(final.roads, final.contacts));
   const wires = measure('lane-projection', () =>
     projectNestedWires(plan.value, allocation.byWire, final.byId),

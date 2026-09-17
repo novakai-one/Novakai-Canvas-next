@@ -26,9 +26,75 @@ function laneProperty(laneId: string | undefined) {
 function point(t: AssignedTravel, along: number): PrototypePoint {
   return t.road.axis === 'horizontal' ? { x: along, y: t.at } : { x: t.at, y: along };
 }
-function corner(t: AssignedTravel, next: AssignedTravel): Connection {
+function corner(
+  t: AssignedTravel,
+  next: AssignedTravel,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
+): Connection {
+  if (turnDirection(t, next) < 0) return leftConnection(t, next, roads, turns);
   const p = t.road.axis === 'horizontal' ? { x: next.at, y: t.at } : { x: t.at, y: next.at };
   return { from: p, to: p, roadId: next.road.id };
+}
+function center(road: PrototypeRoad): number {
+  const a = axes[road.axis];
+  return road.bounds[a.across] + road.bounds[a.breadth] / 2;
+}
+function turnKey(t: AssignedTravel, next: AssignedTravel, direction: number): string {
+  return `${t.road.axis}/${center(t.road)}/${center(next.road)}/${direction}`;
+}
+/** Separate coincident corner legs by a quarter pitch inside the junction. */
+function leftConnection(
+  t: AssignedTravel,
+  next: AssignedTravel,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
+): Connection {
+  if (turns.has(turnKey(t, next, -t.direction))) return leftCorner(t, next, roads);
+  const road = roads.get(next.road.id) ?? next.road;
+  const a = axes[t.road.axis];
+  const from = point(t, edge(road, t, 0.5));
+  const to = point(next, t.at + (next.direction * nestedLanePitch) / 4);
+  return {
+    from,
+    to,
+    roadId: road.kind === 'driveway' ? t.road.id : road.id,
+    via: [{ ...from, [a.across]: to[a.across] }],
+  };
+}
+/** Opposing left turns use nested outer channels. Entry/exit depths differ
+ * by half a pitch so adjacent approach arms cannot share a turn segment.
+ */
+function leftCorner(
+  t: AssignedTravel,
+  next: AssignedTravel,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+): Connection {
+  const incoming = roads.get(t.road.id) ?? t.road,
+    outgoing = roads.get(next.road.id) ?? next.road;
+  const from = point(t, edge(outgoing, t, t.lane.index + 0.25));
+  const to = point(
+    next,
+    edge(incoming, { ...next, direction: next.direction === 1 ? -1 : 1 }, next.lane.index + 0.75),
+  );
+  const a = axes[t.road.axis];
+  return {
+    from,
+    to,
+    roadId: outgoing.kind === 'driveway' ? incoming.id : outgoing.id,
+    via: [{ ...from, [a.across]: to[a.across] }],
+  };
+}
+function edge(
+  road: PrototypeRoad,
+  travel: Pick<AssignedTravel, 'road' | 'direction'>,
+  rank: number,
+): number {
+  const a = axes[travel.road.axis],
+    b = road.bounds;
+  return (
+    b[a.along] + b[a.length] / 2 - travel.direction * (b[a.length] / 2 - rank * nestedLanePitch)
+  );
 }
 function crossing(
   t: AssignedTravel,
@@ -93,8 +159,9 @@ function connect(
   next: AssignedTravel,
   wire: NestedWire,
   roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
 ): Connection {
-  if (t.road.axis !== next.road.axis) return corner(t, next);
+  if (t.road.axis !== next.road.axis) return corner(t, next, roads, turns);
   return bridge(t, next, wire, roads);
 }
 function fan(t: AssignedTravel, endpoint: PrototypePoint, sign: number) {
@@ -167,22 +234,46 @@ function joinsFor(
   travels: readonly AssignedTravel[],
   wire: NestedWire,
   roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
 ): readonly Connection[] {
-  return travels.slice(0, -1).flatMap((t, i) => joined(t, travels[i + 1], wire, roads));
+  return travels.slice(0, -1).reduce<Connection[]>((joins, t, i) => {
+    const next = joined(t, travels[i + 1], wire, roads, turns);
+    return [...joins, ...next.map((c) => forwardConnection(c, t, joins.at(-1)))];
+  }, []);
+}
+/** A widened neighboring mouth may consume the approach: retain a positive
+ * stem before the turn instead of backtracking to the nominal entry column.
+ */
+function forwardConnection(
+  c: Connection,
+  t: AssignedTravel,
+  previous: Connection | undefined,
+): Connection {
+  if (!previous || !c.via) return c;
+  const axis = axes[t.road.axis].along;
+  const start = previous.to[axis] + (t.direction * nestedLanePitch) / 4;
+  if (t.direction * (c.from[axis] - start) >= 0) return c;
+  return {
+    ...c,
+    from: { ...c.from, [axis]: start },
+    via: c.via.map((p) => ({ ...p, [axis]: start })),
+  };
 }
 function joined(
   t: AssignedTravel,
   next: AssignedTravel | undefined,
   wire: NestedWire,
   roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
 ): readonly Connection[] {
-  return next === undefined ? [] : [connect(t, next, wire, roads)];
+  return next === undefined ? [] : [connect(t, next, wire, roads, turns)];
 }
 /** Materialize retained assignments, never reroute. Missing plans leave the original typed failure owner intact. */
-export function projectNestedWire(
+function projectNestedWire(
   wire: NestedWire,
   travels: readonly AssignedTravel[],
   roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
 ): NestedWire {
   const first = travels[0],
     last = travels.at(-1),
@@ -192,7 +283,7 @@ export function projectNestedWire(
     return wire;
   const start = fan(first, source, 1),
     end = fan(last, target, -1);
-  const joins = joinsFor(travels, wire, roads);
+  const joins = joinsFor(travels, wire, roads, turns);
   const middle = travels.flatMap((t, i) =>
     piece(t, i, joins, travels, [start.end, end.end], roads),
   );
@@ -206,4 +297,26 @@ export function projectNestedWire(
       ...line(end.bend, end.pin, last.road.id),
     ],
   };
+}
+
+function turnDirection(t: AssignedTravel, next: AssignedTravel): number {
+  return t.direction * next.direction * (t.road.axis === 'horizontal' ? 1 : -1);
+}
+function leftKey(t: AssignedTravel, next: AssignedTravel): readonly string[] {
+  return turnDirection(t, next) < 0 ? [turnKey(t, next, t.direction)] : [];
+}
+function leftKeys(t: AssignedTravel, next: AssignedTravel | undefined): readonly string[] {
+  if (!next || t.road.axis === next.road.axis) return [];
+  return leftKey(t, next);
+}
+/** Coordinate opposing left turns from retained assignments, then project each wire once. */
+export function projectNestedWires(
+  wires: readonly NestedWire[],
+  byWire: ReadonlyMap<string, readonly AssignedTravel[]>,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+): readonly NestedWire[] {
+  const turns = new Set(
+    [...byWire.values()].flatMap((ts) => ts.flatMap((t, i) => leftKeys(t, ts[i + 1]))),
+  );
+  return wires.map((wire) => projectNestedWire(wire, byWire.get(wire.id) ?? [], roads, turns));
 }

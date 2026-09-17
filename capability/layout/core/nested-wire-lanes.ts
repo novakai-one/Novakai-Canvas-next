@@ -6,6 +6,7 @@ import type {
 import type { PrototypeRoad } from '../contract/records/road-prototype.js';
 import { axes } from './prototype-road-geometry.js';
 import { nestedLanePitch } from './prototype-nested-placement.js';
+import { laneOrder } from './nested-lane-order.js';
 
 export interface Travel {
   readonly road: PrototypeRoad;
@@ -73,10 +74,12 @@ function assign(t: Travel, index: number, count: number): AssignedTravel {
     },
   };
 }
-function assignedRoad(travels: readonly Travel[]): readonly AssignedTravel[] {
-  const sorted = travels.toSorted((a, b) => a.wireId.localeCompare(b.wireId));
+function assignedRoad(
+  travels: readonly Travel[],
+  compare: (a: Travel, b: Travel) => number,
+): readonly AssignedTravel[] {
   return [1, -1].flatMap((direction) => {
-    const group = sorted.filter((t) => t.direction === direction);
+    const group = travels.filter((t) => t.direction === direction).toSorted(compare);
     return group.map((t, index) => assign(t, index, group.length));
   });
 }
@@ -88,7 +91,8 @@ export function allocateNestedLanes(
   const travels = wires.flatMap((wire) => wireTravels(wire, roads));
   const byRoad = new Map<string, Travel[]>();
   travels.forEach((t) => addTo(byRoad, t.road.id, t));
-  const assigned = [...byRoad.values()].flatMap(assignedRoad);
+  const compare = laneOrder(wires);
+  const assigned = [...byRoad.values()].flatMap((group) => assignedRoad(group, compare));
   const byWire = new Map<string, AssignedTravel[]>();
   assigned.forEach((t) => addTo(byWire, t.wireId, t));
   byWire.forEach((ts, id) =>

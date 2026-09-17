@@ -5,7 +5,7 @@ import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-r
 import { routeNestedWires } from './nested-wire-routing.js';
 import { allocateNestedLanes } from './nested-wire-lanes.js';
 import { capacityRoads } from './nested-road-capacity.js';
-import { projectNestedWire } from './nested-lane-projection.js';
+import { projectNestedWires } from './nested-lane-projection.js';
 import type {
   PrototypeLayoutOptions,
   RoadPrototypeScene,
@@ -78,7 +78,7 @@ export function createNestedRoadScene(
   const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure);
   const network = measure('network', () => roadNetwork(final.roads, final.contacts));
   const wires = measure('lane-projection', () =>
-    plan.value.map((w) => projectNestedWire(w, allocation.byWire.get(w.id) ?? [], final.byId)),
+    projectNestedWires(plan.value, allocation.byWire, final.byId),
   );
   return {
     ...reserved,

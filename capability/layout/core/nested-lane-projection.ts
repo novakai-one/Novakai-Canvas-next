@@ -120,12 +120,23 @@ function bridge(
 function streetBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRoad): Connection {
   const a = axes[t.road.axis],
     b = road.bounds;
-  if (occupiedRank(t, next)) return medianBridge(t, next, road);
+  if ([occupiedRank(t, next), occupiedSourceRank(t, next)].some(Boolean))
+    return medianBridge(t, next, road);
   const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
   // Distinct destination ranks reserve nested turn rows instead of sharing the outer row.
   const depth = (next.count - next.lane.index - 0.5) * nestedLanePitch;
   const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - depth);
   return { from: point(t, at), to: point(next, at), roadId: road.id };
+}
+/** An outward change into an occupied source rank needs a separate through
+ * channel as well: changing at either mouth would share a neighbor's lane.
+ */
+function occupiedSourceRank(t: AssignedTravel, next: AssignedTravel): boolean {
+  return [
+    next.lane.index < t.count,
+    next.lane.index > t.lane.index,
+    t.direction === next.direction,
+  ].every(Boolean);
 }
 /** An inward change across an occupied destination rank needs two separate turn columns.
  * Allocation ranks choose this fixed median dogleg; no intersection probing or retries.

@@ -5,74 +5,7 @@
     "boundaries": [],
     "continuity": []
   },
-  "overlaps": [
-    {
-      "wires": [
-        "w31",
-        "w63"
-      ],
-      "hit": {
-        "x": 1267,
-        "y": 397,
-        "length": 36
-      },
-      "first": {
-        "from": {
-          "x": 1267,
-          "y": 397
-        },
-        "to": {
-          "x": 1360,
-          "y": 397
-        },
-        "corridorId": "section-1:vertical:1312:248"
-      },
-      "second": {
-        "from": {
-          "x": 1264,
-          "y": 397
-        },
-        "to": {
-          "x": 1303,
-          "y": 397
-        },
-        "corridorId": "section-1:vertical:1312:248"
-      }
-    },
-    {
-      "wires": [
-        "w61",
-        "w62"
-      ],
-      "hit": {
-        "x": 1135,
-        "y": 471,
-        "length": 42
-      },
-      "first": {
-        "from": {
-          "x": 1135,
-          "y": 468
-        },
-        "to": {
-          "x": 1135,
-          "y": 513
-        },
-        "corridorId": "section-1:horizontal:528:640"
-      },
-      "second": {
-        "from": {
-          "x": 1135,
-          "y": 471
-        },
-        "to": {
-          "x": 1135,
-          "y": 588
-        },
-        "corridorId": "section-1:horizontal:528:640"
-      }
-    }
-  ],
+  "overlaps": [],
   "corridorWitnesses": [],
   "boundaryWitnesses": [],
   "stages": [

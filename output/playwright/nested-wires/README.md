@@ -679,3 +679,57 @@ selection execution, screenshots, visual acceptance and Part C A/B remain
 unverified. No browser/server was launched; 5190 was untouched. There is no
 IN-port parameter or adoption. Geometry is the first observed failure at
 40/75; no measured claim about compounding toward 150/300 is available.
+
+## M7 Ruling #5 — Part B implementation
+
+The deterministic seed-7007 fixture is now installed at `?scale`: six top-level
+sections, children 2+4, 40 four-port nodes and 75 wires, provider fan-out 12,
+re-export fan-in 13, four non-adjacent long-range requests. No authored
+coordinates. `scale-scene/generate-scale-scene.mts` reproduces the semantic spec.
+
+The joined-mouth defect was an outward rank change into an occupied source
+rank. Moving that change to either mouth overlaps a departing or arriving
+neighbor. Projection now reserves the existing median through-channel for
+this symmetric case, from retained ranks, without searching or changing law.
+The full audit enumerates all contacts before asserting: **0 overlaps,
+112 certified / 0 uncertified**; contract owns 90 of those crossings.
+Full nested/templates serialization remains byte-identical to `f77907c`.
+
+| Scene | Nodes / wires | Routing ops | Registry | Lane allocation | Network | Projection | Compile sum | All layout ops | Doubled nodes + wires ratio |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Nested | 24 / 26 | 992 | 928 | 3,790 | 11,021 | 4,029 | 19,768 | 27,184 | 2.0237× |
+| Templates | 16 / 29 | 1,626 | 907 | 9,430 | 11,941 | 6,165 | 28,443 | 36,850 | 2.0171× |
+| Scale | 40 / 75 | 2,088 | 1,821 | 9,335 | 23,453 | 9,267 | 43,876 | 59,189 | 2.0110× |
+
+Road-pair discovery is zero for all three. The scale 80-node / 150-wire clone
+uses fresh IDs and 119,028 ops; every pipeline stage runs once. All stage
+counts and meter exclusions are in `scale-scene/*operations.json`. This is
+the inherited numeric-op definition, excluding multiplication/division,
+native sort internals, string comparisons and Map operations; it does not
+measure the separate coverage audit or renderer.
+
+Five scale loads were 1556.7, 1562.0, 1561.0, 1540.6, 1514.8 ms; median
+**1556.7 ms** (headless Chrome 153, 1920×1440, own server 5191). Full stage
+samples: `scale-scene/scale-browser.json`. In the third load layout was 7.8 ms,
+coverage audit 1281.2 ms and render readiness 200 ms. The unchanged selection
+body passes all assertions and every click has delta=0. The isolated wrapper
+rerun passes its inherited 300 ms ceiling at 253.7 ms; the earlier 356.7 ms
+failure is retained rather than hidden.
+
+**Does any term compound toward 150 nodes / 300 wires, and what breaks first?**
+The doubled graph's layout-op growth is within 2.5×, but that does not prove
+universal linearity. Per-road ordering sorts congested populations and follows
+memoized common paths; junction links grow with local incoming×outgoing degree.
+More importantly the browser's existing exact coverage audit constructs every
+x-cut×y-cut cell, scans roads/regions for each, and scans cells again per road:
+O(XY(R+G)). It is already the dominant measured load term at 40 nodes. Geometry
+concentration, finite pin-row capacity and overview legibility remain limits;
+150/300 is not certified by this clone. No 150-node timing is invented.
+
+**Visual limitations / scope:** hierarchy and six capability regions are visible,
+but 90 crossings in contract exceed the standing dense-map budget of six.
+The overview has tiny labels; long sibling traces remain difficult to follow.
+The twelve-section toolbar crowds the title and clips its right edge. These are
+recorded visual weaknesses, not a reference-parity claim. Compacting remains
+explicitly deferred to M7.5 under Ruling #4. Part C evaluation follows separately;
+Part B passing geometry is not a declaration that all eight DoD items are done.

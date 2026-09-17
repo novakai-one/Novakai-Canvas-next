@@ -92344,13 +92344,35 @@
             },
             "to": {
               "x": 1267,
-              "y": 397
+              "y": 394
             },
             "corridorId": "section-1:vertical:1312:248"
           },
           {
             "from": {
               "x": 1267,
+              "y": 394
+            },
+            "to": {
+              "x": 1357,
+              "y": 394
+            },
+            "corridorId": "section-1:vertical:1312:248"
+          },
+          {
+            "from": {
+              "x": 1357,
+              "y": 394
+            },
+            "to": {
+              "x": 1357,
+              "y": 397
+            },
+            "corridorId": "section-1:vertical:1312:248"
+          },
+          {
+            "from": {
+              "x": 1357,
               "y": 397
             },
             "to": {
@@ -95411,15 +95433,37 @@
               "y": 471
             },
             "to": {
-              "x": 1135,
+              "x": 1138,
               "y": 471
             },
             "corridorId": "section-1:horizontal:528:640"
           },
           {
             "from": {
-              "x": 1135,
+              "x": 1138,
               "y": 471
+            },
+            "to": {
+              "x": 1138,
+              "y": 585
+            },
+            "corridorId": "section-1:horizontal:528:640"
+          },
+          {
+            "from": {
+              "x": 1138,
+              "y": 585
+            },
+            "to": {
+              "x": 1135,
+              "y": 585
+            },
+            "corridorId": "section-1:horizontal:528:640"
+          },
+          {
+            "from": {
+              "x": 1135,
+              "y": 585
             },
             "to": {
               "x": 1135,

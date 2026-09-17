@@ -17,6 +17,7 @@ import type {
 import { createRoadPrototype } from '@novakai/canvas-canvas';
 import { createReactBindings } from '@novakai/canvas-design-system';
 import { buildTemplatesScene } from './templates-scene.js';
+import { buildScaleScene } from './scale-scene.js';
 
 declare global {
   interface Window {
@@ -86,6 +87,7 @@ function builder() {
   const parameters = new URLSearchParams(location.search);
   const choices = [
     { key: 'templates', build: buildTemplatesScene },
+    { key: 'scale', build: buildScaleScene },
     { key: 'nested', build: buildHubScene },
     { key: 'seven', build: createSevenRoadScene },
   ];

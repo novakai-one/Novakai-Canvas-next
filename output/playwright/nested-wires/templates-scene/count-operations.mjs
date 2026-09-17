@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import ts from 'typescript';
-import { createNestedRoadScene } from '../../../../capability/layout/contract/index.ts';
+import { createNestedRoadScene, fanInHubSceneSpec } from '../../../../capability/layout/contract/index.ts';
 
 const require = createRequire(import.meta.url);
 const { build } = createRequire(require.resolve('tsx/package.json'))('esbuild');
@@ -164,16 +164,25 @@ await build({
 const { createNestedRoadScene: instrumented } =
   await import('../../../../.local/nested-wire-meter/scene.mjs');
 await unlink('.local/nested-wire-meter/scene.mjs');
-const spec = JSON.parse(
-  await readFile('output/playwright/nested-wires/templates-scene/scene-spec.json', 'utf8'),
+const config = JSON.parse(process.argv[2] ?? '{}');
+const directory = config.directory ?? 'output/playwright/nested-wires/templates-scene';
+const spec = config.nested ? fanInHubSceneSpec : JSON.parse(
+  await readFile(config.specFile ?? `${directory}/scene-spec.json`, 'utf8'),
 );
+const flatten = (section) => [section, ...section.children.flatMap(flatten)];
+const sections = spec.sections.flatMap(flatten);
+const nodeCount = sections.reduce((sum, section) => sum + section.nodes.length, 0);
+const nodeStride = Math.max(...sections.flatMap((s) => s.nodes.map((n) => n.number)));
+const wireCount = spec.requests.length;
+const layoutOptions = config.layoutOptions ?? {};
 const probeSpec = {
   ...spec,
-  requests: [...spec.requests, ...spec.requests.map((pair) => pair.map((id) => id + 16))],
+  requests: [...spec.requests, ...spec.requests.map((pair) => pair.map((id) => id + nodeStride))],
 };
 function measured(spec, copies, prefix) {
   stage = `${prefix}setup`;
   return instrumented({
+    ...layoutOptions,
     spec,
     copies,
     measure: (name, run) => {
@@ -187,21 +196,21 @@ function measured(spec, copies, prefix) {
 }
 const scene = measured(spec, 1, '');
 const probe = measured(probeSpec, 2, 'probe:');
-assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene({ spec })));
+assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene({ ...layoutOptions, spec })));
 assert.equal(
   JSON.stringify(probe),
-  JSON.stringify(createNestedRoadScene({ spec: probeSpec, copies: 2 })),
+  JSON.stringify(createNestedRoadScene({ ...layoutOptions, spec: probeSpec, copies: 2 })),
 );
 assert(scene.wiring.ok && probe.wiring.ok);
-assert.equal(scene.nodes.length, 16);
-assert.equal(probe.nodes.length, 32);
-assert.equal(scene.wiring.value.length, 29);
-assert.equal(probe.wiring.value.length, 58);
-assert.equal(new Set(probe.nodes.map((n) => n.id)).size, 32);
-assert.equal(probe.sections.length, 18);
+assert.equal(scene.nodes.length, nodeCount);
+assert.equal(probe.nodes.length, nodeCount * 2);
+assert.equal(scene.wiring.value.length, wireCount);
+assert.equal(probe.wiring.value.length, wireCount * 2);
+assert.equal(new Set(probe.nodes.map((n) => n.id)).size, nodeCount * 2);
+assert.equal(probe.sections.length, sections.length * 2);
 assert.deepEqual(
-  probe.wiring.value.slice(29).map((w) => [w.from, w.to]),
-  spec.requests.map((pair) => pair.map((id) => `node-${id + 16}`)),
+  probe.wiring.value.slice(wireCount).map((w) => [w.from, w.to]),
+  spec.requests.map((pair) => pair.map((id) => `node-${id + nodeStride}`)),
 );
 assert([...calls.values()].every((n) => n === 1));
 const stageTotal = (prefix, filter) =>
@@ -235,8 +244,8 @@ const report = {
   maxLawLeg: Math.max(...perLeg.map((l) => l.operations)),
   perWireRoadPairDiscovery: 0,
   scalingProbe: {
-    nodes: [16, 32],
-    wires: [29, 58],
+    nodes: [nodeCount, nodeCount * 2],
+    wires: [wireCount, wireCount * 2],
     freshIds: true,
     totalOperations: [total, clonedTotal],
     ratio: clonedTotal / total,
@@ -245,14 +254,14 @@ const report = {
   instrumentedScenesByteIdentical: true,
 };
 await writeFile(
-  'output/playwright/nested-wires/templates-scene/operations.json',
+  `${directory}/${config.outputFile ?? 'operations.json'}`,
   JSON.stringify(report, null, 2) + '\n',
 );
 console.log(
   `MEASURE routing=${wireTotal}; maxLawLeg=${report.maxLawLeg}; compile=${report.compile.total}; stages=${JSON.stringify(report.compile.components)}; roadPairDiscovery=0`,
 );
 console.log(
-  `MEASURE 16/32 nodes, 29/58 wires: total ops=${total}/${clonedTotal}; growth=${report.scalingProbe.ratio}`,
+  `MEASURE ${nodeCount}/${nodeCount * 2} nodes, ${wireCount}/${wireCount * 2} wires: total ops=${total}/${clonedTotal}; growth=${report.scalingProbe.ratio}`,
 );
 assert(perLeg.every((l) => l.operations <= 60));
 scene.wiring.value.forEach((w) =>

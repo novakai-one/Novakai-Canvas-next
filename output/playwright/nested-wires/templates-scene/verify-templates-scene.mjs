@@ -6,11 +6,19 @@ import {
   inspectNestedWires,
 } from '../../../../capability/layout/contract/index.ts';
 
-const directory = new URL('./', import.meta.url);
-const spec = JSON.parse(readFileSync(new URL('scene-spec.json', directory), 'utf8'));
+const configuration = JSON.parse(process.argv[2] ?? '{}');
+const directory = new URL(configuration.directory ?? './', import.meta.url);
+const spec = JSON.parse(
+  readFileSync(new URL(configuration.specFile ?? 'scene-spec.json', directory), 'utf8'),
+);
+const layoutOptions = configuration.layoutOptions ?? {};
+const nodeCount = configuration.nodeCount ?? 16;
+const sectionCount = configuration.sectionCount ?? 9;
+const wireCount = configuration.wireCount ?? 29;
 const stages = [];
 const scene = createNestedRoadScene({
   spec,
+  ...layoutOptions,
   measure: (stage, run) => {
     stages.push(stage);
     return run();
@@ -31,26 +39,32 @@ const contains = (outer, inner) =>
   inner.y >= outer.y &&
   inner.x + inner.width <= outer.x + outer.width &&
   inner.y + inner.height <= outer.y + outer.height;
-check('16 nodes / 9 sections; every node and child inside its owner; finite bounds', () => {
-  assert.equal(scene.nodes.length, 16);
-  assert.equal(scene.sections.length, 9);
-  assert([...scene.nodes, ...scene.sections, ...scene.roads].every(finite));
-  scene.nodes.forEach((node) =>
-    assert(
-      contains(scene.sections.find((section) => section.id === node.sectionId).bounds, node.bounds),
-    ),
-  );
-  scene.sections
-    .filter((section) => section.parentSectionId !== null)
-    .forEach((section) =>
+check(
+  `${nodeCount} nodes / ${sectionCount} sections; every node and child inside its owner; finite bounds`,
+  () => {
+    assert.equal(scene.nodes.length, nodeCount);
+    assert.equal(scene.sections.length, sectionCount);
+    assert([...scene.nodes, ...scene.sections, ...scene.roads].every(finite));
+    scene.nodes.forEach((node) =>
       assert(
         contains(
-          scene.sections.find((parent) => parent.id === section.parentSectionId).bounds,
-          section.bounds,
+          scene.sections.find((section) => section.id === node.sectionId).bounds,
+          node.bounds,
         ),
       ),
     );
-});
+    scene.sections
+      .filter((section) => section.parentSectionId !== null)
+      .forEach((section) =>
+        assert(
+          contains(
+            scene.sections.find((parent) => parent.id === section.parentSectionId).bounds,
+            section.bounds,
+          ),
+        ),
+      );
+  },
+);
 check('minimal nested-only regression and explicit empty-section rejection', () => {
   const regression = createNestedRoadScene({
     spec: {
@@ -74,7 +88,10 @@ check('minimal nested-only regression and explicit empty-section rejection', () 
   );
 });
 check('two complete builds byte-identical; each one-way pipeline stage once', () => {
-  assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene({ spec })));
+  assert.equal(
+    JSON.stringify(scene),
+    JSON.stringify(createNestedRoadScene({ spec, ...layoutOptions })),
+  );
   assert.equal(stages.length, new Set(stages).size);
   assert.deepEqual(stages, [
     'capacity',
@@ -93,7 +110,7 @@ check('two complete builds byte-identical; each one-way pipeline stage once', ()
 console.log(`STAGES ${JSON.stringify(stages)}`);
 assert(scene.wiring.ok, JSON.stringify(scene.wiring));
 const wires = scene.wiring.value;
-check('all 29 value wires route ok:true', () => assert.equal(wires.length, 29));
+check(`all ${wireCount} value wires route ok:true`, () => assert.equal(wires.length, wireCount));
 const inspection = inspectNestedWires(scene, wires);
 console.log(`INSPECTION ${JSON.stringify(inspection)}`);
 check(
@@ -243,37 +260,35 @@ check(
   },
 );
 const hits = new Map();
+const invalidContacts = [];
+function recordContact(a, b, first, second) {
+  const hit = intersection(first, second);
+  if (!hit) return;
+  const transverse = (first.from.x === first.to.x) !== (second.from.x === second.to.x);
+  if (hit.length !== 0 || !transverse) {
+    invalidContacts.push({ wires: [a.id, b.id], hit, transverse });
+    return;
+  }
+  const registeredJunctions = scene.junctions
+    .filter((j) => containsPoint(hit, j.bounds))
+    .map((j) => j.id);
+  hits.set(`${a.id}/${b.id}/${hit.x}/${hit.y}`, {
+    wires: [a.id, b.id],
+    point: { x: hit.x, y: hit.y },
+    registeredJunctions,
+  });
+}
+pairs(wires).forEach(([a, b]) =>
+  a.segments.forEach((first) => b.segments.forEach((second) => recordContact(a, b, first, second))),
+);
 check(
   'all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction',
   () => {
-    pairs(wires).forEach(([a, b]) =>
-      a.segments.forEach((first) =>
-        b.segments.forEach((second) => {
-          const hit = intersection(first, second);
-          if (!hit) return;
-          assert.equal(hit.length, 0);
-          assert.notEqual(
-            first.from.x === first.to.x,
-            second.from.x === second.to.x,
-            `${a.id}/${b.id} parallel touch`,
-          );
-          const registeredJunctions = scene.junctions
-            .filter((j) => containsPoint(hit, j.bounds))
-            .map((j) => j.id);
-          assert(
-            registeredJunctions.length,
-            `${a.id}/${b.id} nonjunction crossing ${JSON.stringify(hit)}`,
-          );
-          hits.set(`${a.id}/${b.id}/${hit.x}/${hit.y}`, {
-            wires: [a.id, b.id],
-            point: { x: hit.x, y: hit.y },
-            registeredJunctions,
-          });
-        }),
-      ),
-    );
+    assert.deepEqual(invalidContacts, []);
+    assert([...hits.values()].every((hit) => hit.registeredJunctions.length > 0));
   },
 );
+console.log(`INVALID_CONTACTS ${JSON.stringify(invalidContacts)}`);
 function owner(point) {
   return (
     scene.sections
@@ -616,27 +631,30 @@ check('exact semantic directory tree and per-directory file order', () => {
     section.nodes.map((n) => n.label),
     section.children.map(shape),
   ];
-  assert.deepEqual(spec.sections.map(shape), [
-    [
-      1,
-      ['api.ts', 'brands.ts', 'compose.ts', 'errors.ts', 'index.ts', 'types.ts'],
+  assert.deepEqual(
+    spec.sections.map(shape),
+    configuration.expectedShape ?? [
       [
-        [2, ['codecs.ts', 'identity.ts'], []],
-        [3, ['failure-source.ts', 'preset.ts'], []],
+        1,
+        ['api.ts', 'brands.ts', 'compose.ts', 'errors.ts', 'index.ts', 'types.ts'],
+        [
+          [2, ['codecs.ts', 'identity.ts'], []],
+          [3, ['failure-source.ts', 'preset.ts'], []],
+        ],
       ],
-    ],
-    [
-      4,
-      [],
       [
-        [5, ['plan.ts'], []],
-        [6, ['select.ts'], []],
-        [7, ['instantiate.ts'], []],
-        [8, ['catalog.ts', 'outcomes.ts'], []],
+        4,
+        [],
+        [
+          [5, ['plan.ts'], []],
+          [6, ['select.ts'], []],
+          [7, ['instantiate.ts'], []],
+          [8, ['catalog.ts', 'outcomes.ts'], []],
+        ],
       ],
+      [9, ['identity.ts'], []],
     ],
-    [9, ['identity.ts'], []],
-  ]);
+  );
 });
 function gateHit(segment, port, road) {
   const a = along(road),

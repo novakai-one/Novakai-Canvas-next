@@ -1,7 +1,7 @@
 {
   "counts": {
     "world": 13,
-    "section-1": 94,
+    "section-1": 90,
     "section-2": 0,
     "section-3": 0,
     "section-4": 3,
@@ -22646,7 +22646,7 @@
         "w62"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 555
       },
       "registeredJunctions": [
@@ -23426,7 +23426,7 @@
         "w62"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 549
       },
       "registeredJunctions": [
@@ -24206,7 +24206,7 @@
         "w62"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 543
       },
       "registeredJunctions": [
@@ -24986,7 +24986,7 @@
         "w62"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 537
       },
       "registeredJunctions": [
@@ -27916,7 +27916,7 @@
         "w62"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 519
       },
       "registeredJunctions": [
@@ -28697,7 +28697,7 @@
         "w62"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 531
       },
       "registeredJunctions": [
@@ -29141,7 +29141,7 @@
         "w64"
       ],
       "point": {
-        "x": 1135,
+        "x": 1138,
         "y": 561
       },
       "registeredJunctions": [
@@ -29239,58 +29239,5 @@
       }
     }
   ],
-  "uncovered": [
-    {
-      "wires": [
-        "w31",
-        "w63"
-      ],
-      "point": {
-        "x": 1267,
-        "y": 397
-      },
-      "registeredJunctions": [
-        "junction:section-1:vertical:1312:248:drive:node-2:exit-right|junction:section-1:vertical:1312:248:drive:node-3:entry-left"
-      ]
-    },
-    {
-      "wires": [
-        "w31",
-        "w63"
-      ],
-      "point": {
-        "x": 1303,
-        "y": 397
-      },
-      "registeredJunctions": [
-        "junction:section-1:vertical:1312:248:drive:node-2:exit-right|junction:section-1:vertical:1312:248:drive:node-3:entry-left"
-      ]
-    },
-    {
-      "wires": [
-        "w61",
-        "w62"
-      ],
-      "point": {
-        "x": 1135,
-        "y": 471
-      },
-      "registeredJunctions": [
-        "junction:section-1:horizontal:528:640:drive:node-2:exit-bottom|junction:section-1:horizontal:528:640:drive:node-5:entry-top"
-      ]
-    },
-    {
-      "wires": [
-        "w61",
-        "w62"
-      ],
-      "point": {
-        "x": 1135,
-        "y": 513
-      },
-      "registeredJunctions": [
-        "junction:section-1:horizontal:528:640:drive:node-2:exit-bottom|junction:section-1:horizontal:528:640:drive:node-5:entry-top"
-      ]
-    }
-  ]
+  "uncovered": []
 }

@@ -1,0 +1,2 @@
+GENERATED seed=7007; top=6; sections=12; nodes=40; wires=75; zero coordinates
+GENERATED seed=7007; top=6; sections=12; nodes=40; wires=75; zero coordinates

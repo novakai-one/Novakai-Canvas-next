@@ -1,0 +1,4 @@
+PASS nested: full fresh scene and committed artifact byte-identical to f77907c; sha256=946bb1e9836c4242382a534ab97f4752b24d7bcc230e85be2835f720145a8e8a
+PASS templates: full fresh scene and committed artifact byte-identical to f77907c; sha256=1940f9b9619a98fd600299aac5f40376184f9d8915d04e8bcbad0b43b4743253
+PASS selection runner byte-identical; sha256=27e28c39cf1c50017483ede1954588d21e97ed4a2eadf1d01d482afdaa1eb11e
+PASS zero new tracked/untracked *.test.ts; branch feat/m7-scale

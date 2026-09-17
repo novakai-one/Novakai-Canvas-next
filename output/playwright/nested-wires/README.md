@@ -466,3 +466,24 @@ without claiming a general visual-quality PASS. M5 is absent from this branch
 invented. The detailed [second-resume report](templates-scene/resume2-report.md)
 lists every DoD result and the outstanding acceptance gates. A green suite and
 geometry certificate alone are **not** declared complete milestone acceptance.
+
+## M6.5 presentation attempt — STOP, not delivered
+
+The [M6.5 STOP report](presentation/stop-report.md) records the blocked
+compaction attempt and every DoD status. The retained 36-unit uniform-padding
+candidate reduces single-node leaf empty area from **90.4509% to 58.4416%**
+and two-node empty area from **88.9231% to 63.4286%**, but fails the unchanged
+geometry runner with **18 corridor violations, 13 boundary violations, and
+0 certified / 168 uncertified crossings**. Per-section measurements, nine
+padding probes, exact rejected geometry, and a runnable zero-match enumeration
+of `?nested` (6/6/6/6 direct nodes) are committed as diagnostic evidence.
+
+Production sources and M6 artifacts were restored to `b20053d`: the above
+reductions are **rejected candidate results**, not final behavior. Restored
+`pnpm check` passes 208 tests; nested remains byte-identical; restored templates
+certification is 130/0. New token names: **none**. Convergence treatment:
+**not implemented**. No M6.5 screenshots, new ops measurements, or selection
+runner passes are claimed. Still visually weak, per the unchanged M6 review:
+sparse panel air, small overview labels, long perimeter routes, strong default
+wires and busy convergence. No browser or server was launched; 5190 was not
+contacted. No push or PR.

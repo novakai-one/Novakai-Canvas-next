@@ -790,3 +790,19 @@ ceiling fails at **367.9 ms**. The earlier 253.7 ms PASS is retained as a prior
 sample, not substituted for the final run. DoD 6 is therefore **FAIL** in the
 final report. No threshold was loosened and no performance repair outside the
 joined-junction scope was attempted.
+
+## M7.6 — STOP before lazy audit implementation
+
+The exact operation-counter gate conflicts with the unchanged `d720e7f`
+starting revision. Fresh inherited-meter runs report nested **19,768/992/0**
+and templates **28,443/1,626/0**, each 36 compile operations above the brief's
+required **19,732/992/0** and **28,407/1,626/0**. Scale matches **43,876/2,088/0**.
+These results also match the already committed M7 evidence. See the
+[STOP report and reproduction commands](presentation/m76/stop-report.md).
+
+No runtime change was made: the coverage audit still runs eagerly before render,
+and toolbar/selector behavior is unchanged. Historical scale/templates load
+baselines remain 1,556.7/374.5 ms; there are no M7.6 after-load measurements,
+selection results, or screenshots. No browser/server was launched, no scene or
+invariant verifier was changed, and no new test file was added. Implementation
+awaits an explicit correction of the conflicting baselines or permitted scope.

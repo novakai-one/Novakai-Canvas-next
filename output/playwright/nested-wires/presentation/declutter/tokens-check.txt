@@ -1,0 +1,5 @@
+$ pnpm tokens:check
+{"ok":true,"value":{"generation":"da4fbd01e525aef8551b02ca546b26fb0cb6641d2534140a77f3633c0c5b651b","version":"1.1.0","files":[{"path":"adapters/styles/tokens.generated.css","hash":"8f68bf703316349b1c185cc5a21cc3145f8afe0e8489bcebd55a81be0eed6c55"},{"path":"adapters/styles/semantics.generated.css","hash":"a78481c736eb846a60cc15f530b84c9c0fce48df57963ed170893b444bfa5faf"},{"path":"adapters/styles/themes.generated.css","hash":"afe86fc0d893deb8b032c2eef8b040f0d8c71d5cf83d04c048b3a791890ff188"},{"path":"adapters/styles/preferences.generated.css","hash":"3cf458e8278185f831cb3825a1a9aa47b9a1ef4a916d22b61104eb9ec99b11cd"},{"path":"adapters/styles/layout.generated.css","hash":"27569ca67b877f89d59ad4248d2ec70382ad039fcfce69ce50709a4b4fdd3c18"},{"path":"contract/generated/token-names.ts","hash":"49d9f385d03bef48402b0241b298f3bf4e9c2263663a129ce33b95feeb0ab422"},{"path":"contract/generated/breakpoints.ts","hash":"4dbecc2053787669535f22975cd45b51664fae9765432b209f8369f63bdad754"}]}}
+$ node --import tsx capability/design-system/cli/build-tokens.ts --check
+
+exit 0

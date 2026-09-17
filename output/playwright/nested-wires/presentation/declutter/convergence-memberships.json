@@ -1,0 +1,190 @@
+{
+  "templates": {
+    "groups": {
+      "section-1:entry-left": [
+        "w01",
+        "w18",
+        "w19",
+        "w20",
+        "w21",
+        "w25"
+      ],
+      "node-3:exit-right": [
+        "w04",
+        "w06",
+        "w07"
+      ],
+      "section-1:exit-bottom": [
+        "w04",
+        "w07",
+        "w09",
+        "w10",
+        "w11",
+        "w12",
+        "w13",
+        "w14",
+        "w16",
+        "w17"
+      ],
+      "node-15:entry-top": [
+        "w07",
+        "w13",
+        "w17"
+      ],
+      "section-4:entry-left": [
+        "w07",
+        "w13",
+        "w14",
+        "w17"
+      ],
+      "section-8:entry-top": [
+        "w07",
+        "w13",
+        "w14",
+        "w17"
+      ],
+      "node-5:exit-bottom": [
+        "w09",
+        "w10",
+        "w11",
+        "w12",
+        "w13",
+        "w14"
+      ],
+      "section-4:entry-top": [
+        "w10",
+        "w11",
+        "w12",
+        "w16"
+      ],
+      "node-10:exit-bottom": [
+        "w15",
+        "w16",
+        "w17"
+      ],
+      "node-2:entry-left": [
+        "w15",
+        "w18",
+        "w19",
+        "w20",
+        "w21",
+        "w25"
+      ],
+      "section-3:exit-bottom": [
+        "w15",
+        "w16",
+        "w17"
+      ],
+      "section-4:exit-bottom": [
+        "w18",
+        "w19",
+        "w20",
+        "w21",
+        "w25"
+      ],
+      "node-15:exit-bottom": [
+        "w21",
+        "w22",
+        "w23",
+        "w24"
+      ],
+      "section-8:exit-bottom": [
+        "w21",
+        "w22",
+        "w23",
+        "w24",
+        "w25",
+        "w26",
+        "w27",
+        "w28"
+      ],
+      "node-16:exit-bottom": [
+        "w25",
+        "w26",
+        "w27",
+        "w28"
+      ]
+    },
+    "wires": [
+      "w01",
+      "w04",
+      "w06",
+      "w07",
+      "w09",
+      "w10",
+      "w11",
+      "w12",
+      "w13",
+      "w14",
+      "w15",
+      "w16",
+      "w17",
+      "w18",
+      "w19",
+      "w20",
+      "w21",
+      "w22",
+      "w23",
+      "w24",
+      "w25",
+      "w26",
+      "w27",
+      "w28"
+    ]
+  },
+  "nested": {
+    "groups": {
+      "section-2:entry-top": [
+        "w09",
+        "w12",
+        "w18"
+      ],
+      "section-2:exit-bottom": [
+        "w10",
+        "w16",
+        "w22"
+      ],
+      "section-1:exit-bottom": [
+        "w10",
+        "w16",
+        "w26"
+      ],
+      "section-4:entry-top": [
+        "w10",
+        "w16",
+        "w26"
+      ],
+      "section-3:exit-right": [
+        "w11",
+        "w17",
+        "w23"
+      ],
+      "section-1:entry-left": [
+        "w12",
+        "w18",
+        "w23"
+      ],
+      "node-23:entry-left": [
+        "w20",
+        "w21",
+        "w22",
+        "w24"
+      ]
+    },
+    "wires": [
+      "w09",
+      "w10",
+      "w11",
+      "w12",
+      "w16",
+      "w17",
+      "w18",
+      "w20",
+      "w21",
+      "w22",
+      "w23",
+      "w24",
+      "w26"
+    ]
+  }
+}

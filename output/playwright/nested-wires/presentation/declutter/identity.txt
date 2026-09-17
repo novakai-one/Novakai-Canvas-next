@@ -1,0 +1,8 @@
+$ node --import tsx output/playwright/nested-wires/presentation/declutter/verify-identity.mjs
+PASS templates from label-extended spec (no output exclusion): fresh public builder byte-identical to M6 b20053d; sha256=1940f9b9619a98fd600299aac5f40376184f9d8915d04e8bcbad0b43b4743253
+PASS nested (no exclusion): fresh public builder byte-identical to M6 b20053d; sha256=946bb1e9836c4242382a534ab97f4752b24d7bcc230e85be2835f720145a8e8a
+PASS templates host: every field equals M6 host output after deleting ONLY wiring.value[*].label; M6 directory captions retained
+PASS catalog.ts -> plan.ts w22: hashContent, validateCatalog, checkPayload, key, pinOf => hashContent + 4 more
+PASS layout core and inherited selection runner unchanged; zero new *.test.ts files
+
+exit 0

@@ -1,0 +1,18 @@
+identity: exit 0
+templates-invariants: exit 0
+verify-nested-wires: exit 0
+verify-invariants: exit 0
+verify-m3-topology: exit 0
+verify-m45-pins: exit 0
+verify-m45-geometry: exit 0
+verify-structural-identity: exit 0
+verify-lanes: exit 0
+verify-static: exit 0
+verify-oracle: exit 0
+verify-m45-topological-bound: exit 0
+verify-m45-evidence: exit 0
+templates-ops-output: exit 0
+PASS templates: every ops field equals M6 exactly
+nested-ops-output: exit 0
+PASS nested: every ops field equals M6 exactly
+tokens-check: exit 0

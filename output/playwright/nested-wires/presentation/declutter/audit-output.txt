@@ -1,0 +1,10 @@
+PASS extractor: two reruns reproduce extended spec/report byte-for-byte; 16 nodes / 9 sections / 29 wires
+SPEC sha256=ab6240399d414015cf8c5c51294f5d1e23cc2c5cf40c91fc14352b08d5cf974c
+PASS templates-roads-off.png: 1920x1440
+PASS templates-roads-on.png: 1920x1440
+PASS templates-contract-detail.png: 1920x1440
+PASS nested-roads-off.png: 1920x1440
+PASS selection-wire-label.png: 1920x1440
+PASS approved references, M6.5a tokens, layout core, selection runner, styling/STOP evidence unchanged
+PASS inherited selection: layout=1 -> 1; median=267.89999997615814 ms
+PASS branch feat/m65b-declutter

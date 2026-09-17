@@ -575,3 +575,58 @@ the fit overview still needs reading zoom to trace tiny endpoints. The broad
 AWS/Docker reference density/polish bar is not claimed met by this styling pass.
 [Personal visual review](presentation/styling/visual-review.md) distinguishes the
 verified paint improvement from these frozen geometry and presentation limits.
+
+## M6.5b — declutter and imported-name labels (zero geometry)
+
+On `feat/m65b-declutter`, node port circles and their IN/OUT text, plus section
+boundary IN/OUT badges, are hidden with `visibility: hidden`. Their existing DOM
+rectangles remain for frozen geometry/selection comparisons; hidden buttons are
+not painted, focusable or pointer targets. Section description spans and node
+“Owns 4 ports” subtitles are removed. Sections show their directory name only;
+nodes show their file name only. The global scene-count toolbar is unchanged.
+No Design System wire token, node size, routing, pin, gate, lane or camera rule changed.
+
+The extractor now emits `wires: [{ id, label }]` beside the unchanged `sections`
+and `requests` in the committed templates `scene-spec.json`. Each wire’s label
+uses exact imported **value** names in declaration/specifier order, deduplicated
+across declarations for that provider/consumer pair. Type-only names are excluded.
+For one or two names, join with `, `; for more, use `first + N more`, where N is
+the number of remaining names. Named aliases use the provider’s imported name.
+For example: `createIdentity`, `fail, InputFault`, and `hashContent + 4 more`.
+The last is catalog.ts → plan.ts (`w22`): `hashContent`, `validateCatalog`,
+`checkPayload`, `key`, `pinOf`.
+
+The templates host attaches these optional `NestedWire.label` values **after**
+layout completes. The renderer reads `wire.label ?? wire.id` only for the existing
+primary-selected label. Default and secondary labels remain hidden; the synthetic
+nested scene still displays IDs such as `w06`. Layout never consumes the metadata.
+
+[Complete nine-item verification report](presentation/declutter/report.md),
+[source review](presentation/declutter/source-review.md), and
+[personal visual review](presentation/declutter/visual-review.md).
+The fresh label-extended spec builds byte-identical public Layout output to M6.
+The decorated host output equals M6 after deleting only `wiring.value[*].label`;
+existing M6 directory captions are included on both sides. Exact compile/routing/
+discovery counts remain templates **28,407 / 1,626 / 0**, nested **19,732 / 992 / 0**.
+
+Reproduce offline checks:
+
+```sh
+node --import tsx output/playwright/nested-wires/templates-scene/extract-scene.mts
+python3 output/playwright/nested-wires/presentation/declutter/verify-offline.py
+pnpm check
+```
+
+For headless browser evidence, run an owned Vite server on **5191**, then
+`python3 output/playwright/nested-wires/presentation/declutter/verify-browser.py`.
+The wrapper adapts only the inherited selection runner’s URL and screenshot
+transport. `verify-audit.py` checks reproducibility, PNG dimensions and frozen
+artifacts. All five requested 1920×1440 captures are in `presentation/declutter/`.
+
+Remaining weaknesses: sparse child panels still exceed the general <=40% empty
+area benchmark; overview text and the selected label remain small; long perimeter
+routes and certified crossing density remain; roads-on is a diagnostic view with
+lane arrows/labels; cards lack the richer imagery of the approved references.
+The shortened label does not expand the remaining names in the UI. Those names
+remain in the extraction report/source evidence. General reference parity is not
+claimed by this scoped declutter pass. Geometry work remains deferred to M7.

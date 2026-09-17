@@ -1,0 +1,1939 @@
+### Page
+- Page URL: http://127.0.0.1:5191/roads-prototype.html?templates
+- Page Title: Roads · Directional proof
+### Snapshot
+```yaml
+- main [ref=f1e3]:
+  - generic [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - paragraph [ref=f1e6]: ROAD LAYOUT · DIRECTIONAL LANES
+      - heading "16 nodes · 9 sections · 29 wires" [level=1] [ref=f1e7]
+    - generic [ref=f1e8]:
+      - button "Overview" [ref=f1e9] [cursor=pointer]
+      - button "contract" [ref=f1e10] [cursor=pointer]
+      - button "contract/ports" [ref=f1e11] [cursor=pointer]
+      - button "contract/records" [ref=f1e12] [cursor=pointer]
+      - button "core" [ref=f1e13] [cursor=pointer]
+      - button "core/admission" [ref=f1e14] [cursor=pointer]
+      - button "core/discovery" [ref=f1e15] [cursor=pointer]
+      - button "core/expansion" [ref=f1e16] [cursor=pointer]
+      - button "core/validation" [ref=f1e17] [cursor=pointer]
+      - button "adapters" [ref=f1e18] [cursor=pointer]
+      - combobox "Wire focus" [ref=f1e19]:
+        - option "All 29 wires" [selected]
+        - option "w01 · node-1 → node-4"
+        - option "w02 · node-2 → node-4"
+        - option "w03 · node-2 → node-6"
+        - option "w04 · node-3 → node-1"
+        - option "w05 · node-3 → node-6"
+        - option "w06 · node-3 → node-10"
+        - option "w07 · node-3 → node-15"
+        - option "w08 · node-4 → node-6"
+        - option "w09 · node-5 → node-1"
+        - option "w10 · node-5 → node-12"
+        - option "w11 · node-5 → node-13"
+        - option "w12 · node-5 → node-14"
+        - option "w13 · node-5 → node-15"
+        - option "w14 · node-5 → node-16"
+        - option "w15 · node-10 → node-2"
+        - option "w16 · node-10 → node-12"
+        - option "w17 · node-10 → node-15"
+        - option "w18 · node-12 → node-2"
+        - option "w19 · node-13 → node-2"
+        - option "w20 · node-14 → node-2"
+        - option "w21 · node-15 → node-2"
+        - option "w22 · node-15 → node-12"
+        - option "w23 · node-15 → node-13"
+        - option "w24 · node-15 → node-14"
+        - option "w25 · node-16 → node-2"
+        - option "w26 · node-16 → node-12"
+        - option "w27 · node-16 → node-13"
+        - option "w28 · node-16 → node-14"
+        - option "w29 · node-16 → node-15"
+    - generic [ref=f1e20]:
+      - checkbox "Show roads" [checked] [ref=f1e21]
+      - text: Show roads
+  - application [ref=f1e23]:
+    - generic [ref=f1e25]:
+      - generic:
+        - generic:
+          - group [ref=f1e26]:
+            - strong [ref=f1e28]: contract
+          - group [ref=f1e29]:
+            - strong [ref=f1e31]: contract/ports
+          - group [ref=f1e32]:
+            - strong [ref=f1e34]: contract/records
+          - group [ref=f1e35]:
+            - strong [ref=f1e37]: core
+          - group [ref=f1e38]:
+            - strong [ref=f1e40]: core/admission
+          - group [ref=f1e41]:
+            - strong [ref=f1e43]: core/discovery
+          - group [ref=f1e44]:
+            - strong [ref=f1e46]: core/expansion
+          - group [ref=f1e47]:
+            - strong [ref=f1e49]: core/validation
+          - group [ref=f1e50]:
+            - strong [ref=f1e52]: adapters
+          - group [ref=f1e53]:
+            - generic "world:horizontal:64:64 · 3258 × 12" [ref=f1e54]:
+              - button "Inspect left lane on world:horizontal:64:64" [ref=f1e55] [cursor=pointer]:
+                - generic [ref=f1e56]: ←
+              - button "Inspect right lane on world:horizontal:64:64" [ref=f1e57] [cursor=pointer]:
+                - generic [ref=f1e58]: →
+              - button "Inspect left lane on world:horizontal:64:64" [ref=f1e59] [cursor=pointer]:
+                - generic [ref=f1e60]: ←
+              - button "Inspect right lane on world:horizontal:64:64" [ref=f1e61] [cursor=pointer]:
+                - generic [ref=f1e62]: →
+          - group [ref=f1e63]:
+            - generic "world:horizontal:944:64 · 3258 × 96" [ref=f1e64]:
+              - button "Inspect left lane on world:horizontal:944:64" [ref=f1e65] [cursor=pointer]:
+                - generic [ref=f1e66]: ←
+              - button "Inspect right lane on world:horizontal:944:64" [ref=f1e67] [cursor=pointer]:
+                - generic [ref=f1e68]: →
+              - button "Inspect left lane on world:horizontal:944:64" [ref=f1e69] [cursor=pointer]:
+                - generic [ref=f1e70]: ←
+              - button "Inspect right lane on world:horizontal:944:64" [ref=f1e71] [cursor=pointer]:
+                - generic [ref=f1e72]: →
+          - group [ref=f1e73]:
+            - generic "world:vertical:64:64 · 156 × 2332" [ref=f1e74]:
+              - button "Inspect down lane on world:vertical:64:64" [ref=f1e75] [cursor=pointer]:
+                - generic [ref=f1e76]: ↓
+              - button "Inspect up lane on world:vertical:64:64" [ref=f1e77] [cursor=pointer]:
+                - generic [ref=f1e78]: ↑
+              - button "Inspect down lane on world:vertical:64:64" [ref=f1e79] [cursor=pointer]:
+                - generic [ref=f1e80]: ↓
+              - button "Inspect up lane on world:vertical:64:64" [ref=f1e81] [cursor=pointer]:
+                - generic [ref=f1e82]: ↑
+              - button "Inspect down lane on world:vertical:64:64" [ref=f1e83] [cursor=pointer]:
+                - generic [ref=f1e84]: ↓
+              - button "Inspect up lane on world:vertical:64:64" [ref=f1e85] [cursor=pointer]:
+                - generic [ref=f1e86]: ↑
+              - button "Inspect down lane on world:vertical:64:64" [ref=f1e87] [cursor=pointer]:
+                - generic [ref=f1e88]: ↓
+              - button "Inspect up lane on world:vertical:64:64" [ref=f1e89] [cursor=pointer]:
+                - generic [ref=f1e90]: ↑
+              - button "Inspect down lane on world:vertical:64:64" [ref=f1e91] [cursor=pointer]:
+                - generic [ref=f1e92]: ↓
+              - button "Inspect up lane on world:vertical:64:64" [ref=f1e93] [cursor=pointer]:
+                - generic [ref=f1e94]: ↑
+              - button "Inspect down lane on world:vertical:64:64" [ref=f1e95] [cursor=pointer]:
+                - generic [ref=f1e96]: ↓
+              - button "Inspect up lane on world:vertical:64:64" [ref=f1e97] [cursor=pointer]:
+                - generic [ref=f1e98]: ↑
+          - group [ref=f1e99]:
+            - generic "world:vertical:3232:64 · 24 × 2332" [ref=f1e100]:
+              - button "Inspect down lane on world:vertical:3232:64" [ref=f1e101] [cursor=pointer]:
+                - generic [ref=f1e102]: ↓
+              - button "Inspect up lane on world:vertical:3232:64" [ref=f1e103] [cursor=pointer]:
+                - generic [ref=f1e104]: ↑
+              - button "Inspect down lane on world:vertical:3232:64" [ref=f1e105] [cursor=pointer]:
+                - generic [ref=f1e106]: ↓
+              - button "Inspect up lane on world:vertical:3232:64" [ref=f1e107] [cursor=pointer]:
+                - generic [ref=f1e108]: ↑
+              - button "Inspect down lane on world:vertical:3232:64" [ref=f1e109] [cursor=pointer]:
+                - generic [ref=f1e110]: ↓
+              - button "Inspect up lane on world:vertical:3232:64" [ref=f1e111] [cursor=pointer]:
+                - generic [ref=f1e112]: ↑
+              - button "Inspect down lane on world:vertical:3232:64" [ref=f1e113] [cursor=pointer]:
+                - generic [ref=f1e114]: ↓
+              - button "Inspect up lane on world:vertical:3232:64" [ref=f1e115] [cursor=pointer]:
+                - generic [ref=f1e116]: ↑
+              - button "Inspect down lane on world:vertical:3232:64" [ref=f1e117] [cursor=pointer]:
+                - generic [ref=f1e118]: ↓
+              - button "Inspect up lane on world:vertical:3232:64" [ref=f1e119] [cursor=pointer]:
+                - generic [ref=f1e120]: ↑
+              - button "Inspect down lane on world:vertical:3232:64" [ref=f1e121] [cursor=pointer]:
+                - generic [ref=f1e122]: ↓
+              - button "Inspect up lane on world:vertical:3232:64" [ref=f1e123] [cursor=pointer]:
+                - generic [ref=f1e124]: ↑
+          - group [ref=f1e125]:
+            - generic "world:horizontal:1824:64 · 3258 × 96" [ref=f1e126]:
+              - button "Inspect left lane on world:horizontal:1824:64" [ref=f1e127] [cursor=pointer]:
+                - generic [ref=f1e128]: ←
+              - button "Inspect right lane on world:horizontal:1824:64" [ref=f1e129] [cursor=pointer]:
+                - generic [ref=f1e130]: →
+              - button "Inspect left lane on world:horizontal:1824:64" [ref=f1e131] [cursor=pointer]:
+                - generic [ref=f1e132]: ←
+              - button "Inspect right lane on world:horizontal:1824:64" [ref=f1e133] [cursor=pointer]:
+                - generic [ref=f1e134]: →
+          - group [ref=f1e135]:
+            - generic "world:horizontal:2384:64 · 3258 × 12" [ref=f1e136]:
+              - button "Inspect left lane on world:horizontal:2384:64" [ref=f1e137] [cursor=pointer]:
+                - generic [ref=f1e138]: ←
+              - button "Inspect right lane on world:horizontal:2384:64" [ref=f1e139] [cursor=pointer]:
+                - generic [ref=f1e140]: →
+              - button "Inspect left lane on world:horizontal:2384:64" [ref=f1e141] [cursor=pointer]:
+                - generic [ref=f1e142]: ←
+              - button "Inspect right lane on world:horizontal:2384:64" [ref=f1e143] [cursor=pointer]:
+                - generic [ref=f1e144]: →
+          - group [ref=f1e145]:
+            - generic "section-1:horizontal:248:200 · 2950 × 48" [ref=f1e146]:
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e147] [cursor=pointer]:
+                - generic [ref=f1e148]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e149] [cursor=pointer]:
+                - generic [ref=f1e150]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e151] [cursor=pointer]:
+                - generic [ref=f1e152]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e153] [cursor=pointer]:
+                - generic [ref=f1e154]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e155] [cursor=pointer]:
+                - generic [ref=f1e156]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e157] [cursor=pointer]:
+                - generic [ref=f1e158]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e159] [cursor=pointer]:
+                - generic [ref=f1e160]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e161] [cursor=pointer]:
+                - generic [ref=f1e162]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e163] [cursor=pointer]:
+                - generic [ref=f1e164]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e165] [cursor=pointer]:
+                - generic [ref=f1e166]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e167] [cursor=pointer]:
+                - generic [ref=f1e168]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e169] [cursor=pointer]:
+                - generic [ref=f1e170]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e171] [cursor=pointer]:
+                - generic [ref=f1e172]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e173] [cursor=pointer]:
+                - generic [ref=f1e174]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e175] [cursor=pointer]:
+                - generic [ref=f1e176]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e177] [cursor=pointer]:
+                - generic [ref=f1e178]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e179] [cursor=pointer]:
+                - generic [ref=f1e180]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e181] [cursor=pointer]:
+                - generic [ref=f1e182]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e183] [cursor=pointer]:
+                - generic [ref=f1e184]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e185] [cursor=pointer]:
+                - generic [ref=f1e186]: →
+              - button "Inspect left lane on section-1:horizontal:248:200" [ref=f1e187] [cursor=pointer]:
+                - generic [ref=f1e188]: ←
+              - button "Inspect right lane on section-1:horizontal:248:200" [ref=f1e189] [cursor=pointer]:
+                - generic [ref=f1e190]: →
+          - group [ref=f1e191]:
+            - generic "section-1:horizontal:808:200 · 2950 × 144" [ref=f1e192]:
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e193] [cursor=pointer]:
+                - generic [ref=f1e194]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e195] [cursor=pointer]:
+                - generic [ref=f1e196]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e197] [cursor=pointer]:
+                - generic [ref=f1e198]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e199] [cursor=pointer]:
+                - generic [ref=f1e200]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e201] [cursor=pointer]:
+                - generic [ref=f1e202]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e203] [cursor=pointer]:
+                - generic [ref=f1e204]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e205] [cursor=pointer]:
+                - generic [ref=f1e206]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e207] [cursor=pointer]:
+                - generic [ref=f1e208]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e209] [cursor=pointer]:
+                - generic [ref=f1e210]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e211] [cursor=pointer]:
+                - generic [ref=f1e212]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e213] [cursor=pointer]:
+                - generic [ref=f1e214]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e215] [cursor=pointer]:
+                - generic [ref=f1e216]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e217] [cursor=pointer]:
+                - generic [ref=f1e218]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e219] [cursor=pointer]:
+                - generic [ref=f1e220]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e221] [cursor=pointer]:
+                - generic [ref=f1e222]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e223] [cursor=pointer]:
+                - generic [ref=f1e224]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e225] [cursor=pointer]:
+                - generic [ref=f1e226]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e227] [cursor=pointer]:
+                - generic [ref=f1e228]: →
+              - button "Inspect left lane on section-1:horizontal:808:200" [ref=f1e229] [cursor=pointer]:
+                - generic [ref=f1e230]: ←
+              - button "Inspect right lane on section-1:horizontal:808:200" [ref=f1e231] [cursor=pointer]:
+                - generic [ref=f1e232]: →
+          - group [ref=f1e233]:
+            - generic "section-1:vertical:200:248 · 96 × 656" [ref=f1e234]:
+              - button "Inspect down lane on section-1:vertical:200:248" [ref=f1e235] [cursor=pointer]:
+                - generic [ref=f1e236]: ↓
+              - button "Inspect up lane on section-1:vertical:200:248" [ref=f1e237] [cursor=pointer]:
+                - generic [ref=f1e238]: ↑
+              - button "Inspect down lane on section-1:vertical:200:248" [ref=f1e239] [cursor=pointer]:
+                - generic [ref=f1e240]: ↓
+              - button "Inspect up lane on section-1:vertical:200:248" [ref=f1e241] [cursor=pointer]:
+                - generic [ref=f1e242]: ↑
+              - button "Inspect down lane on section-1:vertical:200:248" [ref=f1e243] [cursor=pointer]:
+                - generic [ref=f1e244]: ↓
+              - button "Inspect up lane on section-1:vertical:200:248" [ref=f1e245] [cursor=pointer]:
+                - generic [ref=f1e246]: ↑
+              - button "Inspect down lane on section-1:vertical:200:248" [ref=f1e247] [cursor=pointer]:
+                - generic [ref=f1e248]: ↓
+              - button "Inspect up lane on section-1:vertical:200:248" [ref=f1e249] [cursor=pointer]:
+                - generic [ref=f1e250]: ↑
+          - group [ref=f1e251]:
+            - generic "section-1:vertical:3096:248 · 12 × 656" [ref=f1e252]:
+              - button "Inspect down lane on section-1:vertical:3096:248" [ref=f1e253] [cursor=pointer]:
+                - generic [ref=f1e254]: ↓
+              - button "Inspect up lane on section-1:vertical:3096:248" [ref=f1e255] [cursor=pointer]:
+                - generic [ref=f1e256]: ↑
+              - button "Inspect down lane on section-1:vertical:3096:248" [ref=f1e257] [cursor=pointer]:
+                - generic [ref=f1e258]: ↓
+              - button "Inspect up lane on section-1:vertical:3096:248" [ref=f1e259] [cursor=pointer]:
+                - generic [ref=f1e260]: ↑
+              - button "Inspect down lane on section-1:vertical:3096:248" [ref=f1e261] [cursor=pointer]:
+                - generic [ref=f1e262]: ↓
+              - button "Inspect up lane on section-1:vertical:3096:248" [ref=f1e263] [cursor=pointer]:
+                - generic [ref=f1e264]: ↑
+          - group [ref=f1e265]:
+            - generic "section-1:horizontal:528:200 · 1062 × 24" [ref=f1e266]:
+              - button "Inspect left lane on section-1:horizontal:528:200" [ref=f1e267] [cursor=pointer]:
+                - generic [ref=f1e268]: ←
+              - button "Inspect right lane on section-1:horizontal:528:200" [ref=f1e269] [cursor=pointer]:
+                - generic [ref=f1e270]: →
+              - button "Inspect left lane on section-1:horizontal:528:200" [ref=f1e271] [cursor=pointer]:
+                - generic [ref=f1e272]: ←
+              - button "Inspect right lane on section-1:horizontal:528:200" [ref=f1e273] [cursor=pointer]:
+                - generic [ref=f1e274]: →
+              - button "Inspect left lane on section-1:horizontal:528:200" [ref=f1e275] [cursor=pointer]:
+                - generic [ref=f1e276]: ←
+              - button "Inspect right lane on section-1:horizontal:528:200" [ref=f1e277] [cursor=pointer]:
+                - generic [ref=f1e278]: →
+              - button "Inspect left lane on section-1:horizontal:528:200" [ref=f1e279] [cursor=pointer]:
+                - generic [ref=f1e280]: ←
+              - button "Inspect right lane on section-1:horizontal:528:200" [ref=f1e281] [cursor=pointer]:
+                - generic [ref=f1e282]: →
+              - button "Inspect left lane on section-1:horizontal:528:200" [ref=f1e283] [cursor=pointer]:
+                - generic [ref=f1e284]: ←
+              - button "Inspect right lane on section-1:horizontal:528:200" [ref=f1e285] [cursor=pointer]:
+                - generic [ref=f1e286]: →
+              - button "Inspect left lane on section-1:horizontal:528:200" [ref=f1e287] [cursor=pointer]:
+                - generic [ref=f1e288]: ←
+              - button "Inspect right lane on section-1:horizontal:528:200" [ref=f1e289] [cursor=pointer]:
+                - generic [ref=f1e290]: →
+          - group [ref=f1e291]:
+            - generic "section-1:vertical:536:248 · 36 × 656" [ref=f1e292]:
+              - button "Inspect down lane on section-1:vertical:536:248" [ref=f1e293] [cursor=pointer]:
+                - generic [ref=f1e294]: ↓
+              - button "Inspect up lane on section-1:vertical:536:248" [ref=f1e295] [cursor=pointer]:
+                - generic [ref=f1e296]: ↑
+              - button "Inspect down lane on section-1:vertical:536:248" [ref=f1e297] [cursor=pointer]:
+                - generic [ref=f1e298]: ↓
+              - button "Inspect up lane on section-1:vertical:536:248" [ref=f1e299] [cursor=pointer]:
+                - generic [ref=f1e300]: ↑
+              - button "Inspect down lane on section-1:vertical:536:248" [ref=f1e301] [cursor=pointer]:
+                - generic [ref=f1e302]: ↓
+              - button "Inspect up lane on section-1:vertical:536:248" [ref=f1e303] [cursor=pointer]:
+                - generic [ref=f1e304]: ↑
+              - button "Inspect down lane on section-1:vertical:536:248" [ref=f1e305] [cursor=pointer]:
+                - generic [ref=f1e306]: ↓
+              - button "Inspect up lane on section-1:vertical:536:248" [ref=f1e307] [cursor=pointer]:
+                - generic [ref=f1e308]: ↑
+          - group [ref=f1e309]:
+            - generic "section-1:vertical:872:248 · 60 × 656" [ref=f1e310]:
+              - button "Inspect down lane on section-1:vertical:872:248" [ref=f1e311] [cursor=pointer]:
+                - generic [ref=f1e312]: ↓
+              - button "Inspect up lane on section-1:vertical:872:248" [ref=f1e313] [cursor=pointer]:
+                - generic [ref=f1e314]: ↑
+              - button "Inspect down lane on section-1:vertical:872:248" [ref=f1e315] [cursor=pointer]:
+                - generic [ref=f1e316]: ↓
+              - button "Inspect up lane on section-1:vertical:872:248" [ref=f1e317] [cursor=pointer]:
+                - generic [ref=f1e318]: ↑
+              - button "Inspect down lane on section-1:vertical:872:248" [ref=f1e319] [cursor=pointer]:
+                - generic [ref=f1e320]: ↓
+              - button "Inspect up lane on section-1:vertical:872:248" [ref=f1e321] [cursor=pointer]:
+                - generic [ref=f1e322]: ↑
+              - button "Inspect down lane on section-1:vertical:872:248" [ref=f1e323] [cursor=pointer]:
+                - generic [ref=f1e324]: ↓
+              - button "Inspect up lane on section-1:vertical:872:248" [ref=f1e325] [cursor=pointer]:
+                - generic [ref=f1e326]: ↑
+          - group [ref=f1e327]:
+            - generic "section-1:vertical:1208:248 · 12 × 656" [ref=f1e328]:
+              - button "Inspect down lane on section-1:vertical:1208:248" [ref=f1e329] [cursor=pointer]:
+                - generic [ref=f1e330]: ↓
+              - button "Inspect up lane on section-1:vertical:1208:248" [ref=f1e331] [cursor=pointer]:
+                - generic [ref=f1e332]: ↑
+              - button "Inspect down lane on section-1:vertical:1208:248" [ref=f1e333] [cursor=pointer]:
+                - generic [ref=f1e334]: ↓
+              - button "Inspect up lane on section-1:vertical:1208:248" [ref=f1e335] [cursor=pointer]:
+                - generic [ref=f1e336]: ↑
+              - button "Inspect down lane on section-1:vertical:1208:248" [ref=f1e337] [cursor=pointer]:
+                - generic [ref=f1e338]: ↓
+              - button "Inspect up lane on section-1:vertical:1208:248" [ref=f1e339] [cursor=pointer]:
+                - generic [ref=f1e340]: ↑
+              - button "Inspect down lane on section-1:vertical:1208:248" [ref=f1e341] [cursor=pointer]:
+                - generic [ref=f1e342]: ↓
+              - button "Inspect up lane on section-1:vertical:1208:248" [ref=f1e343] [cursor=pointer]:
+                - generic [ref=f1e344]: ↑
+          - group [ref=f1e345]:
+            - generic "section-1:vertical:2152:248 · 12 × 656" [ref=f1e346]:
+              - button "Inspect down lane on section-1:vertical:2152:248" [ref=f1e347] [cursor=pointer]:
+                - generic [ref=f1e348]: ↓
+              - button "Inspect up lane on section-1:vertical:2152:248" [ref=f1e349] [cursor=pointer]:
+                - generic [ref=f1e350]: ↑
+              - button "Inspect down lane on section-1:vertical:2152:248" [ref=f1e351] [cursor=pointer]:
+                - generic [ref=f1e352]: ↓
+              - button "Inspect up lane on section-1:vertical:2152:248" [ref=f1e353] [cursor=pointer]:
+                - generic [ref=f1e354]: ↑
+          - group [ref=f1e355]:
+            - generic "section-2:horizontal:432:1344 · 684 × 12" [ref=f1e356]:
+              - button "Inspect left lane on section-2:horizontal:432:1344" [ref=f1e357] [cursor=pointer]:
+                - generic [ref=f1e358]: ←
+              - button "Inspect right lane on section-2:horizontal:432:1344" [ref=f1e359] [cursor=pointer]:
+                - generic [ref=f1e360]: →
+              - button "Inspect left lane on section-2:horizontal:432:1344" [ref=f1e361] [cursor=pointer]:
+                - generic [ref=f1e362]: ←
+              - button "Inspect right lane on section-2:horizontal:432:1344" [ref=f1e363] [cursor=pointer]:
+                - generic [ref=f1e364]: →
+              - button "Inspect left lane on section-2:horizontal:432:1344" [ref=f1e365] [cursor=pointer]:
+                - generic [ref=f1e366]: ←
+              - button "Inspect right lane on section-2:horizontal:432:1344" [ref=f1e367] [cursor=pointer]:
+                - generic [ref=f1e368]: →
+              - button "Inspect left lane on section-2:horizontal:432:1344" [ref=f1e369] [cursor=pointer]:
+                - generic [ref=f1e370]: ←
+              - button "Inspect right lane on section-2:horizontal:432:1344" [ref=f1e371] [cursor=pointer]:
+                - generic [ref=f1e372]: →
+          - group [ref=f1e373]:
+            - generic "section-2:horizontal:672:1344 · 684 × 12" [ref=f1e374]:
+              - button "Inspect left lane on section-2:horizontal:672:1344" [ref=f1e375] [cursor=pointer]:
+                - generic [ref=f1e376]: ←
+              - button "Inspect right lane on section-2:horizontal:672:1344" [ref=f1e377] [cursor=pointer]:
+                - generic [ref=f1e378]: →
+              - button "Inspect left lane on section-2:horizontal:672:1344" [ref=f1e379] [cursor=pointer]:
+                - generic [ref=f1e380]: ←
+              - button "Inspect right lane on section-2:horizontal:672:1344" [ref=f1e381] [cursor=pointer]:
+                - generic [ref=f1e382]: →
+              - button "Inspect left lane on section-2:horizontal:672:1344" [ref=f1e383] [cursor=pointer]:
+                - generic [ref=f1e384]: ←
+              - button "Inspect right lane on section-2:horizontal:672:1344" [ref=f1e385] [cursor=pointer]:
+                - generic [ref=f1e386]: →
+              - button "Inspect left lane on section-2:horizontal:672:1344" [ref=f1e387] [cursor=pointer]:
+                - generic [ref=f1e388]: ←
+              - button "Inspect right lane on section-2:horizontal:672:1344" [ref=f1e389] [cursor=pointer]:
+                - generic [ref=f1e390]: →
+          - group [ref=f1e391]:
+            - generic "section-2:vertical:1344:432 · 12 × 252" [ref=f1e392]:
+              - button "Inspect down lane on section-2:vertical:1344:432" [ref=f1e393] [cursor=pointer]:
+                - generic [ref=f1e394]: ↓
+              - button "Inspect up lane on section-2:vertical:1344:432" [ref=f1e395] [cursor=pointer]:
+                - generic [ref=f1e396]: ↑
+              - button "Inspect down lane on section-2:vertical:1344:432" [ref=f1e397] [cursor=pointer]:
+                - generic [ref=f1e398]: ↓
+              - button "Inspect up lane on section-2:vertical:1344:432" [ref=f1e399] [cursor=pointer]:
+                - generic [ref=f1e400]: ↑
+              - button "Inspect down lane on section-2:vertical:1344:432" [ref=f1e401] [cursor=pointer]:
+                - generic [ref=f1e402]: ↓
+              - button "Inspect up lane on section-2:vertical:1344:432" [ref=f1e403] [cursor=pointer]:
+                - generic [ref=f1e404]: ↑
+          - group [ref=f1e405]:
+            - generic "section-2:vertical:2016:432 · 12 × 252" [ref=f1e406]:
+              - button "Inspect down lane on section-2:vertical:2016:432" [ref=f1e407] [cursor=pointer]:
+                - generic [ref=f1e408]: ↓
+              - button "Inspect up lane on section-2:vertical:2016:432" [ref=f1e409] [cursor=pointer]:
+                - generic [ref=f1e410]: ↑
+              - button "Inspect down lane on section-2:vertical:2016:432" [ref=f1e411] [cursor=pointer]:
+                - generic [ref=f1e412]: ↓
+              - button "Inspect up lane on section-2:vertical:2016:432" [ref=f1e413] [cursor=pointer]:
+                - generic [ref=f1e414]: ↑
+              - button "Inspect down lane on section-2:vertical:2016:432" [ref=f1e415] [cursor=pointer]:
+                - generic [ref=f1e416]: ↓
+              - button "Inspect up lane on section-2:vertical:2016:432" [ref=f1e417] [cursor=pointer]:
+                - generic [ref=f1e418]: ↑
+          - group [ref=f1e419]:
+            - generic "section-2:vertical:1680:432 · 12 × 252" [ref=f1e420]:
+              - button "Inspect down lane on section-2:vertical:1680:432" [ref=f1e421] [cursor=pointer]:
+                - generic [ref=f1e422]: ↓
+              - button "Inspect up lane on section-2:vertical:1680:432" [ref=f1e423] [cursor=pointer]:
+                - generic [ref=f1e424]: ↑
+              - button "Inspect down lane on section-2:vertical:1680:432" [ref=f1e425] [cursor=pointer]:
+                - generic [ref=f1e426]: ↓
+              - button "Inspect up lane on section-2:vertical:1680:432" [ref=f1e427] [cursor=pointer]:
+                - generic [ref=f1e428]: ↑
+          - group [ref=f1e429]:
+            - generic "section-3:horizontal:432:2288 · 684 × 24" [ref=f1e430]:
+              - button "Inspect left lane on section-3:horizontal:432:2288" [ref=f1e431] [cursor=pointer]:
+                - generic [ref=f1e432]: ←
+              - button "Inspect right lane on section-3:horizontal:432:2288" [ref=f1e433] [cursor=pointer]:
+                - generic [ref=f1e434]: →
+              - button "Inspect left lane on section-3:horizontal:432:2288" [ref=f1e435] [cursor=pointer]:
+                - generic [ref=f1e436]: ←
+              - button "Inspect right lane on section-3:horizontal:432:2288" [ref=f1e437] [cursor=pointer]:
+                - generic [ref=f1e438]: →
+              - button "Inspect left lane on section-3:horizontal:432:2288" [ref=f1e439] [cursor=pointer]:
+                - generic [ref=f1e440]: ←
+              - button "Inspect right lane on section-3:horizontal:432:2288" [ref=f1e441] [cursor=pointer]:
+                - generic [ref=f1e442]: →
+              - button "Inspect left lane on section-3:horizontal:432:2288" [ref=f1e443] [cursor=pointer]:
+                - generic [ref=f1e444]: ←
+              - button "Inspect right lane on section-3:horizontal:432:2288" [ref=f1e445] [cursor=pointer]:
+                - generic [ref=f1e446]: →
+          - group [ref=f1e447]:
+            - generic "section-3:horizontal:672:2288 · 684 × 48" [ref=f1e448]:
+              - button "Inspect left lane on section-3:horizontal:672:2288" [ref=f1e449] [cursor=pointer]:
+                - generic [ref=f1e450]: ←
+              - button "Inspect right lane on section-3:horizontal:672:2288" [ref=f1e451] [cursor=pointer]:
+                - generic [ref=f1e452]: →
+              - button "Inspect left lane on section-3:horizontal:672:2288" [ref=f1e453] [cursor=pointer]:
+                - generic [ref=f1e454]: ←
+              - button "Inspect right lane on section-3:horizontal:672:2288" [ref=f1e455] [cursor=pointer]:
+                - generic [ref=f1e456]: →
+              - button "Inspect left lane on section-3:horizontal:672:2288" [ref=f1e457] [cursor=pointer]:
+                - generic [ref=f1e458]: ←
+              - button "Inspect right lane on section-3:horizontal:672:2288" [ref=f1e459] [cursor=pointer]:
+                - generic [ref=f1e460]: →
+              - button "Inspect left lane on section-3:horizontal:672:2288" [ref=f1e461] [cursor=pointer]:
+                - generic [ref=f1e462]: ←
+              - button "Inspect right lane on section-3:horizontal:672:2288" [ref=f1e463] [cursor=pointer]:
+                - generic [ref=f1e464]: →
+          - group [ref=f1e465]:
+            - generic "section-3:vertical:2288:432 · 12 × 276" [ref=f1e466]:
+              - button "Inspect down lane on section-3:vertical:2288:432" [ref=f1e467] [cursor=pointer]:
+                - generic [ref=f1e468]: ↓
+              - button "Inspect up lane on section-3:vertical:2288:432" [ref=f1e469] [cursor=pointer]:
+                - generic [ref=f1e470]: ↑
+              - button "Inspect down lane on section-3:vertical:2288:432" [ref=f1e471] [cursor=pointer]:
+                - generic [ref=f1e472]: ↓
+              - button "Inspect up lane on section-3:vertical:2288:432" [ref=f1e473] [cursor=pointer]:
+                - generic [ref=f1e474]: ↑
+              - button "Inspect down lane on section-3:vertical:2288:432" [ref=f1e475] [cursor=pointer]:
+                - generic [ref=f1e476]: ↓
+              - button "Inspect up lane on section-3:vertical:2288:432" [ref=f1e477] [cursor=pointer]:
+                - generic [ref=f1e478]: ↑
+          - group [ref=f1e479]:
+            - generic "section-3:vertical:2960:432 · 12 × 276" [ref=f1e480]:
+              - button "Inspect down lane on section-3:vertical:2960:432" [ref=f1e481] [cursor=pointer]:
+                - generic [ref=f1e482]: ↓
+              - button "Inspect up lane on section-3:vertical:2960:432" [ref=f1e483] [cursor=pointer]:
+                - generic [ref=f1e484]: ↑
+              - button "Inspect down lane on section-3:vertical:2960:432" [ref=f1e485] [cursor=pointer]:
+                - generic [ref=f1e486]: ↓
+              - button "Inspect up lane on section-3:vertical:2960:432" [ref=f1e487] [cursor=pointer]:
+                - generic [ref=f1e488]: ↑
+              - button "Inspect down lane on section-3:vertical:2960:432" [ref=f1e489] [cursor=pointer]:
+                - generic [ref=f1e490]: ↓
+              - button "Inspect up lane on section-3:vertical:2960:432" [ref=f1e491] [cursor=pointer]:
+                - generic [ref=f1e492]: ↑
+          - group [ref=f1e493]:
+            - generic "section-3:vertical:2624:432 · 12 × 276" [ref=f1e494]:
+              - button "Inspect down lane on section-3:vertical:2624:432" [ref=f1e495] [cursor=pointer]:
+                - generic [ref=f1e496]: ↓
+              - button "Inspect up lane on section-3:vertical:2624:432" [ref=f1e497] [cursor=pointer]:
+                - generic [ref=f1e498]: ↑
+              - button "Inspect down lane on section-3:vertical:2624:432" [ref=f1e499] [cursor=pointer]:
+                - generic [ref=f1e500]: ↓
+              - button "Inspect up lane on section-3:vertical:2624:432" [ref=f1e501] [cursor=pointer]:
+                - generic [ref=f1e502]: ↑
+          - group [ref=f1e503]:
+            - generic "section-4:horizontal:1128:264 · 2816 × 108" [ref=f1e504]:
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e505] [cursor=pointer]:
+                - generic [ref=f1e506]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e507] [cursor=pointer]:
+                - generic [ref=f1e508]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e509] [cursor=pointer]:
+                - generic [ref=f1e510]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e511] [cursor=pointer]:
+                - generic [ref=f1e512]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e513] [cursor=pointer]:
+                - generic [ref=f1e514]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e515] [cursor=pointer]:
+                - generic [ref=f1e516]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e517] [cursor=pointer]:
+                - generic [ref=f1e518]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e519] [cursor=pointer]:
+                - generic [ref=f1e520]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e521] [cursor=pointer]:
+                - generic [ref=f1e522]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e523] [cursor=pointer]:
+                - generic [ref=f1e524]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e525] [cursor=pointer]:
+                - generic [ref=f1e526]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e527] [cursor=pointer]:
+                - generic [ref=f1e528]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e529] [cursor=pointer]:
+                - generic [ref=f1e530]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e531] [cursor=pointer]:
+                - generic [ref=f1e532]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e533] [cursor=pointer]:
+                - generic [ref=f1e534]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e535] [cursor=pointer]:
+                - generic [ref=f1e536]: →
+              - button "Inspect left lane on section-4:horizontal:1128:264" [ref=f1e537] [cursor=pointer]:
+                - generic [ref=f1e538]: ←
+              - button "Inspect right lane on section-4:horizontal:1128:264" [ref=f1e539] [cursor=pointer]:
+                - generic [ref=f1e540]: →
+          - group [ref=f1e541]:
+            - generic "section-4:horizontal:1688:264 · 2816 × 144" [ref=f1e542]:
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e543] [cursor=pointer]:
+                - generic [ref=f1e544]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e545] [cursor=pointer]:
+                - generic [ref=f1e546]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e547] [cursor=pointer]:
+                - generic [ref=f1e548]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e549] [cursor=pointer]:
+                - generic [ref=f1e550]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e551] [cursor=pointer]:
+                - generic [ref=f1e552]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e553] [cursor=pointer]:
+                - generic [ref=f1e554]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e555] [cursor=pointer]:
+                - generic [ref=f1e556]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e557] [cursor=pointer]:
+                - generic [ref=f1e558]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e559] [cursor=pointer]:
+                - generic [ref=f1e560]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e561] [cursor=pointer]:
+                - generic [ref=f1e562]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e563] [cursor=pointer]:
+                - generic [ref=f1e564]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e565] [cursor=pointer]:
+                - generic [ref=f1e566]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e567] [cursor=pointer]:
+                - generic [ref=f1e568]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e569] [cursor=pointer]:
+                - generic [ref=f1e570]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e571] [cursor=pointer]:
+                - generic [ref=f1e572]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e573] [cursor=pointer]:
+                - generic [ref=f1e574]: →
+              - button "Inspect left lane on section-4:horizontal:1688:264" [ref=f1e575] [cursor=pointer]:
+                - generic [ref=f1e576]: ←
+              - button "Inspect right lane on section-4:horizontal:1688:264" [ref=f1e577] [cursor=pointer]:
+                - generic [ref=f1e578]: →
+          - group [ref=f1e579]:
+            - generic "section-4:vertical:264:1128 · 84 × 686" [ref=f1e580]:
+              - button "Inspect down lane on section-4:vertical:264:1128" [ref=f1e581] [cursor=pointer]:
+                - generic [ref=f1e582]: ↓
+              - button "Inspect up lane on section-4:vertical:264:1128" [ref=f1e583] [cursor=pointer]:
+                - generic [ref=f1e584]: ↑
+              - button "Inspect down lane on section-4:vertical:264:1128" [ref=f1e585] [cursor=pointer]:
+                - generic [ref=f1e586]: ↓
+              - button "Inspect up lane on section-4:vertical:264:1128" [ref=f1e587] [cursor=pointer]:
+                - generic [ref=f1e588]: ↑
+          - group [ref=f1e589]:
+            - generic "section-4:vertical:3032:1128 · 12 × 686" [ref=f1e590]:
+              - button "Inspect down lane on section-4:vertical:3032:1128" [ref=f1e591] [cursor=pointer]:
+                - generic [ref=f1e592]: ↓
+              - button "Inspect up lane on section-4:vertical:3032:1128" [ref=f1e593] [cursor=pointer]:
+                - generic [ref=f1e594]: ↑
+              - button "Inspect down lane on section-4:vertical:3032:1128" [ref=f1e595] [cursor=pointer]:
+                - generic [ref=f1e596]: ↓
+              - button "Inspect up lane on section-4:vertical:3032:1128" [ref=f1e597] [cursor=pointer]:
+                - generic [ref=f1e598]: ↑
+              - button "Inspect down lane on section-4:vertical:3032:1128" [ref=f1e599] [cursor=pointer]:
+                - generic [ref=f1e600]: ↓
+              - button "Inspect up lane on section-4:vertical:3032:1128" [ref=f1e601] [cursor=pointer]:
+                - generic [ref=f1e602]: ↑
+          - group [ref=f1e603]:
+            - generic "section-4:vertical:872:1128 · 48 × 686" [ref=f1e604]:
+              - button "Inspect down lane on section-4:vertical:872:1128" [ref=f1e605] [cursor=pointer]:
+                - generic [ref=f1e606]: ↓
+              - button "Inspect up lane on section-4:vertical:872:1128" [ref=f1e607] [cursor=pointer]:
+                - generic [ref=f1e608]: ↑
+              - button "Inspect down lane on section-4:vertical:872:1128" [ref=f1e609] [cursor=pointer]:
+                - generic [ref=f1e610]: ↓
+              - button "Inspect up lane on section-4:vertical:872:1128" [ref=f1e611] [cursor=pointer]:
+                - generic [ref=f1e612]: ↑
+          - group [ref=f1e613]:
+            - generic "section-4:vertical:1480:1128 · 48 × 686" [ref=f1e614]:
+              - button "Inspect down lane on section-4:vertical:1480:1128" [ref=f1e615] [cursor=pointer]:
+                - generic [ref=f1e616]: ↓
+              - button "Inspect up lane on section-4:vertical:1480:1128" [ref=f1e617] [cursor=pointer]:
+                - generic [ref=f1e618]: ↑
+              - button "Inspect down lane on section-4:vertical:1480:1128" [ref=f1e619] [cursor=pointer]:
+                - generic [ref=f1e620]: ↓
+              - button "Inspect up lane on section-4:vertical:1480:1128" [ref=f1e621] [cursor=pointer]:
+                - generic [ref=f1e622]: ↑
+          - group [ref=f1e623]:
+            - generic "section-4:vertical:2088:1128 · 12 × 686" [ref=f1e624]:
+              - button "Inspect down lane on section-4:vertical:2088:1128" [ref=f1e625] [cursor=pointer]:
+                - generic [ref=f1e626]: ↓
+              - button "Inspect up lane on section-4:vertical:2088:1128" [ref=f1e627] [cursor=pointer]:
+                - generic [ref=f1e628]: ↑
+              - button "Inspect down lane on section-4:vertical:2088:1128" [ref=f1e629] [cursor=pointer]:
+                - generic [ref=f1e630]: ↓
+              - button "Inspect up lane on section-4:vertical:2088:1128" [ref=f1e631] [cursor=pointer]:
+                - generic [ref=f1e632]: ↑
+          - group [ref=f1e633]:
+            - generic "section-5:horizontal:1312:400 · 366 × 12" [ref=f1e634]:
+              - button "Inspect left lane on section-5:horizontal:1312:400" [ref=f1e635] [cursor=pointer]:
+                - generic [ref=f1e636]: ←
+              - button "Inspect right lane on section-5:horizontal:1312:400" [ref=f1e637] [cursor=pointer]:
+                - generic [ref=f1e638]: →
+              - button "Inspect left lane on section-5:horizontal:1312:400" [ref=f1e639] [cursor=pointer]:
+                - generic [ref=f1e640]: ←
+              - button "Inspect right lane on section-5:horizontal:1312:400" [ref=f1e641] [cursor=pointer]:
+                - generic [ref=f1e642]: →
+          - group [ref=f1e643]:
+            - generic "section-5:horizontal:1552:400 · 366 × 12" [ref=f1e644]:
+              - button "Inspect left lane on section-5:horizontal:1552:400" [ref=f1e645] [cursor=pointer]:
+                - generic [ref=f1e646]: ←
+              - button "Inspect right lane on section-5:horizontal:1552:400" [ref=f1e647] [cursor=pointer]:
+                - generic [ref=f1e648]: →
+              - button "Inspect left lane on section-5:horizontal:1552:400" [ref=f1e649] [cursor=pointer]:
+                - generic [ref=f1e650]: ←
+              - button "Inspect right lane on section-5:horizontal:1552:400" [ref=f1e651] [cursor=pointer]:
+                - generic [ref=f1e652]: →
+          - group [ref=f1e653]:
+            - generic "section-5:vertical:400:1312 · 36 × 252" [ref=f1e654]:
+              - button "Inspect down lane on section-5:vertical:400:1312" [ref=f1e655] [cursor=pointer]:
+                - generic [ref=f1e656]: ↓
+              - button "Inspect up lane on section-5:vertical:400:1312" [ref=f1e657] [cursor=pointer]:
+                - generic [ref=f1e658]: ↑
+              - button "Inspect down lane on section-5:vertical:400:1312" [ref=f1e659] [cursor=pointer]:
+                - generic [ref=f1e660]: ↓
+              - button "Inspect up lane on section-5:vertical:400:1312" [ref=f1e661] [cursor=pointer]:
+                - generic [ref=f1e662]: ↑
+          - group [ref=f1e663]:
+            - generic "section-5:vertical:736:1312 · 24 × 252" [ref=f1e664]:
+              - button "Inspect down lane on section-5:vertical:736:1312" [ref=f1e665] [cursor=pointer]:
+                - generic [ref=f1e666]: ↓
+              - button "Inspect up lane on section-5:vertical:736:1312" [ref=f1e667] [cursor=pointer]:
+                - generic [ref=f1e668]: ↑
+              - button "Inspect down lane on section-5:vertical:736:1312" [ref=f1e669] [cursor=pointer]:
+                - generic [ref=f1e670]: ↓
+              - button "Inspect up lane on section-5:vertical:736:1312" [ref=f1e671] [cursor=pointer]:
+                - generic [ref=f1e672]: ↑
+          - group [ref=f1e673]:
+            - generic "section-6:horizontal:1312:1008 · 366 × 12" [ref=f1e674]:
+              - button "Inspect left lane on section-6:horizontal:1312:1008" [ref=f1e675] [cursor=pointer]:
+                - generic [ref=f1e676]: ←
+              - button "Inspect right lane on section-6:horizontal:1312:1008" [ref=f1e677] [cursor=pointer]:
+                - generic [ref=f1e678]: →
+              - button "Inspect left lane on section-6:horizontal:1312:1008" [ref=f1e679] [cursor=pointer]:
+                - generic [ref=f1e680]: ←
+              - button "Inspect right lane on section-6:horizontal:1312:1008" [ref=f1e681] [cursor=pointer]:
+                - generic [ref=f1e682]: →
+          - group [ref=f1e683]:
+            - generic "section-6:horizontal:1552:1008 · 366 × 12" [ref=f1e684]:
+              - button "Inspect left lane on section-6:horizontal:1552:1008" [ref=f1e685] [cursor=pointer]:
+                - generic [ref=f1e686]: ←
+              - button "Inspect right lane on section-6:horizontal:1552:1008" [ref=f1e687] [cursor=pointer]:
+                - generic [ref=f1e688]: →
+              - button "Inspect left lane on section-6:horizontal:1552:1008" [ref=f1e689] [cursor=pointer]:
+                - generic [ref=f1e690]: ←
+              - button "Inspect right lane on section-6:horizontal:1552:1008" [ref=f1e691] [cursor=pointer]:
+                - generic [ref=f1e692]: →
+          - group [ref=f1e693]:
+            - generic "section-6:vertical:1008:1312 · 36 × 252" [ref=f1e694]:
+              - button "Inspect down lane on section-6:vertical:1008:1312" [ref=f1e695] [cursor=pointer]:
+                - generic [ref=f1e696]: ↓
+              - button "Inspect up lane on section-6:vertical:1008:1312" [ref=f1e697] [cursor=pointer]:
+                - generic [ref=f1e698]: ↑
+              - button "Inspect down lane on section-6:vertical:1008:1312" [ref=f1e699] [cursor=pointer]:
+                - generic [ref=f1e700]: ↓
+              - button "Inspect up lane on section-6:vertical:1008:1312" [ref=f1e701] [cursor=pointer]:
+                - generic [ref=f1e702]: ↑
+          - group [ref=f1e703]:
+            - generic "section-6:vertical:1344:1312 · 24 × 252" [ref=f1e704]:
+              - button "Inspect down lane on section-6:vertical:1344:1312" [ref=f1e705] [cursor=pointer]:
+                - generic [ref=f1e706]: ↓
+              - button "Inspect up lane on section-6:vertical:1344:1312" [ref=f1e707] [cursor=pointer]:
+                - generic [ref=f1e708]: ↑
+              - button "Inspect down lane on section-6:vertical:1344:1312" [ref=f1e709] [cursor=pointer]:
+                - generic [ref=f1e710]: ↓
+              - button "Inspect up lane on section-6:vertical:1344:1312" [ref=f1e711] [cursor=pointer]:
+                - generic [ref=f1e712]: ↑
+          - group [ref=f1e713]:
+            - generic "section-7:horizontal:1312:1616 · 360 × 12" [ref=f1e714]:
+              - button "Inspect left lane on section-7:horizontal:1312:1616" [ref=f1e715] [cursor=pointer]:
+                - generic [ref=f1e716]: ←
+              - button "Inspect right lane on section-7:horizontal:1312:1616" [ref=f1e717] [cursor=pointer]:
+                - generic [ref=f1e718]: →
+              - button "Inspect left lane on section-7:horizontal:1312:1616" [ref=f1e719] [cursor=pointer]:
+                - generic [ref=f1e720]: ←
+              - button "Inspect right lane on section-7:horizontal:1312:1616" [ref=f1e721] [cursor=pointer]:
+                - generic [ref=f1e722]: →
+          - group [ref=f1e723]:
+            - generic "section-7:horizontal:1552:1616 · 360 × 12" [ref=f1e724]:
+              - button "Inspect left lane on section-7:horizontal:1552:1616" [ref=f1e725] [cursor=pointer]:
+                - generic [ref=f1e726]: ←
+              - button "Inspect right lane on section-7:horizontal:1552:1616" [ref=f1e727] [cursor=pointer]:
+                - generic [ref=f1e728]: →
+              - button "Inspect left lane on section-7:horizontal:1552:1616" [ref=f1e729] [cursor=pointer]:
+                - generic [ref=f1e730]: ←
+              - button "Inspect right lane on section-7:horizontal:1552:1616" [ref=f1e731] [cursor=pointer]:
+                - generic [ref=f1e732]: →
+          - group [ref=f1e733]:
+            - generic "section-7:vertical:1616:1312 · 36 × 252" [ref=f1e734]:
+              - button "Inspect down lane on section-7:vertical:1616:1312" [ref=f1e735] [cursor=pointer]:
+                - generic [ref=f1e736]: ↓
+              - button "Inspect up lane on section-7:vertical:1616:1312" [ref=f1e737] [cursor=pointer]:
+                - generic [ref=f1e738]: ↑
+              - button "Inspect down lane on section-7:vertical:1616:1312" [ref=f1e739] [cursor=pointer]:
+                - generic [ref=f1e740]: ↓
+              - button "Inspect up lane on section-7:vertical:1616:1312" [ref=f1e741] [cursor=pointer]:
+                - generic [ref=f1e742]: ↑
+          - group [ref=f1e743]:
+            - generic "section-7:vertical:1952:1312 · 12 × 252" [ref=f1e744]:
+              - button "Inspect down lane on section-7:vertical:1952:1312" [ref=f1e745] [cursor=pointer]:
+                - generic [ref=f1e746]: ↓
+              - button "Inspect up lane on section-7:vertical:1952:1312" [ref=f1e747] [cursor=pointer]:
+                - generic [ref=f1e748]: ↑
+              - button "Inspect down lane on section-7:vertical:1952:1312" [ref=f1e749] [cursor=pointer]:
+                - generic [ref=f1e750]: ↓
+              - button "Inspect up lane on section-7:vertical:1952:1312" [ref=f1e751] [cursor=pointer]:
+                - generic [ref=f1e752]: ↑
+              - button "Inspect down lane on section-7:vertical:1952:1312" [ref=f1e753] [cursor=pointer]:
+                - generic [ref=f1e754]: ↓
+              - button "Inspect up lane on section-7:vertical:1952:1312" [ref=f1e755] [cursor=pointer]:
+                - generic [ref=f1e756]: ↑
+          - group [ref=f1e757]:
+            - generic "section-8:horizontal:1312:2224 · 696 × 72" [ref=f1e758]:
+              - button "Inspect left lane on section-8:horizontal:1312:2224" [ref=f1e759] [cursor=pointer]:
+                - generic [ref=f1e760]: ←
+              - button "Inspect right lane on section-8:horizontal:1312:2224" [ref=f1e761] [cursor=pointer]:
+                - generic [ref=f1e762]: →
+              - button "Inspect left lane on section-8:horizontal:1312:2224" [ref=f1e763] [cursor=pointer]:
+                - generic [ref=f1e764]: ←
+              - button "Inspect right lane on section-8:horizontal:1312:2224" [ref=f1e765] [cursor=pointer]:
+                - generic [ref=f1e766]: →
+              - button "Inspect left lane on section-8:horizontal:1312:2224" [ref=f1e767] [cursor=pointer]:
+                - generic [ref=f1e768]: ←
+              - button "Inspect right lane on section-8:horizontal:1312:2224" [ref=f1e769] [cursor=pointer]:
+                - generic [ref=f1e770]: →
+              - button "Inspect left lane on section-8:horizontal:1312:2224" [ref=f1e771] [cursor=pointer]:
+                - generic [ref=f1e772]: ←
+              - button "Inspect right lane on section-8:horizontal:1312:2224" [ref=f1e773] [cursor=pointer]:
+                - generic [ref=f1e774]: →
+          - group [ref=f1e775]:
+            - generic "section-8:horizontal:1552:2224 · 696 × 108" [ref=f1e776]:
+              - button "Inspect left lane on section-8:horizontal:1552:2224" [ref=f1e777] [cursor=pointer]:
+                - generic [ref=f1e778]: ←
+              - button "Inspect right lane on section-8:horizontal:1552:2224" [ref=f1e779] [cursor=pointer]:
+                - generic [ref=f1e780]: →
+              - button "Inspect left lane on section-8:horizontal:1552:2224" [ref=f1e781] [cursor=pointer]:
+                - generic [ref=f1e782]: ←
+              - button "Inspect right lane on section-8:horizontal:1552:2224" [ref=f1e783] [cursor=pointer]:
+                - generic [ref=f1e784]: →
+              - button "Inspect left lane on section-8:horizontal:1552:2224" [ref=f1e785] [cursor=pointer]:
+                - generic [ref=f1e786]: ←
+              - button "Inspect right lane on section-8:horizontal:1552:2224" [ref=f1e787] [cursor=pointer]:
+                - generic [ref=f1e788]: →
+              - button "Inspect left lane on section-8:horizontal:1552:2224" [ref=f1e789] [cursor=pointer]:
+                - generic [ref=f1e790]: ←
+              - button "Inspect right lane on section-8:horizontal:1552:2224" [ref=f1e791] [cursor=pointer]:
+                - generic [ref=f1e792]: →
+          - group [ref=f1e793]:
+            - generic "section-8:vertical:2224:1312 · 24 × 330" [ref=f1e794]:
+              - button "Inspect down lane on section-8:vertical:2224:1312" [ref=f1e795] [cursor=pointer]:
+                - generic [ref=f1e796]: ↓
+              - button "Inspect up lane on section-8:vertical:2224:1312" [ref=f1e797] [cursor=pointer]:
+                - generic [ref=f1e798]: ↑
+              - button "Inspect down lane on section-8:vertical:2224:1312" [ref=f1e799] [cursor=pointer]:
+                - generic [ref=f1e800]: ↓
+              - button "Inspect up lane on section-8:vertical:2224:1312" [ref=f1e801] [cursor=pointer]:
+                - generic [ref=f1e802]: ↑
+              - button "Inspect down lane on section-8:vertical:2224:1312" [ref=f1e803] [cursor=pointer]:
+                - generic [ref=f1e804]: ↓
+              - button "Inspect up lane on section-8:vertical:2224:1312" [ref=f1e805] [cursor=pointer]:
+                - generic [ref=f1e806]: ↑
+          - group [ref=f1e807]:
+            - generic "section-8:vertical:2896:1312 · 24 × 330" [ref=f1e808]:
+              - button "Inspect down lane on section-8:vertical:2896:1312" [ref=f1e809] [cursor=pointer]:
+                - generic [ref=f1e810]: ↓
+              - button "Inspect up lane on section-8:vertical:2896:1312" [ref=f1e811] [cursor=pointer]:
+                - generic [ref=f1e812]: ↑
+              - button "Inspect down lane on section-8:vertical:2896:1312" [ref=f1e813] [cursor=pointer]:
+                - generic [ref=f1e814]: ↓
+              - button "Inspect up lane on section-8:vertical:2896:1312" [ref=f1e815] [cursor=pointer]:
+                - generic [ref=f1e816]: ↑
+              - button "Inspect down lane on section-8:vertical:2896:1312" [ref=f1e817] [cursor=pointer]:
+                - generic [ref=f1e818]: ↓
+              - button "Inspect up lane on section-8:vertical:2896:1312" [ref=f1e819] [cursor=pointer]:
+                - generic [ref=f1e820]: ↑
+          - group [ref=f1e821]:
+            - generic "section-8:vertical:2560:1312 · 12 × 330" [ref=f1e822]:
+              - button "Inspect down lane on section-8:vertical:2560:1312" [ref=f1e823] [cursor=pointer]:
+                - generic [ref=f1e824]: ↓
+              - button "Inspect up lane on section-8:vertical:2560:1312" [ref=f1e825] [cursor=pointer]:
+                - generic [ref=f1e826]: ↑
+              - button "Inspect down lane on section-8:vertical:2560:1312" [ref=f1e827] [cursor=pointer]:
+                - generic [ref=f1e828]: ↓
+              - button "Inspect up lane on section-8:vertical:2560:1312" [ref=f1e829] [cursor=pointer]:
+                - generic [ref=f1e830]: ↑
+          - group [ref=f1e831]:
+            - generic "section-9:horizontal:2008:1480 · 354 × 12" [ref=f1e832]:
+              - button "Inspect left lane on section-9:horizontal:2008:1480" [ref=f1e833] [cursor=pointer]:
+                - generic [ref=f1e834]: ←
+              - button "Inspect right lane on section-9:horizontal:2008:1480" [ref=f1e835] [cursor=pointer]:
+                - generic [ref=f1e836]: →
+              - button "Inspect left lane on section-9:horizontal:2008:1480" [ref=f1e837] [cursor=pointer]:
+                - generic [ref=f1e838]: ←
+              - button "Inspect right lane on section-9:horizontal:2008:1480" [ref=f1e839] [cursor=pointer]:
+                - generic [ref=f1e840]: →
+          - group [ref=f1e841]:
+            - generic "section-9:horizontal:2248:1480 · 354 × 12" [ref=f1e842]:
+              - button "Inspect left lane on section-9:horizontal:2248:1480" [ref=f1e843] [cursor=pointer]:
+                - generic [ref=f1e844]: ←
+              - button "Inspect right lane on section-9:horizontal:2248:1480" [ref=f1e845] [cursor=pointer]:
+                - generic [ref=f1e846]: →
+              - button "Inspect left lane on section-9:horizontal:2248:1480" [ref=f1e847] [cursor=pointer]:
+                - generic [ref=f1e848]: ←
+              - button "Inspect right lane on section-9:horizontal:2248:1480" [ref=f1e849] [cursor=pointer]:
+                - generic [ref=f1e850]: →
+          - group [ref=f1e851]:
+            - generic "section-9:vertical:1480:2008 · 12 × 252" [ref=f1e852]:
+              - button "Inspect down lane on section-9:vertical:1480:2008" [ref=f1e853] [cursor=pointer]:
+                - generic [ref=f1e854]: ↓
+              - button "Inspect up lane on section-9:vertical:1480:2008" [ref=f1e855] [cursor=pointer]:
+                - generic [ref=f1e856]: ↑
+              - button "Inspect down lane on section-9:vertical:1480:2008" [ref=f1e857] [cursor=pointer]:
+                - generic [ref=f1e858]: ↓
+              - button "Inspect up lane on section-9:vertical:1480:2008" [ref=f1e859] [cursor=pointer]:
+                - generic [ref=f1e860]: ↑
+              - button "Inspect down lane on section-9:vertical:1480:2008" [ref=f1e861] [cursor=pointer]:
+                - generic [ref=f1e862]: ↓
+              - button "Inspect up lane on section-9:vertical:1480:2008" [ref=f1e863] [cursor=pointer]:
+                - generic [ref=f1e864]: ↑
+          - group [ref=f1e865]:
+            - generic "section-9:vertical:1816:2008 · 24 × 252" [ref=f1e866]:
+              - button "Inspect down lane on section-9:vertical:1816:2008" [ref=f1e867] [cursor=pointer]:
+                - generic [ref=f1e868]: ↓
+              - button "Inspect up lane on section-9:vertical:1816:2008" [ref=f1e869] [cursor=pointer]:
+                - generic [ref=f1e870]: ↑
+              - button "Inspect down lane on section-9:vertical:1816:2008" [ref=f1e871] [cursor=pointer]:
+                - generic [ref=f1e872]: ↓
+              - button "Inspect up lane on section-9:vertical:1816:2008" [ref=f1e873] [cursor=pointer]:
+                - generic [ref=f1e874]: ↑
+          - group [ref=f1e875]:
+            - generic "drive:node-2:entry-top · 12 × 68" [ref=f1e876]:
+              - button "Inspect down lane on drive:node-2:entry-top" [ref=f1e877] [cursor=pointer]:
+                - generic [ref=f1e878]: IN ↓
+          - group [ref=f1e879]:
+            - generic "drive:node-2:entry-left · 31.5 × 84" [ref=f1e880]:
+              - button "Inspect right lane on drive:node-2:entry-left" [ref=f1e881] [cursor=pointer]:
+                - generic [ref=f1e882]: IN →
+          - group [ref=f1e883]:
+            - generic "drive:node-2:exit-bottom · 12 × 80" [ref=f1e884]:
+              - button "Inspect down lane on drive:node-2:exit-bottom" [ref=f1e885] [cursor=pointer]:
+                - generic [ref=f1e886]: OUT ↓
+          - group [ref=f1e887]:
+            - generic "drive:node-2:exit-right · 54 × 36" [ref=f1e888]:
+              - button "Inspect right lane on drive:node-2:exit-right" [ref=f1e889] [cursor=pointer]:
+                - generic [ref=f1e890]: OUT →
+          - group [ref=f1e891]:
+            - generic "drive:node-3:entry-top · 12 × 68" [ref=f1e892]:
+              - button "Inspect down lane on drive:node-3:entry-top" [ref=f1e893] [cursor=pointer]:
+                - generic [ref=f1e894]: IN ↓
+          - group [ref=f1e895]:
+            - generic "drive:node-3:entry-left · 54 × 12" [ref=f1e896]:
+              - button "Inspect right lane on drive:node-3:entry-left" [ref=f1e897] [cursor=pointer]:
+                - generic [ref=f1e898]: IN →
+          - group [ref=f1e899]:
+            - generic "drive:node-3:exit-bottom · 24 × 80" [ref=f1e900]:
+              - button "Inspect down lane on drive:node-3:exit-bottom" [ref=f1e901] [cursor=pointer]:
+                - generic [ref=f1e902]: OUT ↓
+          - group [ref=f1e903]:
+            - generic "drive:node-3:exit-right · 42 × 48" [ref=f1e904]:
+              - button "Inspect right lane on drive:node-3:exit-right" [ref=f1e905] [cursor=pointer]:
+                - generic [ref=f1e906]: OUT →
+          - group [ref=f1e907]:
+            - generic "drive:node-4:entry-top · 24 × 68" [ref=f1e908]:
+              - button "Inspect down lane on drive:node-4:entry-top" [ref=f1e909] [cursor=pointer]:
+                - generic [ref=f1e910]: IN ↓
+          - group [ref=f1e911]:
+            - generic "drive:node-4:entry-left · 42 × 24" [ref=f1e912]:
+              - button "Inspect right lane on drive:node-4:entry-left" [ref=f1e913] [cursor=pointer]:
+                - generic [ref=f1e914]: IN →
+          - group [ref=f1e915]:
+            - generic "drive:node-4:exit-bottom · 24 × 80" [ref=f1e916]:
+              - button "Inspect down lane on drive:node-4:exit-bottom" [ref=f1e917] [cursor=pointer]:
+                - generic [ref=f1e918]: OUT ↓
+          - group [ref=f1e919]:
+            - generic "drive:node-4:exit-right · 66 × 12" [ref=f1e920]:
+              - button "Inspect right lane on drive:node-4:exit-right" [ref=f1e921] [cursor=pointer]:
+                - generic [ref=f1e922]: OUT →
+          - group [ref=f1e923]:
+            - generic "drive:node-5:entry-top · 12 × 80" [ref=f1e924]:
+              - button "Inspect down lane on drive:node-5:entry-top" [ref=f1e925] [cursor=pointer]:
+                - generic [ref=f1e926]: IN ↓
+          - group [ref=f1e927]:
+            - generic "drive:node-5:entry-left · 24 × 12" [ref=f1e928]:
+              - button "Inspect right lane on drive:node-5:entry-left" [ref=f1e929] [cursor=pointer]:
+                - generic [ref=f1e930]: IN →
+          - group [ref=f1e931]:
+            - generic "drive:node-5:exit-bottom · 84 × 31.5" [ref=f1e932]:
+              - button "Inspect down lane on drive:node-5:exit-bottom" [ref=f1e933] [cursor=pointer]:
+                - generic [ref=f1e934]: OUT ↓
+          - group [ref=f1e935]:
+            - generic "drive:node-5:exit-right · 54 × 12" [ref=f1e936]:
+              - button "Inspect right lane on drive:node-5:exit-right" [ref=f1e937] [cursor=pointer]:
+                - generic [ref=f1e938]: OUT →
+          - group [ref=f1e939]:
+            - generic "drive:node-6:entry-top · 36 × 80" [ref=f1e940]:
+              - button "Inspect down lane on drive:node-6:entry-top" [ref=f1e941] [cursor=pointer]:
+                - generic [ref=f1e942]: IN ↓
+          - group [ref=f1e943]:
+            - generic "drive:node-6:entry-left · 54 × 24" [ref=f1e944]:
+              - button "Inspect right lane on drive:node-6:entry-left" [ref=f1e945] [cursor=pointer]:
+                - generic [ref=f1e946]: IN →
+          - group [ref=f1e947]:
+            - generic "drive:node-6:exit-bottom · 12 × 20" [ref=f1e948]:
+              - button "Inspect down lane on drive:node-6:exit-bottom" [ref=f1e949] [cursor=pointer]:
+                - generic [ref=f1e950]: OUT ↓
+          - group [ref=f1e951]:
+            - generic "drive:node-6:exit-right · 42 × 12" [ref=f1e952]:
+              - button "Inspect right lane on drive:node-6:exit-right" [ref=f1e953] [cursor=pointer]:
+                - generic [ref=f1e954]: OUT →
+          - group [ref=f1e955]:
+            - generic "drive:node-11:entry-top · 12 × 80" [ref=f1e956]:
+              - button "Inspect down lane on drive:node-11:entry-top" [ref=f1e957] [cursor=pointer]:
+                - generic [ref=f1e958]: IN ↓
+          - group [ref=f1e959]:
+            - generic "drive:node-11:entry-left · 42 × 12" [ref=f1e960]:
+              - button "Inspect right lane on drive:node-11:entry-left" [ref=f1e961] [cursor=pointer]:
+                - generic [ref=f1e962]: IN →
+          - group [ref=f1e963]:
+            - generic "drive:node-11:exit-bottom · 12 × 20" [ref=f1e964]:
+              - button "Inspect down lane on drive:node-11:exit-bottom" [ref=f1e965] [cursor=pointer]:
+                - generic [ref=f1e966]: OUT ↓
+          - group [ref=f1e967]:
+            - generic "drive:node-11:exit-right · 66 × 12" [ref=f1e968]:
+              - button "Inspect right lane on drive:node-11:exit-right" [ref=f1e969] [cursor=pointer]:
+                - generic [ref=f1e970]: OUT →
+          - group [ref=f1e971]:
+            - generic "drive:section-1:entry-top · 12 × 154" [ref=f1e972]:
+              - button "Inspect down lane on drive:section-1:entry-top" [ref=f1e973] [cursor=pointer]:
+                - generic [ref=f1e974]: IN ↓
+          - group [ref=f1e975]:
+            - generic "drive:section-1:entry-left · 16 × 84" [ref=f1e976]:
+              - button "Inspect right lane on drive:section-1:entry-left" [ref=f1e977] [cursor=pointer]:
+                - generic [ref=f1e978]: IN →
+          - group [ref=f1e979]:
+            - generic "drive:section-1:exit-bottom · 132 × 24" [ref=f1e980]:
+              - button "Inspect down lane on drive:section-1:exit-bottom" [ref=f1e981] [cursor=pointer]:
+                - generic [ref=f1e982]: OUT ↓
+          - group [ref=f1e983]:
+            - generic "drive:section-1:exit-right · 118 × 12" [ref=f1e984]:
+              - button "Inspect right lane on drive:section-1:exit-right" [ref=f1e985] [cursor=pointer]:
+                - generic [ref=f1e986]: OUT →
+          - group [ref=f1e987]:
+            - generic "drive:node-7:entry-top · 12 × 66" [ref=f1e988]:
+              - button "Inspect down lane on drive:node-7:entry-top" [ref=f1e989] [cursor=pointer]:
+                - generic [ref=f1e990]: IN ↓
+          - group [ref=f1e991]:
+            - generic "drive:node-7:entry-left · 66 × 12" [ref=f1e992]:
+              - button "Inspect right lane on drive:node-7:entry-left" [ref=f1e993] [cursor=pointer]:
+                - generic [ref=f1e994]: IN →
+          - group [ref=f1e995]:
+            - generic "drive:node-7:exit-bottom · 12 × 66" [ref=f1e996]:
+              - button "Inspect down lane on drive:node-7:exit-bottom" [ref=f1e997] [cursor=pointer]:
+                - generic [ref=f1e998]: OUT ↓
+          - group [ref=f1e999]:
+            - generic "drive:node-7:exit-right · 66 × 12" [ref=f1e1000]:
+              - button "Inspect right lane on drive:node-7:exit-right" [ref=f1e1001] [cursor=pointer]:
+                - generic [ref=f1e1002]: OUT →
+          - group [ref=f1e1003]:
+            - generic "drive:node-8:entry-top · 12 × 66" [ref=f1e1004]:
+              - button "Inspect down lane on drive:node-8:entry-top" [ref=f1e1005] [cursor=pointer]:
+                - generic [ref=f1e1006]: IN ↓
+          - group [ref=f1e1007]:
+            - generic "drive:node-8:entry-left · 66 × 12" [ref=f1e1008]:
+              - button "Inspect right lane on drive:node-8:entry-left" [ref=f1e1009] [cursor=pointer]:
+                - generic [ref=f1e1010]: IN →
+          - group [ref=f1e1011]:
+            - generic "drive:node-8:exit-bottom · 12 × 66" [ref=f1e1012]:
+              - button "Inspect down lane on drive:node-8:exit-bottom" [ref=f1e1013] [cursor=pointer]:
+                - generic [ref=f1e1014]: OUT ↓
+          - group [ref=f1e1015]:
+            - generic "drive:node-8:exit-right · 66 × 12" [ref=f1e1016]:
+              - button "Inspect right lane on drive:node-8:exit-right" [ref=f1e1017] [cursor=pointer]:
+                - generic [ref=f1e1018]: OUT →
+          - group [ref=f1e1019]:
+            - generic "drive:section-2:entry-top · 12 × 154" [ref=f1e1020]:
+              - button "Inspect down lane on drive:section-2:entry-top" [ref=f1e1021] [cursor=pointer]:
+                - generic [ref=f1e1022]: IN ↓
+          - group [ref=f1e1023]:
+            - generic "drive:section-2:entry-left · 124 × 12" [ref=f1e1024]:
+              - button "Inspect right lane on drive:section-2:entry-left" [ref=f1e1025] [cursor=pointer]:
+                - generic [ref=f1e1026]: IN →
+          - group [ref=f1e1027]:
+            - generic "drive:section-2:exit-bottom · 12 × 58" [ref=f1e1028]:
+              - button "Inspect down lane on drive:section-2:exit-bottom" [ref=f1e1029] [cursor=pointer]:
+                - generic [ref=f1e1030]: OUT ↓
+          - group [ref=f1e1031]:
+            - generic "drive:section-2:exit-right · 124 × 12" [ref=f1e1032]:
+              - button "Inspect right lane on drive:section-2:exit-right" [ref=f1e1033] [cursor=pointer]:
+                - generic [ref=f1e1034]: OUT →
+          - group [ref=f1e1035]:
+            - generic "drive:node-9:entry-top · 12 × 60" [ref=f1e1036]:
+              - button "Inspect down lane on drive:node-9:entry-top" [ref=f1e1037] [cursor=pointer]:
+                - generic [ref=f1e1038]: IN ↓
+          - group [ref=f1e1039]:
+            - generic "drive:node-9:entry-left · 66 × 12" [ref=f1e1040]:
+              - button "Inspect right lane on drive:node-9:entry-left" [ref=f1e1041] [cursor=pointer]:
+                - generic [ref=f1e1042]: IN →
+          - group [ref=f1e1043]:
+            - generic "drive:node-9:exit-bottom · 12 × 48" [ref=f1e1044]:
+              - button "Inspect down lane on drive:node-9:exit-bottom" [ref=f1e1045] [cursor=pointer]:
+                - generic [ref=f1e1046]: OUT ↓
+          - group [ref=f1e1047]:
+            - generic "drive:node-9:exit-right · 66 × 12" [ref=f1e1048]:
+              - button "Inspect right lane on drive:node-9:exit-right" [ref=f1e1049] [cursor=pointer]:
+                - generic [ref=f1e1050]: OUT →
+          - group [ref=f1e1051]:
+            - generic "drive:node-10:entry-top · 24 × 60" [ref=f1e1052]:
+              - button "Inspect down lane on drive:node-10:entry-top" [ref=f1e1053] [cursor=pointer]:
+                - generic [ref=f1e1054]: IN ↓
+          - group [ref=f1e1055]:
+            - generic "drive:node-10:entry-left · 66 × 12" [ref=f1e1056]:
+              - button "Inspect right lane on drive:node-10:entry-left" [ref=f1e1057] [cursor=pointer]:
+                - generic [ref=f1e1058]: IN →
+          - group [ref=f1e1059]:
+            - generic "drive:node-10:exit-bottom · 48 × 48" [ref=f1e1060]:
+              - button "Inspect down lane on drive:node-10:exit-bottom" [ref=f1e1061] [cursor=pointer]:
+                - generic [ref=f1e1062]: OUT ↓
+          - group [ref=f1e1063]:
+            - generic "drive:node-10:exit-right · 66 × 12" [ref=f1e1064]:
+              - button "Inspect right lane on drive:node-10:exit-right" [ref=f1e1065] [cursor=pointer]:
+                - generic [ref=f1e1066]: OUT →
+          - group [ref=f1e1067]:
+            - generic "drive:section-3:entry-top · 24 × 148" [ref=f1e1068]:
+              - button "Inspect down lane on drive:section-3:entry-top" [ref=f1e1069] [cursor=pointer]:
+                - generic [ref=f1e1070]: IN ↓
+          - group [ref=f1e1071]:
+            - generic "drive:section-3:entry-left · 124 × 12" [ref=f1e1072]:
+              - button "Inspect right lane on drive:section-3:entry-left" [ref=f1e1073] [cursor=pointer]:
+                - generic [ref=f1e1074]: IN →
+          - group [ref=f1e1075]:
+            - generic "drive:section-3:exit-bottom · 48 × 40" [ref=f1e1076]:
+              - button "Inspect down lane on drive:section-3:exit-bottom" [ref=f1e1077] [cursor=pointer]:
+                - generic [ref=f1e1078]: OUT ↓
+          - group [ref=f1e1079]:
+            - generic "drive:section-3:exit-right · 124 × 12" [ref=f1e1080]:
+              - button "Inspect right lane on drive:section-3:exit-right" [ref=f1e1081] [cursor=pointer]:
+                - generic [ref=f1e1082]: OUT →
+          - group [ref=f1e1083]:
+            - generic "drive:section-4:entry-top · 60 × 82" [ref=f1e1084]:
+              - button "Inspect down lane on drive:section-4:entry-top" [ref=f1e1085] [cursor=pointer]:
+                - generic [ref=f1e1086]: IN ↓
+          - group [ref=f1e1087]:
+            - generic "drive:section-4:entry-left · 80 × 60" [ref=f1e1088]:
+              - button "Inspect right lane on drive:section-4:entry-left" [ref=f1e1089] [cursor=pointer]:
+                - generic [ref=f1e1090]: IN →
+          - group [ref=f1e1091]:
+            - generic "drive:section-4:exit-bottom · 72 × 24" [ref=f1e1092]:
+              - button "Inspect down lane on drive:section-4:exit-bottom" [ref=f1e1093] [cursor=pointer]:
+                - generic [ref=f1e1094]: OUT ↓
+          - group [ref=f1e1095]:
+            - generic "drive:section-4:exit-right · 182 × 12" [ref=f1e1096]:
+              - button "Inspect right lane on drive:section-4:exit-right" [ref=f1e1097] [cursor=pointer]:
+                - generic [ref=f1e1098]: OUT →
+          - group [ref=f1e1099]:
+            - generic "drive:node-12:entry-top · 36 × 66" [ref=f1e1100]:
+              - button "Inspect down lane on drive:node-12:entry-top" [ref=f1e1101] [cursor=pointer]:
+                - generic [ref=f1e1102]: IN ↓
+          - group [ref=f1e1103]:
+            - generic "drive:node-12:entry-left · 54 × 36" [ref=f1e1104]:
+              - button "Inspect right lane on drive:node-12:entry-left" [ref=f1e1105] [cursor=pointer]:
+                - generic [ref=f1e1106]: IN →
+          - group [ref=f1e1107]:
+            - generic "drive:node-12:exit-bottom · 12 × 66" [ref=f1e1108]:
+              - button "Inspect down lane on drive:node-12:exit-bottom" [ref=f1e1109] [cursor=pointer]:
+                - generic [ref=f1e1110]: OUT ↓
+          - group [ref=f1e1111]:
+            - generic "drive:node-12:exit-right · 60 × 24" [ref=f1e1112]:
+              - button "Inspect right lane on drive:node-12:exit-right" [ref=f1e1113] [cursor=pointer]:
+                - generic [ref=f1e1114]: OUT →
+          - group [ref=f1e1115]:
+            - generic "drive:section-5:entry-top · 36 × 124" [ref=f1e1116]:
+              - button "Inspect down lane on drive:section-5:entry-top" [ref=f1e1117] [cursor=pointer]:
+                - generic [ref=f1e1118]: IN ↓
+          - group [ref=f1e1119]:
+            - generic "drive:section-5:entry-left · 76 × 36" [ref=f1e1120]:
+              - button "Inspect right lane on drive:section-5:entry-left" [ref=f1e1121] [cursor=pointer]:
+                - generic [ref=f1e1122]: IN →
+          - group [ref=f1e1123]:
+            - generic "drive:section-5:exit-bottom · 12 × 58" [ref=f1e1124]:
+              - button "Inspect down lane on drive:section-5:exit-bottom" [ref=f1e1125] [cursor=pointer]:
+                - generic [ref=f1e1126]: OUT ↓
+          - group [ref=f1e1127]:
+            - generic "drive:section-5:exit-right · 100 × 24" [ref=f1e1128]:
+              - button "Inspect right lane on drive:section-5:exit-right" [ref=f1e1129] [cursor=pointer]:
+                - generic [ref=f1e1130]: OUT →
+          - group [ref=f1e1131]:
+            - generic "drive:node-13:entry-top · 24 × 66" [ref=f1e1132]:
+              - button "Inspect down lane on drive:node-13:entry-top" [ref=f1e1133] [cursor=pointer]:
+                - generic [ref=f1e1134]: IN ↓
+          - group [ref=f1e1135]:
+            - generic "drive:node-13:entry-left · 54 × 36" [ref=f1e1136]:
+              - button "Inspect right lane on drive:node-13:entry-left" [ref=f1e1137] [cursor=pointer]:
+                - generic [ref=f1e1138]: IN →
+          - group [ref=f1e1139]:
+            - generic "drive:node-13:exit-bottom · 12 × 66" [ref=f1e1140]:
+              - button "Inspect down lane on drive:node-13:exit-bottom" [ref=f1e1141] [cursor=pointer]:
+                - generic [ref=f1e1142]: OUT ↓
+          - group [ref=f1e1143]:
+            - generic "drive:node-13:exit-right · 60 × 24" [ref=f1e1144]:
+              - button "Inspect right lane on drive:node-13:exit-right" [ref=f1e1145] [cursor=pointer]:
+                - generic [ref=f1e1146]: OUT →
+          - group [ref=f1e1147]:
+            - generic "drive:section-6:entry-top · 24 × 124" [ref=f1e1148]:
+              - button "Inspect down lane on drive:section-6:entry-top" [ref=f1e1149] [cursor=pointer]:
+                - generic [ref=f1e1150]: IN ↓
+          - group [ref=f1e1151]:
+            - generic "drive:section-6:entry-left · 94 × 36" [ref=f1e1152]:
+              - button "Inspect right lane on drive:section-6:entry-left" [ref=f1e1153] [cursor=pointer]:
+                - generic [ref=f1e1154]: IN →
+          - group [ref=f1e1155]:
+            - generic "drive:section-6:exit-bottom · 12 × 58" [ref=f1e1156]:
+              - button "Inspect down lane on drive:section-6:exit-bottom" [ref=f1e1157] [cursor=pointer]:
+                - generic [ref=f1e1158]: OUT ↓
+          - group [ref=f1e1159]:
+            - generic "drive:section-6:exit-right · 100 × 24" [ref=f1e1160]:
+              - button "Inspect right lane on drive:section-6:exit-right" [ref=f1e1161] [cursor=pointer]:
+                - generic [ref=f1e1162]: OUT →
+          - group [ref=f1e1163]:
+            - generic "drive:node-14:entry-top · 24 × 66" [ref=f1e1164]:
+              - button "Inspect down lane on drive:node-14:entry-top" [ref=f1e1165] [cursor=pointer]:
+                - generic [ref=f1e1166]: IN ↓
+          - group [ref=f1e1167]:
+            - generic "drive:node-14:entry-left · 54 × 36" [ref=f1e1168]:
+              - button "Inspect right lane on drive:node-14:entry-left" [ref=f1e1169] [cursor=pointer]:
+                - generic [ref=f1e1170]: IN →
+          - group [ref=f1e1171]:
+            - generic "drive:node-14:exit-bottom · 24 × 66" [ref=f1e1172]:
+              - button "Inspect down lane on drive:node-14:exit-bottom" [ref=f1e1173] [cursor=pointer]:
+                - generic [ref=f1e1174]: OUT ↓
+          - group [ref=f1e1175]:
+            - generic "drive:node-14:exit-right · 66 × 12" [ref=f1e1176]:
+              - button "Inspect right lane on drive:node-14:exit-right" [ref=f1e1177] [cursor=pointer]:
+                - generic [ref=f1e1178]: OUT →
+          - group [ref=f1e1179]:
+            - generic "drive:section-7:entry-top · 24 × 124" [ref=f1e1180]:
+              - button "Inspect down lane on drive:section-7:entry-top" [ref=f1e1181] [cursor=pointer]:
+                - generic [ref=f1e1182]: IN ↓
+          - group [ref=f1e1183]:
+            - generic "drive:section-7:entry-left · 94 × 36" [ref=f1e1184]:
+              - button "Inspect right lane on drive:section-7:entry-left" [ref=f1e1185] [cursor=pointer]:
+                - generic [ref=f1e1186]: IN →
+          - group [ref=f1e1187]:
+            - generic "drive:section-7:exit-bottom · 24 × 58" [ref=f1e1188]:
+              - button "Inspect down lane on drive:section-7:exit-bottom" [ref=f1e1189] [cursor=pointer]:
+                - generic [ref=f1e1190]: OUT ↓
+          - group [ref=f1e1191]:
+            - generic "drive:section-7:exit-right · 124 × 12" [ref=f1e1192]:
+              - button "Inspect right lane on drive:section-7:exit-right" [ref=f1e1193] [cursor=pointer]:
+                - generic [ref=f1e1194]: OUT →
+          - group [ref=f1e1195]:
+            - generic "drive:node-15:entry-top · 48 × 36" [ref=f1e1196]:
+              - button "Inspect down lane on drive:node-15:entry-top" [ref=f1e1197] [cursor=pointer]:
+                - generic [ref=f1e1198]: IN ↓
+          - group [ref=f1e1199]:
+            - generic "drive:node-15:entry-left · 60 × 24" [ref=f1e1200]:
+              - button "Inspect right lane on drive:node-15:entry-left" [ref=f1e1201] [cursor=pointer]:
+                - generic [ref=f1e1202]: IN →
+          - group [ref=f1e1203]:
+            - generic "drive:node-15:exit-bottom · 60 × 19.5" [ref=f1e1204]:
+              - button "Inspect down lane on drive:node-15:exit-bottom" [ref=f1e1205] [cursor=pointer]:
+                - generic [ref=f1e1206]: OUT ↓
+          - group [ref=f1e1207]:
+            - generic "drive:node-15:exit-right · 66 × 12" [ref=f1e1208]:
+              - button "Inspect right lane on drive:node-15:exit-right" [ref=f1e1209] [cursor=pointer]:
+                - generic [ref=f1e1210]: OUT →
+          - group [ref=f1e1211]:
+            - generic "drive:node-16:entry-top · 24 × 36" [ref=f1e1212]:
+              - button "Inspect down lane on drive:node-16:entry-top" [ref=f1e1213] [cursor=pointer]:
+                - generic [ref=f1e1214]: IN ↓
+          - group [ref=f1e1215]:
+            - generic "drive:node-16:entry-left · 66 × 12" [ref=f1e1216]:
+              - button "Inspect right lane on drive:node-16:entry-left" [ref=f1e1217] [cursor=pointer]:
+                - generic [ref=f1e1218]: IN →
+          - group [ref=f1e1219]:
+            - generic "drive:node-16:exit-bottom · 60 × 19.5" [ref=f1e1220]:
+              - button "Inspect down lane on drive:node-16:exit-bottom" [ref=f1e1221] [cursor=pointer]:
+                - generic [ref=f1e1222]: OUT ↓
+          - group [ref=f1e1223]:
+            - generic "drive:node-16:exit-right · 60 × 24" [ref=f1e1224]:
+              - button "Inspect right lane on drive:node-16:exit-right" [ref=f1e1225] [cursor=pointer]:
+                - generic [ref=f1e1226]: OUT →
+          - group [ref=f1e1227]:
+            - generic "drive:section-8:entry-top · 60 × 94" [ref=f1e1228]:
+              - button "Inspect down lane on drive:section-8:entry-top" [ref=f1e1229] [cursor=pointer]:
+                - generic [ref=f1e1230]: IN ↓
+          - group [ref=f1e1231]:
+            - generic "drive:section-8:entry-left · 118 × 12" [ref=f1e1232]:
+              - button "Inspect right lane on drive:section-8:entry-left" [ref=f1e1233] [cursor=pointer]:
+                - generic [ref=f1e1234]: IN →
+          - group [ref=f1e1235]:
+            - generic "drive:section-8:exit-bottom · 108 × 10" [ref=f1e1236]:
+              - button "Inspect down lane on drive:section-8:exit-bottom" [ref=f1e1237] [cursor=pointer]:
+                - generic [ref=f1e1238]: OUT ↓
+          - group [ref=f1e1239]:
+            - generic "drive:section-8:exit-right · 118 × 12" [ref=f1e1240]:
+              - button "Inspect right lane on drive:section-8:exit-right" [ref=f1e1241] [cursor=pointer]:
+                - generic [ref=f1e1242]: OUT →
+          - group [ref=f1e1243]:
+            - generic "drive:node-1:entry-top · 36 × 66" [ref=f1e1244]:
+              - button "Inspect down lane on drive:node-1:entry-top" [ref=f1e1245] [cursor=pointer]:
+                - generic [ref=f1e1246]: IN ↓
+          - group [ref=f1e1247]:
+            - generic "drive:node-1:entry-left · 66 × 12" [ref=f1e1248]:
+              - button "Inspect right lane on drive:node-1:entry-left" [ref=f1e1249] [cursor=pointer]:
+                - generic [ref=f1e1250]: IN →
+          - group [ref=f1e1251]:
+            - generic "drive:node-1:exit-bottom · 12 × 66" [ref=f1e1252]:
+              - button "Inspect down lane on drive:node-1:exit-bottom" [ref=f1e1253] [cursor=pointer]:
+                - generic [ref=f1e1254]: OUT ↓
+          - group [ref=f1e1255]:
+            - generic "drive:node-1:exit-right · 60 × 24" [ref=f1e1256]:
+              - button "Inspect right lane on drive:node-1:exit-right" [ref=f1e1257] [cursor=pointer]:
+                - generic [ref=f1e1258]: OUT →
+          - group [ref=f1e1259]:
+            - generic "drive:section-9:entry-top · 36 × 130" [ref=f1e1260]:
+              - button "Inspect down lane on drive:section-9:entry-top" [ref=f1e1261] [cursor=pointer]:
+                - generic [ref=f1e1262]: IN ↓
+          - group [ref=f1e1263]:
+            - generic "drive:section-9:entry-left · 1332 × 12" [ref=f1e1264]:
+              - button "Inspect right lane on drive:section-9:entry-left" [ref=f1e1265] [cursor=pointer]:
+                - generic [ref=f1e1266]: IN →
+          - group [ref=f1e1267]:
+            - generic "drive:section-9:exit-bottom · 12 × 124" [ref=f1e1268]:
+              - button "Inspect down lane on drive:section-9:exit-bottom" [ref=f1e1269] [cursor=pointer]:
+                - generic [ref=f1e1270]: OUT ↓
+          - group [ref=f1e1271]:
+            - generic "drive:section-9:exit-right · 1392 × 24" [ref=f1e1272]:
+              - button "Inspect right lane on drive:section-9:exit-right" [ref=f1e1273] [cursor=pointer]:
+                - generic [ref=f1e1274]: OUT →
+          - group [ref=f1e1275]:
+            - button "Inspect J1 bend" [ref=f1e1276] [cursor=pointer]:
+              - generic [ref=f1e1277]: J1
+          - group [ref=f1e1278]:
+            - button "Inspect J2 bend" [ref=f1e1279] [cursor=pointer]:
+              - generic [ref=f1e1280]: J2
+          - group [ref=f1e1281]:
+            - button "Inspect J3 entry" [ref=f1e1282] [cursor=pointer]:
+              - generic [ref=f1e1283]: J3
+          - group [ref=f1e1284]:
+            - button "Inspect J4 intersection" [ref=f1e1285] [cursor=pointer]:
+              - generic [ref=f1e1286]: J4
+          - group [ref=f1e1287]:
+            - button "Inspect J5 intersection" [ref=f1e1288] [cursor=pointer]:
+              - generic [ref=f1e1289]: J5
+          - group [ref=f1e1290]:
+            - button "Inspect J6 exit" [ref=f1e1291] [cursor=pointer]:
+              - generic [ref=f1e1292]: J6
+          - group [ref=f1e1293]:
+            - button "Inspect J7 intersection" [ref=f1e1294] [cursor=pointer]:
+              - generic [ref=f1e1295]: J7
+          - group [ref=f1e1296]:
+            - button "Inspect J8 bend" [ref=f1e1297] [cursor=pointer]:
+              - generic [ref=f1e1298]: J8
+          - group [ref=f1e1299]:
+            - button "Inspect J9 entry" [ref=f1e1300] [cursor=pointer]:
+              - generic [ref=f1e1301]: J9
+          - group [ref=f1e1302]:
+            - button "Inspect J10 entry" [ref=f1e1303] [cursor=pointer]:
+              - generic [ref=f1e1304]: J10
+          - group [ref=f1e1305]:
+            - button "Inspect J11 entry" [ref=f1e1306] [cursor=pointer]:
+              - generic [ref=f1e1307]: J11
+          - group [ref=f1e1308]:
+            - button "Inspect J12 intersection" [ref=f1e1309] [cursor=pointer]:
+              - generic [ref=f1e1310]: J12
+          - group [ref=f1e1311]:
+            - button "Inspect J13 bend" [ref=f1e1312] [cursor=pointer]:
+              - generic [ref=f1e1313]: J13
+          - group [ref=f1e1314]:
+            - button "Inspect J14 exit" [ref=f1e1315] [cursor=pointer]:
+              - generic [ref=f1e1316]: J14
+          - group [ref=f1e1317]:
+            - button "Inspect J15 exit" [ref=f1e1318] [cursor=pointer]:
+              - generic [ref=f1e1319]: J15
+          - group [ref=f1e1320]:
+            - button "Inspect J16 exit" [ref=f1e1321] [cursor=pointer]:
+              - generic [ref=f1e1322]: J16
+          - group [ref=f1e1323]:
+            - button "Inspect J17 exit" [ref=f1e1324] [cursor=pointer]:
+              - generic [ref=f1e1325]: J17
+          - group [ref=f1e1326]:
+            - button "Inspect J18 exit" [ref=f1e1327] [cursor=pointer]:
+              - generic [ref=f1e1328]: J18
+          - group [ref=f1e1329]:
+            - button "Inspect J19 bend" [ref=f1e1330] [cursor=pointer]:
+              - generic [ref=f1e1331]: J19
+          - group [ref=f1e1332]:
+            - button "Inspect J20 bend" [ref=f1e1333] [cursor=pointer]:
+              - generic [ref=f1e1334]: J20
+          - group [ref=f1e1335]:
+            - button "Inspect J21 intersection" [ref=f1e1336] [cursor=pointer]:
+              - generic [ref=f1e1337]: J21
+          - group [ref=f1e1338]:
+            - button "Inspect J22 intersection" [ref=f1e1339] [cursor=pointer]:
+              - generic [ref=f1e1340]: J22
+          - group [ref=f1e1341]:
+            - button "Inspect J23 intersection" [ref=f1e1342] [cursor=pointer]:
+              - generic [ref=f1e1343]: J23
+          - group [ref=f1e1344]:
+            - button "Inspect J24 intersection" [ref=f1e1345] [cursor=pointer]:
+              - generic [ref=f1e1346]: J24
+          - group [ref=f1e1347]:
+            - button "Inspect J25 entry" [ref=f1e1348] [cursor=pointer]:
+              - generic [ref=f1e1349]: J25
+          - group [ref=f1e1350]:
+            - button "Inspect J26 entry" [ref=f1e1351] [cursor=pointer]:
+              - generic [ref=f1e1352]: J26
+          - group [ref=f1e1353]:
+            - button "Inspect J27 entry" [ref=f1e1354] [cursor=pointer]:
+              - generic [ref=f1e1355]: J27
+          - group [ref=f1e1356]:
+            - button "Inspect J28 entry" [ref=f1e1357] [cursor=pointer]:
+              - generic [ref=f1e1358]: J28
+          - group [ref=f1e1359]:
+            - button "Inspect J29 entry" [ref=f1e1360] [cursor=pointer]:
+              - generic [ref=f1e1361]: J29
+          - group [ref=f1e1362]:
+            - button "Inspect J30 entry" [ref=f1e1363] [cursor=pointer]:
+              - generic [ref=f1e1364]: J30
+          - group [ref=f1e1365]:
+            - button "Inspect J31 bend" [ref=f1e1366] [cursor=pointer]:
+              - generic [ref=f1e1367]: J31
+          - group [ref=f1e1368]:
+            - button "Inspect J32 bend" [ref=f1e1369] [cursor=pointer]:
+              - generic [ref=f1e1370]: J32
+          - group [ref=f1e1371]:
+            - button "Inspect J33 intersection" [ref=f1e1372] [cursor=pointer]:
+              - generic [ref=f1e1373]: J33
+          - group [ref=f1e1374]:
+            - button "Inspect J34 intersection" [ref=f1e1375] [cursor=pointer]:
+              - generic [ref=f1e1376]: J34
+          - group [ref=f1e1377]:
+            - button "Inspect J35 intersection" [ref=f1e1378] [cursor=pointer]:
+              - generic [ref=f1e1379]: J35
+          - group [ref=f1e1380]:
+            - button "Inspect J36 intersection" [ref=f1e1381] [cursor=pointer]:
+              - generic [ref=f1e1382]: J36
+          - group [ref=f1e1383]:
+            - button "Inspect J37 exit" [ref=f1e1384] [cursor=pointer]:
+              - generic [ref=f1e1385]: J37
+          - group [ref=f1e1386]:
+            - button "Inspect J38 exit" [ref=f1e1387] [cursor=pointer]:
+              - generic [ref=f1e1388]: J38
+          - group [ref=f1e1389]:
+            - button "Inspect J39 exit" [ref=f1e1390] [cursor=pointer]:
+              - generic [ref=f1e1391]: J39
+          - group [ref=f1e1392]:
+            - button "Inspect J40 exit" [ref=f1e1393] [cursor=pointer]:
+              - generic [ref=f1e1394]: J40
+          - group [ref=f1e1395]:
+            - button "Inspect J41 exit" [ref=f1e1396] [cursor=pointer]:
+              - generic [ref=f1e1397]: J41
+          - group [ref=f1e1398]:
+            - button "Inspect J42 entry" [ref=f1e1399] [cursor=pointer]:
+              - generic [ref=f1e1400]: J42
+          - group [ref=f1e1401]:
+            - button "Inspect J43 entry" [ref=f1e1402] [cursor=pointer]:
+              - generic [ref=f1e1403]: J43
+          - group [ref=f1e1404]:
+            - button "Inspect J44 entry" [ref=f1e1405] [cursor=pointer]:
+              - generic [ref=f1e1406]: J44
+          - group [ref=f1e1407]:
+            - button "Inspect J45 exit" [ref=f1e1408] [cursor=pointer]:
+              - generic [ref=f1e1409]: J45
+          - group [ref=f1e1410]:
+            - button "Inspect J46 exit" [ref=f1e1411] [cursor=pointer]:
+              - generic [ref=f1e1412]: J46
+          - group [ref=f1e1413]:
+            - button "Inspect J47 intersection" [ref=f1e1414] [cursor=pointer]:
+              - generic [ref=f1e1415]: J47
+          - group [ref=f1e1416]:
+            - button "Inspect J48 intersection" [ref=f1e1417] [cursor=pointer]:
+              - generic [ref=f1e1418]: J48
+          - group [ref=f1e1419]:
+            - button "Inspect J49 exit" [ref=f1e1420] [cursor=pointer]:
+              - generic [ref=f1e1421]: J49
+          - group [ref=f1e1422]:
+            - button "Inspect J50 exit" [ref=f1e1423] [cursor=pointer]:
+              - generic [ref=f1e1424]: J50
+          - group [ref=f1e1425]:
+            - button "Inspect J51 exit" [ref=f1e1426] [cursor=pointer]:
+              - generic [ref=f1e1427]: J51
+          - group [ref=f1e1428]:
+            - button "Inspect J52 exit" [ref=f1e1429] [cursor=pointer]:
+              - generic [ref=f1e1430]: J52
+          - group [ref=f1e1431]:
+            - button "Inspect J53 exit" [ref=f1e1432] [cursor=pointer]:
+              - generic [ref=f1e1433]: J53
+          - group [ref=f1e1434]:
+            - button "Inspect J54 exit" [ref=f1e1435] [cursor=pointer]:
+              - generic [ref=f1e1436]: J54
+          - group [ref=f1e1437]:
+            - button "Inspect J55 exit" [ref=f1e1438] [cursor=pointer]:
+              - generic [ref=f1e1439]: J55
+          - group [ref=f1e1440]:
+            - button "Inspect J56 exit" [ref=f1e1441] [cursor=pointer]:
+              - generic [ref=f1e1442]: J56
+          - group [ref=f1e1443]:
+            - button "Inspect J57 exit" [ref=f1e1444] [cursor=pointer]:
+              - generic [ref=f1e1445]: J57
+          - group [ref=f1e1446]:
+            - button "Inspect J58 entry" [ref=f1e1447] [cursor=pointer]:
+              - generic [ref=f1e1448]: J58
+          - group [ref=f1e1449]:
+            - button "Inspect J59 exit" [ref=f1e1450] [cursor=pointer]:
+              - generic [ref=f1e1451]: J59
+          - group [ref=f1e1452]:
+            - button "Inspect J60 bend" [ref=f1e1453] [cursor=pointer]:
+              - generic [ref=f1e1454]: J60
+          - group [ref=f1e1455]:
+            - button "Inspect J61 bend" [ref=f1e1456] [cursor=pointer]:
+              - generic [ref=f1e1457]: J61
+          - group [ref=f1e1458]:
+            - button "Inspect J62 entry" [ref=f1e1459] [cursor=pointer]:
+              - generic [ref=f1e1460]: J62
+          - group [ref=f1e1461]:
+            - button "Inspect J63 entry" [ref=f1e1462] [cursor=pointer]:
+              - generic [ref=f1e1463]: J63
+          - group [ref=f1e1464]:
+            - button "Inspect J64 entry" [ref=f1e1465] [cursor=pointer]:
+              - generic [ref=f1e1466]: J64
+          - group [ref=f1e1467]:
+            - button "Inspect J65 bend" [ref=f1e1468] [cursor=pointer]:
+              - generic [ref=f1e1469]: J65
+          - group [ref=f1e1470]:
+            - button "Inspect J66 bend" [ref=f1e1471] [cursor=pointer]:
+              - generic [ref=f1e1472]: J66
+          - group [ref=f1e1473]:
+            - button "Inspect J67 exit" [ref=f1e1474] [cursor=pointer]:
+              - generic [ref=f1e1475]: J67
+          - group [ref=f1e1476]:
+            - button "Inspect J68 exit" [ref=f1e1477] [cursor=pointer]:
+              - generic [ref=f1e1478]: J68
+          - group [ref=f1e1479]:
+            - button "Inspect J69 exit" [ref=f1e1480] [cursor=pointer]:
+              - generic [ref=f1e1481]: J69
+          - group [ref=f1e1482]:
+            - button "Inspect J70 entry" [ref=f1e1483] [cursor=pointer]:
+              - generic [ref=f1e1484]: J70
+          - group [ref=f1e1485]:
+            - button "Inspect J71 entry" [ref=f1e1486] [cursor=pointer]:
+              - generic [ref=f1e1487]: J71
+          - group [ref=f1e1488]:
+            - button "Inspect J72 exit" [ref=f1e1489] [cursor=pointer]:
+              - generic [ref=f1e1490]: J72
+          - group [ref=f1e1491]:
+            - button "Inspect J73 exit" [ref=f1e1492] [cursor=pointer]:
+              - generic [ref=f1e1493]: J73
+          - group [ref=f1e1494]:
+            - button "Inspect J74 exit" [ref=f1e1495] [cursor=pointer]:
+              - generic [ref=f1e1496]: J74
+          - group [ref=f1e1497]:
+            - button "Inspect J75 bend" [ref=f1e1498] [cursor=pointer]:
+              - generic [ref=f1e1499]: J75
+          - group [ref=f1e1500]:
+            - button "Inspect J76 bend" [ref=f1e1501] [cursor=pointer]:
+              - generic [ref=f1e1502]: J76
+          - group [ref=f1e1503]:
+            - button "Inspect J77 entry" [ref=f1e1504] [cursor=pointer]:
+              - generic [ref=f1e1505]: J77
+          - group [ref=f1e1506]:
+            - button "Inspect J78 entry" [ref=f1e1507] [cursor=pointer]:
+              - generic [ref=f1e1508]: J78
+          - group [ref=f1e1509]:
+            - button "Inspect J79 entry" [ref=f1e1510] [cursor=pointer]:
+              - generic [ref=f1e1511]: J79
+          - group [ref=f1e1512]:
+            - button "Inspect J80 bend" [ref=f1e1513] [cursor=pointer]:
+              - generic [ref=f1e1514]: J80
+          - group [ref=f1e1515]:
+            - button "Inspect J81 bend" [ref=f1e1516] [cursor=pointer]:
+              - generic [ref=f1e1517]: J81
+          - group [ref=f1e1518]:
+            - button "Inspect J82 exit" [ref=f1e1519] [cursor=pointer]:
+              - generic [ref=f1e1520]: J82
+          - group [ref=f1e1521]:
+            - button "Inspect J83 exit" [ref=f1e1522] [cursor=pointer]:
+              - generic [ref=f1e1523]: J83
+          - group [ref=f1e1524]:
+            - button "Inspect J84 exit" [ref=f1e1525] [cursor=pointer]:
+              - generic [ref=f1e1526]: J84
+          - group [ref=f1e1527]:
+            - button "Inspect J85 entry" [ref=f1e1528] [cursor=pointer]:
+              - generic [ref=f1e1529]: J85
+          - group [ref=f1e1530]:
+            - button "Inspect J86 entry" [ref=f1e1531] [cursor=pointer]:
+              - generic [ref=f1e1532]: J86
+          - group [ref=f1e1533]:
+            - button "Inspect J87 exit" [ref=f1e1534] [cursor=pointer]:
+              - generic [ref=f1e1535]: J87
+          - group [ref=f1e1536]:
+            - button "Inspect J88 exit" [ref=f1e1537] [cursor=pointer]:
+              - generic [ref=f1e1538]: J88
+          - group [ref=f1e1539]:
+            - button "Inspect J89 exit" [ref=f1e1540] [cursor=pointer]:
+              - generic [ref=f1e1541]: J89
+          - group [ref=f1e1542]:
+            - button "Inspect J90 bend" [ref=f1e1543] [cursor=pointer]:
+              - generic [ref=f1e1544]: J90
+          - group [ref=f1e1545]:
+            - button "Inspect J91 bend" [ref=f1e1546] [cursor=pointer]:
+              - generic [ref=f1e1547]: J91
+          - group [ref=f1e1548]:
+            - button "Inspect J92 intersection" [ref=f1e1549] [cursor=pointer]:
+              - generic [ref=f1e1550]: J92
+          - group [ref=f1e1551]:
+            - button "Inspect J93 intersection" [ref=f1e1552] [cursor=pointer]:
+              - generic [ref=f1e1553]: J93
+          - group [ref=f1e1554]:
+            - button "Inspect J94 intersection" [ref=f1e1555] [cursor=pointer]:
+              - generic [ref=f1e1556]: J94
+          - group [ref=f1e1557]:
+            - button "Inspect J95 entry" [ref=f1e1558] [cursor=pointer]:
+              - generic [ref=f1e1559]: J95
+          - group [ref=f1e1560]:
+            - button "Inspect J96 entry" [ref=f1e1561] [cursor=pointer]:
+              - generic [ref=f1e1562]: J96
+          - group [ref=f1e1563]:
+            - button "Inspect J97 entry" [ref=f1e1564] [cursor=pointer]:
+              - generic [ref=f1e1565]: J97
+          - group [ref=f1e1566]:
+            - button "Inspect J98 entry" [ref=f1e1567] [cursor=pointer]:
+              - generic [ref=f1e1568]: J98
+          - group [ref=f1e1569]:
+            - button "Inspect J99 entry" [ref=f1e1570] [cursor=pointer]:
+              - generic [ref=f1e1571]: J99
+          - group [ref=f1e1572]:
+            - button "Inspect J100 bend" [ref=f1e1573] [cursor=pointer]:
+              - generic [ref=f1e1574]: J100
+          - group [ref=f1e1575]:
+            - button "Inspect J101 bend" [ref=f1e1576] [cursor=pointer]:
+              - generic [ref=f1e1577]: J101
+          - group [ref=f1e1578]:
+            - button "Inspect J102 intersection" [ref=f1e1579] [cursor=pointer]:
+              - generic [ref=f1e1580]: J102
+          - group [ref=f1e1581]:
+            - button "Inspect J103 intersection" [ref=f1e1582] [cursor=pointer]:
+              - generic [ref=f1e1583]: J103
+          - group [ref=f1e1584]:
+            - button "Inspect J104 intersection" [ref=f1e1585] [cursor=pointer]:
+              - generic [ref=f1e1586]: J104
+          - group [ref=f1e1587]:
+            - button "Inspect J105 exit" [ref=f1e1588] [cursor=pointer]:
+              - generic [ref=f1e1589]: J105
+          - group [ref=f1e1590]:
+            - button "Inspect J106 exit" [ref=f1e1591] [cursor=pointer]:
+              - generic [ref=f1e1592]: J106
+          - group [ref=f1e1593]:
+            - button "Inspect J107 exit" [ref=f1e1594] [cursor=pointer]:
+              - generic [ref=f1e1595]: J107
+          - group [ref=f1e1596]:
+            - button "Inspect J108 exit" [ref=f1e1597] [cursor=pointer]:
+              - generic [ref=f1e1598]: J108
+          - group [ref=f1e1599]:
+            - button "Inspect J109 exit" [ref=f1e1600] [cursor=pointer]:
+              - generic [ref=f1e1601]: J109
+          - group [ref=f1e1602]:
+            - button "Inspect J110 entry" [ref=f1e1603] [cursor=pointer]:
+              - generic [ref=f1e1604]: J110
+          - group [ref=f1e1605]:
+            - button "Inspect J111 exit" [ref=f1e1606] [cursor=pointer]:
+              - generic [ref=f1e1607]: J111
+          - group [ref=f1e1608]:
+            - button "Inspect J112 exit" [ref=f1e1609] [cursor=pointer]:
+              - generic [ref=f1e1610]: J112
+          - group [ref=f1e1611]:
+            - button "Inspect J113 exit" [ref=f1e1612] [cursor=pointer]:
+              - generic [ref=f1e1613]: J113
+          - group [ref=f1e1614]:
+            - button "Inspect J114 exit" [ref=f1e1615] [cursor=pointer]:
+              - generic [ref=f1e1616]: J114
+          - group [ref=f1e1617]:
+            - button "Inspect J115 exit" [ref=f1e1618] [cursor=pointer]:
+              - generic [ref=f1e1619]: J115
+          - group [ref=f1e1620]:
+            - button "Inspect J116 bend" [ref=f1e1621] [cursor=pointer]:
+              - generic [ref=f1e1622]: J116
+          - group [ref=f1e1623]:
+            - button "Inspect J117 bend" [ref=f1e1624] [cursor=pointer]:
+              - generic [ref=f1e1625]: J117
+          - group [ref=f1e1626]:
+            - button "Inspect J118 entry" [ref=f1e1627] [cursor=pointer]:
+              - generic [ref=f1e1628]: J118
+          - group [ref=f1e1629]:
+            - button "Inspect J119 bend" [ref=f1e1630] [cursor=pointer]:
+              - generic [ref=f1e1631]: J119
+          - group [ref=f1e1632]:
+            - button "Inspect J120 bend" [ref=f1e1633] [cursor=pointer]:
+              - generic [ref=f1e1634]: J120
+          - group [ref=f1e1635]:
+            - button "Inspect J121 exit" [ref=f1e1636] [cursor=pointer]:
+              - generic [ref=f1e1637]: J121
+          - group [ref=f1e1638]:
+            - button "Inspect J122 entry" [ref=f1e1639] [cursor=pointer]:
+              - generic [ref=f1e1640]: J122
+          - group [ref=f1e1641]:
+            - button "Inspect J123 exit" [ref=f1e1642] [cursor=pointer]:
+              - generic [ref=f1e1643]: J123
+          - group [ref=f1e1644]:
+            - button "Inspect J124 exit" [ref=f1e1645] [cursor=pointer]:
+              - generic [ref=f1e1646]: J124
+          - group [ref=f1e1647]:
+            - button "Inspect J125 bend" [ref=f1e1648] [cursor=pointer]:
+              - generic [ref=f1e1649]: J125
+          - group [ref=f1e1650]:
+            - button "Inspect J126 bend" [ref=f1e1651] [cursor=pointer]:
+              - generic [ref=f1e1652]: J126
+          - group [ref=f1e1653]:
+            - button "Inspect J127 entry" [ref=f1e1654] [cursor=pointer]:
+              - generic [ref=f1e1655]: J127
+          - group [ref=f1e1656]:
+            - button "Inspect J128 bend" [ref=f1e1657] [cursor=pointer]:
+              - generic [ref=f1e1658]: J128
+          - group [ref=f1e1659]:
+            - button "Inspect J129 bend" [ref=f1e1660] [cursor=pointer]:
+              - generic [ref=f1e1661]: J129
+          - group [ref=f1e1662]:
+            - button "Inspect J130 exit" [ref=f1e1663] [cursor=pointer]:
+              - generic [ref=f1e1664]: J130
+          - group [ref=f1e1665]:
+            - button "Inspect J131 entry" [ref=f1e1666] [cursor=pointer]:
+              - generic [ref=f1e1667]: J131
+          - group [ref=f1e1668]:
+            - button "Inspect J132 exit" [ref=f1e1669] [cursor=pointer]:
+              - generic [ref=f1e1670]: J132
+          - group [ref=f1e1671]:
+            - button "Inspect J133 exit" [ref=f1e1672] [cursor=pointer]:
+              - generic [ref=f1e1673]: J133
+          - group [ref=f1e1674]:
+            - button "Inspect J134 bend" [ref=f1e1675] [cursor=pointer]:
+              - generic [ref=f1e1676]: J134
+          - group [ref=f1e1677]:
+            - button "Inspect J135 bend" [ref=f1e1678] [cursor=pointer]:
+              - generic [ref=f1e1679]: J135
+          - group [ref=f1e1680]:
+            - button "Inspect J136 entry" [ref=f1e1681] [cursor=pointer]:
+              - generic [ref=f1e1682]: J136
+          - group [ref=f1e1683]:
+            - button "Inspect J137 bend" [ref=f1e1684] [cursor=pointer]:
+              - generic [ref=f1e1685]: J137
+          - group [ref=f1e1686]:
+            - button "Inspect J138 bend" [ref=f1e1687] [cursor=pointer]:
+              - generic [ref=f1e1688]: J138
+          - group [ref=f1e1689]:
+            - button "Inspect J139 exit" [ref=f1e1690] [cursor=pointer]:
+              - generic [ref=f1e1691]: J139
+          - group [ref=f1e1692]:
+            - button "Inspect J140 entry" [ref=f1e1693] [cursor=pointer]:
+              - generic [ref=f1e1694]: J140
+          - group [ref=f1e1695]:
+            - button "Inspect J141 exit" [ref=f1e1696] [cursor=pointer]:
+              - generic [ref=f1e1697]: J141
+          - group [ref=f1e1698]:
+            - button "Inspect J142 exit" [ref=f1e1699] [cursor=pointer]:
+              - generic [ref=f1e1700]: J142
+          - group [ref=f1e1701]:
+            - button "Inspect J143 bend" [ref=f1e1702] [cursor=pointer]:
+              - generic [ref=f1e1703]: J143
+          - group [ref=f1e1704]:
+            - button "Inspect J144 bend" [ref=f1e1705] [cursor=pointer]:
+              - generic [ref=f1e1706]: J144
+          - group [ref=f1e1707]:
+            - button "Inspect J145 entry" [ref=f1e1708] [cursor=pointer]:
+              - generic [ref=f1e1709]: J145
+          - group [ref=f1e1710]:
+            - button "Inspect J146 entry" [ref=f1e1711] [cursor=pointer]:
+              - generic [ref=f1e1712]: J146
+          - group [ref=f1e1713]:
+            - button "Inspect J147 entry" [ref=f1e1714] [cursor=pointer]:
+              - generic [ref=f1e1715]: J147
+          - group [ref=f1e1716]:
+            - button "Inspect J148 bend" [ref=f1e1717] [cursor=pointer]:
+              - generic [ref=f1e1718]: J148
+          - group [ref=f1e1719]:
+            - button "Inspect J149 bend" [ref=f1e1720] [cursor=pointer]:
+              - generic [ref=f1e1721]: J149
+          - group [ref=f1e1722]:
+            - button "Inspect J150 exit" [ref=f1e1723] [cursor=pointer]:
+              - generic [ref=f1e1724]: J150
+          - group [ref=f1e1725]:
+            - button "Inspect J151 exit" [ref=f1e1726] [cursor=pointer]:
+              - generic [ref=f1e1727]: J151
+          - group [ref=f1e1728]:
+            - button "Inspect J152 exit" [ref=f1e1729] [cursor=pointer]:
+              - generic [ref=f1e1730]: J152
+          - group [ref=f1e1731]:
+            - button "Inspect J153 entry" [ref=f1e1732] [cursor=pointer]:
+              - generic [ref=f1e1733]: J153
+          - group [ref=f1e1734]:
+            - button "Inspect J154 entry" [ref=f1e1735] [cursor=pointer]:
+              - generic [ref=f1e1736]: J154
+          - group [ref=f1e1737]:
+            - button "Inspect J155 exit" [ref=f1e1738] [cursor=pointer]:
+              - generic [ref=f1e1739]: J155
+          - group [ref=f1e1740]:
+            - button "Inspect J156 exit" [ref=f1e1741] [cursor=pointer]:
+              - generic [ref=f1e1742]: J156
+          - group [ref=f1e1743]:
+            - button "Inspect J157 exit" [ref=f1e1744] [cursor=pointer]:
+              - generic [ref=f1e1745]: J157
+          - group [ref=f1e1746]:
+            - button "Inspect J158 bend" [ref=f1e1747] [cursor=pointer]:
+              - generic [ref=f1e1748]: J158
+          - group [ref=f1e1749]:
+            - button "Inspect J159 bend" [ref=f1e1750] [cursor=pointer]:
+              - generic [ref=f1e1751]: J159
+          - group [ref=f1e1752]:
+            - button "Inspect J160 entry" [ref=f1e1753] [cursor=pointer]:
+              - generic [ref=f1e1754]: J160
+          - group [ref=f1e1755]:
+            - button "Inspect J161 bend" [ref=f1e1756] [cursor=pointer]:
+              - generic [ref=f1e1757]: J161
+          - group [ref=f1e1758]:
+            - button "Inspect J162 bend" [ref=f1e1759] [cursor=pointer]:
+              - generic [ref=f1e1760]: J162
+          - group [ref=f1e1761]:
+            - button "Inspect J163 exit" [ref=f1e1762] [cursor=pointer]:
+              - generic [ref=f1e1763]: J163
+          - group [ref=f1e1764]:
+            - button "Inspect J164 entry" [ref=f1e1765] [cursor=pointer]:
+              - generic [ref=f1e1766]: J164
+          - group [ref=f1e1767]:
+            - button "Inspect J165 entry" [ref=f1e1768] [cursor=pointer]:
+              - generic [ref=f1e1769]: J165
+          - group [ref=f1e1770]:
+            - button "Inspect J166 exit" [ref=f1e1771] [cursor=pointer]:
+              - generic [ref=f1e1772]: J166
+          - group [ref=f1e1773]:
+            - button "Inspect J167 exit" [ref=f1e1774] [cursor=pointer]:
+              - generic [ref=f1e1775]: J167
+          - group [ref=f1e1776]:
+            - strong [ref=f1e1778]: api.ts
+          - group [ref=f1e1779]:
+            - strong [ref=f1e1781]: brands.ts
+          - group [ref=f1e1782]:
+            - strong [ref=f1e1784]: compose.ts
+          - group [ref=f1e1785]:
+            - strong [ref=f1e1787]: errors.ts
+          - group [ref=f1e1788]:
+            - strong [ref=f1e1790]: index.ts
+          - group [ref=f1e1791]:
+            - strong [ref=f1e1793]: types.ts
+          - group [ref=f1e1794]:
+            - strong [ref=f1e1796]: codecs.ts
+          - group [ref=f1e1797]:
+            - strong [ref=f1e1799]: identity.ts
+          - group [ref=f1e1800]:
+            - strong [ref=f1e1802]: failure-source.ts
+          - group [ref=f1e1803]:
+            - strong [ref=f1e1805]: preset.ts
+          - group [ref=f1e1806]:
+            - strong [ref=f1e1808]: plan.ts
+          - group [ref=f1e1809]:
+            - strong [ref=f1e1811]: select.ts
+          - group [ref=f1e1812]:
+            - strong [ref=f1e1814]: instantiate.ts
+          - group [ref=f1e1815]:
+            - strong [ref=f1e1817]: catalog.ts
+          - group [ref=f1e1818]:
+            - strong [ref=f1e1820]: outcomes.ts
+          - group [ref=f1e1821]:
+            - strong [ref=f1e1823]: identity.ts
+          - group [ref=f1e1824]
+          - group [ref=f1e1825]
+          - group [ref=f1e1826]
+          - group [ref=f1e1827]
+          - group [ref=f1e1828]
+          - group [ref=f1e1829]
+          - group [ref=f1e1830]
+          - group [ref=f1e1831]
+          - group [ref=f1e1832]
+          - group [ref=f1e1833]
+          - group [ref=f1e1834]
+          - group [ref=f1e1835]
+          - group [ref=f1e1836]
+          - group [ref=f1e1837]
+          - group [ref=f1e1838]
+          - group [ref=f1e1839]
+          - group [ref=f1e1840]
+          - group [ref=f1e1841]
+          - group [ref=f1e1842]
+          - group [ref=f1e1843]
+          - group [ref=f1e1844]
+          - group [ref=f1e1845]
+          - group [ref=f1e1846]
+          - group [ref=f1e1847]
+          - group [ref=f1e1848]
+          - group [ref=f1e1849]
+          - group [ref=f1e1850]
+          - group [ref=f1e1851]
+          - group [ref=f1e1852]
+          - group [ref=f1e1853]
+          - group [ref=f1e1854]
+          - group [ref=f1e1855]
+          - group [ref=f1e1856]
+          - group [ref=f1e1857]
+          - group [ref=f1e1858]
+          - group [ref=f1e1859]
+        - generic:
+          - img "Twelve law-routed wires":
+            - 'generic "w01: node-1 → node-4"':
+              - generic [ref=f1e1860] [cursor=pointer]
+            - 'generic "w02: node-2 → node-4"':
+              - generic [ref=f1e1861] [cursor=pointer]
+            - 'generic "w03: node-2 → node-6"':
+              - generic [ref=f1e1862] [cursor=pointer]
+            - 'generic "w04: node-3 → node-1"':
+              - generic [ref=f1e1863] [cursor=pointer]
+            - 'generic "w05: node-3 → node-6"':
+              - generic [ref=f1e1864] [cursor=pointer]
+            - 'generic "w06: node-3 → node-10"':
+              - generic [ref=f1e1865] [cursor=pointer]
+            - 'generic "w07: node-3 → node-15"':
+              - generic [ref=f1e1866] [cursor=pointer]
+            - 'generic "w08: node-4 → node-6"':
+              - generic [ref=f1e1867] [cursor=pointer]
+            - 'generic "w09: node-5 → node-1"':
+              - generic [ref=f1e1868] [cursor=pointer]
+            - 'generic "w10: node-5 → node-12"':
+              - generic [ref=f1e1869] [cursor=pointer]
+            - 'generic "w11: node-5 → node-13"':
+              - generic [ref=f1e1870] [cursor=pointer]
+            - 'generic "w12: node-5 → node-14"':
+              - generic [ref=f1e1871] [cursor=pointer]
+            - 'generic "w13: node-5 → node-15"':
+              - generic [ref=f1e1872] [cursor=pointer]
+            - 'generic "w14: node-5 → node-16"':
+              - generic [ref=f1e1873] [cursor=pointer]
+            - 'generic "w15: node-10 → node-2"':
+              - generic [ref=f1e1874] [cursor=pointer]
+            - 'generic "w16: node-10 → node-12"':
+              - generic [ref=f1e1875] [cursor=pointer]
+            - 'generic "w17: node-10 → node-15"':
+              - generic [ref=f1e1876] [cursor=pointer]
+            - 'generic "w18: node-12 → node-2"':
+              - generic [ref=f1e1877] [cursor=pointer]
+            - 'generic "w19: node-13 → node-2"':
+              - generic [ref=f1e1878] [cursor=pointer]
+            - 'generic "w20: node-14 → node-2"':
+              - generic [ref=f1e1879] [cursor=pointer]
+            - 'generic "w21: node-15 → node-2"':
+              - generic [ref=f1e1880] [cursor=pointer]
+            - 'generic "w22: node-15 → node-12"':
+              - generic [ref=f1e1881] [cursor=pointer]
+            - 'generic "w23: node-15 → node-13"':
+              - generic [ref=f1e1882] [cursor=pointer]
+            - 'generic "w24: node-15 → node-14"':
+              - generic [ref=f1e1883] [cursor=pointer]
+            - 'generic "w25: node-16 → node-2"':
+              - generic [ref=f1e1884] [cursor=pointer]
+            - 'generic "w26: node-16 → node-12"':
+              - generic [ref=f1e1885] [cursor=pointer]
+            - 'generic "w27: node-16 → node-13"':
+              - generic [ref=f1e1886] [cursor=pointer]
+            - 'generic "w28: node-16 → node-14"':
+              - generic [ref=f1e1887] [cursor=pointer]
+            - 'generic "w29: node-16 → node-15"':
+              - generic [ref=f1e1888] [cursor=pointer]
+    - generic "Control Panel" [ref=f1e1889]:
+      - button "Zoom In" [ref=f1e1890] [cursor=pointer]
+      - button "Zoom Out" [ref=f1e1893] [cursor=pointer]
+      - button "Fit View" [ref=f1e1896] [cursor=pointer]
+    - link "React Flow attribution" [ref=f1e1900] [cursor=pointer]:
+      - /url: https://reactflow.dev/attribution
+      - text: React Flow
+  - generic [ref=f1e1902]:
+    - generic [ref=f1e1903]: 100% road area accounted for · 3,074,472 px²
+    - generic [ref=f1e1904]: 625 inspectable areas · 0 two-wire demonstrations
+```

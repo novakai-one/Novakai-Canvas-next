@@ -100,36 +100,76 @@
         - option "w74 · discover.ts → select.ts"
         - option "w75 · memory-store.ts → system-clock.ts"
     - generic [ref=e23]:
-      - checkbox "Show roads" [ref=e24]
+      - text: Density
+      - combobox "Density" [ref=e24]:
+        - option "Compact"
+        - option "Comfortable" [selected]
+        - option "Expanded"
+    - generic [ref=e25]:
+      - checkbox "Show roads" [ref=e26]
       - text: Show roads
-  - application [ref=e26]:
-    - generic [ref=e28]:
+  - application [ref=e28]:
+    - generic [ref=e30]:
       - generic:
         - generic:
-          - group [ref=e29]:
-            - strong [ref=e31]: contract
-          - group [ref=e32]:
-            - strong [ref=e34]: contract/ports
+          - group [ref=e31]:
+            - generic [ref=e32]:
+              - generic:
+                - strong: contract
+          - group [ref=e33]:
+            - generic [ref=e34]:
+              - generic:
+                - strong: contract/ports
           - group [ref=e35]:
-            - strong [ref=e37]: contract/records
-          - group [ref=e38]:
-            - strong [ref=e40]: core
+            - generic [ref=e36]:
+              - generic:
+                - strong: contract/records
+          - group [ref=e37]:
+            - generic [ref=e38]:
+              - generic:
+                - strong: core
+          - group [ref=e39]:
+            - generic [ref=e40]:
+              - generic:
+                - strong: core/admission
           - group [ref=e41]:
-            - strong [ref=e43]: core/admission
-          - group [ref=e44]:
-            - strong [ref=e46]: core/discovery
+            - generic [ref=e42]:
+              - generic:
+                - strong: core/discovery
+          - group [ref=e43]:
+            - generic [ref=e44]:
+              - generic:
+                - strong: core/expansion
+          - group [ref=e45]:
+            - generic [ref=e46]:
+              - generic:
+                - strong: core/validation
           - group [ref=e47]:
-            - strong [ref=e49]: core/expansion
-          - group [ref=e50]:
-            - strong [ref=e52]: core/validation
+            - generic [ref=e48]:
+              - generic:
+                - strong: adapters
+          - group [ref=e49]:
+            - generic [ref=e50]:
+              - generic:
+                - strong: service
+          - group [ref=e51]:
+            - generic [ref=e52]:
+              - generic:
+                - strong: web
           - group [ref=e53]:
-            - strong [ref=e55]: adapters
-          - group [ref=e56]:
-            - strong [ref=e58]: service
-          - group [ref=e59]:
-            - strong [ref=e61]: web
-          - group [ref=e62]:
-            - strong [ref=e64]: cli
+            - generic [ref=e54]:
+              - generic:
+                - strong: cli
+          - group [ref=e55]
+          - group [ref=e56]
+          - group [ref=e57]
+          - group [ref=e58]
+          - group [ref=e59]
+          - group [ref=e60]
+          - group [ref=e61]
+          - group [ref=e62]
+          - group [ref=e63]
+          - group [ref=e64]
           - group [ref=e65]
           - group [ref=e66]
           - group [ref=e67]
@@ -718,96 +758,96 @@
           - group [ref=e650]
           - group [ref=e651]
           - group [ref=e652]
-          - group [ref=e653]
-          - group [ref=e654]
-          - group [ref=e655]
-          - group [ref=e656]
-          - group [ref=e657]
-          - group [ref=e658]
-          - group [ref=e659]
-          - group [ref=e660]
-          - group [ref=e661]
-          - group [ref=e662]
-          - group [ref=e663]:
-            - strong [ref=e665]: kernel.ts
-          - group [ref=e666]:
-            - strong [ref=e668]: brands.ts
-          - group [ref=e669]:
-            - strong [ref=e671]: errors.ts
-          - group [ref=e672]:
-            - strong [ref=e674]: types.ts
-          - group [ref=e675]:
-            - strong [ref=e677]: api.ts
-          - group [ref=e678]:
-            - strong [ref=e680]: index.ts
-          - group [ref=e681]:
-            - strong [ref=e683]: store-port.ts
-          - group [ref=e684]:
-            - strong [ref=e686]: clock-port.ts
-          - group [ref=e687]:
-            - strong [ref=e689]: request.ts
-          - group [ref=e690]:
-            - strong [ref=e692]: receipt.ts
-          - group [ref=e693]:
-            - strong [ref=e695]: admit.ts
-          - group [ref=e696]:
-            - strong [ref=e698]: normalize.ts
-          - group [ref=e699]:
-            - strong [ref=e701]: authorize.ts
-          - group [ref=e702]:
-            - strong [ref=e704]: plan.ts
-          - group [ref=e705]:
-            - strong [ref=e707]: discover.ts
-          - group [ref=e708]:
-            - strong [ref=e710]: catalog.ts
-          - group [ref=e711]:
-            - strong [ref=e713]: match.ts
-          - group [ref=e714]:
-            - strong [ref=e716]: select.ts
-          - group [ref=e717]:
-            - strong [ref=e719]: expand.ts
-          - group [ref=e720]:
-            - strong [ref=e722]: instantiate.ts
-          - group [ref=e723]:
-            - strong [ref=e725]: bind.ts
-          - group [ref=e726]:
-            - strong [ref=e728]: assemble.ts
-          - group [ref=e729]:
-            - strong [ref=e731]: validate.ts
-          - group [ref=e732]:
-            - strong [ref=e734]: diagnose.ts
-          - group [ref=e735]:
-            - strong [ref=e737]: check.ts
-          - group [ref=e738]:
-            - strong [ref=e740]: result.ts
-          - group [ref=e741]:
-            - strong [ref=e743]: memory-store.ts
-          - group [ref=e744]:
-            - strong [ref=e746]: disk-store.ts
-          - group [ref=e747]:
-            - strong [ref=e749]: system-clock.ts
-          - group [ref=e750]:
-            - strong [ref=e752]: registry.ts
-          - group [ref=e753]:
-            - strong [ref=e755]: resource.ts
-          - group [ref=e756]:
-            - strong [ref=e758]: transaction.ts
-          - group [ref=e759]:
-            - strong [ref=e761]: endpoint.ts
-          - group [ref=e762]:
-            - strong [ref=e764]: server.ts
-          - group [ref=e765]:
-            - strong [ref=e767]: client.ts
-          - group [ref=e768]:
-            - strong [ref=e770]: presenter.ts
-          - group [ref=e771]:
-            - strong [ref=e773]: shell.ts
-          - group [ref=e774]:
-            - strong [ref=e776]: parse.ts
-          - group [ref=e777]:
-            - strong [ref=e779]: execute.ts
-          - group [ref=e780]:
-            - strong [ref=e782]: main.ts
+          - group [ref=e653]:
+            - strong [ref=e655]: kernel.ts
+          - group [ref=e656]:
+            - strong [ref=e658]: brands.ts
+          - group [ref=e659]:
+            - strong [ref=e661]: errors.ts
+          - group [ref=e662]:
+            - strong [ref=e664]: types.ts
+          - group [ref=e665]:
+            - strong [ref=e667]: api.ts
+          - group [ref=e668]:
+            - strong [ref=e670]: index.ts
+          - group [ref=e671]:
+            - strong [ref=e673]: store-port.ts
+          - group [ref=e674]:
+            - strong [ref=e676]: clock-port.ts
+          - group [ref=e677]:
+            - strong [ref=e679]: request.ts
+          - group [ref=e680]:
+            - strong [ref=e682]: receipt.ts
+          - group [ref=e683]:
+            - strong [ref=e685]: admit.ts
+          - group [ref=e686]:
+            - strong [ref=e688]: normalize.ts
+          - group [ref=e689]:
+            - strong [ref=e691]: authorize.ts
+          - group [ref=e692]:
+            - strong [ref=e694]: plan.ts
+          - group [ref=e695]:
+            - strong [ref=e697]: discover.ts
+          - group [ref=e698]:
+            - strong [ref=e700]: catalog.ts
+          - group [ref=e701]:
+            - strong [ref=e703]: match.ts
+          - group [ref=e704]:
+            - strong [ref=e706]: select.ts
+          - group [ref=e707]:
+            - strong [ref=e709]: expand.ts
+          - group [ref=e710]:
+            - strong [ref=e712]: instantiate.ts
+          - group [ref=e713]:
+            - strong [ref=e715]: bind.ts
+          - group [ref=e716]:
+            - strong [ref=e718]: assemble.ts
+          - group [ref=e719]:
+            - strong [ref=e721]: validate.ts
+          - group [ref=e722]:
+            - strong [ref=e724]: diagnose.ts
+          - group [ref=e725]:
+            - strong [ref=e727]: check.ts
+          - group [ref=e728]:
+            - strong [ref=e730]: result.ts
+          - group [ref=e731]:
+            - strong [ref=e733]: memory-store.ts
+          - group [ref=e734]:
+            - strong [ref=e736]: disk-store.ts
+          - group [ref=e737]:
+            - strong [ref=e739]: system-clock.ts
+          - group [ref=e740]:
+            - strong [ref=e742]: registry.ts
+          - group [ref=e743]:
+            - strong [ref=e745]: resource.ts
+          - group [ref=e746]:
+            - strong [ref=e748]: transaction.ts
+          - group [ref=e749]:
+            - strong [ref=e751]: endpoint.ts
+          - group [ref=e752]:
+            - strong [ref=e754]: server.ts
+          - group [ref=e755]:
+            - strong [ref=e757]: client.ts
+          - group [ref=e758]:
+            - strong [ref=e760]: presenter.ts
+          - group [ref=e761]:
+            - strong [ref=e763]: shell.ts
+          - group [ref=e764]:
+            - strong [ref=e766]: parse.ts
+          - group [ref=e767]:
+            - strong [ref=e769]: execute.ts
+          - group [ref=e770]:
+            - strong [ref=e772]: main.ts
+          - group [ref=e773]
+          - group [ref=e774]
+          - group [ref=e775]
+          - group [ref=e776]
+          - group [ref=e777]
+          - group [ref=e778]
+          - group [ref=e779]
+          - group [ref=e780]
+          - group [ref=e781]
+          - group [ref=e782]
           - group [ref=e783]
           - group [ref=e784]
           - group [ref=e785]
@@ -846,174 +886,164 @@
           - group [ref=e818]
           - group [ref=e819]
           - group [ref=e820]
-          - group [ref=e821]
-          - group [ref=e822]
-          - group [ref=e823]
-          - group [ref=e824]
-          - group [ref=e825]
-          - group [ref=e826]
-          - group [ref=e827]
-          - group [ref=e828]
-          - group [ref=e829]
-          - group [ref=e830]
         - generic:
           - img "Twelve law-routed wires":
             - 'generic "w01: node-1 → node-2"':
-              - generic [ref=e831] [cursor=pointer]
+              - generic [ref=e821] [cursor=pointer]
             - 'generic "w02: node-1 → node-3"':
-              - generic [ref=e832] [cursor=pointer]
+              - generic [ref=e822] [cursor=pointer]
             - 'generic "w03: node-1 → node-4"':
-              - generic [ref=e833] [cursor=pointer]
+              - generic [ref=e823] [cursor=pointer]
             - 'generic "w04: node-1 → node-5"':
-              - generic [ref=e834] [cursor=pointer]
+              - generic [ref=e824] [cursor=pointer]
             - 'generic "w05: node-1 → node-7"':
-              - generic [ref=e835] [cursor=pointer]
+              - generic [ref=e825] [cursor=pointer]
             - 'generic "w06: node-1 → node-9"':
-              - generic [ref=e836] [cursor=pointer]
+              - generic [ref=e826] [cursor=pointer]
             - 'generic "w07: node-1 → node-11"':
-              - generic [ref=e837] [cursor=pointer]
+              - generic [ref=e827] [cursor=pointer]
             - 'generic "w08: node-1 → node-15"':
-              - generic [ref=e838] [cursor=pointer]
+              - generic [ref=e828] [cursor=pointer]
             - 'generic "w09: node-1 → node-19"':
-              - generic [ref=e839] [cursor=pointer]
+              - generic [ref=e829] [cursor=pointer]
             - 'generic "w10: node-1 → node-23"':
-              - generic [ref=e840] [cursor=pointer]
+              - generic [ref=e830] [cursor=pointer]
             - 'generic "w11: node-5 → node-6"':
-              - generic [ref=e841] [cursor=pointer]
+              - generic [ref=e831] [cursor=pointer]
             - 'generic "w12: node-7 → node-6"':
-              - generic [ref=e842] [cursor=pointer]
+              - generic [ref=e832] [cursor=pointer]
             - 'generic "w13: node-8 → node-6"':
-              - generic [ref=e843] [cursor=pointer]
+              - generic [ref=e833] [cursor=pointer]
             - 'generic "w14: node-9 → node-6"':
-              - generic [ref=e844] [cursor=pointer]
+              - generic [ref=e834] [cursor=pointer]
             - 'generic "w15: node-10 → node-6"':
-              - generic [ref=e845] [cursor=pointer]
+              - generic [ref=e835] [cursor=pointer]
             - 'generic "w16: node-14 → node-6"':
-              - generic [ref=e846] [cursor=pointer]
+              - generic [ref=e836] [cursor=pointer]
             - 'generic "w17: node-18 → node-6"':
-              - generic [ref=e847] [cursor=pointer]
+              - generic [ref=e837] [cursor=pointer]
             - 'generic "w18: node-22 → node-6"':
-              - generic [ref=e848] [cursor=pointer]
+              - generic [ref=e838] [cursor=pointer]
             - 'generic "w19: node-26 → node-6"':
-              - generic [ref=e849] [cursor=pointer]
+              - generic [ref=e839] [cursor=pointer]
             - 'generic "w20: node-14 → node-15"':
-              - generic [ref=e850] [cursor=pointer]
+              - generic [ref=e840] [cursor=pointer]
             - 'generic "w21: node-18 → node-19"':
-              - generic [ref=e851] [cursor=pointer]
+              - generic [ref=e841] [cursor=pointer]
             - 'generic "w22: node-22 → node-23"':
-              - generic [ref=e852] [cursor=pointer]
+              - generic [ref=e842] [cursor=pointer]
             - 'generic "w23: node-26 → node-27"':
-              - generic [ref=e853] [cursor=pointer]
+              - generic [ref=e843] [cursor=pointer]
             - 'generic "w24: node-30 → node-31"':
-              - generic [ref=e854] [cursor=pointer]
+              - generic [ref=e844] [cursor=pointer]
             - 'generic "w25: node-34 → node-35"':
-              - generic [ref=e855] [cursor=pointer]
+              - generic [ref=e845] [cursor=pointer]
             - 'generic "w26: node-37 → node-38"':
-              - generic [ref=e856] [cursor=pointer]
+              - generic [ref=e846] [cursor=pointer]
             - 'generic "w27: node-1 → node-31"':
-              - generic [ref=e857] [cursor=pointer]
+              - generic [ref=e847] [cursor=pointer]
             - 'generic "w28: node-5 → node-35"':
-              - generic [ref=e858] [cursor=pointer]
+              - generic [ref=e848] [cursor=pointer]
             - 'generic "w29: node-7 → node-38"':
-              - generic [ref=e859] [cursor=pointer]
+              - generic [ref=e849] [cursor=pointer]
             - 'generic "w30: node-10 → node-40"':
-              - generic [ref=e860] [cursor=pointer]
+              - generic [ref=e850] [cursor=pointer]
             - 'generic "w31: node-2 → node-3"':
-              - generic [ref=e861] [cursor=pointer]
+              - generic [ref=e851] [cursor=pointer]
             - 'generic "w32: node-3 → node-4"':
-              - generic [ref=e862] [cursor=pointer]
+              - generic [ref=e852] [cursor=pointer]
             - 'generic "w33: node-4 → node-5"':
-              - generic [ref=e863] [cursor=pointer]
+              - generic [ref=e853] [cursor=pointer]
             - 'generic "w34: node-7 → node-8"':
-              - generic [ref=e864] [cursor=pointer]
+              - generic [ref=e854] [cursor=pointer]
             - 'generic "w35: node-9 → node-10"':
-              - generic [ref=e865] [cursor=pointer]
+              - generic [ref=e855] [cursor=pointer]
             - 'generic "w36: node-11 → node-12"':
-              - generic [ref=e866] [cursor=pointer]
+              - generic [ref=e856] [cursor=pointer]
             - 'generic "w37: node-12 → node-13"':
-              - generic [ref=e867] [cursor=pointer]
+              - generic [ref=e857] [cursor=pointer]
             - 'generic "w38: node-13 → node-14"':
-              - generic [ref=e868] [cursor=pointer]
+              - generic [ref=e858] [cursor=pointer]
             - 'generic "w39: node-15 → node-16"':
-              - generic [ref=e869] [cursor=pointer]
+              - generic [ref=e859] [cursor=pointer]
             - 'generic "w40: node-16 → node-17"':
-              - generic [ref=e870] [cursor=pointer]
+              - generic [ref=e860] [cursor=pointer]
             - 'generic "w41: node-17 → node-18"':
-              - generic [ref=e871] [cursor=pointer]
+              - generic [ref=e861] [cursor=pointer]
             - 'generic "w42: node-19 → node-20"':
-              - generic [ref=e872] [cursor=pointer]
+              - generic [ref=e862] [cursor=pointer]
             - 'generic "w43: node-20 → node-21"':
-              - generic [ref=e873] [cursor=pointer]
+              - generic [ref=e863] [cursor=pointer]
             - 'generic "w44: node-21 → node-22"':
-              - generic [ref=e874] [cursor=pointer]
+              - generic [ref=e864] [cursor=pointer]
             - 'generic "w45: node-23 → node-24"':
-              - generic [ref=e875] [cursor=pointer]
+              - generic [ref=e865] [cursor=pointer]
             - 'generic "w46: node-24 → node-25"':
-              - generic [ref=e876] [cursor=pointer]
+              - generic [ref=e866] [cursor=pointer]
             - 'generic "w47: node-25 → node-26"':
-              - generic [ref=e877] [cursor=pointer]
+              - generic [ref=e867] [cursor=pointer]
             - 'generic "w48: node-27 → node-28"':
-              - generic [ref=e878] [cursor=pointer]
+              - generic [ref=e868] [cursor=pointer]
             - 'generic "w49: node-28 → node-29"':
-              - generic [ref=e879] [cursor=pointer]
+              - generic [ref=e869] [cursor=pointer]
             - 'generic "w50: node-29 → node-30"':
-              - generic [ref=e880] [cursor=pointer]
+              - generic [ref=e870] [cursor=pointer]
             - 'generic "w51: node-31 → node-32"':
-              - generic [ref=e881] [cursor=pointer]
+              - generic [ref=e871] [cursor=pointer]
             - 'generic "w52: node-32 → node-33"':
-              - generic [ref=e882] [cursor=pointer]
+              - generic [ref=e872] [cursor=pointer]
             - 'generic "w53: node-33 → node-34"':
-              - generic [ref=e883] [cursor=pointer]
+              - generic [ref=e873] [cursor=pointer]
             - 'generic "w54: node-35 → node-36"':
-              - generic [ref=e884] [cursor=pointer]
+              - generic [ref=e874] [cursor=pointer]
             - 'generic "w55: node-36 → node-37"':
-              - generic [ref=e885] [cursor=pointer]
+              - generic [ref=e875] [cursor=pointer]
             - 'generic "w56: node-38 → node-39"':
-              - generic [ref=e886] [cursor=pointer]
+              - generic [ref=e876] [cursor=pointer]
             - 'generic "w57: node-39 → node-40"':
-              - generic [ref=e887] [cursor=pointer]
+              - generic [ref=e877] [cursor=pointer]
             - 'generic "w58: node-1 → node-6"':
-              - generic [ref=e888] [cursor=pointer]
+              - generic [ref=e878] [cursor=pointer]
             - 'generic "w59: node-3 → node-5"':
-              - generic [ref=e889] [cursor=pointer]
+              - generic [ref=e879] [cursor=pointer]
             - 'generic "w60: node-3 → node-6"':
-              - generic [ref=e890] [cursor=pointer]
+              - generic [ref=e880] [cursor=pointer]
             - 'generic "w61: node-2 → node-4"':
-              - generic [ref=e891] [cursor=pointer]
+              - generic [ref=e881] [cursor=pointer]
             - 'generic "w62: node-2 → node-5"':
-              - generic [ref=e892] [cursor=pointer]
+              - generic [ref=e882] [cursor=pointer]
             - 'generic "w63: node-2 → node-6"':
-              - generic [ref=e893] [cursor=pointer]
+              - generic [ref=e883] [cursor=pointer]
             - 'generic "w64: node-4 → node-6"':
-              - generic [ref=e894] [cursor=pointer]
+              - generic [ref=e884] [cursor=pointer]
             - 'generic "w65: node-11 → node-14"':
-              - generic [ref=e895] [cursor=pointer]
+              - generic [ref=e885] [cursor=pointer]
             - 'generic "w66: node-12 → node-14"':
-              - generic [ref=e896] [cursor=pointer]
+              - generic [ref=e886] [cursor=pointer]
             - 'generic "w67: node-11 → node-13"':
-              - generic [ref=e897] [cursor=pointer]
+              - generic [ref=e887] [cursor=pointer]
             - 'generic "w68: node-20 → node-22"':
-              - generic [ref=e898] [cursor=pointer]
+              - generic [ref=e888] [cursor=pointer]
             - 'generic "w69: node-19 → node-22"':
-              - generic [ref=e899] [cursor=pointer]
+              - generic [ref=e889] [cursor=pointer]
             - 'generic "w70: node-19 → node-21"':
-              - generic [ref=e900] [cursor=pointer]
+              - generic [ref=e890] [cursor=pointer]
             - 'generic "w71: node-15 → node-17"':
-              - generic [ref=e901] [cursor=pointer]
+              - generic [ref=e891] [cursor=pointer]
             - 'generic "w72: node-16 → node-18"':
-              - generic [ref=e902] [cursor=pointer]
+              - generic [ref=e892] [cursor=pointer]
             - 'generic "w73: node-27 → node-30"':
-              - generic [ref=e903] [cursor=pointer]
+              - generic [ref=e893] [cursor=pointer]
             - 'generic "w74: node-15 → node-18"':
-              - generic [ref=e904] [cursor=pointer]
+              - generic [ref=e894] [cursor=pointer]
             - 'generic "w75: node-27 → node-29"':
-              - generic [ref=e905] [cursor=pointer]
-    - generic "Control Panel" [ref=e906]:
-      - button "Zoom In" [ref=e907] [cursor=pointer]
-      - button "Zoom Out" [ref=e910] [cursor=pointer]
-      - button "Fit View" [ref=e913] [cursor=pointer]
-    - link "React Flow attribution" [ref=e917] [cursor=pointer]:
+              - generic [ref=e895] [cursor=pointer]
+    - generic "Control Panel" [ref=e896]:
+      - button "Zoom In" [ref=e897] [cursor=pointer]
+      - button "Zoom Out" [ref=e900] [cursor=pointer]
+      - button "Fit View" [ref=e903] [cursor=pointer]
+    - link "React Flow attribution" [ref=e907] [cursor=pointer]:
       - /url: https://reactflow.dev/attribution
       - text: React Flow
-  - generic [ref=e919]: 1193 inspectable areas · 0 two-wire demonstrations
+  - generic [ref=e909]: 1193 inspectable areas · 0 two-wire demonstrations
 ```

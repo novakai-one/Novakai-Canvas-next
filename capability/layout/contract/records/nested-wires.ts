@@ -1,10 +1,20 @@
 import type { PrototypePoint } from './road-prototype.js';
 
+/** One continuous parallel stretch; connectors inside junctions have no lane identity. */
+export interface NestedWireLane {
+  readonly id: string;
+  readonly wireId: string;
+  readonly roadId: string;
+  readonly direction: 1 | -1;
+  readonly index: number;
+  readonly offset: number;
+}
 /** A wire retains explicit corridor ownership for every orthogonal segment. */
 export interface NestedWireSegment {
   readonly from: PrototypePoint;
   readonly to: PrototypePoint;
   readonly corridorId: string;
+  readonly laneId?: string;
 }
 /** Gates are ordered along the source-to-target traversal. */
 export interface NestedWire {

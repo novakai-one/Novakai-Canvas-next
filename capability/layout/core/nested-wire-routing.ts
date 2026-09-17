@@ -180,14 +180,7 @@ export function routeNestedWires(
 ): NestedWireResult {
   const wires = requests.map(([from, to], i) =>
     measure(`wire:w${String(i + 1).padStart(2, '0')}`, () =>
-      route(
-        scene,
-        registry,
-        `w${String(i + 1).padStart(2, '0')}`,
-        `node-${from}`,
-        `node-${to}`,
-        (i - (requests.length - 1) / 2) * 3,
-      ),
+      route(scene, registry, `w${String(i + 1).padStart(2, '0')}`, `node-${from}`, `node-${to}`, 0),
     ),
   );
   const failed = wires.findIndex((w) => w === null);

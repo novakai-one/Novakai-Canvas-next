@@ -70,12 +70,63 @@ function touches(s: NestedWireSegment, b: PrototypeBounds): readonly PrototypePo
 function same(a: PrototypePoint, b: PrototypePoint): boolean {
   return a.x === b.x && a.y === b.y;
 }
-function nongate(s: NestedWireSegment, scene: RoadPrototypeScene): boolean {
+function gatePosition(
+  scene: RoadPrototypeScene,
+  wire: NestedWire,
+  gate: string,
+): PrototypePoint | undefined {
+  const port = scene.ports.find((p) => p.portId === gate);
+  const lane = scene.wireLanes?.find((l) => l.wireId === wire.id && l.roadId === `drive:${gate}`);
+  if (port === undefined || lane === undefined) return undefined;
+  const horizontal = port.side === 'left' || port.side === 'right';
+  return horizontal
+    ? { x: port.point.x, y: port.point.y + lane.offset }
+    : { x: port.point.x + lane.offset, y: port.point.y };
+}
+function permitted(
+  point: PrototypePoint,
+  scene: RoadPrototypeScene,
+  wire: NestedWire,
+  sectionId: string,
+): boolean {
+  return wire.gates.some((gate) => permittedGate(point, scene, wire, gate, sectionId));
+}
+function permittedGate(
+  point: PrototypePoint,
+  scene: RoadPrototypeScene,
+  wire: NestedWire,
+  gate: string,
+  sectionId: string,
+): boolean {
+  const road = scene.roads.find((r) => r.id === `drive:${gate}`);
+  const expected = gatePosition(scene, wire, gate);
+  if (road === undefined || expected === undefined) return false;
+  return [
+    road.access?.nodeId === sectionId,
+    containsPoint(road.bounds, point),
+    same(point, expected),
+  ].every(Boolean);
+}
+function nongate(s: NestedWireSegment, scene: RoadPrototypeScene, wire: NestedWire): boolean {
   return scene.sections.some((section) =>
-    touches(s, section.bounds).some(
-      (p) => !scene.ports.some((g) => g.nodeId === section.id && same(g.point, p)),
-    ),
+    touches(s, section.bounds).some((p) => !permitted(p, scene, wire, section.id)),
   );
+}
+function terminals(wire: NestedWire, scene: RoadPrototypeScene): boolean {
+  const ends = [
+    [wire.sourcePortId, wire.segments[0]?.from],
+    [wire.targetPortId, wire.segments.at(-1)?.to],
+  ] as const;
+  return ends.every(([id, point]) => terminal(id, point, scene));
+}
+function terminal(
+  id: string,
+  point: PrototypePoint | undefined,
+  scene: RoadPrototypeScene,
+): boolean {
+  const port = scene.ports.find((p) => p.portId === id);
+  if (port === undefined || point === undefined) return false;
+  return same(port.point, point);
 }
 function disconnected(w: NestedWire): boolean {
   return w.segments.slice(1).some((s, i) => !same(w.segments[i]?.to ?? s.from, s.from));
@@ -87,14 +138,14 @@ export function inspectNestedWires(
 ): NestedWireInspection {
   const roads = new Map(scene.roads.map((r) => [r.id, r]));
   const all = wires.flatMap((w) =>
-    w.segments.map((segment, i) => ({ id: `${w.id}:${i + 1}`, segment })),
+    w.segments.map((segment, i) => ({ id: `${w.id}:${i + 1}`, segment, wire: w })),
   );
   return {
     corridors: all.filter((s) => !covered(s.segment, roads)).map((s) => s.id),
     nodeBodies: all
       .filter((s) => scene.nodes.some((n) => bodyIntersection(s.segment, n.bounds)))
       .map((s) => s.id),
-    boundaries: all.filter((s) => nongate(s.segment, scene)).map((s) => s.id),
-    continuity: wires.filter(disconnected).map((w) => w.id),
+    boundaries: all.filter((s) => nongate(s.segment, scene, s.wire)).map((s) => s.id),
+    continuity: wires.filter((w) => disconnected(w) || !terminals(w, scene)).map((w) => w.id),
   };
 }

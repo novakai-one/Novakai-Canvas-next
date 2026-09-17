@@ -1,6 +1,9 @@
 import { wireRegistry } from './nested-wire-registry.js';
 import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
 import { routeNestedWires } from './nested-wire-routing.js';
+import { allocateNestedLanes } from './nested-wire-lanes.js';
+import { capacityRoads } from './nested-road-capacity.js';
+import { projectNestedWire } from './nested-lane-projection.js';
 import type {
   PrototypeLayoutOptions,
   RoadPrototypeScene,
@@ -9,6 +12,7 @@ import {
   sizeNestedSections,
   positionNestedSections,
   nestedSpacing,
+  nestedLaneWidth,
 } from './prototype-nested-placement.js';
 import {
   nestedMainRoads,
@@ -19,43 +23,62 @@ import {
 import { readPrototypeNodePorts } from './prototype-road-nodes.js';
 import { roadNetwork } from './prototype-road-network.js';
 
-/** Four-section creation milestone: semantic counts → capacity → placement → owner ports → roads. */
+/** Reservation topology → law demand → final geometry → network → lane projection, each once.
+ * The caller owns reconstruction; no committed scene or shared state is mutated on failure.
+ */
 export function createNestedRoadScene(
   options: Pick<PrototypeLayoutOptions, 'measure'> & { readonly copies?: 1 | 2 } = {},
 ): RoadPrototypeScene {
   const measure = options.measure ?? ((_stage, run) => run());
   const capacity = measure('capacity', sizeNestedSections);
   const placement = measure('nodes', () => positionNestedSections(capacity, options.copies));
-  const sections = placement.map((p) => p.section);
-  const nodes = placement.flatMap((p) => p.nodes);
+  const sections = placement.map((p) => p.section),
+    nodes = placement.flatMap((p) => p.nodes);
   const ports = measure('ports', () => [
     ...nodes.flatMap(readPrototypeNodePorts),
     ...placement.flatMap(nestedSectionPorts),
   ]);
-  const main = measure('main-roads', () => nestedMainRoads(placement));
-  const drives = measure('driveways', () => placement.flatMap(nestedDriveways));
-  const roads = [...main, ...drives];
-  const compiled = measure('network', () => {
-    const registry = roadRegistry(roads);
+  const topology = measure('topology', () => {
+    const main = nestedMainRoads(placement),
+      drives = placement.flatMap(nestedDriveways);
+    const roads = [...main, ...drives];
     const contacts = constructedContacts(
-      registry,
+      roadRegistry(roads),
       [...frameEnds(main), ...nestedCrossings(placement)],
       drives,
       nestedSpacing.road / 2,
     );
-    return { contacts, network: roadNetwork(roads, contacts) };
+    return { roads, contacts };
   });
-  const scene = {
+  const reserved: RoadPrototypeScene = {
     sections,
     nodes,
     ports,
-    roads,
-    roadWidth: nestedSpacing.road,
-    drivewayWidth: nestedSpacing.driveway,
-    ...compiled.network,
+    roads: topology.roads,
+    roadWidth: nestedLaneWidth(0),
+    drivewayWidth: nestedLaneWidth(0),
+    lanes: [],
+    junctions: [],
+    dividers: [],
+    connections: [],
+    crossingExamples: [],
   };
+  const registry = wireRegistry(reserved, topology.contacts, measure);
+  const plan = routeNestedWires(reserved, registry, measure);
+  if (!plan.ok) return { ...reserved, wiring: plan };
+  const allocation = measure('lane-allocation', () =>
+    allocateNestedLanes(plan.value, registry.roads),
+  );
+  const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure);
+  const network = measure('network', () => roadNetwork(final.roads, final.contacts));
+  const wires = measure('lane-projection', () =>
+    plan.value.map((w) => projectNestedWire(w, allocation.byWire.get(w.id) ?? [], final.byId)),
+  );
   return {
-    ...scene,
-    wiring: routeNestedWires(scene, wireRegistry(scene, compiled.contacts, measure), measure),
+    ...reserved,
+    roads: final.roads,
+    ...network,
+    wireLanes: allocation.lanes,
+    wiring: { ok: true, value: wires },
   };
 }

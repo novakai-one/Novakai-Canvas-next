@@ -7,6 +7,11 @@ import type {
 import { placePrototypeNode, prototypeNodeSize } from './prototype-road-nodes.js';
 
 export const nestedSpacing = { road: 48, driveway: 24, clearance: 72, side: 64, top: 112 } as const;
+export const nestedLanePitch = 6;
+/** Symmetric capacity reserves both traffic sides; reconstruction is pure and retry-safe. */
+export function nestedLaneWidth(lanes: number): number {
+  return nestedLanePitch * 2 + lanes * nestedLanePitch * 2;
+}
 const clearancePair = nestedSpacing.clearance * 2;
 const horizontalPadding = nestedSpacing.side * 2;
 const verticalPadding = nestedSpacing.top + nestedSpacing.side;

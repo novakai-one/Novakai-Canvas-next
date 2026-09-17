@@ -1,0 +1,39 @@
+PASS DoD 2: tracked source, ok=true, wires=18; exact six addendum pairs
+PASS DoD 2: w10/w16 gates=["section-2:exit-bottom","section-1:exit-bottom","section-4:entry-top"]
+PASS DoD 2: w11/w17 gates=["section-3:exit-right","section-4:entry-left"]
+PASS DoD 2: w12/w18 gates=["section-3:exit-bottom","section-1:entry-left","section-2:entry-top"]
+PASS DoD 3c: w04/w13 shared=["drive:node-5:exit-right"]; required>=1
+PASS DoD 3c: w07/w14 shared=["drive:node-11:exit-right"]; required>=1
+PASS DoD 3c: w01/w15 shared=["drive:node-1:exit-right"]; required>=1
+PASS DoD 3c: w10/w16 shared=["drive:section-2:exit-bottom","section-1:horizontal:1048:368","drive:section-1:exit-bottom","world:horizontal:1184:64","drive:section-4:entry-top"]; required>=2
+PASS DoD 3c: w11/w17 shared=["drive:node-16:exit-right","section-3:vertical:1208:1368","drive:section-3:exit-right","drive:section-4:entry-left","section-4:vertical:1480:1368"]; required>=2
+PASS DoD 3c: w12/w18 shared=["section-3:vertical:536:1368","drive:node-12:exit-bottom","section-3:horizontal:1608:200","section-3:horizontal:1848:200","drive:section-3:exit-bottom","world:horizontal:1984:64","world:vertical:64:64","drive:section-1:entry-left","section-1:vertical:368:248","section-1:horizontal:248:368","drive:section-2:entry-top","section-2:horizontal:432:1176"]; required>=2
+PASS DoD 3g: complete scene regeneration is byte-identical
+PASS 3b node-1:exit-right: order=w01,w15; exact pins=[{"x":632,"y":445},{"x":632,"y":451}]; pitch=6; centered
+PASS 3b node-5:exit-right: order=w04,w13; exact pins=[{"x":1440,"y":549},{"x":1440,"y":555}]; pitch=6; centered
+PASS 3b node-11:exit-right: order=w07,w14; exact pins=[{"x":464,"y":1485},{"x":464,"y":1491}]; pitch=6; centered
+PASS 3b node-12:exit-bottom: order=w12,w18; exact pins=[{"x":707,"y":1536},{"x":701,"y":1536}]; pitch=6; centered
+PASS 3b node-16:exit-right: order=w11,w17; exact pins=[{"x":1136,"y":1725},{"x":1136,"y":1731}]; pitch=6; centered
+PASS 3b node-18:entry-top: order=w10,w17; exact pins=[{"x":1987,"y":1440},{"x":1981,"y":1440}]; pitch=6; centered
+PASS 3b complete default serialization equals immutable M3 plus ONLY the six exact computed terminal fans; every other byte preserved
+PASS 3a every assigned road/driveway lane distinct; actual centrelines match the assignment; shared gate positions distinct inside mouths
+PASS 3b opposite directions occupy opposite sides; same-direction lanes stack outward in wire-ID order at pitch 6
+PASS 3d every road and every node/gate driveway width = 12 + 12 × lane count
+PASS 3e no road/driveway node overlap; streets respect boundaries; only registered junctions overlap; all wire containment, terminal and gate-lane invariants
+PASS 3a global segment audit: zero same-axis overlap or parallel touch; perpendicular junction crossings only; NO shared terminal exemption
+PASS 3g two complete scene JSON serialisations are byte-identical
+PASS M4 exactly 24 nodes / 26 wires; six hub imports and two api exports
+PASS hub capacity: drive:node-23:entry-left; lanes=4; width=60; order=w20,w21,w22,w24
+PASS M4 hub driveway >=3 lanes, width = 12 + 12*lanes, arrival lane order ascending
+PASS M4 every terminal and node driveway belongs to its own source/target
+PASS M4 hub entry driveways never merge and form planar fans to distinct pins
+WITNESS w20/w21 final stems: null
+PASS M4 hub final stems have no positive-length overlap
+PASS 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals
+PASS DoD 9 canonical scene matches full regenerated M4 serialization
+PASS exemption controls: registered perpendicular only; >=60 threshold; outside/shallow/overlap retained; ceiling rejects 7
+MEASURE all crossings per section: {"section-1": 28, "section-2": 4, "section-3": 2, "section-4": 4, "world": 8}
+MEASURE junction crossings per section (health metric, no M4 ceiling): {"section-1": 28, "section-2": 4, "section-3": 2, "section-4": 4, "world": 8}
+MEASURE budgeted crossings per section (ceiling <=6): {"section-1": 0, "section-2": 0, "section-3": 0, "section-4": 0, "world": 0}
+PASS DoD 3f retained crossing-budget gate under ruling #3; legal junction crossings reported, excluded with reasons
+PASS DoD 3f amended visual crossing budget

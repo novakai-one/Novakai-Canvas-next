@@ -1,8 +1,12 @@
 {
   "baseline": "0e5f21e:output/playwright/nested-wires/scene.json",
+  "sceneSha256": "dc1e09937c7a4408dbb3614883ccfbdee8455e6cee0a9c6574ca4980cf62ab34",
   "section": "section-1",
-  "target": 11,
-  "lowerBound": 14,
+  "target": 16,
+  "lowerBound": 17,
+  "rankMagnitudeCombinationsChecked": 1530,
+  "independentEndpointLowerBound": 14,
+  "linkedRoadOrderLowerBound": 3,
   "witnesses": [
     {
       "junction": "junction:section-1:horizontal:248:200:section-1:vertical:536:248",
@@ -1543,5 +1547,1067 @@
       "justification": "Disjoint ABAB ranges for every allowed index: w24:N[533.0,527.0,521.0,515.0,509.0,503.0] -> w09:N[539.0,545.0,551.0,557.0,563.0,569.0] -> w24:E[851.0,857.0,863.0,869.0,875.0] -> w09:W[851.0,857.0,863.0]"
     }
   ],
-  "scope": "Every endpoint independently takes any pitch-6 index fitting its traffic half, including spare slots and ignoring exclusivity. This superset includes all globally coordinated lane permutations. Frozen routes fix boundary arms; right-hand traffic fixes opposing half-orders. No fixed baseline lane order, terminal order, projection algorithm, or pin position assumed."
+  "roadOrderObstructions": [
+    {
+      "wires": [
+        "w02",
+        "w09"
+      ],
+      "lowerBound": 1,
+      "constraints": [
+        {
+          "junction": "junction:section-1:horizontal:248:200:section-1:vertical:536:248",
+          "label": "J21",
+          "bounds": {
+            "x": 500,
+            "y": 212,
+            "width": 72,
+            "height": 72
+          },
+          "wires": [
+            "w02",
+            "w09"
+          ],
+          "variables": [
+            "section-1:horizontal:248:200",
+            "section-1:vertical:536:248"
+          ],
+          "endpoints": [
+            {
+              "wire": "w02",
+              "side": "S",
+              "road": "section-1:vertical:536:248",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                539.0,
+                545.0,
+                551.0,
+                557.0,
+                563.0,
+                569.0
+              ],
+              "clockwiseRange": [
+                147.0,
+                177.0
+              ]
+            },
+            {
+              "wire": "w02",
+              "side": "E",
+              "road": "section-1:horizontal:248:200",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                251.0,
+                257.0,
+                263.0,
+                269.0,
+                275.0,
+                281.0
+              ],
+              "clockwiseRange": [
+                111.0,
+                141.0
+              ]
+            },
+            {
+              "wire": "w09",
+              "side": "S",
+              "road": "section-1:vertical:536:248",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                539.0,
+                545.0,
+                551.0,
+                557.0,
+                563.0,
+                569.0
+              ],
+              "clockwiseRange": [
+                147.0,
+                177.0
+              ]
+            },
+            {
+              "wire": "w09",
+              "side": "E",
+              "road": "section-1:horizontal:248:200",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                251.0,
+                257.0,
+                263.0,
+                269.0,
+                275.0,
+                281.0
+              ],
+              "clockwiseRange": [
+                111.0,
+                141.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false,
+                false
+              ],
+              "crossing": false
+            },
+            {
+              "values": [
+                false,
+                true
+              ],
+              "crossing": true
+            },
+            {
+              "values": [
+                true,
+                false
+              ],
+              "crossing": true
+            },
+            {
+              "values": [
+                true,
+                true
+              ],
+              "crossing": false
+            }
+          ]
+        },
+        {
+          "junction": "junction:section-1:horizontal:248:200:section-1:vertical:872:248",
+          "label": "J22",
+          "bounds": {
+            "x": 860,
+            "y": 212,
+            "width": 24,
+            "height": 72
+          },
+          "wires": [
+            "w02",
+            "w09"
+          ],
+          "variables": [
+            "section-1:horizontal:248:200"
+          ],
+          "endpoints": [
+            {
+              "wire": "w02",
+              "side": "W",
+              "road": "section-1:horizontal:248:200",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                251.0,
+                257.0,
+                263.0,
+                269.0,
+                275.0,
+                281.0
+              ],
+              "clockwiseRange": [
+                123.0,
+                153.0
+              ]
+            },
+            {
+              "wire": "w02",
+              "side": "S",
+              "road": "section-1:vertical:872:248",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1
+              ],
+              "allowedCoordinates": [
+                869.0,
+                863.0
+              ],
+              "clockwiseRange": [
+                111.0,
+                117.0
+              ]
+            },
+            {
+              "wire": "w09",
+              "side": "W",
+              "road": "section-1:horizontal:248:200",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                251.0,
+                257.0,
+                263.0,
+                269.0,
+                275.0,
+                281.0
+              ],
+              "clockwiseRange": [
+                123.0,
+                153.0
+              ]
+            },
+            {
+              "wire": "w09",
+              "side": "E",
+              "road": "section-1:horizontal:248:200",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                251.0,
+                257.0,
+                263.0,
+                269.0,
+                275.0,
+                281.0
+              ],
+              "clockwiseRange": [
+                63.0,
+                93.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false
+              ],
+              "crossing": false
+            },
+            {
+              "values": [
+                true
+              ],
+              "crossing": true
+            }
+          ]
+        },
+        {
+          "junction": "junction:section-1:vertical:536:248:drive:node-1:exit-right|junction:section-1:vertical:536:248:drive:node-2:entry-left",
+          "label": "J49",
+          "bounds": {
+            "x": 500,
+            "y": 430,
+            "width": 72,
+            "height": 36
+          },
+          "wires": [
+            "w02",
+            "w09"
+          ],
+          "variables": [
+            "section-1:vertical:536:248"
+          ],
+          "endpoints": [
+            {
+              "wire": "w02",
+              "side": "W",
+              "road": "drive:node-1:exit-right",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2
+              ],
+              "allowedCoordinates": [
+                451.0,
+                457.0,
+                463.0
+              ],
+              "clockwiseRange": [
+                183.0,
+                195.0
+              ]
+            },
+            {
+              "wire": "w02",
+              "side": "N",
+              "road": "section-1:vertical:536:248",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                539.0,
+                545.0,
+                551.0,
+                557.0,
+                563.0,
+                569.0
+              ],
+              "clockwiseRange": [
+                39.0,
+                69.0
+              ]
+            },
+            {
+              "wire": "w09",
+              "side": "N",
+              "road": "section-1:vertical:536:248",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                539.0,
+                545.0,
+                551.0,
+                557.0,
+                563.0,
+                569.0
+              ],
+              "clockwiseRange": [
+                39.0,
+                69.0
+              ]
+            },
+            {
+              "wire": "w09",
+              "side": "S",
+              "road": "section-1:vertical:536:248",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                539.0,
+                545.0,
+                551.0,
+                557.0,
+                563.0,
+                569.0
+              ],
+              "clockwiseRange": [
+                111.0,
+                141.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false
+              ],
+              "crossing": true
+            },
+            {
+              "values": [
+                true
+              ],
+              "crossing": false
+            }
+          ]
+        }
+      ],
+      "exhaustiveAssignments": [
+        {
+          "assignment": {
+            "section-1:horizontal:248:200": false,
+            "section-1:vertical:536:248": false
+          },
+          "mandatoryCrossingsAt": [
+            "J49"
+          ],
+          "crossings": 1
+        },
+        {
+          "assignment": {
+            "section-1:horizontal:248:200": false,
+            "section-1:vertical:536:248": true
+          },
+          "mandatoryCrossingsAt": [
+            "J21"
+          ],
+          "crossings": 1
+        },
+        {
+          "assignment": {
+            "section-1:horizontal:248:200": true,
+            "section-1:vertical:536:248": false
+          },
+          "mandatoryCrossingsAt": [
+            "J21",
+            "J22",
+            "J49"
+          ],
+          "crossings": 3
+        },
+        {
+          "assignment": {
+            "section-1:horizontal:248:200": true,
+            "section-1:vertical:536:248": true
+          },
+          "mandatoryCrossingsAt": [
+            "J22"
+          ],
+          "crossings": 1
+        }
+      ],
+      "justification": "Every consistent per-road pair order has an alternating boundary pair. All Boolean assignments are listed; rank magnitudes cannot change their order."
+    },
+    {
+      "wires": [
+        "w10",
+        "w21"
+      ],
+      "lowerBound": 1,
+      "constraints": [
+        {
+          "junction": "junction:section-1:horizontal:1048:200:drive:section-1:exit-bottom",
+          "label": "J37",
+          "bounds": {
+            "x": 1320,
+            "y": 1012,
+            "width": 48,
+            "height": 72
+          },
+          "wires": [
+            "w10",
+            "w21"
+          ],
+          "variables": [
+            "section-1:horizontal:1048:200"
+          ],
+          "endpoints": [
+            {
+              "wire": "w10",
+              "side": "E",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                51.0,
+                81.0
+              ]
+            },
+            {
+              "wire": "w10",
+              "side": "S",
+              "road": "drive:section-1:exit-bottom",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "allowedCoordinates": [
+                1341.0,
+                1335.0,
+                1329.0,
+                1323.0
+              ],
+              "clockwiseRange": [
+                147.0,
+                165.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "W",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                207.0,
+                237.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "E",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                51.0,
+                81.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false
+              ],
+              "crossing": true
+            },
+            {
+              "values": [
+                true
+              ],
+              "crossing": false
+            }
+          ]
+        },
+        {
+          "junction": "junction:section-1:horizontal:1048:200:drive:section-2:exit-bottom",
+          "label": "J38",
+          "bounds": {
+            "x": 1824,
+            "y": 1012,
+            "width": 48,
+            "height": 72
+          },
+          "wires": [
+            "w10",
+            "w21"
+          ],
+          "variables": [
+            "section-1:horizontal:1048:200"
+          ],
+          "endpoints": [
+            {
+              "wire": "w10",
+              "side": "N",
+              "road": "drive:section-2:exit-bottom",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "allowedCoordinates": [
+                1845.0,
+                1839.0,
+                1833.0,
+                1827.0
+              ],
+              "clockwiseRange": [
+                3.0,
+                21.0
+              ]
+            },
+            {
+              "wire": "w10",
+              "side": "W",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                207.0,
+                237.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "W",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                207.0,
+                237.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "E",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                51.0,
+                81.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false
+              ],
+              "crossing": false
+            },
+            {
+              "values": [
+                true
+              ],
+              "crossing": true
+            }
+          ]
+        }
+      ],
+      "exhaustiveAssignments": [
+        {
+          "assignment": {
+            "section-1:horizontal:1048:200": false
+          },
+          "mandatoryCrossingsAt": [
+            "J37"
+          ],
+          "crossings": 1
+        },
+        {
+          "assignment": {
+            "section-1:horizontal:1048:200": true
+          },
+          "mandatoryCrossingsAt": [
+            "J38"
+          ],
+          "crossings": 1
+        }
+      ],
+      "justification": "Every consistent per-road pair order has an alternating boundary pair. All Boolean assignments are listed; rank magnitudes cannot change their order."
+    },
+    {
+      "wires": [
+        "w16",
+        "w21"
+      ],
+      "lowerBound": 1,
+      "constraints": [
+        {
+          "junction": "junction:section-1:horizontal:1048:200:drive:section-1:exit-bottom",
+          "label": "J37",
+          "bounds": {
+            "x": 1320,
+            "y": 1012,
+            "width": 48,
+            "height": 72
+          },
+          "wires": [
+            "w16",
+            "w21"
+          ],
+          "variables": [
+            "section-1:horizontal:1048:200"
+          ],
+          "endpoints": [
+            {
+              "wire": "w16",
+              "side": "E",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                51.0,
+                81.0
+              ]
+            },
+            {
+              "wire": "w16",
+              "side": "S",
+              "road": "drive:section-1:exit-bottom",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "allowedCoordinates": [
+                1341.0,
+                1335.0,
+                1329.0,
+                1323.0
+              ],
+              "clockwiseRange": [
+                147.0,
+                165.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "W",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                207.0,
+                237.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "E",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                51.0,
+                81.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false
+              ],
+              "crossing": true
+            },
+            {
+              "values": [
+                true
+              ],
+              "crossing": false
+            }
+          ]
+        },
+        {
+          "junction": "junction:section-1:horizontal:1048:200:drive:section-2:exit-bottom",
+          "label": "J38",
+          "bounds": {
+            "x": 1824,
+            "y": 1012,
+            "width": 48,
+            "height": 72
+          },
+          "wires": [
+            "w16",
+            "w21"
+          ],
+          "variables": [
+            "section-1:horizontal:1048:200"
+          ],
+          "endpoints": [
+            {
+              "wire": "w16",
+              "side": "N",
+              "road": "drive:section-2:exit-bottom",
+              "direction": 1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "allowedCoordinates": [
+                1845.0,
+                1839.0,
+                1833.0,
+                1827.0
+              ],
+              "clockwiseRange": [
+                3.0,
+                21.0
+              ]
+            },
+            {
+              "wire": "w16",
+              "side": "W",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                207.0,
+                237.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "W",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                207.0,
+                237.0
+              ]
+            },
+            {
+              "wire": "w21",
+              "side": "E",
+              "road": "section-1:horizontal:1048:200",
+              "direction": -1,
+              "allowedIndices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "allowedCoordinates": [
+                1045.0,
+                1039.0,
+                1033.0,
+                1027.0,
+                1021.0,
+                1015.0
+              ],
+              "clockwiseRange": [
+                51.0,
+                81.0
+              ]
+            }
+          ],
+          "truthTable": [
+            {
+              "values": [
+                false
+              ],
+              "crossing": false
+            },
+            {
+              "values": [
+                true
+              ],
+              "crossing": true
+            }
+          ]
+        }
+      ],
+      "exhaustiveAssignments": [
+        {
+          "assignment": {
+            "section-1:horizontal:1048:200": false
+          },
+          "mandatoryCrossingsAt": [
+            "J37"
+          ],
+          "crossings": 1
+        },
+        {
+          "assignment": {
+            "section-1:horizontal:1048:200": true
+          },
+          "mandatoryCrossingsAt": [
+            "J38"
+          ],
+          "crossings": 1
+        }
+      ],
+      "justification": "Every consistent per-road pair order has an alternating boundary pair. All Boolean assignments are listed; rank magnitudes cannot change their order."
+    }
+  ],
+  "scope": "Frozen routes, right-hand traffic, one constant assigned lane per road traversal. Layer 1 independently permits every physical pitch-6 slot, even spare slots. Layer 2 keeps only each same-direction wire pair order constant along a road; all pair orders are enumerated independently, ignoring three-wire transitivity. Both layers relax legal assignments. Their counted pairs are disjoint. A linked certificate forces a crossing at one listed junction, not at every junction."
 }

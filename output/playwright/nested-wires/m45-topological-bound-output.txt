@@ -14,5 +14,20 @@ FORCED J49 w01/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0] -> w01:E[451.0,45
 FORCED J49 w02/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0] -> w02:N[539.0,545.0,551.0,557.0,563.0,569.0] -> w24:S[533.0,527.0,521.0,515.0,509.0,503.0] -> w02:W[451.0,457.0,463.0]
 FORCED J50 w09/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0] -> w09:N[539.0,545.0,551.0,557.0,563.0,569.0] -> w24:E[851.0,857.0,863.0,869.0,875.0] -> w09:W[851.0,857.0,863.0]
 PASS 6 disjoint junction rectangles; witness counts are additive
-MEASURE section-1 unavoidable crossings >= 14; target <= 11
-FAIL DoD 3: lane reassignment alone cannot meet S1 <= 11 with frozen routes and right-hand traffic
+PASS linked-order controls: opposite requirements force 1; compatible orders and independent roads force 0
+PASS current canonical scene boundary arms agree with immutable M4; no baseline indices frozen
+FORCED-LINKED w02/w09 >= 1: J21, J22, J49
+  ORDER {"assignment": {"section-1:horizontal:248:200": false, "section-1:vertical:536:248": false}, "crossings": 1, "mandatoryCrossingsAt": ["J49"]}
+  ORDER {"assignment": {"section-1:horizontal:248:200": false, "section-1:vertical:536:248": true}, "crossings": 1, "mandatoryCrossingsAt": ["J21"]}
+  ORDER {"assignment": {"section-1:horizontal:248:200": true, "section-1:vertical:536:248": false}, "crossings": 3, "mandatoryCrossingsAt": ["J21", "J22", "J49"]}
+  ORDER {"assignment": {"section-1:horizontal:248:200": true, "section-1:vertical:536:248": true}, "crossings": 1, "mandatoryCrossingsAt": ["J22"]}
+FORCED-LINKED w10/w21 >= 1: J37, J38
+  ORDER {"assignment": {"section-1:horizontal:1048:200": false}, "crossings": 1, "mandatoryCrossingsAt": ["J37"]}
+  ORDER {"assignment": {"section-1:horizontal:1048:200": true}, "crossings": 1, "mandatoryCrossingsAt": ["J38"]}
+FORCED-LINKED w16/w21 >= 1: J37, J38
+  ORDER {"assignment": {"section-1:horizontal:1048:200": false}, "crossings": 1, "mandatoryCrossingsAt": ["J37"]}
+  ORDER {"assignment": {"section-1:horizontal:1048:200": true}, "crossings": 1, "mandatoryCrossingsAt": ["J38"]}
+PASS exhaustive rank-magnitude control: 1530 legal physical-slot combinations match linked truth tables
+PASS additive certificates: 14 independent-endpoint + 3 linked-road-order
+MEASURE section-1 unavoidable crossings >= 17; corrected target <= 16
+FAIL DoD 3: certified lower bound 17 > 16 with frozen routes, right-hand traffic, and constant road lanes

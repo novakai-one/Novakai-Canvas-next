@@ -1,0 +1,23 @@
+PASS w01: 11 routing ops; executed legs 10
+PASS w02: 15 routing ops; executed legs 14
+PASS w03: 15 routing ops; executed legs 14
+PASS w04: 11 routing ops; executed legs 10
+PASS w05: 15 routing ops; executed legs 14
+PASS w06: 34 routing ops; executed legs 33
+PASS w07: 32 routing ops; executed legs 31
+PASS w08: 15 routing ops; executed legs 14
+PASS w09: 26 routing ops; executed legs 10,10
+PASS w10: 72 routing ops; executed legs 13,13,3,13,14
+PASS w11: 41 routing ops; executed legs 10,10,10
+PASS w12: 106 routing ops; executed legs 3,43,14,3,14,13
+PASS w13: 32 routing ops; executed legs 31
+PASS w14: 11 routing ops; executed legs 10
+PASS w15: 11 routing ops; executed legs 10
+PASS w16: 69 routing ops; executed legs 14,13,13,13
+PASS w17: 45 routing ops; executed legs 10,10,14
+PASS w18: 107 routing ops; executed legs 3,43,14,3,14,14
+PASS routing total=668 <=700; maximum law leg=43 <=60
+PASS lane allocation + registry compilation=13922 <=15000; components={"wire-registry":868,"lane-allocation":889,"network":10340,"lane-projection":1825}
+PASS per-wire road-pair discovery checks=0
+PASS 22/44 nodes: total ops=19563/36124; growth=1.8465470531104635 <=2.5; byte-identical instrumented scenes
+PASS one-way pipeline: every recorded construction/allocation/projection stage executes exactly once

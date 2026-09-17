@@ -1,1077 +1,1131 @@
 {
-  "before": {
-    "calculations": {
-      "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
-      "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
-      "stages": {
-        "module-initialization": {
+  "milestone": "M3",
+  "scene": {
+    "nodes": 22,
+    "sections": 4,
+    "wires": 18
+  },
+  "widthFunction": "12 + 12 * laneCount",
+  "lanePitch": 6,
+  "calculations": {
+    "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
+    "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
+    "stages": {
+      "module-initialization": {
+        "arithmetic": 3,
+        "comparisons": 0,
+        "total": 3
+      },
+      "capacity": {
+        "arithmetic": 41,
+        "comparisons": 7,
+        "total": 48
+      },
+      "nodes": {
+        "arithmetic": 262,
+        "comparisons": 5,
+        "total": 267
+      },
+      "ports": {
+        "arithmetic": 208,
+        "comparisons": 0,
+        "total": 208
+      },
+      "topology": {
+        "arithmetic": 2097,
+        "comparisons": 558,
+        "total": 2655
+      },
+      "unattributed-setup": {
+        "arithmetic": 20,
+        "comparisons": 1,
+        "total": 21
+      },
+      "wire-registry": {
+        "arithmetic": 868,
+        "comparisons": 0,
+        "total": 868
+      },
+      "wire:w01": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "wire:w02": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "wire:w03": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "wire:w04": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "wire:w05": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "wire:w06": {
+        "arithmetic": 23,
+        "comparisons": 11,
+        "total": 34
+      },
+      "wire:w07": {
+        "arithmetic": 21,
+        "comparisons": 11,
+        "total": 32
+      },
+      "wire:w08": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "wire:w09": {
+        "arithmetic": 10,
+        "comparisons": 16,
+        "total": 26
+      },
+      "wire:w10": {
+        "arithmetic": 24,
+        "comparisons": 48,
+        "total": 72
+      },
+      "wire:w11": {
+        "arithmetic": 17,
+        "comparisons": 24,
+        "total": 41
+      },
+      "wire:w12": {
+        "arithmetic": 51,
+        "comparisons": 55,
+        "total": 106
+      },
+      "wire:w13": {
+        "arithmetic": 21,
+        "comparisons": 11,
+        "total": 32
+      },
+      "wire:w14": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "wire:w15": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "wire:w16": {
+        "arithmetic": 24,
+        "comparisons": 45,
+        "total": 69
+      },
+      "wire:w17": {
+        "arithmetic": 17,
+        "comparisons": 28,
+        "total": 45
+      },
+      "wire:w18": {
+        "arithmetic": 51,
+        "comparisons": 56,
+        "total": 107
+      },
+      "lane-allocation": {
+        "arithmetic": 413,
+        "comparisons": 476,
+        "total": 889
+      },
+      "main-roads": {
+        "arithmetic": 762,
+        "comparisons": 220,
+        "total": 982
+      },
+      "driveways": {
+        "arithmetic": 672,
+        "comparisons": 120,
+        "total": 792
+      },
+      "network": {
+        "arithmetic": 5516,
+        "comparisons": 4824,
+        "total": 10340
+      },
+      "lane-projection": {
+        "arithmetic": 703,
+        "comparisons": 1122,
+        "total": 1825
+      },
+      "probe:capacity": {
+        "arithmetic": 41,
+        "comparisons": 7,
+        "total": 48
+      },
+      "probe:nodes": {
+        "arithmetic": 524,
+        "comparisons": 11,
+        "total": 535
+      },
+      "probe:ports": {
+        "arithmetic": 416,
+        "comparisons": 0,
+        "total": 416
+      },
+      "probe:topology": {
+        "arithmetic": 4170,
+        "comparisons": 1430,
+        "total": 5600
+      },
+      "probe:setup": {
+        "arithmetic": 20,
+        "comparisons": 1,
+        "total": 21
+      },
+      "probe:wire-registry": {
+        "arithmetic": 1734,
+        "comparisons": 0,
+        "total": 1734
+      },
+      "probe:wire:w01": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "probe:wire:w02": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "probe:wire:w03": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "probe:wire:w04": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "probe:wire:w05": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "probe:wire:w06": {
+        "arithmetic": 23,
+        "comparisons": 11,
+        "total": 34
+      },
+      "probe:wire:w07": {
+        "arithmetic": 21,
+        "comparisons": 11,
+        "total": 32
+      },
+      "probe:wire:w08": {
+        "arithmetic": 3,
+        "comparisons": 12,
+        "total": 15
+      },
+      "probe:wire:w09": {
+        "arithmetic": 10,
+        "comparisons": 16,
+        "total": 26
+      },
+      "probe:wire:w10": {
+        "arithmetic": 24,
+        "comparisons": 48,
+        "total": 72
+      },
+      "probe:wire:w11": {
+        "arithmetic": 17,
+        "comparisons": 24,
+        "total": 41
+      },
+      "probe:wire:w12": {
+        "arithmetic": 51,
+        "comparisons": 55,
+        "total": 106
+      },
+      "probe:wire:w13": {
+        "arithmetic": 21,
+        "comparisons": 11,
+        "total": 32
+      },
+      "probe:wire:w14": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "probe:wire:w15": {
+        "arithmetic": 3,
+        "comparisons": 8,
+        "total": 11
+      },
+      "probe:wire:w16": {
+        "arithmetic": 24,
+        "comparisons": 45,
+        "total": 69
+      },
+      "probe:wire:w17": {
+        "arithmetic": 17,
+        "comparisons": 28,
+        "total": 45
+      },
+      "probe:wire:w18": {
+        "arithmetic": 51,
+        "comparisons": 56,
+        "total": 107
+      },
+      "probe:lane-allocation": {
+        "arithmetic": 413,
+        "comparisons": 476,
+        "total": 889
+      },
+      "probe:main-roads": {
+        "arithmetic": 1491,
+        "comparisons": 432,
+        "total": 1923
+      },
+      "probe:driveways": {
+        "arithmetic": 1344,
+        "comparisons": 240,
+        "total": 1584
+      },
+      "probe:network": {
+        "arithmetic": 11187,
+        "comparisons": 9694,
+        "total": 20881
+      },
+      "probe:lane-projection": {
+        "arithmetic": 703,
+        "comparisons": 1122,
+        "total": 1825
+      }
+    },
+    "wireRouting": {
+      "perWire": {
+        "w01": {
           "arithmetic": 3,
-          "comparisons": 0,
-          "total": 3
+          "comparisons": 8,
+          "total": 11
         },
-        "capacity": {
-          "arithmetic": 41,
-          "comparisons": 7,
-          "total": 48
+        "w02": {
+          "arithmetic": 3,
+          "comparisons": 12,
+          "total": 15
         },
-        "nodes": {
-          "arithmetic": 258,
-          "comparisons": 5,
-          "total": 263
+        "w03": {
+          "arithmetic": 3,
+          "comparisons": 12,
+          "total": 15
         },
-        "ports": {
-          "arithmetic": 208,
-          "comparisons": 0,
-          "total": 208
+        "w04": {
+          "arithmetic": 3,
+          "comparisons": 8,
+          "total": 11
         },
-        "main-roads": {
-          "arithmetic": 244,
-          "comparisons": 20,
-          "total": 264
+        "w05": {
+          "arithmetic": 3,
+          "comparisons": 12,
+          "total": 15
         },
-        "driveways": {
-          "arithmetic": 1180,
-          "comparisons": 0,
-          "total": 1180
+        "w06": {
+          "arithmetic": 23,
+          "comparisons": 11,
+          "total": 34
         },
-        "network": {
-          "arithmetic": 139030,
-          "comparisons": 141103,
-          "total": 280133
+        "w07": {
+          "arithmetic": 21,
+          "comparisons": 11,
+          "total": 32
         },
-        "unattributed-setup": {
-          "arithmetic": 12,
-          "comparisons": 1,
-          "total": 13
+        "w08": {
+          "arithmetic": 3,
+          "comparisons": 12,
+          "total": 15
         },
-        "wire:w01": {
-          "arithmetic": 186,
-          "comparisons": 824,
-          "total": 1010
+        "w09": {
+          "arithmetic": 10,
+          "comparisons": 16,
+          "total": 26
         },
-        "wire:w02": {
-          "arithmetic": 187,
-          "comparisons": 813,
-          "total": 1000
+        "w10": {
+          "arithmetic": 24,
+          "comparisons": 48,
+          "total": 72
         },
-        "wire:w03": {
-          "arithmetic": 219,
-          "comparisons": 853,
-          "total": 1072
+        "w11": {
+          "arithmetic": 17,
+          "comparisons": 24,
+          "total": 41
         },
-        "wire:w04": {
-          "arithmetic": 256,
-          "comparisons": 962,
-          "total": 1218
+        "w12": {
+          "arithmetic": 51,
+          "comparisons": 55,
+          "total": 106
         },
-        "wire:w05": {
-          "arithmetic": 327,
-          "comparisons": 1029,
-          "total": 1356
+        "w13": {
+          "arithmetic": 21,
+          "comparisons": 11,
+          "total": 32
         },
-        "wire:w06": {
-          "arithmetic": 819,
-          "comparisons": 3806,
-          "total": 4625
+        "w14": {
+          "arithmetic": 3,
+          "comparisons": 8,
+          "total": 11
         },
-        "wire:w07": {
-          "arithmetic": 899,
-          "comparisons": 3972,
-          "total": 4871
+        "w15": {
+          "arithmetic": 3,
+          "comparisons": 8,
+          "total": 11
         },
-        "wire:w08": {
-          "arithmetic": 419,
-          "comparisons": 1217,
-          "total": 1636
+        "w16": {
+          "arithmetic": 24,
+          "comparisons": 45,
+          "total": 69
         },
-        "wire:w09": {
-          "arithmetic": 905,
-          "comparisons": 4323,
-          "total": 5228
+        "w17": {
+          "arithmetic": 17,
+          "comparisons": 28,
+          "total": 45
         },
-        "wire:w10": {
-          "arithmetic": 1632,
-          "comparisons": 6258,
-          "total": 7890
-        },
-        "wire:w11": {
-          "arithmetic": 1529,
-          "comparisons": 5743,
-          "total": 7272
-        },
-        "wire:w12": {
-          "arithmetic": 2066,
-          "comparisons": 9633,
-          "total": 11699
+        "w18": {
+          "arithmetic": 51,
+          "comparisons": 56,
+          "total": 107
         }
       },
-      "wireRouting": {
-        "perWire": {
-          "w01": {
-            "arithmetic": 186,
-            "comparisons": 824,
-            "total": 1010
-          },
-          "w02": {
-            "arithmetic": 187,
-            "comparisons": 813,
-            "total": 1000
-          },
-          "w03": {
-            "arithmetic": 219,
-            "comparisons": 853,
-            "total": 1072
-          },
-          "w04": {
-            "arithmetic": 256,
-            "comparisons": 962,
-            "total": 1218
-          },
-          "w05": {
-            "arithmetic": 327,
-            "comparisons": 1029,
-            "total": 1356
-          },
-          "w06": {
-            "arithmetic": 819,
-            "comparisons": 3806,
-            "total": 4625
-          },
-          "w07": {
-            "arithmetic": 899,
-            "comparisons": 3972,
-            "total": 4871
-          },
-          "w08": {
-            "arithmetic": 419,
-            "comparisons": 1217,
-            "total": 1636
-          },
-          "w09": {
-            "arithmetic": 905,
-            "comparisons": 4323,
-            "total": 5228
-          },
-          "w10": {
-            "arithmetic": 1632,
-            "comparisons": 6258,
-            "total": 7890
-          },
-          "w11": {
-            "arithmetic": 1529,
-            "comparisons": 5743,
-            "total": 7272
-          },
-          "w12": {
-            "arithmetic": 2066,
-            "comparisons": 9633,
-            "total": 11699
-          }
-        },
-        "total": 48877
+      "total": 668
+    },
+    "laneNetwork": {
+      "total": 13922,
+      "components": {
+        "wire-registry": 868,
+        "lane-allocation": 889,
+        "network": 10340,
+        "lane-projection": 1825
       },
-      "laneNetwork": {
-        "total": 280133,
-        "roadCount": 138,
-        "pairwiseRoadCandidates": 9453
+      "roadCount": 138,
+      "pairwiseRoadCandidates": 0,
+      "roadPairDiscoveryChecks": 0,
+      "proof": "Compiler consumes construction contacts; forbidden all-road discovery forms asserted absent. See static-proof.txt."
+    },
+    "scalingProbe": {
+      "nodes": [
+        22,
+        44
+      ],
+      "southOffset": 1920,
+      "exactCloneVerified": true,
+      "laneCompile": [
+        13922,
+        25329
+      ],
+      "totalOperations": [
+        19563,
+        36124
+      ],
+      "ratio": 1.8465470531104635
+    },
+    "perLeg": [
+      {
+        "stage": "wire:w01",
+        "operations": 10,
+        "admitted": true
       },
-      "instrumentedSceneIdentical": true
-    },
-    "browser": {
-      "url": "http://127.0.0.1:5188/roads-prototype.html?nested",
-      "loads": [
-        {
-          "roads:navigation-to-ready": 273.2999999523163,
-          "roads:styles-import": 17.199999928474426,
-          "roads:renderer-import": 8.5,
-          "roads:capacity": 0,
-          "roads:nodes": 0,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:layout-total": 6.800000071525574,
-          "roads:driveways": 0,
-          "roads:network": 5.5,
-          "roads:wire:w01": 0.20000004768371582,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0.10000002384185791,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0.09999990463256836,
-          "roads:wire:w06": 0.10000002384185791,
-          "roads:wire:w07": 0.10000002384185791,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0.10000002384185791,
-          "roads:wire:w10": 0.19999992847442627,
-          "roads:wire:w11": 0.10000002384185791,
-          "roads:wire:w12": 0.20000004768371582,
-          "roads:coverage-audit": 47.699999928474426,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 126
-        },
-        {
-          "roads:navigation-to-ready": 245,
-          "roads:styles-import": 23.5,
-          "roads:renderer-import": 2.399999976158142,
-          "roads:capacity": 0,
-          "roads:nodes": 0,
-          "roads:ports": 0.10000002384185791,
-          "roads:layout-total": 6.600000023841858,
-          "roads:main-roads": 0,
-          "roads:driveways": 0,
-          "roads:network": 5.399999976158142,
-          "roads:wire:w01": 0.10000002384185791,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0.10000002384185791,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0.10000002384185791,
-          "roads:wire:w07": 0.20000004768371582,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0.09999990463256836,
-          "roads:wire:w10": 0.10000002384185791,
-          "roads:wire:w11": 0.20000004768371582,
-          "roads:wire:w12": 0.10000002384185791,
-          "roads:coverage-audit": 42.799999952316284,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 119.20000004768372
-        },
-        {
-          "roads:navigation-to-ready": 239.19999992847443,
-          "roads:styles-import": 6.300000071525574,
-          "roads:renderer-import": 2.299999952316284,
-          "roads:capacity": 0,
-          "roads:nodes": 0.10000002384185791,
-          "roads:layout-total": 6.899999976158142,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:driveways": 0.09999990463256836,
-          "roads:network": 5.400000095367432,
-          "roads:wire:w01": 0.09999990463256836,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0.10000002384185791,
-          "roads:wire:w04": 0.10000002384185791,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0.10000002384185791,
-          "roads:wire:w07": 0.10000002384185791,
-          "roads:wire:w08": 0.09999990463256836,
-          "roads:wire:w09": 0.10000002384185791,
-          "roads:wire:w10": 0.20000004768371582,
-          "roads:wire:w11": 0.10000002384185791,
-          "roads:wire:w12": 0.19999992847442627,
-          "roads:coverage-audit": 42.89999997615814,
-          "roads:proof-catalog": 0.10000002384185791,
-          "roads:render-to-ready": 133.89999997615814
-        },
-        {
-          "roads:navigation-to-ready": 224.69999992847443,
-          "roads:styles-import": 6.799999952316284,
-          "roads:renderer-import": 2.4000000953674316,
-          "roads:capacity": 0,
-          "roads:nodes": 0.09999990463256836,
-          "roads:layout-total": 7.099999904632568,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:driveways": 0,
-          "roads:network": 5.600000023841858,
-          "roads:wire:w01": 0.10000002384185791,
-          "roads:wire:w02": 0.09999990463256836,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0.10000002384185791,
-          "roads:wire:w06": 0.20000004768371582,
-          "roads:wire:w07": 0.10000002384185791,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0.09999990463256836,
-          "roads:wire:w10": 0.10000002384185791,
-          "roads:wire:w11": 0.30000007152557373,
-          "roads:wire:w12": 0.09999990463256836,
-          "roads:coverage-audit": 43.300000071525574,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 115.79999995231628
-        },
-        {
-          "roads:navigation-to-ready": 226.5,
-          "roads:styles-import": 6.699999928474426,
-          "roads:renderer-import": 1.5,
-          "roads:capacity": 0,
-          "roads:nodes": 0,
-          "roads:layout-total": 6.899999976158142,
-          "roads:ports": 0,
-          "roads:main-roads": 0,
-          "roads:driveways": 0.10000002384185791,
-          "roads:network": 5.5,
-          "roads:wire:w01": 0.09999990463256836,
-          "roads:wire:w02": 0.10000002384185791,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0.20000004768371582,
-          "roads:wire:w07": 0.10000002384185791,
-          "roads:wire:w08": 0.09999990463256836,
-          "roads:wire:w09": 0.10000002384185791,
-          "roads:wire:w10": 0.20000004768371582,
-          "roads:wire:w11": 0.10000002384185791,
-          "roads:wire:w12": 0.09999990463256836,
-          "roads:coverage-audit": 42.700000047683716,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 124.89999997615814
-        }
-      ],
-      "medianMilliseconds": 239.19999992847443,
-      "method": "Five consecutive warm-cache Chromium development navigations; Navigation start \u2192 fonts ready + two animation frames. No GPU paint-duration claim."
-    },
-    "visual": {
-      "wireOverlapCount": 0,
-      "selfOverlapCount": 0,
-      "crossings": [
-        [
-          "w04",
-          "w06",
-          1510.5,
-          552
-        ],
-        [
-          "w06",
-          "w12",
-          1680,
-          430.5
-        ],
-        [
-          "w06",
-          "w12",
-          1846.5,
-          448.5
-        ]
-      ],
-      "labelCollisionCount": 0,
-      "labelNodeCollisionCount": 0,
-      "minimumLabelHaloContrast": 5.892601677370216,
-      "headingBodyRatio": 1.4875
-    },
-    "screenshots": {
-      "overview": "a82a0a5bf8b683b6461b69de21422f965f7b994cb6fe921a740bb9bc4b10b424",
-      "w01": "a3898af3d973704582df3b3774f2a8b52a9bc98ce03e3940081d5be933b65ec7",
-      "w02": "c1a915412b109c7604834dd0354cd17107c3ffc7dcd67de43e25da3ceda37ede",
-      "w03": "f42c7c32e4667f8537aa06be6434f901db6c6044b026a4234eeaf9315bcbac00",
-      "w04": "afaf34917e88e0363f800f4bdf0d566e9fadac3872f0041f3e85f34dd3c25d0f",
-      "w05": "bf81d96eed8426a18f8c69df7df4836c60263a331ba5064eb21585f14e13e010",
-      "w06": "470f6dc8ab14108e1c2e2e60def6ac100bdcd7d65cc509dbbf12f058a78d8d51",
-      "w07": "65dd05ac978f402e087396d40946598589f81a80e26d89739f0a8a94b0c1d217",
-      "w08": "f153160d4f796f685bc9a835bc7d44d5ede021a1c5fad93c06f67847b380cc2e",
-      "w09": "1eb98eefb1cd6a4bce48fb2b462d98d15f3d5c52d7c20b07cffd04eda0f333d8",
-      "w10": "b29c6a8ee6ba06dbbbbcaf91e89dccc36cc4210365664578b54d478af3d809b0",
-      "w11": "12466ecf44f7c721554b88111a3139e2ad630355dd0c960e83d14e952022280b",
-      "w12": "0280b1cf97e2eec3ed4613b19e40a66b23e85446574211893774cffd0be95371"
+      {
+        "stage": "wire:w02",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w03",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w04",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w05",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w06",
+        "operations": 33,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w07",
+        "operations": 31,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w08",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w09",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w09",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w10",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w10",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w10",
+        "operations": 3,
+        "admitted": false
+      },
+      {
+        "stage": "wire:w10",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w10",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w11",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w11",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w11",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w12",
+        "operations": 3,
+        "admitted": false
+      },
+      {
+        "stage": "wire:w12",
+        "operations": 43,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w12",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w12",
+        "operations": 3,
+        "admitted": false
+      },
+      {
+        "stage": "wire:w12",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w12",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w13",
+        "operations": 31,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w14",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w15",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w16",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w16",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w16",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w16",
+        "operations": 13,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w17",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w17",
+        "operations": 10,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w17",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w18",
+        "operations": 3,
+        "admitted": false
+      },
+      {
+        "stage": "wire:w18",
+        "operations": 43,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w18",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w18",
+        "operations": 3,
+        "admitted": false
+      },
+      {
+        "stage": "wire:w18",
+        "operations": 14,
+        "admitted": true
+      },
+      {
+        "stage": "wire:w18",
+        "operations": 14,
+        "admitted": true
+      }
+    ],
+    "instrumentedSceneIdentical": true,
+    "stageInvocations": {
+      "capacity": 1,
+      "nodes": 1,
+      "ports": 1,
+      "topology": 1,
+      "wire-registry": 1,
+      "wire:w01": 1,
+      "wire:w02": 1,
+      "wire:w03": 1,
+      "wire:w04": 1,
+      "wire:w05": 1,
+      "wire:w06": 1,
+      "wire:w07": 1,
+      "wire:w08": 1,
+      "wire:w09": 1,
+      "wire:w10": 1,
+      "wire:w11": 1,
+      "wire:w12": 1,
+      "wire:w13": 1,
+      "wire:w14": 1,
+      "wire:w15": 1,
+      "wire:w16": 1,
+      "wire:w17": 1,
+      "wire:w18": 1,
+      "lane-allocation": 1,
+      "main-roads": 1,
+      "driveways": 1,
+      "network": 1,
+      "lane-projection": 1
     }
   },
-  "after": {
-    "calculations": {
-      "definition": "One executed numeric +, subtraction, Math.abs, or numeric comparison = one operation. Math.min/max charge n-1 comparisons. Multiplication, division, modulo, sqrt, string/identity comparison, lookup, allocation and native collection iteration are excluded. Sort comparator arithmetic is counted; native sort internals are excluded.",
-      "instrumentation": "TypeScript AST instrumentation of every reachable Layout core module; actual operands and short-circuit evaluation preserved; result byte-compared to the uninstrumented public builder. Initialization and unassigned setup are separately reported. No ++/-- operators exist in the reachable prototype modules.",
-      "stages": {
-        "module-initialization": {
-          "arithmetic": 3,
-          "comparisons": 0,
-          "total": 3
-        },
-        "capacity": {
-          "arithmetic": 41,
-          "comparisons": 7,
-          "total": 48
-        },
-        "nodes": {
-          "arithmetic": 262,
-          "comparisons": 5,
-          "total": 267
-        },
-        "ports": {
-          "arithmetic": 208,
-          "comparisons": 0,
-          "total": 208
-        },
-        "main-roads": {
-          "arithmetic": 244,
-          "comparisons": 20,
-          "total": 264
-        },
-        "driveways": {
-          "arithmetic": 1180,
-          "comparisons": 0,
-          "total": 1180
-        },
-        "network": {
-          "arithmetic": 6173,
-          "comparisons": 5402,
-          "total": 11575
-        },
-        "wire-registry": {
-          "arithmetic": 868,
-          "comparisons": 0,
-          "total": 868
-        },
-        "unattributed-setup": {
-          "arithmetic": 12,
-          "comparisons": 1,
-          "total": 13
-        },
-        "wire:w01": {
-          "arithmetic": 5,
-          "comparisons": 8,
-          "total": 13
-        },
-        "wire:w02": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "wire:w03": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "wire:w04": {
-          "arithmetic": 5,
-          "comparisons": 8,
-          "total": 13
-        },
-        "wire:w05": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "wire:w06": {
-          "arithmetic": 25,
-          "comparisons": 11,
-          "total": 36
-        },
-        "wire:w07": {
-          "arithmetic": 23,
-          "comparisons": 11,
-          "total": 34
-        },
-        "wire:w08": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "wire:w09": {
-          "arithmetic": 12,
-          "comparisons": 16,
-          "total": 28
-        },
-        "wire:w10": {
-          "arithmetic": 26,
-          "comparisons": 48,
-          "total": 74
-        },
-        "wire:w11": {
-          "arithmetic": 19,
-          "comparisons": 24,
-          "total": 43
-        },
-        "wire:w12": {
-          "arithmetic": 53,
-          "comparisons": 55,
-          "total": 108
-        },
-        "probe:capacity": {
-          "arithmetic": 41,
-          "comparisons": 7,
-          "total": 48
-        },
-        "probe:nodes": {
-          "arithmetic": 524,
-          "comparisons": 11,
-          "total": 535
-        },
-        "probe:ports": {
-          "arithmetic": 416,
-          "comparisons": 0,
-          "total": 416
-        },
-        "probe:main-roads": {
-          "arithmetic": 482,
-          "comparisons": 47,
-          "total": 529
-        },
-        "probe:driveways": {
-          "arithmetic": 2360,
-          "comparisons": 0,
-          "total": 2360
-        },
-        "probe:network": {
-          "arithmetic": 12524,
-          "comparisons": 11073,
-          "total": 23597
-        },
-        "probe:wire-registry": {
-          "arithmetic": 1734,
-          "comparisons": 0,
-          "total": 1734
-        },
-        "probe:setup": {
-          "arithmetic": 12,
-          "comparisons": 1,
-          "total": 13
-        },
-        "probe:wire:w01": {
-          "arithmetic": 5,
-          "comparisons": 8,
-          "total": 13
-        },
-        "probe:wire:w02": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "probe:wire:w03": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "probe:wire:w04": {
-          "arithmetic": 5,
-          "comparisons": 8,
-          "total": 13
-        },
-        "probe:wire:w05": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "probe:wire:w06": {
-          "arithmetic": 25,
-          "comparisons": 11,
-          "total": 36
-        },
-        "probe:wire:w07": {
-          "arithmetic": 23,
-          "comparisons": 11,
-          "total": 34
-        },
-        "probe:wire:w08": {
-          "arithmetic": 5,
-          "comparisons": 12,
-          "total": 17
-        },
-        "probe:wire:w09": {
-          "arithmetic": 12,
-          "comparisons": 16,
-          "total": 28
-        },
-        "probe:wire:w10": {
-          "arithmetic": 26,
-          "comparisons": 48,
-          "total": 74
-        },
-        "probe:wire:w11": {
-          "arithmetic": 19,
-          "comparisons": 24,
-          "total": 43
-        },
-        "probe:wire:w12": {
-          "arithmetic": 53,
-          "comparisons": 55,
-          "total": 108
+  "browser": {
+    "loads": [
+      {
+        "roads:navigation-to-ready": 282,
+        "roads:styles-import": 17.799999952316284,
+        "roads:renderer-import": 8.100000023841858,
+        "roads:capacity": 0,
+        "roads:nodes": 0.10000002384185791,
+        "roads:layout-total": 2.899999976158142,
+        "roads:ports": 0,
+        "roads:topology": 0.2999999523162842,
+        "roads:wire-registry": 0.20000004768371582,
+        "roads:wire:w01": 0,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0.09999990463256836,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0,
+        "roads:wire:w10": 0,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0.10000002384185791,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0,
+        "roads:wire:w17": 0,
+        "roads:wire:w18": 0,
+        "roads:lane-allocation": 0.20000004768371582,
+        "roads:main-roads": 0,
+        "roads:driveways": 0,
+        "roads:network": 1.7999999523162842,
+        "roads:lane-projection": 0.10000002384185791,
+        "roads:coverage-audit": 70.79999995231628,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 118.5
+      },
+      {
+        "roads:navigation-to-ready": 279.10000002384186,
+        "roads:styles-import": 23.100000023841858,
+        "roads:renderer-import": 2.200000047683716,
+        "roads:capacity": 0,
+        "roads:nodes": 0.09999990463256836,
+        "roads:layout-total": 3.299999952316284,
+        "roads:ports": 0,
+        "roads:topology": 0.30000007152557373,
+        "roads:wire-registry": 0.3999999761581421,
+        "roads:wire:w01": 0,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0.10000002384185791,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0,
+        "roads:wire:w10": 0,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0.10000002384185791,
+        "roads:wire:w17": 0,
+        "roads:wire:w18": 0,
+        "roads:lane-allocation": 0.09999990463256836,
+        "roads:main-roads": 0,
+        "roads:driveways": 0.10000002384185791,
+        "roads:network": 2,
+        "roads:lane-projection": 0.10000002384185791,
+        "roads:coverage-audit": 68.20000004768372,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 135
+      },
+      {
+        "roads:navigation-to-ready": 239.80000007152557,
+        "roads:styles-import": 5.799999952316284,
+        "roads:renderer-import": 1.600000023841858,
+        "roads:capacity": 0,
+        "roads:nodes": 0.10000002384185791,
+        "roads:layout-total": 3.1999999284744263,
+        "roads:ports": 0,
+        "roads:topology": 0.3999999761581421,
+        "roads:wire-registry": 0.19999992847442627,
+        "roads:wire:w01": 0.10000002384185791,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0,
+        "roads:wire:w10": 0,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0.10000002384185791,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0,
+        "roads:wire:w17": 0,
+        "roads:wire:w18": 0,
+        "roads:lane-allocation": 0.10000002384185791,
+        "roads:main-roads": 0.10000002384185791,
+        "roads:driveways": 0,
+        "roads:network": 1.899999976158142,
+        "roads:lane-projection": 0.19999992847442627,
+        "roads:coverage-audit": 67.30000007152557,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 114.5
+      },
+      {
+        "roads:navigation-to-ready": 260.6999999284744,
+        "roads:styles-import": 9.299999952316284,
+        "roads:renderer-import": 4.900000095367432,
+        "roads:capacity": 0.09999990463256836,
+        "roads:layout-total": 3,
+        "roads:nodes": 0,
+        "roads:ports": 0,
+        "roads:topology": 0.30000007152557373,
+        "roads:wire-registry": 0.19999992847442627,
+        "roads:wire:w01": 0,
+        "roads:wire:w02": 0.10000002384185791,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0.10000002384185791,
+        "roads:wire:w10": 0,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0.10000002384185791,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0,
+        "roads:wire:w17": 0,
+        "roads:wire:w18": 0,
+        "roads:lane-allocation": 0,
+        "roads:main-roads": 0.10000002384185791,
+        "roads:driveways": 0.09999990463256836,
+        "roads:network": 1.8000000715255737,
+        "roads:lane-projection": 0.10000002384185791,
+        "roads:coverage-audit": 68.19999992847443,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 129
+      },
+      {
+        "roads:navigation-to-ready": 249.89999997615814,
+        "roads:styles-import": 6.699999928474426,
+        "roads:renderer-import": 1.5,
+        "roads:layout-total": 3.100000023841858,
+        "roads:capacity": 0,
+        "roads:nodes": 0,
+        "roads:ports": 0,
+        "roads:topology": 0.30000007152557373,
+        "roads:wire-registry": 0.3999999761581421,
+        "roads:wire:w01": 0,
+        "roads:wire:w02": 0,
+        "roads:wire:w03": 0,
+        "roads:wire:w04": 0,
+        "roads:wire:w05": 0,
+        "roads:wire:w06": 0,
+        "roads:wire:w07": 0,
+        "roads:wire:w08": 0,
+        "roads:wire:w09": 0,
+        "roads:wire:w10": 0.10000002384185791,
+        "roads:wire:w11": 0,
+        "roads:wire:w12": 0,
+        "roads:wire:w13": 0,
+        "roads:wire:w14": 0,
+        "roads:wire:w15": 0,
+        "roads:wire:w16": 0,
+        "roads:wire:w17": 0.09999990463256836,
+        "roads:wire:w18": 0,
+        "roads:lane-allocation": 0.10000002384185791,
+        "roads:main-roads": 0,
+        "roads:driveways": 0.10000002384185791,
+        "roads:network": 1.7999999523162842,
+        "roads:lane-projection": 0.10000002384185791,
+        "roads:coverage-audit": 67.5,
+        "roads:proof-catalog": 0,
+        "roads:render-to-ready": 124.20000004768372
+      }
+    ],
+    "medianMilliseconds": 260.6999999284744,
+    "screenshots": [
+      {
+        "name": "m3-overview",
+        "focus": "",
+        "viewport": {
+          "width": 1920,
+          "height": 1440
         }
       },
-      "wireRouting": {
-        "perWire": {
-          "w01": {
-            "arithmetic": 5,
-            "comparisons": 8,
-            "total": 13
-          },
-          "w02": {
-            "arithmetic": 5,
-            "comparisons": 12,
-            "total": 17
-          },
-          "w03": {
-            "arithmetic": 5,
-            "comparisons": 12,
-            "total": 17
-          },
-          "w04": {
-            "arithmetic": 5,
-            "comparisons": 8,
-            "total": 13
-          },
-          "w05": {
-            "arithmetic": 5,
-            "comparisons": 12,
-            "total": 17
-          },
-          "w06": {
-            "arithmetic": 25,
-            "comparisons": 11,
-            "total": 36
-          },
-          "w07": {
-            "arithmetic": 23,
-            "comparisons": 11,
-            "total": 34
-          },
-          "w08": {
-            "arithmetic": 5,
-            "comparisons": 12,
-            "total": 17
-          },
-          "w09": {
-            "arithmetic": 12,
-            "comparisons": 16,
-            "total": 28
-          },
-          "w10": {
-            "arithmetic": 26,
-            "comparisons": 48,
-            "total": 74
-          },
-          "w11": {
-            "arithmetic": 19,
-            "comparisons": 24,
-            "total": 43
-          },
-          "w12": {
-            "arithmetic": 53,
-            "comparisons": 55,
-            "total": 108
-          }
-        },
-        "total": 417
-      },
-      "laneNetwork": {
-        "total": 11575,
-        "roadCount": 138,
-        "pairwiseRoadCandidates": 0,
-        "roadPairDiscoveryChecks": 0,
-        "proof": "Compiler consumes construction contacts; forbidden all-road discovery forms asserted absent. See static-proof.txt."
-      },
-      "scalingProbe": {
-        "nodes": [
-          22,
-          44
-        ],
-        "southOffset": 1920,
-        "exactCloneVerified": true,
-        "laneCompile": [
-          11575,
-          23597
-        ],
-        "ratio": 2.0386177105831536
-      },
-      "perLeg": [
-        {
-          "stage": "wire:w01",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w02",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w03",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w04",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w05",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w06",
-          "operations": 33,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w07",
-          "operations": 31,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w08",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w09",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w09",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w10",
-          "operations": 13,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w10",
-          "operations": 13,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w10",
-          "operations": 3,
-          "admitted": false
-        },
-        {
-          "stage": "wire:w10",
-          "operations": 13,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w10",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w11",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w11",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w11",
-          "operations": 10,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w12",
-          "operations": 3,
-          "admitted": false
-        },
-        {
-          "stage": "wire:w12",
-          "operations": 43,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w12",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w12",
-          "operations": 3,
-          "admitted": false
-        },
-        {
-          "stage": "wire:w12",
-          "operations": 14,
-          "admitted": true
-        },
-        {
-          "stage": "wire:w12",
-          "operations": 13,
-          "admitted": true
+      {
+        "name": "m3-corridor-s2s4",
+        "focus": "w10",
+        "viewport": {
+          "width": 1920,
+          "height": 1440
         }
-      ],
-      "instrumentedSceneIdentical": true
-    },
-    "browser": {
-      "url": "http://127.0.0.1:5188/roads-prototype.html?nested",
+      },
+      {
+        "name": "m3-corridor-s3s4",
+        "focus": "w17",
+        "viewport": {
+          "width": 1920,
+          "height": 1440
+        }
+      },
+      {
+        "name": "m3-shared-rows",
+        "focus": "w12",
+        "viewport": {
+          "width": 2560,
+          "height": 1920
+        }
+      }
+    ],
+    "wires": 18,
+    "nodes": 22,
+    "layoutRecalcCount": 1
+  },
+  "m2MedianMilliseconds": 243.7,
+  "selection": {
+    "messages": [
+      "PASS 2a load: 0 visible labels; all 22 nodes / 18 wires unselected",
+      "PASS 2b node-7 primary; only w12 + w13 + node-12 + node-5 secondary; every other node/wire dim; 0 labels (40/40 class assertions)",
+      "PASS 3/b layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS 2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (40/40 class assertions)",
+      "PASS 3/c layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS 2d empty canvas: 0 labels; 0 primary/secondary/dim classes anywhere",
+      "PASS 3/d layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS 2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (40/40 class assertions)",
+      "PASS 3/e layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS 2f node-5 twice: 0 labels; 0 primary/secondary/dim classes anywhere",
+      "PASS 3/f layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS 2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (40/40 class assertions)",
+      "PASS 3/g layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS extra: primary wire toggles off; secondary node becomes primary with fresh one-hop neighbourhood",
+      "PASS 3/extra layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged",
+      "PASS M3 timing loads=[309.5, 270.5, 240.79999995231628, 240.19999992847443, 235.79999995231628]; median=240.800 ms <=280; M2=243.7 ms"
+    ],
+    "performance": {
       "loads": [
-        {
-          "roads:navigation-to-ready": 308.5,
-          "roads:styles-import": 16.600000023841858,
-          "roads:renderer-import": 8.699999928474426,
-          "roads:layout-total": 2.700000047683716,
-          "roads:capacity": 0,
-          "roads:nodes": 0.10000002384185791,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:driveways": 0,
-          "roads:network": 2,
-          "roads:wire-registry": 0.19999992847442627,
-          "roads:wire:w01": 0,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0.10000002384185791,
-          "roads:wire:w07": 0,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0.10000002384185791,
-          "roads:wire:w10": 0,
-          "roads:wire:w11": 0,
-          "roads:wire:w12": 0,
-          "roads:coverage-audit": 47.799999952316284,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 132.60000002384186
-        },
-        {
-          "roads:navigation-to-ready": 250.39999997615814,
-          "roads:styles-import": 29.399999976158142,
-          "roads:renderer-import": 2.100000023841858,
-          "roads:capacity": 0,
-          "roads:nodes": 0.10000002384185791,
-          "roads:layout-total": 2.600000023841858,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:driveways": 0.10000002384185791,
-          "roads:network": 2,
-          "roads:wire-registry": 0.19999992847442627,
-          "roads:wire:w01": 0,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0,
-          "roads:wire:w07": 0,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0.10000002384185791,
-          "roads:wire:w10": 0,
-          "roads:wire:w11": 0,
-          "roads:wire:w12": 0,
-          "roads:coverage-audit": 44,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 121.5
-        },
-        {
-          "roads:navigation-to-ready": 226.30000007152557,
-          "roads:styles-import": 7.299999952316284,
-          "roads:renderer-import": 1.600000023841858,
-          "roads:layout-total": 2.899999976158142,
-          "roads:capacity": 0,
-          "roads:nodes": 0,
-          "roads:ports": 0,
-          "roads:main-roads": 0,
-          "roads:driveways": 0.10000002384185791,
-          "roads:network": 2.1999999284744263,
-          "roads:wire-registry": 0.30000007152557373,
-          "roads:wire:w01": 0,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0,
-          "roads:wire:w07": 0,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0.09999990463256836,
-          "roads:wire:w10": 0,
-          "roads:wire:w11": 0,
-          "roads:wire:w12": 0.10000002384185791,
-          "roads:coverage-audit": 43.60000002384186,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 120.60000002384186
-        },
-        {
-          "roads:navigation-to-ready": 218.29999995231628,
-          "roads:styles-import": 6.600000023841858,
-          "roads:renderer-import": 1.5999999046325684,
-          "roads:capacity": 0.10000002384185791,
-          "roads:layout-total": 2.700000047683716,
-          "roads:nodes": 0,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:driveways": 0,
-          "roads:network": 2.100000023841858,
-          "roads:wire-registry": 0.19999992847442627,
-          "roads:wire:w01": 0.10000002384185791,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0.10000002384185791,
-          "roads:wire:w07": 0,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0,
-          "roads:wire:w10": 0,
-          "roads:wire:w11": 0,
-          "roads:wire:w12": 0,
-          "roads:coverage-audit": 42.39999997615814,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 119.10000002384186
-        },
-        {
-          "roads:navigation-to-ready": 220.69999992847443,
-          "roads:styles-import": 6.899999976158142,
-          "roads:renderer-import": 2.0999999046325684,
-          "roads:layout-total": 2.600000023841858,
-          "roads:capacity": 0,
-          "roads:nodes": 0,
-          "roads:ports": 0,
-          "roads:main-roads": 0.10000002384185791,
-          "roads:driveways": 0.10000002384185791,
-          "roads:network": 2,
-          "roads:wire-registry": 0.19999992847442627,
-          "roads:wire:w01": 0,
-          "roads:wire:w02": 0,
-          "roads:wire:w03": 0,
-          "roads:wire:w04": 0,
-          "roads:wire:w05": 0,
-          "roads:wire:w06": 0.10000002384185791,
-          "roads:wire:w07": 0,
-          "roads:wire:w08": 0,
-          "roads:wire:w09": 0,
-          "roads:wire:w10": 0,
-          "roads:wire:w11": 0,
-          "roads:wire:w12": 0,
-          "roads:coverage-audit": 42.800000071525574,
-          "roads:proof-catalog": 0,
-          "roads:render-to-ready": 119.69999992847443
-        }
+        309.5,
+        270.5,
+        240.79999995231628,
+        240.19999992847443,
+        235.79999995231628
       ],
-      "medianMilliseconds": 226.30000007152557,
-      "method": "Five consecutive warm-cache Chromium development navigations; Navigation start \u2192 fonts ready + two animation frames. No GPU paint-duration claim."
+      "median": 240.79999995231628,
+      "m2Median": 243.7,
+      "ceiling": 280
     },
-    "visual": {
-      "wireOverlapCount": 0,
-      "selfOverlapCount": 0,
-      "crossings": [
-        [
-          "w05",
-          "w06",
-          1680,
-          670.5
-        ]
+    "counterBefore": 1,
+    "counterAfter": 1,
+    "midpoint": {
+      "x": 1680,
+      "y": 675,
+      "middle": {
+        "x": 1680,
+        "y": 675
+      },
+      "lift": -12,
+      "bounds": {
+        "x": 1164.8350830078125,
+        "y": 500.2576904296875,
+        "width": 15.71875,
+        "height": 10,
+        "top": 500.2576904296875,
+        "right": 1180.5538330078125,
+        "bottom": 510.2576904296875,
+        "left": 1164.8350830078125
+      }
+    }
+  },
+  "oracle": {
+    "method": "Independent rectilinear visibility graph: full street rectangles and directed driveway mouths.\n\nRoad rectangle edges, port axes, and wire coordinates form a Hanan grid. Street\narcs are bidirectional; driveway arcs follow the admitted down/right direction.\nNo routing law, contact registry or application graph is read. Gate-lane assignments constrain boundary crossings, as required by M3.\nNode bodies have no arcs. Crossing a section wall requires a gate mouth. Each wire uses only its assigned gate-lane crossing points; shortest paths inside the road rectangles are independently searched.\nWire vertices only refine the grid; they do not privilege or remove any path.\nDijkstra therefore considers alternative gates and all positions across each street.",
+    "graphVertices": 12376,
+    "wires": [
+      {
+        "wire": "w01",
+        "length": 150,
+        "oracle": 144,
+        "detourPercent": 4.166666666666674,
+        "beforeLength": 144
+      },
+      {
+        "wire": "w02",
+        "length": 310,
+        "oracle": 304,
+        "detourPercent": 1.9736842105263053,
+        "beforeLength": 304
+      },
+      {
+        "wire": "w03",
+        "length": 310,
+        "oracle": 304,
+        "detourPercent": 1.9736842105263053,
+        "beforeLength": 304
+      },
+      {
+        "wire": "w04",
+        "length": 150,
+        "oracle": 144,
+        "detourPercent": 4.166666666666674,
+        "beforeLength": 144
+      },
+      {
+        "wire": "w05",
+        "length": 150,
+        "oracle": 144,
+        "detourPercent": 4.166666666666674,
+        "beforeLength": 144
+      },
+      {
+        "wire": "w06",
+        "length": 726,
+        "oracle": 696,
+        "detourPercent": 4.31034482758621,
+        "beforeLength": 1203.0
+      },
+      {
+        "wire": "w07",
+        "length": 726,
+        "oracle": 684,
+        "detourPercent": 6.140350877192979,
+        "beforeLength": 717.0
+      },
+      {
+        "wire": "w08",
+        "length": 150,
+        "oracle": 144,
+        "detourPercent": 4.166666666666674,
+        "beforeLength": 144
+      },
+      {
+        "wire": "w09",
+        "length": 582,
+        "oracle": 576,
+        "detourPercent": 1.041666666666674,
+        "beforeLength": 576.0
+      },
+      {
+        "wire": "w10",
+        "length": 1918,
+        "oracle": 1918,
+        "detourPercent": 0.0,
+        "beforeLength": 1912.0
+      },
+      {
+        "wire": "w11",
+        "length": 662,
+        "oracle": 656,
+        "detourPercent": 0.9146341463414531,
+        "beforeLength": 656.0
+      },
+      {
+        "wire": "w12",
+        "length": 5350,
+        "oracle": 5206,
+        "detourPercent": 2.766039185555136,
+        "beforeLength": 5974.0
+      },
+      {
+        "wire": "w13",
+        "length": 726,
+        "oracle": 672,
+        "detourPercent": 8.03571428571428,
+        "beforeLength": null
+      },
+      {
+        "wire": "w14",
+        "length": 162,
+        "oracle": 144,
+        "detourPercent": 12.5,
+        "beforeLength": null
+      },
+      {
+        "wire": "w15",
+        "length": 550,
+        "oracle": 544,
+        "detourPercent": 1.1029411764705843,
+        "beforeLength": null
+      },
+      {
+        "wire": "w16",
+        "length": 1918,
+        "oracle": 1912,
+        "detourPercent": 0.3138075313807498,
+        "beforeLength": null
+      },
+      {
+        "wire": "w17",
+        "length": 1292,
+        "oracle": 1244,
+        "detourPercent": 3.8585209003215493,
+        "beforeLength": null
+      },
+      {
+        "wire": "w18",
+        "length": 5836,
+        "oracle": 5668,
+        "detourPercent": 2.9640084685956136,
+        "beforeLength": null
+      }
+    ]
+  },
+  "screenshots": {
+    "m3-overview": "bd60915307e9330d83d6d6b6c78c20c009b80852a1c44fd0d7b3b135bdb23d4e",
+    "m3-corridor-s2s4": "7ba6579ecbfc5b457c45e9c26f03f0b766bd708364713c052344cdb1c8d57c61",
+    "m3-corridor-s3s4": "85433c2d1849ea63dc03e1999b41b4776512aa040e1f1cd07f1bff77a26fea7c",
+    "m3-shared-rows": "35b1cff5643af8e3927853e66c6818a750487ac9b32f776dffe3c4d880a731f3"
+  },
+  "visual": {
+    "perSectionCrossings": {
+      "section-1": 0,
+      "section-2": 3,
+      "section-3": 0,
+      "section-4": 2,
+      "world": 0
+    },
+    "crossings": [
+      [
+        "w04",
+        "w13",
+        1521,
+        555
       ],
-      "labelCollisionCount": 0,
-      "labelNodeCollisionCount": 0,
-      "minimumLabelHaloContrast": 5.892601677370216,
-      "headingBodyRatio": 1.4875
-    },
-    "screenshots": {
-      "overview": "d264838cf686656ecd3151a5559e17881ec21a7855adb0c99f788ee1e4b14711",
-      "w01": "d7b9a624acdced8406a1fc6e83d941b9a139b063127c4ef16a4008a11d221c47",
-      "w02": "95a1f3eb76b27f284abe23eca612a298676b8e17c06338d9c04bb5d86eddb74e",
-      "w03": "361cd4f57d5f60019ed16e645b9a3e42dc8d6f01d5200858b1a3b48076980186",
-      "w04": "128caf35932d0c3a09d36d9fc211f481665b445be4e517b47aafe3bb2a7b7881",
-      "w05": "fe409981abefd397a89c1016403a016d0b5378d34f551b503d8d9a1ade9f946c",
-      "w06": "80ceee41b954d68f005a0fa093b526a5795c8b0d51f2a507f416d8498445916b",
-      "w07": "c7b42ee112ff64e575f7fd4b2571b934e272529de9dc7384fdc6154ef1377e28",
-      "w08": "4ed412ea673877e08c0dcdb9b7afea61bef1cbed1f9da7ab822d569522fdf910",
-      "w09": "00149df29ac514f10f2964a9181922a164ed5eed0446745946152f9ec949397c",
-      "w10": "d82c4ba262fedc66d212c5f20cf2848dd76c25a67b3a9b2163ba2eabbe613a72",
-      "w11": "a129e3f2737f32cc01800823d5443437f06d1da98a50ed5e0413664d0041a18b",
-      "w12": "f0702fdf30ad88a32ec01e44ae9542399d5430027a0759ff80acc275cd533177"
-    },
-    "oracle": {
-      "method": "Independent rectilinear visibility graph: full street rectangles, directed driveway centerlines.\n\nRoad rectangle edges, port axes, and wire coordinates form a Hanan grid. Street\narcs are bidirectional; driveway arcs follow the admitted down/right direction.\nNo routing law, contact registry, selected gate list, or application graph is read.\nNode bodies have no arcs. Crossing a section wall requires its gate centerline.\nWire vertices only refine the grid; they do not privilege or remove any path.\nDijkstra therefore considers alternative gates and all positions across each street.",
-      "graphVertices": 5982,
-      "wires": [
-        {
-          "wire": "w01",
-          "length": 144.0,
-          "oracle": 144.0,
-          "detourPercent": 0.0,
-          "beforeLength": 144
-        },
-        {
-          "wire": "w02",
-          "length": 304.0,
-          "oracle": 304.0,
-          "detourPercent": 0.0,
-          "beforeLength": 304
-        },
-        {
-          "wire": "w03",
-          "length": 304.0,
-          "oracle": 304.0,
-          "detourPercent": 0.0,
-          "beforeLength": 304
-        },
-        {
-          "wire": "w04",
-          "length": 144.0,
-          "oracle": 144.0,
-          "detourPercent": 0.0,
-          "beforeLength": 144
-        },
-        {
-          "wire": "w05",
-          "length": 144.0,
-          "oracle": 144.0,
-          "detourPercent": 0.0,
-          "beforeLength": 144
-        },
-        {
-          "wire": "w06",
-          "length": 723.0,
-          "oracle": 672.0,
-          "detourPercent": 7.589285714285721,
-          "beforeLength": 1203.0
-        },
-        {
-          "wire": "w07",
-          "length": 717.0,
-          "oracle": 672.0,
-          "detourPercent": 6.696428571428581,
-          "beforeLength": 717.0
-        },
-        {
-          "wire": "w08",
-          "length": 144.0,
-          "oracle": 144.0,
-          "detourPercent": 0.0,
-          "beforeLength": 144
-        },
-        {
-          "wire": "w09",
-          "length": 576.0,
-          "oracle": 576.0,
-          "detourPercent": 0.0,
-          "beforeLength": 576.0
-        },
-        {
-          "wire": "w10",
-          "length": 1912.0,
-          "oracle": 1912.0,
-          "detourPercent": 0.0,
-          "beforeLength": 1912.0
-        },
-        {
-          "wire": "w11",
-          "length": 656.0,
-          "oracle": 656.0,
-          "detourPercent": 0.0,
-          "beforeLength": 656.0
-        },
-        {
-          "wire": "w12",
-          "length": 5302.0,
-          "oracle": 4856.0,
-          "detourPercent": 9.184514003294897,
-          "beforeLength": 5974.0
-        }
+      [
+        "w05",
+        "w06",
+        1677,
+        675
+      ],
+      [
+        "w09",
+        "w18",
+        1173,
+        651
+      ],
+      [
+        "w11",
+        "w17",
+        1489,
+        1491
+      ],
+      [
+        "w16",
+        "w17",
+        1645,
+        1371
       ]
-    }
+    ]
   },
-  "ceilings": {
-    "perWire": {
-      "w01": 60,
-      "w02": 60,
-      "w03": 60,
-      "w04": 60,
-      "w05": 60,
-      "w06": 60,
-      "w07": 60,
-      "w08": 60,
-      "w09": 120,
-      "w10": 180,
-      "w11": 120,
-      "w12": 180
-    },
-    "perLeg": 60,
-    "wireTotal": 1200,
-    "laneCompile": 12000,
-    "roadPairDiscoveryChecks": 0,
-    "medianLoadMilliseconds": 239.2,
-    "scalingRatio": 2.5
-  }
+  "tests": 208,
+  "newTestFiles": 0
 }

@@ -1,0 +1,2 @@
+PASS M3 five loads=[282, 279.10000002384186, 239.80000007152557, 260.6999999284744, 249.89999997615814]; median=260.700 ms; M2=243.7 ms; ceiling=280 ms
+PASS 22 nodes, 18 wires, one layout calculation; four M3 screenshots captured

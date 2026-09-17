@@ -1,0 +1,11 @@
+Historical M2 wrapper, not the M3 acceptance runner:
+$ python3 apps/web/cli/verify-selection.py
+AssertionError: FAIL default/cleared screenshot mismatch
+
+Diagnostic: every element tag, class and computed CSS property compared before node-7 selection and after clearing.
+Result: [] (zero computed-style differences).
+The requested MJS assertions independently report zero geometry/camera differences and layout counter 1 -> 1.
+Consecutive idle PNGs: identical. Pre-selection/post-clear PNGs: different.
+Compositor flag experiments did not resolve the difference; no product styling or assertions were changed to hide it.
+The M3 runner invokes the exact requested MJS with its original assertions and the amended 18-wire expectations, and applies the specified 280 ms ceiling.
+This report does not claim that the additional legacy PNG-byte-identity assertion passed.

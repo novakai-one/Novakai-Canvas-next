@@ -1,95 +1,93 @@
-# M3 status — STOP on straight-through junction crossing (2026-09-17)
+# M3 — wire capacity and deterministic lanes
 
-The corrected **w01/w15** prerequisite and parallel-travel interpretation now pass, as do all 18 routes and the three gate-sequence equalities. The old w02/w15 STOP is resolved.
+Implementation on `feat/wire-lanes`, based on M2 `2c8ca32`. The amended 2026-09-17 brief admits clean perpendicular junction crossings whether turning or straight-through; same-axis overlap and parallel touching remain forbidden. The earlier STOP reports and candidate patch are historical evidence, superseded by the installed implementation and the M3 results below. No push, PR, new test file, Vite restart, or subagent.
 
-The resumed lane candidate exposed a different conflict with Part 2.6: **w05 and w06 cross at a junction where neither wire turns**. This is reproduced in the accepted M2 fixture, current 18-wire source, and capacity/lane candidate. Separate offsets move the intersection but cannot remove it under the unchanged law. The brief permits junction crossings only where wires genuinely turn; implementation stopped without silently broadening that exemption.
+## Pipeline and geometry
 
-Read [the current STOP report](m3-junction-blocker.md), [executable reproduction output](m3-junction-output.txt), and [corrected topology output](m3-topology-output.txt). The unaccepted candidate is preserved in [m3-lane-candidate.patch](m3-lane-candidate.patch), with a separate [candidate scene](m3-candidate-scene.json) and [candidate verification](m3-candidate-verification.txt). It is **not installed in application source**. The two accepted commits remain intact. No new test files, push, PR or Vite restart.
+Capacity → nodes → ports → reservation topology/contact registry → unchanged law demand → lane allocation → final street/driveway geometry → final network → lane projection. Each stage executes once. Reservation rectangles encode fixed construction ownership and the law's road assignments before widths are fixed; they are not a first final scene. The law runs once per attempted leg at zero reservation offset. Projection consumes those retained assignments and never searches/reroutes. The operation report asserts one invocation per stage and byte-identical instrumented/uninstrumented results.
 
-The candidate used lane pitch 6 and **width = 12 + 12 × lane count**, equally for streets and driveways, with no extra driveway margin. This is candidate design evidence, not a completed M3 implementation or scaling claim. The canonical `scene.json`, `oracle.json`, `calculations.json`, `metrics.json` and the M1.5 measurements below remain historical; none is presented as completed M3 evidence.
+`nested-wire-law.ts` is byte-identical to M2: band → shared road → quadrant corner, no search. The two rejected original pairs remain the known deferred law-coverage limitation; the six orchestrator substitutions are implemented exactly. All 18 routes are admitted. The original nodes, sections and ports are unchanged.
 
-# M1.5 — construction-owned routing
+**Published width function: `f(n) = 12 + 12 × n`**, for every street and every node/gate driveway; there is **no extra driveway margin**. Named lane pitch = **6** scene units. Lane centers on each direction's side are `(index + 0.5) × 6`, signed for right-hand traffic: east/south use positive-y/negative-x respectively. Wire-ID order within a direction determines its outward index. Opposing directions occupy opposing sides. Empty roads are 12 units wide; one lane 24; two lanes 36. The extra symmetric width permits either direction's entire demand without a second geometry pass.
 
-Branch `feat/nested-wires-efficient`, based on `feat/nested-wires` / `266a96c`. No push or PR. The original Vite server remains on http://127.0.0.1:5188/roads-prototype.html?nested.
+A shared gate is a mouth: each wire crosses at its assigned offset inside that driveway's width. Node terminals remain exact owner-port points and fan immediately into distinct driveway lanes. Street end caps now consume final neighboring street widths; this removes the recorded `world:vertical:1344:1184` / `drive:section-1:exit-bottom` overlap. Final driveway ends attach to those same final street edges through existing construction contacts.
 
-## Construction and route law
+## Verified results
 
-Scene construction records actual frame/grid crossings and driveway endpoints. A coordinate-keyed street registry resolves each event to its owners; it never enumerates road pairs. Each road's ordered junction/mouth events cut its lanes and register the lane endpoints. Junction merging sweeps events belonging to the same road. Lane connections consume those registered endpoints. The seven-node and two-node builders use the same compiler with their construction events.
+| DoD | Evidence/result |
+|---|---|
+| 1 | `pnpm check`: 70 files, **208 tests**, exit 0; **zero new .test.ts files**; see `m3-final-checks.txt`. |
+| 2 | `ok=true`, **18 wires**, exact prescribed pairs and all three shared-gate equalities; `m3-lanes-output.txt`. |
+| 3a–g | All lane, mouth, global segment, right-hand, sharing, width, node/boundary/containment, terminal and byte-determinism checks PASS; `verify-lanes.mjs`, `verify-invariants.mjs`. |
+| 4 | Route demand **668 ≤700**; maximum executed law leg **43 ≤60**; lane allocation + registries/network/projection **13,922 ≤15,000**; per-wire road-pair discovery **0**. |
+| 5 | Five loads **[282, 279.1, 239.8, 260.7, 249.9] ms**; median **260.700 ms**, recorded in `m3-browser.json`; M2 **243.7 ms**, M3 ceiling **280 ms**. Total-op clone probe: **19,563 →36,124**, **1.8465470531× ≤2.5**. |
+| 6 | Every unchanged selection assertion passes for 18 wires; every click preserves layout count **1 →1**, geometry and camera; `m3-selection-output.txt`. |
+| 7 | Width function, complete metrics and scaling interpretation are published here. |
+| 8 | Four named M3 screenshots personally inspected at overview and reading zoom; visual findings below. |
+| 9 | Canonical `scene.json`, `oracle.json`, `calculations.json`, `metrics.json` regenerated for 18 wires. |
+| 10 | Logical local commits on `feat/wire-lanes`; final clean status and six-commit log in the delivery report. |
 
-Before routing, a measured `wire-registry` stage builds road-owned ordered crossings, node terminals and gate accesses. No route is cached or precomputed there. Each requested wire uses direct access/road lookups. `coverPath` assigns segments through their named road entries; endpoint ownership follows the registered crossings/mouths and the reserved track width. The independent inspector checks the named rectangle's actual bounds, orthogonality, node interiors, continuity and gate positions.
+Full pasted outputs are collected in `m3-verification.txt` and the per-check output files. `m3-source-review.md` records whole-file scores **146–152/160**, all above 144; Sonar ≤2 is enforced by the full gate. No new lint exemption.
 
-`pair()` is unchanged: band → shared road → quadrant corner. Ports, gate sequences, containment ownership and wire families match M1. Highways are selected only from shared registered crossings, minimizing travel within the same highway family. This shortens w06 from 1203 to 723 and w12 from 5974 to 5302; every other length is unchanged. Fixed 3-unit street-track spacing and exact driveway/gate centerlines remain. The complete scene excluding wiring (including all lane/junction/connection/example records) is byte-identical to `1716111:output/playwright/nested/scene.json`.
+### Operations and scaling
 
-## Binary operation ceilings
+Same M1.5 op definition: one executed numeric addition, subtraction, `abs`, or numeric comparison is one operation; min/max charge n−1 comparisons. Multiply/divide, string/identity comparisons, lookup/allocation and native collection internals are excluded; comparator arithmetic is counted. Every reachable Layout core module is instrumented, including projection; no arithmetic is hidden in an unmetered helper.
 
-The M1 definition is unchanged: one executed numeric +, subtraction, Math.abs or numeric comparison = one operation; Math.min/max charge n−1 comparisons. Multiplication, division, modulo, sqrt, identity/string comparisons, lookups, allocation and native collection iteration/sort internals are excluded. Sort comparator arithmetic is counted. The TypeScript AST meter instruments all reachable Layout core modules, compares both 22- and 44-node output with the normal public builder, and asserts the ceilings. It separately brackets every actual `lawLeg` execution, including rejected gate attempts. No arithmetic is moved into uninstrumented helpers.
+| Wire | Routing operations |
+|---|---:|
+| w01 | 11 |
+| w02 | 15 |
+| w03 | 15 |
+| w04 | 11 |
+| w05 | 15 |
+| w06 | 34 |
+| w07 | 32 |
+| w08 | 15 |
+| w09 | 26 |
+| w10 | 72 |
+| w11 | 41 |
+| w12 | 106 |
+| w13 | 32 |
+| w14 | 11 |
+| w15 | 11 |
+| w16 | 69 |
+| w17 | 45 |
+| w18 | 107 |
+| Total | **668** |
 
-| Wire | Before | After | Ceiling | Result |
-|---|---:|---:|---:|---|
-| w01 | 1010 | 13 | 60 | PASS |
-| w02 | 1000 | 17 | 60 | PASS |
-| w03 | 1072 | 17 | 60 | PASS |
-| w04 | 1218 | 13 | 60 | PASS |
-| w05 | 1356 | 17 | 60 | PASS |
-| w06 | 4625 | 36 | 60 | PASS |
-| w07 | 4871 | 34 | 60 | PASS |
-| w08 | 1636 | 17 | 60 | PASS |
-| w09 | 5228 | 28 | 120 | PASS |
-| w10 | 7890 | 74 | 180 | PASS |
-| w11 | 7272 | 43 | 120 | PASS |
-| w12 | 11699 | 108 | 180 | PASS |
-| Wire total | 48877 | 417 | 1200 | PASS |
-| Lane compilation | 280133 | 11575 | 12000 | PASS |
-| Road-pair discovery checks | 9453 | 0 | exactly 0 | PASS |
+Multi-gate wires have multiple law legs; every actual invocation, including rejected gate attempts, is measured separately and ≤43. The lane/registry total includes wire registry **868**, lane allocation **889**, network compile **10,340**, and lane projection **1,825**: **13,922**. Final width/cap geometry (**982 streets +792 driveways**) and reservation topology (**2,655**) are separately visible construction stages. Nothing is omitted from the full **19,563** total. Initialization is separately listed. M1 baseline routing was 417 for 12 wires; network compilation was 11,575.
 
-Maximum executed leg: **43 ≤ 60 operations**. Full per-leg traces, including failed attempts, are in `calculations.json`. Construction contacts, lane endpoint registration, connection paths and crossing demonstrations are included in the lane-compile measurement. One-time wire indexing is separately visible, not hidden from the report: **868 operations**. All other construction stages and the 44-node probe stages are retained in `metrics.json` under the explicit `before` / `after` comparison.
+The 44-node probe clones all four sections at +1920 south, preserves every node/port/parent relationship, and retains the specified 18-wire request list (it does not invent a second set of requests). Both normal and instrumented clone serializations match. Its full **36,124** operations are **1.8465×** the 22-node scene. This is full-pipeline growth, not just a selected cheap stage.
 
-## Scaling probe and 100-node interpretation
+**Lane allocation at 100 nodes / 200 wires costs what?** Under the measured fixture's bounded road/junction degree and average road legs per wire, allocation plus projection extrapolates to `(889 +1825) ×200/18 ≈30,156` numeric ops; construction registries/network add `(868 +10340) ×100/22 ≈50,945`, giving **about 81,101 ops** for that combined work. Pure lane assignment alone is approximately **9,878 ops**. Routing demand would separately be about **7,422 ops**. These are explicit estimates, not a measured 100-node result or proof that 200 arbitrary wires fit the reserved space.
 
-The user clarified the probe: duplicate the **entire four-section, 22-node fixture**, using the same capacity/placement/road/compiler builders. `createNestedRoadScene({ copies: 2 })` produces exactly **44 nodes and eight sections**; sections 5–8 preserve the original nesting and are offset **1920 units south**. The world-road builder merges adjoining frame spans as usual. Measurements: **22 nodes = 11575 lane-compile operations; 44 nodes = 23597; ratio = 2.0386177105831536 ≤ 2.5**.
+Demand is grouped once by named road, sorted once per road by wire ID, then projected once. There are no per-wire road-pair searches or repeated geometry stages. Buckets append locally rather than repeatedly copying a growing road population. For L traversals, the allocation sorting term is `Σ k_r log(k_r)` (and restoring each wire's retained order); bounded congestion/leg count behaves approximately linearly. Concentrating every wire on one road or increasing containment depth is not promised constant cost. Geometry/network work is proportional to emitted contacts with local ordering terms. The measured clone does not compound; worst-case sorting and output density are stated rather than hidden.
 
-At 100 nodes the dominant number is approximately **52614 lane-compile operations** under a linear extrapolation of this repeated fixture. The construction/output work grows linearly because each added section contributes a bounded set of actual contacts, lane pieces and junction-local connections, rather than comparisons against every existing road. This is an estimate (`11575 × 100 / 22`), not a measured 100-node result or a universal linear-time claim: contact ordering and per-road event sorting retain an O(E log E) worst-case term. The measured twofold scene grew 2.0386×, with **zero** quadratic road-pair discovery. Denser junction degree or more containment legs changes the workload; the twelve-track allocation is still a bounded fixture policy.
+### Browser, visual review and limits
 
-## Independent oracle
+Four required captures: `m3-overview.png`, `m3-corridor-s2s4.png`, `m3-corridor-s3s4.png`, `m3-shared-rows.png`. Parallel lanes remain evenly spaced through shared mouths and bends; two-wire roads visibly exceed empty roads in width. The full overview contains all 22 nodes/18 wires, and shared-row reading zoom includes both S2 and S3. Required corridors were inspected against the approved AWS/Docker hierarchy and routing references. Reference assets are unchanged.
 
-`verify-oracle.py` constructs a rectilinear visibility graph from actual road rectangle boundaries and port axes. Streets are bidirectional across their full width; driveways are directed along their centerline through the exact owner ports. Wire coordinates refine the grid without removing alternatives. Dijkstra can choose different gates; it does not read the routing law, construction registry or selected route. This is stronger than a centerline-only oracle. Every reported path is within 10%, and no new path is longer than M1.
+Inherited plain node cards and sparse fixture padding remain: M3 does not restyle the approved M1/M2 prototype into an infographic or change its frozen placement. Wire labels are hidden by default and appear only for primary wire selection, as M2 requires. Road lines and section borders are contextual separators. Section crossing counts: **S1=0, S2=3, S3=0, S4=2, world=0**, all within the dense-map budget of six. The M3 global audit rejects every coincident overlap and parallel touch; perpendicular point crossings are accepted only inside registered junctions. The w05/w06 straight crossing is now correctly legal.
 
-| Wire | Length | Oracle | Detour |
-|---|---:|---:|---:|
-| w01 | 144 | 144 | 0.0000% |
-| w02 | 304 | 304 | 0.0000% |
-| w03 | 304 | 304 | 0.0000% |
-| w04 | 144 | 144 | 0.0000% |
-| w05 | 144 | 144 | 0.0000% |
-| w06 | 723 | 672 | 7.5893% |
-| w07 | 717 | 672 | 6.6964% |
-| w08 | 144 | 144 | 0.0000% |
-| w09 | 576 | 576 | 0.0000% |
-| w10 | 1912 | 1912 | 0.0000% |
-| w11 | 656 | 656 | 0.0000% |
-| w12 | 5302 | 4856 | 9.1845% |
+The exact requested `apps/web/cli/verify-selection.mjs` changes only topology expectations; all of its assertions pass. Use **`verify-m3-selection.py`** to run it with M3's 280 ms ceiling. The historical M2 wrapper `apps/web/cli/verify-selection.py` has an additional PNG-byte-equality assertion and an older M1-relative timing ceiling. Its PNG identity check currently fails despite identical geometry and identical computed styles after clearing: an observed screenshot raster difference, not claimed fixed or silently relaxed in that legacy wrapper. The M3 runner does not claim this extra legacy check passed. This limitation and the failed diagnostic are retained explicitly; selection semantics, op counts and timing are independently measured.
 
-## Browser and visual evidence
-
-Five consecutive Chromium development loads at 1920×1440: **308.5, 250.4, 226.3, 218.3, 220.7 ms**. Median **226.3 ms ≤ 239.2 ms**. Measurement remains navigation start → fonts ready plus two animation frames, including the coverage audit. Every raw User Timing entry is in `browser.json`; no claim about GPU paint duration is made.
-
-Regenerated and personally inspected `overview.png` and `w01.png`–`w12.png`, alongside the M1 overview and retained AWS/Docker references in `docs/agent-diagrams/visual-quality/References.md`. The four-section composition, nested S2, all ports and route families are preserved. The only visible route changes are the nearer highway for w06 and the nearer vertical crossing for w12. Their endpoints and arrows are fully visible. The overview contains all 22 nodes, 4 sections and 12 wires; each focused screenshot includes its complete route.
-
-The new paths have **zero shared positive-length segments, zero self-overlaps, zero wire-label collisions and zero label/node collisions**. There is **one crossing in S2**, within the dense-map budget of six. Wire-label halo contrast is at least **5.89:1**, heading/body ratio **1.4875**. Road dividers and section borders remain contextual separators. Inherited sparse section padding and plain rectangular actors remain the frozen M1 fixture; this milestone does not claim the infographic imagery/panel-density bar. No reference assets were changed, and no subagents were used.
+The regenerated independent oracle searches rectilinear road rectangles, directed driveways and **assigned gate-lane crossings**. It reads no routing law or application route graph. Its shortest distances are conditional on the legal gate allocations; they must not be compared to M1's unrestricted gate-choice centerline oracle as though the constraint sets were identical. All original 12 wires stay within 10% of this oracle. New w14 measures **162 vs144 =12.5%**, reflecting its outward shared-port lane; the M3 brief specifies no detour ceiling for added wires. All 18 measurements, including this one, are published, not filtered out.
 
 ## Reproduce
 
-Run from the repository root, leaving port 5188 running:
+Leave the existing Vite on port 5188 running. From the repository root:
 
 ```sh
 pnpm check
 pnpm exec tsx apps/web/cli/verify-nested-wires.ts
-pnpm exec tsx output/playwright/nested-wires/count-operations.mjs
-pnpm exec tsx output/playwright/nested-wires/verify-invariants.mjs
+node output/playwright/nested-wires/verify-lanes.mjs
+node --import tsx output/playwright/nested-wires/verify-invariants.mjs
+node --import tsx output/playwright/nested-wires/count-operations.mjs
 python3 output/playwright/nested-wires/verify-static.py
 python3 output/playwright/nested-wires/verify-oracle.py
-python3 output/playwright/nested-wires/capture-browser.py
-python3 output/playwright/nested-wires/verify-evidence.py
+python3 output/playwright/nested-wires/verify-m3-selection.py
+python3 output/playwright/nested-wires/capture-m3.py
+python3 output/playwright/nested-wires/verify-m3-evidence.py --write
 ```
 
-After deliberately replacing the five-load sample, update the timing paragraph and run `verify-evidence.py --write` to refresh the comparison. Its assertions enforce every numeric ceiling without rounding. `before.json` is the untouched M1 metrics from `266a96c`. `static-proof.txt` contains the grep commands/results and the unchanged-law assertion. `verification.txt` contains the acceptance output. `checks.txt` records the successful full gate: **208 tests, zero new test files**, with `capability/layout/tests/nested-wires.test.ts` deleted. All six valuable cases now run in the new committed `verify-invariants.mjs`: complete admission, determinism and four deliberate corruptions. Per-file standards evidence is in `source-review.md`.
+Run browser measurements without the concurrent full test suite. Replacing timing/screenshots requires refreshing metrics and their recorded sample. The original `before.json`, M1/M1.5 outputs and named historical STOP evidence remain provenance, not current acceptance results.

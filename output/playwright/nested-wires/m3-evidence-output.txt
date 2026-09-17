@@ -1,0 +1,7 @@
+PASS DoD 1: pnpm check, 208 tests; zero new .test.ts files
+PASS DoD 4/5: routing=668; compilation=13922; max leg=43; pair discovery=0; clone total=[19563, 36124]
+PASS DoD 5: five loads=[282, 279.10000002384186, 239.80000007152557, 260.6999999284744, 249.89999997615814]; median=260.700 ms <=280; M2=243.7 ms
+PASS DoD 6: all selection items PASS; layout counter 1 -> 1
+PASS DoD 8: four required PNGs, hashes recorded; per-section crossings={"section-1": 0, "section-2": 3, "section-3": 0, "section-4": 2, "world": 0}
+PASS DoD 9: scene, oracle, calculations and metrics all describe 18 wires
+PASS unchanged law: byte-identical to 2c8ca32

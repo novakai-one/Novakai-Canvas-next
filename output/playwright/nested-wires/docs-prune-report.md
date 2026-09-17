@@ -55,3 +55,7 @@ The old M4.5 metrics schema and stale 19683 compilation value remain in git hist
 ## Execution
 
 Provenance passed. Metrics regeneration, protocol #4, banner-restores, README rewrite and final gates follow in order.
+
+### Metrics regeneration
+
+`python3 output/playwright/nested-wires/verify-evidence.py --write` regenerated metrics through its own write path, then exited 1 at the unchanged README assertion: `AssertionError: Missing README count: 19768`. All 26 fixed per-wire assertions and whole-bundle equality passed first. This expected intermediate failure is resolved by the later authorized README rewrite; it is not a claimed full pass. No pinned input changed. Separate ruling #16 commit contains only metrics and this report update.

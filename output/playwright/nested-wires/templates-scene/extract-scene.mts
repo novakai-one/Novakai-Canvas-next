@@ -20,7 +20,7 @@ const options: ts.CompilerOptions = { module: ts.ModuleKind.NodeNext, moduleReso
 const program = ts.createProgram(files.map(file => resolve(root, file)), options);
 const checker = program.getTypeChecker();
 const members = new Set(files);
-interface Edge { readonly consumer: string; readonly provider: string; readonly line: number; readonly source: string }
+interface Edge { readonly consumer: string; readonly provider: string; readonly line: number; readonly source: string; readonly names: readonly string[] }
 interface Dropped { readonly consumer: string; readonly line: number; readonly reason: string; readonly source: string }
 const dropped: Dropped[] = [];
 function hasValue(node: ts.Node): boolean {
@@ -28,29 +28,6 @@ function hasValue(node: ts.Node): boolean {
   if (!symbol) return false;
   const actual = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
   return (actual.flags & ts.SymbolFlags.Value) !== 0;
-}
-function importValues(clause: ts.ImportClause | undefined): boolean {
-  if (!clause || clause.isTypeOnly) return false;
-  const bindings = clause.namedBindings;
-  return Boolean(clause.name && hasValue(clause.name)) || namedValues(bindings);
-}
-function namedValues(bindings: ts.NamedImportBindings | undefined): boolean {
-  if (!bindings) return false;
-  if (ts.isNamespaceImport(bindings)) return hasValue(bindings.name);
-  return bindings.elements.some(element => !element.isTypeOnly && hasValue(element.name));
-}
-function exportValues(statement: ts.ExportDeclaration): boolean {
-  if (statement.isTypeOnly) return false;
-  const clause = statement.exportClause;
-  if (!clause) return moduleValues(statement.moduleSpecifier);
-  if (ts.isNamespaceExport(clause)) return hasValue(clause.name);
-  return clause.elements.some(element => !element.isTypeOnly && hasValue(element.name));
-}
-function moduleValues(node: ts.Expression | undefined): boolean {
-  if (!node) return false;
-  const symbol = checker.getSymbolAtLocation(node);
-  if (!symbol) return false;
-  return checker.getExportsOfModule(symbol).some(value => (value.flags & ts.SymbolFlags.Value) !== 0);
 }
 function edge(file: string, source: ts.SourceFile, statement: ts.Statement): readonly Edge[] {
   if (!ts.isImportDeclaration(statement) && !ts.isExportDeclaration(statement)) return [];
@@ -63,12 +40,15 @@ function declarationEdge(file: string, source: ts.SourceFile, statement: ts.Impo
   const provider = relative(root, resolved?.resolvedFileName ?? module.text);
   const line = source.getLineAndCharacterOfPosition(statement.getStart(source)).line + 1;
   const text = statement.getText(source).replace(/\s+/g, ' ');
-  const value = ts.isImportDeclaration(statement) ? importValues(statement.importClause) : exportValues(statement);
-  return admit({ consumer: file, provider, line, source: text }, value);
+  const names = valueNames(statement);
+  return admit({ consumer: file, provider, line, source: text, names });
 }
-function admit(candidate: Edge, value: boolean): readonly Edge[] {
-  const reason = members.has(candidate.provider) ? 'type-only / no value binding' : 'external';
-  if (members.has(candidate.provider) && value) return [candidate];
+function admit(candidate: Edge): readonly Edge[] {
+  if (!members.has(candidate.provider)) return drop(candidate, 'external');
+  if (candidate.names.length === 0) return drop(candidate, 'type-only / no value binding');
+  return [candidate];
+}
+function drop(candidate: Edge, reason: string): readonly Edge[] {
   dropped.push({ consumer: candidate.consumer, line: candidate.line, reason, source: candidate.source });
   return [];
 }
@@ -87,7 +67,59 @@ function section(path: string): object {
     children: directories.filter(child => dirname(child) === path).map(section),
   };
 }
-const spec = { sections: roots.map(section), requests: pairs.map(edge => [files.indexOf(edge.provider) + 1, files.indexOf(edge.consumer) + 1]) };
+/** Source spelling/order is retained, aliases use the imported (provider) name. */
+function specifierNames(elements: readonly (ts.ImportSpecifier | ts.ExportSpecifier)[]): readonly string[] {
+  return elements.filter(element => !element.isTypeOnly && hasValue(element.name))
+    .map(element => (element.propertyName ?? element.name).text);
+}
+function bindingNames(bindings: ts.NamedImportBindings | undefined): readonly string[] {
+  if (!bindings) return [];
+  if (ts.isNamespaceImport(bindings)) return namespaceNames(bindings.name);
+  return specifierNames(bindings.elements);
+}
+function importedNames(clause: ts.ImportClause | undefined): readonly string[] {
+  if (!clause || clause.isTypeOnly) return [];
+  return [...defaultNames(clause.name), ...bindingNames(clause.namedBindings)];
+}
+function exportedNames(statement: ts.ExportDeclaration): readonly string[] {
+  if (statement.isTypeOnly) return [];
+  const clause = statement.exportClause;
+  if (!clause) return exportedModuleNames(statement.moduleSpecifier);
+  return exportClauseNames(clause);
+}
+function namespaceNames(name: ts.Identifier | ts.StringLiteral): readonly string[] {
+  return hasValue(name) ? [name.text] : [];
+}
+function defaultNames(name: ts.Identifier | undefined): readonly string[] {
+  if (!name) return [];
+  return hasValue(name) ? ['default'] : [];
+}
+function exportClauseNames(clause: ts.NamedExportBindings): readonly string[] {
+  if (ts.isNamespaceExport(clause)) return namespaceNames(clause.name);
+  return specifierNames(clause.elements);
+}
+function exportedModuleNames(node: ts.Expression | undefined): readonly string[] {
+  if (!node) return [];
+  const symbol = checker.getSymbolAtLocation(node);
+  if (!symbol) return [];
+  return checker.getExportsOfModule(symbol).filter(value => (value.flags & ts.SymbolFlags.Value) !== 0)
+    .map(value => value.name);
+}
+function valueNames(statement: ts.ImportDeclaration | ts.ExportDeclaration): readonly string[] {
+  return ts.isImportDeclaration(statement) ? importedNames(statement.importClause) : exportedNames(statement);
+}
+function wireMetadata(pair: Edge, index: number): { readonly id: string; readonly label: string } {
+  const names = [...new Set(declarations.filter(edge => edge.provider === pair.provider && edge.consumer === pair.consumer)
+    .flatMap(edge => edge.names))];
+  assert(names.length > 0, `Missing value names for ${pair.provider} -> ${pair.consumer}`);
+  const label = names.length <= 2 ? names.join(', ') : `${names[0]} + ${names.length - 1} more`;
+  return { id: `w${String(index + 1).padStart(2, '0')}`, label };
+}
+const spec = {
+  sections: roots.map(section),
+  requests: pairs.map(edge => [files.indexOf(edge.provider) + 1, files.indexOf(edge.consumer) + 1]),
+  wires: pairs.map(wireMetadata),
+};
 const connected = new Set(pairs.flatMap(edge => [edge.provider, edge.consumer]));
 const report = [
   '# Templates scene extraction', '',
@@ -99,6 +131,7 @@ const report = [
   ...files.map((file, index) => `| node-${index + 1} | ${file} |`), '',
   '## Sections', '', '| Section | Directory | Direct nodes |', '| --- | --- | --- |',
   ...directories.map((dir, index) => `| section-${index + 1} | ${dir} | ${files.filter(file => dirname(file) === dir).length} |`), '',
+  'Labels retain exact imported value names in source order, deduplicated per provider/consumer pair. One or two names are comma-joined; three or more render first + N more, where N is the remaining count. Type-only names are excluded. The wires array adds id/label presentation metadata beside unchanged sections and requests; the host attaches it after layout. Nested synthetic scenes retain wire IDs.', '',
   '## Value wires', '', '| Wire | Provider | Consumer | Source evidence (consumer:line) |', '| --- | --- | --- | --- |',
   ...pairs.map((edge, index) => `| w${String(index + 1).padStart(2, '0')} | ${edge.provider} | ${edge.consumer} | ${declarations.filter(item => item.provider === edge.provider && item.consumer === edge.consumer).map(item => `${item.consumer}:${item.line} — \`${item.source}\``).join('<br>')} |`), '',
   '## Dropped declarations', '',

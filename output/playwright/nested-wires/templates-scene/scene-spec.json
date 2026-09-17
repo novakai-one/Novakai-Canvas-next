@@ -237,5 +237,123 @@
       16,
       15
     ]
+  ],
+  "wires": [
+    {
+      "id": "w01",
+      "label": "createIdentity"
+    },
+    {
+      "id": "w02",
+      "label": "createTemplates"
+    },
+    {
+      "id": "w03",
+      "label": "createTemplates"
+    },
+    {
+      "id": "w04",
+      "label": "digest"
+    },
+    {
+      "id": "w05",
+      "label": "presetId + 2 more"
+    },
+    {
+      "id": "w06",
+      "label": "digest + 2 more"
+    },
+    {
+      "id": "w07",
+      "label": "digest"
+    },
+    {
+      "id": "w08",
+      "label": "composeTemplates"
+    },
+    {
+      "id": "w09",
+      "label": "fail"
+    },
+    {
+      "id": "w10",
+      "label": "fail"
+    },
+    {
+      "id": "w11",
+      "label": "fail"
+    },
+    {
+      "id": "w12",
+      "label": "fail"
+    },
+    {
+      "id": "w13",
+      "label": "fail"
+    },
+    {
+      "id": "w14",
+      "label": "fail, InputFault"
+    },
+    {
+      "id": "w15",
+      "label": "selection + 2 more"
+    },
+    {
+      "id": "w16",
+      "label": "admission + 3 more"
+    },
+    {
+      "id": "w17",
+      "label": "catalog + 2 more"
+    },
+    {
+      "id": "w18",
+      "label": "admit, plan"
+    },
+    {
+      "id": "w19",
+      "label": "select, list"
+    },
+    {
+      "id": "w20",
+      "label": "instantiate"
+    },
+    {
+      "id": "w21",
+      "label": "validateCatalog"
+    },
+    {
+      "id": "w22",
+      "label": "hashContent + 4 more"
+    },
+    {
+      "id": "w23",
+      "label": "pinOf"
+    },
+    {
+      "id": "w24",
+      "label": "exact + 2 more"
+    },
+    {
+      "id": "w25",
+      "label": "protect + 3 more"
+    },
+    {
+      "id": "w26",
+      "label": "parse + 2 more"
+    },
+    {
+      "id": "w27",
+      "label": "success"
+    },
+    {
+      "id": "w28",
+      "label": "success + 2 more"
+    },
+    {
+      "id": "w29",
+      "label": "canonical + 4 more"
+    }
   ]
 }

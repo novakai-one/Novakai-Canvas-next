@@ -19,6 +19,8 @@ export interface NestedWireSegment {
 /** Gates are ordered along the source-to-target traversal. */
 export interface NestedWire {
   readonly id: string;
+  /** Optional presentation metadata; routing and pin geometry never consume it. */
+  readonly label?: string;
   readonly from: string;
   readonly to: string;
   readonly sourcePortId: string;

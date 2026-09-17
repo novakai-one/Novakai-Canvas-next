@@ -43,6 +43,8 @@ Delta from grep estimate 29: 0. The AST/checker filters type-only dependencies a
 | section-8 | core/validation | 2 |
 | section-9 | adapters | 1 |
 
+Labels retain exact imported value names in source order, deduplicated per provider/consumer pair. One or two names are comma-joined; three or more render first + N more, where N is the remaining count. Type-only names are excluded. The wires array adds id/label presentation metadata beside unchanged sections and requests; the host attaches it after layout. Nested synthetic scenes retain wire IDs.
+
 ## Value wires
 
 | Wire | Provider | Consumer | Source evidence (consumer:line) |

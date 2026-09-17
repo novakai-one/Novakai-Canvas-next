@@ -1,0 +1,33 @@
+$ date -u
+Thu Sep 17 13:24:45 UTC 2026
+
+$ uptime
+23:24  up 7 days, 21:48, 3 users, load averages: 3.57 4.88 4.78
+
+$ ps -Ao pid,ppid,%cpu,%mem,etime,comm -r
+  PID  PPID  %CPU %MEM     ELAPSED COMM
+  397     1   4.3  0.6 07-21:47:48 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer
+  850     1   2.1  0.2 07-21:47:39 /private/var/folders/lp/fb1qcnzj0735404g5kjgv9ym0000gn/T/AppTranslocation/9A11DEC6-01B3-4D9E-AC86-7862665574CD/d/Ice.app/Contents/MacOS/Ice
+43504 65944   1.7  0.2    04:31:06 /Applications/Wispr Flow.app/Contents/Resources/swift-helper-app-dist/Wispr Flow.app/Contents/MacOS/Wispr Flow
+87107     1   1.6  0.1 06-15:12:41 /private/var/folders/lp/fb1qcnzj0735404g5kjgv9ym0000gn/T/AppTranslocation/9A11DEC6-01B3-4D9E-AC86-7862665574CD/d/Ice.app/Contents/XPCServices/MenuBarItemService.xpc/Contents/MacOS/MenuBarItemService
+55171 55062   1.4  0.3    03:11:33 /Applications/Kimi.app/Contents/Resources/resources/runtime/node
+  645     1   1.3  0.3 07-21:47:47 /System/Library/CoreServices/ControlCenter.app/Contents/MacOS/ControlCenter
+  856     1   1.3  0.2 07-21:47:39 /Applications/Stats.app/Contents/MacOS/Stats
+65965 65944   1.2  0.3    09:02:08 /Applications/Wispr Flow.app/Contents/Frameworks/Wispr Flow Helper (Renderer).app/Contents/MacOS/Wispr Flow Helper (Renderer)
+  406     1   1.2  0.1 07-21:47:48 /usr/sbin/coreaudiod
+58131 55062   1.1  0.6    01:16:24 /Applications/Kimi.app/Contents/Frameworks/Kimi Helper (Renderer).app/Contents/MacOS/Kimi Helper (Renderer)
+  560     1   1.1  0.3 07-21:47:49 /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN
+65963 65944   1.0  0.2    09:02:08 /Applications/Wispr Flow.app/Contents/Frameworks/Wispr Flow Helper (Renderer).app/Contents/MacOS/Wispr Flow Helper (Renderer)
+44444 43133   1.0  0.1    04:30:01 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/152.0.7977.83/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)
+  813     1   0.7  0.1 07-21:47:40 /Applications/GlobalProtect.app/Contents/Resources/PanGPS
+  864     1   0.6  0.1 07-21:47:39 /Applications/Be Focused Pro.app/Contents/MacOS/Be Focused Pro
+43133     1   0.6  0.9 07-08:34:37 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT
+32892 32885   0.5  0.2    04:53:36 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/153.0.8010.48/Helpers/Google Chrome Helper (GPU).app/Contents/MacOS/Google Chrome Helper (GPU)
+32676 32670   0.4  0.2    04:54:51 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/153.0.8010.48/Helpers/Google Chrome Helper (GPU).app/Contents/MacOS/Google Chrome Helper (GPU)
+  408     1   0.4  0.1 07-21:47:48 /usr/sbin/mDNSResponder
+    1     0   0.3  0.1 07-21:48:05 /sbin/launchd
+  366     1   0.3  0.1 07-21:47:49 /System/Library/CoreServices/launchservicesd
+62562     1   0.3  0.2       47:30 /System/Library/Frameworks/AppKit.framework/Versions/C/XPCServices/com.apple.appkit.xpc.openAndSavePanelService.xpc/Contents/MacOS/com.apple.appkit.xpc.openAndSavePanelService
+  647     1   0.3  0.3 07-21:47:47 /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder
+58524 58499   0.3  0.7    01:11:24 /Applications/Notion.app/Contents/Frameworks/Notion Helper (Renderer).app/Contents/MacOS/Notion Helper (Renderer)
+15294     1   0.3  0.1 05-22:55:34 /System/Library/Frameworks/AppKit.framework/Versions/C/XPCServices/com.apple.appkit.xpc.openAndSavePanelService.xpc/Contents/MacOS/com.apple.appkit.xpc.openAndSavePanelService

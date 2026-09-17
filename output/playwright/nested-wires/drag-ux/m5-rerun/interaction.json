@@ -1,0 +1,18 @@
+{
+  "messages": [
+    "PASS 2a exactly node-4/node-1 exchange bounds; other 22 and actual rendered bounds verified",
+    "PASS 2b\u2013d byte-identical independent swapped-spec build; all 26 routes and rendered paths; exactly +1 layout; selection unchanged",
+    "PASS 2e empty canvas drop snaps back exactly; byte-identical scene; +0 layouts; selection unchanged",
+    "PASS 2f click node-7: exact neighborhood/+0 layouts; return swap: unchanged selection and byte-identical original scene",
+    "PASS 5 drop-to-ready milliseconds=[131.70000004768372,69.29999995231628,66.70000004768372,64.69999992847443,79.39999997615814]; median=69.29999995231628 <=100",
+    "PASS extra cross-section no-op/+0 layouts; headless mouse events only"
+  ],
+  "timings": [
+    131.70000004768372,
+    69.29999995231628,
+    66.70000004768372,
+    64.69999992847443,
+    79.39999997615814
+  ],
+  "median": 69.29999995231628
+}

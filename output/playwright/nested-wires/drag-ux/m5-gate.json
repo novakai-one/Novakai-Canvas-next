@@ -1,0 +1,6 @@
+{
+  "command": "python3 output/playwright/nested-wires/verify-drag-swap.py",
+  "exitCode": 0,
+  "mjsSHA256Before": "c7db60180976c5aa70a3b0a5bad75e3d03d941005a8e56f12d4e88d7446ead67",
+  "mjsSHA256After": "c7db60180976c5aa70a3b0a5bad75e3d03d941005a8e56f12d4e88d7446ead67"
+}

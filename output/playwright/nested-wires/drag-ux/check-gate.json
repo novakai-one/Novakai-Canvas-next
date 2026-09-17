@@ -1,0 +1,7 @@
+{
+  "command": "pnpm check",
+  "exitCode": 0,
+  "startedUTC": "2026-09-17T13:25:33.729755+00:00",
+  "finishedUTC": "2026-09-17T13:26:02.471118+00:00",
+  "otherTaskVerificationRunning": false
+}

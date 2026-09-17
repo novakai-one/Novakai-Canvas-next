@@ -58,6 +58,8 @@ type JunctionNode = Node<
   'junction'
 >;
 const noProofs: readonly PrototypeRoadProof[] = [];
+// React Flow separates click suppression from drag activation; keep their CSS-pixel limit equal.
+const nodeGestureThreshold = 3;
 const arrows = { left: '←', right: '→', up: '↑', down: '↓' };
 const accessLabels = { entry: 'IN', exit: 'OUT' };
 
@@ -714,7 +716,8 @@ export function RoadPrototype({
           nodes={nodes}
           onNodesChange={onNodesChange}
           onNodeDragStop={drop}
-          nodeDragThreshold={4}
+          nodeDragThreshold={nodeGestureThreshold}
+          nodeClickDistance={nodeGestureThreshold}
           edges={[]}
           nodeTypes={nodeTypes}
           fitView={initialProof < 0}

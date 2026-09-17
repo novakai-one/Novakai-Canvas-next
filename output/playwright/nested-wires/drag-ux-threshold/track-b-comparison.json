@@ -1,0 +1,381 @@
+{
+  "previous_passes": 47,
+  "regressions": [],
+  "fixed": [
+    {
+      "probe_index": 7,
+      "probe": "click-1",
+      "check": "M2 primary",
+      "before": false,
+      "after": true
+    },
+    {
+      "probe_index": 7,
+      "probe": "click-1",
+      "check": "M2 exact neighborhood",
+      "before": false,
+      "after": true
+    }
+  ],
+  "residual": [
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "cursor within 3 CSS px at every step",
+      "before": false,
+      "after": false
+    }
+  ],
+  "comparisons": [
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "complete serialized scene SHA-256 + byte length unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "rendered transforms/dimensions byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "screen bounds byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 0,
+      "probe": "invalid",
+      "check": "cursor within 3 CSS px at every step",
+      "before": false,
+      "after": false
+    },
+    {
+      "probe_index": 1,
+      "probe": "valid",
+      "check": "node-4 exchanged bounds",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 1,
+      "probe": "valid",
+      "check": "node-1 exchanged bounds",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 1,
+      "probe": "valid",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 1,
+      "probe": "valid",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 1,
+      "probe": "valid",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 1,
+      "probe": "valid",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 2,
+      "probe": "invalid",
+      "check": "complete serialized scene SHA-256 + byte length unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 2,
+      "probe": "invalid",
+      "check": "rendered transforms/dimensions byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 2,
+      "probe": "invalid",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 2,
+      "probe": "invalid",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 2,
+      "probe": "invalid",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 2,
+      "probe": "invalid",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 3,
+      "probe": "past-edge",
+      "check": "complete serialized scene SHA-256 + byte length unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 3,
+      "probe": "past-edge",
+      "check": "rendered transforms/dimensions byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 3,
+      "probe": "past-edge",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 3,
+      "probe": "past-edge",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 3,
+      "probe": "past-edge",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 3,
+      "probe": "past-edge",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 4,
+      "probe": "cross-section",
+      "check": "complete serialized scene SHA-256 + byte length unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 4,
+      "probe": "cross-section",
+      "check": "rendered transforms/dimensions byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 4,
+      "probe": "cross-section",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 4,
+      "probe": "cross-section",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 4,
+      "probe": "cross-section",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 4,
+      "probe": "cross-section",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 5,
+      "probe": "section-frame",
+      "check": "complete serialized scene SHA-256 + byte length unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 5,
+      "probe": "section-frame",
+      "check": "rendered transforms/dimensions byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 5,
+      "probe": "section-frame",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 5,
+      "probe": "section-frame",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 5,
+      "probe": "section-frame",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 5,
+      "probe": "section-frame",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 6,
+      "probe": "drag-not-click",
+      "check": "complete serialized scene SHA-256 + byte length unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 6,
+      "probe": "drag-not-click",
+      "check": "rendered transforms/dimensions byte-exact",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 6,
+      "probe": "drag-not-click",
+      "check": "recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 6,
+      "probe": "drag-not-click",
+      "check": "selection unchanged",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 6,
+      "probe": "drag-not-click",
+      "check": "real React Flow drag moved",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 6,
+      "probe": "drag-not-click",
+      "check": "no recomputation during movement",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 7,
+      "probe": "click-1",
+      "check": "M2 primary",
+      "before": false,
+      "after": true
+    },
+    {
+      "probe_index": 7,
+      "probe": "click-1",
+      "check": "M2 exact neighborhood",
+      "before": false,
+      "after": true
+    },
+    {
+      "probe_index": 7,
+      "probe": "click-1",
+      "check": "click recalc delta",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 8,
+      "probe": "click-0",
+      "check": "M2 primary",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 8,
+      "probe": "click-0",
+      "check": "M2 exact neighborhood",
+      "before": true,
+      "after": true
+    },
+    {
+      "probe_index": 8,
+      "probe": "click-0",
+      "check": "click recalc delta",
+      "before": true,
+      "after": true
+    }
+  ]
+}

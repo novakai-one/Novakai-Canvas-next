@@ -1,0 +1,71 @@
+{
+  "status": "DIVERGENCE",
+  "checks": [
+    {
+      "name": "no uncaught browser errors",
+      "pass": true,
+      "actual": [],
+      "expected": []
+    }
+  ],
+  "errors": []
+}
+invalid {"moved": true, "maxDeviation": 10.33333969116211, "intervalMedian": 16.90000009536743}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+PASS screen bounds byte-exact
+DIVERGENCE cursor within 3 CSS px at every step
+valid {"moved": true, "maxDeviation": 21.33334732055664, "intervalMedian": 50.60000002384186}
+PASS node-4 exchanged bounds
+PASS node-1 exchanged bounds
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+invalid {"moved": true, "maxDeviation": 10.33333969116211, "intervalMedian": 51.59999990463257}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+past-edge {"moved": true, "maxDeviation": 34.519996643066406, "intervalMedian": 16.799999952316284}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+cross-section {"moved": true, "maxDeviation": 57.14772546367797, "intervalMedian": 16.799999952316284}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+section-frame {"moved": true, "maxDeviation": 37.707261932393024, "intervalMedian": 16.600000023841858}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+drag-not-click {"moved": true, "maxDeviation": 5, "intervalMedian": 17.5}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS real React Flow drag moved
+PASS no recomputation during movement
+click-1 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta
+click-0 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta

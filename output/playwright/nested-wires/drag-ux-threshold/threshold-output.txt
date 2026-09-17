@@ -1,0 +1,37 @@
+{
+  "status": "PASS"
+}
+click-0 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta
+click-1 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta
+click-1.9798989873223327 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta
+click-2.1213203435596424 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta
+boundary-4px {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS 4px activates one real drop
+boundary-valid {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS node-4 exchanged bounds
+PASS node-1 exchanged bounds
+PASS recalc delta
+PASS selection unchanged
+PASS 4px activates one real drop
+boundary-invalid {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS complete serialized scene SHA-256 + byte length unchanged
+PASS rendered transforms/dimensions byte-exact
+PASS recalc delta
+PASS selection unchanged
+PASS 4px activates one real drop

@@ -1,0 +1,19 @@
+{
+  "status": "DIVERGENCE"
+}
+click-0 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+PASS M2 primary
+PASS M2 exact neighborhood
+PASS click recalc delta
+click-1 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+DIVERGENCE M2 primary
+DIVERGENCE M2 exact neighborhood
+PASS click recalc delta
+click-1.9798989873223327 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+DIVERGENCE M2 primary
+DIVERGENCE M2 exact neighborhood
+PASS click recalc delta
+click-2.1213203435596424 {"moved": null, "maxDeviation": null, "intervalMedian": null}
+DIVERGENCE M2 primary
+DIVERGENCE M2 exact neighborhood
+PASS click recalc delta

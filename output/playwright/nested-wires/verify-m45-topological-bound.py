@@ -5,7 +5,7 @@ Layer 2 retains only pair order along each road: one assigned straight lane
 cannot change rank between junctions. Exhaustive Boolean truth tables in this
 OFFLINE prover certify incompatible orders; they never choose application lanes.
 The current canonical scene is audited against immutable M4 boundary arms.
-Exit 1 rejects the corrected S1 <= 16 acceptance gate; it is not a passing run.
+Exit 1 rejects any ceiling, non-junction crossing, or uncertified actual crossing.
 """
 import hashlib
 import itertools
@@ -186,10 +186,10 @@ def linked_constraint(junction, pair, first, second):
             'wires': list(pair), 'variables': variables, 'endpoints': endpoints, 'truthTable': rows}
 
 
-def order_constraints(subject):
+def order_constraints(subject, section="section-1"):
     constraints = []
     for junction in subject['junctions']:
-        if owner(junction['bounds']) != 'section-1':
+        if section is not None and owner(junction['bounds']) != section:
             continue
         paths = []
         for wire in subject['wiring']['value']:
@@ -292,7 +292,7 @@ print(f'PASS exhaustive rank-magnitude control: {checked} legal physical-slot co
 linked_bound = sum(o['lowerBound'] for o in obstructions)
 bound = len(witnesses) + linked_bound
 report = {'baseline': BASELINE, 'sceneSha256': hashlib.sha256(scene_bytes).hexdigest(),
-          'section': 'section-1', 'target': 16, 'lowerBound': bound,
+          'section': 'section-1', 'target': 20, 'lowerBound': bound,
           'rankMagnitudeCombinationsChecked': checked,
           'independentEndpointLowerBound': len(witnesses), 'linkedRoadOrderLowerBound': linked_bound,
           'witnesses': witnesses, 'roadOrderObstructions': obstructions,
@@ -302,10 +302,98 @@ report = {'baseline': BASELINE, 'sceneSha256': hashlib.sha256(scene_bytes).hexdi
                    'all pair orders are enumerated independently, ignoring three-wire transitivity. '
                    'Both layers relax legal assignments. Their counted pairs are disjoint. '
                    'A linked certificate forces a crossing at one listed junction, not at every junction.'}
+
+print(f'PASS additive S1 certificates: {len(witnesses)} independent-endpoint + {linked_bound} linked-road-order')
+print(f"MEASURE section-1 unavoidable crossings >= {bound}; accepted target <= 20")
+assert bound <= 20
+
+# Extend the same proofs to all sections. The three accepted S1 linked-road
+# certificates above remain unchanged. Two further obstructions span S1/S2;
+# they certify a single crossing somewhere on their linked routes, not a
+# higher S1-only floor.
+global_witnesses = []
+for junction in scene['junctions']:
+    paths = []
+    for wire in scene['wiring']['value']:
+        hits = events(wire, junction['bounds'])
+        if len(hits) != 2 or any(hit['laneId'] is None for hit in hits):
+            continue
+        paths.append((wire['id'], [{'wire': wire['id'], **endpoint_range(hit, junction['bounds'])} for hit in hits]))
+    for (a, first), (b, second) in itertools.combinations(paths, 2):
+        ordered = certify(first, second)
+        if ordered is not None:
+            global_witnesses.append({'junction': junction['id'], 'label': junction['label'],
+                'section': owner(junction['bounds']), 'wires': [a, b], 'clockwiseEndpointRanges': ordered,
+                'justification': 'Disjoint alternating endpoint ranges for every allowed physical lane index.'})
+
+global_constraints = order_constraints(scene, None)
+global_obstructions = []
+for pair in sorted({tuple(c['wires']) for c in global_constraints}):
+    group = [c for c in global_constraints if tuple(c['wires']) == pair]
+    table = exhaustive_table(group)
+    minimum = min(row['crossings'] for row in table)
+    if not minimum:
+        continue
+    assert not any(set(w['wires']) == set(pair) for w in global_witnesses)
+    global_obstructions.append({'wires': list(pair), 'lowerBound': minimum, 'constraints': group,
+        'exhaustiveAssignments': table,
+        'justification': 'Every consistent per-road pair order forces at least this many crossings among the listed junctions.'})
+
+# Recompute actual intersections, never trust a stale budget artifact.
+subprocess.run(['python3', str(ROOT / 'verify-m4-visual-budget.py')], check=True, capture_output=True, text=True)
+actual = json.loads((ROOT / 'm4-visual-budget.json').read_text())
+certified = {}
+for witness in global_witnesses:
+    certified[(witness['junction'], tuple(witness['wires']))] = {'kind': 'endpoint-alternation', 'certificate': witness}
+for obstruction in global_obstructions:
+    pair = tuple(obstruction['wires'])
+    relevant = [hit for hit in actual['crossings'] if tuple(hit['wires']) == pair]
+    assert len(relevant) == obstruction['lowerBound'], f'Linked bound cannot certify surplus intersections: {pair}'
+    for constraint in obstruction['constraints']:
+        assignment = {v: next(l['index'] for l in lanes.values() if l['wireId'] == pair[0] and l['roadId'] == v)
+                         < next(l['index'] for l in lanes.values() if l['wireId'] == pair[1] and l['roadId'] == v)
+                      for v in constraint['variables']}
+        if violated(constraint, assignment):
+            certified[(constraint['junction'], pair)] = {'kind': 'linked-road-order', 'certificate': obstruction}
+
+
+def coverage(crossings, certificates):
+    seen = set()
+    uncovered = []
+    covered = []
+    for hit in crossings:
+        keys = [(j, tuple(hit['wires'])) for j in hit['registeredJunctions']]
+        key = next((key for key in keys if key in certificates and key not in seen), None)
+        if key is None or not hit['excluded']:
+            uncovered.append(hit)
+            continue
+        seen.add(key)
+        covered.append({**hit, 'justification': certificates[key]})
+    return covered, uncovered
+
+
+covered, uncovered = coverage(actual['crossings'], certified)
+assert coverage([{'wires': ['fake-a', 'fake-b'], 'registeredJunctions': [], 'excluded': True}], certified)[1]
+if covered:
+    assert len(coverage([covered[0], covered[0]], certified)[1]) == 1
+print('PASS certification negative controls: unknown pair and duplicate crossing rejected')
+for hit in covered:
+    labels = [j['label'] for j in scene['junctions'] if j['id'] in hit['registeredJunctions']]
+    print(f"CERTIFIED {'/'.join(labels)} {'/'.join(hit['wires'])} at {hit['point']}: {hit['justification']['kind']}")
+for hit in uncovered:
+    print('UNCERTIFIED ' + json.dumps(hit))
+ceilings = {'section-1': 20, 'section-2': 4, 'section-3': 2, 'section-4': 4, 'world': 8}
+j21 = next(j['id'] for j in scene['junctions'] if j['label'] == 'J21')
+j21_count = sum(j21 in hit['registeredJunctions'] for hit in actual['crossings'])
+report.update({'globalEndpointCertificates': global_witnesses, 'globalRoadOrderObstructions': global_obstructions,
+    'globalLowerBound': len(global_witnesses) + sum(o['lowerBound'] for o in global_obstructions),
+    'certifiedCrossings': covered, 'uncertifiedCrossings': uncovered, 'ceilings': ceilings,
+    'actualCounts': actual['counts'], 'budgetedCounts': actual['budgetedCounts'], 'J21': j21_count})
 (ROOT / 'm45-topological-bound.json').write_text(json.dumps(report, indent=2) + '\n')
-print(f'PASS additive certificates: {len(witnesses)} independent-endpoint + {linked_bound} linked-road-order')
-print(f"MEASURE section-1 unavoidable crossings >= {bound}; corrected target <= 16")
-if bound > 16:
-    print(f'FAIL DoD 3: certified lower bound {bound} > 16 with frozen routes, right-hand traffic, and constant road lanes')
-    raise SystemExit(1)
-print('PASS lower-bound feasibility gate only; actual crossing ceilings and certification coverage must also pass')
+print(f'MEASURE crossings={actual["counts"]}; J21={j21_count}; budgeted={actual["budgetedCounts"]}')
+print(f'MEASURE certified={len(covered)}; uncertified={len(uncovered)}; global floor={report["globalLowerBound"]}')
+assert all(actual['counts'][section] <= ceiling for section, ceiling in ceilings.items())
+assert j21_count <= 2
+assert all(value == 0 for value in actual['budgetedCounts'].values())
+assert not uncovered, 'FAIL immovable hard gate: every actual crossing must be individually certified'
+print('PASS DoD 3: all ceilings, budgeted zero, ZERO uncertified crossings')

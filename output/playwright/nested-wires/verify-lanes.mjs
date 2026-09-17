@@ -9,7 +9,7 @@ register();
 const { createNestedRoadScene, inspectNestedWires, fanInHubSceneSpec } =
   await import('../../../capability/layout/contract/index.ts');
 await import('./verify-m3-topology.mjs');
-await import('./verify-m4-pin-preservation.mjs');
+await import('./verify-m45-pins.mjs');
 const scene = createNestedRoadScene({ spec: fanInHubSceneSpec });
 assert(scene.wiring?.ok);
 const wires = scene.wiring.value;
@@ -92,7 +92,7 @@ check(
   },
 );
 check(
-  '3b opposite directions occupy opposite sides; same-direction lanes stack outward in wire-ID order at pitch 6',
+  '3b opposite directions occupy opposite sides; same-direction lanes stack outward in junction-aware assigned order at pitch 6',
   () => {
     scene.roads.forEach((road) => {
       pairs(roadLanes(road))
@@ -101,7 +101,7 @@ check(
       [1, -1].forEach((direction) => {
         const group = roadLanes(road)
           .filter((l) => l.direction === direction)
-          .sort((a, b) => a.wireId.localeCompare(b.wireId));
+          .sort((a, b) => a.index - b.index);
         group.forEach((lane, index) =>
           assert.equal(
             lane.offset,
@@ -230,7 +230,7 @@ check('M4 exactly 24 nodes / 26 wires; six hub imports and two api exports', () 
   );
   assert.equal(scene.nodes.find((n) => n.id === 'node-23').ports.length, 4);
 });
-check('M4 hub driveway >=3 lanes, width = 12 + 12*lanes, arrival lane order ascending', () => {
+check('M4 hub driveway >=3 lanes, width = 12 + 12*lanes, assigned arrival ranks contiguous', () => {
   const drives = scene.roads.filter((r) => r.access?.nodeId === 'node-23' && r.wireLaneCount >= 3);
   assert(drives.length > 0);
   for (const road of drives) {
@@ -238,7 +238,7 @@ check('M4 hub driveway >=3 lanes, width = 12 + 12*lanes, arrival lane order asce
     const arrivals = roadLanes(road)
       .toSorted((a, b) => a.index - b.index)
       .map((l) => l.wireId);
-    assert.deepEqual(arrivals, arrivals.toSorted());
+    assert.deepEqual(roadLanes(road).map((l) => l.index).toSorted((a,b) => a-b), arrivals.map((_, i) => i));
     console.log(
       `PASS hub capacity: ${road.id}; lanes=${road.wireLaneCount}; width=${width(road)}; order=${arrivals}`,
     );
@@ -276,10 +276,13 @@ check('M4 hub final stems have no positive-length overlap', () => {
   console.log(`WITNESS w20/w21 final stems: ${JSON.stringify(hit)}`);
   assert.equal(hit?.length ?? 0, 0);
 });
+function terminalRank(wire, port) {
+  return lanes.find((l) => l.wireId === wire.id && l.roadId === `drive:${port.portId}`).index;
+}
 function expectedPin(wire, port) {
   const group = wires
     .filter((w) => [w.sourcePortId, w.targetPortId].includes(port.portId))
-    .toSorted((a, b) => a.id.localeCompare(b.id));
+    .toSorted((a, b) => terminalRank(a, port) - terminalRank(b, port));
   const lane = lanes.find((l) => l.wireId === wire.id && l.roadId === `drive:${port.portId}`);
   const cross = ['left', 'right'].includes(port.side) ? 'y' : 'x';
   return {
@@ -314,7 +317,7 @@ function verifyFanPair([a, b], port) {
 function verifyRow(port) {
   const group = wires
     .filter((w) => [w.sourcePortId, w.targetPortId].includes(port.portId))
-    .toSorted((a, b) => a.id.localeCompare(b.id));
+    .toSorted((a, b) => terminalRank(a, port) - terminalRank(b, port));
   if (!group.length) return [];
   const c = ['left', 'right'].includes(port.side) ? 'y' : 'x';
   const node = scene.nodes.find((n) => n.id === port.nodeId);

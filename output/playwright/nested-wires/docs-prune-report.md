@@ -1,104 +1,69 @@
-# Documentation prune — ruling #14 applied; STOP with evidence
+# Documentation prune — ruling #15 pre-rewrite proof STOP
 
-Branch: `feat/docs-prune`. Entry commit: `14ce5d7`, clean worktree.
-Authority: `/Users/christopherdasca/Documents/Codex/2026-09-16/fi/orchestration/docs-prune.md`, including its ruling #14 amendment and the user's explicit order/scope.
-The prior STOP remains in Git history. This report supersedes its current-state claims.
+Branch: `feat/docs-prune`; clean entry commit `c163301`.
+Authority: `/Users/christopherdasca/Documents/Codex/2026-09-16/fi/orchestration/docs-prune.md`, including rulings #14 and #15 and the user's ordered execution instructions.
+Prior correct STOP reports remain in commits `14ce5d7` and `c163301`; the ruling #14 certification fix remains in `44cd915` unchanged.
+This report supersedes the previous report's current-state claims. Ruling #15 resolves the historical-map link issue: the required banners authorize links resolving on the source branches, without artifact imports. That is no longer a blocker.
 
-## Completed first: ruling #14
+## STOP: the mandatory pre-rewrite README proof is impossible
 
-Separate commit **`44cd915`**, `fix(evidence): apply ruling #14 crossing certification gate`, replaces only the historical six-crossing assertion in `verify-evidence.py`.
-Certification comes from `m45-topological-bound.json`, the same proof used by the M4.5 evidence verifier. The replacement checks the scene SHA256, an empty uncertified list, and exact equality between detected wire-pair/point tuples and certified tuples. All other assertions, ceilings, verifiers, and return values remain unchanged.
+Ruling #15 requires the full verifier to exit 0 on the otherwise-unmodified tree **before touching README**, and requires its pinned-string assertions to remain intact. The premise that the existing README contains all pinned strings is false at `c163301`.
 
-An in-memory invocation of the actual geometry function accepts **23 certified / 0 uncertified** crossings. Three negative controls reject a removed certificate, a nonempty uncertified list, and a stale scene hash. No test file or proof artifact was created or edited. `pnpm check` ran alone before the commit: exit 0, 70 files / 208 tests, duration 17.50s.
-This is a terminal evidence-script correction, not an admitted application/capability module. No production quality score or source refactor is claimed.
+| Exact required string | Source of required value | Current README result |
+| --- | --- | --- |
+| `19768` | `calculations.json`, `laneNetwork.total`; accepted by ruling #10 | Absent. README lines 700, 797, 841 and 875 use `19,768`, which does not satisfy `str(value) in readme`. |
+| `104` | `calculations.json`, `wireRouting.perWire.w18.total` | Absent. The existing loop checks **all 26** per-wire totals, including w18, not just the original twelve. |
+| `226.3` | `browser.json`, `medianMilliseconds = 226.30000007152557`, formatted with `.1f` | Absent. The original median assertion fails independently. |
 
-## STOP: restoration references cannot resolve within the requested scope
+README is unchanged at **888 lines**, SHA256 `649ee9950fed5bb00085c5faf5e5399e4673ddbb8f9393590dee8e9a2051a64b`. The literal `100 nodes` is present. No replacement for these pinned literals is authorized: substituting formatted numbers, narrowing the wire loop, choosing another browser artifact, or omitting the assertions would change the expressly protected contract. In particular, **`226.3` has no accepted alternative that both preserves the existing median assertion and appears in the untouched README**. These are missing baseline documentation strings, not unsourced numerical baselines.
 
-The four exact historical report blobs exist, but both destination directories and their supporting evidence are absent on this branch. Restoring only the four Markdown maps leaves **81 unresolved link occurrences** after excluding the two links between the requested maps themselves. These are literal Markdown links checked relative to each intended destination, not basename collisions or hypothetical future references.
+This is a deterministic ordering conflict even if every stale verifier constant is modernized correctly. Consequently the first required milestone cannot be proved, and steps 2–4 were not started. No partial verifier modernization was committed as though it met the one-pass requirement.
 
-| Required map | Source branch | Report blob | Lines | Still-missing link occurrences |
-| --- | --- | --- | ---: | ---: |
-| `compacting/stop-report.md` | `feat/m75-compacting` | `8828d95f7918634f4599f2203307bde8a1160357` | 333 | 31 |
-| `compacting/m75b/stop-report.md` | `feat/m75-compacting` | `034a7fd4e159ac34a105d3379194444733c0d661` | 223 | 31 |
-| `authoring-scene/stop-report.md` | `feat/m8-authoring-scene` | `85a61f649e804aa10bf939c95e2a9a2c6af680ca` | 193 | 8 |
-| `authoring-scene/m8b/stop-report.md` | `feat/m8-authoring-scene` | `113006fc2eef09aa71b700fad89cda8a9c5724a9` | 281 | 11 |
+## One-pass audit: old → accepted replacement and evidence
 
-Concrete unresolved references (line numbers in the source report; paths relative to this evidence root):
+The following table records the full known modernization findings, **not applied changes**. The three named constant replacements and the independently sourced ratio correction were exercised only in memory. No verifier or artifact was written.
 
-| Source map and line | Missing target | Target blob on source branch | Mandated basename grep hits before report update |
-| --- | --- | --- | ---: |
-| `compacting/stop-report.md:20` | `compacting/rejected-candidate.patch` | `7d03978a13b017df5803cf71b1cb6cc4c8bce044` | 0 |
-| `compacting/m75b/stop-report.md:11` | `compacting/m75b/rejected-candidate.patch` | `5af55d42aca8b11237c38db808a18b4db45ff14d` | 0 |
-| `authoring-scene/stop-report.md:23` | `authoring-scene/capacity-witness.json` | `0d29fb9238acf37e7ea6df4171ed026f6106ec7c` | 0 |
-| `authoring-scene/m8b/stop-report.md:16` | `authoring-scene/m8b/probe-sizing.mjs` | `85c0d27a543f383a078ec145d13621f96efc2574` | 0 |
+| Old contract / constant | Accepted replacement or finding | Evidence source |
+| --- | --- | --- |
+| Lane compile `<= 12000` | Exact `== 19768`; matching diagnostic text | Ruling #10 in `milestone-076-lazy-audit.md:38`; current `calculations.json`; `presentation/m9a/verify-offline.py:29`. |
+| Routing total `<= 1200` | Exact `== 992`; matching diagnostic text | Same ruling #10 baseline and M9a exact gate; current `calculations.json`. |
+| Scaling nodes `[22, 44]`; printed 22/44 and final “44-node clone” text | `[24, 48]`; printed 24/48 and 48-node clone | M4 brief title and DoD 5; `verify-m45-evidence.py:35`; current `calculations.json.scalingProbe`. The +1920 offset and exact-clone flag remain valid. |
+| Scaling ratio equals `laneCompile[1] / laneCompile[0]` | Equals `totalOperations[1] / totalOperations[0]`; growth ceiling stays `2.5` | M4 brief DoD 5 specifies total-op growth; M4.5 completion report §5/6 and `verify-m45-evidence.py:103` report clone total operations. Current ratio `46177 / 27184 = 1.698683048852266`; lane-only ratio is `31965 / 19768 = 1.6170072845002024`. |
+| Oracle wire count `12` | `26` | M4 brief DoD 2/9, M4.5 completion report, current scene/oracle. All 26 current detours already satisfy the existing 0–10% assertion. |
+| M1.5 metrics object `{before, after, ceilings}` and whole-object equality | Current artifact is the M4.5 schema, but its raw-calculation equality also fails; **no accepted passing reconciliation sourced within the allowed edits** | `metrics.json`, last updated in `88c65fe`; schema constructed by `verify-m45-evidence.py:86–98`. Details below. |
+| README `19768`, `104`, median `226.3` | **No permissible replacement** preserving the explicit pinned-string contract and pre-rewrite sequence | Original `verify-evidence.py:115–119`, unchanged canonical calculations/browser and README. |
+| Crossings ceiling (already replaced under ruling #14) | Keep scene-hash-bound exact certificate equality and empty uncertified list | `44cd915`, `m45-topological-bound.json`: 23 certified / 0 uncertified. No further change required. |
 
-Reproduce any row with `git show <source-branch>:output/playwright/nested-wires/<map>` and `git cat-file -e <source-branch>:output/playwright/nested-wires/<target>`; `test -e output/playwright/nested-wires/<target>` fails in this worktree. The source blobs resolve in Git history, but the reports' relative links do not resolve on this branch.
+Other historical checks were inspected: original 12-wire screenshot set, PNG dimensions, five historical browser loads, median ceiling 239.2, twelve named per-wire ceilings, per-leg 60, zero discovery, detour ceiling, M1 baseline, and exact clone offset. They are not automatically changed just because a number is old. In-memory execution confirms the historical screenshot/load checks and all twelve named per-wire ceilings pass. The M4.5 metrics schema has its own separate browser and screenshot artifacts.
 
-The brief authorizes restoring four Markdown maps and protects non-Markdown artifacts. Resolving these links requires choosing between importing additional evidence (including executable scripts/patches and JSON) and rewriting the historical links/restoration content. Protocol #4 cannot settle that choice by retaining an existing target: the targets are absent. Following the explicit STOP instruction, neither option was assumed. **No deletion, restoration, or README rewrite occurred.**
+The metrics problem is independent of the README problem. `metrics.json.calculations.laneNetwork.total` is **19683**, but `calculations.json.laneNetwork.total` is **19768**. The recorded clone totals are `[26107, 44120]`, versus canonical `[27184, 46177]`. Merely changing the object schema cannot reconcile those bytes. Ruling #10 accepts current operation totals; it does not supply a replacement frozen metrics artifact or authorize changing `metrics.json`. Dropping whole-object/raw-evidence reconciliation, substituting the expected object from the artifact under test, or running `--write` would not preserve the gate within the stated scope. No such workaround was used.
 
-## Independent mandatory-gate conflict after the amendment
+## Execution evidence and gate accounting
 
-The full root verifier now passes the certification assertion and the twelve named per-wire ceilings, then exits 1 at **line 97**, `calculations['laneNetwork']['total'] <= 12000`. The unchanged canonical total is **19768**. M9a independently confirms this exact accepted total. Ruling #14 changes only crossing certification and the declutter branch gate; it does not supersede this lane-network ceiling.
+The actual unchanged root verifier exits 1 at its original lane-network assertion, not at a later assertion. An in-memory diagnostic with the three specifically named replacements reaches the ratio assertion at line 104 and fails. Adding only the sourced total-operation ratio replacement reaches the metrics equality at line 113 and fails. Separately evaluating the original pinned-string conditions produces:
 
-The README assertions remain unreachable. Later unchanged assertions also expect the old `[22, 44]` scaling probe and 12 oracle wires, while canonical evidence has `[24, 48]` and 26. These are static observations, not claims that execution advanced past line 97. No extra assertion or evidence was altered to force exit 0.
-
-## Gate accounting
-
-| Required gate | Observed outcome |
-| --- | --- |
-| Root verifier, in full | FAIL, exit 1 at unchanged lane-network ceiling; output below |
-| Declutter audit | Exit 1 at branch assertion; non-runnability documented below, satisfying ruling #14 |
-| M9a offline verifier | PASS, exit 0; all suites and exact operation totals below |
-| `pnpm check`, alone | PASS before verifier commit: 70 files / 208 tests; final rerun recorded below |
-| README ≤100 lines and pinned strings | NOT MET: unchanged at 888 lines; full root verifier cannot reach pinned-string assertions |
-| Scope | Only ruling #14 verifier edit and this report; zero deletions/restores/new tests/source changes |
-
-## Per-file reference-safety decisions
-
-Before considering every candidate, the exact required command was executed from the repository root:
-
-```sh
-grep -rn "<basename>" --include='*.py' --include='*.mjs' --include='*.mts' --include='*.ts' --include='*.md' output/ capability/ apps/
+```text
+FAIL original pinned-string assertion: Missing README count: 19768
+FAIL original pinned-string assertion: Missing README count: 104
+README median literal '226.3' present: False
+README '100 nodes' present: True
+README lines: 888
 ```
 
-All scans exited 0 or 1, with no errors. Every existing candidate is retained after the STOP. The initial report already references all candidates; those hits are counted, not silently excluded. Generic names also match unrelated targets, so raw counts alone are not treated as proof of a particular link. Before is `14ce5d7` plus the isolated ruling #14 fix; after includes this updated report. No deletion occurred between scans.
+These diagnostic probes are not claimed as a passing full verifier. No assertions were removed or bypassed in any on-disk file, and no `--write` mode ran.
 
-| Candidate relative to evidence root | Decision / reason | File lines before → after | Grep lines before → after |
-| --- | --- | ---: | ---: |
-| `m3-blocker.md` | Keep: STOP; existing reference hits preserved | 62 → 62 | 1 → 1 |
-| `m3-junction-blocker.md` | Keep: STOP; existing reference hits preserved | 62 → 62 | 2 → 2 |
-| `m3-source-review.md` | Keep: STOP; existing reference hits preserved | 40 → 40 | 2 → 2 |
-| `m4-completion-report.md` | Keep: STOP; existing reference hits preserved | 268 → 268 | 3 → 3 |
-| `m4-pin-ruling-stop-report.md` | Keep: STOP; existing reference hits preserved | 78 → 78 | 2 → 2 |
-| `m4-source-review.md` | Keep: STOP; existing reference hits preserved | 47 → 47 | 3 → 3 |
-| `m4-stop-report.md` | Keep: STOP; existing reference hits preserved | 124 → 124 | 2 → 2 |
-| `m4-visual-budget-stop-report.md` | Keep: STOP; existing reference hits preserved | 113 → 113 | 2 → 2 |
-| `m45-completion-report.md` | Keep: STOP; existing reference hits preserved | 333 → 333 | 3 → 3 |
-| `m45-source-review.md` | Keep: STOP; existing reference hits preserved | 34 → 34 | 2 → 2 |
-| `m45-stop-report.md` | Keep: STOP; existing reference hits preserved | 196 → 196 | 3 → 3 |
-| `m45-visual-review.md` | Keep: STOP; existing reference hits preserved | 17 → 17 | 3 → 3 |
-| `presentation/declutter/report.md` | Keep: STOP; existing reference hits preserved | 313 → 313 | 47 → 50 |
-| `presentation/declutter/source-review.md` | Keep: STOP; existing reference hits preserved | 76 → 76 | 23 → 23 |
-| `presentation/declutter/visual-review.md` | Keep: STOP; existing reference hits preserved | 39 → 39 | 18 → 18 |
-| `presentation/m76/source-review.md` | Keep: STOP; existing reference hits preserved | 31 → 31 | 23 → 23 |
-| `presentation/m76/stop-report.md` | Keep: STOP; existing reference hits preserved | 45 → 45 | 25 → 29 |
-| `presentation/port-ab/source-review.md` | Absent at specified path; no substitution/deletion | 0 → 0 | 23 → 23 |
-| `scale-scene/port-ab/source-review.md` | Keep: STOP; existing reference hits preserved | 57 → 57 | 23 → 23 |
-| `scale-scene/ruling5-source-review.md` | Keep: STOP; existing reference hits preserved | 44 → 44 | 1 → 1 |
-| `scale-scene/ruling5-visual-review.md` | Keep: STOP; existing reference hits preserved | 40 → 40 | 3 → 3 |
-| `source-review.md` | Keep: STOP; existing reference hits preserved | 62 → 62 | 23 → 23 |
-| `templates-scene/resume-stop-report.md` | Keep: STOP; existing reference hits preserved | 158 → 158 | 2 → 2 |
-| `templates-scene/resume2-report.md` | Keep: STOP; existing reference hits preserved | 221 → 221 | 2 → 2 |
-| `templates-scene/resume2-source-review.md` | Keep: STOP; existing reference hits preserved | 89 → 89 | 2 → 2 |
-| `templates-scene/source-review.md` | Keep: STOP; existing reference hits preserved | 29 → 29 | 23 → 23 |
-| `templates-scene/stop-report.md` | Keep: STOP; existing reference hits preserved | 87 → 87 | 25 → 29 |
-| `templates-scene/visual-review.md` | Keep: STOP; existing reference hits preserved | 46 → 46 | 18 → 18 |
+| Required gate | Observed result |
+| --- | --- |
+| Full root verifier before README | Exit 1; ordering/metrics blockers documented above. |
+| Full root verifier after README | Not reached; README rewrite not started. |
+| M9a offline verifier | Exit 0; exact operation totals and all suites below. |
+| Declutter audit | Exit 1 at the branch assertion; its own output below satisfies ruling #14's documentation alternative. |
+| `pnpm check`, alone | PASS, exit 0: 70 files / 208 tests; standalone run after M9a finished. |
+| README ≤100 lines | Not reached: unchanged at 888 lines. |
+| Prune and four bannered restorations | Not started because the first required proof cannot pass. |
+| Scope | Only this Markdown report changed; no new tests, verifier edits, application source edits or artifact imports. |
 
-Specific retained links include root README:36 to the M3 source review, root README:604–606 to the declutter report/reviews, the M4 completion report:25 to its source review, the second templates resume report:36 to its source review, and the protected ruling #5 report:162 to its visual review. The presentation port-A/B review path is absent; the scale-scene port-A/B review is a separate retained file. No ambiguous link was redirected.
-
-## Verifier-owned output
-
-Root verifier, actual worktree, exit 1:
+### Actual root verifier output
 
 ```text
 PASS w01: 11 <= 60 routing ops
@@ -118,9 +83,11 @@ Traceback (most recent call last):
     assert calculations['laneNetwork']['total'] <= 12000
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError
+
+exit 1
 ```
 
-Declutter audit, actual worktree, exit 1:
+### Actual declutter output
 
 ```text
 Traceback (most recent call last):
@@ -128,11 +95,13 @@ Traceback (most recent call last):
     assert run(['git', 'branch', '--show-current']).decode().strip() == 'feat/m65b-declutter'
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError
+
+exit 1
 ```
 
-The declutter branch assertion runs before extraction or writes. Remaining on `feat/docs-prune` prevents this verifier from proceeding; no branch switch or verifier bypass was performed.
+This assertion executes before extraction/writes. The required branch remains `feat/docs-prune`; no branch switch or verifier bypass occurred.
 
-M9a offline verifier, exit 0:
+### M9a offline output
 
 ```text
 identity: exit 0
@@ -154,22 +123,64 @@ templates-ops-amended: exit 0
 PASS templates: exact compile/routing/discovery [28443, 1626, 0]
 scale-ops-amended: exit 0
 PASS scale: exact compile/routing/discovery [43876, 2088, 0]
+
+exit 0
 ```
 
-M9a writes logs/operation files in its protected directory and its children rewrite canonical evidence. To preserve those bytes, the unchanged command ran in an isolated `git archive 44cd915` copy with existing dependency directories linked, the original Git directory, the isolated worktree path, and a private copied index. The archive contains the committed ruling #14 edit; only this Markdown report differs from the final worktree. This verifies the actual retained source/evidence, not completion of a prune. No browser or other gate ran concurrently.
+The unmodified command ran serially in an isolated `git archive c163301` tree, with existing dependency directories linked, the original Git directory, the isolated worktree path and a private copied index. This is necessary because M9a writes protected logs/operation JSON and its child scripts regenerate canonical artifacts. The actual worktree's protected files remained untouched. The isolated tree contains exactly the retained application/verifier/evidence bytes; only this report differs. This PASS does not claim prune completion.
 
-## Final standalone check and scope verification
+## Per-file reference-safety decisions
 
-`pnpm check` ran alone after M9a completed, exit 0. Typecheck, lint, formatting, architecture and tests all passed:
+Before updating this report, every prior candidate was scanned from the repository root with the required command:
+
+```sh
+grep -rn "<basename>" --include='*.py' --include='*.mjs' --include='*.mts' --include='*.ts' --include='*.md' output/ capability/ apps/
+```
+
+Every scan exited 0 or 1, without errors. No deletion was attempted. All candidates remain because execution stopped before the prune, and existing reference hits remain relevant; previous report references were counted. Basename collisions are not silently excluded. Before = clean `c163301`; after = this report update. Counts describe matching output lines, not total occurrences.
+
+| Candidate relative to evidence root | Decision / reason | File lines before → after | Grep lines before → after |
+| --- | --- | ---: | ---: |
+| `m3-blocker.md` | Keep: pre-rewrite proof STOP; reference hits retained | 62 → 62 | 1 → 1 |
+| `m3-junction-blocker.md` | Keep: pre-rewrite proof STOP; reference hits retained | 62 → 62 | 2 → 2 |
+| `m3-source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 40 → 40 | 2 → 2 |
+| `m4-completion-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 268 → 268 | 3 → 3 |
+| `m4-pin-ruling-stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 78 → 78 | 2 → 2 |
+| `m4-source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 47 → 47 | 3 → 3 |
+| `m4-stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 124 → 124 | 2 → 2 |
+| `m4-visual-budget-stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 113 → 113 | 2 → 2 |
+| `m45-completion-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 333 → 333 | 3 → 3 |
+| `m45-source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 34 → 34 | 2 → 2 |
+| `m45-stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 196 → 196 | 3 → 3 |
+| `m45-visual-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 17 → 17 | 3 → 3 |
+| `presentation/declutter/report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 313 → 313 | 50 → 42 |
+| `presentation/declutter/source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 76 → 76 | 23 → 23 |
+| `presentation/declutter/visual-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 39 → 39 | 18 → 18 |
+| `presentation/m76/source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 31 → 31 | 23 → 23 |
+| `presentation/m76/stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 45 → 45 | 29 → 21 |
+| `presentation/port-ab/source-review.md` | Absent at specified path; no substitution | 0 → 0 | 23 → 23 |
+| `scale-scene/port-ab/source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 57 → 57 | 23 → 23 |
+| `scale-scene/ruling5-source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 44 → 44 | 1 → 1 |
+| `scale-scene/ruling5-visual-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 40 → 40 | 3 → 3 |
+| `source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 62 → 62 | 23 → 23 |
+| `templates-scene/resume-stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 158 → 158 | 2 → 2 |
+| `templates-scene/resume2-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 221 → 221 | 2 → 2 |
+| `templates-scene/resume2-source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 89 → 89 | 2 → 2 |
+| `templates-scene/source-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 29 → 29 | 23 → 23 |
+| `templates-scene/stop-report.md` | Keep: pre-rewrite proof STOP; reference hits retained | 87 → 87 | 29 → 21 |
+| `templates-scene/visual-review.md` | Keep: pre-rewrite proof STOP; reference hits retained | 46 → 46 | 18 → 18 |
+
+## Final scope and validation
+
+`pnpm check` ran alone after all other verifier processes completed, exit 0. Typecheck, lint, formatting, architecture and tests passed:
 
 ```text
  Test Files  70 passed (70)
       Tests  208 passed (208)
-   Start at  23:19:46
-   Duration  18.60s (tests 75%, import 14%, transform 10%, environment 2%)
-
+   Start at  23:26:25
+   Duration  17.27s (tests 74%, import 14%, transform 10%, environment 2%)
 ```
 
-A byte comparison against `14ce5d7` confirms every tracked file except this report and the explicitly amended verifier remains unchanged, including all protected Markdown, all M9a files, and every other non-Markdown artifact. The frozen styling trio and presentation STOP also match `11f2db3`. No new tracked or untracked test file exists. No rendered output changed or visual acceptance is claimed.
+A byte comparison against entry commit `c163301` confirms that only this report changed: README, the ruling #14 verifier, all other verifiers, all non-Markdown artifacts, all protected reports and everything under M9a are unchanged. The frozen styling trio and presentation STOP also match `11f2db3`. No new tracked or untracked test file exists. There was no rendered-output change and no new visual acceptance claim. All 28 reference scans completed without errors; every candidate remains unchanged.
 
-README remains 888 lines; original evidence Markdown remains 5,056 lines excluding this report. Zero prune savings or completed restoration is claimed. The standalone ruling #14 commit is retained, followed by this STOP evidence report. No push or PR.
+Original evidence Markdown remains **5,056 lines excluding this report**. No prune savings, restored maps, completed modernization or completed README rewrite is claimed. No push or PR.

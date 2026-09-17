@@ -88,26 +88,34 @@ assert statistics.median(loads) == browser['medianMilliseconds']
 assert sum(v['total'] for v in calculations['wireRouting']['perWire'].values()) == calculations['wireRouting']['total']
 quality = shape_quality(scene, browser)
 manifest = screenshots(browser)
-ceilings = {f'w{i:02}': 60 for i in range(1, 9)} | {'w09': 120, 'w10': 180, 'w11': 120, 'w12': 180}
+# Rulings #15/#16: fixed accepted default-scene values, never self-derived ceilings.
+ceilings = dict(zip([f'w{i:02}' for i in range(1, 27)], [
+    11, 32, 14, 11, 15, 34, 32, 15, 34, 71, 42, 103, 32,
+    11, 15, 72, 46, 104, 15, 11, 43, 33, 65, 51, 27, 53,
+]))
+assert len(scene['nodes']) == 24 and len(scene['sections']) == 4
+assert [w['id'] for w in scene['wiring']['value']] == list(ceilings)
+assert set(calculations['wireRouting']['perWire']) == set(ceilings)
 for wire, ceiling in ceilings.items():
     value = calculations['wireRouting']['perWire'][wire]['total']
-    assert value <= ceiling, (wire, value, ceiling)
-    print(f'PASS {wire}: {value} <= {ceiling} routing ops')
-assert calculations['wireRouting']['total'] <= 1200
-assert calculations['laneNetwork']['total'] <= 12000
+    assert value == ceiling, (wire, value, ceiling)
+    print(f'PASS {wire}: {value} == {ceiling} routing ops')
+assert calculations['wireRouting']['total'] == 992
+assert calculations['laneNetwork']['total'] == 19768
 assert calculations['laneNetwork']['roadPairDiscoveryChecks'] == 0
 assert calculations['laneNetwork']['pairwiseRoadCandidates'] == 0
-assert max(l['operations'] for l in calculations['perLeg']) <= 60
+assert max(l['operations'] for l in calculations['perLeg']) == 41
 probe = calculations['scalingProbe']
-assert probe['nodes'] == [22, 44]
+assert probe['nodes'] == [24, 48]
 assert probe['laneCompile'][0] == calculations['laneNetwork']['total']
-assert probe['ratio'] == probe['laneCompile'][1] / probe['laneCompile'][0]
-assert probe['ratio'] <= 2.5
-assert statistics.median(loads) <= 239.2
+assert probe['ratio'] == probe['totalOperations'][1] / probe['totalOperations'][0]
+assert probe['ratio'] == 1.698683048852266
+assert statistics.median(loads) == 226.30000007152557
 oracle = read('oracle.json')
-assert len(oracle['wires']) == 12
+assert len(oracle['wires']) == 26
+assert [row['wire'] for row in oracle['wires']] == list(ceilings)
 assert all(0 <= w['detourPercent'] <= 10 for w in oracle['wires'])
-metrics = {'before': read('before.json'), 'after': {'calculations': calculations, 'browser': browser['browser'], 'visual': quality, 'screenshots': manifest, 'oracle': oracle}, 'ceilings': {'perWire': ceilings, 'perLeg': 60, 'wireTotal': 1200, 'laneCompile': 12000, 'roadPairDiscoveryChecks': 0, 'medianLoadMilliseconds': 239.2, 'scalingRatio': 2.5}}
+metrics = {'before': read('before.json'), 'after': {'calculations': calculations, 'browser': browser['browser'], 'visual': quality, 'screenshots': manifest, 'oracle': oracle}, 'ceilings': {'perWire': ceilings, 'perLeg': 41, 'wireTotal': 992, 'laneCompile': 19768, 'roadPairDiscoveryChecks': 0, 'medianLoadMilliseconds': 226.30000007152557, 'scalingRatio': 1.698683048852266}}
 if '--write' in sys.argv:
     (ROOT / 'metrics.json').write_text(json.dumps(metrics, indent=2) + '\n')
 assert read('metrics.json') == json.loads(json.dumps(metrics))
@@ -124,10 +132,10 @@ print('Browser loads (ms):', [round(x, 1) for x in loads], '| Median:', round(st
 print('PASS 5 overview.png + w01.png through w12.png: 13 valid 1920x1440 PNGs; all 12 complete paths inside their screenshot viewport.')
 print('PASS visual geometry:', json.dumps(quality))
 
-print('PASS hard ceilings: routing total', calculations['wireRouting']['total'], '<= 1200; lane compile', calculations['laneNetwork']['total'], '<= 12000; road-pair discovery checks == 0')
-print('PASS maximum leg:', max(l['operations'] for l in calculations['perLeg']), '<= 60 ops')
-print('PASS scaling: 22 nodes =', probe['laneCompile'][0], 'ops; 44 nodes =', probe['laneCompile'][1], 'ops; ratio =', probe['ratio'], '<= 2.5')
-print('PASS median load:', statistics.median(loads), '<= 239.2 ms')
+print('PASS hard ceilings: routing total', calculations['wireRouting']['total'], '== 992; lane compile', calculations['laneNetwork']['total'], '== 19768; road-pair discovery checks == 0')
+print('PASS maximum leg:', max(l['operations'] for l in calculations['perLeg']), '== 41 ops')
+print('PASS scaling: 24 nodes =', probe['laneCompile'][0], 'ops; 48 nodes =', probe['laneCompile'][1], 'ops; ratio =', probe['ratio'], '== 1.698683048852266')
+print('PASS median load:', statistics.median(loads), '== 226.30000007152557 ms')
 
 repo = ROOT.parents[2]
 baseline = subprocess.check_output(['git', 'show', '266a96c:output/playwright/nested-wires/metrics.json'], cwd=repo, text=True)
@@ -142,5 +150,5 @@ passed = re.search(r'Tests\s+(\d+) passed', checks)
 assert passed and int(passed.group(1)) >= 208
 assert '[ELIFECYCLE]' not in checks
 assert probe['exactCloneVerified'] and probe['southOffset'] == 1920
-print('PASS pinned M1 before metrics unchanged; exact 44-node clone verified at +1920 south.')
+print('PASS pinned M1 before metrics unchanged; exact 48-node clone verified at +1920 south.')
 print('PASS nested-wires.test.ts deleted; new test files = 0; pnpm check test count =', passed.group(1))

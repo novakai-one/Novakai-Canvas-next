@@ -21,3 +21,15 @@ assert.equal(execFileSync('git', ['diff', '--name-only', '--diff-filter=A', '808
 assert.equal(execFileSync('git', ['ls-files', '--others', '--exclude-standard', '--', '*.test.ts'], {encoding:'utf8'}), '');
 assert.equal(execFileSync('git', ['branch', '--show-current'], {encoding:'utf8'}).trim(), 'feat/m7-scale');
 console.log('PASS zero new tracked/untracked *.test.ts; branch feat/m7-scale');
+const scaleSpec = JSON.parse(readFileSync(root + 'scale-scene/scale-scene-spec.json', 'utf8'));
+const scaleBytes = execFileSync('git', ['show', `fb86264:${root}scale-scene/scene.json`], {encoding:'utf8',maxBuffer:16*1024*1024});
+assert.equal(JSON.stringify(createNestedRoadScene({spec:scaleSpec}),null,2)+'\n', scaleBytes);
+for (const spec of [fanInHubSceneSpec, templates, scaleSpec]) {
+  assert.equal(JSON.stringify(createNestedRoadScene({spec,sectionInPortsLeft:false})), JSON.stringify(createNestedRoadScene({spec})));
+}
+console.log('PASS sectionInPortsLeft omitted == false for all three scenes; scale bytes unchanged from Part B fb86264');
+for (const path of ['nested-wire-law.ts','nested-wire-routing.ts','nested-wire-registry.ts','prototype-road-junction-union.ts']) {
+  const file = `capability/layout/core/${path}`;
+  assert.equal(readFileSync(file,'utf8'),baseline(file));
+}
+console.log('PASS routing law, gate routing, registry and junction-union bodies unchanged from f77907c');

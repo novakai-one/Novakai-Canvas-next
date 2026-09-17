@@ -201,6 +201,23 @@ assert.equal(
   JSON.stringify(probe),
   JSON.stringify(createNestedRoadScene({ ...layoutOptions, spec: probeSpec, copies: 2 })),
 );
+if (config.failureReport && !scene.wiring.ok) {
+  const report = {
+    status: 'FAIL: incomplete pipeline, no compiled graph',
+    wiring: scene.wiring,
+    stages: counts,
+    stageInvocations: Object.fromEntries(calls),
+    completedCompileOperations: counts['wire-registry'].total,
+    completeCompileOperations: null,
+    totalWireLength: null,
+    perSectionCrossings: null,
+    explanation: 'Routing fails before allocation/network/projection; missing values are not zero.',
+    instrumentedScenesByteIdentical: true,
+  };
+  await writeFile(`${directory}/${config.outputFile ?? 'operations.json'}`, JSON.stringify(report, null, 2) + '\n');
+  console.error(JSON.stringify(report.wiring));
+  process.exit(1);
+}
 assert(scene.wiring.ok && probe.wiring.ok);
 assert.equal(scene.nodes.length, nodeCount);
 assert.equal(probe.nodes.length, nodeCount * 2);

@@ -1,0 +1,1944 @@
+{
+  "counts": {
+    "world": 110,
+    "section-1": 12,
+    "section-2": 0,
+    "section-3": 0,
+    "section-4": 23,
+    "section-5": 0,
+    "section-6": 0,
+    "section-7": 0,
+    "section-8": 3,
+    "section-9": 0
+  },
+  "lowerBound": 0,
+  "endpointCertificates": [],
+  "obstructions": [],
+  "covered": [],
+  "uncovered": [
+    {
+      "wires": [
+        "w01",
+        "w04"
+      ],
+      "point": {
+        "x": 1627,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w06"
+      ],
+      "point": {
+        "x": 1037,
+        "y": 263
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:248:200:drive:node-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w07"
+      ],
+      "point": {
+        "x": 1633,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w09"
+      ],
+      "point": {
+        "x": 1591,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w10"
+      ],
+      "point": {
+        "x": 1597,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w11"
+      ],
+      "point": {
+        "x": 1603,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w12"
+      ],
+      "point": {
+        "x": 1609,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w13"
+      ],
+      "point": {
+        "x": 1615,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w14"
+      ],
+      "point": {
+        "x": 1621,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w16"
+      ],
+      "point": {
+        "x": 1639,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w17"
+      ],
+      "point": {
+        "x": 1645,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-1:exit-bottom|junction:section-1:horizontal:808:200:drive:section-2:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w01",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 881
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w02",
+        "w06"
+      ],
+      "point": {
+        "x": 870.5,
+        "y": 389.5
+      },
+      "registeredJunctions": [
+        "junction:section-1:vertical:872:248:drive:node-3:exit-right|junction:section-1:vertical:872:248:drive:node-4:entry-left"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w08"
+      ],
+      "point": {
+        "x": 857,
+        "y": 525
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:528:200:section-1:vertical:872:248"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w10"
+      ],
+      "point": {
+        "x": 43,
+        "y": 1306.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w11"
+      ],
+      "point": {
+        "x": 43,
+        "y": 1300.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w12"
+      ],
+      "point": {
+        "x": 43,
+        "y": 1294.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w13"
+      ],
+      "point": {
+        "x": 43,
+        "y": 1288.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w14"
+      ],
+      "point": {
+        "x": 43,
+        "y": 1282.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w15"
+      ],
+      "point": {
+        "x": 858.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:section-1:vertical:872:248"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 924.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 924.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 924.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 924.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w04",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 924.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w08"
+      ],
+      "point": {
+        "x": 863,
+        "y": 525
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:528:200:section-1:vertical:872:248"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w14"
+      ],
+      "point": {
+        "x": 2209,
+        "y": 1352.1666666666667
+      },
+      "registeredJunctions": [
+        "junction:section-8:horizontal:1312:2224:section-8:vertical:2224:1312|junction:section-8:vertical:2224:1312:drive:section-8:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w15"
+      ],
+      "point": {
+        "x": 864.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:section-1:vertical:872:248"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w16"
+      ],
+      "point": {
+        "x": 261,
+        "y": 1274.8333333333333
+      },
+      "registeredJunctions": [
+        "junction:section-4:vertical:264:1128:drive:section-4:entry-top|junction:section-4:vertical:264:1128:drive:section-5:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 930.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1276.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 930.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1276.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 930.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1276.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 930.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1276.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 930.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w07",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1276.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w09",
+        "w15"
+      ],
+      "point": {
+        "x": 336.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:drive:node-5:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w09",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 888.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w09",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 888.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w09",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 888.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w09",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 888.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w09",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 888.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w15"
+      ],
+      "point": {
+        "x": 342.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:drive:node-5:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 894.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1306.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 894.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1306.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 894.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1306.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 894.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1306.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 894.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w10",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1306.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w15"
+      ],
+      "point": {
+        "x": 348.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:drive:node-5:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w16"
+      ],
+      "point": {
+        "x": 261,
+        "y": 1298.8333333333333
+      },
+      "registeredJunctions": [
+        "junction:section-4:vertical:264:1128:drive:section-4:entry-top|junction:section-4:vertical:264:1128:drive:section-5:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 900.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1300.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 900.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1300.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 900.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1300.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 900.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1300.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 900.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w11",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1300.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w15"
+      ],
+      "point": {
+        "x": 354.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:drive:node-5:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w16"
+      ],
+      "point": {
+        "x": 261,
+        "y": 1292.8333333333333
+      },
+      "registeredJunctions": [
+        "junction:section-4:vertical:264:1128:drive:section-4:entry-top|junction:section-4:vertical:264:1128:drive:section-5:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 906.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1294.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 906.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1294.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 906.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1294.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 906.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1294.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 906.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w12",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1294.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w15"
+      ],
+      "point": {
+        "x": 360.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:drive:node-5:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w16"
+      ],
+      "point": {
+        "x": 261,
+        "y": 1286.8333333333333
+      },
+      "registeredJunctions": [
+        "junction:section-4:vertical:264:1128:drive:section-4:entry-top|junction:section-4:vertical:264:1128:drive:section-5:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 912.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1288.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 912.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1288.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 912.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1288.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 912.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1288.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 912.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w13",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1288.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w15"
+      ],
+      "point": {
+        "x": 366.5,
+        "y": 793
+      },
+      "registeredJunctions": [
+        "junction:section-1:horizontal:808:200:drive:node-5:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w16"
+      ],
+      "point": {
+        "x": 261,
+        "y": 1280.8333333333333
+      },
+      "registeredJunctions": [
+        "junction:section-4:vertical:264:1128:drive:section-4:entry-top|junction:section-4:vertical:264:1128:drive:section-5:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w17"
+      ],
+      "point": {
+        "x": 2215,
+        "y": 1352.1666666666667
+      },
+      "registeredJunctions": [
+        "junction:section-8:horizontal:1312:2224:section-8:vertical:2224:1312|junction:section-8:vertical:2224:1312:drive:section-8:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 918.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1282.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 918.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1282.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 918.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1282.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 918.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1282.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 918.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1282.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w14",
+        "w29"
+      ],
+      "point": {
+        "x": 2221,
+        "y": 1352.1666666666667
+      },
+      "registeredJunctions": [
+        "junction:section-8:horizontal:1312:2224:section-8:vertical:2224:1312|junction:section-8:vertical:2224:1312:drive:section-8:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 936.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1270.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 936.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1270.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 936.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1270.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 936.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1270.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 936.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w16",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1270.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 942.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w18"
+      ],
+      "point": {
+        "x": 97,
+        "y": 1264.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 942.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w19"
+      ],
+      "point": {
+        "x": 91,
+        "y": 1264.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 942.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w20"
+      ],
+      "point": {
+        "x": 85,
+        "y": 1264.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 942.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w21"
+      ],
+      "point": {
+        "x": 79,
+        "y": 1264.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 942.5
+      },
+      "registeredJunctions": [
+        "junction:world:horizontal:944:64:world:vertical:64:64"
+      ]
+    },
+    {
+      "wires": [
+        "w17",
+        "w25"
+      ],
+      "point": {
+        "x": 73,
+        "y": 1264.3333333333333
+      },
+      "registeredJunctions": [
+        "junction:world:vertical:64:64:drive:section-4:entry-top"
+      ]
+    },
+    {
+      "wires": [
+        "w18",
+        "w22"
+      ],
+      "point": {
+        "x": 864.5,
+        "y": 1649
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:872:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w18",
+        "w26"
+      ],
+      "point": {
+        "x": 864.5,
+        "y": 1679
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:872:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w19",
+        "w22"
+      ],
+      "point": {
+        "x": 1472.5,
+        "y": 1649
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:1480:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w19",
+        "w23"
+      ],
+      "point": {
+        "x": 1472.5,
+        "y": 1643
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:1480:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w19",
+        "w26"
+      ],
+      "point": {
+        "x": 1472.5,
+        "y": 1679
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:1480:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w19",
+        "w27"
+      ],
+      "point": {
+        "x": 1472.5,
+        "y": 1661
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:1480:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w20",
+        "w22"
+      ],
+      "point": {
+        "x": 1781,
+        "y": 1649
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-7:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w20",
+        "w23"
+      ],
+      "point": {
+        "x": 1781,
+        "y": 1643
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-7:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w20",
+        "w24"
+      ],
+      "point": {
+        "x": 1781,
+        "y": 1637
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-7:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w20",
+        "w26"
+      ],
+      "point": {
+        "x": 1633,
+        "y": 1679
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-4:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w20",
+        "w27"
+      ],
+      "point": {
+        "x": 1781,
+        "y": 1661
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-7:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w20",
+        "w28"
+      ],
+      "point": {
+        "x": 1781,
+        "y": 1655
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-7:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w21",
+        "w26"
+      ],
+      "point": {
+        "x": 1639,
+        "y": 1679
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-4:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w21",
+        "w27"
+      ],
+      "point": {
+        "x": 2533,
+        "y": 1661
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-8:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w21",
+        "w28"
+      ],
+      "point": {
+        "x": 2533,
+        "y": 1655
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:drive:section-8:exit-bottom"
+      ]
+    },
+    {
+      "wires": [
+        "w22",
+        "w27"
+      ],
+      "point": {
+        "x": 875,
+        "y": 1649
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:872:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w22",
+        "w28"
+      ],
+      "point": {
+        "x": 1483,
+        "y": 1649
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:1480:1128"
+      ]
+    },
+    {
+      "wires": [
+        "w23",
+        "w28"
+      ],
+      "point": {
+        "x": 1483,
+        "y": 1643
+      },
+      "registeredJunctions": [
+        "junction:section-4:horizontal:1688:264:section-4:vertical:1480:1128"
+      ]
+    }
+  ]
+}

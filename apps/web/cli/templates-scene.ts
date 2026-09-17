@@ -1,5 +1,5 @@
 import { createNestedRoadScene } from '@novakai/canvas-layout';
-import type { RoadPrototypeScene, PrototypeLayoutMeasure } from '@novakai/canvas-layout';
+import type { RoadPrototypeScene, PrototypeLayoutOptions } from '@novakai/canvas-layout';
 import spec from '../../../output/playwright/nested-wires/templates-scene/scene-spec.json' with { type: 'json' };
 
 const directories = [
@@ -17,7 +17,9 @@ const directories = [
 /** Render the extracted semantic fixture; the prototype host owns reload/recovery.
  * Directory captions and imported-name labels decorate completed public output only.
  */
-export function buildTemplatesScene(options: { readonly measure: PrototypeLayoutMeasure }) {
+export function buildTemplatesScene(
+  options: Pick<PrototypeLayoutOptions, 'measure' | 'sectionInPortsLeft'>,
+) {
   const scene = createNestedRoadScene({
     ...options,
     spec: {

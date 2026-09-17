@@ -1,0 +1,2 @@
+PASS headless Chrome 153.0.8010.48; 1920x1440; 16 nodes / 29 wires; layout=1; errors=0
+MEASURE http://127.0.0.1:5191/roads-prototype.html?templates&ports-left; five loads=[675.3999999761581, 625.6000000238419, 577.1999999284744, 584.3000000715256, 587.1000000238419]; median=587.100 ms

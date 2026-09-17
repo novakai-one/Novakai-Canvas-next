@@ -1,5 +1,5 @@
 import { createNestedRoadScene } from '@novakai/canvas-layout';
-import type { PrototypeLayoutMeasure } from '@novakai/canvas-layout';
+import type { PrototypeLayoutOptions } from '@novakai/canvas-layout';
 import spec from '../../../output/playwright/nested-wires/scale-scene/scale-scene-spec.json' with { type: 'json' };
 
 const labels = [
@@ -18,7 +18,9 @@ const labels = [
 ];
 
 /** Render semantic scale data through Layout; the browser host owns failed-build recovery. */
-export function buildScaleScene(options: { readonly measure: PrototypeLayoutMeasure }) {
+export function buildScaleScene(
+  options: Pick<PrototypeLayoutOptions, 'measure' | 'sectionInPortsLeft'>,
+) {
   const scene = createNestedRoadScene({
     ...options,
     spec: {

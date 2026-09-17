@@ -733,3 +733,60 @@ The twelve-section toolbar crowds the title and clips its right edge. These are
 recorded visual weaknesses, not a reference-parity claim. Compacting remains
 explicitly deferred to M7.5 under Ruling #4. Part C evaluation follows separately;
 Part B passing geometry is not a declaration that all eight DoD items are done.
+
+## M7 Part C — left-edge evaluation STOP, not adoption
+
+Explicit Layout option `sectionInPortsLeft` defaults **false**. Browser opt-in
+is `?templates&ports-left` / `?scale&ports-left`. Interpretation: the current
+top entrance moves to the left edge at one-third section height; the existing
+left entrance moves to two-thirds. Both keep stable identities and distinct
+mouths. Node ports and section exits are unchanged. An entrance merely shifted
+leftward *along the top edge* would be a different experiment; clarification
+was requested, and no alternate geometry was silently substituted.
+
+| Case | Wire length | Compile ops | Crossings | Certification / validity |
+| --- | ---: | ---: | ---: | --- |
+| Templates current | 100,846 | 28,443 | 130 | 130 certified / 0 uncertified |
+| Templates left edge | 107,817.667 | 30,852 | 148 | 0 certified / 148 uncertified; forward-lane and gate-mouth failures |
+| Scale current | 103,134 | 43,876 | 112 | 112 certified / 0 uncertified; zero overlaps |
+| Scale left edge | N/A | N/A | N/A | `unroutable-leg`, w27, kernel.ts → resource.ts; no compiled wire graph |
+
+Templates crossings by world / section-1…9 change from
+`76,12,0,0,36,0,0,0,6,0` to `110,12,0,0,23,0,0,0,3,0`.
+Scale current world / section-1…12 is
+`13,90,0,0,3,1,1,1,0,1,0,0,2`. Scale-left values are unavailable,
+**not zero**: routing fails before allocation/network/projection. Its executed
+registry stage costs 1,821 ops; that partial value is not the requested complete
+compile metric. Complete outputs and failed-stage evidence are in
+[comparison.json](scale-scene/port-ab/comparison.json).
+
+**Recommendation:** do not adopt this left-edge interpretation. Templates
+adds 6.9% wire length, 8.5% compile work and 18 crossings while breaking the
+forward/gate/topological proof, and scale cannot route one long-range request
+under the unchanged law. Keep current entrance placement; review the intended
+mouth position and topology with the orchestrator before any further change.
+Compacting remains deferred to M7.5. Neither a routing-law change nor a search
+for a favorable offset was attempted.
+
+All six requested 1920×1440 PNG paths exist; A/B also includes roads-on/off
+and contract detail images. The **scale-ports-left image has zero wires**
+because it records the failed routing outcome, not a passing scale rendering.
+Do not mistake that blank routing result for improved clarity. The templates
+left-edge footer also flags coverage needing correction. Default-off public
+bytes remain identical for nested/templates/scale. Browser timing samples for
+Part C are diagnostic only; they are not the controlled Part B load gate.
+
+**M7 remains incomplete:** DoD 4 cannot supply complete scale-left length,
+crossing and compile measurements because the graph is unroutable. Standing
+visual benchmark gaps also remain documented in
+[visual review](scale-scene/ruling5-visual-review.md). The root-cause fix and
+Part B evidence are retained separately from this failed Part C evaluation.
+See [the binary DoD report](scale-scene/ruling5-report.md) for verified outputs
+and limitations; no all-green completion, 150-node readiness, push or PR is claimed.
+
+Final-source selection re-run: all unchanged body assertions pass and every
+click still has zero recalculations, but the inherited wrapper's 300 ms median
+ceiling fails at **367.9 ms**. The earlier 253.7 ms PASS is retained as a prior
+sample, not substituted for the final run. DoD 6 is therefore **FAIL** in the
+final report. No threshold was loosened and no performance repair outside the
+joined-junction scope was attempted.

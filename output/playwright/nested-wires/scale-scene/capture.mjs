@@ -26,8 +26,8 @@ export async function capture(page, options) {
     nodes: await page.locator('[data-node-id]').count(), wires: await page.locator('[data-wire-id]').count(),
     layoutRecalcCount: await page.evaluate(() => window.__layoutRecalcCount), errors,
   };
-  ensure(report.nodes === options.nodes && report.wires === options.wires, 'Rendered counts differ');
-  ensure(report.layoutRecalcCount === 1 && errors.length === 0, 'Repeated layout or browser errors');
+  ensure([report.nodes === options.nodes, report.wires === options.wires].every(Boolean), 'Rendered counts differ');
+  ensure([report.layoutRecalcCount === 1, errors.length === 0].every(Boolean), 'Repeated layout or browser errors');
   await page.getByRole('button', { name: 'contract', exact: true }).click();
   await page.waitForTimeout(350);
   await page.screenshot({ path: `${options.prefix}-contract-detail.png` });

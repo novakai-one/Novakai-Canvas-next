@@ -1,0 +1,110 @@
+{
+  "interpretation": "Top entrance moved to left edge at height/3; existing left entrance at 2*height/3. Stable port identities retained. Evaluation only, default false.",
+  "cases": [
+    {
+      "name": "templates",
+      "sectionInPortsLeft": false,
+      "status": "PASS",
+      "totalWireLength": 100846,
+      "perSectionCrossings": {
+        "world": 76,
+        "section-1": 12,
+        "section-2": 0,
+        "section-3": 0,
+        "section-4": 36,
+        "section-5": 0,
+        "section-6": 0,
+        "section-7": 0,
+        "section-8": 6,
+        "section-9": 0
+      },
+      "certification": {
+        "certified": 130,
+        "uncertified": 0
+      },
+      "failures": [],
+      "compileOperations": 28443,
+      "routingOperations": 1626
+    },
+    {
+      "name": "templates",
+      "sectionInPortsLeft": true,
+      "status": "FAIL",
+      "totalWireLength": 107817.66666666669,
+      "perSectionCrossings": {
+        "world": 110,
+        "section-1": 12,
+        "section-2": 0,
+        "section-3": 0,
+        "section-4": 23,
+        "section-5": 0,
+        "section-6": 0,
+        "section-7": 0,
+        "section-8": 3,
+        "section-9": 0
+      },
+      "certification": {
+        "certified": 0,
+        "uncertified": 148
+      },
+      "failures": [
+        "FAIL four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct: no forward lane w17:9",
+        "FAIL topological endpoint ranges and linked road-order constraints: J3/J27 proof regions overlap",
+        "FAIL actual crossing count equals additive endpoint and linked-order lower bound: Expected values to be strictly equal:",
+        "FAIL zero uncertified crossings: Expected values to be strictly equal:",
+        "FAIL every gate traversal crosses its own mouth at its assigned distinct offset: w17 missing owned gate crossing"
+      ],
+      "compileOperations": 30852,
+      "routingOperations": 1654
+    },
+    {
+      "name": "scale",
+      "sectionInPortsLeft": false,
+      "status": "PASS",
+      "totalWireLength": 103134,
+      "perSectionCrossings": {
+        "world": 13,
+        "section-1": 90,
+        "section-2": 0,
+        "section-3": 0,
+        "section-4": 3,
+        "section-5": 1,
+        "section-6": 1,
+        "section-7": 1,
+        "section-8": 0,
+        "section-9": 1,
+        "section-10": 0,
+        "section-11": 0,
+        "section-12": 2
+      },
+      "certification": {
+        "certified": 112,
+        "uncertified": 0
+      },
+      "failures": [],
+      "compileOperations": 43876,
+      "routingOperations": 2088
+    },
+    {
+      "name": "scale",
+      "sectionInPortsLeft": true,
+      "status": "FAIL",
+      "routing": {
+        "ok": false,
+        "error": {
+          "code": "unroutable-leg",
+          "wireId": "w27",
+          "ownerId": "frozen-scene"
+        }
+      },
+      "totalWireLength": null,
+      "perSectionCrossings": null,
+      "certification": null,
+      "compileOperations": null,
+      "completedCompileOperations": 1821,
+      "reason": "No compiled wire graph: routing fails before lane allocation, network and projection."
+    }
+  ],
+  "recommendation": "Do not adopt the left-edge variant. Templates increases crossings and wire length and fails forward-lane/gate-mouth/topological certification. Scale cannot route w27 (kernel.ts to resource.ts) under the unchanged law. Retain current entrances and revisit topology before adoption. Moving a top-edge mouth leftward is a different experiment requiring clarified intent.",
+  "complete": false
+}

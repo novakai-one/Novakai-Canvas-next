@@ -59,7 +59,10 @@ async function main(): Promise<void> {
   const layoutStart = performance.now();
   const build = builder();
   window.__layoutRecalcCount += 1;
-  const scene = build({ measure });
+  const scene = build({
+    measure,
+    sectionInPortsLeft: new URLSearchParams(location.search).has('ports-left'),
+  });
   performance.measure('roads:layout-total', { start: layoutStart });
   const auditStart = performance.now();
   const coverage = auditRoadCoverage(scene);

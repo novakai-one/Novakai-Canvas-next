@@ -1,0 +1,623 @@
+{
+  "interpretation": "Move top entrance to left edge at height/3 and existing left entrance to 2*height/3; no routing-law change",
+  "wiring": {
+    "ok": false,
+    "error": {
+      "code": "unroutable-leg",
+      "wireId": "w27",
+      "ownerId": "frozen-scene"
+    }
+  },
+  "stages": [
+    "capacity",
+    "nodes",
+    "ports",
+    "topology",
+    "wire-registry",
+    "wire:w01",
+    "wire:w02",
+    "wire:w03",
+    "wire:w04",
+    "wire:w05",
+    "wire:w06",
+    "wire:w07",
+    "wire:w08",
+    "wire:w09",
+    "wire:w10",
+    "wire:w11",
+    "wire:w12",
+    "wire:w13",
+    "wire:w14",
+    "wire:w15",
+    "wire:w16",
+    "wire:w17",
+    "wire:w18",
+    "wire:w19",
+    "wire:w20",
+    "wire:w21",
+    "wire:w22",
+    "wire:w23",
+    "wire:w24",
+    "wire:w25",
+    "wire:w26",
+    "wire:w27",
+    "wire:w28",
+    "wire:w29",
+    "wire:w30",
+    "wire:w31",
+    "wire:w32",
+    "wire:w33",
+    "wire:w34",
+    "wire:w35",
+    "wire:w36",
+    "wire:w37",
+    "wire:w38",
+    "wire:w39",
+    "wire:w40",
+    "wire:w41",
+    "wire:w42",
+    "wire:w43",
+    "wire:w44",
+    "wire:w45",
+    "wire:w46",
+    "wire:w47",
+    "wire:w48",
+    "wire:w49",
+    "wire:w50",
+    "wire:w51",
+    "wire:w52",
+    "wire:w53",
+    "wire:w54",
+    "wire:w55",
+    "wire:w56",
+    "wire:w57",
+    "wire:w58",
+    "wire:w59",
+    "wire:w60",
+    "wire:w61",
+    "wire:w62",
+    "wire:w63",
+    "wire:w64",
+    "wire:w65",
+    "wire:w66",
+    "wire:w67",
+    "wire:w68",
+    "wire:w69",
+    "wire:w70",
+    "wire:w71",
+    "wire:w72",
+    "wire:w73",
+    "wire:w74",
+    "wire:w75"
+  ],
+  "ports": [
+    {
+      "nodeId": "section-1",
+      "sectionId": "section-1",
+      "portId": "section-1:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 576,
+        "y": 381.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-1",
+      "sectionId": "section-1",
+      "portId": "section-1:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 576,
+        "y": 626.6666666666666
+      }
+    },
+    {
+      "nodeId": "section-1",
+      "sectionId": "section-1",
+      "portId": "section-1:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 2088,
+        "y": 872
+      }
+    },
+    {
+      "nodeId": "section-1",
+      "sectionId": "section-1",
+      "portId": "section-1:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 3600,
+        "y": 504
+      }
+    },
+    {
+      "nodeId": "section-2",
+      "sectionId": "section-2",
+      "portId": "section-2:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 1720,
+        "y": 458.66666666666663
+      }
+    },
+    {
+      "nodeId": "section-2",
+      "sectionId": "section-2",
+      "portId": "section-2:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 1720,
+        "y": 597.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-2",
+      "sectionId": "section-2",
+      "portId": "section-2:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 2120,
+        "y": 736
+      }
+    },
+    {
+      "nodeId": "section-2",
+      "sectionId": "section-2",
+      "portId": "section-2:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 2520,
+        "y": 528
+      }
+    },
+    {
+      "nodeId": "section-3",
+      "sectionId": "section-3",
+      "portId": "section-3:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 2664,
+        "y": 458.66666666666663
+      }
+    },
+    {
+      "nodeId": "section-3",
+      "sectionId": "section-3",
+      "portId": "section-3:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 2664,
+        "y": 597.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-3",
+      "sectionId": "section-3",
+      "portId": "section-3:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 3064,
+        "y": 736
+      }
+    },
+    {
+      "nodeId": "section-3",
+      "sectionId": "section-3",
+      "portId": "section-3:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 3464,
+        "y": 528
+      }
+    },
+    {
+      "nodeId": "section-4",
+      "sectionId": "section-4",
+      "portId": "section-4:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 136,
+        "y": 1341.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-4",
+      "sectionId": "section-4",
+      "portId": "section-4:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 136,
+        "y": 1666.6666666666665
+      }
+    },
+    {
+      "nodeId": "section-4",
+      "sectionId": "section-4",
+      "portId": "section-4:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 2088,
+        "y": 1992
+      }
+    },
+    {
+      "nodeId": "section-4",
+      "sectionId": "section-4",
+      "portId": "section-4:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 4040,
+        "y": 1504
+      }
+    },
+    {
+      "nodeId": "section-5",
+      "sectionId": "section-5",
+      "portId": "section-5:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 272,
+        "y": 1418.6666666666667
+      }
+    },
+    {
+      "nodeId": "section-5",
+      "sectionId": "section-5",
+      "portId": "section-5:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 272,
+        "y": 1637.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-5",
+      "sectionId": "section-5",
+      "portId": "section-5:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 672,
+        "y": 1856
+      }
+    },
+    {
+      "nodeId": "section-5",
+      "sectionId": "section-5",
+      "portId": "section-5:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 1072,
+        "y": 1528
+      }
+    },
+    {
+      "nodeId": "section-6",
+      "sectionId": "section-6",
+      "portId": "section-6:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 1216,
+        "y": 1418.6666666666667
+      }
+    },
+    {
+      "nodeId": "section-6",
+      "sectionId": "section-6",
+      "portId": "section-6:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 1216,
+        "y": 1637.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-6",
+      "sectionId": "section-6",
+      "portId": "section-6:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 1616,
+        "y": 1856
+      }
+    },
+    {
+      "nodeId": "section-6",
+      "sectionId": "section-6",
+      "portId": "section-6:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 2016,
+        "y": 1528
+      }
+    },
+    {
+      "nodeId": "section-7",
+      "sectionId": "section-7",
+      "portId": "section-7:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 2160,
+        "y": 1418.6666666666667
+      }
+    },
+    {
+      "nodeId": "section-7",
+      "sectionId": "section-7",
+      "portId": "section-7:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 2160,
+        "y": 1637.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-7",
+      "sectionId": "section-7",
+      "portId": "section-7:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 2560,
+        "y": 1856
+      }
+    },
+    {
+      "nodeId": "section-7",
+      "sectionId": "section-7",
+      "portId": "section-7:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 2960,
+        "y": 1528
+      }
+    },
+    {
+      "nodeId": "section-8",
+      "sectionId": "section-8",
+      "portId": "section-8:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 3104,
+        "y": 1418.6666666666667
+      }
+    },
+    {
+      "nodeId": "section-8",
+      "sectionId": "section-8",
+      "portId": "section-8:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 3104,
+        "y": 1637.3333333333333
+      }
+    },
+    {
+      "nodeId": "section-8",
+      "sectionId": "section-8",
+      "portId": "section-8:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 3504,
+        "y": 1856
+      }
+    },
+    {
+      "nodeId": "section-8",
+      "sectionId": "section-8",
+      "portId": "section-8:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 3904,
+        "y": 1528
+      }
+    },
+    {
+      "nodeId": "section-9",
+      "sectionId": "section-9",
+      "portId": "section-9:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 170,
+        "y": 2354.6666666666665
+      }
+    },
+    {
+      "nodeId": "section-9",
+      "sectionId": "section-9",
+      "portId": "section-9:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 170,
+        "y": 2573.3333333333335
+      }
+    },
+    {
+      "nodeId": "section-9",
+      "sectionId": "section-9",
+      "portId": "section-9:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 570,
+        "y": 2792
+      }
+    },
+    {
+      "nodeId": "section-9",
+      "sectionId": "section-9",
+      "portId": "section-9:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 970,
+        "y": 2464
+      }
+    },
+    {
+      "nodeId": "section-10",
+      "sectionId": "section-10",
+      "portId": "section-10:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 1182,
+        "y": 2354.6666666666665
+      }
+    },
+    {
+      "nodeId": "section-10",
+      "sectionId": "section-10",
+      "portId": "section-10:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 1182,
+        "y": 2573.3333333333335
+      }
+    },
+    {
+      "nodeId": "section-10",
+      "sectionId": "section-10",
+      "portId": "section-10:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 1582,
+        "y": 2792
+      }
+    },
+    {
+      "nodeId": "section-10",
+      "sectionId": "section-10",
+      "portId": "section-10:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 1982,
+        "y": 2464
+      }
+    },
+    {
+      "nodeId": "section-11",
+      "sectionId": "section-11",
+      "portId": "section-11:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 2194,
+        "y": 2354.6666666666665
+      }
+    },
+    {
+      "nodeId": "section-11",
+      "sectionId": "section-11",
+      "portId": "section-11:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 2194,
+        "y": 2573.3333333333335
+      }
+    },
+    {
+      "nodeId": "section-11",
+      "sectionId": "section-11",
+      "portId": "section-11:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 2594,
+        "y": 2792
+      }
+    },
+    {
+      "nodeId": "section-11",
+      "sectionId": "section-11",
+      "portId": "section-11:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 2994,
+        "y": 2464
+      }
+    },
+    {
+      "nodeId": "section-12",
+      "sectionId": "section-12",
+      "portId": "section-12:entry-top",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 3206,
+        "y": 2354.6666666666665
+      }
+    },
+    {
+      "nodeId": "section-12",
+      "sectionId": "section-12",
+      "portId": "section-12:entry-left",
+      "role": "entry",
+      "side": "left",
+      "point": {
+        "x": 3206,
+        "y": 2573.3333333333335
+      }
+    },
+    {
+      "nodeId": "section-12",
+      "sectionId": "section-12",
+      "portId": "section-12:exit-bottom",
+      "role": "exit",
+      "side": "bottom",
+      "point": {
+        "x": 3606,
+        "y": 2792
+      }
+    },
+    {
+      "nodeId": "section-12",
+      "sectionId": "section-12",
+      "portId": "section-12:exit-right",
+      "role": "exit",
+      "side": "right",
+      "point": {
+        "x": 4006,
+        "y": 2464
+      }
+    }
+  ]
+}

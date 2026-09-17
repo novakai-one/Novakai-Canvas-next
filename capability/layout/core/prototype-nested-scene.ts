@@ -29,7 +29,7 @@ import { roadNetwork } from './prototype-road-network.js';
  * The caller owns reconstruction; no committed scene or shared state is mutated on failure.
  */
 export function createNestedRoadScene(
-  options: Pick<PrototypeLayoutOptions, 'measure'> & {
+  options: Pick<PrototypeLayoutOptions, 'measure' | 'sectionInPortsLeft'> & {
     readonly copies?: 1 | 2;
     readonly spec?: NestedSceneSpec;
   } = {},
@@ -37,7 +37,9 @@ export function createNestedRoadScene(
   const measure = options.measure ?? ((_stage, run) => run());
   const spec = options.spec ?? defaultNestedSceneSpec;
   const capacity = measure('capacity', () => sizeNestedSections(spec.sections));
-  const placement = measure('nodes', () => positionNestedSections(capacity, options.copies));
+  const placement = measure('nodes', () =>
+    positionNestedSections(capacity, options.copies, options.sectionInPortsLeft),
+  );
   const sections = placement.map((p) => p.section),
     nodes = placement.flatMap((p) => p.nodes);
   const ports = measure('ports', () => [

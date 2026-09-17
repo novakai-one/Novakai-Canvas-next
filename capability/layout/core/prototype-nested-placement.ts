@@ -3,6 +3,7 @@ import type {
   PrototypeBlock,
   PrototypeBounds,
   PrototypeNode,
+  PrototypeNodePort,
 } from '../contract/records/road-prototype.js';
 import { placePrototypeNode, prototypeNodeSize } from './prototype-road-nodes.js';
 
@@ -102,8 +103,8 @@ export function sizeNestedSections(specs: readonly SectionSpec[]): readonly Row[
   const limit = Math.max(Math.sqrt(area * 1.5), ...sizes.map((s) => s.width + clearancePair));
   return sizes.reduce<readonly Row[]>((rows, size) => appendRow(rows, size, limit), []);
 }
-function sectionPorts(id: string, bounds: PrototypeBounds) {
-  return [
+function sectionPorts(id: string, bounds: PrototypeBounds, inPortsLeft: boolean) {
+  const current = [
     { side: 'top' as const, role: 'entry' as const, offset: { x: bounds.width / 2, y: 0 } },
     { side: 'left' as const, role: 'entry' as const, offset: { x: 0, y: bounds.height / 2 } },
     {
@@ -117,6 +118,13 @@ function sectionPorts(id: string, bounds: PrototypeBounds) {
       offset: { x: bounds.width, y: bounds.height / 2 },
     },
   ].map((port) => ({ ...port, id: `${id}:${port.role}-${port.side}` }));
+  return inPortsLeft ? current.map((port) => leftEntrance(port, bounds)) : current;
+}
+/** Two separate mouths preserve both entrance identities in the evaluation variant. */
+function leftEntrance(port: PrototypeNodePort, bounds: PrototypeBounds): PrototypeNodePort {
+  if (port.role !== 'entry') return port;
+  const fraction = port.side === 'top' ? 1 / 3 : 2 / 3;
+  return { ...port, side: 'left', offset: { x: 0, y: bounds.height * fraction } };
 }
 function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   if (size.count === 0) return [];
@@ -136,6 +144,7 @@ function positionSection(
   size: SizedSection,
   surrounding: PrototypeBounds,
   parentSectionId: string | null,
+  inPortsLeft: boolean,
 ): readonly SectionPlacement[] {
   const bounds = {
     x: surrounding.x + (surrounding.width - size.width) / 2,
@@ -155,14 +164,14 @@ function positionSection(
     bounds,
     parentSectionId,
     description: sectionDescription(size),
-    ports: sectionPorts(size.id, bounds),
+    ports: sectionPorts(size.id, bounds, inPortsLeft),
   };
   const own = { section, size, surrounding, interior, nodes: gridNodes(size, interior) };
   let x = interior.x + size.ownWidth;
   const children = size.children.flatMap((child) => {
     const box = { x, y: interior.y, width: child.width + clearancePair, height: interior.height };
     x += box.width;
-    const placed = positionSection(child, box, size.id);
+    const placed = positionSection(child, box, size.id, inPortsLeft);
     return placed;
   });
   return [own, ...children];
@@ -175,6 +184,7 @@ function sectionDescription(size: SizedSection): string {
 export function positionNestedSections(
   original: readonly Row[],
   copies = 1,
+  inPortsLeft = false,
 ): readonly SectionPlacement[] {
   const nodeStride = Math.max(...original.flatMap((row) => row.items.flatMap(nodeNumbers)));
   const sectionStride = Math.max(...original.flatMap((row) => row.items.flatMap(sectionNumbers)));
@@ -191,7 +201,7 @@ export function positionNestedSections(
     const extra = (width - row.width) / row.items.length;
     const result = row.items.flatMap((size) => {
       const box = { x, y, width: size.width + clearancePair + extra, height: row.height };
-      const placed = positionSection(size, box, null);
+      const placed = positionSection(size, box, null, inPortsLeft);
       x += box.width;
       return placed;
     });

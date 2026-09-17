@@ -49,6 +49,8 @@ export type PrototypeLayoutStage =
 /** Optional caller-owned measurement; geometry never reads a clock. */
 export type PrototypeLayoutMeasure = <T>(stage: PrototypeLayoutStage, operation: () => T) => T;
 export interface PrototypeLayoutOptions {
+  /** Evaluation only: both section entrances on the left edge. Defaults off. */
+  readonly sectionInPortsLeft?: boolean;
   readonly roadWidth?: number;
   readonly measure?: PrototypeLayoutMeasure;
 }

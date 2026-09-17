@@ -17,9 +17,5 @@ PASS hub node-23: exactly w19–w24 and their six sources secondary; no labels
 PASS 3/hub layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
 PASS api node-24: exactly w25/w26 and node-8/node-20 secondary; no labels
 PASS 3/api layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
-MEASURE inherited selection five-load median=367.89999997615814 ms
-Traceback (most recent call last):
-  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/scale-scene/verify-nested-selection.py", line 36, in <module>
-    assert report['performance']['median'] <= 300
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError
+MEASURE inherited selection five-load median=253.70000004768372 ms
+PASS default nested browser selection; unchanged runner assertions; median <=300 ms

@@ -1,0 +1,1 @@
+Stopped own Vite PID 20202 on 5191; all headless sessions closed by their wrappers; 5190 untouched.

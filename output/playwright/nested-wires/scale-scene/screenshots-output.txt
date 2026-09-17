@@ -1,0 +1,6 @@
+PASS 1920x1440 output/playwright/nested-wires/scale-scene/scale-roads-off.png
+PASS 1920x1440 output/playwright/nested-wires/scale-scene/scale-roads-on.png
+PASS 1920x1440 output/playwright/nested-wires/scale-scene/port-ab/templates-current.png
+PASS 1920x1440 output/playwright/nested-wires/scale-scene/port-ab/templates-ports-left.png
+PASS 1920x1440 output/playwright/nested-wires/scale-scene/port-ab/scale-current.png
+PASS 1920x1440 output/playwright/nested-wires/scale-scene/port-ab/scale-ports-left.png

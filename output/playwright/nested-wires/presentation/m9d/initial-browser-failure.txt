@@ -1,0 +1,40 @@
+scale-off {"roads:navigation-to-ready": 241.29999995231628, "roads:styles-import": 9.700000047683716, "roads:renderer-import": 1.899999976158142, "roads:capacity": 0, "roads:nodes": 0.10000002384185791, "roads:layout-total": 7.300000071525574, "roads:ports": 0, "roads:topology": 0.6000000238418579, "roads:wire-registry": 0.7000000476837158, "roads:wire:w01": 0, "roads:wire:w02": 0, "roads:wire:w03": 0, "roads:wire:w04": 0, "roads:wire:w05": 0.09999990463256836, "roads:wire:w06": 0, "roads:wire:w07": 0, "roads:wire:w08": 0, "roads:wire:w09": 0, "roads:wire:w10": 0, "roads:wire:w11": 0, "roads:wire:w12": 0, "roads:wire:w13": 0, "roads:wire:w14": 0, "roads:wire:w15": 0, "roads:wire:w16": 0, "roads:wire:w17": 0, "roads:wire:w18": 0, "roads:wire:w19": 0, "roads:wire:w20": 0, "roads:wire:w21": 0, "roads:wire:w22": 0, "roads:wire:w23": 0, "roads:wire:w24": 0, "roads:wire:w25": 0, "roads:wire:w26": 0, "roads:wire:w27": 0, "roads:wire:w28": 0, "roads:wire:w29": 0, "roads:wire:w30": 0, "roads:wire:w31": 0, "roads:wire:w32": 0, "roads:wire:w33": 0, "roads:wire:w34": 0, "roads:wire:w35": 0, "roads:wire:w36": 0, "roads:wire:w37": 0, "roads:wire:w38": 0, "roads:wire:w39": 0, "roads:wire:w40": 0, "roads:wire:w41": 0, "roads:wire:w42": 0, "roads:wire:w43": 0, "roads:wire:w44": 0, "roads:wire:w45": 0, "roads:wire:w46": 0, "roads:wire:w47": 0, "roads:wire:w48": 0, "roads:wire:w49": 0, "roads:wire:w50": 0, "roads:wire:w51": 0, "roads:wire:w52": 0, "roads:wire:w53": 0, "roads:wire:w54": 0, "roads:wire:w55": 0, "roads:wire:w56": 0, "roads:wire:w57": 0, "roads:wire:w58": 0, "roads:wire:w59": 0, "roads:wire:w60": 0, "roads:wire:w61": 0, "roads:wire:w62": 0, "roads:wire:w63": 0, "roads:wire:w64": 0, "roads:wire:w65": 0, "roads:wire:w66": 0, "roads:wire:w67": 0, "roads:wire:w68": 0, "roads:wire:w69": 0, "roads:wire:w70": 0, "roads:wire:w71": 0, "roads:wire:w72": 0, "roads:wire:w73": 0, "roads:wire:w74": 0, "roads:wire:w75": 0, "roads:lane-allocation": 0.7000000476837158, "roads:main-roads": 0.10000002384185791, "roads:driveways": 0.19999992847442627, "roads:network": 3.700000047683716, "roads:lane-projection": 0.5, "roads:proof-catalog": 0, "roads:render-to-ready": 177.5}
+templates-off {"roads:navigation-to-ready": 190.89999997615814, "roads:styles-import": 10.100000023841858, "roads:renderer-import": 1.8000000715255737, "roads:layout-total": 4.700000047683716, "roads:capacity": 0, "roads:nodes": 0.10000002384185791, "roads:ports": 0, "roads:topology": 0.30000007152557373, "roads:wire-registry": 0.2999999523162842, "roads:wire:w01": 0.10000002384185791, "roads:wire:w02": 0, "roads:wire:w03": 0, "roads:wire:w04": 0, "roads:wire:w05": 0, "roads:wire:w06": 0, "roads:wire:w07": 0, "roads:wire:w08": 0, "roads:wire:w09": 0, "roads:wire:w10": 0, "roads:wire:w11": 0, "roads:wire:w12": 0, "roads:wire:w13": 0, "roads:wire:w14": 0, "roads:wire:w15": 0, "roads:wire:w16": 0, "roads:wire:w17": 0, "roads:wire:w18": 0, "roads:wire:w19": 0, "roads:wire:w20": 0, "roads:wire:w21": 0, "roads:wire:w22": 0, "roads:wire:w23": 0, "roads:wire:w24": 0, "roads:wire:w25": 0, "roads:wire:w26": 0, "roads:wire:w27": 0, "roads:wire:w28": 0, "roads:wire:w29": 0, "roads:lane-allocation": 0.6000000238418579, "roads:main-roads": 0.10000002384185791, "roads:driveways": 0.10000002384185791, "roads:network": 2.1999999284744263, "roads:lane-projection": 0.3999999761581421, "roads:proof-catalog": 0, "roads:render-to-ready": 131.5}
+scale-on {"roads:navigation-to-ready": 234.90000009536743, "m9a:navigation-through-roads-on": 898, "roads:styles-import": 9.600000023841858, "roads:renderer-import": 1.6999999284744263, "roads:layout-total": 7.399999976158142, "roads:capacity": 0, "roads:nodes": 0.10000002384185791, "roads:ports": 0, "roads:topology": 0.5999999046325684, "roads:wire-registry": 0.7000000476837158, "roads:wire:w01": 0, "roads:wire:w02": 0, "roads:wire:w03": 0, "roads:wire:w04": 0, "roads:wire:w05": 0, "roads:wire:w06": 0, "roads:wire:w07": 0.09999990463256836, "roads:wire:w08": 0, "roads:wire:w09": 0, "roads:wire:w10": 0, "roads:wire:w11": 0, "roads:wire:w12": 0, "roads:wire:w13": 0, "roads:wire:w14": 0, "roads:wire:w15": 0, "roads:wire:w16": 0, "roads:wire:w17": 0.10000002384185791, "roads:wire:w18": 0, "roads:wire:w19": 0, "roads:wire:w20": 0, "roads:wire:w21": 0, "roads:wire:w22": 0, "roads:wire:w23": 0, "roads:wire:w24": 0, "roads:wire:w25": 0, "roads:wire:w26": 0, "roads:wire:w27": 0, "roads:wire:w28": 0, "roads:wire:w29": 0, "roads:wire:w30": 0, "roads:wire:w31": 0, "roads:wire:w32": 0, "roads:wire:w33": 0, "roads:wire:w34": 0, "roads:wire:w35": 0, "roads:wire:w36": 0, "roads:wire:w37": 0, "roads:wire:w38": 0, "roads:wire:w39": 0, "roads:wire:w40": 0, "roads:wire:w41": 0, "roads:wire:w42": 0, "roads:wire:w43": 0, "roads:wire:w44": 0, "roads:wire:w45": 0, "roads:wire:w46": 0, "roads:wire:w47": 0, "roads:wire:w48": 0, "roads:wire:w49": 0, "roads:wire:w50": 0, "roads:wire:w51": 0, "roads:wire:w52": 0, "roads:wire:w53": 0, "roads:wire:w54": 0, "roads:wire:w55": 0, "roads:wire:w56": 0, "roads:wire:w57": 0, "roads:wire:w58": 0, "roads:wire:w59": 0, "roads:wire:w60": 0, "roads:wire:w61": 0, "roads:wire:w62": 0, "roads:wire:w63": 0, "roads:wire:w64": 0, "roads:wire:w65": 0, "roads:wire:w66": 0, "roads:wire:w67": 0, "roads:wire:w68": 0, "roads:wire:w69": 0, "roads:wire:w70": 0, "roads:wire:w71": 0, "roads:wire:w72": 0, "roads:wire:w73": 0, "roads:wire:w74": 0, "roads:wire:w75": 0, "roads:lane-allocation": 0.7000000476837158, "roads:main-roads": 0.10000002384185791, "roads:driveways": 0.20000004768371582, "roads:network": 3.700000047683716, "roads:lane-projection": 0.6000000238418579, "roads:proof-catalog": 0, "roads:render-to-ready": 173.70000004768372, "m9a:toggle-to-ready": 645.3999999761581, "roads:coverage-audit": 544.3000000715256}
+Traceback (most recent call last):
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m9a/verify-browser.py", line 32, in <module>
+    selection=parsed(command('run-code','async () => {\n'+original.replace('export async function','async function')+'\n'+proxy+'\n}'))
+                     ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m9a/verify-browser.py", line 10, in command
+    raise RuntimeError(result.stdout+result.stderr)
+RuntimeError: ### Error
+TimeoutError: locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-node-id="node-7"] strong')[22m
+[2m    - locator resolved to <strong>Node 7</strong>[22m
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is visible, enabled and stable[22m
+[2m      - scrolling into view if needed[22m
+[2m      - done scrolling[22m
+[2m      - <div data-node-id="node-7" class="_node_fgbfw_184 ">…</div> intercepts pointer events[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is visible, enabled and stable[22m
+[2m      - scrolling into view if needed[22m
+[2m      - done scrolling[22m
+[2m      - <div data-node-id="node-7" class="_node_fgbfw_184 ">…</div> intercepts pointer events[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    58 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is visible, enabled and stable[22m
+[2m       - scrolling into view if needed[22m
+[2m       - done scrolling[22m
+[2m       - <div data-node-id="node-7" class="_node_fgbfw_184 ">…</div> intercepts pointer events[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+
+
+
+exit 1

@@ -1,6 +1,14 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import type { ReactElement, CSSProperties } from 'react';
-import { ReactFlow, Background, Controls, ViewportPortal, useReactFlow } from '@xyflow/react';
+import { useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef } from 'react';
+import type { ReactElement, CSSProperties, RefObject } from 'react';
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  ViewportPortal,
+  useReactFlow,
+  useViewport,
+  useNodesInitialized,
+} from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
 import type {
   RoadPrototypeScene,
@@ -120,12 +128,16 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
         data-depth-parity={data.paintDepth % 2}
         data-section-family={data.block.label.split('/')[0]}
       >
-        <strong>{data.block.label}</strong>
+        <span className={styles.labelFrame} data-label-frame>
+          <strong>{data.block.label}</strong>
+        </span>
       </div>
     );
   return (
     <div className={`${styles.node} ${data.selectionClass ?? ''}`} data-node-id={data.block.id}>
-      <strong>{data.block.label}</strong>
+      <span className={styles.labelFrame} data-label-frame>
+        <strong>{data.block.label}</strong>
+      </span>
       {data.ports.map((port) => (
         <button
           key={port.id}
@@ -568,6 +580,8 @@ export function RoadPrototype({
   readonly onReady: () => void;
 }): ReactElement {
   const [visible, setVisible] = useState(false);
+  const [density, setDensity] = useState('comfortable');
+  const paintRoot = useRef<HTMLElement>(null);
   const [proofIndex, setProofIndex] = useState(initialProof);
   const proof = proofs[proofIndex];
   const [focus, setFocus] = useState('');
@@ -636,7 +650,7 @@ export function RoadPrototype({
     [focusedWire, scene, focus],
   );
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-density={density} ref={paintRoot}>
       <header className={styles.header}>
         <div>
           <p>ROAD LAYOUT · DIRECTIONAL LANES</p>
@@ -708,6 +722,14 @@ export function RoadPrototype({
           </div>
         )}
         <label>
+          Density
+          <select aria-label="Density" value={density} onChange={(e) => setDensity(e.target.value)}>
+            <option value="compact">Compact</option>
+            <option value="comfortable">Comfortable</option>
+            <option value="expanded">Expanded</option>
+          </select>
+        </label>
+        <label>
           <input
             type="checkbox"
             checked={visible}
@@ -738,6 +760,7 @@ export function RoadPrototype({
           onNodeMouseLeave={() => hover('')}
           onPaneClick={() => setPrimary('')}
         >
+          <LabelPaint root={paintRoot} />
           <ReadySignal onReady={onReady} />
           <ProofCamera proof={proof} focus={cameraFocus} />
           <NestedWirePaths
@@ -1299,4 +1322,41 @@ function wireMidpoint(wire: NestedWire): PrototypePoint {
     x: segment.from.x + (segment.to.x - segment.from.x) * ratio,
     y: segment.from.y + (segment.to.y - segment.from.y) * ratio,
   };
+}
+
+/** Browser paint only. ResizeObserver measures untransformed label boxes, never scene geometry.
+ * Zoom writes transform/opacity inputs only; font loading and density can refresh fit limits.
+ * Until measured, labels are transparent. Unmount disconnects; remount recomputes safely.
+ */
+function LabelPaint({ root }: { readonly root: RefObject<HTMLElement | null> }): null {
+  const { zoom } = useViewport();
+  const ready = useNodesInitialized();
+  useLayoutEffect(() => {
+    root.current?.style.setProperty('--label-scale', String(Math.max(1, 1 / zoom)));
+    root.current?.style.setProperty('--paint-zoom', String(zoom));
+  }, [root, zoom]);
+  useLayoutEffect(() => {
+    const frames = root.current?.querySelectorAll<HTMLElement>('[data-label-frame]') ?? [];
+    const observer = new ResizeObserver(() => frames.forEach(measureLabelFit));
+    frames.forEach((frame) => observeLabel(observer, frame));
+    return () => observer.disconnect();
+  }, [root, ready]);
+  return null;
+}
+
+/** Rounded CSSOM dimensions get a conservative pixel on both sides of the fit inequality. */
+function measureLabelFit(frame: HTMLElement): void {
+  const text = frame.querySelector('strong');
+  if (text === null) return;
+  const fit = Math.min(
+    (frame.clientWidth - 1) / (text.offsetWidth + 1),
+    (frame.clientHeight - 1) / (text.offsetHeight + 1),
+  );
+  frame.style.setProperty('--label-fit', String(fit));
+}
+
+function observeLabel(observer: ResizeObserver, frame: HTMLElement): void {
+  observer.observe(frame);
+  const text = frame.querySelector('strong');
+  if (text !== null) observer.observe(text);
 }

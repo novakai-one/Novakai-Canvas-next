@@ -1,0 +1,114 @@
+{
+  "scale-hover-hub.png": [
+    1920,
+    1440
+  ],
+  "scale-roads-on.png": [
+    1920,
+    1440
+  ],
+  "scale-below-default-legible.png": [
+    1920,
+    1440
+  ],
+  "scale-zoomed-out-legible.png": [
+    1920,
+    1440
+  ],
+  "scale-primary-wire.png": [
+    1920,
+    1440
+  ],
+  "nested-selection-node-selected.png": [
+    1920,
+    1440
+  ],
+  "scale-off.png": [
+    1920,
+    1440
+  ],
+  "templates-off.png": [
+    1920,
+    1440
+  ],
+  "scale-idle.png": [
+    1920,
+    1440
+  ],
+  "scale-comfortable.png": [
+    1920,
+    1440
+  ],
+  "nested-selection-default.png": [
+    1920,
+    1440
+  ],
+  "scale-roads-off.png": [
+    1920,
+    1440
+  ],
+  "scale-compact.png": [
+    1920,
+    1440
+  ],
+  "export-preview.png": [
+    1920,
+    1440
+  ],
+  "scale-contract-detail-idle.png": [
+    1920,
+    1440
+  ],
+  "nested-after.png": [
+    1920,
+    1440
+  ],
+  "compact-vs-expanded.png": [
+    1920,
+    1440
+  ],
+  "toolbar-full-width.png": [
+    1920,
+    1440
+  ],
+  "scale-expanded.png": [
+    1920,
+    1440
+  ],
+  "scale-contract-detail-hover.png": [
+    1920,
+    1440
+  ],
+  "scale-on.png": [
+    1920,
+    1440
+  ],
+  "scale-after.png": [
+    1920,
+    1440
+  ],
+  "scale-hover-wire.png": [
+    1920,
+    1440
+  ],
+  "scale-default-roads-off.png": [
+    1920,
+    1440
+  ],
+  "nested-selection-wire-selected.png": [
+    1920,
+    1440
+  ],
+  "scale-roads-on-hover.png": [
+    1920,
+    1440
+  ],
+  "templates-after.png": [
+    1920,
+    1440
+  ],
+  "nested-selection-cleared.png": [
+    1920,
+    1440
+  ]
+}

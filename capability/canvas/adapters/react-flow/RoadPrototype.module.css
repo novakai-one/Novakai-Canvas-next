@@ -541,3 +541,90 @@
     color: var(--nv-chrome-paint-text);
   }
 }
+
+@layer components {
+  /* Local chrome aliases never overwrite layout/shared spacing tokens. */
+  .page {
+    --density-frame: var(--nv-chrome-density-comfortable-frame-weight);
+    --density-inset: var(--nv-chrome-density-comfortable-header-inset);
+    --density-toolbar: var(--nv-chrome-density-comfortable-toolbar-padding);
+    --density-control: var(--nv-chrome-density-comfortable-control-padding);
+    --density-label: var(--nv-chrome-density-comfortable-label-size);
+  }
+  .page[data-density='compact'] {
+    --density-frame: var(--nv-chrome-density-compact-frame-weight);
+    --density-inset: var(--nv-chrome-density-compact-header-inset);
+    --density-toolbar: var(--nv-chrome-density-compact-toolbar-padding);
+    --density-control: var(--nv-chrome-density-compact-control-padding);
+    --density-label: var(--nv-chrome-density-compact-label-size);
+  }
+  .page[data-density='expanded'] {
+    --density-frame: var(--nv-chrome-density-expanded-frame-weight);
+    --density-inset: var(--nv-chrome-density-expanded-header-inset);
+    --density-toolbar: var(--nv-chrome-density-expanded-toolbar-padding);
+    --density-control: var(--nv-chrome-density-expanded-control-padding);
+    --density-label: var(--nv-chrome-density-expanded-label-size);
+  }
+  .header {
+    padding-block: var(--density-toolbar);
+  }
+  .header button,
+  .header select {
+    padding-block: var(--density-control);
+  }
+  .header > label select {
+    color: var(--nv-chrome-paint-text);
+    background: var(--nv-surface-raised);
+    border: var(--nv-stroke-base) solid var(--nv-chrome-paint-border);
+    border-radius: var(--nv-shape-radius);
+  }
+  .section {
+    border-color: transparent;
+  }
+  .section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 var(--density-frame) var(--nv-border-default);
+  }
+  /* Absolute frames cannot resize their cards. Clip is the fail-closed paint guard. */
+  .labelFrame {
+    position: absolute;
+    display: block;
+    overflow: clip;
+    pointer-events: none;
+    color: inherit;
+  }
+  .node .labelFrame {
+    color: inherit;
+    inset: var(--nv-zoom-type-node-inset);
+  }
+  .section .labelFrame {
+    inset: var(--density-inset) var(--density-inset) auto;
+    height: min(var(--nv-zoom-type-section-height), calc(100% - var(--density-inset) * 2));
+    color: inherit;
+  }
+  .labelFrame strong {
+    position: absolute;
+    display: block;
+    width: max-content;
+    white-space: nowrap;
+    font-size: var(--density-label);
+    /* Fade finishes BEFORE the transformed text reaches either containment edge. */
+    opacity: min(
+      clamp(0, calc((var(--label-fit, 0) - var(--label-scale, 1)) / var(--nv-zoom-type-fit-fade)), 1),
+      clamp(0, calc((var(--paint-zoom, 1) - var(--nv-zoom-type-minimum)) / var(--nv-zoom-type-zoom-fade)), 1)
+    );
+    transform-origin: top left;
+    transform: scale(var(--label-scale, 1));
+  }
+  .node .labelFrame strong {
+    pointer-events: auto;
+    left: 50%;
+    top: 50%;
+    transform-origin: center;
+    transform: translate(-50%, -50%) scale(var(--label-scale, 1));
+  }
+}

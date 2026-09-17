@@ -1,0 +1,45 @@
+{
+  "before": {
+    "zoom": 0.41767210787792763,
+    "count": 1,
+    "visible": [
+      "contract",
+      "contract/ports",
+      "contract/records",
+      "core",
+      "core/admission",
+      "core/discovery",
+      "core/expansion",
+      "core/validation",
+      "adapters",
+      "service",
+      "web",
+      "cli",
+      "api.ts",
+      "plan.ts",
+      "bind.ts",
+      "shell.ts",
+      "main.ts"
+    ]
+  },
+  "after": {
+    "zoom": 0.34806008989827303,
+    "count": 1,
+    "visible": [
+      "contract",
+      "contract/ports",
+      "contract/records",
+      "core",
+      "core/admission",
+      "core/discovery",
+      "core/expansion",
+      "core/validation",
+      "adapters",
+      "service",
+      "web",
+      "cli",
+      "api.ts"
+    ]
+  },
+  "layoutDelta": 0
+}

@@ -1,0 +1,38 @@
+{
+  "nested": {
+    "base": "50b5237284ea9699ee5e319c17ffc1b20d08cb7d",
+    "offlineSceneSha256": "946bb1e9836c4242382a534ab97f4752b24d7bcc230e85be2835f720145a8e8a",
+    "browserSceneSha256": "502666b9a3335f6627e969f2e2474d192b741a8bd51e091a613a99d367797352",
+    "probeCount": 100,
+    "zoomMinimum": 0.1,
+    "zoomMaximum": 2,
+    "equalToBase": true,
+    "presetsEqual": true,
+    "allLayoutDeltas": 0,
+    "allVisibleOverflow": 0
+  },
+  "templates": {
+    "base": "50b5237284ea9699ee5e319c17ffc1b20d08cb7d",
+    "offlineSceneSha256": "1940f9b9619a98fd600299aac5f40376184f9d8915d04e8bcbad0b43b4743253",
+    "browserSceneSha256": "75659a4b3a4b0ad67f6e8886e0e5e94302cc56dadb603ed20c6917677a3c565b",
+    "probeCount": 101,
+    "zoomMinimum": 0.1,
+    "zoomMaximum": 2,
+    "equalToBase": true,
+    "presetsEqual": true,
+    "allLayoutDeltas": 0,
+    "allVisibleOverflow": 0
+  },
+  "scale": {
+    "base": "50b5237284ea9699ee5e319c17ffc1b20d08cb7d",
+    "offlineSceneSha256": "5779c71c97d40fd0ae8b64fb903d603b019f4ccb528aa9dbc84b5a57fb50fd74",
+    "browserSceneSha256": "501d5062b554ca2a19b190b6e2124dbca57cff2f23bf6b9a800c9d9a9377040a",
+    "probeCount": 102,
+    "zoomMinimum": 0.1,
+    "zoomMaximum": 2,
+    "equalToBase": true,
+    "presetsEqual": true,
+    "allLayoutDeltas": 0,
+    "allVisibleOverflow": 0
+  }
+}

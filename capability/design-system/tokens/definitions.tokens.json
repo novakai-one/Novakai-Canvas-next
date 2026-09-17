@@ -909,5 +909,146 @@
         "alpha": 1
       }
     }
+  },
+  "chromeDensity": {
+    "compact": {
+      "frameWeight": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.5,
+          "unit": "px"
+        }
+      },
+      "headerInset": {
+        "$type": "dimension",
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        }
+      },
+      "toolbarPadding": {
+        "$type": "dimension",
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "controlPadding": {
+        "$type": "dimension",
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        }
+      },
+      "labelSize": {
+        "$type": "dimension",
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        }
+      }
+    },
+    "comfortable": {
+      "frameWeight": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
+      },
+      "headerInset": {
+        "$type": "dimension",
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        }
+      },
+      "toolbarPadding": {
+        "$type": "dimension",
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        }
+      },
+      "controlPadding": {
+        "$type": "dimension",
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        }
+      },
+      "labelSize": {
+        "$type": "dimension",
+        "$value": {
+          "value": 19.6,
+          "unit": "px"
+        }
+      }
+    },
+    "expanded": {
+      "frameWeight": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        }
+      },
+      "headerInset": {
+        "$type": "dimension",
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        }
+      },
+      "toolbarPadding": {
+        "$type": "dimension",
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        }
+      },
+      "controlPadding": {
+        "$type": "dimension",
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "labelSize": {
+        "$type": "dimension",
+        "$value": {
+          "value": 21,
+          "unit": "px"
+        }
+      }
+    }
+  },
+  "zoomType": {
+    "minimum": {
+      "$type": "number",
+      "$value": 0.15
+    },
+    "zoomFade": {
+      "$type": "number",
+      "$value": 0.05
+    },
+    "fitFade": {
+      "$type": "number",
+      "$value": 0.15
+    },
+    "nodeInset": {
+      "$type": "dimension",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      }
+    },
+    "sectionHeight": {
+      "$type": "dimension",
+      "$value": {
+        "value": 112,
+        "unit": "px"
+      }
+    }
   }
 }

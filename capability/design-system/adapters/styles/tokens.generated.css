@@ -112,5 +112,25 @@
   --nv-node-elevation-blur: 6px;
   --nv-node-elevation-spread: 0px;
   --nv-chrome-paint-border: #d9e0e8;
+  --nv-chrome-density-compact-frame-weight: 0.5px;
+  --nv-chrome-density-compact-header-inset: 20px;
+  --nv-chrome-density-compact-toolbar-padding: 12px;
+  --nv-chrome-density-compact-control-padding: 6px;
+  --nv-chrome-density-compact-label-size: 18px;
+  --nv-chrome-density-comfortable-frame-weight: 1px;
+  --nv-chrome-density-comfortable-header-inset: 24px;
+  --nv-chrome-density-comfortable-toolbar-padding: 20px;
+  --nv-chrome-density-comfortable-control-padding: 8px;
+  --nv-chrome-density-comfortable-label-size: 19.6px;
+  --nv-chrome-density-expanded-frame-weight: 2px;
+  --nv-chrome-density-expanded-header-inset: 28px;
+  --nv-chrome-density-expanded-toolbar-padding: 28px;
+  --nv-chrome-density-expanded-control-padding: 10px;
+  --nv-chrome-density-expanded-label-size: 21px;
+  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-zoom-fade: 0.05;
+  --nv-zoom-type-fit-fade: 0.15;
+  --nv-zoom-type-node-inset: 4px;
+  --nv-zoom-type-section-height: 112px;
 }
 }

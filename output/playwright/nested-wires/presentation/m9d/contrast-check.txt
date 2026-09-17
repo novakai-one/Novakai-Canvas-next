@@ -1,0 +1,6 @@
+Minimum idle/converging ratio: 3.0492901837944903
+Minimum label ratio: 14.364491391142389
+PASS all resolved canvas/section/node/road/junction backgrounds, labels and accent clearances
+
+exit 0
+runner sha256 64073c8875460c304b589a9c9b4bd3dc0edcc58ed0865b053b8cd9b0dffe9069

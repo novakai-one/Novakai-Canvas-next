@@ -1,0 +1,8 @@
+{
+  "viewport": {
+    "width": 1920,
+    "height": 1440
+  },
+  "comparison": "Two unmodified full screenshots at half scale plus actual-size crops; same scene and camera; chrome shifts canvas origin only",
+  "export": "Actual native SVG rendered by headless Chromium"
+}

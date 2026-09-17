@@ -1,0 +1,1049 @@
+### Page
+- Page URL: http://127.0.0.1:5191/roads-prototype.html?scale
+- Page Title: Roads · Directional proof
+### Snapshot
+```yaml
+- main [ref=f1e3]:
+  - generic [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - paragraph [ref=f1e6]: ROAD LAYOUT · DIRECTIONAL LANES
+      - heading "40 nodes · 12 sections · 75 wires" [level=1] [ref=f1e7]
+    - generic [ref=f1e8]:
+      - button "Overview" [ref=f1e9] [cursor=pointer]
+      - button "contract" [ref=f1e10] [cursor=pointer]
+      - button "contract/ports" [ref=f1e11] [cursor=pointer]
+      - button "contract/records" [ref=f1e12] [cursor=pointer]
+      - button "core" [ref=f1e13] [cursor=pointer]
+      - button "core/admission" [ref=f1e14] [cursor=pointer]
+      - button "core/discovery" [ref=f1e15] [cursor=pointer]
+      - button "core/expansion" [ref=f1e16] [cursor=pointer]
+      - button "core/validation" [ref=f1e17] [cursor=pointer]
+      - button "adapters" [ref=f1e18] [cursor=pointer]
+      - button "service" [ref=f1e19] [cursor=pointer]
+      - button "web" [ref=f1e20] [cursor=pointer]
+      - button "cli" [ref=f1e21] [cursor=pointer]
+      - combobox "Wire focus" [ref=f1e22]:
+        - option "All 75 wires" [selected]
+        - option "w01 · kernel.ts → brands.ts"
+        - option "w02 · kernel.ts → errors.ts"
+        - option "w03 · kernel.ts → types.ts"
+        - option "w04 · kernel.ts → api.ts"
+        - option "w05 · kernel.ts → store-port.ts"
+        - option "w06 · kernel.ts → request.ts"
+        - option "w07 · kernel.ts → admit.ts"
+        - option "w08 · kernel.ts → discover.ts"
+        - option "w09 · kernel.ts → expand.ts"
+        - option "w10 · kernel.ts → validate.ts"
+        - option "w11 · api.ts → index.ts"
+        - option "w12 · store-port.ts → index.ts"
+        - option "w13 · clock-port.ts → index.ts"
+        - option "w14 · request.ts → index.ts"
+        - option "w15 · receipt.ts → index.ts"
+        - option "w16 · plan.ts → index.ts"
+        - option "w17 · select.ts → index.ts"
+        - option "w18 · assemble.ts → index.ts"
+        - option "w19 · result.ts → index.ts"
+        - option "w20 · plan.ts → discover.ts"
+        - option "w21 · select.ts → expand.ts"
+        - option "w22 · assemble.ts → validate.ts"
+        - option "w23 · result.ts → memory-store.ts"
+        - option "w24 · registry.ts → resource.ts"
+        - option "w25 · server.ts → client.ts"
+        - option "w26 · shell.ts → parse.ts"
+        - option "w27 · kernel.ts → resource.ts"
+        - option "w28 · api.ts → client.ts"
+        - option "w29 · store-port.ts → parse.ts"
+        - option "w30 · receipt.ts → main.ts"
+        - option "w31 · brands.ts → errors.ts"
+        - option "w32 · errors.ts → types.ts"
+        - option "w33 · types.ts → api.ts"
+        - option "w34 · store-port.ts → clock-port.ts"
+        - option "w35 · request.ts → receipt.ts"
+        - option "w36 · admit.ts → normalize.ts"
+        - option "w37 · normalize.ts → authorize.ts"
+        - option "w38 · authorize.ts → plan.ts"
+        - option "w39 · discover.ts → catalog.ts"
+        - option "w40 · catalog.ts → match.ts"
+        - option "w41 · match.ts → select.ts"
+        - option "w42 · expand.ts → instantiate.ts"
+        - option "w43 · instantiate.ts → bind.ts"
+        - option "w44 · bind.ts → assemble.ts"
+        - option "w45 · validate.ts → diagnose.ts"
+        - option "w46 · diagnose.ts → check.ts"
+        - option "w47 · check.ts → result.ts"
+        - option "w48 · memory-store.ts → disk-store.ts"
+        - option "w49 · disk-store.ts → system-clock.ts"
+        - option "w50 · system-clock.ts → registry.ts"
+        - option "w51 · resource.ts → transaction.ts"
+        - option "w52 · transaction.ts → endpoint.ts"
+        - option "w53 · endpoint.ts → server.ts"
+        - option "w54 · client.ts → presenter.ts"
+        - option "w55 · presenter.ts → shell.ts"
+        - option "w56 · parse.ts → execute.ts"
+        - option "w57 · execute.ts → main.ts"
+        - option "w58 · kernel.ts → index.ts"
+        - option "w59 · errors.ts → api.ts"
+        - option "w60 · errors.ts → index.ts"
+        - option "w61 · brands.ts → types.ts"
+        - option "w62 · brands.ts → api.ts"
+        - option "w63 · brands.ts → index.ts"
+        - option "w64 · types.ts → index.ts"
+        - option "w65 · admit.ts → plan.ts"
+        - option "w66 · normalize.ts → plan.ts"
+        - option "w67 · admit.ts → authorize.ts"
+        - option "w68 · instantiate.ts → assemble.ts"
+        - option "w69 · expand.ts → assemble.ts"
+        - option "w70 · expand.ts → bind.ts"
+        - option "w71 · discover.ts → match.ts"
+        - option "w72 · catalog.ts → select.ts"
+        - option "w73 · memory-store.ts → registry.ts"
+        - option "w74 · discover.ts → select.ts"
+        - option "w75 · memory-store.ts → system-clock.ts"
+    - generic [ref=f1e23]:
+      - text: Density
+      - combobox "Density" [ref=f1e24]:
+        - option "Compact"
+        - option "Comfortable" [selected]
+        - option "Expanded"
+    - generic [ref=f1e25]:
+      - checkbox "Show roads" [ref=f1e26]
+      - text: Show roads
+  - application [ref=f1e28]:
+    - generic [ref=f1e30]:
+      - generic:
+        - generic:
+          - group [ref=f1e31]:
+            - generic [ref=f1e32]:
+              - generic:
+                - strong: contract
+          - group [ref=f1e33]:
+            - generic [ref=f1e34]:
+              - generic:
+                - strong: contract/ports
+          - group [ref=f1e35]:
+            - generic [ref=f1e36]:
+              - generic:
+                - strong: contract/records
+          - group [ref=f1e37]:
+            - generic [ref=f1e38]:
+              - generic:
+                - strong: core
+          - group [ref=f1e39]:
+            - generic [ref=f1e40]:
+              - generic:
+                - strong: core/admission
+          - group [ref=f1e41]:
+            - generic [ref=f1e42]:
+              - generic:
+                - strong: core/discovery
+          - group [ref=f1e43]:
+            - generic [ref=f1e44]:
+              - generic:
+                - strong: core/expansion
+          - group [ref=f1e45]:
+            - generic [ref=f1e46]:
+              - generic:
+                - strong: core/validation
+          - group [ref=f1e47]:
+            - generic [ref=f1e48]:
+              - generic:
+                - strong: adapters
+          - group [ref=f1e49]:
+            - generic [ref=f1e50]:
+              - generic:
+                - strong: service
+          - group [ref=f1e51]:
+            - generic [ref=f1e52]:
+              - generic:
+                - strong: web
+          - group [ref=f1e53]:
+            - generic [ref=f1e54]:
+              - generic:
+                - strong: cli
+          - group [ref=f1e55]
+          - group [ref=f1e56]
+          - group [ref=f1e57]
+          - group [ref=f1e58]
+          - group [ref=f1e59]
+          - group [ref=f1e60]
+          - group [ref=f1e61]
+          - group [ref=f1e62]
+          - group [ref=f1e63]
+          - group [ref=f1e64]
+          - group [ref=f1e65]
+          - group [ref=f1e66]
+          - group [ref=f1e67]
+          - group [ref=f1e68]
+          - group [ref=f1e69]
+          - group [ref=f1e70]
+          - group [ref=f1e71]
+          - group [ref=f1e72]
+          - group [ref=f1e73]
+          - group [ref=f1e74]
+          - group [ref=f1e75]
+          - group [ref=f1e76]
+          - group [ref=f1e77]
+          - group [ref=f1e78]
+          - group [ref=f1e79]
+          - group [ref=f1e80]
+          - group [ref=f1e81]
+          - group [ref=f1e82]
+          - group [ref=f1e83]
+          - group [ref=f1e84]
+          - group [ref=f1e85]
+          - group [ref=f1e86]
+          - group [ref=f1e87]
+          - group [ref=f1e88]
+          - group [ref=f1e89]
+          - group [ref=f1e90]
+          - group [ref=f1e91]
+          - group [ref=f1e92]
+          - group [ref=f1e93]
+          - group [ref=f1e94]
+          - group [ref=f1e95]
+          - group [ref=f1e96]
+          - group [ref=f1e97]
+          - group [ref=f1e98]
+          - group [ref=f1e99]
+          - group [ref=f1e100]
+          - group [ref=f1e101]
+          - group [ref=f1e102]
+          - group [ref=f1e103]
+          - group [ref=f1e104]
+          - group [ref=f1e105]
+          - group [ref=f1e106]
+          - group [ref=f1e107]
+          - group [ref=f1e108]
+          - group [ref=f1e109]
+          - group [ref=f1e110]
+          - group [ref=f1e111]
+          - group [ref=f1e112]
+          - group [ref=f1e113]
+          - group [ref=f1e114]
+          - group [ref=f1e115]
+          - group [ref=f1e116]
+          - group [ref=f1e117]
+          - group [ref=f1e118]
+          - group [ref=f1e119]
+          - group [ref=f1e120]
+          - group [ref=f1e121]
+          - group [ref=f1e122]
+          - group [ref=f1e123]
+          - group [ref=f1e124]
+          - group [ref=f1e125]
+          - group [ref=f1e126]
+          - group [ref=f1e127]
+          - group [ref=f1e128]
+          - group [ref=f1e129]
+          - group [ref=f1e130]
+          - group [ref=f1e131]
+          - group [ref=f1e132]
+          - group [ref=f1e133]
+          - group [ref=f1e134]
+          - group [ref=f1e135]
+          - group [ref=f1e136]
+          - group [ref=f1e137]
+          - group [ref=f1e138]
+          - group [ref=f1e139]
+          - group [ref=f1e140]
+          - group [ref=f1e141]
+          - group [ref=f1e142]
+          - group [ref=f1e143]
+          - group [ref=f1e144]
+          - group [ref=f1e145]
+          - group [ref=f1e146]
+          - group [ref=f1e147]
+          - group [ref=f1e148]
+          - group [ref=f1e149]
+          - group [ref=f1e150]
+          - group [ref=f1e151]
+          - group [ref=f1e152]
+          - group [ref=f1e153]
+          - group [ref=f1e154]
+          - group [ref=f1e155]
+          - group [ref=f1e156]
+          - group [ref=f1e157]
+          - group [ref=f1e158]
+          - group [ref=f1e159]
+          - group [ref=f1e160]
+          - group [ref=f1e161]
+          - group [ref=f1e162]
+          - group [ref=f1e163]
+          - group [ref=f1e164]
+          - group [ref=f1e165]
+          - group [ref=f1e166]
+          - group [ref=f1e167]
+          - group [ref=f1e168]
+          - group [ref=f1e169]
+          - group [ref=f1e170]
+          - group [ref=f1e171]
+          - group [ref=f1e172]
+          - group [ref=f1e173]
+          - group [ref=f1e174]
+          - group [ref=f1e175]
+          - group [ref=f1e176]
+          - group [ref=f1e177]
+          - group [ref=f1e178]
+          - group [ref=f1e179]
+          - group [ref=f1e180]
+          - group [ref=f1e181]
+          - group [ref=f1e182]
+          - group [ref=f1e183]
+          - group [ref=f1e184]
+          - group [ref=f1e185]
+          - group [ref=f1e186]
+          - group [ref=f1e187]
+          - group [ref=f1e188]
+          - group [ref=f1e189]
+          - group [ref=f1e190]
+          - group [ref=f1e191]
+          - group [ref=f1e192]
+          - group [ref=f1e193]
+          - group [ref=f1e194]
+          - group [ref=f1e195]
+          - group [ref=f1e196]
+          - group [ref=f1e197]
+          - group [ref=f1e198]
+          - group [ref=f1e199]
+          - group [ref=f1e200]
+          - group [ref=f1e201]
+          - group [ref=f1e202]
+          - group [ref=f1e203]
+          - group [ref=f1e204]
+          - group [ref=f1e205]
+          - group [ref=f1e206]
+          - group [ref=f1e207]
+          - group [ref=f1e208]
+          - group [ref=f1e209]
+          - group [ref=f1e210]
+          - group [ref=f1e211]
+          - group [ref=f1e212]
+          - group [ref=f1e213]
+          - group [ref=f1e214]
+          - group [ref=f1e215]
+          - group [ref=f1e216]
+          - group [ref=f1e217]
+          - group [ref=f1e218]
+          - group [ref=f1e219]
+          - group [ref=f1e220]
+          - group [ref=f1e221]
+          - group [ref=f1e222]
+          - group [ref=f1e223]
+          - group [ref=f1e224]
+          - group [ref=f1e225]
+          - group [ref=f1e226]
+          - group [ref=f1e227]
+          - group [ref=f1e228]
+          - group [ref=f1e229]
+          - group [ref=f1e230]
+          - group [ref=f1e231]
+          - group [ref=f1e232]
+          - group [ref=f1e233]
+          - group [ref=f1e234]
+          - group [ref=f1e235]
+          - group [ref=f1e236]
+          - group [ref=f1e237]
+          - group [ref=f1e238]
+          - group [ref=f1e239]
+          - group [ref=f1e240]
+          - group [ref=f1e241]
+          - group [ref=f1e242]
+          - group [ref=f1e243]
+          - group [ref=f1e244]
+          - group [ref=f1e245]
+          - group [ref=f1e246]
+          - group [ref=f1e247]
+          - group [ref=f1e248]
+          - group [ref=f1e249]
+          - group [ref=f1e250]
+          - group [ref=f1e251]
+          - group [ref=f1e252]
+          - group [ref=f1e253]
+          - group [ref=f1e254]
+          - group [ref=f1e255]
+          - group [ref=f1e256]
+          - group [ref=f1e257]
+          - group [ref=f1e258]
+          - group [ref=f1e259]
+          - group [ref=f1e260]
+          - group [ref=f1e261]
+          - group [ref=f1e262]
+          - group [ref=f1e263]
+          - group [ref=f1e264]
+          - group [ref=f1e265]
+          - group [ref=f1e266]
+          - group [ref=f1e267]
+          - group [ref=f1e268]
+          - group [ref=f1e269]
+          - group [ref=f1e270]
+          - group [ref=f1e271]
+          - group [ref=f1e272]
+          - group [ref=f1e273]
+          - group [ref=f1e274]
+          - group [ref=f1e275]
+          - group [ref=f1e276]
+          - group [ref=f1e277]
+          - group [ref=f1e278]
+          - group [ref=f1e279]
+          - group [ref=f1e280]
+          - group [ref=f1e281]
+          - group [ref=f1e282]
+          - group [ref=f1e283]
+          - group [ref=f1e284]
+          - group [ref=f1e285]
+          - group [ref=f1e286]
+          - group [ref=f1e287]
+          - group [ref=f1e288]
+          - group [ref=f1e289]
+          - group [ref=f1e290]
+          - group [ref=f1e291]
+          - group [ref=f1e292]
+          - group [ref=f1e293]
+          - group [ref=f1e294]
+          - group [ref=f1e295]
+          - group [ref=f1e296]
+          - group [ref=f1e297]
+          - group [ref=f1e298]
+          - group [ref=f1e299]
+          - group [ref=f1e300]
+          - group [ref=f1e301]
+          - group [ref=f1e302]
+          - group [ref=f1e303]
+          - group [ref=f1e304]
+          - group [ref=f1e305]
+          - group [ref=f1e306]
+          - group [ref=f1e307]
+          - group [ref=f1e308]
+          - group [ref=f1e309]
+          - group [ref=f1e310]
+          - group [ref=f1e311]
+          - group [ref=f1e312]
+          - group [ref=f1e313]
+          - group [ref=f1e314]
+          - group [ref=f1e315]
+          - group [ref=f1e316]
+          - group [ref=f1e317]
+          - group [ref=f1e318]
+          - group [ref=f1e319]
+          - group [ref=f1e320]
+          - group [ref=f1e321]
+          - group [ref=f1e322]
+          - group [ref=f1e323]
+          - group [ref=f1e324]
+          - group [ref=f1e325]
+          - group [ref=f1e326]
+          - group [ref=f1e327]
+          - group [ref=f1e328]
+          - group [ref=f1e329]
+          - group [ref=f1e330]
+          - group [ref=f1e331]
+          - group [ref=f1e332]
+          - group [ref=f1e333]
+          - group [ref=f1e334]
+          - group [ref=f1e335]
+          - group [ref=f1e336]
+          - group [ref=f1e337]
+          - group [ref=f1e338]
+          - group [ref=f1e339]
+          - group [ref=f1e340]
+          - group [ref=f1e341]
+          - group [ref=f1e342]
+          - group [ref=f1e343]
+          - group [ref=f1e344]
+          - group [ref=f1e345]
+          - group [ref=f1e346]
+          - group [ref=f1e347]
+          - group [ref=f1e348]
+          - group [ref=f1e349]
+          - group [ref=f1e350]
+          - group [ref=f1e351]
+          - group [ref=f1e352]
+          - group [ref=f1e353]
+          - group [ref=f1e354]
+          - group [ref=f1e355]
+          - group [ref=f1e356]
+          - group [ref=f1e357]
+          - group [ref=f1e358]
+          - group [ref=f1e359]
+          - group [ref=f1e360]
+          - group [ref=f1e361]
+          - group [ref=f1e362]
+          - group [ref=f1e363]
+          - group [ref=f1e364]
+          - group [ref=f1e365]
+          - group [ref=f1e366]
+          - group [ref=f1e367]
+          - group [ref=f1e368]
+          - group [ref=f1e369]
+          - group [ref=f1e370]
+          - group [ref=f1e371]
+          - group [ref=f1e372]
+          - group [ref=f1e373]
+          - group [ref=f1e374]
+          - group [ref=f1e375]
+          - group [ref=f1e376]
+          - group [ref=f1e377]
+          - group [ref=f1e378]
+          - group [ref=f1e379]
+          - group [ref=f1e380]
+          - group [ref=f1e381]
+          - group [ref=f1e382]
+          - group [ref=f1e383]
+          - group [ref=f1e384]
+          - group [ref=f1e385]
+          - group [ref=f1e386]
+          - group [ref=f1e387]
+          - group [ref=f1e388]
+          - group [ref=f1e389]
+          - group [ref=f1e390]
+          - group [ref=f1e391]
+          - group [ref=f1e392]
+          - group [ref=f1e393]
+          - group [ref=f1e394]
+          - group [ref=f1e395]
+          - group [ref=f1e396]
+          - group [ref=f1e397]
+          - group [ref=f1e398]
+          - group [ref=f1e399]
+          - group [ref=f1e400]
+          - group [ref=f1e401]
+          - group [ref=f1e402]
+          - group [ref=f1e403]
+          - group [ref=f1e404]
+          - group [ref=f1e405]
+          - group [ref=f1e406]
+          - group [ref=f1e407]
+          - group [ref=f1e408]
+          - group [ref=f1e409]
+          - group [ref=f1e410]
+          - group [ref=f1e411]
+          - group [ref=f1e412]
+          - group [ref=f1e413]
+          - group [ref=f1e414]
+          - group [ref=f1e415]
+          - group [ref=f1e416]
+          - group [ref=f1e417]
+          - group [ref=f1e418]
+          - group [ref=f1e419]
+          - group [ref=f1e420]
+          - group [ref=f1e421]
+          - group [ref=f1e422]
+          - group [ref=f1e423]
+          - group [ref=f1e424]
+          - group [ref=f1e425]
+          - group [ref=f1e426]
+          - group [ref=f1e427]
+          - group [ref=f1e428]
+          - group [ref=f1e429]
+          - group [ref=f1e430]
+          - group [ref=f1e431]
+          - group [ref=f1e432]
+          - group [ref=f1e433]
+          - group [ref=f1e434]
+          - group [ref=f1e435]
+          - group [ref=f1e436]
+          - group [ref=f1e437]
+          - group [ref=f1e438]
+          - group [ref=f1e439]
+          - group [ref=f1e440]
+          - group [ref=f1e441]
+          - group [ref=f1e442]
+          - group [ref=f1e443]
+          - group [ref=f1e444]
+          - group [ref=f1e445]
+          - group [ref=f1e446]
+          - group [ref=f1e447]
+          - group [ref=f1e448]
+          - group [ref=f1e449]
+          - group [ref=f1e450]
+          - group [ref=f1e451]
+          - group [ref=f1e452]
+          - group [ref=f1e453]
+          - group [ref=f1e454]
+          - group [ref=f1e455]
+          - group [ref=f1e456]
+          - group [ref=f1e457]
+          - group [ref=f1e458]
+          - group [ref=f1e459]
+          - group [ref=f1e460]
+          - group [ref=f1e461]
+          - group [ref=f1e462]
+          - group [ref=f1e463]
+          - group [ref=f1e464]
+          - group [ref=f1e465]
+          - group [ref=f1e466]
+          - group [ref=f1e467]
+          - group [ref=f1e468]
+          - group [ref=f1e469]
+          - group [ref=f1e470]
+          - group [ref=f1e471]
+          - group [ref=f1e472]
+          - group [ref=f1e473]
+          - group [ref=f1e474]
+          - group [ref=f1e475]
+          - group [ref=f1e476]
+          - group [ref=f1e477]
+          - group [ref=f1e478]
+          - group [ref=f1e479]
+          - group [ref=f1e480]
+          - group [ref=f1e481]
+          - group [ref=f1e482]
+          - group [ref=f1e483]
+          - group [ref=f1e484]
+          - group [ref=f1e485]
+          - group [ref=f1e486]
+          - group [ref=f1e487]
+          - group [ref=f1e488]
+          - group [ref=f1e489]
+          - group [ref=f1e490]
+          - group [ref=f1e491]
+          - group [ref=f1e492]
+          - group [ref=f1e493]
+          - group [ref=f1e494]
+          - group [ref=f1e495]
+          - group [ref=f1e496]
+          - group [ref=f1e497]
+          - group [ref=f1e498]
+          - group [ref=f1e499]
+          - group [ref=f1e500]
+          - group [ref=f1e501]
+          - group [ref=f1e502]
+          - group [ref=f1e503]
+          - group [ref=f1e504]
+          - group [ref=f1e505]
+          - group [ref=f1e506]
+          - group [ref=f1e507]
+          - group [ref=f1e508]
+          - group [ref=f1e509]
+          - group [ref=f1e510]
+          - group [ref=f1e511]
+          - group [ref=f1e512]
+          - group [ref=f1e513]
+          - group [ref=f1e514]
+          - group [ref=f1e515]
+          - group [ref=f1e516]
+          - group [ref=f1e517]
+          - group [ref=f1e518]
+          - group [ref=f1e519]
+          - group [ref=f1e520]
+          - group [ref=f1e521]
+          - group [ref=f1e522]
+          - group [ref=f1e523]
+          - group [ref=f1e524]
+          - group [ref=f1e525]
+          - group [ref=f1e526]
+          - group [ref=f1e527]
+          - group [ref=f1e528]
+          - group [ref=f1e529]
+          - group [ref=f1e530]
+          - group [ref=f1e531]
+          - group [ref=f1e532]
+          - group [ref=f1e533]
+          - group [ref=f1e534]
+          - group [ref=f1e535]
+          - group [ref=f1e536]
+          - group [ref=f1e537]
+          - group [ref=f1e538]
+          - group [ref=f1e539]
+          - group [ref=f1e540]
+          - group [ref=f1e541]
+          - group [ref=f1e542]
+          - group [ref=f1e543]
+          - group [ref=f1e544]
+          - group [ref=f1e545]
+          - group [ref=f1e546]
+          - group [ref=f1e547]
+          - group [ref=f1e548]
+          - group [ref=f1e549]
+          - group [ref=f1e550]
+          - group [ref=f1e551]
+          - group [ref=f1e552]
+          - group [ref=f1e553]
+          - group [ref=f1e554]
+          - group [ref=f1e555]
+          - group [ref=f1e556]
+          - group [ref=f1e557]
+          - group [ref=f1e558]
+          - group [ref=f1e559]
+          - group [ref=f1e560]
+          - group [ref=f1e561]
+          - group [ref=f1e562]
+          - group [ref=f1e563]
+          - group [ref=f1e564]
+          - group [ref=f1e565]
+          - group [ref=f1e566]
+          - group [ref=f1e567]
+          - group [ref=f1e568]
+          - group [ref=f1e569]
+          - group [ref=f1e570]
+          - group [ref=f1e571]
+          - group [ref=f1e572]
+          - group [ref=f1e573]
+          - group [ref=f1e574]
+          - group [ref=f1e575]
+          - group [ref=f1e576]
+          - group [ref=f1e577]
+          - group [ref=f1e578]
+          - group [ref=f1e579]
+          - group [ref=f1e580]
+          - group [ref=f1e581]
+          - group [ref=f1e582]
+          - group [ref=f1e583]
+          - group [ref=f1e584]
+          - group [ref=f1e585]
+          - group [ref=f1e586]
+          - group [ref=f1e587]
+          - group [ref=f1e588]
+          - group [ref=f1e589]
+          - group [ref=f1e590]
+          - group [ref=f1e591]
+          - group [ref=f1e592]
+          - group [ref=f1e593]
+          - group [ref=f1e594]
+          - group [ref=f1e595]
+          - group [ref=f1e596]
+          - group [ref=f1e597]
+          - group [ref=f1e598]
+          - group [ref=f1e599]
+          - group [ref=f1e600]
+          - group [ref=f1e601]
+          - group [ref=f1e602]
+          - group [ref=f1e603]
+          - group [ref=f1e604]
+          - group [ref=f1e605]
+          - group [ref=f1e606]
+          - group [ref=f1e607]
+          - group [ref=f1e608]
+          - group [ref=f1e609]
+          - group [ref=f1e610]
+          - group [ref=f1e611]
+          - group [ref=f1e612]
+          - group [ref=f1e613]
+          - group [ref=f1e614]
+          - group [ref=f1e615]
+          - group [ref=f1e616]
+          - group [ref=f1e617]
+          - group [ref=f1e618]
+          - group [ref=f1e619]
+          - group [ref=f1e620]
+          - group [ref=f1e621]
+          - group [ref=f1e622]
+          - group [ref=f1e623]
+          - group [ref=f1e624]
+          - group [ref=f1e625]
+          - group [ref=f1e626]
+          - group [ref=f1e627]
+          - group [ref=f1e628]
+          - group [ref=f1e629]
+          - group [ref=f1e630]
+          - group [ref=f1e631]
+          - group [ref=f1e632]
+          - group [ref=f1e633]
+          - group [ref=f1e634]
+          - group [ref=f1e635]
+          - group [ref=f1e636]
+          - group [ref=f1e637]
+          - group [ref=f1e638]
+          - group [ref=f1e639]
+          - group [ref=f1e640]
+          - group [ref=f1e641]
+          - group [ref=f1e642]
+          - group [ref=f1e643]
+          - group [ref=f1e644]
+          - group [ref=f1e645]
+          - group [ref=f1e646]
+          - group [ref=f1e647]
+          - group [ref=f1e648]
+          - group [ref=f1e649]
+          - group [ref=f1e650]
+          - group [ref=f1e651]
+          - group [ref=f1e652]
+          - group [ref=f1e653]:
+            - strong [ref=f1e655]: kernel.ts
+          - group [ref=f1e656]:
+            - strong [ref=f1e658]: brands.ts
+          - group [ref=f1e659]:
+            - strong [ref=f1e661]: errors.ts
+          - group [ref=f1e662]:
+            - strong [ref=f1e664]: types.ts
+          - group [ref=f1e665]:
+            - strong [ref=f1e667]: api.ts
+          - group [ref=f1e668]:
+            - strong [ref=f1e670]: index.ts
+          - group [ref=f1e671]:
+            - strong [ref=f1e673]: store-port.ts
+          - group [ref=f1e674]:
+            - strong [ref=f1e676]: clock-port.ts
+          - group [ref=f1e677]:
+            - strong [ref=f1e679]: request.ts
+          - group [ref=f1e680]:
+            - strong [ref=f1e682]: receipt.ts
+          - group [ref=f1e683]:
+            - strong [ref=f1e685]: admit.ts
+          - group [ref=f1e686]:
+            - strong [ref=f1e688]: normalize.ts
+          - group [ref=f1e689]:
+            - strong [ref=f1e691]: authorize.ts
+          - group [ref=f1e692]:
+            - strong [ref=f1e694]: plan.ts
+          - group [ref=f1e695]:
+            - strong [ref=f1e697]: discover.ts
+          - group [ref=f1e698]:
+            - strong [ref=f1e700]: catalog.ts
+          - group [ref=f1e701]:
+            - strong [ref=f1e703]: match.ts
+          - group [ref=f1e704]:
+            - strong [ref=f1e706]: select.ts
+          - group [ref=f1e707]:
+            - strong [ref=f1e709]: expand.ts
+          - group [ref=f1e710]:
+            - strong [ref=f1e712]: instantiate.ts
+          - group [ref=f1e713]:
+            - strong [ref=f1e715]: bind.ts
+          - group [ref=f1e716]:
+            - strong [ref=f1e718]: assemble.ts
+          - group [ref=f1e719]:
+            - strong [ref=f1e721]: validate.ts
+          - group [ref=f1e722]:
+            - strong [ref=f1e724]: diagnose.ts
+          - group [ref=f1e725]:
+            - strong [ref=f1e727]: check.ts
+          - group [ref=f1e728]:
+            - strong [ref=f1e730]: result.ts
+          - group [ref=f1e731]:
+            - strong [ref=f1e733]: memory-store.ts
+          - group [ref=f1e734]:
+            - strong [ref=f1e736]: disk-store.ts
+          - group [ref=f1e737]:
+            - strong [ref=f1e739]: system-clock.ts
+          - group [ref=f1e740]:
+            - strong [ref=f1e742]: registry.ts
+          - group [ref=f1e743]:
+            - strong [ref=f1e745]: resource.ts
+          - group [ref=f1e746]:
+            - strong [ref=f1e748]: transaction.ts
+          - group [ref=f1e749]:
+            - strong [ref=f1e751]: endpoint.ts
+          - group [ref=f1e752]:
+            - strong [ref=f1e754]: server.ts
+          - group [ref=f1e755]:
+            - strong [ref=f1e757]: client.ts
+          - group [ref=f1e758]:
+            - strong [ref=f1e760]: presenter.ts
+          - group [ref=f1e761]:
+            - strong [ref=f1e763]: shell.ts
+          - group [ref=f1e764]:
+            - strong [ref=f1e766]: parse.ts
+          - group [ref=f1e767]:
+            - strong [ref=f1e769]: execute.ts
+          - group [ref=f1e770]:
+            - strong [ref=f1e772]: main.ts
+          - group [ref=f1e773]
+          - group [ref=f1e774]
+          - group [ref=f1e775]
+          - group [ref=f1e776]
+          - group [ref=f1e777]
+          - group [ref=f1e778]
+          - group [ref=f1e779]
+          - group [ref=f1e780]
+          - group [ref=f1e781]
+          - group [ref=f1e782]
+          - group [ref=f1e783]
+          - group [ref=f1e784]
+          - group [ref=f1e785]
+          - group [ref=f1e786]
+          - group [ref=f1e787]
+          - group [ref=f1e788]
+          - group [ref=f1e789]
+          - group [ref=f1e790]
+          - group [ref=f1e791]
+          - group [ref=f1e792]
+          - group [ref=f1e793]
+          - group [ref=f1e794]
+          - group [ref=f1e795]
+          - group [ref=f1e796]
+          - group [ref=f1e797]
+          - group [ref=f1e798]
+          - group [ref=f1e799]
+          - group [ref=f1e800]
+          - group [ref=f1e801]
+          - group [ref=f1e802]
+          - group [ref=f1e803]
+          - group [ref=f1e804]
+          - group [ref=f1e805]
+          - group [ref=f1e806]
+          - group [ref=f1e807]
+          - group [ref=f1e808]
+          - group [ref=f1e809]
+          - group [ref=f1e810]
+          - group [ref=f1e811]
+          - group [ref=f1e812]
+          - group [ref=f1e813]
+          - group [ref=f1e814]
+          - group [ref=f1e815]
+          - group [ref=f1e816]
+          - group [ref=f1e817]
+          - group [ref=f1e818]
+          - group [ref=f1e819]
+          - group [ref=f1e820]
+        - generic:
+          - img "Twelve law-routed wires":
+            - 'generic "w01: node-1 → node-2"':
+              - generic [ref=f1e821] [cursor=pointer]
+            - 'generic "w02: node-1 → node-3"':
+              - generic [ref=f1e822] [cursor=pointer]
+            - 'generic "w03: node-1 → node-4"':
+              - generic [ref=f1e823] [cursor=pointer]
+            - 'generic "w04: node-1 → node-5"':
+              - generic [ref=f1e824] [cursor=pointer]
+            - 'generic "w05: node-1 → node-7"':
+              - generic [ref=f1e825] [cursor=pointer]
+            - 'generic "w06: node-1 → node-9"':
+              - generic [ref=f1e826] [cursor=pointer]
+            - 'generic "w07: node-1 → node-11"':
+              - generic [ref=f1e827] [cursor=pointer]
+            - 'generic "w08: node-1 → node-15"':
+              - generic [ref=f1e828] [cursor=pointer]
+            - 'generic "w09: node-1 → node-19"':
+              - generic [ref=f1e829] [cursor=pointer]
+            - 'generic "w10: node-1 → node-23"':
+              - generic [ref=f1e830] [cursor=pointer]
+            - 'generic "w11: node-5 → node-6"':
+              - generic [ref=f1e831] [cursor=pointer]
+            - 'generic "w12: node-7 → node-6"':
+              - generic [ref=f1e832] [cursor=pointer]
+            - 'generic "w13: node-8 → node-6"':
+              - generic [ref=f1e833] [cursor=pointer]
+            - 'generic "w14: node-9 → node-6"':
+              - generic [ref=f1e834] [cursor=pointer]
+            - 'generic "w15: node-10 → node-6"':
+              - generic [ref=f1e835] [cursor=pointer]
+            - 'generic "w16: node-14 → node-6"':
+              - generic [ref=f1e836] [cursor=pointer]
+            - 'generic "w17: node-18 → node-6"':
+              - generic [ref=f1e837] [cursor=pointer]
+            - 'generic "w18: node-22 → node-6"':
+              - generic [ref=f1e838] [cursor=pointer]
+            - 'generic "w19: node-26 → node-6"':
+              - generic [ref=f1e839] [cursor=pointer]
+            - 'generic "w20: node-14 → node-15"':
+              - generic [ref=f1e840] [cursor=pointer]
+            - 'generic "w21: node-18 → node-19"':
+              - generic [ref=f1e841] [cursor=pointer]
+            - 'generic "w22: node-22 → node-23"':
+              - generic [ref=f1e842] [cursor=pointer]
+            - 'generic "w23: node-26 → node-27"':
+              - generic [ref=f1e843] [cursor=pointer]
+            - 'generic "w24: node-30 → node-31"':
+              - generic [ref=f1e844] [cursor=pointer]
+            - 'generic "w25: node-34 → node-35"':
+              - generic [ref=f1e845] [cursor=pointer]
+            - 'generic "w26: node-37 → node-38"':
+              - generic [ref=f1e846] [cursor=pointer]
+            - 'generic "w27: node-1 → node-31"':
+              - generic [ref=f1e847] [cursor=pointer]
+            - 'generic "w28: node-5 → node-35"':
+              - generic [ref=f1e848] [cursor=pointer]
+            - 'generic "w29: node-7 → node-38"':
+              - generic [ref=f1e849] [cursor=pointer]
+            - 'generic "w30: node-10 → node-40"':
+              - generic [ref=f1e850] [cursor=pointer]
+            - 'generic "w31: node-2 → node-3"':
+              - generic [ref=f1e851] [cursor=pointer]
+            - 'generic "w32: node-3 → node-4"':
+              - generic [ref=f1e852] [cursor=pointer]
+            - 'generic "w33: node-4 → node-5"':
+              - generic [ref=f1e853] [cursor=pointer]
+            - 'generic "w34: node-7 → node-8"':
+              - generic [ref=f1e854] [cursor=pointer]
+            - 'generic "w35: node-9 → node-10"':
+              - generic [ref=f1e855] [cursor=pointer]
+            - 'generic "w36: node-11 → node-12"':
+              - generic [ref=f1e856] [cursor=pointer]
+            - 'generic "w37: node-12 → node-13"':
+              - generic [ref=f1e857] [cursor=pointer]
+            - 'generic "w38: node-13 → node-14"':
+              - generic [ref=f1e858] [cursor=pointer]
+            - 'generic "w39: node-15 → node-16"':
+              - generic [ref=f1e859] [cursor=pointer]
+            - 'generic "w40: node-16 → node-17"':
+              - generic [ref=f1e860] [cursor=pointer]
+            - 'generic "w41: node-17 → node-18"':
+              - generic [ref=f1e861] [cursor=pointer]
+            - 'generic "w42: node-19 → node-20"':
+              - generic [ref=f1e862] [cursor=pointer]
+            - 'generic "w43: node-20 → node-21"':
+              - generic [ref=f1e863] [cursor=pointer]
+            - 'generic "w44: node-21 → node-22"':
+              - generic [ref=f1e864] [cursor=pointer]
+            - 'generic "w45: node-23 → node-24"':
+              - generic [ref=f1e865] [cursor=pointer]
+            - 'generic "w46: node-24 → node-25"':
+              - generic [ref=f1e866] [cursor=pointer]
+            - 'generic "w47: node-25 → node-26"':
+              - generic [ref=f1e867] [cursor=pointer]
+            - 'generic "w48: node-27 → node-28"':
+              - generic [ref=f1e868] [cursor=pointer]
+            - 'generic "w49: node-28 → node-29"':
+              - generic [ref=f1e869] [cursor=pointer]
+            - 'generic "w50: node-29 → node-30"':
+              - generic [ref=f1e870] [cursor=pointer]
+            - 'generic "w51: node-31 → node-32"':
+              - generic [ref=f1e871] [cursor=pointer]
+            - 'generic "w52: node-32 → node-33"':
+              - generic [ref=f1e872] [cursor=pointer]
+            - 'generic "w53: node-33 → node-34"':
+              - generic [ref=f1e873] [cursor=pointer]
+            - 'generic "w54: node-35 → node-36"':
+              - generic [ref=f1e874] [cursor=pointer]
+            - 'generic "w55: node-36 → node-37"':
+              - generic [ref=f1e875] [cursor=pointer]
+            - 'generic "w56: node-38 → node-39"':
+              - generic [ref=f1e876] [cursor=pointer]
+            - 'generic "w57: node-39 → node-40"':
+              - generic [ref=f1e877] [cursor=pointer]
+            - 'generic "w58: node-1 → node-6"':
+              - generic [ref=f1e878] [cursor=pointer]
+            - 'generic "w59: node-3 → node-5"':
+              - generic [ref=f1e879] [cursor=pointer]
+            - 'generic "w60: node-3 → node-6"':
+              - generic [ref=f1e880] [cursor=pointer]
+            - 'generic "w61: node-2 → node-4"':
+              - generic [ref=f1e881] [cursor=pointer]
+            - 'generic "w62: node-2 → node-5"':
+              - generic [ref=f1e882] [cursor=pointer]
+            - 'generic "w63: node-2 → node-6"':
+              - generic [ref=f1e883] [cursor=pointer]
+            - 'generic "w64: node-4 → node-6"':
+              - generic [ref=f1e884] [cursor=pointer]
+            - 'generic "w65: node-11 → node-14"':
+              - generic [ref=f1e885] [cursor=pointer]
+            - 'generic "w66: node-12 → node-14"':
+              - generic [ref=f1e886] [cursor=pointer]
+            - 'generic "w67: node-11 → node-13"':
+              - generic [ref=f1e887] [cursor=pointer]
+            - 'generic "w68: node-20 → node-22"':
+              - generic [ref=f1e888] [cursor=pointer]
+            - 'generic "w69: node-19 → node-22"':
+              - generic [ref=f1e889] [cursor=pointer]
+            - 'generic "w70: node-19 → node-21"':
+              - generic [ref=f1e890] [cursor=pointer]
+            - 'generic "w71: node-15 → node-17"':
+              - generic [ref=f1e891] [cursor=pointer]
+            - 'generic "w72: node-16 → node-18"':
+              - generic [ref=f1e892] [cursor=pointer]
+            - 'generic "w73: node-27 → node-30"':
+              - generic [ref=f1e893] [cursor=pointer]
+            - 'generic "w74: node-15 → node-18"':
+              - generic [ref=f1e894] [cursor=pointer]
+            - 'generic "w75: node-27 → node-29"':
+              - generic [ref=f1e895] [cursor=pointer]
+    - generic "Control Panel" [ref=f1e896]:
+      - button "Zoom In" [ref=f1e897] [cursor=pointer]
+      - button "Zoom Out" [ref=f1e900] [cursor=pointer]
+      - button "Fit View" [ref=f1e903] [cursor=pointer]
+    - link "React Flow attribution" [ref=f1e907] [cursor=pointer]:
+      - /url: https://reactflow.dev/attribution
+      - text: React Flow
+  - generic [ref=f1e909]: 1193 inspectable areas · 0 two-wire demonstrations
+```

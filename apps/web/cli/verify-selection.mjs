@@ -1,7 +1,7 @@
 /** Browser acceptance body, invoked by verify-selection.py through installed Playwright CLI.
  * Assertion/browser failures reach that runner; rerun safely replaces this milestone's evidence.
  */
-const directory = 'output/playwright/selection/';
+const directory = 'output/playwright/nested-wires/m4-selection-';
 const messages = [];
 function assert(value, message) {
   if (!value) throw new Error(`FAIL ${message}`);
@@ -56,8 +56,8 @@ async function state(page, primary, secondary, labelIds = []) {
       opacity: Number(getComputedStyle(element).opacity),
     })),
   );
-  assert(actual.filter((item) => item.id.startsWith('node-')).length === 22, '22 nodes');
-  assert(actual.filter((item) => item.id.startsWith('w')).length === 18, '18 wires');
+  assert(actual.filter((item) => item.id.startsWith('node-')).length === 24, '24 nodes');
+  assert(actual.filter((item) => item.id.startsWith('w')).length === 26, '26 wires');
   actual.forEach((item) => checkObject(item, primary, secondary));
   await labels(page, labelIds);
   await decorations(page, primary !== '');
@@ -170,12 +170,12 @@ export async function verify(page) {
   assert(before === 1, `instrumented pipeline executes once (actual ${before})`);
   const baseline = await geometry(page);
   await state(page, '', []);
-  pass('2a load: 0 visible labels; all 22 nodes / 18 wires unselected');
+  pass('2a load: 0 visible labels; all 24 nodes / 26 wires unselected');
   await page.screenshot({ path: `${directory}default.png` });
   await clickNode(page, 'node-7');
-  await state(page, 'node-7', ['w12', 'w13', 'node-12', 'node-5']);
+  await state(page, 'node-7', ['w12', 'w13', 'w21', 'node-12', 'node-5', 'node-23']);
   pass(
-    '2b node-7 primary; only w12 + w13 + node-12 + node-5 secondary; every other node/wire dim; 0 labels (40/40 class assertions)',
+    '2b node-7 primary; only w12 + w13 + w21 + node-12 + node-5 + node-23 secondary; every other node/wire dim; 0 labels (50/50 class assertions)',
   );
   await unchanged(page, before, baseline, 'b');
   await page.screenshot({ path: `${directory}node-selected.png` });
@@ -183,7 +183,7 @@ export async function verify(page) {
   await state(page, 'w06', ['node-8', 'node-10'], ['w06']);
   const label = await midpoint(page);
   pass(
-    '2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (40/40 class assertions)',
+    '2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (50/50 class assertions)',
   );
   await unchanged(page, before, baseline, 'c');
   await page.screenshot({ path: `${directory}wire-selected.png` });
@@ -197,7 +197,7 @@ export async function verify(page) {
   await clickNode(page, 'node-22');
   await state(page, 'node-22', []);
   pass(
-    '2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (40/40 class assertions)',
+    '2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (50/50 class assertions)',
   );
   await unchanged(page, before, baseline, 'e');
   await clickNode(page, 'node-5');
@@ -211,7 +211,7 @@ export async function verify(page) {
   await clickWire(page, 'w04');
   await state(page, 'w04', ['node-5', 'node-6'], ['w04']);
   pass(
-    '2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (40/40 class assertions)',
+    '2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (50/50 class assertions)',
   );
   await unchanged(page, before, baseline, 'g');
   await clickWire(page, 'w04');
@@ -223,6 +223,28 @@ export async function verify(page) {
     'extra: primary wire toggles off; secondary node becomes primary with fresh one-hop neighbourhood',
   );
   await unchanged(page, before, baseline, 'extra');
+  await clear(page);
+  await clickNode(page, 'node-23');
+  await state(page, 'node-23', [
+    'w19',
+    'w20',
+    'w21',
+    'w22',
+    'w23',
+    'w24',
+    'node-2',
+    'node-4',
+    'node-7',
+    'node-10',
+    'node-13',
+    'node-19',
+  ]);
+  pass('hub node-23: exactly w19–w24 and their six sources secondary; no labels');
+  await unchanged(page, before, baseline, 'hub');
+  await clickNode(page, 'node-24');
+  await state(page, 'node-24', ['w25', 'w26', 'node-8', 'node-20']);
+  pass('api node-24: exactly w25/w26 and node-8/node-20 secondary; no labels');
+  await unchanged(page, before, baseline, 'api');
   await clear(page);
   return {
     messages,

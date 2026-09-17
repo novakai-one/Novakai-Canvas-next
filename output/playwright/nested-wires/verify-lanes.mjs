@@ -1,13 +1,16 @@
-/** Standalone M3 geometry acceptance. Node owns assertion failures; no scene mutation or test files.
+/** Standalone M4 geometry acceptance. Node owns assertion failures; no scene mutation or test files.
  * Run: node --import tsx output/playwright/nested-wires/verify-lanes.mjs
  */
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { register } from 'tsx/esm/api';
 register();
-const { createNestedRoadScene, inspectNestedWires } =
+const { createNestedRoadScene, inspectNestedWires, fanInHubSceneSpec } =
   await import('../../../capability/layout/contract/index.ts');
 await import('./verify-m3-topology.mjs');
-const scene = createNestedRoadScene();
+await import('./verify-m4-pin-preservation.mjs');
+const scene = createNestedRoadScene({ spec: fanInHubSceneSpec });
 assert(scene.wiring?.ok);
 const wires = scene.wiring.value;
 const roads = new Map(scene.roads.map((r) => [r.id, r]));
@@ -173,20 +176,10 @@ function intersection(a, b) {
   if (x0 > x1 || y0 > y1) return null;
   return { x: x0, y: y0, length: x1 - x0 + y1 - y0 };
 }
-function sharedTerminal(a, b, hit) {
-  const common = [a.sourcePortId, a.targetPortId].filter((id) =>
-    [b.sourcePortId, b.targetPortId].includes(id),
-  );
-  return common.some((id) => {
-    const port = scene.ports.find((p) => p.portId === id);
-    return port.nodeId.startsWith('node-') && port.point.x === hit.x && port.point.y === hit.y;
-  });
-}
 function collision(a, b, sa, sb) {
   const hit = intersection(sa, sb);
   if (hit === null) return [];
   assert.equal(hit.length, 0, `${a.id}/${b.id} overlap ${JSON.stringify(hit)}`);
-  if (sharedTerminal(a, b, hit)) return [hit];
   assert.notEqual(
     sa.from.x === sa.to.x,
     sb.from.x === sb.to.x,
@@ -202,24 +195,170 @@ function collisions(a, b) {
   return a.segments.flatMap((sa) => b.segments.flatMap((sb) => collision(a, b, sa, sb)));
 }
 check(
-  '3a global segment audit: zero same-axis overlap or parallel touch; perpendicular junction crossings and exact common node-port terminals only',
+  '3a global segment audit: zero same-axis overlap or parallel touch; perpendicular junction crossings only; NO shared terminal exemption',
   () => {
     pairs(wires).forEach(([a, b]) => collisions(a, b));
   },
 );
+check('3g two complete scene JSON serialisations are byte-identical', () =>
+  assert.equal(
+    JSON.stringify(scene),
+    JSON.stringify(createNestedRoadScene({ spec: fanInHubSceneSpec })),
+  ),
+);
+
+check('M4 exactly 24 nodes / 26 wires; six hub imports and two api exports', () => {
+  assert.equal(scene.nodes.length, 24);
+  assert.equal(wires.length, 26);
+  assert.deepEqual(
+    wires.filter((w) => w.to === 'node-23').map((w) => [w.id, w.from]),
+    [
+      [19, 2],
+      [20, 4],
+      [21, 7],
+      [22, 10],
+      [23, 13],
+      [24, 19],
+    ].map(([id, from]) => [`w${id}`, `node-${from}`]),
+  );
+  assert.deepEqual(
+    wires.filter((w) => w.from === 'node-24').map((w) => [w.id, w.to]),
+    [
+      ['w25', 'node-8'],
+      ['w26', 'node-20'],
+    ],
+  );
+  assert.equal(scene.nodes.find((n) => n.id === 'node-23').ports.length, 4);
+});
+check('M4 hub driveway >=3 lanes, width = 12 + 12*lanes, arrival lane order ascending', () => {
+  const drives = scene.roads.filter((r) => r.access?.nodeId === 'node-23' && r.wireLaneCount >= 3);
+  assert(drives.length > 0);
+  for (const road of drives) {
+    assert.equal(width(road), 12 + 12 * road.wireLaneCount);
+    const arrivals = roadLanes(road)
+      .toSorted((a, b) => a.index - b.index)
+      .map((l) => l.wireId);
+    assert.deepEqual(arrivals, arrivals.toSorted());
+    console.log(
+      `PASS hub capacity: ${road.id}; lanes=${road.wireLaneCount}; width=${width(road)}; order=${arrivals}`,
+    );
+  }
+});
+function ownNodeDriveway(wire, segment) {
+  const owner = roads.get(segment.corridorId).access?.nodeId;
+  if (owner?.startsWith('node-')) assert([wire.from, wire.to].includes(owner));
+}
+function ownTerminals(wire) {
+  const source = scene.ports.find((p) => p.portId === wire.sourcePortId);
+  const target = scene.ports.find((p) => p.portId === wire.targetPortId);
+  assert.equal(source.nodeId, wire.from);
+  assert.equal(target.nodeId, wire.to);
+  assert.deepEqual(wire.segments[0].from, expectedPin(wire, source));
+  assert.deepEqual(wire.segments.at(-1).to, expectedPin(wire, target));
+  wire.segments.forEach((segment) => ownNodeDriveway(wire, segment));
+}
+check('M4 every terminal and node driveway belongs to its own source/target', () =>
+  wires.forEach(ownTerminals),
+);
+function hubSegments(wire) {
+  return wire.segments.filter((s) => roads.get(s.corridorId).access?.nodeId === 'node-23');
+}
+function hubCollision([a, b]) {
+  hubSegments(a).forEach((sa) => hubSegments(b).forEach((sb) => collision(a, b, sa, sb)));
+}
+check('M4 hub entry driveways never merge and form planar fans to distinct pins', () => {
+  pairs(wires.filter((w) => w.to === 'node-23')).forEach(hubCollision);
+});
+check('M4 hub final stems have no positive-length overlap', () => {
+  const a = wires.find((w) => w.id === 'w20');
+  const b = wires.find((w) => w.id === 'w21');
+  const hit = intersection(a.segments.at(-1), b.segments.at(-1));
+  console.log(`WITNESS w20/w21 final stems: ${JSON.stringify(hit)}`);
+  assert.equal(hit?.length ?? 0, 0);
+});
+function expectedPin(wire, port) {
+  const group = wires
+    .filter((w) => [w.sourcePortId, w.targetPortId].includes(port.portId))
+    .toSorted((a, b) => a.id.localeCompare(b.id));
+  const lane = lanes.find((l) => l.wireId === wire.id && l.roadId === `drive:${port.portId}`);
+  const cross = ['left', 'right'].includes(port.side) ? 'y' : 'x';
+  return {
+    ...port.point,
+    [cross]:
+      port.point[cross] +
+      (group.indexOf(wire) - (group.length - 1) / 2) * 6 * Math.sign(lane.offset),
+  };
+}
+function verifyNodeSize(node) {
+  assert.equal(node.bounds.width, 192);
+  assert.equal(node.bounds.height, 96);
+}
+function pinPosition(wire, port) {
+  return wire.sourcePortId === port.portId ? wire.segments[0].from : wire.segments.at(-1).to;
+}
+function verifyPin(wire, port, node, c) {
+  const actual = pinPosition(wire, port);
+  assert.deepEqual(actual, expectedPin(wire, port));
+  assert(actual[c] >= node.bounds[c] + 6);
+  assert(actual[c] <= node.bounds[c] + node.bounds[c === 'x' ? 'width' : 'height'] - 6);
+  return actual;
+}
+function verifyFanPair([a, b], port) {
+  const segments = (wire) => wire.segments.filter((s) => s.corridorId === `drive:${port.portId}`);
+  segments(a).forEach((sa) =>
+    segments(b).forEach((sb) =>
+      assert.equal(intersection(sa, sb), null, `${port.portId}: nonplanar fan`),
+    ),
+  );
+}
+function verifyRow(port) {
+  const group = wires
+    .filter((w) => [w.sourcePortId, w.targetPortId].includes(port.portId))
+    .toSorted((a, b) => a.id.localeCompare(b.id));
+  if (!group.length) return [];
+  const c = ['left', 'right'].includes(port.side) ? 'y' : 'x';
+  const node = scene.nodes.find((n) => n.id === port.nodeId);
+  const points = group.map((w) => verifyPin(w, port, node, c));
+  const coordinates = points.map((p) => p[c]);
+  assert.equal((Math.min(...coordinates) + Math.max(...coordinates)) / 2, port.point[c]);
+  coordinates.slice(1).forEach((value, i) => assert.equal(Math.abs(value - coordinates[i]), 6));
+  pairs(group).forEach((pair) => verifyFanPair(pair, port));
+  return points.map((p) => JSON.stringify(p));
+}
 check(
-  '3f no shared positive-length segments or nonjunction crossings; w12/w18 share only the exact node-12 terminal inside its driveway',
+  '3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals',
   () => {
-    const shared = ['w12', 'w18'].map((id) => wires.find((w) => w.id === id));
-    const driveway = 'drive:node-12:exit-bottom';
-    const first = shared[0].segments.filter((s) => s.corridorId === driveway),
-      second = shared[1].segments.filter((s) => s.corridorId === driveway);
-    const hits = first.flatMap((a) => second.map((b) => intersection(a, b)).filter(Boolean));
-    const port = scene.ports.find((p) => p.portId === 'node-12:exit-bottom');
-    assert(hits.length > 0);
-    hits.forEach((p) => assert.deepEqual(p, { ...port.point, length: 0 }));
+    scene.nodes.forEach(verifyNodeSize);
+    const all = scene.ports.filter((p) => p.nodeId.startsWith('node-')).flatMap(verifyRow);
+    assert.equal(new Set(all).size, all.length);
   },
 );
-check('3g two complete scene JSON serialisations are byte-identical', () =>
-  assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene())),
-);
+if (process.argv.includes('--oracle'))
+  check('3e all eight hub oracle measurements reported; >10% flagged', () => {
+    const report = JSON.parse(readFileSync(new URL('./oracle.json', import.meta.url)));
+    const hub = report.wires.filter((w) => Number(w.wire.slice(1)) >= 19);
+    assert.equal(hub.length, 8);
+    hub.forEach(reportOracle);
+  });
+
+function reportOracle(row) {
+  const wire = wires.find((w) => w.id === row.wire);
+  const length = wire.segments.reduce(
+    (sum, s) => sum + Math.abs(s.to.x - s.from.x) + Math.abs(s.to.y - s.from.y),
+    0,
+  );
+  assert.equal(length, row.length);
+  assert(row.oracle > 0 && row.oracle <= length);
+  const flag = row.detourPercent > 10 ? ' FLAG >10%: orchestrator visual review' : '';
+  console.log(
+    `PASS ${row.wire}: length=${length}; oracle=${row.oracle}; detour=${row.detourPercent.toFixed(4)}%${flag}`,
+  );
+}
+
+check('DoD 9 canonical scene matches full regenerated M4 serialization', () => {
+  assert.equal(readFileSync(new URL('./scene.json', import.meta.url), 'utf8'), JSON.stringify(scene, null, 2) + '\n');
+});
+check('DoD 3f amended visual crossing budget', () => {
+  const output = execFileSync('python3', ['output/playwright/nested-wires/verify-m4-visual-budget.py'], { encoding: 'utf8' });
+  console.log(output.split('\n').filter((line) => line.startsWith('MEASURE') || line.startsWith('PASS')).join('\n'));
+});

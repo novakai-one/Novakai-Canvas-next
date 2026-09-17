@@ -2,7 +2,11 @@
 import assert from 'node:assert/strict';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { createNestedRoadScene, inspectNestedWires } from '@novakai/canvas-layout';
+import {
+  createNestedRoadScene,
+  inspectNestedWires,
+  fanInHubSceneSpec,
+} from '@novakai/canvas-layout';
 import type { RoadPrototypeScene, NestedWire } from '@novakai/canvas-layout';
 
 const expected = [
@@ -24,6 +28,14 @@ const expected = [
   [9, 17],
   [16, 18],
   [12, 8],
+  [2, 23],
+  [4, 23],
+  [7, 23],
+  [10, 23],
+  [13, 23],
+  [19, 23],
+  [24, 8],
+  [24, 20],
 ];
 function wireData(scene: RoadPrototypeScene): readonly NestedWire[] {
   assert(scene.wiring?.ok, JSON.stringify(scene.wiring));
@@ -40,12 +52,12 @@ function portEnds(scene: RoadPrototypeScene, wire: NestedWire): void {
   assert.equal(target.nodeId, wire.to);
   assert(['right', 'bottom'].includes(source.side));
   assert(['top', 'left'].includes(target.side));
-  assert.deepEqual(first.from, source.point);
-  assert.deepEqual(last.to, target.point);
+  assert.deepEqual(inspectNestedWires(scene, [wire]).continuity, []);
   assert.equal(first.corridorId, `drive:${source.portId}`);
   assert.equal(last.corridorId, `drive:${target.portId}`);
 }
-function geometry(scene: RoadPrototypeScene): void {
+function geometry(): void {
+  const scene = createNestedRoadScene();
   const baseline = execFileSync('git', ['show', '1716111:output/playwright/nested/scene.json'], {
     encoding: 'utf8',
   });
@@ -62,10 +74,10 @@ function verify(scene: RoadPrototypeScene): void {
     wires.map((w) => [w.id, w.from, w.to]),
     expected.map(([a, b], i) => [`w${String(i + 1).padStart(2, '0')}`, `node-${a}`, `node-${b}`]),
   );
-  console.log('PASS 3a exactly 18 wires with all prescribed IDs and endpoints.');
+  console.log('PASS 3a exactly 26 wires with all prescribed IDs and endpoints.');
   wires.forEach((w) => portEnds(scene, w));
   console.log(
-    'PASS 3b all 18 start in right/bottom source driveways and end in top/left target driveways.',
+    'PASS 3b all 26 start in right/bottom source driveways and end in top/left target driveways.',
   );
   const inspection = inspectNestedWires(scene, wires);
   assert.deepEqual(inspection.continuity, []);
@@ -77,11 +89,14 @@ function verify(scene: RoadPrototypeScene): void {
   console.log('PASS 3d zero segments intersect node body interiors.');
   assert.deepEqual(inspection.boundaries, []);
   console.log('PASS 3e zero section-boundary crossings at non-gate locations.');
-  assert.equal(JSON.stringify(wires), JSON.stringify(wireData(createNestedRoadScene())));
+  assert.equal(
+    JSON.stringify(wires),
+    JSON.stringify(wireData(createNestedRoadScene({ spec: fanInHubSceneSpec }))),
+  );
   console.log('PASS 3f two consecutive scene generations have byte-identical wire path data.');
 }
-const scene = createNestedRoadScene();
-geometry(scene);
+const scene = createNestedRoadScene({ spec: fanInHubSceneSpec });
+geometry();
 verify(scene);
 mkdirSync('output/playwright/nested-wires', { recursive: true });
 writeFileSync('output/playwright/nested-wires/scene.json', JSON.stringify(scene, null, 2) + '\n');

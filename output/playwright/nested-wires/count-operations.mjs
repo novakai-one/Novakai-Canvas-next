@@ -1,9 +1,12 @@
 /** Audit-only instrumentation of executed TypeScript; never loaded by the app. */
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import ts from 'typescript';
-import { createNestedRoadScene } from '../../../capability/layout/contract/index.ts';
+import {
+  createNestedRoadScene,
+  fanInHubSceneSpec,
+} from '../../../capability/layout/contract/index.ts';
 
 const require = createRequire(import.meta.url);
 const { build } = createRequire(require.resolve('tsx/package.json'))('esbuild');
@@ -163,8 +166,10 @@ await build({
 });
 const { createNestedRoadScene: instrumented } =
   await import('../../../.local/nested-wire-meter/scene.mjs');
+await unlink('.local/nested-wire-meter/scene.mjs');
 stage = 'unattributed-setup';
 const scene = instrumented({
+  spec: fanInHubSceneSpec,
   measure: (name, run) => {
     calls.set(name, (calls.get(name) ?? 0) + 1);
     stage = name;
@@ -173,8 +178,12 @@ const scene = instrumented({
     return result;
   },
 });
-assert.equal(JSON.stringify(scene), JSON.stringify(createNestedRoadScene()));
+assert.equal(
+  JSON.stringify(scene),
+  JSON.stringify(createNestedRoadScene({ spec: fanInHubSceneSpec })),
+);
 const probe = instrumented({
+  spec: fanInHubSceneSpec,
   copies: 2,
   measure: (name, run) => {
     stage = `probe:${name}`;
@@ -183,20 +192,23 @@ const probe = instrumented({
     return result;
   },
 });
-assert.equal(JSON.stringify(probe), JSON.stringify(createNestedRoadScene({ copies: 2 })));
+assert.equal(
+  JSON.stringify(probe),
+  JSON.stringify(createNestedRoadScene({ copies: 2, spec: fanInHubSceneSpec })),
+);
 assert(
   [...calls.values()].every((count) => count === 1),
   'Every stage must execute exactly once',
 );
-assert.equal(scene.nodes.length, 22);
-assert.equal(probe.nodes.length, 44);
+assert.equal(scene.nodes.length, 24);
+assert.equal(probe.nodes.length, 48);
 assert.equal(probe.sections.length, 8);
-const southOffset = probe.nodes[22].bounds.y - scene.nodes[0].bounds.y;
+const southOffset = probe.nodes[24].bounds.y - scene.nodes[0].bounds.y;
 assert.equal(southOffset, 1920);
-assert.deepEqual(probe.nodes.slice(0, 22), scene.nodes);
+assert.deepEqual(probe.nodes.slice(0, 24), scene.nodes);
 scene.nodes.forEach((node, i) => {
-  const copy = probe.nodes[i + 22];
-  assert.equal(copy.id, `node-${i + 23}`);
+  const copy = probe.nodes[i + 24];
+  assert.equal(copy.id, `node-${Number(node.id.slice(5)) + 24}`);
   assert.equal(copy.sectionId, renumberSection(node.sectionId));
   assert.deepEqual(copy.bounds, { ...node.bounds, y: node.bounds.y + southOffset });
   assert.deepEqual(
@@ -259,13 +271,20 @@ const report = {
   instrumentedSceneIdentical: true,
   stageInvocations: Object.fromEntries(calls),
 };
+await writeFile(
+  'output/playwright/nested-wires/calculations.json',
+  JSON.stringify(report, null, 2) + '\n',
+);
+console.log(
+  `MEASURE routing=${wireTotal}; compile=${compiledTotal()}; total=${report.scalingProbe.totalOperations}; maxLeg=${Math.max(...report.perLeg.map((l) => l.operations))}; stages=${JSON.stringify(report.stageInvocations)}`,
+);
 for (const [id, value] of Object.entries(wireCounts)) {
   const wire = scene.wiring.value.find((w) => w.id === id);
   const ceiling = (wire.gates.length + 1) * 60;
   assert(value.total <= ceiling, `${id}: ${value.total} > ${ceiling}`);
 }
-assert(wireTotal <= 700);
-assert(compiledTotal() <= 15000);
+assert(wireTotal <= 1000, `wire routing ${wireTotal} > 1000`);
+assert(compiledTotal() <= 20000);
 assert(report.perLeg.every((l) => l.operations <= 60));
 assert(report.scalingProbe.ratio <= 2.5);
 await writeFile(
@@ -281,14 +300,14 @@ Object.entries(wireCounts).forEach(([id, value]) =>
   ),
 );
 console.log(
-  `PASS routing total=${wireTotal} <=700; maximum law leg=${Math.max(...report.perLeg.map((l) => l.operations))} <=60`,
+  `PASS routing total=${wireTotal} <=1000; maximum law leg=${Math.max(...report.perLeg.map((l) => l.operations))} <=60`,
 );
 console.log(
-  `PASS lane allocation + registry compilation=${compiledTotal()} <=15000; components=${JSON.stringify(report.laneNetwork.components)}`,
+  `PASS lane allocation + registry compilation=${compiledTotal()} <=20000; components=${JSON.stringify(report.laneNetwork.components)}`,
 );
 console.log(`PASS per-wire road-pair discovery checks=${discoveryLoops.length}`);
 console.log(
-  `PASS 22/44 nodes: total ops=${report.scalingProbe.totalOperations.join('/')}; growth=${report.scalingProbe.ratio} <=2.5; byte-identical instrumented scenes`,
+  `PASS 24/48 nodes: total ops=${report.scalingProbe.totalOperations.join('/')}; growth=${report.scalingProbe.ratio} <=2.5; byte-identical instrumented scenes`,
 );
 
 console.log(

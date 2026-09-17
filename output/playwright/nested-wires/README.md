@@ -651,3 +651,31 @@ judgment, A/B recommendation, or passing interaction-regression claims. No
 browser/server was launched; port 5190 was untouched. The inherited missing
 M5 drag-runner issue remains unverified. See the report for all nine binary
 DoD statuses and command outputs.
+
+## M7 amended — Part B scale geometry STOP
+
+Orchestrator ruling #4 withdraws compacting to **M7.5**; it was not retried.
+The drag runner is not required on this branch line. The new
+[amended STOP report](scale-scene/stop-report.md) records a fixed-seed semantic
+candidate with six top-level stages, exactly two nested parents (2 + 4 children),
+40 four-port nodes, 75 wires, 12 fan-out, 13 fan-in, and four long-range wires.
+Two generator runs are byte-identical. The candidate generator, `?scale` host,
+and full inherited invariant runner are retained in a replayable patch, not
+installed in the runtime.
+
+The full scan fails: **two coincident wire intervals and four uncertified
+contacts**, with 112 certified contacts and 116 total transverse contacts.
+The first scan stopped on an overlap and undercounted; its 98/1 result is
+superseded by the complete diagnostic scan. Exact witnesses and per-section
+counts are in the report. No wire set was tuned after the failure.
+
+Production source and canonical verifiers are restored. Both full baseline
+serializations equal `f77907c`; templates remains 130/0. Final `pnpm check`
+passes 70 files / 208 tests, with no new test files. Original STOP commit
+`60ae5d7` remains in history. No push or PR.
+
+M7 is **not complete**: scale ops/clone/load probes, all-scene ops table,
+selection execution, screenshots, visual acceptance and Part C A/B remain
+unverified. No browser/server was launched; 5190 was untouched. There is no
+IN-port parameter or adoption. Geometry is the first observed failure at
+40/75; no measured claim about compounding toward 150/300 is available.

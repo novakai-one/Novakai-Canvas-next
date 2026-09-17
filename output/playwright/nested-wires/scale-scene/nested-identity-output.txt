@@ -1,0 +1,46 @@
+PASS frozen nodes: byte-identical to 0e5f21e
+PASS frozen sections: byte-identical to 0e5f21e
+PASS frozen road ids + bounds: byte-identical to 0e5f21e
+PASS frozen wire routes (ordered road sequences): byte-identical to 0e5f21e
+PASS frozen gates: byte-identical to 0e5f21e
+LANE w02 drive:node-1:exit-right: 1 -> 0
+LANE w01 drive:node-1:exit-right: 0 -> 1
+LANE w09 section-1:vertical:536:248: 1 -> 0
+LANE w02 section-1:vertical:536:248: 0 -> 1
+LANE w12 section-1:horizontal:248:200: 2 -> 0
+LANE w18 section-1:horizontal:248:200: 3 -> 1
+LANE w09 section-1:horizontal:248:200: 1 -> 2
+LANE w02 section-1:horizontal:248:200: 0 -> 3
+LANE w19 drive:node-2:exit-bottom: 1 -> 0
+LANE w03 drive:node-2:exit-bottom: 0 -> 1
+LANE w13 drive:node-5:exit-right: 1 -> 0
+LANE w04 drive:node-5:exit-right: 0 -> 1
+LANE w13 section-2:vertical:1680:432: 1 -> 0
+LANE w06 section-2:vertical:1680:432: 0 -> 1
+LANE w13 section-2:vertical:2016:432: 1 -> 0
+LANE w06 section-2:vertical:2016:432: 0 -> 1
+LANE w12 drive:section-2:entry-top: 1 -> 0
+LANE w18 drive:section-2:entry-top: 2 -> 1
+LANE w09 drive:section-2:entry-top: 0 -> 2
+LANE w18 section-2:horizontal:432:1344: 1 -> 0
+LANE w09 section-2:horizontal:432:1344: 0 -> 1
+LANE w22 drive:section-2:exit-bottom: 2 -> 1
+LANE w16 drive:section-2:exit-bottom: 1 -> 2
+LANE w17 drive:node-16:exit-right: 1 -> 0
+LANE w11 drive:node-16:exit-right: 0 -> 1
+LANE w17 section-3:vertical:1208:1368: 1 -> 0
+LANE w11 section-3:vertical:1208:1368: 0 -> 1
+LANE w23 drive:section-3:exit-right: 2 -> 0
+LANE w11 drive:section-3:exit-right: 0 -> 2
+LANE w17 drive:section-4:entry-left: 1 -> 0
+LANE w11 drive:section-4:entry-left: 0 -> 1
+LANE w17 section-4:vertical:1480:1368: 1 -> 0
+LANE w11 section-4:vertical:1480:1368: 0 -> 1
+LANE w24 drive:node-23:entry-left: 3 -> 0
+LANE w20 drive:node-23:entry-left: 0 -> 1
+LANE w21 drive:node-23:entry-left: 1 -> 2
+LANE w22 drive:node-23:entry-left: 2 -> 3
+MEASURE per-wire lane-index diffs=37
+PASS deterministic regeneration: two fresh scene serializations byte-identical
+PASS current canonical scene matches fresh public builder: 24 nodes / 26 wires
+PASS zero new tracked *.test.ts files

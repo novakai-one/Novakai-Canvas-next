@@ -1,0 +1,8 @@
+PASS nested: fresh full public scene and canonical artifact byte-identical to f77907c; sha256=946bb1e9836c4242382a534ab97f4752b24d7bcc230e85be2835f720145a8e8a
+PASS templates: fresh full public scene and canonical artifact byte-identical to f77907c; sha256=1940f9b9619a98fd600299aac5f40376184f9d8915d04e8bcbad0b43b4743253
+PASS all production source unchanged from f77907c; candidate route is retained only in the diagnostic patch
+PASS runner byte identity (not execution): apps/web/cli/verify-selection.mjs
+PASS runner byte identity (not execution): output/playwright/nested-wires/templates-scene/verify-nested-selection.py
+PASS runner byte identity (not execution): output/playwright/nested-wires/verify-m3-selection.py
+PASS runner byte identity (not execution): output/playwright/nested-wires/verify-m4-selection.py
+PASS zero new tracked or untracked *.test.ts; STOP commit 60ae5d7 retained

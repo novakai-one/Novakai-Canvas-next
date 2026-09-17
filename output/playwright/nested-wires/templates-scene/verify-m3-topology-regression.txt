@@ -1,0 +1,14 @@
+$ node --import tsx output/playwright/nested-wires/verify-m3-topology.mjs
+PASS DoD 2: tracked source, ok=true, wires=18; exact six addendum pairs
+PASS DoD 2: w10/w16 gates=["section-2:exit-bottom","section-1:exit-bottom","section-4:entry-top"]
+PASS DoD 2: w11/w17 gates=["section-3:exit-right","section-4:entry-left"]
+PASS DoD 2: w12/w18 gates=["section-3:exit-bottom","section-1:entry-left","section-2:entry-top"]
+PASS DoD 3c: w04/w13 shared=["drive:node-5:exit-right"]; required>=1
+PASS DoD 3c: w07/w14 shared=["drive:node-11:exit-right"]; required>=1
+PASS DoD 3c: w01/w15 shared=["drive:node-1:exit-right"]; required>=1
+PASS DoD 3c: w10/w16 shared=["drive:section-2:exit-bottom","section-1:horizontal:1048:368","drive:section-1:exit-bottom","world:horizontal:1184:64","drive:section-4:entry-top"]; required>=2
+PASS DoD 3c: w11/w17 shared=["drive:node-16:exit-right","section-3:vertical:1208:1368","drive:section-3:exit-right","drive:section-4:entry-left","section-4:vertical:1480:1368"]; required>=2
+PASS DoD 3c: w12/w18 shared=["section-3:vertical:536:1368","drive:node-12:exit-bottom","section-3:horizontal:1608:200","section-3:horizontal:1848:200","drive:section-3:exit-bottom","world:horizontal:1984:64","world:vertical:64:64","drive:section-1:entry-left","section-1:vertical:368:248","section-1:horizontal:248:368","drive:section-2:entry-top","section-2:horizontal:432:1176"]; required>=2
+PASS DoD 3g: complete scene regeneration is byte-identical
+
+EXIT 0

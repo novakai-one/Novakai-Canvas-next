@@ -1,0 +1,6 @@
+RUN 1: 16 nodes / 9 sections / 29 wires; 45 dropped declarations
+RUN 2: 16 nodes / 9 sections / 29 wires; 45 dropped declarations
+PASS diff scene-spec.json: byte-identical
+PASS diff extraction-report.md: byte-identical
+PASS every one of 29 wires has an extraction-report table row
+PASS production source tree: exactly 16 TypeScript files excluding tests

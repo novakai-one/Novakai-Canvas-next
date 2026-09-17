@@ -1,0 +1,4 @@
+$ node --import tsx output/playwright/nested-wires/verify-m45-geometry.mjs
+PASS geometry scope: 865 nonjunction/nonterminal intervals lie exactly on their assigned road lanes; turns confined to registered junctions
+
+EXIT 0

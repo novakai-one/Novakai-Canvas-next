@@ -1,0 +1,51 @@
+[
+  {
+    "runner": "apps/web/cli/verify-nested-wires.ts",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-invariants.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-m3-topology.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-m45-pins.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-m45-geometry.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-structural-identity.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-lanes.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/count-operations.mjs",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-static.py",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-oracle.py",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-m45-topological-bound.py",
+    "exit": 0
+  },
+  {
+    "runner": "output/playwright/nested-wires/verify-m45-evidence.py",
+    "exit": 0,
+    "scope": "unchanged historical-artifact reconciliation; fresh runtime checks listed separately"
+  }
+]

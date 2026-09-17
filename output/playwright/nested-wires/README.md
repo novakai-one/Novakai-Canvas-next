@@ -354,3 +354,115 @@ No routing law, lane, gate, pin-row or topology source was changed. Existing
 M1–M5 verifier scripts and approved references are preserved. Nothing was pushed
 and no PR was opened. **M6 remains incomplete.** Full binary DoD status and
 command output: [resume STOP report](templates-scene/resume-stop-report.md).
+
+## M6 second resume — capacity/projection repaired; acceptance evidence
+
+This entry supersedes the **geometry blocker** in the preceding resume entry;
+the original STOP evidence remains intact for provenance. The current brief's
+item 8 authorizes the corrections described here. Branch stays
+`feat/templates-scene`; nothing is pushed and no PR is opened.
+
+`roads-prototype.html?templates` renders the real capability: **16 production
+TypeScript files, nine directory sections, 29 provider → consumer value wires**.
+Node order is alphabetical by file name; child directory order is alphabetical;
+root order is contract, core, adapters. The deterministic TypeScript-AST extractor
+still drops **3 external and 42 internal type-only declarations**, with **0
+duplicate value declarations** and **no delta from the 29-wire survey**. Tests
+are excluded. Every wire has an import/export source line in the extraction
+report. Both consecutive-run artifact diffs pass. Empty sections still reject
+with `RangeError`; nested-only sections size from their children.
+
+The driveway capacity pass now preserves the gate port plane and reserves the
+entire node fan plus a quarter-pitch forward stem. Source projection consumes
+that retained start instead of backtracking to a turn inside the fan. Rank
+changes across a street use distinct destination-ranked turn rows. No routing
+law, road discovery loop, lane ordering, coordinates in the semantic input,
+or repeated layout stage is introduced. The unchanged canonical `?nested`
+serialization remains byte-identical, including geometry and projected wires.
+
+The [complete templates runner](templates-scene/verify-templates-scene.mjs)
+checks containment, finite geometry, the exact directory tree, deterministic
+rebuild, one-way stage counts, four port sides, exact centered pin rows at pitch
+6 with end margins, planar terminal fans, distinct forward lanes, gate-mouth
+positions, junction-only turns, and every segment-pair contact. **9 off-corridor
+segments → 0; 21 boundary violations → 0; 3 positive-length overlaps → 0.**
+It certifies **130/130 crossings; zero uncertified**. Counts: world **76**,
+contract **12**, core **36**, core/validation **6**, all other sections **0**.
+Every crossing is transverse inside a registered junction. The offline proof
+uses disjoint alternating endpoint ranges and consistent per-road pair-order
+truth tables, including centered terminal-pin domains. Its proof regions include
+terminal fans, are pairwise disjoint, and cannot certify the same crossing twice.
+Full witnesses and negative controls are in
+[crossing-certificates.json](templates-scene/crossing-certificates.json).
+This is an unavoidable-crossing claim under the existing frozen-route/lane laws,
+not a claim that an unrestricted graph layout needs 130 crossings.
+
+Measured with the retained AST operation-count definition (numeric additions,
+subtractions, absolute values and comparisons; excluded operations documented
+in the artifact):
+
+| Measurement | Templates |
+| --- | ---: |
+| Routing operations, all 29 wires | 1,626 |
+| Maximum law leg | 38 (ceiling 60) |
+| Wire registry compilation | 907 |
+| Lane allocation | 9,430 |
+| Network compilation | 11,941 |
+| Lane projection | 6,129 |
+| Compilation subtotal | 28,407 |
+| Total operations, all stages | 36,814 |
+| Per-wire road-pair discovery | 0 |
+| Clone: nodes / wires | 32 / 58, all fresh IDs |
+| Clone total operations | 74,259 |
+| Clone total growth | **2.017140×**, below 2.5× |
+| Five headless navigation-to-ready loads | 393.9, 374.5, 352.1, 368.9, 406.4 ms |
+| Median time-to-load | **374.5 ms** |
+
+[All stage counts and instrumentation limits](templates-scene/operations.json)
+are published, including setup and the doubled graph. The old default-scene
+runner still passes its unchanged ceilings: routing **992**, maximum leg **41**,
+compilation **19,732 ≤ 20,000**. Default compilation rises from 19,683 by 49;
+its total rises from 26,107 to 27,148 because capacity now visits each terminal.
+This adds bounded work; the existing default clone ratio is **1.699610×**.
+The real-graph probe duplicates **both nodes and wires**, unlike the inherited
+synthetic probe that retains its original requests.
+
+**Cost at approximately 150 nodes / 300 wires:** for similar depth, fan degree
+and path length, simple proportional extrapolation is roughly **0.35–0.38 million
+counted operations**, including approximately **16,821 routing operations**.
+That is an estimate, not a measured 150-node build or a browser timing promise.
+The 16→32-node/29→58-wire probe shows no compounding growth for this topology.
+There is no all-road-pairs discovery term. However, per-road sorting and cached
+shared-path comparisons depend on congestion, and network connections contain
+local incoming×outgoing products. Those terms can grow faster than linearly as
+junction degree/shared paths increase; this probe does **not** prove a uniform
+linear bound for arbitrary 300-wire graphs. Browser DOM/render cost is separate
+from this deliberately limited numeric-operation meter.
+
+The two required **1920×1440 headless Chrome fit-view** captures are
+[roads off](templates-scene/templates-roads-off.png) and
+[roads on](templates-scene/templates-roads-on.png). They were captured from this
+worktree's owned server on **5190**, not 5188, and personally inspected along
+with the [contract detail](templates-scene/templates-contract-detail.png).
+All 16 real file labels are present, every node fits the viewport, there are no
+page errors, and the layout counter stays 1. [Browser measurements](templates-scene/browser.json)
+retain all five loads. The unchanged inherited selection assertion body also
+passes against the default scene through a transport redirect to 5190: median
+**253.1 ms**, every selection geometry/camera assertion unchanged.
+
+**What the real data shows:** the main hubs are `contract/api.ts` and
+`core/validation/catalog.ts`, each with eight incident value edges; `errors.ts`
+supplies six consumers. `index.ts` has only three incoming re-export edges and
+no outgoing value edges. The dense trunks are the contract/core boundary and
+the core validation/admission/discovery/expansion roads, not the barrel. The
+four type-only isolated files remain visible as architectural context.
+
+**Visual limits / acceptance status:** the hierarchy and file identities read,
+but the frozen placement leaves large empty panels and long world-road detours.
+The fit overview's labels are small. These do not match the density/polish of
+the binding reference diagrams; the visual review records that limitation
+without claiming a general visual-quality PASS. M5 is absent from this branch
+(the supplied brief says it is developed in another worktree), so no M5 pass is
+invented. The detailed [second-resume report](templates-scene/resume2-report.md)
+lists every DoD result and the outstanding acceptance gates. A green suite and
+geometry certificate alone are **not** declared complete milestone acceptance.

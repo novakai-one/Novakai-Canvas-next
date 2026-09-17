@@ -1,0 +1,10 @@
+$ node --import tsx apps/web/cli/verify-nested-wires.ts
+PASS M3 preserves all node, section and port geometry; road widths derive from lane demand.
+PASS 3a exactly 26 wires with all prescribed IDs and endpoints.
+PASS 3b all 26 start in right/bottom source driveways and end in top/left target driveways.
+PASS 3c every one of 422 segments independently covered by a road/driveway rectangle; all paths continuous.
+PASS 3d zero segments intersect node body interiors.
+PASS 3e zero section-boundary crossings at non-gate locations.
+PASS 3f two consecutive scene generations have byte-identical wire path data.
+
+EXIT 0

@@ -13,45 +13,58 @@ export async function capture(page) {
     roads:document.querySelector('input[type="checkbox"]').checked,
     layout:window.__layoutRecalcCount,
   }));
-  for (const mode of ['scale-off','templates-off','scale-on']) {
+  async function enableRoads(mode) {
+    if(mode!=='scale-on') return;
+    await page.evaluate(()=>performance.mark('m76:toggle-start'));
+    await page.getByRole('checkbox',{name:'Show roads'}).check();
+    await page.locator('[data-coverage]').waitFor();
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      performance.measure('m76:toggle-to-ready',{start:'m76:toggle-start'});
+      performance.measure('m76:navigation-through-roads-on',{start:0});resolve();
+    }))));
+  }
+  function assertRoadsOn(mode, sample) {
+    if(mode==='scale-on') assert(sample.audits===1 && sample.footer.startsWith('100%'), 'on audit missing');
+  }
+  async function loadSample(mode, scene) {
+    await page.goto(`http://127.0.0.1:5191/roads-prototype.html?${scene}`);
+    await page.waitForFunction(()=>performance.getEntriesByName('roads:navigation-to-ready').length>0);
+    const off = await read();
+    assert(off.audits===0 && off.footer===null && !off.roads, `${mode}: hidden audit or footer`);
+    await enableRoads(mode);
+    const sample = await read();
+    assert(sample.layout===1, 'layout recalculated');
+    assertRoadsOn(mode, sample);
+    return sample;
+  }
+  async function captureLoads(mode) {
     const scene = mode.split('-')[0];
     const samples=[];
     for(let i=0;i<5;i++) {
-      await page.goto(`http://127.0.0.1:5191/roads-prototype.html?${scene}`);
-      await page.waitForFunction(()=>performance.getEntriesByName('roads:navigation-to-ready').length>0);
-      const off = await read();
-      assert(off.audits===0 && off.footer===null && !off.roads, `${mode}: hidden audit or footer`);
-      if(mode==='scale-on') {
-        await page.evaluate(()=>performance.mark('m76:toggle-start'));
-        await page.getByRole('checkbox',{name:'Show roads'}).check();
-        await page.locator('[data-coverage]').waitFor();
-        await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
-          performance.measure('m76:toggle-to-ready',{start:'m76:toggle-start'});
-          performance.measure('m76:navigation-through-roads-on',{start:0});resolve();
-        }))));
-      }
-      const sample = await read();
-      assert(sample.layout===1, 'layout recalculated');
-      if(mode==='scale-on') assert(sample.audits===1 && sample.footer.startsWith('100%'), 'on audit missing');
-      samples.push(sample);
+      samples.push(await loadSample(mode, scene));
     }
     const stageNames=[...new Set(samples.flatMap(s=>Object.keys(s.stages)))];
     const medians=Object.fromEntries(stageNames.map(name=>[name,samples.map(s=>s.stages[name]).sort((a,b)=>a-b)[2]]));
     report.loads[mode]={samples,medians};
     await page.screenshot({path:out+mode+'.png'});
-    if(mode==='scale-off') {
-      const toolbar = await page.locator('header').evaluate(header=>({
-        bounds:header.getBoundingClientRect().toJSON(),
-        items:[...header.querySelectorAll('h1,button,select,label')].map(e=>({text:e.textContent,bounds:e.getBoundingClientRect().toJSON()})),
-        viewport:innerWidth, documentWidth:document.documentElement.scrollWidth,
-        buttons:header.querySelectorAll('button').length,
-      }));
-      assert(toolbar.buttons===13,'12 tabs plus Overview');
-      assert(toolbar.items.every(e=>e.bounds.x>=0 && e.bounds.right<=toolbar.viewport),'toolbar clipped');
-      assert(toolbar.documentWidth===toolbar.viewport,'horizontal overflow');
-      report.toolbar=toolbar;
-      await page.screenshot({path:out+'toolbar-full-width.png'});
-    }
+  }
+  async function captureToolbar(mode) {
+    if(mode!=='scale-off') return;
+    const toolbar = await page.locator('header').evaluate(header=>({
+      bounds:header.getBoundingClientRect().toJSON(),
+      items:[...header.querySelectorAll('h1,button,select,label')].map(e=>({text:e.textContent,bounds:e.getBoundingClientRect().toJSON()})),
+      viewport:innerWidth, documentWidth:document.documentElement.scrollWidth,
+      buttons:header.querySelectorAll('button').length,
+    }));
+    assert(toolbar.buttons===13,'12 tabs plus Overview');
+    assert(toolbar.items.every(e=>e.bounds.x>=0 && e.bounds.right<=toolbar.viewport),'toolbar clipped');
+    assert(toolbar.documentWidth===toolbar.viewport,'horizontal overflow');
+    report.toolbar=toolbar;
+    await page.screenshot({path:out+'toolbar-full-width.png'});
+  }
+  for (const mode of ['scale-off','templates-off','scale-on']) {
+    await captureLoads(mode);
+    await captureToolbar(mode);
   }
   assert(report.loads['scale-off'].medians['roads:navigation-to-ready']<=500,'scale off median >500ms');
   assert(report.loads['templates-off'].medians['roads:navigation-to-ready']<374.5,'templates no improvement');

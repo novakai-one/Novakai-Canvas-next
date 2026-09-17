@@ -17,6 +17,7 @@
     background: var(--nv-surface-raised);
   }
   .header {
+    flex-wrap: wrap;
     border-bottom: var(--nv-stroke-base) solid var(--nv-border-default);
   }
   .header p {
@@ -30,6 +31,7 @@
     font-weight: 600;
   }
   .header label {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: calc(var(--nv-space-unit) * 2);
@@ -275,6 +277,7 @@
     align-items: center;
   }
   .probes select {
+    max-width: 100%;
     color: var(--nv-text-primary);
     background: var(--nv-surface-raised);
     padding: calc(var(--nv-space-unit) * 2);
@@ -297,6 +300,9 @@
   }
   .probes {
     display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
     gap: calc(var(--nv-space-unit) * 2);
   }
   .probes button {

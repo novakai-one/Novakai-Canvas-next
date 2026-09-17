@@ -532,11 +532,23 @@ function coverageLabel(coverage: PrototypeRoadCoverage): string {
   return `100% road area accounted for · ${coverage.roadArea.toLocaleString('en-US')} px²`;
 }
 
+/** Mounted only with roads visible; selection rerenders reuse the scene's audit. */
+function RoadCoverage({
+  scene,
+  auditCoverage,
+}: {
+  readonly scene: RoadPrototypeScene;
+  readonly auditCoverage: (scene: RoadPrototypeScene) => PrototypeRoadCoverage;
+}): ReactElement {
+  const coverage = useMemo(() => auditCoverage(scene), [scene, auditCoverage]);
+  return <span data-coverage="road-area">{coverageLabel(coverage)}</span>;
+}
+
 /** Inspect frozen roads and committed wire data; reload safely rebuilds the deterministic scene. */
 export function RoadPrototype({
   scene,
   inspectTravel,
-  coverage,
+  auditCoverage,
   onReady,
   proofs = noProofs,
   initialProof = -1,
@@ -545,14 +557,21 @@ export function RoadPrototype({
   readonly initialProof?: number;
   readonly scene: RoadPrototypeScene;
   readonly inspectTravel: InspectTravel;
-  readonly coverage: PrototypeRoadCoverage;
+  readonly auditCoverage: (scene: RoadPrototypeScene) => PrototypeRoadCoverage;
   readonly onReady: () => void;
 }): ReactElement {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [proofIndex, setProofIndex] = useState(initialProof);
   const proof = proofs[proofIndex];
   const [focus, setFocus] = useState('');
   const wires = useMemo(() => (scene.wiring?.ok ? scene.wiring.value : []), [scene]);
+  const filenames = useMemo(
+    () =>
+      new Map(
+        scene.nodes.filter((node) => node.label.includes('.')).map((node) => [node.id, node.label]),
+      ),
+    [scene],
+  );
   const [primary, setPrimary] = useState('');
   const secondary = useMemo(() => selectionNeighbours(wires, primary), [wires, primary]);
   const togglePrimary = useCallback((id: string) => {
@@ -637,7 +656,7 @@ export function RoadPrototype({
                 <option value="">All {wires.length} wires</option>
                 {wires.map((w) => (
                   <option key={w.id} value={w.id}>
-                    {w.id} · {w.from} → {w.to}
+                    {w.id} · {filenames.get(w.from) ?? w.from} → {filenames.get(w.to) ?? w.to}
                   </option>
                 ))}
               </select>
@@ -731,7 +750,7 @@ export function RoadPrototype({
         </ProofHint>
       )}
       <footer className={styles.footer}>
-        <span data-coverage="road-area">{coverageLabel(coverage)}</span>
+        {visible && <RoadCoverage scene={scene} auditCoverage={auditCoverage} />}
         <span>
           {scene.lanes.length + scene.junctions.length} inspectable areas · {proofs.length} two-wire
           demonstrations

@@ -32,6 +32,13 @@ const measure: PrototypeLayoutMeasure = (stage, operation) => {
   performance.measure(`roads:${stage}`, { start });
   return result;
 };
+/** Debug audit runs on demand; its timing remains separate from layout stages. */
+function auditCoverage(scene: RoadPrototypeScene) {
+  const start = performance.now();
+  const coverage = auditRoadCoverage(scene);
+  performance.measure('roads:coverage-audit', { start });
+  return coverage;
+}
 /** Readiness includes fonts and two frame opportunities; it is not a GPU paint-duration claim. */
 async function recordReady(): Promise<void> {
   await document.fonts.ready;
@@ -64,9 +71,6 @@ async function main(): Promise<void> {
     sectionInPortsLeft: new URLSearchParams(location.search).has('ports-left'),
   });
   performance.measure('roads:layout-total', { start: layoutStart });
-  const auditStart = performance.now();
-  const coverage = auditRoadCoverage(scene);
-  performance.measure('roads:coverage-audit', { start: auditStart });
   const proofStart = performance.now();
   const proofs = catalog(scene);
   performance.measure('roads:proof-catalog', { start: proofStart });
@@ -74,7 +78,7 @@ async function main(): Promise<void> {
   createRoot(target).render(
     createElement(Prototype, {
       scene,
-      coverage,
+      auditCoverage,
       proofs,
       initialProof: Number(new URLSearchParams(location.search).get('proof') ?? -1),
       onReady: recordReady,

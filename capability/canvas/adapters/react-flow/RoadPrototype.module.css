@@ -201,6 +201,7 @@
     color: var(--nv-text-secondary);
   }
   .port {
+    visibility: hidden;
     position: absolute;
     width: calc(var(--nv-space-unit) * 3);
     height: calc(var(--nv-space-unit) * 3);
@@ -331,6 +332,7 @@
 
 @layer components {
   .gate {
+    visibility: hidden;
     pointer-events: auto;
     width: 100%;
     height: 100%;

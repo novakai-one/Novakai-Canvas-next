@@ -107,7 +107,7 @@ function Road({ data }: NodeProps<RoadNode>): ReactElement {
   );
 }
 
-/** Section and node rectangles share geometry plumbing; only nodes expose entry/exit markers. */
+/** Paint labels over finished rectangles; port hit-box geometry remains available but hidden. */
 function Block({ data }: NodeProps<BlockNode>): ReactElement {
   if (data.kind === 'section')
     return (
@@ -117,13 +117,11 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
         data-parent-section={data.block.parentSectionId}
       >
         <strong>{data.block.label}</strong>
-        <span>{data.block.description ?? 'Four boundary gates'}</span>
       </div>
     );
   return (
     <div className={`${styles.node} ${data.selectionClass ?? ''}`} data-node-id={data.block.id}>
       <strong>{data.block.label}</strong>
-      <span>Owns 4 ports</span>
       {data.ports.map((port) => (
         <button
           key={port.id}
@@ -1131,7 +1129,7 @@ function NestedWirePaths({
                 y={midpoints[i]?.y}
                 textAnchor="middle"
               >
-                {wire.id}
+                {wire.label ?? wire.id}
               </text>
             )}
           </g>

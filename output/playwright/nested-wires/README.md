@@ -1,3 +1,5 @@
+> **M4.5 STOP (corrected brief, 2026-09-17):** junction-aware lane assignment is allowed, including moved wire centerlines on roads and derived pins. A new independent proof still certifies **S1 >=14 unavoidable crossings**, above the unchanged <=11 target, under frozen routes and right-hand traffic. See [the full STOP report and all DoD statuses](m45-stop-report.md), [reproducer](verify-m45-topological-bound.py), and [14 individual witnesses](m45-topological-bound.json). No production geometry changed; counts remain S1 28→28, S2 4→4, S3 2→2, S4 4→4, world 8→8; budgeted 0→0 everywhere. M4.5 is not complete.
+
 > **Current acceptance: M4 completed under orchestrator ruling #3.** Canonical JSON now describes 24 nodes / 26 wires. Earlier STOP narratives and candidate snapshots below are retained as history; see the final M4 section and [end-to-end DoD report](m4-completion-report.md).
 
 # M3 — wire capacity and deterministic lanes

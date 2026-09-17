@@ -299,3 +299,63 @@ The required node-4/node-1 semantic swap was checked before adding interaction c
 **M5 is incomplete.** The brief restricts changes to placement order and interaction handling and prohibits incremental machinery; resolving the compile overrun needs an orchestrator ruling on pipeline optimization or the ceiling. No drag UI, screenshots, interaction timing, dirty-set report or scaling-time claim was produced after STOP. The default-scene artifacts and two inherited selection-file edits are preserved. No browser was used, no push/PR, and Vite on 5188 was left running.
 
 [STOP report with binary DoD table and pasted outputs](m5-swap/STOP.md). Reproduce with `node --import tsx output/playwright/nested-wires/verify-m5-preflight.mjs` (expected exit 1).
+
+
+## M5 — deterministic drag-to-swap (amended DoD 6)
+
+This completed implementation supersedes the historical M5 compile-ceiling STOP above. Node cards now follow the pointer during a drag. Dropping inside another node's bounds in the same section exchanges their semantic `nodes` order and runs the unchanged full pipeline once. Empty, same-cell and cross-section drops reset the transient React Flow position without a layout calculation. The renderer never repairs wire geometry. React preserves selection independently of the semantic scene. The browser fixture owns only its local spec; no production workspace/Authoring transaction is performed.
+
+The headless [runner](verify-drag-swap.py) and its [browser assertions](verify-drag-swap.mjs) verify the actual DOM bounds and paths, complete byte-identical from-scratch result, 26 routed wires, exactly +1 recalculation, empty-space +0, node-7's exact M2 neighborhood and +0 click recalculations, unchanged drag selection, and a perfect complete-scene round-trip. DoD 2f's phrase “node-1's old cell” would target node-4's current cell after the first swap; the runner follows the stated restoring intent by dropping onto node-1's **current** cell (node-4's original cell).
+
+**Dirty set.** Exactly 2 moved nodes; 0 changed section bounds; 8 changed main roads; 25 changed driveway records; 12 roads with changed lane records; 16/26 changed wires; 36 changed junction records. All roads/driveways/wires are recomputed; these counts describe changed outputs, not incremental work. Node-1 moves `(272,400,192,96) → (272,800,192,96)`; node-4 moves in reverse. The other 22 node bounds stay exact. See [dirty-set.json](m5-swap/dirty-set.json) and [per-wire explanations](m5-swap/dirty-set.md).
+
+**Interaction timing.** Final five drop-event → React commit → two frame-opportunity measurements: **78.7, 73.6, 69.7, 71.5, 67.6 ms**; median **71.5 ms ≤100**. This is render-ready timing, not GPU paint duration. The initial expensive road-coverage diagnostic is not rerun in the drag path; its footer explicitly becomes “Road coverage not audited after swap,” avoiding a stale area claim. Independent swapped-scene geometry/invariant audits pass.
+
+**Amended operation ceiling.** Routing **1,025 ≤1,050**; compile **20,107 ≤21,000**; road-pair discovery **0**; every stage executes once.
+
+| Compile stage | Default | Swapped | Delta | Explanation |
+|---|---:|---:|---:|---|
+| wire-registry | 928 | 928 | 0 | Same node/section/road identity counts. |
+| lane-allocation | 3,790 | 4,067 | +277 | New shared-route congestion changes ordering comparisons. |
+| network | 11,021 | 11,020 | −1 | Changed capacity geometry changes executed numeric work. |
+| lane-projection | 3,944 | 4,092 | +148 | Changed assigned ranks, turns and terminal geometry. |
+| **Total** | **19,683** | **20,107** | **+424** | Within the amended guard. |
+
+**Verdict: scene variance, not compounding—discovery remains zero and no stage repeats.** No routing law, lane ordering, pin law, gate or topology implementation changed.
+
+**Crossings.** Swapped counts: S1 **25**, S2 **2**, S3 **0**, S4 **3**, world **0**; J21 **2**. The bound prover certifies all **30/30**, with **zero UNC** and zero budgeted crossings. The S1 lower bound is **24 =21 independent +3 linked**. The default retains its M4.5 checks (including its fixed caps); supplied M5 scenes report their changed counts as the brief permits, while keeping the hard certification gate. The four requested suites pass against the actual browser-produced swapped scene.
+
+**Scaling answer.** The committed [scaling runner](measure-m5-scaling.py) measures independent six-node sections with twelve local directed wires each, through exactly 150 nodes / 300 wires. It asserts routing and containment/body/boundary/continuity validity before and after swapping. Five samples per size, existing headless Chromium/Vite, 1920×1440 viewport:
+
+| Nodes / wires | Builder median | Drop-to-ready median |
+|---|---:|---:|
+| 24 / 48 | 2.8 ms | 82.0 ms |
+| 48 / 96 | 4.3 ms | 157.3 ms |
+| 72 / 144 | 7.4 ms | 234.9 ms |
+| 96 / 192 | 9.0 ms | 304.2 ms |
+| 120 / 240 | 12.1 ms | 406.0 ms |
+| 150 / 300 | 15.3 ms | 537.5 ms |
+
+At **150 nodes /300 wires**, full recompute plus render costs **537.5 ms**, while the builder itself costs **15.3 ms**. For this topology/device the 100 ms interaction limit is crossed between the measured **24/48** and **48/96** sizes; 48/96 is the first failing sample. Rendering/reconciliation dominates the difference. This is not a universal node-count cutoff: fan-in, cross-section traffic, geometry admission, hardware, browser scheduling and visible DOM all matter. Arbitrary dense hub clones are not certified by this local-wire probe. Incremental machinery was not built; the current 24/26 acceptance fixture fits, and rendering work should be profiled before attributing the large-scene delay to layout alone. All raw samples are in [scaling.json](m5-swap/scaling.json).
+
+**Visuals and regression.** Personally inspected [before](m5-swap/before-roads-off.png), [after roads off](m5-swap/after-swap-roads-off.png), [after roads on](m5-swap/after-swap-roads-on.png), and the retained AWS/Docker references. [Visual review](m5-swap/visual-review.md) records the clean exchange and inherited prototype presentation gaps. The unchanged M4 selection runner passes all zero-recalc/geometry/camera assertions. Application source scores are **146/160** and **145/160**, with Sonar ≤2 and no suppressions ([review](m5-swap/source-review.md)).
+
+### Reproduce M5 headlessly
+
+Leave the existing Vite on 5188 running. Execute CPU checks before browser timing; do not run browser samplers concurrently.
+
+```sh
+pnpm check
+node --import tsx output/playwright/nested-wires/count-operations.mjs --output output/playwright/nested-wires/m5-swap/default-calculations.json
+node --import tsx output/playwright/nested-wires/verify-m5-preflight.mjs
+python3 output/playwright/nested-wires/verify-drag-swap.py
+node --import tsx output/playwright/nested-wires/verify-lanes.mjs --scene output/playwright/nested-wires/m5-swap/after-scene.json --spec output/playwright/nested-wires/m5-swap/swapped-spec.json
+node --import tsx output/playwright/nested-wires/verify-invariants.mjs --scene output/playwright/nested-wires/m5-swap/after-scene.json --spec output/playwright/nested-wires/m5-swap/swapped-spec.json
+python3 output/playwright/nested-wires/verify-m4-visual-budget.py --scene output/playwright/nested-wires/m5-swap/after-scene.json --output output/playwright/nested-wires/m5-swap/m4-visual-budget.json
+python3 output/playwright/nested-wires/verify-m45-topological-bound.py --scene output/playwright/nested-wires/m5-swap/after-scene.json --output output/playwright/nested-wires/m5-swap/topological-bound.json
+node output/playwright/nested-wires/report-m5-dirty-set.mjs
+python3 output/playwright/nested-wires/measure-m5-scaling.py
+python3 output/playwright/nested-wires/verify-m4-selection.py
+```
+
+The [completion report](m5-swap/completion-report.md) contains the binary DoD table and pasted outputs. Branch stays `feat/drag-swap`; no visible browser, server restart, push, PR, or new `.test.ts` file.

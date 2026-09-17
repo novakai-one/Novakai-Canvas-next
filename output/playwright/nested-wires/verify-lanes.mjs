@@ -4,13 +4,18 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { register } from 'tsx/esm/api';
 register();
 const { createNestedRoadScene, inspectNestedWires, fanInHubSceneSpec } =
   await import('../../../capability/layout/contract/index.ts');
 await import('./verify-m3-topology.mjs');
 await import('./verify-m45-pins.mjs');
-const scene = createNestedRoadScene({ spec: fanInHubSceneSpec });
+const sceneArgument = process.argv.indexOf('--scene');
+const specArgument = process.argv.indexOf('--spec');
+const spec = specArgument < 0 ? fanInHubSceneSpec : JSON.parse(readFileSync(process.argv[specArgument + 1], 'utf8'));
+const scene = sceneArgument < 0 ? createNestedRoadScene({ spec }) : JSON.parse(readFileSync(process.argv[sceneArgument + 1], 'utf8'));
+if (sceneArgument >= 0) assert(specArgument >= 0, 'A supplied scene requires its semantic --spec for independent regeneration');
 assert(scene.wiring?.ok);
 const wires = scene.wiring.value;
 const roads = new Map(scene.roads.map((r) => [r.id, r]));
@@ -203,7 +208,7 @@ check(
 check('3g two complete scene JSON serialisations are byte-identical', () =>
   assert.equal(
     JSON.stringify(scene),
-    JSON.stringify(createNestedRoadScene({ spec: fanInHubSceneSpec })),
+    JSON.stringify(createNestedRoadScene({ spec })),
   ),
 );
 
@@ -359,9 +364,12 @@ function reportOracle(row) {
 }
 
 check('DoD 9 canonical scene matches full regenerated M4 serialization', () => {
-  assert.equal(readFileSync(new URL('./scene.json', import.meta.url), 'utf8'), JSON.stringify(scene, null, 2) + '\n');
+  const path = sceneArgument < 0 ? new URL('./scene.json', import.meta.url) : process.argv[sceneArgument + 1];
+  assert.equal(JSON.stringify(JSON.parse(readFileSync(path, 'utf8'))), JSON.stringify(scene));
 });
 check('DoD 3f amended visual crossing budget', () => {
-  const output = execFileSync('python3', ['output/playwright/nested-wires/verify-m4-visual-budget.py'], { encoding: 'utf8' });
+  const args = ['output/playwright/nested-wires/verify-m4-visual-budget.py'];
+  if (sceneArgument >= 0) args.push('--scene', process.argv[sceneArgument + 1], '--output', join(dirname(process.argv[sceneArgument + 1]), 'm4-visual-budget.json'));
+  const output = execFileSync('python3', args, { encoding: 'utf8' });
   console.log(output.split('\n').filter((line) => line.startsWith('MEASURE') || line.startsWith('PASS')).join('\n'));
 });

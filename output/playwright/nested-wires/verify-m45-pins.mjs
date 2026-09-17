@@ -1,8 +1,11 @@
 /** M4.5's corrected contract permits derived pin movement; verify the exact row law. */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { createNestedRoadScene, fanInHubSceneSpec } from '../../../capability/layout/contract/index.ts';
-for (const spec of [undefined, fanInHubSceneSpec]) {
-  const scene = createNestedRoadScene({ spec });
+const sceneArgument = process.argv.indexOf('--scene');
+const scenes = [createNestedRoadScene(), createNestedRoadScene({ spec: fanInHubSceneSpec })];
+if (sceneArgument >= 0) scenes.push(JSON.parse(readFileSync(process.argv[sceneArgument + 1], 'utf8')));
+for (const scene of scenes) {
   assert(scene.wiring.ok);
   let rows = 0;
   for (const port of scene.ports.filter((p) => p.nodeId.startsWith('node-'))) {

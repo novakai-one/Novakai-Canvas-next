@@ -1,0 +1,203 @@
+{
+  "description": "Independent six-node sections with 12 directed local wires each; no cross-section traffic. Sizes 24/48 through exactly 150/300. This is measured topology-specific scaling, not an arbitrary dense-graph guarantee.",
+  "results": [
+    {
+      "times": [
+        3.5,
+        5.600000023841858,
+        2.799999952316284,
+        2.399999976158142,
+        2
+      ],
+      "nodes": 24,
+      "wires": 48,
+      "ok": true,
+      "violations": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "postSwap": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "dropToReady": [
+        83.10000002384186,
+        95.10000002384186,
+        82,
+        81.39999997615814,
+        73.30000007152557
+      ],
+      "median": 82,
+      "buildMedian": 2.799999952316284
+    },
+    {
+      "times": [
+        6.300000071525574,
+        4.299999952316284,
+        4.100000023841858,
+        6.299999952316284,
+        4.200000047683716
+      ],
+      "nodes": 48,
+      "wires": 96,
+      "ok": true,
+      "violations": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "postSwap": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "dropToReady": [
+        214.29999995231628,
+        158.70000004768372,
+        153.10000002384186,
+        157.30000007152557,
+        148.5
+      ],
+      "median": 157.30000007152557,
+      "buildMedian": 4.299999952316284
+    },
+    {
+      "times": [
+        8.899999976158142,
+        12,
+        6.5,
+        6,
+        7.400000095367432
+      ],
+      "nodes": 72,
+      "wires": 144,
+      "ok": true,
+      "violations": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "postSwap": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "dropToReady": [
+        234.89999997615814,
+        208,
+        271.1999999284744,
+        227.30000007152557,
+        235.10000002384186
+      ],
+      "median": 234.89999997615814,
+      "buildMedian": 7.400000095367432
+    },
+    {
+      "times": [
+        11.400000095367432,
+        8.199999928474426,
+        9.800000071525574,
+        8.099999904632568,
+        9
+      ],
+      "nodes": 96,
+      "wires": 192,
+      "ok": true,
+      "violations": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "postSwap": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "dropToReady": [
+        328.1999999284744,
+        304.1999999284744,
+        302.5,
+        288,
+        311.7999999523163
+      ],
+      "median": 304.1999999284744,
+      "buildMedian": 9
+    },
+    {
+      "times": [
+        14.100000023841858,
+        12.5,
+        10.600000023841858,
+        12.100000023841858,
+        11.100000023841858
+      ],
+      "nodes": 120,
+      "wires": 240,
+      "ok": true,
+      "violations": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "postSwap": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "dropToReady": [
+        457.2000000476837,
+        406,
+        388.60000002384186,
+        399.60000002384186,
+        433
+      ],
+      "median": 406,
+      "buildMedian": 12.100000023841858
+    },
+    {
+      "times": [
+        17.600000023841858,
+        16.699999928474426,
+        15.300000071525574,
+        14,
+        14.799999952316284
+      ],
+      "nodes": 150,
+      "wires": 300,
+      "ok": true,
+      "violations": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "postSwap": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      },
+      "dropToReady": [
+        474.2999999523163,
+        558.2999999523163,
+        537.5,
+        488.7999999523163,
+        594.5
+      ],
+      "median": 537.5,
+      "buildMedian": 15.300000071525574
+    }
+  ]
+}

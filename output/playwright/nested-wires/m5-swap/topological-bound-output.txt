@@ -1,0 +1,71 @@
+PASS controls: disjoint ABAB accepted; reorderable ranges and AABB rejected
+FORCED J21 w12/w24: w24:E[245.0,239.0,233.0,227.0,221.0,215.0,209.0,203.0] -> w12:E[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w24:S[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w12:W[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0]
+FORCED J21 w18/w24: w24:E[245.0,239.0,233.0,227.0,221.0,215.0,209.0,203.0] -> w18:E[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w24:S[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w18:W[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0]
+FORCED J22 w02/w03: w02:E[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:S[875.0,881.0] -> w02:W[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:W[245.0,239.0,233.0,227.0,221.0,215.0,209.0,203.0]
+FORCED J22 w03/w09: w09:E[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:S[875.0,881.0] -> w09:W[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:W[245.0,239.0,233.0,227.0,221.0,215.0,209.0,203.0]
+FORCED J22 w03/w12: w12:E[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:S[875.0,881.0] -> w12:W[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:W[245.0,239.0,233.0,227.0,221.0,215.0,209.0,203.0]
+FORCED J22 w03/w18: w18:E[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:S[875.0,881.0] -> w18:W[251.0,257.0,263.0,269.0,275.0,281.0,287.0,293.0] -> w03:W[245.0,239.0,233.0,227.0,221.0,215.0,209.0,203.0]
+FORCED J36 w21/w26: w26:N[1037.0,1031.0] -> w21:E[1045.0,1039.0,1033.0,1027.0,1021.0,1015.0,1009.0] -> w26:E[1051.0,1057.0,1063.0,1069.0,1075.0,1081.0,1087.0] -> w21:W[1045.0,1039.0,1033.0,1027.0,1021.0,1015.0,1009.0]
+FORCED J36 w22/w26: w26:N[1037.0,1031.0] -> w22:E[1045.0,1039.0,1033.0,1027.0,1021.0,1015.0,1009.0] -> w26:E[1051.0,1057.0,1063.0,1069.0,1075.0,1081.0,1087.0] -> w22:W[1045.0,1039.0,1033.0,1027.0,1021.0,1015.0,1009.0]
+FORCED J39 w03/w12: w03:N[197.0,191.0,185.0,179.0,173.0,167.0] -> w12:N[203.0,209.0,215.0,221.0,227.0,233.0] -> w03:E[451.0,457.0] -> w12:S[203.0,209.0,215.0,221.0,227.0,233.0]
+FORCED J39 w03/w15: w03:N[197.0,191.0,185.0,179.0,173.0,167.0] -> w15:N[203.0,209.0,215.0,221.0,227.0,233.0] -> w03:E[451.0,457.0] -> w15:S[203.0,209.0,215.0,221.0,227.0,233.0]
+FORCED J39 w03/w18: w03:N[197.0,191.0,185.0,179.0,173.0,167.0] -> w18:N[203.0,209.0,215.0,221.0,227.0,233.0] -> w03:E[451.0,457.0] -> w18:S[203.0,209.0,215.0,221.0,227.0,233.0]
+FORCED J41 w15/w23: w15:N[203.0,209.0,215.0,221.0,227.0,233.0] -> w23:E[651.0,657.0] -> w15:S[203.0,209.0,215.0,221.0,227.0,233.0] -> w23:W[627.0,633.0,639.0,645.0]
+FORCED J44 w01/w23: w01:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w23:E[651.0,657.0] -> w01:S[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w23:W[651.0,657.0]
+FORCED J44 w02/w23: w02:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w23:E[651.0,657.0] -> w02:S[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w23:W[651.0,657.0]
+FORCED J44 w20/w23: w20:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w23:E[651.0,657.0] -> w20:S[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w23:W[651.0,657.0]
+FORCED J44 w23/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w23:E[651.0,657.0] -> w24:S[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w23:W[651.0,657.0]
+FORCED J49 w09/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w09:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w24:S[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w09:W[451.0,457.0,463.0]
+FORCED J50 w01/w20: w20:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w01:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w20:E[851.0,857.0,863.0,869.0,875.0] -> w01:W[851.0,857.0,863.0]
+FORCED J50 w01/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w01:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w24:E[851.0,857.0,863.0,869.0,875.0] -> w01:W[851.0,857.0,863.0]
+FORCED J50 w02/w20: w20:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w02:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w20:E[851.0,857.0,863.0,869.0,875.0] -> w02:W[851.0,857.0,863.0]
+FORCED J50 w02/w24: w24:N[533.0,527.0,521.0,515.0,509.0,503.0,497.0,491.0] -> w02:N[539.0,545.0,551.0,557.0,563.0,569.0,575.0,581.0] -> w24:E[851.0,857.0,863.0,869.0,875.0] -> w02:W[851.0,857.0,863.0]
+PASS 8 disjoint junction rectangles; witness counts are additive
+PASS linked-order controls: opposite requirements force 1; compatible orders and independent roads force 0
+PASS boundary-arm provenance: supplied semantic scene
+FORCED-LINKED w03/w24 >= 1: J21, J22
+  ORDER {"assignment": {"section-1:horizontal:248:200": false}, "crossings": 1, "mandatoryCrossingsAt": ["J22"]}
+  ORDER {"assignment": {"section-1:horizontal:248:200": true}, "crossings": 1, "mandatoryCrossingsAt": ["J21"]}
+FORCED-LINKED w10/w21 >= 1: J37, J38
+  ORDER {"assignment": {"section-1:horizontal:1048:200": false}, "crossings": 1, "mandatoryCrossingsAt": ["J37"]}
+  ORDER {"assignment": {"section-1:horizontal:1048:200": true}, "crossings": 1, "mandatoryCrossingsAt": ["J38"]}
+FORCED-LINKED w16/w21 >= 1: J37, J38
+  ORDER {"assignment": {"section-1:horizontal:1048:200": false}, "crossings": 1, "mandatoryCrossingsAt": ["J37"]}
+  ORDER {"assignment": {"section-1:horizontal:1048:200": true}, "crossings": 1, "mandatoryCrossingsAt": ["J38"]}
+PASS exhaustive rank-magnitude control: 1232 legal physical-slot combinations match linked truth tables
+PASS additive S1 certificates: 21 independent-endpoint + 3 linked-road-order
+MEASURE section-1 unavoidable crossings >= 24; M5 reports scene-dependent counts
+PASS certification negative controls: unknown pair and duplicate crossing rejected
+CERTIFIED J50 w01/w20 at [528.5, 855.5]: endpoint-alternation
+CERTIFIED J44 w01/w23 at [551.0, 651.0]: endpoint-alternation
+CERTIFIED J50 w01/w24 at [551.0, 851.0]: endpoint-alternation
+CERTIFIED J22 w02/w03 at [873.5, 269.0]: endpoint-alternation
+CERTIFIED J50 w02/w20 at [528.5, 849.5]: endpoint-alternation
+CERTIFIED J44 w02/w23 at [545.0, 651.0]: endpoint-alternation
+CERTIFIED J50 w02/w24 at [534.5, 849.5]: endpoint-alternation
+CERTIFIED J22 w03/w09 at [873.5, 263.0]: endpoint-alternation
+CERTIFIED J39 w03/w12 at [203.0, 451.0]: endpoint-alternation
+CERTIFIED J22 w03/w12 at [873.5, 251.0]: endpoint-alternation
+CERTIFIED J39 w03/w15 at [215.0, 451.0]: endpoint-alternation
+CERTIFIED J39 w03/w18 at [209.0, 451.0]: endpoint-alternation
+CERTIFIED J22 w03/w18 at [873.5, 257.0]: endpoint-alternation
+CERTIFIED J22 w03/w24 at [873.5, 245.0]: linked-road-order
+CERTIFIED J81 w05/w06 at [1845.0, 675.0]: endpoint-alternation
+CERTIFIED J60 w09/w18 at [1509.0, 429.0]: linked-road-order
+CERTIFIED J49 w09/w24 at [533.0, 449.5]: endpoint-alternation
+CERTIFIED J38 w10/w21 at [1845.0, 1033.0]: linked-road-order
+CERTIFIED J134 w11/w26 at [1477.0, 1591.5]: endpoint-alternation
+CERTIFIED J21 w12/w24 at [533.0, 251.0]: endpoint-alternation
+CERTIFIED J41 w15/w23 at [215.0, 651.0]: endpoint-alternation
+CERTIFIED J121 w16/w17 at [1645.0, 1371.0]: endpoint-alternation
+CERTIFIED J38 w16/w21 at [1833.0, 1033.0]: linked-road-order
+CERTIFIED J38 w16/w22 at [1833.0, 1027.0]: linked-road-order
+CERTIFIED J134 w17/w26 at [1477.0, 1585.5]: endpoint-alternation
+CERTIFIED J21 w18/w24 at [533.0, 257.0]: endpoint-alternation
+CERTIFIED J44 w20/w23 at [527.0, 651.0]: endpoint-alternation
+CERTIFIED J36 w21/w26 at [1038.5, 1033.0]: endpoint-alternation
+CERTIFIED J36 w22/w26 at [1038.5, 1027.0]: endpoint-alternation
+CERTIFIED J44 w23/w24 at [533.0, 651.0]: endpoint-alternation
+MEASURE crossings={'section-1': 25, 'section-2': 2, 'section-3': 0, 'section-4': 3, 'world': 0}; J21=2; budgeted={'section-1': 0, 'section-2': 0, 'section-3': 0, 'section-4': 0, 'world': 0}
+MEASURE certified=30; uncertified=0; global floor=30
+PASS DoD 3: applicable ceilings, budgeted zero, ZERO uncertified crossings

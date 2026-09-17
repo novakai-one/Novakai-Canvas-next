@@ -13,6 +13,8 @@ const spec = specArgument < 0 ? fanInHubSceneSpec : JSON.parse(await readFile(pr
 const outputArgument = process.argv.indexOf('--output');
 const outputPath = outputArgument < 0 ? 'output/playwright/nested-wires/calculations.json' : process.argv[outputArgument + 1];
 const routingCeiling = specArgument < 0 ? 1000 : 1050;
+// M5 amended DoD 6: congestion variance is allowed up to 21,000.
+const compileCeiling = specArgument < 0 ? 20000 : 21000;
 const require = createRequire(import.meta.url);
 const { build } = createRequire(require.resolve('tsx/package.json'))('esbuild');
 const binary = {
@@ -289,7 +291,7 @@ for (const [id, value] of Object.entries(wireCounts)) {
   assert(value.total <= ceiling, `${id}: ${value.total} > ${ceiling}`);
 }
 assert(wireTotal <= routingCeiling, `wire routing ${wireTotal} > ${routingCeiling}`);
-assert(compiledTotal() <= 20000);
+assert(compiledTotal() <= compileCeiling);
 assert(report.perLeg.every((l) => l.operations <= 60));
 assert(report.scalingProbe.ratio <= 2.5);
 await writeFile(
@@ -308,7 +310,7 @@ console.log(
   `PASS routing total=${wireTotal} <=${routingCeiling}; maximum law leg=${Math.max(...report.perLeg.map((l) => l.operations))} <=60`,
 );
 console.log(
-  `PASS lane allocation + registry compilation=${compiledTotal()} <=20000; components=${JSON.stringify(report.laneNetwork.components)}`,
+  `PASS lane allocation + registry compilation=${compiledTotal()} <=${compileCeiling}; components=${JSON.stringify(report.laneNetwork.components)}`,
 );
 console.log(`PASS per-wire road-pair discovery checks=${discoveryLoops.length}`);
 console.log(

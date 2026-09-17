@@ -1,0 +1,3 @@
+PASS retained six fixture cases: 18-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.
+PASS gate mouth refinement: wrong lane inside the permitted mouth is rejected; exact assigned lanes accepted.
+PASS supplied scene: 26 wires; all nodes own four ports; containment, bodies, boundaries, continuity; byte-identical regeneration

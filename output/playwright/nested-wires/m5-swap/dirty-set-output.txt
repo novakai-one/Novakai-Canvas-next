@@ -1,0 +1,12 @@
+Full pipeline recompute: all roads, driveways and wires are rebuilt once. This report describes changed outputs, not avoided work.
+
+Moved nodes: 2; changed main roads: 8; changed driveways: 25; roads with changed lane records: 12; changed wires: 16/26; changed junctions: 36; changed sections: 0.
+
+- node-1: {"x":272,"y":400,"width":192,"height":96} → {"x":272,"y":800,"width":192,"height":96}
+[
+  { stage: 'wire-registry', before: 928, after: 928, delta: 0 },
+  { stage: 'lane-allocation', before: 3790, after: 4067, delta: 277 },
+  { stage: 'network', before: 11021, after: 11020, delta: -1 },
+  { stage: 'lane-projection', before: 3944, after: 4092, delta: 148 }
+]
+Scene variance, not compounding: congestion changes allocation/projection work while discovery stays zero and every stage executes once.

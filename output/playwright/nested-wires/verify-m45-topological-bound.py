@@ -4,10 +4,12 @@ Layer 1 independently relaxes every endpoint over all pitch-6 traffic-half slots
 Layer 2 retains only pair order along each road: one assigned straight lane
 cannot change rank between junctions. Exhaustive Boolean truth tables in this
 OFFLINE prover certify incompatible orders; they never choose application lanes.
-The current canonical scene is audited against immutable M4 boundary arms.
+The default scene is audited against immutable M4 boundary arms. Supplied semantic
+scenes retain their own route arms while the prover relaxes all physical lane ranks.
 Exit 1 rejects any ceiling, non-junction crossing, or uncertified actual crossing.
 """
 import hashlib
+import argparse
 import itertools
 import json
 import subprocess
@@ -15,17 +17,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 BASELINE = '0e5f21e:output/playwright/nested-wires/scene.json'
-baseline = json.loads(subprocess.check_output(['git', 'show', BASELINE], text=True))
-scene_bytes = (ROOT / 'scene.json').read_bytes()
+parser = argparse.ArgumentParser()
+parser.add_argument('--scene', type=Path)
+parser.add_argument('--output', type=Path, default=ROOT / 'm45-topological-bound.json')
+args = parser.parse_args()
+scene_bytes = (args.scene or ROOT / 'scene.json').read_bytes()
+# A supplied scene changes semantic placement and therefore its boundary arms.
+# The proof still relaxes ALL physical lane ranks, never freezing current order.
+baseline = None if args.scene else json.loads(subprocess.check_output(['git', 'show', BASELINE], text=True))
 scene = json.loads(scene_bytes)
 roads = {road['id']: road for road in scene['roads']}
 lanes = {lane['id']: lane for lane in scene['wireLanes']}
 SIDES = ['N', 'E', 'S', 'W']
 assert len({(lane['wireId'], lane['roadId']) for lane in lanes.values()}) == len(lanes), 'Proof expects one traversal per wire/road'
-baseline_lanes = {lane['id']: lane for lane in baseline['wireLanes']}
-assert set(lanes) == set(baseline_lanes)
-for lane_id, lane in lanes.items():
-    assert all(lane[key] == baseline_lanes[lane_id][key] for key in ['wireId', 'roadId', 'direction'])
+if baseline is not None:
+    baseline_lanes = {lane['id']: lane for lane in baseline['wireLanes']}
+    assert set(lanes) == set(baseline_lanes)
+    for lane_id, lane in lanes.items():
+        assert all(lane[key] == baseline_lanes[lane_id][key] for key in ['wireId', 'roadId', 'direction'])
 
 
 
@@ -241,8 +250,9 @@ def arms(subject):
                                      for hit in events(w, j['bounds']) if hit['laneId'])
             for j in subject['junctions'] for w in subject['wiring']['value']}
 
-assert arms(scene) == arms(baseline), 'Current traversals changed frozen junction boundary arms'
-print('PASS current canonical scene boundary arms agree with immutable M4; no baseline indices frozen')
+if baseline is not None:
+    assert arms(scene) == arms(baseline), 'Current traversals changed frozen junction boundary arms'
+print('PASS boundary-arm provenance: supplied semantic scene' if args.scene else 'PASS current canonical scene boundary arms agree with immutable M4; no baseline indices frozen')
 obstructions = []
 for pair in sorted({tuple(c['wires']) for c in constraints}):
     group = [c for c in constraints if tuple(c['wires']) == pair]
@@ -291,8 +301,8 @@ print(f'PASS exhaustive rank-magnitude control: {checked} legal physical-slot co
 
 linked_bound = sum(o['lowerBound'] for o in obstructions)
 bound = len(witnesses) + linked_bound
-report = {'baseline': BASELINE, 'sceneSha256': hashlib.sha256(scene_bytes).hexdigest(),
-          'section': 'section-1', 'target': 20, 'lowerBound': bound,
+report = {'baseline': str(args.scene) if args.scene else BASELINE, 'sceneSha256': hashlib.sha256(scene_bytes).hexdigest(),
+          'section': 'section-1', 'target': None if args.scene else 20, 'lowerBound': bound,
           'rankMagnitudeCombinationsChecked': checked,
           'independentEndpointLowerBound': len(witnesses), 'linkedRoadOrderLowerBound': linked_bound,
           'witnesses': witnesses, 'roadOrderObstructions': obstructions,
@@ -304,8 +314,9 @@ report = {'baseline': BASELINE, 'sceneSha256': hashlib.sha256(scene_bytes).hexdi
                    'A linked certificate forces a crossing at one listed junction, not at every junction.'}
 
 print(f'PASS additive S1 certificates: {len(witnesses)} independent-endpoint + {linked_bound} linked-road-order')
-print(f"MEASURE section-1 unavoidable crossings >= {bound}; accepted target <= 20")
-assert bound <= 20
+print(f"MEASURE section-1 unavoidable crossings >= {bound}; " + ('M5 reports scene-dependent counts' if args.scene else 'accepted target <= 20'))
+if not args.scene:
+    assert bound <= 20
 
 # Extend the same proofs to all sections. The three accepted S1 linked-road
 # certificates above remain unchanged. Two further obstructions span S1/S2;
@@ -340,8 +351,9 @@ for pair in sorted({tuple(c['wires']) for c in global_constraints}):
         'justification': 'Every consistent per-road pair order forces at least this many crossings among the listed junctions.'})
 
 # Recompute actual intersections, never trust a stale budget artifact.
-subprocess.run(['python3', str(ROOT / 'verify-m4-visual-budget.py')], check=True, capture_output=True, text=True)
-actual = json.loads((ROOT / 'm4-visual-budget.json').read_text())
+budget_path = args.output.parent / 'm4-visual-budget.json'
+subprocess.run(['python3', str(ROOT / 'verify-m4-visual-budget.py'), '--scene', str(args.scene or ROOT / 'scene.json'), '--output', str(budget_path)], check=True, capture_output=True, text=True)
+actual = json.loads(budget_path.read_text())
 certified = {}
 for witness in global_witnesses:
     certified[(witness['junction'], tuple(witness['wires']))] = {'kind': 'endpoint-alternation', 'certificate': witness}
@@ -387,13 +399,14 @@ j21 = next(j['id'] for j in scene['junctions'] if j['label'] == 'J21')
 j21_count = sum(j21 in hit['registeredJunctions'] for hit in actual['crossings'])
 report.update({'globalEndpointCertificates': global_witnesses, 'globalRoadOrderObstructions': global_obstructions,
     'globalLowerBound': len(global_witnesses) + sum(o['lowerBound'] for o in global_obstructions),
-    'certifiedCrossings': covered, 'uncertifiedCrossings': uncovered, 'ceilings': ceilings,
+    'certifiedCrossings': covered, 'uncertifiedCrossings': uncovered, 'ceilings': None if args.scene else ceilings,
     'actualCounts': actual['counts'], 'budgetedCounts': actual['budgetedCounts'], 'J21': j21_count})
-(ROOT / 'm45-topological-bound.json').write_text(json.dumps(report, indent=2) + '\n')
+args.output.write_text(json.dumps(report, indent=2) + '\n')
 print(f'MEASURE crossings={actual["counts"]}; J21={j21_count}; budgeted={actual["budgetedCounts"]}')
 print(f'MEASURE certified={len(covered)}; uncertified={len(uncovered)}; global floor={report["globalLowerBound"]}')
-assert all(actual['counts'][section] <= ceiling for section, ceiling in ceilings.items())
-assert j21_count <= 2
+if not args.scene:
+    assert all(actual['counts'][section] <= ceiling for section, ceiling in ceilings.items())
+    assert j21_count <= 2
 assert all(value == 0 for value in actual['budgetedCounts'].values())
 assert not uncovered, 'FAIL immovable hard gate: every actual crossing must be individually certified'
-print('PASS DoD 3: all ceilings, budgeted zero, ZERO uncertified crossings')
+print('PASS DoD 3: applicable ceilings, budgeted zero, ZERO uncertified crossings')

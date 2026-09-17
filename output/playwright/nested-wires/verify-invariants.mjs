@@ -1,5 +1,6 @@
 /** Retained fixture invariants. Node owns assertion failures; rerunning has no side effects. */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   createNestedRoadScene,
   inspectNestedWires,
@@ -62,3 +63,20 @@ const illegal = inspectNestedWires(scene, [{ ...gateWire, segments: [shifted] }]
 assert.equal(illegal.corridors.length, 0);
 assert(illegal.boundaries.length > 0);
 console.log('PASS gate mouth refinement: wrong lane inside the permitted mouth is rejected; exact assigned lanes accepted.');
+
+// Keep historical corruption controls above, then audit the requested scene independently.
+const sceneArgument = process.argv.indexOf('--scene');
+const specArgument = process.argv.indexOf('--spec');
+if (sceneArgument >= 0) {
+  assert(specArgument >= 0, 'Supplied scene requires --spec for deterministic regeneration');
+  const supplied = JSON.parse(readFileSync(process.argv[sceneArgument + 1], 'utf8'));
+  const spec = JSON.parse(readFileSync(process.argv[specArgument + 1], 'utf8'));
+  assert(supplied.wiring.ok);
+  assert.equal(supplied.wiring.value.length, 26);
+  assert(supplied.nodes.every((n) => n.ports.length === 4));
+  assert.deepEqual(inspectNestedWires(supplied, supplied.wiring.value), {
+    corridors: [], nodeBodies: [], boundaries: [], continuity: [],
+  });
+  assert.equal(JSON.stringify(supplied), JSON.stringify(createNestedRoadScene({ spec })));
+  console.log('PASS supplied scene: 26 wires; all nodes own four ports; containment, bodies, boundaries, continuity; byte-identical regeneration');
+}

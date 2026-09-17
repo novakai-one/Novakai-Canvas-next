@@ -7,10 +7,15 @@ inside it. Count each pair once in each disjoint registered junction region.
 import itertools
 import json
 import math
+import argparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-scene = json.loads((ROOT / 'scene.json').read_text())
+parser = argparse.ArgumentParser()
+parser.add_argument('--scene', type=Path, default=ROOT / 'scene.json')
+parser.add_argument('--output', type=Path, default=ROOT / 'm4-visual-budget.json')
+args = parser.parse_args()
+scene = json.loads(args.scene.read_text())
 
 def contains(p, b):
     return b['x'] <= p[0] <= b['x'] + b['width'] and b['y'] <= p[1] <= b['y'] + b['height']
@@ -151,6 +156,6 @@ report = {'ruling': 'M4 orchestrator ruling #3 (2026-09-17)',
           'counts': counts, 'budgetedCounts': budgeted_counts,
           'junctionCrossingCounts': junction_counts, 'ceiling': 6,
           'crossings': records, 'alternatingBoundaryWitnesses': witnesses}
-(ROOT / 'm4-visual-budget.json').write_text(json.dumps(report, indent=2) + '\n')
+args.output.write_text(json.dumps(report, indent=2) + '\n')
 assert within_budget(budgeted_counts), f'FAIL budgeted visual crossings: {budgeted_counts}; ceiling=6'
 print('PASS DoD 3f retained crossing-budget gate under ruling #3; legal junction crossings reported, excluded with reasons')

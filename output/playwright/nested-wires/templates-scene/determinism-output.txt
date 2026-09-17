@@ -1,0 +1,4 @@
+run 1: 16 nodes / 9 sections / 29 wires; 45 dropped declarations
+run 2: 16 nodes / 9 sections / 29 wires; 45 dropped declarations
+diff scene-spec.json: exit 0
+diff extraction-report.md: exit 0

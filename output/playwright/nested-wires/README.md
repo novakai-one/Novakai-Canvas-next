@@ -302,3 +302,55 @@ routing changes were made. Extraction, real-wire routing, browser capture,
 invariant certification, ops/scaling, and visual acceptance remain unverified.
 See the [STOP report and exact reproduction](templates-scene/stop-report.md).
 No browser/server was started, port 5188 was untouched, and no push or PR occurred.
+
+## M6 resumed — placement fixed; STOP at real-graph invariants (2026-09-17)
+
+The orchestrator authorized the nested-only placement fix after the preceding
+STOP. `sizeSection` now assigns zero rows for zero direct nodes, and `gridNodes`
+returns before dividing by that row count. Child sizes and existing padding
+alone determine the parent footprint. A section with neither nodes nor children
+is rejected deterministically with `RangeError`; callers correct the semantic
+spec and rebuild. Nonempty sections retain their original arithmetic. The
+unchanged structural-identity verifier passes, including full byte identity
+against the canonical `?nested` scene.
+
+The committed [TypeScript AST extractor](templates-scene/extract-scene.mts)
+maps the real production tree to **16 nodes, nine sections, and 29 value wires**.
+It uses the existing TypeScript compiler API and symbol checker, with no new
+dependency. Requests run provider OUT → consumer IN. Type-only statements and
+named specifiers, non-value symbols, and external modules are excluded; each
+provider/consumer pair appears once. Dropped declaration counts are **3 external,
+42 internal type-only, 0 duplicate value declarations**. The wire count matches
+the approximate 29-wire survey exactly. Node IDs follow sorted relative paths;
+direct nodes are alphabetical by file name; child directories are alphabetical;
+root order is contract, core, adapters. Source lines, section mappings and the
+four isolated files are in the [extraction report](templates-scene/extraction-report.md).
+Two consecutive runs produce byte-identical JSON and Markdown (`diff` exit 0).
+The scene spec contains no coordinates.
+
+**What the real data shows:** `contract/api.ts` and
+`core/validation/catalog.ts` each have eight incident value edges. The barrel
+`contract/index.ts` has three incoming re-export edges and no outgoing value
+edges. `contract/errors.ts` supplies six consumers; three of those outbound
+routes already expose overlapping projection segments. These are graph
+observations, not a visual acceptance claim.
+
+All 16 nodes and nine sections now have finite, contained geometry, and all
+29 requests return `ok: true`. However, the public wire inspector reports
+**9 off-corridor segments and 21 invalid boundary-crossing segments**; the
+independent segment-pair audit finds **3 positive-length overlaps**. This fails
+DoD 4 under the unchanged lane/projection/road constraints. The
+[new STOP runner](templates-scene/verify-templates-scene.mjs) exits 1 and retains
+[exact witnesses](templates-scene/invariant-failures.json). It also verifies the
+minimal zero-node regression, deterministic rebuild and each measured pipeline
+stage once. Pin-row/crossing certificates remain unverified; this is not the
+complete acceptance runner.
+
+Per the brief's required STOP, browser integration, screenshots, five-load
+median, routing/compile ops, 2× graph scaling and a ~150-node/300-wire cost
+answer were **not run**. No estimates stand in for those measurements. Neither
+port 5188 nor port 5190 was contacted, and no browser/server was started.
+No routing law, lane, gate, pin-row or topology source was changed. Existing
+M1–M5 verifier scripts and approved references are preserved. Nothing was pushed
+and no PR was opened. **M6 remains incomplete.** Full binary DoD status and
+command output: [resume STOP report](templates-scene/resume-stop-report.md).

@@ -1,0 +1,1242 @@
+{
+  "inspection": {
+    "corridors": [
+      "w11:1",
+      "w11:2",
+      "w11:3",
+      "w12:1",
+      "w12:2",
+      "w12:3",
+      "w25:25",
+      "w25:26",
+      "w25:27"
+    ],
+    "nodeBodies": [],
+    "boundaries": [
+      "w01:17",
+      "w04:8",
+      "w07:9",
+      "w09:7",
+      "w10:8",
+      "w11:8",
+      "w12:8",
+      "w13:8",
+      "w14:8",
+      "w16:14",
+      "w17:14",
+      "w18:14",
+      "w18:19",
+      "w19:14",
+      "w19:19",
+      "w20:10",
+      "w20:15",
+      "w21:13",
+      "w21:18",
+      "w25:13",
+      "w25:18"
+    ],
+    "continuity": []
+  },
+  "overlaps": [
+    {
+      "wires": [
+        "w10",
+        "w11"
+      ],
+      "hit": {
+        "x": 1615,
+        "y": 989,
+        "length": 12
+      },
+      "first": {
+        "from": {
+          "x": 1609,
+          "y": 989
+        },
+        "to": {
+          "x": 1627,
+          "y": 989
+        },
+        "corridorId": "world:horizontal:944:64"
+      },
+      "second": {
+        "from": {
+          "x": 1615,
+          "y": 989
+        },
+        "to": {
+          "x": 1633,
+          "y": 989
+        },
+        "corridorId": "world:horizontal:944:64"
+      }
+    },
+    {
+      "wires": [
+        "w10",
+        "w12"
+      ],
+      "hit": {
+        "x": 1621,
+        "y": 989,
+        "length": 6
+      },
+      "first": {
+        "from": {
+          "x": 1609,
+          "y": 989
+        },
+        "to": {
+          "x": 1627,
+          "y": 989
+        },
+        "corridorId": "world:horizontal:944:64"
+      },
+      "second": {
+        "from": {
+          "x": 1621,
+          "y": 989
+        },
+        "to": {
+          "x": 1639,
+          "y": 989
+        },
+        "corridorId": "world:horizontal:944:64"
+      }
+    },
+    {
+      "wires": [
+        "w11",
+        "w12"
+      ],
+      "hit": {
+        "x": 1621,
+        "y": 989,
+        "length": 12
+      },
+      "first": {
+        "from": {
+          "x": 1615,
+          "y": 989
+        },
+        "to": {
+          "x": 1633,
+          "y": 989
+        },
+        "corridorId": "world:horizontal:944:64"
+      },
+      "second": {
+        "from": {
+          "x": 1621,
+          "y": 989
+        },
+        "to": {
+          "x": 1639,
+          "y": 989
+        },
+        "corridorId": "world:horizontal:944:64"
+      }
+    }
+  ],
+  "corridorWitnesses": [
+    {
+      "id": "w11:1",
+      "from": "node-5",
+      "to": "node-13",
+      "segment": {
+        "from": {
+          "x": 377,
+          "y": 716
+        },
+        "to": {
+          "x": 377,
+          "y": 740
+        },
+        "corridorId": "drive:node-5:exit-bottom"
+      },
+      "road": {
+        "id": "drive:node-5:exit-bottom",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 326,
+          "y": 716,
+          "width": 84,
+          "height": 20
+        },
+        "axis": "vertical",
+        "directions": [
+          "down"
+        ],
+        "access": {
+          "nodeId": "node-5",
+          "portId": "node-5:exit-bottom",
+          "side": "bottom",
+          "role": "exit"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w11:2",
+      "from": "node-5",
+      "to": "node-13",
+      "segment": {
+        "from": {
+          "x": 377,
+          "y": 740
+        },
+        "to": {
+          "x": 359,
+          "y": 740
+        },
+        "corridorId": "drive:node-5:exit-bottom"
+      },
+      "road": {
+        "id": "drive:node-5:exit-bottom",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 326,
+          "y": 716,
+          "width": 84,
+          "height": 20
+        },
+        "axis": "vertical",
+        "directions": [
+          "down"
+        ],
+        "access": {
+          "nodeId": "node-5",
+          "portId": "node-5:exit-bottom",
+          "side": "bottom",
+          "role": "exit"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w11:3",
+      "from": "node-5",
+      "to": "node-13",
+      "segment": {
+        "from": {
+          "x": 359,
+          "y": 740
+        },
+        "to": {
+          "x": 359,
+          "y": 736
+        },
+        "corridorId": "drive:node-5:exit-bottom"
+      },
+      "road": {
+        "id": "drive:node-5:exit-bottom",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 326,
+          "y": 716,
+          "width": 84,
+          "height": 20
+        },
+        "axis": "vertical",
+        "directions": [
+          "down"
+        ],
+        "access": {
+          "nodeId": "node-5",
+          "portId": "node-5:exit-bottom",
+          "side": "bottom",
+          "role": "exit"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w12:1",
+      "from": "node-5",
+      "to": "node-14",
+      "segment": {
+        "from": {
+          "x": 383,
+          "y": 716
+        },
+        "to": {
+          "x": 383,
+          "y": 746
+        },
+        "corridorId": "drive:node-5:exit-bottom"
+      },
+      "road": {
+        "id": "drive:node-5:exit-bottom",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 326,
+          "y": 716,
+          "width": 84,
+          "height": 20
+        },
+        "axis": "vertical",
+        "directions": [
+          "down"
+        ],
+        "access": {
+          "nodeId": "node-5",
+          "portId": "node-5:exit-bottom",
+          "side": "bottom",
+          "role": "exit"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w12:2",
+      "from": "node-5",
+      "to": "node-14",
+      "segment": {
+        "from": {
+          "x": 383,
+          "y": 746
+        },
+        "to": {
+          "x": 365,
+          "y": 746
+        },
+        "corridorId": "drive:node-5:exit-bottom"
+      },
+      "road": {
+        "id": "drive:node-5:exit-bottom",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 326,
+          "y": 716,
+          "width": 84,
+          "height": 20
+        },
+        "axis": "vertical",
+        "directions": [
+          "down"
+        ],
+        "access": {
+          "nodeId": "node-5",
+          "portId": "node-5:exit-bottom",
+          "side": "bottom",
+          "role": "exit"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w12:3",
+      "from": "node-5",
+      "to": "node-14",
+      "segment": {
+        "from": {
+          "x": 365,
+          "y": 746
+        },
+        "to": {
+          "x": 365,
+          "y": 736
+        },
+        "corridorId": "drive:node-5:exit-bottom"
+      },
+      "road": {
+        "id": "drive:node-5:exit-bottom",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 326,
+          "y": 716,
+          "width": 84,
+          "height": 20
+        },
+        "axis": "vertical",
+        "directions": [
+          "down"
+        ],
+        "access": {
+          "nodeId": "node-5",
+          "portId": "node-5:exit-bottom",
+          "side": "bottom",
+          "role": "exit"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w25:25",
+      "from": "node-16",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 248,
+          "y": 391
+        },
+        "to": {
+          "x": 242,
+          "y": 391
+        },
+        "corridorId": "drive:node-2:entry-left"
+      },
+      "road": {
+        "id": "drive:node-2:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 248,
+          "y": 346,
+          "width": 24,
+          "height": 84
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "node-2",
+          "portId": "node-2:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w25:26",
+      "from": "node-16",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 242,
+          "y": 391
+        },
+        "to": {
+          "x": 242,
+          "y": 373
+        },
+        "corridorId": "drive:node-2:entry-left"
+      },
+      "road": {
+        "id": "drive:node-2:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 248,
+          "y": 346,
+          "width": 24,
+          "height": 84
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "node-2",
+          "portId": "node-2:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 6
+      }
+    },
+    {
+      "id": "w25:27",
+      "from": "node-16",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 242,
+          "y": 373
+        },
+        "to": {
+          "x": 272,
+          "y": 373
+        },
+        "corridorId": "drive:node-2:entry-left"
+      },
+      "road": {
+        "id": "drive:node-2:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 248,
+          "y": 346,
+          "width": 24,
+          "height": 84
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "node-2",
+          "portId": "node-2:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 6
+      }
+    }
+  ],
+  "boundaryWitnesses": [
+    {
+      "id": "w01:17",
+      "from": "node-1",
+      "to": "node-4",
+      "segment": {
+        "from": {
+          "x": 67,
+          "y": 507
+        },
+        "to": {
+          "x": 142,
+          "y": 507
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      "road": {
+        "id": "world:vertical:64:64",
+        "sectionId": null,
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": -14,
+          "y": 58,
+          "width": 156,
+          "height": 2332
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 12
+      }
+    },
+    {
+      "id": "w04:8",
+      "from": "node-3",
+      "to": "node-1",
+      "segment": {
+        "from": {
+          "x": 1627,
+          "y": 817
+        },
+        "to": {
+          "x": 1627,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w07:9",
+      "from": "node-3",
+      "to": "node-15",
+      "segment": {
+        "from": {
+          "x": 1633,
+          "y": 811
+        },
+        "to": {
+          "x": 1633,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w09:7",
+      "from": "node-5",
+      "to": "node-1",
+      "segment": {
+        "from": {
+          "x": 1591,
+          "y": 853
+        },
+        "to": {
+          "x": 1591,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w10:8",
+      "from": "node-5",
+      "to": "node-12",
+      "segment": {
+        "from": {
+          "x": 1609,
+          "y": 835
+        },
+        "to": {
+          "x": 1609,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w11:8",
+      "from": "node-5",
+      "to": "node-13",
+      "segment": {
+        "from": {
+          "x": 1615,
+          "y": 829
+        },
+        "to": {
+          "x": 1615,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w12:8",
+      "from": "node-5",
+      "to": "node-14",
+      "segment": {
+        "from": {
+          "x": 1621,
+          "y": 823
+        },
+        "to": {
+          "x": 1621,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w13:8",
+      "from": "node-5",
+      "to": "node-15",
+      "segment": {
+        "from": {
+          "x": 1597,
+          "y": 847
+        },
+        "to": {
+          "x": 1597,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w14:8",
+      "from": "node-5",
+      "to": "node-16",
+      "segment": {
+        "from": {
+          "x": 1603,
+          "y": 841
+        },
+        "to": {
+          "x": 1603,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w16:14",
+      "from": "node-10",
+      "to": "node-12",
+      "segment": {
+        "from": {
+          "x": 1645,
+          "y": 806.5
+        },
+        "to": {
+          "x": 1645,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w17:14",
+      "from": "node-10",
+      "to": "node-15",
+      "segment": {
+        "from": {
+          "x": 1639,
+          "y": 800.5
+        },
+        "to": {
+          "x": 1639,
+          "y": 880
+        },
+        "corridorId": "section-1:horizontal:808:200"
+      },
+      "road": {
+        "id": "section-1:horizontal:808:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 152,
+          "y": 736,
+          "width": 2950,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w18:14",
+      "from": "node-12",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 1621,
+          "y": 1697
+        },
+        "to": {
+          "x": 1621,
+          "y": 1760
+        },
+        "corridorId": "section-4:horizontal:1688:264"
+      },
+      "road": {
+        "id": "section-4:horizontal:1688:264",
+        "sectionId": "section-4",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 222,
+          "y": 1616,
+          "width": 2816,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w18:19",
+      "from": "node-12",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 97,
+          "y": 537
+        },
+        "to": {
+          "x": 142,
+          "y": 537
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      "road": {
+        "id": "world:vertical:64:64",
+        "sectionId": null,
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": -14,
+          "y": 58,
+          "width": 156,
+          "height": 2332
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 12
+      }
+    },
+    {
+      "id": "w19:14",
+      "from": "node-13",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 1627,
+          "y": 1691
+        },
+        "to": {
+          "x": 1627,
+          "y": 1760
+        },
+        "corridorId": "section-4:horizontal:1688:264"
+      },
+      "road": {
+        "id": "section-4:horizontal:1688:264",
+        "sectionId": "section-4",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 222,
+          "y": 1616,
+          "width": 2816,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w19:19",
+      "from": "node-13",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 91,
+          "y": 531
+        },
+        "to": {
+          "x": 142,
+          "y": 531
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      "road": {
+        "id": "world:vertical:64:64",
+        "sectionId": null,
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": -14,
+          "y": 58,
+          "width": 156,
+          "height": 2332
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 12
+      }
+    },
+    {
+      "id": "w20:10",
+      "from": "node-14",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 1633,
+          "y": 1668.5
+        },
+        "to": {
+          "x": 1633,
+          "y": 1760
+        },
+        "corridorId": "section-4:horizontal:1688:264"
+      },
+      "road": {
+        "id": "section-4:horizontal:1688:264",
+        "sectionId": "section-4",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 222,
+          "y": 1616,
+          "width": 2816,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w20:15",
+      "from": "node-14",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 85,
+          "y": 525
+        },
+        "to": {
+          "x": 142,
+          "y": 525
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      "road": {
+        "id": "world:vertical:64:64",
+        "sectionId": null,
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": -14,
+          "y": 58,
+          "width": 156,
+          "height": 2332
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 12
+      }
+    },
+    {
+      "id": "w21:13",
+      "from": "node-15",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 1639,
+          "y": 1674.5
+        },
+        "to": {
+          "x": 1639,
+          "y": 1760
+        },
+        "corridorId": "section-4:horizontal:1688:264"
+      },
+      "road": {
+        "id": "section-4:horizontal:1688:264",
+        "sectionId": "section-4",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 222,
+          "y": 1616,
+          "width": 2816,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w21:18",
+      "from": "node-15",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 79,
+          "y": 519
+        },
+        "to": {
+          "x": 142,
+          "y": 519
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      "road": {
+        "id": "world:vertical:64:64",
+        "sectionId": null,
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": -14,
+          "y": 58,
+          "width": 156,
+          "height": 2332
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 12
+      }
+    },
+    {
+      "id": "w25:13",
+      "from": "node-16",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 1645,
+          "y": 1686.5
+        },
+        "to": {
+          "x": 1645,
+          "y": 1760
+        },
+        "corridorId": "section-4:horizontal:1688:264"
+      },
+      "road": {
+        "id": "section-4:horizontal:1688:264",
+        "sectionId": "section-4",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 222,
+          "y": 1616,
+          "width": 2816,
+          "height": 144
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 11
+      }
+    },
+    {
+      "id": "w25:18",
+      "from": "node-16",
+      "to": "node-2",
+      "segment": {
+        "from": {
+          "x": 73,
+          "y": 513
+        },
+        "to": {
+          "x": 142,
+          "y": 513
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      "road": {
+        "id": "world:vertical:64:64",
+        "sectionId": null,
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": -14,
+          "y": 58,
+          "width": 156,
+          "height": 2332
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 12
+      }
+    }
+  ],
+  "stages": [
+    "capacity",
+    "nodes",
+    "ports",
+    "topology",
+    "wire-registry",
+    "wire:w01",
+    "wire:w02",
+    "wire:w03",
+    "wire:w04",
+    "wire:w05",
+    "wire:w06",
+    "wire:w07",
+    "wire:w08",
+    "wire:w09",
+    "wire:w10",
+    "wire:w11",
+    "wire:w12",
+    "wire:w13",
+    "wire:w14",
+    "wire:w15",
+    "wire:w16",
+    "wire:w17",
+    "wire:w18",
+    "wire:w19",
+    "wire:w20",
+    "wire:w21",
+    "wire:w22",
+    "wire:w23",
+    "wire:w24",
+    "wire:w25",
+    "wire:w26",
+    "wire:w27",
+    "wire:w28",
+    "wire:w29",
+    "lane-allocation",
+    "main-roads",
+    "driveways",
+    "network",
+    "lane-projection"
+  ]
+}

@@ -1,0 +1,56 @@
+PASS 16 nodes / 9 sections; every node and child inside its owner; finite bounds
+PASS minimal nested-only regression and explicit empty-section rejection
+PASS two complete builds byte-identical; each one-way pipeline stage once
+STAGES ["capacity","nodes","ports","topology","wire-registry","wire:w01","wire:w02","wire:w03","wire:w04","wire:w05","wire:w06","wire:w07","wire:w08","wire:w09","wire:w10","wire:w11","wire:w12","wire:w13","wire:w14","wire:w15","wire:w16","wire:w17","wire:w18","wire:w19","wire:w20","wire:w21","wire:w22","wire:w23","wire:w24","wire:w25","wire:w26","wire:w27","wire:w28","wire:w29","lane-allocation","main-roads","driveways","network","lane-projection"]
+PASS all 29 value wires route ok:true
+INSPECTION {"corridors":["w11:1","w11:2","w11:3","w12:1","w12:2","w12:3","w25:25","w25:26","w25:27"],"nodeBodies":[],"boundaries":["w01:17","w04:8","w07:9","w09:7","w10:8","w11:8","w12:8","w13:8","w14:8","w16:14","w17:14","w18:14","w18:19","w19:14","w19:19","w20:10","w20:15","w21:13","w21:18","w25:13","w25:18"],"continuity":[]}
+FAIL all wires inside corridors; gate-mouth crossings only; no body or continuity failures: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   boundaries: [
++     'w01:17',
++     'w04:8',
++     'w07:9',
++     'w09:7',
++     'w10:8',
++     'w11:8',
++     'w12:8',
++     'w13:8',
++     'w14:8',
++     'w16:14',
++     'w17:14',
++     'w18:14',
++     'w18:19',
++     'w19:14',
++     'w19:19',
++     'w20:10',
++     'w20:15',
++     'w21:13',
++     'w21:18',
++     'w25:13',
++     'w25:18'
++   ],
+-   boundaries: [],
+    continuity: [],
++   corridors: [
++     'w11:1',
++     'w11:2',
++     'w11:3',
++     'w12:1',
++     'w12:2',
++     'w12:3',
++     'w25:25',
++     'w25:26',
++     'w25:27'
++   ],
+-   corridors: [],
+    nodeBodies: []
+  }
+
+OVERLAPS [{"wires":["w10","w11"],"hit":{"x":1615,"y":989,"length":12},"first":{"from":{"x":1609,"y":989},"to":{"x":1627,"y":989},"corridorId":"world:horizontal:944:64"},"second":{"from":{"x":1615,"y":989},"to":{"x":1633,"y":989},"corridorId":"world:horizontal:944:64"}},{"wires":["w10","w12"],"hit":{"x":1621,"y":989,"length":6},"first":{"from":{"x":1609,"y":989},"to":{"x":1627,"y":989},"corridorId":"world:horizontal:944:64"},"second":{"from":{"x":1621,"y":989},"to":{"x":1639,"y":989},"corridorId":"world:horizontal:944:64"}},{"wires":["w11","w12"],"hit":{"x":1621,"y":989,"length":12},"first":{"from":{"x":1615,"y":989},"to":{"x":1633,"y":989},"corridorId":"world:horizontal:944:64"},"second":{"from":{"x":1621,"y":989},"to":{"x":1639,"y":989},"corridorId":"world:horizontal:944:64"}}]
+FAIL zero positive-length parallel/coincident wire overlaps: Expected values to be strictly equal:
+
+3 !== 0
+
+STOP DoD 4: containment and overlap gates fail before crossing certification. No acceptance claim.

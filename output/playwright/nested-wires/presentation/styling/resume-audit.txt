@@ -1,0 +1,11 @@
+PASS fresh computed stroke colors equal paper default #526170 and primary #355ccd tokens
+PASS templates-roads-off.png: PNG 1920x1440; sha256=3ead5684a5d6250447f475377e6e946eec00c1ba70602f79dccc3787b17c8561
+PASS templates-roads-on.png: PNG 1920x1440; sha256=029e879991eecc21079a11a06f2557df553429df46f9e9a73d683bce7e4b2112
+PASS nested-roads-off.png: PNG 1920x1440; sha256=334be4c90ef81dc466f9bac11acedadc0b4fc2fad512b1ae30e4586d0ab0e555
+PASS nested-roads-on.png: PNG 1920x1440; sha256=a740dd9aeaeaad81c9cd41819b02592bee20609b9fd2dec388f4c3f161443d08
+PASS templates-validation-detail.png: PNG 1920x1440; sha256=0bbefda2a6acde40459ed13d565e6aadffd4e511a30c34b7ff1287f1876147f3
+PASS selection-wire.png: PNG 1920x1440; sha256=2f261852d20488a895a80c89af5672c7d7f41b7232b493340ef48c029e6bde30
+PASS M6 layout, host, templates evidence and approved references unchanged
+PASS both historical STOP evidence commits preserved unchanged
+PASS M4/M5 selection runner SHA256=27e28c39cf1c50017483ede1954588d21e97ed4a2eadf1d01d482afdaa1eb11e
+exit 0

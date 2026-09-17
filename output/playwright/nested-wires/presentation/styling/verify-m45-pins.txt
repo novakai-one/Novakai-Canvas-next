@@ -1,0 +1,5 @@
+$ node --import tsx output/playwright/nested-wires/verify-m45-pins.mjs
+PASS M4.5 derived pins: 18 wires; 30 exact centered rows in assigned lane order; pitch 6
+PASS M4.5 derived pins: 26 wires; 37 exact centered rows in assigned lane order; pitch 6
+
+exit 0

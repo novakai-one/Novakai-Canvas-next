@@ -1,0 +1,13 @@
+$ python3 output/playwright/nested-wires/verify-m45-evidence.py
+PASS DoD 4: lane, pin, fan, overlap, containment, determinism and geometry-scope audits
+PASS DoD 1: pnpm check, 208 tests; zero new .test.ts files
+PASS DoD 2: 24 nodes / 26 wires; frozen identity checked separately against 0e5f21e
+PASS DoD 3: certified=23; uncertified=0; J21=2; budgeted={"section-1": 0, "section-2": 0, "section-3": 0, "section-4": 0, "world": 0}; junction health={"section-1": 18, "section-2": 2, "section-3": 0, "section-4": 3, "world": 0}
+PASS DoD 5: routing=992; compilation=19683; max leg=41; discovery=0; every stage=1
+PASS DoD 6: loads=[293, 263, 322.7999999523163, 284.2000000476837, 274.7000000476837]; median=284.200 ms; clone ops=[26107, 44120]; growth=1.6899682077603708
+PASS DoD 7: every selection item PASS, hub/api neighborhoods; layout counter 1 -> 1
+PASS DoD 8: required PNG hashes recorded; roads-off captured via checkbox
+PASS DoD 9: canonical scene/oracle/calculations/metrics reconciled for 26 wires
+PASS both accepted bound-proof commits retained as ancestors
+
+exit 0

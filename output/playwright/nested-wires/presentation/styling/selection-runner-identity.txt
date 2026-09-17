@@ -1,0 +1,6 @@
+$ git diff b20053d df05931 -- apps/web/cli/verify-selection.mjs
+(empty; exit 0)
+PASS current M4/M5 selection body byte-identical to M6 b20053d and M5 df05931
+SHA256 27e28c39cf1c50017483ede1954588d21e97ed4a2eadf1d01d482afdaa1eb11e
+M5 m5-swap/completion-report.md DoD 8 runs the unchanged M4 selection wrapper and browser body.
+Scope: selection semantics, not the separate M5 drag/swap implementation.

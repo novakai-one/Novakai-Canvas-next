@@ -1,0 +1,28 @@
+$ python3 output/playwright/nested-wires/presentation/styling/verify-browser.py
+PASS headless Chrome 153.0.8010.48; six captures at 1920x1440 on 5191; browser errors=0
+PASS templates: exact >=3 convergence membership: 15 mouths / 24 wires; default labels hidden; paint tokens match
+PASS nested: exact >=3 convergence membership: 7 mouths / 13 wires; default labels hidden; paint tokens match
+PASS converging w22 primary: stroke=5px / opacity=1 / label=w22; all others dim; paths and camera unchanged; layout=1
+PASS 2a load: 0 visible labels; all 24 nodes / 26 wires unselected
+PASS 2b node-7 primary; only w12 + w13 + w21 + node-12 + node-5 + node-23 secondary; every other node/wire dim; 0 labels (50/50 class assertions)
+PASS 3/b layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS 2c w06 primary; only node-8 + node-10 secondary; every other node/wire dim; 1 label = w06, above arc midpoint (50/50 class assertions)
+PASS 3/c layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS 2d empty canvas: 0 labels; 0 primary/secondary/dim classes anywhere
+PASS 3/d layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS 2e node-1 -> node-22: only node-22 primary, 0 secondary, previous neighbourhood dim, 0 labels (50/50 class assertions)
+PASS 3/e layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS 2f node-5 twice: 0 labels; 0 primary/secondary/dim classes anywhere
+PASS 3/f layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS 2g secondary w04 -> primary; only node-5 + node-6 secondary; 1 label = w04 (50/50 class assertions)
+PASS 3/g layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS extra: primary wire toggles off; secondary node becomes primary with fresh one-hop neighbourhood
+PASS 3/extra layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS hub node-23: exactly w19–w24 and their six sources secondary; no labels
+PASS 3/hub layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+PASS api node-24: exactly w25/w26 and node-8/node-20 secondary; no labels
+PASS 3/api layout counter before=1 after=1 delta=0; all node/road/port bounds, wire paths and camera unchanged
+MEASURE selection five-load median=269.59999990463257 ms
+PASS unchanged inherited selection assertions; zero recalculations per click; median <=300 ms
+
+exit 0

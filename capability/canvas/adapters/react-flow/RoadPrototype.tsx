@@ -1,7 +1,14 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { ReactElement, CSSProperties } from 'react';
-import { ReactFlow, Background, Controls, ViewportPortal, useReactFlow } from '@xyflow/react';
-import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  ViewportPortal,
+  useReactFlow,
+  useNodesState,
+} from '@xyflow/react';
+import type { Node, NodeProps, NodeTypes, ReactFlowInstance } from '@xyflow/react';
 import type {
   RoadPrototypeScene,
   NestedWire,
@@ -199,7 +206,7 @@ function blockNode(
     data: { block, kind, ports: block.ports ?? [], selected, select },
     style: { width: block.bounds.width, height: block.bounds.height },
     zIndex,
-    draggable: false,
+    draggable: kind === 'node',
     selectable: false,
   };
 }
@@ -524,7 +531,8 @@ function RoutePreview({
   );
 }
 
-function coverageLabel(coverage: PrototypeRoadCoverage): string {
+function coverageLabel(coverage: PrototypeRoadCoverage | undefined): string {
+  if (coverage === undefined) return 'Road coverage not audited after swap';
   if (
     [coverage.uncoveredArea, coverage.multiplyOwnedArea, coverage.outsideRoadArea].some(
       (area) => area !== 0,
@@ -540,6 +548,7 @@ export function RoadPrototype({
   inspectTravel,
   coverage,
   onReady,
+  onSwap,
   proofs = noProofs,
   initialProof = -1,
 }: {
@@ -547,9 +556,11 @@ export function RoadPrototype({
   readonly initialProof?: number;
   readonly scene: RoadPrototypeScene;
   readonly inspectTravel: InspectTravel;
-  readonly coverage: PrototypeRoadCoverage;
+  readonly coverage: PrototypeRoadCoverage | undefined;
   readonly onReady: () => void;
+  readonly onSwap?: ((source: string, destination: string) => void) | undefined;
 }): ReactElement {
+  const camera = useRef<Pick<ReactFlowInstance, 'screenToFlowPosition'> | null>(null);
   const [visible, setVisible] = useState(true);
   const [proofIndex, setProofIndex] = useState(initialProof);
   const proof = proofs[proofIndex];
@@ -594,10 +605,25 @@ export function RoadPrototype({
     ],
     [scene, selected, selectRegion],
   );
-  const nodes = useMemo(
-    () => baseNodes.map((node) => selectionNode(node, primary, secondary)),
-    [baseNodes, primary, secondary],
+  const committedNodes = useMemo(
+    () =>
+      baseNodes.map((node) => ({
+        ...selectionNode(node, primary, secondary),
+        draggable: node.draggable === true && onSwap !== undefined,
+      })),
+    [baseNodes, primary, secondary, onSwap],
   );
+  const [nodes, setNodes, onNodesChange] = useNodesState(committedNodes);
+  useEffect(() => setNodes(committedNodes), [committedNodes, setNodes]);
+  function drop(event: MouseEvent | TouchEvent, node: Node): void {
+    performance.mark('roads:drop');
+    setNodes(committedNodes);
+    const point = eventPoint(event);
+    const position = camera.current?.screenToFlowPosition(point);
+    if (position === undefined) return;
+    const target = swapTarget(scene, node.id, position);
+    if (target !== undefined) onSwap?.(node.id, target);
+  }
   const cameraFocus = useMemo(
     () => wireFocus(focusedWire) ?? scene.sections.find((s) => s.id === focus),
     [focusedWire, scene, focus],
@@ -686,10 +712,16 @@ export function RoadPrototype({
       <div className={styles.canvas} data-roads-visible={visible}>
         <ReactFlow
           nodes={nodes}
+          onNodesChange={onNodesChange}
+          onNodeDragStop={drop}
+          nodeDragThreshold={4}
           edges={[]}
           nodeTypes={nodeTypes}
           fitView={initialProof < 0}
-          onInit={(camera) => focusProof(camera, proofs[initialProof], undefined)}
+          onInit={(instance) => {
+            camera.current = instance;
+            focusProof(instance, proofs[initialProof], undefined);
+          }}
           fitViewOptions={{ padding: 0.12 }}
           minZoom={0.1}
           maxZoom={2}
@@ -701,7 +733,7 @@ export function RoadPrototype({
           }}
           onPaneClick={() => setPrimary('')}
         >
-          <ReadySignal onReady={onReady} />
+          <ReadySignal onReady={onReady} scene={scene} />
           <ProofCamera proof={proof} focus={cameraFocus} />
           <NestedWirePaths
             wires={wires}
@@ -820,10 +852,16 @@ function PortProof({ port }: { readonly port: PrototypePortLocation }): ReactEle
   );
 }
 /** After React commits, the host waits for fonts and two animation frames. Geometry is already explicit. */
-function ReadySignal({ onReady }: { readonly onReady: () => void }): null {
+function ReadySignal({
+  onReady,
+  scene,
+}: {
+  readonly onReady: () => void;
+  readonly scene: RoadPrototypeScene;
+}): null {
   useEffect(() => {
     onReady();
-  }, [onReady]);
+  }, [onReady, scene]);
   return null;
 }
 
@@ -1188,4 +1226,29 @@ function wireMidpoint(wire: NestedWire): PrototypePoint {
     x: segment.from.x + (segment.to.x - segment.from.x) * ratio,
     y: segment.from.y + (segment.to.y - segment.from.y) * ratio,
   };
+}
+
+/** Drop admission uses the cursor and committed geometry, never transient dragged bounds. */
+function eventPoint(event: MouseEvent | TouchEvent): PrototypePoint {
+  if ('clientX' in event) return { x: event.clientX, y: event.clientY };
+  const touch = event.changedTouches[0];
+  return { x: touch?.clientX ?? -Infinity, y: touch?.clientY ?? -Infinity };
+}
+function swapTarget(
+  scene: RoadPrototypeScene,
+  source: string,
+  point: PrototypePoint,
+): string | undefined {
+  const owner = scene.nodes.find((node) => node.id === source)?.parentSectionId;
+  return scene.nodes
+    .filter((node) => node.id !== source && node.parentSectionId === owner)
+    .find((node) => insideBounds(point, node.bounds))?.id;
+}
+function insideBounds(point: PrototypePoint, bounds: PrototypeBounds): boolean {
+  return (
+    point.x >= bounds.x &&
+    point.x <= bounds.x + bounds.width &&
+    point.y >= bounds.y &&
+    point.y <= bounds.y + bounds.height
+  );
 }

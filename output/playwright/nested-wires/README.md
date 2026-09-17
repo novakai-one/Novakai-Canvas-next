@@ -290,3 +290,12 @@ python3 output/playwright/nested-wires/verify-m45-evidence.py --write
 ```
 
 Run timing after checks, without concurrent browser runners/source edits. Full stdout, all ten DoD statuses, load samples, operation totals, clone interpretation and local commit log are in [m45-completion-report.md](m45-completion-report.md). [Visual inspection](m45-visual-review.md) records the reference comparison and retained fixture limitations. [Source review](m45-source-review.md) records scores 146–152/160 and the enforced Sonar ≤2 gate.
+
+
+## M5 drag-swap — STOP at compile-operation ceiling
+
+The required node-4/node-1 semantic swap was checked before adding interaction code. Full recompute costs **20,107 compile ops > 20,000**, versus 19,683 for the unchanged default scene. Routing is 1,025/1,050, discovery is zero, and every stage executes once. Exactly two nodes exchange bounds, all 26 wires route, and the builder round-trip is byte-identical.
+
+**M5 is incomplete.** The brief restricts changes to placement order and interaction handling and prohibits incremental machinery; resolving the compile overrun needs an orchestrator ruling on pipeline optimization or the ceiling. No drag UI, screenshots, interaction timing, dirty-set report or scaling-time claim was produced after STOP. The default-scene artifacts and two inherited selection-file edits are preserved. No browser was used, no push/PR, and Vite on 5188 was left running.
+
+[STOP report with binary DoD table and pasted outputs](m5-swap/STOP.md). Reproduce with `node --import tsx output/playwright/nested-wires/verify-m5-preflight.mjs` (expected exit 1).

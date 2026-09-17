@@ -1,3 +1,5 @@
+> **M4.5 current result (final ruling, 2026-09-17):** junction-aware assignment and coordinated turns reduce S1 **28→18**, J21 **6→2**, S2 **4→2**, S3 **2→0**, S4 **4→3**, world **8→0**. Budgeted crossings are **0 everywhere**. Every one of the **23 remaining crossings is individually certified; uncertified = 0**. The accepted S1 floor **17 = 14 + 3** and both proof commits remain. Earlier STOP narratives below are historical and superseded by [the completion report](m45-completion-report.md).
+
 > **M4.5 STOP (corrected brief, 2026-09-17):** junction-aware lane assignment is allowed, including moved wire centerlines on roads and derived pins. A new independent proof still certifies **S1 >=14 unavoidable crossings**, above the unchanged <=11 target, under frozen routes and right-hand traffic. See [the full STOP report and all DoD statuses](m45-stop-report.md), [reproducer](verify-m45-topological-bound.py), and [14 individual witnesses](m45-topological-bound.json). No production geometry changed; counts remain S1 28→28, S2 4→4, S3 2→2, S4 4→4, world 8→8; budgeted 0→0 everywhere. M4.5 is not complete.
 
 > **Current acceptance: M4 completed under orchestrator ruling #3.** Canonical JSON now describes 24 nodes / 26 wires. Earlier STOP narratives and candidate snapshots below are retained as history; see the final M4 section and [end-to-end DoD report](m4-completion-report.md).
@@ -258,3 +260,33 @@ budgeted crossings remain **0** everywhere. Eleven current S1 crossings remain
 uncertified. Full DoD table, proof, freshly pasted checks, and explicit not-run
 items: [m45-stop-report.md](m45-stop-report.md). Canonical M4 evidence is retained.
 No browser was used; port 5188 was left running; no push or PR.
+
+
+## M4.5 — junction-aware lane continuity
+
+Allocation compacts retained law paths once, orders shared lanes at their upstream/downstream forks, and memoizes each shared-path comparison. If endpoint preferences conflict, the upper/left fork wins deterministically; wire ID only breaks an unresolved tie. There is no route search, alternative-lane enumeration, per-junction identity switch, or geometry retry. Right-hand halves and pitch 6 remain. Pins are still exact centered rows, now ordered by the new assigned ranks as the corrected brief permits.
+
+Projection coordinates opposing left turns through distinct outer channels. Other left turns receive quarter-pitch internal steps to prevent coincident corner segments; entry/exit channel staggering avoids same-axis overlap. A neighboring widened mouth cannot cause an assigned stem to backtrack. All new bends are inside registered junctions; the independent interval audit checks 865 nonjunction/nonterminal intervals against their exact assigned road lanes. Routing-law source, nodes, sections, road IDs/bounds, routes and gates remain frozen against `0e5f21e`.
+
+The prover retains all 14 independent S1 witnesses and the three accepted linked-road-order certificates. Extending the same method across sections certifies two additional linked obstructions (w09/w18 and w16/w22): each forces one crossing somewhere along its listed junction chain, without increasing the S1-only floor. Current allocation places them in S2 and S1 respectively. There are 18 independent endpoint certificates plus five global linked-order certificates: all 23 actual crossings, with no surplus or uncertified intersection.
+
+`verify-lanes.mjs` retains geometry/overlap/fan/gate controls and replaces only superseded wire-ID-order and frozen-derived-pin assumptions with assigned-rank and exact pin-row checks. `verify-m4-pin-preservation.mjs` is retained unchanged as historical M4 evidence. The M4 selection runner and browser assertions are unchanged.
+
+Reproduce headlessly, leaving Vite on 5188 running:
+
+```sh
+pnpm check
+pnpm exec tsx apps/web/cli/verify-nested-wires.ts
+node --import tsx output/playwright/nested-wires/verify-structural-identity.mjs
+node --import tsx output/playwright/nested-wires/verify-lanes.mjs
+node --import tsx output/playwright/nested-wires/verify-invariants.mjs
+node --import tsx output/playwright/nested-wires/verify-m45-geometry.mjs
+node --import tsx output/playwright/nested-wires/count-operations.mjs
+python3 output/playwright/nested-wires/verify-m45-topological-bound.py
+python3 output/playwright/nested-wires/verify-oracle.py
+python3 output/playwright/nested-wires/verify-m4-selection.py
+python3 output/playwright/nested-wires/capture-m45.py
+python3 output/playwright/nested-wires/verify-m45-evidence.py --write
+```
+
+Run timing after checks, without concurrent browser runners/source edits. Full stdout, all ten DoD statuses, load samples, operation totals, clone interpretation and local commit log are in [m45-completion-report.md](m45-completion-report.md). [Visual inspection](m45-visual-review.md) records the reference comparison and retained fixture limitations. [Source review](m45-source-review.md) records scores 146–152/160 and the enforced Sonar ≤2 gate.

@@ -1,0 +1,27 @@
+{
+  "history": [
+    {
+      "purpose": "initial current-scene timing; baseline screenshot harness later corrected",
+      "loads": [
+        291.8000000715256,
+        268.10000002384186,
+        262.5,
+        266.89999997615814,
+        262.60000002384186
+      ],
+      "medianMilliseconds": 266.89999997615814
+    },
+    {
+      "purpose": "baseline screenshot correction; run overlapped ongoing work; failed timing retained",
+      "loads": [
+        354.6999999284744,
+        329.8000000715256,
+        298,
+        312.60000002384186,
+        303.89999997615814
+      ],
+      "medianMilliseconds": 312.60000002384186
+    }
+  ],
+  "finalRunPolicy": "Fresh complete five-load batch after all source edits and full checks; no dropped sample or changed ceiling."
+}

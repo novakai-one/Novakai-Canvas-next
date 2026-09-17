@@ -1,0 +1,2 @@
+PASS five loads=[293, 263, 322.7999999523163, 284.2000000476837, 274.7000000476837]; median=284.200 ms <=300
+PASS headless captures: immutable M4 before / current M4.5 after, overview, roads-off; 24 nodes / 26 wires; layout count 1

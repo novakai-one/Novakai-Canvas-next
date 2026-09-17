@@ -1,0 +1,1 @@
+PASS geometry scope: 865 nonjunction/nonterminal intervals lie exactly on their assigned road lanes; turns confined to registered junctions

@@ -168,9 +168,9 @@
       "total": 53
     },
     "lane-allocation": {
-      "arithmetic": 674,
-      "comparisons": 740,
-      "total": 1414
+      "arithmetic": 2286,
+      "comparisons": 1504,
+      "total": 3790
     },
     "main-roads": {
       "arithmetic": 801,
@@ -188,9 +188,9 @@
       "total": 11021
     },
     "lane-projection": {
-      "arithmetic": 1224,
-      "comparisons": 1789,
-      "total": 3013
+      "arithmetic": 1849,
+      "comparisons": 2095,
+      "total": 3944
     },
     "probe:capacity": {
       "arithmetic": 41,
@@ -353,9 +353,9 @@
       "total": 53
     },
     "probe:lane-allocation": {
-      "arithmetic": 674,
-      "comparisons": 740,
-      "total": 1414
+      "arithmetic": 2286,
+      "comparisons": 1504,
+      "total": 3790
     },
     "probe:main-roads": {
       "arithmetic": 1569,
@@ -373,9 +373,9 @@
       "total": 22292
     },
     "probe:lane-projection": {
-      "arithmetic": 1224,
-      "comparisons": 1789,
-      "total": 3013
+      "arithmetic": 1849,
+      "comparisons": 2095,
+      "total": 3944
     }
   },
   "wireRouting": {
@@ -514,12 +514,12 @@
     "total": 992
   },
   "laneNetwork": {
-    "total": 16376,
+    "total": 19683,
     "components": {
       "wire-registry": 928,
-      "lane-allocation": 1414,
+      "lane-allocation": 3790,
       "network": 11021,
-      "lane-projection": 3013
+      "lane-projection": 3944
     },
     "roadCount": 147,
     "pairwiseRoadCandidates": 0,
@@ -534,14 +534,14 @@
     "southOffset": 1920,
     "exactCloneVerified": true,
     "laneCompile": [
-      16376,
-      28573
+      19683,
+      31880
     ],
     "totalOperations": [
-      22800,
-      40813
+      26107,
+      44120
     ],
-    "ratio": 1.7900438596491228
+    "ratio": 1.6899682077603708
   },
   "perLeg": [
     {

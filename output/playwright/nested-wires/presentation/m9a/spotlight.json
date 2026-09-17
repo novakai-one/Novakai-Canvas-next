@@ -13,7 +13,7 @@
     "PASS roads-on spotlight: layout delta=0; exact geometry/camera retained"
   ],
   "timing": [
-    132.70000004768372
+    129.30000007152557
   ],
   "tokens": {
     "idle-opacity": "0.65",

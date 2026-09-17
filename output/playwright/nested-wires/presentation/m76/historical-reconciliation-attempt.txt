@@ -1,0 +1,26 @@
+identity: exit 0
+verify-nested-wires: exit 0
+verify-invariants: exit 0
+verify-m3-topology: exit 0
+verify-m45-pins: exit 0
+verify-m45-geometry: exit 0
+verify-structural-identity: exit 0
+verify-lanes: exit 0
+verify-static: exit 0
+verify-oracle: exit 0
+verify-m45-topological-bound: exit 0
+verify-m45-evidence: exit 1
+Traceback (most recent call last):
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m76/verify-offline.py", line 19, in <module>
+    run(entry['runner'], Path(entry['runner']).stem)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/presentation/m76/verify-offline.py", line 15, in run
+    assert result.returncode == 0, result.stdout + result.stderr
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PASS DoD 4: lane, pin, fan, overlap, containment, determinism and geometry-scope audits
+Traceback (most recent call last):
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/verify-m45-evidence.py", line 98, in <module>
+    assert read('metrics.json') == metrics
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+

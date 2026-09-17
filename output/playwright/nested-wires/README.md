@@ -806,3 +806,52 @@ baselines remain 1,556.7/374.5 ms; there are no M7.6 after-load measurements,
 selection results, or screenshots. No browser/server was launched, no scene or
 invariant verifier was changed, and no new test file was added. Implementation
 awaits an explicit correction of the conflicting baselines or permitted scope.
+
+## M7.6 — ruling #10 implementation; STOP at open-menu screenshot
+
+The amended operation baselines resolve the earlier STOP above; commit `5c43d23`
+remains. Lazy coverage, wrapped toolbar controls and filename wire options are
+implemented on `feat/m76-lazy-audit`. **Milestone completion is stopped at DoD-6:**
+headless screenshots omit the native open dropdown. Filename content and behavior
+pass, but a closed/selected dropdown image is not substituted for that required
+screenshot. See the [amended binary report](presentation/m76/amended-report.md).
+
+| Five-load median | Before | After |
+| --- | ---: | ---: |
+| Scale, roads off | 1,556.7ms | **235.7ms** |
+| Templates, roads off | 374.5ms | **190.8ms** |
+| Scale, navigation through roads on | — | **881.4ms** |
+| Inherited selection runner | ceiling 450ms | **183.4ms** |
+
+Roads now default off: coverage audit is not invoked, does not block readiness,
+and no accounting footer is displayed. Checking Show roads mounts the unchanged
+synchronous audit and displays its result. Selection while on reuses that result;
+off removes it without auditing; turning on again runs a fresh audit. The browser
+verified each transition. Offline audit implementations and verifiers are unchanged.
+
+The on-run median audit is 545.6ms; toggle-through-ready is 646.1ms. Its 881.4ms
+navigation-through-on includes initial off readiness, driver handoff, the toggle
+and two frames. Historical before numbers are not same-session A/B data. Full
+five-load samples and stage decomposition are in
+[browser.json](presentation/m76/browser.json). Readiness is not GPU paint timing.
+
+`pnpm check` ran alone and passed all 208 tests. Full scenes remain byte-identical
+to `d720e7f`; nested/templates/scale invariants pass, with 23/130/112 certified
+crossings and zero uncertified crossings or overlaps. Exact compile/routing/discovery
+counts are **19,768/992/0**, **28,443/1,626/0**, **43,876/2,088/0**. All selection
+click deltas are zero. No new `*.test.ts`, geometry, routing-law, placement, sizing
+or invariant-verifier changes. Headless only, owned port 5191 only; no push or PR.
+
+The twelve-tab toolbar now wraps and preserves the title and checkbox at 1920px.
+Wire labels use existing filename-like node labels, falling back to IDs when
+absent (`w01 · node-1 → node-2`); templates w22 reads
+`w22 · catalog.ts → plan.ts`. This changes presentation only.
+
+Honest limits: native-popup screenshot gate remains unmet after Chrome and
+Chromium headless-shell attempts. The old M7 density/crossing/empty-panel visual
+gaps remain; no overall reference-parity claim. An extra historical metrics
+reconciler also failed against refreshed artifacts; its failure is retained and
+is distinct from the passing required live suites. The original dirty operation
+artifacts were preserved. See [source review](presentation/m76/source-review.md),
+[behavior and timing output](presentation/m76/browser-output.txt), and
+[offline output](presentation/m76/offline-output.txt).

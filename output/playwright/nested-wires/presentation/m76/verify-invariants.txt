@@ -1,0 +1,5 @@
+$ node --import tsx output/playwright/nested-wires/verify-invariants.mjs
+PASS retained six fixture cases: 18-wire admission, determinism, off-road rejection, node-body rejection, nongate rejection, disconnected-path rejection.
+PASS gate mouth refinement: wrong lane inside the permitted mouth is rejected; exact assigned lanes accepted.
+
+exit 0

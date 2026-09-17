@@ -203,8 +203,8 @@
     },
     "lane-projection": {
       "arithmetic": 2804,
-      "comparisons": 3325,
-      "total": 6129
+      "comparisons": 3361,
+      "total": 6165
     },
     "probe:capacity": {
       "arithmetic": 89,
@@ -548,8 +548,8 @@
     },
     "probe:lane-projection": {
       "arithmetic": 5608,
-      "comparisons": 6662,
-      "total": 12270
+      "comparisons": 6734,
+      "total": 12342
     }
   },
   "stageInvocations": {
@@ -665,12 +665,12 @@
     "total": 1626
   },
   "compile": {
-    "total": 28407,
+    "total": 28443,
     "components": {
       "wire-registry": 907,
       "lane-allocation": 9430,
       "network": 11941,
-      "lane-projection": 6129
+      "lane-projection": 6165
     }
   },
   "perLeg": [
@@ -1138,13 +1138,13 @@
     ],
     "freshIds": true,
     "totalOperations": [
-      36814,
-      74259
+      36850,
+      74331
     ],
-    "ratio": 2.0171402183951757,
+    "ratio": 2.017123473541384,
     "compileOperations": [
-      28407,
-      57166
+      28443,
+      57238
     ]
   },
   "instrumentedScenesByteIdentical": true

@@ -1,0 +1,9 @@
+$ python3 output/playwright/nested-wires/verify-m45-evidence.py
+PASS DoD 4: lane, pin, fan, overlap, containment, determinism and geometry-scope audits
+Traceback (most recent call last):
+  File "/Users/christopherdasca/Programming/Novakai-Canvas-next-templates/output/playwright/nested-wires/verify-m45-evidence.py", line 98, in <module>
+    assert read('metrics.json') == metrics
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+exit 1

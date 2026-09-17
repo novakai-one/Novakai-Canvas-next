@@ -29,3 +29,16 @@ Open `http://127.0.0.1:5185/?collection=<id>` in the browser. Example DSL source
 - Deferred work and findings: [docs/maintenance/diagram-quality-improvements.md](docs/maintenance/diagram-quality-improvements.md)
 
 Gate for every change: `pnpm check` (typecheck, ESLint with Sonar ≤2, Prettier, import boundaries, tests).
+
+### M7.6 — lazy road audit and toolbar presentation
+
+Road coverage now runs only while Show roads is enabled; the off view makes no
+accounting claim. Twelve section tabs wrap, and wire choices show existing file
+names with ID fallback. Five-load roads-off medians: scale **235.7ms** (before
+1,556.7ms), templates **190.8ms** (before 374.5ms); selection **183.4ms**, zero click
+recalculations. Scene bytes, invariant counts and exact layout ops are unchanged;
+`pnpm check` passes 208 tests.
+
+**STOP: DoD-6 open-dropdown screenshot remains unavailable in headless capture.**
+The implementation is retained locally, with no push or PR. Existing dense-scene
+visual limits remain. [Full M7.6 evidence, scheduling, stage timings and limits](output/playwright/nested-wires/presentation/m76/amended-report.md).

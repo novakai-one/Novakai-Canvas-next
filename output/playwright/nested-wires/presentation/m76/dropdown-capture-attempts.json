@@ -1,0 +1,43 @@
+{
+  "status": "STOP: DoD-6 open dropdown screenshot not obtained",
+  "chrome": {
+    "version": "153.0.8010.48",
+    "headless": true,
+    "viewport": [
+      1920,
+      1440
+    ],
+    "url": "http://127.0.0.1:5191/roads-prototype.html?templates",
+    "clickThenScreenshot": {
+      "openBefore": true,
+      "openAfter": false
+    },
+    "directCDPScreenshot": {
+      "openBefore": true,
+      "openAfter": false
+    },
+    "keyboardAttempts": [
+      "Space",
+      "Alt+ArrowDown"
+    ],
+    "image": "dropdown-open-attempt.png"
+  },
+  "chromiumHeadlessShell": {
+    "version": "149.0.7827.55",
+    "headless": true,
+    "viewport": [
+      1920,
+      1440
+    ],
+    "openBefore": true,
+    "openAfter": true,
+    "image": "dropdown-headless-shell.png",
+    "visualInspection": "Popup omitted despite :open remaining true"
+  },
+  "selectedOptionEvidence": {
+    "value": "w22",
+    "text": "w22 \u00b7 catalog.ts \u2192 plan.ts",
+    "image": "dropdown-alt-arrow.png"
+  },
+  "applicationOrDOMModifiedForScreenshot": false
+}

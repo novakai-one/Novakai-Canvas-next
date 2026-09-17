@@ -8,14 +8,14 @@
       "total": 50
     },
     "capacity": {
-      "arithmetic": 41,
-      "comparisons": 7,
-      "total": 48
+      "arithmetic": 45,
+      "comparisons": 15,
+      "total": 60
     },
     "nodes": {
       "arithmetic": 296,
-      "comparisons": 31,
-      "total": 327
+      "comparisons": 35,
+      "total": 331
     },
     "ports": {
       "arithmetic": 224,
@@ -178,9 +178,9 @@
       "total": 1033
     },
     "driveways": {
-      "arithmetic": 720,
-      "comparisons": 128,
-      "total": 848
+      "arithmetic": 1152,
+      "comparisons": 672,
+      "total": 1824
     },
     "network": {
       "arithmetic": 5901,
@@ -188,19 +188,19 @@
       "total": 11021
     },
     "lane-projection": {
-      "arithmetic": 1849,
-      "comparisons": 2095,
-      "total": 3944
+      "arithmetic": 1889,
+      "comparisons": 2140,
+      "total": 4029
     },
     "probe:capacity": {
-      "arithmetic": 41,
-      "comparisons": 7,
-      "total": 48
+      "arithmetic": 45,
+      "comparisons": 15,
+      "total": 60
     },
     "probe:nodes": {
       "arithmetic": 592,
-      "comparisons": 37,
-      "total": 629
+      "comparisons": 45,
+      "total": 637
     },
     "probe:ports": {
       "arithmetic": 448,
@@ -363,9 +363,9 @@
       "total": 2025
     },
     "probe:driveways": {
-      "arithmetic": 1440,
-      "comparisons": 256,
-      "total": 1696
+      "arithmetic": 2304,
+      "comparisons": 1344,
+      "total": 3648
     },
     "probe:network": {
       "arithmetic": 12000,
@@ -373,9 +373,9 @@
       "total": 22292
     },
     "probe:lane-projection": {
-      "arithmetic": 1849,
-      "comparisons": 2095,
-      "total": 3944
+      "arithmetic": 1889,
+      "comparisons": 2140,
+      "total": 4029
     }
   },
   "wireRouting": {
@@ -514,12 +514,12 @@
     "total": 992
   },
   "laneNetwork": {
-    "total": 19683,
+    "total": 19768,
     "components": {
       "wire-registry": 928,
       "lane-allocation": 3790,
       "network": 11021,
-      "lane-projection": 3944
+      "lane-projection": 4029
     },
     "roadCount": 147,
     "pairwiseRoadCandidates": 0,
@@ -534,14 +534,14 @@
     "southOffset": 1920,
     "exactCloneVerified": true,
     "laneCompile": [
-      19683,
-      31880
+      19768,
+      31965
     ],
     "totalOperations": [
-      26107,
-      44120
+      27184,
+      46177
     ],
-    "ratio": 1.6899682077603708
+    "ratio": 1.698683048852266
   },
   "perLeg": [
     {

@@ -1,0 +1,29 @@
+$ python3 output/playwright/nested-wires/verify-static.py
+$ grep -nE 'scene\.roads|roads\.(map|filter|find|some|flatMap|slice)' capability/layout/core/nested-wire-access.ts capability/layout/core/nested-wire-corridors.ts capability/layout/core/nested-wire-law.ts capability/layout/core/nested-wire-routing.ts
+[no matches; exit 1]
+$ grep -nE 'roads\.(slice|flatMap)|for.*of roads' capability/layout/core/prototype-road-network.ts
+[no matches; exit 1]
+$ grep -nE 'scene\.roads|roads\.(map|filter|find|some|flatMap|slice)' capability/layout/core/nested-wire-access.ts capability/layout/core/nested-wire-corridors.ts capability/layout/core/nested-wire-inspection.ts capability/layout/core/nested-wire-lanes.ts capability/layout/core/nested-wire-law.ts capability/layout/core/nested-wire-registry.ts capability/layout/core/nested-wire-routing.ts capability/layout/core/prototype-road-network.ts
+capability/layout/core/nested-wire-inspection.ts:103:  const road = scene.roads.find((r) => r.id === `drive:${gate}`);
+capability/layout/core/nested-wire-inspection.ts:153:  const roads = new Map(scene.roads.map((r) => [r.id, r]));
+capability/layout/core/nested-wire-registry.ts:64:  const registry = roadRegistry(scene.roads);
+capability/layout/core/nested-wire-registry.ts:88:  return { roads: new Map(scene.roads.map((r) => [r.id, r])), crossings, accesses, terminals };
+capability/layout/core/prototype-road-network.ts:225:  const parts = roads.map((road) => roadParts(road, ownership.get(road.id) ?? []));
+capability/layout/core/prototype-road-network.ts:248:  const order = new Map(roads.map((r, i) => [r.id, i]));
+$ grep -nE 'constructedContacts|nestedCrossings|registeredEndpoints|registry\.crossings\.get|roads\.get' capability/layout/core/prototype-nested-scene.ts capability/layout/core/prototype-road-network.ts capability/layout/core/nested-wire-law.ts capability/layout/core/nested-wire-corridors.ts
+capability/layout/core/prototype-nested-scene.ts:4:import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
+capability/layout/core/prototype-nested-scene.ts:23:  nestedCrossings,
+capability/layout/core/prototype-nested-scene.ts:53:    const contacts = constructedContacts(
+capability/layout/core/prototype-nested-scene.ts:55:      [...frameEnds(main), ...nestedCrossings(placement)],
+capability/layout/core/prototype-road-network.ts:227:  const adjacency = laneAdjacency(roads, registeredEndpoints(parts), lanes);
+capability/layout/core/prototype-road-network.ts:260:function registeredEndpoints(parts: readonly ReturnType<typeof roadParts>[]) {
+capability/layout/core/nested-wire-law.ts:46:  const destination = new Set((registry.crossings.get(b.roadId) ?? []).map((c) => c.roadId));
+capability/layout/core/nested-wire-law.ts:48:  const candidates = (registry.crossings.get(a.roadId) ?? []).filter((c) =>
+capability/layout/core/nested-wire-law.ts:110:  if (!(registry.crossings.get(a.roadId) ?? []).some((c) => c.roadId === b.roadId)) return null;
+capability/layout/core/nested-wire-corridors.ts:13:  const road = roads.get(line.roadId);
+PASS pair law unchanged: band -> shared road -> quadrant.
+PASS routing call chain has no all-road scan; compiler has no road-pair discovery loop.
+The remaining matches are compile-once road indexing and the independent inspector once-per-inspection index. roadNetwork maps roads once to their owned events and ranks construction contacts; neither traversal is per wire.
+Construction contacts enumerate registered grid/frame crossings and driveway endpoints; the lane compiler consumes only those contacts. No shifted scan or hidden road-pair helper remains.
+
+exit 0

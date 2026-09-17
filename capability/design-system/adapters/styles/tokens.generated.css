@@ -87,5 +87,12 @@
   --nv-opacity-selection-dim: 0.28;
   --nv-opacity-selection-secondary: 0.7;
   --nv-opacity-selection-road: 0.55;
+  --nv-wire-default-width: 1.75px;
+  --nv-wire-convergence-width: 1.25px;
+  --nv-wire-convergence-opacity: 0.72;
+  --nv-wire-halo-width: 4px;
+  --nv-wire-primary-width: 5px;
+  --nv-wire-primary-opacity: 1;
+  --nv-wire-primary-halo-width: 6px;
 }
 }

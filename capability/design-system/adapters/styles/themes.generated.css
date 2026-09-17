@@ -87,6 +87,13 @@
   --nv-opacity-selection-dim: 0.28;
   --nv-opacity-selection-secondary: 0.7;
   --nv-opacity-selection-road: 0.55;
+  --nv-wire-default-width: 1.75px;
+  --nv-wire-convergence-width: 1.25px;
+  --nv-wire-convergence-opacity: 0.72;
+  --nv-wire-halo-width: 4px;
+  --nv-wire-primary-width: 5px;
+  --nv-wire-primary-opacity: 1;
+  --nv-wire-primary-halo-width: 6px;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -144,6 +151,8 @@
   --nv-role-warning-secondary: #526170;
   --nv-chrome-wire: #355ccd;
   --nv-chrome-external-wire: #526170;
+  --nv-wire-default-color: #526170;
+  --nv-wire-primary-color: #355ccd;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -240,6 +249,13 @@
   --nv-opacity-selection-dim: 0.28;
   --nv-opacity-selection-secondary: 0.7;
   --nv-opacity-selection-road: 0.55;
+  --nv-wire-default-width: 1.75px;
+  --nv-wire-convergence-width: 1.25px;
+  --nv-wire-convergence-opacity: 0.72;
+  --nv-wire-halo-width: 4px;
+  --nv-wire-primary-width: 5px;
+  --nv-wire-primary-opacity: 1;
+  --nv-wire-primary-halo-width: 6px;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -297,6 +313,8 @@
   --nv-role-warning-secondary: #b8c1ca;
   --nv-chrome-wire: #9cb7ff;
   --nv-chrome-external-wire: #b8c1ca;
+  --nv-wire-default-color: #b8c1ca;
+  --nv-wire-primary-color: #9cb7ff;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;

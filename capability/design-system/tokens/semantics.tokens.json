@@ -669,5 +669,15 @@
       "$type": "color",
       "$value": "{text.secondary}"
     }
+  },
+  "wire": {
+    "defaultColor": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    },
+    "primaryColor": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    }
   }
 }

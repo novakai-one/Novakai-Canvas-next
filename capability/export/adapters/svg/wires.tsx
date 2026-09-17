@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { wireIdleOpacity } from '../../../design-system/contract/index.js';
 import type {
   DrawingSlots,
   MarkerDrawing,
@@ -22,10 +23,13 @@ export function createWireDrawing(
           stroke={paint.stroke}
           strokeWidth={item.appearance.width}
           strokeDasharray={dash}
+          opacity={wireIdleOpacity}
         />
         {label(item.measuredLabel, item.labelBox)}
-        <Marker kind={item.sourceMarker} points={item.points} at="source" paint={paint} />
-        <Marker kind={item.targetMarker} points={item.points} at="target" paint={paint} />
+        <g opacity={wireIdleOpacity}>
+          <Marker kind={item.sourceMarker} points={item.points} at="source" paint={paint} />
+          <Marker kind={item.targetMarker} points={item.points} at="target" paint={paint} />
+        </g>
       </g>
     );
   }

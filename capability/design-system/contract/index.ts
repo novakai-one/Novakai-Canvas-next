@@ -75,3 +75,5 @@ export { tokenId } from './brands.js';
 export { chromeName, hexColor } from './brands.js';
 export type { ChromeName, HexColor } from './brands.js';
 export type { ChromeMetrics } from './records/theme.js';
+
+export { wireIdleOpacity } from './wire-paint.js';

@@ -6,6 +6,7 @@ import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { decompressFont } from '../adapters/native/woff2.js';
 import type { Fixture } from './fixtures.js';
 import { createExport } from '../contract/index.js';
+import { wireIdleOpacity } from '../../design-system/contract/index.js';
 import { createFontDecoder } from '../adapters/native/fonts.js';
 import { createPdfEncoder } from '../adapters/native/pdf.js';
 import { fixture, value, startRaster, failed } from './fixtures.js';
@@ -21,6 +22,23 @@ describe('Concrete portable rendering', () => {
     expect(document.querySelector('[data-wire="apply"] text')?.textContent).toBe(
       'validated changes',
     );
+    const wire = document.querySelector('[data-wire="apply"]');
+    assert(wire);
+    expect(wire.querySelectorAll(':scope > path')).toHaveLength(1);
+    expect(Number(wire.querySelector(':scope > path')?.getAttribute('opacity'))).toBe(
+      wireIdleOpacity,
+    );
+    expect(wire.querySelector(':scope > path')?.getAttribute('d')).toBe(
+      f.snapshot.scene.sections
+        .flatMap((section) => section.wires)
+        .find((item) => item.id === 'apply')?.path,
+    );
+    expect(wire.querySelector(':scope > g[opacity]')?.getAttribute('opacity')).toBe(
+      String(wireIdleOpacity),
+    );
+    expect(
+      document.querySelector('[data-wire-hit], [data-wire-label], [class*="spotlit"]'),
+    ).toBeNull();
     expect(document.querySelector('[data-sequence-event="message"]')).not.toBeNull();
     expect(document.querySelector('[data-layer="sequence"]')?.getAttribute('stroke')).toBe(
       '#0f172a',

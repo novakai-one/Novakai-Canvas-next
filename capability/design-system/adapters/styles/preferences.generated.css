@@ -94,6 +94,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -256,6 +258,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -418,6 +422,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -580,6 +586,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -742,6 +750,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -904,6 +914,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -1066,6 +1078,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -1228,6 +1242,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -1390,6 +1406,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -1552,6 +1570,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -1714,6 +1734,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -1876,6 +1898,8 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;

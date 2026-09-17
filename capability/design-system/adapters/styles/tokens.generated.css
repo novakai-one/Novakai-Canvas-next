@@ -94,5 +94,7 @@
   --nv-wire-primary-width: 5px;
   --nv-wire-primary-opacity: 1;
   --nv-wire-primary-halo-width: 6px;
+  --nv-wire-idle-opacity: 0.65;
+  --nv-wire-spotlight-dim-opacity: 0.16;
 }
 }

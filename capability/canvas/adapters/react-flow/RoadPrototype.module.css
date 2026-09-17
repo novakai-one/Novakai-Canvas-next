@@ -459,3 +459,29 @@
     cursor: pointer;
   }
 }
+
+@layer components {
+  /* Idle alpha affects painted strokes only; M2 group opacity remains unchanged. */
+  .nestedWires g:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedPath,
+  .nestedWires g:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedHalo {
+    opacity: var(--nv-wire-idle-opacity);
+  }
+  .nestedWires g[data-converging='true']:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedPath {
+    opacity: calc(var(--nv-wire-convergence-opacity) * var(--nv-wire-idle-opacity));
+  }
+  .nestedWires .spotlightDim > .nestedPath,
+  .nestedWires .spotlightDim > .nestedHalo {
+    opacity: var(--nv-wire-spotlight-dim-opacity);
+  }
+  .nestedWires .spotlit {
+    color: var(--nv-wire-primary-color);
+  }
+  .nestedWires .spotlit > .nestedPath {
+    opacity: var(--nv-wire-primary-opacity);
+  }
+  .node.spotlit {
+    background: var(--nv-rolefill-supporting);
+    outline: var(--nv-stroke-base) solid var(--nv-action-accent);
+    outline-offset: var(--nv-space-unit);
+  }
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { ReactElement, CSSProperties } from 'react';
 import { ReactFlow, Background, Controls, ViewportPortal, useReactFlow } from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
@@ -23,6 +23,7 @@ import type {
 import '@xyflow/react/dist/style.css';
 import styles from './RoadPrototype.module.css';
 
+type ScheduleSpotlight = (paint: () => void) => () => void;
 type InspectTravel = (travel: PrototypeTravel) => PrototypeTravelResult;
 type RoadNode = Node<
   {
@@ -549,6 +550,7 @@ export function RoadPrototype({
   scene,
   inspectTravel,
   auditCoverage,
+  scheduleSpotlight,
   onReady,
   proofs = noProofs,
   initialProof = -1,
@@ -558,6 +560,7 @@ export function RoadPrototype({
   readonly scene: RoadPrototypeScene;
   readonly inspectTravel: InspectTravel;
   readonly auditCoverage: (scene: RoadPrototypeScene) => PrototypeRoadCoverage;
+  readonly scheduleSpotlight: ScheduleSpotlight;
   readonly onReady: () => void;
 }): ReactElement {
   const [visible, setVisible] = useState(false);
@@ -574,6 +577,8 @@ export function RoadPrototype({
   );
   const [primary, setPrimary] = useState('');
   const secondary = useMemo(() => selectionNeighbours(wires, primary), [wires, primary]);
+  const [hovered, hover] = useSpotlight(scheduleSpotlight);
+  const spotlight = useMemo(() => selectionNeighbours(wires, hovered), [wires, hovered]);
   const togglePrimary = useCallback((id: string) => {
     setPrimary((previous) => (previous === id ? '' : id));
   }, []);
@@ -612,8 +617,8 @@ export function RoadPrototype({
     [scene, selected, selectRegion],
   );
   const nodes = useMemo(
-    () => baseNodes.map((node) => selectionNode(node, primary, secondary)),
-    [baseNodes, primary, secondary],
+    () => baseNodes.map((node) => selectionNode(node, primary, secondary, hovered, spotlight)),
+    [baseNodes, primary, secondary, hovered, spotlight],
   );
   const cameraFocus = useMemo(
     () => wireFocus(focusedWire) ?? scene.sections.find((s) => s.id === focus),
@@ -716,6 +721,10 @@ export function RoadPrototype({
           onNodeClick={(_event, node) => {
             if (node.id.startsWith('node-')) togglePrimary(node.id);
           }}
+          onNodeMouseEnter={(_event, node) => {
+            if (node.id.startsWith('node-')) hover(node.id);
+          }}
+          onNodeMouseLeave={() => hover('')}
           onPaneClick={() => setPrimary('')}
         >
           <ReadySignal onReady={onReady} />
@@ -724,6 +733,9 @@ export function RoadPrototype({
             wires={wires}
             primary={primary}
             secondary={secondary}
+            hovered={hovered}
+            spotlight={spotlight}
+            hover={hover}
             select={togglePrimary}
           />
           <Background gap={24} size={1} />
@@ -1089,11 +1101,17 @@ function NestedWirePaths({
   wires,
   primary,
   secondary,
+  hovered,
+  spotlight,
+  hover,
   select,
 }: {
   readonly wires: readonly NestedWire[];
   readonly primary: string;
   readonly secondary: ReadonlySet<string>;
+  readonly hovered: string;
+  readonly spotlight: ReadonlySet<string>;
+  readonly hover: (id: string) => void;
   readonly select: (id: string) => void;
 }): ReactElement {
   const midpoints = useMemo(() => wires.map(wireMidpoint), [wires]);
@@ -1105,13 +1123,11 @@ function NestedWirePaths({
           <g
             key={wire.id}
             data-wire-id={wire.id}
+            aria-label={`${wire.id}: ${wire.from} → ${wire.to}`}
             data-tone={i % 3}
             data-converging={converging.has(wire.id)}
-            className={selectionClass(wire.id, primary, secondary)}
+            className={paintClass(wire.id, primary, secondary, hovered, spotlight)}
           >
-            <title>
-              {wire.id}: {wire.from} → {wire.to}
-            </title>
             <defs>
               <marker
                 id={`arrow-${wire.id}`}
@@ -1135,6 +1151,8 @@ function NestedWirePaths({
               className={`${styles.wireHit} nodrag nopan`}
               data-wire-hit={wire.id}
               points={pointsAttribute(wirePoints(wire))}
+              onMouseEnter={() => hover(wire.id)}
+              onMouseLeave={() => hover('')}
               onClick={(event) => {
                 event.stopPropagation();
                 select(wire.id);
@@ -1173,6 +1191,41 @@ function convergingWireIds(wires: readonly NestedWire[]): ReadonlySet<string> {
   );
 }
 
+/** Enter/leave share the host's dwell scheduler; replacement and unmount cancel pending paint. */
+function useSpotlight(schedule: ScheduleSpotlight): readonly [string, (id: string) => void] {
+  const [hovered, setHovered] = useState('');
+  const cancel = useRef(() => {});
+  const hover = useCallback(
+    (id: string) => {
+      cancel.current();
+      cancel.current = schedule(() => setHovered(id));
+    },
+    [schedule],
+  );
+  useEffect(() => () => cancel.current(), [schedule]);
+  return [hovered, hover];
+}
+/** Selection retains its exact M2 treatment; hover adds no primary class or labels. */
+function paintClass(
+  id: string,
+  primary: string,
+  secondary: ReadonlySet<string>,
+  hovered: string,
+  spotlight: ReadonlySet<string>,
+): string {
+  if (primary !== '') return selectionClass(id, primary, secondary);
+  return spotlightClass(id, hovered, spotlight);
+}
+function spotlightClass(id: string, hovered: string, spotlight: ReadonlySet<string>): string {
+  if (hovered === '') return '';
+  return spotlightMember(id, hovered, spotlight)
+    ? (styles.spotlit ?? '')
+    : (styles.spotlightDim ?? '');
+}
+function spotlightMember(id: string, hovered: string, spotlight: ReadonlySet<string>): boolean {
+  return id === hovered || spotlight.has(id);
+}
+
 /** Fresh one-hop view state: wire selections stop at their two endpoints. */
 function selectionNeighbours(wires: readonly NestedWire[], primary: string): ReadonlySet<string> {
   const selectedWire = wires.find((wire) => wire.id === primary);
@@ -1191,13 +1244,19 @@ function secondaryClass(id: string, secondary: ReadonlySet<string>): string {
   return secondary.has(id) ? (styles.secondary ?? '') : (styles.dim ?? '');
 }
 /** Geometry and cached road/lane membership are retained; only paint records change. */
-function selectionNode(node: Node, primary: string, secondary: ReadonlySet<string>): Node {
+function selectionNode(
+  node: Node,
+  primary: string,
+  secondary: ReadonlySet<string>,
+  hovered: string,
+  spotlight: ReadonlySet<string>,
+): Node {
   if (node.type === 'block')
     return {
       ...node,
       data: {
         ...node.data,
-        selectionClass: selectionClass(node.id, primary, secondary),
+        selectionClass: paintClass(node.id, primary, secondary, hovered, spotlight),
         selectionActive: primary !== '',
       },
     };

@@ -93,6 +93,8 @@ export const tokenNames = [
   '--nv-wire-primary-width',
   '--nv-wire-primary-opacity',
   '--nv-wire-primary-halo-width',
+  '--nv-wire-idle-opacity',
+  '--nv-wire-spotlight-dim-opacity',
   '--nv-color-panel',
   '--nv-color-content',
   '--nv-color-subtle',

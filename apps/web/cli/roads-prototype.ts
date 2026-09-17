@@ -49,6 +49,11 @@ async function recordReady(): Promise<void> {
     }),
   );
 }
+/** Paint-only 100ms enter/leave dwell; the renderer owns cancellation on replacement/unmount. */
+function scheduleSpotlight(paint: () => void): () => void {
+  const timer = setTimeout(paint, 100);
+  return () => clearTimeout(timer);
+}
 /** Isolated prototype. Timings stay in browser User Timing, never in deterministic scene records. */
 async function main(): Promise<void> {
   const target = document.getElementById('app');
@@ -79,6 +84,7 @@ async function main(): Promise<void> {
     createElement(Prototype, {
       scene,
       auditCoverage,
+      scheduleSpotlight,
       proofs,
       initialProof: Number(new URLSearchParams(location.search).get('proof') ?? -1),
       onReady: recordReady,

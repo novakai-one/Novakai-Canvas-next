@@ -240,3 +240,21 @@ python3 output/playwright/nested-wires/verify-m4-evidence.py --write
 ```
 
 Run browser loads after the CPU-heavy gate completes. Preserve `pnpm check` output in `m4-final-checks.txt` when updating acceptance evidence. `verify-m4-evidence.py` without `--write` checks canonical metrics rather than replacing them; `--final` additionally requires the requested branch and a clean working tree and prints the six-commit log. Full output and the binary DoD table are in [m4-completion-report.md](m4-completion-report.md).
+
+
+## M4.5 corrected <=16 gate — STOP (2026-09-17)
+
+The original independent-endpoint bound 14 remains valid. The retained
+`verify-m45-topological-bound.py` now checks the current canonical scene and
+certifies **17 = 14 + 3**: globally consistent per-road lane order forces one
+additional crossing for w02/w09 (J21/J22/J49), w10/w21 (J37/J38), and w16/w21
+(J37/J38). All order assignments and 1,530 physical-slot checks are
+published. The corrected <=16 gate therefore exits 1. This supersedes the
+historical <=11 STOP rationale; **M4.5 is not complete**.
+
+No production/geometry changes were made. Before -> after is S1 **28 -> 28**,
+S2 **4 -> 4**, S3 **2 -> 2**, S4 **4 -> 4**, world **8 -> 8**; J21 **6 -> 6**;
+budgeted crossings remain **0** everywhere. Eleven current S1 crossings remain
+uncertified. Full DoD table, proof, freshly pasted checks, and explicit not-run
+items: [m45-stop-report.md](m45-stop-report.md). Canonical M4 evidence is retained.
+No browser was used; port 5188 was left running; no push or PR.

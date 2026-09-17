@@ -4,6 +4,7 @@ import {
   createRoadPrototypeScene,
   createSevenRoadScene,
   createNestedRoadScene,
+  fanInHubSceneSpec,
   createRoadProofs,
   inspectRoadTravel,
   auditRoadCoverage,
@@ -81,11 +82,16 @@ void main().catch(() => {
 });
 
 function builder() {
-  if (new URLSearchParams(location.search).has('nested')) return createNestedRoadScene;
+  if (new URLSearchParams(location.search).has('nested')) return buildHubScene;
   return new URLSearchParams(location.search).has('seven')
     ? createSevenRoadScene
     : createRoadPrototypeScene;
 }
 function catalog(scene: RoadPrototypeScene) {
   return new URLSearchParams(location.search).has('seven') ? createRoadProofs(scene) : [];
+}
+
+/** This browser fixture opts into the hub; the public builder keeps its M3 default. */
+function buildHubScene(options: { readonly measure: PrototypeLayoutMeasure }): RoadPrototypeScene {
+  return createNestedRoadScene({ ...options, spec: fanInHubSceneSpec });
 }

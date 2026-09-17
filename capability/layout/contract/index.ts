@@ -107,3 +107,10 @@ export { createNestedRoadScene } from './api.js';
 
 export type { NestedWire, NestedWireSegment, NestedWireResult } from './records/nested-wires.js';
 export { inspectNestedWires } from './api.js';
+
+export { defaultNestedSceneSpec, fanInHubSceneSpec } from './api.js';
+export type {
+  NestedSceneSpec,
+  NestedSectionSpec,
+  NestedNodeSpec,
+} from './records/nested-scene-spec.js';

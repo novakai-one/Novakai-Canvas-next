@@ -19,15 +19,15 @@ const pitch = {
   x: prototypeNodeSize.width + clearancePair,
   y: prototypeNodeSize.height + clearancePair,
 };
-interface SectionSpec {
-  readonly number: number;
-  readonly count: number;
-  readonly children: readonly SectionSpec[];
-}
+import type {
+  NestedNodeSpec as NodeSpec,
+  NestedSectionSpec as SectionSpec,
+} from '../contract/records/nested-scene-spec.js';
 export interface SizedSection {
   readonly id: string;
   readonly label: string;
   readonly count: number;
+  readonly nodes: readonly NodeSpec[];
   readonly total: number;
   readonly columns: number;
   readonly rows: number;
@@ -48,21 +48,18 @@ interface Row {
   readonly width: number;
   readonly height: number;
 }
-const specs: readonly SectionSpec[] = [
-  { number: 1, count: 4, children: [{ number: 2, count: 6, children: [] }] },
-  { number: 3, count: 6, children: [] },
-  { number: 4, count: 6, children: [] },
-];
 function sizeSection(spec: SectionSpec): SizedSection {
-  const columns = Math.ceil(Math.sqrt(spec.count));
-  const rows = Math.ceil(spec.count / columns);
+  const count = spec.nodes.length;
+  const columns = Math.ceil(Math.sqrt(count));
+  const rows = Math.ceil(count / columns);
   const children = spec.children.map(sizeSection);
   const ownWidth = columns * pitch.x;
   return {
     id: `section-${spec.number}`,
     label: `Section ${spec.number}`,
-    count: spec.count,
-    total: spec.count + children.reduce((sum, child) => sum + child.total, 0),
+    count,
+    nodes: spec.nodes,
+    total: count + children.reduce((sum, child) => sum + child.total, 0),
     columns,
     rows,
     ownWidth,
@@ -92,7 +89,7 @@ function appendRow(rows: readonly Row[], size: SizedSection, limit: number): rea
     },
   ];
 }
-export function sizeNestedSections(): readonly Row[] {
+export function sizeNestedSections(specs: readonly SectionSpec[]): readonly Row[] {
   const sizes = specs.map(sizeSection);
   const area = sizes.reduce(
     (sum, s) => sum + (s.width + clearancePair) * (s.height + clearancePair),
@@ -117,22 +114,22 @@ function sectionPorts(id: string, bounds: PrototypeBounds) {
     },
   ].map((port) => ({ ...port, id: `${id}:${port.role}-${port.side}` }));
 }
-function gridNodes(size: SizedSection, interior: PrototypeBounds, first: number) {
+function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   const rowHeight = interior.height / size.rows;
-  return Array.from({ length: size.count }, (_, i) =>
-    placePrototypeNode(size.id, first + i, {
+  return size.nodes.map((node, i) => ({
+    ...placePrototypeNode(size.id, node.number - 1, {
       x: interior.x + (i % size.columns) * pitch.x + (pitch.x - prototypeNodeSize.width) / 2,
       y:
         interior.y +
         Math.floor(i / size.columns) * rowHeight +
         (rowHeight - prototypeNodeSize.height) / 2,
     }),
-  );
+    label: node.label,
+  }));
 }
 function positionSection(
   size: SizedSection,
   surrounding: PrototypeBounds,
-  first: number,
   parentSectionId: string | null,
 ): readonly SectionPlacement[] {
   const bounds = {
@@ -155,14 +152,12 @@ function positionSection(
     description: sectionDescription(size),
     ports: sectionPorts(size.id, bounds),
   };
-  const own = { section, size, surrounding, interior, nodes: gridNodes(size, interior, first) };
+  const own = { section, size, surrounding, interior, nodes: gridNodes(size, interior) };
   let x = interior.x + size.ownWidth;
-  let next = first + size.count;
   const children = size.children.flatMap((child) => {
     const box = { x, y: interior.y, width: child.width + clearancePair, height: interior.height };
     x += box.width;
-    const placed = positionSection(child, box, next, size.id);
-    next += child.total;
+    const placed = positionSection(child, box, size.id);
     return placed;
   });
   return [own, ...children];
@@ -176,20 +171,23 @@ export function positionNestedSections(
   original: readonly Row[],
   copies = 1,
 ): readonly SectionPlacement[] {
+  const nodeStride = Math.max(...original.flatMap((row) => row.items.flatMap(nodeNumbers)));
+  const sectionStride = Math.max(...original.flatMap((row) => row.items.flatMap(sectionNumbers)));
   const rows = Array.from({ length: copies }, (_, copy) =>
-    original.map((row) => ({ ...row, items: row.items.map((s) => numbered(s, copy * 4)) })),
+    original.map((row) => ({
+      ...row,
+      items: row.items.map((s) => numbered(s, copy * nodeStride, copy * sectionStride)),
+    })),
   ).flat();
   const width = Math.max(...rows.map((row) => row.width));
   let y: number = nestedSpacing.side;
-  let first = 0;
   return rows.flatMap((row) => {
     let x: number = nestedSpacing.side;
     const extra = (width - row.width) / row.items.length;
     const result = row.items.flatMap((size) => {
       const box = { x, y, width: size.width + clearancePair + extra, height: row.height };
-      const placed = positionSection(size, box, first, null);
+      const placed = positionSection(size, box, null);
       x += box.width;
-      first += size.total;
       return placed;
     });
     y += row.height;
@@ -197,12 +195,20 @@ export function positionNestedSections(
   });
 }
 
-function numbered(size: SizedSection, offset: number): SizedSection {
-  const number = Number(size.id.slice('section-'.length)) + offset;
+function numbered(size: SizedSection, nodeOffset: number, sectionOffset: number): SizedSection {
+  const number = Number(size.id.slice('section-'.length)) + sectionOffset;
   return {
     ...size,
     id: `section-${number}`,
     label: `Section ${number}`,
-    children: size.children.map((child) => numbered(child, offset)),
+    nodes: size.nodes.map((node) => ({ ...node, number: node.number + nodeOffset })),
+    children: size.children.map((child) => numbered(child, nodeOffset, sectionOffset)),
   };
+}
+
+function nodeNumbers(size: SizedSection): readonly number[] {
+  return [...size.nodes.map((node) => node.number), ...size.children.flatMap(nodeNumbers)];
+}
+function sectionNumbers(size: SizedSection): readonly number[] {
+  return [Number(size.id.slice('section-'.length)), ...size.children.flatMap(sectionNumbers)];
 }

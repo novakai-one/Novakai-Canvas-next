@@ -1,3 +1,5 @@
+import type { NestedSceneSpec } from '../contract/records/nested-scene-spec.js';
+import { defaultNestedSceneSpec } from './nested-scene-spec.js';
 import { wireRegistry } from './nested-wire-registry.js';
 import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
 import { routeNestedWires } from './nested-wire-routing.js';
@@ -27,10 +29,14 @@ import { roadNetwork } from './prototype-road-network.js';
  * The caller owns reconstruction; no committed scene or shared state is mutated on failure.
  */
 export function createNestedRoadScene(
-  options: Pick<PrototypeLayoutOptions, 'measure'> & { readonly copies?: 1 | 2 } = {},
+  options: Pick<PrototypeLayoutOptions, 'measure'> & {
+    readonly copies?: 1 | 2;
+    readonly spec?: NestedSceneSpec;
+  } = {},
 ): RoadPrototypeScene {
   const measure = options.measure ?? ((_stage, run) => run());
-  const capacity = measure('capacity', sizeNestedSections);
+  const spec = options.spec ?? defaultNestedSceneSpec;
+  const capacity = measure('capacity', () => sizeNestedSections(spec.sections));
   const placement = measure('nodes', () => positionNestedSections(capacity, options.copies));
   const sections = placement.map((p) => p.section),
     nodes = placement.flatMap((p) => p.nodes);
@@ -64,7 +70,7 @@ export function createNestedRoadScene(
     crossingExamples: [],
   };
   const registry = wireRegistry(reserved, topology.contacts, measure);
-  const plan = routeNestedWires(reserved, registry, measure);
+  const plan = routeNestedWires(reserved, registry, measure, spec.requests);
   if (!plan.ok) return { ...reserved, wiring: plan };
   const allocation = measure('lane-allocation', () =>
     allocateNestedLanes(plan.value, registry.roads),

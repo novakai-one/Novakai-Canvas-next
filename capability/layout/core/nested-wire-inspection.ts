@@ -1,7 +1,9 @@
+import { terminalPin } from './nested-terminal-pins.js';
 import type { NestedWire, NestedWireSegment } from '../contract/records/nested-wires.js';
 import type {
   PrototypeBounds,
   PrototypePoint,
+  PrototypePortLocation,
   PrototypeRoad,
   RoadPrototypeScene,
 } from '../contract/records/road-prototype.js';
@@ -117,16 +119,28 @@ function terminals(wire: NestedWire, scene: RoadPrototypeScene): boolean {
     [wire.sourcePortId, wire.segments[0]?.from],
     [wire.targetPortId, wire.segments.at(-1)?.to],
   ] as const;
-  return ends.every(([id, point]) => terminal(id, point, scene));
+  return ends.every(([id, point]) => terminal(id, point, scene, wire.id));
 }
 function terminal(
   id: string,
   point: PrototypePoint | undefined,
   scene: RoadPrototypeScene,
+  wireId: string,
 ): boolean {
   const port = scene.ports.find((p) => p.portId === id);
   if (port === undefined || point === undefined) return false;
-  return same(port.point, point);
+  return same(pinFor(port, scene, wireId), point);
+}
+function pinFor(
+  port: PrototypePortLocation,
+  scene: RoadPrototypeScene,
+  wireId: string,
+): PrototypePoint {
+  const lanes = scene.wireLanes?.filter((lane) => lane.roadId === `drive:${port.portId}`) ?? [];
+  const lane = lanes.find((entry) => entry.wireId === wireId);
+  if (lane === undefined) return port.point;
+  const across = ['left', 'right'].includes(port.side) ? 'y' : 'x';
+  return terminalPin(port.point, across, lane, lanes.length);
 }
 function disconnected(w: NestedWire): boolean {
   return w.segments.slice(1).some((s, i) => !same(w.segments[i]?.to ?? s.from, s.from));

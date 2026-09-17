@@ -108,7 +108,7 @@ function corner(
   registry: WireRegistry,
 ): readonly OwnedLine[] | null {
   if (!(registry.crossings.get(a.roadId) ?? []).some((c) => c.roadId === b.roadId)) return null;
-  const point = a.side === 'right' ? { x: p.x, y: q.y } : { x: q.x, y: p.y };
+  const point = a.drive.axis === 'horizontal' ? { x: p.x, y: q.y } : { x: q.x, y: p.y };
   return [
     line(a.mouth, p, a.roadId),
     line(p, point, a.roadId),
@@ -116,16 +116,34 @@ function corner(
     line(q, b.mouth, b.roadId),
   ];
 }
-/** Fixed gate accesses obey the unchanged band → shared road → quadrant law. */
+export interface LegPreference {
+  readonly source: Access | undefined;
+  readonly target: Access | undefined;
+  readonly original: boolean;
+}
+/** Rank admitted legacy pairs before extended pairs; no route is evaluated to choose a pair. */
+export function lawPreference(s: Terminal, t: Terminal): LegPreference {
+  const [out, input] = pair(s, t);
+  const source = s.accesses.find((p) => p.side === out),
+    target = t.accesses.find((p) => p.side === input);
+  return {
+    source: source ?? s.accesses[0],
+    target: target ?? t.accesses[0],
+    original: source !== undefined && target !== undefined,
+  };
+}
+/** Keep an admitted legacy pair, otherwise use the fixed terminal's admitted direction.
+ * Mirrored corners depend on driveway axis, so left/top approaches obey the same rule.
+ * Selection precedes geometry; a failed trunk is never retried or searched.
+ */
 export function lawLeg(
   s: Terminal,
   t: Terminal,
   registry: WireRegistry,
   offset: number,
+  preference = lawPreference(s, t),
 ): Leg | null {
-  const [out, input] = pair(s, t);
-  const source = s.accesses.find((p) => p.side === out),
-    target = t.accesses.find((p) => p.side === input);
+  const { source, target } = preference;
   if (source === undefined || target === undefined) return null;
   return completeLeg(source, target, registry, offset);
 }

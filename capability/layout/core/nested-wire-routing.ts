@@ -7,31 +7,11 @@ import type {
   RoadPrototypeScene,
 } from '../contract/records/road-prototype.js';
 import type { NestedWire, NestedWireResult } from '../contract/records/nested-wires.js';
-import type { Terminal } from './nested-wire-access.js';
+import type { Access, Terminal } from './nested-wire-access.js';
 import { access, gateTerminal, nodeTerminal } from './nested-wire-access.js';
-import type { Leg } from './nested-wire-law.js';
-import { lawLeg } from './nested-wire-law.js';
+import type { Leg, LegPreference } from './nested-wire-law.js';
+import { lawLeg, lawPreference } from './nested-wire-law.js';
 
-const requests = [
-  [1, 2],
-  [1, 3],
-  [2, 4],
-  [5, 6],
-  [6, 9],
-  [8, 10],
-  [11, 13],
-  [17, 20],
-  [4, 5],
-  [10, 18],
-  [16, 17],
-  [12, 7],
-  [5, 7],
-  [11, 12],
-  [1, 4],
-  [9, 17],
-  [16, 18],
-  [12, 8],
-] as const;
 interface State {
   readonly offset: number;
   readonly terminal: Terminal;
@@ -59,15 +39,10 @@ function boundaries(scene: RoadPrototypeScene, from: string, to: string): readon
       .map((section) => ({ section, exiting: false })),
   ];
 }
-function alignment(
-  port: PrototypePortLocation,
-  source: PrototypePoint,
-  target: PrototypePoint,
-): number {
+function alignment(source: PrototypePoint, target: PrototypePoint) {
   const dx = target.x - source.x,
     dy = target.y - source.y;
-  const scores = { right: dx, bottom: dy, left: dx, top: dy };
-  return scores[port.side];
+  return { right: dx, bottom: dy, left: dx, top: dy };
 }
 function cross(
   scene: RoadPrototypeScene,
@@ -81,12 +56,34 @@ function cross(
   const ports = scene.ports.filter(
     (p) => p.nodeId === section.id && p.role === (exiting ? 'exit' : 'entry'),
   );
-  const ordered = ports.toSorted(
-    (a, b) =>
-      alignment(b, state.terminal.point, target.point) -
-      alignment(a, state.terminal.point, target.point),
-  );
+  const scores = alignment(state.terminal.point, target.point);
+  const ordered = ports.toSorted((a, b) => scores[b.side] - scores[a.side]);
   return firstGate(ordered, registry, state, boundary, owner);
+}
+interface GateChoice {
+  readonly port: PrototypePortLocation;
+  readonly approach: Access;
+  readonly departure: Access;
+  readonly preference: LegPreference;
+}
+function gateChoice(
+  port: PrototypePortLocation,
+  registry: WireRegistry,
+  state: State,
+  boundary: Boundary,
+  owner: string | null,
+): readonly GateChoice[] {
+  const approach = access(registry, port.portId, owner);
+  const departure = access(registry, port.portId, departureOwner(boundary));
+  if (approach === undefined || departure === undefined) return [];
+  return [
+    {
+      port,
+      approach,
+      departure,
+      preference: lawPreference(state.terminal, gateTerminal(approach)),
+    },
+  ];
 }
 function firstGate(
   ports: readonly PrototypePortLocation[],
@@ -95,31 +92,32 @@ function firstGate(
   boundary: Boundary,
   owner: string | null,
 ): State | null {
+  const choices = ports.flatMap((port) => gateChoice(port, registry, state, boundary, owner));
+  const ordered = [
+    ...choices.filter((choice) => choice.preference.original),
+    ...choices.filter((choice) => !choice.preference.original),
+  ];
   let selected: State | null = null;
-  ports.some((port) => {
-    selected = gateLeg(registry, state, boundary, port, owner);
+  ordered.some((choice) => {
+    selected = gateLeg(registry, state, choice);
     return selected !== null;
   });
   return selected;
 }
-function gateLeg(
-  registry: WireRegistry,
-  state: State,
-  boundary: Boundary,
-  port: PrototypePortLocation,
-  owner: string | null,
-): State | null {
-  const approach = access(registry, port.portId, owner);
-  const nextOwner = departureOwner(boundary);
-  const departure = access(registry, port.portId, nextOwner);
-  if (approach === undefined || departure === undefined) return null;
-  const leg = lawLeg(state.terminal, gateTerminal(approach), registry, state.offset);
+function gateLeg(registry: WireRegistry, state: State, choice: GateChoice): State | null {
+  const leg = lawLeg(
+    state.terminal,
+    gateTerminal(choice.approach),
+    registry,
+    state.offset,
+    choice.preference,
+  );
   if (leg === null) return null;
   return {
     offset: state.offset,
-    terminal: gateTerminal(departure),
+    terminal: gateTerminal(choice.departure),
     legs: [...state.legs, leg],
-    gates: [...state.gates, port.portId],
+    gates: [...state.gates, choice.port.portId],
   };
 }
 function advance(
@@ -177,6 +175,7 @@ export function routeNestedWires(
   scene: RoadPrototypeScene,
   registry: WireRegistry,
   measure: PrototypeLayoutMeasure,
+  requests: readonly (readonly [number, number])[],
 ): NestedWireResult {
   const wires = requests.map(([from, to], i) =>
     measure(`wire:w${String(i + 1).padStart(2, '0')}`, () =>

@@ -3,11 +3,13 @@ import type { PrototypePoint, PrototypeRoad } from '../contract/records/road-pro
 import type { AssignedTravel } from './nested-wire-lanes.js';
 import { axes, samePoint } from './prototype-road-geometry.js';
 import { nestedLanePitch } from './prototype-nested-placement.js';
+import { terminalPin } from './nested-terminal-pins.js';
 
 interface Connection {
   readonly from: PrototypePoint;
   readonly to: PrototypePoint;
   readonly roadId: string;
+  readonly via?: readonly PrototypePoint[];
 }
 function line(
   from: PrototypePoint,
@@ -47,11 +49,40 @@ function bridge(
 ): Connection {
   const road = crossing(t, next, wire, roads);
   if (road === undefined) return gateJoin(t, next, wire);
+  return streetBridge(t, next, road);
+}
+function streetBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRoad): Connection {
   const a = axes[t.road.axis],
     b = road.bounds;
+  if (occupiedRank(t, next)) return medianBridge(t, next, road);
   const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
   const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - nestedLanePitch / 2);
   return { from: point(t, at), to: point(next, at), roadId: road.id };
+}
+/** An inward change across an occupied destination rank needs two separate turn columns.
+ * Allocation ranks choose this fixed median dogleg; no intersection probing or retries.
+ */
+function occupiedRank(t: AssignedTravel, next: AssignedTravel): boolean {
+  return [
+    t.lane.index < next.count,
+    t.lane.index > next.lane.index,
+    t.direction === next.direction,
+  ].every(Boolean);
+}
+function medianBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRoad): Connection {
+  const a = axes[t.road.axis],
+    b = road.bounds;
+  const middle = b[a.along] + b[a.length] / 2;
+  const radius = (b[a.length] - nestedLanePitch) / 2;
+  const near = middle - t.direction * radius,
+    far = middle + t.direction * radius;
+  const median = (t.at + next.at) / 2;
+  return {
+    from: point(t, near),
+    to: point(next, far),
+    roadId: road.id,
+    via: [point(t, near), point(t, far)].map((p) => ({ ...p, [a.across]: median })),
+  };
 }
 function gateJoin(t: AssignedTravel, next: AssignedTravel, wire: NestedWire): Connection {
   const at = wire.segments[t.last]?.to[axes[t.road.axis].along] ?? 0;
@@ -68,9 +99,10 @@ function connect(
 }
 function fan(t: AssignedTravel, endpoint: PrototypePoint, sign: number) {
   const a = axes[t.road.axis];
+  const pin = terminalPin(endpoint, a.across, t.lane, t.count);
   const along =
     endpoint[a.along] + sign * t.direction * (t.count - t.lane.index - 1) * nestedLanePitch;
-  return { bend: { ...endpoint, [a.along]: along }, end: point(t, along) };
+  return { pin, bend: { ...pin, [a.along]: along }, end: point(t, along) };
 }
 function clipped(p: PrototypePoint, road: PrototypeRoad): PrototypePoint {
   const a = axes[road.axis],
@@ -127,7 +159,9 @@ function nextOwner(
   return connection?.roadId ?? t.road.id;
 }
 function connectionLine(c: Connection | undefined): readonly NestedWireSegment[] {
-  return c === undefined ? [] : line(c.from, c.to, c.roadId);
+  if (c === undefined) return [];
+  const points = [c.from, ...(c.via ?? []), c.to];
+  return points.slice(1).flatMap((p, i) => line(points[i] ?? p, p, c.roadId));
 }
 function joinsFor(
   travels: readonly AssignedTravel[],
@@ -165,11 +199,11 @@ export function projectNestedWire(
   return {
     ...wire,
     segments: [
-      ...line(source, start.bend, first.road.id),
+      ...line(start.pin, start.bend, first.road.id),
       ...line(start.bend, start.end, first.road.id),
       ...middle,
       ...line(end.end, end.bend, last.road.id),
-      ...line(end.bend, target, last.road.id),
+      ...line(end.bend, end.pin, last.road.id),
     ],
   };
 }

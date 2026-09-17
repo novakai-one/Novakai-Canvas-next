@@ -1,0 +1,33 @@
+PASS 16 nodes / 9 sections; every node and child inside its owner; finite bounds
+PASS minimal nested-only regression and explicit empty-section rejection
+PASS two complete builds byte-identical; each one-way pipeline stage once
+STAGES ["capacity","nodes","ports","topology","wire-registry","wire:w01","wire:w02","wire:w03","wire:w04","wire:w05","wire:w06","wire:w07","wire:w08","wire:w09","wire:w10","wire:w11","wire:w12","wire:w13","wire:w14","wire:w15","wire:w16","wire:w17","wire:w18","wire:w19","wire:w20","wire:w21","wire:w22","wire:w23","wire:w24","wire:w25","wire:w26","wire:w27","wire:w28","wire:w29","lane-allocation","main-roads","driveways","network","lane-projection"]
+PASS all 29 value wires route ok:true
+INSPECTION {"corridors":[],"nodeBodies":[],"boundaries":["w12:14"],"continuity":[]}
+OVERLAPS []
+PASS zero positive-length parallel/coincident wire overlaps
+PASS 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals
+PASS four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct
+PASS all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction
+CROSSINGS {"world":62,"section-1":17,"section-2":0,"section-3":0,"section-4":40,"section-5":0,"section-6":0,"section-7":0,"section-8":3,"section-9":0}
+PASS topological endpoint ranges and linked road-order constraints
+PASS actual crossing count equals additive endpoint and linked-order lower bound
+PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings
+CERTIFICATION 122 certified / 0 uncertified
+PASS zero uncertified crossings
+PASS exact semantic directory tree and per-directory file order
+PASS turns confined to registered junctions and terminal fans; remaining intervals on assigned lanes
+FAIL all wires inside corridors; gate-mouth crossings only; no body or continuity failures: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   boundaries: [
++     'w12:14'
++   ],
+-   boundaries: [],
+    continuity: [],
+    corridors: [],
+    nodeBodies: []
+  }
+
+FAIL every gate traversal crosses its own mouth at its assigned distinct offset: w12 missing owned gate crossing

@@ -1,0 +1,164 @@
+PASS 16 nodes / 9 sections; every node and child inside its owner; finite bounds
+PASS minimal nested-only regression and explicit empty-section rejection
+PASS two complete builds byte-identical; each one-way pipeline stage once
+STAGES ["capacity","nodes","ports","topology","wire-registry","wire:w01","wire:w02","wire:w03","wire:w04","wire:w05","wire:w06","wire:w07","wire:w08","wire:w09","wire:w10","wire:w11","wire:w12","wire:w13","wire:w14","wire:w15","wire:w16","wire:w17","wire:w18","wire:w19","wire:w20","wire:w21","wire:w22","wire:w23","wire:w24","wire:w25","wire:w26","wire:w27","wire:w28","wire:w29","lane-allocation","main-roads","driveways","network","lane-projection"]
+PASS all 29 value wires route ok:true
+INSPECTION {"corridors":["w01:1","w01:2","w04:18","w04:19","w04:20","w06:15","w07:17","w07:18","w07:19","w09:16","w09:17","w10:11","w10:12","w10:13","w10:17","w10:18","w11:11","w11:12","w11:13","w11:17","w11:18","w12:17","w12:18","w13:16","w13:17","w13:18","w15:1","w16:16","w16:17","w16:18","w16:22","w16:23","w16:24","w17:21","w17:22","w17:23","w18:1","w18:2","w19:1","w19:2","w20:1","w20:2","w22:13","w22:14","w23:12","w23:13","w24:11","w24:12","w26:15","w26:16","w26:17","w27:15","w27:16","w27:17","w28:14","w28:15","w28:16","w29:1","w29:9"],"nodeBodies":["w04:18","w04:19","w04:20","w07:21","w07:22","w15:1","w16:22","w16:23","w16:24","w17:25","w17:26","w21:1","w21:2","w22:1","w22:2","w26:15","w26:16","w26:17","w27:1","w27:2","w27:15","w27:16","w27:17","w28:1","w28:14","w28:15","w28:16"],"boundaries":["w04:12","w07:19","w09:10","w10:15","w11:13","w13:20","w16:18","w17:23","w23:2","w24:1","w29:4","w29:8"],"continuity":["w04","w07","w09","w10","w13","w15","w16","w17","w21","w22","w23","w24","w25","w26","w27","w28"]}
+FAIL all wires inside corridors; gate-mouth crossings only; no body or continuity failures: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   boundaries: [
++     'w04:12',
++     'w07:19',
++     'w09:10',
++     'w10:15',
++     'w11:13',
++     'w13:20',
++     'w16:18',
++     'w17:23',
++     'w23:2',
++     'w24:1',
++     'w29:4',
++     'w29:8'
++   ],
++   continuity: [
++     'w04',
++     'w07',
++     'w09',
++     'w10',
++     'w13',
++     'w15',
++     'w16',
++     'w17',
++     'w21',
++     'w22',
++     'w23',
++     'w24',
++     'w25',
++     'w26',
++     'w27',
++     'w28'
++   ],
++   corridors: [
++     'w01:1',
++     'w01:2',
++     'w04:18',
++     'w04:19',
++     'w04:20',
++     'w06:15',
++     'w07:17',
++     'w07:18',
++     'w07:19',
++     'w09:16',
++     'w09:17',
++     'w10:11',
++     'w10:12',
++     'w10:13',
++     'w10:17',
++     'w10:18',
++     'w11:11',
++     'w11:12',
++     'w11:13',
++     'w11:17',
++     'w11:18',
++     'w12:17',
++     'w12:18',
++     'w13:16',
++     'w13:17',
++     'w13:18',
++     'w15:1',
++     'w16:16',
++     'w16:17',
++     'w16:18',
++     'w16:22',
++     'w16:23',
++     'w16:24',
++     'w17:21',
++     'w17:22',
++     'w17:23',
++     'w18:1',
++     'w18:2',
++     'w19:1',
++     'w19:2',
++     'w20:1',
++     'w20:2',
++     'w22:13',
++     'w22:14',
++     'w23:12',
++     'w23:13',
++     'w24:11',
++     'w24:12',
++     'w26:15',
++     'w26:16',
++     'w26:17',
++     'w27:15',
++     'w27:16',
++     'w27:17',
++     'w28:14',
++     'w28:15',
++     'w28:16',
++     'w29:1',
++     'w29:9'
++   ],
++   nodeBodies: [
++     'w04:18',
++     'w04:19',
++     'w04:20',
++     'w07:21',
++     'w07:22',
++     'w15:1',
++     'w16:22',
++     'w16:23',
++     'w16:24',
++     'w17:25',
++     'w17:26',
++     'w21:1',
++     'w21:2',
++     'w22:1',
++     'w22:2',
++     'w26:15',
++     'w26:16',
++     'w26:17',
++     'w27:1',
++     'w27:2',
++     'w27:15',
++     'w27:16',
++     'w27:17',
++     'w28:1',
++     'w28:14',
++     'w28:15',
++     'w28:16'
++   ]
+-   boundaries: [],
+-   continuity: [],
+-   corridors: [],
+-   nodeBodies: []
+  }
+
+OVERLAPS [{"wires":["w25","w27"],"hit":{"x":1950,"y":1161,"length":12},"first":{"from":{"x":1968,"y":1161},"to":{"x":1950,"y":1161},"corridorId":"section-8:horizontal:1176:1512"},"second":{"from":{"x":1962,"y":1161},"to":{"x":1851,"y":1161},"corridorId":"section-8:horizontal:1176:1512","laneId":"w27:1"}},{"wires":["w26","w28"],"hit":{"x":1956,"y":1155,"length":12},"first":{"from":{"x":1968,"y":1155},"to":{"x":1956,"y":1155},"corridorId":"section-8:horizontal:1176:1512"},"second":{"from":{"x":1968,"y":1155},"to":{"x":1851,"y":1155},"corridorId":"section-8:horizontal:1176:1512","laneId":"w28:1"}}]
+FAIL zero positive-length parallel/coincident wire overlaps: Expected values to be strictly equal:
+
+2 !== 0
+
+FAIL 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals: Cannot read properties of undefined (reading 'offset')
+FAIL four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct: no forward lane w17:8
+FAIL all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction: w04/w09 nonjunction crossing {"x":2575,"y":1056,"length":0}
+CROSSINGS {"world":3,"section-1":3,"section-2":0,"section-3":0,"section-4":0,"section-5":0,"section-6":0,"section-7":0,"section-8":0,"section-9":0}
+FAIL topological endpoint ranges and linked road-order constraints: J6/J40 proof regions overlap
+FAIL actual crossing count equals additive endpoint and linked-order lower bound: Expected values to be strictly equal:
+
+6 !== 0
+
+PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings
+CERTIFICATION 0 certified / 6 uncertified
+FAIL zero uncertified crossings: Expected values to be strictly equal:
+
+6 !== 0
+
+PASS exact semantic directory tree and per-directory file order
+FAIL every gate traversal crosses its own mouth at its assigned distinct offset: w17 missing owned gate crossing
+FAIL turns confined to registered junctions and terminal fans; remaining intervals on assigned lanes: Expected values to be strictly equal:
+
+'y' !== 'x'
+

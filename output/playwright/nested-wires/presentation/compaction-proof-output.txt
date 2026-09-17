@@ -1,0 +1,18 @@
+CANDIDATE ONLY: rejected production change is retained as a patch, not installed
+PASS predicate uses only its own directNodeCount parameter: return directNodeCount <= 2
+ENUMERATION {"section":"section-1","directNodeCount":6,"compact":false}
+ENUMERATION {"section":"section-2","directNodeCount":6,"compact":false}
+ENUMERATION {"section":"section-3","directNodeCount":6,"compact":false}
+ENUMERATION {"section":"section-4","directNodeCount":6,"compact":false}
+PASS rejected compacting predicate matches zero ?nested sections
+PASS restored ?nested full serialization byte-identical to b20053d
+OCCUPANCY {"section":"section-1","before":{"direct":6,"children":2,"emptyPercent":65.12537382102599},"rejectedCandidate":{"direct":6,"children":2,"emptyPercent":81.86347412254611}}
+OCCUPANCY {"section":"section-2","before":{"direct":2,"children":0,"emptyPercent":88.92307692307693},"rejectedCandidate":{"direct":2,"children":0,"emptyPercent":63.42857142857143}}
+OCCUPANCY {"section":"section-3","before":{"direct":2,"children":0,"emptyPercent":88.92307692307693},"rejectedCandidate":{"direct":2,"children":0,"emptyPercent":63.42857142857143}}
+OCCUPANCY {"section":"section-4","before":{"direct":0,"children":4,"emptyPercent":57.218352149891906},"rejectedCandidate":{"direct":0,"children":4,"emptyPercent":63.54657687991021}}
+OCCUPANCY {"section":"section-5","before":{"direct":1,"children":0,"emptyPercent":90.45092838196287},"rejectedCandidate":{"direct":1,"children":0,"emptyPercent":58.44155844155844}}
+OCCUPANCY {"section":"section-6","before":{"direct":1,"children":0,"emptyPercent":90.45092838196287},"rejectedCandidate":{"direct":1,"children":0,"emptyPercent":58.44155844155844}}
+OCCUPANCY {"section":"section-7","before":{"direct":1,"children":0,"emptyPercent":90.45092838196287},"rejectedCandidate":{"direct":1,"children":0,"emptyPercent":58.44155844155844}}
+OCCUPANCY {"section":"section-8","before":{"direct":2,"children":0,"emptyPercent":88.92307692307693},"rejectedCandidate":{"direct":2,"children":0,"emptyPercent":63.42857142857143}}
+OCCUPANCY {"section":"section-9","before":{"direct":1,"children":0,"emptyPercent":90.45092838196287},"rejectedCandidate":{"direct":1,"children":0,"emptyPercent":58.44155844155844}}
+PASS rejected candidate meets leaf occupancy thresholds; invariant failure still rejects it

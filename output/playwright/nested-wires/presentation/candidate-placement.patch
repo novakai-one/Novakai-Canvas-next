@@ -1,0 +1,83 @@
+diff --git a/capability/layout/core/prototype-nested-placement.ts b/capability/layout/core/prototype-nested-placement.ts
+index aa02412..330c0f6 100644
+--- a/capability/layout/core/prototype-nested-placement.ts
++++ b/capability/layout/core/prototype-nested-placement.ts
+@@ -13,8 +13,19 @@ export function nestedLaneWidth(lanes: number): number {
+   return nestedLanePitch * 2 + lanes * nestedLanePitch * 2;
+ }
+ const clearancePair = nestedSpacing.clearance * 2;
+-const horizontalPadding = nestedSpacing.side * 2;
+-const verticalPadding = nestedSpacing.top + nestedSpacing.side;
++/** Sparse panels use 36 world units on every side of the node content:
++ * 30 inside the street frame and 6 between that frame and the section boundary.
++ * Selection is solely the section's direct-node count, including empty parents.
++ */
++function compactSection(directNodeCount: number): boolean {
++  return directNodeCount <= 2;
++}
++const compactInset = 6;
++const compactClearance = 30;
++function sectionInset(count: number) {
++  if (compactSection(count)) return { side: compactInset, top: compactInset };
++  return nestedSpacing;
++}
+ const pitch = {
+   x: prototypeNodeSize.width + clearancePair,
+   y: prototypeNodeSize.height + clearancePair,
+@@ -56,7 +67,11 @@ function sizeSection(spec: SectionSpec): SizedSection {
+   const columns = Math.ceil(Math.sqrt(count));
+   const rows = count === 0 ? 0 : Math.ceil(count / columns);
+   const children = spec.children.map(sizeSection);
+-  const ownWidth = columns * pitch.x;
++  const inset = sectionInset(count);
++  const cell = compactSection(count)
++    ? { x: prototypeNodeSize.width + compactClearance * 2, y: prototypeNodeSize.height + compactClearance * 2 }
++    : pitch;
++  const ownWidth = columns * cell.x + Math.max(0, columns - 1) * (clearancePair - compactClearance * 2) * Number(compactSection(count));
+   return {
+     id: `section-${spec.number}`,
+     label: `Section ${spec.number}`,
+@@ -70,10 +85,10 @@ function sizeSection(spec: SectionSpec): SizedSection {
+     width:
+       ownWidth +
+       children.reduce((sum, child) => sum + child.width + clearancePair, 0) +
+-      horizontalPadding,
++      inset.side * 2,
+     height:
+-      Math.max(rows * pitch.y, ...children.map((child) => child.height + clearancePair)) +
+-      verticalPadding,
++      Math.max(rows * cell.y, ...children.map((child) => child.height + clearancePair)) +
++      inset.top + inset.side,
+   };
+ }
+ function appendRow(rows: readonly Row[], size: SizedSection, limit: number): readonly Row[] {
+@@ -121,9 +136,11 @@ function sectionPorts(id: string, bounds: PrototypeBounds) {
+ function gridNodes(size: SizedSection, interior: PrototypeBounds) {
+   if (size.count === 0) return [];
+   const rowHeight = interior.height / size.rows;
++  const cellWidth = pitch.x;
++  const offset = compactSection(size.count) ? compactClearance : nestedSpacing.clearance;
+   return size.nodes.map((node, i) => ({
+     ...placePrototypeNode(size.id, node.number - 1, {
+-      x: interior.x + (i % size.columns) * pitch.x + (pitch.x - prototypeNodeSize.width) / 2,
++      x: interior.x + (i % size.columns) * cellWidth + offset,
+       y:
+         interior.y +
+         Math.floor(i / size.columns) * rowHeight +
+@@ -143,11 +160,12 @@ function positionSection(
+     width: size.width,
+     height: size.height,
+   };
++  const inset = sectionInset(size.count);
+   const interior = {
+-    x: bounds.x + nestedSpacing.side,
+-    y: bounds.y + nestedSpacing.top,
+-    width: bounds.width - horizontalPadding,
+-    height: bounds.height - verticalPadding,
++    x: bounds.x + inset.side,
++    y: bounds.y + inset.top,
++    width: bounds.width - inset.side * 2,
++    height: bounds.height - inset.top - inset.side,
+   };
+   const section = {
+     id: size.id,

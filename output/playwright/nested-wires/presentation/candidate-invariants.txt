@@ -1,0 +1,204 @@
+PASS 16 nodes / 9 sections; every node and child inside its owner; finite bounds
+PASS minimal nested-only regression and explicit empty-section rejection
+PASS two complete builds byte-identical; each one-way pipeline stage once
+STAGES ["capacity","nodes","ports","topology","wire-registry","wire:w01","wire:w02","wire:w03","wire:w04","wire:w05","wire:w06","wire:w07","wire:w08","wire:w09","wire:w10","wire:w11","wire:w12","wire:w13","wire:w14","wire:w15","wire:w16","wire:w17","wire:w18","wire:w19","wire:w20","wire:w21","wire:w22","wire:w23","wire:w24","wire:w25","wire:w26","wire:w27","wire:w28","wire:w29","lane-allocation","main-roads","driveways","network","lane-projection"]
+PASS all 29 value wires route ok:true
+INSPECTION {"corridors":["w04:21","w04:22","w04:23","w07:17","w07:18","w07:19","w07:23","w07:24","w07:25","w10:11","w10:12","w10:13","w11:11","w11:12","w11:13","w13:16","w13:17","w13:18","w16:1","w16:2","w16:3","w16:20","w16:21","w16:22","w16:29","w16:30","w16:31","w17:1","w17:2","w17:3","w17:4","w17:5","w17:6","w17:25","w17:26","w17:27","w17:31","w17:32","w17:33","w21:1","w21:2","w21:3","w22:1","w22:2","w22:3","w23:1","w23:2","w23:3","w25:1","w25:2","w25:3","w26:1","w26:2","w26:3","w26:22","w26:23","w26:24","w27:1","w27:2","w27:3","w27:22","w27:23","w27:24","w28:20","w28:21","w28:22"],"nodeBodies":["w04:21","w04:22","w04:23","w07:23","w07:24","w07:25","w15:2","w15:3","w15:4","w16:1","w16:2","w16:3","w16:4","w16:5","w16:6","w16:29","w16:30","w16:31","w17:1","w17:2","w17:3","w17:4","w17:5","w17:6","w17:31","w17:32","w17:33","w21:1","w21:2","w21:3","w22:1","w22:2","w22:3","w23:1","w23:2","w23:3","w25:1","w25:2","w25:3","w25:4","w25:5","w25:6","w26:1","w26:2","w26:3","w26:4","w26:5","w26:6","w26:22","w26:23","w26:24","w27:1","w27:2","w27:3","w27:4","w27:5","w27:6","w27:22","w27:23","w27:24","w28:2","w28:3","w28:4","w28:5","w28:6","w28:7","w28:8","w28:20","w28:21","w28:22"],"boundaries":["w04:12","w07:19","w09:10","w10:13","w11:13","w13:18","w16:22","w17:27","w24:3","w29:6","w29:10"],"continuity":[]}
+FAIL all wires inside corridors; gate-mouth crossings only; no body or continuity failures: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   boundaries: [
++     'w04:12',
++     'w07:19',
++     'w09:10',
++     'w10:13',
++     'w11:13',
++     'w13:18',
++     'w16:22',
++     'w17:27',
++     'w24:3',
++     'w29:6',
++     'w29:10'
++   ],
+-   boundaries: [],
+    continuity: [],
++   corridors: [
++     'w04:21',
++     'w04:22',
++     'w04:23',
++     'w07:17',
++     'w07:18',
++     'w07:19',
++     'w07:23',
++     'w07:24',
++     'w07:25',
++     'w10:11',
++     'w10:12',
++     'w10:13',
++     'w11:11',
++     'w11:12',
++     'w11:13',
++     'w13:16',
++     'w13:17',
++     'w13:18',
++     'w16:1',
++     'w16:2',
++     'w16:3',
++     'w16:20',
++     'w16:21',
++     'w16:22',
++     'w16:29',
++     'w16:30',
++     'w16:31',
++     'w17:1',
++     'w17:2',
++     'w17:3',
++     'w17:4',
++     'w17:5',
++     'w17:6',
++     'w17:25',
++     'w17:26',
++     'w17:27',
++     'w17:31',
++     'w17:32',
++     'w17:33',
++     'w21:1',
++     'w21:2',
++     'w21:3',
++     'w22:1',
++     'w22:2',
++     'w22:3',
++     'w23:1',
++     'w23:2',
++     'w23:3',
++     'w25:1',
++     'w25:2',
++     'w25:3',
++     'w26:1',
++     'w26:2',
++     'w26:3',
++     'w26:22',
++     'w26:23',
++     'w26:24',
++     'w27:1',
++     'w27:2',
++     'w27:3',
++     'w27:22',
++     'w27:23',
++     'w27:24',
++     'w28:20',
++     'w28:21',
++     'w28:22'
++   ],
++   nodeBodies: [
++     'w04:21',
++     'w04:22',
++     'w04:23',
++     'w07:23',
++     'w07:24',
++     'w07:25',
++     'w15:2',
++     'w15:3',
++     'w15:4',
++     'w16:1',
++     'w16:2',
++     'w16:3',
++     'w16:4',
++     'w16:5',
++     'w16:6',
++     'w16:29',
++     'w16:30',
++     'w16:31',
++     'w17:1',
++     'w17:2',
++     'w17:3',
++     'w17:4',
++     'w17:5',
++     'w17:6',
++     'w17:31',
++     'w17:32',
++     'w17:33',
++     'w21:1',
++     'w21:2',
++     'w21:3',
++     'w22:1',
++     'w22:2',
++     'w22:3',
++     'w23:1',
++     'w23:2',
++     'w23:3',
++     'w25:1',
++     'w25:2',
++     'w25:3',
++     'w25:4',
++     'w25:5',
++     'w25:6',
++     'w26:1',
++     'w26:2',
++     'w26:3',
++     'w26:4',
++     'w26:5',
++     'w26:6',
++     'w26:22',
++     'w26:23',
++     'w26:24',
++     'w27:1',
++     'w27:2',
++     'w27:3',
++     'w27:4',
++     'w27:5',
++     'w27:6',
++     'w27:22',
++     'w27:23',
++     'w27:24',
++     'w28:2',
++     'w28:3',
++     'w28:4',
++     'w28:5',
++     'w28:6',
++     'w28:7',
++     'w28:8',
++     'w28:20',
++     'w28:21',
++     'w28:22'
++   ]
+-   corridors: [],
+-   nodeBodies: []
+  }
+
+OVERLAPS [{"wires":["w14","w29"],"hit":{"x":1469,"y":1101,"length":6},"first":{"from":{"x":1456,"y":1101},"to":{"x":1475,"y":1101},"corridorId":"section-8:vertical:1472:1040"},"second":{"from":{"x":1469,"y":1101},"to":{"x":1486.5,"y":1101},"corridorId":"section-8:vertical:1472:1040"}},{"wires":["w21","w23"],"hit":{"x":1587,"y":1146,"length":6},"first":{"from":{"x":1587,"y":1134},"to":{"x":1587,"y":1152},"corridorId":"drive:node-15:exit-bottom"},"second":{"from":{"x":1587,"y":1152},"to":{"x":1587,"y":1146},"corridorId":"drive:node-15:exit-bottom"}},{"wires":["w25","w27"],"hit":{"x":1811,"y":1146,"length":6},"first":{"from":{"x":1811,"y":1134},"to":{"x":1811,"y":1152},"corridorId":"drive:node-16:exit-bottom"},"second":{"from":{"x":1811,"y":1152},"to":{"x":1811,"y":1146},"corridorId":"drive:node-16:exit-bottom"}},{"wires":["w25","w27"],"hit":{"x":1811,"y":1146,"length":6},"first":{"from":{"x":1811,"y":1152},"to":{"x":1811,"y":1132.5},"corridorId":"section-8:horizontal:1168:1472"},"second":{"from":{"x":1811,"y":1152},"to":{"x":1811,"y":1146},"corridorId":"drive:node-16:exit-bottom"}}]
+FAIL zero positive-length parallel/coincident wire overlaps: Expected values to be strictly equal:
+
+4 !== 0
+
+FAIL 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals: node-10:exit-bottom: nonplanar fan
++ actual - expected
+
++ {
++   length: 0,
++   x: 2259,
++   y: 530
++ }
+- null
+
+FAIL four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct: no forward lane w17:9
+FAIL all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction: w04/w09 nonjunction crossing {"x":2363,"y":1056,"length":0}
+CROSSINGS {"world":3,"section-1":3,"section-2":0,"section-3":0,"section-4":0,"section-5":0,"section-6":0,"section-7":0,"section-8":0,"section-9":0}
+FAIL topological endpoint ranges and linked road-order constraints: J6/J40 proof regions overlap
+FAIL actual crossing count equals additive endpoint and linked-order lower bound: Expected values to be strictly equal:
+
+6 !== 0
+
+PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings
+CERTIFICATION 0 certified / 6 uncertified
+FAIL zero uncertified crossings: Expected values to be strictly equal:
+
+6 !== 0
+
+PASS exact semantic directory tree and per-directory file order
+FAIL every gate traversal crosses its own mouth at its assigned distinct offset: w17 missing owned gate crossing
+FAIL turns confined to registered junctions and terminal fans; remaining intervals on assigned lanes: Expected values to be strictly equal:
+
+'x' !== 'y'
+

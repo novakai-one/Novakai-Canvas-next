@@ -1,0 +1,70 @@
+PASS 16 nodes / 9 sections; every node and child inside its owner; finite bounds
+PASS minimal nested-only regression and explicit empty-section rejection
+PASS two complete builds byte-identical; each one-way pipeline stage once
+STAGES ["capacity","nodes","ports","topology","wire-registry","wire:w01","wire:w02","wire:w03","wire:w04","wire:w05","wire:w06","wire:w07","wire:w08","wire:w09","wire:w10","wire:w11","wire:w12","wire:w13","wire:w14","wire:w15","wire:w16","wire:w17","wire:w18","wire:w19","wire:w20","wire:w21","wire:w22","wire:w23","wire:w24","wire:w25","wire:w26","wire:w27","wire:w28","wire:w29","lane-allocation","main-roads","driveways","network","lane-projection"]
+PASS all 29 value wires route ok:true
+INSPECTION {"corridors":["w07:17","w07:18","w07:19","w10:11","w10:12","w10:13","w11:11","w11:12","w11:13","w13:16","w13:17","w13:18","w16:18","w16:19","w16:20","w17:23","w17:24","w17:25"],"nodeBodies":[],"boundaries":["w04:12","w07:19","w09:10","w10:15","w11:13","w13:22","w16:20","w17:25","w23:5","w24:4","w29:8","w29:12"],"continuity":[]}
+OVERLAPS []
+PASS zero positive-length parallel/coincident wire overlaps
+PASS 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals
+PASS all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction
+CROSSINGS {"world":79,"section-1":12,"section-2":0,"section-3":0,"section-4":64,"section-5":2,"section-6":1,"section-7":1,"section-8":5,"section-9":1}
+PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings
+CERTIFICATION 0 certified / 165 uncertified
+PASS exact semantic directory tree and per-directory file order
+PASS turns confined to registered junctions and terminal fans; remaining intervals on assigned lanes
+FAIL all wires inside corridors; gate-mouth crossings only; no body or continuity failures: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   boundaries: [
++     'w04:12',
++     'w07:19',
++     'w09:10',
++     'w10:15',
++     'w11:13',
++     'w13:22',
++     'w16:20',
++     'w17:25',
++     'w23:5',
++     'w24:4',
++     'w29:8',
++     'w29:12'
++   ],
+-   boundaries: [],
+    continuity: [],
++   corridors: [
++     'w07:17',
++     'w07:18',
++     'w07:19',
++     'w10:11',
++     'w10:12',
++     'w10:13',
++     'w11:11',
++     'w11:12',
++     'w11:13',
++     'w13:16',
++     'w13:17',
++     'w13:18',
++     'w16:18',
++     'w16:19',
++     'w16:20',
++     'w17:23',
++     'w17:24',
++     'w17:25'
++   ],
+-   corridors: [],
+    nodeBodies: []
+  }
+
+FAIL four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct: no forward lane w17:9
+FAIL topological endpoint ranges and linked road-order constraints: J6/J40 proof regions overlap
+FAIL actual crossing count equals additive endpoint and linked-order lower bound: Expected values to be strictly equal:
+
+165 !== 0
+
+FAIL zero uncertified crossings: Expected values to be strictly equal:
+
+165 !== 0
+
+FAIL every gate traversal crosses its own mouth at its assigned distinct offset: w17 missing owned gate crossing

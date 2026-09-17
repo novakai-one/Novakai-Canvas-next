@@ -462,9 +462,11 @@
 
 @layer components {
   /* Idle alpha affects painted strokes only; M2 group opacity remains unchanged. */
-  .nestedWires g:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedPath,
-  .nestedWires g:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedHalo {
+  .nestedWires g:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedPath {
     opacity: var(--nv-wire-idle-opacity);
+  }
+  .nestedWires g:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedHalo {
+    opacity: var(--nv-wire-idle-halo-opacity);
   }
   .nestedWires g[data-converging='true']:not(.primary, .secondary, .dim, .spotlit, .spotlightDim) > .nestedPath {
     opacity: calc(var(--nv-wire-convergence-opacity) * var(--nv-wire-idle-opacity));
@@ -483,5 +485,59 @@
     background: var(--nv-rolefill-supporting);
     outline: var(--nv-stroke-base) solid var(--nv-action-accent);
     outline-offset: var(--nv-space-unit);
+  }
+}
+
+@layer components {
+  .section {
+    position: relative;
+    background: var(--nv-section-paint-even-fill);
+  }
+  .section[data-depth-parity='1'] {
+    background: var(--nv-section-paint-odd-fill);
+  }
+  /* The accent is inside the existing header gutter; it consumes no layout space. */
+  .section::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    top: var(--nv-section-paint-accent-inset);
+    left: var(--nv-section-paint-accent-inset);
+    width: var(--nv-section-paint-accent-width);
+    height: var(--nv-section-paint-accent-height);
+    background: var(--nv-section-paint-default-accent);
+  }
+  .section[data-section-family='contract']::before {
+    background: var(--nv-section-paint-contract);
+  }
+  .section[data-section-family='core']::before {
+    background: var(--nv-section-paint-core);
+  }
+  .section[data-section-family='adapters']::before {
+    background: var(--nv-section-paint-adapters);
+  }
+  .section[data-section-family='service']::before {
+    background: var(--nv-section-paint-service);
+  }
+  .section[data-section-family='web']::before {
+    background: var(--nv-section-paint-web);
+  }
+  .section[data-section-family='cli']::before {
+    background: var(--nv-section-paint-cli);
+  }
+  .node {
+    box-shadow: var(--nv-node-elevation-spread) var(--nv-node-elevation-offset-y)
+      var(--nv-node-elevation-blur) var(--nv-node-elevation-spread) var(--nv-shadow-opacity-color);
+  }
+  .header,
+  .footer,
+  .probes button,
+  .probes select {
+    border-color: var(--nv-chrome-paint-border);
+  }
+  .header,
+  .probes button,
+  .probes select {
+    color: var(--nv-chrome-paint-text);
   }
 }

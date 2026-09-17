@@ -1,0 +1,14 @@
+{
+  "verify-offline.py": {
+    "exit": 0,
+    "sha256": "a57be663ee074f57b8c818e2d6c63d53380a727d08ed41b29d73cc3ebe9f547c"
+  },
+  "verify-browser.py": {
+    "exit": 0,
+    "sha256": "9eb1f455a2988b2bbe886fcea7ea8e5ae3768ab57d15bbe46b40d1aa0a07f493"
+  },
+  "verify-spotlight.py": {
+    "exit": 0,
+    "sha256": "b4702368021422c3da8c5ea2cf3bcb2296c255cfa6f551f93fa32fcf4e4ae83d"
+  }
+}

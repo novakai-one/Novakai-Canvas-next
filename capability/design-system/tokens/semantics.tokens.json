@@ -673,11 +673,27 @@
   "wire": {
     "defaultColor": {
       "$type": "color",
-      "$value": "{text.secondary}"
+      "$value": "{wire.idleInk}"
     },
     "primaryColor": {
       "$type": "color",
       "$value": "{action.accent}"
+    }
+  },
+  "sectionPaint": {
+    "evenFill": {
+      "$type": "color",
+      "$value": "{surface.raised}"
+    },
+    "defaultAccent": {
+      "$type": "color",
+      "$value": "{sectionPaint.core}"
+    }
+  },
+  "chromePaint": {
+    "text": {
+      "$type": "color",
+      "$value": "{text.secondary}"
     }
   }
 }

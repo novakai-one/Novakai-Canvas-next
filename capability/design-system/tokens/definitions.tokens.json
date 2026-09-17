@@ -748,6 +748,166 @@
     "spotlightDimOpacity": {
       "$type": "number",
       "$value": 0.16
+    },
+    "idleInk": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alpha": 1
+      }
+    },
+    "idleHaloOpacity": {
+      "$type": "number",
+      "$value": 0.1
+    }
+  },
+  "sectionPaint": {
+    "oddFill": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9294117647058824,
+          0.9450980392156862,
+          0.9647058823529412
+        ],
+        "alpha": 1
+      }
+    },
+    "accentWidth": {
+      "$type": "dimension",
+      "$value": {
+        "value": 3,
+        "unit": "px"
+      }
+    },
+    "accentHeight": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      }
+    },
+    "accentInset": {
+      "$type": "dimension",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      }
+    },
+    "contract": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.20784313725490197,
+          0.3607843137254902,
+          0.803921568627451
+        ],
+        "alpha": 1
+      }
+    },
+    "core": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.3215686274509804,
+          0.3803921568627451,
+          0.4392156862745098
+        ],
+        "alpha": 1
+      }
+    },
+    "adapters": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.1803921568627451,
+          0.49019607843137253,
+          0.3568627450980392
+        ],
+        "alpha": 1
+      }
+    },
+    "service": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.4745098039215686,
+          0.3333333333333333,
+          0.6352941176470588
+        ],
+        "alpha": 1
+      }
+    },
+    "web": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.5411764705882353,
+          0.36470588235294116,
+          0.13725490196078433
+        ],
+        "alpha": 1
+      }
+    },
+    "cli": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.2901960784313726,
+          0.4196078431372549,
+          0.49019607843137253
+        ],
+        "alpha": 1
+      }
+    }
+  },
+  "nodeElevation": {
+    "offsetY": {
+      "$type": "dimension",
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      }
+    },
+    "blur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 6,
+        "unit": "px"
+      }
+    },
+    "spread": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "chromePaint": {
+    "border": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.8509803921568627,
+          0.8784313725490196,
+          0.9098039215686274
+        ],
+        "alpha": 1
+      }
     }
   }
 }

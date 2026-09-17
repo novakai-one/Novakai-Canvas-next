@@ -138,6 +138,33 @@
       ],
       "alpha": 1
     },
-    "shadow.strength": 0.32
+    "shadow.strength": 0.32,
+    "wire.idleInk": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "alpha": 1
+    },
+    "sectionPaint.oddFill": {
+      "colorSpace": "srgb",
+      "components": [
+        0.18823529411764706,
+        0.22745098039215686,
+        0.2823529411764706
+      ],
+      "alpha": 1
+    },
+    "chromePaint.border": {
+      "colorSpace": "srgb",
+      "components": [
+        0.21568627450980393,
+        0.2549019607843137,
+        0.3176470588235294
+      ],
+      "alpha": 1
+    }
   }
 }

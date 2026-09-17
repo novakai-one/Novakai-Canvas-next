@@ -96,5 +96,21 @@
   --nv-wire-primary-halo-width: 6px;
   --nv-wire-idle-opacity: 0.65;
   --nv-wire-spotlight-dim-opacity: 0.16;
+  --nv-wire-idle-ink: #000000;
+  --nv-wire-idle-halo-opacity: 0.1;
+  --nv-section-paint-odd-fill: #edf1f6;
+  --nv-section-paint-accent-width: 3px;
+  --nv-section-paint-accent-height: 48px;
+  --nv-section-paint-accent-inset: 4px;
+  --nv-section-paint-contract: #355ccd;
+  --nv-section-paint-core: #526170;
+  --nv-section-paint-adapters: #2e7d5b;
+  --nv-section-paint-service: #7955a2;
+  --nv-section-paint-web: #8a5d23;
+  --nv-section-paint-cli: #4a6b7d;
+  --nv-node-elevation-offset-y: 2px;
+  --nv-node-elevation-blur: 6px;
+  --nv-node-elevation-spread: 0px;
+  --nv-chrome-paint-border: #d9e0e8;
 }
 }

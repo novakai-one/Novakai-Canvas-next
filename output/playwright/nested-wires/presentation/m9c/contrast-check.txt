@@ -1,0 +1,3 @@
+Minimum idle/converging ratio: 3.0492901837944903
+Minimum label ratio: 14.364491391142389
+PASS all resolved canvas/section/node/road/junction backgrounds, labels and accent clearances

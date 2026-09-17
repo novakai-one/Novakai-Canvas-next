@@ -39,6 +39,7 @@ type BlockNode = Node<
   {
     block: PrototypeBlock;
     kind: 'section' | 'node';
+    paintDepth: number;
     selectionClass?: string;
     selectionActive?: boolean;
     ports: readonly PrototypeNodePort[];
@@ -116,6 +117,8 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
         className={styles.section}
         data-section-id={data.block.id}
         data-parent-section={data.block.parentSectionId}
+        data-depth-parity={data.paintDepth % 2}
+        data-section-family={data.block.label.split('/')[0]}
       >
         <strong>{data.block.label}</strong>
       </div>
@@ -188,6 +191,7 @@ function blockNode(
   zIndex: number,
   selected: string,
   select: (id: string) => void,
+  paintDepth = 0,
 ): BlockNode {
   return {
     id: block.id,
@@ -195,7 +199,7 @@ function blockNode(
     position: block.bounds,
     width: block.bounds.width,
     height: block.bounds.height,
-    data: { block, kind, ports: block.ports ?? [], selected, select },
+    data: { block, kind, paintDepth, ports: block.ports ?? [], selected, select },
     style: { width: block.bounds.width, height: block.bounds.height },
     zIndex,
     draggable: false,
@@ -605,7 +609,14 @@ export function RoadPrototype({
   const baseNodes = useMemo(
     () => [
       ...scene.sections.map((item) =>
-        blockNode(item, 'section', sectionLayer(item), selected, selectRegion),
+        blockNode(
+          item,
+          'section',
+          sectionLayer(item),
+          selected,
+          selectRegion,
+          sectionPaintDepth(item, scene.sections),
+        ),
       ),
       ...scene.roads.map((road) => roadNode(road, scene, selected, selectRegion)),
       ...scene.junctions.map((item) => junctionNode(item, selected, selectRegion)),
@@ -1070,6 +1081,13 @@ function focusProof(
 
 function sectionLayer(section: PrototypeBlock): number {
   return section.parentSectionId ? 0 : -1;
+}
+
+/** Read admitted ancestry for tint parity only; never modify scene records or layer geometry. */
+function sectionPaintDepth(section: PrototypeBlock, sections: readonly PrototypeBlock[]): number {
+  const parent = sections.find((item) => item.id === section.parentSectionId);
+  if (parent === undefined) return 0;
+  return 1 + sectionPaintDepth(parent, sections);
 }
 
 function initialRegion(scene: RoadPrototypeScene, proofs: readonly PrototypeRoadProof[]): string {

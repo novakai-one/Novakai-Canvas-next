@@ -1,0 +1,140 @@
+[
+  {
+    "file": "export-preview.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "0c65fe5fe8f294bfa697040920434d6ef78ad1064772591f5e2db359c281b401"
+  },
+  {
+    "file": "nested-after.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "1eeabd67d9b2f98744dcd50e18d4f044b3c24748db5efa8915d7bc60fb0738de"
+  },
+  {
+    "file": "nested-before.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "ad3060635fffa7c469616b5417023abfa63ccbd7fabcef34f3f1fe4a08540f79"
+  },
+  {
+    "file": "nested-selection-cleared.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "79909723ad0ca6a018b2c2af492fc76695ee9c94c33bc797c16ba951bf53cea2"
+  },
+  {
+    "file": "nested-selection-default.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "1eeabd67d9b2f98744dcd50e18d4f044b3c24748db5efa8915d7bc60fb0738de"
+  },
+  {
+    "file": "nested-selection-node-selected.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "24b479086066ced9a28a901a2f6f446d0a1159681b6f38ebc336c993d388aa63"
+  },
+  {
+    "file": "nested-selection-wire-selected.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "cce271f725901d717a783e231faa7f84514baf91663b041590ef5cc14735589d"
+  },
+  {
+    "file": "scale-after.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "7f4561f4c0738db34039a21d2b951531cd5c9e9f97c34e4def41942ab88337dd"
+  },
+  {
+    "file": "scale-before.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "b09d5d6a994df254ea07a020fd89b13518bdd04ca397cbb46a6ad7a025e84306"
+  },
+  {
+    "file": "scale-contract-detail-hover.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "a19d0e9d238535a9790ffdde37fce66dc8d1b9a019369967261e97edc2b95f4d"
+  },
+  {
+    "file": "scale-contract-detail-idle.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "9d9f587f0f968f5b6c33b4f2e1bdcea6aea19d4776d41d84241c68e74a081f2c"
+  },
+  {
+    "file": "scale-hover-hub.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "7876f0c6ee18e5517ab9512e8d1697d70b7e4617b4519f73d3e5a0483611d036"
+  },
+  {
+    "file": "scale-hover-wire.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "377be4094d81db4bc67c688b75c0c1d662f43601c86d2a56ffcf18790d300a2a"
+  },
+  {
+    "file": "scale-idle.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "7f4561f4c0738db34039a21d2b951531cd5c9e9f97c34e4def41942ab88337dd"
+  },
+  {
+    "file": "scale-off.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "7f4561f4c0738db34039a21d2b951531cd5c9e9f97c34e4def41942ab88337dd"
+  },
+  {
+    "file": "scale-on.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "e226b3875480334aa6877ebbda4125158318a23be76ec215a740412718b64229"
+  },
+  {
+    "file": "scale-primary-wire.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "d3fd34a6a1b1500a0148544f2f4c7304d90bcf7bfd0ff05ee90287a7ee1c498c"
+  },
+  {
+    "file": "scale-roads-on-hover.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "5c834f6199e74d1c4787349eed523bc794868274f6e181722dfea84a627ee1e8"
+  },
+  {
+    "file": "scale-roads-on.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "562454945c3f08353dc17543c7142f6ea5ab237eba819c3b712cc8dea233763e"
+  },
+  {
+    "file": "templates-after.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "28031553418100a79419cc1ccb8ab65c22c2fa1765f7c75a63be7d9e6b294cae"
+  },
+  {
+    "file": "templates-before.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "2ef25ee348c2499666dba84c4da41ff8eb8e655d421ef5d38649bb75481549f4"
+  },
+  {
+    "file": "templates-off.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "28031553418100a79419cc1ccb8ab65c22c2fa1765f7c75a63be7d9e6b294cae"
+  },
+  {
+    "file": "toolbar-full-width.png",
+    "width": 1920,
+    "height": 1440,
+    "sha256": "7f4561f4c0738db34039a21d2b951531cd5c9e9f97c34e4def41942ab88337dd"
+  }
+]

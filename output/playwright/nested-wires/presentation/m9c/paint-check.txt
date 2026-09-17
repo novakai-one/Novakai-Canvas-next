@@ -1,0 +1,1 @@
+PASS exact browser geometry/camera/styles across three scenes; one layout each

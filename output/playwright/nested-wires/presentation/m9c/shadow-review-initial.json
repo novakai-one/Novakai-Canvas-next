@@ -1,0 +1,23 @@
+{
+  "finding": "Full-strength node-shadow underlay conservative bound exposes insufficient margin at idle halo alpha 0.25. Paint-token correction: lower idle halo alpha to 0.10. Frozen stroke alphas unchanged.",
+  "minimum": 2.9637078067441505,
+  "example": {
+    "scene": "scale",
+    "background": "section-1:horizontal:248:640:max-shadow-underlay",
+    "color": [
+      0.7833725490196078,
+      0.8109803921568627,
+      0.8385882352941176
+    ],
+    "converging": true,
+    "stroke": "rgb(0, 0, 0)",
+    "alpha": 0.468,
+    "haloAlpha": 0.25,
+    "compositedSrgb255": [
+      113.61924,
+      116.4282,
+      119.23716
+    ],
+    "ratio": 2.9637078067441505
+  }
+}

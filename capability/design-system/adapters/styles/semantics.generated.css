@@ -58,8 +58,11 @@
   --nv-role-warning-secondary: #526170;
   --nv-chrome-wire: #355ccd;
   --nv-chrome-external-wire: #526170;
-  --nv-wire-default-color: #526170;
+  --nv-wire-default-color: #000000;
   --nv-wire-primary-color: #355ccd;
+  --nv-section-paint-even-fill: #ffffff;
+  --nv-section-paint-default-accent: #526170;
+  --nv-chrome-paint-text: #526170;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;

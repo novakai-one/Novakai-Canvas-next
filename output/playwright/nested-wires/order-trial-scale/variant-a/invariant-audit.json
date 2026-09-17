@@ -1,0 +1,240 @@
+{
+  "inspection": {
+    "corridors": [],
+    "nodeBodies": [],
+    "boundaries": [
+      "w16:19",
+      "w17:20",
+      "w18:21",
+      "w19:21"
+    ],
+    "continuity": []
+  },
+  "overlaps": [],
+  "corridorWitnesses": [],
+  "boundaryWitnesses": [
+    {
+      "id": "w16:19",
+      "from": "node-14",
+      "to": "node-6",
+      "segment": {
+        "from": {
+          "x": 559,
+          "y": 523.5
+        },
+        "to": {
+          "x": 667,
+          "y": 523.5
+        },
+        "corridorId": "section-1:vertical:640:248"
+      },
+      "road": {
+        "id": "section-1:vertical:640:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 13
+      }
+    },
+    {
+      "id": "w17:20",
+      "from": "node-18",
+      "to": "node-6",
+      "segment": {
+        "from": {
+          "x": 559,
+          "y": 517.5
+        },
+        "to": {
+          "x": 661,
+          "y": 517.5
+        },
+        "corridorId": "section-1:vertical:640:248"
+      },
+      "road": {
+        "id": "section-1:vertical:640:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 13
+      }
+    },
+    {
+      "id": "w18:21",
+      "from": "node-22",
+      "to": "node-6",
+      "segment": {
+        "from": {
+          "x": 559,
+          "y": 511.5
+        },
+        "to": {
+          "x": 655,
+          "y": 511.5
+        },
+        "corridorId": "section-1:vertical:640:248"
+      },
+      "road": {
+        "id": "section-1:vertical:640:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 13
+      }
+    },
+    {
+      "id": "w19:21",
+      "from": "node-26",
+      "to": "node-6",
+      "segment": {
+        "from": {
+          "x": 559,
+          "y": 505.5
+        },
+        "to": {
+          "x": 649,
+          "y": 505.5
+        },
+        "corridorId": "section-1:vertical:640:248"
+      },
+      "road": {
+        "id": "section-1:vertical:640:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 13
+      }
+    }
+  ],
+  "stages": [
+    "capacity",
+    "nodes",
+    "ports",
+    "topology",
+    "wire-registry",
+    "wire:w01",
+    "wire:w02",
+    "wire:w03",
+    "wire:w04",
+    "wire:w05",
+    "wire:w06",
+    "wire:w07",
+    "wire:w08",
+    "wire:w09",
+    "wire:w10",
+    "wire:w11",
+    "wire:w12",
+    "wire:w13",
+    "wire:w14",
+    "wire:w15",
+    "wire:w16",
+    "wire:w17",
+    "wire:w18",
+    "wire:w19",
+    "wire:w20",
+    "wire:w21",
+    "wire:w22",
+    "wire:w23",
+    "wire:w24",
+    "wire:w25",
+    "wire:w26",
+    "wire:w27",
+    "wire:w28",
+    "wire:w29",
+    "wire:w30",
+    "wire:w31",
+    "wire:w32",
+    "wire:w33",
+    "wire:w34",
+    "wire:w35",
+    "wire:w36",
+    "wire:w37",
+    "wire:w38",
+    "wire:w39",
+    "wire:w40",
+    "wire:w41",
+    "wire:w42",
+    "wire:w43",
+    "wire:w44",
+    "wire:w45",
+    "wire:w46",
+    "wire:w47",
+    "wire:w48",
+    "wire:w49",
+    "wire:w50",
+    "wire:w51",
+    "wire:w52",
+    "wire:w53",
+    "wire:w54",
+    "wire:w55",
+    "wire:w56",
+    "wire:w57",
+    "wire:w58",
+    "wire:w59",
+    "wire:w60",
+    "wire:w61",
+    "wire:w62",
+    "wire:w63",
+    "wire:w64",
+    "wire:w65",
+    "wire:w66",
+    "wire:w67",
+    "wire:w68",
+    "wire:w69",
+    "wire:w70",
+    "wire:w71",
+    "wire:w72",
+    "wire:w73",
+    "wire:w74",
+    "wire:w75",
+    "lane-allocation",
+    "main-roads",
+    "driveways",
+    "network",
+    "lane-projection"
+  ]
+}

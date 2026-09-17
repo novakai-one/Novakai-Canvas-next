@@ -1,0 +1,1 @@
+PASS canonical vs rebuilt baseline: byte-identical (no diff); all top-level keys preserved; seed = 7007.

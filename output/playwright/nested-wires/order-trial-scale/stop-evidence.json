@@ -1,0 +1,24 @@
+{
+  "outcome": "STOP",
+  "step": 5,
+  "reason": "variant invariant verifier exit 1",
+  "baselineVerifierExit": 0,
+  "variantVerifierExit": 1,
+  "variantBoundaryViolations": [
+    "w16:19",
+    "w17:20",
+    "w18:21",
+    "w19:21"
+  ],
+  "variantCrossings": 101,
+  "variantCertified": 85,
+  "variantUncertified": 16,
+  "missingOwnedGateCrossing": "w19",
+  "baselineCertified": 112,
+  "baselineUncertified": 0,
+  "seedPreserved": 7007,
+  "requestsByteIdentical": true,
+  "optionalWiresPresenceAwareByteIdentical": true,
+  "perNodeDegreesIdentical": true,
+  "allLaterStepsNotRun": true
+}

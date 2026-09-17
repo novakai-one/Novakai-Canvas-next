@@ -1,0 +1,255 @@
+{
+  "onlyRecursiveNodeOrderDiffers": true,
+  "requestsByteIdentical": true,
+  "wiresByteIdentical": true,
+  "wireMetadataPresence": {
+    "baseline": false,
+    "variant": false
+  },
+  "wireMetadataNote": "Both canonical-derived specs omit optional wires metadata. Presence-aware bytes are identical; 75 connectivity pairs are in requests. Rendered wire geometry is allowed to change.",
+  "requestsSha256": "74e4657c34c218ecf106e22e24648a727589112a4dbbaf756ba0388cba485e97",
+  "wiresPresenceAwareSha256": "f35a0cf0ef896a2236d8419cac8a2d85bfb33d12859af555f9cf7825dc785109",
+  "degreesIdenticalAll40": true,
+  "degrees": [
+    {
+      "number": 1,
+      "label": "kernel.ts",
+      "baseline": 12,
+      "variant": 12
+    },
+    {
+      "number": 2,
+      "label": "brands.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 3,
+      "label": "errors.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 4,
+      "label": "types.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 5,
+      "label": "api.ts",
+      "baseline": 6,
+      "variant": 6
+    },
+    {
+      "number": 6,
+      "label": "index.ts",
+      "baseline": 13,
+      "variant": 13
+    },
+    {
+      "number": 7,
+      "label": "store-port.ts",
+      "baseline": 4,
+      "variant": 4
+    },
+    {
+      "number": 8,
+      "label": "clock-port.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 9,
+      "label": "request.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 10,
+      "label": "receipt.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 11,
+      "label": "admit.ts",
+      "baseline": 4,
+      "variant": 4
+    },
+    {
+      "number": 12,
+      "label": "normalize.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 13,
+      "label": "authorize.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 14,
+      "label": "plan.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 15,
+      "label": "discover.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 16,
+      "label": "catalog.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 17,
+      "label": "match.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 18,
+      "label": "select.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 19,
+      "label": "expand.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 20,
+      "label": "instantiate.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 21,
+      "label": "bind.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 22,
+      "label": "assemble.ts",
+      "baseline": 5,
+      "variant": 5
+    },
+    {
+      "number": 23,
+      "label": "validate.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 24,
+      "label": "diagnose.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 25,
+      "label": "check.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 26,
+      "label": "result.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 27,
+      "label": "memory-store.ts",
+      "baseline": 4,
+      "variant": 4
+    },
+    {
+      "number": 28,
+      "label": "disk-store.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 29,
+      "label": "system-clock.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 30,
+      "label": "registry.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 31,
+      "label": "resource.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 32,
+      "label": "transaction.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 33,
+      "label": "endpoint.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 34,
+      "label": "server.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 35,
+      "label": "client.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 36,
+      "label": "presenter.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 37,
+      "label": "shell.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 38,
+      "label": "parse.ts",
+      "baseline": 3,
+      "variant": 3
+    },
+    {
+      "number": 39,
+      "label": "execute.ts",
+      "baseline": 2,
+      "variant": 2
+    },
+    {
+      "number": 40,
+      "label": "main.ts",
+      "baseline": 2,
+      "variant": 2
+    }
+  ]
+}

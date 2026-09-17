@@ -1,0 +1,2946 @@
+{
+  "ok": true,
+  "value": {
+    "status": "REPRODUCED_ILLEGAL_GEOMETRY_AND_PROOF_GAPS",
+    "verifierSha256": "b058594560efe05cc927cca4b320d15a4075b5ff78570a7157a2ea8be1818e00",
+    "inspection": {
+      "corridors": [],
+      "nodeBodies": [],
+      "boundaries": [
+        "w16:19",
+        "w17:20",
+        "w18:21",
+        "w19:21"
+      ],
+      "continuity": []
+    },
+    "boundaryWitnesses": [
+      {
+        "identity": "w16:19",
+        "from": "node-14",
+        "to": "node-6",
+        "targetPort": "node-6:entry-left",
+        "street": "section-1:vertical:640:248",
+        "streetBounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "streetDemand": 13,
+        "gateBounds": {
+          "x": 106,
+          "y": 474,
+          "width": 470,
+          "height": 60
+        },
+        "gatePlane": 576,
+        "assignedY": 525,
+        "actualBoundaryPoint": {
+          "x": 576,
+          "y": 523.5
+        },
+        "segment": {
+          "from": {
+            "x": 559,
+            "y": 523.5
+          },
+          "to": {
+            "x": 667,
+            "y": 523.5
+          },
+          "corridorId": "section-1:vertical:640:248"
+        },
+        "ownedGateCrossings": 0,
+        "violatedAssumption": "Left-turn start must follow the gate plane; street edge + half-pitch is 559 < 576. Crossing moves off its assigned gate by -1.5."
+      },
+      {
+        "identity": "w17:20",
+        "from": "node-18",
+        "to": "node-6",
+        "targetPort": "node-6:entry-left",
+        "street": "section-1:vertical:640:248",
+        "streetBounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "streetDemand": 13,
+        "gateBounds": {
+          "x": 106,
+          "y": 474,
+          "width": 470,
+          "height": 60
+        },
+        "gatePlane": 576,
+        "assignedY": 519,
+        "actualBoundaryPoint": {
+          "x": 576,
+          "y": 517.5
+        },
+        "segment": {
+          "from": {
+            "x": 559,
+            "y": 517.5
+          },
+          "to": {
+            "x": 661,
+            "y": 517.5
+          },
+          "corridorId": "section-1:vertical:640:248"
+        },
+        "ownedGateCrossings": 0,
+        "violatedAssumption": "Left-turn start must follow the gate plane; street edge + half-pitch is 559 < 576. Crossing moves off its assigned gate by -1.5."
+      },
+      {
+        "identity": "w18:21",
+        "from": "node-22",
+        "to": "node-6",
+        "targetPort": "node-6:entry-left",
+        "street": "section-1:vertical:640:248",
+        "streetBounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "streetDemand": 13,
+        "gateBounds": {
+          "x": 106,
+          "y": 474,
+          "width": 470,
+          "height": 60
+        },
+        "gatePlane": 576,
+        "assignedY": 513,
+        "actualBoundaryPoint": {
+          "x": 576,
+          "y": 511.5
+        },
+        "segment": {
+          "from": {
+            "x": 559,
+            "y": 511.5
+          },
+          "to": {
+            "x": 655,
+            "y": 511.5
+          },
+          "corridorId": "section-1:vertical:640:248"
+        },
+        "ownedGateCrossings": 0,
+        "violatedAssumption": "Left-turn start must follow the gate plane; street edge + half-pitch is 559 < 576. Crossing moves off its assigned gate by -1.5."
+      },
+      {
+        "identity": "w19:21",
+        "from": "node-26",
+        "to": "node-6",
+        "targetPort": "node-6:entry-left",
+        "street": "section-1:vertical:640:248",
+        "streetBounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "streetDemand": 13,
+        "gateBounds": {
+          "x": 106,
+          "y": 474,
+          "width": 470,
+          "height": 60
+        },
+        "gatePlane": 576,
+        "assignedY": 507,
+        "actualBoundaryPoint": {
+          "x": 576,
+          "y": 505.5
+        },
+        "segment": {
+          "from": {
+            "x": 559,
+            "y": 505.5
+          },
+          "to": {
+            "x": 649,
+            "y": 505.5
+          },
+          "corridorId": "section-1:vertical:640:248"
+        },
+        "ownedGateCrossings": 0,
+        "violatedAssumption": "Left-turn start must follow the gate plane; street edge + half-pitch is 559 < 576. Crossing moves off its assigned gate by -1.5."
+      }
+    ],
+    "certification": {
+      "actual": 101,
+      "lowerBound": 85,
+      "uncertified": [
+        {
+          "wires": [
+            "w11",
+            "w60"
+          ],
+          "point": {
+            "x": 805,
+            "y": 763
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-3:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 796,
+              "y": 712,
+              "width": 24,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w11",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 763,
+                  "laneId": "w11:2",
+                  "point": {
+                    "x": 796,
+                    "y": 763
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 763,
+                  "laneId": "w11:2",
+                  "point": {
+                    "x": 820,
+                    "y": 763
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 793,
+                  "laneId": "w60:2",
+                  "point": {
+                    "x": 796,
+                    "y": 793
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-3:exit-bottom",
+                  "pin": {
+                    "x": 808,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 796,
+                    "y": 716,
+                    "width": 24,
+                    "height": 1.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": [
+            {
+              "junction": "junction:section-1:horizontal:808:640:section-1:vertical:640:248",
+              "bounds": {
+                "x": 556,
+                "y": 712,
+                "width": 168,
+                "height": 192
+              },
+              "wires": [
+                "w11",
+                "w60"
+              ],
+              "variables": [
+                "section-1:horizontal:808:640",
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w11",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w11",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": false
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w12",
+            "w28"
+          ],
+          "point": {
+            "x": 1478.5,
+            "y": 769
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-5:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 1462,
+              "y": 712,
+              "width": 36,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w12",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 769,
+                  "laneId": "w12:7",
+                  "point": {
+                    "x": 1462,
+                    "y": 769
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 769,
+                  "laneId": "w12:7",
+                  "point": {
+                    "x": 1498,
+                    "y": 769
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w28",
+              "events": [
+                {
+                  "side": 1,
+                  "coordinate": 811,
+                  "laneId": "w28:2",
+                  "point": {
+                    "x": 1498,
+                    "y": 811
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-5:exit-bottom",
+                  "pin": {
+                    "x": 1483,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 1462,
+                    "y": 716,
+                    "width": 36,
+                    "height": 7.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": []
+        },
+        {
+          "wires": [
+            "w12",
+            "w60"
+          ],
+          "point": {
+            "x": 805,
+            "y": 769
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-3:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 796,
+              "y": 712,
+              "width": 24,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w12",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 769,
+                  "laneId": "w12:7",
+                  "point": {
+                    "x": 796,
+                    "y": 769
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 769,
+                  "laneId": "w12:7",
+                  "point": {
+                    "x": 820,
+                    "y": 769
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 793,
+                  "laneId": "w60:2",
+                  "point": {
+                    "x": 796,
+                    "y": 793
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-3:exit-bottom",
+                  "pin": {
+                    "x": 808,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 796,
+                    "y": 716,
+                    "width": 24,
+                    "height": 1.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": [
+            {
+              "junction": "junction:section-1:horizontal:808:640:section-1:vertical:640:248",
+              "bounds": {
+                "x": 556,
+                "y": 712,
+                "width": 168,
+                "height": 192
+              },
+              "wires": [
+                "w12",
+                "w60"
+              ],
+              "variables": [
+                "section-1:horizontal:808:640",
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w12",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w12",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": false
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w13",
+            "w28"
+          ],
+          "point": {
+            "x": 1478.5,
+            "y": 775
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-5:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 1462,
+              "y": 712,
+              "width": 36,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w13",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 775,
+                  "laneId": "w13:7",
+                  "point": {
+                    "x": 1462,
+                    "y": 775
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 775,
+                  "laneId": "w13:7",
+                  "point": {
+                    "x": 1498,
+                    "y": 775
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w28",
+              "events": [
+                {
+                  "side": 1,
+                  "coordinate": 811,
+                  "laneId": "w28:2",
+                  "point": {
+                    "x": 1498,
+                    "y": 811
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-5:exit-bottom",
+                  "pin": {
+                    "x": 1483,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 1462,
+                    "y": 716,
+                    "width": 36,
+                    "height": 7.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": []
+        },
+        {
+          "wires": [
+            "w13",
+            "w60"
+          ],
+          "point": {
+            "x": 805,
+            "y": 775
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-3:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 796,
+              "y": 712,
+              "width": 24,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w13",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 775,
+                  "laneId": "w13:7",
+                  "point": {
+                    "x": 796,
+                    "y": 775
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 775,
+                  "laneId": "w13:7",
+                  "point": {
+                    "x": 820,
+                    "y": 775
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 793,
+                  "laneId": "w60:2",
+                  "point": {
+                    "x": 796,
+                    "y": 793
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-3:exit-bottom",
+                  "pin": {
+                    "x": 808,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 796,
+                    "y": 716,
+                    "width": 24,
+                    "height": 1.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": [
+            {
+              "junction": "junction:section-1:horizontal:808:640:section-1:vertical:640:248",
+              "bounds": {
+                "x": 556,
+                "y": 712,
+                "width": 168,
+                "height": 192
+              },
+              "wires": [
+                "w13",
+                "w60"
+              ],
+              "variables": [
+                "section-1:horizontal:808:640",
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w13",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w13",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": false
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w14",
+            "w28"
+          ],
+          "point": {
+            "x": 1478.5,
+            "y": 781
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-5:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 1462,
+              "y": 712,
+              "width": 36,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w14",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 781,
+                  "laneId": "w14:7",
+                  "point": {
+                    "x": 1462,
+                    "y": 781
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 781,
+                  "laneId": "w14:7",
+                  "point": {
+                    "x": 1498,
+                    "y": 781
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w28",
+              "events": [
+                {
+                  "side": 1,
+                  "coordinate": 811,
+                  "laneId": "w28:2",
+                  "point": {
+                    "x": 1498,
+                    "y": 811
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-5:exit-bottom",
+                  "pin": {
+                    "x": 1483,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 1462,
+                    "y": 716,
+                    "width": 36,
+                    "height": 7.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": []
+        },
+        {
+          "wires": [
+            "w14",
+            "w60"
+          ],
+          "point": {
+            "x": 805,
+            "y": 781
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-3:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 796,
+              "y": 712,
+              "width": 24,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w14",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 781,
+                  "laneId": "w14:7",
+                  "point": {
+                    "x": 796,
+                    "y": 781
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 781,
+                  "laneId": "w14:7",
+                  "point": {
+                    "x": 820,
+                    "y": 781
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 793,
+                  "laneId": "w60:2",
+                  "point": {
+                    "x": 796,
+                    "y": 793
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-3:exit-bottom",
+                  "pin": {
+                    "x": 808,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 796,
+                    "y": 716,
+                    "width": 24,
+                    "height": 1.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": [
+            {
+              "junction": "junction:section-1:horizontal:808:640:section-1:vertical:640:248",
+              "bounds": {
+                "x": 556,
+                "y": 712,
+                "width": 168,
+                "height": 192
+              },
+              "wires": [
+                "w14",
+                "w60"
+              ],
+              "variables": [
+                "section-1:horizontal:808:640",
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w14",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w14",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": false
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w15",
+            "w28"
+          ],
+          "point": {
+            "x": 1478.5,
+            "y": 787
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-5:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 1462,
+              "y": 712,
+              "width": 36,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w15",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 787,
+                  "laneId": "w15:7",
+                  "point": {
+                    "x": 1462,
+                    "y": 787
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 787,
+                  "laneId": "w15:7",
+                  "point": {
+                    "x": 1498,
+                    "y": 787
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w28",
+              "events": [
+                {
+                  "side": 1,
+                  "coordinate": 811,
+                  "laneId": "w28:2",
+                  "point": {
+                    "x": 1498,
+                    "y": 811
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-5:exit-bottom",
+                  "pin": {
+                    "x": 1483,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 1462,
+                    "y": 716,
+                    "width": 36,
+                    "height": 7.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": []
+        },
+        {
+          "wires": [
+            "w15",
+            "w60"
+          ],
+          "point": {
+            "x": 805,
+            "y": 787
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-3:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 796,
+              "y": 712,
+              "width": 24,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w15",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 787,
+                  "laneId": "w15:7",
+                  "point": {
+                    "x": 796,
+                    "y": 787
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 787,
+                  "laneId": "w15:7",
+                  "point": {
+                    "x": 820,
+                    "y": 787
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 793,
+                  "laneId": "w60:2",
+                  "point": {
+                    "x": 796,
+                    "y": 793
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-3:exit-bottom",
+                  "pin": {
+                    "x": 808,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 796,
+                    "y": 716,
+                    "width": 24,
+                    "height": 1.5
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": [
+            {
+              "junction": "junction:section-1:horizontal:808:640:section-1:vertical:640:248",
+              "bounds": {
+                "x": 556,
+                "y": 712,
+                "width": 168,
+                "height": 192
+              },
+              "wires": [
+                "w15",
+                "w60"
+              ],
+              "variables": [
+                "section-1:horizontal:808:640",
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w15",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w15",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": false
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w16",
+            "w60"
+          ],
+          "point": {
+            "x": 643,
+            "y": 523.5
+          },
+          "registeredJunctions": [
+            "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left"
+          ],
+          "region": {
+            "bounds": {
+              "x": 556,
+              "y": 474,
+              "width": 168,
+              "height": 84
+            },
+            "roadIds": [
+              "section-1:vertical:640:248",
+              "section-1:horizontal:528:640",
+              "drive:section-1:entry-left"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w16",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 525,
+                  "laneId": "w16:15",
+                  "point": {
+                    "x": 556,
+                    "y": 525
+                  }
+                },
+                {
+                  "side": 0,
+                  "coordinate": 667,
+                  "laneId": "w16:18",
+                  "point": {
+                    "y": 474,
+                    "x": 667
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 474,
+                    "x": 643
+                  }
+                },
+                {
+                  "side": 2,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 558,
+                    "x": 643
+                  }
+                }
+              ],
+              "terminals": []
+            }
+          ],
+          "reason": "linked road-order table admits zero crossings; no positive obstruction retained",
+          "constraints": [
+            {
+              "junction": "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left",
+              "bounds": {
+                "x": 556,
+                "y": 474,
+                "width": 168,
+                "height": 84
+              },
+              "wires": [
+                "w16",
+                "w60"
+              ],
+              "variables": [
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w16",
+                  "side": 3,
+                  "road": "drive:section-1:entry-left",
+                  "direction": 1,
+                  "coordinates": [
+                    507,
+                    513,
+                    519,
+                    525,
+                    531
+                  ],
+                  "range": [
+                    447,
+                    471
+                  ]
+                },
+                {
+                  "wire": "w16",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 2,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    255,
+                    333
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w17",
+            "w60"
+          ],
+          "point": {
+            "x": 643,
+            "y": 517.5
+          },
+          "registeredJunctions": [
+            "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left"
+          ],
+          "region": {
+            "bounds": {
+              "x": 556,
+              "y": 474,
+              "width": 168,
+              "height": 84
+            },
+            "roadIds": [
+              "section-1:vertical:640:248",
+              "section-1:horizontal:528:640",
+              "drive:section-1:entry-left"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w17",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 519,
+                  "laneId": "w17:15",
+                  "point": {
+                    "x": 556,
+                    "y": 519
+                  }
+                },
+                {
+                  "side": 0,
+                  "coordinate": 661,
+                  "laneId": "w17:18",
+                  "point": {
+                    "y": 474,
+                    "x": 661
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 474,
+                    "x": 643
+                  }
+                },
+                {
+                  "side": 2,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 558,
+                    "x": 643
+                  }
+                }
+              ],
+              "terminals": []
+            }
+          ],
+          "reason": "linked road-order table admits zero crossings; no positive obstruction retained",
+          "constraints": [
+            {
+              "junction": "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left",
+              "bounds": {
+                "x": 556,
+                "y": 474,
+                "width": 168,
+                "height": 84
+              },
+              "wires": [
+                "w17",
+                "w60"
+              ],
+              "variables": [
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w17",
+                  "side": 3,
+                  "road": "drive:section-1:entry-left",
+                  "direction": 1,
+                  "coordinates": [
+                    507,
+                    513,
+                    519,
+                    525,
+                    531
+                  ],
+                  "range": [
+                    447,
+                    471
+                  ]
+                },
+                {
+                  "wire": "w17",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 2,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    255,
+                    333
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w18",
+            "w60"
+          ],
+          "point": {
+            "x": 643,
+            "y": 511.5
+          },
+          "registeredJunctions": [
+            "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left"
+          ],
+          "region": {
+            "bounds": {
+              "x": 556,
+              "y": 474,
+              "width": 168,
+              "height": 84
+            },
+            "roadIds": [
+              "section-1:vertical:640:248",
+              "section-1:horizontal:528:640",
+              "drive:section-1:entry-left"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w18",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 513,
+                  "laneId": "w18:15",
+                  "point": {
+                    "x": 556,
+                    "y": 513
+                  }
+                },
+                {
+                  "side": 0,
+                  "coordinate": 655,
+                  "laneId": "w18:18",
+                  "point": {
+                    "y": 474,
+                    "x": 655
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 474,
+                    "x": 643
+                  }
+                },
+                {
+                  "side": 2,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 558,
+                    "x": 643
+                  }
+                }
+              ],
+              "terminals": []
+            }
+          ],
+          "reason": "linked road-order table admits zero crossings; no positive obstruction retained",
+          "constraints": [
+            {
+              "junction": "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left",
+              "bounds": {
+                "x": 556,
+                "y": 474,
+                "width": 168,
+                "height": 84
+              },
+              "wires": [
+                "w18",
+                "w60"
+              ],
+              "variables": [
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w18",
+                  "side": 3,
+                  "road": "drive:section-1:entry-left",
+                  "direction": 1,
+                  "coordinates": [
+                    507,
+                    513,
+                    519,
+                    525,
+                    531
+                  ],
+                  "range": [
+                    447,
+                    471
+                  ]
+                },
+                {
+                  "wire": "w18",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 2,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    255,
+                    333
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w19",
+            "w60"
+          ],
+          "point": {
+            "x": 643,
+            "y": 505.5
+          },
+          "registeredJunctions": [
+            "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left"
+          ],
+          "region": {
+            "bounds": {
+              "x": 556,
+              "y": 474,
+              "width": 168,
+              "height": 84
+            },
+            "roadIds": [
+              "section-1:vertical:640:248",
+              "section-1:horizontal:528:640",
+              "drive:section-1:entry-left"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w19",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 507,
+                  "laneId": "w19:15",
+                  "point": {
+                    "x": 556,
+                    "y": 507
+                  }
+                },
+                {
+                  "side": 0,
+                  "coordinate": 649,
+                  "laneId": "w19:18",
+                  "point": {
+                    "y": 474,
+                    "x": 649
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 474,
+                    "x": 643
+                  }
+                },
+                {
+                  "side": 2,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 558,
+                    "x": 643
+                  }
+                }
+              ],
+              "terminals": []
+            }
+          ],
+          "reason": "linked road-order table admits zero crossings; no positive obstruction retained",
+          "constraints": [
+            {
+              "junction": "junction:section-1:vertical:640:248:section-1:horizontal:528:640|junction:section-1:vertical:640:248:drive:section-1:entry-left",
+              "bounds": {
+                "x": 556,
+                "y": 474,
+                "width": 168,
+                "height": 84
+              },
+              "wires": [
+                "w19",
+                "w60"
+              ],
+              "variables": [
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w19",
+                  "side": 3,
+                  "road": "drive:section-1:entry-left",
+                  "direction": 1,
+                  "coordinates": [
+                    507,
+                    513,
+                    519,
+                    525,
+                    531
+                  ],
+                  "range": [
+                    447,
+                    471
+                  ]
+                },
+                {
+                  "wire": "w19",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 2,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    255,
+                    333
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "wires": [
+            "w58",
+            "w60"
+          ],
+          "point": {
+            "x": 643,
+            "y": 391
+          },
+          "registeredJunctions": [
+            "junction:section-1:vertical:640:248:drive:node-6:entry-left"
+          ],
+          "region": {
+            "bounds": {
+              "x": 556,
+              "y": 310,
+              "width": 168,
+              "height": 156
+            },
+            "roadIds": [
+              "section-1:vertical:640:248"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w58",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 637,
+                  "laneId": "w58:4",
+                  "point": {
+                    "y": 310,
+                    "x": 637
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-6:entry-left",
+                  "pin": {
+                    "x": 712,
+                    "y": 355
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 644.5,
+                    "y": 310,
+                    "width": 67.5,
+                    "height": 156
+                  }
+                }
+              ]
+            },
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 310,
+                    "x": 643
+                  }
+                },
+                {
+                  "side": 2,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 466,
+                    "x": 643
+                  }
+                }
+              ],
+              "terminals": []
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": []
+        },
+        {
+          "wires": [
+            "w60",
+            "w63"
+          ],
+          "point": {
+            "x": 643,
+            "y": 397
+          },
+          "registeredJunctions": [
+            "junction:section-1:vertical:640:248:drive:node-6:entry-left"
+          ],
+          "region": {
+            "bounds": {
+              "x": 556,
+              "y": 310,
+              "width": 168,
+              "height": 156
+            },
+            "roadIds": [
+              "section-1:vertical:640:248"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 310,
+                    "x": 643
+                  }
+                },
+                {
+                  "side": 2,
+                  "coordinate": 643,
+                  "laneId": "w60:3",
+                  "point": {
+                    "y": 466,
+                    "x": 643
+                  }
+                }
+              ],
+              "terminals": []
+            },
+            {
+              "wire": "w63",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 631,
+                  "laneId": "w63:4",
+                  "point": {
+                    "y": 310,
+                    "x": 631
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-6:entry-left",
+                  "pin": {
+                    "x": 712,
+                    "y": 361
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 644.5,
+                    "y": 310,
+                    "width": 67.5,
+                    "height": 156
+                  }
+                }
+              ]
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": []
+        },
+        {
+          "wires": [
+            "w60",
+            "w64"
+          ],
+          "point": {
+            "x": 805,
+            "y": 757
+          },
+          "registeredJunctions": [
+            "junction:section-1:horizontal:808:640:drive:node-3:exit-bottom"
+          ],
+          "region": {
+            "bounds": {
+              "x": 796,
+              "y": 712,
+              "width": 24,
+              "height": 192
+            },
+            "roadIds": [
+              "section-1:horizontal:808:640"
+            ]
+          },
+          "events": [
+            {
+              "wire": "w60",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 793,
+                  "laneId": "w60:2",
+                  "point": {
+                    "x": 796,
+                    "y": 793
+                  }
+                }
+              ],
+              "terminals": [
+                {
+                  "port": "node-3:exit-bottom",
+                  "pin": {
+                    "x": 808,
+                    "y": 716
+                  },
+                  "strictlyInterior": true,
+                  "driveway": {
+                    "x": 796,
+                    "y": 716,
+                    "width": 24,
+                    "height": 1.5
+                  }
+                }
+              ]
+            },
+            {
+              "wire": "w64",
+              "events": [
+                {
+                  "side": 3,
+                  "coordinate": 757,
+                  "laneId": "w64:2",
+                  "point": {
+                    "x": 796,
+                    "y": 757
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 757,
+                  "laneId": "w64:2",
+                  "point": {
+                    "x": 820,
+                    "y": 757
+                  }
+                }
+              ],
+              "terminals": []
+            }
+          ],
+          "reason": "junctionPath discards a path: pin lies inside the proof rectangle, not on its perimeter",
+          "constraints": [
+            {
+              "junction": "junction:section-1:horizontal:808:640:section-1:vertical:640:248",
+              "bounds": {
+                "x": 556,
+                "y": 712,
+                "width": 168,
+                "height": 192
+              },
+              "wires": [
+                "w60",
+                "w64"
+              ],
+              "variables": [
+                "section-1:horizontal:808:640",
+                "section-1:vertical:640:248"
+              ],
+              "endpoints": [
+                {
+                  "wire": "w60",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w60",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                },
+                {
+                  "wire": "w64",
+                  "side": 1,
+                  "road": "section-1:horizontal:808:640",
+                  "direction": -1,
+                  "coordinates": [
+                    805,
+                    799,
+                    793,
+                    787,
+                    781,
+                    775,
+                    769,
+                    763,
+                    757,
+                    751,
+                    745,
+                    739,
+                    733,
+                    727,
+                    721,
+                    715
+                  ],
+                  "range": [
+                    171,
+                    261
+                  ]
+                },
+                {
+                  "wire": "w64",
+                  "side": 0,
+                  "road": "section-1:vertical:640:248",
+                  "direction": -1,
+                  "coordinates": [
+                    643,
+                    649,
+                    655,
+                    661,
+                    667,
+                    673,
+                    679,
+                    685,
+                    691,
+                    697,
+                    703,
+                    709,
+                    715,
+                    721
+                  ],
+                  "range": [
+                    87,
+                    165
+                  ]
+                }
+              ],
+              "table": [
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": false
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": false
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": false,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": true
+                },
+                {
+                  "assignment": {
+                    "section-1:horizontal:808:640": true,
+                    "section-1:vertical:640:248": true
+                  },
+                  "crossing": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "baseline": {
+      "inspection": {
+        "corridors": [],
+        "nodeBodies": [],
+        "boundaries": [],
+        "continuity": []
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+ORDER section-1: 6:index.ts, 1:kernel.ts, 2:brands.ts, 3:errors.ts, 4:types.ts, 5:api.ts
+ORDER section-2: 7:store-port.ts, 8:clock-port.ts
+ORDER section-3: 9:request.ts, 10:receipt.ts
+ORDER section-5: 14:plan.ts, 11:admit.ts, 12:normalize.ts, 13:authorize.ts
+ORDER section-6: 15:discover.ts, 16:catalog.ts, 17:match.ts, 18:select.ts
+ORDER section-7: 19:expand.ts, 20:instantiate.ts, 21:bind.ts, 22:assemble.ts
+ORDER section-8: 23:validate.ts, 24:diagnose.ts, 25:check.ts, 26:result.ts
+ORDER section-9: 27:memory-store.ts, 28:disk-store.ts, 29:system-clock.ts, 30:registry.ts
+ORDER section-10: 31:resource.ts, 32:transaction.ts, 33:endpoint.ts, 34:server.ts
+ORDER section-11: 35:client.ts, 36:presenter.ts, 37:shell.ts
+ORDER section-12: 38:parse.ts, 39:execute.ts, 40:main.ts
+WROTE output/playwright/nested-wires/order-trial-scale/variant-a-order.json

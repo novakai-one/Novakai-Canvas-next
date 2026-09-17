@@ -1,0 +1,11 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm architecture && pnpm test
+$ tsc --noEmit
+$ eslint .
+
+/Users/christopherdasca/Programming/Novakai-Canvas-next-ordertrial/output/playwright/nested-wires/order-trial/capture.mjs
+  10:23  error  Refactor this function to reduce its Cognitive Complexity from 3 to the 2 allowed  sonarjs/cognitive-complexity
+
+✖ 1 problem (1 error, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

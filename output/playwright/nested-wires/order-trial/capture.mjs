@@ -7,14 +7,17 @@
 function ensure(condition, message) {
   if (!condition) throw new Error(message);
 }
-export async function capture(page, options) {
-  await page.setViewportSize({ width: 1920, height: 1440 });
+async function interceptSceneSpec(page, options) {
   if (options.spec) {
     const body = 'export default ' + JSON.stringify(options.spec) + ';';
     await page.route('**/templates-scene/scene-spec.json**', (route) =>
       route.fulfill({ contentType: 'application/javascript', body }),
     );
   }
+}
+export async function capture(page, options) {
+  await page.setViewportSize({ width: 1920, height: 1440 });
+  await interceptSceneSpec(page, options);
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   const loads = [];

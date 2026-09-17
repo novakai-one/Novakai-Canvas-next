@@ -1,0 +1,180 @@
+{
+  "sourceHead": "ca7be03d1a748b356039843e82dda7e12f0f46ff",
+  "branch": "feat/order-trial",
+  "scenes": {
+    "baseline": {
+      "sceneSha256": "5779c71c97d40fd0ae8b64fb903d603b019f4ccb528aa9dbc84b5a57fb50fd74",
+      "nodes": [
+        {
+          "id": "node-1",
+          "label": "kernel.ts",
+          "bounds": {
+            "x": 712,
+            "y": 340,
+            "width": 192,
+            "height": 96
+          },
+          "inDegree": 0,
+          "outDegree": 12
+        },
+        {
+          "id": "node-6",
+          "label": "index.ts",
+          "bounds": {
+            "x": 1384,
+            "y": 620,
+            "width": 192,
+            "height": 96
+          },
+          "inDegree": 13,
+          "outDegree": 0
+        }
+      ],
+      "street": {
+        "id": "section-1:vertical:640:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 610,
+          "y": 224,
+          "width": 60,
+          "height": 662
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 4
+      },
+      "gate": {
+        "id": "drive:section-1:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 106,
+          "y": 474,
+          "width": 504,
+          "height": 60
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "section-1",
+          "portId": "section-1:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 4
+      },
+      "targetPorts": [
+        {
+          "wire": "w16",
+          "targetPort": "node-6:entry-top"
+        },
+        {
+          "wire": "w17",
+          "targetPort": "node-6:entry-top"
+        },
+        {
+          "wire": "w18",
+          "targetPort": "node-6:entry-top"
+        },
+        {
+          "wire": "w19",
+          "targetPort": "node-6:entry-top"
+        }
+      ]
+    },
+    "variant-a": {
+      "sceneSha256": "1ea3ed6380ba690341615770e3d972e591ad79b6baa8da165f96e214df5c824d",
+      "nodes": [
+        {
+          "id": "node-6",
+          "label": "index.ts",
+          "bounds": {
+            "x": 712,
+            "y": 340,
+            "width": 192,
+            "height": 96
+          },
+          "inDegree": 13,
+          "outDegree": 0
+        },
+        {
+          "id": "node-1",
+          "label": "kernel.ts",
+          "bounds": {
+            "x": 1048,
+            "y": 340,
+            "width": 192,
+            "height": 96
+          },
+          "inDegree": 0,
+          "outDegree": 12
+        }
+      ],
+      "street": {
+        "id": "section-1:vertical:640:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 556,
+          "y": 212,
+          "width": 168,
+          "height": 692
+        },
+        "directions": [
+          "down",
+          "up"
+        ],
+        "wireLaneCount": 13
+      },
+      "gate": {
+        "id": "drive:section-1:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 106,
+          "y": 474,
+          "width": 470,
+          "height": 60
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "section-1",
+          "portId": "section-1:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 4
+      },
+      "targetPorts": [
+        {
+          "wire": "w16",
+          "targetPort": "node-6:entry-left"
+        },
+        {
+          "wire": "w17",
+          "targetPort": "node-6:entry-left"
+        },
+        {
+          "wire": "w18",
+          "targetPort": "node-6:entry-left"
+        },
+        {
+          "wire": "w19",
+          "targetPort": "node-6:entry-left"
+        }
+      ]
+    }
+  }
+}

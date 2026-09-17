@@ -1,0 +1,94 @@
+{
+  "status": "ANALYSIS_ACCEPTED_CHECK_PASSED",
+  "branch": "feat/order-trial",
+  "sourceHead": "ca7be03d1a748b356039843e82dda7e12f0f46ff",
+  "commands": [
+    {
+      "command": "node --import tsx output/playwright/nested-wires/mouths-spike/reproduce.mjs",
+      "exitCode": 0,
+      "output": "reproduction-output.json"
+    },
+    {
+      "command": "node --import tsx output/playwright/nested-wires/mouths-spike/reproduce.mjs --assert-legal",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "output": "negative-control-output.txt"
+    },
+    {
+      "command": "pnpm exec eslint output/playwright/nested-wires/mouths-spike/reproduce.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node --import tsx output/playwright/nested-wires/order-trial-scale/verify-scale-scene.mjs baseline",
+      "exitCode": 0,
+      "output": "baseline-verifier-output.txt"
+    },
+    {
+      "command": "node --import tsx output/playwright/nested-wires/order-trial-scale/verify-scale-scene.mjs variant-a",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "output": "variant-verifier-output.txt"
+    },
+    {
+      "command": "pnpm check",
+      "exitCode": 1,
+      "output": "pnpm-check-pre-amendment-output.txt",
+      "failure": {
+        "file": "output/playwright/nested-wires/order-trial/capture.mjs",
+        "line": 10,
+        "column": 23,
+        "rule": "sonarjs/cognitive-complexity",
+        "actual": 3,
+        "maximum": 2
+      },
+      "stages": {
+        "typecheck": "passed",
+        "lint": "failed",
+        "format:check": "not reached",
+        "architecture": "not reached",
+        "test": "not reached"
+      }
+    },
+    {
+      "command": "pnpm check",
+      "exitCode": 0,
+      "output": "pnpm-check-output.txt",
+      "stages": {
+        "typecheck": "passed",
+        "lint": "passed",
+        "format:check": "passed",
+        "architecture": "passed",
+        "test": "passed"
+      },
+      "testFilesPassed": 70,
+      "testsPassed": 208
+    }
+  ],
+  "scopeCheck": {
+    "gitDiffNameOnly": [
+      "output/playwright/nested-wires/order-trial/capture.mjs"
+    ],
+    "gitStatus": [
+      " M output/playwright/nested-wires/order-trial/capture.mjs",
+      "?? output/playwright/nested-wires/mouths-spike/",
+      "?? output/playwright/nested-wires/order-trial-scale/"
+    ],
+    "productSourceModified": false,
+    "preExistingUntrackedDirectory": "output/playwright/nested-wires/order-trial-scale/",
+    "recordedAt": "before staging Amendment 1 delivery"
+  },
+  "pullRequest": "not created",
+  "amendment1": {
+    "authority": "brief.md: Amendment 1",
+    "change": "Extract unchanged optional scene-interception block into interceptSceneSpec(page, options); preserve remaining capture body, CLI and output shape.",
+    "designFindingsUnchanged": true,
+    "designFindingsSha256": "6bbc399c0809a4068bad93cd4148ab819a125a8c9e29da2d20893c4d00d797ef",
+    "reproductionReplay": "exit 0; byte-for-byte identical to reproduction-output.json",
+    "browserCapture": "none; terminal-only work"
+  },
+  "delivery": {
+    "branch": "feat/order-trial",
+    "commitMessage": "docs(mouths-spike): corner-door/legality analysis + lint-debt fix in order-trial capture",
+    "receipt": "Containing commit and remote push are verified in the delivery response."
+  }
+}

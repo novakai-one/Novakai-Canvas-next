@@ -4,14 +4,16 @@
   }
   .wire {
     fill: none;
+    opacity: var(--nv-canvas-wire-idle-opacity);
     transition-duration: var(--nv-canvas-transition);
     transition-property: opacity;
   }
   .underlay {
     fill: none;
+    opacity: 0;
     pointer-events: none;
-    stroke: var(--nv-text-secondary);
-    stroke-width: calc(var(--nv-focus-width) + var(--nv-stroke-base));
+    stroke: var(--nv-canvas-node-boundary);
+    stroke-width: var(--nv-focus-width);
     transition-duration: var(--nv-canvas-transition);
     transition-property: opacity, stroke;
   }
@@ -29,25 +31,33 @@
   .wire[data-emphasis='secondary'] {
     stroke: var(--nv-text-secondary) !important;
   }
-  .underlay[data-emphasis='muted'],
   .wire[data-emphasis='muted'],
-  .marker[data-emphasis='muted'],
-  .markerContrast[data-emphasis='muted'] {
-    opacity: var(--nv-canvas-muted-opacity);
+  .marker[data-emphasis='muted'] {
+    opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
   }
   .marker,
   .markerContrast {
     pointer-events: none;
+    opacity: var(--nv-canvas-wire-idle-opacity);
     transition-duration: var(--nv-canvas-transition);
     transition-property: opacity;
   }
+  .markerContrast {
+    opacity: 0;
+  }
+  :is(.underlay, .wire, .marker, .markerContrast):is(
+    [data-emphasis='primary'],
+    [data-emphasis='secondary']
+  ) {
+    opacity: 1;
+  }
   .markerContrast :global(path),
   .markerContrast :global(circle) {
-    stroke: var(--nv-text-secondary) !important;
+    stroke: var(--nv-canvas-node-boundary) !important;
     stroke-width: var(--nv-focus-width);
   }
   .markerContrast :global(path:not([fill='none'])) {
-    fill: var(--nv-text-secondary) !important;
+    fill: var(--nv-canvas-node-boundary) !important;
   }
   .markerContrast[data-emphasis='primary'] :global(path),
   .markerContrast[data-emphasis='primary'] :global(circle),

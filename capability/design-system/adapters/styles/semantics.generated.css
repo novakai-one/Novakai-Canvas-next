@@ -59,18 +59,20 @@
   --nv-chrome-wire: #355ccd;
   --nv-chrome-external-wire: #526170;
   --nv-canvas-surface: #f4f6f8;
-  --nv-canvas-grid: #bbc5d06b;
+  --nv-canvas-grid: #bbc5d03d;
   --nv-canvas-node-surface: #ffffff;
-  --nv-canvas-node-header: #f4f6f8;
-  --nv-canvas-node-rim: #17212b24;
-  --nv-canvas-node-ambient-shadow: #00000014;
-  --nv-canvas-node-offset-y: 4px;
-  --nv-canvas-node-blur: 12px;
+  --nv-canvas-node-header: #17212b09;
+  --nv-canvas-node-boundary: #17212b80;
+  --nv-canvas-node-rim: #17212b1a;
+  --nv-canvas-node-ambient-shadow: #00000038;
+  --nv-canvas-node-offset-y: 3px;
+  --nv-canvas-node-blur: 4px;
   --nv-canvas-ambient-offset-y: 10px;
-  --nv-canvas-ambient-blur: 22px;
+  --nv-canvas-ambient-blur: 18px;
   --nv-canvas-heading: #17212b;
   --nv-canvas-member: #526170;
-  --nv-canvas-group-surface: #ffffff5c;
+  --nv-canvas-group-surface: #ffffff29;
+  --nv-canvas-group-boundary: #bbc5d05c;
   --nv-canvas-group-heading: #526170;
   --nv-canvas-muted-opacity: 0.36;
   --nv-canvas-transition: 120ms;
@@ -82,8 +84,6 @@
   --nv-diagram-figure-medium: 128px;
   --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
-  --nv-canvas-node-boundary: #526170;
   --nv-canvas-node-shadow: #0000001f;
-  --nv-canvas-group-boundary: #526170;
 }
 }

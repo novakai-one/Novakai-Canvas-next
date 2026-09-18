@@ -70,18 +70,14 @@ function header(node: VisualNode, classes?: NodeRenderClasses): ReactElement | n
   const path = `M${corner} 0 H${node.width - corner} Q${node.width} 0 ${node.width} ${corner} V${node.headerHeight} H0 V${corner} Q0 0 ${corner} 0 Z`;
   return <path className={classes.header} d={path} />;
 }
-/** A quiet inset line supplies the rim light that separates a node from the canvas. */
+/** The top-facing rim catches light without outlining the entire body a second time. */
 function rim(node: VisualNode, classes?: NodeRenderClasses): ReactElement | null {
   if (classes === undefined || node.frame === 'none' || node.shape === 'diamond') return null;
   const inset = node.strokeWidth / 2;
   return (
-    <rect
+    <path
       className={classes.rim}
-      x={inset}
-      y={inset}
-      width={node.width - node.strokeWidth}
-      height={node.height - node.strokeWidth}
-      rx={radius(node)}
+      d={`M${inset} ${radius(node)} Q${inset} ${inset} ${radius(node)} ${inset} H${node.width - radius(node)} Q${node.width - inset} ${inset} ${node.width - inset} ${radius(node)}`}
       vectorEffect="non-scaling-stroke"
     />
   );

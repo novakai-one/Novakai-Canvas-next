@@ -700,11 +700,48 @@
     },
     "nodeHeader": {
       "$type": "color",
-      "$value": "{surface.base}"
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{text.primary}"
+            },
+            "scalar": {
+              "op": "multiply",
+              "value": {
+                "op": "reference",
+                "value": "{canvasDepth.rimOpacity}"
+              },
+              "scalar": {
+                "op": "reference",
+                "value": "{canvasEmphasis.mutedOpacity}"
+              }
+            }
+          }
+        }
+      }
     },
     "nodeBoundary": {
       "$type": "color",
-      "$value": "{role.neutral.stroke}"
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{text.primary}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.nodeBoundaryOpacity}"
+            }
+          }
+        }
+      }
     },
     "nodeRim": {
       "$type": "color",
@@ -793,7 +830,22 @@
     },
     "groupBoundary": {
       "$type": "color",
-      "$value": "{role.neutral.stroke}"
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{border.default}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasEmphasis.mutedOpacity}"
+            }
+          }
+        }
+      }
     },
     "groupHeading": {
       "$type": "color",
@@ -806,6 +858,10 @@
     "transition": {
       "$type": "duration",
       "$value": "{motion.duration}"
+    },
+    "wireIdleOpacity": {
+      "$type": "number",
+      "$value": 0.42
     }
   }
 }

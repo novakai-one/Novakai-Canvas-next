@@ -83,14 +83,16 @@
   --nv-chrome-header-decision: #f2f7fc;
   --nv-chrome-header-success: #f2f7fc;
   --nv-chrome-header-warning: #f2f7fc;
-  --nv-canvas-depth-node-offset-y: 4px;
-  --nv-canvas-depth-node-blur: 12px;
+  --nv-canvas-depth-node-offset-y: 3px;
+  --nv-canvas-depth-node-blur: 4px;
   --nv-canvas-depth-ambient-offset-y: 10px;
-  --nv-canvas-depth-ambient-blur: 22px;
-  --nv-canvas-depth-ambient-opacity: 0.08;
-  --nv-canvas-depth-rim-opacity: 0.14;
-  --nv-canvas-depth-group-opacity: 0.36;
-  --nv-canvas-depth-grid-opacity: 0.42;
+  --nv-canvas-depth-ambient-blur: 18px;
+  --nv-canvas-depth-ambient-opacity: 0.22;
+  --nv-canvas-depth-rim-opacity: 0.1;
+  --nv-canvas-depth-group-opacity: 0.16;
+  --nv-canvas-depth-grid-opacity: 0.24;
+  --nv-canvas-depth-node-boundary-opacity: 0.5;
   --nv-canvas-emphasis-muted-opacity: 0.36;
+  --nv-canvas-wire-idle-opacity: 0.42;
 }
 }

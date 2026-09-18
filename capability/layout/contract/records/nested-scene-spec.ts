@@ -11,6 +11,7 @@ export interface NestedNodeSpec {
   };
 }
 export interface NestedSectionSpec {
+  readonly position?: { readonly x: number; readonly y: number };
   readonly measured?: {
     readonly width: number;
     readonly height: number;

@@ -1,5 +1,7 @@
 import { protect, reject } from '../core/validation/outcomes.js';
-import { toEngineScene } from '../core/scene-in.js';
+import { toEngineScene, fixedSource } from '../core/scene-in.js';
+import { inspectSection } from '../core/validation/sections.js';
+import { same } from '../core/validation/facts.js';
 import { toAppSection } from '../core/scene-out.js';
 import { nativeEngineVersions, nestedEngineVersions } from './records/engines.js';
 import type { PrototypeLayoutMeasure } from './records/road-prototype.js';
@@ -72,16 +74,32 @@ export function routeModuleSection(
   metrics: import('./types.js').SupplementalMeasurements,
   options: import('./types.js').LayoutOptions,
   fixedNodes: readonly import('./records/geometry.js').PlacedNode[],
+  frame: Pick<import('./records/geometry.js').PlacedSection, 'origin' | 'box'>,
 ): Result<import('./records/geometry.js').PlacedSection> {
   return protect(() => {
     if (source.mode !== 'modules')
       return reject('invalid-input', source.id, 'Custom preview requires a module section');
-    return toAppSection(
-      toEngineScene(source, metrics, undefined, fixedNodes),
-      source,
+    const draft = fixedSource(source, fixedNodes);
+    const candidate = toAppSection(
+      toEngineScene(draft, metrics),
+      draft,
       metrics,
       options,
       nestedEngineVersions,
+    );
+    same(
+      candidate.nodes.map((node) => node.box),
+      fixedNodes.map((node) => node.box),
+      source.id,
+    );
+    return inspectSection(
+      draft,
+      { ...candidate, ...frame },
+      {
+        options,
+        measurements: metrics,
+        engines: nestedEngineVersions,
+      },
     );
   });
 }

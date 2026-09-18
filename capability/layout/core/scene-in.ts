@@ -16,6 +16,7 @@ import type {
 import { createNestedRoadScene } from './prototype-nested-scene.js';
 import { inspectNestedWires } from './nested-wire-inspection.js';
 import { reject } from './validation/outcomes.js';
+import { same } from './validation/facts.js';
 
 /** All input dimensions come from Presentation or an authored size; roads can only move boxes. */
 function dimensions(node: VisualNode) {
@@ -94,8 +95,10 @@ function tree(
   number: number,
   advance: number,
 ): NestedSectionSpec {
+  const placement = source.nodes.find((node) => node.id === parent)?.placement;
   return {
     number,
+    ...(placement == null ? {} : { position: { x: placement.x, y: placement.y } }),
     measured: required(
       parent === null ? source.envelope : source.nodes.find((node) => node.id === parent)?.envelope,
       parent ?? source.id,
@@ -207,7 +210,7 @@ export function toEngineScene(
 }
 
 /** Route-only supplies existing boxes; manual moves use the same parent-local representation on reload. */
-function fixedSource(source: VisualSection, fixed?: readonly PlacedNode[]): VisualSection {
+export function fixedSource(source: VisualSection, fixed?: readonly PlacedNode[]): VisualSection {
   if (fixed === undefined) return source;
   return {
     ...source,
@@ -216,6 +219,8 @@ function fixedSource(source: VisualSection, fixed?: readonly PlacedNode[]): Visu
         fixed.find((item) => item.id === node.id),
         node.id,
       ).box;
+      const size = node.envelope ?? dimensions(node);
+      same([size.width, size.height], [box.width, box.height], node.id);
       const parent = fixed.find((item) => item.id === node.parent)?.box ?? { x: 0, y: 0 };
       return {
         ...node,

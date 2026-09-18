@@ -45,6 +45,7 @@ export function previewModuleRoutes(
       document.measurements,
       document.options,
       moved(section, intent),
+      section,
     );
     if (!routed.ok) return routed;
     wires.push(

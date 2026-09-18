@@ -17,6 +17,7 @@ import type {
 } from '../contract/records/nested-scene-spec.js';
 export interface SizedSection {
   readonly id: string;
+  readonly position?: SectionSpec['position'];
   readonly measured: NonNullable<SectionSpec['measured']>;
   readonly label: string;
   readonly count: number;
@@ -53,6 +54,7 @@ function sizeSection(spec: SectionSpec): SizedSection {
   const ownWidth = measured.columnWidths.reduce((sum, width) => sum + width, 0);
   return {
     measured,
+    position: spec.position,
     id: `section-${spec.number}`,
     label: `Section ${spec.number}`,
     count,
@@ -165,10 +167,17 @@ function positionSection(
   size: SizedSection,
   surrounding: PrototypeBounds,
   parentSectionId: string | null,
+  parentOrigin = { x: 0, y: 0 },
 ): readonly SectionPlacement[] {
   const bounds = {
-    x: surrounding.x + (surrounding.width - size.width) / 2,
-    y: surrounding.y + (surrounding.height - size.height) / 2,
+    x:
+      size.position === undefined
+        ? surrounding.x + (surrounding.width - size.width) / 2
+        : parentOrigin.x + size.position.x,
+    y:
+      size.position === undefined
+        ? surrounding.y + (surrounding.height - size.height) / 2
+        : parentOrigin.y + size.position.y,
     width: size.width,
     height: size.height,
   };
@@ -205,7 +214,7 @@ function positionSection(
       width: size.measured.childColumnWidths[column]!,
       height: size.measured.childRowHeights[row]!,
     };
-    return positionSection(child, cell, size.id);
+    return positionSection(child, cell, size.id, bounds);
   });
   return [own, ...children];
 }

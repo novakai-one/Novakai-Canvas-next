@@ -111,16 +111,31 @@ function dimensions(item: PositionedInput): readonly LinearConstraint[] {
 function locks(item: PositionedInput): readonly LinearConstraint[] {
   if (!item.node.placement?.locked) return [];
   const placement = item.node.placement;
-  return fields.flatMap((field) => lockField(item.node.id, field, placement[field]));
+  return fields.flatMap((field) => lockField(item.node, field, placement[field]));
 }
 /** Width/height omitted from a lock remain content-driven, not frozen to an accidental prior size. */
 function lockField(
-  id: string,
+  node: ConstraintBox,
   field: (typeof fields)[number],
   value: number | undefined,
 ): readonly LinearConstraint[] {
   if (value === undefined) return [];
-  return [equation(`${id}:lock-${field}`, [term(id, field)], 'eq', value, [id], 'required')];
+  return [
+    equation(
+      `${node.id}:lock-${field}`,
+      lockTerms(node, field),
+      'eq',
+      value,
+      [node.id],
+      'required',
+    ),
+  ];
+}
+/** Stored positions are parent-local; solver variables and candidate boxes are section-local. */
+function lockTerms(node: ConstraintBox, field: (typeof fields)[number]): Term[] {
+  const terms = [term(node.id, field)];
+  if (node.parent !== null && ['x', 'y'].includes(field)) terms.push(term(node.parent, field, -1));
+  return terms;
 }
 /** Children stay inside parent padding and below the complete measured header. */
 function containment(

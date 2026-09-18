@@ -8,6 +8,7 @@ import type {
   PrototypeLayoutOptions,
 } from '../contract/records/road-prototype.js';
 import { placePrototypeNode, readPrototypeNodePorts } from './prototype-road-nodes.js';
+import type { PrototypeNodeSize } from './prototype-road-nodes.js';
 import { roadNetwork } from './prototype-road-network.js';
 
 const width = 48,
@@ -156,7 +157,10 @@ function externalRoads(): PrototypeRoad[] {
   ];
 }
 /** Explicit fixture, separate from the earlier two-node milestone. No convergence loop or DOM reads. */
-export function createSevenRoadScene(options: PrototypeLayoutOptions = {}) {
+export function createSevenRoadScene(
+  nodeSize: PrototypeNodeSize,
+  options: PrototypeLayoutOptions = {},
+) {
   const measure = options.measure ?? ((_stage, run) => run());
   const sections = measure('capacity', () => [
     section(1, 160, 960, 3),
@@ -165,10 +169,14 @@ export function createSevenRoadScene(options: PrototypeLayoutOptions = {}) {
   ]);
   const nodes = measure('nodes', () => [
     ...[0, 1, 2].map((i) =>
-      placePrototypeNode('section-1', i, { x: 400 + i * 96, y: 344 + i * 240 }),
+      placePrototypeNode('section-1', i, { x: 400 + i * 96, y: 344 + i * 240, ...nodeSize }),
     ),
-    ...[0, 1].map((i) => placePrototypeNode('section-2', 3 + i, { x: 1600 + i * 336, y: 344 })),
-    ...[0, 1].map((i) => placePrototypeNode('section-3', 5 + i, { x: 2912, y: 344 + i * 240 })),
+    ...[0, 1].map((i) =>
+      placePrototypeNode('section-2', 3 + i, { x: 1600 + i * 336, y: 344, ...nodeSize }),
+    ),
+    ...[0, 1].map((i) =>
+      placePrototypeNode('section-3', 5 + i, { x: 2912, y: 344 + i * 240, ...nodeSize }),
+    ),
   ]);
   const { ports, sectionPorts } = measure('ports', () => ({
     ports: nodes.flatMap(readPrototypeNodePorts),

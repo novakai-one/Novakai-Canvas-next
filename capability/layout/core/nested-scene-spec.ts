@@ -3,6 +3,7 @@ import type {
   NestedSectionSpec as SectionSpec,
   NestedNodeSpec as NodeSpec,
 } from '../contract/records/nested-scene-spec.js';
+const fixtureNodeSize = { width: 160, height: 80 } as const;
 const sections: readonly SectionSpec[] = [
   {
     number: 1,
@@ -16,6 +17,7 @@ function nodeSpecs(first: number, count: number): readonly NodeSpec[] {
   return Array.from({ length: count }, (_, i) => ({
     number: first + i,
     label: `Node ${first + i}`,
+    size: fixtureNodeSize,
   }));
 }
 const requests = [
@@ -48,8 +50,8 @@ export const fanInHubSceneSpec: NestedSceneSpec = {
           ...section,
           nodes: [
             ...section.nodes,
-            { number: 23, label: 'index.ts' },
-            { number: 24, label: 'api.ts' },
+            { number: 23, label: 'index.ts', size: fixtureNodeSize },
+            { number: 24, label: 'api.ts', size: fixtureNodeSize },
           ],
         }
       : section,

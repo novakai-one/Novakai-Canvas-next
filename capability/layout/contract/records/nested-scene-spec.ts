@@ -1,7 +1,12 @@
-/** Semantic fixture input: node identities, containment and wire endpoints; no geometry. */
+/** Semantic fixture input: node identities, caller-measured sizes, containment and wire endpoints; no positions. */
+export interface NestedNodeSize {
+  readonly width: number;
+  readonly height: number;
+}
 export interface NestedNodeSpec {
   readonly number: number;
   readonly label: string;
+  readonly size: NestedNodeSize;
 }
 export interface NestedSectionSpec {
   readonly number: number;

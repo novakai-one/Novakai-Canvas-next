@@ -5,7 +5,7 @@ import type {
   PrototypeNode,
   PrototypeNodePort,
 } from '../contract/records/road-prototype.js';
-import { placePrototypeNode, prototypeNodeSize } from './prototype-road-nodes.js';
+import { placePrototypeNode } from './prototype-road-nodes.js';
 
 export const nestedSpacing = { road: 48, driveway: 24, clearance: 72, side: 64, top: 112 } as const;
 export const nestedLanePitch = 6;
@@ -16,10 +16,6 @@ export function nestedLaneWidth(lanes: number): number {
 const clearancePair = nestedSpacing.clearance * 2;
 const horizontalPadding = nestedSpacing.side * 2;
 const verticalPadding = nestedSpacing.top + nestedSpacing.side;
-const pitch = {
-  x: prototypeNodeSize.width + clearancePair,
-  y: prototypeNodeSize.height + clearancePair,
-};
 import type {
   NestedNodeSpec as NodeSpec,
   NestedSectionSpec as SectionSpec,
@@ -32,6 +28,7 @@ export interface SizedSection {
   readonly total: number;
   readonly columns: number;
   readonly rows: number;
+  readonly pitch: { readonly x: number; readonly y: number };
   readonly ownWidth: number;
   readonly width: number;
   readonly height: number;
@@ -55,6 +52,10 @@ function sizeSection(spec: SectionSpec): SizedSection {
   const columns = Math.ceil(Math.sqrt(count));
   const rows = count === 0 ? 0 : Math.ceil(count / columns);
   const children = spec.children.map(sizeSection);
+  const pitch = {
+    x: Math.max(0, ...spec.nodes.map((node) => node.size.width)) + clearancePair,
+    y: Math.max(0, ...spec.nodes.map((node) => node.size.height)) + clearancePair,
+  };
   const ownWidth = columns * pitch.x;
   return {
     id: `section-${spec.number}`,
@@ -64,6 +65,7 @@ function sizeSection(spec: SectionSpec): SizedSection {
     total: count + children.reduce((sum, child) => sum + child.total, 0),
     columns,
     rows,
+    pitch,
     ownWidth,
     children,
     width:
@@ -129,11 +131,16 @@ function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   const rowHeight = interior.height / size.rows;
   return size.nodes.map((node, i) => ({
     ...placePrototypeNode(size.id, node.number - 1, {
-      x: interior.x + (i % size.columns) * pitch.x + (pitch.x - prototypeNodeSize.width) / 2,
+      x:
+        interior.x +
+        (i % size.columns) * size.pitch.x +
+        (size.pitch.x - node.size.width) / 2,
       y:
         interior.y +
         Math.floor(i / size.columns) * rowHeight +
-        (rowHeight - prototypeNodeSize.height) / 2,
+        (rowHeight - node.size.height) / 2,
+      width: node.size.width,
+      height: node.size.height,
     }),
     label: node.label,
   }));

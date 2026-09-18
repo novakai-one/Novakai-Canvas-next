@@ -1,30 +1,33 @@
 import type {
+  PrototypeBounds,
   PrototypeNode,
-  PrototypePoint,
   PrototypeNodePort,
   PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
 
+/** Caller-measured node dimensions; the engine never decides node size. */
+export type PrototypeNodeSize = Pick<PrototypeBounds, 'width' | 'height'>;
 /** Node-owned footprint and port offsets. No road geometry is accepted by this module. */
-export const prototypeNodeSize = { width: 192, height: 96 } as const;
-const portDefinitions: readonly Omit<PrototypeNodePort, 'id'>[] = [
-  { side: 'top', role: 'entry', offset: { x: 96, y: 0 } },
-  { side: 'left', role: 'entry', offset: { x: 0, y: 48 } },
-  { side: 'bottom', role: 'exit', offset: { x: 96, y: 96 } },
-  { side: 'right', role: 'exit', offset: { x: 192, y: 48 } },
-];
+function portDefinitions(bounds: PrototypeBounds): readonly Omit<PrototypeNodePort, 'id'>[] {
+  return [
+    { side: 'top', role: 'entry', offset: { x: bounds.width / 2, y: 0 } },
+    { side: 'left', role: 'entry', offset: { x: 0, y: bounds.height / 2 } },
+    { side: 'bottom', role: 'exit', offset: { x: bounds.width / 2, y: bounds.height } },
+    { side: 'right', role: 'exit', offset: { x: bounds.width, y: bounds.height / 2 } },
+  ];
+}
 export function placePrototypeNode(
   sectionId: string,
   index: number,
-  position: PrototypePoint,
+  bounds: PrototypeBounds,
 ): PrototypeNode {
   const id = `node-${index + 1}`;
   return {
     id,
     sectionId,
     label: `Node ${index + 1}`,
-    bounds: { ...position, ...prototypeNodeSize },
-    ports: portDefinitions.map((port) => ({
+    bounds: { ...bounds },
+    ports: portDefinitions(bounds).map((port) => ({
       ...port,
       offset: { ...port.offset },
       id: `${id}:${port.role}-${port.side}`,

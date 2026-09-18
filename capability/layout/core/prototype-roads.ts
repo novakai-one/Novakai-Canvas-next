@@ -8,11 +8,8 @@ import type {
   PrototypeLayoutMeasure,
 } from '../contract/records/road-prototype.js';
 import { roadNetwork } from './prototype-road-network.js';
-import {
-  placePrototypeNode,
-  readPrototypeNodePorts,
-  prototypeNodeSize,
-} from './prototype-road-nodes.js';
+import { placePrototypeNode, readPrototypeNodePorts } from './prototype-road-nodes.js';
+import type { PrototypeNodeSize } from './prototype-road-nodes.js';
 import { attachPrototypeDriveways } from './prototype-road-driveways.js';
 
 const drivewayWidth = 24,
@@ -21,17 +18,17 @@ const drivewayWidth = 24,
   margin = 48,
   inset = 24,
   streetTop = 80;
-/** Capacity is chosen once. Wider roads reserve more space before any node is placed. */
-function capacity(roadWidth: number) {
+/** Capacity is chosen once from the caller-supplied node bounds. Wider roads reserve more space before any node is placed. */
+function capacity(roadWidth: number, nodeSize: PrototypeNodeSize) {
   if (!Number.isFinite(roadWidth) || roadWidth < 48)
     throw new RangeError('Road width must be finite and at least 48');
   return {
     roadWidth,
-    blockWidth: inset * 2 + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.width,
-    blockHeight: streetTop + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.height + inset,
+    blockWidth: inset * 2 + roadWidth * 2 + drivewayLength * 2 + nodeSize.width,
+    blockHeight: streetTop + roadWidth * 2 + drivewayLength * 2 + nodeSize.height + inset,
     nodeLeft: inset + roadWidth + drivewayLength,
     nodeTop: streetTop + roadWidth + drivewayLength,
-    streetBottom: streetTop + roadWidth + drivewayLength * 2 + prototypeNodeSize.height,
+    streetBottom: streetTop + roadWidth + drivewayLength * 2 + nodeSize.height,
   };
 }
 type Capacity = ReturnType<typeof capacity>;
@@ -106,15 +103,19 @@ const unmeasured: PrototypeLayoutMeasure = (_stage, operation) => operation();
  * There is no geometry feedback, convergence loop or DOM measurement. Caller owns any timing.
  * Invalid roadWidth throws RangeError; callers correct the option and safely retry.
  */
-export function createRoadPrototypeScene(options: PrototypeLayoutOptions = {}): RoadPrototypeScene {
+export function createRoadPrototypeScene(
+  nodeSize: PrototypeNodeSize,
+  options: PrototypeLayoutOptions = {},
+): RoadPrototypeScene {
   const measure = options.measure ?? unmeasured;
-  const plan = measure('capacity', () => capacity(options.roadWidth ?? 48));
+  const plan = measure('capacity', () => capacity(options.roadWidth ?? 48, nodeSize));
   const sections = ['Section A', 'Section B'].map((label, index) => section(label, index, plan));
   const nodes = measure('nodes', () =>
     sections.map((item, index) =>
       placePrototypeNode(item.id, index, {
         x: item.bounds.x + plan.nodeLeft,
         y: item.bounds.y + plan.nodeTop,
+        ...nodeSize,
       }),
     ),
   );

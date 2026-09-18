@@ -6,6 +6,7 @@ import type {
   PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
 import type { AssignedTravel } from './nested-wire-lanes.js';
+import { needsMedianBridge } from './nested-wire-lanes.js';
 import { axes, contains, samePoint } from './prototype-road-geometry.js';
 import { reject } from './nested-support-graph.js';
 import { validateSupportedProjection } from './nested-projection-support.js';
@@ -170,46 +171,26 @@ function bridge(
   return streetBridge(t, next, road);
 }
 function streetBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRoad): Connection {
-  const a = axes[t.road.axis],
-    b = road.bounds;
-  if ([occupiedRank(t, next), occupiedSourceRank(t, next)].some(Boolean))
-    return medianBridge(t, next, road);
-  const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
-  // Quarter-pitch transfer rows sit between the half-pitch through lanes.
-  const pitch = Math.min(roadLanePitch(next.road), b[a.length] / (2 * (next.count + 1)));
-  const depth = (next.count - next.lane.index - 0.25) * pitch;
-  const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - depth);
+  if (needsMedianBridge(t, next)) return medianBridge(t, next, road);
+  if (t.at === next.at) {
+    const a = axes[t.road.axis];
+    const p = point(t, road.bounds[a.along] + road.bounds[a.length] / 2);
+    return { from: p, to: p, roadId: road.id };
+  }
+  const at = transferCoordinates(t, road)[0]!;
   return { from: point(t, at), to: point(next, at), roadId: road.id };
 }
-/** An outward change into an occupied source rank needs a separate through
- * channel as well: changing at either mouth would share a neighbor's lane.
- */
-function occupiedSourceRank(t: AssignedTravel, next: AssignedTravel): boolean {
-  return [
-    next.lane.index < t.count,
-    next.lane.index > t.lane.index,
-    t.direction === next.direction,
-  ].every(Boolean);
-}
-/** An inward change across an occupied destination rank needs two separate turn columns.
- * Allocation ranks choose this fixed median dogleg; no intersection probing or retries.
- */
-function occupiedRank(t: AssignedTravel, next: AssignedTravel): boolean {
-  return [
-    t.lane.index < next.count,
-    t.lane.index > next.lane.index,
-    t.direction === next.direction,
-  ].every(Boolean);
+/** No transfer is invented during projection: capacity already includes its measured slot. */
+function transferCoordinates(t: AssignedTravel, road: PrototypeRoad): readonly number[] {
+  if (t.transfer?.roadId !== road.id)
+    return reject('unsupported-support', [t.wireId, road.id, 'missing-transfer-capacity']);
+  return t.transfer.coordinates;
 }
 function medianBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRoad): Connection {
-  const a = axes[t.road.axis],
-    b = road.bounds;
-  const middle = b[a.along] + b[a.length] / 2;
-  const half = b[a.length] / 2;
-  const entryDepth = (half * (t.lane.index + 0.25)) / (t.count + 1);
-  const exitDepth = (half * (next.lane.index + 0.75)) / (next.count + 1);
-  const near = middle - t.direction * (half - entryDepth),
-    far = middle + t.direction * (half - exitDepth);
+  const a = axes[t.road.axis];
+  const coordinates = transferCoordinates(t, road).toSorted((a, b) => t.direction * (a - b));
+  const near = coordinates[0]!,
+    far = coordinates[1]!;
   const displacement = next.at - t.at;
   const median =
     t.at +

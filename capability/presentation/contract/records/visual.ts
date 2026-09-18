@@ -129,6 +129,8 @@ export const moduleEnvelope = z
     terminalPitch: dimension,
     columns: z.number().int().positive(),
     childColumns: z.number().int().positive(),
+    childColumnWidths: z.array(dimension).readonly(),
+    childRowHeights: z.array(dimension).readonly(),
     pitch: z.strictObject({ x: dimension, y: dimension }).readonly(),
     columnWidths: z.array(dimension).readonly(),
     rowHeights: z.array(dimension).readonly(),

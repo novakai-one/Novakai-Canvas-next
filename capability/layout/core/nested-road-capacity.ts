@@ -80,13 +80,13 @@ export function capacityRoads(
   contacts: readonly RoadContact[],
   measure: PrototypeLayoutMeasure,
   ports: readonly PrototypePortLocation[],
-  drivewayWidths?: ReadonlyMap<string, number>,
+  allocatedWidths?: ReadonlyMap<string, number>,
 ) {
   const streets = measure('main-roads', () => {
     const result = new Map(
       templates
         .filter((r) => r.kind === 'street')
-        .map((r) => [r.id, sized(r, demand.get(r.id) ?? 0)]),
+        .map((r) => [r.id, sized(r, demand.get(r.id) ?? 0, allocatedWidths?.get(r.id))]),
     );
     contacts.forEach((c) => capContact(result, c));
     return [...result.values()];
@@ -94,7 +94,7 @@ export function capacityRoads(
   const roads = measure('driveways', () => {
     const drives = templates
       .filter((r) => r.kind === 'driveway')
-      .map((r) => sized(r, demand.get(r.id) ?? 0, drivewayWidths?.get(r.id)));
+      .map((r) => sized(r, demand.get(r.id) ?? 0, allocatedWidths?.get(r.id)));
     const result = new Map([...streets, ...drives].map((r) => [r.id, r]));
     contacts.forEach((c) => attach(result, c));
     ports.forEach((port) => admitTerminal(result, port));

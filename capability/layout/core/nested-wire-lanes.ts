@@ -20,6 +20,22 @@ export interface AssignedTravel extends Travel {
   readonly at: number;
   readonly count: number;
   readonly pitch: number;
+  readonly transfer?: TransferChannel;
+}
+export interface TransferChannel {
+  readonly roadId: string;
+  readonly coordinates: readonly number[];
+}
+export function transferKey(t: AssignedTravel, next: AssignedTravel): string {
+  return `${t.wireId}:${t.last}:${next.first}`;
+}
+/** A rank swap needs separate entry and exit channels to avoid sharing a continuing lane. */
+export function needsMedianBridge(t: AssignedTravel, next: AssignedTravel): boolean {
+  if (t.direction !== next.direction) return false;
+  return (
+    (next.lane.index < t.count && next.lane.index > t.lane.index) ||
+    (t.lane.index < next.count && t.lane.index > next.lane.index)
+  );
 }
 function travel(
   wireId: string,
@@ -124,12 +140,88 @@ export function allocateNestedLanes(
       ts.toSorted((a, b) => a.first - b.first),
     ),
   );
+  const demand = new Map([...byRoad].map(([id, ts]) => [id, ts.length]));
+  const transfers = allocateTransfers(wires, byWire, roads, byRoad, demand);
+  byWire.forEach((travels, id) =>
+    byWire.set(
+      id,
+      travels.map((travel, index) => {
+        const next = travels[index + 1];
+        const transfer = next === undefined ? undefined : transfers.get(transferKey(travel, next));
+        return transfer === undefined ? travel : { ...travel, transfer };
+      }),
+    ),
+  );
   return {
     byWire,
-    demand: new Map([...byRoad].map(([id, ts]) => [id, ts.length])),
-    widths: measuredWidths(assigned),
+    transfers,
+    demand,
+    widths: transferWidths(measuredWidths(assigned), transfers, roads),
     lanes: assigned.map((t) => t.lane),
   };
+}
+
+/** Both through lanes and reserved transfer lanes contribute their actual outer edges. */
+function transferWidths(
+  through: ReadonlyMap<string, number>,
+  transfers: ReadonlyMap<string, TransferChannel>,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+): ReadonlyMap<string, number> {
+  const widths = new Map(through);
+  transfers.forEach((transfer) => {
+    const road = roads.get(transfer.roadId)!;
+    const a = axes[road.axis],
+      pitch = roadLanePitch(road);
+    const center = road.bounds[a.across] + road.bounds[a.breadth] / 2;
+    const width =
+      2 *
+      (Math.max(...transfer.coordinates.map((at) => Math.abs(at - center))) + pitch / 2 + pitch);
+    widths.set(road.id, Math.max(widths.get(road.id) ?? 0, width));
+  });
+  return widths;
+}
+
+/** A nominal zero-length crossing can become a real transfer after lane offsets.
+ * Reserve it with the through population before road capacity is materialized. */
+function allocateTransfers(
+  wires: readonly NestedWire[],
+  byWire: ReadonlyMap<string, readonly AssignedTravel[]>,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  through: ReadonlyMap<string, readonly Travel[]>,
+  demand: Map<string, number>,
+): ReadonlyMap<string, TransferChannel> {
+  const channels = new Map<string, TransferChannel>();
+  const ranks = new Map<string, number>();
+  wires.forEach((wire) => {
+    const travels = byWire.get(wire.id) ?? [];
+    travels.slice(0, -1).forEach((t, index) => {
+      const next = travels[index + 1]!;
+      if (t.road.axis !== next.road.axis) return;
+      if (t.at === next.at && !needsMedianBridge(t, next)) return;
+      const road = wire.segments
+        .slice(t.last + 1, next.first)
+        .map((segment) => roads.get(segment.corridorId))
+        .find((item) => item?.axis !== t.road.axis);
+      if (road === undefined) return;
+      const direction = Math.sign(next.at - t.at) || t.direction;
+      const key = `${road.id}:${direction}`;
+      const first =
+        ranks.get(key) ??
+        (through.get(road.id) ?? []).filter((visit) => visit.direction === direction).length;
+      const count = needsMedianBridge(t, next) ? 2 : 1;
+      const a = axes[road.axis],
+        pitch = roadLanePitch(road);
+      const center = road.bounds[a.across] + road.bounds[a.breadth] / 2;
+      const coordinates = Array.from(
+        { length: count },
+        (_, ordinal) => center + (first + ordinal + 0.5) * pitch * direction * rightHand(road),
+      );
+      channels.set(transferKey(t, next), { roadId: road.id, coordinates });
+      ranks.set(key, first + count);
+      demand.set(road.id, (demand.get(road.id) ?? 0) + count);
+    });
+  });
+  return channels;
 }
 
 /** Buckets are invocation-local; append avoids copying a growing road population. */

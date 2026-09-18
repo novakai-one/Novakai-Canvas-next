@@ -35,11 +35,14 @@ export function candidates(
 ): readonly Box[] {
   const span = length(segment);
   const extent = segment.a.y === segment.b.y ? content.width : content.height;
+  const inset = (extent / 2 + gap) / span;
   const steps = Math.max(1, Math.min(32, Math.floor(span / (extent + gap * 2))));
   const fractions = [
     0.5,
     0.25,
     0.75,
+    // Flush against either end with the same measured clearance, without extending past a bend.
+    ...(inset <= 0.5 ? [inset, 1 - inset] : []),
     ...Array.from({ length: steps }, (_, i) => (i + 0.5) / steps),
   ];
   return fractions.flatMap((fraction) => atFraction(segment, content, gap, fraction));

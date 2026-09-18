@@ -45,6 +45,7 @@ function sizeSection(spec: SectionSpec): SizedSection {
   const measured = spec.measured;
   if (measured === undefined) throw new Error('Presentation must supply a section envelope');
   measuredSection(measured, count);
+  measuredChildren(measured, spec.children.length);
   const columns = measured.columns;
   const rows = count === 0 ? 0 : Math.ceil(count / columns);
   const children = spec.children.map(sizeSection);
@@ -100,6 +101,17 @@ function measuredSection(measured: NonNullable<SectionSpec['measured']>, count: 
   const centers = [measured.columnCenters.length, measured.rowCenters.length];
   if (!actual.every((value, index) => value === expected[index] && value === centers[index]))
     throw new Error('Measured tracks must cover every node');
+}
+/** Shared child tracks belong to Presentation, just like leaf tracks and section bounds. */
+function measuredChildren(measured: NonNullable<SectionSpec['measured']>, count: number): void {
+  const sizes = [...measured.childColumnWidths, ...measured.childRowHeights];
+  if (!sizes.every((value) => Number.isFinite(value) && value > 0))
+    throw new Error('Child tracks must be finite and positive');
+  if (
+    measured.childColumnWidths.length !== Math.min(count, measured.childColumns) ||
+    measured.childRowHeights.length !== Math.ceil(count / measured.childColumns)
+  )
+    throw new Error('Measured child tracks must cover every section');
 }
 /** The app supplies one measured root containing every nested group. */
 export function sizeNestedSections(specs: readonly SectionSpec[]): readonly SizedSection[] {
@@ -182,22 +194,18 @@ function positionSection(
   });
   const own = { section, size, surrounding, interior, nodes };
   const columns = size.measured.childColumns;
-  const gap = size.measured.gap;
-  const rows = Array.from({ length: Math.ceil(size.children.length / columns) }, (_, i) =>
-    size.children.slice(i * columns, (i + 1) * columns),
-  );
-  let y = interior.y;
-  const children = rows.flatMap((row) => {
-    const height = Math.max(...row.map((child) => child.height + gap));
-    let x = interior.x + size.ownWidth;
-    const placed = row.flatMap((child) => {
-      const width = child.width + gap;
-      const result = positionSection(child, { x, y, width, height }, size.id);
-      x += width;
-      return result;
-    });
-    y += height;
-    return placed;
+  const xEdges = gridEdges(size.measured.childColumnWidths);
+  const yEdges = gridEdges(size.measured.childRowHeights);
+  const children = size.children.flatMap((child, index) => {
+    const column = index % columns,
+      row = Math.floor(index / columns);
+    const cell = {
+      x: interior.x + size.ownWidth + xEdges[column]!,
+      y: interior.y + yEdges[row]!,
+      width: size.measured.childColumnWidths[column]!,
+      height: size.measured.childRowHeights[row]!,
+    };
+    return positionSection(child, cell, size.id);
   });
   return [own, ...children];
 }

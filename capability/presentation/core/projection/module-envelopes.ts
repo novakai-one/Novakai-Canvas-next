@@ -106,14 +106,18 @@ function measure(
   const childRows = Array.from({ length: Math.ceil(children.length / childColumns) }, (_, index) =>
     children.slice(index * childColumns, (index + 1) * childColumns),
   );
-  const childWidth = Math.max(
-    0,
-    ...childRows.map((row) => row.reduce((sum, child) => sum + child.width + gap, 0)),
+  const childColumnWidths = Array.from(
+    { length: Math.min(children.length, childColumns) },
+    (_, column) =>
+      Math.max(
+        ...childRows.flatMap((row) => (row[column] === undefined ? [] : [row[column].width + gap])),
+      ),
   );
-  const childHeight = childRows.reduce(
-    (sum, row) => sum + Math.max(...row.map((child) => child.height + gap)),
-    0,
+  const childRowHeights = childRows.map((row) =>
+    Math.max(...row.map((child) => child.height + gap)),
   );
+  const childWidth = childColumnWidths.reduce((sum, width) => sum + width, 0);
+  const childHeight = childRowHeights.reduce((sum, height) => sum + height, 0);
   const ownWidth = columnWidths.reduce((sum, width) => sum + width, 0);
   const ownHeight = rowHeights.reduce((sum, height) => sum + height, 0);
   const pinned = leaves.filter((node) => node.placement !== null);
@@ -147,6 +151,8 @@ function measure(
     terminalPitch,
     columns,
     childColumns,
+    childColumnWidths,
+    childRowHeights,
     pitch,
     columnWidths,
     rowHeights,

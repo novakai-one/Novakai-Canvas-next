@@ -109,6 +109,13 @@ export type { NestedWire, NestedWireSegment, NestedWireResult } from './records/
 export { inspectNestedWires } from './api.js';
 
 export { defaultNestedSceneSpec, fanInHubSceneSpec } from './api.js';
+export { preflightNestedSupports } from './api.js';
+export type {
+  NestedSupportRequest,
+  NestedSupportResult,
+  NestedSupportLedger,
+  NestedSupportFailure,
+} from './records/nested-support.js';
 export type {
   NestedSceneSpec,
   NestedSectionSpec,

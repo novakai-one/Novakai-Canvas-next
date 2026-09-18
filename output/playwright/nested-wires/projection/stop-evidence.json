@@ -1,0 +1,447 @@
+{
+  "base": "b9e098a",
+  "candidate": "clamp-only, rejected, not milestone completion",
+  "retained": {
+    "default": {
+      "byteIdentical": true,
+      "sha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b"
+    },
+    "hub": {
+      "byteIdentical": true,
+      "sha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca"
+    },
+    "templates": {
+      "byteIdentical": true,
+      "sha256": "f8c7e0cc1902db78521e959bc5b49fce8f274ee2a520003276ffedf84a2844e6"
+    },
+    "scale": {
+      "byteIdentical": true,
+      "sha256": "d31fe5da0e937b06d328ada0f8a722f39a42784f7de3a9d8107ca672398de215"
+    }
+  },
+  "authoring": {
+    "before": "58bdd5a97a1e235973743680999abc4718ed5c975d5a9ee536b1e98175dcd9e0",
+    "after": "7d10b07a70d293489d31252f75178ce8102d8cd7ce4589fa1b3ae07d1891ad9a",
+    "deterministic": true,
+    "changes": [
+      {
+        "id": "w03",
+        "before": [
+          {
+            "from": {
+              "x": 3052,
+              "y": 430
+            },
+            "to": {
+              "x": 3088,
+              "y": 430
+            },
+            "corridorId": "drive:node-2:exit-right"
+          },
+          {
+            "from": {
+              "x": 3088,
+              "y": 430
+            },
+            "to": {
+              "x": 3088,
+              "y": 451
+            },
+            "corridorId": "drive:node-2:exit-right"
+          },
+          {
+            "from": {
+              "x": 3088,
+              "y": 451
+            },
+            "to": {
+              "x": 3089.5,
+              "y": 451
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w03:0"
+          },
+          {
+            "from": {
+              "x": 3089.5,
+              "y": 451
+            },
+            "to": {
+              "x": 3089.5,
+              "y": 454
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3089.5,
+              "y": 454
+            },
+            "to": {
+              "x": 3247,
+              "y": 457
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3247,
+              "y": 457
+            },
+            "to": {
+              "x": 3196,
+              "y": 457
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3196,
+              "y": 457
+            },
+            "to": {
+              "x": 3178,
+              "y": 457
+            },
+            "corridorId": "drive:node-3:entry-left",
+            "laneId": "w03:3"
+          },
+          {
+            "from": {
+              "x": 3178,
+              "y": 457
+            },
+            "to": {
+              "x": 3178,
+              "y": 442
+            },
+            "corridorId": "drive:node-3:entry-left"
+          },
+          {
+            "from": {
+              "x": 3178,
+              "y": 442
+            },
+            "to": {
+              "x": 3196,
+              "y": 442
+            },
+            "corridorId": "drive:node-3:entry-left"
+          }
+        ],
+        "after": [
+          {
+            "from": {
+              "x": 3052,
+              "y": 430
+            },
+            "to": {
+              "x": 3088,
+              "y": 430
+            },
+            "corridorId": "drive:node-2:exit-right"
+          },
+          {
+            "from": {
+              "x": 3088,
+              "y": 430
+            },
+            "to": {
+              "x": 3088,
+              "y": 451
+            },
+            "corridorId": "drive:node-2:exit-right"
+          },
+          {
+            "from": {
+              "x": 3088,
+              "y": 451
+            },
+            "to": {
+              "x": 3089.5,
+              "y": 451
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w03:0"
+          },
+          {
+            "from": {
+              "x": 3089.5,
+              "y": 451
+            },
+            "to": {
+              "x": 3089.5,
+              "y": 454
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3089.5,
+              "y": 454
+            },
+            "to": {
+              "x": 3247,
+              "y": 454
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3247,
+              "y": 454
+            },
+            "to": {
+              "x": 3247,
+              "y": 457
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3247,
+              "y": 457
+            },
+            "to": {
+              "x": 3196,
+              "y": 457
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3196,
+              "y": 457
+            },
+            "to": {
+              "x": 3178,
+              "y": 457
+            },
+            "corridorId": "drive:node-3:entry-left",
+            "laneId": "w03:3"
+          },
+          {
+            "from": {
+              "x": 3178,
+              "y": 457
+            },
+            "to": {
+              "x": 3178,
+              "y": 442
+            },
+            "corridorId": "drive:node-3:entry-left"
+          },
+          {
+            "from": {
+              "x": 3178,
+              "y": 442
+            },
+            "to": {
+              "x": 3196,
+              "y": 442
+            },
+            "corridorId": "drive:node-3:entry-left"
+          }
+        ]
+      },
+      {
+        "id": "w23",
+        "before": [
+          {
+            "from": {
+              "x": 600,
+              "y": 1660
+            },
+            "to": {
+              "x": 624,
+              "y": 1660
+            },
+            "corridorId": "drive:node-18:exit-right"
+          },
+          {
+            "from": {
+              "x": 624,
+              "y": 1660
+            },
+            "to": {
+              "x": 624,
+              "y": 1675
+            },
+            "corridorId": "drive:node-18:exit-right"
+          },
+          {
+            "from": {
+              "x": 624,
+              "y": 1675
+            },
+            "to": {
+              "x": 625.5,
+              "y": 1675
+            },
+            "corridorId": "drive:node-18:exit-right",
+            "laneId": "w23:0"
+          },
+          {
+            "from": {
+              "x": 625.5,
+              "y": 1675
+            },
+            "to": {
+              "x": 625.5,
+              "y": 1678
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          },
+          {
+            "from": {
+              "x": 625.5,
+              "y": 1678
+            },
+            "to": {
+              "x": 741,
+              "y": 1681
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          },
+          {
+            "from": {
+              "x": 741,
+              "y": 1681
+            },
+            "to": {
+              "x": 738,
+              "y": 1681
+            },
+            "corridorId": "drive:node-19:entry-left",
+            "laneId": "w23:3"
+          },
+          {
+            "from": {
+              "x": 738,
+              "y": 1681
+            },
+            "to": {
+              "x": 738,
+              "y": 1672
+            },
+            "corridorId": "drive:node-19:entry-left"
+          },
+          {
+            "from": {
+              "x": 738,
+              "y": 1672
+            },
+            "to": {
+              "x": 744,
+              "y": 1672
+            },
+            "corridorId": "drive:node-19:entry-left"
+          }
+        ],
+        "after": [
+          {
+            "from": {
+              "x": 600,
+              "y": 1660
+            },
+            "to": {
+              "x": 624,
+              "y": 1660
+            },
+            "corridorId": "drive:node-18:exit-right"
+          },
+          {
+            "from": {
+              "x": 624,
+              "y": 1660
+            },
+            "to": {
+              "x": 624,
+              "y": 1675
+            },
+            "corridorId": "drive:node-18:exit-right"
+          },
+          {
+            "from": {
+              "x": 624,
+              "y": 1675
+            },
+            "to": {
+              "x": 625.5,
+              "y": 1675
+            },
+            "corridorId": "drive:node-18:exit-right",
+            "laneId": "w23:0"
+          },
+          {
+            "from": {
+              "x": 625.5,
+              "y": 1675
+            },
+            "to": {
+              "x": 625.5,
+              "y": 1678
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          },
+          {
+            "from": {
+              "x": 625.5,
+              "y": 1678
+            },
+            "to": {
+              "x": 741,
+              "y": 1678
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          },
+          {
+            "from": {
+              "x": 741,
+              "y": 1678
+            },
+            "to": {
+              "x": 741,
+              "y": 1681
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          },
+          {
+            "from": {
+              "x": 741,
+              "y": 1681
+            },
+            "to": {
+              "x": 738,
+              "y": 1681
+            },
+            "corridorId": "drive:node-19:entry-left",
+            "laneId": "w23:3"
+          },
+          {
+            "from": {
+              "x": 738,
+              "y": 1681
+            },
+            "to": {
+              "x": 738,
+              "y": 1672
+            },
+            "corridorId": "drive:node-19:entry-left"
+          },
+          {
+            "from": {
+              "x": 738,
+              "y": 1672
+            },
+            "to": {
+              "x": 744,
+              "y": 1672
+            },
+            "corridorId": "drive:node-19:entry-left"
+          }
+        ]
+      }
+    ]
+  }
+}

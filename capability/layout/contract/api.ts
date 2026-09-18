@@ -52,3 +52,5 @@ export { createNestedRoadScene } from '../core/prototype-nested-scene.js';
 export { inspectNestedWires } from '../core/nested-wire-inspection.js';
 
 export { defaultNestedSceneSpec, fanInHubSceneSpec } from '../core/nested-scene-spec.js';
+
+export { preflightNestedSupports } from '../core/nested-support.js';

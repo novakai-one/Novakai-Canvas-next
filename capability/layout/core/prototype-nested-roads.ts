@@ -14,35 +14,39 @@ interface StreetSpan {
   readonly at: number;
   readonly start: number;
   readonly end: number;
+  readonly origins: readonly string[];
 }
-function frame(owner: string | null, b: PrototypeBounds): StreetSpan[] {
+function frame(owner: string | null, b: PrototypeBounds, origin: string): StreetSpan[] {
   return [
-    ...[b.y, b.y + b.height].map((at) => ({
+    ...[b.y, b.y + b.height].map((at, ordinal) => ({
       owner,
       axis: 'horizontal' as const,
       at,
       start: b.x,
       end: b.x + b.width,
+      origins: [`${origin}:horizontal:${ordinal}`],
     })),
-    ...[b.x, b.x + b.width].map((at) => ({
+    ...[b.x, b.x + b.width].map((at, ordinal) => ({
       owner,
       axis: 'vertical' as const,
       at,
       start: b.y,
       end: b.y + b.height,
+      origins: [`${origin}:vertical:${ordinal}`],
     })),
   ];
 }
 function internalStreets(p: SectionPlacement): StreetSpan[] {
   const { size, interior: b } = p;
   return [
-    ...frame(size.id, b),
+    ...frame(size.id, b, `${size.id}:frame`),
     ...Array.from({ length: size.rows - 1 }, (_, i) => ({
       owner: size.id,
       axis: 'horizontal' as const,
       at: b.y + ((i + 1) * b.height) / size.rows,
       start: b.x,
       end: b.x + size.ownWidth,
+      origins: [`${size.id}:row:${i}`],
     })),
     ...Array.from({ length: size.columns }, (_, i) => ({
       owner: size.id,
@@ -50,13 +54,14 @@ function internalStreets(p: SectionPlacement): StreetSpan[] {
       at: b.x + ((i + 1) * size.ownWidth) / size.columns,
       start: b.y,
       end: b.y + b.height,
+      origins: [`${size.id}:column:${i}`],
     })),
     ...childBoundaries(p),
   ];
 }
 function childBoundaries(p: SectionPlacement): StreetSpan[] {
   let x = p.interior.x + p.size.ownWidth;
-  return p.size.children.map((child) => {
+  return p.size.children.map((child, ordinal) => {
     x += child.width + nestedSpacing.clearance * 2;
     return {
       owner: p.size.id,
@@ -64,6 +69,7 @@ function childBoundaries(p: SectionPlacement): StreetSpan[] {
       at: x,
       start: p.interior.y,
       end: p.interior.y + p.interior.height,
+      origins: [`${p.size.id}:child-boundary:${ordinal}`],
     };
   });
 }
@@ -71,7 +77,14 @@ function mergeSpan(spans: readonly StreetSpan[], next: StreetSpan): readonly Str
   const last = spans.at(-1);
   if (last === undefined) return [next];
   if (next.start > last.end) return [...spans, next];
-  return [...spans.slice(0, -1), { ...last, end: Math.max(last.end, next.end) }];
+  return [
+    ...spans.slice(0, -1),
+    {
+      ...last,
+      end: Math.max(last.end, next.end),
+      origins: [...last.origins, ...next.origins],
+    },
+  ];
 }
 function street(s: StreetSpan): PrototypeRoad {
   const bounds =
@@ -88,11 +101,14 @@ function street(s: StreetSpan): PrototypeRoad {
     directions: s.axis === 'horizontal' ? ['left', 'right'] : ['down', 'up'],
   };
 }
-export function nestedMainRoads(placements: readonly SectionPlacement[]): readonly PrototypeRoad[] {
+export function nestedMainRoads(
+  placements: readonly SectionPlacement[],
+  retain?: (road: PrototypeRoad, origins: readonly string[]) => void,
+): readonly PrototypeRoad[] {
   const spans = [
     ...placements
       .filter((p) => p.section.parentSectionId === null)
-      .flatMap((p) => frame(null, p.surrounding)),
+      .flatMap((p) => frame(null, p.surrounding, `${p.section.id}:surrounding`)),
     ...placements.flatMap(internalStreets),
   ];
   const groups = new Map<string, StreetSpan[]>();
@@ -104,7 +120,11 @@ export function nestedMainRoads(placements: readonly SectionPlacement[]): readon
     group
       .toSorted((a, b) => a.start - b.start)
       .reduce<readonly StreetSpan[]>(mergeSpan, [])
-      .map(street),
+      .map((span) => {
+        const road = street(span);
+        retain?.(road, span.origins);
+        return road;
+      }),
   );
 }
 export function nestedSectionPorts(p: SectionPlacement): readonly PrototypePortLocation[] {

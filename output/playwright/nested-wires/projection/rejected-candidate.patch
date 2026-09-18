@@ -1,0 +1,13 @@
+diff --git a/capability/layout/core/nested-lane-projection.ts b/capability/layout/core/nested-lane-projection.ts
+index 6cde715..47dc2ed 100644
+--- a/capability/layout/core/nested-lane-projection.ts
++++ b/capability/layout/core/nested-lane-projection.ts
+@@ -331,7 +331,7 @@ function forwardConnection(
+   return {
+     ...c,
+     from: { ...c.from, [axis]: start },
+-    via: c.via.map((p) => ({ ...p, [axis]: start })),
++    via: c.via.map((p) => (p[axis] === c.from[axis] ? { ...p, [axis]: start } : p)),
+   };
+ }
+ function joined(

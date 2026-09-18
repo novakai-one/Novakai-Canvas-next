@@ -1,0 +1,59 @@
+{"phase":"after","counts":{"corridors":0,"reversed":28,"overlaps":7,"bodies":41,"boundaries":87,"uncertified":1282,"gateOmissions":96,"diagonal":0}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   bodies: 41,
+-   bodies: 40,
+    boundaries: 87,
+    corridors: 0,
+    diagonal: 0,
+    gateOmissions: 96,
++   overlaps: 7,
++   reversed: 28,
++   uncertified: 1282
+-   overlaps: 4,
+-   reversed: 0,
+-   uncertified: 1273
+  }
+
+    at projectionAuthoring (file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10f/output/playwright/nested-wires/ownership/verify.mjs:96:10)
+    at verifyAuthoring (file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10f/output/playwright/nested-wires/ownership/verify.mjs:110:26)
+    at retained (file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10f/output/playwright/nested-wires/ownership/verify.mjs:132:36)
+    at verifyScene (file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10f/output/playwright/nested-wires/ownership/verify.mjs:145:19)
+    at Array.map (<anonymous>)
+    at file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10f/output/playwright/nested-wires/ownership/verify.mjs:150:57
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: {
+    corridors: 0,
+    reversed: 28,
+    overlaps: 7,
+    bodies: 41,
+    boundaries: 87,
+    uncertified: 1282,
+    gateOmissions: 96,
+    diagonal: 0
+  },
+  expected: {
+    corridors: 0,
+    reversed: 0,
+    overlaps: 4,
+    bodies: 40,
+    boundaries: 87,
+    uncertified: 1273,
+    gateOmissions: 96,
+    diagonal: 0
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.13.0

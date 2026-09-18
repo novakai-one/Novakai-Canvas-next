@@ -1,0 +1,112 @@
+{
+  "status": "baseline-admitted",
+  "base": "b9e098aab6bb66c3359211efecd721023c59f06f",
+  "head": "a5f013033edc09bfa19028e77581a1fd5d215757",
+  "scenes": {
+    "default": {
+      "baselineSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+      "currentSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+      "baselineBytes": 649257,
+      "currentBytes": 649257,
+      "byteEqual": true,
+      "baselineDeterministic": true,
+      "currentDeterministic": true,
+      "baselineInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      },
+      "currentInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      }
+    },
+    "hub": {
+      "baselineSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+      "currentSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+      "baselineBytes": 713191,
+      "currentBytes": 713191,
+      "byteEqual": true,
+      "baselineDeterministic": true,
+      "currentDeterministic": true,
+      "baselineInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      },
+      "currentInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      }
+    },
+    "templates": {
+      "baselineSha256": "f8c7e0cc1902db78521e959bc5b49fce8f274ee2a520003276ffedf84a2844e6",
+      "currentSha256": "f8c7e0cc1902db78521e959bc5b49fce8f274ee2a520003276ffedf84a2844e6",
+      "baselineBytes": 764731,
+      "currentBytes": 764731,
+      "byteEqual": true,
+      "baselineDeterministic": true,
+      "currentDeterministic": true,
+      "baselineInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      },
+      "currentInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      }
+    },
+    "scale": {
+      "baselineSha256": "d31fe5da0e937b06d328ada0f8a722f39a42784f7de3a9d8107ca672398de215",
+      "currentSha256": "d31fe5da0e937b06d328ada0f8a722f39a42784f7de3a9d8107ca672398de215",
+      "baselineBytes": 1462875,
+      "currentBytes": 1462875,
+      "byteEqual": true,
+      "baselineDeterministic": true,
+      "currentDeterministic": true,
+      "baselineInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      },
+      "currentInspection": {
+        "corridors": 0,
+        "nodeBodies": 0,
+        "boundaries": 0,
+        "continuity": 0
+      }
+    },
+    "authoring": {
+      "baselineSha256": "58bdd5a97a1e235973743680999abc4718ed5c975d5a9ee536b1e98175dcd9e0",
+      "currentSha256": "58bdd5a97a1e235973743680999abc4718ed5c975d5a9ee536b1e98175dcd9e0",
+      "baselineBytes": 1953839,
+      "currentBytes": 1953839,
+      "byteEqual": true,
+      "baselineDeterministic": true,
+      "currentDeterministic": true,
+      "baselineInspection": {
+        "corridors": 2,
+        "nodeBodies": 40,
+        "boundaries": 87,
+        "continuity": 0
+      },
+      "currentInspection": {
+        "corridors": 2,
+        "nodeBodies": 40,
+        "boundaries": 87,
+        "continuity": 0
+      }
+    }
+  }
+}

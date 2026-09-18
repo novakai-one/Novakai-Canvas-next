@@ -1,0 +1,24 @@
+{
+  "pnpmCheck": {
+    "exit": 0,
+    "files": 70,
+    "tests": 208,
+    "logSha256": "033c3c9a2cbbae09819417ff20204dab64867dfe0765733c7547aa125469078f"
+  },
+  "productSha256": {
+    "capability/layout/contract/api.ts": "b56b17855b23cc4e15fd62ddabc28c9aba6511db88d172159e275fb45dd1a680",
+    "capability/layout/contract/index.ts": "0688c0441d019032cd9ab2d980d0c2df3938ccd63194c3e7b90e5c1145214b49",
+    "capability/layout/contract/records/nested-support.ts": "d3a59773e4e08bca36a984fe35325689a010c84b07de91a949c2dd6f4d352de8",
+    "capability/layout/core/nested-lane-projection.ts": "c42dedb57593e324cb48f8016baa5c1b457eaf9383de955c2f08849545966b14",
+    "capability/layout/core/nested-support-graph.ts": "1fc7ecf6ee6c6a82a7a3fa1acf274414f1d30f62f57f3fdd4357f9b1a7f0886b",
+    "capability/layout/core/nested-support-input.ts": "d9a69373fc0ab8c5cf5b11f7615b623bdef6b9e7780e7b568cdf20d60b75df26",
+    "capability/layout/core/nested-support-mouths.ts": "b69014f383d13c214aba59799b254fc401926ef9c3cc86cfd848e71eed583861",
+    "capability/layout/core/nested-support-paths.ts": "0b237556374b826b1c53d70eb7355ff7378e650d03b0dfc7af754f19c889536e",
+    "capability/layout/core/nested-support-structure.ts": "d7094eccaf742beedf669cb662ac57a89d92331a1e5374cfd62cf2bd709308ec",
+    "capability/layout/core/nested-support.ts": "33604a48fc7e51f1dedc34ee08b99728f4d2d6707e2c394c11844f1b87e50ffc",
+    "capability/layout/core/prototype-nested-roads.ts": "7798cfff2a13fd5a34aaa2859a755063d757ac93d3a9f35cc8c76c3056718b82"
+  },
+  "headless": true,
+  "geometryChanged": false,
+  "scope": "Increment A only"
+}

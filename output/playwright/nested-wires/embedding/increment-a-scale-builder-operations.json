@@ -1,0 +1,2184 @@
+{
+  "definition": "Executed numeric +, subtraction, Math.abs and numeric comparisons; min/max charge n-1 comparisons. Multiplication/division, string comparisons, map lookups and native collection iteration/sort internals excluded. Same AST meter as retained M4.5 runner.",
+  "stages": {
+    "module-initialization": {
+      "arithmetic": 47,
+      "comparisons": 3,
+      "total": 50
+    },
+    "capacity": {
+      "arithmetic": 116,
+      "comparisons": 32,
+      "total": 148
+    },
+    "nodes": {
+      "arithmetic": 558,
+      "comparisons": 76,
+      "total": 634
+    },
+    "ports": {
+      "arithmetic": 416,
+      "comparisons": 0,
+      "total": 416
+    },
+    "topology": {
+      "arithmetic": 4488,
+      "comparisons": 1780,
+      "total": 6268
+    },
+    "setup": {
+      "arithmetic": 77,
+      "comparisons": 1,
+      "total": 78
+    },
+    "wire-registry": {
+      "arithmetic": 1821,
+      "comparisons": 0,
+      "total": 1821
+    },
+    "wire:w01": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w02": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "wire:w03": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w04": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w05": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "wire:w06": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "wire:w07": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "wire:w08": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "wire:w09": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "wire:w10": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "wire:w11": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w12": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "wire:w13": {
+      "arithmetic": 8,
+      "comparisons": 25,
+      "total": 33
+    },
+    "wire:w14": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "wire:w15": {
+      "arithmetic": 8,
+      "comparisons": 25,
+      "total": 33
+    },
+    "wire:w16": {
+      "arithmetic": 18,
+      "comparisons": 51,
+      "total": 69
+    },
+    "wire:w17": {
+      "arithmetic": 18,
+      "comparisons": 52,
+      "total": 70
+    },
+    "wire:w18": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "wire:w19": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "wire:w20": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "wire:w21": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "wire:w22": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "wire:w23": {
+      "arithmetic": 18,
+      "comparisons": 52,
+      "total": 70
+    },
+    "wire:w24": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "wire:w25": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "wire:w26": {
+      "arithmetic": 13,
+      "comparisons": 37,
+      "total": 50
+    },
+    "wire:w27": {
+      "arithmetic": 27,
+      "comparisons": 44,
+      "total": 71
+    },
+    "wire:w28": {
+      "arithmetic": 25,
+      "comparisons": 43,
+      "total": 68
+    },
+    "wire:w29": {
+      "arithmetic": 30,
+      "comparisons": 57,
+      "total": 87
+    },
+    "wire:w30": {
+      "arithmetic": 30,
+      "comparisons": 57,
+      "total": 87
+    },
+    "wire:w31": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w32": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w33": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w34": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w35": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w36": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w37": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w38": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w39": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w40": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w41": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w42": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w43": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w44": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w45": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w46": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w47": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w48": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w49": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w50": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w51": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w52": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w53": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w54": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w55": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w56": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w57": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w58": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w59": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w60": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w61": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "wire:w62": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w63": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w64": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "wire:w65": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w66": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w67": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w68": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w69": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w70": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w71": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w72": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w73": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w74": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w75": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "lane-allocation": {
+      "arithmetic": 5642,
+      "comparisons": 3693,
+      "total": 9335
+    },
+    "main-roads": {
+      "arithmetic": 1737,
+      "comparisons": 496,
+      "total": 2233
+    },
+    "driveways": {
+      "arithmetic": 2176,
+      "comparisons": 1248,
+      "total": 3424
+    },
+    "network": {
+      "arithmetic": 12131,
+      "comparisons": 11322,
+      "total": 23453
+    },
+    "lane-projection": {
+      "arithmetic": 24931,
+      "comparisons": 45077,
+      "total": 70008
+    },
+    "probe:capacity": {
+      "arithmetic": 116,
+      "comparisons": 32,
+      "total": 148
+    },
+    "probe:nodes": {
+      "arithmetic": 1116,
+      "comparisons": 103,
+      "total": 1219
+    },
+    "probe:ports": {
+      "arithmetic": 832,
+      "comparisons": 0,
+      "total": 832
+    },
+    "probe:topology": {
+      "arithmetic": 8955,
+      "comparisons": 4299,
+      "total": 13254
+    },
+    "probe:setup": {
+      "arithmetic": 152,
+      "comparisons": 1,
+      "total": 153
+    },
+    "probe:wire-registry": {
+      "arithmetic": 3640,
+      "comparisons": 0,
+      "total": 3640
+    },
+    "probe:wire:w01": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w02": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "probe:wire:w03": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w04": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w05": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w06": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w07": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w08": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w09": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w10": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w11": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w12": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w13": {
+      "arithmetic": 8,
+      "comparisons": 25,
+      "total": 33
+    },
+    "probe:wire:w14": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w15": {
+      "arithmetic": 8,
+      "comparisons": 25,
+      "total": 33
+    },
+    "probe:wire:w16": {
+      "arithmetic": 18,
+      "comparisons": 51,
+      "total": 69
+    },
+    "probe:wire:w17": {
+      "arithmetic": 18,
+      "comparisons": 52,
+      "total": 70
+    },
+    "probe:wire:w18": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "probe:wire:w19": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "probe:wire:w20": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w21": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w22": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w23": {
+      "arithmetic": 18,
+      "comparisons": 52,
+      "total": 70
+    },
+    "probe:wire:w24": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w25": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w26": {
+      "arithmetic": 13,
+      "comparisons": 37,
+      "total": 50
+    },
+    "probe:wire:w27": {
+      "arithmetic": 27,
+      "comparisons": 44,
+      "total": 71
+    },
+    "probe:wire:w28": {
+      "arithmetic": 25,
+      "comparisons": 43,
+      "total": 68
+    },
+    "probe:wire:w29": {
+      "arithmetic": 30,
+      "comparisons": 57,
+      "total": 87
+    },
+    "probe:wire:w30": {
+      "arithmetic": 30,
+      "comparisons": 57,
+      "total": 87
+    },
+    "probe:wire:w31": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w32": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w33": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w34": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w35": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w36": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w37": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w38": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w39": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w40": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w41": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w42": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w43": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w44": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w45": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w46": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w47": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w48": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w49": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w50": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w51": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w52": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w53": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w54": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w55": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w56": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w57": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w58": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w59": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w60": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w61": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w62": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w63": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w64": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "probe:wire:w65": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w66": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w67": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w68": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w69": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w70": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w71": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w72": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w73": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w74": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w75": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w76": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w77": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "probe:wire:w78": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w79": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w80": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w81": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w82": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w83": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w84": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w85": {
+      "arithmetic": 18,
+      "comparisons": 55,
+      "total": 73
+    },
+    "probe:wire:w86": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w87": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w88": {
+      "arithmetic": 8,
+      "comparisons": 25,
+      "total": 33
+    },
+    "probe:wire:w89": {
+      "arithmetic": 8,
+      "comparisons": 26,
+      "total": 34
+    },
+    "probe:wire:w90": {
+      "arithmetic": 8,
+      "comparisons": 25,
+      "total": 33
+    },
+    "probe:wire:w91": {
+      "arithmetic": 18,
+      "comparisons": 51,
+      "total": 69
+    },
+    "probe:wire:w92": {
+      "arithmetic": 18,
+      "comparisons": 52,
+      "total": 70
+    },
+    "probe:wire:w93": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "probe:wire:w94": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "probe:wire:w95": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w96": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w97": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w98": {
+      "arithmetic": 18,
+      "comparisons": 52,
+      "total": 70
+    },
+    "probe:wire:w99": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w100": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w101": {
+      "arithmetic": 13,
+      "comparisons": 37,
+      "total": 50
+    },
+    "probe:wire:w102": {
+      "arithmetic": 27,
+      "comparisons": 44,
+      "total": 71
+    },
+    "probe:wire:w103": {
+      "arithmetic": 25,
+      "comparisons": 43,
+      "total": 68
+    },
+    "probe:wire:w104": {
+      "arithmetic": 30,
+      "comparisons": 57,
+      "total": 87
+    },
+    "probe:wire:w105": {
+      "arithmetic": 30,
+      "comparisons": 57,
+      "total": 87
+    },
+    "probe:wire:w106": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w107": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w108": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w109": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w110": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w111": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w112": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w113": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w114": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w115": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w116": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w117": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w118": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w119": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w120": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w121": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w122": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w123": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w124": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w125": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w126": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w127": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w128": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w129": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w130": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w131": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w132": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w133": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w134": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w135": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w136": {
+      "arithmetic": 3,
+      "comparisons": 11,
+      "total": 14
+    },
+    "probe:wire:w137": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w138": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w139": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "probe:wire:w140": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w141": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w142": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w143": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w144": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w145": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w146": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w147": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w148": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w149": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w150": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:lane-allocation": {
+      "arithmetic": 11329,
+      "comparisons": 7379,
+      "total": 18708
+    },
+    "probe:main-roads": {
+      "arithmetic": 3441,
+      "comparisons": 984,
+      "total": 4425
+    },
+    "probe:driveways": {
+      "arithmetic": 4352,
+      "comparisons": 2496,
+      "total": 6848
+    },
+    "probe:network": {
+      "arithmetic": 24459,
+      "comparisons": 22608,
+      "total": 47067
+    },
+    "probe:lane-projection": {
+      "arithmetic": 50606,
+      "comparisons": 91642,
+      "total": 142248
+    }
+  },
+  "stageInvocations": {
+    "capacity": 1,
+    "nodes": 1,
+    "ports": 1,
+    "topology": 1,
+    "wire-registry": 1,
+    "wire:w01": 1,
+    "wire:w02": 1,
+    "wire:w03": 1,
+    "wire:w04": 1,
+    "wire:w05": 1,
+    "wire:w06": 1,
+    "wire:w07": 1,
+    "wire:w08": 1,
+    "wire:w09": 1,
+    "wire:w10": 1,
+    "wire:w11": 1,
+    "wire:w12": 1,
+    "wire:w13": 1,
+    "wire:w14": 1,
+    "wire:w15": 1,
+    "wire:w16": 1,
+    "wire:w17": 1,
+    "wire:w18": 1,
+    "wire:w19": 1,
+    "wire:w20": 1,
+    "wire:w21": 1,
+    "wire:w22": 1,
+    "wire:w23": 1,
+    "wire:w24": 1,
+    "wire:w25": 1,
+    "wire:w26": 1,
+    "wire:w27": 1,
+    "wire:w28": 1,
+    "wire:w29": 1,
+    "wire:w30": 1,
+    "wire:w31": 1,
+    "wire:w32": 1,
+    "wire:w33": 1,
+    "wire:w34": 1,
+    "wire:w35": 1,
+    "wire:w36": 1,
+    "wire:w37": 1,
+    "wire:w38": 1,
+    "wire:w39": 1,
+    "wire:w40": 1,
+    "wire:w41": 1,
+    "wire:w42": 1,
+    "wire:w43": 1,
+    "wire:w44": 1,
+    "wire:w45": 1,
+    "wire:w46": 1,
+    "wire:w47": 1,
+    "wire:w48": 1,
+    "wire:w49": 1,
+    "wire:w50": 1,
+    "wire:w51": 1,
+    "wire:w52": 1,
+    "wire:w53": 1,
+    "wire:w54": 1,
+    "wire:w55": 1,
+    "wire:w56": 1,
+    "wire:w57": 1,
+    "wire:w58": 1,
+    "wire:w59": 1,
+    "wire:w60": 1,
+    "wire:w61": 1,
+    "wire:w62": 1,
+    "wire:w63": 1,
+    "wire:w64": 1,
+    "wire:w65": 1,
+    "wire:w66": 1,
+    "wire:w67": 1,
+    "wire:w68": 1,
+    "wire:w69": 1,
+    "wire:w70": 1,
+    "wire:w71": 1,
+    "wire:w72": 1,
+    "wire:w73": 1,
+    "wire:w74": 1,
+    "wire:w75": 1,
+    "lane-allocation": 1,
+    "main-roads": 1,
+    "driveways": 1,
+    "network": 1,
+    "lane-projection": 1,
+    "probe:capacity": 1,
+    "probe:nodes": 1,
+    "probe:ports": 1,
+    "probe:topology": 1,
+    "probe:wire-registry": 1,
+    "probe:wire:w01": 1,
+    "probe:wire:w02": 1,
+    "probe:wire:w03": 1,
+    "probe:wire:w04": 1,
+    "probe:wire:w05": 1,
+    "probe:wire:w06": 1,
+    "probe:wire:w07": 1,
+    "probe:wire:w08": 1,
+    "probe:wire:w09": 1,
+    "probe:wire:w10": 1,
+    "probe:wire:w11": 1,
+    "probe:wire:w12": 1,
+    "probe:wire:w13": 1,
+    "probe:wire:w14": 1,
+    "probe:wire:w15": 1,
+    "probe:wire:w16": 1,
+    "probe:wire:w17": 1,
+    "probe:wire:w18": 1,
+    "probe:wire:w19": 1,
+    "probe:wire:w20": 1,
+    "probe:wire:w21": 1,
+    "probe:wire:w22": 1,
+    "probe:wire:w23": 1,
+    "probe:wire:w24": 1,
+    "probe:wire:w25": 1,
+    "probe:wire:w26": 1,
+    "probe:wire:w27": 1,
+    "probe:wire:w28": 1,
+    "probe:wire:w29": 1,
+    "probe:wire:w30": 1,
+    "probe:wire:w31": 1,
+    "probe:wire:w32": 1,
+    "probe:wire:w33": 1,
+    "probe:wire:w34": 1,
+    "probe:wire:w35": 1,
+    "probe:wire:w36": 1,
+    "probe:wire:w37": 1,
+    "probe:wire:w38": 1,
+    "probe:wire:w39": 1,
+    "probe:wire:w40": 1,
+    "probe:wire:w41": 1,
+    "probe:wire:w42": 1,
+    "probe:wire:w43": 1,
+    "probe:wire:w44": 1,
+    "probe:wire:w45": 1,
+    "probe:wire:w46": 1,
+    "probe:wire:w47": 1,
+    "probe:wire:w48": 1,
+    "probe:wire:w49": 1,
+    "probe:wire:w50": 1,
+    "probe:wire:w51": 1,
+    "probe:wire:w52": 1,
+    "probe:wire:w53": 1,
+    "probe:wire:w54": 1,
+    "probe:wire:w55": 1,
+    "probe:wire:w56": 1,
+    "probe:wire:w57": 1,
+    "probe:wire:w58": 1,
+    "probe:wire:w59": 1,
+    "probe:wire:w60": 1,
+    "probe:wire:w61": 1,
+    "probe:wire:w62": 1,
+    "probe:wire:w63": 1,
+    "probe:wire:w64": 1,
+    "probe:wire:w65": 1,
+    "probe:wire:w66": 1,
+    "probe:wire:w67": 1,
+    "probe:wire:w68": 1,
+    "probe:wire:w69": 1,
+    "probe:wire:w70": 1,
+    "probe:wire:w71": 1,
+    "probe:wire:w72": 1,
+    "probe:wire:w73": 1,
+    "probe:wire:w74": 1,
+    "probe:wire:w75": 1,
+    "probe:wire:w76": 1,
+    "probe:wire:w77": 1,
+    "probe:wire:w78": 1,
+    "probe:wire:w79": 1,
+    "probe:wire:w80": 1,
+    "probe:wire:w81": 1,
+    "probe:wire:w82": 1,
+    "probe:wire:w83": 1,
+    "probe:wire:w84": 1,
+    "probe:wire:w85": 1,
+    "probe:wire:w86": 1,
+    "probe:wire:w87": 1,
+    "probe:wire:w88": 1,
+    "probe:wire:w89": 1,
+    "probe:wire:w90": 1,
+    "probe:wire:w91": 1,
+    "probe:wire:w92": 1,
+    "probe:wire:w93": 1,
+    "probe:wire:w94": 1,
+    "probe:wire:w95": 1,
+    "probe:wire:w96": 1,
+    "probe:wire:w97": 1,
+    "probe:wire:w98": 1,
+    "probe:wire:w99": 1,
+    "probe:wire:w100": 1,
+    "probe:wire:w101": 1,
+    "probe:wire:w102": 1,
+    "probe:wire:w103": 1,
+    "probe:wire:w104": 1,
+    "probe:wire:w105": 1,
+    "probe:wire:w106": 1,
+    "probe:wire:w107": 1,
+    "probe:wire:w108": 1,
+    "probe:wire:w109": 1,
+    "probe:wire:w110": 1,
+    "probe:wire:w111": 1,
+    "probe:wire:w112": 1,
+    "probe:wire:w113": 1,
+    "probe:wire:w114": 1,
+    "probe:wire:w115": 1,
+    "probe:wire:w116": 1,
+    "probe:wire:w117": 1,
+    "probe:wire:w118": 1,
+    "probe:wire:w119": 1,
+    "probe:wire:w120": 1,
+    "probe:wire:w121": 1,
+    "probe:wire:w122": 1,
+    "probe:wire:w123": 1,
+    "probe:wire:w124": 1,
+    "probe:wire:w125": 1,
+    "probe:wire:w126": 1,
+    "probe:wire:w127": 1,
+    "probe:wire:w128": 1,
+    "probe:wire:w129": 1,
+    "probe:wire:w130": 1,
+    "probe:wire:w131": 1,
+    "probe:wire:w132": 1,
+    "probe:wire:w133": 1,
+    "probe:wire:w134": 1,
+    "probe:wire:w135": 1,
+    "probe:wire:w136": 1,
+    "probe:wire:w137": 1,
+    "probe:wire:w138": 1,
+    "probe:wire:w139": 1,
+    "probe:wire:w140": 1,
+    "probe:wire:w141": 1,
+    "probe:wire:w142": 1,
+    "probe:wire:w143": 1,
+    "probe:wire:w144": 1,
+    "probe:wire:w145": 1,
+    "probe:wire:w146": 1,
+    "probe:wire:w147": 1,
+    "probe:wire:w148": 1,
+    "probe:wire:w149": 1,
+    "probe:wire:w150": 1,
+    "probe:lane-allocation": 1,
+    "probe:main-roads": 1,
+    "probe:driveways": 1,
+    "probe:network": 1,
+    "probe:lane-projection": 1
+  },
+  "wireRouting": {
+    "total": 2088
+  },
+  "compile": {
+    "total": 104617,
+    "components": {
+      "wire-registry": 1821,
+      "lane-allocation": 9335,
+      "network": 23453,
+      "lane-projection": 70008
+    }
+  },
+  "perLeg": [
+    {
+      "stage": "wire:w01",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w02",
+      "operations": 29,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w03",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w04",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w05",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w05",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w06",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w06",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w13",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w13",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w14",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w14",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w15",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w15",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w19",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w19",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w19",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w19",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w20",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w20",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w20",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w21",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w21",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w21",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w22",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w22",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w22",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w23",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w23",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w23",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w23",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w24",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w24",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w24",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w25",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w25",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w25",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w26",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w26",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w26",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w27",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w27",
+      "operations": 2,
+      "admitted": false
+    },
+    {
+      "stage": "wire:w27",
+      "operations": 26,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w27",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w28",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w28",
+      "operations": 26,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w28",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w29",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w29",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w29",
+      "operations": 26,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w29",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w30",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w30",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w30",
+      "operations": 26,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w30",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w31",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w32",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w33",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w34",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w35",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w36",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w37",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w38",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w39",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w40",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w41",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w42",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w43",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w44",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w45",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w46",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w47",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w48",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w49",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w50",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w51",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w52",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w53",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w54",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w55",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w56",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w57",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w58",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w59",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w60",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w61",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w62",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w63",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w64",
+      "operations": 31,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w65",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w66",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w67",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w68",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w69",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w70",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w71",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w72",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w73",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w74",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w75",
+      "operations": 12,
+      "admitted": true
+    }
+  ],
+  "maxLawLeg": 31,
+  "perWireRoadPairDiscovery": 0,
+  "scalingProbe": {
+    "nodes": [
+      40,
+      80
+    ],
+    "wires": [
+      75,
+      150
+    ],
+    "freshIds": true,
+    "totalOperations": [
+      119906,
+      242718
+    ],
+    "ratio": 2.024235651260154,
+    "compileOperations": [
+      104617,
+      211663
+    ]
+  },
+  "instrumentedScenesByteIdentical": true
+}

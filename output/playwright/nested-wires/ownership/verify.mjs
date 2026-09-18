@@ -1,4 +1,4 @@
-/** M10f-1 offline public-output gates. Assertion failure means STOP; no fixture writes. */
+/** M10f-1/M10f-2 offline public-output gates. Assertion failure means STOP; no fixture writes. */
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -7,8 +7,9 @@ import { runInNewContext } from 'node:vm';
 import { gunzipSync } from 'node:zlib';
 import { createNestedRoadScene, defaultNestedSceneSpec, fanInHubSceneSpec, inspectNestedWires } from '../../../../capability/layout/contract/index.ts';
 const root = 'output/playwright/nested-wires/';
-const local = '.local/m10f-ownership/';
-const phase = process.argv[2];
+const projection = process.argv[2]?.startsWith('projection-');
+const local = projection ? '.local/m10f2-projection/' : '.local/m10f-ownership/';
+const phase = process.argv[2]?.replace('projection-', '');
 assert(['before', 'after'].includes(phase));
 mkdirSync(local, { recursive: true });
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
@@ -76,6 +77,36 @@ function withoutOwner(segment) {
 function geometry(scene) {
   return { ...scene, wiring: { ...scene.wiring, value: scene.wiring.value.map((w) => ({ ...w, segments: w.segments.map(withoutOwner) })) } };
 }
+function projectionAuthoring(scene) {
+  const path = local + 'authoring-before.json';
+  const committed = phase === 'before' ? scene : read(path);
+  const inspection = inspectNestedWires(scene, scene.wiring.value);
+  const current = catalogs(scene), extra = supplementary(scene);
+  const diagonal = scene.wiring.value.flatMap((w) => w.segments.flatMap((s, i) =>
+    s.from.x !== s.to.x && s.from.y !== s.to.y ? [`${w.id}:${i + 1}`] : []));
+  const details = { inspection, diagonal, ...extra, catalogs: current };
+  writeFileSync(root + `projection/${phase}-catalogs.json`, JSON.stringify(details, null, 2) + '\n');
+  const counts = { corridors: inspection.corridors.length, reversed: extra.reversed.length,
+    overlaps: current.overlaps.length, bodies: inspection.nodeBodies.length,
+    boundaries: inspection.boundaries.length, uncertified: current.certification.uncovered.length,
+    gateOmissions: extra.missingGates.length, diagonal: diagonal.length };
+  console.log(JSON.stringify({ phase, counts }));
+  assert.deepEqual({ ...scene, wiring: null }, { ...committed, wiring: null }, 'Non-wire scene data frozen');
+  assert.deepEqual(inspection.continuity, []);
+  const expected = {
+    before: { corridors: 2, reversed: 28, overlaps: 18, bodies: 40, boundaries: 87,
+      uncertified: 1273, gateOmissions: 96, diagonal: 2 },
+    after: { corridors: 0, reversed: 0, overlaps: 4, bodies: 40, boundaries: 87,
+      uncertified: 1273, gateOmissions: 96, diagonal: 0 },
+  };
+  assert.deepEqual(counts, expected[phase]);
+  if (phase === 'after') {
+    const original = read(root + 'projection/before-catalogs.json');
+    assert.deepEqual(extra.missingGates, original.missingGates, 'Gate omission catalog retained');
+    assert.deepEqual(current.overlaps, original.catalogs.overlaps.slice(14), 'Only O3 overlaps retained');
+  }
+  return counts;
+}
 function verifyAuthoring(scene) {
   const committed = JSON.parse(pinned(root + 'authoring-scene/scene.json'));
   assert.equal(json(geometry(scene)), json(geometry(committed)), 'All non-corridor metadata and geometry must match committed M10b');
@@ -97,8 +128,9 @@ function verifyAuthoring(scene) {
   assert.deepEqual(changes.map((c) => `${c.wire}:${c.segment}`), phase === 'before' ? [] : ['w41:16', 'w41:17']);
   return { inspection, changes, geometryHash: hash(geometry(scene)), overlaps: current.overlaps.length, overlapHash: hash(current.overlaps), uncertified: current.certification.uncovered.length, proofHash: hash(current), reversed: extra.reversed.length, gateOmissions: extra.missingGates.length };
 }
+const authoringVerifier = projection ? projectionAuthoring : verifyAuthoring;
 function retained(name, scene) {
-  if (name === 'authoring') return verifyAuthoring(scene);
+  if (name === 'authoring') return authoringVerifier(scene);
   const inspection = inspectNestedWires(scene, scene.wiring.value);
   assert.deepEqual(inspection, { corridors: [], nodeBodies: [], boundaries: [], continuity: [] });
   assert.equal(json(scene), gunzipSync(readFileSync(root + `ownership/${name}-baseline.json.gz`)).toString(), `${name} retained bytes`);
@@ -112,9 +144,10 @@ function verifyScene([name, spec]) {
   const path = local + name + '-before.json';
   if (phase === 'before') writeFileSync(path, json(scene));
   const details = retained(name, scene);
+  if (projection) writeFileSync(local + name + `-${phase}.json`, json(scene));
   writeFileSync(local + name + '-spec.json', json(spec));
   return [name, { sha256: hash(scene), bytes: Buffer.byteLength(json(scene)), deterministic: true, stages, ...details }];
 }
 const report = Object.fromEntries(Object.entries(specs).map(verifyScene));
-writeFileSync(root + `ownership/${phase}.json`, JSON.stringify(report, null, 2) + '\n');
+writeFileSync(root + `${projection ? 'projection' : 'ownership'}/${phase}.json`, JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report, null, 2));

@@ -1,0 +1,663 @@
+{
+  "status": "STOP-support-template-ratification",
+  "scope": "Read-only diagnostic, not the public Increment A ledger or full constraint-graph admission",
+  "controls": [
+    {
+      "name": "default",
+      "sceneSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+      "observationCount": 0,
+      "twiceDeterministic": true,
+      "ordinaryByteEqual": true
+    },
+    {
+      "name": "hub",
+      "sceneSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+      "observationCount": 1,
+      "twiceDeterministic": true,
+      "ordinaryByteEqual": true
+    }
+  ],
+  "constraint": {
+    "code": "support-template-decision",
+    "axis": "y",
+    "direction": 1,
+    "previousEnd": 639,
+    "nominalStart": 633,
+    "minimumStem": 1.5,
+    "requiredStart": 640.5,
+    "nominalTemplateDeficit": 7.5,
+    "logicalKeys": {
+      "incoming": {
+        "owner": "section-1",
+        "portId": "section-1:entry-left"
+      },
+      "travel": {
+        "owner": "section-1",
+        "axis": "vertical",
+        "kind": "frame-left",
+        "ordinal": 0
+      },
+      "outgoing": {
+        "owner": "section-1",
+        "axis": "horizontal",
+        "kind": "row-boundary",
+        "ordinal": 1
+      }
+    },
+    "identityEvidence": "Keys verified from construction placement fields; numeric road IDs were not parsed. This is the witness only, not a complete merged-provenance ledger."
+  },
+  "witness": {
+    "wireId": "w23",
+    "sourceSegmentOrdinal": 14,
+    "lane": {
+      "id": "w23:14",
+      "wireId": "w23",
+      "roadId": "section-1:vertical:200:248",
+      "direction": 1,
+      "index": 0,
+      "offset": -3
+    },
+    "road": {
+      "id": "section-1:vertical:200:248",
+      "sectionId": "section-1",
+      "axis": "vertical",
+      "kind": "street",
+      "access": null,
+      "bounds": {
+        "x": 176,
+        "y": 224,
+        "width": 48,
+        "height": 848
+      },
+      "directions": [
+        "down",
+        "up"
+      ]
+    },
+    "direction": 1,
+    "axis": "y",
+    "previous": {
+      "from": {
+        "x": 197,
+        "y": 639
+      },
+      "to": {
+        "x": 197,
+        "y": 639
+      },
+      "roadId": "section-1:vertical:200:248"
+    },
+    "nominal": {
+      "from": {
+        "x": 197,
+        "y": 633
+      },
+      "to": {
+        "x": 198.5,
+        "y": 651
+      },
+      "roadId": "section-1:horizontal:648:200",
+      "via": [
+        {
+          "x": 198.5,
+          "y": 633
+        }
+      ]
+    },
+    "requiredStart": 640.5,
+    "deficit": 7.5
+  },
+  "retainedNeighborhood": [
+    {
+      "road": {
+        "id": "drive:section-1:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 88,
+          "y": 612,
+          "width": 88,
+          "height": 24
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "section-1",
+          "portId": "section-1:entry-left",
+          "side": "left",
+          "role": "entry"
+        }
+      },
+      "wireId": "w23",
+      "first": 11,
+      "last": 12,
+      "direction": 1,
+      "count": 3,
+      "at": 639,
+      "lane": {
+        "id": "w23:11",
+        "wireId": "w23",
+        "roadId": "drive:section-1:entry-left",
+        "direction": 1,
+        "index": 2,
+        "offset": 15
+      }
+    },
+    {
+      "road": {
+        "id": "section-1:vertical:200:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 176,
+          "y": 224,
+          "width": 48,
+          "height": 848
+        },
+        "directions": [
+          "down",
+          "up"
+        ]
+      },
+      "wireId": "w23",
+      "first": 14,
+      "last": 14,
+      "direction": 1,
+      "count": 1,
+      "at": 197,
+      "lane": {
+        "id": "w23:14",
+        "wireId": "w23",
+        "roadId": "section-1:vertical:200:248",
+        "direction": 1,
+        "index": 0,
+        "offset": -3
+      }
+    },
+    {
+      "road": {
+        "id": "section-1:horizontal:648:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 176,
+          "y": 624,
+          "width": 1056,
+          "height": 48
+        },
+        "directions": [
+          "left",
+          "right"
+        ]
+      },
+      "wireId": "w23",
+      "first": 15,
+      "last": 15,
+      "direction": 1,
+      "count": 1,
+      "at": 651,
+      "lane": {
+        "id": "w23:15",
+        "wireId": "w23",
+        "roadId": "section-1:horizontal:648:200",
+        "direction": 1,
+        "index": 0,
+        "offset": 3
+      }
+    }
+  ],
+  "constructionContacts": [
+    {
+      "a": {
+        "id": "section-1:vertical:200:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 176,
+          "y": 224,
+          "width": 48,
+          "height": 848
+        },
+        "directions": [
+          "down",
+          "up"
+        ]
+      },
+      "b": {
+        "id": "drive:section-1:entry-left",
+        "sectionId": "section-1",
+        "kind": "driveway",
+        "bounds": {
+          "x": 88,
+          "y": 612,
+          "width": 88,
+          "height": 24
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "section-1",
+          "portId": "section-1:entry-left",
+          "side": "left",
+          "role": "entry"
+        }
+      }
+    },
+    {
+      "a": {
+        "id": "section-1:horizontal:648:200",
+        "sectionId": "section-1",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 176,
+          "y": 624,
+          "width": 1056,
+          "height": 48
+        },
+        "directions": [
+          "left",
+          "right"
+        ]
+      },
+      "b": {
+        "id": "section-1:vertical:200:248",
+        "sectionId": "section-1",
+        "axis": "vertical",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 176,
+          "y": 224,
+          "width": 48,
+          "height": 848
+        },
+        "directions": [
+          "down",
+          "up"
+        ]
+      }
+    }
+  ],
+  "finalRoads": [
+    {
+      "id": "drive:section-1:entry-left",
+      "sectionId": "section-1",
+      "kind": "driveway",
+      "bounds": {
+        "x": 88,
+        "y": 600,
+        "width": 88,
+        "height": 48
+      },
+      "axis": "horizontal",
+      "directions": [
+        "right"
+      ],
+      "access": {
+        "nodeId": "section-1",
+        "portId": "section-1:entry-left",
+        "side": "left",
+        "role": "entry"
+      },
+      "wireLaneCount": 3
+    },
+    {
+      "id": "section-1:vertical:200:248",
+      "sectionId": "section-1",
+      "axis": "vertical",
+      "kind": "street",
+      "access": null,
+      "bounds": {
+        "x": 176,
+        "y": 212,
+        "width": 48,
+        "height": 872
+      },
+      "directions": [
+        "down",
+        "up"
+      ],
+      "wireLaneCount": 3
+    },
+    {
+      "id": "section-1:horizontal:648:200",
+      "sectionId": "section-1",
+      "axis": "horizontal",
+      "kind": "street",
+      "access": null,
+      "bounds": {
+        "x": 176,
+        "y": 630,
+        "width": 1044,
+        "height": 36
+      },
+      "directions": [
+        "left",
+        "right"
+      ],
+      "wireLaneCount": 2
+    }
+  ],
+  "ordinaryWire": {
+    "id": "w23",
+    "from": "node-13",
+    "to": "node-23",
+    "sourcePortId": "node-13:exit-right",
+    "targetPortId": "node-23:entry-top",
+    "gates": [
+      "section-3:exit-right",
+      "section-1:entry-left"
+    ],
+    "segments": [
+      {
+        "from": {
+          "x": 1136,
+          "y": 1488
+        },
+        "to": {
+          "x": 1136,
+          "y": 1491
+        },
+        "corridorId": "drive:node-13:exit-right"
+      },
+      {
+        "from": {
+          "x": 1136,
+          "y": 1491
+        },
+        "to": {
+          "x": 1184,
+          "y": 1491
+        },
+        "corridorId": "drive:node-13:exit-right",
+        "laneId": "w23:0"
+      },
+      {
+        "from": {
+          "x": 1184,
+          "y": 1491
+        },
+        "to": {
+          "x": 1205,
+          "y": 1491
+        },
+        "corridorId": "section-3:vertical:1208:1368"
+      },
+      {
+        "from": {
+          "x": 1205,
+          "y": 1491
+        },
+        "to": {
+          "x": 1205,
+          "y": 1563
+        },
+        "corridorId": "section-3:vertical:1208:1368",
+        "laneId": "w23:2"
+      },
+      {
+        "from": {
+          "x": 1205,
+          "y": 1563
+        },
+        "to": {
+          "x": 1206.5,
+          "y": 1563
+        },
+        "corridorId": "section-3:vertical:1208:1368"
+      },
+      {
+        "from": {
+          "x": 1206.5,
+          "y": 1563
+        },
+        "to": {
+          "x": 1206.5,
+          "y": 1587
+        },
+        "corridorId": "section-3:vertical:1208:1368"
+      },
+      {
+        "from": {
+          "x": 1206.5,
+          "y": 1587
+        },
+        "to": {
+          "x": 1232,
+          "y": 1587
+        },
+        "corridorId": "section-3:vertical:1208:1368"
+      },
+      {
+        "from": {
+          "x": 1232,
+          "y": 1587
+        },
+        "to": {
+          "x": 1332,
+          "y": 1587
+        },
+        "corridorId": "drive:section-3:exit-right",
+        "laneId": "w23:4"
+      },
+      {
+        "from": {
+          "x": 1332,
+          "y": 1587
+        },
+        "to": {
+          "x": 1335,
+          "y": 1587
+        },
+        "corridorId": "world:vertical:1344:1184"
+      },
+      {
+        "from": {
+          "x": 1335,
+          "y": 1587
+        },
+        "to": {
+          "x": 1335,
+          "y": 1585.5
+        },
+        "corridorId": "world:vertical:1344:1184"
+      },
+      {
+        "from": {
+          "x": 1335,
+          "y": 1585.5
+        },
+        "to": {
+          "x": 1347,
+          "y": 1585.5
+        },
+        "corridorId": "world:vertical:1344:1184"
+      },
+      {
+        "from": {
+          "x": 1347,
+          "y": 1585.5
+        },
+        "to": {
+          "x": 1347,
+          "y": 1212.5
+        },
+        "corridorId": "world:vertical:1344:1184",
+        "laneId": "w23:7"
+      },
+      {
+        "from": {
+          "x": 1347,
+          "y": 1212.5
+        },
+        "to": {
+          "x": 1336.5,
+          "y": 1212.5
+        },
+        "corridorId": "world:horizontal:1184:64"
+      },
+      {
+        "from": {
+          "x": 1336.5,
+          "y": 1212.5
+        },
+        "to": {
+          "x": 1336.5,
+          "y": 1181
+        },
+        "corridorId": "world:horizontal:1184:64"
+      },
+      {
+        "from": {
+          "x": 1336.5,
+          "y": 1181
+        },
+        "to": {
+          "x": 79,
+          "y": 1181
+        },
+        "corridorId": "world:horizontal:1184:64",
+        "laneId": "w23:8"
+      },
+      {
+        "from": {
+          "x": 79,
+          "y": 1181
+        },
+        "to": {
+          "x": 79,
+          "y": 639
+        },
+        "corridorId": "world:vertical:64:64",
+        "laneId": "w23:9"
+      },
+      {
+        "from": {
+          "x": 79,
+          "y": 639
+        },
+        "to": {
+          "x": 88,
+          "y": 639
+        },
+        "corridorId": "world:vertical:64:64"
+      },
+      {
+        "from": {
+          "x": 88,
+          "y": 639
+        },
+        "to": {
+          "x": 176,
+          "y": 639
+        },
+        "corridorId": "drive:section-1:entry-left",
+        "laneId": "w23:11"
+      },
+      {
+        "from": {
+          "x": 176,
+          "y": 639
+        },
+        "to": {
+          "x": 197,
+          "y": 639
+        },
+        "corridorId": "section-1:vertical:200:248"
+      },
+      {
+        "from": {
+          "x": 197,
+          "y": 639
+        },
+        "to": {
+          "x": 197,
+          "y": 640.5
+        },
+        "corridorId": "section-1:vertical:200:248",
+        "laneId": "w23:14"
+      },
+      {
+        "from": {
+          "x": 197,
+          "y": 640.5
+        },
+        "to": {
+          "x": 198.5,
+          "y": 640.5
+        },
+        "corridorId": "section-1:horizontal:648:200"
+      },
+      {
+        "from": {
+          "x": 198.5,
+          "y": 640.5
+        },
+        "to": {
+          "x": 198.5,
+          "y": 651
+        },
+        "corridorId": "section-1:horizontal:648:200"
+      },
+      {
+        "from": {
+          "x": 198.5,
+          "y": 651
+        },
+        "to": {
+          "x": 695,
+          "y": 651
+        },
+        "corridorId": "section-1:horizontal:648:200",
+        "laneId": "w23:15"
+      },
+      {
+        "from": {
+          "x": 695,
+          "y": 651
+        },
+        "to": {
+          "x": 695,
+          "y": 666
+        },
+        "corridorId": "section-1:horizontal:648:200"
+      },
+      {
+        "from": {
+          "x": 695,
+          "y": 666
+        },
+        "to": {
+          "x": 695,
+          "y": 800
+        },
+        "corridorId": "drive:node-23:entry-top",
+        "laneId": "w23:17"
+      },
+      {
+        "from": {
+          "x": 695,
+          "y": 800
+        },
+        "to": {
+          "x": 701,
+          "y": 800
+        },
+        "corridorId": "drive:node-23:entry-top"
+      }
+    ]
+  },
+  "decision": "Does support compilation fix the nominal turn anchor, or admit the existing non-median forward adjustment as a supported retained template? The latter needs an explicit admissibility rule; the former binds hub. Neither interpretation is selected here."
+}

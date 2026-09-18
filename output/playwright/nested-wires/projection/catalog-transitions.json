@@ -1,0 +1,597 @@
+{
+  "overlaps": {
+    "removed": [
+      {
+        "wires": [
+          "w03",
+          "w12"
+        ],
+        "hit": {
+          "x": 3127,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3127,
+            "y": 849.5
+          },
+          "to": {
+            "x": 3127,
+            "y": 299
+          },
+          "corridorId": "section-2:vertical:3124:248",
+          "laneId": "w12:2"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w13"
+        ],
+        "hit": {
+          "x": 3190,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3190,
+            "y": 469
+          },
+          "to": {
+            "x": 3190,
+            "y": 454
+          },
+          "corridorId": "drive:node-3:entry-left"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w13"
+        ],
+        "hit": {
+          "x": 3190,
+          "y": 454,
+          "length": 6
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3190,
+            "y": 454
+          },
+          "to": {
+            "x": 3196,
+            "y": 454
+          },
+          "corridorId": "drive:node-3:entry-left"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w20"
+        ],
+        "hit": {
+          "x": 3184,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3184,
+            "y": 463
+          },
+          "to": {
+            "x": 3184,
+            "y": 448
+          },
+          "corridorId": "drive:node-3:entry-left"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w102"
+        ],
+        "hit": {
+          "x": 3115,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3115,
+            "y": 210.5
+          },
+          "to": {
+            "x": 3115,
+            "y": 791
+          },
+          "corridorId": "section-2:vertical:3124:248",
+          "laneId": "w102:14"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w110"
+        ],
+        "hit": {
+          "x": 3091,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3091,
+            "y": 186.5
+          },
+          "to": {
+            "x": 3091,
+            "y": 791
+          },
+          "corridorId": "section-2:vertical:3124:248",
+          "laneId": "w110:17"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w111"
+        ],
+        "hit": {
+          "x": 3109,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3109,
+            "y": 204.5
+          },
+          "to": {
+            "x": 3109,
+            "y": 791
+          },
+          "corridorId": "section-2:vertical:3124:248",
+          "laneId": "w111:14"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w116"
+        ],
+        "hit": {
+          "x": 3097,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3097,
+            "y": 192.5
+          },
+          "to": {
+            "x": 3097,
+            "y": 791
+          },
+          "corridorId": "section-2:vertical:3124:248",
+          "laneId": "w116:14"
+        }
+      },
+      {
+        "wires": [
+          "w03",
+          "w119"
+        ],
+        "hit": {
+          "x": 3103,
+          "y": 454,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3103,
+            "y": 198.5
+          },
+          "to": {
+            "x": 3103,
+            "y": 791
+          },
+          "corridorId": "section-2:vertical:3124:248",
+          "laneId": "w119:14"
+        }
+      },
+      {
+        "wires": [
+          "w07",
+          "w23"
+        ],
+        "hit": {
+          "x": 657,
+          "y": 1678,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 657,
+            "y": 1544.5
+          },
+          "to": {
+            "x": 657,
+            "y": 1759
+          },
+          "corridorId": "section-6:vertical:672:1552",
+          "laneId": "w07:19"
+        },
+        "second": {
+          "from": {
+            "x": 625.5,
+            "y": 1678
+          },
+          "to": {
+            "x": 741,
+            "y": 1681
+          },
+          "corridorId": "section-6:vertical:672:1552"
+        }
+      },
+      {
+        "wires": [
+          "w23",
+          "w24"
+        ],
+        "hit": {
+          "x": 625.5,
+          "y": 1681,
+          "length": 25.5
+        },
+        "first": {
+          "from": {
+            "x": 625.5,
+            "y": 1678
+          },
+          "to": {
+            "x": 741,
+            "y": 1681
+          },
+          "corridorId": "section-6:vertical:672:1552"
+        },
+        "second": {
+          "from": {
+            "x": 625.5,
+            "y": 1681
+          },
+          "to": {
+            "x": 651,
+            "y": 1681
+          },
+          "corridorId": "section-6:vertical:672:1552"
+        }
+      },
+      {
+        "wires": [
+          "w23",
+          "w44"
+        ],
+        "hit": {
+          "x": 675,
+          "y": 1678,
+          "length": 3
+        },
+        "first": {
+          "from": {
+            "x": 625.5,
+            "y": 1678
+          },
+          "to": {
+            "x": 741,
+            "y": 1681
+          },
+          "corridorId": "section-6:vertical:672:1552"
+        },
+        "second": {
+          "from": {
+            "x": 675,
+            "y": 1913.5
+          },
+          "to": {
+            "x": 675,
+            "y": 1567
+          },
+          "corridorId": "section-6:vertical:672:1552",
+          "laneId": "w44:2"
+        }
+      }
+    ],
+    "added": [
+      {
+        "wires": [
+          "w03",
+          "w13"
+        ],
+        "hit": {
+          "x": 3190,
+          "y": 454,
+          "length": 6
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 454
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3190,
+            "y": 454
+          },
+          "to": {
+            "x": 3196,
+            "y": 454
+          },
+          "corridorId": "drive:node-3:entry-left"
+        }
+      }
+    ]
+  },
+  "uncertified": {
+    "removed": [
+      {
+        "wires": [
+          "w23",
+          "w24"
+        ],
+        "point": {
+          "x": 651,
+          "y": 1681
+        },
+        "registeredJunctions": [
+          "junction:section-6:vertical:672:1552:drive:node-18:exit-right|junction:section-6:vertical:672:1552:drive:node-19:entry-left"
+        ]
+      }
+    ],
+    "added": [
+      {
+        "wires": [
+          "w03",
+          "w12"
+        ],
+        "point": {
+          "x": 3127,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w13"
+        ],
+        "point": {
+          "x": 3190,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w20"
+        ],
+        "point": {
+          "x": 3184,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w102"
+        ],
+        "point": {
+          "x": 3115,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w110"
+        ],
+        "point": {
+          "x": 3091,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w111"
+        ],
+        "point": {
+          "x": 3109,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w116"
+        ],
+        "point": {
+          "x": 3097,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w03",
+          "w119"
+        ],
+        "point": {
+          "x": 3103,
+          "y": 454
+        },
+        "registeredJunctions": [
+          "junction:section-2:horizontal:248:2788:section-2:vertical:3124:248|junction:section-2:vertical:3124:248:drive:node-2:exit-right|junction:section-2:vertical:3124:248:drive:node-3:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w07",
+          "w23"
+        ],
+        "point": {
+          "x": 657,
+          "y": 1678
+        },
+        "registeredJunctions": [
+          "junction:section-6:vertical:672:1552:drive:node-18:exit-right|junction:section-6:vertical:672:1552:drive:node-19:entry-left"
+        ]
+      },
+      {
+        "wires": [
+          "w23",
+          "w44"
+        ],
+        "point": {
+          "x": 675,
+          "y": 1678
+        },
+        "registeredJunctions": [
+          "junction:section-6:vertical:672:1552:drive:node-18:exit-right|junction:section-6:vertical:672:1552:drive:node-19:entry-left"
+        ]
+      }
+    ]
+  },
+  "boundariesUnchanged": true,
+  "gateOmissionsUnchanged": true,
+  "fourO3Unchanged": true
+}

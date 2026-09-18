@@ -1,0 +1,3 @@
+MEASURE routing=2088; maxLawLeg=31; compile=104617; stages={"wire-registry":1821,"lane-allocation":9335,"network":23453,"lane-projection":70008}; roadPairDiscovery=0
+MEASURE 40/80 nodes, 75/150 wires: total ops=119906/242718; growth=2.024235651260154
+PASS max law leg <=60; per-wire ceiling; clone total growth <=2.5; instrumented byte identity; every stage once

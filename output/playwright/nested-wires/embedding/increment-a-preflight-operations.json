@@ -1,0 +1,260 @@
+{
+  "definition": "Same retained AST meter: numeric +, subtraction, comparisons, Math.abs, min/max n-1; excludes multiply/divide, strings, native iteration/map/JSON internals. Separately measured read-only operation, including one authoritative reservation/routing/allocation replay.",
+  "scenes": {
+    "default": {
+      "counts": {
+        "T": 93,
+        "C": 175,
+        "G": 9,
+        "V": 110,
+        "E": 651
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 6858,
+          "comparisons": 2898,
+          "total": 9756
+        },
+        "structure": {
+          "arithmetic": 599,
+          "comparisons": 672,
+          "total": 1271
+        },
+        "paths": {
+          "arithmetic": 1596,
+          "comparisons": 504,
+          "total": 2100
+        },
+        "mouths": {
+          "arithmetic": 556,
+          "comparisons": 723,
+          "total": 1279
+        },
+        "admission": {
+          "arithmetic": 2326,
+          "comparisons": 1413,
+          "total": 3739
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 112,
+          "total": 112
+        }
+      },
+      "total": 18257,
+      "support": 8501,
+      "reservationReplay": 9756,
+      "pathsPerTravel": 22.580645161290324,
+      "allSupportPerTravel": 91.40860215053763,
+      "travelOnlyEstimate": [
+        1488,
+        5952
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "hub": {
+      "counts": {
+        "T": 146,
+        "C": 186,
+        "G": 12,
+        "V": 115,
+        "E": 841
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 8268,
+          "comparisons": 3926,
+          "total": 12194
+        },
+        "structure": {
+          "arithmetic": 632,
+          "comparisons": 709,
+          "total": 1341
+        },
+        "paths": {
+          "arithmetic": 2549,
+          "comparisons": 817,
+          "total": 3366
+        },
+        "mouths": {
+          "arithmetic": 692,
+          "comparisons": 914,
+          "total": 1606
+        },
+        "admission": {
+          "arithmetic": 2908,
+          "comparisons": 1798,
+          "total": 4706
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 116,
+          "total": 116
+        }
+      },
+      "total": 23329,
+      "support": 11135,
+      "reservationReplay": 12194,
+      "pathsPerTravel": 23.054794520547944,
+      "allSupportPerTravel": 76.26712328767124,
+      "travelOnlyEstimate": [
+        2336,
+        9344
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "templates": {
+      "counts": {
+        "T": 233,
+        "C": 204,
+        "G": 20,
+        "V": 157,
+        "E": 1235
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 12174,
+          "comparisons": 6656,
+          "total": 18830
+        },
+        "structure": {
+          "arithmetic": 775,
+          "comparisons": 869,
+          "total": 1644
+        },
+        "paths": {
+          "arithmetic": 3942,
+          "comparisons": 1386,
+          "total": 5328
+        },
+        "mouths": {
+          "arithmetic": 867,
+          "comparisons": 1208,
+          "total": 2075
+        },
+        "admission": {
+          "arithmetic": 4148,
+          "comparisons": 2628,
+          "total": 6776
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 188,
+          "total": 188
+        }
+      },
+      "total": 34841,
+      "support": 16011,
+      "reservationReplay": 18830,
+      "pathsPerTravel": 22.86695278969957,
+      "allSupportPerTravel": 68.71673819742489,
+      "travelOnlyEstimate": [
+        3728,
+        14912
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "scale": {
+      "counts": {
+        "T": 333,
+        "C": 380,
+        "G": 31,
+        "V": 259,
+        "E": 1859
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 17492,
+          "comparisons": 9117,
+          "total": 26609
+        },
+        "structure": {
+          "arithmetic": 1367,
+          "comparisons": 1540,
+          "total": 2907
+        },
+        "paths": {
+          "arithmetic": 5870,
+          "comparisons": 2024,
+          "total": 7894
+        },
+        "mouths": {
+          "arithmetic": 1455,
+          "comparisons": 1865,
+          "total": 3320
+        },
+        "admission": {
+          "arithmetic": 6482,
+          "comparisons": 3978,
+          "total": 10460
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 296,
+          "total": 296
+        }
+      },
+      "total": 51486,
+      "support": 24877,
+      "reservationReplay": 26609,
+      "pathsPerTravel": 23.705705705705707,
+      "allSupportPerTravel": 74.70570570570571,
+      "travelOnlyEstimate": [
+        5328,
+        21312
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "authoring": {
+      "counts": {
+        "T": 918,
+        "C": 455,
+        "G": 34,
+        "V": 310,
+        "E": 3704
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 46556,
+          "comparisons": 27118,
+          "total": 73674
+        },
+        "structure": {
+          "arithmetic": 1633,
+          "comparisons": 1835,
+          "total": 3468
+        },
+        "paths": {
+          "arithmetic": 17353,
+          "comparisons": 7085,
+          "total": 24438
+        },
+        "mouths": {
+          "arithmetic": 2266,
+          "comparisons": 3384,
+          "total": 5650
+        },
+        "admission": {
+          "arithmetic": 11680,
+          "comparisons": 7719,
+          "total": 19399
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 356,
+          "total": 356
+        }
+      },
+      "total": 126985,
+      "support": 53311,
+      "reservationReplay": 73674,
+      "pathsPerTravel": 26.62091503267974,
+      "allSupportPerTravel": 58.07298474945534,
+      "travelOnlyEstimate": [
+        14688,
+        58752
+      ],
+      "instrumentedByteIdentical": true
+    }
+  }
+}

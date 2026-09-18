@@ -1,0 +1,329 @@
+{
+  "scope": "Constraint admission only; no legality claim",
+  "scenes": {
+    "default": {
+      "status": "admitted-with-reservation-evidence",
+      "counts": {
+        "T": 93,
+        "C": 175,
+        "G": 9,
+        "V": 110,
+        "E": 651
+      },
+      "ledgerSha256": "7f420a8de1837bf8fc63d3be4cc133ab8c1d189f4c4e407e94621ada96a9bc22",
+      "sceneSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+      "deterministic": true,
+      "inputUnchanged": true,
+      "completeGraphOrdered": true,
+      "constraintsByKind": {
+        "structure": 144,
+        "envelope": 112,
+        "travel": 235,
+        "body-fan": 88,
+        "gate-tangent": 54,
+        "gate-normal": 18
+      },
+      "deficits": 0,
+      "minimumNonstructuralSlack": 40.5,
+      "adjustments": 0,
+      "unsupportedAdjustments": [],
+      "envelopeSpills": []
+    },
+    "hub": {
+      "status": "admitted-with-reservation-evidence",
+      "counts": {
+        "T": 146,
+        "C": 186,
+        "G": 12,
+        "V": 115,
+        "E": 841
+      },
+      "ledgerSha256": "a0956f5f30cd8a310f74d1bd17df0573bf4833c6e676cd52b40a37c6527ee20d",
+      "sceneSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+      "deterministic": true,
+      "inputUnchanged": true,
+      "completeGraphOrdered": true,
+      "constraintsByKind": {
+        "structure": 152,
+        "envelope": 116,
+        "travel": 381,
+        "body-fan": 96,
+        "gate-tangent": 72,
+        "gate-normal": 24
+      },
+      "deficits": 0,
+      "minimumNonstructuralSlack": 16.5,
+      "adjustments": 1,
+      "unsupportedAdjustments": [],
+      "envelopeSpills": []
+    },
+    "templates": {
+      "status": "admitted-with-reservation-evidence",
+      "counts": {
+        "T": 233,
+        "C": 204,
+        "G": 20,
+        "V": 157,
+        "E": 1235
+      },
+      "ledgerSha256": "8cc3f027cec88f811a75f1a48710f8ae271039889fb401d51b6de8587ce0fc9c",
+      "sceneSha256": "f8c7e0cc1902db78521e959bc5b49fce8f274ee2a520003276ffedf84a2844e6",
+      "deterministic": true,
+      "inputUnchanged": true,
+      "completeGraphOrdered": true,
+      "constraintsByKind": {
+        "structure": 190,
+        "envelope": 188,
+        "travel": 633,
+        "body-fan": 64,
+        "gate-tangent": 120,
+        "gate-normal": 40
+      },
+      "deficits": 24,
+      "minimumNonstructuralSlack": -11.5,
+      "adjustments": 5,
+      "unsupportedAdjustments": [],
+      "envelopeSpills": [
+        "section-1:horizontal:808:200",
+        "section-1:vertical:200:248",
+        "section-1:vertical:3096:248",
+        "section-1:vertical:536:248",
+        "section-1:vertical:872:248",
+        "section-1:vertical:1208:248",
+        "section-1:vertical:2152:248",
+        "section-4:horizontal:1688:264",
+        "section-4:vertical:264:1128",
+        "section-4:vertical:3032:1128",
+        "section-4:vertical:872:1128",
+        "section-4:vertical:1480:1128",
+        "section-4:vertical:2088:1128"
+      ]
+    },
+    "scale": {
+      "status": "admitted-with-reservation-evidence",
+      "counts": {
+        "T": 333,
+        "C": 380,
+        "G": 31,
+        "V": 259,
+        "E": 1859
+      },
+      "ledgerSha256": "ad0744adc9404fa18be9c61b89f7a7b30e8fc28f05e6d9903695fc83a67112f0",
+      "sceneSha256": "d31fe5da0e937b06d328ada0f8a722f39a42784f7de3a9d8107ca672398de215",
+      "deterministic": true,
+      "inputUnchanged": true,
+      "completeGraphOrdered": true,
+      "constraintsByKind": {
+        "structure": 328,
+        "envelope": 296,
+        "travel": 827,
+        "body-fan": 160,
+        "gate-tangent": 186,
+        "gate-normal": 62
+      },
+      "deficits": 16,
+      "minimumNonstructuralSlack": -49.5,
+      "adjustments": 8,
+      "unsupportedAdjustments": [],
+      "envelopeSpills": [
+        "section-1:horizontal:808:640",
+        "section-1:vertical:640:248",
+        "section-1:vertical:3536:248",
+        "section-1:vertical:976:248",
+        "section-1:vertical:1312:248",
+        "section-1:vertical:1648:248",
+        "section-1:vertical:2592:248"
+      ]
+    },
+    "authoring": {
+      "status": "admitted-with-reservation-evidence",
+      "counts": {
+        "T": 918,
+        "C": 455,
+        "G": 34,
+        "V": 310,
+        "E": 3704
+      },
+      "ledgerSha256": "57242afe12eb4e0ace4af11ca115145068b7e3dd0ff61beed6d3ce84aa5edab1",
+      "sceneSha256": "58bdd5a97a1e235973743680999abc4718ed5c975d5a9ee536b1e98175dcd9e0",
+      "deterministic": true,
+      "inputUnchanged": true,
+      "completeGraphOrdered": true,
+      "constraintsByKind": {
+        "structure": 398,
+        "envelope": 356,
+        "travel": 2490,
+        "body-fan": 188,
+        "gate-tangent": 204,
+        "gate-normal": 68
+      },
+      "deficits": 162,
+      "minimumNonstructuralSlack": -177.5,
+      "adjustments": 72,
+      "unsupportedAdjustments": [
+        {
+          "wireId": "w03",
+          "first": 0,
+          "nominalAnchor": 3001,
+          "requiredAnchor": 3089.5,
+          "deficit": 88.5,
+          "resolutionTemplate": "unsupported-retained-adjustment",
+          "byteIdentityConsequence": "cannot-admit-current-adjustment"
+        },
+        {
+          "wireId": "w22",
+          "first": 10,
+          "nominalAnchor": 2229,
+          "requiredAnchor": 2346.5,
+          "deficit": 117.5,
+          "resolutionTemplate": "unsupported-retained-adjustment",
+          "byteIdentityConsequence": "cannot-admit-current-adjustment"
+        },
+        {
+          "wireId": "w23",
+          "first": 0,
+          "nominalAnchor": 603,
+          "requiredAnchor": 625.5,
+          "deficit": 22.5,
+          "resolutionTemplate": "unsupported-retained-adjustment",
+          "byteIdentityConsequence": "cannot-admit-current-adjustment"
+        },
+        {
+          "wireId": "w41",
+          "first": 13,
+          "nominalAnchor": 1759,
+          "requiredAnchor": 1910.5,
+          "deficit": 151.5,
+          "resolutionTemplate": "unsupported-retained-adjustment",
+          "byteIdentityConsequence": "cannot-admit-current-adjustment"
+        },
+        {
+          "wireId": "w73",
+          "first": 14,
+          "nominalAnchor": 1759,
+          "requiredAnchor": 1802.5,
+          "deficit": 43.5,
+          "resolutionTemplate": "unsupported-retained-adjustment",
+          "byteIdentityConsequence": "cannot-admit-current-adjustment"
+        },
+        {
+          "wireId": "w85",
+          "first": 11,
+          "nominalAnchor": 1759,
+          "requiredAnchor": 1814.5,
+          "deficit": 55.5,
+          "resolutionTemplate": "unsupported-retained-adjustment",
+          "byteIdentityConsequence": "cannot-admit-current-adjustment"
+        }
+      ],
+      "envelopeSpills": [
+        "section-2:horizontal:248:2788",
+        "section-2:horizontal:1048:2788",
+        "section-2:vertical:2788:248",
+        "section-2:vertical:6356:248",
+        "section-2:vertical:3124:248",
+        "section-2:vertical:3460:248",
+        "section-2:vertical:3796:248",
+        "section-2:vertical:5076:248",
+        "section-5:horizontal:1368:200",
+        "section-5:horizontal:2168:200",
+        "section-5:vertical:200:1368",
+        "section-5:vertical:7016:1368",
+        "section-5:vertical:1480:1368",
+        "section-5:vertical:1752:1368",
+        "section-5:vertical:2696:1368",
+        "section-5:vertical:3640:1368",
+        "section-5:vertical:3912:1368",
+        "section-5:vertical:4184:1368",
+        "section-5:vertical:5128:1368",
+        "section-5:vertical:6072:1368",
+        "section-6:horizontal:1552:336",
+        "section-6:horizontal:2032:336",
+        "section-6:vertical:336:1552",
+        "section-6:vertical:1344:1552",
+        "section-6:horizontal:1792:336",
+        "section-6:vertical:672:1552",
+        "section-6:vertical:1008:1552",
+        "section-14:horizontal:1552:6208",
+        "section-14:horizontal:2032:6208",
+        "section-14:vertical:6208:1552",
+        "section-14:vertical:6880:1552",
+        "section-14:horizontal:1792:6208",
+        "section-14:vertical:6544:1552"
+      ]
+    }
+  },
+  "negativeControls": {
+    "missingContact": {
+      "ok": false,
+      "error": {
+        "code": "infeasible-embedding",
+        "reason": "missing-contact",
+        "provenance": [
+          "world:horizontal:64:64"
+        ],
+        "required": [],
+        "available": []
+      }
+    },
+    "mismatchedContact": {
+      "ok": false,
+      "error": {
+        "code": "infeasible-embedding",
+        "reason": "mismatched-contact",
+        "provenance": [
+          "world:horizontal:64:64"
+        ],
+        "required": [
+          40,
+          52,
+          2596,
+          24
+        ],
+        "available": [
+          41,
+          52,
+          2596,
+          24
+        ]
+      }
+    },
+    "pins": {
+      "ok": false,
+      "error": {
+        "code": "infeasible-embedding",
+        "reason": "insufficient-terminal-pins",
+        "provenance": [
+          "node-1",
+          "node-1:exit-right"
+        ],
+        "required": [
+          18
+        ],
+        "available": [
+          1
+        ]
+      }
+    },
+    "emptyInterval": {
+      "ok": false,
+      "error": {
+        "code": "infeasible-embedding",
+        "reason": "empty-interval",
+        "provenance": [
+          "section-1:entry-top",
+          "world:horizontal:64:64",
+          "section-1:horizontal:248:200"
+        ],
+        "required": [
+          188,
+          125
+        ],
+        "available": [
+          136,
+          137
+        ]
+      }
+    }
+  }
+}

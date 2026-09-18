@@ -1,0 +1,13 @@
+{
+  "catalogBytesEqual": true,
+  "sha256": "55eeba2dac56cd120b8cec744bc4ceb96a3f2a0f0bbc68638e73464c6a167ca0",
+  "counts": {
+    "bodies": 40,
+    "boundaries": 87,
+    "uncertified": 1273,
+    "overlaps": 18,
+    "reversed": 28,
+    "gateOmissions": 96
+  },
+  "verifierSource": "1ff0be8"
+}

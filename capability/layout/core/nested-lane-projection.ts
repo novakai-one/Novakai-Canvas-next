@@ -400,3 +400,68 @@ export function projectNestedWires(
     projectNestedWire(wire, byWire.get(wire.id) ?? [], roads, turns, byRoad),
   );
 }
+
+/** Read the same template algebra without emitting or changing a scene. Recovery is caller reconstruction. */
+export function readNestedProjectionSupports(
+  wires: readonly NestedWire[],
+  byWire: ReadonlyMap<string, readonly AssignedTravel[]>,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+) {
+  const turns = new Set(
+    [...byWire.values()].flatMap((ts) => ts.flatMap((t, i) => leftKeys(t, ts[i + 1]))),
+  );
+  return wires.flatMap((wire) => supportFor(wire, byWire.get(wire.id) ?? [], roads, turns));
+}
+
+interface RetainedJoin {
+  readonly incoming: AssignedTravel;
+  readonly outgoing: AssignedTravel;
+  readonly previous: Connection;
+  readonly nominal: Connection;
+  readonly adjusted: Connection;
+}
+
+function supportFor(
+  wire: NestedWire,
+  travels: readonly AssignedTravel[],
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
+) {
+  const first = travels[0],
+    last = travels.at(-1);
+  const source = wire.segments[0]?.from,
+    target = wire.segments.at(-1)?.to;
+  if ([first, last, source, target].some((value) => value === undefined)) return [];
+  return supportedEnds(wire, travels, roads, turns, first, last, source, target);
+}
+
+function supportedEnds(
+  wire: NestedWire,
+  travels: readonly AssignedTravel[],
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  turns: ReadonlySet<string>,
+  first: AssignedTravel | undefined,
+  last: AssignedTravel | undefined,
+  source: PrototypePoint | undefined,
+  target: PrototypePoint | undefined,
+) {
+  if (!first || !last || !source || !target) return [];
+  const start = fan(first, source, 1),
+    end = fan(last, target, -1);
+  const initial = { from: start.end, to: start.end, roadId: first.road.id };
+  const joins: RetainedJoin[] = [];
+  travels.forEach((incoming, ordinal) => {
+    const outgoing = travels[ordinal + 1];
+    if (outgoing === undefined) return;
+    const previous = joins.at(-1)?.adjusted ?? initial;
+    const nominal = connect(incoming, outgoing, wire, roads, turns);
+    joins.push({
+      incoming,
+      outgoing,
+      previous,
+      nominal,
+      adjusted: forwardConnection(nominal, incoming, previous),
+    });
+  });
+  return [{ wire, travels, start, end, joins }];
+}

@@ -12,6 +12,7 @@ import type {
 } from '../../contract/react-types.js';
 import type { Result } from '../../contract/errors.js';
 import styles from './CanvasSurface.module.css';
+import themeStyles from './react-flow-theme.module.css';
 /** Report a rejected view from an effect, never as a render-time side effect; host retains its last committed data. */
 function reportView(result: Result<ViewSnapshot>, onError: SurfaceProps['onError']): void {
   if (!result.ok) onError(result.error);
@@ -53,7 +54,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     return (
       <div
         ref={ref}
-        className={styles.surface}
+        className={`${styles.surface} ${themeStyles.theme}`}
         role="region"
         aria-label={props.label}
         tabIndex={0}

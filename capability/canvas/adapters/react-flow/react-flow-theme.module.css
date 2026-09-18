@@ -1,5 +1,5 @@
 @layer components {
-  :global(.react-flow) {
+  .theme {
     --xy-background-color: var(--nv-canvas-surface);
     --xy-background-pattern-dots-color: var(--nv-canvas-grid);
     --xy-node-color: var(--nv-text-primary);
@@ -7,24 +7,24 @@
     --xy-minimap-background-color: var(--nv-surface-raised);
     --xy-minimap-mask-background-color: var(--nv-canvas-surface);
   }
-  :global(.react-flow__node.selected) {
+  .theme :global(.react-flow__node.selected) {
     outline: var(--nv-focus-width) solid var(--nv-action-accent);
     outline-offset: var(--nv-focus-offset);
   }
-  :global(.react-flow__minimap) {
+  .theme :global(.react-flow__minimap) {
     border: var(--nv-stroke-base) solid var(--nv-canvas-group-boundary);
     border-radius: var(--nv-radius-panel);
     background: var(--nv-surface-raised);
     box-shadow: var(--nv-elevation-offset-x) var(--nv-elevation-offset-y)
       var(--nv-elevation-blur) var(--nv-shadow-opacity-color);
   }
-  :global(.react-flow__minimap-mask) {
+  .theme :global(.react-flow__minimap-mask) {
     fill: var(--nv-canvas-group-surface);
   }
-  :global(.react-flow__minimap-node) {
+  .theme :global(.react-flow__minimap-node) {
     fill: var(--nv-canvas-node-boundary);
   }
-  :global(.react-flow__attribution) {
+  .theme :global(.react-flow__attribution) {
     background: var(--nv-surface-raised);
     color: var(--nv-text-secondary);
   }

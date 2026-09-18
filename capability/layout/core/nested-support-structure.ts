@@ -1,7 +1,6 @@
 import type { PrototypeBounds, PrototypeRoad } from '../contract/records/road-prototype.js';
 import type { NestedSupportConstraint } from '../contract/records/nested-support.js';
 import type { SectionPlacement } from './prototype-nested-placement.js';
-import { nestedSpacing } from './prototype-nested-placement.js';
 import { axes } from './prototype-road-geometry.js';
 import {
   anchor,
@@ -263,8 +262,8 @@ function streetEnd(
   const a = axes[road.axis],
     b = road.bounds;
   const position = high
-    ? b[a.along] + b[a.length] - nestedSpacing.road / 2
-    : b[a.along] + nestedSpacing.road / 2;
+    ? b[a.along] + b[a.length] - b[a.breadth] / 2
+    : b[a.along] + b[a.breadth] / 2;
   const end = anchor(
     graph,
     `${required(input.keys, road.id)}:${high ? 'end' : 'start'}`,

@@ -54,7 +54,7 @@ export async function arrange(
     [],
     async (result, source) => {
       requireValue(await dependencies.jobs.checkpoint(request.job));
-      const custom = source.mode === 'modules' ? dependencies.nested : undefined;
+      const custom = moduleEngine(source, dependencies);
       if (custom !== undefined)
         return [
           ...result,
@@ -69,11 +69,9 @@ export async function arrange(
       return [...result, section];
     },
   );
-  const sections =
-    dependencies.nested !== undefined &&
-    request.projection.sections.some((s) => s.mode === 'modules')
-      ? placeAppSections(local, request.projection, request.options)
-      : requireValue(await arrangeSections(local, request.projection, prior, context));
+  const sections = request.projection.sections.some((s) => s.mode === 'modules')
+    ? placeAppSections(local, request.projection, request.options)
+    : requireValue(await arrangeSections(local, request.projection, prior, context));
   const scene: Scene = {
     collectionId: request.projection.collectionId,
     revision: request.projection.revision,
@@ -133,7 +131,7 @@ export async function reroute(
     async (result, source) => {
       const fixed = fixedSection(source, request);
       const nodes = inspectNodes(source, fixed.nodes, request.options);
-      const custom = source.mode === 'modules' ? dependencies.nested : undefined;
+      const custom = moduleEngine(source, dependencies);
       const local =
         custom === undefined
           ? await completeSection(source, nodes, request.measurements, {
@@ -176,4 +174,12 @@ function fixedSection(source: VisualSection, request: CheckedRouteRequest): Sect
   const fixed = request.fixed.sections.find((item) => item.id === source.id);
   if (!fixed) return reject('invalid-input', source.id, 'Fixed section is missing');
   return fixed;
+}
+
+/** Module routing has one implementation; missing composition is an error, never native fallback. */
+function moduleEngine(source: VisualSection, dependencies: GeometryDependencies) {
+  if (source.mode !== 'modules') return undefined;
+  if (dependencies.nested === undefined)
+    return reject('invalid-input', source.id, 'Module sections require the custom roads engine');
+  return dependencies.nested;
 }

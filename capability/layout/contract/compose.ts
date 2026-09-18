@@ -11,7 +11,6 @@ import type { JobHost } from '../adapters/scheduling.js';
 import { createLayout } from './api.js';
 import { failure } from './errors.js';
 export interface LayoutOwners {
-  readonly engine?: 'nested' | 'legacy';
   readonly measure?: PrototypeLayoutMeasure;
   readonly projection: ProjectionReader;
   readonly jobs: JobHost;
@@ -49,21 +48,17 @@ export async function composeLayout(owners: LayoutOwners): Promise<Result<Layout
           solve: (problem) => measure('native-solver', () => solver.solve(problem)),
         },
         routing: nativeRouting,
-        ...(owners.engine === 'legacy'
-          ? {}
-          : {
-              nested: {
-                version: nestedEngineVersions[0] ?? 'nested-roads-2',
-                section: (source, metrics, options, versions, fixedNodes) =>
-                  toAppSection(
-                    toEngineScene(source, metrics, owners.measure, fixedNodes),
-                    source,
-                    metrics,
-                    options,
-                    versions,
-                  ),
-              },
-            }),
+        nested: {
+          version: nestedEngineVersions[0]!,
+          section: (source, metrics, options, versions, fixedNodes) =>
+            toAppSection(
+              toEngineScene(source, metrics, owners.measure, fixedNodes),
+              source,
+              metrics,
+              options,
+              versions,
+            ),
+        },
       }),
     };
   } catch {

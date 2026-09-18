@@ -8,7 +8,6 @@ import type { PrototypeRoad, PrototypeLayoutMeasure } from '../contract/records/
 import {
   positionNestedSections,
   sizeNestedSections,
-  nestedSpacing,
   nestedLaneWidth,
 } from './prototype-nested-placement.js';
 import { nestedMainRoads, nestedDriveways, nestedCrossings } from './prototype-nested-roads.js';
@@ -23,21 +22,20 @@ const measure: PrototypeLayoutMeasure = (_stage, run) => run();
 
 /** Replay the authoritative reservation laws once; never route on demand-expanded geometry. */
 export function retainSupportInput(request: NestedSupportRequest) {
-  const placements = positionNestedSections(
-    sizeNestedSections(request.spec.sections),
-    1,
-    request.sectionInPortsLeft,
-  );
+  const placements = positionNestedSections(sizeNestedSections(request.spec.sections));
+  const pitch = placements[0]?.size.measured.lanePitch;
+  if (pitch === undefined) throw new Error('Measured lane spacing is required');
+  const pitches = { horizontal: pitch, vertical: pitch };
   const origins = new Map<string, readonly string[]>();
-  const main = nestedMainRoads(placements, (road, keys) => origins.set(road.id, keys));
-  const drives = placements.flatMap((p) => nestedDriveways(p, main));
+  const main = nestedMainRoads(placements, pitches, (road, keys) => origins.set(road.id, keys));
+  const drives = placements.flatMap((p) => nestedDriveways(p, main, pitches));
   drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
   const roads = [...main, ...drives];
   const contacts = constructedContacts(
     roadRegistry(roads),
     [...frameEnds(main), ...nestedCrossings(placements)],
     drives,
-    nestedSpacing.road / 2,
+    pitches,
   );
   const reserved = { ...request.scene, roads };
   const registry = wireRegistry(reserved, contacts, measure);

@@ -6,7 +6,7 @@ import type {
 import type { RoadContact } from './prototype-road-registry.js';
 import { terminalDepth, roadLanePitch } from './nested-terminal-pins.js';
 import { axes } from './prototype-road-geometry.js';
-import { nestedLaneWidth, nestedSpacing } from './prototype-nested-placement.js';
+import { nestedLaneWidth } from './prototype-nested-placement.js';
 
 /** Preserve the mouth and the full terminal fan even when a street consumes its approach. */
 function terminalExtent(road: PrototypeRoad, port: PrototypePortLocation): PrototypeRoad {
@@ -124,8 +124,8 @@ function capped(
     t = template.bounds,
     n = neighbor.bounds;
   const center = n[a.along] + n[a.length] / 2;
-  const low = t[a.along] + nestedSpacing.road / 2;
-  const high = t[a.along] + t[a.length] - nestedSpacing.road / 2;
+  const low = t[a.along] + t[a.breadth] / 2;
+  const high = t[a.along] + t[a.length] - t[a.breadth] / 2;
   const start = center === low ? n[a.along] : b[a.along];
   const end = center === high ? n[a.along] + n[a.length] : b[a.along] + b[a.length];
   return { ...road, bounds: { ...b, [a.along]: start, [a.length]: end - start } };

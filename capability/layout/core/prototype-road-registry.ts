@@ -65,11 +65,12 @@ function crossing(registry: RoadRegistry, p: PrototypePoint): readonly RoadConta
 function mouths(
   registry: RoadRegistry,
   drive: PrototypeRoad,
-  halfWidth: number,
+  halfWidths: number | Readonly<Record<PrototypeRoad['axis'], number>>,
 ): readonly RoadContact[] {
   const e = registry.entries.get(drive.id);
   if (e === undefined) return [];
   const perpendicular = drive.axis === 'horizontal' ? 'vertical' : 'horizontal';
+  const halfWidth = typeof halfWidths === 'number' ? halfWidths : halfWidths[perpendicular];
   const points = [e.low - halfWidth, e.high + halfWidth].map((value) =>
     drive.axis === 'horizontal' ? { x: value, y: e.at } : { x: e.at, y: value },
   );
@@ -82,9 +83,9 @@ export function constructedContacts(
   registry: RoadRegistry,
   points: readonly PrototypePoint[],
   drives: readonly PrototypeRoad[],
-  halfWidth: number,
+  halfWidths: number | Readonly<Record<PrototypeRoad['axis'], number>>,
 ): readonly RoadContact[] {
   const unique = new Map(points.map((p) => [`${p.x},${p.y}`, p]));
   const contacts = [...unique.values()].flatMap((p) => crossing(registry, p));
-  return [...contacts, ...drives.flatMap((d) => mouths(registry, d, halfWidth))];
+  return [...contacts, ...drives.flatMap((d) => mouths(registry, d, halfWidths))];
 }

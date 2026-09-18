@@ -5,11 +5,11 @@ import type {
   PrototypeRoad,
 } from '../contract/records/road-prototype.js';
 import type { SectionPlacement } from './prototype-nested-placement.js';
-import { nestedSpacing, gridEdges } from './prototype-nested-placement.js';
+import { gridEdges } from './prototype-nested-placement.js';
 import { reject } from './nested-support-graph.js';
 import { axes } from './prototype-road-geometry.js';
 import { readPrototypeNodePorts } from './prototype-road-nodes.js';
-const half = nestedSpacing.road / 2;
+export type RoadPitches = Readonly<Record<PrototypeRoad['axis'], number>>;
 interface StreetSpan {
   readonly owner: string | null;
   readonly axis: PrototypeRoad['axis'];
@@ -76,7 +76,8 @@ function mergeSpan(spans: readonly StreetSpan[], next: StreetSpan): readonly Str
     },
   ];
 }
-function street(s: StreetSpan): PrototypeRoad {
+function street(s: StreetSpan, pitches: RoadPitches): PrototypeRoad {
+  const half = pitches[s.axis];
   const bounds =
     s.axis === 'horizontal'
       ? { x: s.start - half, y: s.at - half, width: s.end - s.start + 2 * half, height: 2 * half }
@@ -93,6 +94,7 @@ function street(s: StreetSpan): PrototypeRoad {
 }
 export function nestedMainRoads(
   placements: readonly SectionPlacement[],
+  pitches: RoadPitches,
   retain?: (road: PrototypeRoad, origins: readonly string[]) => void,
 ): readonly PrototypeRoad[] {
   const spans = [
@@ -111,7 +113,7 @@ export function nestedMainRoads(
       .toSorted((a, b) => a.start - b.start)
       .reduce<readonly StreetSpan[]>(mergeSpan, [])
       .map((span) => {
-        const road = street(span);
+        const road = street(span, pitches);
         retain?.(road, span.origins);
         return road;
       }),
@@ -124,20 +126,26 @@ export function nestedSectionPorts(p: SectionPlacement): readonly PrototypePortL
     ports: p.section.ports ?? [],
   });
 }
-function accessRoad(port: PrototypePortLocation, start: number, end: number): PrototypeRoad {
+function accessRoad(
+  port: PrototypePortLocation,
+  start: number,
+  end: number,
+  pitches: RoadPitches,
+): PrototypeRoad {
   const vertical = ['top', 'bottom'].includes(port.side);
+  const width = 2 * pitches[vertical ? 'vertical' : 'horizontal'];
   const bounds = vertical
     ? {
-        x: port.point.x - nestedSpacing.driveway / 2,
+        x: port.point.x - width / 2,
         y: start,
-        width: nestedSpacing.driveway,
+        width: width,
         height: end - start,
       }
     : {
         x: start,
-        y: port.point.y - nestedSpacing.driveway / 2,
+        y: port.point.y - width / 2,
         width: end - start,
-        height: nestedSpacing.driveway,
+        height: width,
       };
   return {
     id: `drive:${port.portId}`,
@@ -156,7 +164,11 @@ function accessRoad(port: PrototypePortLocation, start: number, end: number): Pr
   };
 }
 /** A moved node connects to the nearest admitted road on its authored side. */
-function nodeDrive(port: PrototypePortLocation, roads: readonly PrototypeRoad[]): PrototypeRoad {
+function nodeDrive(
+  port: PrototypePortLocation,
+  roads: readonly PrototypeRoad[],
+  pitches: RoadPitches,
+): PrototypeRoad {
   const vertical = ['top', 'bottom'].includes(port.side);
   const a = axes[vertical ? 'vertical' : 'horizontal'];
   const sign = ['top', 'left'].includes(port.side) ? -1 : 1;
@@ -177,9 +189,19 @@ function nodeDrive(port: PrototypePortLocation, roads: readonly PrototypeRoad[])
   )[0];
   if (street === undefined) return reject('missing-contact', [port.nodeId, port.portId]);
   const edge = street.bounds[a.along] + (sign < 0 ? street.bounds[a.length] : 0);
-  return accessRoad(port, Math.min(port.point[a.along], edge), Math.max(port.point[a.along], edge));
+  return accessRoad(
+    port,
+    Math.min(port.point[a.along], edge),
+    Math.max(port.point[a.along], edge),
+    pitches,
+  );
 }
-function sectionDrive(port: PrototypePortLocation, p: SectionPlacement): PrototypeRoad {
+function sectionDrive(
+  port: PrototypePortLocation,
+  p: SectionPlacement,
+  pitches: RoadPitches,
+): PrototypeRoad {
+  const half = pitches[['top', 'bottom'].includes(port.side) ? 'horizontal' : 'vertical'];
   const a = p.surrounding,
     b = p.interior;
   const intervals = {
@@ -189,17 +211,18 @@ function sectionDrive(port: PrototypePortLocation, p: SectionPlacement): Prototy
     right: [b.x + b.width + half, a.x + a.width - half],
   };
   const [start = 0, end = 0] = intervals[port.side];
-  return accessRoad(port, start, end);
+  return accessRoad(port, start, end, pitches);
 }
 export function nestedDriveways(
   p: SectionPlacement,
   roads: readonly PrototypeRoad[],
+  pitches: RoadPitches,
 ): readonly PrototypeRoad[] {
   return [
     ...p.nodes.flatMap((node) =>
-      readPrototypeNodePorts(node).map((port) => nodeDrive(port, roads)),
+      readPrototypeNodePorts(node).map((port) => nodeDrive(port, roads, pitches)),
     ),
-    ...nestedSectionPorts(p).map((port) => sectionDrive(port, p)),
+    ...nestedSectionPorts(p).map((port) => sectionDrive(port, p, pitches)),
   ];
 }
 

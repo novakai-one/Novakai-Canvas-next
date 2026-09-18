@@ -7,7 +7,6 @@ import {
 import { roadContactAreas } from './prototype-road-network.js';
 import { SupportRejection } from './nested-support-graph.js';
 import type { NestedSceneSpec } from '../contract/records/nested-scene-spec.js';
-import { defaultNestedSceneSpec } from './nested-scene-spec.js';
 import { wireRegistry } from './nested-wire-registry.js';
 import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
 import { routeNestedWires, resolveNestedRequests } from './nested-wire-routing.js';
@@ -21,7 +20,6 @@ import type {
 import {
   sizeNestedSections,
   positionNestedSections,
-  nestedSpacing,
   nestedLaneWidth,
   nestedLanePitch,
 } from './prototype-nested-placement.js';
@@ -49,17 +47,41 @@ export function createNestedRoadScene(
     | 'annotationWidths'
     | 'annotationEndpoints'
   > & {
-    readonly copies?: 1 | 2;
-    readonly fixedGeometry?: boolean;
-    readonly spec?: NestedSceneSpec;
-  } = {},
+    readonly fixedGeometry: true;
+    readonly spec: NestedSceneSpec;
+    readonly lanePitch: { readonly horizontal: number; readonly vertical: number };
+    readonly annotateTerminals: true;
+    readonly annotationEndpoints: readonly ('source' | 'target')[];
+    readonly annotationPitches: readonly number[];
+    readonly annotationWidths: readonly number[];
+  },
 ): RoadPrototypeScene {
+  if (options.fixedGeometry !== true) throw new Error('Owner geometry must remain fixed');
+  if (options.annotateTerminals !== true) throw new Error('Measured annotations are required');
+  if (
+    ![options.lanePitch.horizontal, options.lanePitch.vertical].every(
+      (pitch) => Number.isFinite(pitch) && pitch > 0,
+    )
+  )
+    throw new Error('Positive measured road spacing is required');
+  if (
+    ![options.annotationEndpoints, options.annotationPitches, options.annotationWidths].every(
+      (values) => values.length === options.spec.requests.length,
+    )
+  )
+    throw new Error('Every wire requires measured annotation ownership and spacing');
+  if (!options.annotationEndpoints.every((side) => side === 'source' || side === 'target'))
+    throw new Error('Every wire requires an annotation endpoint');
+  if (
+    ![...options.annotationPitches, ...options.annotationWidths].every(
+      (value) => Number.isFinite(value) && value > 0,
+    )
+  )
+    throw new Error('Annotation spacing must be finite and positive');
   const measure = options.measure ?? ((_stage, run) => run());
-  const spec = options.spec ?? defaultNestedSceneSpec;
+  const spec = options.spec;
   const capacity = measure('capacity', () => sizeNestedSections(spec.sections));
-  const initial = measure('nodes', () =>
-    positionNestedSections(capacity, options.copies, options.sectionInPortsLeft),
-  );
+  const initial = measure('nodes', () => positionNestedSections(capacity));
   const requests = resolveNestedRequests(
     initial.flatMap((p) => p.nodes),
     spec.requests,
@@ -73,21 +95,20 @@ export function createNestedRoadScene(
   ]);
   const topology = measure('topology', () => {
     const origins = new Map<string, readonly string[]>();
-    const main = nestedMainRoads(placement, (road, keys) => origins.set(road.id, keys)),
-      drives = placement.flatMap((p) => nestedDriveways(p, main));
+    const main = nestedMainRoads(placement, options.lanePitch, (road, keys) =>
+        origins.set(road.id, keys),
+      ),
+      drives = placement.flatMap((p) => nestedDriveways(p, main, options.lanePitch));
     drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
     const roads = [...main, ...drives].map((road) => ({
       ...road,
-      lanePitch:
-        road.access !== null && road.access.nodeId !== road.sectionId
-          ? (options.lanePitch?.terminal ?? options.lanePitch?.[road.axis] ?? nestedLanePitch)
-          : (options.lanePitch?.[road.axis] ?? nestedLanePitch),
+      lanePitch: options.lanePitch[road.axis],
     }));
     const contacts = constructedContacts(
       roadRegistry(roads),
       [...frameEnds(main), ...nestedCrossings(placement)],
       roads.filter((road) => road.kind === 'driveway'),
-      nestedSpacing.road / 2,
+      options.lanePitch,
     );
     return { roads, contacts, origins };
   });
@@ -96,8 +117,8 @@ export function createNestedRoadScene(
     nodes,
     ports,
     roads: topology.roads,
-    roadWidth: nestedLaneWidth(0),
-    drivewayWidth: nestedLaneWidth(0),
+    roadWidth: nestedLaneWidth(0, options.lanePitch.horizontal),
+    drivewayWidth: nestedLaneWidth(0, options.lanePitch.vertical),
     lanes: [],
     junctions: [],
     dividers: [],

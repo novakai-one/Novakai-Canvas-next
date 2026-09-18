@@ -159,7 +159,7 @@ export function toEngineScene(
     spec,
     fixedGeometry: true,
     annotateTerminals: true,
-    annotationEndpoints: source.wires.map((wire) => wire.annotationEndpoint),
+    annotationEndpoints: source.wires.map((wire) => required(wire.annotationEndpoint, wire.id)),
     annotationWidths: source.wires.map(
       (wire) => wire.label.width + required(source.envelope, source.id).annotationGap * 2 + 1,
     ),
@@ -169,7 +169,6 @@ export function toEngineScene(
     lanePitch: {
       horizontal: required(source.envelope, source.id).lanePitch,
       vertical: required(source.envelope, source.id).lanePitch,
-      terminal: required(source.envelope, source.id).terminalPitch,
     },
     ...(measure === undefined ? {} : { measure }),
   });

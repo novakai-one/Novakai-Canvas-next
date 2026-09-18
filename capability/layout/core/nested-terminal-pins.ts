@@ -39,5 +39,8 @@ export function terminalDepth(
 
 /** Each road carries its caller-owned annotation spacing. */
 export function roadLanePitch(road: Pick<PrototypeRoad, 'lanePitch'>): number {
-  return road.lanePitch ?? nestedLanePitch;
+  const pitch = road.lanePitch;
+  if (pitch === undefined || !Number.isFinite(pitch) || pitch <= 0)
+    throw new Error('Roads require measured lane spacing');
+  return pitch;
 }

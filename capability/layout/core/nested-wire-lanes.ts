@@ -192,7 +192,9 @@ export function allocateNestedLanes(
     ),
   );
   const demand = new Map([...byRoad].map(([id, ts]) => [id, ts.length]));
-  const transfers = allocateTransfers(wires, byWire, roads, byRoad, demand);
+  const occupied = new Map<string, AssignedTravel[]>();
+  assigned.forEach((travel) => addTo(occupied, travel.road.id, travel));
+  const transfers = allocateTransfers(wires, byWire, roads, occupied, demand);
   byWire.forEach((travels, id) =>
     byWire.set(
       id,
@@ -238,7 +240,7 @@ function allocateTransfers(
   wires: readonly NestedWire[],
   byWire: ReadonlyMap<string, readonly AssignedTravel[]>,
   roads: ReadonlyMap<string, PrototypeRoad>,
-  through: ReadonlyMap<string, readonly Travel[]>,
+  through: ReadonlyMap<string, readonly AssignedTravel[]>,
   demand: Map<string, number>,
 ): ReadonlyMap<string, TransferChannel> {
   const channels = new Map<string, TransferChannel>();
@@ -256,9 +258,13 @@ function allocateTransfers(
       if (road === undefined) return;
       const direction = Math.sign(next.at - t.at) || t.direction;
       const key = `${road.id}:${direction}`;
-      const first =
-        ranks.get(key) ??
-        (through.get(road.id) ?? []).filter((visit) => visit.direction === direction).length;
+      const outer = Math.max(
+        0,
+        ...(through.get(road.id) ?? [])
+          .filter((visit) => visit.direction === direction)
+          .map((visit) => Math.abs(visit.lane.offset) + visit.pitch / 2),
+      );
+      const first = ranks.get(key) ?? Math.ceil(outer / roadLanePitch(road));
       const count = needsMedianBridge(t, next) ? 2 : 1;
       const a = axes[road.axis],
         pitch = roadLanePitch(road);

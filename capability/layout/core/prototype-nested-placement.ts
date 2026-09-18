@@ -121,21 +121,19 @@ export function sizeNestedSections(specs: readonly SectionSpec[]): readonly Size
   return specs.map(sizeSection);
 }
 function sectionPorts(id: string, bounds: PrototypeBounds) {
-  const current = [
-    { side: 'top' as const, role: 'entry' as const, offset: { x: bounds.width / 2, y: 0 } },
-    { side: 'left' as const, role: 'entry' as const, offset: { x: 0, y: bounds.height / 2 } },
-    {
-      side: 'bottom' as const,
-      role: 'exit' as const,
-      offset: { x: bounds.width / 2, y: bounds.height },
-    },
-    {
-      side: 'right' as const,
-      role: 'exit' as const,
-      offset: { x: bounds.width, y: bounds.height / 2 },
-    },
-  ].map((port) => ({ ...port, id: `${id}:${port.role}-${port.side}` }));
-  return current;
+  const sides = [
+    { side: 'top' as const, offset: { x: bounds.width / 2, y: 0 } },
+    { side: 'left' as const, offset: { x: 0, y: bounds.height / 2 } },
+    { side: 'bottom' as const, offset: { x: bounds.width / 2, y: bounds.height } },
+    { side: 'right' as const, offset: { x: bounds.width, y: bounds.height / 2 } },
+  ];
+  return sides.flatMap((port) =>
+    (['entry', 'exit'] as const).map((role) => ({
+      ...port,
+      role,
+      id: `${id}:${role}-${port.side}`,
+    })),
+  );
 }
 function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   if (size.count === 0) return [];

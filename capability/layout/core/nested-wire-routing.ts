@@ -44,7 +44,7 @@ function boundaries(scene: RoadPrototypeScene, from: string, to: string): readon
 function alignment(source: PrototypePoint, target: PrototypePoint) {
   const dx = target.x - source.x,
     dy = target.y - source.y;
-  return { right: dx, bottom: dy, left: dx, top: dy };
+  return { right: dx, bottom: dy, left: -dx, top: -dy };
 }
 function cross(
   scene: RoadPrototypeScene,
@@ -59,8 +59,16 @@ function cross(
     (p) => p.nodeId === section.id && p.role === (exiting ? 'exit' : 'entry'),
   );
   const scores = alignment(state.terminal.point, target.point);
-  const ordered = ports.toSorted((a, b) => scores[b.side] - scores[a.side]);
+  const normal = exiting ? 1 : -1;
+  const distance = (port: PrototypePortLocation) =>
+    manhattan(state.terminal.point, port.point) + manhattan(port.point, target.point);
+  const ordered = ports.toSorted(
+    (a, b) => distance(a) - distance(b) || normal * (scores[b.side] - scores[a.side]),
+  );
   return firstGate(ordered, registry, state, boundary, owner);
+}
+function manhattan(a: PrototypePoint, b: PrototypePoint): number {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 interface GateChoice {
   readonly port: PrototypePortLocation;
@@ -95,16 +103,9 @@ function firstGate(
   owner: string | null,
 ): State | null {
   const choices = ports.flatMap((port) => gateChoice(port, registry, state, boundary, owner));
-  const ordered = [
-    ...choices.filter((choice) => choice.preference.original),
-    ...choices.filter((choice) => !choice.preference.original),
-  ];
-  let selected: State | null = null;
-  ordered.some((choice) => {
-    selected = gateLeg(registry, state, choice);
-    return selected !== null;
-  });
-  return selected;
+  // Choose from registered contacts before routing; an infeasible chosen leg fails closed.
+  const selected = choices[0];
+  return selected === undefined ? null : gateLeg(registry, state, selected);
 }
 function gateLeg(registry: WireRegistry, state: State, choice: GateChoice): State | null {
   const leg = lawLeg(

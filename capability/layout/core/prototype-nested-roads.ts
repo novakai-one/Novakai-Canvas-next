@@ -236,11 +236,17 @@ function accessDirection(port: PrototypePortLocation): Pick<PrototypeRoad, 'axis
 
 /** Interior grid crossings are emitted with the grid, not discovered by pairing roads. */
 export function nestedCrossings(placements: readonly SectionPlacement[]) {
-  return placements.flatMap((p) =>
-    gridEdges(p.size.rowHeights)
+  return placements.flatMap((p) => [
+    ...gridEdges(p.size.measured.childRowHeights).flatMap((y) =>
+      gridEdges(p.size.measured.childColumnWidths).map((x) => ({
+        x: p.interior.x + p.size.ownWidth + x,
+        y: p.interior.y + y,
+      })),
+    ),
+    ...gridEdges(p.size.rowHeights)
       .slice(1, -1)
       .flatMap((y) =>
         gridEdges(p.size.columnWidths).map((x) => ({ x: p.interior.x + x, y: p.interior.y + y })),
       ),
-  );
+  ]);
 }

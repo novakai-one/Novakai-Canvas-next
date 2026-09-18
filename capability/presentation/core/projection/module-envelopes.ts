@@ -80,12 +80,14 @@ function measure(
     ...labels.map((label) => label.height + annotationGap * 2),
   );
   const traffic = density(members, section.nodes, section.wires);
-  const gap = Math.ceil(
-    Math.max(padding * 4, (traffic.perimeter + 2) * lanePitch * 2 + padding * 2),
-  );
-  const cellGap = Math.ceil(
-    Math.max(padding * 4, (traffic.local + 2) * lanePitch * 2 + padding * 2),
-  );
+  const gap = trafficGap(traffic.perimeter, lanePitch, padding);
+  const cellGap = trafficGap(traffic.local, lanePitch, padding);
+  // Each child reserves its own boundary population. Shared-road feasibility is admitted by Layout.
+  const childCells = children.map((child, index) => {
+    const boundary = density([groups[index]!], section.nodes, section.wires);
+    const clearance = trafficGap(boundary.local, lanePitch, padding);
+    return { width: child.width + clearance, height: child.height + clearance };
+  });
   const intent =
     section.groups.find((group) => group.id === parent?.groupId)?.layout ?? section.layout;
   const columns = Math.max(
@@ -105,19 +107,18 @@ function measure(
   const columnWidths = horizontal.sizes;
   const rowHeights = vertical.sizes;
   const pitch = { x: Math.max(gap, ...columnWidths), y: Math.max(gap, ...rowHeights) };
-  const childRows = Array.from({ length: Math.ceil(children.length / childColumns) }, (_, index) =>
-    children.slice(index * childColumns, (index + 1) * childColumns),
+  const childRows = Array.from(
+    { length: Math.ceil(childCells.length / childColumns) },
+    (_, index) => childCells.slice(index * childColumns, (index + 1) * childColumns),
   );
   const childColumnWidths = Array.from(
     { length: Math.min(children.length, childColumns) },
     (_, column) =>
       Math.max(
-        ...childRows.flatMap((row) => (row[column] === undefined ? [] : [row[column].width + gap])),
+        ...childRows.flatMap((row) => (row[column] === undefined ? [] : [row[column].width])),
       ),
   );
-  const childRowHeights = childRows.map((row) =>
-    Math.max(...row.map((child) => child.height + gap)),
-  );
+  const childRowHeights = childRows.map((row) => Math.max(...row.map((child) => child.height)));
   const childWidth = childColumnWidths.reduce((sum, width) => sum + width, 0);
   const childHeight = childRowHeights.reduce((sum, height) => sum + height, 0);
   const ownWidth = columnWidths.reduce((sum, width) => sum + width, 0);
@@ -161,6 +162,11 @@ function measure(
     columnCenters: horizontal.centers,
     rowCenters: vertical.centers,
   };
+}
+
+/** A style-derived spacing policy, not a promise that every route fits this capacity. */
+function trafficGap(population: number, pitch: number, padding: number): number {
+  return Math.ceil(Math.max(padding * 4, (population + 2) * pitch * 2 + padding * 2));
 }
 
 function descendants(

@@ -1,0 +1,104 @@
+{
+  "status": "STOP",
+  "failedAssertion": "registered joint ownership for corrected connector",
+  "changes": [
+    {
+      "wire": "w41",
+      "segment": 16,
+      "before": {
+        "from": {
+          "x": 6181,
+          "y": 1910.5
+        },
+        "to": {
+          "x": 6182.5,
+          "y": 1910.5
+        },
+        "corridorId": "section-14:horizontal:1792:6208"
+      },
+      "after": {
+        "from": {
+          "x": 6181,
+          "y": 1910.5
+        },
+        "to": {
+          "x": 6182.5,
+          "y": 1910.5
+        },
+        "corridorId": "drive:section-14:entry-left"
+      },
+      "registeredJointOwners": [],
+      "newRoad": {
+        "id": "drive:section-14:entry-left",
+        "sectionId": "section-14",
+        "kind": "driveway",
+        "bounds": {
+          "x": 6144,
+          "y": 1612,
+          "width": 40,
+          "height": 312
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "section-14",
+          "portId": "section-14:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 25
+      }
+    },
+    {
+      "wire": "w41",
+      "segment": 17,
+      "before": {
+        "from": {
+          "x": 6182.5,
+          "y": 1910.5
+        },
+        "to": {
+          "x": 6182.5,
+          "y": 1813
+        },
+        "corridorId": "section-14:horizontal:1792:6208"
+      },
+      "after": {
+        "from": {
+          "x": 6182.5,
+          "y": 1910.5
+        },
+        "to": {
+          "x": 6182.5,
+          "y": 1813
+        },
+        "corridorId": "drive:section-14:entry-left"
+      },
+      "registeredJointOwners": [],
+      "newRoad": {
+        "id": "drive:section-14:entry-left",
+        "sectionId": "section-14",
+        "kind": "driveway",
+        "bounds": {
+          "x": 6144,
+          "y": 1612,
+          "width": 40,
+          "height": 312
+        },
+        "axis": "horizontal",
+        "directions": [
+          "right"
+        ],
+        "access": {
+          "nodeId": "section-14",
+          "portId": "section-14:entry-left",
+          "side": "left",
+          "role": "entry"
+        },
+        "wireLaneCount": 25
+      }
+    }
+  ]
+}

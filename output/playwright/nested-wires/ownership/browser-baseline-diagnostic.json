@@ -1,0 +1,94 @@
+[
+  {
+    "name": "default",
+    "baselineBrowserMatchesPinnedNode": true,
+    "browserGeometryBeforeAfterEqual": true,
+    "browserSceneBeforeAfterEqual": true
+  },
+  {
+    "name": "templates",
+    "baselineBrowserMatchesPinnedNode": true,
+    "browserGeometryBeforeAfterEqual": true,
+    "browserSceneBeforeAfterEqual": true,
+    "exampleBefore": {
+      "from": {
+        "x": 56.5,
+        "y": 1357
+      },
+      "to": {
+        "x": 56.5,
+        "y": 1393
+      },
+      "corridorId": "world:vertical:64:64"
+    },
+    "exampleAfter": {
+      "from": {
+        "x": 56.5,
+        "y": 1357
+      },
+      "to": {
+        "x": 56.5,
+        "y": 1393
+      },
+      "corridorId": "world:vertical:64:64"
+    }
+  },
+  {
+    "name": "scale",
+    "baselineBrowserMatchesPinnedNode": false,
+    "browserGeometryBeforeAfterEqual": true,
+    "browserSceneBeforeAfterEqual": true,
+    "exampleBefore": {
+      "from": {
+        "x": 681,
+        "y": 1120.5
+      },
+      "to": {
+        "x": 669,
+        "y": 1120.5
+      },
+      "corridorId": "section-4:horizontal:1128:200"
+    },
+    "exampleAfter": {
+      "from": {
+        "x": 681,
+        "y": 1120.5
+      },
+      "to": {
+        "x": 669,
+        "y": 1120.5
+      },
+      "corridorId": "section-4:horizontal:1128:200"
+    }
+  },
+  {
+    "name": "authoring",
+    "baselineBrowserMatchesPinnedNode": false,
+    "browserGeometryBeforeAfterEqual": true,
+    "browserSceneBeforeAfterEqual": false,
+    "exampleBefore": {
+      "from": {
+        "x": 3605,
+        "y": 1359
+      },
+      "to": {
+        "x": 855,
+        "y": 1359
+      },
+      "corridorId": "section-5:horizontal:1368:200",
+      "laneId": "w07:13"
+    },
+    "exampleAfter": {
+      "from": {
+        "x": 3605,
+        "y": 1359
+      },
+      "to": {
+        "x": 855,
+        "y": 1359
+      },
+      "corridorId": "section-5:horizontal:1368:200",
+      "laneId": "w07:13"
+    }
+  }
+]

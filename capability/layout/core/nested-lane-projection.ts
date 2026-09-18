@@ -1,7 +1,11 @@
 import type { NestedWire, NestedWireSegment } from '../contract/records/nested-wires.js';
-import type { PrototypePoint, PrototypeRoad } from '../contract/records/road-prototype.js';
+import type {
+  PrototypeJunction,
+  PrototypePoint,
+  PrototypeRoad,
+} from '../contract/records/road-prototype.js';
 import type { AssignedTravel } from './nested-wire-lanes.js';
-import { axes, samePoint } from './prototype-road-geometry.js';
+import { axes, contains, samePoint } from './prototype-road-geometry.js';
 import { nestedLanePitch } from './prototype-nested-placement.js';
 import { terminalPin } from './nested-terminal-pins.js';
 
@@ -10,6 +14,50 @@ interface Connection {
   readonly to: PrototypePoint;
   readonly roadId: string;
   readonly via?: readonly PrototypePoint[];
+}
+type ConnectorLine = (
+  from: PrototypePoint,
+  to: PrototypePoint,
+  preferredOwner: string,
+) => readonly NestedWireSegment[];
+
+type JunctionsByRoad = ReadonlyMap<string, readonly PrototypeJunction[]>;
+
+/** Junction membership admits adjacent owners; containment only checks admitted candidates.
+ * Streets take precedence. Missing candidates preserve the original inspection witness.
+ */
+function connectorLine(
+  from: PrototypePoint,
+  to: PrototypePoint,
+  preferredOwner: string,
+  adjacent: readonly string[],
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  junctions: JunctionsByRoad,
+): readonly NestedWireSegment[] {
+  const registered = (junctions.get(preferredOwner) ?? [])
+    .filter((junction) => [from, to].every((p) => contains(junction.bounds, p)))
+    .flatMap((junction) => junction.roadIds);
+  const candidates = registered.filter((id) => [preferredOwner, ...adjacent].includes(id));
+  const owners = [preferredOwner, ...candidates].filter(
+    (id) => candidates.includes(id) && containsConnector(roads.get(id), from, to),
+  );
+  const owner = owners.find((id) => roads.get(id)?.kind === 'street') ?? owners[0];
+  return line(from, to, owner ?? preferredOwner);
+}
+function junctionIndex(junctions: readonly PrototypeJunction[]): JunctionsByRoad {
+  const byRoad = new Map<string, readonly PrototypeJunction[]>();
+  junctions.forEach((junction) =>
+    junction.roadIds.forEach((id) => byRoad.set(id, [...(byRoad.get(id) ?? []), junction])),
+  );
+  return byRoad;
+}
+function containsConnector(
+  road: PrototypeRoad | undefined,
+  from: PrototypePoint,
+  to: PrototypePoint,
+): boolean {
+  if (road === undefined) return false;
+  return [from, to].every((p) => contains(road.bounds, p));
 }
 function line(
   from: PrototypePoint,
@@ -196,10 +244,15 @@ function owned(
   to: PrototypePoint,
   before: string,
   after: string,
+  connector: ConnectorLine,
 ): readonly NestedWireSegment[] {
   const p = clipped(from, road),
     q = clipped(to, road);
-  return [...line(from, p, before), ...line(p, q, road.id, t.lane.id), ...line(q, to, after)];
+  return [
+    ...connector(from, p, before),
+    ...line(p, q, road.id, t.lane.id),
+    ...connector(q, to, after),
+  ];
 }
 function piece(
   t: AssignedTravel,
@@ -208,6 +261,7 @@ function piece(
   travels: readonly AssignedTravel[],
   ends: readonly PrototypePoint[],
   roads: ReadonlyMap<string, PrototypeRoad>,
+  junctions: JunctionsByRoad,
 ): readonly NestedWireSegment[] {
   const previous = joins[index - 1],
     next = joins[index];
@@ -217,9 +271,12 @@ function piece(
   if (road === undefined || start === undefined || end === undefined) return [];
   const before = previous?.roadId ?? t.road.id;
   const after = nextOwner(t, travels[index + 1], next);
+  const adjacent = travels.slice(Math.max(0, index - 1), index + 2).map((travel) => travel.road.id);
+  const connector: ConnectorLine = (from, to, owner) =>
+    connectorLine(from, to, owner, adjacent, roads, junctions);
   return [
-    ...owned(t, road, start, end, beforeOwner(t, travels[index - 1], before), after),
-    ...connectionLine(next),
+    ...owned(t, road, start, end, beforeOwner(t, travels[index - 1], before), after, connector),
+    ...connectionLine(next, connector),
   ];
 }
 function beforeOwner(
@@ -238,10 +295,13 @@ function nextOwner(
   if (next?.road.axis !== t.road.axis) return next?.road.id ?? t.road.id;
   return connection?.roadId ?? t.road.id;
 }
-function connectionLine(c: Connection | undefined): readonly NestedWireSegment[] {
+function connectionLine(
+  c: Connection | undefined,
+  connector: ConnectorLine,
+): readonly NestedWireSegment[] {
   if (c === undefined) return [];
   const points = [c.from, ...(c.via ?? []), c.to];
-  return points.slice(1).flatMap((p, i) => line(points[i] ?? p, p, c.roadId));
+  return points.slice(1).flatMap((p, i) => connector(points[i] ?? p, p, c.roadId));
 }
 function joinsFor(
   travels: readonly AssignedTravel[],
@@ -289,6 +349,7 @@ function projectNestedWire(
   travels: readonly AssignedTravel[],
   roads: ReadonlyMap<string, PrototypeRoad>,
   turns: ReadonlySet<string>,
+  junctions: JunctionsByRoad,
 ): NestedWire {
   const first = travels[0],
     last = travels.at(-1),
@@ -300,7 +361,7 @@ function projectNestedWire(
     end = fan(last, target, -1);
   const joins = joinsFor(travels, wire, roads, turns, start.end);
   const middle = travels.flatMap((t, i) =>
-    piece(t, i, joins, travels, [start.end, end.end], roads),
+    piece(t, i, joins, travels, [start.end, end.end], roads, junctions),
   );
   return {
     ...wire,
@@ -329,9 +390,13 @@ export function projectNestedWires(
   wires: readonly NestedWire[],
   byWire: ReadonlyMap<string, readonly AssignedTravel[]>,
   roads: ReadonlyMap<string, PrototypeRoad>,
+  junctions: readonly PrototypeJunction[],
 ): readonly NestedWire[] {
+  const byRoad = junctionIndex(junctions);
   const turns = new Set(
     [...byWire.values()].flatMap((ts) => ts.flatMap((t, i) => leftKeys(t, ts[i + 1]))),
   );
-  return wires.map((wire) => projectNestedWire(wire, byWire.get(wire.id) ?? [], roads, turns));
+  return wires.map((wire) =>
+    projectNestedWire(wire, byWire.get(wire.id) ?? [], roads, turns, byRoad),
+  );
 }

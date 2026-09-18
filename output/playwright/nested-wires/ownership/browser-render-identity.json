@@ -1,0 +1,27 @@
+{
+  "default": {
+    "byteIdentical": true,
+    "beforeSha256": "1234966f13f3fa5956524f1ec61134d0feb8e2cf51d2332fbcb695c9fbb2cdda",
+    "afterSha256": "1234966f13f3fa5956524f1ec61134d0feb8e2cf51d2332fbcb695c9fbb2cdda"
+  },
+  "templates": {
+    "byteIdentical": true,
+    "beforeSha256": "6f50670978cdd7a6497d9ed0317c934f0155a2f6877c644d352d34aac1db17c0",
+    "afterSha256": "6f50670978cdd7a6497d9ed0317c934f0155a2f6877c644d352d34aac1db17c0"
+  },
+  "scale": {
+    "byteIdentical": true,
+    "beforeSha256": "555d1d571fa8f8b7b45cb2552e9991bf6f3d1f73abc15d5bb49830127f6377a3",
+    "afterSha256": "555d1d571fa8f8b7b45cb2552e9991bf6f3d1f73abc15d5bb49830127f6377a3"
+  },
+  "authoring": {
+    "byteIdentical": true,
+    "beforeSha256": "52602ab93e61d286b2ca0e32b9769e6834798d3080ebaad125880715fcce5287",
+    "afterSha256": "52602ab93e61d286b2ca0e32b9769e6834798d3080ebaad125880715fcce5287"
+  },
+  "authoring-detail": {
+    "byteIdentical": true,
+    "beforeSha256": "3a50b6ed73bb0ef9c67059c14a49466e5fbb770e8c2f8184b4e0c2e2d0b635d5",
+    "afterSha256": "3a50b6ed73bb0ef9c67059c14a49466e5fbb770e8c2f8184b4e0c2e2d0b635d5"
+  }
+}

@@ -1,6 +1,7 @@
 import type { NestedWire } from '../contract/records/nested-wires.js';
 import type { PrototypePoint } from '../contract/records/road-prototype.js';
 import type { Travel } from './nested-wire-lanes.js';
+import { reject } from './validation/outcomes.js';
 
 interface Step {
   readonly from: PrototypePoint;
@@ -132,9 +133,36 @@ function choose(a: Fork | undefined, b: Fork | undefined): number {
   if (!b) return a.order;
   return earlier(a, b).order;
 }
-/** Compile route points once; each comparison follows a shared path to its two forks.
- * The upper/left fork wins conflicting endpoint orders deterministically, without search.
- * Paths and memo tables are invocation-local; callers own reconstruction on failure.
+function identity(a: Travel, b: Travel): number {
+  if (a.wireId === b.wireId) return 0;
+  return a.wireId < b.wireId ? -1 : 1;
+}
+function representative(group: readonly Travel[]): Travel {
+  const first = group[0];
+  if (first === undefined)
+    reject('engine-failed', 'lanes.population', 'Cannot order an empty lane population');
+  return first;
+}
+function rankGroups(
+  groups: readonly (readonly Travel[])[],
+  preference: (a: Travel, b: Travel) => number,
+): readonly (readonly Travel[])[] {
+  const ranked = groups.map((group) => ({ group, head: representative(group), predecessors: 0 }));
+  ranked.forEach((a, index) => {
+    ranked.slice(index + 1).forEach((b) => {
+      const order = preference(a.head, b.head);
+      if (order < 0) b.predecessors += 1;
+      else a.predecessors += 1;
+    });
+  });
+  return ranked
+    .toSorted((a, b) => a.predecessors - b.predecessors || identity(a.head, b.head))
+    .map(({ group }) => group);
+}
+/** Fork preferences can cycle. Rank the whole component by predecessor count, then
+ * codepoint identity, instead of passing cyclic preferences to runtime sorting.
+ * Transitive preferences retain their unique ranks; conflicts have a total order.
+ * Each unordered pair is evaluated once; path/fork caches are invocation-local.
  */
 export function laneOrder(wires: readonly NestedWire[]) {
   const paths = new Map(wires.map((wire) => [wire.id, path(wire)]));
@@ -142,14 +170,16 @@ export function laneOrder(wires: readonly NestedWire[]) {
   const compare = (a: Travel, b: Travel): number => {
     const first = paths.get(a.wireId),
       second = paths.get(b.wireId);
-    if (!first || !second) return a.wireId.localeCompare(b.wireId);
+    if (!first || !second) return identity(a, b);
     const i = first.indices[a.first] ?? 0,
       j = second.indices[b.first] ?? 0;
     const order = choose(
       split(cache, first, second, i, j, 'forward'),
       split(cache, first, second, i, j, 'backward'),
     );
-    return order || a.wireId.localeCompare(b.wireId);
+    return order || identity(a, b);
   };
-  return (a: Travel, b: Travel) => (a.wireId < b.wireId ? compare(a, b) : -compare(b, a));
+  const preference = (a: Travel, b: Travel) =>
+    a.wireId < b.wireId ? compare(a, b) : -compare(b, a);
+  return (groups: readonly (readonly Travel[])[]) => rankGroups(groups, preference);
 }

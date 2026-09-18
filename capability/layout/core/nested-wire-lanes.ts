@@ -146,12 +146,12 @@ function continuous(t: Travel, next: Travel, wire: NestedWire): boolean {
 }
 function assignedComponent(
   travels: readonly Travel[],
-  compare: (a: Travel, b: Travel) => number,
+  order: ReturnType<typeof laneOrder>,
   annotations?: ReadonlyMap<string, LaneAnnotation>,
 ): readonly AssignedTravel[] {
   const visits = new Map<string, Travel[]>();
   travels.forEach((travel) => addTo(visits, travel.wireId, travel));
-  const groups = [...visits.values()].toSorted((a, b) => compare(a[0]!, b[0]!));
+  const groups = order([...visits.values()]);
   const pitches = groups.map((group) =>
     Math.max(...group.map((t) => annotationPitch(t, annotations?.get(t.wireId)))),
   );

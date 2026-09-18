@@ -43,6 +43,11 @@ function projectedWire(
   target: Point,
 ): RoutedWire {
   if (isRouteTarget(state, key)) return { ...wire, points: routePoints(state, wire.points) };
+  const preview =
+    state.draft === null
+      ? state.routePreview?.wires.find((item) => item.id === wire.id)
+      : undefined;
+  if (preview !== undefined) return { ...wire, points: preview.points, labelBox: preview.labelBox };
   const unchanged = [source.x, source.y, target.x, target.y].every((delta) => delta === 0);
   if (unchanged) return wire;
   return movedWire(wire, source, target);

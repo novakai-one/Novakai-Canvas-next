@@ -41,6 +41,22 @@ export const event = z
       targetSide: side,
       locked: z.union([z.boolean(), z.literal('preserve')]),
     }),
+    z.strictObject({
+      kind: z.literal('preview-routes'),
+      id: identity,
+      wires: z
+        .array(
+          z
+            .strictObject({
+              id: identity,
+              points: z.array(point).min(2).max(10000).readonly(),
+              labelBox: box,
+            })
+            .readonly(),
+        )
+        .max(10000)
+        .readonly(),
+    }),
     z.strictObject({ kind: z.literal('finish'), id: identity }),
     z.strictObject({ kind: z.literal('cancel'), id: identity }),
     z.strictObject({

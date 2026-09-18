@@ -3,7 +3,7 @@ import type { Scene, SceneIndex, SceneStamp } from './scene.js';
 import type { Camera } from './camera.js';
 import type { Target } from './selection.js';
 import type { InteractionProfile } from './profile.js';
-import type { GestureDraft, RecoverableDraft } from './draft.js';
+import type { GestureDraft, RecoverableDraft, WireRoutePreview } from './draft.js';
 import type { Endpoint, CanvasEffect } from './intent.js';
 export interface ReadingState {
   readonly savedCamera: Camera;
@@ -25,6 +25,10 @@ export interface SessionState {
   readonly tool: 'select' | 'hand' | 'connect';
   readonly connection: Endpoint | null;
   readonly draft: GestureDraft | null;
+  readonly routePreview?: {
+    readonly gesture: string;
+    readonly wires: readonly WireRoutePreview[];
+  } | null;
   readonly recovery: readonly RecoverableDraft[];
   readonly reading: ReadingState | null;
   readonly connected: boolean;

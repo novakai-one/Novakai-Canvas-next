@@ -14,6 +14,7 @@ export type {
   RecoverableDraft,
   RouteGeometry,
   GeometryEntry,
+  WireRoutePreview,
   AttachmentSide,
 } from './records/draft.js';
 export type { EditIntent, CanvasEffect, Endpoint, LocalPlacement } from './records/intent.js';

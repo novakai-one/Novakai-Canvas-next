@@ -38,3 +38,10 @@ export interface RecoverableDraft {
   readonly reason: 'submitted' | 'scene-changed' | 'target-removed' | 'rejected' | 'disconnected';
   readonly message: string;
 }
+
+/** Ephemeral routing output for one pending gesture, never a replacement authoritative scene. */
+export interface WireRoutePreview {
+  readonly id: string;
+  readonly points: readonly Point[];
+  readonly labelBox: Box;
+}

@@ -328,6 +328,20 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       return;
     }
     submitCanvas(intent, planned.value);
+    previewRoutes(active, intent);
+  }
+  /** Preview geometry is local and temporary; the ordinary Authoring transaction still owns acceptance. */
+  function previewRoutes(active: ActiveDiagram, intent: EditIntent): void {
+    if (intent.kind !== 'placement' || bindings.previewRoutes === undefined) return;
+    const start = performance.now();
+    const preview = bindings.previewRoutes(active.document, intent);
+    if (!preview.ok) return;
+    active.session.dispatch({ kind: 'preview-routes', id: intent.id, wires: preview.value });
+    performance.measure('canvas:released-route-preview', {
+      start,
+      end: performance.now(),
+      detail: { gesture: intent.id },
+    });
   }
   /** Capture the snapshot shown with the gesture; changing versions later is never part of retry. */
   function submitCanvas(

@@ -1,3 +1,4 @@
+import { sameStamp } from '../scenes/accept.js';
 import { handler, type Handler } from './handler.js';
 import { changed } from './changes.js';
 import { beginDraft } from '../drafts/begin.js';
@@ -17,6 +18,13 @@ export function draftHandlers(): readonly Handler[] {
     handler('route', (state, event) =>
       changed(state, { ...state, draft: updateRoute(state, event) }),
     ),
+    handler('preview-routes', (state, event) => {
+      const pending = state.recovery.find(
+        (entry) => entry.draft.id === event.id && entry.reason === 'submitted',
+      );
+      if (!pending || !sameStamp(pending.draft.base, state.stamp)) return changed(state, state);
+      return changed(state, { ...state, routePreview: { gesture: event.id, wires: event.wires } });
+    }),
     handler('finish', (state, event) => finishDraft(state, event.id)),
     handler('cancel', (state, event) => {
       activeDraft(state, event.id);

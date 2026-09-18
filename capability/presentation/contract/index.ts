@@ -2,6 +2,7 @@
 export { createPresentation } from './api.js';
 export {
   composePresentation,
+  createBrowserReactBindings,
   createReactBindings,
   prepareNativePresentation,
   remeasureModuleEnvelopes,
@@ -69,6 +70,7 @@ export type {
   MarkerProps,
   FontDefinitionsProps,
   StaticRenderer,
+  NodeRenderClasses,
 } from './react-types.js';
 export { PROJECTION_CAPACITY } from './records/limits.js';
 

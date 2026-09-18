@@ -6,7 +6,7 @@
     min-width: 0;
     min-height: 0;
     overflow: hidden;
-    background: var(--nv-surface-base);
+    background: var(--nv-canvas-surface);
   }
   .surface:focus-visible {
     outline: var(--nv-focus-width) solid var(--nv-color-focus);

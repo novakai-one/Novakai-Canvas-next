@@ -6,13 +6,19 @@ export function createFolderTabChrome(
   outline: (width: number, height: number, tabWidth: number, tabHeight: number) => ChromeOutline,
 ): ComponentType<NodeChromeProps> {
   /** Render only the module shell; measured content, ports and badges remain shared. */
-  function FolderTabChrome({ node, style, heading }: NodeChromeProps): ReactElement | null {
+  function FolderTabChrome({
+    node,
+    style,
+    heading,
+    classes,
+  }: NodeChromeProps): ReactElement | null {
     if (!style?.chromeMetrics) return null;
     const metrics = style.chromeMetrics;
     const header = style.headers?.[node.role] ?? node.paint.fill;
     return (
       <>
         <path
+          className={classes?.frame}
           d={outline(node.width, node.height, metrics.tabWidth, metrics.tabHeight)}
           fill={node.paint.fill}
           stroke={node.paint.stroke}
@@ -20,6 +26,7 @@ export function createFolderTabChrome(
           vectorEffect="non-scaling-stroke"
         />
         <path
+          className={classes?.header}
           d={outline(node.width, node.headerHeight, metrics.tabWidth, metrics.tabHeight)}
           fill={header}
           stroke={node.paint.stroke}

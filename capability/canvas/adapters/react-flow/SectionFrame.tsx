@@ -19,8 +19,6 @@ export function createSectionFrame(
         style={{
           width: view.box.width,
           height: view.box.height,
-          background: data.paint.fill,
-          borderColor: data.paint.stroke,
         }}
       >
         <div className={`section-drag-handle ${styles.title}`} style={{ left, top }}>

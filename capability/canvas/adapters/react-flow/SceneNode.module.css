@@ -8,7 +8,11 @@
     outline: var(--nv-stroke-base) dashed var(--nv-action-accent);
   }
   .node :global(.react-flow__handle) {
-    background: var(--nv-surface-base);
-    border-color: var(--nv-border-default);
+    width: var(--nv-space-2);
+    height: var(--nv-space-2);
+    background: var(--nv-canvas-node-surface);
+    border-color: var(--nv-canvas-node-boundary);
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: background-color, border-color, box-shadow;
   }
 }

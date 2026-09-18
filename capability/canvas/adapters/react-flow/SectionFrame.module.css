@@ -1,12 +1,16 @@
 @layer components {
   .frame {
     position: relative;
-    border: var(--nv-stroke-base) solid var(--nv-border-default);
+    border: var(--nv-stroke-base) solid var(--nv-canvas-group-boundary);
     border-radius: var(--nv-radius-panel);
-    background: var(--nv-surface-base);
+    background: var(--nv-canvas-group-surface);
+    box-shadow: inset 0 var(--nv-stroke-base) 0 var(--nv-canvas-node-rim);
   }
   .title {
     position: absolute;
     cursor: grab;
+  }
+  .title text {
+    fill: var(--nv-canvas-group-heading);
   }
 }

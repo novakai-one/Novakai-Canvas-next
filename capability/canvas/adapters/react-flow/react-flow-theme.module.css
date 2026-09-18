@@ -1,11 +1,11 @@
 @layer components {
   :global(.react-flow) {
-    --xy-background-color: var(--nv-surface-base);
-    --xy-background-pattern-dots-color: var(--nv-border-default);
+    --xy-background-color: var(--nv-canvas-surface);
+    --xy-background-pattern-dots-color: var(--nv-canvas-grid);
     --xy-node-color: var(--nv-text-primary);
     --xy-edge-stroke: var(--nv-border-default);
     --xy-minimap-background-color: var(--nv-surface-raised);
-    --xy-minimap-mask-background-color: var(--nv-surface-base);
+    --xy-minimap-mask-background-color: var(--nv-canvas-surface);
   }
   :global(.react-flow__node.selected) {
     outline: var(--nv-focus-width) solid var(--nv-action-accent);

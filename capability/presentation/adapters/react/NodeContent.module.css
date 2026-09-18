@@ -1,0 +1,63 @@
+@layer components {
+  .root {
+    overflow: visible;
+  }
+
+  .frame {
+    filter:
+      drop-shadow(
+        var(--nv-elevation-offset-x) var(--nv-canvas-node-offset-y)
+          var(--nv-canvas-node-blur) var(--nv-canvas-node-shadow)
+      )
+      drop-shadow(
+        var(--nv-elevation-offset-x) var(--nv-canvas-ambient-offset-y)
+          var(--nv-canvas-ambient-blur) var(--nv-canvas-node-ambient-shadow)
+      );
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: filter, fill, stroke;
+  }
+
+  .root:is(
+      [data-shape='module'],
+      [data-shape='entity'],
+      [data-shape='interface'],
+      [data-shape='function']
+    )
+    .frame {
+    fill: var(--nv-canvas-node-surface);
+    stroke: var(--nv-canvas-node-boundary);
+  }
+
+  .root[data-shape='container'] .frame {
+    fill: var(--nv-canvas-group-surface);
+    filter: none;
+    stroke: var(--nv-canvas-group-boundary);
+  }
+
+  .header {
+    fill: var(--nv-canvas-node-header);
+  }
+
+  .rim {
+    fill: none;
+    pointer-events: none;
+    stroke: var(--nv-canvas-node-rim);
+    stroke-width: var(--nv-stroke-base);
+  }
+
+  .separator {
+    stroke: var(--nv-canvas-node-boundary);
+  }
+
+  .heading text {
+    fill: var(--nv-canvas-heading);
+  }
+
+  .root[data-shape='container'] .heading text {
+    fill: var(--nv-canvas-group-heading);
+  }
+
+  .body text {
+    fill: var(--nv-canvas-member);
+  }
+}

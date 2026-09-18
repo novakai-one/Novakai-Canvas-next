@@ -42,7 +42,10 @@ import type {
   DesignSystem,
   Environment,
 } from '@novakai/canvas-design-system';
-import { createReactBindings as presentationBindings, fontSet } from '@novakai/canvas-presentation';
+import {
+  createBrowserReactBindings as presentationBindings,
+  fontSet,
+} from '@novakai/canvas-presentation';
 import { createCanvas, createReactBindings as canvasBindings } from '@novakai/canvas-canvas';
 import { createLanguage } from '@novakai/canvas-language';
 import { validate, plan, stage } from '@novakai/canvas-model';

@@ -47,6 +47,7 @@ export function createContentRenderer(
     const content = compartments(node, chrome.separateHeading);
     return (
       <svg
+        className={slots.classes?.root}
         display="block"
         overflow="visible"
         xmlns="http://www.w3.org/2000/svg"
@@ -54,9 +55,10 @@ export function createContentRenderer(
         height={node.height}
         viewBox={`0 0 ${node.width} ${node.height}`}
         role="img"
-        aria-label={node.content.outline.join('; ')}
+        aria-label={node.label}
         data-shape={node.shape}
         data-frame={node.frame}
+        data-node-role={node.role}
         data-node-id={node.id}
       >
         <title>{node.label}</title>
@@ -64,9 +66,14 @@ export function createContentRenderer(
         <Chrome
           node={node}
           style={node.chromeStyle}
-          heading={<Blocks primitives={content.heading} />}
+          classes={slots.classes}
+          heading={
+            <g className={slots.classes?.heading}>
+              <Blocks primitives={content.heading} />
+            </g>
+          }
         />
-        <g transform={`translate(${contentSlack(node)} 0)`}>
+        <g className={slots.classes?.body} transform={`translate(${contentSlack(node)} 0)`}>
           <Blocks primitives={content.body} />
         </g>
       </svg>

@@ -2,7 +2,12 @@ import { moduleEnvelopes } from '../core/projection/module-envelopes.js';
 import type { Projection } from './records/visual.js';
 import type { ResolvedStyle } from './records/style.js';
 import type { Dependencies, Presentation } from './types.js';
-import type { ReactBindings, StaticRenderer, NodeChromeRegistry } from './react-types.js';
+import type {
+  ReactBindings,
+  StaticRenderer,
+  NodeChromeRegistry,
+  NodeRenderClasses,
+} from './react-types.js';
 import type { Result } from './errors.js';
 import { fail } from './errors.js';
 import { chromeName, sectionLabel } from './records/chrome.js';
@@ -29,11 +34,28 @@ export async function createReactBindings(
     return fail('missing-resource', 'fonts', 'Presentation React bindings could not be loaded');
   }
 }
+/** Browser composition is the sole owner of Presentation stylesheet loading. */
+export async function createBrowserReactBindings(
+  fonts: unknown,
+  chromes?: NodeChromeRegistry,
+): Promise<Result<ReactBindings>> {
+  try {
+    const pinned = parse(fontSet, fonts);
+    const styles = await import('../adapters/browser/node-styles.js');
+    return { ok: true, value: await bindReact(pinned, chromes, styles.nodeRenderClasses) };
+  } catch {
+    return fail('missing-resource', 'styles', 'Presentation browser bindings could not be loaded');
+  }
+}
 /** Resolve concrete React adapters once; render operations share the exact same pinned font definitions. */
-async function bindReact(pinned: FontSet, injected?: NodeChromeRegistry): Promise<ReactBindings> {
+async function bindReact(
+  pinned: FontSet,
+  injected?: NodeChromeRegistry,
+  classes?: NodeRenderClasses,
+): Promise<ReactBindings> {
   const [content, nodes, card, folder, accent] = await reactModules();
   const chromes: NodeChromeRegistry = injected ?? {
-    card: { Component: card.CardChrome, showKind: true },
+    card: { Component: card.CardChrome, showKind: true, separateHeading: true },
     [chromeName.parse('folder-tab')]: {
       Component: folder.createFolderTabChrome(folderPath),
       showKind: false,
@@ -46,7 +68,7 @@ async function bindReact(pinned: FontSet, injected?: NodeChromeRegistry): Promis
       sectionLabel: sectionLabel.parse('EXPORTS'),
     },
   };
-  const slots = { ContentBlocks: content.ContentBlocks, chromes };
+  const slots = { ContentBlocks: content.ContentBlocks, chromes, classes };
   return {
     chromePolicies: Object.fromEntries(
       Object.entries(chromes)

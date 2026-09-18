@@ -9,6 +9,7 @@ const wire = z
   .strictObject({
     id: sceneId,
     relationshipId: z.string(),
+    annotationEndpoint: z.enum(['source', 'target']).optional(),
     sectionId: z.string(),
     kind: z.string(),
     source: endpoint,

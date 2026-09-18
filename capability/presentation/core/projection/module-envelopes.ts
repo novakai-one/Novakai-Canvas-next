@@ -10,10 +10,11 @@ import type { ContentContext } from '../content/blocks.js';
  * measured content and connection density, never on a router's calculated geometry. */
 export function moduleEnvelopes(section: VisualSection, context: ContentContext): VisualSection {
   if (section.mode !== 'modules') return section;
+  const annotated = { ...section, wires: annotationOwners(section.wires) };
   const measured = new Map<string, VisualNode>();
-  const envelope = measure(null, section, context, measured);
+  const envelope = measure(null, annotated, context, measured);
   return {
-    ...section,
+    ...annotated,
     envelope,
     nodes: section.nodes.map((node) => measured.get(node.id) ?? node),
   };
@@ -89,8 +90,7 @@ function measure(
     const reserve =
       demand.traffic === 0
         ? 0
-        : (demand.annotation + 1) * incidentPitch * 2 +
-          Math.max(0, demand.traffic - demand.annotation) * lanePitch * 2;
+        : 2 * Math.max((demand.annotation + 1) * incidentPitch, (demand.traffic + 1) * lanePitch);
     return {
       x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve + cellGap),
       y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve + cellGap),
@@ -171,19 +171,20 @@ function nodeDemand(id: string, wires: readonly VisualWire[]) {
   const exits = wires.filter((wire) => wire.source.node === id);
   const entries = wires.filter((wire) => wire.target.node === id);
   const traffic = Math.max(exits.length, entries.length);
-  const related = [
-    ...exits.map((wire) =>
-      Math.min(
-        exits.length,
-        wires.filter((other) => other.target.node === wire.target.node).length,
-      ),
-    ),
-    ...entries.map((wire) =>
-      Math.min(
-        entries.length,
-        wires.filter((other) => other.source.node === wire.source.node).length,
-      ),
-    ),
-  ];
-  return { traffic, annotation: Math.min(traffic, Math.max(3, ...related)) };
+  const exitAnnotation = exits.some((wire) => wire.annotationEndpoint === 'source')
+    ? exits.length
+    : Math.min(3, exits.length);
+  const entryAnnotation = entries.some((wire) => wire.annotationEndpoint === 'target')
+    ? entries.length
+    : Math.min(3, entries.length);
+  return { traffic, annotation: Math.max(exitAnnotation, entryAnnotation) };
+}
+
+/** Annotation ownership is semantic and fixed before measuring any module envelope. */
+function annotationOwners(wires: readonly VisualWire[]): readonly VisualWire[] {
+  return wires.map((wire) => {
+    const exits = wires.filter((other) => other.source.node === wire.source.node).length;
+    const entries = wires.filter((other) => other.target.node === wire.target.node).length;
+    return { ...wire, annotationEndpoint: exits <= entries ? 'source' : 'target' };
+  });
 }

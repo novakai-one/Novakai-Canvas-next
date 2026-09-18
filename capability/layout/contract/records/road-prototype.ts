@@ -59,6 +59,7 @@ export type PrototypeLayoutMeasure = <T>(stage: PrototypeLayoutStage, operation:
 export interface PrototypeLayoutOptions {
   readonly annotateTerminals?: boolean;
   readonly annotationPitches?: readonly number[];
+  readonly annotationEndpoints?: readonly ('source' | 'target' | undefined)[];
   readonly annotationTerminalLimit?: number;
   readonly lanePitch?: {
     readonly horizontal: number;

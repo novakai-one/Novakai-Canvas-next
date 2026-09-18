@@ -46,6 +46,7 @@ export function createNestedRoadScene(
     | 'annotateTerminals'
     | 'annotationTerminalLimit'
     | 'annotationPitches'
+    | 'annotationEndpoints'
   > & {
     readonly copies?: 1 | 2;
     readonly fixedGeometry?: boolean;
@@ -227,13 +228,17 @@ function activePorts(
   }));
 }
 
-/** Every wire reserves annotation room on its less crowded endpoint approach. */
+/** Honor owner-selected annotations; legacy callers choose the less crowded approach. */
 function terminalCapacity(
   roads: RoadPrototypeScene['roads'],
   wires: readonly import('../contract/records/nested-wires.js').NestedWire[],
   options: Pick<
     PrototypeLayoutOptions,
-    'lanePitch' | 'annotateTerminals' | 'annotationTerminalLimit' | 'annotationPitches'
+    | 'lanePitch'
+    | 'annotateTerminals'
+    | 'annotationTerminalLimit'
+    | 'annotationPitches'
+    | 'annotationEndpoints'
   >,
 ): RoadPrototypeScene['roads'] {
   if (!options.annotateTerminals) return roads;
@@ -246,9 +251,11 @@ function terminalCapacity(
     }),
   );
   const annotated = new Set(
-    wires.map((wire) => {
+    wires.map((wire, index) => {
       const source = `drive:${wire.sourcePortId}`,
         target = `drive:${wire.targetPortId}`;
+      const selected = options.annotationEndpoints?.[index];
+      if (selected !== undefined) return selected === 'source' ? source : target;
       return (counts.get(source) ?? 0) <= (counts.get(target) ?? 0) ? source : target;
     }),
   );

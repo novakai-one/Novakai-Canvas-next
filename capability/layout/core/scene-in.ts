@@ -158,6 +158,7 @@ export function toEngineScene(
     spec,
     fixedGeometry: true,
     annotateTerminals: true,
+    annotationEndpoints: source.wires.map((wire) => wire.annotationEndpoint),
     annotationPitches: source.wires.map(
       (wire) => wire.label.height + required(source.envelope, source.id).lanePitch * 2,
     ),

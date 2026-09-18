@@ -704,7 +704,7 @@
     },
     "nodeBoundary": {
       "$type": "color",
-      "$value": "{border.default}"
+      "$value": "{role.neutral.stroke}"
     },
     "nodeRim": {
       "$type": "color",
@@ -793,22 +793,7 @@
     },
     "groupBoundary": {
       "$type": "color",
-      "$value": null,
-      "$extensions": {
-        "novakai": {
-          "recipe": {
-            "op": "alpha",
-            "color": {
-              "op": "reference",
-              "value": "{border.default}"
-            },
-            "scalar": {
-              "op": "reference",
-              "value": "{canvasDepth.boundaryOpacity}"
-            }
-          }
-        }
-      }
+      "$value": "{role.neutral.stroke}"
     },
     "groupHeading": {
       "$type": "color",

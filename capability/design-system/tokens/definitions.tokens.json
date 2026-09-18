@@ -720,10 +720,6 @@
       "$type": "number",
       "$value": 0.36
     },
-    "boundaryOpacity": {
-      "$type": "number",
-      "$value": 0.55
-    },
     "gridOpacity": {
       "$type": "number",
       "$value": 0.42

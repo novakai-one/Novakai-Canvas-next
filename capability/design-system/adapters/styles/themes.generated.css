@@ -90,7 +90,6 @@
   --nv-canvas-depth-ambient-opacity: 0.08;
   --nv-canvas-depth-rim-opacity: 0.14;
   --nv-canvas-depth-group-opacity: 0.36;
-  --nv-canvas-depth-boundary-opacity: 0.55;
   --nv-canvas-depth-grid-opacity: 0.42;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
@@ -153,7 +152,6 @@
   --nv-canvas-grid: #bbc5d06b;
   --nv-canvas-node-surface: #ffffff;
   --nv-canvas-node-header: #f4f6f8;
-  --nv-canvas-node-boundary: #bbc5d0;
   --nv-canvas-node-rim: #17212b24;
   --nv-canvas-node-ambient-shadow: #00000014;
   --nv-canvas-node-offset-y: 4px;
@@ -163,7 +161,6 @@
   --nv-canvas-heading: #17212b;
   --nv-canvas-member: #526170;
   --nv-canvas-group-surface: #ffffff5c;
-  --nv-canvas-group-boundary: #bbc5d08c;
   --nv-canvas-group-heading: #526170;
   --nv-canvas-transition: 120ms;
   --nv-diagram-width-extra-large: 437.5px;
@@ -174,7 +171,9 @@
   --nv-diagram-figure-medium: 128px;
   --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
+  --nv-canvas-node-boundary: #526170;
   --nv-canvas-node-shadow: #0000001f;
+  --nv-canvas-group-boundary: #526170;
 }
 [data-nv-scope="ui"][data-nv-theme="ink"] {
   --nv-surface-base: #17191d;
@@ -266,7 +265,6 @@
   --nv-canvas-depth-ambient-opacity: 0.08;
   --nv-canvas-depth-rim-opacity: 0.14;
   --nv-canvas-depth-group-opacity: 0.36;
-  --nv-canvas-depth-boundary-opacity: 0.55;
   --nv-canvas-depth-grid-opacity: 0.42;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
@@ -329,7 +327,6 @@
   --nv-canvas-grid: #4953606b;
   --nv-canvas-node-surface: #22262c;
   --nv-canvas-node-header: #17191d;
-  --nv-canvas-node-boundary: #495360;
   --nv-canvas-node-rim: #f1f3f524;
   --nv-canvas-node-ambient-shadow: #00000014;
   --nv-canvas-node-offset-y: 4px;
@@ -339,7 +336,6 @@
   --nv-canvas-heading: #f1f3f5;
   --nv-canvas-member: #b8c1ca;
   --nv-canvas-group-surface: #22262c5c;
-  --nv-canvas-group-boundary: #4953608c;
   --nv-canvas-group-heading: #b8c1ca;
   --nv-canvas-transition: 120ms;
   --nv-diagram-width-extra-large: 437.5px;
@@ -350,6 +346,8 @@
   --nv-diagram-figure-medium: 128px;
   --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
+  --nv-canvas-node-boundary: #9aabba;
   --nv-canvas-node-shadow: #00000052;
+  --nv-canvas-group-boundary: #9aabba;
 }
 }

@@ -62,7 +62,6 @@
   --nv-canvas-grid: #bbc5d06b;
   --nv-canvas-node-surface: #ffffff;
   --nv-canvas-node-header: #f4f6f8;
-  --nv-canvas-node-boundary: #bbc5d0;
   --nv-canvas-node-rim: #17212b24;
   --nv-canvas-node-ambient-shadow: #00000014;
   --nv-canvas-node-offset-y: 4px;
@@ -72,7 +71,6 @@
   --nv-canvas-heading: #17212b;
   --nv-canvas-member: #526170;
   --nv-canvas-group-surface: #ffffff5c;
-  --nv-canvas-group-boundary: #bbc5d08c;
   --nv-canvas-group-heading: #526170;
   --nv-canvas-transition: 120ms;
   --nv-diagram-width-extra-large: 437.5px;
@@ -83,6 +81,8 @@
   --nv-diagram-figure-medium: 128px;
   --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
+  --nv-canvas-node-boundary: #526170;
   --nv-canvas-node-shadow: #0000001f;
+  --nv-canvas-group-boundary: #526170;
 }
 }

@@ -89,7 +89,6 @@ export const tokenNames = [
   '--nv-canvas-depth-ambient-opacity',
   '--nv-canvas-depth-rim-opacity',
   '--nv-canvas-depth-group-opacity',
-  '--nv-canvas-depth-boundary-opacity',
   '--nv-canvas-depth-grid-opacity',
   '--nv-color-panel',
   '--nv-color-content',

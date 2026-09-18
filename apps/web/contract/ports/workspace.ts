@@ -74,6 +74,7 @@ export interface WorkspaceBindings {
   readonly previewRoutes?: (
     document: RenderDocument,
     intent: import('../records/owners.js').EditIntent,
+    changes: readonly Change[],
   ) => Result<import('@novakai/canvas-canvas').GeometryPreview | null>;
   readonly submissions: SubmissionFactory;
   readonly source: SourceFactory;

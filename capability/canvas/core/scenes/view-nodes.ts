@@ -38,15 +38,13 @@ export function viewSection(state: SessionState, section: PlacedSection): ViewSe
   const target = { kind: 'section' as const, id: section.id };
   const info = targetInfo(state.index, target);
   const bounds = previewBox(state, info);
+  const origin = previewOrigin(state, section.id);
   return {
     id: info.key,
     target,
     position: { x: bounds.x, y: bounds.y },
     box: bounds,
-    section:
-      previewOrigin(state, section.id) === undefined
-        ? section
-        : { ...section, box: bounds, origin: previewOrigin(state, section.id)! },
+    section: origin === undefined ? section : { ...section, box: bounds, origin },
     selected: selected(state, info.key),
     collapsed: state.reading?.collapsed.includes(info.key) ?? false,
   };

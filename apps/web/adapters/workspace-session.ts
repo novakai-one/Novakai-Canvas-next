@@ -337,7 +337,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     changes: readonly import('../contract/records/owners.js').Change[],
   ): void {
     const start = performance.now();
-    const preview = bindings.previewRoutes?.(active.document, intent) ?? { ok: true, value: null };
+    const preview = bindings.previewRoutes?.(active.document, intent, changes) ?? {
+      ok: true,
+      value: null,
+    };
     if (!preview.ok) {
       active.session.dispatch({ kind: 'reject', id: intent.id, message: preview.error.message });
       report(preview.error);

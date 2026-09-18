@@ -137,9 +137,7 @@ export function previewModuleCollection(
     const local = projection.sections
       .toSorted((a, b) => a.order - b.order)
       .map((source) => {
-        const prior = previous.sections.find((section) => section.id === source.id);
-        if (prior === undefined)
-          return reject('invalid-input', source.id, 'Preview section is missing');
+        const prior = previewSection(previous, source.id);
         const inputKey = sectionKey(source, metrics, options, previous.engineVersions);
         if (source.mode === 'modules' && inputKey !== prior.inputKey)
           return toAppSection(
@@ -167,4 +165,11 @@ export function previewModuleCollection(
       ),
     };
   });
+}
+
+/** Required section identity is checked before retaining any unchanged local geometry. */
+function previewSection(scene: import('./records/geometry.js').Scene, id: string) {
+  const section = scene.sections.find((section) => section.id === id);
+  if (section === undefined) return reject('invalid-input', id, 'Preview section is missing');
+  return section;
 }

@@ -1,9 +1,8 @@
-import { placeEntries } from '../core/editing/placements.js';
-import type { Section } from '../contract/records/owners.js';
+import type { Change, Section } from '../contract/records/owners.js';
 import { previewModuleCollection } from '@novakai/canvas-layout';
 import { remeasureModuleEnvelopes } from '@novakai/canvas-presentation';
 import type { VisualSection } from '@novakai/canvas-presentation';
-import type { EditIntent, GeometryPreview } from '@novakai/canvas-canvas';
+import type { EditIntent, PlacementIntent, GeometryPreview } from '@novakai/canvas-canvas';
 import type { RenderDocument } from '@novakai/canvas-service';
 import type { Result } from '../contract/errors.js';
 
@@ -27,15 +26,29 @@ function placed(section: VisualSection, source: Section): VisualSection {
 export function previewModuleRoutes(
   document: RenderDocument,
   intent: EditIntent,
+  changes: readonly Change[],
 ): Result<GeometryPreview | null> {
   if (intent.kind !== 'placement') return { ok: true, value: null };
-  // Resizing changes font/content measurement and remains with the full save pipeline.
-  if (
-    intent.entries.some(
-      (entry) => entry.placement.width !== undefined || entry.placement.height !== undefined,
-    )
-  )
-    return { ok: true, value: null };
+  if (!supportedMove(document, intent)) return { ok: true, value: null };
+  return previewMove(document, changes);
+}
+
+/** Reuse the already successful Authoring plan; no second core call can throw or reinterpret dimensions. */
+function plannedSections(changes: readonly Change[]): readonly Section[] {
+  return changes.flatMap((change) => {
+    if (change.op !== 'replace') return [];
+    return change.target === 'sections' ? [change.value] : [];
+  });
+}
+function projected(section: VisualSection, sources: readonly Section[]): VisualSection {
+  const source = sources.find((source) => source.id === section.id);
+  return source === undefined ? section : placed(section, source);
+}
+function supportedMove(document: RenderDocument, intent: PlacementIntent): boolean {
+  const resized = intent.entries.some(
+    (entry) => entry.placement.width !== undefined || entry.placement.height !== undefined,
+  );
+  const modules = document.projection.sections.some((section) => section.mode === 'modules');
   const supported = intent.entries.every(
     ({ target }) =>
       target.kind === 'section' ||
@@ -43,19 +56,18 @@ export function previewModuleRoutes(
         (section) => section.id === target.section && section.mode === 'modules',
       ),
   );
-  if (!supported) return { ok: true, value: null };
-  if (!document.projection.sections.some((section) => section.mode === 'modules'))
-    return { ok: true, value: null };
-  const sources = placeEntries(intent, document);
+  return [!resized, modules, supported].every(Boolean);
+}
+/** Resize needs fresh text measurement; this fast seam is for position-only module moves. */
+function previewMove(
+  document: RenderDocument,
+  changes: readonly Change[],
+): Result<GeometryPreview | null> {
+  const sources = plannedSections(changes);
   const projection = remeasureModuleEnvelopes(
     {
       ...document.projection,
-      sections: document.projection.sections.map((section) =>
-        placed(
-          section,
-          sources.find((source) => source.id === section.id)!,
-        ),
-      ),
+      sections: document.projection.sections.map((section) => projected(section, sources)),
     },
     document.style,
   );

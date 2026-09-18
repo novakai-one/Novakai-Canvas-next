@@ -44,21 +44,32 @@ function projectedWire(
   target: Point,
 ): RoutedWire {
   if (isRouteTarget(state, key)) return { ...wire, points: routePoints(state, wire.points) };
-  const preview =
-    state.draft === null
-      ? state.routePreview?.wires.find((item) => item.section === section && item.id === wire.id)
-      : undefined;
-  if (preview !== undefined)
-    return {
-      ...wire,
-      source: preview.source,
-      target: preview.target,
-      points: preview.points,
-      labelBox: preview.labelBox,
-    };
+  const preview = releasedWire(state, wire, section);
+  if (preview !== undefined) return preview;
+  return movingWire(wire, source, target);
+}
+/** Pointer-only stretching remains distinct from a fully inspected released route. */
+function movingWire(wire: RoutedWire, source: Point, target: Point): RoutedWire {
   const unchanged = [source.x, source.y, target.x, target.y].every((delta) => delta === 0);
-  if (unchanged) return wire;
-  return movedWire(wire, source, target);
+  return unchanged ? wire : movedWire(wire, source, target);
+}
+function releasedWire(
+  state: SessionState,
+  wire: RoutedWire,
+  section: string,
+): RoutedWire | undefined {
+  if (state.draft !== null) return undefined;
+  const preview = state.routePreview?.wires.find(
+    (item) => item.section === section && item.id === wire.id,
+  );
+  if (preview === undefined) return undefined;
+  return {
+    ...wire,
+    source: preview.source,
+    target: preview.target,
+    points: preview.points,
+    labelBox: preview.labelBox,
+  };
 }
 /** Wire view reuses labels/markers and marks endpoint-stretched paths as previews, never feasible committed geometry. */
 export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedSection): ViewWire {

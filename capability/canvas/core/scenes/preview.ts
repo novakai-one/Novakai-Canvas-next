@@ -48,12 +48,7 @@ function placementEntry(draft: NonNullable<SessionState['draft']>, key: string):
 }
 /** Return original box by reference when untouched; hot React node props can remain stable. */
 export function previewBox(state: SessionState, info: TargetInfo): Box {
-  const geometry =
-    state.draft === null
-      ? state.routePreview?.boxes.find((entry) => targetKey(entry.target) === info.key)
-      : undefined;
-  if (geometry !== undefined) return geometry.box;
-  const own = draftEntry(state, info.key);
+  const own = releasedBox(state, info) ?? draftEntry(state, info.key);
   if (own !== null) return own;
   const delta = movedAncestor(state, info);
   if ([delta.x, delta.y].every((value) => value === 0)) return info.box;
@@ -71,4 +66,10 @@ export function previewOrigin(state: SessionState, id: string): Point | undefine
   return state.draft === null
     ? state.routePreview?.sections.find((section) => section.id === id)?.origin
     : undefined;
+}
+
+/** Exact released boxes supersede pointer deltas only after full owner admission. */
+function releasedBox(state: SessionState, info: TargetInfo): Box | undefined {
+  if (state.draft !== null) return undefined;
+  return state.routePreview?.boxes.find((entry) => targetKey(entry.target) === info.key)?.box;
 }

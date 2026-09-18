@@ -10,18 +10,20 @@
   }
   .underlay {
     fill: none;
-    opacity: 0;
+    stroke-opacity: 0;
     pointer-events: none;
     stroke: var(--nv-canvas-node-boundary);
     stroke-width: var(--nv-focus-width);
     transition-duration: var(--nv-canvas-transition);
-    transition-property: opacity, stroke;
+    transition-property: stroke-opacity, stroke;
   }
   .underlay[data-emphasis='primary'] {
+    stroke-opacity: 1;
     stroke: var(--nv-action-accent);
     stroke-width: var(--nv-space-1);
   }
   .underlay[data-emphasis='secondary'] {
+    stroke-opacity: 1;
     stroke: var(--nv-text-secondary);
   }
   .wire[data-emphasis='primary'] {
@@ -49,10 +51,7 @@
   .markerContrast {
     opacity: 0;
   }
-  :is(.underlay, .wire, .marker, .markerContrast):is(
-    [data-emphasis='primary'],
-    [data-emphasis='secondary']
-  ) {
+  :is(.wire, .marker, .markerContrast):is([data-emphasis='primary'], [data-emphasis='secondary']) {
     opacity: 1;
   }
   .markerContrast :global(path),

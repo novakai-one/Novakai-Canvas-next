@@ -94,7 +94,7 @@ export function routeModuleSection(
     );
     return inspectSection(
       draft,
-      { ...candidate, ...frame },
+      { ...candidate, origin: frame.origin, box: frame.box },
       {
         options,
         measurements: metrics,

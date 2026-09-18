@@ -62,7 +62,7 @@ function validateWire(wire: RoutedWire, section: PlacedSection): void {
   validateEndpoint(wire.target, section);
 }
 /** Hidden annotations have an explicit empty footprint; visible annotations still need positive bounds. */
-function validateWireLabel(wire: RoutedWire): void {
+export function validateWireLabel(wire: RoutedWire): void {
   if (wire.labelVisible !== false) {
     parse(box, wire.labelBox);
     return;

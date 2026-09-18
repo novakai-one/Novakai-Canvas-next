@@ -1,3 +1,7 @@
+import { validateWireLabel } from '../scenes/validate.js';
+import { reject } from '../validation/outcomes.js';
+import type { SessionState } from '../../contract/records/state.js';
+import type { WireRoutePreview } from '../../contract/records/draft.js';
 import { sameStamp } from '../scenes/accept.js';
 import { handler, type Handler } from './handler.js';
 import { changed } from './changes.js';
@@ -23,6 +27,7 @@ export function draftHandlers(): readonly Handler[] {
         (entry) => entry.draft.id === event.id && entry.reason === 'submitted',
       );
       if (!pending || !sameStamp(pending.draft.base, state.stamp)) return changed(state, state);
+      event.wires.forEach((wire) => validatePreviewLabel(state, wire));
       return changed(state, { ...state, routePreview: { gesture: event.id, wires: event.wires } });
     }),
     handler('finish', (state, event) => finishDraft(state, event.id)),
@@ -36,4 +41,13 @@ export function draftHandlers(): readonly Handler[] {
     handler('confirmed', (state, event) => changed(state, removeRecovery(state, event.id))),
     handler('discard', (state, event) => changed(state, removeRecovery(state, event.id))),
   ];
+}
+
+/** Preview label bounds follow the admitted wire visibility, never a payload override. */
+function validatePreviewLabel(state: SessionState, preview: WireRoutePreview): void {
+  const source = state.scene.sections
+    .flatMap((section) => section.wires)
+    .find((wire) => wire.id === preview.id);
+  if (!source) reject('invalid-input', preview.id, 'Preview wire is not in the admitted scene');
+  validateWireLabel({ ...source, labelBox: preview.labelBox });
 }

@@ -336,7 +336,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const start = performance.now();
     const preview = bindings.previewRoutes(active.document, intent);
     if (!preview.ok) return;
-    active.session.dispatch({ kind: 'preview-routes', id: intent.id, wires: preview.value });
+    const accepted = active.session.dispatch({
+      kind: 'preview-routes',
+      id: intent.id,
+      wires: preview.value,
+    });
+    if (!accepted.ok) return;
+    if (accepted.value.state.routePreview?.gesture !== intent.id) return;
     performance.measure('canvas:released-route-preview', {
       start,
       end: performance.now(),

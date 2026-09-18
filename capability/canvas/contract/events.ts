@@ -50,7 +50,13 @@ export const event = z
             .strictObject({
               id: identity,
               points: z.array(point).min(2).max(10000).readonly(),
-              labelBox: box,
+              labelBox: z.union([
+                box,
+                point
+                  .unwrap()
+                  .extend({ width: z.literal(0), height: z.literal(0) })
+                  .readonly(),
+              ]),
             })
             .readonly(),
         )

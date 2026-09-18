@@ -1,0 +1,76 @@
+PASS 47 nodes / 15 sections; every node and child inside its owner; finite bounds
+PASS minimal nested-only regression and empty leaf with header/padding bounds
+PASS two complete builds byte-identical; each one-way pipeline stage once
+STAGES ["capacity","nodes","ports","topology","wire-registry","wire:w01","wire:w02","wire:w03","wire:w04","wire:w05","wire:w06","wire:w07","wire:w08","wire:w09","wire:w10","wire:w11","wire:w12","wire:w13","wire:w14","wire:w15","wire:w16","wire:w17","wire:w18","wire:w19","wire:w20","wire:w21","wire:w22","wire:w23","wire:w24","wire:w25","wire:w26","wire:w27","wire:w28","wire:w29","wire:w30","wire:w31","wire:w32","wire:w33","wire:w34","wire:w35","wire:w36","wire:w37","wire:w38","wire:w39","wire:w40","wire:w41","wire:w42","wire:w43","wire:w44","wire:w45","wire:w46","wire:w47","wire:w48","wire:w49","wire:w50","wire:w51","wire:w52","wire:w53","wire:w54","wire:w55","wire:w56","wire:w57","wire:w58","wire:w59","wire:w60","wire:w61","wire:w62","wire:w63","wire:w64","wire:w65","wire:w66","wire:w67","wire:w68","wire:w69","wire:w70","wire:w71","wire:w72","wire:w73","wire:w74","wire:w75","wire:w76","wire:w77","wire:w78","wire:w79","wire:w80","wire:w81","wire:w82","wire:w83","wire:w84","wire:w85","wire:w86","wire:w87","wire:w88","wire:w89","wire:w90","wire:w91","wire:w92","wire:w93","wire:w94","wire:w95","wire:w96","wire:w97","wire:w98","wire:w99","wire:w100","wire:w101","wire:w102","wire:w103","wire:w104","wire:w105","wire:w106","wire:w107","wire:w108","wire:w109","wire:w110","wire:w111","wire:w112","wire:w113","wire:w114","wire:w115","wire:w116","wire:w117","wire:w118","wire:w119","lane-allocation","main-roads","driveways","network","lane-projection"]
+PASS all 119 value wires route ok:true
+INSPECTION {"corridors":[],"nodeBodies":[],"boundaries":[],"continuity":[]}
+PASS all wires inside corridors; gate-mouth crossings only; no body or continuity failures
+OVERLAPS [{"wires":["w05","w06"],"hit":{"x":6899,"y":1761,"length":1.5},"first":{"from":{"x":6893,"y":1761},"to":{"x":6967.25,"y":1761},"corridorId":"section-14:horizontal:1872:6581"},"second":{"from":{"x":6899,"y":1761},"to":{"x":6900.5,"y":1761},"corridorId":"section-14:horizontal:1872:6581"}},{"wires":["w31","w56"],"hit":{"x":5803,"y":627.5,"length":1.5},"first":{"from":{"x":5803,"y":627.5},"to":{"x":5804.5,"y":627.5},"corridorId":"section-4:horizontal:666.5:5408.5"},"second":{"from":{"x":5797,"y":627.5},"to":{"x":5853.25,"y":627.5},"corridorId":"section-4:horizontal:666.5:5408.5"}},{"wires":["w56","w65"],"hit":{"x":5853.25,"y":705.5,"length":50.25},"first":{"from":{"x":5853.25,"y":705.5},"to":{"x":5909.5,"y":705.5},"corridorId":"section-4:horizontal:666.5:5408.5"},"second":{"from":{"x":5791,"y":705.5},"to":{"x":5903.5,"y":705.5},"corridorId":"section-4:horizontal:666.5:5408.5"}}]
+FAIL zero positive-length parallel/coincident wire overlaps: Expected values to be strictly equal:
+
+3 !== 0
+
+PASS 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals
+FAIL four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct: Expected values to be strictly equal:
+
+15 !== 12
+
+FAIL all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   {
++     hit: {
++       length: 1.5,
++       x: 6899,
++       y: 1761
++     },
++     transverse: false,
++     wires: [
++       'w05',
++       'w06'
++     ]
++   },
++   {
++     hit: {
++       length: 1.5,
++       x: 5803,
++       y: 627.5
++     },
++     transverse: false,
++     wires: [
++       'w31',
++       'w56'
++     ]
++   },
++   {
++     hit: {
++       length: 50.25,
++       x: 5853.25,
++       y: 705.5
++     },
++     transverse: false,
++     wires: [
++       'w56',
++       'w65'
++     ]
++   }
++ ]
+- []
+
+INVALID_CONTACTS [{"wires":["w05","w06"],"hit":{"x":6899,"y":1761,"length":1.5},"transverse":false},{"wires":["w31","w56"],"hit":{"x":5803,"y":627.5,"length":1.5},"transverse":false},{"wires":["w56","w65"],"hit":{"x":5853.25,"y":705.5,"length":50.25},"transverse":false}]
+CROSSINGS {"world":53,"section-1":0,"section-2":117,"section-3":0,"section-4":10,"section-5":552,"section-6":49,"section-7":0,"section-8":3,"section-9":1,"section-10":0,"section-11":0,"section-12":2,"section-13":0,"section-14":119,"section-15":45}
+PASS topological endpoint ranges and linked road-order constraints
+FAIL actual crossing count equals additive endpoint and linked-order lower bound: Expected values to be strictly equal:
+
+951 !== 803
+
+PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings
+CERTIFICATION 800 certified / 151 uncertified
+FAIL zero uncertified crossings: Expected values to be strictly equal:
+
+151 !== 0
+
+PASS exact semantic directory tree and per-directory file order
+PASS every gate traversal crosses its own mouth at its assigned distinct offset
+FAIL turns confined to registered junctions and terminal fans; remaining intervals on assigned lanes: unassigned nonjunction interval w05/section-14:horizontal:1872:6581

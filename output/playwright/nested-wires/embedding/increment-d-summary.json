@@ -1,0 +1,657 @@
+{
+  "verifierExit": 1,
+  "proofRegionOverlapPairs": 0,
+  "widthViolations": [
+    {
+      "road": {
+        "id": "section-13:horizontal:2348.5:5372.5",
+        "sectionId": "section-13",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 5366.5,
+          "y": 2342.5,
+          "width": 702,
+          "height": 15
+        },
+        "directions": ["left", "right"],
+        "wireLaneCount": 0
+      },
+      "actual": 15,
+      "expected": 12,
+      "lanes": []
+    }
+  ],
+  "laneCoordinateViolationCount": 0,
+  "turnViolationCount": 13,
+  "actual": 951,
+  "certified": 800,
+  "uncertified": 151,
+  "derivedBound": 803,
+  "endpointCertificates": 417,
+  "obstructionCount": 386,
+  "legacy": {
+    "failures": [],
+    "uncertified": 951,
+    "lowerBound": 803,
+    "endpointCertificates": 417,
+    "reversed": [],
+    "missingGates": []
+  },
+  "firstUncoveredPaths": [
+    {
+      "wires": ["w05", "w06"],
+      "point": {
+        "x": 6899,
+        "y": 1761
+      },
+      "registeredJunctions": [
+        "junction:section-14:horizontal:1872:6581:drive:node-35:entry-top|junction:section-14:horizontal:1872:6581:drive:section-14:entry-top"
+      ],
+      "regions": [
+        {
+          "label": "J296",
+          "bounds": {
+            "x": 6864.5,
+            "y": 1758,
+            "width": 61.5,
+            "height": 325.5
+          },
+          "paths": [
+            {
+              "wire": "w05",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 6893,
+                  "laneId": "w05:17",
+                  "point": {
+                    "y": 1758,
+                    "x": 6893
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 1761,
+                  "point": {
+                    "x": 6926,
+                    "y": 1761
+                  }
+                }
+              ],
+              "source": {
+                "x": 3053.5,
+                "y": 638.5
+              },
+              "target": {
+                "x": 7221.5,
+                "y": 2323.5
+              }
+            },
+            {
+              "wire": "w06",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 6899,
+                  "laneId": "w06:17",
+                  "point": {
+                    "y": 1758,
+                    "x": 6899
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 1875,
+                  "laneId": "w06:20",
+                  "point": {
+                    "x": 6926,
+                    "y": 1875
+                  }
+                }
+              ],
+              "source": {
+                "x": 3053.5,
+                "y": 632.5
+              },
+              "target": {
+                "x": 7260.5,
+                "y": 2083.5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wires": ["w05", "w06"],
+      "point": {
+        "x": 6900.5,
+        "y": 1761
+      },
+      "registeredJunctions": [
+        "junction:section-14:horizontal:1872:6581:drive:node-35:entry-top|junction:section-14:horizontal:1872:6581:drive:section-14:entry-top"
+      ],
+      "regions": [
+        {
+          "label": "J296",
+          "bounds": {
+            "x": 6864.5,
+            "y": 1758,
+            "width": 61.5,
+            "height": 325.5
+          },
+          "paths": [
+            {
+              "wire": "w05",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 6893,
+                  "laneId": "w05:17",
+                  "point": {
+                    "y": 1758,
+                    "x": 6893
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 1761,
+                  "point": {
+                    "x": 6926,
+                    "y": 1761
+                  }
+                }
+              ],
+              "source": {
+                "x": 3053.5,
+                "y": 638.5
+              },
+              "target": {
+                "x": 7221.5,
+                "y": 2323.5
+              }
+            },
+            {
+              "wire": "w06",
+              "events": [
+                {
+                  "side": 0,
+                  "coordinate": 6899,
+                  "laneId": "w06:17",
+                  "point": {
+                    "y": 1758,
+                    "x": 6899
+                  }
+                },
+                {
+                  "side": 1,
+                  "coordinate": 1875,
+                  "laneId": "w06:20",
+                  "point": {
+                    "x": 6926,
+                    "y": 1875
+                  }
+                }
+              ],
+              "source": {
+                "x": 3053.5,
+                "y": 632.5
+              },
+              "target": {
+                "x": 7260.5,
+                "y": 2083.5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wires": ["w05", "w06"],
+      "point": {
+        "x": 6967.25,
+        "y": 1875
+      },
+      "registeredJunctions": [],
+      "regions": []
+    },
+    {
+      "wires": ["w05", "w25"],
+      "point": {
+        "x": 6967.25,
+        "y": 1959
+      },
+      "registeredJunctions": [],
+      "regions": []
+    },
+    {
+      "wires": ["w05", "w28"],
+      "point": {
+        "x": 6967.25,
+        "y": 1953
+      },
+      "registeredJunctions": [],
+      "regions": []
+    }
+  ],
+  "turnViolations": [
+    {
+      "wire": "w05",
+      "segment": 28,
+      "piece": {
+        "from": {
+          "x": 6893,
+          "y": 1761
+        },
+        "to": {
+          "x": 6967.25,
+          "y": 1761
+        },
+        "corridorId": "section-14:horizontal:1872:6581"
+      },
+      "message": "unassigned nonjunction interval w05/section-14:horizontal:1872:6581"
+    },
+    {
+      "wire": "w05",
+      "segment": 29,
+      "piece": {
+        "from": {
+          "x": 6967.25,
+          "y": 1761
+        },
+        "to": {
+          "x": 6967.25,
+          "y": 1983
+        },
+        "corridorId": "section-14:horizontal:1872:6581"
+      },
+      "message": "unassigned nonjunction interval w05/section-14:horizontal:1872:6581"
+    },
+    {
+      "wire": "w05",
+      "segment": 30,
+      "piece": {
+        "from": {
+          "x": 6967.25,
+          "y": 1983
+        },
+        "to": {
+          "x": 7041.5,
+          "y": 1983
+        },
+        "corridorId": "section-14:horizontal:1872:6581"
+      },
+      "message": "unassigned nonjunction interval w05/section-14:horizontal:1872:6581"
+    },
+    {
+      "wire": "w20",
+      "segment": 4,
+      "piece": {
+        "from": {
+          "x": 5903.5,
+          "y": 1143.5
+        },
+        "to": {
+          "x": 5750.5,
+          "y": 1143.5
+        },
+        "corridorId": "section-4:horizontal:1146.5:5408.5"
+      },
+      "message": "unassigned nonjunction interval w20/section-4:horizontal:1146.5:5408.5"
+    },
+    {
+      "wire": "w21",
+      "segment": 5,
+      "piece": {
+        "from": {
+          "x": 5909.5,
+          "y": 1149.5
+        },
+        "to": {
+          "x": 5756.5,
+          "y": 1149.5
+        },
+        "corridorId": "section-4:horizontal:1146.5:5408.5"
+      },
+      "message": "unassigned nonjunction interval w21/section-4:horizontal:1146.5:5408.5"
+    },
+    {
+      "wire": "w56",
+      "segment": 40,
+      "piece": {
+        "from": {
+          "x": 5853.25,
+          "y": 705.5
+        },
+        "to": {
+          "x": 5909.5,
+          "y": 705.5
+        },
+        "corridorId": "section-4:horizontal:666.5:5408.5"
+      },
+      "message": "unassigned nonjunction interval w56/section-4:horizontal:666.5:5408.5"
+    },
+    {
+      "wire": "w65",
+      "segment": 37,
+      "piece": {
+        "from": {
+          "x": 5791,
+          "y": 705.5
+        },
+        "to": {
+          "x": 5903.5,
+          "y": 705.5
+        },
+        "corridorId": "section-4:horizontal:666.5:5408.5"
+      },
+      "message": "unassigned nonjunction interval w65/section-4:horizontal:666.5:5408.5"
+    },
+    {
+      "wire": "w76",
+      "segment": 5,
+      "piece": {
+        "from": {
+          "x": 4755.5,
+          "y": 2345.5
+        },
+        "to": {
+          "x": 4647,
+          "y": 2345.5
+        },
+        "corridorId": "section-12:horizontal:2348.5:4428.5"
+      },
+      "message": "unassigned nonjunction interval w76/section-12:horizontal:2348.5:4428.5"
+    },
+    {
+      "wire": "w77",
+      "segment": 6,
+      "piece": {
+        "from": {
+          "x": 4761.5,
+          "y": 2351.5
+        },
+        "to": {
+          "x": 4653,
+          "y": 2351.5
+        },
+        "corridorId": "section-12:horizontal:2348.5:4428.5"
+      },
+      "message": "unassigned nonjunction interval w77/section-12:horizontal:2348.5:4428.5"
+    },
+    {
+      "wire": "w80",
+      "segment": 5,
+      "piece": {
+        "from": {
+          "x": 5693.5,
+          "y": 2345.5
+        },
+        "to": {
+          "x": 5585,
+          "y": 2345.5
+        },
+        "corridorId": "section-13:horizontal:2348.5:5372.5"
+      },
+      "message": "unassigned nonjunction interval w80/section-13:horizontal:2348.5:5372.5"
+    },
+    {
+      "wire": "w81",
+      "segment": 6,
+      "piece": {
+        "from": {
+          "x": 5699.5,
+          "y": 2351.5
+        },
+        "to": {
+          "x": 5591,
+          "y": 2351.5
+        },
+        "corridorId": "section-13:horizontal:2348.5:5372.5"
+      },
+      "message": "unassigned nonjunction interval w81/section-13:horizontal:2348.5:5372.5"
+    },
+    {
+      "wire": "w84",
+      "segment": 6,
+      "piece": {
+        "from": {
+          "x": 5705.5,
+          "y": 2357.5
+        },
+        "to": {
+          "x": 5597,
+          "y": 2357.5
+        },
+        "corridorId": "section-13:horizontal:2348.5:5372.5"
+      },
+      "message": "unassigned nonjunction interval w84/section-13:horizontal:2348.5:5372.5"
+    },
+    {
+      "wire": "w88",
+      "segment": 5,
+      "piece": {
+        "from": {
+          "x": 7035.5,
+          "y": 2470.5
+        },
+        "to": {
+          "x": 6535,
+          "y": 2470.5
+        },
+        "corridorId": "section-14:horizontal:2491.5:6581"
+      },
+      "message": "unassigned nonjunction interval w88/section-14:horizontal:2491.5:6581"
+    }
+  ],
+  "coveredKinds": {
+    "endpoint-alternation": 417,
+    "linked-road-order": 383
+  },
+  "uncoveredWithoutJunction": 16,
+  "obstructionBoundSum": 386,
+  "invalidPerimeterPaths": [
+    {
+      "region": "J296",
+      "wire": "w05",
+      "events": [
+        {
+          "side": 0,
+          "coordinate": 6893,
+          "laneId": "w05:17",
+          "point": {
+            "y": 1758,
+            "x": 6893
+          }
+        },
+        {
+          "side": 1,
+          "coordinate": 1761,
+          "point": {
+            "x": 6926,
+            "y": 1761
+          }
+        }
+      ],
+      "source": {
+        "x": 3053.5,
+        "y": 638.5
+      },
+      "target": {
+        "x": 7221.5,
+        "y": 2323.5
+      },
+      "sourceInterior": false,
+      "targetInterior": false
+    },
+    {
+      "region": "J110",
+      "wire": "w56",
+      "events": [
+        {
+          "side": 0,
+          "coordinate": 5797,
+          "laneId": "w56:22",
+          "point": {
+            "y": 624.5,
+            "x": 5797
+          }
+        },
+        {
+          "side": 1,
+          "coordinate": 705.5,
+          "point": {
+            "x": 5860,
+            "y": 705.5
+          }
+        }
+      ],
+      "source": {
+        "x": 2568,
+        "y": 2000.5
+      },
+      "target": {
+        "x": 5915.5,
+        "y": 738.5
+      },
+      "sourceInterior": false,
+      "targetInterior": false
+    },
+    {
+      "region": "J110",
+      "wire": "w65",
+      "events": [
+        {
+          "side": 0,
+          "coordinate": 5791,
+          "laneId": "w65:21",
+          "point": {
+            "y": 624.5,
+            "x": 5791
+          }
+        },
+        {
+          "side": 1,
+          "coordinate": 705.5,
+          "point": {
+            "x": 5860,
+            "y": 705.5
+          }
+        }
+      ],
+      "source": {
+        "x": 2127,
+        "y": 2276.5
+      },
+      "target": {
+        "x": 5909.5,
+        "y": 738.5
+      },
+      "sourceInterior": false,
+      "targetInterior": false
+    },
+    {
+      "region": "J108",
+      "wire": "w56",
+      "events": [
+        {
+          "side": 3,
+          "coordinate": 705.5,
+          "point": {
+            "x": 5894.5,
+            "y": 705.5
+          }
+        },
+        {
+          "side": 2,
+          "coordinate": 5915.5,
+          "point": {
+            "x": 5915.5,
+            "y": 738.5
+          },
+          "laneId": "w56:26",
+          "terminal": true
+        }
+      ],
+      "source": {
+        "x": 2568,
+        "y": 2000.5
+      },
+      "target": {
+        "x": 5915.5,
+        "y": 738.5
+      },
+      "sourceInterior": false,
+      "targetInterior": false
+    },
+    {
+      "region": "J108",
+      "wire": "w65",
+      "events": [
+        {
+          "side": 3,
+          "coordinate": 705.5,
+          "point": {
+            "x": 5894.5,
+            "y": 705.5
+          }
+        },
+        {
+          "side": 2,
+          "coordinate": 5909.5,
+          "point": {
+            "x": 5909.5,
+            "y": 738.5
+          },
+          "laneId": "w65:25",
+          "terminal": true
+        }
+      ],
+      "source": {
+        "x": 2127,
+        "y": 2276.5
+      },
+      "target": {
+        "x": 5909.5,
+        "y": 738.5
+      },
+      "sourceInterior": false,
+      "targetInterior": false
+    },
+    {
+      "region": "J301",
+      "wire": "w88",
+      "events": [
+        {
+          "side": 1,
+          "coordinate": 2470.5,
+          "point": {
+            "x": 6749,
+            "y": 2470.5
+          }
+        },
+        {
+          "side": 2,
+          "coordinate": 6535,
+          "laneId": "w88:4",
+          "point": {
+            "y": 2515.5,
+            "x": 6535
+          }
+        }
+      ],
+      "source": {
+        "x": 6972.5,
+        "y": 2134.5
+      },
+      "target": {
+        "x": 5480.5,
+        "y": 1026.5
+      },
+      "sourceInterior": false,
+      "targetInterior": false
+    }
+  ]
+}

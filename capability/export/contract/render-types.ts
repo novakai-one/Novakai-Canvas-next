@@ -35,7 +35,7 @@ export interface DrawingSlots {
   readonly node: (node: PlacedNode) => ReactElement;
   readonly wire: (wire: RoutedWire, paint: Paint) => ReactElement;
   readonly sequence: (geometry: SequenceGeometry, paint: Paint) => ReactElement;
-  readonly label: (content: MeasuredContent, point: Point) => ReactElement;
+  readonly label: (content: MeasuredContent, point: Point, sectionTitle?: boolean) => ReactElement;
 }
 export interface MarkerPlacement {
   readonly kind: MarkerKind;

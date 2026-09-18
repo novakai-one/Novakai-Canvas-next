@@ -1,0 +1,59 @@
+[
+  {
+    "pair": "m10a-idle",
+    "files": [
+      "m10a-before-idle.png",
+      "m10a-after-idle.png"
+    ],
+    "width": 1920,
+    "height": 1440,
+    "totalPixels": 2764800,
+    "changedPixels": 15418,
+    "percentChanged": 0.5577,
+    "bbox": {
+      "x": 182,
+      "y": 20,
+      "width": 1364,
+      "height": 1205
+    },
+    "diffPng": "diff-m10a-idle.png"
+  },
+  {
+    "pair": "m10a-roads-on",
+    "files": [
+      "m10a-before-roads-on.png",
+      "m10a-after-roads-on.png"
+    ],
+    "width": 1920,
+    "height": 1440,
+    "totalPixels": 2764800,
+    "changedPixels": 15291,
+    "percentChanged": 0.5531,
+    "bbox": {
+      "x": 182,
+      "y": 20,
+      "width": 1364,
+      "height": 1205
+    },
+    "diffPng": "diff-m10a-roads-on.png"
+  },
+  {
+    "pair": "m10a-mid-zoom",
+    "files": [
+      "m10a-before-mid-zoom.png",
+      "m10a-after-mid-zoom.png"
+    ],
+    "width": 1920,
+    "height": 1440,
+    "totalPixels": 2764800,
+    "changedPixels": 11100,
+    "percentChanged": 0.4015,
+    "bbox": {
+      "x": 0,
+      "y": 20,
+      "width": 1811,
+      "height": 990
+    },
+    "diffPng": "diff-m10a-mid-zoom.png"
+  }
+]

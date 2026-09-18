@@ -2,7 +2,11 @@ import type { ReactElement } from 'react';
 import type { ContentBlocksProps } from '../../contract/react-types.js';
 import type { Primitive } from '../../contract/records/visual.js';
 /** Measured text uses digest-derived family and exact advance; JSX escapes source text. */
-function text(item: Extract<Primitive, { kind: 'text' }>, key: number): ReactElement {
+function text(
+  item: Extract<Primitive, { kind: 'text' }>,
+  key: number,
+  display = item.text,
+): ReactElement {
   return (
     <text
       key={key}
@@ -13,10 +17,10 @@ function text(item: Extract<Primitive, { kind: 'text' }>, key: number): ReactEle
       fill={item.fill}
       fontFamily={`canvas-${item.font.digest}`}
       fontSize={item.size}
-      textLength={item.width}
+      textLength={display === item.text ? item.width : undefined}
       lengthAdjust="spacingAndGlyphs"
     >
-      {item.text}
+      {display}
     </text>
   );
 }
@@ -63,8 +67,12 @@ function rule(item: Extract<Primitive, { kind: 'rule' }>, key: number): ReactEle
   );
 }
 /** Narrowing selects only declarative primitive rendering, not semantic diagram policy. */
-function primitive(item: Primitive, key: number): ReactElement {
-  if (item.kind === 'text') return text(item, key);
+function primitive(
+  item: Primitive,
+  key: number,
+  displayText: NonNullable<ContentBlocksProps['displayText']>,
+): ReactElement {
+  if (item.kind === 'text') return text(item, key, displayText(item));
   return nonText(item, key);
 }
 /** Image and line are the remaining closed primitive variants. */
@@ -73,8 +81,11 @@ function nonText(item: Exclude<Primitive, { kind: 'text' }>, key: number): React
   return decoration(item, key);
 }
 /** Shared block renderer owns escaping and local primitives for both interactive nodes and static export. */
-export function ContentBlocks({ primitives }: ContentBlocksProps): ReactElement {
-  return <g>{primitives.map(primitive)}</g>;
+export function ContentBlocks({
+  primitives,
+  displayText = (item) => item.text,
+}: ContentBlocksProps): ReactElement {
+  return <g>{primitives.map((item, key) => primitive(item, key, displayText))}</g>;
 }
 
 /** Badge fill and line geometry were measured before routing; no renderer-owned dimensions. */

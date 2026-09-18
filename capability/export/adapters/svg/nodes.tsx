@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import type {
   ReactBindings,
+  DrawingSlots,
   PlacedNode,
   MeasuredContent,
   Point,
@@ -10,7 +11,7 @@ export function createNodeDrawing(
   bindings: Pick<ReactBindings, 'NodeContent' | 'MeasuredContent'>,
 ): {
   node: (node: PlacedNode) => ReactElement;
-  label: (content: MeasuredContent, point: Point) => ReactElement;
+  label: DrawingSlots['label'];
 } {
   const Content = bindings.NodeContent;
   const Measured = bindings.MeasuredContent;
@@ -23,11 +24,11 @@ export function createNodeDrawing(
       </g>
     );
   }
-  /** Labels are section-local, independently measured by Presentation. */
-  function label(content: MeasuredContent, point: Point): ReactElement {
+  /** Only section titles opt into shortening; wire and sequence text stays verbatim. */
+  function label(content: MeasuredContent, point: Point, sectionTitle = false): ReactElement {
     return (
       <g transform={`translate(${point.x} ${point.y})`}>
-        <Measured content={content} embedFonts={false} />
+        <Measured content={content} embedFonts={false} sectionTitle={sectionTitle} />
       </g>
     );
   }

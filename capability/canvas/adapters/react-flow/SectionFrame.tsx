@@ -23,8 +23,12 @@ export function createSectionFrame(
           borderColor: data.paint.stroke,
         }}
       >
-        <div className={`section-drag-handle ${styles.title}`} style={{ left, top }}>
-          <Content embedFonts={false} content={section.title.content} />
+        <div
+          className={`section-drag-handle ${styles.title}`}
+          style={{ left, top }}
+          title={section.title.content.outline.join(' ')}
+        >
+          <Content embedFonts={false} content={section.title.content} sectionTitle />
         </div>
       </div>
     );

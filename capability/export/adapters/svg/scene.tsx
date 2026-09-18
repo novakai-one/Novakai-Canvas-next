@@ -21,7 +21,7 @@ export function createSceneRenderer(
       <g key={item.id} data-section={item.id}>
         <rect {...item.box} fill={paint.fill} stroke={paint.stroke} />
         <g transform={`translate(${item.origin.x} ${item.origin.y})`}>
-          {slots.label(item.title.content, item.title.box)}
+          {slots.label(item.title.content, item.title.box, true)}
           {item.nodes.map(slots.node)}
           {item.wires.map((wire) => slots.wire(wire, paint))}
           {slots.sequence(item.sequence, paint)}

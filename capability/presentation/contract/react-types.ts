@@ -1,10 +1,17 @@
 import type { ComponentType, ReactElement, ReactNode } from 'react';
-import type { VisualNode, Primitive, MarkerKind, MeasuredContent } from './records/visual.js';
+import type {
+  VisualNode,
+  Primitive,
+  MarkerKind,
+  MeasuredContent,
+  TextRun,
+} from './records/visual.js';
 import type { ChromePolicy, ChromePolicies, ChromeName } from './records/chrome.js';
 import type { FontSet, Paint, ResolvedStyle } from './records/style.js';
 /** React declarations never enter core; stable slots are bound once by composition. */
 export interface ContentBlocksProps {
   readonly primitives: readonly Primitive[];
+  readonly displayText?: ((item: TextRun) => string) | undefined;
 }
 export interface NodeContentProps {
   readonly node: VisualNode;
@@ -13,6 +20,7 @@ export interface NodeContentProps {
 /** Measured labels/titles reuse exact font bytes and primitives without inventing a node frame. */
 export interface MeasuredContentProps {
   readonly content: MeasuredContent;
+  readonly sectionTitle?: boolean;
   readonly embedFonts?: boolean;
 }
 export interface MarkerProps {

@@ -1,0 +1,160 @@
+{
+  "date": "2026-09-18T00:13:34.201Z",
+  "pairs": [
+    {
+      "attempt": 1,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 452.89999997615814,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 497.8000000715256,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    },
+    {
+      "attempt": 2,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 369.5,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 377.8000000715256,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    },
+    {
+      "attempt": 3,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 368.89999997615814,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 405.60000002384186,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    },
+    {
+      "attempt": 4,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 397.7999999523163,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 386.1999999284744,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    },
+    {
+      "attempt": 5,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 366.09999990463257,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 379.10000002384186,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    },
+    {
+      "attempt": 6,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 370.2000000476837,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 376.1999999284744,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    },
+    {
+      "attempt": 7,
+      "samples": [
+        {
+          "side": "before",
+          "port": 5191,
+          "duration": 370,
+          "roadsVisible": "false"
+        },
+        {
+          "side": "after",
+          "port": 5196,
+          "duration": 376.10000002384186,
+          "roadsVisible": "false"
+        }
+      ],
+      "contamination": [],
+      "clean": true
+    }
+  ],
+  "profile": {
+    "headless": true,
+    "viewport": {
+      "width": 1920,
+      "height": 1440
+    },
+    "deviceScaleFactor": 1
+  },
+  "metric": "roads:navigation-to-ready",
+  "cleanPairs": 7,
+  "discardedPairs": [],
+  "beforeMedian": 370,
+  "afterMedian": 379.10000002384186,
+  "limit": 388.5,
+  "changePercent": 2.459459465903202,
+  "afterAbsolutePass": false,
+  "pass": true,
+  "windowServerCpuRange": [
+    24.7,
+    37.9
+  ],
+  "provenance": "Retained Amendment 5/6 run, timing-ab.json (full process samples retained locally); not a fresh Amendment 14 timing run."
+}

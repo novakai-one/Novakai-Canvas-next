@@ -1,0 +1,381 @@
+{
+  "pass": true,
+  "corpus": "modules-document-publishing",
+  "counts": {
+    "wire": 4,
+    "node": 31,
+    "section": 1,
+    "other": 0
+  },
+  "changes": [],
+  "wireListsByteIdentical": true,
+  "afterRunsByteIdentical": true,
+  "svgByteIdenticalBeforeAfter": true,
+  "sha256": "fa7d2734f845fbd4681f3a20784af92d9605b95df093e6431a0e2975242bbdf2",
+  "labels": {
+    "before": [
+      [
+        "section",
+        "publishing-boundary",
+        "Publishing boundaries"
+      ],
+      [
+        "node",
+        "publishing-boundary:group:policy",
+        "APPLICATION POLICY"
+      ],
+      [
+        "node",
+        "publishing-boundary:group:integration",
+        "VENDOR INTEGRATION"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "MODULE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "Editorial workspace"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "Validates a draft before "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "asking the publishing port "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "to submit it."
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "publisher: PublicationPort "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "(out)"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "FUNCTION"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "validateApproval"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "validateApproval(draft: Draft,"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "policy: EditorialPolicy): Result<ApprovedDraft, ValidationError>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "INTERFACE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "PublicationPort"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "public submit: (ApprovedDraft) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "Promise<Result<PublicationReceipt, PublishError>>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "public withdraw: (PublicationId, Reason) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "Promise<Result<WithdrawalReceipt, PublishError>>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "MODULE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "Web publisher adapter"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "Implements both submit and withdraw; "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "translates vendor failures into "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "PublishError."
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "CMS client: CmsClient (out)"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "INTERFACE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "CmsClient / external boundary"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "public createPage: (CmsPage) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "Promise<Result<CmsPageId, CmsError>>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "public removePage: (CmsPageId) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "Promise<Result<void, CmsError>>"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:checks",
+        "calls validation before submit"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:imports",
+        "imports publishing contract"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:implements",
+        "implements submit and withdraw"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:calls-cms",
+        "imports vendor contract"
+      ]
+    ],
+    "after": [
+      [
+        "section",
+        "publishing-boundary",
+        "Publishing boundaries"
+      ],
+      [
+        "node",
+        "publishing-boundary:group:policy",
+        "APPLICATION POLICY"
+      ],
+      [
+        "node",
+        "publishing-boundary:group:integration",
+        "VENDOR INTEGRATION"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "MODULE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "Editorial workspace"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "Validates a draft before "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "asking the publishing port "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "to submit it."
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "publisher: PublicationPort "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:editor",
+        "(out)"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "FUNCTION"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "validateApproval"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "validateApproval(draft: Draft,"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:validate",
+        "policy: EditorialPolicy): Result<ApprovedDraft, ValidationError>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "INTERFACE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "PublicationPort"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "public submit: (ApprovedDraft) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "Promise<Result<PublicationReceipt, PublishError>>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "public withdraw: (PublicationId, Reason) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:publication",
+        "Promise<Result<WithdrawalReceipt, PublishError>>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "MODULE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "Web publisher adapter"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "Implements both submit and withdraw; "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "translates vendor failures into "
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "PublishError."
+      ],
+      [
+        "node",
+        "publishing-boundary:object:web-adapter",
+        "CMS client: CmsClient (out)"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "INTERFACE"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "CmsClient / external boundary"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "public createPage: (CmsPage) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "Promise<Result<CmsPageId, CmsError>>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "public removePage: (CmsPageId) =>"
+      ],
+      [
+        "node",
+        "publishing-boundary:object:cms",
+        "Promise<Result<void, CmsError>>"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:checks",
+        "calls validation before submit"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:imports",
+        "imports publishing contract"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:implements",
+        "implements submit and withdraw"
+      ],
+      [
+        "wire",
+        "publishing-boundary:object:wire:calls-cms",
+        "imports vendor contract"
+      ]
+    ]
+  }
+}

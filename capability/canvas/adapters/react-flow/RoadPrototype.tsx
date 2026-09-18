@@ -10,6 +10,7 @@ import {
   useNodesInitialized,
 } from '@xyflow/react';
 import type { Node, NodeProps, NodeTypes } from '@xyflow/react';
+import { zoomTypeMinimum } from '@novakai/canvas-design-system';
 import type {
   RoadPrototypeScene,
   NestedWire,
@@ -117,6 +118,11 @@ function Road({ data }: NodeProps<RoadNode>): ReactElement {
   );
 }
 
+/** Section headings and navigation share the same display-only leaf label. */
+function sectionLeafLabel(label: string): string | undefined {
+  return label.split('/').at(-1);
+}
+
 /** Paint labels over finished rectangles; port hit-box geometry remains available but hidden. */
 function Block({ data }: NodeProps<BlockNode>): ReactElement {
   if (data.kind === 'section')
@@ -129,14 +135,14 @@ function Block({ data }: NodeProps<BlockNode>): ReactElement {
         data-section-family={data.block.label.split('/')[0]}
       >
         <span className={styles.labelFrame} data-label-frame>
-          <strong>{data.block.label}</strong>
+          <strong title={data.block.label}>{sectionLeafLabel(data.block.label)}</strong>
         </span>
       </div>
     );
   return (
     <div className={`${styles.node} ${data.selectionClass ?? ''}`} data-node-id={data.block.id}>
       <span className={styles.labelFrame} data-label-frame>
-        <strong>{data.block.label}</strong>
+        <strong title={data.block.label}>{data.block.label.replace(/\.ts$/u, '')}</strong>
       </span>
       {data.ports.map((port) => (
         <button
@@ -665,12 +671,13 @@ export function RoadPrototype({
             {scene.sections.map((s) => (
               <button
                 key={s.id}
+                title={s.label}
                 onClick={() => {
                   setProofIndex(-1);
                   setFocus(s.id);
                 }}
               >
-                {s.label}
+                {sectionLeafLabel(s.label)}
               </button>
             ))}
             {wires.length > 0 && (
@@ -1324,9 +1331,9 @@ function wireMidpoint(wire: NestedWire): PrototypePoint {
   };
 }
 
-/** Browser paint only. ResizeObserver measures untransformed label boxes, never scene geometry.
- * Zoom writes transform/opacity inputs only; font loading and density can refresh fit limits.
- * Until measured, labels are transparent. Unmount disconnects; remount recomputes safely.
+/** Browser paint only: one zoom tier controls every node label, independent of its text.
+ * Section-only measurement keeps headings visible inside their finished rectangles.
+ * Unmount disconnects the observer; remount recomputes safely.
  */
 function LabelPaint({ root }: { readonly root: RefObject<HTMLElement | null> }): null {
   const { zoom } = useViewport();
@@ -1334,9 +1341,13 @@ function LabelPaint({ root }: { readonly root: RefObject<HTMLElement | null> }):
   useLayoutEffect(() => {
     root.current?.style.setProperty('--label-scale', String(Math.max(1, 1 / zoom)));
     root.current?.style.setProperty('--paint-zoom', String(zoom));
+    const element = root.current;
+    if (!element) return;
+    element.style.setProperty('--node-label-opacity', zoom >= zoomTypeMinimum ? '1' : '0');
   }, [root, zoom]);
   useLayoutEffect(() => {
-    const frames = root.current?.querySelectorAll<HTMLElement>('[data-label-frame]') ?? [];
+    const frames =
+      root.current?.querySelectorAll<HTMLElement>('[data-section-id] [data-label-frame]') ?? [];
     const observer = new ResizeObserver(() => frames.forEach(measureLabelFit));
     frames.forEach((frame) => observeLabel(observer, frame));
     return () => observer.disconnect();

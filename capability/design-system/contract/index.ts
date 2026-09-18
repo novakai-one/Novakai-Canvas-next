@@ -77,3 +77,4 @@ export type { ChromeName, HexColor } from './brands.js';
 export type { ChromeMetrics } from './records/theme.js';
 
 export { wireIdleOpacity } from './wire-paint.js';
+export { zoomTypeMinimum } from './zoom-type.js';

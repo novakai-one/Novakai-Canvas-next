@@ -127,7 +127,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -330,7 +331,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -533,7 +535,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -736,7 +739,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -939,7 +943,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -1142,7 +1147,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -1345,7 +1351,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -1548,7 +1555,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -1751,7 +1759,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -1954,7 +1963,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -2157,7 +2167,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;
@@ -2360,7 +2371,8 @@
   --nv-chrome-density-expanded-toolbar-padding: 28px;
   --nv-chrome-density-expanded-control-padding: 10px;
   --nv-chrome-density-expanded-label-size: 21px;
-  --nv-zoom-type-minimum: 0.15;
+  --nv-zoom-type-section-heading-ratio: 1.35;
+  --nv-zoom-type-minimum: 0.9;
   --nv-zoom-type-zoom-fade: 0.05;
   --nv-zoom-type-fit-fade: 0.15;
   --nv-zoom-type-node-inset: 4px;

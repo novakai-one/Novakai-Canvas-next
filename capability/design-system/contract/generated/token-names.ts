@@ -126,6 +126,7 @@ export const tokenNames = [
   '--nv-chrome-density-expanded-toolbar-padding',
   '--nv-chrome-density-expanded-control-padding',
   '--nv-chrome-density-expanded-label-size',
+  '--nv-zoom-type-section-heading-ratio',
   '--nv-zoom-type-minimum',
   '--nv-zoom-type-zoom-fade',
   '--nv-zoom-type-fit-fade',

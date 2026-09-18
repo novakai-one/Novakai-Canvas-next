@@ -7,6 +7,7 @@ import type {
   FontDefinitionsProps,
   NodeChrome,
   NodeChromeRegistry,
+  ContentBlocksProps,
 } from '../../contract/react-types.js';
 import type { ChromeName } from '../../contract/records/chrome.js';
 import type { FontSet } from '../../contract/records/style.js';
@@ -64,10 +65,10 @@ export function createContentRenderer(
         <Chrome
           node={node}
           style={node.chromeStyle}
-          heading={<Blocks primitives={content.heading} />}
+          heading={<Blocks primitives={content.heading} displayText={nodeLabel(node)} />}
         />
         <g transform={`translate(${contentSlack(node)} 0)`}>
-          <Blocks primitives={content.body} />
+          <Blocks primitives={content.body} displayText={nodeLabel(node)} />
         </g>
       </svg>
     );
@@ -123,7 +124,11 @@ export function createMeasuredRenderer(
   const css = fontRules(fonts);
   const Blocks = slots.ContentBlocks;
   /** Render admitted measured content at its exact bounds; no wrapping, frame or typography policy is introduced. */
-  function MeasuredContent({ content, embedFonts = true }: MeasuredContentProps): ReactElement {
+  function MeasuredContent({
+    content,
+    embedFonts = true,
+    sectionTitle = false,
+  }: MeasuredContentProps): ReactElement {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +139,7 @@ export function createMeasuredRenderer(
         aria-label={content.outline.join('; ')}
       >
         {embedFonts && <style>{css}</style>}
-        <Blocks primitives={content.primitives} />
+        <Blocks primitives={content.primitives} displayText={sectionLabel(sectionTitle)} />
       </svg>
     );
   }
@@ -161,4 +166,18 @@ function compartments(
     heading: node.content.primitives.filter(heading),
     body: node.content.primitives.filter((item) => !heading(item)),
   };
+}
+
+/** Display-only headings preserve measured scene bytes; full-name tooltips belong to DOM hosts. */
+function nodeLabel(node: VisualNode): ContentBlocksProps['displayText'] {
+  return (item) => {
+    if (item.y > node.headerHeight) return item.text;
+    return item.text.replace(/\.ts$/u, '');
+  };
+}
+
+/** Section callers opt in; wire labels and other measured annotations retain their source text. */
+function sectionLabel(enabled: boolean): ContentBlocksProps['displayText'] {
+  if (!enabled) return undefined;
+  return (item) => item.text.split('/').at(-1) ?? item.text;
 }

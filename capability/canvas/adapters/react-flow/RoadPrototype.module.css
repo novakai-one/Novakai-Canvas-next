@@ -612,15 +612,15 @@
     width: max-content;
     white-space: nowrap;
     font-size: var(--density-label);
-    /* Fade finishes BEFORE the transformed text reaches either containment edge. */
-    opacity: min(
-      clamp(0, calc((var(--label-fit, 0) - var(--label-scale, 1)) / var(--nv-zoom-type-fit-fade)), 1),
-      clamp(0, calc((var(--paint-zoom, 1) - var(--nv-zoom-type-minimum)) / var(--nv-zoom-type-zoom-fade)), 1)
-    );
     transform-origin: top left;
-    transform: scale(var(--label-scale, 1));
+    transform: scale(min(var(--label-scale, 1), var(--label-fit, 1)));
+    pointer-events: auto;
+  }
+  .section .labelFrame strong {
+    font-size: calc(var(--density-label) * var(--nv-zoom-type-section-heading-ratio));
   }
   .node .labelFrame strong {
+    opacity: var(--node-label-opacity, 0);
     pointer-events: auto;
     left: 50%;
     top: 50%;

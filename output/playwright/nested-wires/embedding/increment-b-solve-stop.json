@@ -1,0 +1,4524 @@
+{
+  "status": "STOP-judgment-required",
+  "scope": "Exact A ledger longest-path replay only. No active B builder, materialized candidate, catalog transition, or infeasible-embedding result is claimed.",
+  "scenes": {
+    "default": {
+      "baselineBuildsByteIdentical": true,
+      "baselineEqualsA": true,
+      "baselineBytes": 649257,
+      "baselineSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+      "ledgerEqualsA": true,
+      "ledgerSha256": "7f420a8de1837bf8fc63d3be4cc133ab8c1d189f4c4e407e94621ada96a9bc22",
+      "numericSolvesIdentical": true,
+      "constraintsSatisfied": 651,
+      "movedAnchors": 0,
+      "sectionContractions": [],
+      "gridTrackSplits": [],
+      "candidateMaterialized": false,
+      "candidateProjected": false,
+      "embeddingActiveInBuilder": false
+    },
+    "hub": {
+      "baselineBuildsByteIdentical": true,
+      "baselineEqualsA": true,
+      "baselineBytes": 713191,
+      "baselineSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+      "ledgerEqualsA": true,
+      "ledgerSha256": "a0956f5f30cd8a310f74d1bd17df0573bf4833c6e676cd52b40a37c6527ee20d",
+      "numericSolvesIdentical": true,
+      "constraintsSatisfied": 841,
+      "movedAnchors": 0,
+      "sectionContractions": [],
+      "gridTrackSplits": [],
+      "candidateMaterialized": false,
+      "candidateProjected": false,
+      "embeddingActiveInBuilder": false
+    },
+    "templates": {
+      "baselineBuildsByteIdentical": true,
+      "baselineEqualsA": true,
+      "baselineBytes": 764731,
+      "baselineSha256": "f8c7e0cc1902db78521e959bc5b49fce8f274ee2a520003276ffedf84a2844e6",
+      "ledgerEqualsA": true,
+      "ledgerSha256": "8cc3f027cec88f811a75f1a48710f8ae271039889fb401d51b6de8587ce0fc9c",
+      "numericSolvesIdentical": true,
+      "constraintsSatisfied": 1235,
+      "movedAnchors": 7,
+      "sectionContractions": [
+        {
+          "sectionId": "section-1",
+          "axis": "x",
+          "before": 3024,
+          "solved": 3016.5,
+          "decrease": 7.5,
+          "low": {
+            "alias": "section-1:x:low",
+            "key": "section-1:x:low",
+            "before": 136,
+            "solved": 143.5,
+            "path": [
+              {
+                "key": "constraint:1081",
+                "kind": "gate-normal",
+                "from": "[null,\"horizontal\",[\"section-9:surrounding:horizontal:1\"]]:start",
+                "to": "section-1:x:low",
+                "required": 79.5,
+                "available": 72,
+                "deficit": 7.5,
+                "provenance": [
+                  "section-1:entry-left",
+                  "world:vertical:64:64"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-1:x:high",
+            "key": "section-1:x:high",
+            "before": 3160,
+            "solved": 3160,
+            "path": []
+          }
+        }
+      ],
+      "gridTrackSplits": [
+        {
+          "sectionId": "section-1",
+          "axis": "x",
+          "track": 0,
+          "points": [
+            {
+              "nodeId": "node-2",
+              "alias": "node-2:x:center",
+              "key": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 368,
+              "solved": 375.5,
+              "path": [
+                {
+                  "key": "constraint:1012",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"horizontal\",[\"section-1:row:0\"]]:start",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 175.5,
+                  "available": 168,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "node-2",
+                    "node-2:entry-left",
+                    "section-1:vertical:200:248"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-5",
+              "alias": "node-5:x:center",
+              "key": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 368,
+              "solved": 368,
+              "path": []
+            }
+          ]
+        }
+      ],
+      "candidateMaterialized": false,
+      "candidateProjected": false,
+      "embeddingActiveInBuilder": false
+    },
+    "scale": {
+      "baselineBuildsByteIdentical": true,
+      "baselineEqualsA": true,
+      "baselineBytes": 1462875,
+      "baselineSha256": "d31fe5da0e937b06d328ada0f8a722f39a42784f7de3a9d8107ca672398de215",
+      "ledgerEqualsA": true,
+      "ledgerSha256": "ad0744adc9404fa18be9c61b89f7a7b30e8fc28f05e6d9903695fc83a67112f0",
+      "numericSolvesIdentical": true,
+      "constraintsSatisfied": 1859,
+      "movedAnchors": 8,
+      "sectionContractions": [],
+      "gridTrackSplits": [
+        {
+          "sectionId": "section-1",
+          "axis": "x",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-2",
+              "alias": "node-2:x:center",
+              "key": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 1144,
+              "solved": 1189,
+              "path": [
+                {
+                  "key": "constraint:1376",
+                  "kind": "travel",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": -6,
+                  "available": 0,
+                  "deficit": 0,
+                  "provenance": [
+                    "w62",
+                    "0",
+                    "turn"
+                  ]
+                },
+                {
+                  "key": "constraint:1468",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 169.5,
+                  "available": 168,
+                  "deficit": 1.5,
+                  "provenance": [
+                    "node-5",
+                    "node-5:entry-left",
+                    "section-1:vertical:976:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1454",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-1\\\",\\\"node-1:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "required": 217.5,
+                  "available": 168,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "node-1",
+                    "node-1:exit-right",
+                    "section-1:vertical:976:248"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-5",
+              "alias": "node-5:x:center",
+              "key": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 1144,
+              "solved": 1195,
+              "path": [
+                {
+                  "key": "constraint:1468",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 169.5,
+                  "available": 168,
+                  "deficit": 1.5,
+                  "provenance": [
+                    "node-5",
+                    "node-5:entry-left",
+                    "section-1:vertical:976:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1454",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-1\\\",\\\"node-1:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "required": 217.5,
+                  "available": 168,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "node-1",
+                    "node-1:exit-right",
+                    "section-1:vertical:976:248"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-1",
+          "axis": "x",
+          "track": 2,
+          "points": [
+            {
+              "nodeId": "node-3",
+              "alias": "node-3:x:center",
+              "key": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-3\\\",\\\"node-3:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 1480,
+              "solved": 1492,
+              "path": [
+                {
+                  "key": "constraint:1460",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"section-1:column:1\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-3\\\",\\\"node-3:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 151.5,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-3",
+                    "node-3:entry-left",
+                    "section-1:vertical:1312:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1458",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"section-1:column:1\"]]",
+                  "required": 151.5,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-2",
+                    "node-2:exit-right",
+                    "section-1:vertical:1312:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1376",
+                  "kind": "travel",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": -6,
+                  "available": 0,
+                  "deficit": 0,
+                  "provenance": [
+                    "w62",
+                    "0",
+                    "turn"
+                  ]
+                },
+                {
+                  "key": "constraint:1468",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 169.5,
+                  "available": 168,
+                  "deficit": 1.5,
+                  "provenance": [
+                    "node-5",
+                    "node-5:entry-left",
+                    "section-1:vertical:976:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1454",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-1\\\",\\\"node-1:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "required": 217.5,
+                  "available": 168,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "node-1",
+                    "node-1:exit-right",
+                    "section-1:vertical:976:248"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-6",
+              "alias": "node-6:x:center",
+              "key": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-6\\\",\\\"node-6:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 1480,
+              "solved": 1522,
+              "path": [
+                {
+                  "key": "constraint:1472",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"section-1:column:1\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-6\\\",\\\"node-6:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 181.5,
+                  "available": 168,
+                  "deficit": 13.5,
+                  "provenance": [
+                    "node-6",
+                    "node-6:entry-left",
+                    "section-1:vertical:1312:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1458",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"section-1:column:1\"]]",
+                  "required": 151.5,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-2",
+                    "node-2:exit-right",
+                    "section-1:vertical:1312:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1376",
+                  "kind": "travel",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": -6,
+                  "available": 0,
+                  "deficit": 0,
+                  "provenance": [
+                    "w62",
+                    "0",
+                    "turn"
+                  ]
+                },
+                {
+                  "key": "constraint:1468",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 169.5,
+                  "available": 168,
+                  "deficit": 1.5,
+                  "provenance": [
+                    "node-5",
+                    "node-5:entry-left",
+                    "section-1:vertical:976:248"
+                  ]
+                },
+                {
+                  "key": "constraint:1454",
+                  "kind": "body-fan",
+                  "from": "[\"section-1\",\"vertical\",[\"[\\\"section-1\\\",\\\"vertical\\\",\\\"node-1\\\",\\\"node-1:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-1\",\"vertical\",[\"section-1:column:0\"]]",
+                  "required": 217.5,
+                  "available": 168,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "node-1",
+                    "node-1:exit-right",
+                    "section-1:vertical:976:248"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "candidateMaterialized": false,
+      "candidateProjected": false,
+      "embeddingActiveInBuilder": false
+    },
+    "authoring": {
+      "baselineBuildsByteIdentical": true,
+      "baselineEqualsA": true,
+      "baselineBytes": 1953839,
+      "baselineSha256": "58bdd5a97a1e235973743680999abc4718ed5c975d5a9ee536b1e98175dcd9e0",
+      "ledgerEqualsA": true,
+      "ledgerSha256": "57242afe12eb4e0ace4af11ca115145068b7e3dd0ff61beed6d3ce84aa5edab1",
+      "numericSolvesIdentical": true,
+      "constraintsSatisfied": 3704,
+      "movedAnchors": 96,
+      "sectionContractions": [
+        {
+          "sectionId": "section-2",
+          "axis": "y",
+          "before": 976,
+          "solved": 933,
+          "decrease": 43,
+          "low": {
+            "alias": "section-2:y:low",
+            "key": "section-2:y:low",
+            "before": 136,
+            "solved": 215.5,
+            "path": [
+              {
+                "key": "constraint:3462",
+                "kind": "gate-normal",
+                "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                "to": "section-2:y:low",
+                "required": 151.5,
+                "available": 72,
+                "deficit": 79.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "world:horizontal:64:64"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-2:y:high",
+            "key": "section-2:y:high",
+            "before": 1112,
+            "solved": 1148.5,
+            "path": [
+              {
+                "key": "constraint:3478",
+                "kind": "gate-normal",
+                "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:end",
+                "to": "section-2:y:high",
+                "required": 79.5,
+                "available": 64,
+                "deficit": 15.5,
+                "provenance": [
+                  "section-2:exit-bottom",
+                  "section-2:horizontal:1048:2788"
+                ]
+              },
+              {
+                "key": "constraint:3495",
+                "kind": "gate-normal",
+                "from": "section-4:y:high",
+                "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:end",
+                "required": 79.5,
+                "available": 72,
+                "deficit": 7.5,
+                "provenance": [
+                  "section-4:exit-bottom",
+                  "section-2:horizontal:1048:2788"
+                ]
+              },
+              {
+                "key": "constraint:3494",
+                "kind": "gate-normal",
+                "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:end",
+                "to": "section-4:y:high",
+                "required": 19.5,
+                "available": 64,
+                "deficit": 0,
+                "provenance": [
+                  "section-4:exit-bottom",
+                  "section-4:horizontal:912:5212"
+                ]
+              },
+              {
+                "key": "constraint:3310",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-16\\\",\\\"node-16:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:end",
+                "required": 73.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-16",
+                  "node-16:exit-bottom",
+                  "section-4:horizontal:912:5212"
+                ]
+              },
+              {
+                "key": "constraint:3308",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-16\\\",\\\"node-16:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 109.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-16",
+                  "node-16:entry-top",
+                  "section-4:horizontal:672:5212"
+                ]
+              },
+              {
+                "key": "constraint:3298",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                "required": 91.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-13",
+                  "node-13:exit-bottom",
+                  "section-4:horizontal:672:5212"
+                ]
+              },
+              {
+                "key": "constraint:3296",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 97.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-13",
+                  "node-13:entry-top",
+                  "section-4:horizontal:432:5212"
+                ]
+              },
+              {
+                "key": "constraint:3487",
+                "kind": "gate-normal",
+                "from": "section-4:y:low",
+                "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                "required": 43.5,
+                "available": 112,
+                "deficit": 0,
+                "provenance": [
+                  "section-4:entry-top",
+                  "section-4:horizontal:432:5212"
+                ]
+              },
+              {
+                "key": "constraint:3486",
+                "kind": "gate-normal",
+                "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "to": "section-4:y:low",
+                "required": 169.5,
+                "available": 72,
+                "deficit": 97.5,
+                "provenance": [
+                  "section-4:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3463",
+                "kind": "gate-normal",
+                "from": "section-2:y:low",
+                "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "required": 169.5,
+                "available": 112,
+                "deficit": 57.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3462",
+                "kind": "gate-normal",
+                "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                "to": "section-2:y:low",
+                "required": 151.5,
+                "available": 72,
+                "deficit": 79.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "world:horizontal:64:64"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sectionId": "section-3",
+          "axis": "y",
+          "before": 656,
+          "solved": 423,
+          "decrease": 233,
+          "low": {
+            "alias": "section-3:y:low",
+            "key": "section-3:y:low",
+            "before": 320,
+            "solved": 553,
+            "path": [
+              {
+                "key": "constraint:348",
+                "kind": "structure",
+                "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "to": "section-3:y:low",
+                "required": 168,
+                "available": 72,
+                "deficit": 96,
+                "provenance": [
+                  "section-3",
+                  "[\"section-2\",\"horizontal\",[\"section-2:frame:horizontal:0\"]]"
+                ]
+              },
+              {
+                "key": "constraint:3463",
+                "kind": "gate-normal",
+                "from": "section-2:y:low",
+                "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "required": 169.5,
+                "available": 112,
+                "deficit": 57.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3462",
+                "kind": "gate-normal",
+                "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                "to": "section-2:y:low",
+                "required": 151.5,
+                "available": 72,
+                "deficit": 79.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "world:horizontal:64:64"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-3:y:high",
+            "key": "section-3:y:high",
+            "before": 976,
+            "solved": 976,
+            "path": []
+          }
+        },
+        {
+          "sectionId": "section-4",
+          "axis": "y",
+          "before": 656,
+          "solved": 435,
+          "decrease": 221,
+          "low": {
+            "alias": "section-4:y:low",
+            "key": "section-4:y:low",
+            "before": 320,
+            "solved": 554.5,
+            "path": [
+              {
+                "key": "constraint:3486",
+                "kind": "gate-normal",
+                "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "to": "section-4:y:low",
+                "required": 169.5,
+                "available": 72,
+                "deficit": 97.5,
+                "provenance": [
+                  "section-4:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3463",
+                "kind": "gate-normal",
+                "from": "section-2:y:low",
+                "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "required": 169.5,
+                "available": 112,
+                "deficit": 57.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3462",
+                "kind": "gate-normal",
+                "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                "to": "section-2:y:low",
+                "required": 151.5,
+                "available": 72,
+                "deficit": 79.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "world:horizontal:64:64"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-4:y:high",
+            "key": "section-4:y:high",
+            "before": 976,
+            "solved": 989.5,
+            "path": [
+              {
+                "key": "constraint:3494",
+                "kind": "gate-normal",
+                "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:end",
+                "to": "section-4:y:high",
+                "required": 19.5,
+                "available": 64,
+                "deficit": 0,
+                "provenance": [
+                  "section-4:exit-bottom",
+                  "section-4:horizontal:912:5212"
+                ]
+              },
+              {
+                "key": "constraint:3310",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-16\\\",\\\"node-16:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:end",
+                "required": 73.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-16",
+                  "node-16:exit-bottom",
+                  "section-4:horizontal:912:5212"
+                ]
+              },
+              {
+                "key": "constraint:3308",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-16\\\",\\\"node-16:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 109.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-16",
+                  "node-16:entry-top",
+                  "section-4:horizontal:672:5212"
+                ]
+              },
+              {
+                "key": "constraint:3298",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                "required": 91.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-13",
+                  "node-13:exit-bottom",
+                  "section-4:horizontal:672:5212"
+                ]
+              },
+              {
+                "key": "constraint:3296",
+                "kind": "body-fan",
+                "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 97.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-13",
+                  "node-13:entry-top",
+                  "section-4:horizontal:432:5212"
+                ]
+              },
+              {
+                "key": "constraint:3487",
+                "kind": "gate-normal",
+                "from": "section-4:y:low",
+                "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                "required": 43.5,
+                "available": 112,
+                "deficit": 0,
+                "provenance": [
+                  "section-4:entry-top",
+                  "section-4:horizontal:432:5212"
+                ]
+              },
+              {
+                "key": "constraint:3486",
+                "kind": "gate-normal",
+                "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "to": "section-4:y:low",
+                "required": 169.5,
+                "available": 72,
+                "deficit": 97.5,
+                "provenance": [
+                  "section-4:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3463",
+                "kind": "gate-normal",
+                "from": "section-2:y:low",
+                "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                "required": 169.5,
+                "available": 112,
+                "deficit": 57.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "section-2:horizontal:248:2788"
+                ]
+              },
+              {
+                "key": "constraint:3462",
+                "kind": "gate-normal",
+                "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                "to": "section-2:y:low",
+                "required": 151.5,
+                "available": 72,
+                "deficit": 79.5,
+                "provenance": [
+                  "section-2:entry-top",
+                  "world:horizontal:64:64"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sectionId": "section-6",
+          "axis": "y",
+          "before": 656,
+          "solved": 614,
+          "decrease": 42,
+          "low": {
+            "alias": "section-6:y:low",
+            "key": "section-6:y:low",
+            "before": 1440,
+            "solved": 1499,
+            "path": [
+              {
+                "key": "constraint:3542",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "to": "section-6:y:low",
+                "required": 121.5,
+                "available": 72,
+                "deficit": 49.5,
+                "provenance": [
+                  "section-6:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              },
+              {
+                "key": "constraint:3511",
+                "kind": "gate-normal",
+                "from": "section-5:y:low",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "required": 121.5,
+                "available": 112,
+                "deficit": 9.5,
+                "provenance": [
+                  "section-5:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-6:y:high",
+            "key": "section-6:y:high",
+            "before": 2096,
+            "solved": 2113,
+            "path": [
+              {
+                "key": "constraint:3558",
+                "kind": "gate-normal",
+                "from": "[\"section-6\",\"vertical\",[\"section-6:column:1\"]]:end",
+                "to": "section-6:y:high",
+                "required": 67.5,
+                "available": 64,
+                "deficit": 3.5,
+                "provenance": [
+                  "section-6:exit-bottom",
+                  "section-6:horizontal:2032:336"
+                ]
+              },
+              {
+                "key": "constraint:3326",
+                "kind": "body-fan",
+                "from": "[\"section-6\",\"horizontal\",[\"[\\\"section-6\\\",\\\"horizontal\\\",\\\"node-21\\\",\\\"node-21:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-6\",\"vertical\",[\"section-6:column:1\"]]:end",
+                "required": 133.5,
+                "available": 120,
+                "deficit": 13.5,
+                "provenance": [
+                  "node-21",
+                  "node-21:exit-bottom",
+                  "section-6:horizontal:2032:336"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sectionId": "section-7",
+          "axis": "x",
+          "before": 128,
+          "solved": 121.5,
+          "decrease": 6.5,
+          "low": {
+            "alias": "section-7:x:low",
+            "key": "section-7:x:low",
+            "before": 1552,
+            "solved": 1558.5,
+            "path": [
+              {
+                "key": "constraint:362",
+                "kind": "structure",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:0\"]]",
+                "to": "section-7:x:low",
+                "required": 54,
+                "available": 72,
+                "deficit": 0,
+                "provenance": [
+                  "section-7",
+                  "[\"section-5\",\"vertical\",[\"section-5:child-boundary:0\"]]"
+                ]
+              },
+              {
+                "key": "constraint:3567",
+                "kind": "gate-normal",
+                "from": "section-6:x:high",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:0\"]]",
+                "required": 55.5,
+                "available": 72,
+                "deficit": 0,
+                "provenance": [
+                  "section-6:exit-right",
+                  "section-5:vertical:1480:1368"
+                ]
+              },
+              {
+                "key": "constraint:3566",
+                "kind": "gate-normal",
+                "from": "[\"section-6\",\"horizontal\",[\"section-6:row:0\"]]:end",
+                "to": "section-6:x:high",
+                "required": 67.5,
+                "available": 64,
+                "deficit": 3.5,
+                "provenance": [
+                  "section-6:exit-right",
+                  "section-6:vertical:1344:1552"
+                ]
+              },
+              {
+                "key": "constraint:3323",
+                "kind": "body-fan",
+                "from": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-20\\\",\\\"node-20:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-6\",\"horizontal\",[\"section-6:row:0\"]]:end",
+                "required": 205.5,
+                "available": 168,
+                "deficit": 37.5,
+                "provenance": [
+                  "node-20",
+                  "node-20:exit-right",
+                  "section-6:vertical:1344:1552"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-7:x:high",
+            "key": "section-7:x:high",
+            "before": 1680,
+            "solved": 1680,
+            "path": []
+          }
+        },
+        {
+          "sectionId": "section-8",
+          "axis": "y",
+          "before": 656,
+          "solved": 598.5,
+          "decrease": 57.5,
+          "low": {
+            "alias": "section-8:y:low",
+            "key": "section-8:y:low",
+            "before": 1440,
+            "solved": 1497.5,
+            "path": [
+              {
+                "key": "constraint:368",
+                "kind": "structure",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "to": "section-8:y:low",
+                "required": 120,
+                "available": 72,
+                "deficit": 48,
+                "provenance": [
+                  "section-8",
+                  "[\"section-5\",\"horizontal\",[\"section-5:frame:horizontal:0\"]]"
+                ]
+              },
+              {
+                "key": "constraint:3511",
+                "kind": "gate-normal",
+                "from": "section-5:y:low",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "required": 121.5,
+                "available": 112,
+                "deficit": 9.5,
+                "provenance": [
+                  "section-5:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-8:y:high",
+            "key": "section-8:y:high",
+            "before": 2096,
+            "solved": 2096,
+            "path": []
+          }
+        },
+        {
+          "sectionId": "section-9",
+          "axis": "x",
+          "before": 800,
+          "solved": 785,
+          "decrease": 15,
+          "low": {
+            "alias": "section-9:x:low",
+            "key": "section-9:x:low",
+            "before": 2768,
+            "solved": 2783,
+            "path": [
+              {
+                "key": "constraint:3598",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:2\"]]",
+                "to": "section-9:x:low",
+                "required": 79.5,
+                "available": 72,
+                "deficit": 7.5,
+                "provenance": [
+                  "section-9:entry-left",
+                  "section-5:vertical:2696:1368"
+                ]
+              },
+              {
+                "key": "constraint:3591",
+                "kind": "gate-normal",
+                "from": "section-8:x:high",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:2\"]]",
+                "required": 79.5,
+                "available": 72,
+                "deficit": 7.5,
+                "provenance": [
+                  "section-8:exit-right",
+                  "section-5:vertical:2696:1368"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-9:x:high",
+            "key": "section-9:x:high",
+            "before": 3568,
+            "solved": 3568,
+            "path": []
+          }
+        },
+        {
+          "sectionId": "section-12",
+          "axis": "y",
+          "before": 656,
+          "solved": 598.5,
+          "decrease": 57.5,
+          "low": {
+            "alias": "section-12:y:low",
+            "key": "section-12:y:low",
+            "before": 1440,
+            "solved": 1497.5,
+            "path": [
+              {
+                "key": "constraint:384",
+                "kind": "structure",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "to": "section-12:y:low",
+                "required": 120,
+                "available": 72,
+                "deficit": 48,
+                "provenance": [
+                  "section-12",
+                  "[\"section-5\",\"horizontal\",[\"section-5:frame:horizontal:0\"]]"
+                ]
+              },
+              {
+                "key": "constraint:3511",
+                "kind": "gate-normal",
+                "from": "section-5:y:low",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "required": 121.5,
+                "available": 112,
+                "deficit": 9.5,
+                "provenance": [
+                  "section-5:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-12:y:high",
+            "key": "section-12:y:high",
+            "before": 2096,
+            "solved": 2096,
+            "path": []
+          }
+        },
+        {
+          "sectionId": "section-13",
+          "axis": "y",
+          "before": 656,
+          "solved": 597,
+          "decrease": 59,
+          "low": {
+            "alias": "section-13:y:low",
+            "key": "section-13:y:low",
+            "before": 1440,
+            "solved": 1499,
+            "path": [
+              {
+                "key": "constraint:3638",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "to": "section-13:y:low",
+                "required": 121.5,
+                "available": 72,
+                "deficit": 49.5,
+                "provenance": [
+                  "section-13:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              },
+              {
+                "key": "constraint:3511",
+                "kind": "gate-normal",
+                "from": "section-5:y:low",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "required": 121.5,
+                "available": 112,
+                "deficit": 9.5,
+                "provenance": [
+                  "section-5:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-13:y:high",
+            "key": "section-13:y:high",
+            "before": 2096,
+            "solved": 2096,
+            "path": []
+          }
+        },
+        {
+          "sectionId": "section-15",
+          "axis": "y",
+          "before": 896,
+          "solved": 589.5,
+          "decrease": 306.5,
+          "low": {
+            "alias": "section-15:y:low",
+            "key": "section-15:y:low",
+            "before": 2376,
+            "solved": 2813,
+            "path": [
+              {
+                "key": "constraint:396",
+                "kind": "structure",
+                "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                "to": "section-15:y:low",
+                "required": 78,
+                "available": 72,
+                "deficit": 6,
+                "provenance": [
+                  "section-15",
+                  "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                ]
+              },
+              {
+                "key": "constraint:3527",
+                "kind": "gate-normal",
+                "from": "section-5:y:high",
+                "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                "required": 79.5,
+                "available": 72,
+                "deficit": 7.5,
+                "provenance": [
+                  "section-5:exit-bottom",
+                  "world:horizontal:2304:64"
+                ]
+              },
+              {
+                "key": "constraint:3526",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                "to": "section-5:y:high",
+                "required": 241.5,
+                "available": 64,
+                "deficit": 177.5,
+                "provenance": [
+                  "section-5:exit-bottom",
+                  "section-5:horizontal:2168:200"
+                ]
+              },
+              {
+                "key": "constraint:3679",
+                "kind": "gate-normal",
+                "from": "section-14:y:high",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                "required": 241.5,
+                "available": 72,
+                "deficit": 169.5,
+                "provenance": [
+                  "section-14:exit-bottom",
+                  "section-5:horizontal:2168:200"
+                ]
+              },
+              {
+                "key": "constraint:3678",
+                "kind": "gate-normal",
+                "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                "to": "section-14:y:high",
+                "required": 25.5,
+                "available": 64,
+                "deficit": 0,
+                "provenance": [
+                  "section-14:exit-bottom",
+                  "section-14:horizontal:2032:6208"
+                ]
+              },
+              {
+                "key": "constraint:3394",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                "required": 85.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-38",
+                  "node-38:exit-bottom",
+                  "section-14:horizontal:2032:6208"
+                ]
+              },
+              {
+                "key": "constraint:3392",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 103.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-38",
+                  "node-38:entry-top",
+                  "section-14:horizontal:1792:6208"
+                ]
+              },
+              {
+                "key": "constraint:3386",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                "required": 84,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-36",
+                  "node-36:exit-bottom",
+                  "section-14:horizontal:1792:6208"
+                ]
+              },
+              {
+                "key": "constraint:3384",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 259.5,
+                "available": 120,
+                "deficit": 139.5,
+                "provenance": [
+                  "node-36",
+                  "node-36:entry-top",
+                  "section-14:horizontal:1552:6208"
+                ]
+              },
+              {
+                "key": "constraint:3663",
+                "kind": "gate-normal",
+                "from": "section-14:y:low",
+                "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                "required": 115.5,
+                "available": 112,
+                "deficit": 3.5,
+                "provenance": [
+                  "section-14:entry-top",
+                  "section-14:horizontal:1552:6208"
+                ]
+              },
+              {
+                "key": "constraint:3662",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "to": "section-14:y:low",
+                "required": 121.5,
+                "available": 72,
+                "deficit": 49.5,
+                "provenance": [
+                  "section-14:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              },
+              {
+                "key": "constraint:3511",
+                "kind": "gate-normal",
+                "from": "section-5:y:low",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "required": 121.5,
+                "available": 112,
+                "deficit": 9.5,
+                "provenance": [
+                  "section-5:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              }
+            ]
+          },
+          "high": {
+            "alias": "section-15:y:high",
+            "key": "section-15:y:high",
+            "before": 3272,
+            "solved": 3402.5,
+            "path": [
+              {
+                "key": "constraint:3694",
+                "kind": "gate-normal",
+                "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:end",
+                "to": "section-15:y:high",
+                "required": 61.5,
+                "available": 64,
+                "deficit": 0,
+                "provenance": [
+                  "section-15:exit-bottom",
+                  "section-15:horizontal:3208:3104"
+                ]
+              },
+              {
+                "key": "constraint:3426",
+                "kind": "body-fan",
+                "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-46\\\",\\\"node-46:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:end",
+                "required": 121.5,
+                "available": 120,
+                "deficit": 1.5,
+                "provenance": [
+                  "node-46",
+                  "node-46:exit-bottom",
+                  "section-15:horizontal:3208:3104"
+                ]
+              },
+              {
+                "key": "constraint:3424",
+                "kind": "body-fan",
+                "from": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-46\\\",\\\"node-46:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 66,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-46",
+                  "node-46:entry-top",
+                  "section-15:horizontal:2968:3104"
+                ]
+              },
+              {
+                "key": "constraint:3410",
+                "kind": "body-fan",
+                "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                "required": 67.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-42",
+                  "node-42:exit-bottom",
+                  "section-15:horizontal:2968:3104"
+                ]
+              },
+              {
+                "key": "constraint:3408",
+                "kind": "body-fan",
+                "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 109.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-42",
+                  "node-42:entry-top",
+                  "section-15:horizontal:2728:3104"
+                ]
+              },
+              {
+                "key": "constraint:3406",
+                "kind": "body-fan",
+                "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                "required": 103.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-41",
+                  "node-41:exit-bottom",
+                  "section-15:horizontal:2728:3104"
+                ]
+              },
+              {
+                "key": "constraint:3404",
+                "kind": "body-fan",
+                "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 54,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-41",
+                  "node-41:entry-top",
+                  "section-15:horizontal:2488:3104"
+                ]
+              },
+              {
+                "key": "constraint:722",
+                "kind": "envelope",
+                "from": "section-15:y:low",
+                "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                "required": 6,
+                "available": 112,
+                "deficit": 0,
+                "provenance": [
+                  "section-15:horizontal:2488:3104",
+                  "section-15"
+                ]
+              },
+              {
+                "key": "constraint:396",
+                "kind": "structure",
+                "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                "to": "section-15:y:low",
+                "required": 78,
+                "available": 72,
+                "deficit": 6,
+                "provenance": [
+                  "section-15",
+                  "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                ]
+              },
+              {
+                "key": "constraint:3527",
+                "kind": "gate-normal",
+                "from": "section-5:y:high",
+                "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                "required": 79.5,
+                "available": 72,
+                "deficit": 7.5,
+                "provenance": [
+                  "section-5:exit-bottom",
+                  "world:horizontal:2304:64"
+                ]
+              },
+              {
+                "key": "constraint:3526",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                "to": "section-5:y:high",
+                "required": 241.5,
+                "available": 64,
+                "deficit": 177.5,
+                "provenance": [
+                  "section-5:exit-bottom",
+                  "section-5:horizontal:2168:200"
+                ]
+              },
+              {
+                "key": "constraint:3679",
+                "kind": "gate-normal",
+                "from": "section-14:y:high",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                "required": 241.5,
+                "available": 72,
+                "deficit": 169.5,
+                "provenance": [
+                  "section-14:exit-bottom",
+                  "section-5:horizontal:2168:200"
+                ]
+              },
+              {
+                "key": "constraint:3678",
+                "kind": "gate-normal",
+                "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                "to": "section-14:y:high",
+                "required": 25.5,
+                "available": 64,
+                "deficit": 0,
+                "provenance": [
+                  "section-14:exit-bottom",
+                  "section-14:horizontal:2032:6208"
+                ]
+              },
+              {
+                "key": "constraint:3394",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                "required": 85.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-38",
+                  "node-38:exit-bottom",
+                  "section-14:horizontal:2032:6208"
+                ]
+              },
+              {
+                "key": "constraint:3392",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 103.5,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-38",
+                  "node-38:entry-top",
+                  "section-14:horizontal:1792:6208"
+                ]
+              },
+              {
+                "key": "constraint:3386",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                "required": 84,
+                "available": 120,
+                "deficit": 0,
+                "provenance": [
+                  "node-36",
+                  "node-36:exit-bottom",
+                  "section-14:horizontal:1792:6208"
+                ]
+              },
+              {
+                "key": "constraint:3384",
+                "kind": "body-fan",
+                "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                "required": 259.5,
+                "available": 120,
+                "deficit": 139.5,
+                "provenance": [
+                  "node-36",
+                  "node-36:entry-top",
+                  "section-14:horizontal:1552:6208"
+                ]
+              },
+              {
+                "key": "constraint:3663",
+                "kind": "gate-normal",
+                "from": "section-14:y:low",
+                "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                "required": 115.5,
+                "available": 112,
+                "deficit": 3.5,
+                "provenance": [
+                  "section-14:entry-top",
+                  "section-14:horizontal:1552:6208"
+                ]
+              },
+              {
+                "key": "constraint:3662",
+                "kind": "gate-normal",
+                "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "to": "section-14:y:low",
+                "required": 121.5,
+                "available": 72,
+                "deficit": 49.5,
+                "provenance": [
+                  "section-14:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              },
+              {
+                "key": "constraint:3511",
+                "kind": "gate-normal",
+                "from": "section-5:y:low",
+                "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                "required": 121.5,
+                "available": 112,
+                "deficit": 9.5,
+                "provenance": [
+                  "section-5:entry-top",
+                  "section-5:horizontal:1368:200"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "gridTrackSplits": [
+        {
+          "sectionId": "section-2",
+          "axis": "x",
+          "track": 0,
+          "points": [
+            {
+              "nodeId": "node-2",
+              "alias": "node-2:x:center",
+              "key": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 2956,
+              "solved": 2956,
+              "path": []
+            },
+            {
+              "nodeId": "node-5",
+              "alias": "node-5:x:center",
+              "key": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 2956,
+              "solved": 2957.5,
+              "path": [
+                {
+                  "key": "constraint:3261",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"horizontal\",[\"section-2:row:0\"]]:start",
+                  "to": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-5\\\",\\\"node-5:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 169.5,
+                  "available": 168,
+                  "deficit": 1.5,
+                  "provenance": [
+                    "node-5",
+                    "node-5:entry-left",
+                    "section-2:vertical:2788:248"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-2",
+          "axis": "x",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-3",
+              "alias": "node-3:x:center",
+              "key": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-3\\\",\\\"node-3:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 3292,
+              "solved": 3463,
+              "path": [
+                {
+                  "key": "constraint:3253",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:column:0\"]]",
+                  "to": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-3\\\",\\\"node-3:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 247.5,
+                  "available": 168,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "node-3",
+                    "node-3:entry-left",
+                    "section-2:vertical:3124:248"
+                  ]
+                },
+                {
+                  "key": "constraint:3251",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:column:0\"]]",
+                  "required": 259.5,
+                  "available": 168,
+                  "deficit": 91.5,
+                  "provenance": [
+                    "node-2",
+                    "node-2:exit-right",
+                    "section-2:vertical:3124:248"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-6",
+              "alias": "node-6:x:center",
+              "key": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-6\\\",\\\"node-6:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 3292,
+              "solved": 3487,
+              "path": [
+                {
+                  "key": "constraint:3265",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:column:0\"]]",
+                  "to": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-6\\\",\\\"node-6:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 271.5,
+                  "available": 168,
+                  "deficit": 103.5,
+                  "provenance": [
+                    "node-6",
+                    "node-6:entry-left",
+                    "section-2:vertical:3124:248"
+                  ]
+                },
+                {
+                  "key": "constraint:3251",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"[\\\"section-2\\\",\\\"vertical\\\",\\\"node-2\\\",\\\"node-2:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:column:0\"]]",
+                  "required": 259.5,
+                  "available": 168,
+                  "deficit": 91.5,
+                  "provenance": [
+                    "node-2",
+                    "node-2:exit-right",
+                    "section-2:vertical:3124:248"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-2",
+          "axis": "y",
+          "track": 0,
+          "points": [
+            {
+              "nodeId": "node-2",
+              "alias": "node-2:y:center",
+              "key": "[\"section-2\",\"horizontal\",[\"[\\\"section-2\\\",\\\"horizontal\\\",\\\"node-2\\\",\\\"node-2:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 448,
+              "solved": 601,
+              "path": [
+                {
+                  "key": "constraint:3248",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "[\"section-2\",\"horizontal\",[\"[\\\"section-2\\\",\\\"horizontal\\\",\\\"node-2\\\",\\\"node-2:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 216,
+                  "available": 200,
+                  "deficit": 16,
+                  "provenance": [
+                    "node-2",
+                    "node-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-3",
+              "alias": "node-3:y:center",
+              "key": "[\"section-2\",\"horizontal\",[\"[\\\"section-2\\\",\\\"horizontal\\\",\\\"node-3\\\",\\\"node-3:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 448,
+              "solved": 632.5,
+              "path": [
+                {
+                  "key": "constraint:3252",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "[\"section-2\",\"horizontal\",[\"[\\\"section-2\\\",\\\"horizontal\\\",\\\"node-3\\\",\\\"node-3:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 247.5,
+                  "available": 200,
+                  "deficit": 47.5,
+                  "provenance": [
+                    "node-3",
+                    "node-3:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-4",
+              "alias": "node-4:y:center",
+              "key": "[\"section-2\",\"horizontal\",[\"[\\\"section-2\\\",\\\"horizontal\\\",\\\"node-4\\\",\\\"node-4:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 448,
+              "solved": 601,
+              "path": [
+                {
+                  "key": "constraint:3256",
+                  "kind": "body-fan",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "[\"section-2\",\"horizontal\",[\"[\\\"section-2\\\",\\\"horizontal\\\",\\\"node-4\\\",\\\"node-4:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 216,
+                  "available": 200,
+                  "deficit": 16,
+                  "provenance": [
+                    "node-4",
+                    "node-4:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-4",
+          "axis": "y",
+          "track": 0,
+          "points": [
+            {
+              "nodeId": "node-12",
+              "alias": "node-12:y:center",
+              "key": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-12\\\",\\\"node-12:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 552,
+              "solved": 689.5,
+              "path": [
+                {
+                  "key": "constraint:3292",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-12\\\",\\\"node-12:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 91.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-12",
+                    "node-12:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3487",
+                  "kind": "gate-normal",
+                  "from": "section-4:y:low",
+                  "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "required": 43.5,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3486",
+                  "kind": "gate-normal",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "section-4:y:low",
+                  "required": 169.5,
+                  "available": 72,
+                  "deficit": 97.5,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-13",
+              "alias": "node-13:y:center",
+              "key": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 552,
+              "solved": 695.5,
+              "path": [
+                {
+                  "key": "constraint:3296",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 97.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-13",
+                    "node-13:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3487",
+                  "kind": "gate-normal",
+                  "from": "section-4:y:low",
+                  "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "required": 43.5,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3486",
+                  "kind": "gate-normal",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "section-4:y:low",
+                  "required": 169.5,
+                  "available": 72,
+                  "deficit": 97.5,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-14",
+              "alias": "node-14:y:center",
+              "key": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-14\\\",\\\"node-14:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 552,
+              "solved": 689.5,
+              "path": [
+                {
+                  "key": "constraint:3300",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-14\\\",\\\"node-14:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 91.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-14",
+                    "node-14:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3487",
+                  "kind": "gate-normal",
+                  "from": "section-4:y:low",
+                  "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "required": 43.5,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3486",
+                  "kind": "gate-normal",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "section-4:y:low",
+                  "required": 169.5,
+                  "available": 72,
+                  "deficit": 97.5,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-4",
+          "axis": "y",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-15",
+              "alias": "node-15:y:center",
+              "key": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-15\\\",\\\"node-15:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 792,
+              "solved": 871,
+              "path": [
+                {
+                  "key": "constraint:3304",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-15\\\",\\\"node-15:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-15",
+                    "node-15:entry-top",
+                    "section-4:horizontal:672:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3298",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                  "required": 91.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-13",
+                    "node-13:exit-bottom",
+                    "section-4:horizontal:672:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3296",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 97.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-13",
+                    "node-13:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3487",
+                  "kind": "gate-normal",
+                  "from": "section-4:y:low",
+                  "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "required": 43.5,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3486",
+                  "kind": "gate-normal",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "section-4:y:low",
+                  "required": 169.5,
+                  "available": 72,
+                  "deficit": 97.5,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-16",
+              "alias": "node-16:y:center",
+              "key": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-16\\\",\\\"node-16:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 792,
+              "solved": 896.5,
+              "path": [
+                {
+                  "key": "constraint:3308",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-16\\\",\\\"node-16:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 109.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-16",
+                    "node-16:entry-top",
+                    "section-4:horizontal:672:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3298",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-4\",\"horizontal\",[\"section-4:row:0\"]]",
+                  "required": 91.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-13",
+                    "node-13:exit-bottom",
+                    "section-4:horizontal:672:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3296",
+                  "kind": "body-fan",
+                  "from": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "to": "[\"section-4\",\"horizontal\",[\"[\\\"section-4\\\",\\\"horizontal\\\",\\\"node-13\\\",\\\"node-13:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 97.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-13",
+                    "node-13:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3487",
+                  "kind": "gate-normal",
+                  "from": "section-4:y:low",
+                  "to": "[\"section-4\",\"vertical\",[\"section-4:column:1\"]]:start",
+                  "required": 43.5,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-4:horizontal:432:5212"
+                  ]
+                },
+                {
+                  "key": "constraint:3486",
+                  "kind": "gate-normal",
+                  "from": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "to": "section-4:y:low",
+                  "required": 169.5,
+                  "available": 72,
+                  "deficit": 97.5,
+                  "provenance": [
+                    "section-4:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3463",
+                  "kind": "gate-normal",
+                  "from": "section-2:y:low",
+                  "to": "[\"section-2\",\"vertical\",[\"section-2:child-boundary:0\"]]:start",
+                  "required": 169.5,
+                  "available": 112,
+                  "deficit": 57.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "section-2:horizontal:248:2788"
+                  ]
+                },
+                {
+                  "key": "constraint:3462",
+                  "kind": "gate-normal",
+                  "from": "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:start",
+                  "to": "section-2:y:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-2:entry-top",
+                    "world:horizontal:64:64"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-6",
+          "axis": "x",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-19",
+              "alias": "node-19:x:center",
+              "key": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-19\\\",\\\"node-19:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 840,
+              "solved": 879,
+              "path": [
+                {
+                  "key": "constraint:3317",
+                  "kind": "body-fan",
+                  "from": "[\"section-6\",\"vertical\",[\"section-6:column:0\"]]",
+                  "to": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-19\\\",\\\"node-19:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 181.5,
+                  "available": 168,
+                  "deficit": 13.5,
+                  "provenance": [
+                    "node-19",
+                    "node-19:entry-left",
+                    "section-6:vertical:672:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3315",
+                  "kind": "body-fan",
+                  "from": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-18\\\",\\\"node-18:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-6\",\"vertical\",[\"section-6:column:0\"]]",
+                  "required": 193.5,
+                  "available": 168,
+                  "deficit": 25.5,
+                  "provenance": [
+                    "node-18",
+                    "node-18:exit-right",
+                    "section-6:vertical:672:1552"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-22",
+              "alias": "node-22:x:center",
+              "key": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-22\\\",\\\"node-22:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 840,
+              "solved": 865.5,
+              "path": [
+                {
+                  "key": "constraint:3329",
+                  "kind": "body-fan",
+                  "from": "[\"section-6\",\"vertical\",[\"section-6:column:0\"]]",
+                  "to": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-22\\\",\\\"node-22:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 168,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-22",
+                    "node-22:entry-left",
+                    "section-6:vertical:672:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3315",
+                  "kind": "body-fan",
+                  "from": "[\"section-6\",\"vertical\",[\"[\\\"section-6\\\",\\\"vertical\\\",\\\"node-18\\\",\\\"node-18:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-6\",\"vertical\",[\"section-6:column:0\"]]",
+                  "required": 193.5,
+                  "available": 168,
+                  "deficit": 25.5,
+                  "provenance": [
+                    "node-18",
+                    "node-18:exit-right",
+                    "section-6:vertical:672:1552"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-14",
+          "axis": "x",
+          "track": 0,
+          "points": [
+            {
+              "nodeId": "node-35",
+              "alias": "node-35:x:center",
+              "key": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-35\\\",\\\"node-35:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 6376,
+              "solved": 6768,
+              "path": [
+                {
+                  "key": "constraint:3381",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "to": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-35\\\",\\\"node-35:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 295.5,
+                  "available": 168,
+                  "deficit": 127.5,
+                  "provenance": [
+                    "node-35",
+                    "node-35:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3671",
+                  "kind": "gate-normal",
+                  "from": "section-14:x:low",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "required": 169.5,
+                  "available": 64,
+                  "deficit": 105.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3670",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "to": "section-14:x:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-5:vertical:6072:1368"
+                  ]
+                },
+                {
+                  "key": "constraint:3655",
+                  "kind": "gate-normal",
+                  "from": "section-13:x:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-13:exit-right",
+                    "section-5:vertical:6072:1368"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-37",
+              "alias": "node-37:x:center",
+              "key": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-37\\\",\\\"node-37:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 6376,
+              "solved": 6750,
+              "path": [
+                {
+                  "key": "constraint:3389",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "to": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-37\\\",\\\"node-37:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 277.5,
+                  "available": 168,
+                  "deficit": 109.5,
+                  "provenance": [
+                    "node-37",
+                    "node-37:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3671",
+                  "kind": "gate-normal",
+                  "from": "section-14:x:low",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "required": 169.5,
+                  "available": 64,
+                  "deficit": 105.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3670",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "to": "section-14:x:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-5:vertical:6072:1368"
+                  ]
+                },
+                {
+                  "key": "constraint:3655",
+                  "kind": "gate-normal",
+                  "from": "section-13:x:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-13:exit-right",
+                    "section-5:vertical:6072:1368"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-14",
+          "axis": "x",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-36",
+              "alias": "node-36:x:center",
+              "key": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-36\\\",\\\"node-36:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 6712,
+              "solved": 7035,
+              "path": [
+                {
+                  "key": "constraint:3385",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-36\\\",\\\"node-36:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 133.5,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-left",
+                    "section-14:vertical:6544:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3383",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-35\\\",\\\"node-35:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]",
+                  "required": 133.5,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-35",
+                    "node-35:exit-right",
+                    "section-14:vertical:6544:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3381",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "to": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-35\\\",\\\"node-35:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 295.5,
+                  "available": 168,
+                  "deficit": 127.5,
+                  "provenance": [
+                    "node-35",
+                    "node-35:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3671",
+                  "kind": "gate-normal",
+                  "from": "section-14:x:low",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "required": 169.5,
+                  "available": 64,
+                  "deficit": 105.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3670",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "to": "section-14:x:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-5:vertical:6072:1368"
+                  ]
+                },
+                {
+                  "key": "constraint:3655",
+                  "kind": "gate-normal",
+                  "from": "section-13:x:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-13:exit-right",
+                    "section-5:vertical:6072:1368"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-38",
+              "alias": "node-38:x:center",
+              "key": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-38\\\",\\\"node-38:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "before": 6712,
+              "solved": 7027.5,
+              "path": [
+                {
+                  "key": "constraint:3393",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-38\\\",\\\"node-38:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 126,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-left",
+                    "section-14:vertical:6544:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3383",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-35\\\",\\\"node-35:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]",
+                  "required": 133.5,
+                  "available": 168,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-35",
+                    "node-35:exit-right",
+                    "section-14:vertical:6544:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3381",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "to": "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-35\\\",\\\"node-35:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+                  "required": 295.5,
+                  "available": 168,
+                  "deficit": 127.5,
+                  "provenance": [
+                    "node-35",
+                    "node-35:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3671",
+                  "kind": "gate-normal",
+                  "from": "section-14:x:low",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+                  "required": 169.5,
+                  "available": 64,
+                  "deficit": 105.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-14:vertical:6208:1552"
+                  ]
+                },
+                {
+                  "key": "constraint:3670",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "to": "section-14:x:low",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-14:entry-left",
+                    "section-5:vertical:6072:1368"
+                  ]
+                },
+                {
+                  "key": "constraint:3655",
+                  "kind": "gate-normal",
+                  "from": "section-13:x:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+                  "required": 151.5,
+                  "available": 72,
+                  "deficit": 79.5,
+                  "provenance": [
+                    "section-13:exit-right",
+                    "section-5:vertical:6072:1368"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-14",
+          "axis": "y",
+          "track": 0,
+          "points": [
+            {
+              "nodeId": "node-35",
+              "alias": "node-35:y:center",
+              "key": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-35\\\",\\\"node-35:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 1672,
+              "solved": 1778,
+              "path": [
+                {
+                  "key": "constraint:3380",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-35\\\",\\\"node-35:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 163.5,
+                  "available": 120,
+                  "deficit": 43.5,
+                  "provenance": [
+                    "node-35",
+                    "node-35:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-36",
+              "alias": "node-36:y:center",
+              "key": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 1672,
+              "solved": 1874,
+              "path": [
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-14",
+          "axis": "y",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-37",
+              "alias": "node-37:y:center",
+              "key": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-37\\\",\\\"node-37:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 1912,
+              "solved": 2043.5,
+              "path": [
+                {
+                  "key": "constraint:3388",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-37\\\",\\\"node-37:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-37",
+                    "node-37:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-38",
+              "alias": "node-38:y:center",
+              "key": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 1912,
+              "solved": 2061.5,
+              "path": [
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-15",
+          "axis": "y",
+          "track": 1,
+          "points": [
+            {
+              "nodeId": "node-42",
+              "alias": "node-42:y:center",
+              "key": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 2848,
+              "solved": 3086,
+              "path": [
+                {
+                  "key": "constraint:3408",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 109.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:entry-top",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3406",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:exit-bottom",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3404",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 54,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:entry-top",
+                    "section-15:horizontal:2488:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:722",
+                  "kind": "envelope",
+                  "from": "section-15:y:low",
+                  "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "required": 6,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-15:horizontal:2488:3104",
+                    "section-15"
+                  ]
+                },
+                {
+                  "key": "constraint:396",
+                  "kind": "structure",
+                  "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "to": "section-15:y:low",
+                  "required": 78,
+                  "available": 72,
+                  "deficit": 6,
+                  "provenance": [
+                    "section-15",
+                    "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                  ]
+                },
+                {
+                  "key": "constraint:3527",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:high",
+                  "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "required": 79.5,
+                  "available": 72,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "world:horizontal:2304:64"
+                  ]
+                },
+                {
+                  "key": "constraint:3526",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "to": "section-5:y:high",
+                  "required": 241.5,
+                  "available": 64,
+                  "deficit": 177.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3679",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "required": 241.5,
+                  "available": 72,
+                  "deficit": 169.5,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3678",
+                  "kind": "gate-normal",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "to": "section-14:y:high",
+                  "required": 25.5,
+                  "available": 64,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3394",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-43",
+              "alias": "node-43:y:center",
+              "key": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-43\\\",\\\"node-43:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 2848,
+              "solved": 3080,
+              "path": [
+                {
+                  "key": "constraint:3412",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-43\\\",\\\"node-43:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-43",
+                    "node-43:entry-top",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3406",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:exit-bottom",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3404",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 54,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:entry-top",
+                    "section-15:horizontal:2488:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:722",
+                  "kind": "envelope",
+                  "from": "section-15:y:low",
+                  "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "required": 6,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-15:horizontal:2488:3104",
+                    "section-15"
+                  ]
+                },
+                {
+                  "key": "constraint:396",
+                  "kind": "structure",
+                  "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "to": "section-15:y:low",
+                  "required": 78,
+                  "available": 72,
+                  "deficit": 6,
+                  "provenance": [
+                    "section-15",
+                    "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                  ]
+                },
+                {
+                  "key": "constraint:3527",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:high",
+                  "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "required": 79.5,
+                  "available": 72,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "world:horizontal:2304:64"
+                  ]
+                },
+                {
+                  "key": "constraint:3526",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "to": "section-5:y:high",
+                  "required": 241.5,
+                  "available": 64,
+                  "deficit": 177.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3679",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "required": 241.5,
+                  "available": 72,
+                  "deficit": 169.5,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3678",
+                  "kind": "gate-normal",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "to": "section-14:y:high",
+                  "required": 25.5,
+                  "available": 64,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3394",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-44",
+              "alias": "node-44:y:center",
+              "key": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-44\\\",\\\"node-44:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 2848,
+              "solved": 3074,
+              "path": [
+                {
+                  "key": "constraint:3416",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-44\\\",\\\"node-44:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 97.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-44",
+                    "node-44:entry-top",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3406",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:exit-bottom",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3404",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 54,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:entry-top",
+                    "section-15:horizontal:2488:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:722",
+                  "kind": "envelope",
+                  "from": "section-15:y:low",
+                  "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "required": 6,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-15:horizontal:2488:3104",
+                    "section-15"
+                  ]
+                },
+                {
+                  "key": "constraint:396",
+                  "kind": "structure",
+                  "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "to": "section-15:y:low",
+                  "required": 78,
+                  "available": 72,
+                  "deficit": 6,
+                  "provenance": [
+                    "section-15",
+                    "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                  ]
+                },
+                {
+                  "key": "constraint:3527",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:high",
+                  "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "required": 79.5,
+                  "available": 72,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "world:horizontal:2304:64"
+                  ]
+                },
+                {
+                  "key": "constraint:3526",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "to": "section-5:y:high",
+                  "required": 241.5,
+                  "available": 64,
+                  "deficit": 177.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3679",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "required": 241.5,
+                  "available": 72,
+                  "deficit": 169.5,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3678",
+                  "kind": "gate-normal",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "to": "section-14:y:high",
+                  "required": 25.5,
+                  "available": 64,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3394",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionId": "section-15",
+          "axis": "y",
+          "track": 2,
+          "points": [
+            {
+              "nodeId": "node-45",
+              "alias": "node-45:y:center",
+              "key": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-45\\\",\\\"node-45:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 3088,
+              "solved": 3219.5,
+              "path": [
+                {
+                  "key": "constraint:3420",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-45\\\",\\\"node-45:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 66,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-45",
+                    "node-45:entry-top",
+                    "section-15:horizontal:2968:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3410",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                  "required": 67.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:exit-bottom",
+                    "section-15:horizontal:2968:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3408",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 109.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:entry-top",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3406",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:exit-bottom",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3404",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 54,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:entry-top",
+                    "section-15:horizontal:2488:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:722",
+                  "kind": "envelope",
+                  "from": "section-15:y:low",
+                  "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "required": 6,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-15:horizontal:2488:3104",
+                    "section-15"
+                  ]
+                },
+                {
+                  "key": "constraint:396",
+                  "kind": "structure",
+                  "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "to": "section-15:y:low",
+                  "required": 78,
+                  "available": 72,
+                  "deficit": 6,
+                  "provenance": [
+                    "section-15",
+                    "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                  ]
+                },
+                {
+                  "key": "constraint:3527",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:high",
+                  "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "required": 79.5,
+                  "available": 72,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "world:horizontal:2304:64"
+                  ]
+                },
+                {
+                  "key": "constraint:3526",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "to": "section-5:y:high",
+                  "required": 241.5,
+                  "available": 64,
+                  "deficit": 177.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3679",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "required": 241.5,
+                  "available": 72,
+                  "deficit": 169.5,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3678",
+                  "kind": "gate-normal",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "to": "section-14:y:high",
+                  "required": 25.5,
+                  "available": 64,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3394",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-46",
+              "alias": "node-46:y:center",
+              "key": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-46\\\",\\\"node-46:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 3088,
+              "solved": 3219.5,
+              "path": [
+                {
+                  "key": "constraint:3424",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-46\\\",\\\"node-46:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 66,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-46",
+                    "node-46:entry-top",
+                    "section-15:horizontal:2968:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3410",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                  "required": 67.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:exit-bottom",
+                    "section-15:horizontal:2968:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3408",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 109.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:entry-top",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3406",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:exit-bottom",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3404",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 54,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:entry-top",
+                    "section-15:horizontal:2488:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:722",
+                  "kind": "envelope",
+                  "from": "section-15:y:low",
+                  "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "required": 6,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-15:horizontal:2488:3104",
+                    "section-15"
+                  ]
+                },
+                {
+                  "key": "constraint:396",
+                  "kind": "structure",
+                  "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "to": "section-15:y:low",
+                  "required": 78,
+                  "available": 72,
+                  "deficit": 6,
+                  "provenance": [
+                    "section-15",
+                    "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                  ]
+                },
+                {
+                  "key": "constraint:3527",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:high",
+                  "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "required": 79.5,
+                  "available": 72,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "world:horizontal:2304:64"
+                  ]
+                },
+                {
+                  "key": "constraint:3526",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "to": "section-5:y:high",
+                  "required": 241.5,
+                  "available": 64,
+                  "deficit": 177.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3679",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "required": 241.5,
+                  "available": 72,
+                  "deficit": 169.5,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3678",
+                  "kind": "gate-normal",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "to": "section-14:y:high",
+                  "required": 25.5,
+                  "available": 64,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3394",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            },
+            {
+              "nodeId": "node-47",
+              "alias": "node-47:y:center",
+              "key": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-47\\\",\\\"node-47:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "before": 3088,
+              "solved": 3221,
+              "path": [
+                {
+                  "key": "constraint:3428",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-47\\\",\\\"node-47:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 67.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-47",
+                    "node-47:entry-top",
+                    "section-15:horizontal:2968:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3410",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+                  "required": 67.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:exit-bottom",
+                    "section-15:horizontal:2968:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3408",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-42\\\",\\\"node-42:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 109.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-42",
+                    "node-42:entry-top",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3406",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:exit-bottom",
+                    "section-15:horizontal:2728:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:3404",
+                  "kind": "body-fan",
+                  "from": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "to": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 54,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-41",
+                    "node-41:entry-top",
+                    "section-15:horizontal:2488:3104"
+                  ]
+                },
+                {
+                  "key": "constraint:722",
+                  "kind": "envelope",
+                  "from": "section-15:y:low",
+                  "to": "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+                  "required": 6,
+                  "available": 112,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-15:horizontal:2488:3104",
+                    "section-15"
+                  ]
+                },
+                {
+                  "key": "constraint:396",
+                  "kind": "structure",
+                  "from": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "to": "section-15:y:low",
+                  "required": 78,
+                  "available": 72,
+                  "deficit": 6,
+                  "provenance": [
+                    "section-15",
+                    "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]"
+                  ]
+                },
+                {
+                  "key": "constraint:3527",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:high",
+                  "to": "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+                  "required": 79.5,
+                  "available": 72,
+                  "deficit": 7.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "world:horizontal:2304:64"
+                  ]
+                },
+                {
+                  "key": "constraint:3526",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "to": "section-5:y:high",
+                  "required": 241.5,
+                  "available": 64,
+                  "deficit": 177.5,
+                  "provenance": [
+                    "section-5:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3679",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:high",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+                  "required": 241.5,
+                  "available": 72,
+                  "deficit": 169.5,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-5:horizontal:2168:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3678",
+                  "kind": "gate-normal",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "to": "section-14:y:high",
+                  "required": 25.5,
+                  "available": 64,
+                  "deficit": 0,
+                  "provenance": [
+                    "section-14:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3394",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:end",
+                  "required": 85.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:exit-bottom",
+                    "section-14:horizontal:2032:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3392",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-38\\\",\\\"node-38:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 103.5,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-38",
+                    "node-38:entry-top",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3386",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "to": "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]",
+                  "required": 84,
+                  "available": 120,
+                  "deficit": 0,
+                  "provenance": [
+                    "node-36",
+                    "node-36:exit-bottom",
+                    "section-14:horizontal:1792:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3384",
+                  "kind": "body-fan",
+                  "from": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "to": "[\"section-14\",\"horizontal\",[\"[\\\"section-14\\\",\\\"horizontal\\\",\\\"node-36\\\",\\\"node-36:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+                  "required": 259.5,
+                  "available": 120,
+                  "deficit": 139.5,
+                  "provenance": [
+                    "node-36",
+                    "node-36:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3663",
+                  "kind": "gate-normal",
+                  "from": "section-14:y:low",
+                  "to": "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]:start",
+                  "required": 115.5,
+                  "available": 112,
+                  "deficit": 3.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-14:horizontal:1552:6208"
+                  ]
+                },
+                {
+                  "key": "constraint:3662",
+                  "kind": "gate-normal",
+                  "from": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "to": "section-14:y:low",
+                  "required": 121.5,
+                  "available": 72,
+                  "deficit": 49.5,
+                  "provenance": [
+                    "section-14:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                },
+                {
+                  "key": "constraint:3511",
+                  "kind": "gate-normal",
+                  "from": "section-5:y:low",
+                  "to": "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:start",
+                  "required": 121.5,
+                  "available": 112,
+                  "deficit": 9.5,
+                  "provenance": [
+                    "section-5:entry-top",
+                    "section-5:horizontal:1368:200"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "candidateMaterialized": false,
+      "candidateProjected": false,
+      "embeddingActiveInBuilder": false
+    }
+  }
+}

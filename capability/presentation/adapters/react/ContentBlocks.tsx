@@ -1,13 +1,18 @@
 import type { ReactElement } from 'react';
 import type { ContentBlocksProps } from '../../contract/react-types.js';
 import type { Primitive } from '../../contract/records/visual.js';
+import { contextualAlternates } from '../../contract/records/style.js';
 /** Measured text uses digest-derived family and exact advance; JSX escapes source text. */
 function text(item: Extract<Primitive, { kind: 'text' }>, key: number): ReactElement {
   return (
     <text
       key={key}
       xmlSpace="preserve"
-      style={{ whiteSpace: 'pre', fontKerning: 'normal' }}
+      style={{
+        whiteSpace: 'pre',
+        fontKerning: 'normal',
+        fontFeatureSettings: `"calt" ${Number(contextualAlternates)}`,
+      }}
       x={item.x}
       y={item.y}
       fill={item.fill}

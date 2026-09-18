@@ -4,10 +4,6 @@ import type { FontRef } from '../../contract/records/style.js';
 import type { TextRequest } from '../../contract/types.js';
 import { content as contentSchema } from '../../contract/records/visual.js';
 import { requireValue, reject, parse } from '../validation/outcomes.js';
-interface Lines {
-  readonly complete: readonly string[];
-  readonly current: string;
-}
 /** Exact font metrics are checked before they can become layout geometry. */
 function measure(text: string, request: TextRequest, metrics: MeasurementPort): TextMetrics {
   const value = requireValue(metrics.measure(text, request.font, request.size));
@@ -24,53 +20,45 @@ function graphemes(text: string): readonly string[] {
   const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
   return Array.from(segmenter.segment(text), (item) => item.segment);
 }
-/** Keep a fitting candidate on its line; overflow starts a new line without clipping an indivisible grapheme. */
-function append(state: Lines, next: string, request: TextRequest, metrics: MeasurementPort): Lines {
-  const candidate = state.current + next;
-  const width = measure(candidate, request, metrics).width;
-  if (width <= request.width || state.current.length === 0) return { ...state, current: candidate };
-  return breakLine(state, next);
+/** Find a fitting prefix with exact font measurements at complete grapheme boundaries. */
+function fittingEnd(
+  units: readonly string[],
+  start: number,
+  request: TextRequest,
+  metrics: MeasurementPort,
+): number {
+  let low = start;
+  let high = units.length;
+  while (low < high) {
+    const middle = Math.ceil((low + high) / 2);
+    const width = measure(units.slice(start, middle).join(''), request, metrics).width;
+    if (width <= request.width) low = middle;
+    else high = middle - 1;
+  }
+  return Math.max(start + 1, low);
 }
-/** Prefer the last word boundary; unbroken identifiers split only between complete graphemes. */
-function breakLine(state: Lines, next: string): Lines {
-  const split = state.current.lastIndexOf(' ');
-  if (split > 0)
-    return {
-      complete: [...state.complete, state.current.slice(0, split + 1)],
-      current: state.current.slice(split + 1) + next,
-    };
-  return { complete: [...state.complete, state.current], current: next };
+/** A word boundary is preferred, while an overlong identifier splits between whole graphemes. */
+function wordEnd(units: readonly string[], start: number, end: number): number {
+  if (end === units.length) return end;
+  const space = units.slice(start, end).lastIndexOf(' ');
+  return space > 0 ? start + space + 1 : end;
 }
-/** Explicit source newlines remain line boundaries, including empty lines. */
+/** Explicit newlines are preserved; shaping work grows with wrapped lines instead of every prefix. */
 function paragraph(
   text: string,
   request: TextRequest,
   metrics: MeasurementPort,
 ): readonly string[] {
-  // Most code rows and labels already fit; shaping their every prefix repeats the same work.
   if (measure(text, request, metrics).width <= request.width) return [text];
-  const result = text
-    .split(/( +)/)
-    .reduce<Lines>((state, next) => appendWord(state, next, request, metrics), {
-      complete: [],
-      current: '',
-    });
-  return [...result.complete, result.current];
-}
-/** Shape a fitting word once; only an overflowing word needs grapheme-level wrapping. */
-function appendWord(
-  state: Lines,
-  next: string,
-  request: TextRequest,
-  metrics: MeasurementPort,
-): Lines {
-  const candidate = state.current + next;
-  if (measure(candidate, request, metrics).width <= request.width)
-    return { ...state, current: candidate };
-  return graphemes(next).reduce<Lines>(
-    (line, character) => append(line, character, request, metrics),
-    state,
-  );
+  const units = graphemes(text);
+  const lines: string[] = [];
+  let start = 0;
+  while (start < units.length) {
+    const end = wordEnd(units, start, fittingEnd(units, start, request, metrics));
+    lines.push(units.slice(start, end).join(''));
+    start = end;
+  }
+  return lines;
 }
 /** Public text requests are bounded before native shaping; callers correct unsupported or oversized input. */
 function checkRequest(request: TextRequest): void {

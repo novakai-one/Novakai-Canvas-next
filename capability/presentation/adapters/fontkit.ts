@@ -2,6 +2,7 @@ import { create } from 'fontkit';
 import type { Font } from 'fontkit';
 import { createHash } from 'node:crypto';
 import type { FontSet, FontSource, FontRef } from '../contract/records/style.js';
+import { contextualAlternates } from '../contract/records/style.js';
 import type { MeasurementPort, TextMetrics } from '../contract/ports/measurement.js';
 import { fail } from '../contract/errors.js';
 import type { Result } from '../contract/errors.js';
@@ -48,7 +49,7 @@ function shape(text: string, loaded: LoadedFont, size: number): Result<TextMetri
       loaded.source.digest,
       `Pinned font ${loaded.source.family} does not contain ${JSON.stringify(missing)} (${codepoint(missing)})`,
     );
-  const run = loaded.font.layout(text);
+  const run = loaded.font.layout(text, { calt: contextualAlternates });
   const scale = size / loaded.font.unitsPerEm;
   return {
     ok: true,
@@ -98,7 +99,7 @@ export function createFontMetrics(
     return {
       ok: true,
       value: {
-        version: 'fontkit-2.0.4/presentation-6',
+        version: 'fontkit-2.0.4/presentation-7',
         measure: (text, font, size) => measure(text, font, size, loaded),
       },
     };

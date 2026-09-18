@@ -1,37 +1,34 @@
 import type {
   PrototypeNode,
   PrototypePoint,
-  PrototypeNodePort,
   PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
+import type { NestedNodeSpec } from '../contract/records/nested-scene-spec.js';
 
-/** Node-owned footprint and port offsets. No road geometry is accepted by this module. */
-export const prototypeNodeSize = { width: 192, height: 96 } as const;
-const portDefinitions: readonly Omit<PrototypeNodePort, 'id'>[] = [
-  { side: 'top', role: 'entry', offset: { x: 96, y: 0 } },
-  { side: 'left', role: 'entry', offset: { x: 0, y: 48 } },
-  { side: 'bottom', role: 'exit', offset: { x: 96, y: 96 } },
-  { side: 'right', role: 'exit', offset: { x: 192, y: 48 } },
-];
+/** Measurements belong to Presentation. Routing may translate, never resize, a node. */
+export function measuredNode(spec: { readonly measured?: NestedNodeSpec['measured'] }) {
+  const measured = spec.measured;
+  if (measured === undefined) throw new Error('Node measurements are required');
+  if (![measured.width, measured.height].every((size) => Number.isFinite(size) && size > 0))
+    throw new RangeError('Node measurements must be finite and positive');
+  return measured;
+}
 export function placePrototypeNode(
   sectionId: string,
   index: number,
   position: PrototypePoint,
+  input?: NestedNodeSpec['measured'],
 ): PrototypeNode {
-  const id = `node-${index + 1}`;
+  const measured = measuredNode({ measured: input });
   return {
-    id,
+    id: `node-${index + 1}`,
     sectionId,
     label: `Node ${index + 1}`,
-    bounds: { ...position, ...prototypeNodeSize },
-    ports: portDefinitions.map((port) => ({
-      ...port,
-      offset: { ...port.offset },
-      id: `${id}:${port.role}-${port.side}`,
-    })),
+    bounds: { ...position, width: measured.width, height: measured.height },
+    ports: measured.ports,
   };
 }
-/** Read world-space attachment points from the node; callers cannot prescribe port positions. */
+/** Read world-space attachment points without changing owner-supplied offsets. */
 export function readPrototypeNodePorts(node: PrototypeNode): readonly PrototypePortLocation[] {
   return node.ports.map((port) => ({
     nodeId: node.id,
@@ -39,6 +36,8 @@ export function readPrototypeNodePorts(node: PrototypeNode): readonly PrototypeP
     portId: port.id,
     role: port.role,
     side: port.side,
+    ...(port.fixed === undefined ? {} : { fixed: port.fixed }),
+    ...(port.advance === undefined ? {} : { advance: port.advance }),
     point: { x: node.bounds.x + port.offset.x, y: node.bounds.y + port.offset.y },
   }));
 }

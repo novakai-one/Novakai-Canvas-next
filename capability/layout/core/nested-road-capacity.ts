@@ -4,18 +4,16 @@ import type {
   PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
 import type { RoadContact } from './prototype-road-registry.js';
+import { terminalDepth } from './nested-terminal-pins.js';
 import { axes } from './prototype-road-geometry.js';
-import { nestedLaneWidth, nestedLanePitch, nestedSpacing } from './prototype-nested-placement.js';
+import { nestedLaneWidth, nestedSpacing } from './prototype-nested-placement.js';
 
 /** Preserve the mouth and the full terminal fan even when a street consumes its approach. */
 function terminalExtent(road: PrototypeRoad, port: PrototypePortLocation): PrototypeRoad {
   const a = axes[road.axis],
     b = road.bounds;
   // (count - 1) fan rows plus a quarter-pitch forward stem; gates retain their port plane.
-  const depth =
-    port.nodeId === port.sectionId
-      ? 0
-      : Math.max(0, (road.wireLaneCount ?? 0) - 0.75) * nestedLanePitch;
+  const depth = port.nodeId === port.sectionId ? 0 : terminalDepth(port, road.wireLaneCount ?? 0);
   const sign = ['top', 'left'].includes(port.side) ? -1 : 1;
   const pin = port.point[a.along],
     fan = pin + sign * depth;

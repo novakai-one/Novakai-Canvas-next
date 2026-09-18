@@ -1,3 +1,5 @@
+import type { NestedSceneSpec } from '../contract/records/nested-scene-spec.js';
+import type { PrototypeNode } from '../contract/records/road-prototype.js';
 import type { WireRegistry } from './nested-wire-registry.js';
 import type {
   PrototypeBlock,
@@ -137,9 +139,11 @@ function route(
   from: string,
   to: string,
   offset: number,
+  sourcePort?: string,
+  targetPort?: string,
 ): NestedWire | null {
-  const source = nodeTerminal(registry, from, 'exit'),
-    target = nodeTerminal(registry, to, 'entry');
+  const source = nodeTerminal(registry, from, 'exit', sourcePort),
+    target = nodeTerminal(registry, to, 'entry', targetPort);
   if (source === undefined || target === undefined) return null;
   const state = boundaries(scene, from, to).reduce<State | null>(
     (s, b) => advance(scene, registry, s, b, target),
@@ -175,11 +179,20 @@ export function routeNestedWires(
   scene: RoadPrototypeScene,
   registry: WireRegistry,
   measure: PrototypeLayoutMeasure,
-  requests: readonly (readonly [number, number])[],
+  requests: NestedSceneSpec['requests'],
 ): NestedWireResult {
-  const wires = requests.map(([from, to], i) =>
+  const wires = requests.map(([from, to, sourcePort, targetPort], i) =>
     measure(`wire:w${String(i + 1).padStart(2, '0')}`, () =>
-      route(scene, registry, `w${String(i + 1).padStart(2, '0')}`, `node-${from}`, `node-${to}`, 0),
+      route(
+        scene,
+        registry,
+        `w${String(i + 1).padStart(2, '0')}`,
+        `node-${from}`,
+        `node-${to}`,
+        0,
+        sourcePort,
+        targetPort,
+      ),
     ),
   );
   const failed = wires.findIndex((w) => w === null);
@@ -198,4 +211,32 @@ export function routeNestedWires(
 function departureOwner(boundary: Boundary): string | null {
   if (boundary.exiting) return boundary.section.parentSectionId ?? null;
   return boundary.section.id;
+}
+
+/** Resolve app automatic sides once from the measured placement before constructing driveways. */
+export function resolveNestedRequests(
+  nodes: readonly PrototypeNode[],
+  requests: NestedSceneSpec['requests'],
+): NestedSceneSpec['requests'] {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  return requests.map(([from, to, source, target]) => {
+    const a = byId.get(`node-${from}`),
+      b = byId.get(`node-${to}`);
+    if (a === undefined || b === undefined) throw new Error('Missing wire endpoint');
+    return [from, to, resolvedPort(source, a, b, false), resolvedPort(target, b, a, true)];
+  });
+}
+function resolvedPort(
+  id: string | undefined,
+  own: PrototypeNode,
+  other: PrototypeNode,
+  target: boolean,
+): string | undefined {
+  if (id === undefined || !id.includes(':auto:')) return id;
+  const dx = other.bounds.x + other.bounds.width / 2 - own.bounds.x - own.bounds.width / 2;
+  const dy = other.bounds.y + other.bounds.height / 2 - own.bounds.y - own.bounds.height / 2;
+  const member = id.split(':auto:')[1] !== '';
+  const horizontal = member || Math.abs(dx) >= Math.abs(dy);
+  const side = horizontal ? (dx >= 0 ? 'right' : 'left') : dy >= 0 ? 'bottom' : 'top';
+  return id.replace(':auto:', `:${target && own.id === other.id && !member ? 'bottom' : side}:`);
 }

@@ -140,7 +140,7 @@ function pinFor(
   const lane = lanes.find((entry) => entry.wireId === wireId);
   if (lane === undefined) return port.point;
   const across = ['left', 'right'].includes(port.side) ? 'y' : 'x';
-  return terminalPin(port.point, across, lane, lanes.length);
+  return terminalPin(port.point, across, lane, lanes.length, port.fixed);
 }
 function disconnected(w: NestedWire): boolean {
   return w.segments.slice(1).some((s, i) => !same(w.segments[i]?.to ?? s.from, s.from));

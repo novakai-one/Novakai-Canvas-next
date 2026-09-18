@@ -10,7 +10,7 @@ import type { NestedSceneSpec } from '../contract/records/nested-scene-spec.js';
 import { defaultNestedSceneSpec } from './nested-scene-spec.js';
 import { wireRegistry } from './nested-wire-registry.js';
 import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
-import { routeNestedWires } from './nested-wire-routing.js';
+import { routeNestedWires, resolveNestedRequests } from './nested-wire-routing.js';
 import { allocateNestedLanes } from './nested-wire-lanes.js';
 import { capacityRoads } from './nested-road-capacity.js';
 import { projectNestedWires } from './nested-lane-projection.js';
@@ -45,9 +45,14 @@ export function createNestedRoadScene(
   const measure = options.measure ?? ((_stage, run) => run());
   const spec = options.spec ?? defaultNestedSceneSpec;
   const capacity = measure('capacity', () => sizeNestedSections(spec.sections));
-  const placement = measure('nodes', () =>
+  const initial = measure('nodes', () =>
     positionNestedSections(capacity, options.copies, options.sectionInPortsLeft),
   );
+  const requests = resolveNestedRequests(
+    initial.flatMap((p) => p.nodes),
+    spec.requests,
+  );
+  const placement = activePorts(initial, requests);
   const sections = placement.map((p) => p.section),
     nodes = placement.flatMap((p) => p.nodes);
   const ports = measure('ports', () => [
@@ -82,7 +87,7 @@ export function createNestedRoadScene(
     crossingExamples: [],
   };
   const registry = wireRegistry(reserved, topology.contacts, measure);
-  const plan = routeNestedWires(reserved, registry, measure, spec.requests);
+  const plan = routeNestedWires(reserved, registry, measure, requests);
   if (!plan.ok) return { ...reserved, wiring: plan };
   const allocation = measure('lane-allocation', () =>
     allocateNestedLanes(plan.value, registry.roads),
@@ -162,4 +167,27 @@ function rejectedScene(scene: RoadPrototypeScene, error: SupportRejection): Road
 function failedEmbedding(scene: RoadPrototypeScene, error: unknown): RoadPrototypeScene {
   if (error instanceof SupportRejection) return rejectedScene(scene, error);
   throw error;
+}
+
+/** Only authored attachments own driveways; unused app handles do not create duplicate roads. */
+function activePorts(
+  placements: ReturnType<typeof positionNestedSections>,
+  requests: NestedSceneSpec['requests'],
+): ReturnType<typeof positionNestedSections> {
+  const selected = new Set(requests.flatMap((request) => request.slice(2)));
+  const automatic = new Set(
+    requests.flatMap(([from, to, source, target]) => [
+      ...(source === undefined ? [`node-${from}:exit`] : []),
+      ...(target === undefined ? [`node-${to}:entry`] : []),
+    ]),
+  );
+  return placements.map((placement) => ({
+    ...placement,
+    nodes: placement.nodes.map((node) => ({
+      ...node,
+      ports: node.ports.filter(
+        (port) => selected.has(port.id) || automatic.has(`${node.id}:${port.role}`),
+      ),
+    })),
+  }));
 }

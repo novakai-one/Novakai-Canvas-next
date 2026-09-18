@@ -36,8 +36,12 @@ export function nodeTerminal(
   registry: WireRegistry,
   id: string,
   role: 'entry' | 'exit',
+  portId?: string,
 ): Terminal | undefined {
-  return registry.terminals.get(`${id}:${role}`);
+  const terminal = registry.terminals.get(`${id}:${role}`);
+  if (portId === undefined) return terminal;
+  const selected = terminal?.accesses.find((entry) => entry.portId === portId);
+  return selected === undefined ? undefined : gateTerminal(selected);
 }
 export function gateTerminal(value: Access): Terminal {
   return { point: value.port, accesses: [value] };

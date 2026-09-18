@@ -10,7 +10,7 @@ import { axes, contains, samePoint } from './prototype-road-geometry.js';
 import { nestedLanePitch } from './prototype-nested-placement.js';
 import { reject } from './nested-support-graph.js';
 import { validateSupportedProjection } from './nested-projection-support.js';
-import { terminalPin } from './nested-terminal-pins.js';
+import { terminalPin, terminalStem } from './nested-terminal-pins.js';
 
 interface Connection {
   readonly from: PrototypePoint;
@@ -230,9 +230,10 @@ function connect(
 }
 function fan(t: AssignedTravel, endpoint: PrototypePoint, sign: number) {
   const a = axes[t.road.axis];
-  const pin = terminalPin(endpoint, a.across, t.lane, t.count);
-  const along =
-    endpoint[a.along] + sign * t.direction * (t.count - t.lane.index - 1) * nestedLanePitch;
+  const pin = terminalPin(endpoint, a.across, t.lane, t.count, t.road.access?.fixed);
+  const stem = terminalStem(t.road.access ?? undefined);
+  const distance = stem + (t.count - t.lane.index - 1) * nestedLanePitch;
+  const along = endpoint[a.along] + sign * t.direction * distance;
   return { pin, bend: { ...pin, [a.along]: along }, end: point(t, along) };
 }
 function clipped(p: PrototypePoint, road: PrototypeRoad): PrototypePoint {

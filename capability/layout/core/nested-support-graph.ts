@@ -79,6 +79,12 @@ function representative(graph: SupportGraph, key: string): string {
 /** Equalities arise only from shared construction lines, never proximity. */
 export function equate(graph: SupportGraph, a: Anchor, b: Anchor): void {
   matching(a, b.axis, b.position);
+  equateOffset(graph, a, b);
+}
+
+/** Preserve a measured port's offset while its body and driveway translate together. */
+export function equateOffset(graph: SupportGraph, a: Anchor, b: Anchor): void {
+  if (a.axis !== b.axis) reject('unsupported-support', [a.key, b.key]);
   const left = representative(graph, a.key),
     right = representative(graph, b.key);
   if (left !== right) graph.equalities.set(right, left);
@@ -107,9 +113,15 @@ function vertices(graph: SupportGraph): readonly NestedSupportVertex[] {
     groups.set(key, group);
   });
   return [...groups].map(([key, group]) => {
-    const first = group[0];
+    const first = graph.anchors.get(key);
     if (first === undefined) return reject('unsupported-support', [key]);
-    return { key, axis: first.axis, position: first.position, aliases: group.map((a) => a.key) };
+    return {
+      key,
+      axis: first.axis,
+      position: first.position,
+      aliases: group.map((a) => a.key),
+      aliasOffsets: Object.fromEntries(group.map((a) => [a.key, a.position - first.position])),
+    };
   });
 }
 function constraint(
@@ -117,15 +129,21 @@ function constraint(
   relation: Relation,
   ordinal: number,
 ): NestedSupportConstraint {
-  const available = relation.to.position - relation.from.position;
+  const from = representative(graph, relation.from.key),
+    to = representative(graph, relation.to.key);
+  const fromPosition = graph.anchors.get(from)?.position ?? relation.from.position;
+  const toPosition = graph.anchors.get(to)?.position ?? relation.to.position;
+  const required =
+    relation.required + relation.from.position - fromPosition - relation.to.position + toPosition;
+  const available = toPosition - fromPosition;
   return {
     key: `constraint:${ordinal}`,
     kind: relation.kind,
-    from: representative(graph, relation.from.key),
-    to: representative(graph, relation.to.key),
-    required: relation.required,
+    from,
+    to,
+    required,
     available,
-    deficit: Math.max(0, relation.required - available),
+    deficit: Math.max(0, required - available),
     provenance: relation.provenance,
   };
 }

@@ -154,8 +154,15 @@ function accessRoad(port: PrototypePortLocation, start: number, end: number): Pr
     sectionId: port.sectionId,
     kind: 'driveway',
     bounds,
-    ...accessDirection(vertical),
-    access: { nodeId: port.nodeId, portId: port.portId, side: port.side, role: port.role },
+    ...accessDirection(port),
+    access: {
+      nodeId: port.nodeId,
+      portId: port.portId,
+      side: port.side,
+      role: port.role,
+      ...(port.fixed === undefined ? {} : { fixed: port.fixed }),
+      ...(port.advance === undefined ? {} : { advance: port.advance }),
+    },
   };
 }
 function nodeDrive(port: PrototypePortLocation, cell: PrototypeBounds): PrototypeRoad {
@@ -197,9 +204,12 @@ export function nestedDriveways(p: SectionPlacement): readonly PrototypeRoad[] {
   ];
 }
 
-function accessDirection(vertical: boolean): Pick<PrototypeRoad, 'axis' | 'directions'> {
-  if (vertical) return { axis: 'vertical', directions: ['down'] };
-  return { axis: 'horizontal', directions: ['right'] };
+function accessDirection(port: PrototypePortLocation): Pick<PrototypeRoad, 'axis' | 'directions'> {
+  const outward = { top: 'up', bottom: 'down', left: 'left', right: 'right' } as const;
+  const inward = { top: 'down', bottom: 'up', left: 'right', right: 'left' } as const;
+  const direction = port.role === 'exit' ? outward[port.side] : inward[port.side];
+  const axis = ['top', 'bottom'].includes(port.side) ? 'vertical' : 'horizontal';
+  return { axis, directions: [direction] };
 }
 
 /** Interior grid crossings are emitted with the grid, not discovered by pairing roads. */

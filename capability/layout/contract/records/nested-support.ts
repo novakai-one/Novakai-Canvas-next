@@ -44,6 +44,7 @@ export interface NestedSupportVertex {
   readonly axis: 'x' | 'y';
   readonly position: number;
   readonly aliases: readonly string[];
+  readonly aliasOffsets?: Readonly<Record<string, number>>;
 }
 
 /** v >= u + required. Deficits describe current reservation, not moved geometry. */

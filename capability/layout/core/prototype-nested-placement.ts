@@ -5,7 +5,7 @@ import type {
   PrototypeNode,
   PrototypeNodePort,
 } from '../contract/records/road-prototype.js';
-import { placePrototypeNode, prototypeNodeSize } from './prototype-road-nodes.js';
+import { placePrototypeNode, measuredNode } from './prototype-road-nodes.js';
 
 export const nestedSpacing = { road: 48, driveway: 24, clearance: 72, side: 64, top: 112 } as const;
 export const nestedLanePitch = 6;
@@ -16,10 +16,6 @@ export function nestedLaneWidth(lanes: number): number {
 const clearancePair = nestedSpacing.clearance * 2;
 const horizontalPadding = nestedSpacing.side * 2;
 const verticalPadding = nestedSpacing.top + nestedSpacing.side;
-const pitch = {
-  x: prototypeNodeSize.width + clearancePair,
-  y: prototypeNodeSize.height + clearancePair,
-};
 import type {
   NestedNodeSpec as NodeSpec,
   NestedSectionSpec as SectionSpec,
@@ -33,6 +29,7 @@ export interface SizedSection {
   readonly columns: number;
   readonly rows: number;
   readonly ownWidth: number;
+  readonly pitch: { readonly x: number; readonly y: number };
   readonly width: number;
   readonly height: number;
   readonly children: readonly SizedSection[];
@@ -55,6 +52,11 @@ function sizeSection(spec: SectionSpec): SizedSection {
   const columns = Math.ceil(Math.sqrt(count));
   const rows = count === 0 ? 0 : Math.ceil(count / columns);
   const children = spec.children.map(sizeSection);
+  const footprints = spec.nodes.map(measuredNode);
+  const pitch = {
+    x: Math.ceil(Math.max(0, ...footprints.map((node) => node.width))) + clearancePair,
+    y: Math.ceil(Math.max(0, ...footprints.map((node) => node.height))) + clearancePair,
+  };
   const ownWidth = columns * pitch.x;
   return {
     id: `section-${spec.number}`,
@@ -65,6 +67,7 @@ function sizeSection(spec: SectionSpec): SizedSection {
     columns,
     rows,
     ownWidth,
+    pitch,
     children,
     width:
       ownWidth +
@@ -127,16 +130,24 @@ function leftEntrance(port: PrototypeNodePort, bounds: PrototypeBounds): Prototy
 function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   if (size.count === 0) return [];
   const rowHeight = interior.height / size.rows;
-  return size.nodes.map((node, i) => ({
-    ...placePrototypeNode(size.id, node.number - 1, {
-      x: interior.x + (i % size.columns) * pitch.x + (pitch.x - prototypeNodeSize.width) / 2,
-      y:
-        interior.y +
-        Math.floor(i / size.columns) * rowHeight +
-        (rowHeight - prototypeNodeSize.height) / 2,
-    }),
-    label: node.label,
-  }));
+  return size.nodes.map((node, i) => {
+    const measured = measuredNode(node);
+    return {
+      ...placePrototypeNode(
+        size.id,
+        node.number - 1,
+        {
+          x: interior.x + (i % size.columns) * size.pitch.x + (size.pitch.x - measured.width) / 2,
+          y:
+            interior.y +
+            Math.floor(i / size.columns) * rowHeight +
+            (rowHeight - measured.height) / 2,
+        },
+        measured,
+      ),
+      label: node.label,
+    };
+  });
 }
 function positionSection(
   size: SizedSection,

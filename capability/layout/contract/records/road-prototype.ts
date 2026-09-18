@@ -18,6 +18,8 @@ export interface PrototypeBlock {
 export type PrototypePortSide = 'top' | 'left' | 'bottom' | 'right';
 /** Local port positions belong exclusively to the node definition. */
 export interface PrototypeNodePort {
+  readonly fixed?: boolean;
+  readonly advance?: number;
   readonly id: string;
   readonly role: 'entry' | 'exit';
   readonly side: PrototypePortSide;
@@ -28,6 +30,8 @@ export interface PrototypeNode extends PrototypeBlock {
   readonly ports: readonly PrototypeNodePort[];
 }
 export interface PrototypePortLocation {
+  readonly fixed?: boolean;
+  readonly advance?: number;
   readonly nodeId: string;
   readonly sectionId: string;
   readonly portId: string;
@@ -36,6 +40,9 @@ export interface PrototypePortLocation {
   readonly point: PrototypePoint;
 }
 export type PrototypeLayoutStage =
+  | 'native-placement'
+  | 'native-solver'
+  | 'native-routing'
   | 'wire-registry'
   | 'topology'
   | 'lane-allocation'
@@ -64,6 +71,8 @@ export interface PrototypeRoad {
   readonly directions: readonly ('left' | 'right' | 'up' | 'down')[];
   readonly bounds: PrototypeBounds;
   readonly access: {
+    readonly fixed?: boolean;
+    readonly advance?: number;
     readonly nodeId: string;
     readonly role: 'entry' | 'exit';
     readonly side: PrototypePortSide;

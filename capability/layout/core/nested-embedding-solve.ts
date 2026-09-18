@@ -27,16 +27,22 @@ export function solveNestedEmbedding(ledger: NestedSupportLedger) {
       reject('cyclic-constraints', [edge.key, ...edge.provenance], [edge.required], [available]);
   });
   const old = new Map(
-    ledger.vertices.flatMap((v) => v.aliases.map((key) => [key, v.position] as const)),
+    ledger.vertices.flatMap((v) =>
+      v.aliases.map((key) => [key, v.position + (v.aliasOffsets?.[key] ?? 0)] as const),
+    ),
   );
   ledger.equalities.forEach((group) =>
     group.members.forEach((member) =>
-      member.aliases.forEach((key) => old.set(key, member.position)),
+      member.aliases.forEach((key) =>
+        old.set(key, member.position + (member.aliasOffsets?.[key] ?? 0)),
+      ),
     ),
   );
   const values = new Map(
     ledger.vertices.flatMap((v) =>
-      v.aliases.map((key) => [key, required(positions, v.key)] as const),
+      v.aliases.map(
+        (key) => [key, required(positions, v.key) + (v.aliasOffsets?.[key] ?? 0)] as const,
+      ),
     ),
   );
   const moved = [...values]

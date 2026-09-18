@@ -7,10 +7,18 @@ import type {
   PrototypeRoad,
   RoadPrototypeScene,
 } from '../contract/records/road-prototype.js';
+import { terminalDepth } from './nested-terminal-pins.js';
 import { axes } from './prototype-road-geometry.js';
 import { nestedLanePitch } from './prototype-nested-placement.js';
 import { required, type retainSupportInput } from './nested-support-input.js';
-import { anchor, equate, reject, type Anchor, type SupportGraph } from './nested-support-graph.js';
+import {
+  anchor,
+  equate,
+  equateOffset,
+  reject,
+  type Anchor,
+  type SupportGraph,
+} from './nested-support-graph.js';
 import { directedRelation } from './nested-support-structure.js';
 
 type Input = ReturnType<typeof retainSupportInput>;
@@ -67,12 +75,12 @@ function terminalMouth(
     count = drive.wireLaneCount ?? 0;
   admitPins(port, count, node.bounds[a.breadth]);
   const center = required(graph.anchors, `${node.id}:${a.along}:center`);
-  equate(
+  equateOffset(
     graph,
     required(lines, drive.id),
     required(graph.anchors, `${node.id}:${a.across}:center`),
   );
-  const depth = Math.max(0, count - 0.75) * nestedLanePitch;
+  const depth = terminalDepth(port, count);
   streets.forEach((street) => {
     const half = street.bounds[a.length] / 2;
     directedRelation(
@@ -87,7 +95,7 @@ function terminalMouth(
   });
 }
 function admitPins(port: PrototypePortLocation, count: number, available: number): void {
-  if (count === 0) return;
+  if (count === 0 || port.fixed) return;
   const need = nestedLanePitch * 2 + Math.max(0, count - 1) * nestedLanePitch;
   if (need > available)
     reject('insufficient-terminal-pins', [port.nodeId, port.portId], [need], [available]);

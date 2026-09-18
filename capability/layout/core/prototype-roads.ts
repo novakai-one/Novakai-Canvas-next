@@ -11,7 +11,7 @@ import { roadNetwork } from './prototype-road-network.js';
 import {
   placePrototypeNode,
   readPrototypeNodePorts,
-  prototypeNodeSize,
+  measuredNode,
 } from './prototype-road-nodes.js';
 import { attachPrototypeDriveways } from './prototype-road-driveways.js';
 
@@ -22,16 +22,16 @@ const drivewayWidth = 24,
   inset = 24,
   streetTop = 80;
 /** Capacity is chosen once. Wider roads reserve more space before any node is placed. */
-function capacity(roadWidth: number) {
+function capacity(roadWidth: number, node: { readonly width: number; readonly height: number }) {
   if (!Number.isFinite(roadWidth) || roadWidth < 48)
     throw new RangeError('Road width must be finite and at least 48');
   return {
     roadWidth,
-    blockWidth: inset * 2 + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.width,
-    blockHeight: streetTop + roadWidth * 2 + drivewayLength * 2 + prototypeNodeSize.height + inset,
+    blockWidth: inset * 2 + roadWidth * 2 + drivewayLength * 2 + node.width,
+    blockHeight: streetTop + roadWidth * 2 + drivewayLength * 2 + node.height + inset,
     nodeLeft: inset + roadWidth + drivewayLength,
     nodeTop: streetTop + roadWidth + drivewayLength,
-    streetBottom: streetTop + roadWidth + drivewayLength * 2 + prototypeNodeSize.height,
+    streetBottom: streetTop + roadWidth + drivewayLength * 2 + node.height,
   };
 }
 type Capacity = ReturnType<typeof capacity>;
@@ -106,16 +106,26 @@ const unmeasured: PrototypeLayoutMeasure = (_stage, operation) => operation();
  * There is no geometry feedback, convergence loop or DOM measurement. Caller owns any timing.
  * Invalid roadWidth throws RangeError; callers correct the option and safely retry.
  */
-export function createRoadPrototypeScene(options: PrototypeLayoutOptions = {}): RoadPrototypeScene {
+export function createRoadPrototypeScene(
+  options: PrototypeLayoutOptions & {
+    readonly measured?: import('../contract/records/nested-scene-spec.js').NestedNodeSpec['measured'];
+  } = {},
+): RoadPrototypeScene {
   const measure = options.measure ?? unmeasured;
-  const plan = measure('capacity', () => capacity(options.roadWidth ?? 48));
+  const measured = measuredNode({ measured: options.measured });
+  const plan = measure('capacity', () => capacity(options.roadWidth ?? 48, measured));
   const sections = ['Section A', 'Section B'].map((label, index) => section(label, index, plan));
   const nodes = measure('nodes', () =>
     sections.map((item, index) =>
-      placePrototypeNode(item.id, index, {
-        x: item.bounds.x + plan.nodeLeft,
-        y: item.bounds.y + plan.nodeTop,
-      }),
+      placePrototypeNode(
+        item.id,
+        index,
+        {
+          x: item.bounds.x + plan.nodeLeft,
+          y: item.bounds.y + plan.nodeTop,
+        },
+        measured,
+      ),
     ),
   );
   const ports = measure('ports', () => nodes.flatMap(readPrototypeNodePorts));

@@ -96,6 +96,7 @@ export function collapseSupportEqualities(
         ...first,
         position,
         aliases: originals.flatMap((point) => point.aliases),
+        aliasOffsets: Object.assign({}, ...originals.map((point) => point.aliasOffsets)),
       });
       return {
         members: originals,

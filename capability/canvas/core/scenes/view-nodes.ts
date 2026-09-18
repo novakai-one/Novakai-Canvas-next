@@ -3,8 +3,9 @@ import type { ViewNode, ViewSection } from '../../contract/records/view.js';
 import type { PlacedNode, PlacedSection } from '../../contract/records/scene.js';
 import { targetInfo, targetKey } from './address.js';
 import { previewBox, previewOrigin, hiddenByReading } from './preview.js';
-import type { FocusProjection } from '../../contract/records/focus.js';
+import type { DetailTier, FocusProjection } from '../../contract/records/focus.js';
 import { emphasisFor } from './focus.js';
+import { visibleDetail } from './detail.js';
 /** Selection membership is scoped to a visible appearance, not canonical content identity. */
 function selected(state: SessionState, key: string): boolean {
   return state.selection.some((target) => targetKey(target) === key);
@@ -23,11 +24,13 @@ export function viewNode(
   node: PlacedNode,
   section: PlacedSection,
   focus: FocusProjection,
+  detail: DetailTier,
 ): ViewNode {
   const target = { kind: 'node' as const, section: section.id, id: node.id };
   const info = targetInfo(state.index, target);
   const bounds = previewBox(state, info);
   const parent = parentBox(state, node, section);
+  const emphasis = emphasisFor(focus, info.key);
   return {
     id: info.key,
     target,
@@ -36,7 +39,8 @@ export function viewNode(
     box: bounds,
     placed: node,
     selected: selected(state, info.key),
-    emphasis: emphasisFor(focus, info.key),
+    emphasis,
+    detail: visibleDetail(detail, emphasis),
     hidden: hiddenByReading(state, info),
     draft: bounds !== info.box,
   };

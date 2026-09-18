@@ -42,7 +42,13 @@ export function createSceneNode(
     const node = { ...view.placed.measured, width: view.box.width, height: view.box.height };
     return (
       <div className={styles.node} data-preview={view.draft} data-emphasis={view.emphasis}>
-        <Content embedFonts={false} node={node} emphasis={view.emphasis} />
+        <Content
+          embedFonts={false}
+          node={node}
+          surface="canvas"
+          detail={view.detail}
+          emphasis={view.emphasis}
+        />
         <Handle
           isConnectable={isConnectable}
           type="target"

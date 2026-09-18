@@ -1,7 +1,7 @@
 import type { Target } from './selection.js';
 import type { Box, Camera, Point } from './camera.js';
 import type { Scene, PlacedNode, RoutedWire } from './scene.js';
-import type { Emphasis, FocusProjection } from './focus.js';
+import type { DetailTier, Emphasis, FocusProjection } from './focus.js';
 export interface ViewNode {
   readonly id: string;
   readonly target: Target;
@@ -11,6 +11,7 @@ export interface ViewNode {
   readonly placed: PlacedNode;
   readonly selected: boolean;
   readonly emphasis: Emphasis;
+  readonly detail: DetailTier;
   readonly hidden: boolean;
   readonly draft: boolean;
 }

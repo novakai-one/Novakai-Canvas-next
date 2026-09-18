@@ -1,0 +1,11 @@
+/** Recreate the isolated capture harness; serve apps/web on 5198, headless only. */
+import {mkdirSync,readFileSync,writeFileSync} from 'node:fs';
+import {gunzipSync} from 'node:zlib';
+const root='apps/web/.local/m10f-c/';
+mkdirSync(root,{recursive:true});
+const files={"index.html": "<!doctype html><html><head><meta charset=\"UTF-8\"><link rel=\"icon\" href=\"data:,\"><title>Increment C evidence</title></head><body style=\"margin:0\"><div id=\"app\" data-nv-scope=\"ui\"></div><script type=\"module\" src=\"./main.mjs\"></script></body></html>\n", "main.mjs": "import { createElement } from 'react';\nimport { createRoot } from 'react-dom/client';\nimport { createRoadPrototype } from '@novakai/canvas-canvas';\nimport { createReactBindings } from '@novakai/canvas-design-system';\nimport { auditRoadCoverage, inspectRoadTravel } from '@novakai/canvas-layout';\nconst phase = new URLSearchParams(location.search).get('phase') ?? 'after';\nconst scene = await fetch(`./${phase}.json`).then(r=>r.json());\nconst styles = await createReactBindings();\nif (!styles.ok) throw new Error(styles.error.message);\nconst Prototype = await createRoadPrototype();\nconst target=document.getElementById('app');\nif(target===null)throw new Error('Missing capture root');\ncreateRoot(target).render(createElement(Prototype, {\n  scene, proofs: [], initialProof: -1,\n  auditCoverage: () => auditRoadCoverage(scene),\n  inspectTravel: (travel) => inspectRoadTravel(scene, travel),\n  scheduleSpotlight: (paint) => { const timer=setTimeout(paint,100);return()=>clearTimeout(timer); },\n  onReady: async () => { await document.fonts.ready; requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.dataset.ready='true')); },\n}));\n"};
+for(const [name,content] of Object.entries(files))writeFileSync(root+name,content);
+const evidence=JSON.parse(gunzipSync(readFileSync('output/playwright/nested-wires/embedding/increment-b-authoring-active.json.gz')));
+writeFileSync(root+'before.json',JSON.stringify(evidence.result.value.scene));
+writeFileSync(root+'after.json',JSON.stringify(JSON.parse(gunzipSync(readFileSync('output/playwright/nested-wires/embedding/increment-c-authoring-candidate.json.gz'))).scene));
+console.log('Harness ready. Use only: pnpm --dir apps/web exec vite --host 127.0.0.1 --port 5198 --strictPort');

@@ -1,0 +1,38 @@
+{
+  "roads-off": {
+    "width": 1920,
+    "height": 1440,
+    "threshold": 0.1,
+    "includeAA": false,
+    "changedPixels": 0,
+    "totalPixels": 2764800,
+    "changedPercent": 0
+  },
+  "roads-on": {
+    "width": 1920,
+    "height": 1440,
+    "threshold": 0.1,
+    "includeAA": false,
+    "changedPixels": 123,
+    "totalPixels": 2764800,
+    "changedPercent": 0.004448784722222222
+  },
+  "section-13": {
+    "width": 1920,
+    "height": 1440,
+    "threshold": 0.1,
+    "includeAA": false,
+    "changedPixels": 0,
+    "totalPixels": 2764800,
+    "changedPercent": 0
+  },
+  "section-13-roads": {
+    "width": 1920,
+    "height": 1440,
+    "threshold": 0.1,
+    "includeAA": false,
+    "changedPixels": 3185,
+    "totalPixels": 2764800,
+    "changedPercent": 0.11519820601851852
+  }
+}

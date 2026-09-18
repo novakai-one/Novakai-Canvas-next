@@ -1,0 +1,57 @@
+{
+  "default": {
+    "before": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+    "after": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+    "identical": true,
+    "inspection": {
+      "corridors": [],
+      "nodeBodies": [],
+      "boundaries": [],
+      "continuity": []
+    }
+  },
+  "hub": {
+    "before": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+    "after": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+    "identical": true,
+    "inspection": {
+      "corridors": [],
+      "nodeBodies": [],
+      "boundaries": [],
+      "continuity": []
+    }
+  },
+  "templates": {
+    "before": "4b00fd4c0b4fd7e06969f0a59710c58842173f178c89193e74198552438054fe",
+    "after": "4b00fd4c0b4fd7e06969f0a59710c58842173f178c89193e74198552438054fe",
+    "identical": true,
+    "inspection": {
+      "corridors": [],
+      "nodeBodies": [],
+      "boundaries": [],
+      "continuity": []
+    }
+  },
+  "scale": {
+    "before": "757afa0dc1356853e60bec161dd2605b18f8ab510826e7f1bdce12829e7bbe62",
+    "after": "757afa0dc1356853e60bec161dd2605b18f8ab510826e7f1bdce12829e7bbe62",
+    "identical": true,
+    "inspection": {
+      "corridors": [],
+      "nodeBodies": [],
+      "boundaries": [],
+      "continuity": []
+    }
+  },
+  "authoring": {
+    "before": "db54c6ca59e90c4e028f17c6ed0d0b73b42626fb3fe3618e4db3a7cddab6f06f",
+    "after": "64db703e69a6f5fb760f4e1f071283acd01eb21783a09e5b6ed2b02f3acfd3c5",
+    "identical": false,
+    "inspection": {
+      "corridors": [],
+      "nodeBodies": [],
+      "boundaries": [],
+      "continuity": []
+    }
+  }
+}

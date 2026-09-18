@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {gunzipSync} from 'node:zlib';
+import {execFileSync} from 'node:child_process';
+import {runInNewContext} from 'node:vm';
+const root='output/playwright/nested-wires/';
+const before=JSON.parse(gunzipSync(readFileSync(root+'embedding/increment-b-authoring-active.json.gz'))).result.value.scene;
+const after=JSON.parse(gunzipSync(readFileSync(root+'embedding/increment-c-authoring-candidate.json.gz'))).scene;
+const verifier=execFileSync('git',['show','1ff0be8:'+root+'templates-scene/verify-templates-scene.mjs'],{encoding:'utf8'});
+const intersect=runInNewContext(verifier.slice(verifier.indexOf('function intersection(a, b)'),verifier.indexOf('const pairs ='))+';intersection;');
+const contacts=(a,b)=>a.segments.flatMap((first,i)=>b.segments.map((second,j)=>({firstOrdinal:i+1,secondOrdinal:j+1,first,second,hit:intersect(first,second)})).filter(c=>c.hit!==null));
+const wire=(scene,id)=>scene.wiring.value.find(w=>w.id===id);
+const old=JSON.parse(readFileSync(root+'projection/after-catalogs.json')).catalogs.overlaps.slice(0,3);
+const historical=old.map(witness=>{
+ assert.equal(JSON.stringify(intersect(witness.first,witness.second)),JSON.stringify(witness.hit));
+ const phases=Object.fromEntries([['before',before],['after',after]].map(([phase,scene])=>{
+  const wires=witness.wires.map(id=>wire(scene,id));
+  const recomputed=contacts(...wires);
+  assert(recomputed.every(c=>c.hit.length===0));
+  return [phase,{wires,recomputedContacts:recomputed}];
+ }));
+ return {historical:witness,...phases};
+});
+const inside=(p,b)=>p.x>=b.x&&p.x<=b.x+b.width&&p.y>=b.y&&p.y<=b.y+b.height;
+const w84=Object.fromEntries([['before',before],['after',after]].map(([phase,scene])=>[phase,wire(scene,'w84').segments.map((segment,i)=>({ordinal:i+1,segment,owner:scene.roads.find(r=>r.id===segment.corridorId),containingRoads:scene.roads.filter(r=>[segment.from,segment.to].every(p=>inside(p,r.bounds))).map(r=>r.id)}))]));
+assert(w84.before[5].containingRoads.length===0&&w84.before[6].containingRoads.length===0);
+assert(w84.after.every(s=>s.containingRoads.includes(s.segment.corridorId)));
+const evidence={historical,w84,note:'Every contact recomputed from endpoints. Old ordinals are used only to identify the saved B rejection; after pieces are enumerated afresh.'};
+writeFileSync(root+'embedding/increment-c-witnesses.json',JSON.stringify(evidence,null,2)+'\n');
+console.log(JSON.stringify(evidence,null,2));

@@ -96,9 +96,19 @@ export interface NestedSupportEquality {
   readonly position: number;
 }
 
+/** Grow-only support reach beyond a retained road's nominal bounds. */
+export interface NestedSupportSpanGrowth {
+  readonly roadId: string;
+  readonly axis: 'x' | 'y';
+  readonly negative: number;
+  readonly positive: number;
+  readonly provenance: readonly string[];
+}
+
 /** Admission certifies computable constraints only. It does not certify scene legality. */
 export interface NestedSupportLedger {
   readonly status: 'admitted-with-reservation-evidence';
+  readonly spanGrowth?: readonly NestedSupportSpanGrowth[];
   readonly equalities: readonly NestedSupportEquality[];
   readonly populations: readonly NestedSupportPopulation[];
   readonly travels: readonly NestedSupportTravel[];

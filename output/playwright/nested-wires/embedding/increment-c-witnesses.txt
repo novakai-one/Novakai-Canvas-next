@@ -1,0 +1,5267 @@
+{
+  "historical": [
+    {
+      "historical": {
+        "wires": [
+          "w03",
+          "w13"
+        ],
+        "hit": {
+          "x": 3190,
+          "y": 454,
+          "length": 6
+        },
+        "first": {
+          "from": {
+            "x": 3089.5,
+            "y": 454
+          },
+          "to": {
+            "x": 3247,
+            "y": 454
+          },
+          "corridorId": "section-2:vertical:3124:248"
+        },
+        "second": {
+          "from": {
+            "x": 3190,
+            "y": 454
+          },
+          "to": {
+            "x": 3196,
+            "y": 454
+          },
+          "corridorId": "drive:node-3:entry-left"
+        }
+      },
+      "before": {
+        "wires": [
+          {
+            "id": "w03",
+            "from": "node-2",
+            "to": "node-3",
+            "sourcePortId": "node-2:exit-right",
+            "targetPortId": "node-3:entry-left",
+            "gates": [],
+            "segments": [
+              {
+                "from": {
+                  "x": 3053.5,
+                  "y": 614.5
+                },
+                "to": {
+                  "x": 3089.5,
+                  "y": 614.5
+                },
+                "corridorId": "drive:node-2:exit-right"
+              },
+              {
+                "from": {
+                  "x": 3089.5,
+                  "y": 614.5
+                },
+                "to": {
+                  "x": 3089.5,
+                  "y": 635.5
+                },
+                "corridorId": "drive:node-2:exit-right"
+              },
+              {
+                "from": {
+                  "x": 3089.5,
+                  "y": 635.5
+                },
+                "to": {
+                  "x": 3091,
+                  "y": 635.5
+                },
+                "corridorId": "drive:node-2:exit-right",
+                "laneId": "w03:0"
+              },
+              {
+                "from": {
+                  "x": 3091,
+                  "y": 635.5
+                },
+                "to": {
+                  "x": 3094,
+                  "y": 635.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3094,
+                  "y": 635.5
+                },
+                "to": {
+                  "x": 3094,
+                  "y": 638.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3094,
+                  "y": 638.5
+                },
+                "to": {
+                  "x": 3340,
+                  "y": 638.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3340,
+                  "y": 638.5
+                },
+                "to": {
+                  "x": 3340,
+                  "y": 641.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3340,
+                  "y": 641.5
+                },
+                "to": {
+                  "x": 3343,
+                  "y": 641.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3343,
+                  "y": 641.5
+                },
+                "to": {
+                  "x": 3374.5,
+                  "y": 641.5
+                },
+                "corridorId": "drive:node-3:entry-left",
+                "laneId": "w03:3"
+              },
+              {
+                "from": {
+                  "x": 3374.5,
+                  "y": 641.5
+                },
+                "to": {
+                  "x": 3374.5,
+                  "y": 626.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              },
+              {
+                "from": {
+                  "x": 3374.5,
+                  "y": 626.5
+                },
+                "to": {
+                  "x": 3392.5,
+                  "y": 626.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              }
+            ]
+          },
+          {
+            "id": "w13",
+            "from": "node-13",
+            "to": "node-3",
+            "sourcePortId": "node-13:exit-bottom",
+            "targetPortId": "node-3:entry-left",
+            "gates": [
+              "section-4:exit-bottom"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 5909.5,
+                  "y": 834.5
+                },
+                "to": {
+                  "x": 5903.5,
+                  "y": 834.5
+                },
+                "corridorId": "drive:node-13:exit-bottom"
+              },
+              {
+                "from": {
+                  "x": 5903.5,
+                  "y": 834.5
+                },
+                "to": {
+                  "x": 5903.5,
+                  "y": 870.5
+                },
+                "corridorId": "drive:node-13:exit-bottom",
+                "laneId": "w13:0"
+              },
+              {
+                "from": {
+                  "x": 5903.5,
+                  "y": 870.5
+                },
+                "to": {
+                  "x": 5903.5,
+                  "y": 897.5
+                },
+                "corridorId": "section-4:horizontal:906.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5903.5,
+                  "y": 897.5
+                },
+                "to": {
+                  "x": 5771.5,
+                  "y": 897.5
+                },
+                "corridorId": "section-4:horizontal:906.5:5408.5",
+                "laneId": "w13:2"
+              },
+              {
+                "from": {
+                  "x": 5771.5,
+                  "y": 897.5
+                },
+                "to": {
+                  "x": 5771.5,
+                  "y": 899
+                },
+                "corridorId": "section-4:vertical:5744.5:666.5"
+              },
+              {
+                "from": {
+                  "x": 5771.5,
+                  "y": 899
+                },
+                "to": {
+                  "x": 5741.5,
+                  "y": 899
+                },
+                "corridorId": "section-4:vertical:5744.5:666.5"
+              },
+              {
+                "from": {
+                  "x": 5741.5,
+                  "y": 899
+                },
+                "to": {
+                  "x": 5741.5,
+                  "y": 1131.5
+                },
+                "corridorId": "section-4:vertical:5744.5:666.5",
+                "laneId": "w13:3"
+              },
+              {
+                "from": {
+                  "x": 5741.5,
+                  "y": 1131.5
+                },
+                "to": {
+                  "x": 5743,
+                  "y": 1131.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5743,
+                  "y": 1131.5
+                },
+                "to": {
+                  "x": 5743,
+                  "y": 1149.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5743,
+                  "y": 1149.5
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1149.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5",
+                "laneId": "w13:4"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1149.5
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1164.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1164.5
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1212
+                },
+                "corridorId": "drive:section-4:exit-bottom",
+                "laneId": "w13:6"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1212
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1269
+                },
+                "corridorId": "section-2:horizontal:1290:2788"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1269
+                },
+                "to": {
+                  "x": 3232,
+                  "y": 1269
+                },
+                "corridorId": "section-2:horizontal:1290:2788",
+                "laneId": "w13:9"
+              },
+              {
+                "from": {
+                  "x": 3232,
+                  "y": 1269
+                },
+                "to": {
+                  "x": 3232,
+                  "y": 653.5
+                },
+                "corridorId": "section-2:vertical:3217:385",
+                "laneId": "w13:10"
+              },
+              {
+                "from": {
+                  "x": 3232,
+                  "y": 653.5
+                },
+                "to": {
+                  "x": 3343,
+                  "y": 653.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3343,
+                  "y": 653.5
+                },
+                "to": {
+                  "x": 3386.5,
+                  "y": 653.5
+                },
+                "corridorId": "drive:node-3:entry-left",
+                "laneId": "w13:12"
+              },
+              {
+                "from": {
+                  "x": 3386.5,
+                  "y": 653.5
+                },
+                "to": {
+                  "x": 3386.5,
+                  "y": 638.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              },
+              {
+                "from": {
+                  "x": 3386.5,
+                  "y": 638.5
+                },
+                "to": {
+                  "x": 3392.5,
+                  "y": 638.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              }
+            ]
+          }
+        ],
+        "recomputedContacts": []
+      },
+      "after": {
+        "wires": [
+          {
+            "id": "w03",
+            "from": "node-2",
+            "to": "node-3",
+            "sourcePortId": "node-2:exit-right",
+            "targetPortId": "node-3:entry-left",
+            "gates": [],
+            "segments": [
+              {
+                "from": {
+                  "x": 3053.5,
+                  "y": 614.5
+                },
+                "to": {
+                  "x": 3089.5,
+                  "y": 614.5
+                },
+                "corridorId": "drive:node-2:exit-right"
+              },
+              {
+                "from": {
+                  "x": 3089.5,
+                  "y": 614.5
+                },
+                "to": {
+                  "x": 3089.5,
+                  "y": 635.5
+                },
+                "corridorId": "drive:node-2:exit-right"
+              },
+              {
+                "from": {
+                  "x": 3089.5,
+                  "y": 635.5
+                },
+                "to": {
+                  "x": 3091,
+                  "y": 635.5
+                },
+                "corridorId": "drive:node-2:exit-right",
+                "laneId": "w03:0"
+              },
+              {
+                "from": {
+                  "x": 3091,
+                  "y": 635.5
+                },
+                "to": {
+                  "x": 3094,
+                  "y": 635.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3094,
+                  "y": 635.5
+                },
+                "to": {
+                  "x": 3094,
+                  "y": 638.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3094,
+                  "y": 638.5
+                },
+                "to": {
+                  "x": 3340,
+                  "y": 638.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3340,
+                  "y": 638.5
+                },
+                "to": {
+                  "x": 3340,
+                  "y": 641.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3340,
+                  "y": 641.5
+                },
+                "to": {
+                  "x": 3343,
+                  "y": 641.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3343,
+                  "y": 641.5
+                },
+                "to": {
+                  "x": 3374.5,
+                  "y": 641.5
+                },
+                "corridorId": "drive:node-3:entry-left",
+                "laneId": "w03:3"
+              },
+              {
+                "from": {
+                  "x": 3374.5,
+                  "y": 641.5
+                },
+                "to": {
+                  "x": 3374.5,
+                  "y": 626.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              },
+              {
+                "from": {
+                  "x": 3374.5,
+                  "y": 626.5
+                },
+                "to": {
+                  "x": 3392.5,
+                  "y": 626.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              }
+            ]
+          },
+          {
+            "id": "w13",
+            "from": "node-13",
+            "to": "node-3",
+            "sourcePortId": "node-13:exit-bottom",
+            "targetPortId": "node-3:entry-left",
+            "gates": [
+              "section-4:exit-bottom"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 5909.5,
+                  "y": 834.5
+                },
+                "to": {
+                  "x": 5903.5,
+                  "y": 834.5
+                },
+                "corridorId": "drive:node-13:exit-bottom"
+              },
+              {
+                "from": {
+                  "x": 5903.5,
+                  "y": 834.5
+                },
+                "to": {
+                  "x": 5903.5,
+                  "y": 870.5
+                },
+                "corridorId": "drive:node-13:exit-bottom",
+                "laneId": "w13:0"
+              },
+              {
+                "from": {
+                  "x": 5903.5,
+                  "y": 870.5
+                },
+                "to": {
+                  "x": 5903.5,
+                  "y": 897.5
+                },
+                "corridorId": "section-4:horizontal:906.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5903.5,
+                  "y": 897.5
+                },
+                "to": {
+                  "x": 5771.5,
+                  "y": 897.5
+                },
+                "corridorId": "section-4:horizontal:906.5:5408.5",
+                "laneId": "w13:2"
+              },
+              {
+                "from": {
+                  "x": 5771.5,
+                  "y": 897.5
+                },
+                "to": {
+                  "x": 5771.5,
+                  "y": 899
+                },
+                "corridorId": "section-4:vertical:5744.5:666.5"
+              },
+              {
+                "from": {
+                  "x": 5771.5,
+                  "y": 899
+                },
+                "to": {
+                  "x": 5741.5,
+                  "y": 899
+                },
+                "corridorId": "section-4:vertical:5744.5:666.5"
+              },
+              {
+                "from": {
+                  "x": 5741.5,
+                  "y": 899
+                },
+                "to": {
+                  "x": 5741.5,
+                  "y": 1131.5
+                },
+                "corridorId": "section-4:vertical:5744.5:666.5",
+                "laneId": "w13:3"
+              },
+              {
+                "from": {
+                  "x": 5741.5,
+                  "y": 1131.5
+                },
+                "to": {
+                  "x": 5743,
+                  "y": 1131.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5743,
+                  "y": 1131.5
+                },
+                "to": {
+                  "x": 5743,
+                  "y": 1149.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5743,
+                  "y": 1149.5
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1149.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5",
+                "laneId": "w13:4"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1149.5
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1164.5
+                },
+                "corridorId": "section-4:horizontal:1146.5:5408.5"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1164.5
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1212
+                },
+                "corridorId": "drive:section-4:exit-bottom",
+                "laneId": "w13:6"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1212
+                },
+                "to": {
+                  "x": 5744.5,
+                  "y": 1269
+                },
+                "corridorId": "section-2:horizontal:1290:2788"
+              },
+              {
+                "from": {
+                  "x": 5744.5,
+                  "y": 1269
+                },
+                "to": {
+                  "x": 3232,
+                  "y": 1269
+                },
+                "corridorId": "section-2:horizontal:1290:2788",
+                "laneId": "w13:9"
+              },
+              {
+                "from": {
+                  "x": 3232,
+                  "y": 1269
+                },
+                "to": {
+                  "x": 3232,
+                  "y": 653.5
+                },
+                "corridorId": "section-2:vertical:3217:385",
+                "laneId": "w13:10"
+              },
+              {
+                "from": {
+                  "x": 3232,
+                  "y": 653.5
+                },
+                "to": {
+                  "x": 3343,
+                  "y": 653.5
+                },
+                "corridorId": "section-2:vertical:3217:385"
+              },
+              {
+                "from": {
+                  "x": 3343,
+                  "y": 653.5
+                },
+                "to": {
+                  "x": 3386.5,
+                  "y": 653.5
+                },
+                "corridorId": "drive:node-3:entry-left",
+                "laneId": "w13:12"
+              },
+              {
+                "from": {
+                  "x": 3386.5,
+                  "y": 653.5
+                },
+                "to": {
+                  "x": 3386.5,
+                  "y": 638.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              },
+              {
+                "from": {
+                  "x": 3386.5,
+                  "y": 638.5
+                },
+                "to": {
+                  "x": 3392.5,
+                  "y": 638.5
+                },
+                "corridorId": "drive:node-3:entry-left"
+              }
+            ]
+          }
+        ],
+        "recomputedContacts": []
+      }
+    },
+    {
+      "historical": {
+        "wires": [
+          "w26",
+          "w61"
+        ],
+        "hit": {
+          "x": 6274,
+          "y": 1681,
+          "length": 6
+        },
+        "first": {
+          "from": {
+            "x": 6274,
+            "y": 1681
+          },
+          "to": {
+            "x": 6280,
+            "y": 1681
+          },
+          "corridorId": "drive:node-35:entry-left"
+        },
+        "second": {
+          "from": {
+            "x": 6280,
+            "y": 1681
+          },
+          "to": {
+            "x": 6256,
+            "y": 1681
+          },
+          "corridorId": "drive:node-35:entry-left",
+          "laneId": "w61:16"
+        }
+      },
+      "before": {
+        "wires": [
+          {
+            "id": "w26",
+            "from": "node-18",
+            "to": "node-35",
+            "sourcePortId": "node-18:exit-right",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-6:exit-bottom",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 600,
+                  "y": 1994.5
+                },
+                "to": {
+                  "x": 606,
+                  "y": 1994.5
+                },
+                "corridorId": "drive:node-18:exit-right"
+              },
+              {
+                "from": {
+                  "x": 606,
+                  "y": 1994.5
+                },
+                "to": {
+                  "x": 606,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-18:exit-right"
+              },
+              {
+                "from": {
+                  "x": 606,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 625.5,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-18:exit-right",
+                "laneId": "w26:0"
+              },
+              {
+                "from": {
+                  "x": 625.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 658.5,
+                  "y": 2009.5
+                },
+                "corridorId": "section-6:vertical:697.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 658.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 658.5,
+                  "y": 2299
+                },
+                "corridorId": "section-6:vertical:697.5:1868.5",
+                "laneId": "w26:2"
+              },
+              {
+                "from": {
+                  "x": 658.5,
+                  "y": 2299
+                },
+                "to": {
+                  "x": 660,
+                  "y": 2299
+                },
+                "corridorId": "section-6:horizontal:2362:336"
+              },
+              {
+                "from": {
+                  "x": 660,
+                  "y": 2299
+                },
+                "to": {
+                  "x": 660,
+                  "y": 2395
+                },
+                "corridorId": "section-6:horizontal:2362:336"
+              },
+              {
+                "from": {
+                  "x": 660,
+                  "y": 2395
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2395
+                },
+                "corridorId": "section-6:horizontal:2362:336",
+                "laneId": "w26:3"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2395
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2428
+                },
+                "corridorId": "section-6:horizontal:2362:336"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2428
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2557
+                },
+                "corridorId": "drive:section-6:exit-bottom",
+                "laneId": "w26:5"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2557
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 784.5,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 784.5,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 784.5,
+                  "y": 2962
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 784.5,
+                  "y": 2962
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2962
+                },
+                "corridorId": "section-5:horizontal:2797:200",
+                "laneId": "w26:8"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2962
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2960.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2960.5
+                },
+                "to": {
+                  "x": 6341,
+                  "y": 2960.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6341,
+                  "y": 2960.5
+                },
+                "to": {
+                  "x": 6341,
+                  "y": 2161.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w26:9"
+              },
+              {
+                "from": {
+                  "x": 6341,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2161.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2161.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w26:11"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2161.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2160
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2160
+                },
+                "to": {
+                  "x": 6698,
+                  "y": 2160
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6698,
+                  "y": 2160
+                },
+                "to": {
+                  "x": 6698,
+                  "y": 2158.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w26:14"
+              },
+              {
+                "from": {
+                  "x": 6698,
+                  "y": 2158.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2158.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2158.5
+                },
+                "to": {
+                  "x": 6774.5,
+                  "y": 2158.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w26:16"
+              },
+              {
+                "from": {
+                  "x": 6774.5,
+                  "y": 2158.5
+                },
+                "to": {
+                  "x": 6774.5,
+                  "y": 2140.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6774.5,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2140.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          },
+          {
+            "id": "w61",
+            "from": "node-25",
+            "to": "node-35",
+            "sourcePortId": "node-25:exit-right",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-8:exit-right",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 2568,
+                  "y": 1982.5
+                },
+                "to": {
+                  "x": 2592,
+                  "y": 1982.5
+                },
+                "corridorId": "drive:node-25:exit-right"
+              },
+              {
+                "from": {
+                  "x": 2592,
+                  "y": 1982.5
+                },
+                "to": {
+                  "x": 2592,
+                  "y": 2003.5
+                },
+                "corridorId": "drive:node-25:exit-right"
+              },
+              {
+                "from": {
+                  "x": 2592,
+                  "y": 2003.5
+                },
+                "to": {
+                  "x": 2605.5,
+                  "y": 2003.5
+                },
+                "corridorId": "drive:node-25:exit-right",
+                "laneId": "w61:0"
+              },
+              {
+                "from": {
+                  "x": 2605.5,
+                  "y": 2003.5
+                },
+                "to": {
+                  "x": 2638.5,
+                  "y": 2003.5
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2638.5,
+                  "y": 2003.5
+                },
+                "to": {
+                  "x": 2638.5,
+                  "y": 2029
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5",
+                "laneId": "w61:2"
+              },
+              {
+                "from": {
+                  "x": 2638.5,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 2640,
+                  "y": 2029
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2640,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 2640,
+                  "y": 2089
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2640,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2701.5,
+                  "y": 2089
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2701.5,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2719,
+                  "y": 2089
+                },
+                "corridorId": "drive:section-8:exit-right",
+                "laneId": "w61:4"
+              },
+              {
+                "from": {
+                  "x": 2719,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2722,
+                  "y": 2089
+                },
+                "corridorId": "section-5:vertical:2797:1635"
+              },
+              {
+                "from": {
+                  "x": 2722,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2722,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:2797:1635"
+              },
+              {
+                "from": {
+                  "x": 2722,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 2812,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:2797:1635"
+              },
+              {
+                "from": {
+                  "x": 2812,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 2812,
+                  "y": 1698
+                },
+                "corridorId": "section-5:vertical:2797:1635",
+                "laneId": "w61:7"
+              },
+              {
+                "from": {
+                  "x": 2812,
+                  "y": 1698
+                },
+                "to": {
+                  "x": 6233,
+                  "y": 1698
+                },
+                "corridorId": "section-5:horizontal:1635:200",
+                "laneId": "w61:8"
+              },
+              {
+                "from": {
+                  "x": 6233,
+                  "y": 1698
+                },
+                "to": {
+                  "x": 6233,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w61:9"
+              },
+              {
+                "from": {
+                  "x": 6233,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6234.5,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6234.5,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6234.5,
+                  "y": 2143.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6234.5,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2143.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2143.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w61:11"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2143.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2142
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2142
+                },
+                "to": {
+                  "x": 6680,
+                  "y": 2142
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6680,
+                  "y": 2142
+                },
+                "to": {
+                  "x": 6680,
+                  "y": 2140.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w61:14"
+              },
+              {
+                "from": {
+                  "x": 6680,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2140.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6756.5,
+                  "y": 2140.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w61:16"
+              },
+              {
+                "from": {
+                  "x": 6756.5,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6756.5,
+                  "y": 2122.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6756.5,
+                  "y": 2122.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2122.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          }
+        ],
+        "recomputedContacts": []
+      },
+      "after": {
+        "wires": [
+          {
+            "id": "w26",
+            "from": "node-18",
+            "to": "node-35",
+            "sourcePortId": "node-18:exit-right",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-6:exit-bottom",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 600,
+                  "y": 1994.5
+                },
+                "to": {
+                  "x": 606,
+                  "y": 1994.5
+                },
+                "corridorId": "drive:node-18:exit-right"
+              },
+              {
+                "from": {
+                  "x": 606,
+                  "y": 1994.5
+                },
+                "to": {
+                  "x": 606,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-18:exit-right"
+              },
+              {
+                "from": {
+                  "x": 606,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 625.5,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-18:exit-right",
+                "laneId": "w26:0"
+              },
+              {
+                "from": {
+                  "x": 625.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 658.5,
+                  "y": 2009.5
+                },
+                "corridorId": "section-6:vertical:697.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 658.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 658.5,
+                  "y": 2299
+                },
+                "corridorId": "section-6:vertical:697.5:1868.5",
+                "laneId": "w26:2"
+              },
+              {
+                "from": {
+                  "x": 658.5,
+                  "y": 2299
+                },
+                "to": {
+                  "x": 660,
+                  "y": 2299
+                },
+                "corridorId": "section-6:horizontal:2362:336"
+              },
+              {
+                "from": {
+                  "x": 660,
+                  "y": 2299
+                },
+                "to": {
+                  "x": 660,
+                  "y": 2395
+                },
+                "corridorId": "section-6:horizontal:2362:336"
+              },
+              {
+                "from": {
+                  "x": 660,
+                  "y": 2395
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2395
+                },
+                "corridorId": "section-6:horizontal:2362:336",
+                "laneId": "w26:3"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2395
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2428
+                },
+                "corridorId": "section-6:horizontal:2362:336"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2428
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2557
+                },
+                "corridorId": "drive:section-6:exit-bottom",
+                "laneId": "w26:5"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2557
+                },
+                "to": {
+                  "x": 783,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 783,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 784.5,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 784.5,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 784.5,
+                  "y": 2962
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 784.5,
+                  "y": 2962
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2962
+                },
+                "corridorId": "section-5:horizontal:2797:200",
+                "laneId": "w26:8"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2962
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2960.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2960.5
+                },
+                "to": {
+                  "x": 6341,
+                  "y": 2960.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6341,
+                  "y": 2960.5
+                },
+                "to": {
+                  "x": 6341,
+                  "y": 2161.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w26:9"
+              },
+              {
+                "from": {
+                  "x": 6341,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2161.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2161.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w26:11"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2161.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2161.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2160
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2160
+                },
+                "to": {
+                  "x": 6698,
+                  "y": 2160
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6698,
+                  "y": 2160
+                },
+                "to": {
+                  "x": 6698,
+                  "y": 2158.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w26:14"
+              },
+              {
+                "from": {
+                  "x": 6698,
+                  "y": 2158.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2158.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2158.5
+                },
+                "to": {
+                  "x": 6774.5,
+                  "y": 2158.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w26:16"
+              },
+              {
+                "from": {
+                  "x": 6774.5,
+                  "y": 2158.5
+                },
+                "to": {
+                  "x": 6774.5,
+                  "y": 2140.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6774.5,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2140.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          },
+          {
+            "id": "w61",
+            "from": "node-25",
+            "to": "node-35",
+            "sourcePortId": "node-25:exit-right",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-8:exit-right",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 2568,
+                  "y": 1982.5
+                },
+                "to": {
+                  "x": 2592,
+                  "y": 1982.5
+                },
+                "corridorId": "drive:node-25:exit-right"
+              },
+              {
+                "from": {
+                  "x": 2592,
+                  "y": 1982.5
+                },
+                "to": {
+                  "x": 2592,
+                  "y": 2003.5
+                },
+                "corridorId": "drive:node-25:exit-right"
+              },
+              {
+                "from": {
+                  "x": 2592,
+                  "y": 2003.5
+                },
+                "to": {
+                  "x": 2605.5,
+                  "y": 2003.5
+                },
+                "corridorId": "drive:node-25:exit-right",
+                "laneId": "w61:0"
+              },
+              {
+                "from": {
+                  "x": 2605.5,
+                  "y": 2003.5
+                },
+                "to": {
+                  "x": 2638.5,
+                  "y": 2003.5
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2638.5,
+                  "y": 2003.5
+                },
+                "to": {
+                  "x": 2638.5,
+                  "y": 2029
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5",
+                "laneId": "w61:2"
+              },
+              {
+                "from": {
+                  "x": 2638.5,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 2640,
+                  "y": 2029
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2640,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 2640,
+                  "y": 2089
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2640,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2701.5,
+                  "y": 2089
+                },
+                "corridorId": "section-8:vertical:2653.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 2701.5,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2719,
+                  "y": 2089
+                },
+                "corridorId": "drive:section-8:exit-right",
+                "laneId": "w61:4"
+              },
+              {
+                "from": {
+                  "x": 2719,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2722,
+                  "y": 2089
+                },
+                "corridorId": "section-5:vertical:2797:1635"
+              },
+              {
+                "from": {
+                  "x": 2722,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 2722,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:2797:1635"
+              },
+              {
+                "from": {
+                  "x": 2722,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 2812,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:2797:1635"
+              },
+              {
+                "from": {
+                  "x": 2812,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 2812,
+                  "y": 1698
+                },
+                "corridorId": "section-5:vertical:2797:1635",
+                "laneId": "w61:7"
+              },
+              {
+                "from": {
+                  "x": 2812,
+                  "y": 1698
+                },
+                "to": {
+                  "x": 6233,
+                  "y": 1698
+                },
+                "corridorId": "section-5:horizontal:1635:200",
+                "laneId": "w61:8"
+              },
+              {
+                "from": {
+                  "x": 6233,
+                  "y": 1698
+                },
+                "to": {
+                  "x": 6233,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w61:9"
+              },
+              {
+                "from": {
+                  "x": 6233,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6234.5,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6234.5,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6234.5,
+                  "y": 2143.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6234.5,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2143.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2143.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w61:11"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2143.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2143.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2142
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2142
+                },
+                "to": {
+                  "x": 6680,
+                  "y": 2142
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6680,
+                  "y": 2142
+                },
+                "to": {
+                  "x": 6680,
+                  "y": 2140.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w61:14"
+              },
+              {
+                "from": {
+                  "x": 6680,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2140.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6756.5,
+                  "y": 2140.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w61:16"
+              },
+              {
+                "from": {
+                  "x": 6756.5,
+                  "y": 2140.5
+                },
+                "to": {
+                  "x": 6756.5,
+                  "y": 2122.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6756.5,
+                  "y": 2122.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2122.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          }
+        ],
+        "recomputedContacts": []
+      }
+    },
+    {
+      "historical": {
+        "wires": [
+          "w36",
+          "w67"
+        ],
+        "hit": {
+          "x": 6268,
+          "y": 1675,
+          "length": 12
+        },
+        "first": {
+          "from": {
+            "x": 6280,
+            "y": 1675
+          },
+          "to": {
+            "x": 6250,
+            "y": 1675
+          },
+          "corridorId": "drive:node-35:entry-left",
+          "laneId": "w36:16"
+        },
+        "second": {
+          "from": {
+            "x": 6268,
+            "y": 1675
+          },
+          "to": {
+            "x": 6280,
+            "y": 1675
+          },
+          "corridorId": "drive:node-35:entry-left"
+        }
+      },
+      "before": {
+        "wires": [
+          {
+            "id": "w36",
+            "from": "node-20",
+            "to": "node-35",
+            "sourcePortId": "node-20:exit-right",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-6:exit-right",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 1311,
+                  "y": 1985.5
+                },
+                "to": {
+                  "x": 1335,
+                  "y": 1985.5
+                },
+                "corridorId": "drive:node-20:exit-right"
+              },
+              {
+                "from": {
+                  "x": 1335,
+                  "y": 1985.5
+                },
+                "to": {
+                  "x": 1335,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-20:exit-right"
+              },
+              {
+                "from": {
+                  "x": 1335,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 1354.5,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-20:exit-right",
+                "laneId": "w36:0"
+              },
+              {
+                "from": {
+                  "x": 1354.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 1411.5,
+                  "y": 2009.5
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1411.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 1411.5,
+                  "y": 2029
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5",
+                "laneId": "w36:2"
+              },
+              {
+                "from": {
+                  "x": 1411.5,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 1413,
+                  "y": 2029
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1413,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 1413,
+                  "y": 2089
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1413,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1486.5,
+                  "y": 2089
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1486.5,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1506,
+                  "y": 2089
+                },
+                "corridorId": "drive:section-6:exit-right",
+                "laneId": "w36:4"
+              },
+              {
+                "from": {
+                  "x": 1506,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1509,
+                  "y": 2089
+                },
+                "corridorId": "section-5:vertical:1560:1635"
+              },
+              {
+                "from": {
+                  "x": 1509,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1509,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:1560:1635"
+              },
+              {
+                "from": {
+                  "x": 1509,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 1575,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:1560:1635"
+              },
+              {
+                "from": {
+                  "x": 1575,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 1575,
+                  "y": 1674
+                },
+                "corridorId": "section-5:vertical:1560:1635",
+                "laneId": "w36:7"
+              },
+              {
+                "from": {
+                  "x": 1575,
+                  "y": 1674
+                },
+                "to": {
+                  "x": 6245,
+                  "y": 1674
+                },
+                "corridorId": "section-5:horizontal:1635:200",
+                "laneId": "w36:8"
+              },
+              {
+                "from": {
+                  "x": 6245,
+                  "y": 1674
+                },
+                "to": {
+                  "x": 6245,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w36:9"
+              },
+              {
+                "from": {
+                  "x": 6245,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6246.5,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6246.5,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6246.5,
+                  "y": 2137.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6246.5,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2137.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2137.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w36:11"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2137.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2136
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2136
+                },
+                "to": {
+                  "x": 6674,
+                  "y": 2136
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6674,
+                  "y": 2136
+                },
+                "to": {
+                  "x": 6674,
+                  "y": 2134.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w36:14"
+              },
+              {
+                "from": {
+                  "x": 6674,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2134.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6750.5,
+                  "y": 2134.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w36:16"
+              },
+              {
+                "from": {
+                  "x": 6750.5,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6750.5,
+                  "y": 2116.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6750.5,
+                  "y": 2116.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2116.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          },
+          {
+            "id": "w67",
+            "from": "node-26",
+            "to": "node-35",
+            "sourcePortId": "node-26:exit-bottom",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-8:exit-bottom",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 2139,
+                  "y": 2276.5
+                },
+                "to": {
+                  "x": 2139,
+                  "y": 2294.5
+                },
+                "corridorId": "drive:node-26:exit-bottom"
+              },
+              {
+                "from": {
+                  "x": 2139,
+                  "y": 2294.5
+                },
+                "to": {
+                  "x": 2121,
+                  "y": 2294.5
+                },
+                "corridorId": "drive:node-26:exit-bottom"
+              },
+              {
+                "from": {
+                  "x": 2121,
+                  "y": 2294.5
+                },
+                "to": {
+                  "x": 2121,
+                  "y": 2308
+                },
+                "corridorId": "drive:node-26:exit-bottom",
+                "laneId": "w67:0"
+              },
+              {
+                "from": {
+                  "x": 2121,
+                  "y": 2308
+                },
+                "to": {
+                  "x": 2121,
+                  "y": 2311
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2121,
+                  "y": 2311
+                },
+                "to": {
+                  "x": 2122.5,
+                  "y": 2311
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2122.5,
+                  "y": 2311
+                },
+                "to": {
+                  "x": 2122.5,
+                  "y": 2365
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2122.5,
+                  "y": 2365
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2365
+                },
+                "corridorId": "section-8:horizontal:2350:1968",
+                "laneId": "w67:2"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2365
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2392
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2392
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2557
+                },
+                "corridorId": "drive:section-8:exit-bottom",
+                "laneId": "w67:4"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2557
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 2192.5,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 2192.5,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 2192.5,
+                  "y": 2920
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 2192.5,
+                  "y": 2920
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2920
+                },
+                "corridorId": "section-5:horizontal:2797:200",
+                "laneId": "w67:7"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2920
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2918.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2918.5
+                },
+                "to": {
+                  "x": 6335,
+                  "y": 2918.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6335,
+                  "y": 2918.5
+                },
+                "to": {
+                  "x": 6335,
+                  "y": 2155.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w67:8"
+              },
+              {
+                "from": {
+                  "x": 6335,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2155.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2155.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w67:10"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2155.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2154
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2154
+                },
+                "to": {
+                  "x": 6692,
+                  "y": 2154
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6692,
+                  "y": 2154
+                },
+                "to": {
+                  "x": 6692,
+                  "y": 2152.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w67:13"
+              },
+              {
+                "from": {
+                  "x": 6692,
+                  "y": 2152.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2152.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2152.5
+                },
+                "to": {
+                  "x": 6768.5,
+                  "y": 2152.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w67:15"
+              },
+              {
+                "from": {
+                  "x": 6768.5,
+                  "y": 2152.5
+                },
+                "to": {
+                  "x": 6768.5,
+                  "y": 2134.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6768.5,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2134.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          }
+        ],
+        "recomputedContacts": []
+      },
+      "after": {
+        "wires": [
+          {
+            "id": "w36",
+            "from": "node-20",
+            "to": "node-35",
+            "sourcePortId": "node-20:exit-right",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-6:exit-right",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 1311,
+                  "y": 1985.5
+                },
+                "to": {
+                  "x": 1335,
+                  "y": 1985.5
+                },
+                "corridorId": "drive:node-20:exit-right"
+              },
+              {
+                "from": {
+                  "x": 1335,
+                  "y": 1985.5
+                },
+                "to": {
+                  "x": 1335,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-20:exit-right"
+              },
+              {
+                "from": {
+                  "x": 1335,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 1354.5,
+                  "y": 2009.5
+                },
+                "corridorId": "drive:node-20:exit-right",
+                "laneId": "w36:0"
+              },
+              {
+                "from": {
+                  "x": 1354.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 1411.5,
+                  "y": 2009.5
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1411.5,
+                  "y": 2009.5
+                },
+                "to": {
+                  "x": 1411.5,
+                  "y": 2029
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5",
+                "laneId": "w36:2"
+              },
+              {
+                "from": {
+                  "x": 1411.5,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 1413,
+                  "y": 2029
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1413,
+                  "y": 2029
+                },
+                "to": {
+                  "x": 1413,
+                  "y": 2089
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1413,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1486.5,
+                  "y": 2089
+                },
+                "corridorId": "section-6:vertical:1420.5:1868.5"
+              },
+              {
+                "from": {
+                  "x": 1486.5,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1506,
+                  "y": 2089
+                },
+                "corridorId": "drive:section-6:exit-right",
+                "laneId": "w36:4"
+              },
+              {
+                "from": {
+                  "x": 1506,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1509,
+                  "y": 2089
+                },
+                "corridorId": "section-5:vertical:1560:1635"
+              },
+              {
+                "from": {
+                  "x": 1509,
+                  "y": 2089
+                },
+                "to": {
+                  "x": 1509,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:1560:1635"
+              },
+              {
+                "from": {
+                  "x": 1509,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 1575,
+                  "y": 2087.5
+                },
+                "corridorId": "section-5:vertical:1560:1635"
+              },
+              {
+                "from": {
+                  "x": 1575,
+                  "y": 2087.5
+                },
+                "to": {
+                  "x": 1575,
+                  "y": 1674
+                },
+                "corridorId": "section-5:vertical:1560:1635",
+                "laneId": "w36:7"
+              },
+              {
+                "from": {
+                  "x": 1575,
+                  "y": 1674
+                },
+                "to": {
+                  "x": 6245,
+                  "y": 1674
+                },
+                "corridorId": "section-5:horizontal:1635:200",
+                "laneId": "w36:8"
+              },
+              {
+                "from": {
+                  "x": 6245,
+                  "y": 1674
+                },
+                "to": {
+                  "x": 6245,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w36:9"
+              },
+              {
+                "from": {
+                  "x": 6245,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6246.5,
+                  "y": 1873.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6246.5,
+                  "y": 1873.5
+                },
+                "to": {
+                  "x": 6246.5,
+                  "y": 2137.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6246.5,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2137.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2137.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w36:11"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2137.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2137.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2136
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2136
+                },
+                "to": {
+                  "x": 6674,
+                  "y": 2136
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6674,
+                  "y": 2136
+                },
+                "to": {
+                  "x": 6674,
+                  "y": 2134.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w36:14"
+              },
+              {
+                "from": {
+                  "x": 6674,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2134.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6750.5,
+                  "y": 2134.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w36:16"
+              },
+              {
+                "from": {
+                  "x": 6750.5,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6750.5,
+                  "y": 2116.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6750.5,
+                  "y": 2116.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2116.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          },
+          {
+            "id": "w67",
+            "from": "node-26",
+            "to": "node-35",
+            "sourcePortId": "node-26:exit-bottom",
+            "targetPortId": "node-35:entry-left",
+            "gates": [
+              "section-8:exit-bottom",
+              "section-14:entry-left"
+            ],
+            "segments": [
+              {
+                "from": {
+                  "x": 2139,
+                  "y": 2276.5
+                },
+                "to": {
+                  "x": 2139,
+                  "y": 2294.5
+                },
+                "corridorId": "drive:node-26:exit-bottom"
+              },
+              {
+                "from": {
+                  "x": 2139,
+                  "y": 2294.5
+                },
+                "to": {
+                  "x": 2121,
+                  "y": 2294.5
+                },
+                "corridorId": "drive:node-26:exit-bottom"
+              },
+              {
+                "from": {
+                  "x": 2121,
+                  "y": 2294.5
+                },
+                "to": {
+                  "x": 2121,
+                  "y": 2308
+                },
+                "corridorId": "drive:node-26:exit-bottom",
+                "laneId": "w67:0"
+              },
+              {
+                "from": {
+                  "x": 2121,
+                  "y": 2308
+                },
+                "to": {
+                  "x": 2121,
+                  "y": 2311
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2121,
+                  "y": 2311
+                },
+                "to": {
+                  "x": 2122.5,
+                  "y": 2311
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2122.5,
+                  "y": 2311
+                },
+                "to": {
+                  "x": 2122.5,
+                  "y": 2365
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2122.5,
+                  "y": 2365
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2365
+                },
+                "corridorId": "section-8:horizontal:2350:1968",
+                "laneId": "w67:2"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2365
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2392
+                },
+                "corridorId": "section-8:horizontal:2350:1968"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2392
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2557
+                },
+                "corridorId": "drive:section-8:exit-bottom",
+                "laneId": "w67:4"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2557
+                },
+                "to": {
+                  "x": 2191,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 2191,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 2192.5,
+                  "y": 2560
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 2192.5,
+                  "y": 2560
+                },
+                "to": {
+                  "x": 2192.5,
+                  "y": 2920
+                },
+                "corridorId": "section-5:horizontal:2797:200"
+              },
+              {
+                "from": {
+                  "x": 2192.5,
+                  "y": 2920
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2920
+                },
+                "corridorId": "section-5:horizontal:2797:200",
+                "laneId": "w67:7"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2920
+                },
+                "to": {
+                  "x": 6113,
+                  "y": 2918.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6113,
+                  "y": 2918.5
+                },
+                "to": {
+                  "x": 6335,
+                  "y": 2918.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6335,
+                  "y": 2918.5
+                },
+                "to": {
+                  "x": 6335,
+                  "y": 2155.5
+                },
+                "corridorId": "section-5:vertical:6260:1635",
+                "laneId": "w67:8"
+              },
+              {
+                "from": {
+                  "x": 6335,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6410,
+                  "y": 2155.5
+                },
+                "corridorId": "section-5:vertical:6260:1635"
+              },
+              {
+                "from": {
+                  "x": 6410,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6413,
+                  "y": 2155.5
+                },
+                "corridorId": "drive:section-14:entry-left",
+                "laneId": "w67:10"
+              },
+              {
+                "from": {
+                  "x": 6413,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2155.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2155.5
+                },
+                "to": {
+                  "x": 6416,
+                  "y": 2154
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6416,
+                  "y": 2154
+                },
+                "to": {
+                  "x": 6692,
+                  "y": 2154
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6692,
+                  "y": 2154
+                },
+                "to": {
+                  "x": 6692,
+                  "y": 2152.5
+                },
+                "corridorId": "section-14:vertical:6581:1872",
+                "laneId": "w67:13"
+              },
+              {
+                "from": {
+                  "x": 6692,
+                  "y": 2152.5
+                },
+                "to": {
+                  "x": 6749,
+                  "y": 2152.5
+                },
+                "corridorId": "section-14:vertical:6581:1872"
+              },
+              {
+                "from": {
+                  "x": 6749,
+                  "y": 2152.5
+                },
+                "to": {
+                  "x": 6768.5,
+                  "y": 2152.5
+                },
+                "corridorId": "drive:node-35:entry-left",
+                "laneId": "w67:15"
+              },
+              {
+                "from": {
+                  "x": 6768.5,
+                  "y": 2152.5
+                },
+                "to": {
+                  "x": 6768.5,
+                  "y": 2134.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              },
+              {
+                "from": {
+                  "x": 6768.5,
+                  "y": 2134.5
+                },
+                "to": {
+                  "x": 6780.5,
+                  "y": 2134.5
+                },
+                "corridorId": "drive:node-35:entry-left"
+              }
+            ]
+          }
+        ],
+        "recomputedContacts": []
+      }
+    }
+  ],
+  "w84": {
+    "before": [
+      {
+        "ordinal": 1,
+        "segment": {
+          "from": {
+            "x": 5636.5,
+            "y": 1985.5
+          },
+          "to": {
+            "x": 5648.5,
+            "y": 1985.5
+          },
+          "corridorId": "drive:node-32:exit-right"
+        },
+        "owner": {
+          "id": "drive:node-32:exit-right",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5636.5,
+            "y": 1958.5,
+            "width": 48,
+            "height": 60
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "node-32",
+            "portId": "node-32:exit-right",
+            "side": "right",
+            "role": "exit"
+          },
+          "wireLaneCount": 4
+        },
+        "containingRoads": [
+          "drive:node-32:exit-right"
+        ]
+      },
+      {
+        "ordinal": 2,
+        "segment": {
+          "from": {
+            "x": 5648.5,
+            "y": 1985.5
+          },
+          "to": {
+            "x": 5648.5,
+            "y": 1997.5
+          },
+          "corridorId": "drive:node-32:exit-right"
+        },
+        "owner": {
+          "id": "drive:node-32:exit-right",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5636.5,
+            "y": 1958.5,
+            "width": 48,
+            "height": 60
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "node-32",
+            "portId": "node-32:exit-right",
+            "side": "right",
+            "role": "exit"
+          },
+          "wireLaneCount": 4
+        },
+        "containingRoads": [
+          "drive:node-32:exit-right"
+        ]
+      },
+      {
+        "ordinal": 3,
+        "segment": {
+          "from": {
+            "x": 5648.5,
+            "y": 1997.5
+          },
+          "to": {
+            "x": 5684.5,
+            "y": 1997.5
+          },
+          "corridorId": "drive:node-32:exit-right",
+          "laneId": "w84:0"
+        },
+        "owner": {
+          "id": "drive:node-32:exit-right",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5636.5,
+            "y": 1958.5,
+            "width": 48,
+            "height": 60
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "node-32",
+            "portId": "node-32:exit-right",
+            "side": "right",
+            "role": "exit"
+          },
+          "wireLaneCount": 4
+        },
+        "containingRoads": [
+          "drive:node-32:exit-right"
+        ]
+      },
+      {
+        "ordinal": 4,
+        "segment": {
+          "from": {
+            "x": 5684.5,
+            "y": 1997.5
+          },
+          "to": {
+            "x": 5705.5,
+            "y": 1997.5
+          },
+          "corridorId": "section-13:vertical:5708.5:1868.5"
+        },
+        "owner": {
+          "id": "section-13:vertical:5708.5:1868.5",
+          "sectionId": "section-13",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5684.5,
+            "y": 1856.5,
+            "width": 48,
+            "height": 498
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 3
+        },
+        "containingRoads": [
+          "section-13:vertical:5708.5:1868.5"
+        ]
+      },
+      {
+        "ordinal": 5,
+        "segment": {
+          "from": {
+            "x": 5705.5,
+            "y": 1997.5
+          },
+          "to": {
+            "x": 5705.5,
+            "y": 2354.5
+          },
+          "corridorId": "section-13:vertical:5708.5:1868.5",
+          "laneId": "w84:2"
+        },
+        "owner": {
+          "id": "section-13:vertical:5708.5:1868.5",
+          "sectionId": "section-13",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5684.5,
+            "y": 1856.5,
+            "width": 48,
+            "height": 498
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 3
+        },
+        "containingRoads": [
+          "section-13:vertical:5708.5:1868.5"
+        ]
+      },
+      {
+        "ordinal": 6,
+        "segment": {
+          "from": {
+            "x": 5705.5,
+            "y": 2354.5
+          },
+          "to": {
+            "x": 5705.5,
+            "y": 2357.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        },
+        "owner": {
+          "id": "section-13:horizontal:2348.5:5372.5",
+          "sectionId": "section-13",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5366.5,
+            "y": 2342.5,
+            "width": 702,
+            "height": 12
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 0
+        },
+        "containingRoads": []
+      },
+      {
+        "ordinal": 7,
+        "segment": {
+          "from": {
+            "x": 5705.5,
+            "y": 2357.5
+          },
+          "to": {
+            "x": 5597,
+            "y": 2357.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        },
+        "owner": {
+          "id": "section-13:horizontal:2348.5:5372.5",
+          "sectionId": "section-13",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5366.5,
+            "y": 2342.5,
+            "width": 702,
+            "height": 12
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 0
+        },
+        "containingRoads": []
+      },
+      {
+        "ordinal": 8,
+        "segment": {
+          "from": {
+            "x": 5597,
+            "y": 2357.5
+          },
+          "to": {
+            "x": 5597,
+            "y": 2557
+          },
+          "corridorId": "drive:section-13:exit-bottom",
+          "laneId": "w84:4"
+        },
+        "owner": {
+          "id": "drive:section-13:exit-bottom",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5576,
+            "y": 2354.5,
+            "width": 48,
+            "height": 202.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "section-13",
+            "portId": "section-13:exit-bottom",
+            "side": "bottom",
+            "role": "exit"
+          },
+          "wireLaneCount": 3
+        },
+        "containingRoads": [
+          "drive:section-13:exit-bottom"
+        ]
+      },
+      {
+        "ordinal": 9,
+        "segment": {
+          "from": {
+            "x": 5597,
+            "y": 2557
+          },
+          "to": {
+            "x": 5597,
+            "y": 2560
+          },
+          "corridorId": "section-5:horizontal:2797:200"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 10,
+        "segment": {
+          "from": {
+            "x": 5597,
+            "y": 2560
+          },
+          "to": {
+            "x": 5598.5,
+            "y": 2560
+          },
+          "corridorId": "section-5:horizontal:2797:200"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 11,
+        "segment": {
+          "from": {
+            "x": 5598.5,
+            "y": 2560
+          },
+          "to": {
+            "x": 5598.5,
+            "y": 2854
+          },
+          "corridorId": "section-5:horizontal:2797:200"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 12,
+        "segment": {
+          "from": {
+            "x": 5598.5,
+            "y": 2854
+          },
+          "to": {
+            "x": 6113,
+            "y": 2854
+          },
+          "corridorId": "section-5:horizontal:2797:200",
+          "laneId": "w84:7"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 13,
+        "segment": {
+          "from": {
+            "x": 6113,
+            "y": 2854
+          },
+          "to": {
+            "x": 6113,
+            "y": 2852.5
+          },
+          "corridorId": "section-5:vertical:6260:1635"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200",
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 14,
+        "segment": {
+          "from": {
+            "x": 6113,
+            "y": 2852.5
+          },
+          "to": {
+            "x": 6269,
+            "y": 2852.5
+          },
+          "corridorId": "section-5:vertical:6260:1635"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200",
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 15,
+        "segment": {
+          "from": {
+            "x": 6269,
+            "y": 2852.5
+          },
+          "to": {
+            "x": 6269,
+            "y": 2077.5
+          },
+          "corridorId": "section-5:vertical:6260:1635",
+          "laneId": "w84:8"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 16,
+        "segment": {
+          "from": {
+            "x": 6269,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6410,
+            "y": 2077.5
+          },
+          "corridorId": "section-5:vertical:6260:1635"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 17,
+        "segment": {
+          "from": {
+            "x": 6410,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6413,
+            "y": 2077.5
+          },
+          "corridorId": "drive:section-14:entry-left",
+          "laneId": "w84:10"
+        },
+        "owner": {
+          "id": "drive:section-14:entry-left",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 6410,
+            "y": 1870.5,
+            "width": 3,
+            "height": 312
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "section-14",
+            "portId": "section-14:entry-left",
+            "side": "left",
+            "role": "entry"
+          },
+          "wireLaneCount": 25
+        },
+        "containingRoads": [
+          "drive:section-14:entry-left"
+        ]
+      },
+      {
+        "ordinal": 18,
+        "segment": {
+          "from": {
+            "x": 6413,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6416,
+            "y": 2077.5
+          },
+          "corridorId": "section-14:vertical:6581:1872"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 19,
+        "segment": {
+          "from": {
+            "x": 6416,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6416,
+            "y": 2076
+          },
+          "corridorId": "section-14:vertical:6581:1872"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 20,
+        "segment": {
+          "from": {
+            "x": 6416,
+            "y": 2076
+          },
+          "to": {
+            "x": 6614,
+            "y": 2076
+          },
+          "corridorId": "section-14:vertical:6581:1872"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 21,
+        "segment": {
+          "from": {
+            "x": 6614,
+            "y": 2076
+          },
+          "to": {
+            "x": 6614,
+            "y": 1911
+          },
+          "corridorId": "section-14:vertical:6581:1872",
+          "laneId": "w84:13"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 22,
+        "segment": {
+          "from": {
+            "x": 6614,
+            "y": 1911
+          },
+          "to": {
+            "x": 7173.5,
+            "y": 1911
+          },
+          "corridorId": "section-14:horizontal:1872:6581",
+          "laneId": "w84:14"
+        },
+        "owner": {
+          "id": "section-14:horizontal:1872:6581",
+          "sectionId": "section-14",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 991.5,
+            "height": 228
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 18
+        },
+        "containingRoads": [
+          "section-14:horizontal:1872:6581"
+        ]
+      },
+      {
+        "ordinal": 23,
+        "segment": {
+          "from": {
+            "x": 7173.5,
+            "y": 1911
+          },
+          "to": {
+            "x": 7173.5,
+            "y": 1986
+          },
+          "corridorId": "section-14:horizontal:1872:6581"
+        },
+        "owner": {
+          "id": "section-14:horizontal:1872:6581",
+          "sectionId": "section-14",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 991.5,
+            "height": 228
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 18
+        },
+        "containingRoads": [
+          "section-14:horizontal:1872:6581"
+        ]
+      },
+      {
+        "ordinal": 24,
+        "segment": {
+          "from": {
+            "x": 7173.5,
+            "y": 1986
+          },
+          "to": {
+            "x": 7173.5,
+            "y": 2023.5
+          },
+          "corridorId": "drive:node-36:entry-top",
+          "laneId": "w84:16"
+        },
+        "owner": {
+          "id": "drive:node-36:entry-top",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 7104.5,
+            "y": 1986,
+            "width": 216,
+            "height": 97.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "node-36",
+            "portId": "node-36:entry-top",
+            "side": "top",
+            "role": "entry"
+          },
+          "wireLaneCount": 17
+        },
+        "containingRoads": [
+          "drive:node-36:entry-top"
+        ]
+      },
+      {
+        "ordinal": 25,
+        "segment": {
+          "from": {
+            "x": 7173.5,
+            "y": 2023.5
+          },
+          "to": {
+            "x": 7224.5,
+            "y": 2023.5
+          },
+          "corridorId": "drive:node-36:entry-top"
+        },
+        "owner": {
+          "id": "drive:node-36:entry-top",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 7104.5,
+            "y": 1986,
+            "width": 216,
+            "height": 97.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "node-36",
+            "portId": "node-36:entry-top",
+            "side": "top",
+            "role": "entry"
+          },
+          "wireLaneCount": 17
+        },
+        "containingRoads": [
+          "drive:node-36:entry-top"
+        ]
+      },
+      {
+        "ordinal": 26,
+        "segment": {
+          "from": {
+            "x": 7224.5,
+            "y": 2023.5
+          },
+          "to": {
+            "x": 7224.5,
+            "y": 2083.5
+          },
+          "corridorId": "drive:node-36:entry-top"
+        },
+        "owner": {
+          "id": "drive:node-36:entry-top",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 7104.5,
+            "y": 1986,
+            "width": 216,
+            "height": 97.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "node-36",
+            "portId": "node-36:entry-top",
+            "side": "top",
+            "role": "entry"
+          },
+          "wireLaneCount": 17
+        },
+        "containingRoads": [
+          "drive:node-36:entry-top"
+        ]
+      }
+    ],
+    "after": [
+      {
+        "ordinal": 1,
+        "segment": {
+          "from": {
+            "x": 5636.5,
+            "y": 1985.5
+          },
+          "to": {
+            "x": 5648.5,
+            "y": 1985.5
+          },
+          "corridorId": "drive:node-32:exit-right"
+        },
+        "owner": {
+          "id": "drive:node-32:exit-right",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5636.5,
+            "y": 1958.5,
+            "width": 48,
+            "height": 60
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "node-32",
+            "portId": "node-32:exit-right",
+            "side": "right",
+            "role": "exit"
+          },
+          "wireLaneCount": 4
+        },
+        "containingRoads": [
+          "drive:node-32:exit-right"
+        ]
+      },
+      {
+        "ordinal": 2,
+        "segment": {
+          "from": {
+            "x": 5648.5,
+            "y": 1985.5
+          },
+          "to": {
+            "x": 5648.5,
+            "y": 1997.5
+          },
+          "corridorId": "drive:node-32:exit-right"
+        },
+        "owner": {
+          "id": "drive:node-32:exit-right",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5636.5,
+            "y": 1958.5,
+            "width": 48,
+            "height": 60
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "node-32",
+            "portId": "node-32:exit-right",
+            "side": "right",
+            "role": "exit"
+          },
+          "wireLaneCount": 4
+        },
+        "containingRoads": [
+          "drive:node-32:exit-right"
+        ]
+      },
+      {
+        "ordinal": 3,
+        "segment": {
+          "from": {
+            "x": 5648.5,
+            "y": 1997.5
+          },
+          "to": {
+            "x": 5684.5,
+            "y": 1997.5
+          },
+          "corridorId": "drive:node-32:exit-right",
+          "laneId": "w84:0"
+        },
+        "owner": {
+          "id": "drive:node-32:exit-right",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5636.5,
+            "y": 1958.5,
+            "width": 48,
+            "height": 60
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "node-32",
+            "portId": "node-32:exit-right",
+            "side": "right",
+            "role": "exit"
+          },
+          "wireLaneCount": 4
+        },
+        "containingRoads": [
+          "drive:node-32:exit-right"
+        ]
+      },
+      {
+        "ordinal": 4,
+        "segment": {
+          "from": {
+            "x": 5684.5,
+            "y": 1997.5
+          },
+          "to": {
+            "x": 5705.5,
+            "y": 1997.5
+          },
+          "corridorId": "section-13:vertical:5708.5:1868.5"
+        },
+        "owner": {
+          "id": "section-13:vertical:5708.5:1868.5",
+          "sectionId": "section-13",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5684.5,
+            "y": 1856.5,
+            "width": 48,
+            "height": 501
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 3
+        },
+        "containingRoads": [
+          "section-13:vertical:5708.5:1868.5"
+        ]
+      },
+      {
+        "ordinal": 5,
+        "segment": {
+          "from": {
+            "x": 5705.5,
+            "y": 1997.5
+          },
+          "to": {
+            "x": 5705.5,
+            "y": 2357.5
+          },
+          "corridorId": "section-13:vertical:5708.5:1868.5",
+          "laneId": "w84:2"
+        },
+        "owner": {
+          "id": "section-13:vertical:5708.5:1868.5",
+          "sectionId": "section-13",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5684.5,
+            "y": 1856.5,
+            "width": 48,
+            "height": 501
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 3
+        },
+        "containingRoads": [
+          "section-13:vertical:5708.5:1868.5"
+        ]
+      },
+      {
+        "ordinal": 6,
+        "segment": {
+          "from": {
+            "x": 5705.5,
+            "y": 2357.5
+          },
+          "to": {
+            "x": 5597,
+            "y": 2357.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        },
+        "owner": {
+          "id": "section-13:horizontal:2348.5:5372.5",
+          "sectionId": "section-13",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 5366.5,
+            "y": 2342.5,
+            "width": 702,
+            "height": 15
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 0
+        },
+        "containingRoads": [
+          "section-13:horizontal:2348.5:5372.5"
+        ]
+      },
+      {
+        "ordinal": 7,
+        "segment": {
+          "from": {
+            "x": 5597,
+            "y": 2357.5
+          },
+          "to": {
+            "x": 5597,
+            "y": 2557
+          },
+          "corridorId": "drive:section-13:exit-bottom",
+          "laneId": "w84:4"
+        },
+        "owner": {
+          "id": "drive:section-13:exit-bottom",
+          "sectionId": "section-13",
+          "kind": "driveway",
+          "bounds": {
+            "x": 5576,
+            "y": 2357.5,
+            "width": 48,
+            "height": 199.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "section-13",
+            "portId": "section-13:exit-bottom",
+            "side": "bottom",
+            "role": "exit"
+          },
+          "wireLaneCount": 3
+        },
+        "containingRoads": [
+          "drive:section-13:exit-bottom"
+        ]
+      },
+      {
+        "ordinal": 8,
+        "segment": {
+          "from": {
+            "x": 5597,
+            "y": 2557
+          },
+          "to": {
+            "x": 5597,
+            "y": 2560
+          },
+          "corridorId": "section-5:horizontal:2797:200"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 9,
+        "segment": {
+          "from": {
+            "x": 5597,
+            "y": 2560
+          },
+          "to": {
+            "x": 5598.5,
+            "y": 2560
+          },
+          "corridorId": "section-5:horizontal:2797:200"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 10,
+        "segment": {
+          "from": {
+            "x": 5598.5,
+            "y": 2560
+          },
+          "to": {
+            "x": 5598.5,
+            "y": 2854
+          },
+          "corridorId": "section-5:horizontal:2797:200"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 11,
+        "segment": {
+          "from": {
+            "x": 5598.5,
+            "y": 2854
+          },
+          "to": {
+            "x": 6113,
+            "y": 2854
+          },
+          "corridorId": "section-5:horizontal:2797:200",
+          "laneId": "w84:7"
+        },
+        "owner": {
+          "id": "section-5:horizontal:2797:200",
+          "sectionId": "section-5",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 158,
+            "y": 2557,
+            "width": 7376.5,
+            "height": 480
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 39
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200"
+        ]
+      },
+      {
+        "ordinal": 12,
+        "segment": {
+          "from": {
+            "x": 6113,
+            "y": 2854
+          },
+          "to": {
+            "x": 6113,
+            "y": 2852.5
+          },
+          "corridorId": "section-5:vertical:6260:1635"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200",
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 13,
+        "segment": {
+          "from": {
+            "x": 6113,
+            "y": 2852.5
+          },
+          "to": {
+            "x": 6269,
+            "y": 2852.5
+          },
+          "corridorId": "section-5:vertical:6260:1635"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:horizontal:2797:200",
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 14,
+        "segment": {
+          "from": {
+            "x": 6269,
+            "y": 2852.5
+          },
+          "to": {
+            "x": 6269,
+            "y": 2077.5
+          },
+          "corridorId": "section-5:vertical:6260:1635",
+          "laneId": "w84:8"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 15,
+        "segment": {
+          "from": {
+            "x": 6269,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6410,
+            "y": 2077.5
+          },
+          "corridorId": "section-5:vertical:6260:1635"
+        },
+        "owner": {
+          "id": "section-5:vertical:6260:1635",
+          "sectionId": "section-5",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6110,
+            "y": 1515,
+            "width": 300,
+            "height": 1522
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 24
+        },
+        "containingRoads": [
+          "section-5:vertical:6260:1635"
+        ]
+      },
+      {
+        "ordinal": 16,
+        "segment": {
+          "from": {
+            "x": 6410,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6413,
+            "y": 2077.5
+          },
+          "corridorId": "drive:section-14:entry-left",
+          "laneId": "w84:10"
+        },
+        "owner": {
+          "id": "drive:section-14:entry-left",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 6410,
+            "y": 1870.5,
+            "width": 3,
+            "height": 312
+          },
+          "axis": "horizontal",
+          "directions": [
+            "right"
+          ],
+          "access": {
+            "nodeId": "section-14",
+            "portId": "section-14:entry-left",
+            "side": "left",
+            "role": "entry"
+          },
+          "wireLaneCount": 25
+        },
+        "containingRoads": [
+          "drive:section-14:entry-left"
+        ]
+      },
+      {
+        "ordinal": 17,
+        "segment": {
+          "from": {
+            "x": 6413,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6416,
+            "y": 2077.5
+          },
+          "corridorId": "section-14:vertical:6581:1872"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 18,
+        "segment": {
+          "from": {
+            "x": 6416,
+            "y": 2077.5
+          },
+          "to": {
+            "x": 6416,
+            "y": 2076
+          },
+          "corridorId": "section-14:vertical:6581:1872"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 19,
+        "segment": {
+          "from": {
+            "x": 6416,
+            "y": 2076
+          },
+          "to": {
+            "x": 6614,
+            "y": 2076
+          },
+          "corridorId": "section-14:vertical:6581:1872"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 20,
+        "segment": {
+          "from": {
+            "x": 6614,
+            "y": 2076
+          },
+          "to": {
+            "x": 6614,
+            "y": 1911
+          },
+          "corridorId": "section-14:vertical:6581:1872",
+          "laneId": "w84:13"
+        },
+        "owner": {
+          "id": "section-14:vertical:6581:1872",
+          "sectionId": "section-14",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 336,
+            "height": 757.5
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 27
+        },
+        "containingRoads": [
+          "section-14:vertical:6581:1872"
+        ]
+      },
+      {
+        "ordinal": 21,
+        "segment": {
+          "from": {
+            "x": 6614,
+            "y": 1911
+          },
+          "to": {
+            "x": 7173.5,
+            "y": 1911
+          },
+          "corridorId": "section-14:horizontal:1872:6581",
+          "laneId": "w84:14"
+        },
+        "owner": {
+          "id": "section-14:horizontal:1872:6581",
+          "sectionId": "section-14",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 991.5,
+            "height": 228
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 18
+        },
+        "containingRoads": [
+          "section-14:horizontal:1872:6581"
+        ]
+      },
+      {
+        "ordinal": 22,
+        "segment": {
+          "from": {
+            "x": 7173.5,
+            "y": 1911
+          },
+          "to": {
+            "x": 7173.5,
+            "y": 1986
+          },
+          "corridorId": "section-14:horizontal:1872:6581"
+        },
+        "owner": {
+          "id": "section-14:horizontal:1872:6581",
+          "sectionId": "section-14",
+          "axis": "horizontal",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 6413,
+            "y": 1758,
+            "width": 991.5,
+            "height": 228
+          },
+          "directions": [
+            "left",
+            "right"
+          ],
+          "wireLaneCount": 18
+        },
+        "containingRoads": [
+          "section-14:horizontal:1872:6581"
+        ]
+      },
+      {
+        "ordinal": 23,
+        "segment": {
+          "from": {
+            "x": 7173.5,
+            "y": 1986
+          },
+          "to": {
+            "x": 7173.5,
+            "y": 2023.5
+          },
+          "corridorId": "drive:node-36:entry-top",
+          "laneId": "w84:16"
+        },
+        "owner": {
+          "id": "drive:node-36:entry-top",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 7104.5,
+            "y": 1986,
+            "width": 216,
+            "height": 97.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "node-36",
+            "portId": "node-36:entry-top",
+            "side": "top",
+            "role": "entry"
+          },
+          "wireLaneCount": 17
+        },
+        "containingRoads": [
+          "drive:node-36:entry-top"
+        ]
+      },
+      {
+        "ordinal": 24,
+        "segment": {
+          "from": {
+            "x": 7173.5,
+            "y": 2023.5
+          },
+          "to": {
+            "x": 7224.5,
+            "y": 2023.5
+          },
+          "corridorId": "drive:node-36:entry-top"
+        },
+        "owner": {
+          "id": "drive:node-36:entry-top",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 7104.5,
+            "y": 1986,
+            "width": 216,
+            "height": 97.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "node-36",
+            "portId": "node-36:entry-top",
+            "side": "top",
+            "role": "entry"
+          },
+          "wireLaneCount": 17
+        },
+        "containingRoads": [
+          "drive:node-36:entry-top"
+        ]
+      },
+      {
+        "ordinal": 25,
+        "segment": {
+          "from": {
+            "x": 7224.5,
+            "y": 2023.5
+          },
+          "to": {
+            "x": 7224.5,
+            "y": 2083.5
+          },
+          "corridorId": "drive:node-36:entry-top"
+        },
+        "owner": {
+          "id": "drive:node-36:entry-top",
+          "sectionId": "section-14",
+          "kind": "driveway",
+          "bounds": {
+            "x": 7104.5,
+            "y": 1986,
+            "width": 216,
+            "height": 97.5
+          },
+          "axis": "vertical",
+          "directions": [
+            "down"
+          ],
+          "access": {
+            "nodeId": "node-36",
+            "portId": "node-36:entry-top",
+            "side": "top",
+            "role": "entry"
+          },
+          "wireLaneCount": 17
+        },
+        "containingRoads": [
+          "drive:node-36:entry-top"
+        ]
+      }
+    ]
+  },
+  "note": "Every contact recomputed from endpoints. Old ordinals are used only to identify the saved B rejection; after pieces are enumerated afresh."
+}

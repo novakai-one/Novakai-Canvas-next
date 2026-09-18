@@ -10,8 +10,9 @@ import { embedNestedBodies } from './nested-embedding-bodies.js';
 import { embedNestedRoads } from './nested-embedding-roads.js';
 import { embedNestedPlan } from './nested-embedding-plan.js';
 import { roadNetwork } from './prototype-road-network.js';
-import { projectNestedWires } from './nested-lane-projection.js';
-import { SupportRejection } from './nested-support-graph.js';
+import { bridgeSpanGrowth, expandedSupportLedger } from './nested-support-expansion.js';
+import { projectNestedWires, readNestedProjectionSupports } from './nested-lane-projection.js';
+import { SupportRejection, reject } from './nested-support-graph.js';
 import { required, type retainSupportInput } from './nested-support-input.js';
 type Input = ReturnType<typeof retainSupportInput>;
 
@@ -38,6 +39,7 @@ function embed(request: NestedSupportRequest): NestedEmbeddingResult {
     prepared.byWire,
     prepared.byId,
     network.junctions,
+    prepared.scene.ports,
   );
   const scene = {
     ...prepared.scene,
@@ -46,7 +48,10 @@ function embed(request: NestedSupportRequest): NestedEmbeddingResult {
     wireLanes: prepared.lanes,
     wiring: { ok: true as const, value: wires },
   };
-  return { ok: true, value: { scene, ledger, moved: prepared.moved, roadIds: prepared.roadIds } };
+  return {
+    ok: true,
+    value: { scene, ledger: prepared.ledger, moved: prepared.moved, roadIds: prepared.roadIds },
+  };
 }
 
 /** The ordinary builder supplies its once-selected input and support-only observation.
@@ -60,8 +65,40 @@ function materialize(
   scene: NestedSupportRequest['scene'],
   ledger: NestedSupportLedger,
 ) {
-  const { values, old, moved } = solveNestedEmbedding(ledger);
-  if (moved.length === 0) return unchanged(input, scene, ledger, moved);
+  const solution = solveNestedEmbedding(ledger);
+  const prepared = materializeSolved(input, scene, ledger, solution);
+  const growth = projectedGrowth(prepared);
+  if (growth.length === 0) return prepared;
+  const originals = new Map(prepared.roadIds.map((r) => [r.after, r.before]));
+  const spans = growth.map((g) => ({ ...g, roadId: required(originals, g.roadId) }));
+  const expanded = expandedSupportLedger(ledger, solution.values, spans);
+  const resolved = solveNestedEmbedding(expanded);
+  const result = materializeSolved(input, scene, expanded, { ...resolved, old: solution.old });
+  const further = projectedGrowth(result);
+  if (further.length > 0)
+    reject(
+      'unsupported-support',
+      further.flatMap((g) => g.provenance),
+      further.flatMap((g) => [g.negative, g.positive]),
+    );
+  return result;
+}
+function projectedGrowth(prepared: ReturnType<typeof materializeSolved>) {
+  const supports = readNestedProjectionSupports(prepared.wires, prepared.byWire, prepared.byId);
+  return bridgeSpanGrowth(supports, prepared.byId, prepared.contacts);
+}
+function materializeSolved(
+  input: Input,
+  scene: NestedSupportRequest['scene'],
+  ledger: NestedSupportLedger,
+  solution: ReturnType<typeof solveNestedEmbedding>,
+) {
+  const { values, old } = solution;
+  const moved = [...values]
+    .filter(([key, value]) => value !== required(old, key))
+    .map(([key, position]) => ({ key, before: required(old, key), position }));
+  if (moved.length === 0 && ledger.spanGrowth === undefined)
+    return unchanged(input, scene, ledger, moved);
   const bodies = embedNestedBodies(scene, values);
   const roads = embedNestedRoads(scene.roads, input.contacts, ledger, values, old, bodies.ports);
   validateNestedEmbedding(roads.roads, roads.contacts);

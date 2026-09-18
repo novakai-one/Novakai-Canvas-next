@@ -1,5 +1,8 @@
 import type { PrototypeRoad, PrototypePortLocation } from '../contract/records/road-prototype.js';
-import type { NestedSupportLedger } from '../contract/records/nested-support.js';
+import type {
+  NestedSupportLedger,
+  NestedSupportSpanGrowth,
+} from '../contract/records/nested-support.js';
 import { axes } from './prototype-road-geometry.js';
 import { required } from './nested-support-input.js';
 import { reject } from './nested-support-graph.js';
@@ -9,6 +12,7 @@ interface Context {
   readonly values: ReadonlyMap<string, number>;
   readonly old: ReadonlyMap<string, number>;
   readonly keys: ReadonlyMap<string, string>;
+  readonly growth: ReadonlyMap<string, NestedSupportSpanGrowth>;
 }
 function street(road: PrototypeRoad, context: Context): PrototypeRoad {
   const { values, old, keys } = context,
@@ -19,11 +23,21 @@ function street(road: PrototypeRoad, context: Context): PrototypeRoad {
   const end =
     b[a.along] + b[a.length] + required(values, `${key}:end`) - required(old, `${key}:end`);
   const at = required(values, key);
+  const across = context.growth.get(JSON.stringify([road.id, a.across]));
+  const along = context.growth.get(JSON.stringify([road.id, a.along]));
+  const negative = along?.negative ?? 0;
+  const positive = along?.positive ?? 0;
   const id = `${road.sectionId ?? 'world'}:${road.axis}:${at}:${required(values, `${key}:start`)}`;
   return {
     ...road,
     id,
-    bounds: { ...b, [a.across]: at - b[a.breadth] / 2, [a.along]: start, [a.length]: end - start },
+    bounds: {
+      ...b,
+      [a.across]: at - b[a.breadth] / 2 - (across?.negative ?? 0),
+      [a.breadth]: b[a.breadth] + (across?.negative ?? 0) + (across?.positive ?? 0),
+      [a.along]: start - negative,
+      [a.length]: end - start + negative + positive,
+    },
   };
 }
 function drive(
@@ -86,7 +100,7 @@ function materializeDrive(
 }
 
 /** One bijection preserves construction merge identities and contacts; no coordinate-based rediscovery.
- * Recovery is pure reconstruction. Demand widths and cap reaches are retained exactly.
+ * Recovery is pure reconstruction. Nominal demand widths retain recorded support/cap growth.
  */
 export function embedNestedRoads(
   roads: readonly PrototypeRoad[],
@@ -99,6 +113,7 @@ export function embedNestedRoads(
   const context: Context = {
     values,
     old,
+    growth: new Map((ledger.spanGrowth ?? []).map((g) => [JSON.stringify([g.roadId, g.axis]), g])),
     keys: new Map(ledger.populations.map((p) => [p.roadId, p.key])),
   };
   const byOldId = new Map(

@@ -1,0 +1,166 @@
+{
+  "status": "STOP-judgment-required-no-product-candidate",
+  "receipts": {
+    "default": {
+      "twiceByteIdentical": true,
+      "equalsAcceptedB": true,
+      "sha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b"
+    },
+    "hub": {
+      "twiceByteIdentical": true,
+      "equalsAcceptedB": true,
+      "sha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca"
+    },
+    "templates": {
+      "twiceByteIdentical": true,
+      "equalsAcceptedB": true,
+      "sha256": "4b00fd4c0b4fd7e06969f0a59710c58842173f178c89193e74198552438054fe"
+    },
+    "scale": {
+      "twiceByteIdentical": true,
+      "equalsAcceptedB": true,
+      "sha256": "757afa0dc1356853e60bec161dd2605b18f8ab510826e7f1bdce12829e7bbe62"
+    },
+    "authoring": {
+      "twiceByteIdentical": true,
+      "equalsAcceptedB": true,
+      "sha256": "db54c6ca59e90c4e028f17c6ed0d0b73b42626fb3fe3618e4db3a7cddab6f06f"
+    }
+  },
+  "counts": {
+    "corridors": 2,
+    "bodies": 0,
+    "boundaries": 0,
+    "continuity": 0,
+    "reversed": 0,
+    "gateOmissions": 0,
+    "overlaps": 3,
+    "uncertified": 951
+  },
+  "corridorWitnesses": [
+    {
+      "id": "w84:6",
+      "segment": {
+        "from": {
+          "x": 5705.5,
+          "y": 2354.5
+        },
+        "to": {
+          "x": 5705.5,
+          "y": 2357.5
+        },
+        "corridorId": "section-13:horizontal:2348.5:5372.5"
+      },
+      "owner": {
+        "id": "section-13:horizontal:2348.5:5372.5",
+        "sectionId": "section-13",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 5366.5,
+          "y": 2342.5,
+          "width": 702,
+          "height": 12
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 0
+      },
+      "containingRoads": []
+    },
+    {
+      "id": "w84:7",
+      "segment": {
+        "from": {
+          "x": 5705.5,
+          "y": 2357.5
+        },
+        "to": {
+          "x": 5597,
+          "y": 2357.5
+        },
+        "corridorId": "section-13:horizontal:2348.5:5372.5"
+      },
+      "owner": {
+        "id": "section-13:horizontal:2348.5:5372.5",
+        "sectionId": "section-13",
+        "axis": "horizontal",
+        "kind": "street",
+        "access": null,
+        "bounds": {
+          "x": 5366.5,
+          "y": 2342.5,
+          "width": 702,
+          "height": 12
+        },
+        "directions": [
+          "left",
+          "right"
+        ],
+        "wireLaneCount": 0
+      },
+      "containingRoads": []
+    }
+  ],
+  "bridgeRows": [
+    {
+      "wireId": "w80",
+      "row": 2345.5,
+      "rank": 2,
+      "count": 3
+    },
+    {
+      "wireId": "w81",
+      "row": 2351.5,
+      "rank": 1,
+      "count": 3
+    },
+    {
+      "wireId": "w84",
+      "row": 2357.5,
+      "rank": 0,
+      "count": 3
+    }
+  ],
+  "historicalReplays": [
+    {
+      "wires": [
+        "w03",
+        "w13"
+      ],
+      "old": {
+        "x": 3190,
+        "y": 454,
+        "length": 6
+      },
+      "current": []
+    },
+    {
+      "wires": [
+        "w26",
+        "w61"
+      ],
+      "old": {
+        "x": 6274,
+        "y": 1681,
+        "length": 6
+      },
+      "current": []
+    },
+    {
+      "wires": [
+        "w36",
+        "w67"
+      ],
+      "old": {
+        "x": 6268,
+        "y": 1675,
+        "length": 12
+      },
+      "current": []
+    }
+  ]
+}

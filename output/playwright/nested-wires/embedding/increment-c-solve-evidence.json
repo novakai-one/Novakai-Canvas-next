@@ -1,0 +1,228 @@
+{
+  "status": "passed",
+  "solvePassesForAffectedScene": 2,
+  "extraSolveLimit": 1,
+  "noFurtherBridgeGap": true,
+  "allConstraintsReplayed": 3942,
+  "growOnly": true,
+  "spanGrowth": [
+    {
+      "roadId": "section-13:horizontal:2032:5264",
+      "axis": "y",
+      "negative": 0,
+      "positive": 3,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint"
+      ]
+    },
+    {
+      "roadId": "section-13:vertical:5264:1552",
+      "axis": "y",
+      "negative": 0,
+      "positive": 3,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint",
+        "section-13:vertical:5372.5:1868.5",
+        "construction-cap"
+      ]
+    },
+    {
+      "roadId": "section-13:vertical:5936:1552",
+      "axis": "y",
+      "negative": 0,
+      "positive": 3,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint",
+        "section-13:vertical:6044.5:1868.5",
+        "construction-cap"
+      ]
+    },
+    {
+      "roadId": "section-13:vertical:5600:1552",
+      "axis": "y",
+      "negative": 0,
+      "positive": 3,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint",
+        "section-13:vertical:5708.5:1868.5",
+        "construction-cap"
+      ]
+    }
+  ],
+  "changedAnchors": [],
+  "changedPhysicalAnchors": [
+    {
+      "roadId": "section-13:horizontal:2348.5:5372.5",
+      "axis": "y",
+      "side": "high",
+      "before": 2354.5,
+      "after": 2357.5,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint"
+      ]
+    },
+    {
+      "roadId": "section-13:vertical:5372.5:1868.5",
+      "axis": "y",
+      "side": "high",
+      "before": 2354.5,
+      "after": 2357.5,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint",
+        "section-13:vertical:5372.5:1868.5",
+        "construction-cap"
+      ]
+    },
+    {
+      "roadId": "section-13:vertical:6044.5:1868.5",
+      "axis": "y",
+      "side": "high",
+      "before": 2354.5,
+      "after": 2357.5,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint",
+        "section-13:vertical:6044.5:1868.5",
+        "construction-cap"
+      ]
+    },
+    {
+      "roadId": "section-13:vertical:5708.5:1868.5",
+      "axis": "y",
+      "side": "high",
+      "before": 2354.5,
+      "after": 2357.5,
+      "provenance": [
+        "w84",
+        "2",
+        "section-13:horizontal:2348.5:5372.5",
+        "complete-bridge-footprint",
+        "section-13:vertical:5708.5:1868.5",
+        "construction-cap"
+      ]
+    },
+    {
+      "roadId": "drive:section-13:exit-bottom",
+      "axis": "y",
+      "side": "low",
+      "before": 2354.5,
+      "after": 2357.5,
+      "provenance": [
+        "attached-gate-driveway-edge",
+        "section-13:exit-bottom"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "id": "w80",
+      "before": [
+        {
+          "from": {
+            "x": 5693.5,
+            "y": 2345.5
+          },
+          "to": {
+            "x": 5585,
+            "y": 2345.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        }
+      ],
+      "after": [
+        {
+          "from": {
+            "x": 5693.5,
+            "y": 2345.5
+          },
+          "to": {
+            "x": 5585,
+            "y": 2345.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        }
+      ]
+    },
+    {
+      "id": "w81",
+      "before": [
+        {
+          "from": {
+            "x": 5699.5,
+            "y": 2351.5
+          },
+          "to": {
+            "x": 5591,
+            "y": 2351.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        }
+      ],
+      "after": [
+        {
+          "from": {
+            "x": 5699.5,
+            "y": 2351.5
+          },
+          "to": {
+            "x": 5591,
+            "y": 2351.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        }
+      ]
+    },
+    {
+      "id": "w84",
+      "before": [
+        {
+          "from": {
+            "x": 5705.5,
+            "y": 2357.5
+          },
+          "to": {
+            "x": 5597,
+            "y": 2357.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        }
+      ],
+      "after": [
+        {
+          "from": {
+            "x": 5705.5,
+            "y": 2357.5
+          },
+          "to": {
+            "x": 5597,
+            "y": 2357.5
+          },
+          "corridorId": "section-13:horizontal:2348.5:5372.5"
+        }
+      ]
+    }
+  ],
+  "wireLanesUnchanged": true,
+  "queryEqualsActive": true,
+  "queryTwiceIdentical": true
+}

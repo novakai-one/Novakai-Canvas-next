@@ -3,10 +3,13 @@ import type {
   PrototypeJunction,
   PrototypePoint,
   PrototypeRoad,
+  PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
 import type { AssignedTravel } from './nested-wire-lanes.js';
 import { axes, contains, samePoint } from './prototype-road-geometry.js';
 import { nestedLanePitch } from './prototype-nested-placement.js';
+import { reject } from './nested-support-graph.js';
+import { validateSupportedProjection } from './nested-projection-support.js';
 import { terminalPin } from './nested-terminal-pins.js';
 
 interface Connection {
@@ -331,8 +334,21 @@ function forwardConnection(
   return {
     ...c,
     from: { ...c.from, [axis]: start },
-    via: c.via.map((p) => ({ ...p, [axis]: start })),
+    via: forwardColumns(c.via, axis, start, t),
   };
+}
+/** A median keeps its far column; a collapsed two-column support is infeasible. */
+function forwardColumns(
+  points: readonly PrototypePoint[],
+  axis: 'x' | 'y',
+  start: number,
+  travel: AssignedTravel,
+): readonly PrototypePoint[] {
+  const far = points[1];
+  if (far === undefined) return points.map((p) => ({ ...p, [axis]: start }));
+  if (travel.direction * (far[axis] - start) < nestedLanePitch / 4)
+    return reject('unsupported-support', [travel.wireId, travel.road.id, 'median-columns']);
+  return points.map((p, ordinal) => (ordinal === 0 ? { ...p, [axis]: start } : p));
 }
 function joined(
   t: AssignedTravel,
@@ -391,14 +407,17 @@ export function projectNestedWires(
   byWire: ReadonlyMap<string, readonly AssignedTravel[]>,
   roads: ReadonlyMap<string, PrototypeRoad>,
   junctions: readonly PrototypeJunction[],
+  ports: readonly PrototypePortLocation[],
 ): readonly NestedWire[] {
   const byRoad = junctionIndex(junctions);
   const turns = new Set(
     [...byWire.values()].flatMap((ts) => ts.flatMap((t, i) => leftKeys(t, ts[i + 1]))),
   );
-  return wires.map((wire) =>
+  const projected = wires.map((wire) =>
     projectNestedWire(wire, byWire.get(wire.id) ?? [], roads, turns, byRoad),
   );
+  validateSupportedProjection(projected, byWire, roads, ports);
+  return projected;
 }
 
 /** Read the same template algebra without emitting or changing a scene. Recovery is caller reconstruction. */

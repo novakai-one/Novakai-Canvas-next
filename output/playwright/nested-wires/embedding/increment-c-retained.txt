@@ -1,0 +1,14 @@
+templates 0 [
+  'PASS all wires inside corridors; gate-mouth crossings only; no body or continuity failures',
+  'PASS all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction',
+  'PASS actual crossing count equals additive endpoint and linked-order lower bound',
+  'PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings',
+  'PASS zero uncertified crossings'
+]
+scale 0 [
+  'PASS all wires inside corridors; gate-mouth crossings only; no body or continuity failures',
+  'PASS all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction',
+  'PASS actual crossing count equals additive endpoint and linked-order lower bound',
+  'PASS certificate negative controls reject reorderable ranges, unknown pairs and duplicate crossings',
+  'PASS zero uncertified crossings'
+]

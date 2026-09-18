@@ -1,0 +1,106 @@
+{
+  "default": {
+    "observerEqualsPublic": true,
+    "passes": [
+      {
+        "expanded": false,
+        "spans": []
+      }
+    ]
+  },
+  "hub": {
+    "observerEqualsPublic": true,
+    "passes": [
+      {
+        "expanded": false,
+        "spans": []
+      }
+    ]
+  },
+  "templates": {
+    "observerEqualsPublic": true,
+    "passes": [
+      {
+        "expanded": false,
+        "spans": []
+      }
+    ]
+  },
+  "scale": {
+    "observerEqualsPublic": true,
+    "passes": [
+      {
+        "expanded": false,
+        "spans": []
+      }
+    ]
+  },
+  "authoring": {
+    "observerEqualsPublic": true,
+    "passes": [
+      {
+        "expanded": false,
+        "spans": []
+      },
+      {
+        "expanded": true,
+        "spans": [
+          {
+            "roadId": "section-13:horizontal:2032:5264",
+            "axis": "y",
+            "negative": 0,
+            "positive": 3,
+            "provenance": [
+              "w84",
+              "2",
+              "section-13:horizontal:2348.5:5372.5",
+              "complete-bridge-footprint"
+            ]
+          },
+          {
+            "roadId": "section-13:vertical:5264:1552",
+            "axis": "y",
+            "negative": 0,
+            "positive": 3,
+            "provenance": [
+              "w84",
+              "2",
+              "section-13:horizontal:2348.5:5372.5",
+              "complete-bridge-footprint",
+              "section-13:vertical:5372.5:1868.5",
+              "construction-cap"
+            ]
+          },
+          {
+            "roadId": "section-13:vertical:5936:1552",
+            "axis": "y",
+            "negative": 0,
+            "positive": 3,
+            "provenance": [
+              "w84",
+              "2",
+              "section-13:horizontal:2348.5:5372.5",
+              "complete-bridge-footprint",
+              "section-13:vertical:6044.5:1868.5",
+              "construction-cap"
+            ]
+          },
+          {
+            "roadId": "section-13:vertical:5600:1552",
+            "axis": "y",
+            "negative": 0,
+            "positive": 3,
+            "provenance": [
+              "w84",
+              "2",
+              "section-13:horizontal:2348.5:5372.5",
+              "complete-bridge-footprint",
+              "section-13:vertical:5708.5:1868.5",
+              "construction-cap"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

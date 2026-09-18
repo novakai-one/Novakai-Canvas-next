@@ -88,30 +88,34 @@ export function createNestedRoadScene(
     allocateNestedLanes(plan.value, registry.roads),
   );
   const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure, ports);
-  const supports = readNestedProjectionSupports(plan.value, allocation.byWire, final.byId);
-  const supportScene: RoadPrototypeScene = {
-    ...reserved,
-    roads: final.roads,
-    wireLanes: allocation.lanes,
-    wiring: {
-      ok: true,
-      value: readNestedAdjustmentEvidence(supports, final.byId, () =>
-        roadContactAreas(final.roads, final.contacts),
-      ),
-    },
-  };
-  const input = retainedSupportRecords(
-    supportScene,
-    placement,
-    topology.roads,
-    topology.contacts,
-    topology.origins,
-    plan.value,
-    allocation,
-    final.byId,
-    supports,
-  );
-  return finish(input, supportScene, measure);
+  try {
+    const supports = readNestedProjectionSupports(plan.value, allocation.byWire, final.byId);
+    const supportScene: RoadPrototypeScene = {
+      ...reserved,
+      roads: final.roads,
+      wireLanes: allocation.lanes,
+      wiring: {
+        ok: true,
+        value: readNestedAdjustmentEvidence(supports, final.byId, () =>
+          roadContactAreas(final.roads, final.contacts),
+        ),
+      },
+    };
+    const input = retainedSupportRecords(
+      supportScene,
+      placement,
+      topology.roads,
+      topology.contacts,
+      topology.origins,
+      plan.value,
+      allocation,
+      final.byId,
+      supports,
+    );
+    return finish(input, supportScene, measure);
+  } catch (error) {
+    return failedEmbedding({ ...reserved, roads: final.roads, wireLanes: allocation.lanes }, error);
+  }
 }
 function finish(
   input: Parameters<typeof prepareNestedEmbedding>[0],
@@ -132,7 +136,13 @@ function embeddedScene(
   const prepared = prepareNestedEmbedding(input, reserved);
   const network = measure('network', () => roadNetwork(prepared.roads, prepared.contacts));
   const wires = measure('lane-projection', () =>
-    projectNestedWires(prepared.wires, prepared.byWire, prepared.byId, network.junctions),
+    projectNestedWires(
+      prepared.wires,
+      prepared.byWire,
+      prepared.byId,
+      network.junctions,
+      prepared.scene.ports,
+    ),
   );
   return {
     ...prepared.scene,

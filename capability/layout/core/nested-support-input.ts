@@ -1,3 +1,8 @@
+import type { readNestedProjectionSupports } from './nested-lane-projection.js';
+import type { NestedWire } from '../contract/records/nested-wires.js';
+import type { RoadPrototypeScene } from '../contract/records/road-prototype.js';
+import type { SectionPlacement } from './prototype-nested-placement.js';
+import type { RoadContact } from './prototype-road-registry.js';
 import type { NestedSupportRequest } from '../contract/records/nested-support.js';
 import type { PrototypeRoad, PrototypeLayoutMeasure } from '../contract/records/road-prototype.js';
 import {
@@ -44,6 +49,30 @@ export function retainSupportInput(request: NestedSupportRequest) {
   expected.roads.forEach((road) => checkRoad(road, required(final, road.id)));
   if (JSON.stringify(request.scene.wireLanes) !== JSON.stringify(allocation.lanes))
     reject('mismatched-contact', ['lane-allocation']);
+  return retainedSupportRecords(
+    request.scene,
+    placements,
+    roads,
+    contacts,
+    origins,
+    plan.value,
+    allocation,
+    final,
+  );
+}
+
+/** Index the once-selected reservation without replaying any placement/routing/allocation step. */
+export function retainedSupportRecords(
+  scene: RoadPrototypeScene,
+  placements: readonly SectionPlacement[],
+  roads: readonly PrototypeRoad[],
+  contacts: readonly RoadContact[],
+  origins: ReadonlyMap<string, readonly string[]>,
+  wires: readonly NestedWire[],
+  allocation: ReturnType<typeof allocateNestedLanes>,
+  final: ReadonlyMap<string, PrototypeRoad>,
+  projectionSupports?: ReturnType<typeof readNestedProjectionSupports>,
+) {
   const populations = roads.map((road) => population(road, origins, allocation.demand, final));
   const keys = new Map(populations.map((p) => [p.roadId, p.key]));
   const neighbors = new Map<string, PrototypeRoad[]>();
@@ -67,13 +96,14 @@ export function retainSupportInput(request: NestedSupportRequest) {
     count: t.count,
   }));
   return {
-    nodes: new Map(request.scene.nodes.map((node) => [node.id, node])),
-    sections: new Map(request.scene.sections.map((section) => [section.id, section])),
+    nodes: new Map(scene.nodes.map((node) => [node.id, node])),
+    sections: new Map(scene.sections.map((section) => [section.id, section])),
+    projectionSupports,
     placements,
     roads,
     contacts,
     neighbors,
-    wires: plan.value,
+    wires,
     allocation,
     final,
     populations,
@@ -89,7 +119,8 @@ export function required<T>(index: ReadonlyMap<string, T>, key: string): T {
   if (value === undefined) return reject('missing-contact', [key]);
   return value;
 }
-function driveOrigin(road: PrototypeRoad): string {
+/** Semantic driveway provenance is shared by query replay and the once-only builder. */
+export function driveOrigin(road: PrototypeRoad): string {
   const access = road.access;
   if (access === null) return reject('missing-contact', [road.id]);
   return JSON.stringify([

@@ -1,0 +1,37 @@
+{
+  "default": {
+    "observedEqualsPublic": true,
+    "preferencesUnchanged": true,
+    "wires": 18,
+    "travels": 93,
+    "joins": 75
+  },
+  "hub": {
+    "observedEqualsPublic": true,
+    "preferencesUnchanged": true,
+    "wires": 26,
+    "travels": 146,
+    "joins": 120
+  },
+  "templates": {
+    "observedEqualsPublic": true,
+    "preferencesUnchanged": true,
+    "wires": 29,
+    "travels": 233,
+    "joins": 204
+  },
+  "scale": {
+    "observedEqualsPublic": true,
+    "preferencesUnchanged": true,
+    "wires": 75,
+    "travels": 333,
+    "joins": 258
+  },
+  "authoring": {
+    "observedEqualsPublic": true,
+    "preferencesUnchanged": true,
+    "wires": 119,
+    "travels": 918,
+    "joins": 799
+  }
+}

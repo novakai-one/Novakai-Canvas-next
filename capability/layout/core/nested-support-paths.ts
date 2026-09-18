@@ -29,7 +29,9 @@ export function supportPaths(
   input: Input,
   scene: RoadPrototypeScene,
 ) {
-  const supports = readNestedProjectionSupports(input.wires, input.allocation.byWire, input.final);
+  const supports =
+    input.projectionSupports ??
+    readNestedProjectionSupports(input.wires, input.allocation.byWire, input.final);
   const adjustments: NestedSupportAdjustment[] = [],
     footprints: NestedSupportFootprint[] = [];
   const emissions = emissionIndex(scene);

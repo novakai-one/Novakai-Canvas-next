@@ -1,0 +1,678 @@
+{
+  "definition": "Executed numeric +, subtraction, Math.abs and numeric comparisons; min/max charge n-1 comparisons. Multiplication/division, string comparisons, map lookups and native collection iteration/sort internals excluded. Same AST meter as retained M4.5 runner.",
+  "stages": {
+    "module-initialization": {
+      "arithmetic": 47,
+      "comparisons": 3,
+      "total": 50
+    },
+    "capacity": {
+      "arithmetic": 41,
+      "comparisons": 11,
+      "total": 52
+    },
+    "nodes": {
+      "arithmetic": 276,
+      "comparisons": 33,
+      "total": 309
+    },
+    "ports": {
+      "arithmetic": 208,
+      "comparisons": 0,
+      "total": 208
+    },
+    "topology": {
+      "arithmetic": 2097,
+      "comparisons": 558,
+      "total": 2655
+    },
+    "setup": {
+      "arithmetic": 7188,
+      "comparisons": 6539,
+      "total": 13727
+    },
+    "wire-registry": {
+      "arithmetic": 868,
+      "comparisons": 0,
+      "total": 868
+    },
+    "wire:w01": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w02": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w03": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w04": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w05": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w06": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "wire:w07": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "wire:w08": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "wire:w09": {
+      "arithmetic": 8,
+      "comparisons": 19,
+      "total": 27
+    },
+    "wire:w10": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "wire:w11": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "wire:w12": {
+      "arithmetic": 45,
+      "comparisons": 58,
+      "total": 103
+    },
+    "wire:w13": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "wire:w14": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w15": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "wire:w16": {
+      "arithmetic": 18,
+      "comparisons": 54,
+      "total": 72
+    },
+    "wire:w17": {
+      "arithmetic": 13,
+      "comparisons": 33,
+      "total": 46
+    },
+    "wire:w18": {
+      "arithmetic": 45,
+      "comparisons": 59,
+      "total": 104
+    },
+    "lane-allocation": {
+      "arithmetic": 1337,
+      "comparisons": 895,
+      "total": 2232
+    },
+    "main-roads": {
+      "arithmetic": 762,
+      "comparisons": 220,
+      "total": 982
+    },
+    "driveways": {
+      "arithmetic": 1072,
+      "comparisons": 624,
+      "total": 1696
+    },
+    "network": {
+      "arithmetic": 5516,
+      "comparisons": 4824,
+      "total": 10340
+    },
+    "lane-projection": {
+      "arithmetic": 7064,
+      "comparisons": 12809,
+      "total": 19873
+    },
+    "probe:capacity": {
+      "arithmetic": 41,
+      "comparisons": 11,
+      "total": 52
+    },
+    "probe:nodes": {
+      "arithmetic": 552,
+      "comparisons": 43,
+      "total": 595
+    },
+    "probe:ports": {
+      "arithmetic": 416,
+      "comparisons": 0,
+      "total": 416
+    },
+    "probe:topology": {
+      "arithmetic": 4170,
+      "comparisons": 1430,
+      "total": 5600
+    },
+    "probe:setup": {
+      "arithmetic": 14359,
+      "comparisons": 13042,
+      "total": 27401
+    },
+    "probe:wire-registry": {
+      "arithmetic": 1734,
+      "comparisons": 0,
+      "total": 1734
+    },
+    "probe:wire:w01": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w02": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w03": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w04": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w05": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w06": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "probe:wire:w07": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "probe:wire:w08": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w09": {
+      "arithmetic": 8,
+      "comparisons": 19,
+      "total": 27
+    },
+    "probe:wire:w10": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "probe:wire:w11": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w12": {
+      "arithmetic": 45,
+      "comparisons": 58,
+      "total": 103
+    },
+    "probe:wire:w13": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "probe:wire:w14": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w15": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w16": {
+      "arithmetic": 18,
+      "comparisons": 54,
+      "total": 72
+    },
+    "probe:wire:w17": {
+      "arithmetic": 13,
+      "comparisons": 33,
+      "total": 46
+    },
+    "probe:wire:w18": {
+      "arithmetic": 45,
+      "comparisons": 59,
+      "total": 104
+    },
+    "probe:wire:w19": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w20": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w21": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w22": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w23": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w24": {
+      "arithmetic": 23,
+      "comparisons": 11,
+      "total": 34
+    },
+    "probe:wire:w25": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "probe:wire:w26": {
+      "arithmetic": 3,
+      "comparisons": 12,
+      "total": 15
+    },
+    "probe:wire:w27": {
+      "arithmetic": 8,
+      "comparisons": 19,
+      "total": 27
+    },
+    "probe:wire:w28": {
+      "arithmetic": 18,
+      "comparisons": 53,
+      "total": 71
+    },
+    "probe:wire:w29": {
+      "arithmetic": 13,
+      "comparisons": 29,
+      "total": 42
+    },
+    "probe:wire:w30": {
+      "arithmetic": 45,
+      "comparisons": 58,
+      "total": 103
+    },
+    "probe:wire:w31": {
+      "arithmetic": 21,
+      "comparisons": 11,
+      "total": 32
+    },
+    "probe:wire:w32": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w33": {
+      "arithmetic": 3,
+      "comparisons": 8,
+      "total": 11
+    },
+    "probe:wire:w34": {
+      "arithmetic": 18,
+      "comparisons": 54,
+      "total": 72
+    },
+    "probe:wire:w35": {
+      "arithmetic": 13,
+      "comparisons": 33,
+      "total": 46
+    },
+    "probe:wire:w36": {
+      "arithmetic": 45,
+      "comparisons": 59,
+      "total": 104
+    },
+    "probe:lane-allocation": {
+      "arithmetic": 2699,
+      "comparisons": 1807,
+      "total": 4506
+    },
+    "probe:main-roads": {
+      "arithmetic": 1491,
+      "comparisons": 432,
+      "total": 1923
+    },
+    "probe:driveways": {
+      "arithmetic": 2144,
+      "comparisons": 1248,
+      "total": 3392
+    },
+    "probe:network": {
+      "arithmetic": 11137,
+      "comparisons": 9610,
+      "total": 20747
+    },
+    "probe:lane-projection": {
+      "arithmetic": 14224,
+      "comparisons": 25810,
+      "total": 40034
+    }
+  },
+  "stageInvocations": {
+    "capacity": 1,
+    "nodes": 1,
+    "ports": 1,
+    "topology": 1,
+    "wire-registry": 1,
+    "wire:w01": 1,
+    "wire:w02": 1,
+    "wire:w03": 1,
+    "wire:w04": 1,
+    "wire:w05": 1,
+    "wire:w06": 1,
+    "wire:w07": 1,
+    "wire:w08": 1,
+    "wire:w09": 1,
+    "wire:w10": 1,
+    "wire:w11": 1,
+    "wire:w12": 1,
+    "wire:w13": 1,
+    "wire:w14": 1,
+    "wire:w15": 1,
+    "wire:w16": 1,
+    "wire:w17": 1,
+    "wire:w18": 1,
+    "lane-allocation": 1,
+    "main-roads": 1,
+    "driveways": 1,
+    "network": 1,
+    "lane-projection": 1,
+    "probe:capacity": 1,
+    "probe:nodes": 1,
+    "probe:ports": 1,
+    "probe:topology": 1,
+    "probe:wire-registry": 1,
+    "probe:wire:w01": 1,
+    "probe:wire:w02": 1,
+    "probe:wire:w03": 1,
+    "probe:wire:w04": 1,
+    "probe:wire:w05": 1,
+    "probe:wire:w06": 1,
+    "probe:wire:w07": 1,
+    "probe:wire:w08": 1,
+    "probe:wire:w09": 1,
+    "probe:wire:w10": 1,
+    "probe:wire:w11": 1,
+    "probe:wire:w12": 1,
+    "probe:wire:w13": 1,
+    "probe:wire:w14": 1,
+    "probe:wire:w15": 1,
+    "probe:wire:w16": 1,
+    "probe:wire:w17": 1,
+    "probe:wire:w18": 1,
+    "probe:wire:w19": 1,
+    "probe:wire:w20": 1,
+    "probe:wire:w21": 1,
+    "probe:wire:w22": 1,
+    "probe:wire:w23": 1,
+    "probe:wire:w24": 1,
+    "probe:wire:w25": 1,
+    "probe:wire:w26": 1,
+    "probe:wire:w27": 1,
+    "probe:wire:w28": 1,
+    "probe:wire:w29": 1,
+    "probe:wire:w30": 1,
+    "probe:wire:w31": 1,
+    "probe:wire:w32": 1,
+    "probe:wire:w33": 1,
+    "probe:wire:w34": 1,
+    "probe:wire:w35": 1,
+    "probe:wire:w36": 1,
+    "probe:lane-allocation": 1,
+    "probe:main-roads": 1,
+    "probe:driveways": 1,
+    "probe:network": 1,
+    "probe:lane-projection": 1
+  },
+  "wireRouting": {
+    "total": 667
+  },
+  "compile": {
+    "total": 33313,
+    "components": {
+      "wire-registry": 868,
+      "lane-allocation": 2232,
+      "network": 10340,
+      "lane-projection": 19873
+    }
+  },
+  "perLeg": [
+    {
+      "stage": "wire:w01",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w02",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w03",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w04",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w05",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w06",
+      "operations": 31,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w07",
+      "operations": 29,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w08",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w09",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w10",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w11",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 41,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w12",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w13",
+      "operations": 29,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w14",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w15",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 12,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w16",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 8,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w17",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 41,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    },
+    {
+      "stage": "wire:w18",
+      "operations": 11,
+      "admitted": true
+    }
+  ],
+  "maxLawLeg": 41,
+  "perWireRoadPairDiscovery": 0,
+  "scalingProbe": {
+    "nodes": [
+      22,
+      44
+    ],
+    "wires": [
+      18,
+      36
+    ],
+    "freshIds": true,
+    "totalOperations": [
+      53609,
+      107734
+    ],
+    "ratio": 2.0096252494916897,
+    "compileOperations": [
+      33313,
+      67021
+    ]
+  },
+  "instrumentedScenesByteIdentical": true
+}

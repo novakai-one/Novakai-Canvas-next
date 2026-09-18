@@ -121,3 +121,5 @@ export type {
   NestedSectionSpec,
   NestedNodeSpec,
 } from './records/nested-scene-spec.js';
+
+export { embedNestedSupports } from './api.js';

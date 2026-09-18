@@ -465,3 +465,40 @@ function supportedEnds(
   });
   return [{ wire, travels, start, end, joins }];
 }
+
+/** Observe only adjusted connector ownership for support admission, never project a provisional wire.
+ * The final emitter shares this exact connector algebra; recovery is caller reconstruction.
+ */
+export function readNestedAdjustmentEvidence(
+  supports: ReturnType<typeof readNestedProjectionSupports>,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  areas: () => readonly PrototypeJunction[],
+): readonly NestedWire[] {
+  const adjusted = supports.filter((support) =>
+    support.joins.some((join) => join.nominal !== join.adjusted),
+  );
+  if (adjusted.length === 0) return [];
+  const index = junctionIndex(areas());
+  return adjusted.map((support) => ({
+    ...support.wire,
+    segments: support.joins.flatMap((join, ordinal) =>
+      adjustmentEvidence(support, join, ordinal, roads, index),
+    ),
+  }));
+}
+
+function adjustmentEvidence(
+  support: ReturnType<typeof readNestedProjectionSupports>[number],
+  join: RetainedJoin,
+  ordinal: number,
+  roads: ReadonlyMap<string, PrototypeRoad>,
+  junctions: JunctionsByRoad,
+): readonly NestedWireSegment[] {
+  if (join.nominal === join.adjusted) return [];
+  const adjacent = support.travels
+    .slice(Math.max(0, ordinal - 1), ordinal + 2)
+    .map((travel) => travel.road.id);
+  return connectionLine(join.adjusted, (from, to, owner) =>
+    connectorLine(from, to, owner, adjacent, roads, junctions),
+  );
+}

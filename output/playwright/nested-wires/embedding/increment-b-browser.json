@@ -1,0 +1,28 @@
+{
+  "browserVersion": "153.0.8010.48",
+  "headless": true,
+  "port": 5198,
+  "rows": [
+    {
+      "phase": "before",
+      "viewport": {
+        "width": 1920,
+        "height": 1440
+      },
+      "camera": "transform: translate(57.5725px, 221.699px) scale(0.246703);",
+      "nodes": 47,
+      "wires": 119
+    },
+    {
+      "phase": "after",
+      "viewport": {
+        "width": 1920,
+        "height": 1440
+      },
+      "camera": "transform: translate(82.113px, 170.897px) scale(0.222137);",
+      "nodes": 47,
+      "wires": 119
+    }
+  ],
+  "errors": []
+}

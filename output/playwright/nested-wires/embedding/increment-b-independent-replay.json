@@ -1,0 +1,591 @@
+{
+  "default": {
+    "independentReplayExit": 0,
+    "constraintsSatisfied": 715,
+    "contactsPreserved": 175,
+    "nodeDimensionsUnchanged": true,
+    "sectionShrinks": 0,
+    "splitGridTracks": 0,
+    "resolvedSpanDiagnostics": [],
+    "equalityGroups": []
+  },
+  "hub": {
+    "independentReplayExit": 0,
+    "constraintsSatisfied": 881,
+    "contactsPreserved": 186,
+    "nodeDimensionsUnchanged": true,
+    "sectionShrinks": 0,
+    "splitGridTracks": 0,
+    "resolvedSpanDiagnostics": [],
+    "equalityGroups": []
+  },
+  "templates": {
+    "independentReplayExit": 0,
+    "constraintsSatisfied": 1381,
+    "contactsPreserved": 204,
+    "nodeDimensionsUnchanged": true,
+    "sectionShrinks": 0,
+    "splitGridTracks": 0,
+    "resolvedSpanDiagnostics": [],
+    "equalityGroups": []
+  },
+  "scale": {
+    "independentReplayExit": 0,
+    "constraintsSatisfied": 2019,
+    "contactsPreserved": 380,
+    "nodeDimensionsUnchanged": true,
+    "sectionShrinks": 0,
+    "splitGridTracks": 0,
+    "resolvedSpanDiagnostics": [],
+    "equalityGroups": []
+  },
+  "authoring": {
+    "independentReplayExit": 0,
+    "constraintsSatisfied": 3942,
+    "contactsPreserved": 455,
+    "nodeDimensionsUnchanged": true,
+    "sectionShrinks": 0,
+    "splitGridTracks": 0,
+    "resolvedSpanDiagnostics": [
+      {
+        "contact": {
+          "key": "[\"[\\\"section-3\\\",\\\"vertical\\\",[\\\"section-3:frame:vertical:0\\\"]]\",\"[\\\"section-3\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-3\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-3\\\\\\\",\\\\\\\"section-3:entry-left\\\\\\\",\\\\\\\"left\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-3\",\"vertical\",[\"section-3:frame:vertical:0\"]]",
+          "b": "[\"section-3\",\"horizontal\",[\"[\\\"section-3\\\",\\\"horizontal\\\",\\\"section-3\\\",\\\"section-3:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-3:entry-left",
+        "street": "section-3:vertical:4128.5:666.5",
+        "beforeDiagnostic": 648,
+        "registeredPosition": 666.5,
+        "streetSpan": [
+          660.5,
+          1152.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-3\\\",\\\"vertical\\\",[\\\"section-3:frame:vertical:1\\\",\\\"section-3:column:2\\\"]]\",\"[\\\"section-3\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-3\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-3\\\\\\\",\\\\\\\"section-3:exit-right\\\\\\\",\\\\\\\"right\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-3\",\"vertical\",[\"section-3:frame:vertical:1\",\"section-3:column:2\"]]",
+          "b": "[\"section-3\",\"horizontal\",[\"[\\\"section-3\\\",\\\"horizontal\\\",\\\"section-3\\\",\\\"section-3:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-3:exit-right",
+        "street": "section-3:vertical:5136.5:666.5",
+        "beforeDiagnostic": 648,
+        "registeredPosition": 666.5,
+        "streetSpan": [
+          660.5,
+          1152.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-7\\\",\\\"horizontal\\\",[\\\"section-7:frame:horizontal:0\\\",\\\"section-7:frame:horizontal:1\\\"]]\",\"[\\\"section-7\\\",\\\"vertical\\\",[\\\"[\\\\\\\"section-7\\\\\\\",\\\\\\\"vertical\\\\\\\",\\\\\\\"section-7\\\\\\\",\\\\\\\"section-7:entry-top\\\\\\\",\\\\\\\"top\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]",
+          "b": "[\"section-7\",\"vertical\",[\"[\\\"section-7\\\",\\\"vertical\\\",\\\"section-7\\\",\\\"section-7:entry-top\\\",\\\"top\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-7:entry-top",
+        "street": "section-7:horizontal:2059:1696",
+        "beforeDiagnostic": 1616,
+        "registeredPosition": 1696.0,
+        "streetSpan": [
+          1690,
+          1702
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-7\\\",\\\"vertical\\\",[\\\"section-7:frame:vertical:0\\\",\\\"section-7:frame:vertical:1\\\"]]\",\"[\\\"section-7\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-7\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-7\\\\\\\",\\\\\\\"section-7:entry-left\\\\\\\",\\\\\\\"left\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]",
+          "b": "[\"section-7\",\"horizontal\",[\"[\\\"section-7\\\",\\\"horizontal\\\",\\\"section-7\\\",\\\"section-7:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-7:entry-left",
+        "street": "section-7:vertical:1696:2059",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 2059.0,
+        "streetSpan": [
+          2053,
+          2065
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-7\\\",\\\"horizontal\\\",[\\\"section-7:frame:horizontal:0\\\",\\\"section-7:frame:horizontal:1\\\"]]\",\"[\\\"section-7\\\",\\\"vertical\\\",[\\\"[\\\\\\\"section-7\\\\\\\",\\\\\\\"vertical\\\\\\\",\\\\\\\"section-7\\\\\\\",\\\\\\\"section-7:exit-bottom\\\\\\\",\\\\\\\"bottom\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]",
+          "b": "[\"section-7\",\"vertical\",[\"[\\\"section-7\\\",\\\"vertical\\\",\\\"section-7\\\",\\\"section-7:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-7:exit-bottom",
+        "street": "section-7:horizontal:2059:1696",
+        "beforeDiagnostic": 1616,
+        "registeredPosition": 1696.0,
+        "streetSpan": [
+          1690,
+          1702
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-7\\\",\\\"vertical\\\",[\\\"section-7:frame:vertical:0\\\",\\\"section-7:frame:vertical:1\\\"]]\",\"[\\\"section-7\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-7\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-7\\\\\\\",\\\\\\\"section-7:exit-right\\\\\\\",\\\\\\\"right\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]",
+          "b": "[\"section-7\",\"horizontal\",[\"[\\\"section-7\\\",\\\"horizontal\\\",\\\"section-7\\\",\\\"section-7:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-7:exit-right",
+        "street": "section-7:vertical:1696:2059",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 2059.0,
+        "streetSpan": [
+          2053,
+          2065
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-10\\\",\\\"horizontal\\\",[\\\"section-10:frame:horizontal:0\\\",\\\"section-10:frame:horizontal:1\\\"]]\",\"[\\\"section-10\\\",\\\"vertical\\\",[\\\"[\\\\\\\"section-10\\\\\\\",\\\\\\\"vertical\\\\\\\",\\\\\\\"section-10\\\\\\\",\\\\\\\"section-10:entry-top\\\\\\\",\\\\\\\"top\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]",
+          "b": "[\"section-10\",\"vertical\",[\"[\\\"section-10\\\",\\\"vertical\\\",\\\"section-10\\\",\\\"section-10:entry-top\\\",\\\"top\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-10:entry-top",
+        "street": "section-10:horizontal:2059:3884.5",
+        "beforeDiagnostic": 3776,
+        "registeredPosition": 3884.5,
+        "streetSpan": [
+          3878.5,
+          3890.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-10\\\",\\\"vertical\\\",[\\\"section-10:frame:vertical:0\\\",\\\"section-10:frame:vertical:1\\\"]]\",\"[\\\"section-10\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-10\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-10\\\\\\\",\\\\\\\"section-10:entry-left\\\\\\\",\\\\\\\"left\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]",
+          "b": "[\"section-10\",\"horizontal\",[\"[\\\"section-10\\\",\\\"horizontal\\\",\\\"section-10\\\",\\\"section-10:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-10:entry-left",
+        "street": "section-10:vertical:3884.5:2059",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 2059.0,
+        "streetSpan": [
+          2053,
+          2065
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-10\\\",\\\"horizontal\\\",[\\\"section-10:frame:horizontal:0\\\",\\\"section-10:frame:horizontal:1\\\"]]\",\"[\\\"section-10\\\",\\\"vertical\\\",[\\\"[\\\\\\\"section-10\\\\\\\",\\\\\\\"vertical\\\\\\\",\\\\\\\"section-10\\\\\\\",\\\\\\\"section-10:exit-bottom\\\\\\\",\\\\\\\"bottom\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]",
+          "b": "[\"section-10\",\"vertical\",[\"[\\\"section-10\\\",\\\"vertical\\\",\\\"section-10\\\",\\\"section-10:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-10:exit-bottom",
+        "street": "section-10:horizontal:2059:3884.5",
+        "beforeDiagnostic": 3776,
+        "registeredPosition": 3884.5,
+        "streetSpan": [
+          3878.5,
+          3890.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-10\\\",\\\"vertical\\\",[\\\"section-10:frame:vertical:0\\\",\\\"section-10:frame:vertical:1\\\"]]\",\"[\\\"section-10\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-10\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-10\\\\\\\",\\\\\\\"section-10:exit-right\\\\\\\",\\\\\\\"right\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]",
+          "b": "[\"section-10\",\"horizontal\",[\"[\\\"section-10\\\",\\\"horizontal\\\",\\\"section-10\\\",\\\"section-10:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-10:exit-right",
+        "street": "section-10:vertical:3884.5:2059",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 2059.0,
+        "streetSpan": [
+          2053,
+          2065
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-11\\\",\\\"horizontal\\\",[\\\"section-11:frame:horizontal:0\\\",\\\"section-11:frame:horizontal:1\\\"]]\",\"[\\\"section-11\\\",\\\"vertical\\\",[\\\"[\\\\\\\"section-11\\\\\\\",\\\\\\\"vertical\\\\\\\",\\\\\\\"section-11\\\\\\\",\\\\\\\"section-11:entry-top\\\\\\\",\\\\\\\"top\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]",
+          "b": "[\"section-11\",\"vertical\",[\"[\\\"section-11\\\",\\\"vertical\\\",\\\"section-11\\\",\\\"section-11:entry-top\\\",\\\"top\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-11:entry-top",
+        "street": "section-11:horizontal:2059:4156.5",
+        "beforeDiagnostic": 4048,
+        "registeredPosition": 4156.5,
+        "streetSpan": [
+          4150.5,
+          4162.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-11\\\",\\\"vertical\\\",[\\\"section-11:frame:vertical:0\\\",\\\"section-11:frame:vertical:1\\\"]]\",\"[\\\"section-11\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-11\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-11\\\\\\\",\\\\\\\"section-11:entry-left\\\\\\\",\\\\\\\"left\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]",
+          "b": "[\"section-11\",\"horizontal\",[\"[\\\"section-11\\\",\\\"horizontal\\\",\\\"section-11\\\",\\\"section-11:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-11:entry-left",
+        "street": "section-11:vertical:4156.5:2059",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 2059.0,
+        "streetSpan": [
+          2053,
+          2065
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-11\\\",\\\"horizontal\\\",[\\\"section-11:frame:horizontal:0\\\",\\\"section-11:frame:horizontal:1\\\"]]\",\"[\\\"section-11\\\",\\\"vertical\\\",[\\\"[\\\\\\\"section-11\\\\\\\",\\\\\\\"vertical\\\\\\\",\\\\\\\"section-11\\\\\\\",\\\\\\\"section-11:exit-bottom\\\\\\\",\\\\\\\"bottom\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]",
+          "b": "[\"section-11\",\"vertical\",[\"[\\\"section-11\\\",\\\"vertical\\\",\\\"section-11\\\",\\\"section-11:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-11:exit-bottom",
+        "street": "section-11:horizontal:2059:4156.5",
+        "beforeDiagnostic": 4048,
+        "registeredPosition": 4156.5,
+        "streetSpan": [
+          4150.5,
+          4162.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-11\\\",\\\"vertical\\\",[\\\"section-11:frame:vertical:0\\\",\\\"section-11:frame:vertical:1\\\"]]\",\"[\\\"section-11\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-11\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-11\\\\\\\",\\\\\\\"section-11:exit-right\\\\\\\",\\\\\\\"right\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]",
+          "b": "[\"section-11\",\"horizontal\",[\"[\\\"section-11\\\",\\\"horizontal\\\",\\\"section-11\\\",\\\"section-11:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-11:exit-right",
+        "street": "section-11:vertical:4156.5:2059",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 2059.0,
+        "streetSpan": [
+          2053,
+          2065
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-12\\\",\\\"vertical\\\",[\\\"section-12:frame:vertical:1\\\",\\\"section-12:column:1\\\"]]\",\"[\\\"section-12\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-12\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-12\\\\\\\",\\\\\\\"section-12:exit-right\\\\\\\",\\\\\\\"right\\\\\\\",\\\\\\\"exit\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-12\",\"vertical\",[\"section-12:frame:vertical:1\",\"section-12:column:1\"]]",
+          "b": "[\"section-12\",\"horizontal\",[\"[\\\"section-12\\\",\\\"horizontal\\\",\\\"section-12\\\",\\\"section-12:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]"
+        },
+        "drive": "drive:section-12:exit-right",
+        "street": "section-12:vertical:5100.5:1868.5",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 1844.5,
+        "streetSpan": [
+          1838.5,
+          2360.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-13\\\",\\\"vertical\\\",[\\\"section-13:frame:vertical:0\\\"]]\",\"[\\\"section-13\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-13\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-13\\\\\\\",\\\\\\\"section-13:entry-left\\\\\\\",\\\\\\\"left\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-13\",\"vertical\",[\"section-13:frame:vertical:0\"]]",
+          "b": "[\"section-13\",\"horizontal\",[\"[\\\"section-13\\\",\\\"horizontal\\\",\\\"section-13\\\",\\\"section-13:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-13:entry-left",
+        "street": "section-13:vertical:5372.5:1868.5",
+        "beforeDiagnostic": 1768,
+        "registeredPosition": 1862.5,
+        "streetSpan": [
+          1856.5,
+          2354.5
+        ]
+      },
+      {
+        "contact": {
+          "key": "[\"[\\\"section-15\\\",\\\"vertical\\\",[\\\"section-15:frame:vertical:0\\\"]]\",\"[\\\"section-15\\\",\\\"horizontal\\\",[\\\"[\\\\\\\"section-15\\\\\\\",\\\\\\\"horizontal\\\\\\\",\\\\\\\"section-15\\\\\\\",\\\\\\\"section-15:entry-left\\\\\\\",\\\\\\\"left\\\\\\\",\\\\\\\"entry\\\\\\\"]\\\"]]\"]",
+          "a": "[\"section-15\",\"vertical\",[\"section-15:frame:vertical:0\"]]",
+          "b": "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"section-15\\\",\\\"section-15:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]"
+        },
+        "drive": "drive:section-15:entry-left",
+        "street": "section-15:vertical:3104:3309.5",
+        "beforeDiagnostic": 2824,
+        "registeredPosition": 3309.5,
+        "streetSpan": [
+          3303.5,
+          4091.0
+        ]
+      }
+    ],
+    "equalityGroups": [
+      {
+        "members": [
+          {
+            "key": "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]:end",
+            "axis": "x",
+            "position": 4048,
+            "aliases": [
+              "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]",
+              "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]:start",
+              "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]:end"
+            ]
+          },
+          {
+            "key": "section-11:entry-top:center",
+            "axis": "x",
+            "position": 4048,
+            "aliases": [
+              "[\"section-11\",\"vertical\",[\"[\\\"section-11\\\",\\\"vertical\\\",\\\"section-11\\\",\\\"section-11:entry-top\\\",\\\"top\\\",\\\"entry\\\"]\"]]",
+              "section-11:entry-top:center"
+            ]
+          },
+          {
+            "key": "section-11:exit-bottom:center",
+            "axis": "x",
+            "position": 4048,
+            "aliases": [
+              "[\"section-11\",\"vertical\",[\"[\\\"section-11\\\",\\\"vertical\\\",\\\"section-11\\\",\\\"section-11:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "section-11:exit-bottom:center"
+            ]
+          }
+        ],
+        "constraints": [
+          "constraint:234",
+          "constraint:3786",
+          "constraint:3787",
+          "constraint:3800",
+          "constraint:3801"
+        ],
+        "provenance": [
+          "section-11",
+          "section-11:entry-top",
+          "section-11:horizontal:1792:4048",
+          "section-11:exit-bottom"
+        ],
+        "representative": "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]:end",
+        "position": 4048
+      },
+      {
+        "members": [
+          {
+            "key": "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]:end",
+            "axis": "y",
+            "position": 1792,
+            "aliases": [
+              "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]",
+              "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]:start",
+              "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]:end"
+            ]
+          },
+          {
+            "key": "section-11:entry-left:center",
+            "axis": "y",
+            "position": 1768,
+            "aliases": [
+              "[\"section-11\",\"horizontal\",[\"[\\\"section-11\\\",\\\"horizontal\\\",\\\"section-11\\\",\\\"section-11:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]",
+              "section-11:entry-left:center"
+            ]
+          },
+          {
+            "key": "section-11:exit-right:center",
+            "axis": "y",
+            "position": 1768,
+            "aliases": [
+              "[\"section-11\",\"horizontal\",[\"[\\\"section-11\\\",\\\"horizontal\\\",\\\"section-11\\\",\\\"section-11:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "section-11:exit-right:center"
+            ]
+          }
+        ],
+        "constraints": [
+          "constraint:240",
+          "constraint:3794",
+          "constraint:3795",
+          "constraint:3808",
+          "constraint:3809"
+        ],
+        "provenance": [
+          "section-11",
+          "section-11:entry-left",
+          "section-11:vertical:4048:1792",
+          "section-11:exit-right"
+        ],
+        "representative": "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]:end",
+        "position": 1792
+      },
+      {
+        "members": [
+          {
+            "key": "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]:end",
+            "axis": "x",
+            "position": 3776,
+            "aliases": [
+              "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]",
+              "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]:start",
+              "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]:end"
+            ]
+          },
+          {
+            "key": "section-10:entry-top:center",
+            "axis": "x",
+            "position": 3776,
+            "aliases": [
+              "[\"section-10\",\"vertical\",[\"[\\\"section-10\\\",\\\"vertical\\\",\\\"section-10\\\",\\\"section-10:entry-top\\\",\\\"top\\\",\\\"entry\\\"]\"]]",
+              "section-10:entry-top:center"
+            ]
+          },
+          {
+            "key": "section-10:exit-bottom:center",
+            "axis": "x",
+            "position": 3776,
+            "aliases": [
+              "[\"section-10\",\"vertical\",[\"[\\\"section-10\\\",\\\"vertical\\\",\\\"section-10\\\",\\\"section-10:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "section-10:exit-bottom:center"
+            ]
+          }
+        ],
+        "constraints": [
+          "constraint:222",
+          "constraint:3754",
+          "constraint:3755",
+          "constraint:3768",
+          "constraint:3769"
+        ],
+        "provenance": [
+          "section-10",
+          "section-10:entry-top",
+          "section-10:horizontal:1792:3776",
+          "section-10:exit-bottom"
+        ],
+        "representative": "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]:end",
+        "position": 3776
+      },
+      {
+        "members": [
+          {
+            "key": "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]:end",
+            "axis": "y",
+            "position": 1792,
+            "aliases": [
+              "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]",
+              "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]:start",
+              "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]:end"
+            ]
+          },
+          {
+            "key": "section-10:entry-left:center",
+            "axis": "y",
+            "position": 1768,
+            "aliases": [
+              "[\"section-10\",\"horizontal\",[\"[\\\"section-10\\\",\\\"horizontal\\\",\\\"section-10\\\",\\\"section-10:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]",
+              "section-10:entry-left:center"
+            ]
+          },
+          {
+            "key": "section-10:exit-right:center",
+            "axis": "y",
+            "position": 1768,
+            "aliases": [
+              "[\"section-10\",\"horizontal\",[\"[\\\"section-10\\\",\\\"horizontal\\\",\\\"section-10\\\",\\\"section-10:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "section-10:exit-right:center"
+            ]
+          }
+        ],
+        "constraints": [
+          "constraint:228",
+          "constraint:3762",
+          "constraint:3763",
+          "constraint:3776",
+          "constraint:3777"
+        ],
+        "provenance": [
+          "section-10",
+          "section-10:entry-left",
+          "section-10:vertical:3776:1792",
+          "section-10:exit-right"
+        ],
+        "representative": "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]:end",
+        "position": 1792
+      },
+      {
+        "members": [
+          {
+            "key": "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]:end",
+            "axis": "x",
+            "position": 1616,
+            "aliases": [
+              "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]",
+              "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]:start",
+              "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]:end"
+            ]
+          },
+          {
+            "key": "section-7:entry-top:center",
+            "axis": "x",
+            "position": 1616,
+            "aliases": [
+              "[\"section-7\",\"vertical\",[\"[\\\"section-7\\\",\\\"vertical\\\",\\\"section-7\\\",\\\"section-7:entry-top\\\",\\\"top\\\",\\\"entry\\\"]\"]]",
+              "section-7:entry-top:center"
+            ]
+          },
+          {
+            "key": "section-7:exit-bottom:center",
+            "axis": "x",
+            "position": 1616,
+            "aliases": [
+              "[\"section-7\",\"vertical\",[\"[\\\"section-7\\\",\\\"vertical\\\",\\\"section-7\\\",\\\"section-7:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+              "section-7:exit-bottom:center"
+            ]
+          }
+        ],
+        "constraints": [
+          "constraint:166",
+          "constraint:3658",
+          "constraint:3659",
+          "constraint:3672",
+          "constraint:3673"
+        ],
+        "provenance": [
+          "section-7",
+          "section-7:entry-top",
+          "section-7:horizontal:1792:1616",
+          "section-7:exit-bottom"
+        ],
+        "representative": "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]:end",
+        "position": 1616
+      },
+      {
+        "members": [
+          {
+            "key": "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]:end",
+            "axis": "y",
+            "position": 1792,
+            "aliases": [
+              "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]",
+              "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]:start",
+              "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]:end"
+            ]
+          },
+          {
+            "key": "section-7:entry-left:center",
+            "axis": "y",
+            "position": 1768,
+            "aliases": [
+              "[\"section-7\",\"horizontal\",[\"[\\\"section-7\\\",\\\"horizontal\\\",\\\"section-7\\\",\\\"section-7:entry-left\\\",\\\"left\\\",\\\"entry\\\"]\"]]",
+              "section-7:entry-left:center"
+            ]
+          },
+          {
+            "key": "section-7:exit-right:center",
+            "axis": "y",
+            "position": 1768,
+            "aliases": [
+              "[\"section-7\",\"horizontal\",[\"[\\\"section-7\\\",\\\"horizontal\\\",\\\"section-7\\\",\\\"section-7:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+              "section-7:exit-right:center"
+            ]
+          }
+        ],
+        "constraints": [
+          "constraint:172",
+          "constraint:3666",
+          "constraint:3667",
+          "constraint:3680",
+          "constraint:3681"
+        ],
+        "provenance": [
+          "section-7",
+          "section-7:entry-left",
+          "section-7:vertical:1616:1792",
+          "section-7:exit-right"
+        ],
+        "representative": "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]:end",
+        "position": 1792
+      }
+    ]
+  }
+}

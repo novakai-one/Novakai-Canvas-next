@@ -1,0 +1,20 @@
+{
+  "off": {
+    "width": 1920,
+    "height": 1440,
+    "threshold": 0.1,
+    "includeAA": false,
+    "changedPixels": 251476,
+    "totalPixels": 2764800,
+    "changedPercent": 9.095630787037036
+  },
+  "on": {
+    "width": 1920,
+    "height": 1440,
+    "threshold": 0.1,
+    "includeAA": false,
+    "changedPixels": 282510,
+    "totalPixels": 2764800,
+    "changedPercent": 10.218098958333334
+  }
+}

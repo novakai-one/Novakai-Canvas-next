@@ -1,0 +1,132 @@
+{
+  "default": {
+    "activeBuildsTwiceByteIdentical": true,
+    "queryTwiceByteIdentical": true,
+    "builderEqualsQuery": true,
+    "beforeSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+    "afterSha256": "e681798065a70ea0b3f04dfd1c7a47984266fd2bd78f06fb93d06f6644eefd7b",
+    "beforeBytes": 649257,
+    "afterBytes": 649257,
+    "unchanged": true,
+    "equalityGroups": 0,
+    "admissionGraphUnchanged": true,
+    "movedAliases": 0,
+    "counts": {
+      "T": 93,
+      "C": 175,
+      "G": 16,
+      "V": 85,
+      "E": 715
+    },
+    "inspection": {
+      "corridors": 0,
+      "nodeBodies": 0,
+      "boundaries": 0,
+      "continuity": 0
+    }
+  },
+  "hub": {
+    "activeBuildsTwiceByteIdentical": true,
+    "queryTwiceByteIdentical": true,
+    "builderEqualsQuery": true,
+    "beforeSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+    "afterSha256": "0abef2eb0dc74d5e8a3454ef447b6a3b15f5fc33a343b38b61f5f0e8c97247ca",
+    "beforeBytes": 713191,
+    "afterBytes": 713191,
+    "unchanged": true,
+    "equalityGroups": 0,
+    "admissionGraphUnchanged": true,
+    "movedAliases": 0,
+    "counts": {
+      "T": 146,
+      "C": 186,
+      "G": 16,
+      "V": 87,
+      "E": 881
+    },
+    "inspection": {
+      "corridors": 0,
+      "nodeBodies": 0,
+      "boundaries": 0,
+      "continuity": 0
+    }
+  },
+  "templates": {
+    "activeBuildsTwiceByteIdentical": true,
+    "queryTwiceByteIdentical": true,
+    "builderEqualsQuery": true,
+    "beforeSha256": "f8c7e0cc1902db78521e959bc5b49fce8f274ee2a520003276ffedf84a2844e6",
+    "afterSha256": "4b00fd4c0b4fd7e06969f0a59710c58842173f178c89193e74198552438054fe",
+    "beforeBytes": 764731,
+    "afterBytes": 791736,
+    "unchanged": false,
+    "equalityGroups": 0,
+    "admissionGraphUnchanged": true,
+    "movedAliases": 166,
+    "counts": {
+      "T": 233,
+      "C": 204,
+      "G": 36,
+      "V": 147,
+      "E": 1381
+    },
+    "inspection": {
+      "corridors": 0,
+      "nodeBodies": 0,
+      "boundaries": 0,
+      "continuity": 0
+    }
+  },
+  "scale": {
+    "activeBuildsTwiceByteIdentical": true,
+    "queryTwiceByteIdentical": true,
+    "builderEqualsQuery": true,
+    "beforeSha256": "d31fe5da0e937b06d328ada0f8a722f39a42784f7de3a9d8107ca672398de215",
+    "afterSha256": "757afa0dc1356853e60bec161dd2605b18f8ab510826e7f1bdce12829e7bbe62",
+    "beforeBytes": 1462875,
+    "afterBytes": 1516877,
+    "unchanged": false,
+    "equalityGroups": 0,
+    "admissionGraphUnchanged": true,
+    "movedAliases": 289,
+    "counts": {
+      "T": 333,
+      "C": 380,
+      "G": 48,
+      "V": 222,
+      "E": 2019
+    },
+    "inspection": {
+      "corridors": 0,
+      "nodeBodies": 0,
+      "boundaries": 0,
+      "continuity": 0
+    }
+  },
+  "authoring": {
+    "activeBuildsTwiceByteIdentical": true,
+    "queryTwiceByteIdentical": true,
+    "builderEqualsQuery": true,
+    "beforeSha256": "58bdd5a97a1e235973743680999abc4718ed5c975d5a9ee536b1e98175dcd9e0",
+    "afterSha256": "db54c6ca59e90c4e028f17c6ed0d0b73b42626fb3fe3618e4db3a7cddab6f06f",
+    "beforeBytes": 1953839,
+    "afterBytes": 2081028,
+    "unchanged": false,
+    "equalityGroups": 6,
+    "admissionGraphUnchanged": false,
+    "movedAliases": 670,
+    "counts": {
+      "T": 918,
+      "C": 455,
+      "G": 60,
+      "V": 251,
+      "E": 3942
+    },
+    "inspection": {
+      "corridors": 2,
+      "nodeBodies": 0,
+      "boundaries": 0,
+      "continuity": 0
+    }
+  }
+}

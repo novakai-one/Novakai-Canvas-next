@@ -13,21 +13,30 @@ import { supportMouths } from './nested-support-mouths.js';
  */
 export function preflightNestedSupports(request: NestedSupportRequest): NestedSupportResult {
   try {
-    return compile(request);
+    return { ok: true, value: compileNestedSupports(request).ledger };
   } catch (error) {
     return failure(error);
   }
 }
-function compile(request: NestedSupportRequest): NestedSupportResult {
-  const input = retainSupportInput(request),
-    graph = supportGraph();
+/** Shared single compilation; callers own typed rejection conversion and reconstruction. */
+export function compileNestedSupports(request: NestedSupportRequest) {
+  const input = retainSupportInput(request);
+  return { input, ledger: compileSupportInput(input, request.scene) };
+}
+
+/** Compile the retained builder input once; caller owns typed rejection and reconstruction. */
+export function compileSupportInput(
+  input: ReturnType<typeof retainSupportInput>,
+  scene: NestedSupportRequest['scene'],
+) {
+  const graph = supportGraph();
   const lines = supportStructure(graph, input);
-  const paths = supportPaths(graph, lines, input, request.scene);
+  const paths = supportPaths(graph, lines, input, scene);
   const gates = supportMouths({
     graph,
     lines,
     input,
-    scene: request.scene,
+    scene,
     footprints: paths.footprints,
   });
   const admitted = admitSupportGraph(graph);
@@ -39,23 +48,20 @@ function compile(request: NestedSupportRequest): NestedSupportResult {
     ),
   ];
   return {
-    ok: true,
-    value: {
-      status: 'admitted-with-reservation-evidence',
-      populations: input.populations,
-      travels: input.travels,
-      contacts: input.retainedContacts,
-      ...admitted,
-      ...paths,
-      gates,
-      envelopeSpills,
-      counts: {
-        T: input.travels.length,
-        C: input.contacts.length,
-        G: gates.length,
-        V: admitted.vertices.length,
-        E: admitted.constraints.length,
-      },
+    status: 'admitted-with-reservation-evidence' as const,
+    populations: input.populations,
+    travels: input.travels,
+    contacts: input.retainedContacts,
+    ...admitted,
+    ...paths,
+    gates,
+    envelopeSpills,
+    counts: {
+      T: input.travels.length,
+      C: input.contacts.length,
+      G: gates.length,
+      V: admitted.vertices.length,
+      E: admitted.constraints.length,
     },
   };
 }

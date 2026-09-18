@@ -1,3 +1,4 @@
+import { collapseSupportEqualities } from './nested-support-equalities.js';
 import type {
   NestedSupportConstraint,
   NestedSupportFailure,
@@ -180,5 +181,6 @@ export function admitSupportGraph(graph: SupportGraph) {
   const constraints = graph.relations.map((relation, ordinal) =>
     constraint(graph, relation, ordinal),
   );
-  return { vertices: points, constraints, order: ordered(points, constraints) };
+  const collapsed = collapseSupportEqualities(points, constraints);
+  return { ...collapsed, order: ordered(collapsed.vertices, collapsed.constraints) };
 }

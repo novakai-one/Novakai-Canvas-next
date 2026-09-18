@@ -1,0 +1,20 @@
+{
+  "authoring": {
+    "before": {
+      "bodies": 40,
+      "boundaries": 87,
+      "overlaps": 18,
+      "reversed": 28,
+      "gateOmissions": 96,
+      "uncertified": 1273
+    },
+    "after": {
+      "bodies": 0,
+      "boundaries": 0,
+      "overlaps": 3,
+      "reversed": 0,
+      "gateOmissions": 0,
+      "uncertified": 951
+    }
+  }
+}

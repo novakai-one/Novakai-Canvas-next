@@ -1,3 +1,11 @@
+import { retainedSupportRecords, driveOrigin } from './nested-support-input.js';
+import { prepareNestedEmbedding } from './nested-embedding.js';
+import {
+  readNestedAdjustmentEvidence,
+  readNestedProjectionSupports,
+} from './nested-lane-projection.js';
+import { roadContactAreas } from './prototype-road-network.js';
+import { SupportRejection } from './nested-support-graph.js';
 import type { NestedSceneSpec } from '../contract/records/nested-scene-spec.js';
 import { defaultNestedSceneSpec } from './nested-scene-spec.js';
 import { wireRegistry } from './nested-wire-registry.js';
@@ -47,8 +55,10 @@ export function createNestedRoadScene(
     ...placement.flatMap(nestedSectionPorts),
   ]);
   const topology = measure('topology', () => {
-    const main = nestedMainRoads(placement),
+    const origins = new Map<string, readonly string[]>();
+    const main = nestedMainRoads(placement, (road, keys) => origins.set(road.id, keys)),
       drives = placement.flatMap(nestedDriveways);
+    drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
     const roads = [...main, ...drives];
     const contacts = constructedContacts(
       roadRegistry(roads),
@@ -56,7 +66,7 @@ export function createNestedRoadScene(
       drives,
       nestedSpacing.road / 2,
     );
-    return { roads, contacts };
+    return { roads, contacts, origins };
   });
   const reserved: RoadPrototypeScene = {
     sections,
@@ -78,15 +88,68 @@ export function createNestedRoadScene(
     allocateNestedLanes(plan.value, registry.roads),
   );
   const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure, ports);
-  const network = measure('network', () => roadNetwork(final.roads, final.contacts));
-  const wires = measure('lane-projection', () =>
-    projectNestedWires(plan.value, allocation.byWire, final.byId, network.junctions),
-  );
-  return {
+  const supports = readNestedProjectionSupports(plan.value, allocation.byWire, final.byId);
+  const supportScene: RoadPrototypeScene = {
     ...reserved,
     roads: final.roads,
-    ...network,
     wireLanes: allocation.lanes,
+    wiring: {
+      ok: true,
+      value: readNestedAdjustmentEvidence(supports, final.byId, () =>
+        roadContactAreas(final.roads, final.contacts),
+      ),
+    },
+  };
+  const input = retainedSupportRecords(
+    supportScene,
+    placement,
+    topology.roads,
+    topology.contacts,
+    topology.origins,
+    plan.value,
+    allocation,
+    final.byId,
+    supports,
+  );
+  return finish(input, supportScene, measure);
+}
+function finish(
+  input: Parameters<typeof prepareNestedEmbedding>[0],
+  reserved: RoadPrototypeScene,
+  measure: NonNullable<PrototypeLayoutOptions['measure']>,
+): RoadPrototypeScene {
+  try {
+    return embeddedScene(input, reserved, measure);
+  } catch (error) {
+    return failedEmbedding(reserved, error);
+  }
+}
+function embeddedScene(
+  input: Parameters<typeof prepareNestedEmbedding>[0],
+  reserved: RoadPrototypeScene,
+  measure: NonNullable<PrototypeLayoutOptions['measure']>,
+): RoadPrototypeScene {
+  const prepared = prepareNestedEmbedding(input, reserved);
+  const network = measure('network', () => roadNetwork(prepared.roads, prepared.contacts));
+  const wires = measure('lane-projection', () =>
+    projectNestedWires(prepared.wires, prepared.byWire, prepared.byId, network.junctions),
+  );
+  return {
+    ...prepared.scene,
+    roads: prepared.roads,
+    ...network,
+    wireLanes: prepared.lanes,
     wiring: { ok: true, value: wires },
   };
+}
+
+function rejectedScene(scene: RoadPrototypeScene, error: SupportRejection): RoadPrototypeScene {
+  const unwired = { ...scene };
+  delete unwired.wiring;
+  return { ...unwired, embeddingFailure: error.evidence };
+}
+
+function failedEmbedding(scene: RoadPrototypeScene, error: unknown): RoadPrototypeScene {
+  if (error instanceof SupportRejection) return rejectedScene(scene, error);
+  throw error;
 }

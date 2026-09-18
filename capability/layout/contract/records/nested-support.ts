@@ -87,9 +87,19 @@ export interface NestedSupportFootprint {
   readonly points: readonly { readonly x: number; readonly y: number }[];
 }
 
+/** Forced zero-separation cycle, preserving the pre-collapse members and producing constraints. */
+export interface NestedSupportEquality {
+  readonly members: readonly NestedSupportVertex[];
+  readonly constraints: readonly string[];
+  readonly provenance: readonly string[];
+  readonly representative: string;
+  readonly position: number;
+}
+
 /** Admission certifies computable constraints only. It does not certify scene legality. */
 export interface NestedSupportLedger {
   readonly status: 'admitted-with-reservation-evidence';
+  readonly equalities: readonly NestedSupportEquality[];
   readonly populations: readonly NestedSupportPopulation[];
   readonly travels: readonly NestedSupportTravel[];
   readonly contacts: readonly NestedSupportContact[];
@@ -128,4 +138,21 @@ export interface NestedSupportFailure {
 /** Query success means graph admission only; failures never publish partial ledgers. */
 export type NestedSupportResult =
   | { readonly ok: true; readonly value: NestedSupportLedger }
+  | { readonly ok: false; readonly error: NestedSupportFailure };
+
+/** Active embedding candidate, with replayable constraints and explicit anchor/identity movement. */
+export type NestedEmbeddingResult =
+  | {
+      readonly ok: true;
+      readonly value: {
+        readonly scene: RoadPrototypeScene;
+        readonly ledger: NestedSupportLedger;
+        readonly moved: readonly {
+          readonly key: string;
+          readonly before: number;
+          readonly position: number;
+        }[];
+        readonly roadIds: readonly { readonly before: string; readonly after: string }[];
+      };
+    }
   | { readonly ok: false; readonly error: NestedSupportFailure };

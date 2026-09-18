@@ -216,10 +216,7 @@ function arms(id: string, adjacency: ReturnType<typeof laneAdjacency>) {
 
 /** Pure, repeatable compilation of this prototype's roads into enforceable lanes and turn areas. */
 export function roadNetwork(roads: readonly PrototypeRoad[], contacts: readonly RoadContact[]) {
-  const areas = mergePrototypeJunctions(
-    orderedContacts(roads, contacts).flatMap(({ a, b }) => junction(a, b)),
-    roads,
-  );
+  const areas = roadContactAreas(roads, contacts);
   const ownership = roadJunctionIndex(areas);
   const accessByJunction = junctionAccess(roads, ownership);
   const parts = roads.map((road) => roadParts(road, ownership.get(road.id) ?? []));
@@ -268,5 +265,16 @@ function registeredEndpoints(parts: readonly ReturnType<typeof roadParts>[]) {
           ] as const,
       ),
     ),
+  );
+}
+
+/** Construction-owned contact regions, shared with support observation; no lane/network compilation. */
+export function roadContactAreas(
+  roads: readonly PrototypeRoad[],
+  contacts: readonly RoadContact[],
+) {
+  return mergePrototypeJunctions(
+    orderedContacts(roads, contacts).flatMap(({ a, b }) => junction(a, b)),
+    roads,
   );
 }

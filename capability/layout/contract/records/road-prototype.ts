@@ -1,3 +1,4 @@
+import type { NestedSupportFailure } from './nested-support.js';
 import type { NestedWireResult, NestedWireLane } from './nested-wires.js';
 /** Milestone-one records only. Roads own geometry independently of nodes and future wires. */
 export interface PrototypeBounds {
@@ -70,6 +71,7 @@ export interface PrototypeRoad {
   } | null;
 }
 export interface RoadPrototypeScene {
+  readonly embeddingFailure?: NestedSupportFailure;
   readonly wireLanes?: readonly NestedWireLane[];
   readonly wiring?: NestedWireResult;
   readonly sections: readonly PrototypeBlock[];

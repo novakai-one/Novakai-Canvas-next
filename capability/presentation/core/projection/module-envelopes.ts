@@ -86,7 +86,10 @@ function measure(
   const childCells = children.map((child, index) => {
     const boundary = density([groups[index]!], section.nodes, section.wires);
     const clearance = trafficGap(boundary.local, lanePitch, padding);
-    return { width: child.width + clearance, height: child.height + clearance };
+    return {
+      width: child.width + clearance,
+      height: child.height + clearance,
+    };
   });
   const intent =
     section.groups.find((group) => group.id === parent?.groupId)?.layout ?? section.layout;
@@ -156,6 +159,11 @@ function measure(
     childColumns,
     childColumnWidths,
     childRowHeights,
+    // Start-align columns within the parent reserve while preserving shared row centres.
+    childInsets: children.map((child, index) => ({
+      x: Math.min(gap / 2, (childColumnWidths[index % childColumns]! - child.width) / 2),
+      y: (childRowHeights[Math.floor(index / childColumns)]! - child.height) / 2,
+    })),
     pitch,
     columnWidths,
     rowHeights,

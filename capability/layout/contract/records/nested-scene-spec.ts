@@ -22,6 +22,7 @@ export interface NestedSectionSpec {
     readonly childColumns: number;
     readonly childColumnWidths: readonly number[];
     readonly childRowHeights: readonly number[];
+    readonly childInsets: readonly { readonly x: number; readonly y: number }[];
     readonly pitch: { readonly x: number; readonly y: number };
     readonly columnWidths: readonly number[];
     readonly rowHeights: readonly number[];

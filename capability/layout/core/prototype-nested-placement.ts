@@ -106,12 +106,17 @@ function measuredSection(measured: NonNullable<SectionSpec['measured']>, count: 
 }
 /** Shared child tracks belong to Presentation, just like leaf tracks and section bounds. */
 function measuredChildren(measured: NonNullable<SectionSpec['measured']>, count: number): void {
-  const sizes = [...measured.childColumnWidths, ...measured.childRowHeights];
+  const sizes = [
+    ...measured.childColumnWidths,
+    ...measured.childRowHeights,
+    ...measured.childInsets.flatMap((inset) => [inset.x, inset.y]),
+  ];
   if (!sizes.every((value) => Number.isFinite(value) && value > 0))
     throw new Error('Child tracks must be finite and positive');
   if (
     measured.childColumnWidths.length !== Math.min(count, measured.childColumns) ||
-    measured.childRowHeights.length !== Math.ceil(count / measured.childColumns)
+    measured.childRowHeights.length !== Math.ceil(count / measured.childColumns) ||
+    measured.childInsets.length !== count
   )
     throw new Error('Measured child tracks must cover every section');
 }
@@ -166,16 +171,11 @@ function positionSection(
   surrounding: PrototypeBounds,
   parentSectionId: string | null,
   parentOrigin = { x: 0, y: 0 },
+  inset = { x: 0, y: 0 },
 ): readonly SectionPlacement[] {
   const bounds = {
-    x:
-      size.position === undefined
-        ? surrounding.x + (surrounding.width - size.width) / 2
-        : parentOrigin.x + size.position.x,
-    y:
-      size.position === undefined
-        ? surrounding.y + (surrounding.height - size.height) / 2
-        : parentOrigin.y + size.position.y,
+    x: size.position === undefined ? surrounding.x + inset.x : parentOrigin.x + size.position.x,
+    y: size.position === undefined ? surrounding.y + inset.y : parentOrigin.y + size.position.y,
     width: size.width,
     height: size.height,
   };
@@ -212,7 +212,7 @@ function positionSection(
       width: size.measured.childColumnWidths[column]!,
       height: size.measured.childRowHeights[row]!,
     };
-    return positionSection(child, cell, size.id, bounds);
+    return positionSection(child, cell, size.id, bounds, size.measured.childInsets[index]!);
   });
   return [own, ...children];
 }

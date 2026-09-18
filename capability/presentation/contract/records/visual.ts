@@ -131,6 +131,7 @@ export const moduleEnvelope = z
     childColumns: z.number().int().positive(),
     childColumnWidths: z.array(dimension).readonly(),
     childRowHeights: z.array(dimension).readonly(),
+    childInsets: z.array(z.strictObject({ x: dimension, y: dimension }).readonly()).readonly(),
     pitch: z.strictObject({ x: dimension, y: dimension }).readonly(),
     columnWidths: z.array(dimension).readonly(),
     rowHeights: z.array(dimension).readonly(),

@@ -1,8 +1,14 @@
 import type { VisualSection } from '../../contract/records/input.js';
 import type { SectionCandidate } from '../../contract/records/candidate.js';
-import type { GeometryDependencies, Inspection } from '../../contract/types.js';
+import type {
+  DerivationContext,
+  GeometryDependencies,
+  Inspection,
+  SupplementalMeasurements,
+} from '../../contract/types.js';
 import type { Scene, PlacedSection } from '../../contract/records/geometry.js';
 import type { SceneCandidate } from '../../contract/records/candidate.js';
+import type { NestedEngine } from '../../contract/records/engine-scene.js';
 import { candidate } from '../../contract/records/candidate.js';
 import type {
   CheckedLayoutRequest,
@@ -10,6 +16,8 @@ import type {
   CheckedRouteRequest,
 } from '../validation/input.js';
 import { arrangeSection, completeSection } from './section.js';
+import { admitNested } from '../scene-in.js';
+import { deriveNestedSection } from '../scene-out.js';
 import { accumulate } from './sequential.js';
 import { arrangeSections } from './collection.js';
 import { requestKey, versions } from './keys.js';
@@ -40,6 +48,30 @@ function inspected(
   same(warnings(sections, request.projection, request.options), scene.warnings, 'warnings');
   return { ...scene, sections };
 }
+/** A protected nested derivation returns nothing on any structured failure; legacy always remains available. */
+function attempted(
+  source: VisualSection,
+  engine: NestedEngine,
+  metrics: SupplementalMeasurements,
+  context: DerivationContext,
+): PlacedSection | null {
+  const derived = protect(() => deriveNestedSection(source, engine, metrics, context));
+  return derived.ok ? derived.value : null;
+}
+/** A nested-admitted modules section derives through the in-repo engine; any failure keeps the legacy derivation. */
+async function sectionOf(
+  source: VisualSection,
+  prior: SectionCandidate | null,
+  metrics: SupplementalMeasurements,
+  context: DerivationContext,
+): Promise<PlacedSection> {
+  const engine = context.dependencies.nested;
+  if (engine === undefined || !admitNested(source))
+    return arrangeSection(source, prior, metrics, context);
+  return (
+    attempted(source, engine, metrics, context) ?? arrangeSection(source, prior, metrics, context)
+  );
+}
 /** Derive one complete scene and reject stale work before it can be returned to Authoring. */
 export async function arrange(
   request: CheckedLayoutRequest,
@@ -53,7 +85,7 @@ export async function arrange(
     [],
     async (result, source) => {
       requireValue(await dependencies.jobs.checkpoint(request.job));
-      const section = await arrangeSection(
+      const section = await sectionOf(
         source,
         prior?.sections.find((section) => section.id === source.id) ?? null,
         request.measurements,

@@ -1,3 +1,4 @@
+import type { WireRoutePreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
 import type { DiagramObject } from '../contract/records/owners.js';
 import type { Submission } from '../contract/records/submission.js';
@@ -327,19 +328,36 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(planned.error);
       return;
     }
-    submitCanvas(intent, planned.value);
-    previewRoutes(active, intent);
+    submitFeasibleCanvas(active, intent, planned.value);
   }
-  /** Preview geometry is local and temporary; the ordinary Authoring transaction still owns acceptance. */
-  function previewRoutes(active: ActiveDiagram, intent: EditIntent): void {
-    if (intent.kind !== 'placement' || bindings.previewRoutes === undefined) return;
+  /** Reject infeasible local geometry before any Authoring submission; retain the human draft. */
+  function submitFeasibleCanvas(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    changes: readonly import('../contract/records/owners.js').Change[],
+  ): void {
     const start = performance.now();
-    const preview = bindings.previewRoutes(active.document, intent);
-    if (!preview.ok) return;
+    const preview = bindings.previewRoutes?.(active.document, intent) ?? { ok: true, value: [] };
+    if (!preview.ok) {
+      active.session.dispatch({ kind: 'reject', id: intent.id, message: preview.error.message });
+      report(preview.error);
+      return;
+    }
+    submitCanvas(intent, changes);
+    if (preview.value.length === 0) return;
+    publishPreview(active, intent, preview.value, start);
+  }
+  /** Measure only inspected routes accepted by the Canvas gesture currently awaiting confirmation. */
+  function publishPreview(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    wires: readonly WireRoutePreview[],
+    start: number,
+  ): void {
     const accepted = active.session.dispatch({
       kind: 'preview-routes',
       id: intent.id,
-      wires: preview.value,
+      wires,
     });
     if (!accepted.ok) return;
     if (accepted.value.state.routePreview?.gesture !== intent.id) return;

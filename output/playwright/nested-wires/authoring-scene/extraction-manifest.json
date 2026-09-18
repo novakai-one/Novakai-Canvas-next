@@ -1,0 +1,6036 @@
+{
+  "scope": "All .ts files in capability/authoring, including tests; importer -> imported file. Import declarations only; re-exports are not import declarations.",
+  "nodes": [
+    {
+      "number": 1,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "path": "adapters/node-identity.ts",
+      "label": "node-identity.ts"
+    },
+    {
+      "number": 2,
+      "file": "capability/authoring/contract/api.ts",
+      "path": "contract/api.ts",
+      "label": "api.ts"
+    },
+    {
+      "number": 3,
+      "file": "capability/authoring/contract/brands.ts",
+      "path": "contract/brands.ts",
+      "label": "brands.ts"
+    },
+    {
+      "number": 4,
+      "file": "capability/authoring/contract/compose.ts",
+      "path": "contract/compose.ts",
+      "label": "compose.ts"
+    },
+    {
+      "number": 5,
+      "file": "capability/authoring/contract/errors.ts",
+      "path": "contract/errors.ts",
+      "label": "errors.ts"
+    },
+    {
+      "number": 6,
+      "file": "capability/authoring/contract/index.ts",
+      "path": "contract/index.ts",
+      "label": "index.ts"
+    },
+    {
+      "number": 7,
+      "file": "capability/authoring/contract/ports/decoding.ts",
+      "path": "contract/ports/decoding.ts",
+      "label": "decoding.ts"
+    },
+    {
+      "number": 8,
+      "file": "capability/authoring/contract/ports/planning.ts",
+      "path": "contract/ports/planning.ts",
+      "label": "planning.ts"
+    },
+    {
+      "number": 9,
+      "file": "capability/authoring/contract/ports/resources.ts",
+      "path": "contract/ports/resources.ts",
+      "label": "resources.ts"
+    },
+    {
+      "number": 10,
+      "file": "capability/authoring/contract/ports/runtime.ts",
+      "path": "contract/ports/runtime.ts",
+      "label": "runtime.ts"
+    },
+    {
+      "number": 11,
+      "file": "capability/authoring/contract/ports/store.ts",
+      "path": "contract/ports/store.ts",
+      "label": "store.ts"
+    },
+    {
+      "number": 12,
+      "file": "capability/authoring/contract/records/failure-source.ts",
+      "path": "contract/records/failure-source.ts",
+      "label": "failure-source.ts"
+    },
+    {
+      "number": 13,
+      "file": "capability/authoring/contract/records/history.ts",
+      "path": "contract/records/history.ts",
+      "label": "history.ts"
+    },
+    {
+      "number": 14,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "path": "contract/records/proposal.ts",
+      "label": "proposal.ts"
+    },
+    {
+      "number": 15,
+      "file": "capability/authoring/contract/records/request.ts",
+      "path": "contract/records/request.ts",
+      "label": "request.ts"
+    },
+    {
+      "number": 16,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "path": "contract/records/storage.ts",
+      "label": "storage.ts"
+    },
+    {
+      "number": 17,
+      "file": "capability/authoring/contract/types.ts",
+      "path": "contract/types.ts",
+      "label": "types.ts"
+    },
+    {
+      "number": 18,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "path": "core/admission/candidate.ts",
+      "label": "candidate.ts"
+    },
+    {
+      "number": 19,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "path": "core/admission/dependencies.ts",
+      "label": "dependencies.ts"
+    },
+    {
+      "number": 20,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "path": "core/admission/pipeline.ts",
+      "label": "pipeline.ts"
+    },
+    {
+      "number": 21,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "path": "core/admission/prepare.ts",
+      "label": "prepare.ts"
+    },
+    {
+      "number": 22,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "path": "core/admission/registry.ts",
+      "label": "registry.ts"
+    },
+    {
+      "number": 23,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "path": "core/admission/resources.ts",
+      "label": "resources.ts"
+    },
+    {
+      "number": 24,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "path": "core/history/inverse.ts",
+      "label": "inverse.ts"
+    },
+    {
+      "number": 25,
+      "file": "capability/authoring/core/history/journal.ts",
+      "path": "core/history/journal.ts",
+      "label": "journal.ts"
+    },
+    {
+      "number": 26,
+      "file": "capability/authoring/core/history/read.ts",
+      "path": "core/history/read.ts",
+      "label": "read.ts"
+    },
+    {
+      "number": 27,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "path": "core/identity/canonical.ts",
+      "label": "canonical.ts"
+    },
+    {
+      "number": 28,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "path": "core/identity/receipts.ts",
+      "label": "receipts.ts"
+    },
+    {
+      "number": 29,
+      "file": "capability/authoring/core/records/changes.ts",
+      "path": "core/records/changes.ts",
+      "label": "changes.ts"
+    },
+    {
+      "number": 30,
+      "file": "capability/authoring/core/records/keys.ts",
+      "path": "core/records/keys.ts",
+      "label": "keys.ts"
+    },
+    {
+      "number": 31,
+      "file": "capability/authoring/core/records/versions.ts",
+      "path": "core/records/versions.ts",
+      "label": "versions.ts"
+    },
+    {
+      "number": 32,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "path": "core/transactions/apply.ts",
+      "label": "apply.ts"
+    },
+    {
+      "number": 33,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "path": "core/transactions/commit.ts",
+      "label": "commit.ts"
+    },
+    {
+      "number": 34,
+      "file": "capability/authoring/core/transactions/notifications.ts",
+      "path": "core/transactions/notifications.ts",
+      "label": "notifications.ts"
+    },
+    {
+      "number": 35,
+      "file": "capability/authoring/core/validation/input.ts",
+      "path": "core/validation/input.ts",
+      "label": "input.ts"
+    },
+    {
+      "number": 36,
+      "file": "capability/authoring/core/validation/outcomes.ts",
+      "path": "core/validation/outcomes.ts",
+      "label": "outcomes.ts"
+    },
+    {
+      "number": 37,
+      "file": "capability/authoring/core/validation/plain-data.ts",
+      "path": "core/validation/plain-data.ts",
+      "label": "plain-data.ts"
+    },
+    {
+      "number": 38,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "path": "core/validation/snapshot.ts",
+      "label": "snapshot.ts"
+    },
+    {
+      "number": 39,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "path": "tests/admission.test.ts",
+      "label": "admission.test.ts"
+    },
+    {
+      "number": 40,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "path": "tests/domain-fixture.ts",
+      "label": "domain-fixture.ts"
+    },
+    {
+      "number": 41,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "path": "tests/failures.test.ts",
+      "label": "failures.test.ts"
+    },
+    {
+      "number": 42,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "path": "tests/fixtures.ts",
+      "label": "fixtures.ts"
+    },
+    {
+      "number": 43,
+      "file": "capability/authoring/tests/gates.ts",
+      "path": "tests/gates.ts",
+      "label": "gates.ts"
+    },
+    {
+      "number": 44,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "path": "tests/history-fixtures.ts",
+      "label": "history-fixtures.ts"
+    },
+    {
+      "number": 45,
+      "file": "capability/authoring/tests/history.test.ts",
+      "path": "tests/history.test.ts",
+      "label": "history.test.ts"
+    },
+    {
+      "number": 46,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "path": "tests/retries.test.ts",
+      "label": "retries.test.ts"
+    },
+    {
+      "number": 47,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "path": "tests/storage-fixture.ts",
+      "label": "storage-fixture.ts"
+    }
+  ],
+  "wires": [
+    {
+      "from": 1,
+      "to": 3,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 2,
+      "module": "../contract/brands.js",
+      "symbols": [
+        "digest",
+        "timestamp"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest, timestamp } from '../contract/brands.js';",
+      "id": "w01",
+      "label": "digest, timestamp"
+    },
+    {
+      "from": 1,
+      "to": 5,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 6,
+      "module": "../contract/errors.js",
+      "symbols": [
+        "failure"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { failure } from '../contract/errors.js';",
+      "id": "w02",
+      "label": "failure"
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 1,
+      "module": "./brands.js",
+      "symbols": [
+        "workspaceId",
+        "requestId"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { workspaceId, requestId } from './brands.js';",
+      "id": "w03",
+      "label": "workspaceId, requestId"
+    },
+    {
+      "from": 2,
+      "to": 35,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 7,
+      "module": "../core/validation/input.js",
+      "symbols": [
+        "readShape",
+        "readRequest",
+        "readOptions"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape, readRequest, readOptions } from '../core/validation/input.js';",
+      "id": "w04",
+      "label": "readShape, readRequest, readOptions"
+    },
+    {
+      "from": 2,
+      "to": 38,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 8,
+      "module": "../core/validation/snapshot.js",
+      "symbols": [
+        "readSnapshot",
+        "readReceipt"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readSnapshot, readReceipt } from '../core/validation/snapshot.js';",
+      "id": "w05",
+      "label": "readSnapshot, readReceipt"
+    },
+    {
+      "from": 2,
+      "to": 36,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 9,
+      "module": "../core/validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "protect",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, protect, reject } from '../core/validation/outcomes.js';",
+      "id": "w06",
+      "label": "accepted, protect, reject"
+    },
+    {
+      "from": 2,
+      "to": 22,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 10,
+      "module": "../core/admission/registry.js",
+      "symbols": [
+        "validateRegistry"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { validateRegistry } from '../core/admission/registry.js';",
+      "id": "w07",
+      "label": "validateRegistry"
+    },
+    {
+      "from": 2,
+      "to": 21,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 11,
+      "module": "../core/admission/prepare.js",
+      "symbols": [
+        "withCandidate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { withCandidate } from '../core/admission/prepare.js';",
+      "id": "w08",
+      "label": "withCandidate"
+    },
+    {
+      "from": 2,
+      "to": 32,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 12,
+      "module": "../core/transactions/apply.js",
+      "symbols": [
+        "applyCandidate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { applyCandidate } from '../core/transactions/apply.js';",
+      "id": "w09",
+      "label": "applyCandidate"
+    },
+    {
+      "from": 4,
+      "to": 1,
+      "file": "capability/authoring/contract/compose.ts",
+      "line": 1,
+      "module": "../adapters/node-identity.js",
+      "symbols": [
+        "createNodeIdentity"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createNodeIdentity } from '../adapters/node-identity.js';",
+      "id": "w10",
+      "label": "createNodeIdentity"
+    },
+    {
+      "from": 4,
+      "to": 2,
+      "file": "capability/authoring/contract/compose.ts",
+      "line": 2,
+      "module": "./api.js",
+      "symbols": [
+        "createAuthoring"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createAuthoring } from './api.js';",
+      "id": "w11",
+      "label": "createAuthoring"
+    },
+    {
+      "from": 5,
+      "to": 12,
+      "file": "capability/authoring/contract/errors.ts",
+      "line": 1,
+      "module": "./records/failure-source.js",
+      "symbols": [
+        "failureSource"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { failureSource } from './records/failure-source.js';",
+      "id": "w12",
+      "label": "failureSource"
+    },
+    {
+      "from": 13,
+      "to": 3,
+      "file": "capability/authoring/contract/records/history.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "requestId",
+        "actorId",
+        "timestamp"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { requestId, actorId, timestamp } from '../brands.js';",
+      "id": "w13",
+      "label": "requestId, actorId, timestamp"
+    },
+    {
+      "from": 13,
+      "to": 16,
+      "file": "capability/authoring/contract/records/history.ts",
+      "line": 3,
+      "module": "./storage.js",
+      "symbols": [
+        "keySchema",
+        "storedSchema",
+        "versionSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keySchema, storedSchema, versionSchema } from './storage.js';",
+      "id": "w14",
+      "label": "keySchema, storedSchema, versionSchema"
+    },
+    {
+      "from": 14,
+      "to": 3,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest } from '../brands.js';",
+      "id": "w15",
+      "label": "digest"
+    },
+    {
+      "from": 14,
+      "to": 5,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 4,
+      "module": "../errors.js",
+      "symbols": [
+        "diagnosticSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { diagnosticSchema } from '../errors.js';",
+      "id": "w16",
+      "label": "diagnosticSchema"
+    },
+    {
+      "from": 14,
+      "to": 16,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 6,
+      "module": "./storage.js",
+      "symbols": [
+        "writeSchema",
+        "versionSchema",
+        "jsonSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { writeSchema, versionSchema, jsonSchema } from './storage.js';",
+      "id": "w17",
+      "label": "writeSchema, versionSchema, jsonSchema"
+    },
+    {
+      "from": 15,
+      "to": 3,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "workspaceId",
+        "requestId",
+        "actorId",
+        "plannerId",
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { workspaceId, requestId, actorId, plannerId, digest } from '../brands.js';",
+      "id": "w18",
+      "label": "workspaceId, requestId, actorId, plannerId, digest"
+    },
+    {
+      "from": 15,
+      "to": 16,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 5,
+      "module": "./storage.js",
+      "symbols": [
+        "keySchema",
+        "versionSchema",
+        "jsonSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keySchema, versionSchema, jsonSchema } from './storage.js';",
+      "id": "w19",
+      "label": "keySchema, versionSchema, jsonSchema"
+    },
+    {
+      "from": 16,
+      "to": 3,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "workspaceId",
+        "recordId",
+        "requestId",
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { workspaceId, recordId, requestId, digest } from '../brands.js';",
+      "id": "w20",
+      "label": "workspaceId, recordId, requestId, digest"
+    },
+    {
+      "from": 16,
+      "to": 5,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 3,
+      "module": "../errors.js",
+      "symbols": [
+        "diagnosticSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { diagnosticSchema } from '../errors.js';",
+      "id": "w21",
+      "label": "diagnosticSchema"
+    },
+    {
+      "from": 18,
+      "to": 16,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 5,
+      "module": "../../contract/records/storage.js",
+      "symbols": [
+        "versionSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { versionSchema } from '../../contract/records/storage.js';",
+      "id": "w22",
+      "label": "versionSchema"
+    },
+    {
+      "from": 18,
+      "to": 19,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 6,
+      "module": "./dependencies.js",
+      "symbols": [
+        "checkProposal"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkProposal } from './dependencies.js';",
+      "id": "w23",
+      "label": "checkProposal"
+    },
+    {
+      "from": 18,
+      "to": 29,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 7,
+      "module": "../records/changes.js",
+      "symbols": [
+        "netWrite",
+        "installWrites"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { netWrite, installWrites } from '../records/changes.js';",
+      "id": "w24",
+      "label": "netWrite, installWrites"
+    },
+    {
+      "from": 18,
+      "to": 36,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 8,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "freeze"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, freeze } from '../validation/outcomes.js';",
+      "id": "w25",
+      "label": "accepted, freeze"
+    },
+    {
+      "from": 18,
+      "to": 35,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 9,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';",
+      "id": "w26",
+      "label": "readShape"
+    },
+    {
+      "from": 19,
+      "to": 31,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "line": 3,
+      "module": "../records/versions.js",
+      "symbols": [
+        "uniqueKeys",
+        "compareVersions",
+        "checkWriteAuthority",
+        "mergeVersions"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  uniqueKeys,\n  compareVersions,\n  checkWriteAuthority,\n  mergeVersions,\n} from '../records/versions.js';",
+      "id": "w27",
+      "label": "uniqueKeys, compareVersions, checkWriteAuthority, mergeVersions"
+    },
+    {
+      "from": 19,
+      "to": 36,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "line": 9,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w28",
+      "label": "reject"
+    },
+    {
+      "from": 20,
+      "to": 16,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [
+        "jsonSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { jsonSchema } from '../../contract/records/storage.js';",
+      "id": "w29",
+      "label": "jsonSchema"
+    },
+    {
+      "from": 20,
+      "to": 3,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 5,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest } from '../../contract/brands.js';",
+      "id": "w30",
+      "label": "digest"
+    },
+    {
+      "from": 20,
+      "to": 14,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 8,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [
+        "proposalSchema",
+        "leaseDataSchema",
+        "feasibilitySchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  proposalSchema,\n  leaseDataSchema,\n  feasibilitySchema,\n} from '../../contract/records/proposal.js';",
+      "id": "w31",
+      "label": "proposalSchema, leaseDataSchema, feasibilitySchema"
+    },
+    {
+      "from": 20,
+      "to": 22,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 14,
+      "module": "./registry.js",
+      "symbols": [
+        "planIntent"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { planIntent } from './registry.js';",
+      "id": "w32",
+      "label": "planIntent"
+    },
+    {
+      "from": 20,
+      "to": 18,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 15,
+      "module": "./candidate.js",
+      "symbols": [
+        "createCandidate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createCandidate } from './candidate.js';",
+      "id": "w33",
+      "label": "createCandidate"
+    },
+    {
+      "from": 20,
+      "to": 19,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 17,
+      "module": "./dependencies.js",
+      "symbols": [
+        "checkDependencies"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkDependencies } from './dependencies.js';",
+      "id": "w34",
+      "label": "checkDependencies"
+    },
+    {
+      "from": 20,
+      "to": 23,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 18,
+      "module": "./resources.js",
+      "symbols": [
+        "checkCoverage"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkCoverage } from './resources.js';",
+      "id": "w35",
+      "label": "checkCoverage"
+    },
+    {
+      "from": 20,
+      "to": 35,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 19,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';",
+      "id": "w36",
+      "label": "readShape"
+    },
+    {
+      "from": 20,
+      "to": 36,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 20,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "freeze",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, freeze, reject } from '../validation/outcomes.js';",
+      "id": "w37",
+      "label": "accepted, freeze, reject"
+    },
+    {
+      "from": 20,
+      "to": 27,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 21,
+      "module": "../identity/canonical.js",
+      "symbols": [
+        "canonical"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { canonical } from '../identity/canonical.js';",
+      "id": "w38",
+      "label": "canonical"
+    },
+    {
+      "from": 21,
+      "to": 27,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 7,
+      "module": "../identity/canonical.js",
+      "symbols": [
+        "fingerprint"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { fingerprint } from '../identity/canonical.js';",
+      "id": "w39",
+      "label": "fingerprint"
+    },
+    {
+      "from": 21,
+      "to": 28,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 8,
+      "module": "../identity/receipts.js",
+      "symbols": [
+        "reconcile"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reconcile } from '../identity/receipts.js';",
+      "id": "w40",
+      "label": "reconcile"
+    },
+    {
+      "from": 21,
+      "to": 38,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 9,
+      "module": "../validation/snapshot.js",
+      "symbols": [
+        "readSnapshot"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readSnapshot } from '../validation/snapshot.js';",
+      "id": "w41",
+      "label": "readSnapshot"
+    },
+    {
+      "from": 21,
+      "to": 36,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 10,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted } from '../validation/outcomes.js';",
+      "id": "w42",
+      "label": "accepted"
+    },
+    {
+      "from": 21,
+      "to": 19,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 11,
+      "module": "./dependencies.js",
+      "symbols": [
+        "checkRequest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkRequest } from './dependencies.js';",
+      "id": "w43",
+      "label": "checkRequest"
+    },
+    {
+      "from": 21,
+      "to": 20,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 12,
+      "module": "./pipeline.js",
+      "symbols": [
+        "buildCandidate",
+        "checkCancellation"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { buildCandidate, checkCancellation } from './pipeline.js';",
+      "id": "w44",
+      "label": "buildCandidate, checkCancellation"
+    },
+    {
+      "from": 21,
+      "to": 23,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 13,
+      "module": "./resources.js",
+      "symbols": [
+        "releaseProtection"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { releaseProtection } from './resources.js';",
+      "id": "w45",
+      "label": "releaseProtection"
+    },
+    {
+      "from": 22,
+      "to": 3,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 6,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "plannerId"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { plannerId } from '../../contract/brands.js';",
+      "id": "w46",
+      "label": "plannerId"
+    },
+    {
+      "from": 22,
+      "to": 5,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 7,
+      "module": "../../contract/errors.js",
+      "symbols": [
+        "failure"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { failure } from '../../contract/errors.js';",
+      "id": "w47",
+      "label": "failure"
+    },
+    {
+      "from": 22,
+      "to": 36,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 8,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';",
+      "id": "w48",
+      "label": "accepted, reject"
+    },
+    {
+      "from": 22,
+      "to": 24,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 9,
+      "module": "../history/inverse.js",
+      "symbols": [
+        "planInverse"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { planInverse } from '../history/inverse.js';",
+      "id": "w49",
+      "label": "planInverse"
+    },
+    {
+      "from": 23,
+      "to": 30,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 4,
+      "module": "../records/keys.js",
+      "symbols": [
+        "findRecord"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord } from '../records/keys.js';",
+      "id": "w50",
+      "label": "findRecord"
+    },
+    {
+      "from": 23,
+      "to": 36,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 5,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w51",
+      "label": "reject"
+    },
+    {
+      "from": 24,
+      "to": 26,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 5,
+      "module": "./read.js",
+      "symbols": [
+        "readTransaction",
+        "readHead",
+        "transactionKey",
+        "headKey"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readTransaction, readHead, transactionKey, headKey } from './read.js';",
+      "id": "w52",
+      "label": "readTransaction, readHead, transactionKey, headKey"
+    },
+    {
+      "from": 24,
+      "to": 31,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 6,
+      "module": "../records/versions.js",
+      "symbols": [
+        "compareVersions",
+        "uniqueKeys"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { compareVersions, uniqueKeys } from '../records/versions.js';",
+      "id": "w53",
+      "label": "compareVersions, uniqueKeys"
+    },
+    {
+      "from": 24,
+      "to": 30,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 7,
+      "module": "../records/keys.js",
+      "symbols": [
+        "keyText",
+        "versionOf"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keyText, versionOf } from '../records/keys.js';",
+      "id": "w54",
+      "label": "keyText, versionOf"
+    },
+    {
+      "from": 24,
+      "to": 36,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 8,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w55",
+      "label": "reject"
+    },
+    {
+      "from": 25,
+      "to": 13,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 1,
+      "module": "../../contract/records/history.js",
+      "symbols": [
+        "transactionSchema",
+        "headSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { transactionSchema, headSchema } from '../../contract/records/history.js';",
+      "id": "w56",
+      "label": "transactionSchema, headSchema"
+    },
+    {
+      "from": 25,
+      "to": 3,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 12,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "timestamp"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { timestamp } from '../../contract/brands.js';",
+      "id": "w57",
+      "label": "timestamp"
+    },
+    {
+      "from": 25,
+      "to": 30,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 14,
+      "module": "../records/keys.js",
+      "symbols": [
+        "findRecord",
+        "versionOf"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord, versionOf } from '../records/keys.js';",
+      "id": "w58",
+      "label": "findRecord, versionOf"
+    },
+    {
+      "from": 25,
+      "to": 26,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 15,
+      "module": "./read.js",
+      "symbols": [
+        "transactionKey",
+        "headKey"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { transactionKey, headKey } from './read.js';",
+      "id": "w59",
+      "label": "transactionKey, headKey"
+    },
+    {
+      "from": 25,
+      "to": 19,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 16,
+      "module": "../admission/dependencies.js",
+      "symbols": [
+        "checkDependencies"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkDependencies } from '../admission/dependencies.js';",
+      "id": "w60",
+      "label": "checkDependencies"
+    },
+    {
+      "from": 25,
+      "to": 35,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 17,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';",
+      "id": "w61",
+      "label": "readShape"
+    },
+    {
+      "from": 25,
+      "to": 37,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 18,
+      "module": "../validation/plain-data.js",
+      "symbols": [
+        "copyJson",
+        "storedLimits"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { copyJson, storedLimits } from '../validation/plain-data.js';",
+      "id": "w62",
+      "label": "copyJson, storedLimits"
+    },
+    {
+      "from": 25,
+      "to": 36,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 19,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';",
+      "id": "w63",
+      "label": "accepted, reject"
+    },
+    {
+      "from": 26,
+      "to": 3,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 1,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "recordId"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { recordId } from '../../contract/brands.js';",
+      "id": "w64",
+      "label": "recordId"
+    },
+    {
+      "from": 26,
+      "to": 13,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 3,
+      "module": "../../contract/records/history.js",
+      "symbols": [
+        "transactionSchema",
+        "headSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { transactionSchema, headSchema } from '../../contract/records/history.js';",
+      "id": "w65",
+      "label": "transactionSchema, headSchema"
+    },
+    {
+      "from": 26,
+      "to": 30,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 6,
+      "module": "../records/keys.js",
+      "symbols": [
+        "findRecord"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord } from '../records/keys.js';",
+      "id": "w66",
+      "label": "findRecord"
+    },
+    {
+      "from": 26,
+      "to": 35,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 7,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';",
+      "id": "w67",
+      "label": "readShape"
+    },
+    {
+      "from": 26,
+      "to": 37,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 8,
+      "module": "../validation/plain-data.js",
+      "symbols": [
+        "storedLimits"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { storedLimits } from '../validation/plain-data.js';",
+      "id": "w68",
+      "label": "storedLimits"
+    },
+    {
+      "from": 26,
+      "to": 36,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 9,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w69",
+      "label": "reject"
+    },
+    {
+      "from": 27,
+      "to": 3,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 5,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest } from '../../contract/brands.js';",
+      "id": "w70",
+      "label": "digest"
+    },
+    {
+      "from": 27,
+      "to": 35,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 6,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';",
+      "id": "w71",
+      "label": "readShape"
+    },
+    {
+      "from": 27,
+      "to": 36,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 7,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted } from '../validation/outcomes.js';",
+      "id": "w72",
+      "label": "accepted"
+    },
+    {
+      "from": 28,
+      "to": 38,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 5,
+      "module": "../validation/snapshot.js",
+      "symbols": [
+        "readReceipt"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readReceipt } from '../validation/snapshot.js';",
+      "id": "w73",
+      "label": "readReceipt"
+    },
+    {
+      "from": 28,
+      "to": 36,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 6,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';",
+      "id": "w74",
+      "label": "accepted, reject"
+    },
+    {
+      "from": 29,
+      "to": 30,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 8,
+      "module": "./keys.js",
+      "symbols": [
+        "findRecord",
+        "keyText"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord, keyText } from './keys.js';",
+      "id": "w75",
+      "label": "findRecord, keyText"
+    },
+    {
+      "from": 29,
+      "to": 27,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 9,
+      "module": "../identity/canonical.js",
+      "symbols": [
+        "canonical"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { canonical } from '../identity/canonical.js';",
+      "id": "w76",
+      "label": "canonical"
+    },
+    {
+      "from": 29,
+      "to": 36,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 10,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w77",
+      "label": "reject"
+    },
+    {
+      "from": 31,
+      "to": 30,
+      "file": "capability/authoring/core/records/versions.ts",
+      "line": 3,
+      "module": "./keys.js",
+      "symbols": [
+        "keyText",
+        "versionOf"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keyText, versionOf } from './keys.js';",
+      "id": "w78",
+      "label": "keyText, versionOf"
+    },
+    {
+      "from": 31,
+      "to": 36,
+      "file": "capability/authoring/core/records/versions.ts",
+      "line": 4,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w79",
+      "label": "reject"
+    },
+    {
+      "from": 32,
+      "to": 25,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 6,
+      "module": "../history/journal.js",
+      "symbols": [
+        "createJournal"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createJournal } from '../history/journal.js';",
+      "id": "w80",
+      "label": "createJournal"
+    },
+    {
+      "from": 32,
+      "to": 20,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 7,
+      "module": "../admission/pipeline.js",
+      "symbols": [
+        "checkCancellation"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkCancellation } from '../admission/pipeline.js';",
+      "id": "w81",
+      "label": "checkCancellation"
+    },
+    {
+      "from": 32,
+      "to": 33,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 8,
+      "module": "./commit.js",
+      "symbols": [
+        "commitAndReconcile"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { commitAndReconcile } from './commit.js';",
+      "id": "w82",
+      "label": "commitAndReconcile"
+    },
+    {
+      "from": 32,
+      "to": 34,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 9,
+      "module": "./notifications.js",
+      "symbols": [
+        "notifyCommitted"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { notifyCommitted } from './notifications.js';",
+      "id": "w83",
+      "label": "notifyCommitted"
+    },
+    {
+      "from": 32,
+      "to": 36,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 10,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';",
+      "id": "w84",
+      "label": "reject"
+    },
+    {
+      "from": 33,
+      "to": 38,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 4,
+      "module": "../validation/snapshot.js",
+      "symbols": [
+        "readReceipt"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readReceipt } from '../validation/snapshot.js';",
+      "id": "w85",
+      "label": "readReceipt"
+    },
+    {
+      "from": 33,
+      "to": 28,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 5,
+      "module": "../identity/receipts.js",
+      "symbols": [
+        "reconcile"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reconcile } from '../identity/receipts.js';",
+      "id": "w86",
+      "label": "reconcile"
+    },
+    {
+      "from": 33,
+      "to": 36,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 6,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';",
+      "id": "w87",
+      "label": "accepted, reject"
+    },
+    {
+      "from": 35,
+      "to": 15,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 3,
+      "module": "../../contract/records/request.js",
+      "symbols": [
+        "requestSchema",
+        "applyOptionsSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { requestSchema, applyOptionsSchema } from '../../contract/records/request.js';",
+      "id": "w88",
+      "label": "requestSchema, applyOptionsSchema"
+    },
+    {
+      "from": 35,
+      "to": 37,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 5,
+      "module": "./plain-data.js",
+      "symbols": [
+        "copyJson"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { copyJson } from './plain-data.js';",
+      "id": "w89",
+      "label": "copyJson"
+    },
+    {
+      "from": 35,
+      "to": 36,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 7,
+      "module": "./outcomes.js",
+      "symbols": [
+        "reject",
+        "freeze"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject, freeze } from './outcomes.js';",
+      "id": "w90",
+      "label": "reject, freeze"
+    },
+    {
+      "from": 36,
+      "to": 5,
+      "file": "capability/authoring/core/validation/outcomes.ts",
+      "line": 1,
+      "module": "../../contract/errors.js",
+      "symbols": [
+        "AuthoringFault",
+        "failure",
+        "diagnosticSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { AuthoringFault, failure, diagnosticSchema } from '../../contract/errors.js';",
+      "id": "w91",
+      "label": "AuthoringFault, failure, diagnosticSchema"
+    },
+    {
+      "from": 37,
+      "to": 36,
+      "file": "capability/authoring/core/validation/plain-data.ts",
+      "line": 2,
+      "module": "./outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from './outcomes.js';",
+      "id": "w92",
+      "label": "reject"
+    },
+    {
+      "from": 38,
+      "to": 16,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [
+        "snapshotSchema",
+        "receiptSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { snapshotSchema, receiptSchema } from '../../contract/records/storage.js';",
+      "id": "w93",
+      "label": "snapshotSchema, receiptSchema"
+    },
+    {
+      "from": 38,
+      "to": 31,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 4,
+      "module": "../records/versions.js",
+      "symbols": [
+        "uniqueKeys"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { uniqueKeys } from '../records/versions.js';",
+      "id": "w94",
+      "label": "uniqueKeys"
+    },
+    {
+      "from": 38,
+      "to": 35,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 5,
+      "module": "./input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from './input.js';",
+      "id": "w95",
+      "label": "readShape"
+    },
+    {
+      "from": 38,
+      "to": 37,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 6,
+      "module": "./plain-data.js",
+      "symbols": [
+        "storedLimits"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { storedLimits } from './plain-data.js';",
+      "id": "w96",
+      "label": "storedLimits"
+    },
+    {
+      "from": 38,
+      "to": 36,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 7,
+      "module": "./outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from './outcomes.js';",
+      "id": "w97",
+      "label": "reject"
+    },
+    {
+      "from": 39,
+      "to": 6,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "requestSchema"
+      ],
+      "excludedTypes": [
+        "Write"
+      ],
+      "importKind": "value",
+      "sourceText": "import { createAuthoring, requestSchema, type Write } from '../contract/index.js';",
+      "id": "w98",
+      "label": "createAuthoring, requestSchema"
+    },
+    {
+      "from": 39,
+      "to": 43,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 3,
+      "module": "./gates.js",
+      "symbols": [
+        "gate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { gate } from './gates.js';",
+      "id": "w99",
+      "label": "gate"
+    },
+    {
+      "from": 39,
+      "to": 42,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 4,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "catalog",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media",
+        "liveCollections"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  catalog,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n  liveCollections,\n} from './fixtures.js';",
+      "id": "w100",
+      "label": "harness, seed, value, rejects, request, diagram, catalog, put, key, record, workspace, media, liveCollections"
+    },
+    {
+      "from": 40,
+      "to": 6,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "line": 7,
+      "module": "../contract/index.js",
+      "symbols": [
+        "proposalSchema",
+        "plannerId",
+        "failure"
+      ],
+      "excludedTypes": [
+        "CandidateValidator",
+        "IntentPlanner",
+        "Result",
+        "Snapshot",
+        "StoredRecord",
+        "ReadVersion",
+        "Proposal"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  proposalSchema,\n  plannerId,\n  failure,\n  type CandidateValidator,\n  type IntentPlanner,\n  type Result,\n  type Snapshot,\n  type StoredRecord,\n  type ReadVersion,\n  type Proposal,\n} from '../contract/index.js';",
+      "id": "w101",
+      "label": "proposalSchema, plannerId, failure"
+    },
+    {
+      "from": 41,
+      "to": 6,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "failure",
+        "plannerId",
+        "requestSchema",
+        "workspaceId"
+      ],
+      "excludedTypes": [
+        "Diagnostic",
+        "Snapshot",
+        "RecordKey",
+        "WorkspaceId",
+        "Result",
+        "ResourceLease",
+        "FeasibilityReport"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  failure,\n  plannerId,\n  requestSchema,\n  workspaceId,\n  type Diagnostic,\n  type Snapshot,\n  type RecordKey,\n  type WorkspaceId,\n  type Result,\n  type ResourceLease,\n  type FeasibilityReport,\n} from '../contract/index.js';",
+      "id": "w102",
+      "label": "createAuthoring, failure, plannerId, requestSchema, workspaceId"
+    },
+    {
+      "from": 41,
+      "to": 1,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 16,
+      "module": "../adapters/node-identity.js",
+      "symbols": [
+        "createNodeIdentity"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createNodeIdentity } from '../adapters/node-identity.js';",
+      "id": "w103",
+      "label": "createNodeIdentity"
+    },
+    {
+      "from": 41,
+      "to": 42,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 17,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n} from './fixtures.js';",
+      "id": "w104",
+      "label": "harness, seed, value, rejects, request, diagram, put, key, record, workspace, media"
+    },
+    {
+      "from": 41,
+      "to": 43,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 30,
+      "module": "./gates.js",
+      "symbols": [
+        "gate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { gate } from './gates.js';",
+      "id": "w105",
+      "label": "gate"
+    },
+    {
+      "from": 42,
+      "to": 6,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "recordId",
+        "workspaceId",
+        "digest",
+        "requestId",
+        "actorId",
+        "plannerId",
+        "requestSchema"
+      ],
+      "excludedTypes": [
+        "Authoring",
+        "Dependencies",
+        "Json",
+        "Request",
+        "Snapshot",
+        "StoredRecord",
+        "RecordKey",
+        "Write",
+        "Result",
+        "Receipt"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  recordId,\n  workspaceId,\n  digest,\n  requestId,\n  actorId,\n  plannerId,\n  requestSchema,\n  type Authoring,\n  type Dependencies,\n  type Json,\n  type Request,\n  type Snapshot,\n  type StoredRecord,\n  type RecordKey,\n  type Write,\n  type Result,\n  type Receipt,\n} from '../contract/index.js';",
+      "id": "w106",
+      "label": "createAuthoring, recordId, workspaceId, digest, requestId, actorId, plannerId, requestSchema"
+    },
+    {
+      "from": 42,
+      "to": 1,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 22,
+      "module": "../adapters/node-identity.js",
+      "symbols": [
+        "createNodeIdentity"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createNodeIdentity } from '../adapters/node-identity.js';",
+      "id": "w107",
+      "label": "createNodeIdentity"
+    },
+    {
+      "from": 42,
+      "to": 47,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 23,
+      "module": "./storage-fixture.js",
+      "symbols": [
+        "openStore",
+        "storageRoles"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { openStore, storageRoles } from './storage-fixture.js';",
+      "id": "w108",
+      "label": "openStore, storageRoles"
+    },
+    {
+      "from": 42,
+      "to": 40,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 24,
+      "module": "./domain-fixture.js",
+      "symbols": [
+        "fixturePlanner",
+        "domainValidator"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { fixturePlanner, domainValidator } from './domain-fixture.js';",
+      "id": "w109",
+      "label": "fixturePlanner, domainValidator"
+    },
+    {
+      "from": 43,
+      "to": 6,
+      "file": "capability/authoring/tests/gates.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring"
+      ],
+      "excludedTypes": [
+        "Result",
+        "Receipt",
+        "Request",
+        "FeasibilityReport"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  type Result,\n  type Receipt,\n  type Request,\n  type FeasibilityReport,\n} from '../contract/index.js';",
+      "id": "w110",
+      "label": "createAuthoring"
+    },
+    {
+      "from": 44,
+      "to": 6,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "line": 1,
+      "module": "../contract/index.js",
+      "symbols": [
+        "requestSchema",
+        "requestId",
+        "actorId"
+      ],
+      "excludedTypes": [
+        "Snapshot",
+        "Request",
+        "RecordKey"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  requestSchema,\n  requestId,\n  actorId,\n  type Snapshot,\n  type Request,\n  type RecordKey,\n} from '../contract/index.js';",
+      "id": "w111",
+      "label": "requestSchema, requestId, actorId"
+    },
+    {
+      "from": 44,
+      "to": 42,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "line": 9,
+      "module": "./fixtures.js",
+      "symbols": [
+        "observed",
+        "workspace",
+        "record"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { observed, workspace, record } from './fixtures.js';",
+      "id": "w112",
+      "label": "observed, workspace, record"
+    },
+    {
+      "from": 45,
+      "to": 6,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "failure"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createAuthoring, failure } from '../contract/index.js';",
+      "id": "w113",
+      "label": "createAuthoring, failure"
+    },
+    {
+      "from": 45,
+      "to": 42,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 3,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media",
+        "alternate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n  alternate,\n} from './fixtures.js';",
+      "id": "w114",
+      "label": "harness, seed, value, rejects, request, diagram, put, key, record, workspace, media, alternate"
+    },
+    {
+      "from": 45,
+      "to": 44,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 17,
+      "module": "./history-fixtures.js",
+      "symbols": [
+        "inverse",
+        "replaceHistoryBefore"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { inverse, replaceHistoryBefore } from './history-fixtures.js';",
+      "id": "w115",
+      "label": "inverse, replaceHistoryBefore"
+    },
+    {
+      "from": 46,
+      "to": 6,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "failure"
+      ],
+      "excludedTypes": [
+        "Result",
+        "Receipt",
+        "CommitRequest"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  failure,\n  type Result,\n  type Receipt,\n  type CommitRequest,\n} from '../contract/index.js';",
+      "id": "w116",
+      "label": "createAuthoring, failure"
+    },
+    {
+      "from": 46,
+      "to": 42,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 9,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media",
+        "alternate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n  alternate,\n} from './fixtures.js';",
+      "id": "w117",
+      "label": "harness, seed, value, rejects, request, diagram, put, key, record, workspace, media, alternate"
+    },
+    {
+      "from": 46,
+      "to": 43,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 23,
+      "module": "./gates.js",
+      "symbols": [
+        "race",
+        "gate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { race, gate } from './gates.js';",
+      "id": "w118",
+      "label": "race, gate"
+    },
+    {
+      "from": 47,
+      "to": 6,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "line": 7,
+      "module": "../contract/index.js",
+      "symbols": [
+        "snapshotSchema",
+        "receiptSchema",
+        "failure"
+      ],
+      "excludedTypes": [
+        "SnapshotReader",
+        "ReceiptReader",
+        "Committer",
+        "Result",
+        "ErrorCode"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  snapshotSchema,\n  receiptSchema,\n  failure,\n  type SnapshotReader,\n  type ReceiptReader,\n  type Committer,\n  type Result,\n  type ErrorCode,\n} from '../contract/index.js';",
+      "id": "w119",
+      "label": "snapshotSchema, receiptSchema, failure"
+    }
+  ],
+  "imports": [
+    {
+      "from": 1,
+      "to": null,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 1,
+      "module": "node:crypto",
+      "symbols": [
+        "createHash"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createHash } from 'node:crypto';"
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 2,
+      "module": "../contract/brands.js",
+      "symbols": [
+        "digest",
+        "timestamp"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest, timestamp } from '../contract/brands.js';"
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 3,
+      "module": "../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest",
+        "Timestamp"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest, Timestamp } from '../contract/brands.js';"
+    },
+    {
+      "from": 1,
+      "to": 10,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 4,
+      "module": "../contract/ports/runtime.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Hasher",
+        "Clock"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Hasher, Clock } from '../contract/ports/runtime.js';"
+    },
+    {
+      "from": 1,
+      "to": 5,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 5,
+      "module": "../contract/errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from '../contract/errors.js';"
+    },
+    {
+      "from": 1,
+      "to": 5,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 6,
+      "module": "../contract/errors.js",
+      "symbols": [
+        "failure"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { failure } from '../contract/errors.js';"
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 1,
+      "module": "./brands.js",
+      "symbols": [
+        "workspaceId",
+        "requestId"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { workspaceId, requestId } from './brands.js';"
+    },
+    {
+      "from": 2,
+      "to": 15,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 2,
+      "module": "./records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from './records/request.js';"
+    },
+    {
+      "from": 2,
+      "to": 17,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 3,
+      "module": "./types.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Authoring",
+        "Dependencies"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Authoring, Dependencies } from './types.js';"
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 4,
+      "module": "./errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from './errors.js';"
+    },
+    {
+      "from": 2,
+      "to": 16,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 5,
+      "module": "./records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Receipt } from './records/storage.js';"
+    },
+    {
+      "from": 2,
+      "to": 14,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 6,
+      "module": "./records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Preparation"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Preparation } from './records/proposal.js';"
+    },
+    {
+      "from": 2,
+      "to": 35,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 7,
+      "module": "../core/validation/input.js",
+      "symbols": [
+        "readShape",
+        "readRequest",
+        "readOptions"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape, readRequest, readOptions } from '../core/validation/input.js';"
+    },
+    {
+      "from": 2,
+      "to": 38,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 8,
+      "module": "../core/validation/snapshot.js",
+      "symbols": [
+        "readSnapshot",
+        "readReceipt"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readSnapshot, readReceipt } from '../core/validation/snapshot.js';"
+    },
+    {
+      "from": 2,
+      "to": 36,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 9,
+      "module": "../core/validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "protect",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, protect, reject } from '../core/validation/outcomes.js';"
+    },
+    {
+      "from": 2,
+      "to": 22,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 10,
+      "module": "../core/admission/registry.js",
+      "symbols": [
+        "validateRegistry"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { validateRegistry } from '../core/admission/registry.js';"
+    },
+    {
+      "from": 2,
+      "to": 21,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 11,
+      "module": "../core/admission/prepare.js",
+      "symbols": [
+        "withCandidate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { withCandidate } from '../core/admission/prepare.js';"
+    },
+    {
+      "from": 2,
+      "to": 32,
+      "file": "capability/authoring/contract/api.ts",
+      "line": 12,
+      "module": "../core/transactions/apply.js",
+      "symbols": [
+        "applyCandidate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { applyCandidate } from '../core/transactions/apply.js';"
+    },
+    {
+      "from": 3,
+      "to": null,
+      "file": "capability/authoring/contract/brands.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 4,
+      "to": 1,
+      "file": "capability/authoring/contract/compose.ts",
+      "line": 1,
+      "module": "../adapters/node-identity.js",
+      "symbols": [
+        "createNodeIdentity"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createNodeIdentity } from '../adapters/node-identity.js';"
+    },
+    {
+      "from": 4,
+      "to": 2,
+      "file": "capability/authoring/contract/compose.ts",
+      "line": 2,
+      "module": "./api.js",
+      "symbols": [
+        "createAuthoring"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createAuthoring } from './api.js';"
+    },
+    {
+      "from": 4,
+      "to": 17,
+      "file": "capability/authoring/contract/compose.ts",
+      "line": 3,
+      "module": "./types.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Authoring",
+        "Dependencies"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Authoring, Dependencies } from './types.js';"
+    },
+    {
+      "from": 5,
+      "to": 12,
+      "file": "capability/authoring/contract/errors.ts",
+      "line": 1,
+      "module": "./records/failure-source.js",
+      "symbols": [
+        "failureSource"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { failureSource } from './records/failure-source.js';"
+    },
+    {
+      "from": 5,
+      "to": 12,
+      "file": "capability/authoring/contract/errors.ts",
+      "line": 2,
+      "module": "./records/failure-source.js",
+      "symbols": [],
+      "excludedTypes": [
+        "FailureSource"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { FailureSource } from './records/failure-source.js';"
+    },
+    {
+      "from": 5,
+      "to": null,
+      "file": "capability/authoring/contract/errors.ts",
+      "line": 3,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 8,
+      "to": 3,
+      "file": "capability/authoring/contract/ports/planning.ts",
+      "line": 1,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "PlannerId"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { PlannerId } from '../brands.js';"
+    },
+    {
+      "from": 8,
+      "to": 5,
+      "file": "capability/authoring/contract/ports/planning.ts",
+      "line": 2,
+      "module": "../errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from '../errors.js';"
+    },
+    {
+      "from": 8,
+      "to": 15,
+      "file": "capability/authoring/contract/ports/planning.ts",
+      "line": 3,
+      "module": "../records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../records/request.js';"
+    },
+    {
+      "from": 8,
+      "to": 16,
+      "file": "capability/authoring/contract/ports/planning.ts",
+      "line": 4,
+      "module": "../records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Json",
+        "RecordKey",
+        "ReadVersion"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Json, RecordKey, ReadVersion } from '../records/storage.js';"
+    },
+    {
+      "from": 8,
+      "to": 14,
+      "file": "capability/authoring/contract/ports/planning.ts",
+      "line": 5,
+      "module": "../records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Proposal",
+        "FeasibilityReport"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Proposal, FeasibilityReport } from '../records/proposal.js';"
+    },
+    {
+      "from": 9,
+      "to": 3,
+      "file": "capability/authoring/contract/ports/resources.ts",
+      "line": 1,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../brands.js';"
+    },
+    {
+      "from": 9,
+      "to": 5,
+      "file": "capability/authoring/contract/ports/resources.ts",
+      "line": 2,
+      "module": "../errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from '../errors.js';"
+    },
+    {
+      "from": 9,
+      "to": 15,
+      "file": "capability/authoring/contract/ports/resources.ts",
+      "line": 3,
+      "module": "../records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../records/request.js';"
+    },
+    {
+      "from": 9,
+      "to": 16,
+      "file": "capability/authoring/contract/ports/resources.ts",
+      "line": 4,
+      "module": "../records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Json",
+        "ReadVersion"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Json, ReadVersion } from '../records/storage.js';"
+    },
+    {
+      "from": 10,
+      "to": 3,
+      "file": "capability/authoring/contract/ports/runtime.ts",
+      "line": 1,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest",
+        "Timestamp",
+        "RequestId",
+        "WorkspaceId"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest, Timestamp, RequestId, WorkspaceId } from '../brands.js';"
+    },
+    {
+      "from": 10,
+      "to": 5,
+      "file": "capability/authoring/contract/ports/runtime.ts",
+      "line": 2,
+      "module": "../errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from '../errors.js';"
+    },
+    {
+      "from": 10,
+      "to": 16,
+      "file": "capability/authoring/contract/ports/runtime.ts",
+      "line": 3,
+      "module": "../records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Receipt } from '../records/storage.js';"
+    },
+    {
+      "from": 11,
+      "to": 3,
+      "file": "capability/authoring/contract/ports/store.ts",
+      "line": 1,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "WorkspaceId",
+        "RequestId",
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { WorkspaceId, RequestId, Digest } from '../brands.js';"
+    },
+    {
+      "from": 11,
+      "to": 5,
+      "file": "capability/authoring/contract/ports/store.ts",
+      "line": 2,
+      "module": "../errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from '../errors.js';"
+    },
+    {
+      "from": 11,
+      "to": 16,
+      "file": "capability/authoring/contract/ports/store.ts",
+      "line": 3,
+      "module": "../records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Receipt",
+        "Write",
+        "ReadVersion",
+        "CommitOutcome"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Receipt, Write, ReadVersion, CommitOutcome } from '../records/storage.js';"
+    },
+    {
+      "from": 12,
+      "to": null,
+      "file": "capability/authoring/contract/records/failure-source.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 13,
+      "to": null,
+      "file": "capability/authoring/contract/records/history.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 13,
+      "to": 3,
+      "file": "capability/authoring/contract/records/history.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "requestId",
+        "actorId",
+        "timestamp"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { requestId, actorId, timestamp } from '../brands.js';"
+    },
+    {
+      "from": 13,
+      "to": 16,
+      "file": "capability/authoring/contract/records/history.ts",
+      "line": 3,
+      "module": "./storage.js",
+      "symbols": [
+        "keySchema",
+        "storedSchema",
+        "versionSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keySchema, storedSchema, versionSchema } from './storage.js';"
+    },
+    {
+      "from": 14,
+      "to": null,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 14,
+      "to": 3,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest } from '../brands.js';"
+    },
+    {
+      "from": 14,
+      "to": 3,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 3,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../brands.js';"
+    },
+    {
+      "from": 14,
+      "to": 5,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 4,
+      "module": "../errors.js",
+      "symbols": [
+        "diagnosticSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { diagnosticSchema } from '../errors.js';"
+    },
+    {
+      "from": 14,
+      "to": 5,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 5,
+      "module": "../errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Diagnostic"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Diagnostic } from '../errors.js';"
+    },
+    {
+      "from": 14,
+      "to": 16,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 6,
+      "module": "./storage.js",
+      "symbols": [
+        "writeSchema",
+        "versionSchema",
+        "jsonSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { writeSchema, versionSchema, jsonSchema } from './storage.js';"
+    },
+    {
+      "from": 14,
+      "to": 16,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 7,
+      "module": "./storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Write",
+        "ReadVersion",
+        "Json",
+        "Snapshot"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Write, ReadVersion, Json, Snapshot } from './storage.js';"
+    },
+    {
+      "from": 15,
+      "to": null,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 15,
+      "to": 3,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "workspaceId",
+        "requestId",
+        "actorId",
+        "plannerId",
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { workspaceId, requestId, actorId, plannerId, digest } from '../brands.js';"
+    },
+    {
+      "from": 15,
+      "to": 3,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 3,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "WorkspaceId",
+        "RequestId",
+        "ActorId",
+        "PlannerId",
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { WorkspaceId, RequestId, ActorId, PlannerId, Digest } from '../brands.js';"
+    },
+    {
+      "from": 15,
+      "to": 16,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 4,
+      "module": "./storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Json",
+        "ReadVersion",
+        "RecordKey"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Json, ReadVersion, RecordKey } from './storage.js';"
+    },
+    {
+      "from": 15,
+      "to": 16,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 5,
+      "module": "./storage.js",
+      "symbols": [
+        "keySchema",
+        "versionSchema",
+        "jsonSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keySchema, versionSchema, jsonSchema } from './storage.js';"
+    },
+    {
+      "from": 16,
+      "to": null,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 16,
+      "to": 3,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 2,
+      "module": "../brands.js",
+      "symbols": [
+        "workspaceId",
+        "recordId",
+        "requestId",
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { workspaceId, recordId, requestId, digest } from '../brands.js';"
+    },
+    {
+      "from": 16,
+      "to": 5,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 3,
+      "module": "../errors.js",
+      "symbols": [
+        "diagnosticSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { diagnosticSchema } from '../errors.js';"
+    },
+    {
+      "from": 16,
+      "to": 3,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 4,
+      "module": "../brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest",
+        "WorkspaceId",
+        "RequestId"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest, WorkspaceId, RequestId } from '../brands.js';"
+    },
+    {
+      "from": 16,
+      "to": 5,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 5,
+      "module": "../errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Diagnostic"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Diagnostic } from '../errors.js';"
+    },
+    {
+      "from": 17,
+      "to": 5,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 1,
+      "module": "./errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from './errors.js';"
+    },
+    {
+      "from": 17,
+      "to": 16,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 2,
+      "module": "./records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Receipt } from './records/storage.js';"
+    },
+    {
+      "from": 17,
+      "to": 14,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 3,
+      "module": "./records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Preparation"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Preparation } from './records/proposal.js';"
+    },
+    {
+      "from": 17,
+      "to": 11,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 4,
+      "module": "./ports/store.js",
+      "symbols": [],
+      "excludedTypes": [
+        "SnapshotReader",
+        "ReceiptReader",
+        "Committer"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { SnapshotReader, ReceiptReader, Committer } from './ports/store.js';"
+    },
+    {
+      "from": 17,
+      "to": 8,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 5,
+      "module": "./ports/planning.js",
+      "symbols": [],
+      "excludedTypes": [
+        "IntentPlanner",
+        "CandidateValidator",
+        "Feasibility"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { IntentPlanner, CandidateValidator, Feasibility } from './ports/planning.js';"
+    },
+    {
+      "from": 17,
+      "to": 9,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 6,
+      "module": "./ports/resources.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ResourceAdmission"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ResourceAdmission } from './ports/resources.js';"
+    },
+    {
+      "from": 17,
+      "to": 10,
+      "file": "capability/authoring/contract/types.ts",
+      "line": 7,
+      "module": "./ports/runtime.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Hasher",
+        "Clock",
+        "Cancellation",
+        "Notifications"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Hasher, Clock, Cancellation, Notifications } from './ports/runtime.js';"
+    },
+    {
+      "from": 18,
+      "to": 15,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 18,
+      "to": 16,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Write",
+        "ReadVersion"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Write, ReadVersion } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 18,
+      "to": 14,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 3,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Proposal"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Proposal } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 18,
+      "to": 8,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 4,
+      "module": "../../contract/ports/planning.js",
+      "symbols": [],
+      "excludedTypes": [
+        "CandidateValidator"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { CandidateValidator } from '../../contract/ports/planning.js';"
+    },
+    {
+      "from": 18,
+      "to": 16,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 5,
+      "module": "../../contract/records/storage.js",
+      "symbols": [
+        "versionSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { versionSchema } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 18,
+      "to": 19,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 6,
+      "module": "./dependencies.js",
+      "symbols": [
+        "checkProposal"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkProposal } from './dependencies.js';"
+    },
+    {
+      "from": 18,
+      "to": 29,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 7,
+      "module": "../records/changes.js",
+      "symbols": [
+        "netWrite",
+        "installWrites"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { netWrite, installWrites } from '../records/changes.js';"
+    },
+    {
+      "from": 18,
+      "to": 36,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 8,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "freeze"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, freeze } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 18,
+      "to": 35,
+      "file": "capability/authoring/core/admission/candidate.ts",
+      "line": 9,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';"
+    },
+    {
+      "from": 19,
+      "to": 15,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 19,
+      "to": 16,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "ReadVersion",
+        "Write"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, ReadVersion, Write } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 19,
+      "to": 31,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "line": 3,
+      "module": "../records/versions.js",
+      "symbols": [
+        "uniqueKeys",
+        "compareVersions",
+        "checkWriteAuthority",
+        "mergeVersions"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  uniqueKeys,\n  compareVersions,\n  checkWriteAuthority,\n  mergeVersions,\n} from '../records/versions.js';"
+    },
+    {
+      "from": 19,
+      "to": 36,
+      "file": "capability/authoring/core/admission/dependencies.ts",
+      "line": 9,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 20,
+      "to": 16,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [
+        "jsonSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { jsonSchema } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 20,
+      "to": 15,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 2,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 20,
+      "to": 16,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 3,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 20,
+      "to": 3,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 4,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 20,
+      "to": 3,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 5,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 20,
+      "to": 17,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 6,
+      "module": "../../contract/types.js",
+      "symbols": [],
+      "excludedTypes": [
+        "PlanningDependencies"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { PlanningDependencies } from '../../contract/types.js';"
+    },
+    {
+      "from": 20,
+      "to": 9,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 7,
+      "module": "../../contract/ports/resources.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ResourceLease"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ResourceLease } from '../../contract/ports/resources.js';"
+    },
+    {
+      "from": 20,
+      "to": 14,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 8,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [
+        "proposalSchema",
+        "leaseDataSchema",
+        "feasibilitySchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  proposalSchema,\n  leaseDataSchema,\n  feasibilitySchema,\n} from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 20,
+      "to": 14,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 13,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "PreparedCandidate",
+        "FeasibilityReport"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { PreparedCandidate, FeasibilityReport } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 20,
+      "to": 22,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 14,
+      "module": "./registry.js",
+      "symbols": [
+        "planIntent"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { planIntent } from './registry.js';"
+    },
+    {
+      "from": 20,
+      "to": 18,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 15,
+      "module": "./candidate.js",
+      "symbols": [
+        "createCandidate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createCandidate } from './candidate.js';"
+    },
+    {
+      "from": 20,
+      "to": 18,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 16,
+      "module": "./candidate.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Candidate"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Candidate } from './candidate.js';"
+    },
+    {
+      "from": 20,
+      "to": 19,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 17,
+      "module": "./dependencies.js",
+      "symbols": [
+        "checkDependencies"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkDependencies } from './dependencies.js';"
+    },
+    {
+      "from": 20,
+      "to": 23,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 18,
+      "module": "./resources.js",
+      "symbols": [
+        "checkCoverage"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkCoverage } from './resources.js';"
+    },
+    {
+      "from": 20,
+      "to": 35,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 19,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';"
+    },
+    {
+      "from": 20,
+      "to": 36,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 20,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "freeze",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, freeze, reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 20,
+      "to": 27,
+      "file": "capability/authoring/core/admission/pipeline.ts",
+      "line": 21,
+      "module": "../identity/canonical.js",
+      "symbols": [
+        "canonical"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { canonical } from '../identity/canonical.js';"
+    },
+    {
+      "from": 21,
+      "to": 3,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 1,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 21,
+      "to": 11,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 2,
+      "module": "../../contract/ports/store.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ReceiptReader"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ReceiptReader } from '../../contract/ports/store.js';"
+    },
+    {
+      "from": 21,
+      "to": 15,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 3,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 21,
+      "to": 16,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 4,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Receipt } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 21,
+      "to": 14,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 5,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "PreparedCandidate"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { PreparedCandidate } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 21,
+      "to": 17,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 6,
+      "module": "../../contract/types.js",
+      "symbols": [],
+      "excludedTypes": [
+        "AdmissionDependencies"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { AdmissionDependencies } from '../../contract/types.js';"
+    },
+    {
+      "from": 21,
+      "to": 27,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 7,
+      "module": "../identity/canonical.js",
+      "symbols": [
+        "fingerprint"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { fingerprint } from '../identity/canonical.js';"
+    },
+    {
+      "from": 21,
+      "to": 28,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 8,
+      "module": "../identity/receipts.js",
+      "symbols": [
+        "reconcile"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reconcile } from '../identity/receipts.js';"
+    },
+    {
+      "from": 21,
+      "to": 38,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 9,
+      "module": "../validation/snapshot.js",
+      "symbols": [
+        "readSnapshot"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readSnapshot } from '../validation/snapshot.js';"
+    },
+    {
+      "from": 21,
+      "to": 36,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 10,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 21,
+      "to": 19,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 11,
+      "module": "./dependencies.js",
+      "symbols": [
+        "checkRequest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkRequest } from './dependencies.js';"
+    },
+    {
+      "from": 21,
+      "to": 20,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 12,
+      "module": "./pipeline.js",
+      "symbols": [
+        "buildCandidate",
+        "checkCancellation"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { buildCandidate, checkCancellation } from './pipeline.js';"
+    },
+    {
+      "from": 21,
+      "to": 23,
+      "file": "capability/authoring/core/admission/prepare.ts",
+      "line": 13,
+      "module": "./resources.js",
+      "symbols": [
+        "releaseProtection"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { releaseProtection } from './resources.js';"
+    },
+    {
+      "from": 22,
+      "to": 8,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 1,
+      "module": "../../contract/ports/planning.js",
+      "symbols": [],
+      "excludedTypes": [
+        "IntentPlanner"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { IntentPlanner } from '../../contract/ports/planning.js';"
+    },
+    {
+      "from": 22,
+      "to": 15,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 2,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 22,
+      "to": 16,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 3,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Json",
+        "Snapshot"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Json, Snapshot } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 22,
+      "to": 14,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 4,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Proposal"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Proposal } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 22,
+      "to": 5,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 5,
+      "module": "../../contract/errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Result } from '../../contract/errors.js';"
+    },
+    {
+      "from": 22,
+      "to": 3,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 6,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "plannerId"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { plannerId } from '../../contract/brands.js';"
+    },
+    {
+      "from": 22,
+      "to": 5,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 7,
+      "module": "../../contract/errors.js",
+      "symbols": [
+        "failure"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { failure } from '../../contract/errors.js';"
+    },
+    {
+      "from": 22,
+      "to": 36,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 8,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 22,
+      "to": 24,
+      "file": "capability/authoring/core/admission/registry.ts",
+      "line": 9,
+      "module": "../history/inverse.js",
+      "symbols": [
+        "planInverse"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { planInverse } from '../history/inverse.js';"
+    },
+    {
+      "from": 23,
+      "to": 9,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 1,
+      "module": "../../contract/ports/resources.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ResourceLease"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ResourceLease } from '../../contract/ports/resources.js';"
+    },
+    {
+      "from": 23,
+      "to": 16,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Write"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Write } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 23,
+      "to": 3,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 3,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 23,
+      "to": 30,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 4,
+      "module": "../records/keys.js",
+      "symbols": [
+        "findRecord"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord } from '../records/keys.js';"
+    },
+    {
+      "from": 23,
+      "to": 36,
+      "file": "capability/authoring/core/admission/resources.ts",
+      "line": 5,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 24,
+      "to": 15,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 24,
+      "to": 14,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 2,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Proposal"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Proposal } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 24,
+      "to": 16,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 3,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Write",
+        "StoredRecord",
+        "RecordKey"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Write, StoredRecord, RecordKey } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 24,
+      "to": 13,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 4,
+      "module": "../../contract/records/history.js",
+      "symbols": [],
+      "excludedTypes": [
+        "HistoryHead",
+        "Transaction"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { HistoryHead, Transaction } from '../../contract/records/history.js';"
+    },
+    {
+      "from": 24,
+      "to": 26,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 5,
+      "module": "./read.js",
+      "symbols": [
+        "readTransaction",
+        "readHead",
+        "transactionKey",
+        "headKey"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readTransaction, readHead, transactionKey, headKey } from './read.js';"
+    },
+    {
+      "from": 24,
+      "to": 31,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 6,
+      "module": "../records/versions.js",
+      "symbols": [
+        "compareVersions",
+        "uniqueKeys"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { compareVersions, uniqueKeys } from '../records/versions.js';"
+    },
+    {
+      "from": 24,
+      "to": 30,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 7,
+      "module": "../records/keys.js",
+      "symbols": [
+        "keyText",
+        "versionOf"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keyText, versionOf } from '../records/keys.js';"
+    },
+    {
+      "from": 24,
+      "to": 36,
+      "file": "capability/authoring/core/history/inverse.ts",
+      "line": 8,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 25,
+      "to": 13,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 1,
+      "module": "../../contract/records/history.js",
+      "symbols": [
+        "transactionSchema",
+        "headSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { transactionSchema, headSchema } from '../../contract/records/history.js';"
+    },
+    {
+      "from": 25,
+      "to": 15,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 2,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 25,
+      "to": 14,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 3,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "PreparedCandidate"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { PreparedCandidate } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 25,
+      "to": 16,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 4,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Write",
+        "ReadVersion",
+        "CommitOutcome",
+        "StoredRecord",
+        "RecordKey"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type {\n  Write,\n  ReadVersion,\n  CommitOutcome,\n  StoredRecord,\n  RecordKey,\n} from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 25,
+      "to": 10,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 11,
+      "module": "../../contract/ports/runtime.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Clock"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Clock } from '../../contract/ports/runtime.js';"
+    },
+    {
+      "from": 25,
+      "to": 3,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 12,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "timestamp"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { timestamp } from '../../contract/brands.js';"
+    },
+    {
+      "from": 25,
+      "to": 3,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 13,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 25,
+      "to": 30,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 14,
+      "module": "../records/keys.js",
+      "symbols": [
+        "findRecord",
+        "versionOf"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord, versionOf } from '../records/keys.js';"
+    },
+    {
+      "from": 25,
+      "to": 26,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 15,
+      "module": "./read.js",
+      "symbols": [
+        "transactionKey",
+        "headKey"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { transactionKey, headKey } from './read.js';"
+    },
+    {
+      "from": 25,
+      "to": 19,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 16,
+      "module": "../admission/dependencies.js",
+      "symbols": [
+        "checkDependencies"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkDependencies } from '../admission/dependencies.js';"
+    },
+    {
+      "from": 25,
+      "to": 35,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 17,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';"
+    },
+    {
+      "from": 25,
+      "to": 37,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 18,
+      "module": "../validation/plain-data.js",
+      "symbols": [
+        "copyJson",
+        "storedLimits"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { copyJson, storedLimits } from '../validation/plain-data.js';"
+    },
+    {
+      "from": 25,
+      "to": 36,
+      "file": "capability/authoring/core/history/journal.ts",
+      "line": 19,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 26,
+      "to": 3,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 1,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "recordId"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { recordId } from '../../contract/brands.js';"
+    },
+    {
+      "from": 26,
+      "to": 3,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 2,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "RequestId"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { RequestId } from '../../contract/brands.js';"
+    },
+    {
+      "from": 26,
+      "to": 13,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 3,
+      "module": "../../contract/records/history.js",
+      "symbols": [
+        "transactionSchema",
+        "headSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { transactionSchema, headSchema } from '../../contract/records/history.js';"
+    },
+    {
+      "from": 26,
+      "to": 13,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 4,
+      "module": "../../contract/records/history.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Transaction",
+        "HistoryHead"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Transaction, HistoryHead } from '../../contract/records/history.js';"
+    },
+    {
+      "from": 26,
+      "to": 16,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 5,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "RecordKey",
+        "Snapshot",
+        "StoredRecord"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { RecordKey, Snapshot, StoredRecord } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 26,
+      "to": 30,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 6,
+      "module": "../records/keys.js",
+      "symbols": [
+        "findRecord"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord } from '../records/keys.js';"
+    },
+    {
+      "from": 26,
+      "to": 35,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 7,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';"
+    },
+    {
+      "from": 26,
+      "to": 37,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 8,
+      "module": "../validation/plain-data.js",
+      "symbols": [
+        "storedLimits"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { storedLimits } from '../validation/plain-data.js';"
+    },
+    {
+      "from": 26,
+      "to": 36,
+      "file": "capability/authoring/core/history/read.ts",
+      "line": 9,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 27,
+      "to": 16,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Json"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Json } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 27,
+      "to": 15,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 2,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 27,
+      "to": 10,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 3,
+      "module": "../../contract/ports/runtime.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Hasher"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Hasher } from '../../contract/ports/runtime.js';"
+    },
+    {
+      "from": 27,
+      "to": 3,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 4,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 27,
+      "to": 3,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 5,
+      "module": "../../contract/brands.js",
+      "symbols": [
+        "digest"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 27,
+      "to": 35,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 6,
+      "module": "../validation/input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from '../validation/input.js';"
+    },
+    {
+      "from": 27,
+      "to": 36,
+      "file": "capability/authoring/core/identity/canonical.ts",
+      "line": 7,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 28,
+      "to": 15,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 28,
+      "to": 3,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 2,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Digest"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Digest } from '../../contract/brands.js';"
+    },
+    {
+      "from": 28,
+      "to": 16,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 3,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Receipt } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 28,
+      "to": 11,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 4,
+      "module": "../../contract/ports/store.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ReceiptReader"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ReceiptReader } from '../../contract/ports/store.js';"
+    },
+    {
+      "from": 28,
+      "to": 38,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 5,
+      "module": "../validation/snapshot.js",
+      "symbols": [
+        "readReceipt"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readReceipt } from '../validation/snapshot.js';"
+    },
+    {
+      "from": 28,
+      "to": 36,
+      "file": "capability/authoring/core/identity/receipts.ts",
+      "line": 6,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 29,
+      "to": 16,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Write",
+        "StoredRecord",
+        "Json",
+        "RecordKey"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type {\n  Snapshot,\n  Write,\n  StoredRecord,\n  Json,\n  RecordKey,\n} from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 29,
+      "to": 30,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 8,
+      "module": "./keys.js",
+      "symbols": [
+        "findRecord",
+        "keyText"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { findRecord, keyText } from './keys.js';"
+    },
+    {
+      "from": 29,
+      "to": 27,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 9,
+      "module": "../identity/canonical.js",
+      "symbols": [
+        "canonical"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { canonical } from '../identity/canonical.js';"
+    },
+    {
+      "from": 29,
+      "to": 36,
+      "file": "capability/authoring/core/records/changes.ts",
+      "line": 10,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 30,
+      "to": 16,
+      "file": "capability/authoring/core/records/keys.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "RecordKey",
+        "Snapshot",
+        "StoredRecord",
+        "ReadVersion"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type {\n  RecordKey,\n  Snapshot,\n  StoredRecord,\n  ReadVersion,\n} from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 31,
+      "to": 15,
+      "file": "capability/authoring/core/records/versions.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 31,
+      "to": 16,
+      "file": "capability/authoring/core/records/versions.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ReadVersion",
+        "RecordKey",
+        "Snapshot"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ReadVersion, RecordKey, Snapshot } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 31,
+      "to": 30,
+      "file": "capability/authoring/core/records/versions.ts",
+      "line": 3,
+      "module": "./keys.js",
+      "symbols": [
+        "keyText",
+        "versionOf"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { keyText, versionOf } from './keys.js';"
+    },
+    {
+      "from": 31,
+      "to": 36,
+      "file": "capability/authoring/core/records/versions.ts",
+      "line": 4,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 32,
+      "to": 15,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request",
+        "ApplyOptions"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request, ApplyOptions } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 32,
+      "to": 14,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 2,
+      "module": "../../contract/records/proposal.js",
+      "symbols": [],
+      "excludedTypes": [
+        "PreparedCandidate"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { PreparedCandidate } from '../../contract/records/proposal.js';"
+    },
+    {
+      "from": 32,
+      "to": 16,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 3,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Receipt } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 32,
+      "to": 11,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 4,
+      "module": "../../contract/ports/store.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Committer",
+        "ReceiptReader"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Committer, ReceiptReader } from '../../contract/ports/store.js';"
+    },
+    {
+      "from": 32,
+      "to": 10,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 5,
+      "module": "../../contract/ports/runtime.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Clock",
+        "Cancellation",
+        "Notifications"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Clock, Cancellation, Notifications } from '../../contract/ports/runtime.js';"
+    },
+    {
+      "from": 32,
+      "to": 25,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 6,
+      "module": "../history/journal.js",
+      "symbols": [
+        "createJournal"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createJournal } from '../history/journal.js';"
+    },
+    {
+      "from": 32,
+      "to": 20,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 7,
+      "module": "../admission/pipeline.js",
+      "symbols": [
+        "checkCancellation"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { checkCancellation } from '../admission/pipeline.js';"
+    },
+    {
+      "from": 32,
+      "to": 33,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 8,
+      "module": "./commit.js",
+      "symbols": [
+        "commitAndReconcile"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { commitAndReconcile } from './commit.js';"
+    },
+    {
+      "from": 32,
+      "to": 34,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 9,
+      "module": "./notifications.js",
+      "symbols": [
+        "notifyCommitted"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { notifyCommitted } from './notifications.js';"
+    },
+    {
+      "from": 32,
+      "to": 36,
+      "file": "capability/authoring/core/transactions/apply.ts",
+      "line": 10,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 33,
+      "to": 15,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 33,
+      "to": 16,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Receipt } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 33,
+      "to": 11,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 3,
+      "module": "../../contract/ports/store.js",
+      "symbols": [],
+      "excludedTypes": [
+        "CommitRequest",
+        "Committer",
+        "ReceiptReader"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { CommitRequest, Committer, ReceiptReader } from '../../contract/ports/store.js';"
+    },
+    {
+      "from": 33,
+      "to": 38,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 4,
+      "module": "../validation/snapshot.js",
+      "symbols": [
+        "readReceipt"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readReceipt } from '../validation/snapshot.js';"
+    },
+    {
+      "from": 33,
+      "to": 28,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 5,
+      "module": "../identity/receipts.js",
+      "symbols": [
+        "reconcile"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reconcile } from '../identity/receipts.js';"
+    },
+    {
+      "from": 33,
+      "to": 36,
+      "file": "capability/authoring/core/transactions/commit.ts",
+      "line": 6,
+      "module": "../validation/outcomes.js",
+      "symbols": [
+        "accepted",
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { accepted, reject } from '../validation/outcomes.js';"
+    },
+    {
+      "from": 34,
+      "to": 15,
+      "file": "capability/authoring/core/transactions/notifications.ts",
+      "line": 1,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 34,
+      "to": 16,
+      "file": "capability/authoring/core/transactions/notifications.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Receipt"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Receipt } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 34,
+      "to": 10,
+      "file": "capability/authoring/core/transactions/notifications.ts",
+      "line": 3,
+      "module": "../../contract/ports/runtime.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Notifications"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Notifications } from '../../contract/ports/runtime.js';"
+    },
+    {
+      "from": 35,
+      "to": 7,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 1,
+      "module": "../../contract/ports/decoding.js",
+      "symbols": [],
+      "excludedTypes": [
+        "CheckedShape"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { CheckedShape } from '../../contract/ports/decoding.js';"
+    },
+    {
+      "from": 35,
+      "to": 5,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 2,
+      "module": "../../contract/errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ErrorCode"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ErrorCode } from '../../contract/errors.js';"
+    },
+    {
+      "from": 35,
+      "to": 15,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 3,
+      "module": "../../contract/records/request.js",
+      "symbols": [
+        "requestSchema",
+        "applyOptionsSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { requestSchema, applyOptionsSchema } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 35,
+      "to": 15,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 4,
+      "module": "../../contract/records/request.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Request",
+        "ApplyOptions"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Request, ApplyOptions } from '../../contract/records/request.js';"
+    },
+    {
+      "from": 35,
+      "to": 37,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 5,
+      "module": "./plain-data.js",
+      "symbols": [
+        "copyJson"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { copyJson } from './plain-data.js';"
+    },
+    {
+      "from": 35,
+      "to": 37,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 6,
+      "module": "./plain-data.js",
+      "symbols": [],
+      "excludedTypes": [
+        "JsonLimits"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { JsonLimits } from './plain-data.js';"
+    },
+    {
+      "from": 35,
+      "to": 36,
+      "file": "capability/authoring/core/validation/input.ts",
+      "line": 7,
+      "module": "./outcomes.js",
+      "symbols": [
+        "reject",
+        "freeze"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject, freeze } from './outcomes.js';"
+    },
+    {
+      "from": 36,
+      "to": 5,
+      "file": "capability/authoring/core/validation/outcomes.ts",
+      "line": 1,
+      "module": "../../contract/errors.js",
+      "symbols": [
+        "AuthoringFault",
+        "failure",
+        "diagnosticSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { AuthoringFault, failure, diagnosticSchema } from '../../contract/errors.js';"
+    },
+    {
+      "from": 36,
+      "to": 5,
+      "file": "capability/authoring/core/validation/outcomes.ts",
+      "line": 2,
+      "module": "../../contract/errors.js",
+      "symbols": [],
+      "excludedTypes": [
+        "ErrorCode",
+        "Result"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { ErrorCode, Result } from '../../contract/errors.js';"
+    },
+    {
+      "from": 37,
+      "to": 16,
+      "file": "capability/authoring/core/validation/plain-data.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Json"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Json } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 37,
+      "to": 36,
+      "file": "capability/authoring/core/validation/plain-data.ts",
+      "line": 2,
+      "module": "./outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from './outcomes.js';"
+    },
+    {
+      "from": 38,
+      "to": 16,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 1,
+      "module": "../../contract/records/storage.js",
+      "symbols": [
+        "snapshotSchema",
+        "receiptSchema"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { snapshotSchema, receiptSchema } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 38,
+      "to": 16,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 2,
+      "module": "../../contract/records/storage.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Snapshot",
+        "Receipt",
+        "StoredRecord"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Snapshot, Receipt, StoredRecord } from '../../contract/records/storage.js';"
+    },
+    {
+      "from": 38,
+      "to": 3,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 3,
+      "module": "../../contract/brands.js",
+      "symbols": [],
+      "excludedTypes": [
+        "WorkspaceId",
+        "RequestId"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { WorkspaceId, RequestId } from '../../contract/brands.js';"
+    },
+    {
+      "from": 38,
+      "to": 31,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 4,
+      "module": "../records/versions.js",
+      "symbols": [
+        "uniqueKeys"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { uniqueKeys } from '../records/versions.js';"
+    },
+    {
+      "from": 38,
+      "to": 35,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 5,
+      "module": "./input.js",
+      "symbols": [
+        "readShape"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { readShape } from './input.js';"
+    },
+    {
+      "from": 38,
+      "to": 37,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 6,
+      "module": "./plain-data.js",
+      "symbols": [
+        "storedLimits"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { storedLimits } from './plain-data.js';"
+    },
+    {
+      "from": 38,
+      "to": 36,
+      "file": "capability/authoring/core/validation/snapshot.ts",
+      "line": 7,
+      "module": "./outcomes.js",
+      "symbols": [
+        "reject"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { reject } from './outcomes.js';"
+    },
+    {
+      "from": 39,
+      "to": null,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "assert"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, assert } from 'vitest';"
+    },
+    {
+      "from": 39,
+      "to": 6,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "requestSchema"
+      ],
+      "excludedTypes": [
+        "Write"
+      ],
+      "importKind": "value",
+      "sourceText": "import { createAuthoring, requestSchema, type Write } from '../contract/index.js';"
+    },
+    {
+      "from": 39,
+      "to": 43,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 3,
+      "module": "./gates.js",
+      "symbols": [
+        "gate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { gate } from './gates.js';"
+    },
+    {
+      "from": 39,
+      "to": 42,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 4,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "catalog",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media",
+        "liveCollections"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  catalog,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n  liveCollections,\n} from './fixtures.js';"
+    },
+    {
+      "from": 40,
+      "to": null,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "line": 1,
+      "module": "@novakai/canvas-model",
+      "symbols": [
+        "validate",
+        "plan"
+      ],
+      "excludedTypes": [
+        "Collection"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  validate as validateModel,\n  plan as planModel,\n  type Collection,\n} from '@novakai/canvas-model';"
+    },
+    {
+      "from": 40,
+      "to": null,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "line": 6,
+      "module": "@novakai/canvas-library",
+      "symbols": [
+        "validate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { validate as validateLibrary } from '@novakai/canvas-library';"
+    },
+    {
+      "from": 40,
+      "to": 6,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "line": 7,
+      "module": "../contract/index.js",
+      "symbols": [
+        "proposalSchema",
+        "plannerId",
+        "failure"
+      ],
+      "excludedTypes": [
+        "CandidateValidator",
+        "IntentPlanner",
+        "Result",
+        "Snapshot",
+        "StoredRecord",
+        "ReadVersion",
+        "Proposal"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  proposalSchema,\n  plannerId,\n  failure,\n  type CandidateValidator,\n  type IntentPlanner,\n  type Result,\n  type Snapshot,\n  type StoredRecord,\n  type ReadVersion,\n  type Proposal,\n} from '../contract/index.js';"
+    },
+    {
+      "from": 41,
+      "to": null,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, vi } from 'vitest';"
+    },
+    {
+      "from": 41,
+      "to": 6,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "failure",
+        "plannerId",
+        "requestSchema",
+        "workspaceId"
+      ],
+      "excludedTypes": [
+        "Diagnostic",
+        "Snapshot",
+        "RecordKey",
+        "WorkspaceId",
+        "Result",
+        "ResourceLease",
+        "FeasibilityReport"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  failure,\n  plannerId,\n  requestSchema,\n  workspaceId,\n  type Diagnostic,\n  type Snapshot,\n  type RecordKey,\n  type WorkspaceId,\n  type Result,\n  type ResourceLease,\n  type FeasibilityReport,\n} from '../contract/index.js';"
+    },
+    {
+      "from": 41,
+      "to": 1,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 16,
+      "module": "../adapters/node-identity.js",
+      "symbols": [
+        "createNodeIdentity"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createNodeIdentity } from '../adapters/node-identity.js';"
+    },
+    {
+      "from": 41,
+      "to": 42,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 17,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n} from './fixtures.js';"
+    },
+    {
+      "from": 41,
+      "to": 43,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 30,
+      "module": "./gates.js",
+      "symbols": [
+        "gate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { gate } from './gates.js';"
+    },
+    {
+      "from": 42,
+      "to": null,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "expect",
+        "assert"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { expect, assert } from 'vitest';"
+    },
+    {
+      "from": 42,
+      "to": 6,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "recordId",
+        "workspaceId",
+        "digest",
+        "requestId",
+        "actorId",
+        "plannerId",
+        "requestSchema"
+      ],
+      "excludedTypes": [
+        "Authoring",
+        "Dependencies",
+        "Json",
+        "Request",
+        "Snapshot",
+        "StoredRecord",
+        "RecordKey",
+        "Write",
+        "Result",
+        "Receipt"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  recordId,\n  workspaceId,\n  digest,\n  requestId,\n  actorId,\n  plannerId,\n  requestSchema,\n  type Authoring,\n  type Dependencies,\n  type Json,\n  type Request,\n  type Snapshot,\n  type StoredRecord,\n  type RecordKey,\n  type Write,\n  type Result,\n  type Receipt,\n} from '../contract/index.js';"
+    },
+    {
+      "from": 42,
+      "to": 1,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 22,
+      "module": "../adapters/node-identity.js",
+      "symbols": [
+        "createNodeIdentity"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createNodeIdentity } from '../adapters/node-identity.js';"
+    },
+    {
+      "from": 42,
+      "to": 47,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 23,
+      "module": "./storage-fixture.js",
+      "symbols": [
+        "openStore",
+        "storageRoles"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { openStore, storageRoles } from './storage-fixture.js';"
+    },
+    {
+      "from": 42,
+      "to": 40,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 24,
+      "module": "./domain-fixture.js",
+      "symbols": [
+        "fixturePlanner",
+        "domainValidator"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { fixturePlanner, domainValidator } from './domain-fixture.js';"
+    },
+    {
+      "from": 42,
+      "to": null,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 25,
+      "module": "@novakai/canvas-persistence",
+      "symbols": [],
+      "excludedTypes": [
+        "Persistence"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Persistence } from '@novakai/canvas-persistence';"
+    },
+    {
+      "from": 43,
+      "to": null,
+      "file": "capability/authoring/tests/gates.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "assert",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { assert, vi } from 'vitest';"
+    },
+    {
+      "from": 43,
+      "to": 6,
+      "file": "capability/authoring/tests/gates.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring"
+      ],
+      "excludedTypes": [
+        "Result",
+        "Receipt",
+        "Request",
+        "FeasibilityReport"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  type Result,\n  type Receipt,\n  type Request,\n  type FeasibilityReport,\n} from '../contract/index.js';"
+    },
+    {
+      "from": 43,
+      "to": 6,
+      "file": "capability/authoring/tests/gates.ts",
+      "line": 9,
+      "module": "../contract/index.js",
+      "symbols": [],
+      "excludedTypes": [
+        "Dependencies"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Dependencies } from '../contract/index.js';"
+    },
+    {
+      "from": 44,
+      "to": 6,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "line": 1,
+      "module": "../contract/index.js",
+      "symbols": [
+        "requestSchema",
+        "requestId",
+        "actorId"
+      ],
+      "excludedTypes": [
+        "Snapshot",
+        "Request",
+        "RecordKey"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  requestSchema,\n  requestId,\n  actorId,\n  type Snapshot,\n  type Request,\n  type RecordKey,\n} from '../contract/index.js';"
+    },
+    {
+      "from": 44,
+      "to": 42,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "line": 9,
+      "module": "./fixtures.js",
+      "symbols": [
+        "observed",
+        "workspace",
+        "record"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { observed, workspace, record } from './fixtures.js';"
+    },
+    {
+      "from": 44,
+      "to": null,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "line": 10,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 45,
+      "to": null,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, vi } from 'vitest';"
+    },
+    {
+      "from": 45,
+      "to": 6,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "failure"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createAuthoring, failure } from '../contract/index.js';"
+    },
+    {
+      "from": 45,
+      "to": 42,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 3,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media",
+        "alternate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n  alternate,\n} from './fixtures.js';"
+    },
+    {
+      "from": 45,
+      "to": 44,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 17,
+      "module": "./history-fixtures.js",
+      "symbols": [
+        "inverse",
+        "replaceHistoryBefore"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { inverse, replaceHistoryBefore } from './history-fixtures.js';"
+    },
+    {
+      "from": 46,
+      "to": null,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, vi } from 'vitest';"
+    },
+    {
+      "from": 46,
+      "to": 6,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 2,
+      "module": "../contract/index.js",
+      "symbols": [
+        "createAuthoring",
+        "failure"
+      ],
+      "excludedTypes": [
+        "Result",
+        "Receipt",
+        "CommitRequest"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  createAuthoring,\n  failure,\n  type Result,\n  type Receipt,\n  type CommitRequest,\n} from '../contract/index.js';"
+    },
+    {
+      "from": 46,
+      "to": 42,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 9,
+      "module": "./fixtures.js",
+      "symbols": [
+        "harness",
+        "seed",
+        "value",
+        "rejects",
+        "request",
+        "diagram",
+        "put",
+        "key",
+        "record",
+        "workspace",
+        "media",
+        "alternate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import {\n  harness,\n  seed,\n  value,\n  rejects,\n  request,\n  diagram,\n  put,\n  key,\n  record,\n  workspace,\n  media,\n  alternate,\n} from './fixtures.js';"
+    },
+    {
+      "from": 46,
+      "to": 43,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 23,
+      "module": "./gates.js",
+      "symbols": [
+        "race",
+        "gate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { race, gate } from './gates.js';"
+    },
+    {
+      "from": 47,
+      "to": null,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "assert"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { assert } from 'vitest';"
+    },
+    {
+      "from": 47,
+      "to": null,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "line": 2,
+      "module": "@novakai/canvas-persistence",
+      "symbols": [
+        "openSqlite"
+      ],
+      "excludedTypes": [
+        "Persistence",
+        "Result"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  openSqlite,\n  type Persistence,\n  type Result as StorageResult,\n} from '@novakai/canvas-persistence';"
+    },
+    {
+      "from": 47,
+      "to": 6,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "line": 7,
+      "module": "../contract/index.js",
+      "symbols": [
+        "snapshotSchema",
+        "receiptSchema",
+        "failure"
+      ],
+      "excludedTypes": [
+        "SnapshotReader",
+        "ReceiptReader",
+        "Committer",
+        "Result",
+        "ErrorCode"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  snapshotSchema,\n  receiptSchema,\n  failure,\n  type SnapshotReader,\n  type ReceiptReader,\n  type Committer,\n  type Result,\n  type ErrorCode,\n} from '../contract/index.js';"
+    }
+  ],
+  "excludedTypeOnlyImports": 111,
+  "excludedTypeSymbols": 231,
+  "external": [
+    {
+      "from": 1,
+      "to": null,
+      "file": "capability/authoring/adapters/node-identity.ts",
+      "line": 1,
+      "module": "node:crypto",
+      "symbols": [
+        "createHash"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { createHash } from 'node:crypto';"
+    },
+    {
+      "from": 3,
+      "to": null,
+      "file": "capability/authoring/contract/brands.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 5,
+      "to": null,
+      "file": "capability/authoring/contract/errors.ts",
+      "line": 3,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 12,
+      "to": null,
+      "file": "capability/authoring/contract/records/failure-source.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 13,
+      "to": null,
+      "file": "capability/authoring/contract/records/history.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 14,
+      "to": null,
+      "file": "capability/authoring/contract/records/proposal.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 15,
+      "to": null,
+      "file": "capability/authoring/contract/records/request.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 16,
+      "to": null,
+      "file": "capability/authoring/contract/records/storage.ts",
+      "line": 1,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 39,
+      "to": null,
+      "file": "capability/authoring/tests/admission.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "assert"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, assert } from 'vitest';"
+    },
+    {
+      "from": 40,
+      "to": null,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "line": 1,
+      "module": "@novakai/canvas-model",
+      "symbols": [
+        "validate",
+        "plan"
+      ],
+      "excludedTypes": [
+        "Collection"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  validate as validateModel,\n  plan as planModel,\n  type Collection,\n} from '@novakai/canvas-model';"
+    },
+    {
+      "from": 40,
+      "to": null,
+      "file": "capability/authoring/tests/domain-fixture.ts",
+      "line": 6,
+      "module": "@novakai/canvas-library",
+      "symbols": [
+        "validate"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { validate as validateLibrary } from '@novakai/canvas-library';"
+    },
+    {
+      "from": 41,
+      "to": null,
+      "file": "capability/authoring/tests/failures.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, vi } from 'vitest';"
+    },
+    {
+      "from": 42,
+      "to": null,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "expect",
+        "assert"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { expect, assert } from 'vitest';"
+    },
+    {
+      "from": 42,
+      "to": null,
+      "file": "capability/authoring/tests/fixtures.ts",
+      "line": 25,
+      "module": "@novakai/canvas-persistence",
+      "symbols": [],
+      "excludedTypes": [
+        "Persistence"
+      ],
+      "importKind": "type-only",
+      "sourceText": "import type { Persistence } from '@novakai/canvas-persistence';"
+    },
+    {
+      "from": 43,
+      "to": null,
+      "file": "capability/authoring/tests/gates.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "assert",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { assert, vi } from 'vitest';"
+    },
+    {
+      "from": 44,
+      "to": null,
+      "file": "capability/authoring/tests/history-fixtures.ts",
+      "line": 10,
+      "module": "zod",
+      "symbols": [
+        "z"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { z } from 'zod';"
+    },
+    {
+      "from": 45,
+      "to": null,
+      "file": "capability/authoring/tests/history.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, vi } from 'vitest';"
+    },
+    {
+      "from": 46,
+      "to": null,
+      "file": "capability/authoring/tests/retries.test.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "describe",
+        "it",
+        "expect",
+        "vi"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { describe, it, expect, vi } from 'vitest';"
+    },
+    {
+      "from": 47,
+      "to": null,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "line": 1,
+      "module": "vitest",
+      "symbols": [
+        "assert"
+      ],
+      "excludedTypes": [],
+      "importKind": "value",
+      "sourceText": "import { assert } from 'vitest';"
+    },
+    {
+      "from": 47,
+      "to": null,
+      "file": "capability/authoring/tests/storage-fixture.ts",
+      "line": 2,
+      "module": "@novakai/canvas-persistence",
+      "symbols": [
+        "openSqlite"
+      ],
+      "excludedTypes": [
+        "Persistence",
+        "Result"
+      ],
+      "importKind": "value",
+      "sourceText": "import {\n  openSqlite,\n  type Persistence,\n  type Result as StorageResult,\n} from '@novakai/canvas-persistence';"
+    }
+  ]
+}

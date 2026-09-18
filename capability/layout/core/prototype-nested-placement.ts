@@ -50,9 +50,7 @@ interface Row {
   readonly height: number;
 }
 function sizeSection(spec: SectionSpec): SizedSection {
-  // A degenerate spec has no content to size; the caller owns correction and reconstruction.
-  if (spec.nodes.length + spec.children.length === 0)
-    throw new RangeError('Nested sections require at least one node or child section');
+  // Empty leaves retain the section header and padding without synthesizing content.
   const count = spec.nodes.length;
   const columns = Math.ceil(Math.sqrt(count));
   const rows = count === 0 ? 0 : Math.ceil(count / columns);
@@ -93,7 +91,7 @@ function appendRow(rows: readonly Row[], size: SizedSection, limit: number): rea
     },
   ];
 }
-/** Reject content-free sections with RangeError; callers correct the semantic spec and rebuild. */
+/** Empty leaves use header/padding bounds; pure reconstruction is caller-owned and retry-safe. */
 export function sizeNestedSections(specs: readonly SectionSpec[]): readonly Row[] {
   const sizes = specs.map(sizeSection);
   const area = sizes.reduce(

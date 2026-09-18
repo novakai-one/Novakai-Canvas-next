@@ -1,0 +1,131 @@
+{
+  "status": "STOP",
+  "reason": "Real scene violates routing invariants after additive empty-leaf placement support",
+  "nodes": 47,
+  "sections": 15,
+  "wires": 119,
+  "inspection": {
+    "corridors": 4,
+    "nodeBodies": 40,
+    "boundaries": 87,
+    "continuity": 0
+  },
+  "overlapWitnesses": 18,
+  "certified": 0,
+  "uncertified": 1273,
+  "failedGates": [
+    "FAIL all wires inside corridors; gate-mouth crossings only; no body or continuity failures: Expected values to be strictly deep-equal:",
+    "FAIL zero positive-length parallel/coincident wire overlaps: Expected values to be strictly equal:",
+    "FAIL 3c/d all pin rows exact, centered, ordered, pitch 6, >=6 end margins; 192x96 nodes; single-wire pins unchanged; globally unique terminals: node-2:exit-right: nonplanar fan",
+    "FAIL four owned port sides; assigned lanes distinct, pitch 6 and forward; all gate positions distinct: w07:0",
+    "FAIL all distinct-wire contacts transverse; no parallel touches; each crossing in a registered junction: Expected values to be strictly deep-equal:",
+    "FAIL topological endpoint ranges and linked road-order constraints: J17/J145 proof regions overlap",
+    "FAIL actual crossing count equals additive endpoint and linked-order lower bound: Expected values to be strictly equal:",
+    "FAIL zero uncertified crossings: Expected values to be strictly equal:",
+    "FAIL every gate traversal crosses its own mouth at its assigned distinct offset: w31 missing owned gate crossing"
+  ],
+  "firstCorridorWitness": {
+    "id": "w03:5",
+    "from": "node-2",
+    "to": "node-3",
+    "segment": {
+      "from": {
+        "x": 3089.5,
+        "y": 454
+      },
+      "to": {
+        "x": 3247,
+        "y": 457
+      },
+      "corridorId": "section-2:vertical:3124:248"
+    },
+    "road": {
+      "id": "section-2:vertical:3124:248",
+      "sectionId": "section-2",
+      "axis": "vertical",
+      "kind": "street",
+      "access": null,
+      "bounds": {
+        "x": 2998,
+        "y": 80,
+        "width": 252,
+        "height": 1046
+      },
+      "directions": [
+        "down",
+        "up"
+      ],
+      "wireLaneCount": 20
+    }
+  },
+  "firstBoundaryWitness": {
+    "id": "w22:11",
+    "from": "node-18",
+    "to": "node-16",
+    "segment": {
+      "from": {
+        "x": 778.5,
+        "y": 2072.5
+      },
+      "to": {
+        "x": 778.5,
+        "y": 2345
+      },
+      "corridorId": "section-5:horizontal:2168:200"
+    },
+    "road": {
+      "id": "section-5:horizontal:2168:200",
+      "sectionId": "section-5",
+      "axis": "horizontal",
+      "kind": "street",
+      "access": null,
+      "bounds": {
+        "x": 158,
+        "y": 1928,
+        "width": 6876,
+        "height": 480
+      },
+      "directions": [
+        "left",
+        "right"
+      ],
+      "wireLaneCount": 39
+    }
+  },
+  "firstOverlapWitness": {
+    "wires": [
+      "w26",
+      "w61"
+    ],
+    "hit": {
+      "x": 6274,
+      "y": 1681,
+      "length": 6
+    },
+    "first": {
+      "from": {
+        "x": 6274,
+        "y": 1681
+      },
+      "to": {
+        "x": 6280,
+        "y": 1681
+      },
+      "corridorId": "drive:node-35:entry-left"
+    },
+    "second": {
+      "from": {
+        "x": 6280,
+        "y": 1681
+      },
+      "to": {
+        "x": 6256,
+        "y": 1681
+      },
+      "corridorId": "drive:node-35:entry-left",
+      "laneId": "w61:16"
+    }
+  },
+  "baselineIdentity": true,
+  "sceneDeterminism": true
+}

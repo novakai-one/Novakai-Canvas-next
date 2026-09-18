@@ -65,7 +65,7 @@ check(
       );
   },
 );
-check('minimal nested-only regression and explicit empty-section rejection', () => {
+check('minimal nested-only regression and empty leaf with header/padding bounds', () => {
   const regression = createNestedRoadScene({
     spec: {
       sections: [
@@ -79,13 +79,15 @@ check('minimal nested-only regression and explicit empty-section rejection', () 
     },
   });
   assert([...regression.nodes, ...regression.sections, ...regression.roads].every(finite));
-  assert.throws(
-    () =>
-      createNestedRoadScene({
-        spec: { sections: [{ number: 1, nodes: [], children: [] }], requests: [] },
-      }),
-    RangeError,
-  );
+  const empty = createNestedRoadScene({
+    spec: { sections: [{ number: 1, nodes: [], children: [] }], requests: [] },
+  });
+  assert.equal(empty.nodes.length, 0);
+  assert.equal(empty.sections.length, 1);
+  assert.equal(empty.sections[0].label, 'Section 1');
+  assert.deepEqual(empty.sections[0].bounds, { x: 136, y: 136, width: 128, height: 176 });
+  assert([...empty.sections, ...empty.roads].every(finite));
+  assert.deepEqual(empty.wiring, { ok: true, value: [] });
 });
 check('two complete builds byte-identical; each one-way pipeline stage once', () => {
   assert.equal(

@@ -1,0 +1,17 @@
+/Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/capability/layout/core/prototype-nested-placement.ts:55
+    throw new RangeError('Nested sections require at least one node or child section');
+          ^
+
+RangeError: Nested sections require at least one node or child section
+    at sizeSection (/Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/capability/layout/core/prototype-nested-placement.ts:55:11)
+    at Array.map (<anonymous>)
+    at sizeSection (/Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/capability/layout/core/prototype-nested-placement.ts:59:34)
+    at Array.map (<anonymous>)
+    at sizeNestedSections (/Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/capability/layout/core/prototype-nested-placement.ts:98:23)
+    at <anonymous> (/Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/capability/layout/core/prototype-nested-scene.ts:39:46)
+    at measure (file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/output/playwright/nested-wires/templates-scene/verify-templates-scene.mjs:24:12)
+    at createNestedRoadScene (/Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/capability/layout/core/prototype-nested-scene.ts:39:20)
+    at file:///Users/christopherdasca/Programming/Novakai-Canvas-next-m10b/output/playwright/nested-wires/templates-scene/verify-templates-scene.mjs:19:15
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+
+Node.js v24.13.0

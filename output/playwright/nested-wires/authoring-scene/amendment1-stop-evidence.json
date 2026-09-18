@@ -1,0 +1,49 @@
+{
+  "status": "STOP: real directory tree rejected during section placement before routing",
+  "base": "b93910aa1ec0dd2a1759266d1337b20b91a72b3c",
+  "branch": "feat/m10b-dogfood",
+  "nodes": 47,
+  "independentFindCount": 47,
+  "sections": 15,
+  "wires": 119,
+  "externalImports": 20,
+  "excludedTypeOnlyImports": 111,
+  "excludedTypeSymbols": 231,
+  "emptySections": [
+    {
+      "section": 7,
+      "directory": "capability/authoring/core/commit",
+      "filesystemEntries": [
+        ".gitkeep"
+      ]
+    },
+    {
+      "section": 10,
+      "directory": "capability/authoring/core/preparation",
+      "filesystemEntries": [
+        ".gitkeep"
+      ]
+    },
+    {
+      "section": 11,
+      "directory": "capability/authoring/core/receipts",
+      "filesystemEntries": [
+        ".gitkeep"
+      ]
+    }
+  ],
+  "verifierExit": 1,
+  "error": "RangeError: Nested sections require at least one node or child section",
+  "source": "capability/layout/core/prototype-nested-placement.ts:55",
+  "pnpmCheckExit": 0,
+  "passingTests": 208,
+  "routingAttempted": false,
+  "serverStarted": false,
+  "browserStarted": false,
+  "portsTouched": [],
+  "sceneBuildDeterminism": null,
+  "routingInvariants": null,
+  "operationCounts": null,
+  "fiveLoadMedian": null,
+  "sourceScores": null
+}

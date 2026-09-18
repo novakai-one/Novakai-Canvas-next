@@ -1,0 +1,3 @@
+PASS two extractor runs byte-identical
+scene-spec.json sha256=1a2fbaad6e783c9a41bbf1af18c7bb637bcad68537742048ea606848c4851e0f
+extraction-manifest.json sha256=e142fc0d2b0eb6ac196ec4ec3f009b71d3c8d29fd0869b3bcd24f7fdc56fd059

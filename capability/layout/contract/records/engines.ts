@@ -11,3 +11,8 @@ export const defaultEngineVersions: readonly string[] = Object.freeze([
   nativeEngineVersions.routing,
   nativeEngineVersions.policy,
 ]);
+
+export const nestedEngineVersions: readonly string[] = Object.freeze([
+  'nested-roads-1',
+  nativeEngineVersions.policy,
+]);

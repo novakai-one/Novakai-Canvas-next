@@ -1,3 +1,4 @@
+import type { NestedLayout } from './records/engine-scene.js';
 import type { LayoutInputKey } from './brands.js';
 import { z } from 'zod';
 import type { ProjectionReader } from './ports/projection.js';
@@ -61,6 +62,8 @@ export interface Inspection {
   readonly diagnostics: readonly Diagnostic[];
 }
 export interface Dependencies {
+  readonly nested?: NestedLayout;
+  readonly engineVersions?: readonly string[];
   readonly projection: ProjectionReader;
   readonly placement: PlacementPort;
   readonly solver: SolverPort;

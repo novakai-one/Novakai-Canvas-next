@@ -66,3 +66,6 @@ export { defaultEngineVersions } from './records/engines.js';
 
 export type { LayoutInputKey } from './brands.js';
 export { inputKey as layoutInputKey } from './brands.js';
+
+export { nestedEngineVersions } from './records/engines.js';
+export type { EngineScene, MeasuredBlock, EngineWirePath } from './records/engine-scene.js';

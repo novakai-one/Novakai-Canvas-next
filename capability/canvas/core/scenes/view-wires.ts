@@ -3,7 +3,7 @@ import type { ViewWire } from '../../contract/records/view.js';
 import type { PlacedSection, RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import { targetInfo, targetKey } from './address.js';
-import { previewBox, hiddenByReading } from './preview.js';
+import { previewBox, previewOrigin, hiddenByReading } from './preview.js';
 /** Endpoint deltas exclude section translation, because that is applied once by the wire's origin. */
 function nodeDelta(
   state: SessionState,
@@ -39,15 +39,23 @@ function projectedWire(
   state: SessionState,
   wire: RoutedWire,
   key: string,
+  section: string,
   source: Point,
   target: Point,
 ): RoutedWire {
   if (isRouteTarget(state, key)) return { ...wire, points: routePoints(state, wire.points) };
   const preview =
     state.draft === null
-      ? state.routePreview?.wires.find((item) => item.id === wire.id)
+      ? state.routePreview?.wires.find((item) => item.section === section && item.id === wire.id)
       : undefined;
-  if (preview !== undefined) return { ...wire, points: preview.points, labelBox: preview.labelBox };
+  if (preview !== undefined)
+    return {
+      ...wire,
+      source: preview.source,
+      target: preview.target,
+      points: preview.points,
+      labelBox: preview.labelBox,
+    };
   const unchanged = [source.x, source.y, target.x, target.y].every((delta) => delta === 0);
   if (unchanged) return wire;
   return movedWire(wire, source, target);
@@ -73,6 +81,7 @@ export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedS
     state,
     wire,
     key,
+    section.id,
     nodeDelta(state, section, wire.source.node, delta),
     nodeDelta(state, section, wire.target.node, delta),
   );
@@ -82,7 +91,10 @@ export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedS
     sourceId: sourceInfo.key,
     targetId: targetData.key,
     wire: projected,
-    origin: { x: section.origin.x + delta.x, y: section.origin.y + delta.y },
+    origin: previewOrigin(state, section.id) ?? {
+      x: section.origin.x + delta.x,
+      y: section.origin.y + delta.y,
+    },
     selected: state.selection.some((value) => targetKey(value) === key),
     hidden: hiddenByReading(state, sourceInfo) || hiddenByReading(state, targetData),
     draft: projected !== wire,

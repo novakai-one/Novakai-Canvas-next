@@ -1,3 +1,6 @@
+import { moduleEnvelopes } from '../core/projection/module-envelopes.js';
+import type { Projection } from './records/visual.js';
+import type { ResolvedStyle } from './records/style.js';
 import type { Dependencies, Presentation } from './types.js';
 import type { ReactBindings, StaticRenderer, NodeChromeRegistry } from './react-types.js';
 import type { Result } from './errors.js';
@@ -118,4 +121,12 @@ export async function prepareNativePresentation(): Promise<Result<void>> {
       'Native Presentation dependencies could not be loaded',
     );
   }
+}
+
+/** Recalculate owner envelopes after placement edits using already measured content; no fonts or routing run. */
+export function remeasureModuleEnvelopes(projection: Projection, style: ResolvedStyle): Projection {
+  return {
+    ...projection,
+    sections: projection.sections.map((section) => moduleEnvelopes(section, { style })),
+  };
 }

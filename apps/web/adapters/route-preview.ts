@@ -1,60 +1,96 @@
-import { routeModuleSection } from '@novakai/canvas-layout';
-import type { PlacedNode, PlacedSection, Point } from '@novakai/canvas-layout';
-import type { EditIntent, PlacementIntent, WireRoutePreview } from '@novakai/canvas-canvas';
+import { placeEntries } from '../core/editing/placements.js';
+import type { Section } from '../contract/records/owners.js';
+import { previewModuleCollection } from '@novakai/canvas-layout';
+import { remeasureModuleEnvelopes } from '@novakai/canvas-presentation';
+import type { VisualSection } from '@novakai/canvas-presentation';
+import type { EditIntent, GeometryPreview } from '@novakai/canvas-canvas';
 import type { RenderDocument } from '@novakai/canvas-service';
 import type { Result } from '../contract/errors.js';
 
-/** Human placements are parent-local; engine fixed boxes are section-local, including nested ancestors. */
-function delta(node: PlacedNode, nodes: readonly PlacedNode[], intent: PlacementIntent): Point {
-  const entry = intent.entries.find(
-    (item) => item.target.kind === 'node' && item.target.id === node.id,
-  );
-  if (entry !== undefined) {
-    const parent = nodes.find((item) => item.id === node.parent)?.box ?? { x: 0, y: 0 };
-    return {
-      x: entry.placement.x + parent.x - node.box.x,
-      y: entry.placement.y + parent.y - node.box.y,
-    };
-  }
-  const parent = nodes.find((item) => item.id === node.parent);
-  return parent === undefined ? { x: 0, y: 0 } : delta(parent, nodes, intent);
+/** Reuse the exact Authoring placement merge; moving retains prior explicit dimensions. */
+function placed(section: VisualSection, source: Section): VisualSection {
+  return {
+    ...section,
+    placement: source.placement ?? null,
+    groups: source.groups,
+    nodes: section.nodes.map((node) => {
+      const owner =
+        node.groupId === null
+          ? source.appearances.find((item) => item.object === node.objectId)
+          : source.groups.find((item) => item.id === node.groupId);
+      return { ...node, placement: owner?.placement ?? null };
+    }),
+  };
 }
-/** Moving a group translates descendants once; measured dimensions are retained byte-for-byte. */
-function moved(section: PlacedSection, intent: PlacementIntent): readonly PlacedNode[] {
-  return section.nodes.map((node) => {
-    const offset = delta(node, section.nodes, intent);
-    return { ...node, box: { ...node.box, x: node.box.x + offset.x, y: node.box.y + offset.y } };
-  });
-}
-/** Reuse the same custom engine as server arrangement without native providers or any new measurement. */
+
+/** Only changed module nodes need portable routing; companion section origins are always repacked. */
 export function previewModuleRoutes(
   document: RenderDocument,
   intent: EditIntent,
-): Result<readonly WireRoutePreview[]> {
-  if (intent.kind !== 'placement') return { ok: true, value: [] };
-  const sections = new Set(
-    intent.entries.flatMap((entry) => (entry.target.kind === 'node' ? [entry.target.section] : [])),
+): Result<GeometryPreview | null> {
+  if (intent.kind !== 'placement') return { ok: true, value: null };
+  // Resizing changes font/content measurement and remains with the full save pipeline.
+  if (
+    intent.entries.some(
+      (entry) => entry.placement.width !== undefined || entry.placement.height !== undefined,
+    )
+  )
+    return { ok: true, value: null };
+  const supported = intent.entries.every(
+    ({ target }) =>
+      target.kind === 'section' ||
+      document.projection.sections.some(
+        (section) => section.id === target.section && section.mode === 'modules',
+      ),
   );
-  const wires: WireRoutePreview[] = [];
-  for (const section of document.scene.sections) {
-    if (!sections.has(section.id)) continue;
-    const source = document.projection.sections.find((item) => item.id === section.id);
-    if (source?.mode !== 'modules') continue;
-    const routed = routeModuleSection(
-      source,
-      document.measurements,
-      document.options,
-      moved(section, intent),
-      section,
-    );
-    if (!routed.ok) return routed;
-    wires.push(
-      ...routed.value.wires.map((wire) => ({
-        id: wire.id,
-        points: wire.points,
-        labelBox: wire.labelBox,
+  if (!supported) return { ok: true, value: null };
+  if (!document.projection.sections.some((section) => section.mode === 'modules'))
+    return { ok: true, value: null };
+  const sources = placeEntries(intent, document);
+  const projection = remeasureModuleEnvelopes(
+    {
+      ...document.projection,
+      sections: document.projection.sections.map((section) =>
+        placed(
+          section,
+          sources.find((source) => source.id === section.id)!,
+        ),
+      ),
+    },
+    document.style,
+  );
+  const result = previewModuleCollection(
+    projection,
+    document.measurements,
+    document.options,
+    document.scene,
+  );
+  if (!result.ok) return result;
+  return {
+    ok: true,
+    value: {
+      bounds: result.value.bounds,
+      sections: result.value.sections.map((section) => ({
+        id: section.id,
+        origin: section.origin,
       })),
-    );
-  }
-  return { ok: true, value: wires };
+      boxes: result.value.sections.flatMap((section) => [
+        { target: { kind: 'section' as const, id: section.id }, box: section.box },
+        ...section.nodes.map((node) => ({
+          target: { kind: 'node' as const, section: section.id, id: node.id },
+          box: { ...node.box, x: node.box.x + section.origin.x, y: node.box.y + section.origin.y },
+        })),
+      ]),
+      wires: result.value.sections.flatMap((section) =>
+        section.wires.map((wire) => ({
+          section: section.id,
+          id: wire.id,
+          source: wire.source,
+          target: wire.target,
+          points: wire.points,
+          labelBox: wire.labelBox,
+        })),
+      ),
+    },
+  };
 }

@@ -48,6 +48,11 @@ function placementEntry(draft: NonNullable<SessionState['draft']>, key: string):
 }
 /** Return original box by reference when untouched; hot React node props can remain stable. */
 export function previewBox(state: SessionState, info: TargetInfo): Box {
+  const geometry =
+    state.draft === null
+      ? state.routePreview?.boxes.find((entry) => targetKey(entry.target) === info.key)
+      : undefined;
+  if (geometry !== undefined) return geometry.box;
   const own = draftEntry(state, info.key);
   if (own !== null) return own;
   const delta = movedAncestor(state, info);
@@ -59,4 +64,11 @@ export function hiddenByReading(state: SessionState, info: TargetInfo): boolean 
   if (state.reading === null) return false;
   const collapsed = new Set(state.reading.collapsed);
   return ancestorKeys(state.index, info.key).some((key) => collapsed.has(key));
+}
+
+/** Repacking changes section origin independently from its visual frame's local offset. */
+export function previewOrigin(state: SessionState, id: string): Point | undefined {
+  return state.draft === null
+    ? state.routePreview?.sections.find((section) => section.id === id)?.origin
+    : undefined;
 }

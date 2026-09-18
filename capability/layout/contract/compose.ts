@@ -1,8 +1,10 @@
 import { protect, reject } from '../core/validation/outcomes.js';
 import { toEngineScene, fixedSource } from '../core/scene-in.js';
-import { inspectSection } from '../core/validation/sections.js';
+import { inspectSections, inspectSection } from '../core/validation/sections.js';
 import { same } from '../core/validation/facts.js';
-import { toAppSection } from '../core/scene-out.js';
+import { toAppSection, placeAppSections } from '../core/scene-out.js';
+import { sectionKey } from '../core/arrangement/keys.js';
+import { union } from '../core/geometry/bounds.js';
 import { nativeEngineVersions, nestedEngineVersions } from './records/engines.js';
 import type { PrototypeLayoutMeasure } from './records/road-prototype.js';
 import type { ProjectionReader } from './ports/projection.js';
@@ -122,4 +124,47 @@ export async function prepareLayoutRuntime(): Promise<Result<void>> {
   } catch {
     return failure('engine-failed', 'composition', 'Layout dependencies could not be loaded');
   }
+}
+
+/** Owner-remeasured module previews repack the whole collection and pass the save-path inspector. */
+export function previewModuleCollection(
+  projection: import('./records/input.js').Projection,
+  metrics: import('./types.js').SupplementalMeasurements,
+  options: import('./types.js').LayoutOptions,
+  previous: import('./records/geometry.js').Scene,
+): Result<Pick<import('./records/geometry.js').Scene, 'sections' | 'bounds'>> {
+  return protect(() => {
+    const local = projection.sections
+      .toSorted((a, b) => a.order - b.order)
+      .map((source) => {
+        const prior = previous.sections.find((section) => section.id === source.id);
+        if (prior === undefined)
+          return reject('invalid-input', source.id, 'Preview section is missing');
+        const inputKey = sectionKey(source, metrics, options, previous.engineVersions);
+        if (source.mode === 'modules' && inputKey !== prior.inputKey)
+          return toAppSection(
+            toEngineScene(source, metrics),
+            source,
+            metrics,
+            options,
+            previous.engineVersions,
+          );
+        return {
+          ...prior,
+          inputKey,
+          origin: { x: 0, y: 0 },
+          box: { ...prior.box, x: prior.box.x - prior.origin.x, y: prior.box.y - prior.origin.y },
+        };
+      });
+    const sections = placeAppSections(local, projection, options);
+    const bounds = union(sections.map((section) => section.box));
+    return {
+      bounds,
+      sections: inspectSections(
+        projection,
+        { ...previous, sections, bounds },
+        { options, measurements: metrics, engines: previous.engineVersions },
+      ),
+    };
+  });
 }

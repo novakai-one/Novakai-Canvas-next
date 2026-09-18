@@ -4,6 +4,14 @@ import { point, box, camera, viewport } from './records/camera.js';
 import { target, selection } from './records/selection.js';
 import { stamp } from './records/scene.js';
 import { endpoint } from './records/intent.js';
+const routedEndpoint = z
+  .strictObject({
+    node: identity,
+    member: identity.nullable(),
+    point,
+    side: z.enum(['top', 'right', 'bottom', 'left']),
+  })
+  .readonly();
 const side = z.enum(['preserve', 'auto', 'top', 'right', 'bottom', 'left']);
 export const event = z
   .discriminatedUnion('kind', [
@@ -44,11 +52,20 @@ export const event = z
     z.strictObject({
       kind: z.literal('preview-routes'),
       id: identity,
+      bounds: box,
+      boxes: z.array(z.strictObject({ target, box }).readonly()).max(10000).readonly(),
+      sections: z
+        .array(z.strictObject({ id: identity, origin: point }).readonly())
+        .max(1000)
+        .readonly(),
       wires: z
         .array(
           z
             .strictObject({
               id: identity,
+              section: identity,
+              source: routedEndpoint,
+              target: routedEndpoint,
               points: z.array(point).min(2).max(10000).readonly(),
               labelBox: z.union([
                 box,

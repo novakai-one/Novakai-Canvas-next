@@ -1,4 +1,4 @@
-import type { WireRoutePreview } from '@novakai/canvas-canvas';
+import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
 import type { DiagramObject } from '../contract/records/owners.js';
 import type { Submission } from '../contract/records/submission.js';
@@ -337,27 +337,27 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     changes: readonly import('../contract/records/owners.js').Change[],
   ): void {
     const start = performance.now();
-    const preview = bindings.previewRoutes?.(active.document, intent) ?? { ok: true, value: [] };
+    const preview = bindings.previewRoutes?.(active.document, intent) ?? { ok: true, value: null };
     if (!preview.ok) {
       active.session.dispatch({ kind: 'reject', id: intent.id, message: preview.error.message });
       report(preview.error);
       return;
     }
     submitCanvas(intent, changes);
-    if (preview.value.length === 0) return;
+    if (preview.value === null) return;
     publishPreview(active, intent, preview.value, start);
   }
   /** Measure only inspected routes accepted by the Canvas gesture currently awaiting confirmation. */
   function publishPreview(
     active: ActiveDiagram,
     intent: EditIntent,
-    wires: readonly WireRoutePreview[],
+    geometry: GeometryPreview,
     start: number,
   ): void {
     const accepted = active.session.dispatch({
       kind: 'preview-routes',
       id: intent.id,
-      wires,
+      ...geometry,
     });
     if (!accepted.ok) return;
     if (accepted.value.state.routePreview?.gesture !== intent.id) return;

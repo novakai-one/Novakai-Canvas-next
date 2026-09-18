@@ -15,6 +15,7 @@ export type {
   RouteGeometry,
   GeometryEntry,
   WireRoutePreview,
+  GeometryPreview,
   AttachmentSide,
 } from './records/draft.js';
 export type { EditIntent, CanvasEffect, Endpoint, LocalPlacement } from './records/intent.js';

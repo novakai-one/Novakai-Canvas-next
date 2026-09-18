@@ -5,11 +5,12 @@ import type {
   VisualWire,
   ModuleEnvelope,
 } from '../../contract/records/visual.js';
-import type { ContentContext } from '../content/blocks.js';
+import type { ResolvedStyle } from '../../contract/records/style.js';
+type EnvelopeContext = { readonly style: ResolvedStyle };
 
 /** Presentation owns container footprints before any routing runs. Reserves are based on
  * measured content and connection density, never on a router's calculated geometry. */
-export function moduleEnvelopes(section: VisualSection, context: ContentContext): VisualSection {
+export function moduleEnvelopes(section: VisualSection, context: EnvelopeContext): VisualSection {
   if (section.mode !== 'modules') return section;
   const annotated = { ...section, wires: annotationOwners(section.wires) };
   const measured = new Map<string, VisualNode>();
@@ -45,7 +46,7 @@ function density(
 function measure(
   parent: VisualNode | null,
   section: VisualSection,
-  context: ContentContext,
+  context: EnvelopeContext,
   measured: Map<string, VisualNode>,
 ): ModuleEnvelope {
   const members = section.nodes.filter((node) => node.parent === (parent?.id ?? null));

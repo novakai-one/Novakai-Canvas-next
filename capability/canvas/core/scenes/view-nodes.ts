@@ -2,7 +2,7 @@ import type { SessionState } from '../../contract/records/state.js';
 import type { ViewNode, ViewSection } from '../../contract/records/view.js';
 import type { PlacedNode, PlacedSection } from '../../contract/records/scene.js';
 import { targetInfo, targetKey } from './address.js';
-import { previewBox, hiddenByReading } from './preview.js';
+import { previewBox, previewOrigin, hiddenByReading } from './preview.js';
 /** Selection membership is scoped to a visible appearance, not canonical content identity. */
 function selected(state: SessionState, key: string): boolean {
   return state.selection.some((target) => targetKey(target) === key);
@@ -43,7 +43,10 @@ export function viewSection(state: SessionState, section: PlacedSection): ViewSe
     target,
     position: { x: bounds.x, y: bounds.y },
     box: bounds,
-    section,
+    section:
+      previewOrigin(state, section.id) === undefined
+        ? section
+        : { ...section, box: bounds, origin: previewOrigin(state, section.id)! },
     selected: selected(state, info.key),
     collapsed: state.reading?.collapsed.includes(info.key) ?? false,
   };

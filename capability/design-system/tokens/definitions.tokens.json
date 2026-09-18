@@ -724,5 +724,11 @@
       "$type": "number",
       "$value": 0.42
     }
+  },
+  "canvasEmphasis": {
+    "mutedOpacity": {
+      "$type": "number",
+      "$value": 0.36
+    }
   }
 }

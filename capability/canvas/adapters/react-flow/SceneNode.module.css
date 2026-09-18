@@ -15,4 +15,14 @@
     transition-duration: var(--nv-canvas-transition);
     transition-property: background-color, border-color, box-shadow;
   }
+  .node[data-emphasis='primary'] :global(.react-flow__handle) {
+    border-color: var(--nv-action-accent);
+    box-shadow: 0 0 var(--nv-space-1) var(--nv-action-accent);
+  }
+  .node[data-emphasis='secondary'] :global(.react-flow__handle) {
+    border-color: var(--nv-text-secondary);
+  }
+  .node[data-emphasis='muted'] :global(.react-flow__handle) {
+    opacity: var(--nv-canvas-muted-opacity);
+  }
 }

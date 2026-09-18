@@ -799,6 +799,10 @@
       "$type": "color",
       "$value": "{text.secondary}"
     },
+    "mutedOpacity": {
+      "$type": "number",
+      "$value": "{canvasEmphasis.mutedOpacity}"
+    },
     "transition": {
       "$type": "duration",
       "$value": "{motion.duration}"

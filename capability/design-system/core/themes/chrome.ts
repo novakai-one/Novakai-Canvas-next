@@ -10,7 +10,7 @@ function chromeExtension(id: TokenId): boolean {
 }
 /** Browser-only canvas treatment never enters a portable diagram theme or its pinned payload. */
 function browserExtension(id: TokenId): boolean {
-  return /^(canvasDepth\.|canvas\.)/.test(id);
+  return /^(canvasDepth\.|canvasEmphasis\.|canvas\.)/.test(id);
 }
 /** Serialization omits browser values always and chrome values only for legacy payloads. */
 function omitted(id: TokenId, chrome: unknown): boolean {

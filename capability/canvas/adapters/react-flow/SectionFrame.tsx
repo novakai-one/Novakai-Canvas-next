@@ -16,6 +16,7 @@ export function createSectionFrame(
     return (
       <div
         className={styles.frame}
+        data-selected={view.selected}
         style={{
           width: view.box.width,
           height: view.box.height,

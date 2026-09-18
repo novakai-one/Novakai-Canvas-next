@@ -42,7 +42,11 @@ export function createContentRenderer(
   const css = fontRules(fonts);
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
-  function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
+  function NodeContent({
+    node,
+    embedFonts = true,
+    emphasis = 'normal',
+  }: NodeContentProps): ReactElement {
     const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
     const Chrome = chrome.Component;
     const content = compartments(node, separatesHeading(node, chrome, slots.classes));
@@ -61,6 +65,7 @@ export function createContentRenderer(
         data-frame={node.frame}
         data-node-role={node.role}
         data-node-id={node.id}
+        data-emphasis={emphasis}
       >
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}

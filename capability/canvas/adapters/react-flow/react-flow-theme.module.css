@@ -7,10 +7,6 @@
     --xy-minimap-background-color: var(--nv-surface-raised);
     --xy-minimap-mask-background-color: var(--nv-canvas-surface);
   }
-  .theme :global(.react-flow__node.selected) {
-    outline: var(--nv-focus-width) solid var(--nv-action-accent);
-    outline-offset: var(--nv-focus-offset);
-  }
   .theme :global(.react-flow__minimap) {
     border: var(--nv-stroke-base) solid var(--nv-canvas-group-boundary);
     border-radius: var(--nv-radius-panel);

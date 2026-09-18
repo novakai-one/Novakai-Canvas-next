@@ -1,6 +1,12 @@
 @layer components {
   .root {
     overflow: visible;
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: opacity;
+  }
+
+  .root[data-emphasis='muted'] {
+    opacity: var(--nv-canvas-muted-opacity);
   }
 
   .frame {
@@ -80,5 +86,16 @@
 
   .root[data-shape='container'] .body text {
     fill: var(--nv-canvas-group-heading);
+  }
+
+  .root[data-emphasis='primary'][data-shape] .frame {
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-focus-width);
+    filter: drop-shadow(0 0 var(--nv-space-2) var(--nv-action-accent));
+  }
+
+  .root[data-emphasis='secondary'][data-shape] .frame {
+    stroke: var(--nv-text-secondary);
+    stroke-width: var(--nv-focus-width);
   }
 }

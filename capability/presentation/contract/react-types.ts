@@ -9,6 +9,7 @@ export interface ContentBlocksProps {
 export interface NodeContentProps {
   readonly node: VisualNode;
   readonly embedFonts?: boolean;
+  readonly emphasis?: 'normal' | 'primary' | 'secondary' | 'muted';
 }
 /** Browser paint roles are injected once; shared/native renderers remain stylesheet-free. */
 export interface NodeRenderClasses {

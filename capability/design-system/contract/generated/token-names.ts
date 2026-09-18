@@ -90,6 +90,7 @@ export const tokenNames = [
   '--nv-canvas-depth-rim-opacity',
   '--nv-canvas-depth-group-opacity',
   '--nv-canvas-depth-grid-opacity',
+  '--nv-canvas-emphasis-muted-opacity',
   '--nv-color-panel',
   '--nv-color-content',
   '--nv-color-subtle',
@@ -172,5 +173,6 @@ export const tokenNames = [
   '--nv-canvas-group-surface',
   '--nv-canvas-group-boundary',
   '--nv-canvas-group-heading',
+  '--nv-canvas-muted-opacity',
   '--nv-canvas-transition',
 ] as const;

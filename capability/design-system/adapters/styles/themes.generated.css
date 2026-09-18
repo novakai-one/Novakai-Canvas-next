@@ -91,6 +91,7 @@
   --nv-canvas-depth-rim-opacity: 0.14;
   --nv-canvas-depth-group-opacity: 0.36;
   --nv-canvas-depth-grid-opacity: 0.42;
+  --nv-canvas-emphasis-muted-opacity: 0.36;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
@@ -162,6 +163,7 @@
   --nv-canvas-member: #526170;
   --nv-canvas-group-surface: #ffffff5c;
   --nv-canvas-group-heading: #526170;
+  --nv-canvas-muted-opacity: 0.36;
   --nv-canvas-transition: 120ms;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
@@ -266,6 +268,7 @@
   --nv-canvas-depth-rim-opacity: 0.14;
   --nv-canvas-depth-group-opacity: 0.36;
   --nv-canvas-depth-grid-opacity: 0.42;
+  --nv-canvas-emphasis-muted-opacity: 0.36;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
   --nv-color-subtle: #b8c1ca;
@@ -337,6 +340,7 @@
   --nv-canvas-member: #b8c1ca;
   --nv-canvas-group-surface: #22262c5c;
   --nv-canvas-group-heading: #b8c1ca;
+  --nv-canvas-muted-opacity: 0.36;
   --nv-canvas-transition: 120ms;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;

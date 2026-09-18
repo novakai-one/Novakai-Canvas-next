@@ -10,6 +10,10 @@
     position: absolute;
     cursor: grab;
   }
+  .frame[data-selected='true'] {
+    border-color: var(--nv-action-accent);
+    border-width: var(--nv-focus-width);
+  }
   .title text {
     fill: var(--nv-canvas-group-heading);
   }

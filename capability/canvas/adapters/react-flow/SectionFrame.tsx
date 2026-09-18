@@ -2,6 +2,7 @@ import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { SectionFrameProps, RenderSlots } from '../../contract/react-types.js';
 import styles from './SectionFrame.module.css';
+import boundary from './GroupBoundary.module.css';
 /** Section frame and title remain one actual React Flow node; children have parent-relative placement. */
 export function createSectionFrame(
   slots: Pick<RenderSlots, 'MeasuredContent'>,
@@ -22,6 +23,9 @@ export function createSectionFrame(
           height: view.box.height,
         }}
       >
+        <svg className={boundary.hit} aria-hidden="true">
+          <rect width="100%" height="100%" vectorEffect="non-scaling-stroke" />
+        </svg>
         <div className={`section-drag-handle ${styles.title}`} style={{ left, top }}>
           <Content embedFonts={false} content={section.title.content} />
         </div>

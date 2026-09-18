@@ -24,7 +24,8 @@ function canHover(state: SessionState, event: EventOf<'target-enter'>): boolean 
     state.draft === null,
     state.connection === null,
     state.tool === 'select',
-    event.target.kind === 'node' || event.target.kind === 'wire',
+    event.target.kind === 'wire' ||
+      state.index.nodes[targetKey(event.target)]?.measured.groupId === null,
   ].every(Boolean);
 }
 

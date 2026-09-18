@@ -9,6 +9,7 @@
   .title {
     position: absolute;
     cursor: grab;
+    pointer-events: auto;
   }
   .frame[data-selected='true'] {
     border-color: var(--nv-action-accent);

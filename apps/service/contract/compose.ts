@@ -47,6 +47,7 @@ export async function createDiagramProducer(timeoutMs = 30000): Promise<Result<D
       import('../adapters/rendering-output.js'),
     ]);
     const transport = worker.createRenderTransport(timeoutMs);
+    await transport.ready;
     return {
       ok: true,
       value: {

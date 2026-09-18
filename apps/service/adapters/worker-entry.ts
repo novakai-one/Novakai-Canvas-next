@@ -16,6 +16,7 @@ export async function serveRenderWorker(owners: WorkerOwners): Promise<Result<vo
   port.on('message', async (input: unknown) => {
     port.postMessage(await rendered(owners.read(input), owners.producer));
   });
+  port.postMessage({ ready: true });
   return { ok: true, value: undefined };
 }
 /** Invalid messages return typed failures without invoking native measurement. */

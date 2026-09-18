@@ -35,7 +35,8 @@ function observe(
       }
       void worker.terminate().then(
         () => resolve(result),
-        () => resolve(failure('unavailable', 'worker', 'Worker termination could not be confirmed')),
+        () =>
+          resolve(failure('unavailable', 'worker', 'Worker termination could not be confirmed')),
       );
     }
     function message(input: unknown): void {
@@ -66,36 +67,83 @@ function observe(
     worker.postMessage(job);
   });
 }
+interface WorkerSlot {
+  readonly worker: NodeWorker;
+  readonly ready: Promise<void>;
+}
+/** Startup readiness precedes jobs; it loads code only and never computes a diagram. */
+function initialized(worker: NodeWorker, timeoutMs: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    function finish(error?: Error): void {
+      clearTimeout(timer);
+      worker.removeListener('message', ready);
+      worker.removeListener('error', failed);
+      worker.removeListener('exit', exited);
+      if (error !== undefined) {
+        reject(error);
+        return;
+      }
+      resolve();
+    }
+    function ready(input: unknown): void {
+      if (
+        typeof input !== 'object' ||
+        input === null ||
+        !('ready' in input) ||
+        input.ready !== true
+      )
+        return finish(new Error('Invalid rendering worker initialization'));
+      finish();
+    }
+    function failed(): void {
+      finish(new Error('Rendering worker initialization failed'));
+    }
+    function exited(): void {
+      finish(new Error('Rendering worker exited during initialization'));
+    }
+    const timer = setTimeout(() => {
+      void worker.terminate();
+      finish(new Error('Rendering worker initialization timed out'));
+    }, timeoutMs);
+    worker.once('message', ready);
+    worker.once('error', failed);
+    worker.once('exit', exited);
+  });
+}
 /** Keep one idle initialized worker, never derived geometry. Concurrent jobs retain separate cancellation realms. */
-export function createRenderTransport(timeoutMs: number): RenderTransport {
-  let idle: NodeWorker | null = null;
-  function create(): NodeWorker {
+export function createRenderTransport(
+  timeoutMs: number,
+): RenderTransport & { readonly ready: Promise<void> } {
+  let idle: WorkerSlot | null = null;
+  function create(): WorkerSlot {
     const worker = new NodeWorker(new URL('../cli/render-worker.mjs', import.meta.url), {
       execArgv: [],
     });
     const retired = (): void => {
-      if (idle === worker) idle = null;
+      if (idle?.worker === worker) idle = null;
     };
     worker.on('error', retired);
     worker.on('exit', retired);
     worker.unref();
-    return worker;
+    return { worker, ready: initialized(worker, timeoutMs) };
   }
-  function release(worker: NodeWorker): void {
+  function release(slot: WorkerSlot): void {
     if (idle !== null) {
-      void worker.terminate();
+      void slot.worker.terminate();
       return;
     }
-    idle = worker;
-    worker.unref();
+    idle = slot;
+    slot.worker.unref();
   }
   idle = create();
   return {
+    ready: idle.ready,
     async run(job, signal): Promise<Result<unknown>> {
       try {
-        const worker = idle ?? create();
+        const slot = idle ?? create();
         idle = null;
-        return await observe(worker, job, signal, timeoutMs, release);
+        await slot.ready;
+        return await observe(slot.worker, job, signal, timeoutMs, () => release(slot));
       } catch {
         return failure('unavailable', 'worker', 'Rendering worker could not start');
       }

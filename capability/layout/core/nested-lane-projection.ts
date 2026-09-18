@@ -6,11 +6,11 @@ import type {
   PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
 import type { AssignedTravel } from './nested-wire-lanes.js';
-import { needsMedianBridge } from './nested-wire-lanes.js';
+import { needsMedianBridge, terminalFanDistance } from './nested-wire-lanes.js';
 import { axes, contains, samePoint } from './prototype-road-geometry.js';
 import { reject } from './nested-support-graph.js';
 import { validateSupportedProjection } from './nested-projection-support.js';
-import { terminalPin, terminalStem, roadLanePitch } from './nested-terminal-pins.js';
+import { terminalPin, roadLanePitch } from './nested-terminal-pins.js';
 
 interface Connection {
   readonly from: PrototypePoint;
@@ -219,8 +219,7 @@ function connect(
 function fan(t: AssignedTravel, endpoint: PrototypePoint, sign: number) {
   const a = axes[t.road.axis];
   const pin = terminalPin(endpoint, a.across, t.lane, t.count, t.road.access?.fixed);
-  const stem = terminalStem(t.road.access ?? undefined, roadLanePitch(t.road));
-  const distance = stem + (t.count - t.lane.index - 1) * roadLanePitch(t.road);
+  const distance = terminalFanDistance(t);
   const along = endpoint[a.along] + sign * t.direction * distance;
   return { pin, bend: { ...pin, [a.along]: along }, end: point(t, along) };
 }

@@ -61,6 +61,7 @@ function wire(
     path,
     labelBox,
     measuredLabel: plan.wire.label,
+    labelVisible: plan.wire.labelVisible,
     appearance: plan.wire.appearance,
     sourceMarker: plan.wire.sourceMarker,
     targetMarker: plan.wire.targetMarker,
@@ -86,6 +87,8 @@ function candidate(
   )
     return null;
   if (!laneAvailable(points, context)) return null;
+  if (plan.wire.labelVisible === false)
+    return wire(plan, points, { ...plan.attachments.source.point, width: 0, height: 0 }, context);
   const label = labelBox(
     points,
     plan.wire.label,
@@ -121,7 +124,9 @@ async function alternatives(
   occupied: readonly Box[],
   context: WireContext,
 ): Promise<RoutedWire> {
-  const gap = context.placement.options.routeClearance * 2 + context.placement.options.labelGap;
+  const gap =
+    context.placement.options.routeClearance * 2 +
+    (plan.wire.labelVisible === false ? 0 : context.placement.options.labelGap);
   const candidates = await accumulate<Corridor, readonly RankedRoute[]>(
     localCorridors(plan, gap),
     [],
@@ -189,7 +194,7 @@ async function labelAll(
       const current = withPriorLabels(context, result);
       const occupiedSpace = [
         ...occupied,
-        ...result.map((item): Box => item.labelBox),
+        ...result.filter((item) => item.labelVisible !== false).map((item): Box => item.labelBox),
         ...result.flatMap((item): readonly Box[] => routeBoxes(item.points)),
         ...saved.flatMap((item): readonly Box[] => routeBoxes(item.points)),
       ];
@@ -205,7 +210,9 @@ async function labelAll(
 }
 /** Accepted labels become real routing obstacles for subsequent connections. */
 function withPriorLabels(context: WireContext, wires: readonly RoutedWire[]): WireContext {
-  const labels = wires.map((wire): Obstacle => ({ id: `label:${wire.id}`, box: wire.labelBox }));
+  const labels = wires
+    .filter((wire) => wire.labelVisible !== false)
+    .map((wire): Obstacle => ({ id: `label:${wire.id}`, box: wire.labelBox }));
   return { ...context, prior: wires, obstacles: [...context.obstacles, ...labels] };
 }
 /** Exact segment footprints let labelGap protect both sides equally; a positive one-sided box biases labels away from right/bottom. */
@@ -225,7 +232,7 @@ function finalPaths(
 ): readonly RoutedWire[] {
   const occupied = [
     ...context.obstacles.map((item): Box => item.box),
-    ...wires.map((item): Box => item.labelBox),
+    ...wires.filter((item) => item.labelVisible !== false).map((item): Box => item.labelBox),
   ];
   return wires.map((wire): RoutedWire =>
     finalPath(wire, section, occupied, context.placement.options.routeClearance / 2),

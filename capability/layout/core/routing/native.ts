@@ -72,7 +72,7 @@ export function plan(
         [visible(wire.source.node, nodes), visible(wire.target.node, nodes)],
         parallel,
         clearance,
-        wire.label.height,
+        wire.labelVisible === false ? 0 : wire.label.height,
       ),
     },
   };

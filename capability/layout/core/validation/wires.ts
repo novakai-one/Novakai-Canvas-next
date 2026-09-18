@@ -27,6 +27,7 @@ function rebind(wire: VisualWire, context: Context): RoutedWire {
   const attachments = endpoints(wire, context.nodes);
   same(attachments, { source: candidate.source, target: candidate.target }, wire.id);
   same(wire.label, candidate.measuredLabel, wire.id);
+  same(wire.labelVisible, candidate.labelVisible, wire.id);
   same(wire.appearance, candidate.appearance, wire.id);
   same(
     [wire.sourceMarker, wire.targetMarker, wire.style],
@@ -63,7 +64,9 @@ function checkGeometry(
     wire.route.route === 'curve'
       ? curvePath(candidate.points, context.options.routeClearance / 2, [
           ...obstacles,
-          ...context.candidates.map((item) => item.labelBox),
+          ...context.candidates
+            .filter((item) => item.labelVisible !== false)
+            .map((item) => item.labelBox),
         ])
       : linePath(candidate.points);
   same(path, candidate.path, wire.id);
@@ -81,11 +84,15 @@ function checkLabels(
   candidate: SectionCandidate['wires'][number],
   context: Context,
 ): void {
+  if (wire.labelVisible === false) {
+    same(candidate.labelBox, { ...candidate.source.point, width: 0, height: 0 }, wire.id);
+    return;
+  }
   const others = context.candidates.filter((item) => item.id !== wire.id);
   const markers = context.candidates.flatMap((item) => markerBounds(item, context.metrics));
   const occupied = [
     ...labelObstacles(context.nodes),
-    ...others.map((item) => item.labelBox),
+    ...others.filter((item) => item.labelVisible !== false).map((item) => item.labelBox),
     ...markers,
   ];
   checkLabel(candidate.labelBox, wire, occupied);

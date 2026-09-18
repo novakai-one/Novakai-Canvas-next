@@ -18,23 +18,25 @@ export function localCorridors(plan: RoutePlan, gap: number): readonly Corridor[
 /** The final fallback alone may depend on whole-scene bounds; it consumes exactly one attempt. Pure replay is safe; Layout owns retry and Authoring retains the scene on failure. */
 export function outsideCorridor(plan: RoutePlan, occupied: readonly Box[], gap: number): Corridor {
   const bounds = union(occupied);
+  const label = labelSize(plan);
   return corridor(
     plan,
     [
-      { x: bounds.x - gap - plan.wire.label.width, y: bounds.y - gap - plan.wire.label.height },
-      { x: bounds.x + bounds.width + gap, y: bounds.y - gap - plan.wire.label.height },
+      { x: bounds.x - gap - label.width, y: bounds.y - gap - label.height },
+      { x: bounds.x + bounds.width + gap, y: bounds.y - gap - label.height },
     ],
     8,
   );
 }
 /** Measured offsets reserve label space; approach-aligned checkpoints follow source-to-target order without forcing reversals past endpoint stubs. */
 function around(plan: RoutePlan, bounds: Box, gap: number, offset: number): readonly Corridor[] {
+  const label = labelSize(plan);
   const source = plan.connection.sourceApproach ?? plan.connection.source;
   const target = plan.connection.targetApproach ?? plan.connection.target;
-  const left = bounds.x - gap - plan.wire.label.width;
-  const right = bounds.x + bounds.width + gap + plan.wire.label.width;
-  const top = bounds.y - gap - plan.wire.label.height;
-  const bottom = bounds.y + bounds.height + gap + plan.wire.label.height;
+  const left = bounds.x - gap - label.width;
+  const right = bounds.x + bounds.width + gap + label.width;
+  const top = bounds.y - gap - label.height;
+  const bottom = bounds.y + bounds.height + gap + label.height;
   return [
     corridor(
       plan,
@@ -69,6 +71,10 @@ function around(plan: RoutePlan, bounds: Box, gap: number, offset: number): read
       offset + 3,
     ),
   ];
+}
+/** Invisible annotations retain semantic content but consume no route footprint. */
+function labelSize(plan: RoutePlan): { readonly width: number; readonly height: number } {
+  return plan.wire.labelVisible === false ? { width: 0, height: 0 } : plan.wire.label;
 }
 /** Preserve only the approach checkpoints around each alternative, never an old outside detour. */
 function corridor(plan: RoutePlan, middle: readonly Point[], index: number): Corridor {

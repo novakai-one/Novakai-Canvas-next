@@ -10,6 +10,7 @@ const wire = z
     id: sceneId,
     relationshipId: z.string(),
     annotationEndpoint: z.enum(['source', 'target']).optional(),
+    labelVisible: z.boolean().optional(),
     sectionId: z.string(),
     kind: z.string(),
     source: endpoint,

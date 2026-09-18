@@ -183,6 +183,7 @@ export interface VisualEndpoint {
 }
 type SceneIdentity = z.infer<typeof sceneId>;
 export interface VisualWire {
+  readonly labelVisible?: boolean | undefined;
   readonly annotationEndpoint?: 'source' | 'target' | undefined;
   readonly id: SceneIdentity;
   readonly relationshipId: string;

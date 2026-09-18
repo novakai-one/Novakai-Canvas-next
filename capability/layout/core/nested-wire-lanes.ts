@@ -5,7 +5,7 @@ import type {
 } from '../contract/records/nested-wires.js';
 import type { PrototypeRoad } from '../contract/records/road-prototype.js';
 import { axes } from './prototype-road-geometry.js';
-import { roadLanePitch } from './nested-terminal-pins.js';
+import { roadLanePitch, terminalStem } from './nested-terminal-pins.js';
 import { laneOrder } from './nested-lane-order.js';
 
 export interface Travel {
@@ -19,6 +19,8 @@ export interface AssignedTravel extends Travel {
   readonly lane: NestedWireLane;
   readonly at: number;
   readonly count: number;
+  readonly fanIndex: number;
+  readonly fanCount: number;
   readonly pitch: number;
   readonly transfer?: TransferChannel;
 }
@@ -86,6 +88,8 @@ function assign(
   return {
     ...t,
     count,
+    fanIndex: index,
+    fanCount: count,
     pitch,
     at: b[a.across] + b[a.breadth] / 2 + offset,
     lane: {
@@ -103,21 +107,70 @@ export interface LaneAnnotation {
   readonly pitch: number;
   readonly verticalPitch?: number;
 }
-function assignedRoad(
+/** Physical lane populations continue across collinear, zero-length junction crossings. */
+function continuityGroups(wires: readonly NestedWire[], roads: ReadonlyMap<string, PrototypeRoad>) {
+  const parent = new Map<string, string>();
+  const all: Travel[] = [];
+  const key = (t: Travel) => `${t.road.id}:${t.direction}`;
+  const root = (id: string): string => {
+    const next = parent.get(id) ?? id;
+    if (next === id) return id;
+    const result = root(next);
+    parent.set(id, result);
+    return result;
+  };
+  wires.forEach((wire) => {
+    const visits = wireTravels(wire, roads);
+    all.push(...visits);
+    visits.slice(0, -1).forEach((t, index) => {
+      const next = visits[index + 1]!;
+      if (!continuous(t, next, wire)) return;
+      parent.set(root(key(next)), root(key(t)));
+    });
+  });
+  const groups = new Map<string, Travel[]>();
+  all.forEach((t) => addTo(groups, root(key(t)), t));
+  return { travels: all, groups: [...groups.values()] };
+}
+function continuous(t: Travel, next: Travel, wire: NestedWire): boolean {
+  if (t.direction !== next.direction || t.road.axis !== next.road.axis) return false;
+  const a = axes[t.road.axis];
+  const center = (road: PrototypeRoad) => road.bounds[a.across] + road.bounds[a.breadth] / 2;
+  if (center(t.road) !== center(next.road)) return false;
+  const skipped = wire.segments.slice(t.last + 1, next.first);
+  if (skipped.length === 0) return false;
+  return skipped.every(
+    (s) =>
+      s.from[a.across] === s.to[a.across] && t.direction * (s.to[a.along] - s.from[a.along]) >= 0,
+  );
+}
+function assignedComponent(
   travels: readonly Travel[],
   compare: (a: Travel, b: Travel) => number,
   annotations?: ReadonlyMap<string, LaneAnnotation>,
 ): readonly AssignedTravel[] {
-  return [1, -1].flatMap((direction) => {
-    const group = travels.filter((t) => t.direction === direction).toSorted(compare);
-    const pitches = group.map((travel) => annotationPitch(travel, annotations?.get(travel.wireId)));
-    let distance = 0;
-    return group.map((t, index) => {
-      const pitch = pitches[index]!;
-      distance += index === 0 ? pitch / 2 : Math.max(pitches[index - 1]!, pitch);
-      return assign(t, index, group.length, distance, pitch);
-    });
+  const visits = new Map<string, Travel[]>();
+  travels.forEach((travel) => addTo(visits, travel.wireId, travel));
+  const groups = [...visits.values()].toSorted((a, b) => compare(a[0]!, b[0]!));
+  const pitches = groups.map((group) =>
+    Math.max(...group.map((t) => annotationPitch(t, annotations?.get(t.wireId)))),
+  );
+  let distance = 0;
+  const assigned = groups.flatMap((group, index) => {
+    const pitch = pitches[index]!;
+    distance += index === 0 ? pitch / 2 : Math.max(pitches[index - 1]!, pitch);
+    return group.map((t) => assign(t, index, groups.length, distance, pitch));
   });
+  const local = new Map<string, AssignedTravel[]>();
+  assigned.forEach((t) => addTo(local, t.road.id, t));
+  return [...local.values()].flatMap((group) =>
+    group.map((t, fanIndex) => ({ ...t, fanIndex, fanCount: group.length })),
+  );
+}
+/** Endpoint fan depth is local; continuity slot indices can contain unused intermediate lanes. */
+export function terminalFanDistance(t: AssignedTravel): number {
+  const pitch = roadLanePitch(t.road);
+  return terminalStem(t.road.access ?? undefined, pitch) + (t.fanCount - t.fanIndex - 1) * pitch;
 }
 /** Compiles retained law assignments once. Fresh indexes make caller-owned reconstruction safe. */
 export function allocateNestedLanes(
@@ -125,13 +178,11 @@ export function allocateNestedLanes(
   roads: ReadonlyMap<string, PrototypeRoad>,
   annotations?: ReadonlyMap<string, LaneAnnotation>,
 ) {
-  const travels = wires.flatMap((wire) => wireTravels(wire, roads));
+  const { travels, groups } = continuityGroups(wires, roads);
   const byRoad = new Map<string, Travel[]>();
   travels.forEach((t) => addTo(byRoad, t.road.id, t));
   const compare = laneOrder(wires);
-  const assigned = [...byRoad.values()].flatMap((group) =>
-    assignedRoad(group, compare, annotations),
-  );
+  const assigned = groups.flatMap((group) => assignedComponent(group, compare, annotations));
   const byWire = new Map<string, AssignedTravel[]>();
   assigned.forEach((t) => addTo(byWire, t.wireId, t));
   byWire.forEach((ts, id) =>

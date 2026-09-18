@@ -23,7 +23,7 @@ export function createWireDrawing(
           strokeWidth={item.appearance.width}
           strokeDasharray={dash}
         />
-        {label(item.measuredLabel, item.labelBox)}
+        {item.labelVisible !== false && label(item.measuredLabel, item.labelBox)}
         <Marker kind={item.sourceMarker} points={item.points} at="source" paint={paint} />
         <Marker kind={item.targetMarker} points={item.points} at="target" paint={paint} />
       </g>

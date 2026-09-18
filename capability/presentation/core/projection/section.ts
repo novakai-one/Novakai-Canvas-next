@@ -42,6 +42,7 @@ function wire(
     source: endpoint(source.source, nodes),
     target: endpoint(source.target, nodes),
     label: measureWireAnnotation(source, context),
+    labelVisible: false,
     appearance: connectionPaint(context.style.connection, notation.style),
     sourceMarker: notation.source,
     targetMarker: notation.target,

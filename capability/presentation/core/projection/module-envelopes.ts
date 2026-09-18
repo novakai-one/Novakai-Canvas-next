@@ -57,7 +57,9 @@ function measure(
     return envelope;
   });
   const padding = context.style.padding;
-  const labels = section.wires.map((wire) => wire.label);
+  const labels = section.wires
+    .filter((wire) => wire.labelVisible !== false)
+    .map((wire) => wire.label);
   // Parallel strokes need their own ink width as clearance; label whitespace stays independent.
   const stroke = Math.max(
     context.style.connection.width,
@@ -223,7 +225,9 @@ function annotatedFootprint(
   gap: number,
   advance: number,
 ): Footprint {
-  const selected = wires.filter((wire) => wire.annotationEndpoint === endpoint);
+  const selected = wires.filter(
+    (wire) => wire.labelVisible !== false && wire.annotationEndpoint === endpoint,
+  );
   const normal = (wires.length + 1) * pitch + Math.max(0, advance - pitch);
   const directions: Readonly<Record<Side, Side>> =
     endpoint === 'source'

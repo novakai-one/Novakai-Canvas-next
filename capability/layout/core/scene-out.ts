@@ -43,7 +43,10 @@ function labeled(
   blocked: (box: Box) => boolean,
 ): RoutedWire {
   const path = points(engine, wire.id);
-  const label = labelBox(path, wire.label, occupied, options.labelGap, blocked);
+  const label =
+    wire.labelVisible === false
+      ? { ...endpoints(wire, engine.nodes).source.point, width: 0, height: 0 }
+      : labelBox(path, wire.label, occupied, options.labelGap, blocked);
   if (label === null)
     return reject('constraint-conflict', wire.id, 'No clear label position on custom roads');
   return {
@@ -53,6 +56,7 @@ function labeled(
     path: linePath(path),
     labelBox: label,
     measuredLabel: wire.label,
+    labelVisible: wire.labelVisible,
     appearance: wire.appearance,
     sourceMarker: wire.sourceMarker,
     targetMarker: wire.targetMarker,
@@ -77,14 +81,17 @@ function paths(
       labeled(
         wire,
         engine,
-        done.map((w) => w.labelBox),
+        done.filter((w) => w.labelVisible !== false).map((w) => w.labelBox),
         options,
         blocked,
       ),
     ],
     [],
   );
-  const curves = [...contentBoxes(engine.nodes), ...wires.map((w) => w.labelBox)];
+  const curves = [
+    ...contentBoxes(engine.nodes),
+    ...wires.filter((w) => w.labelVisible !== false).map((w) => w.labelBox),
+  ];
   return wires.map((wire, i) =>
     source.wires[i]?.route.route === 'curve'
       ? { ...wire, path: curvePath(wire.points, options.routeClearance / 2, curves) }

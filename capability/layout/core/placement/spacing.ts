@@ -34,6 +34,7 @@ function corridorWidth(
 ): number {
   const source = measurements.markers[wire.sourceMarker].advance;
   const target = measurements.markers[wire.targetMarker].advance;
+  if (wire.labelVisible === false) return source + target + options.routeClearance * 4;
   const label =
     direction === 'right' || direction === 'left' ? wire.label.width : wire.label.height;
   return source + target + options.routeClearance * 4 + label + options.labelGap * 2;
@@ -128,7 +129,9 @@ export function labelPadding(
   const extent = horizontal ? 'height' : 'width';
   const reserve = Math.max(
     options.padding,
-    ...wires.map((wire) => wire.label[extent] + options.labelGap * 2 + group.strokeWidth / 2),
+    ...wires
+      .filter((wire) => wire.labelVisible !== false)
+      .map((wire) => wire.label[extent] + options.labelGap * 2 + group.strokeWidth / 2),
   );
   const halfNode = Math.min(Infinity, ...children.map((node) => node[extent] / 2));
   const padding = Math.max(options.padding, reserve - halfNode);

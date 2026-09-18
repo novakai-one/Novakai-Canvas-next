@@ -81,7 +81,7 @@ function memberPoint(node: PlacedNode, member: string, side: Side): Point {
     return reject('invalid-input', member, 'Measured member anchor is missing', [node.id, member]);
   return { ...edge(node, side), y: node.box.y + anchor.y };
 }
-/** Automatic annotation approaches are lateral so text uses a shallow horizontal label band. */
+/** The semantically selected endpoint keeps a stable lateral approach, independent of label visibility. */
 export function preferredSide(wire: VisualWire, endpoint: 'source' | 'target'): Side | 'auto' {
   const requested = endpoint === 'source' ? wire.route.sourceSide : wire.route.targetSide;
   if (requested !== 'auto' || wire.annotationEndpoint !== endpoint) return requested;

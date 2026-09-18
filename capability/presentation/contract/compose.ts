@@ -28,13 +28,7 @@ export async function createReactBindings(
 }
 /** Resolve concrete React adapters once; render operations share the exact same pinned font definitions. */
 async function bindReact(pinned: FontSet, injected?: NodeChromeRegistry): Promise<ReactBindings> {
-  const [content, nodes, card, folder, accent] = await Promise.all([
-    import('../adapters/react/ContentBlocks.js'),
-    import('../adapters/react/NodeContent.js'),
-    import('../adapters/react/CardChrome.js'),
-    import('../adapters/react/FolderTabChrome.js'),
-    import('../adapters/react/AccentStripeChrome.js'),
-  ]);
+  const [content, nodes, card, folder, accent] = await reactModules();
   const chromes: NodeChromeRegistry = injected ?? {
     card: { Component: card.CardChrome, showKind: true },
     [chromeName.parse('folder-tab')]: {
@@ -74,10 +68,7 @@ export async function composePresentation(
   chromes?: NodeChromeRegistry,
 ): Promise<Result<ComposedPresentation>> {
   try {
-    const [metrics, markup] = await Promise.all([
-      import('../adapters/fontkit.js'),
-      import('../adapters/static-markup.js'),
-    ]);
+    const [metrics, markup] = await nativeModules();
     const react = requireValue(await createReactBindings(fonts, chromes));
     return protect(() => {
       const measurement = requireValue(metrics.createFontMetrics(react.fonts));
@@ -92,6 +83,34 @@ export async function composePresentation(
         react,
       };
     });
+  } catch {
+    return fail(
+      'provider-failed',
+      'composition',
+      'Native Presentation dependencies could not be loaded',
+    );
+  }
+}
+
+/** Import immutable renderer code separately from font binding and diagram measurement. */
+function reactModules() {
+  return Promise.all([
+    import('../adapters/react/ContentBlocks.js'),
+    import('../adapters/react/NodeContent.js'),
+    import('../adapters/react/CardChrome.js'),
+    import('../adapters/react/FolderTabChrome.js'),
+    import('../adapters/react/AccentStripeChrome.js'),
+  ]);
+}
+/** Service-only providers stay behind explicit native preparation; browser imports remain portable. */
+function nativeModules() {
+  return Promise.all([import('../adapters/fontkit.js'), import('../adapters/static-markup.js')]);
+}
+/** Worker readiness includes provider code loading, without parsing fonts or deriving any diagram geometry. */
+export async function prepareNativePresentation(): Promise<Result<void>> {
+  try {
+    await Promise.all([nativeModules(), reactModules()]);
+    return { ok: true, value: undefined };
   } catch {
     return fail(
       'provider-failed',

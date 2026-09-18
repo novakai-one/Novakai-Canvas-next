@@ -1,6 +1,6 @@
 /** Presentation public boundary: measured scenes and stable React bindings; host owns recovery and layout. */
 export { createPresentation } from './api.js';
-export { composePresentation, createReactBindings } from './compose.js';
+export { composePresentation, createReactBindings, prepareNativePresentation } from './compose.js';
 export type { Owners, ComposedPresentation } from './compose.js';
 export type { Dependencies, Presentation, TextRequest, SupplementalMeasurements } from './types.js';
 export type { Result, Diagnostic, ErrorCode } from './errors.js';

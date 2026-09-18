@@ -1,3 +1,4 @@
+import { prepareNativePresentation } from '@novakai/canvas-presentation';
 import { openAssets } from '@novakai/canvas-assets';
 import { openSqlite } from '@novakai/canvas-persistence';
 import { composeAuthoring, failure as authoringFailure } from '@novakai/canvas-authoring';
@@ -30,6 +31,9 @@ export async function runRenderWorker(): Promise<Result<void>> {
       import('../adapters/rendering-input.js'),
       import('../adapters/rendering.js'),
     ]);
+    const prepared = await prepareNativePresentation();
+    if (!prepared.ok)
+      return failure('unavailable', 'worker', prepared.error.message, prepared.error);
     return entry.serveRenderWorker({
       producer: { produce: rendering.produceDiagram },
       read: input.readRenderingJob,

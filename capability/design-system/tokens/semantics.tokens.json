@@ -669,5 +669,154 @@
       "$type": "color",
       "$value": "{text.secondary}"
     }
+  },
+  "canvas": {
+    "surface": {
+      "$type": "color",
+      "$value": "{surface.base}"
+    },
+    "grid": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{border.default}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.gridOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "nodeSurface": {
+      "$type": "color",
+      "$value": "{surface.raised}"
+    },
+    "nodeHeader": {
+      "$type": "color",
+      "$value": "{surface.base}"
+    },
+    "nodeBoundary": {
+      "$type": "color",
+      "$value": "{border.default}"
+    },
+    "nodeRim": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{text.primary}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.rimOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "nodeShadow": {
+      "$type": "color",
+      "$value": "{shadow.opacityColor}"
+    },
+    "nodeAmbientShadow": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{shadow.color}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.ambientOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "nodeOffsetY": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.nodeOffsetY}"
+    },
+    "nodeBlur": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.nodeBlur}"
+    },
+    "ambientOffsetY": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.ambientOffsetY}"
+    },
+    "ambientBlur": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.ambientBlur}"
+    },
+    "heading": {
+      "$type": "color",
+      "$value": "{text.primary}"
+    },
+    "member": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    },
+    "groupSurface": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{surface.raised}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.groupOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "groupBoundary": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{border.default}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.boundaryOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "groupHeading": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    },
+    "transition": {
+      "$type": "duration",
+      "$value": "{motion.duration}"
+    }
   }
 }

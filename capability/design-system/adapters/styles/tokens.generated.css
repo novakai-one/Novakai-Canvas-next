@@ -83,5 +83,14 @@
   --nv-chrome-header-decision: #f2f7fc;
   --nv-chrome-header-success: #f2f7fc;
   --nv-chrome-header-warning: #f2f7fc;
+  --nv-canvas-depth-node-offset-y: 4px;
+  --nv-canvas-depth-node-blur: 12px;
+  --nv-canvas-depth-ambient-offset-y: 10px;
+  --nv-canvas-depth-ambient-blur: 22px;
+  --nv-canvas-depth-ambient-opacity: 0.08;
+  --nv-canvas-depth-rim-opacity: 0.14;
+  --nv-canvas-depth-group-opacity: 0.36;
+  --nv-canvas-depth-boundary-opacity: 0.55;
+  --nv-canvas-depth-grid-opacity: 0.42;
 }
 }

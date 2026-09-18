@@ -678,5 +678,55 @@
         }
       }
     }
+  },
+  "canvasDepth": {
+    "nodeOffsetY": {
+      "$type": "dimension",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      }
+    },
+    "nodeBlur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      }
+    },
+    "ambientOffsetY": {
+      "$type": "dimension",
+      "$value": {
+        "value": 10,
+        "unit": "px"
+      }
+    },
+    "ambientBlur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 22,
+        "unit": "px"
+      }
+    },
+    "ambientOpacity": {
+      "$type": "number",
+      "$value": 0.08
+    },
+    "rimOpacity": {
+      "$type": "number",
+      "$value": 0.14
+    },
+    "groupOpacity": {
+      "$type": "number",
+      "$value": 0.36
+    },
+    "boundaryOpacity": {
+      "$type": "number",
+      "$value": 0.55
+    },
+    "gridOpacity": {
+      "$type": "number",
+      "$value": 0.42
+    }
   }
 }

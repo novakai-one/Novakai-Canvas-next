@@ -21,6 +21,8 @@ export interface NestedSectionSpec {
     readonly pitch: { readonly x: number; readonly y: number };
     readonly columnWidths: readonly number[];
     readonly rowHeights: readonly number[];
+    readonly columnCenters: readonly number[];
+    readonly rowCenters: readonly number[];
   };
   readonly number: number;
   readonly nodes: readonly NestedNodeSpec[];

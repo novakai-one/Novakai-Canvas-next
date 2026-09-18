@@ -132,6 +132,8 @@ export const moduleEnvelope = z
     pitch: z.strictObject({ x: dimension, y: dimension }).readonly(),
     columnWidths: z.array(dimension).readonly(),
     rowHeights: z.array(dimension).readonly(),
+    columnCenters: z.array(dimension).readonly(),
+    rowCenters: z.array(dimension).readonly(),
   })
   .readonly();
 export type ModuleEnvelope = z.infer<typeof moduleEnvelope>;

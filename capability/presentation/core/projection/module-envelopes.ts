@@ -94,19 +94,14 @@ function measure(
     1,
     Math.min(children.length || 1, intent.columns ?? Math.ceil(Math.sqrt(children.length))),
   );
-  const cells = leaves.map((node) => {
-    const reserve = nodeReserve(node.id, section.wires, lanePitch, annotationGap, advance);
-    return {
-      x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve.x + cellGap),
-      y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve.y + cellGap),
-    };
-  });
-  const columnWidths = Array.from({ length: leaves.length === 0 ? 0 : columns }, (_, column) =>
-    Math.max(...cells.filter((_, i) => i % columns === column).map((cell) => cell.x)),
+  const cells = leaves.map((node) =>
+    nodeFootprint(node, section.wires, lanePitch, annotationGap, advance),
   );
-  const rowHeights = Array.from({ length: Math.ceil(leaves.length / columns) }, (_, row) =>
-    Math.max(...cells.slice(row * columns, (row + 1) * columns).map((cell) => cell.y)),
-  );
+  const horizontal = tracks(leaves, cells, columns, 'x', cellGap, gap / 2);
+  const header = Math.ceil((parent?.headerHeight ?? section.title.height + padding * 2) + gap / 2);
+  const vertical = tracks(leaves, cells, columns, 'y', cellGap, header);
+  const columnWidths = horizontal.sizes;
+  const rowHeights = vertical.sizes;
   const pitch = { x: Math.max(gap, ...columnWidths), y: Math.max(gap, ...rowHeights) };
   const childRows = Array.from({ length: Math.ceil(children.length / childColumns) }, (_, index) =>
     children.slice(index * childColumns, (index + 1) * childColumns),
@@ -119,7 +114,6 @@ function measure(
     (sum, row) => sum + Math.max(...row.map((child) => child.height + gap)),
     0,
   );
-  const header = Math.ceil((parent?.headerHeight ?? section.title.height + padding * 2) + gap / 2);
   const ownWidth = columnWidths.reduce((sum, width) => sum + width, 0);
   const ownHeight = rowHeights.reduce((sum, height) => sum + height, 0);
   const pinned = leaves.filter((node) => node.placement !== null);
@@ -156,6 +150,8 @@ function measure(
     pitch,
     columnWidths,
     rowHeights,
+    columnCenters: horizontal.centers,
+    rowCenters: vertical.centers,
   };
 }
 
@@ -172,58 +168,143 @@ function descendants(
   ]);
 }
 
-/** Each role bounds its eventual ports; only owned labels reserve extra lane space. */
-function nodeReserve(
-  id: string,
+interface Footprint {
+  readonly left: number;
+  readonly right: number;
+  readonly top: number;
+  readonly bottom: number;
+}
+type Side = keyof Footprint;
+
+/** Cell bounds include body, compact unselected approaches and the selected annotation bands. */
+function nodeFootprint(
+  node: VisualNode,
   wires: readonly VisualWire[],
   pitch: number,
   labelGap: number,
   advance: number,
-) {
-  const exits = wires.filter((wire) => wire.source.node === id);
-  const entries = wires.filter((wire) => wire.target.node === id);
-  return {
-    x:
-      2 *
-      Math.max(
-        roleReserve(exits, 'source', pitch, 'width', labelGap, advance),
-        roleReserve(entries, 'target', pitch, 'width', labelGap, advance),
-      ),
-    y:
-      2 *
-      Math.max(
-        roleReserve(exits, 'source', pitch, 'height', labelGap, advance),
-        roleReserve(entries, 'target', pitch, 'height', labelGap, advance),
-      ),
+): Footprint {
+  const exits = wires.filter((wire) => wire.source.node === node.id);
+  const entries = wires.filter((wire) => wire.target.node === node.id);
+  const width = Math.max(node.width, node.placement?.width ?? 0);
+  const height = Math.max(node.height, node.placement?.height ?? 0);
+  const count = Math.max(exits.length, entries.length);
+  const compact = count === 0 ? 0 : (count + 1) * pitch + Math.max(0, advance - pitch);
+  const body = {
+    left: width / 2 + compact,
+    right: width / 2 + compact,
+    top: height / 2 + compact,
+    bottom: height / 2 + compact,
   };
+  return annotatedFootprint(
+    annotatedFootprint(body, node, exits, 'source', pitch, labelGap, advance),
+    node,
+    entries,
+    'target',
+    pitch,
+    labelGap,
+    advance,
+  );
 }
 
-/** Lateral automatic annotations reserve shallow bands and a measured approach length. */
-function roleReserve(
+/** Orthogonal lanes share the body's across-axis span instead of adding it a second time. */
+function annotatedFootprint(
+  body: Footprint,
+  node: VisualNode,
   wires: readonly VisualWire[],
   endpoint: 'source' | 'target',
   pitch: number,
-  dimension: 'width' | 'height',
-  labelGap: number,
+  gap: number,
   advance: number,
+): Footprint {
+  const selected = wires.filter((wire) => wire.annotationEndpoint === endpoint);
+  const normal = (wires.length + 1) * pitch + Math.max(0, advance - pitch);
+  const directions: Readonly<Record<Side, Side>> =
+    endpoint === 'source'
+      ? { right: 'bottom', left: 'top', bottom: 'left', top: 'right' }
+      : { left: 'bottom', right: 'top', top: 'left', bottom: 'right' };
+  return (['left', 'right', 'top', 'bottom'] as const).reduce((bounds, side) => {
+    const labels = selected.filter((wire) => annotationSide(wire, endpoint) === side);
+    if (labels.length === 0) return bounds;
+    const lateral = side === 'left' || side === 'right';
+    const across = lateral ? 'height' : 'width';
+    const along = lateral ? 'width' : 'height';
+    const pitches = labels.map((wire) => wire.label[across] + gap * 2 + 1);
+    const band = Math.min(
+      (wires.length + 1) * Math.max(pitch, ...pitches),
+      (wires.length + 1) * pitch + 2 * pitches.reduce((sum, value) => sum + value - pitch, 0),
+    );
+    const crossSide = directions[side];
+    const anchors = labels.map((wire) => anchorOffset(node, wire, endpoint, crossSide));
+    return {
+      ...bounds,
+      [side]: Math.max(
+        bounds[side],
+        node[along] / 2 +
+          normal +
+          Math.max(...labels.map((wire) => wire.label[along] + gap * 2 + 1)),
+      ),
+      [crossSide]: Math.max(bounds[crossSide], band + Math.max(...anchors)),
+    };
+  }, body);
+}
+function annotationSide(wire: VisualWire, endpoint: 'source' | 'target'): Side {
+  const side = endpoint === 'source' ? wire.route.sourceSide : wire.route.targetSide;
+  return side === 'auto' ? (endpoint === 'source' ? 'right' : 'left') : side;
+}
+function anchorOffset(
+  node: VisualNode,
+  wire: VisualWire,
+  endpoint: 'source' | 'target',
+  side: Side,
 ): number {
-  if (wires.length === 0) return 0;
-  const owned = wires.filter((wire) => wire.annotationEndpoint === endpoint);
-  const across = owned.filter((wire) => acrossDimension(wire, endpoint) === dimension);
-  const along = owned.filter((wire) => acrossDimension(wire, endpoint) !== dimension);
-  const pitches = across.map((wire) => wire.label[dimension] + labelGap * 2 + 1);
-  const stem = Math.max(0, advance - pitch);
-  const base = (wires.length + 1) * pitch + stem;
-  const uniform = (wires.length + 1) * Math.max(pitch, ...pitches) + stem;
-  const variable = base + 2 * pitches.reduce((sum, value) => sum + value - pitch, 0);
-  const approach = Math.max(0, ...along.map((wire) => wire.label[dimension] + labelGap * 2 + 1));
-  return Math.max(Math.min(uniform, variable), base + approach);
+  const anchor = node.content.anchors.find((item) => item.member === wire[endpoint].member);
+  if (anchor === undefined) return 0;
+  return (anchor.y - node.height / 2) * (side === 'top' ? -1 : 1);
 }
 
-/** Explicit vertical sides remain authoritative; automatic label attachments are lateral. */
-function acrossDimension(wire: VisualWire, endpoint: 'source' | 'target'): 'width' | 'height' {
-  const side = endpoint === 'source' ? wire.route.sourceSide : wire.route.targetSide;
-  return side === 'top' || side === 'bottom' ? 'width' : 'height';
+/** Manual placements reserve their own cell before roads are built; automatic nodes retain grid order. */
+function tracks(
+  nodes: readonly VisualNode[],
+  cells: readonly Footprint[],
+  columns: number,
+  axis: 'x' | 'y',
+  gap: number,
+  origin: number,
+) {
+  const count = axis === 'x' ? Math.min(columns, nodes.length) : Math.ceil(nodes.length / columns);
+  const before = axis === 'x' ? 'left' : 'top';
+  const after = axis === 'x' ? 'right' : 'bottom';
+  const dimension = axis === 'x' ? 'width' : 'height';
+  const sizes: number[] = [],
+    centers: number[] = [];
+  let start = origin;
+  for (let track = 0; track < count; track++) {
+    const members = nodes
+      .map((node, index) => ({
+        node,
+        cell: cells[index]!,
+        track: axis === 'x' ? index % columns : Math.floor(index / columns),
+      }))
+      .filter((item) => item.track === track);
+    const lead = Math.max(...members.map((item) => item.cell[before]));
+    const trail = Math.max(...members.map((item) => item.cell[after]));
+    const pinned = members
+      .filter((item) => item.node.placement !== null)
+      .map(
+        ({ node, cell }) =>
+          node.placement![axis] +
+          Math.max(node[dimension], node.placement![dimension] ?? 0) / 2 +
+          cell[after] +
+          gap / 2 -
+          start,
+      );
+    const size = Math.ceil(Math.max(lead + trail + gap, ...pinned));
+    sizes.push(size);
+    centers.push(lead + gap / 2);
+    start += size;
+  }
+  return { sizes, centers };
 }
 
 /** Annotation ownership is semantic and fixed before measuring any module envelope. */

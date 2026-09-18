@@ -139,8 +139,16 @@ function gridNodes(size: SizedSection, interior: PrototypeBounds) {
         size.id,
         node.number - 1,
         {
-          x: interior.x + xEdges[column]! + (cellWidth - measured.width) / 2,
-          y: interior.y + yEdges[row]! + (rowHeight - measured.height) / 2,
+          x:
+            interior.x +
+            xEdges[column]! +
+            (size.measured?.columnCenters[column] ?? cellWidth / 2) -
+            measured.width / 2,
+          y:
+            interior.y +
+            yEdges[row]! +
+            (size.measured?.rowCenters[row] ?? rowHeight / 2) -
+            measured.height / 2,
         },
         measured,
       ),

@@ -1,0 +1,48 @@
+{
+  "inputRevision": "534fd8dd4e6b22e143008b975795125c1b538c73",
+  "sourceBaseline": "71a22e8c52db3b96c0c8efe06be96b08e35cae50",
+  "branch": "feat/order-trial",
+  "replay": {
+    "command": "./output/playwright/nested-wires/legality-spike/replay.mjs",
+    "exits": [
+      0,
+      0
+    ],
+    "byteIdentical": true,
+    "matchesClassification": true,
+    "bytes": 3059262,
+    "sha256Each": [
+      "e042d836e6276a25ddf440b32420f3da4f981a1d4437d589575ddf686eb0d113",
+      "e042d836e6276a25ddf440b32420f3da4f981a1d4437d589575ddf686eb0d113"
+    ],
+    "directExecutableVerified": true
+  },
+  "probes": {
+    "exit": 0,
+    "matchesPreservedOutput": true,
+    "sha256": "d2eae9a3b85631333d7529c9c1c75e99750c8c71f5282f93d6e0bcb0f3f07748"
+  },
+  "negativeControl": {
+    "exit": 1,
+    "expected": true
+  },
+  "explicitScriptLint": {
+    "exit": 0,
+    "cognitiveComplexityLimit": 2
+  },
+  "scope": "Only output/playwright/nested-wires/legality-spike/; no product source changes; headless terminal only; no PR",
+  "scriptSha256": {
+    "replay.mjs": "ba3624a1af2f711bf04cde72e104221ce2c988e8658a79f201016af7e0ffc0dd",
+    "probes.mjs": "efab51d295dbd423bc34f5239da97342abc0c45203bf894ab1ef71e9959d0f1a"
+  },
+  "pnpmCheck": {
+    "command": "pnpm check",
+    "exit": 0,
+    "testFiles": 70,
+    "testsPassed": 208,
+    "testsTotal": 208,
+    "afterFinalExecutableAndNarrativeEdits": true,
+    "logSha256": "dd1ccfc2bdb3837442bfb51ab27f7d3802abd1c248c550a0f5f29fb1c3e6a4c2",
+    "note": "After check, only this generated receipt and trailing-blank-line normalization of its log changed; executable hashes unchanged."
+  }
+}

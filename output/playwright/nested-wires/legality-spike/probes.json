@@ -1,0 +1,1683 @@
+{
+  "ok": true,
+  "value": {
+    "revision": "534fd8dd4e6b22e143008b975795125c1b538c73",
+    "supplementary": {
+      "reversedAssignedSegments": [
+        {
+          "identity": "w07:3",
+          "segment": {
+            "from": {
+              "x": 3082,
+              "y": 457
+            },
+            "to": {
+              "x": 3061,
+              "y": 457
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w07:0"
+          },
+          "lane": {
+            "id": "w07:0",
+            "wireId": "w07",
+            "roadId": "drive:node-2:exit-right",
+            "direction": 1,
+            "index": 1,
+            "offset": 9
+          }
+        },
+        {
+          "identity": "w08:3",
+          "segment": {
+            "from": {
+              "x": 3076,
+              "y": 463
+            },
+            "to": {
+              "x": 3055,
+              "y": 463
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w08:0"
+          },
+          "lane": {
+            "id": "w08:0",
+            "wireId": "w08",
+            "roadId": "drive:node-2:exit-right",
+            "direction": 1,
+            "index": 2,
+            "offset": 15
+          }
+        },
+        {
+          "identity": "w06:3",
+          "segment": {
+            "from": {
+              "x": 3070,
+              "y": 469
+            },
+            "to": {
+              "x": 3052,
+              "y": 469
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w06:0"
+          },
+          "lane": {
+            "id": "w06:0",
+            "wireId": "w06",
+            "roadId": "drive:node-2:exit-right",
+            "direction": 1,
+            "index": 3,
+            "offset": 21
+          }
+        },
+        {
+          "identity": "w05:3",
+          "segment": {
+            "from": {
+              "x": 3064,
+              "y": 475
+            },
+            "to": {
+              "x": 3052,
+              "y": 475
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w05:0"
+          },
+          "lane": {
+            "id": "w05:0",
+            "wireId": "w05",
+            "roadId": "drive:node-2:exit-right",
+            "direction": 1,
+            "index": 4,
+            "offset": 27
+          }
+        },
+        {
+          "identity": "w04:3",
+          "segment": {
+            "from": {
+              "x": 3058,
+              "y": 481
+            },
+            "to": {
+              "x": 3052,
+              "y": 481
+            },
+            "corridorId": "drive:node-2:exit-right",
+            "laneId": "w04:0"
+          },
+          "lane": {
+            "id": "w04:0",
+            "wireId": "w04",
+            "roadId": "drive:node-2:exit-right",
+            "direction": 1,
+            "index": 5,
+            "offset": 33
+          }
+        },
+        {
+          "identity": "w03:7",
+          "segment": {
+            "from": {
+              "x": 3196,
+              "y": 457
+            },
+            "to": {
+              "x": 3178,
+              "y": 457
+            },
+            "corridorId": "drive:node-3:entry-left",
+            "laneId": "w03:3"
+          },
+          "lane": {
+            "id": "w03:3",
+            "wireId": "w03",
+            "roadId": "drive:node-3:entry-left",
+            "direction": 1,
+            "index": 1,
+            "offset": 9
+          }
+        },
+        {
+          "identity": "w06:30",
+          "segment": {
+            "from": {
+              "x": 6709,
+              "y": 1555
+            },
+            "to": {
+              "x": 6709,
+              "y": 1528
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w06:22"
+          },
+          "lane": {
+            "id": "w06:22",
+            "wireId": "w06",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 0,
+            "offset": -3
+          }
+        },
+        {
+          "identity": "w37:24",
+          "segment": {
+            "from": {
+              "x": 6703,
+              "y": 1561
+            },
+            "to": {
+              "x": 6703,
+              "y": 1534
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w37:17"
+          },
+          "lane": {
+            "id": "w37:17",
+            "wireId": "w37",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 1,
+            "offset": -9
+          }
+        },
+        {
+          "identity": "w51:24",
+          "segment": {
+            "from": {
+              "x": 6697,
+              "y": 1567
+            },
+            "to": {
+              "x": 6697,
+              "y": 1540
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w51:17"
+          },
+          "lane": {
+            "id": "w51:17",
+            "wireId": "w51",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 2,
+            "offset": -15
+          }
+        },
+        {
+          "identity": "w63:23",
+          "segment": {
+            "from": {
+              "x": 6691,
+              "y": 1573
+            },
+            "to": {
+              "x": 6691,
+              "y": 1546
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w63:17"
+          },
+          "lane": {
+            "id": "w63:17",
+            "wireId": "w63",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 3,
+            "offset": -21
+          }
+        },
+        {
+          "identity": "w74:24",
+          "segment": {
+            "from": {
+              "x": 6685,
+              "y": 1579
+            },
+            "to": {
+              "x": 6685,
+              "y": 1552
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w74:17"
+          },
+          "lane": {
+            "id": "w74:17",
+            "wireId": "w74",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 4,
+            "offset": -27
+          }
+        },
+        {
+          "identity": "w87:18",
+          "segment": {
+            "from": {
+              "x": 6679,
+              "y": 1585
+            },
+            "to": {
+              "x": 6679,
+              "y": 1558
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w87:14"
+          },
+          "lane": {
+            "id": "w87:14",
+            "wireId": "w87",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 5,
+            "offset": -33
+          }
+        },
+        {
+          "identity": "w84:20",
+          "segment": {
+            "from": {
+              "x": 6673,
+              "y": 1591
+            },
+            "to": {
+              "x": 6673,
+              "y": 1564
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w84:16"
+          },
+          "lane": {
+            "id": "w84:16",
+            "wireId": "w84",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 6,
+            "offset": -39
+          }
+        },
+        {
+          "identity": "w77:20",
+          "segment": {
+            "from": {
+              "x": 6667,
+              "y": 1597
+            },
+            "to": {
+              "x": 6667,
+              "y": 1570
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w77:16"
+          },
+          "lane": {
+            "id": "w77:16",
+            "wireId": "w77",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 7,
+            "offset": -45
+          }
+        },
+        {
+          "identity": "w79:21",
+          "segment": {
+            "from": {
+              "x": 6661,
+              "y": 1603
+            },
+            "to": {
+              "x": 6661,
+              "y": 1576
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w79:16"
+          },
+          "lane": {
+            "id": "w79:16",
+            "wireId": "w79",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 8,
+            "offset": -51
+          }
+        },
+        {
+          "identity": "w72:22",
+          "segment": {
+            "from": {
+              "x": 6655,
+              "y": 1609
+            },
+            "to": {
+              "x": 6655,
+              "y": 1582
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w72:16"
+          },
+          "lane": {
+            "id": "w72:16",
+            "wireId": "w72",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 9,
+            "offset": -57
+          }
+        },
+        {
+          "identity": "w55:19",
+          "segment": {
+            "from": {
+              "x": 6649,
+              "y": 1615
+            },
+            "to": {
+              "x": 6649,
+              "y": 1588
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w55:16"
+          },
+          "lane": {
+            "id": "w55:16",
+            "wireId": "w55",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 10,
+            "offset": -63
+          }
+        },
+        {
+          "identity": "w69:22",
+          "segment": {
+            "from": {
+              "x": 6643,
+              "y": 1621
+            },
+            "to": {
+              "x": 6643,
+              "y": 1594
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w69:16"
+          },
+          "lane": {
+            "id": "w69:16",
+            "wireId": "w69",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 11,
+            "offset": -69
+          }
+        },
+        {
+          "identity": "w48:20",
+          "segment": {
+            "from": {
+              "x": 6637,
+              "y": 1624
+            },
+            "to": {
+              "x": 6637,
+              "y": 1600
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w48:15"
+          },
+          "lane": {
+            "id": "w48:15",
+            "wireId": "w48",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 12,
+            "offset": -75
+          }
+        },
+        {
+          "identity": "w28:26",
+          "segment": {
+            "from": {
+              "x": 6631,
+              "y": 1624
+            },
+            "to": {
+              "x": 6631,
+              "y": 1606
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w28:18"
+          },
+          "lane": {
+            "id": "w28:18",
+            "wireId": "w28",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 13,
+            "offset": -81
+          }
+        },
+        {
+          "identity": "w25:24",
+          "segment": {
+            "from": {
+              "x": 6625,
+              "y": 1624
+            },
+            "to": {
+              "x": 6625,
+              "y": 1612
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w25:17"
+          },
+          "lane": {
+            "id": "w25:17",
+            "wireId": "w25",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 14,
+            "offset": -87
+          }
+        },
+        {
+          "identity": "w42:22",
+          "segment": {
+            "from": {
+              "x": 6619,
+              "y": 1624
+            },
+            "to": {
+              "x": 6619,
+              "y": 1618
+            },
+            "corridorId": "drive:node-36:entry-top",
+            "laneId": "w42:16"
+          },
+          "lane": {
+            "id": "w42:16",
+            "wireId": "w42",
+            "roadId": "drive:node-36:entry-top",
+            "direction": 1,
+            "index": 15,
+            "offset": -93
+          }
+        },
+        {
+          "identity": "w23:6",
+          "segment": {
+            "from": {
+              "x": 741,
+              "y": 1681
+            },
+            "to": {
+              "x": 738,
+              "y": 1681
+            },
+            "corridorId": "drive:node-19:entry-left",
+            "laneId": "w23:3"
+          },
+          "lane": {
+            "id": "w23:3",
+            "wireId": "w23",
+            "roadId": "drive:node-19:entry-left",
+            "direction": 1,
+            "index": 1,
+            "offset": 9
+          }
+        },
+        {
+          "identity": "w36:24",
+          "segment": {
+            "from": {
+              "x": 6280,
+              "y": 1675
+            },
+            "to": {
+              "x": 6250,
+              "y": 1675
+            },
+            "corridorId": "drive:node-35:entry-left",
+            "laneId": "w36:16"
+          },
+          "lane": {
+            "id": "w36:16",
+            "wireId": "w36",
+            "roadId": "drive:node-35:entry-left",
+            "direction": 1,
+            "index": 0,
+            "offset": 3
+          }
+        },
+        {
+          "identity": "w61:23",
+          "segment": {
+            "from": {
+              "x": 6280,
+              "y": 1681
+            },
+            "to": {
+              "x": 6256,
+              "y": 1681
+            },
+            "corridorId": "drive:node-35:entry-left",
+            "laneId": "w61:16"
+          },
+          "lane": {
+            "id": "w61:16",
+            "wireId": "w61",
+            "roadId": "drive:node-35:entry-left",
+            "direction": 1,
+            "index": 1,
+            "offset": 9
+          }
+        },
+        {
+          "identity": "w71:22",
+          "segment": {
+            "from": {
+              "x": 6280,
+              "y": 1687
+            },
+            "to": {
+              "x": 6262,
+              "y": 1687
+            },
+            "corridorId": "drive:node-35:entry-left",
+            "laneId": "w71:15"
+          },
+          "lane": {
+            "id": "w71:15",
+            "wireId": "w71",
+            "roadId": "drive:node-35:entry-left",
+            "direction": 1,
+            "index": 2,
+            "offset": 15
+          }
+        },
+        {
+          "identity": "w67:21",
+          "segment": {
+            "from": {
+              "x": 6280,
+              "y": 1693
+            },
+            "to": {
+              "x": 6268,
+              "y": 1693
+            },
+            "corridorId": "drive:node-35:entry-left",
+            "laneId": "w67:15"
+          },
+          "lane": {
+            "id": "w67:15",
+            "wireId": "w67",
+            "roadId": "drive:node-35:entry-left",
+            "direction": 1,
+            "index": 3,
+            "offset": 21
+          }
+        },
+        {
+          "identity": "w26:22",
+          "segment": {
+            "from": {
+              "x": 6280,
+              "y": 1699
+            },
+            "to": {
+              "x": 6274,
+              "y": 1699
+            },
+            "corridorId": "drive:node-35:entry-left",
+            "laneId": "w26:16"
+          },
+          "lane": {
+            "id": "w26:16",
+            "wireId": "w26",
+            "roadId": "drive:node-35:entry-left",
+            "direction": 1,
+            "index": 4,
+            "offset": 27
+          }
+        }
+      ],
+      "missingOwnedGateTraversals": [
+        {
+          "wire": "w06",
+          "road": "drive:section-14:entry-top"
+        },
+        {
+          "wire": "w05",
+          "road": "drive:section-14:entry-top"
+        },
+        {
+          "wire": "w04",
+          "road": "drive:section-14:entry-top"
+        },
+        {
+          "wire": "w49",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w48",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w46",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w47",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w24",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w27",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w28",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w25",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w42",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w26",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w22",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w40",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w39",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w41",
+          "road": "drive:section-6:exit-bottom"
+        },
+        {
+          "wire": "w31",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w56",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w65",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w29",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w22",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w88",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w57",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w64",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w30",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w46",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w47",
+          "road": "drive:section-5:exit-bottom"
+        },
+        {
+          "wire": "w31",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w56",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w65",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w93",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w29",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w22",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w88",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w70",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w57",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w64",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w30",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w46",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w102",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w111",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w119",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w116",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w110",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w101",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w98",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w106",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w113",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w91",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w47",
+          "road": "drive:section-2:entry-top"
+        },
+        {
+          "wire": "w37",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w51",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w63",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w74",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w87",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w84",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w77",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w79",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w72",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w55",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w69",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w48",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w28",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w25",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w42",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w36",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w61",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w71",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w67",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w26",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w41",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w68",
+          "road": "drive:section-14:entry-left"
+        },
+        {
+          "wire": "w54",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w53",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w55",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w66",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w69",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w67",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w68",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w65",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w64",
+          "road": "drive:section-8:exit-bottom"
+        },
+        {
+          "wire": "w60",
+          "road": "drive:section-8:exit-right"
+        },
+        {
+          "wire": "w63",
+          "road": "drive:section-8:exit-right"
+        },
+        {
+          "wire": "w61",
+          "road": "drive:section-8:exit-right"
+        },
+        {
+          "wire": "w62",
+          "road": "drive:section-8:exit-right"
+        },
+        {
+          "wire": "w58",
+          "road": "drive:section-8:exit-right"
+        },
+        {
+          "wire": "w72",
+          "road": "drive:section-9:exit-bottom"
+        },
+        {
+          "wire": "w71",
+          "road": "drive:section-9:exit-bottom"
+        },
+        {
+          "wire": "w70",
+          "road": "drive:section-9:exit-bottom"
+        },
+        {
+          "wire": "w77",
+          "road": "drive:section-12:exit-bottom"
+        },
+        {
+          "wire": "w79",
+          "road": "drive:section-12:exit-bottom"
+        },
+        {
+          "wire": "w84",
+          "road": "drive:section-13:exit-bottom"
+        },
+        {
+          "wire": "w86",
+          "road": "drive:section-13:exit-right"
+        },
+        {
+          "wire": "w93",
+          "road": "drive:section-5:exit-right"
+        },
+        {
+          "wire": "w91",
+          "road": "drive:section-5:exit-right"
+        }
+      ],
+      "pinsOutsideSixUnitMargin": []
+    },
+    "medianProbes": [
+      {
+        "wire": "w03",
+        "t": {
+          "road": {
+            "id": "drive:node-2:exit-right",
+            "sectionId": "section-2",
+            "kind": "driveway",
+            "bounds": {
+              "x": 3052,
+              "y": 400,
+              "width": 37.5,
+              "height": 96
+            },
+            "axis": "horizontal",
+            "directions": [
+              "right"
+            ],
+            "access": {
+              "nodeId": "node-2",
+              "portId": "node-2:exit-right",
+              "side": "right",
+              "role": "exit"
+            },
+            "wireLaneCount": 7
+          },
+          "lane": {
+            "id": "w03:0",
+            "wireId": "w03",
+            "roadId": "drive:node-2:exit-right",
+            "direction": 1,
+            "index": 0,
+            "offset": 3
+          },
+          "direction": 1,
+          "count": 7,
+          "at": 451
+        },
+        "next": {
+          "road": {
+            "id": "drive:node-3:entry-left",
+            "sectionId": "section-2",
+            "kind": "driveway",
+            "bounds": {
+              "x": 3170.5,
+              "y": 412,
+              "width": 25.5,
+              "height": 72
+            },
+            "axis": "horizontal",
+            "directions": [
+              "right"
+            ],
+            "access": {
+              "nodeId": "node-3",
+              "portId": "node-3:entry-left",
+              "side": "left",
+              "role": "entry"
+            },
+            "wireLaneCount": 5
+          },
+          "lane": {
+            "id": "w03:3",
+            "wireId": "w03",
+            "roadId": "drive:node-3:entry-left",
+            "direction": 1,
+            "index": 1,
+            "offset": 9
+          },
+          "direction": 1,
+          "count": 5,
+          "at": 457
+        },
+        "street": {
+          "id": "section-2:vertical:3124:248",
+          "sectionId": "section-2",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 2998,
+            "y": 80,
+            "width": 252,
+            "height": 1046
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 20
+        },
+        "previous": {
+          "to": {
+            "x": 3088,
+            "y": 451
+          }
+        },
+        "raw": {
+          "from": {
+            "x": 3001,
+            "y": 451
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "roadId": "section-2:vertical:3124:248",
+          "via": [
+            {
+              "x": 3001,
+              "y": 454
+            },
+            {
+              "x": 3247,
+              "y": 454
+            }
+          ]
+        },
+        "clamped": {
+          "from": {
+            "x": 3089.5,
+            "y": 451
+          },
+          "to": {
+            "x": 3247,
+            "y": 457
+          },
+          "roadId": "section-2:vertical:3124:248",
+          "via": [
+            {
+              "x": 3089.5,
+              "y": 454
+            },
+            {
+              "x": 3089.5,
+              "y": 454
+            }
+          ]
+        },
+        "emitted": [
+          {
+            "from": {
+              "x": 3089.5,
+              "y": 451
+            },
+            "to": {
+              "x": 3089.5,
+              "y": 454
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          },
+          {
+            "from": {
+              "x": 3089.5,
+              "y": 454
+            },
+            "to": {
+              "x": 3247,
+              "y": 457
+            },
+            "corridorId": "section-2:vertical:3124:248"
+          }
+        ]
+      },
+      {
+        "wire": "w23",
+        "t": {
+          "road": {
+            "id": "drive:node-18:exit-right",
+            "sectionId": "section-6",
+            "kind": "driveway",
+            "bounds": {
+              "x": 600,
+              "y": 1636,
+              "width": 25.5,
+              "height": 72
+            },
+            "axis": "horizontal",
+            "directions": [
+              "right"
+            ],
+            "access": {
+              "nodeId": "node-18",
+              "portId": "node-18:exit-right",
+              "side": "right",
+              "role": "exit"
+            },
+            "wireLaneCount": 5
+          },
+          "lane": {
+            "id": "w23:0",
+            "wireId": "w23",
+            "roadId": "drive:node-18:exit-right",
+            "direction": 1,
+            "index": 0,
+            "offset": 3
+          },
+          "direction": 1,
+          "count": 5,
+          "at": 1675
+        },
+        "next": {
+          "road": {
+            "id": "drive:node-19:entry-left",
+            "sectionId": "section-6",
+            "kind": "driveway",
+            "bounds": {
+              "x": 730.5,
+              "y": 1648,
+              "width": 13.5,
+              "height": 48
+            },
+            "axis": "horizontal",
+            "directions": [
+              "right"
+            ],
+            "access": {
+              "nodeId": "node-19",
+              "portId": "node-19:entry-left",
+              "side": "left",
+              "role": "entry"
+            },
+            "wireLaneCount": 3
+          },
+          "lane": {
+            "id": "w23:3",
+            "wireId": "w23",
+            "roadId": "drive:node-19:entry-left",
+            "direction": 1,
+            "index": 1,
+            "offset": 9
+          },
+          "direction": 1,
+          "count": 3,
+          "at": 1681
+        },
+        "street": {
+          "id": "section-6:vertical:672:1552",
+          "sectionId": "section-6",
+          "axis": "vertical",
+          "kind": "street",
+          "access": null,
+          "bounds": {
+            "x": 600,
+            "y": 1504,
+            "width": 144,
+            "height": 594
+          },
+          "directions": [
+            "down",
+            "up"
+          ],
+          "wireLaneCount": 11
+        },
+        "previous": {
+          "to": {
+            "x": 624,
+            "y": 1675
+          }
+        },
+        "raw": {
+          "from": {
+            "x": 603,
+            "y": 1675
+          },
+          "to": {
+            "x": 741,
+            "y": 1681
+          },
+          "roadId": "section-6:vertical:672:1552",
+          "via": [
+            {
+              "x": 603,
+              "y": 1678
+            },
+            {
+              "x": 741,
+              "y": 1678
+            }
+          ]
+        },
+        "clamped": {
+          "from": {
+            "x": 625.5,
+            "y": 1675
+          },
+          "to": {
+            "x": 741,
+            "y": 1681
+          },
+          "roadId": "section-6:vertical:672:1552",
+          "via": [
+            {
+              "x": 625.5,
+              "y": 1678
+            },
+            {
+              "x": 625.5,
+              "y": 1678
+            }
+          ]
+        },
+        "emitted": [
+          {
+            "from": {
+              "x": 625.5,
+              "y": 1675
+            },
+            "to": {
+              "x": 625.5,
+              "y": 1678
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          },
+          {
+            "from": {
+              "x": 625.5,
+              "y": 1678
+            },
+            "to": {
+              "x": 741,
+              "y": 1681
+            },
+            "corridorId": "section-6:vertical:672:1552"
+          }
+        ]
+      }
+    ],
+    "ownershipProbe": {
+      "status": "ANALYSIS_COUNTERFACTUAL_ONLY",
+      "changed": [
+        "w41:16",
+        "w41:17"
+      ],
+      "oldOwner": "section-14:horizontal:1792:6208",
+      "newOwner": "section-14:vertical:6208:1552",
+      "roadBounds": {
+        "x": 6040,
+        "y": 1438,
+        "width": 336,
+        "height": 618
+      },
+      "junctions": [
+        {
+          "label": "J280",
+          "id": "junction:section-5:vertical:6072:1368:drive:section-13:exit-right|junction:section-5:vertical:6072:1368:drive:section-14:entry-left|junction:section-13:vertical:5936:1552:section-13:horizontal:1792:5264|junction:section-13:vertical:5936:1552:drive:section-13:exit-right|junction:section-14:horizontal:1552:6208:section-14:vertical:6208:1552|junction:section-14:horizontal:1552:6208:drive:node-35:entry-top|junction:section-14:vertical:6208:1552:section-14:horizontal:1792:6208|junction:section-14:vertical:6208:1552:drive:node-35:entry-left|junction:section-14:vertical:6208:1552:drive:node-37:entry-left|junction:section-14:vertical:6208:1552:drive:section-14:entry-left|junction:section-14:horizontal:1792:6208:drive:node-35:exit-bottom|junction:section-14:horizontal:1792:6208:drive:node-37:entry-top",
+          "bounds": {
+            "x": 5912,
+            "y": 1438,
+            "width": 476,
+            "height": 498
+          },
+          "roadIds": [
+            "section-13:horizontal:1792:5264",
+            "section-14:horizontal:1552:6208",
+            "section-14:vertical:6208:1552",
+            "section-14:horizontal:1792:6208"
+          ]
+        }
+      ],
+      "before": {
+        "corridors": [
+          "w03:5",
+          "w23:5",
+          "w41:16",
+          "w41:17"
+        ],
+        "nodeBodies": [
+          "w03:5",
+          "w03:6",
+          "w04:4",
+          "w04:5",
+          "w05:4",
+          "w05:5",
+          "w06:4",
+          "w06:5",
+          "w09:2",
+          "w09:3",
+          "w25:20",
+          "w25:21",
+          "w25:22",
+          "w25:23",
+          "w26:19",
+          "w26:20",
+          "w26:21",
+          "w28:23",
+          "w28:24",
+          "w28:25",
+          "w36:21",
+          "w36:22",
+          "w36:23",
+          "w42:18",
+          "w42:19",
+          "w42:20",
+          "w42:21",
+          "w48:18",
+          "w48:19",
+          "w61:20",
+          "w61:21",
+          "w61:22",
+          "w67:18",
+          "w67:19",
+          "w67:20",
+          "w71:19",
+          "w71:20",
+          "w71:21",
+          "w95:6",
+          "w95:7"
+        ],
+        "boundaries": [
+          "w22:11",
+          "w22:29",
+          "w24:12",
+          "w24:16",
+          "w25:12",
+          "w25:16",
+          "w25:20",
+          "w26:12",
+          "w26:16",
+          "w27:15",
+          "w27:19",
+          "w28:14",
+          "w28:18",
+          "w28:22",
+          "w29:18",
+          "w29:31",
+          "w30:16",
+          "w31:18",
+          "w31:31",
+          "w36:21",
+          "w37:21",
+          "w39:10",
+          "w39:14",
+          "w40:10",
+          "w40:14",
+          "w41:9",
+          "w41:13",
+          "w42:10",
+          "w42:14",
+          "w42:18",
+          "w46:8",
+          "w47:7",
+          "w48:8",
+          "w48:12",
+          "w48:16",
+          "w49:8",
+          "w51:21",
+          "w53:9",
+          "w54:9",
+          "w54:13",
+          "w55:8",
+          "w55:12",
+          "w55:16",
+          "w56:18",
+          "w56:31",
+          "w57:11",
+          "w58:11",
+          "w60:11",
+          "w61:11",
+          "w61:20",
+          "w62:11",
+          "w63:11",
+          "w63:20",
+          "w64:10",
+          "w65:11",
+          "w65:28",
+          "w66:11",
+          "w66:15",
+          "w67:11",
+          "w67:15",
+          "w68:11",
+          "w68:15",
+          "w69:11",
+          "w69:15",
+          "w69:19",
+          "w70:10",
+          "w71:11",
+          "w71:15",
+          "w71:19",
+          "w72:11",
+          "w72:19",
+          "w73:13",
+          "w74:14",
+          "w74:21",
+          "w77:9",
+          "w77:17",
+          "w79:10",
+          "w79:18",
+          "w84:9",
+          "w84:17",
+          "w86:11",
+          "w87:15",
+          "w88:14",
+          "w88:27",
+          "w91:16",
+          "w93:16",
+          "w93:26"
+        ],
+        "continuity": []
+      },
+      "after": {
+        "corridors": [
+          "w03:5",
+          "w23:5"
+        ],
+        "nodeBodies": [
+          "w03:5",
+          "w03:6",
+          "w04:4",
+          "w04:5",
+          "w05:4",
+          "w05:5",
+          "w06:4",
+          "w06:5",
+          "w09:2",
+          "w09:3",
+          "w25:20",
+          "w25:21",
+          "w25:22",
+          "w25:23",
+          "w26:19",
+          "w26:20",
+          "w26:21",
+          "w28:23",
+          "w28:24",
+          "w28:25",
+          "w36:21",
+          "w36:22",
+          "w36:23",
+          "w42:18",
+          "w42:19",
+          "w42:20",
+          "w42:21",
+          "w48:18",
+          "w48:19",
+          "w61:20",
+          "w61:21",
+          "w61:22",
+          "w67:18",
+          "w67:19",
+          "w67:20",
+          "w71:19",
+          "w71:20",
+          "w71:21",
+          "w95:6",
+          "w95:7"
+        ],
+        "boundaries": [
+          "w22:11",
+          "w22:29",
+          "w24:12",
+          "w24:16",
+          "w25:12",
+          "w25:16",
+          "w25:20",
+          "w26:12",
+          "w26:16",
+          "w27:15",
+          "w27:19",
+          "w28:14",
+          "w28:18",
+          "w28:22",
+          "w29:18",
+          "w29:31",
+          "w30:16",
+          "w31:18",
+          "w31:31",
+          "w36:21",
+          "w37:21",
+          "w39:10",
+          "w39:14",
+          "w40:10",
+          "w40:14",
+          "w41:9",
+          "w41:13",
+          "w42:10",
+          "w42:14",
+          "w42:18",
+          "w46:8",
+          "w47:7",
+          "w48:8",
+          "w48:12",
+          "w48:16",
+          "w49:8",
+          "w51:21",
+          "w53:9",
+          "w54:9",
+          "w54:13",
+          "w55:8",
+          "w55:12",
+          "w55:16",
+          "w56:18",
+          "w56:31",
+          "w57:11",
+          "w58:11",
+          "w60:11",
+          "w61:11",
+          "w61:20",
+          "w62:11",
+          "w63:11",
+          "w63:20",
+          "w64:10",
+          "w65:11",
+          "w65:28",
+          "w66:11",
+          "w66:15",
+          "w67:11",
+          "w67:15",
+          "w68:11",
+          "w68:15",
+          "w69:11",
+          "w69:15",
+          "w69:19",
+          "w70:10",
+          "w71:11",
+          "w71:15",
+          "w71:19",
+          "w72:11",
+          "w72:19",
+          "w73:13",
+          "w74:14",
+          "w74:21",
+          "w77:9",
+          "w77:17",
+          "w79:10",
+          "w79:18",
+          "w84:9",
+          "w84:17",
+          "w86:11",
+          "w87:15",
+          "w88:14",
+          "w88:27",
+          "w91:16",
+          "w93:16",
+          "w93:26"
+        ],
+        "continuity": []
+      },
+      "geometryAndLaneIdsUnchanged": true,
+      "positiveLengthOverlapCatalogUnchanged": true,
+      "note": "No product fix implemented. Generic ownership allocation still requires baseline replay; uncertified crossings remain 1273."
+    }
+  }
+}

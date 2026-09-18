@@ -1,0 +1,25 @@
+# Executable diagnostic review
+
+Reviewed the final `replay.mjs` and `probes.mjs` individually against `docs/standards/CODING-STANDARDS.md`, including the file-local scoring anchors, and `AGENTS.md`'s stricter Sonar cognitive-complexity <=2 gate. Scores below concern these spike scripts only. Pinned producer/prover internals are evidence, not secretly changed source. Line references in each evidence column refer to its target script.
+
+| Principle | Replay | Evidence | Probes | Evidence |
+|---|---:|---|---:|---|
+| SRP | 10 | One responsibility: reproduce/classify the committed catalog, including graph context; 168–192. | 10 | One responsibility: test local explanations against committed geometry; 120–126. |
+| OCP | 6 | Fixed diagnostic steps/families require editing `run`; no step seam, 168–192. | 6 | Fixed probe list/IDs and orchestration require editing, 57–79,120–126. |
+| LSP | 7 | No subtyping; not demonstrated, 6–207. | 7 | No subtyping; not demonstrated, 6–140. |
+| ISP | 10 | Injected reader has one operation and is used; VM context supplies required prover data/helpers, 91–112,168–178. | 10 | Reader is used for each source/evidence input; VM context exposes only axes, pitch and point equality, 17–23,120–126. |
+| DIP | 10 | CLI infrastructure explicit; analysis receives a reader/data and uses the layout public contract, 6–15,168–178. | 10 | Public inspector import; isolated pinned-source execution is explicit diagnostic instrumentation, not a private runtime product import, 6–23. |
+| DRY | 9 | Runs existing prover and public inspector; small geometry helpers duplicate inspector/verifier predicates to expose witnesses, 16–38,91–112,173–174. Deduct one. | 9 | Executes pinned projection/overlap code; small gate/direction checks duplicate verifier predicates, 17–45,88–118. Deduct one. |
+| KISS | 10 | Named source sentinels, explicit assertions, direct record output; slice failures fail closed, 91–112,168–192. | 10 | Source isolation is a straight-line transpile/slice with explicit matching assertions; single-identity counterfactual clearly named, 17–45,57–79. |
+| YAGNI | 10 | Only catalog replay/topology and negative control; no repair engine, 119–192,207. | 10 | Only two diagonal probes, ownership counterfactual, and extra verifier obligations; no proposed runtime implementation, 120–126. |
+| Typed error outcomes | 8 | Generic declared Result preserves unknown source, 194–202; deliberate negative-control assertion is a separate CLI failure form with recovery named at entry, 1–5,207. Deduct two. | 10 | Generic declared Result retains unknown source with stable `probe-failed` code; exit mapping at CLI boundary, 128–140. |
+| Idempotency / failure semantics | 10 | Read-only Git reads, retry/correction owner named; no writes, 1–5,14,194–202. | 10 | Read-only pinned inputs and immutable candidate; recovery named, 1–5,13,46–79,128–136. |
+| Deep module / information hiding | 10 | `run` hides inspector/prover/classification/topology behind one structured result, 168–202. | 10 | `run` hides source loading, isolated execution and candidate assertions behind one result, 120–136. |
+| Law of Demeter | 10 | Calls direct collaborators and reads data records; no behavior-bearing navigation chain, 39–118,168–192. | 10 | Direct inspector/VM calls and record transformations, 17–79. |
+| Immutability | 10 | Inputs untouched; derived records and invocation-local failure accumulation/VM scope, 39–118,168–192. | 10 | Candidate copies only selected records; geometry equality asserted; no input mutation, 46–79. |
+| Type safety | 10 | Under this file-local anchor: no `any`/unchecked `as`; error source is `unknown`, 194–202. JSON is not comprehensively schema-validated; no claim of full static input safety. | 10 | No own `any`/unchecked `as`; source is `unknown`, 128–136. Same JSON-validation limitation. |
+| Cognitive complexity | 10 | Guards/catches and flat transformations; no nested/spread-ternary bad idioms, 29–38,119–150,194–207. Explicit <=2 lint receipt in `validation.json`. | 10 | Guards, flat filters/maps and direct assertions; 46–79,88–118,128–140. Explicit <=2 lint receipt in `validation.json`. |
+| Testability | 5 | Analysis reader injectable, but CLI uses ambient Git/argv and real VM/public inspector, 6–15,168–178,203–207. | 5 | Source reader injectable, but CLI uses ambient Git and concrete VM/compiler/inspector, 6–23,137–140. |
+| **Total** | **145/160** | Strictly above 144; not a repository-wide score. | **147/160** | Strictly above 144; not a product sufficiency claim. |
+
+Worst limitations in each file: ambient CLI infrastructure (5), fixed diagnostic orchestration (6), and no demonstrated subtyping (7). Replay additionally has the intentional negative-control failure channel (8); both have minor duplicated geometry predicates (9). These deductions are retained, not exemptions. Successful replay exercises the actual public inspector against the pinned audit and the exact pinned proof code; probes assert exact producer output and unchanged counterfactual catalogs. The expected failing negative control remains separate from repository `pnpm check`.

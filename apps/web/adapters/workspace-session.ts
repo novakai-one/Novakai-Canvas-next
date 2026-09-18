@@ -41,8 +41,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     ...source.getSnapshot(),
   };
   const listeners = new Set<() => void>();
+  const confirmedGestures = new Set<string>();
   let unsubscribe = (): void => undefined;
   let renderJob: AbortController | null = null;
+  let rendering: { id: string; revision: number; generation: string } | null = null;
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
   const inspector = bindings.inspector({ apply: applyObject, report });
@@ -134,6 +136,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       update({ active: null, opening: null, status: 'Collection is no longer available' });
       return;
     }
+    const requested = rendering;
+    if (
+      requested?.id === current.id &&
+      requested.revision === current.revision &&
+      requested.generation === state.generation
+    )
+      return;
     if (renderChanged(active, current.revision, state.generation))
       void open(active.document.collection.id);
   }
@@ -143,6 +152,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const job = new AbortController();
     renderJob = job;
     const generation = state.generation;
+    rendering = {
+      id,
+      revision: state.collections.find((item) => item.id === id)?.revision ?? -1,
+      generation,
+    };
     update({ opening: id, status: 'Rendering diagram…', problem: null });
     const response = await bindings.client.get(
       `/api/v1/render?id=${encodeURIComponent(id)}`,
@@ -150,6 +164,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     );
     if (job.signal.aborted) return;
     if (generation !== state.generation) return;
+    rendering = null;
     receiveRender(response, id, generation);
   }
   /** Successful HTTP payloads require owner validation before Canvas sees them. */
@@ -264,6 +279,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(updated.error);
       return;
     }
+    releaseConfirmed(active.session);
     update({
       opening: null,
       active: { ...active, generation: state.generation, document, base },
@@ -340,7 +356,16 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   ): Promise<Result<Receipt>> {
     update({ status: 'Saving…', problem: null });
     const result = await submissions.submit({ request, generation, sourceEdit, gesture });
-    if (!result.ok) report(result.error);
+    if (!result.ok) {
+      report(result.error);
+      void refresh();
+      if (gesture !== null)
+        state.active?.session.dispatch({
+          kind: 'reject',
+          id: gesture,
+          message: result.error.message,
+        });
+    }
     return result;
   }
   /** Only a matching Authoring receipt may acknowledge a gesture or mark its submitted source generation saved. */
@@ -353,7 +378,18 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Canvas is notified only when the receipt belongs to a submitted gesture. */
   function confirmGesture(gesture: string | null): void {
     if (gesture === null) return;
-    state.active?.session.dispatch({ kind: 'confirmed', id: gesture });
+    confirmedGestures.add(gesture);
+    if (state.active !== null) releaseConfirmed(state.active.session);
+  }
+  /** Receipt alone cannot remove a drag preview while the canvas still displays the old revision. */
+  function releaseConfirmed(session: ActiveDiagram['session']): void {
+    const snapshot = session.getSnapshot();
+    for (const retained of snapshot.recovery) {
+      if (!confirmedGestures.has(retained.draft.id)) continue;
+      if (snapshot.stamp.revision <= retained.draft.base.revision) continue;
+      session.dispatch({ kind: 'confirmed', id: retained.draft.id });
+      confirmedGestures.delete(retained.draft.id);
+    }
   }
   /** A response racing a newer snapshot is discarded; old rendered data never gains new write preconditions. */
   function matchingSnapshot(document: RenderDocument): WorkspaceView['snapshot'] {
@@ -416,6 +452,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Returning to discovery retains source and inspector drafts but disposes the old viewing session. */
   function showLibrary(): void {
     renderJob?.abort();
+    rendering = null;
     state.active?.session.dispose();
     source.close('keep');
     update({ active: null, opening: null });
@@ -433,7 +470,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     restoreEdits();
     await restoreLocation();
     unsubscribe = bindings.client.changes(() => {
-      void refresh();
+      // The local receipt refresh includes every commit made while its submission was in flight.
+      if (!state.busy) void refresh();
     }, connection);
     if (!state.sourceDirty) update({ status: 'Ready' });
   }

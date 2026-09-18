@@ -47,11 +47,30 @@ function paragraph(
   request: TextRequest,
   metrics: MeasurementPort,
 ): readonly string[] {
-  const result = graphemes(text).reduce<Lines>(
-    (state, next) => append(state, next, request, metrics),
-    { complete: [], current: '' },
-  );
+  // Most code rows and labels already fit; shaping their every prefix repeats the same work.
+  if (measure(text, request, metrics).width <= request.width) return [text];
+  const result = text
+    .split(/( +)/)
+    .reduce<Lines>((state, next) => appendWord(state, next, request, metrics), {
+      complete: [],
+      current: '',
+    });
   return [...result.complete, result.current];
+}
+/** Shape a fitting word once; only an overflowing word needs grapheme-level wrapping. */
+function appendWord(
+  state: Lines,
+  next: string,
+  request: TextRequest,
+  metrics: MeasurementPort,
+): Lines {
+  const candidate = state.current + next;
+  if (measure(candidate, request, metrics).width <= request.width)
+    return { ...state, current: candidate };
+  return graphemes(next).reduce<Lines>(
+    (line, character) => append(line, character, request, metrics),
+    state,
+  );
 }
 /** Public text requests are bounded before native shaping; callers correct unsupported or oversized input. */
 function checkRequest(request: TextRequest): void {

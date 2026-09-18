@@ -10,17 +10,16 @@
   }
 
   .frame {
-    filter:
-      drop-shadow(
-        var(--nv-elevation-offset-x) var(--nv-canvas-node-offset-y)
-          var(--nv-canvas-node-blur) var(--nv-canvas-node-shadow)
+    filter: drop-shadow(
+        var(--nv-elevation-offset-x) var(--nv-canvas-node-offset-y) var(--nv-canvas-node-blur)
+          var(--nv-canvas-node-shadow)
       )
       drop-shadow(
-        var(--nv-elevation-offset-x) var(--nv-canvas-ambient-offset-y)
-          var(--nv-canvas-ambient-blur) var(--nv-canvas-node-ambient-shadow)
+        var(--nv-elevation-offset-x) var(--nv-canvas-ambient-offset-y) var(--nv-canvas-ambient-blur)
+          var(--nv-canvas-node-ambient-shadow)
       );
     transition-duration: var(--nv-canvas-transition);
-    transition-property: filter, fill, stroke;
+    transition-property: fill, stroke;
   }
 
   .root:is(

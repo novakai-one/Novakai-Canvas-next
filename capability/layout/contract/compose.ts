@@ -20,13 +20,7 @@ export interface LayoutOwners {
 /** Compose pinned open-source adapters; the host owns worker cancellation and the replaceable Wasm resource. */
 export async function composeLayout(owners: LayoutOwners): Promise<Result<Layout>> {
   try {
-    const [elk, kiwi, avoid, wasm, scheduling] = await Promise.all([
-      import('../adapters/elk.js'),
-      import('../adapters/kiwi.js'),
-      import('../adapters/libavoid.js'),
-      import('../adapters/wasm-loader.js'),
-      import('../adapters/scheduling.js'),
-    ]);
+    const [elk, kiwi, avoid, wasm, scheduling] = await providerModules();
     const measure = owners.measure ?? ((_stage, run) => run());
     const placement = elk.createPlacement(),
       solver = kiwi.createSolver();
@@ -95,4 +89,24 @@ export function routeModuleSection(
       nestedEngineVersions,
     );
   });
+}
+
+/** Provider code is shared by startup preparation and real composition; no engine runs during import. */
+function providerModules() {
+  return Promise.all([
+    import('../adapters/elk.js'),
+    import('../adapters/kiwi.js'),
+    import('../adapters/libavoid.js'),
+    import('../adapters/wasm-loader.js'),
+    import('../adapters/scheduling.js'),
+  ]);
+}
+/** Prepare the worker's code before it advertises readiness, without inputs, fonts or derived geometry. */
+export async function prepareLayoutRuntime(): Promise<Result<void>> {
+  try {
+    await providerModules();
+    return { ok: true, value: undefined };
+  } catch {
+    return failure('engine-failed', 'composition', 'Layout dependencies could not be loaded');
+  }
 }

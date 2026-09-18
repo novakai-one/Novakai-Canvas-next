@@ -1,6 +1,6 @@
 /** Layout public boundary: consumers never import its geometry policies or concrete native adapters. */
 export { createLayout } from './api.js';
-export { composeLayout, routeModuleSection } from './compose.js';
+export { composeLayout, routeModuleSection, prepareLayoutRuntime } from './compose.js';
 export type { LayoutOwners } from './compose.js';
 export { options } from './types.js';
 export type {

@@ -2,7 +2,7 @@ import type { VisualSection, VisualWire } from '../../contract/records/input.js'
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { PlacedNode, RoutedWire, Box } from '../../contract/records/geometry.js';
 import type { LayoutOptions, SupplementalMeasurements } from '../../contract/types.js';
-import { distinctLane } from '../routing/lanes.js';
+import { prepareLane, distinctPreparedLane } from '../routing/lanes.js';
 import { endpoints } from '../routing/endpoints.js';
 import { contentBoxes, labelObstacles } from '../routing/obstacles.js';
 import { validRoute, checkLabel, markerBox } from '../routing/checks.js';
@@ -16,6 +16,8 @@ interface Context {
   readonly options: LayoutOptions;
   readonly metrics: SupplementalMeasurements;
   readonly candidates: SectionCandidate['wires'];
+  readonly lanes: ReadonlyMap<string, ReturnType<typeof prepareLane>>;
+  readonly pairs: Map<string, Map<string, boolean>>;
 }
 /** Reconstruct only authoritative wire data after exact attachment/route/label validation. */
 function rebind(wire: VisualWire, context: Context): RoutedWire {
@@ -31,7 +33,7 @@ function rebind(wire: VisualWire, context: Context): RoutedWire {
     wire.id,
   );
   checkGeometry(wire, candidate, context);
-  checkSharedRuns(candidate, context.candidates);
+  checkSharedRuns(candidate, context);
   return { ...candidate, ...attachments, measuredLabel: wire.label, appearance: wire.appearance };
 }
 /** Native output has no special authority: inspect the corridor, exact path syntax, manual lock and label independently. */
@@ -119,20 +121,40 @@ export function inspectWires(
     candidates.map((wire) => wire.id),
     source.id,
   );
-  const context: Context = { candidates, nodes, metrics, options };
+  const context: Context = {
+    candidates,
+    nodes,
+    metrics,
+    options,
+    lanes: new Map(candidates.map((wire) => [wire.id, prepareLane(wire.points)])),
+    pairs: new Map(candidates.map((wire) => [wire.id, new Map()])),
+  };
   return source.wires.map((wire) => rebind(wire, context));
 }
 
 /** Inspect final routes independently; an interior shared run hides which relationship reaches which endpoint. */
-function checkSharedRuns(
-  wire: SectionCandidate['wires'][number],
-  candidates: Context['candidates'],
-): void {
-  const others = candidates.filter((item) => item.id !== wire.id);
-  const hidden = others.find((item) => !distinctLane(wire.points, item.points));
+function checkSharedRuns(wire: SectionCandidate['wires'][number], context: Context): void {
+  const others = context.candidates.filter((item) => item.id !== wire.id);
+  const hidden = others.find((item) => !clearLanes(wire, item, context));
   if (hidden !== undefined)
     reject('constraint-conflict', wire.id, 'Wires share an obscuring interior route', [
       wire.id,
       hidden.id,
     ]);
+}
+
+/** Cache symmetric results lazily so the original inspection/failure order stays unchanged. */
+function clearLanes(
+  a: SectionCandidate['wires'][number],
+  b: SectionCandidate['wires'][number],
+  context: Context,
+): boolean {
+  const cached = context.pairs.get(a.id)?.get(b.id);
+  if (cached !== undefined) return cached;
+  const left = context.lanes.get(a.id) ?? prepareLane(a.points);
+  const right = context.lanes.get(b.id) ?? prepareLane(b.points);
+  const clear = distinctPreparedLane(left, right);
+  context.pairs.get(a.id)?.set(b.id, clear);
+  context.pairs.get(b.id)?.set(a.id, clear);
+  return clear;
 }

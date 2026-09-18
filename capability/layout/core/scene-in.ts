@@ -88,6 +88,17 @@ function request(
     portId(to, 'entry', preferredSide(wire, 'target'), wire.target.member),
   ];
 }
+/** Measured header and envelope share the same Presentation owner as this section. */
+function sectionMeasurements(
+  source: VisualSection,
+  parent: string | null,
+): NonNullable<NestedSectionSpec['measured']> {
+  const group = source.nodes.find((node) => node.id === parent);
+  return {
+    ...required(parent === null ? source.envelope : group?.envelope, parent ?? source.id),
+    headerWidth: parent === null ? source.title.width : required(group, parent).content.width,
+  };
+}
 function tree(
   source: VisualSection,
   numbers: ReadonlyMap<string, number>,
@@ -99,10 +110,7 @@ function tree(
   return {
     number,
     ...(placement == null ? {} : { position: { x: placement.x, y: placement.y } }),
-    measured: required(
-      parent === null ? source.envelope : source.nodes.find((node) => node.id === parent)?.envelope,
-      parent ?? source.id,
-    ),
+    measured: sectionMeasurements(source, parent),
     nodes: source.nodes
       .filter((n) => n.parent === parent && n.groupId === null)
       .map((n) => nodeSpec(n, required(numbers.get(n.id), n.id), advance)),

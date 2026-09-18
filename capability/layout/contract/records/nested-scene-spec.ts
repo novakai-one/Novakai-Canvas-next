@@ -16,6 +16,7 @@ export interface NestedSectionSpec {
     readonly width: number;
     readonly height: number;
     readonly header: number;
+    readonly headerWidth: number;
     readonly gap: number;
     readonly lanePitch: number;
     readonly columns: number;

@@ -94,6 +94,19 @@ function center(road: PrototypeRoad): number {
 function turnKey(t: AssignedTravel, next: AssignedTravel, direction: number): string {
   return `${t.road.axis}/${center(t.road)}/${center(next.road)}/${direction}`;
 }
+/** One physical junction uses nested channels on every arm when either opposing pair needs them. */
+function nestedJunction(
+  t: AssignedTravel,
+  next: AssignedTravel,
+  turns: ReadonlySet<string>,
+): boolean {
+  const across = (direction: number) =>
+    `${next.road.axis}/${center(next.road)}/${center(t.road)}/${direction}`;
+  return (
+    turns.has(turnKey(t, next, -t.direction)) ||
+    [1, -1].every((direction) => turns.has(across(direction)))
+  );
+}
 /** Separate coincident corner legs by a quarter pitch inside the junction. */
 function leftConnection(
   t: AssignedTravel,
@@ -101,7 +114,7 @@ function leftConnection(
   roads: ReadonlyMap<string, PrototypeRoad>,
   turns: ReadonlySet<string>,
 ): Connection {
-  if (turns.has(turnKey(t, next, -t.direction))) return leftCorner(t, next, roads);
+  if (nestedJunction(t, next, turns)) return leftCorner(t, next, roads);
   const road = roads.get(next.road.id) ?? next.road;
   const a = axes[t.road.axis];
   const from = point(t, edge(road, t, 0.5));

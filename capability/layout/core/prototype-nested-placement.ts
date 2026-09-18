@@ -86,6 +86,7 @@ function measuredSection(measured: NonNullable<SectionSpec['measured']>, count: 
     throw new Error('Section dimensions must be finite and positive');
   const offsets = [
     measured.header,
+    measured.headerWidth,
     measured.gap,
     ...measured.columnCenters,
     ...measured.rowCenters,
@@ -125,9 +126,15 @@ export function sizeNestedSections(specs: readonly SectionSpec[]): readonly Size
   if (specs.length !== 1) throw new Error('Nested layout requires one measured root section');
   return specs.map(sizeSection);
 }
-function sectionPorts(id: string, bounds: PrototypeBounds) {
+/** Top doors reserve the measured boundary lane space beyond the title; a blocked side has no door. */
+function sectionPorts(size: SizedSection, bounds: PrototypeBounds) {
+  const id = size.id;
+  const clearance = size.measured.gap / 2;
+  const topX = Math.max(bounds.width / 2, size.measured.headerWidth + clearance);
+  const top =
+    topX <= bounds.width - clearance ? [{ side: 'top' as const, offset: { x: topX, y: 0 } }] : [];
   const sides = [
-    { side: 'top' as const, offset: { x: bounds.width / 2, y: 0 } },
+    ...top,
     { side: 'left' as const, offset: { x: 0, y: bounds.height / 2 } },
     { side: 'bottom' as const, offset: { x: bounds.width / 2, y: bounds.height } },
     { side: 'right' as const, offset: { x: bounds.width, y: bounds.height / 2 } },
@@ -191,7 +198,7 @@ function positionSection(
     bounds,
     parentSectionId,
     description: sectionDescription(size),
-    ports: sectionPorts(size.id, bounds),
+    ports: sectionPorts(size, bounds),
   };
   const nodes = gridNodes(size, interior).map((node, i) => {
     const position = size.nodes[i]?.position;

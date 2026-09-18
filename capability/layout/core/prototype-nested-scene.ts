@@ -11,7 +11,7 @@ import { defaultNestedSceneSpec } from './nested-scene-spec.js';
 import { wireRegistry } from './nested-wire-registry.js';
 import { roadRegistry, constructedContacts, frameEnds } from './prototype-road-registry.js';
 import { routeNestedWires, resolveNestedRequests } from './nested-wire-routing.js';
-import { allocateNestedLanes } from './nested-wire-lanes.js';
+import { allocateNestedLanes, type LaneAnnotation } from './nested-wire-lanes.js';
 import { capacityRoads } from './nested-road-capacity.js';
 import { projectNestedWires } from './nested-lane-projection.js';
 import type {
@@ -46,6 +46,7 @@ export function createNestedRoadScene(
     | 'annotateTerminals'
     | 'annotationTerminalLimit'
     | 'annotationPitches'
+    | 'annotationWidths'
     | 'annotationEndpoints'
   > & {
     readonly copies?: 1 | 2;
@@ -108,13 +109,17 @@ export function createNestedRoadScene(
   if (!plan.ok) return { ...reserved, wiring: plan };
   const configuredRoads = terminalCapacity(topology.roads, plan.value, options);
   const configured = new Map(configuredRoads.map((road) => [road.id, road]));
-  const allocation = measure('lane-allocation', () => allocateNestedLanes(plan.value, configured));
+  const annotations = measuredAnnotations(plan.value, options);
+  const allocation = measure('lane-allocation', () =>
+    allocateNestedLanes(plan.value, configured, annotations),
+  );
   const final = capacityRoads(
     configuredRoads,
     allocation.demand,
     topology.contacts,
     measure,
     ports,
+    annotations === undefined ? undefined : allocation.widths,
   );
   try {
     if (options.fixedGeometry) {
@@ -238,6 +243,7 @@ function terminalCapacity(
     | 'annotateTerminals'
     | 'annotationTerminalLimit'
     | 'annotationPitches'
+    | 'annotationWidths'
     | 'annotationEndpoints'
   >,
 ): RoadPrototypeScene['roads'] {
@@ -261,6 +267,8 @@ function terminalCapacity(
   );
   return roads.map((road) => {
     if (road.access === null || road.access.nodeId === road.sectionId) return road;
+    if (options.annotationEndpoints !== undefined)
+      return { ...road, lanePitch: options.lanePitch?.[road.axis] ?? nestedLanePitch };
     const annotatedRoad = {
       ...road,
       lanePitch: pitches.get(road.id) || road.lanePitch || nestedLanePitch,
@@ -269,4 +277,35 @@ function terminalCapacity(
     if ((counts.get(road.id) ?? 0) <= (options.annotationTerminalLimit ?? 3)) return annotatedRoad;
     return { ...road, lanePitch: options.lanePitch?.[road.axis] ?? nestedLanePitch };
   });
+}
+
+/** Explicit owner choices allocate label room per wire, never to every wire sharing its port. */
+function measuredAnnotations(
+  wires: readonly import('../contract/records/nested-wires.js').NestedWire[],
+  options: Pick<
+    PrototypeLayoutOptions,
+    'annotationEndpoints' | 'annotationPitches' | 'annotationWidths'
+  >,
+): ReadonlyMap<string, LaneAnnotation> | undefined {
+  if (options.annotationEndpoints === undefined) return undefined;
+  return new Map(
+    wires.flatMap((wire, index) => {
+      const owner = options.annotationEndpoints?.[index];
+      if (owner === undefined) return [];
+      const port = owner === 'source' ? wire.sourcePortId : wire.targetPortId;
+      return [
+        [
+          wire.id,
+          {
+            roadId: `drive:${port}`,
+            pitch: options.annotationPitches?.[index] ?? nestedLanePitch,
+            verticalPitch:
+              options.annotationWidths?.[index] ??
+              options.annotationPitches?.[index] ??
+              nestedLanePitch,
+          },
+        ],
+      ];
+    }),
+  );
 }

@@ -1,3 +1,4 @@
+import { markerMeasurements } from '../notation/markers.js';
 import type {
   VisualNode,
   VisualSection,
@@ -57,10 +58,24 @@ function measure(
   });
   const padding = context.style.padding;
   const labels = section.wires.map((wire) => wire.label);
-  const lanePitch = context.style.gap;
+  // Parallel strokes need their own ink width as clearance; label whitespace stays independent.
+  const stroke = Math.max(
+    context.style.connection.width,
+    ...section.wires.map((wire) => wire.appearance.width),
+  );
+  const lanePitch = Math.max(stroke * 2, context.style.gap / 2);
+  const markers = markerMeasurements();
+  const advance = Math.max(
+    0,
+    ...section.wires.flatMap((wire) => [
+      markers[wire.sourceMarker].advance,
+      markers[wire.targetMarker].advance,
+    ]),
+  );
+  const annotationGap = context.style.gap;
   const terminalPitch = Math.max(
     lanePitch * 2,
-    ...labels.map((label) => label.height + lanePitch * 2),
+    ...labels.map((label) => label.height + annotationGap * 2),
   );
   const traffic = density(members, section.nodes, section.wires);
   const gap = Math.ceil(
@@ -80,20 +95,10 @@ function measure(
     Math.min(children.length || 1, intent.columns ?? Math.ceil(Math.sqrt(children.length))),
   );
   const cells = leaves.map((node) => {
-    const demand = nodeDemand(node.id, section.wires);
-    const incidentPitch = Math.max(
-      lanePitch * 2,
-      ...section.wires
-        .filter((wire) => wire.source.node === node.id || wire.target.node === node.id)
-        .map((wire) => wire.label.height + lanePitch * 2),
-    );
-    const reserve =
-      demand.traffic === 0
-        ? 0
-        : 2 * Math.max((demand.annotation + 1) * incidentPitch, (demand.traffic + 1) * lanePitch);
+    const reserve = nodeReserve(node.id, section.wires, lanePitch, annotationGap, advance);
     return {
-      x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve + cellGap),
-      y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve + cellGap),
+      x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve.x + cellGap),
+      y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve.y + cellGap),
     };
   });
   const columnWidths = Array.from({ length: leaves.length === 0 ? 0 : columns }, (_, column) =>
@@ -144,6 +149,7 @@ function measure(
     header,
     gap,
     lanePitch,
+    annotationGap,
     terminalPitch,
     columns,
     childColumns,
@@ -166,18 +172,58 @@ function descendants(
   ]);
 }
 
-/** Directed endpoint counts bound each port before automatic sides are resolved by placement. */
-function nodeDemand(id: string, wires: readonly VisualWire[]) {
+/** Each role bounds its eventual ports; only owned labels reserve extra lane space. */
+function nodeReserve(
+  id: string,
+  wires: readonly VisualWire[],
+  pitch: number,
+  labelGap: number,
+  advance: number,
+) {
   const exits = wires.filter((wire) => wire.source.node === id);
   const entries = wires.filter((wire) => wire.target.node === id);
-  const traffic = Math.max(exits.length, entries.length);
-  const exitAnnotation = exits.some((wire) => wire.annotationEndpoint === 'source')
-    ? exits.length
-    : Math.min(3, exits.length);
-  const entryAnnotation = entries.some((wire) => wire.annotationEndpoint === 'target')
-    ? entries.length
-    : Math.min(3, entries.length);
-  return { traffic, annotation: Math.max(exitAnnotation, entryAnnotation) };
+  return {
+    x:
+      2 *
+      Math.max(
+        roleReserve(exits, 'source', pitch, 'width', labelGap, advance),
+        roleReserve(entries, 'target', pitch, 'width', labelGap, advance),
+      ),
+    y:
+      2 *
+      Math.max(
+        roleReserve(exits, 'source', pitch, 'height', labelGap, advance),
+        roleReserve(entries, 'target', pitch, 'height', labelGap, advance),
+      ),
+  };
+}
+
+/** Lateral automatic annotations reserve shallow bands and a measured approach length. */
+function roleReserve(
+  wires: readonly VisualWire[],
+  endpoint: 'source' | 'target',
+  pitch: number,
+  dimension: 'width' | 'height',
+  labelGap: number,
+  advance: number,
+): number {
+  if (wires.length === 0) return 0;
+  const owned = wires.filter((wire) => wire.annotationEndpoint === endpoint);
+  const across = owned.filter((wire) => acrossDimension(wire, endpoint) === dimension);
+  const along = owned.filter((wire) => acrossDimension(wire, endpoint) !== dimension);
+  const pitches = across.map((wire) => wire.label[dimension] + labelGap * 2 + 1);
+  const stem = Math.max(0, advance - pitch);
+  const base = (wires.length + 1) * pitch + stem;
+  const uniform = (wires.length + 1) * Math.max(pitch, ...pitches) + stem;
+  const variable = base + 2 * pitches.reduce((sum, value) => sum + value - pitch, 0);
+  const approach = Math.max(0, ...along.map((wire) => wire.label[dimension] + labelGap * 2 + 1));
+  return Math.max(Math.min(uniform, variable), base + approach);
+}
+
+/** Explicit vertical sides remain authoritative; automatic label attachments are lateral. */
+function acrossDimension(wire: VisualWire, endpoint: 'source' | 'target'): 'width' | 'height' {
+  const side = endpoint === 'source' ? wire.route.sourceSide : wire.route.targetSide;
+  return side === 'top' || side === 'bottom' ? 'width' : 'height';
 }
 
 /** Annotation ownership is semantic and fixed before measuring any module envelope. */

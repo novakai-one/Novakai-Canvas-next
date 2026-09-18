@@ -175,9 +175,9 @@ function streetBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRo
   if ([occupiedRank(t, next), occupiedSourceRank(t, next)].some(Boolean))
     return medianBridge(t, next, road);
   const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
-  // Distinct destination ranks reserve nested turn rows instead of sharing the outer row.
+  // Quarter-pitch transfer rows sit between the half-pitch through lanes.
   const pitch = Math.min(roadLanePitch(next.road), b[a.length] / (2 * (next.count + 1)));
-  const depth = (next.count - next.lane.index - 0.5) * pitch;
+  const depth = (next.count - next.lane.index - 0.25) * pitch;
   const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - depth);
   return { from: point(t, at), to: point(next, at), roadId: road.id };
 }

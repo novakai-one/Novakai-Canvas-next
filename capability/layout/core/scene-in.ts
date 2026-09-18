@@ -1,3 +1,4 @@
+import { preferredSide } from './routing/endpoints.js';
 import type { SupplementalMeasurements } from '../contract/types.js';
 import type { VisualNode, VisualSection, VisualWire } from '../contract/records/input.js';
 import type { EngineScene } from '../contract/records/engine-scene.js';
@@ -82,8 +83,8 @@ function request(
   return [
     from,
     to,
-    portId(from, 'exit', wire.route.sourceSide, wire.source.member),
-    portId(to, 'entry', wire.route.targetSide, wire.target.member),
+    portId(from, 'exit', preferredSide(wire, 'source'), wire.source.member),
+    portId(to, 'entry', preferredSide(wire, 'target'), wire.target.member),
   ];
 }
 function tree(
@@ -159,8 +160,11 @@ export function toEngineScene(
     fixedGeometry: true,
     annotateTerminals: true,
     annotationEndpoints: source.wires.map((wire) => wire.annotationEndpoint),
+    annotationWidths: source.wires.map(
+      (wire) => wire.label.width + required(source.envelope, source.id).annotationGap * 2 + 1,
+    ),
     annotationPitches: source.wires.map(
-      (wire) => wire.label.height + required(source.envelope, source.id).lanePitch * 2,
+      (wire) => wire.label.height + required(source.envelope, source.id).annotationGap * 2 + 1,
     ),
     lanePitch: {
       horizontal: required(source.envelope, source.id).lanePitch,

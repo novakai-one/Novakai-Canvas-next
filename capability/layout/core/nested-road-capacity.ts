@@ -29,10 +29,10 @@ function admitTerminal(roads: Map<string, PrototypeRoad>, port: PrototypePortLoc
   if (road !== undefined) roads.set(road.id, terminalExtent(road, port));
 }
 
-function sized(road: PrototypeRoad, count: number): PrototypeRoad {
+function sized(road: PrototypeRoad, count: number, measuredWidth?: number): PrototypeRoad {
   const a = axes[road.axis],
     b = road.bounds,
-    width = nestedLaneWidth(count, roadLanePitch(road));
+    width = measuredWidth ?? nestedLaneWidth(count, roadLanePitch(road));
   return {
     ...road,
     wireLaneCount: count,
@@ -80,6 +80,7 @@ export function capacityRoads(
   contacts: readonly RoadContact[],
   measure: PrototypeLayoutMeasure,
   ports: readonly PrototypePortLocation[],
+  drivewayWidths?: ReadonlyMap<string, number>,
 ) {
   const streets = measure('main-roads', () => {
     const result = new Map(
@@ -93,7 +94,7 @@ export function capacityRoads(
   const roads = measure('driveways', () => {
     const drives = templates
       .filter((r) => r.kind === 'driveway')
-      .map((r) => sized(r, demand.get(r.id) ?? 0));
+      .map((r) => sized(r, demand.get(r.id) ?? 0, drivewayWidths?.get(r.id)));
     const result = new Map([...streets, ...drives].map((r) => [r.id, r]));
     contacts.forEach((c) => attach(result, c));
     ports.forEach((port) => admitTerminal(result, port));

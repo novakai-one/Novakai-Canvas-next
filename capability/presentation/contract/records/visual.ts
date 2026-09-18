@@ -125,6 +125,7 @@ export const moduleEnvelope = z
     header: dimension,
     gap: dimension,
     lanePitch: dimension,
+    annotationGap: dimension,
     terminalPitch: dimension,
     columns: z.number().int().positive(),
     childColumns: z.number().int().positive(),

@@ -1,3 +1,4 @@
+import { same } from '../core/validation/facts.js';
 import { nestedEngineVersions } from './records/engines.js';
 import type { LayoutInputKey } from './brands.js';
 import type { SceneReaderOwners } from './types.js';
@@ -7,7 +8,7 @@ import type { Result } from './errors.js';
 import type { Scene } from './records/geometry.js';
 import { readArrangement, readInspection, readRoute, readKey } from '../core/validation/input.js';
 import { execute, protect, reject } from '../core/validation/outcomes.js';
-import { requestKey, forProjection } from '../core/arrangement/keys.js';
+import { requestKey, forProjection, versions } from '../core/arrangement/keys.js';
 import { arrange, inspect, reroute } from '../core/arrangement/pipeline.js';
 /** Bind required owner/native roles once; every public operation snapshots inputs and returns a typed outcome. */
 export function createLayout(dependencies: Dependencies): Layout {
@@ -27,13 +28,32 @@ export function createLayout(dependencies: Dependencies): Layout {
   }
   /** Recompute wires around fixed boxes without granting permission to reposition nodes or section origins. */
   function route(input: unknown): Promise<Result<Scene>> {
-    return execute(() => reroute(readRoute(input, dependencies.projection), dependencies));
+    return execute(() => {
+      const request = readRoute(input, dependencies.projection);
+      const keyInput = { ...request, previous: request.fixed };
+      same(
+        requestKey(keyInput, forProjection(dependencies, request.projection)),
+        request.job.inputKey,
+        'job.inputKey',
+      );
+      const inputKey = requestKey(keyInput, dependencies);
+      return reroute(
+        { ...request, job: { ...request.job, inputKey } },
+        {
+          ...dependencies,
+          jobs: { checkpoint: () => dependencies.jobs.checkpoint(request.job) },
+        },
+      );
+    });
   }
   /** Recheck authoritative content and required geometry without invoking any native placement/router. */
   function inspectScene(input: unknown): Result<Inspection> {
     return protect(() => {
       const request = readInspection(input, dependencies.projection);
-      return inspect(request, forProjection(dependencies, request.projection));
+      return inspect(request, {
+        ...dependencies,
+        engineVersions: admittedVersions(request.candidate.engineVersions, versions(dependencies)),
+      });
     });
   }
   return Object.freeze({ key, arrange: arrangeScene, route, inspect: inspectScene });
@@ -45,14 +65,20 @@ export { toCollection, toSection, toParent } from '../core/geometry/coordinates.
 export function readScene(input: unknown, owners: SceneReaderOwners): Result<Scene> {
   return protect(() => {
     const request = readInspection(input, owners.projection);
-    const actual = request.candidate.engineVersions;
-    const accepted = [
-      owners.engineVersions,
-      nestedEngineVersions,
-      [...nestedEngineVersions, ...owners.engineVersions],
-    ];
-    if (!accepted.some((v) => JSON.stringify(v) === JSON.stringify(actual)))
-      return reject('invalid-input', 'engines', 'Unknown layout engine versions');
-    return admitScene(request, actual);
+    return admitScene(
+      request,
+      admittedVersions(request.candidate.engineVersions, owners.engineVersions),
+    );
   });
+}
+
+/** Admit only registered producer identities, including the explicitly retained legacy reroute. */
+function admittedVersions(
+  actual: readonly string[],
+  expected: readonly string[],
+): readonly string[] {
+  const accepted = [expected, nestedEngineVersions, [...nestedEngineVersions, ...expected]];
+  if (!accepted.some((value) => JSON.stringify(value) === JSON.stringify(actual)))
+    return reject('invalid-input', 'engines', 'Unknown layout engine versions');
+  return actual;
 }

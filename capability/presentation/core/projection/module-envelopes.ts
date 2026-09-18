@@ -23,16 +23,22 @@ function density(
   members: readonly VisualNode[],
   all: readonly VisualNode[],
   wires: readonly VisualWire[],
-): number {
+): { perimeter: number; local: number } {
   const owners = new Map<string, string>();
   members.forEach((member) =>
     descendants([member], all).forEach((node) => owners.set(node.id, member.id)),
   );
-  return wires.filter((wire) => {
+  const counts = new Map<string, number>();
+  let perimeter = 0;
+  wires.forEach((wire) => {
     const from = owners.get(wire.source.node),
       to = owners.get(wire.target.node);
-    return from !== to && (from !== undefined || to !== undefined);
-  }).length;
+    if (from === to) return;
+    perimeter += 1;
+    if (from !== undefined) counts.set(`${from}:out`, (counts.get(`${from}:out`) ?? 0) + 1);
+    if (to !== undefined) counts.set(`${to}:in`, (counts.get(`${to}:in`) ?? 0) + 1);
+  });
+  return { perimeter, local: Math.max(0, ...counts.values()) };
 }
 function measure(
   parent: VisualNode | null,
@@ -56,7 +62,12 @@ function measure(
     ...labels.map((label) => label.height + lanePitch * 2),
   );
   const traffic = density(members, section.nodes, section.wires);
-  const gap = Math.ceil(Math.max(padding * 4, (traffic + 2) * lanePitch * 2 + padding * 2));
+  const gap = Math.ceil(
+    Math.max(padding * 4, (traffic.perimeter + 2) * lanePitch * 2 + padding * 2),
+  );
+  const cellGap = Math.ceil(
+    Math.max(padding * 4, (traffic.local + 2) * lanePitch * 2 + padding * 2),
+  );
   const intent =
     section.groups.find((group) => group.id === parent?.groupId)?.layout ?? section.layout;
   const columns = Math.max(
@@ -81,8 +92,8 @@ function measure(
         : (demand.annotation + 1) * incidentPitch * 2 +
           Math.max(0, demand.traffic - demand.annotation) * lanePitch * 2;
     return {
-      x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve + gap),
-      y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve + gap),
+      x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve + cellGap),
+      y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve + cellGap),
     };
   });
   const columnWidths = Array.from({ length: leaves.length === 0 ? 0 : columns }, (_, column) =>

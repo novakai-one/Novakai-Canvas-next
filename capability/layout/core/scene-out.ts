@@ -21,28 +21,28 @@ import type {
   SupplementalMeasurements,
 } from '../contract/types.js';
 import { nodeSize, translateNested } from './scene-in.js';
-import { nestedLanePitch } from './prototype-nested-placement.js';
 import type { Attachments } from './routing/endpoints.js';
 import { approach, endpoints } from './routing/endpoints.js';
 import { contentBoxes, labelObstacles } from './routing/obstacles.js';
 import { markerBox } from './routing/checks.js';
 import { labelBox } from './routing/labels.js';
-import { curvePath, linePath, segments } from './routing/paths.js';
+import { clear, curvePath, linePath, segments } from './routing/paths.js';
 import { sequenceGeometry } from './sequence/sequence.js';
 import { contentBounds, sectionBounds, titleBox } from './arrangement/bounds.js';
 import { sectionKey, versions } from './arrangement/keys.js';
 import { inspectSection } from './validation/sections.js';
 import { union } from './geometry/bounds.js';
+import { segmentHits } from './geometry/intersections.js';
 import { reject } from './validation/outcomes.js';
 
-/** One resolved wire end plus its deterministic lane rank on that node side. */
+/** One resolved wire end plus its assigned stub length and lane on that node side. */
 interface Terminal {
   readonly endpoint: ResolvedEndpoint;
-  readonly advance: number;
-  readonly rank: number;
+  readonly distance: number;
+  readonly lane: number;
 }
-/** Per-wire terminal ranks on the resolved source and target sides. */
-type Ranks = Record<'source' | 'target', number>;
+/** Terminal stub lanes reuse the engine's lane pitch value; the engine entry-point boundary forbids importing it. */
+const stubLanePitch = 6;
 /** A translated engine route carrying its authoritative source wire and resolved endpoints. */
 interface Built {
   readonly wire: VisualWire;
@@ -149,14 +149,132 @@ function cut(wire: NestedWire, pointCount: number): { readonly from: number; rea
   if (from > to) return reject('engine-failed', wire.id, 'Nested engine wire terminals overlap');
   return { from, to };
 }
-/** The stub departs along the resolved side beyond the marker, then meets the engine driveway lane. */
-function stub(terminal: Terminal, mouth: Point, inward: boolean): readonly Point[] {
-  const a = approach(terminal.endpoint, terminal.advance + (terminal.rank + 1) * nestedLanePitch);
-  const b =
-    terminal.endpoint.side === 'left' || terminal.endpoint.side === 'right'
-      ? { x: a.x, y: mouth.y }
-      : { x: mouth.x, y: a.y };
-  return inward ? [b, a, terminal.endpoint.point] : [terminal.endpoint.point, a, b];
+/** A bypass leaves the node band on the near side, travels outside it, and rejoins the driveway channel. */
+function bypasses(
+  point: Point,
+  a: Point,
+  mouth: Point,
+  node: Box,
+  lane: number,
+  across: 'x' | 'y',
+): readonly (readonly Point[])[] {
+  return [1, 2, 3].flatMap((step) => {
+    const offset = stubLanePitch * (lane + step);
+    const before = across === 'y' ? node.y - offset : node.x - offset;
+    const after = across === 'y' ? node.y + node.height + offset : node.x + node.width + offset;
+    return [before, after].map((band) =>
+      across === 'y'
+        ? [point, a, { x: a.x, y: band }, { x: mouth.x, y: band }, mouth]
+        : [point, a, { x: band, y: a.y }, { x: band, y: mouth.y }, mouth],
+    );
+  });
+}
+/** One lateral path extends the stub to a clear coordinate before joining the mouth band. */
+function lateralPath(point: Point, q: number, mouth: Point, horizontal: boolean): readonly Point[] {
+  return horizontal
+    ? [point, { x: q, y: point.y }, { x: q, y: mouth.y }, mouth]
+    : [point, { x: point.x, y: q }, { x: mouth.x, y: q }, mouth];
+}
+/** Lateral candidates extend the stub past a blocking obstacle edge, nearest first. */
+function laterals(
+  terminal: Terminal,
+  mouth: Point,
+  obstacles: readonly Box[],
+): readonly (readonly Point[])[] {
+  const point = terminal.endpoint.point;
+  const horizontal = terminal.endpoint.side === 'left' || terminal.endpoint.side === 'right';
+  const outward = terminal.endpoint.side === 'right' || terminal.endpoint.side === 'bottom';
+  const offset = stubLanePitch * (terminal.lane + 1);
+  const edges = obstacles.flatMap((box) =>
+    horizontal
+      ? [box.x - offset, box.x + box.width + offset]
+      : [box.y - offset, box.y + box.height + offset],
+  );
+  const axis = horizontal ? point.x : point.y;
+  return edges
+    .filter((q) => (outward ? q - axis >= terminal.distance : axis - q >= terminal.distance))
+    .filter((q, index, all) => all.indexOf(q) === index)
+    .toSorted((a, b) => Math.abs(a - axis) - Math.abs(b - axis))
+    .map((q) => lateralPath(point, q, mouth, horizontal));
+}
+/** Direct comb plus lane-offset bypasses around the terminal node, cheapest first. */
+function candidates(
+  terminal: Terminal,
+  mouth: Point,
+  node: Box,
+  obstacles: readonly Box[],
+): readonly (readonly Point[])[] {
+  const point = terminal.endpoint.point;
+  const a = approach(terminal.endpoint, terminal.distance);
+  const across =
+    terminal.endpoint.side === 'left' || terminal.endpoint.side === 'right' ? 'y' : 'x';
+  const direct =
+    across === 'y'
+      ? [point, a, { x: a.x, y: mouth.y }, mouth]
+      : [point, a, { x: mouth.x, y: a.y }, mouth];
+  return [
+    direct,
+    ...bypasses(point, a, mouth, node, terminal.lane, across),
+    ...laterals(terminal, mouth, obstacles),
+  ];
+}
+/** Perimeter walks hug the node's own edges at a lane offset; ending exactly on the edge is legal. */
+function walks(terminal: Terminal, end: Point, node: Box): readonly (readonly Point[])[] {
+  const point = terminal.endpoint.point;
+  const a = approach(terminal.endpoint, terminal.distance);
+  const offset = stubLanePitch * (terminal.lane + 1);
+  if (terminal.endpoint.side === 'left' || terminal.endpoint.side === 'right')
+    return [node.y - offset, node.y + node.height + offset].map((band) => [
+      point,
+      a,
+      { x: a.x, y: band },
+      { x: end.x, y: band },
+      end,
+    ]);
+  return [node.x - offset, node.x + node.width + offset].map((band) => [
+    point,
+    a,
+    { x: band, y: a.y },
+    { x: band, y: end.y },
+    end,
+  ]);
+}
+/** One terminal attachment strategy: the stub points and the engine polyline index they join. */
+interface HeadChoice {
+  readonly points: readonly Point[];
+  readonly join: number;
+}
+/** Comb candidates join at the driveway mouth; walk candidates keep the engine terminal whole. */
+function chooseHead(
+  terminal: Terminal,
+  local: readonly Point[],
+  join: number,
+  end: Point,
+  endJoin: number,
+  nodes: PlacedSection['nodes'],
+  obstacles: readonly Box[],
+): HeadChoice {
+  const node = nodes.find((item) => item.id === terminal.endpoint.node);
+  if (node === undefined)
+    return reject('engine-failed', terminal.endpoint.node, 'Nested terminal node is missing');
+  const choices: readonly HeadChoice[] = [
+    ...candidates(terminal, at(local, join, terminal.endpoint.node), node.box, obstacles).map(
+      (points) => ({
+        points,
+        join,
+      }),
+    ),
+    ...walks(terminal, end, node.box).map((points) => ({ points, join: endJoin })),
+  ];
+  const found = choices.find((choice) => clear(choice.points, obstacles));
+  if (found === undefined)
+    return reject(
+      'constraint-conflict',
+      terminal.endpoint.node,
+      'Nested terminal cannot reach the engine road',
+      [terminal.endpoint.node],
+    );
+  return found;
 }
 /** Seam points coincide by construction; exact duplicates never become zero-length segments. */
 function dedupe(points: readonly Point[]): readonly Point[] {
@@ -165,14 +283,14 @@ function dedupe(points: readonly Point[]): readonly Point[] {
     return prior === undefined || prior.x !== point.x || prior.y !== point.y;
   });
 }
-/** Snap one engine route: retained road interior plus exact member-port terminal stubs. */
+/** Snap one engine route: retained road interior plus verified node-clear terminal stubs. */
 function buildWire(
   wire: VisualWire,
   engineWire: NestedWire,
   order: ReadonlyMap<string, number>,
   pair: Attachments,
-  ranks: Ranks,
-  metrics: SupplementalMeasurements,
+  terminals: { readonly source: Terminal; readonly target: Terminal },
+  nodes: PlacedSection['nodes'],
   origin: Point,
 ): Built {
   if (
@@ -185,23 +303,37 @@ function buildWire(
     .map((point) => ({ x: point.x - origin.x, y: point.y - origin.y }));
   if (local.length < 2) return reject('engine-failed', wire.id, 'Nested engine wire has no path');
   const { from, to } = cut(engineWire, local.length);
-  const terminal = (end: 'source' | 'target'): Terminal => ({
-    endpoint: pair[end],
-    advance: metrics.markers[end === 'source' ? wire.sourceMarker : wire.targetMarker].advance,
-    rank: ranks[end],
-  });
+  const obstacles = contentBoxes(nodes);
+  const sourceHead = chooseHead(
+    terminals.source,
+    local,
+    from,
+    at(local, 0, wire.id),
+    0,
+    nodes,
+    obstacles,
+  );
+  const targetHead = chooseHead(
+    terminals.target,
+    local,
+    to,
+    at(local, local.length - 1, wire.id),
+    local.length - 1,
+    nodes,
+    obstacles,
+  );
   return {
     wire,
     source: pair.source,
     target: pair.target,
     points: dedupe([
-      ...stub(terminal('source'), at(local, from, wire.id), false),
-      ...local.slice(from, to + 1),
-      ...stub(terminal('target'), at(local, to, wire.id), true),
+      ...sourceHead.points,
+      ...local.slice(sourceHead.join + 1, targetHead.join),
+      ...targetHead.points.toReversed(),
     ]),
   };
 }
-/** Exact segment footprints reserve route space for labels, mirroring the legacy reservation. */
+/** Exact segment footprints block a striking wire's corridor on label retry. */
 function routeBoxes(points: readonly Point[]): readonly Box[] {
   return segments(points).map((segment): Box => ({
     x: Math.min(segment.a.x, segment.b.x),
@@ -209,6 +341,64 @@ function routeBoxes(points: readonly Point[]): readonly Box[] {
     width: Math.abs(segment.a.x - segment.b.x),
     height: Math.abs(segment.a.y - segment.b.y),
   }));
+}
+/** A wire strikes a label when one of its segments passes through the box. */
+function strikes(item: Built, box: Box): boolean {
+  return segments(item.points).some((segment) => segmentHits(segment.a, segment.b, box));
+}
+/** The inspector's exact candidate space; each retry blocks one distinct striker, so retries are finite. */
+function placeLabel(
+  item: Built,
+  others: readonly Built[],
+  occupied: readonly Box[],
+  options: LayoutOptions,
+): Box {
+  const box = labelBox(item.points, item.wire.label, occupied, options.labelGap);
+  if (box === null)
+    return reject('constraint-conflict', item.wire.id, 'Nested route has no clear label space', [
+      item.wire.id,
+    ]);
+  const striker = others.find((other) => strikes(other, box));
+  if (striker === undefined) return box;
+  return placeLabel(item, others, [...occupied, ...routeBoxes(striker.points)], options);
+}
+/** Stub lanes per resolved node side: the group base covers the largest marker advance, so lanes never collide. */
+function planTerminals(
+  source: VisualSection,
+  attachments: readonly Attachments[],
+  metrics: SupplementalMeasurements,
+): readonly { readonly source: Terminal; readonly target: Terminal }[] {
+  const groups = new Map<string, readonly number[]>();
+  const keyOf = (endpoint: ResolvedEndpoint): string =>
+    JSON.stringify([endpoint.node, endpoint.side]);
+  const advance = (wire: VisualWire, end: 'source' | 'target'): number =>
+    metrics.markers[end === 'source' ? wire.sourceMarker : wire.targetMarker].advance;
+  source.wires.forEach((wire, index) => {
+    const pair = at(attachments, index, wire.id);
+    groups.set(keyOf(pair.source), [
+      ...(groups.get(keyOf(pair.source)) ?? []),
+      advance(wire, 'source'),
+    ]);
+    groups.set(keyOf(pair.target), [
+      ...(groups.get(keyOf(pair.target)) ?? []),
+      advance(wire, 'target'),
+    ]);
+  });
+  const seen = new Map<string, number>();
+  const terminal = (endpoint: ResolvedEndpoint): Terminal => {
+    const key = keyOf(endpoint);
+    const lane = seen.get(key) ?? 0;
+    seen.set(key, lane + 1);
+    return {
+      endpoint,
+      distance: Math.max(...(groups.get(key) ?? [0])) + (lane + 1) * stubLanePitch,
+      lane,
+    };
+  };
+  return source.wires.map((wire, index) => {
+    const pair = at(attachments, index, wire.id);
+    return { source: terminal(pair.source), target: terminal(pair.target) };
+  });
 }
 /** Routed wires recompute their exact legacy path syntax around the final label obstacles. */
 function routedWires(
@@ -221,16 +411,7 @@ function routedWires(
   origin: Point,
 ): readonly RoutedWire[] {
   const attachments = source.wires.map((wire) => endpoints(wire, placed));
-  const count = new Map<string, number>();
-  const ranks = attachments.map((pair): Ranks => {
-    const rank = (endpoint: ResolvedEndpoint): number => {
-      const key = JSON.stringify([endpoint.node, endpoint.side]);
-      const next = count.get(key) ?? 0;
-      count.set(key, next + 1);
-      return next;
-    };
-    return { source: rank(pair.source), target: rank(pair.target) };
-  });
+  const terminals = planTerminals(source, attachments, metrics);
   const order: ReadonlyMap<string, number> = new Map(map.nodes.map((id, index) => [id, index + 1]));
   const built = source.wires.map((wire, index) =>
     buildWire(
@@ -238,8 +419,8 @@ function routedWires(
       at(engineWires, index, wire.id),
       order,
       at(attachments, index, wire.id),
-      at(ranks, index, wire.id),
-      metrics,
+      at(terminals, index, wire.id),
+      placed,
       origin,
     ),
   );
@@ -249,16 +430,17 @@ function routedWires(
       markerBox(item.source, metrics.markers[item.wire.sourceMarker]),
       markerBox(item.target, metrics.markers[item.wire.targetMarker]),
     ]),
-    ...built.flatMap((item) => routeBoxes(item.points)),
   ];
   const labels: Box[] = [];
   built.forEach((item) => {
-    const box = labelBox(item.points, item.wire.label, [...fixed, ...labels], options.labelGap);
-    if (box === null)
-      return reject('constraint-conflict', item.wire.id, 'Nested route has no clear label space', [
-        item.wire.id,
-      ]);
-    labels.push(box);
+    labels.push(
+      placeLabel(
+        item,
+        built.filter((other) => other !== item),
+        [...fixed, ...labels],
+        options,
+      ),
+    );
   });
   const obstacles = [...contentBoxes(placed), ...labels];
   return built.map((item, index) => ({

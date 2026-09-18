@@ -20,12 +20,13 @@ import { admitNested } from '../scene-in.js';
 import { deriveNestedSection } from '../scene-out.js';
 import { accumulate } from './sequential.js';
 import { arrangeSections } from './collection.js';
-import { requestKey, versions } from './keys.js';
+import { engaged, requestKey, sectionKey, versions } from './keys.js';
 import { adjustments, warnings } from './notices.js';
 import { union } from '../geometry/bounds.js';
 import { inspectSections } from '../validation/sections.js';
 import { inspectNodes } from '../validation/nodes.js';
 import { same, sameIds } from '../validation/facts.js';
+import { equal } from '../validation/equality.js';
 import { parse, protect, reject, requireValue } from '../validation/outcomes.js';
 /** A different collection or future revision is not an admissible geometry preference. */
 function previous(request: CheckedLayoutRequest): SceneCandidate | null {
@@ -37,16 +38,21 @@ function previous(request: CheckedLayoutRequest): SceneCandidate | null {
 function inspected(
   scene: Scene,
   request: Pick<CheckedLayoutRequest, 'projection' | 'measurements' | 'options'>,
-  dependencies: GeometryDependencies,
+  engines: readonly string[],
 ): Scene {
   const checked = parse(candidate, scene);
   const sections = inspectSections(request.projection, checked, {
     measurements: request.measurements,
     options: request.options,
-    engines: versions(dependencies),
+    engines,
   });
   same(warnings(sections, request.projection, request.options), scene.warnings, 'warnings');
   return { ...scene, sections };
+}
+/** One derived section plus whether the nested engine arranged it. */
+interface ArrangedSection {
+  readonly section: PlacedSection;
+  readonly nested: boolean;
 }
 /** A protected nested derivation returns nothing on any structured failure; legacy always remains available. */
 function attempted(
@@ -58,19 +64,33 @@ function attempted(
   const derived = protect(() => deriveNestedSection(source, engine, metrics, context));
   return derived.ok ? derived.value : null;
 }
+/** The nested engine arranges admitted modules sections only. */
+function nestedArranged(
+  source: VisualSection,
+  metrics: SupplementalMeasurements,
+  context: DerivationContext,
+): PlacedSection | null {
+  const engine = context.dependencies.nested;
+  if (engine === undefined || !admitNested(source)) return null;
+  return attempted(source, engine, metrics, context);
+}
 /** A nested-admitted modules section derives through the in-repo engine; any failure keeps the legacy derivation. */
 async function sectionOf(
   source: VisualSection,
   prior: SectionCandidate | null,
   metrics: SupplementalMeasurements,
   context: DerivationContext,
-): Promise<PlacedSection> {
-  const engine = context.dependencies.nested;
-  if (engine === undefined || !admitNested(source))
-    return arrangeSection(source, prior, metrics, context);
-  return (
-    attempted(source, engine, metrics, context) ?? arrangeSection(source, prior, metrics, context)
-  );
+): Promise<ArrangedSection> {
+  const derived = nestedArranged(source, metrics, context);
+  if (derived !== null) return { section: derived, nested: true };
+  return { section: await arrangeSection(source, prior, metrics, context), nested: false };
+}
+/** Every placed section resolves its authoritative source for the execution-accurate restamp. */
+function sourceOf(request: CheckedLayoutRequest, id: string): VisualSection {
+  const source = request.projection.sections.find((section) => section.id === id);
+  if (source === undefined)
+    return reject('engine-failed', id, 'Placed section is missing its source');
+  return source;
 }
 /** Derive one complete scene and reject stale work before it can be returned to Authoring. */
 export async function arrange(
@@ -80,7 +100,7 @@ export async function arrange(
   same(requestKey(request, dependencies), request.job.inputKey, 'job.inputKey');
   const prior = previous(request);
   const context = { dependencies, options: request.options, job: request.job };
-  const local = await accumulate<VisualSection, readonly PlacedSection[]>(
+  const local = await accumulate<VisualSection, readonly ArrangedSection[]>(
     request.projection.sections.toSorted((a, b) => a.order - b.order),
     [],
     async (result, source) => {
@@ -94,20 +114,49 @@ export async function arrange(
       return [...result, section];
     },
   );
-  const sections = requireValue(await arrangeSections(local, request.projection, prior, context));
+  const engines = local.some((item) => item.nested)
+    ? engaged(dependencies)
+    : versions(dependencies);
+  const arranged = requireValue(
+    await arrangeSections(
+      local.map((item) => item.section),
+      request.projection,
+      prior,
+      context,
+    ),
+  );
+  const sections = arranged.map((section): PlacedSection => ({
+    ...section,
+    inputKey: sectionKey(
+      sourceOf(request, section.id),
+      request.measurements,
+      request.options,
+      engines,
+    ),
+  }));
   const scene: Scene = {
     collectionId: request.projection.collectionId,
     revision: request.projection.revision,
     inputKey: request.job.inputKey,
-    engineVersions: versions(dependencies),
+    engineVersions: engines,
     sections,
     bounds: union(sections.map((section) => section.box)),
     warnings: warnings(sections, request.projection, request.options),
     adjustments: adjustments(sections, request.projection, prior),
   };
-  const result = inspected(scene, request, dependencies);
+  const result = inspected(scene, request, engines);
   requireValue(await dependencies.jobs.checkpoint(request.job));
   return result;
+}
+/** A candidate is inspected against the stamp set it carries; an unavailable engine's stamp fails equality. */
+function admitted(
+  candidate: SceneCandidate,
+  dependencies: GeometryDependencies,
+): readonly string[] {
+  const nested = dependencies.nested;
+  if (nested !== undefined && equal(candidate.engineVersions, engaged(dependencies)))
+    return engaged(dependencies);
+  return versions(dependencies);
 }
 /** Public inspection returns a typed invalid verdict while malformed envelopes remain boundary failures. */
 export function inspect(
@@ -118,7 +167,7 @@ export function inspect(
     inspectSections(request.projection, request.candidate, {
       measurements: request.measurements,
       options: request.options,
-      engines: versions(dependencies),
+      engines: admitted(request.candidate, dependencies),
     }),
   );
   if (!result.ok) return { valid: false, diagnostics: [result.error] };
@@ -177,7 +226,7 @@ export async function reroute(
     warnings: warnings(sections, request.projection, request.options),
     adjustments: adjustments(sections, request.projection, request.fixed),
   };
-  const result = inspected(scene, request, dependencies);
+  const result = inspected(scene, request, versions(dependencies));
   requireValue(await dependencies.jobs.checkpoint(request.job));
   return result;
 }

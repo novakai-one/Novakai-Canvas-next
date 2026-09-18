@@ -92,6 +92,7 @@ async function derive(job: RenderingJob, signal: AbortSignal): Promise<RenderDoc
       projection: projectionReader(job),
       wasmResource: job.wasmResource,
       jobs: { isCurrent: () => !signal.aborted, yield: yieldJob },
+      engine: process.env.NOVAKAI_LAYOUT_ENGINE === 'nested' ? 'nested' : 'legacy',
     }),
   );
   const request = { projection, measurements, options: job.options, previous: job.previous };

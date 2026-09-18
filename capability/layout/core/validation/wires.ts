@@ -7,6 +7,7 @@ import { endpoints } from '../routing/endpoints.js';
 import { contentBoxes, labelObstacles } from '../routing/obstacles.js';
 import { validRoute, checkLabel, markerBox } from '../routing/checks.js';
 import { linePath, curvePath, segments } from '../routing/paths.js';
+import type { Segment } from '../routing/paths.js';
 import { adjacentLabel } from '../routing/labels.js';
 import { segmentHits } from '../geometry/intersections.js';
 import { sameIds, same } from './facts.js';
@@ -90,7 +91,13 @@ function checkLabels(
   checkLabel(candidate.labelBox, wire, occupied);
   if (!adjacentLabel(candidate.labelBox, candidate.points, wire.label, context.options.labelGap))
     reject('constraint-conflict', wire.id, 'Wire has no label segment');
-  others.forEach((other) => checkLabelCrossing(wire.id, candidate.labelBox, other.points));
+  others.forEach((other) =>
+    checkLabelCrossing(
+      wire.id,
+      candidate.labelBox,
+      context.lanes.get(other.id)?.segments ?? segments(other.points),
+    ),
+  );
 }
 /** Every candidate marker reserves its owner-supplied dimensions near the checked endpoint. */
 function markerBounds(
@@ -103,8 +110,8 @@ function markerBounds(
   ];
 }
 /** A later connection may cross another wire, but may never strike through its label. */
-function checkLabelCrossing(id: string, box: Box, points: RoutedWire['points']): void {
-  if (segments(points).some((segment) => segmentHits(segment.a, segment.b, box)))
+function checkLabelCrossing(id: string, box: Box, lines: readonly Segment[]): void {
+  if (lines.some((segment) => segmentHits(segment.a, segment.b, box)))
     reject('constraint-conflict', id, 'Another wire crosses this label');
 }
 /** Check wire cardinality and measured payloads before returning immutable rendering records.

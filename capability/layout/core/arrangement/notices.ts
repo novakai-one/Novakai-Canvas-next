@@ -9,7 +9,8 @@ import type { LinearConstraint } from '../../contract/records/problem.js';
 import type { SceneCandidate } from '../../contract/records/candidate.js';
 import type { Projection, VisualSection, LayoutIntent } from '../../contract/records/input.js';
 import type { LayoutOptions } from '../../contract/types.js';
-import { crosses } from '../routing/checks.js';
+import { crossesSegments } from '../routing/checks.js';
+import { segments } from '../routing/paths.js';
 import { relative } from '../constraints/relative.js';
 import { violated } from '../constraints/evaluate.js';
 import { equal } from '../validation/equality.js';
@@ -125,18 +126,21 @@ function notices(
 }
 /** Every strict wire crossing is reported once in stable source order. */
 function crossingWarnings(sections: readonly PlacedSection[]): readonly Warning[] {
-  return sections.flatMap((section) =>
-    section.wires.flatMap((wire, index) =>
-      section.wires
-        .slice(index + 1)
-        .filter((other) => crosses(wire, other))
-        .map((other) => ({
-          code: 'wire-crossing' as const,
-          targets: [wire.id, other.id],
-          message:
-            'Connections cross; inspect labelled routes or add route intent if separation is required.',
-        })),
-    ),
+  return sections.flatMap(sectionCrossings);
+}
+/** Prepare once per wire; pairwise warning checks reuse that local work in source order. */
+function sectionCrossings(section: PlacedSection): readonly Warning[] {
+  const wires = section.wires.map((wire) => ({ wire, lines: segments(wire.points) }));
+  return wires.flatMap(({ wire, lines }, index) =>
+    wires
+      .slice(index + 1)
+      .filter((other) => crossesSegments(lines, other.lines))
+      .map(({ wire: other }) => ({
+        code: 'wire-crossing' as const,
+        targets: [wire.id, other.id],
+        message:
+          'Connections cross; inspect labelled routes or add route intent if separation is required.',
+      })),
   );
 }
 type AuthoredConstraint = LayoutIntent['constraints'][number];

@@ -57,23 +57,6 @@ function measure(
   );
   const traffic = density(members, section.nodes, section.wires);
   const gap = Math.ceil(Math.max(padding * 4, (traffic + 2) * lanePitch * 2 + padding * 2));
-  const nodeTraffic = Math.max(
-    0,
-    ...leaves.map(
-      (node) =>
-        section.wires.filter((wire) => wire.source.node === node.id || wire.target.node === node.id)
-          .length,
-    ),
-  );
-  const annotationTraffic = Math.max(3, annotationDensity(leaves, section.wires));
-  const nodeGap = Math.ceil(
-    Math.max(
-      gap,
-      (annotationTraffic + 1) * terminalPitch * 2 +
-        Math.max(0, nodeTraffic - annotationTraffic) * lanePitch * 2 +
-        gap,
-    ),
-  );
   const intent =
     section.groups.find((group) => group.id === parent?.groupId)?.layout ?? section.layout;
   const columns = Math.max(
@@ -84,16 +67,25 @@ function measure(
     1,
     Math.min(children.length || 1, intent.columns ?? Math.ceil(Math.sqrt(children.length))),
   );
-  const pitch = {
-    x:
-      Math.ceil(
-        Math.max(0, ...leaves.map((node) => Math.max(node.width, node.placement?.width ?? 0))),
-      ) + nodeGap,
-    y:
-      Math.ceil(
-        Math.max(0, ...leaves.map((node) => Math.max(node.height, node.placement?.height ?? 0))),
-      ) + nodeGap,
-  };
+  const cells = leaves.map((node) => {
+    const demand = nodeDemand(node.id, section.wires);
+    const reserve =
+      demand.traffic === 0
+        ? 0
+        : (demand.annotation + 1) * terminalPitch * 2 +
+          Math.max(0, demand.traffic - demand.annotation) * lanePitch * 2;
+    return {
+      x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve + gap),
+      y: Math.ceil(Math.max(node.height, node.placement?.height ?? 0) + reserve + gap),
+    };
+  });
+  const columnWidths = Array.from({ length: leaves.length === 0 ? 0 : columns }, (_, column) =>
+    Math.max(...cells.filter((_, i) => i % columns === column).map((cell) => cell.x)),
+  );
+  const rowHeights = Array.from({ length: Math.ceil(leaves.length / columns) }, (_, row) =>
+    Math.max(...cells.slice(row * columns, (row + 1) * columns).map((cell) => cell.y)),
+  );
+  const pitch = { x: Math.max(gap, ...columnWidths), y: Math.max(gap, ...rowHeights) };
   const childRows = Array.from({ length: Math.ceil(children.length / childColumns) }, (_, index) =>
     children.slice(index * childColumns, (index + 1) * childColumns),
   );
@@ -106,14 +98,32 @@ function measure(
     0,
   );
   const header = Math.ceil((parent?.headerHeight ?? section.title.height + padding * 2) + gap / 2);
-  const ownWidth = leaves.length === 0 ? 0 : columns * pitch.x;
-  const ownHeight = Math.ceil(leaves.length / columns) * pitch.y;
+  const ownWidth = columnWidths.reduce((sum, width) => sum + width, 0);
+  const ownHeight = rowHeights.reduce((sum, height) => sum + height, 0);
+  const pinned = leaves.filter((node) => node.placement !== null);
+  const manualWidth = Math.max(
+    0,
+    ...pinned.map(
+      (node) => node.placement!.x + Math.max(node.width, node.placement!.width ?? 0) + gap / 2,
+    ),
+  );
+  const manualHeight = Math.max(
+    0,
+    ...pinned.map(
+      (node) => node.placement!.y + Math.max(node.height, node.placement!.height ?? 0) + gap / 2,
+    ),
+  );
   const authored = parent === null ? section.placement : parent.placement;
   return {
     width:
       authored?.width ??
-      Math.max(parent?.content.width ?? section.title.width, ownWidth + childWidth) + gap,
-    height: authored?.height ?? Math.max(ownHeight, childHeight) + header + gap / 2,
+      Math.max(
+        manualWidth,
+        Math.max(parent?.content.width ?? section.title.width, ownWidth + childWidth) + gap,
+      ),
+    height:
+      authored?.height ??
+      Math.max(manualHeight, Math.max(ownHeight, childHeight) + header + gap / 2),
     header,
     gap,
     lanePitch,
@@ -121,6 +131,8 @@ function measure(
     columns,
     childColumns,
     pitch,
+    columnWidths,
+    rowHeights,
   };
 }
 
@@ -137,18 +149,24 @@ function descendants(
   ]);
 }
 
-/** Each relationship can place its annotation at its less crowded endpoint. */
-function annotationDensity(nodes: readonly VisualNode[], wires: readonly VisualWire[]): number {
-  const counts = new Map<string, number>();
-  wires.forEach((wire) =>
-    [wire.source.node, wire.target.node].forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1)),
-  );
-  const ids = new Set(nodes.map((node) => node.id));
-  const related = wires.filter((wire) => ids.has(wire.source.node) || ids.has(wire.target.node));
-  return Math.max(
-    0,
-    ...related.map((wire) =>
-      Math.min(counts.get(wire.source.node) ?? 0, counts.get(wire.target.node) ?? 0),
+/** Directed endpoint counts bound each port before automatic sides are resolved by placement. */
+function nodeDemand(id: string, wires: readonly VisualWire[]) {
+  const exits = wires.filter((wire) => wire.source.node === id);
+  const entries = wires.filter((wire) => wire.target.node === id);
+  const traffic = Math.max(exits.length, entries.length);
+  const related = [
+    ...exits.map((wire) =>
+      Math.min(
+        exits.length,
+        wires.filter((other) => other.target.node === wire.target.node).length,
+      ),
     ),
-  );
+    ...entries.map((wire) =>
+      Math.min(
+        entries.length,
+        wires.filter((other) => other.source.node === wire.source.node).length,
+      ),
+    ),
+  ];
+  return { traffic, annotation: Math.min(traffic, Math.max(3, ...related)) };
 }

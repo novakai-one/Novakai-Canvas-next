@@ -29,6 +29,8 @@ export interface SizedSection {
   readonly rows: number;
   readonly ownWidth: number;
   readonly pitch: { readonly x: number; readonly y: number };
+  readonly columnWidths: readonly number[];
+  readonly rowHeights: readonly number[];
   readonly width: number;
   readonly height: number;
   readonly children: readonly SizedSection[];
@@ -54,7 +56,7 @@ function sizeSection(spec: SectionSpec): SizedSection {
   const rows = count === 0 ? 0 : Math.ceil(count / columns);
   const children = spec.children.map(sizeSection);
   const pitch = measured.pitch;
-  const ownWidth = count === 0 ? 0 : columns * pitch.x;
+  const ownWidth = measured.columnWidths.reduce((sum, width) => sum + width, 0);
   return {
     measured,
     id: `section-${spec.number}`,
@@ -66,6 +68,8 @@ function sizeSection(spec: SectionSpec): SizedSection {
     rows,
     ownWidth,
     pitch,
+    columnWidths: measured.columnWidths,
+    rowHeights: measured.rowHeights,
     children,
     width: measured.width,
     height: measured.height,
@@ -122,19 +126,21 @@ function leftEntrance(port: PrototypeNodePort, bounds: PrototypeBounds): Prototy
 }
 function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   if (size.count === 0) return [];
-  const rowHeight = size.pitch.y;
+  const xEdges = gridEdges(size.columnWidths);
+  const yEdges = gridEdges(size.rowHeights);
   return size.nodes.map((node, i) => {
     const measured = measuredNode(node);
+    const column = i % size.columns,
+      row = Math.floor(i / size.columns);
+    const cellWidth = size.columnWidths[column]!,
+      rowHeight = size.rowHeights[row]!;
     return {
       ...placePrototypeNode(
         size.id,
         node.number - 1,
         {
-          x: interior.x + (i % size.columns) * size.pitch.x + (size.pitch.x - measured.width) / 2,
-          y:
-            interior.y +
-            Math.floor(i / size.columns) * rowHeight +
-            (rowHeight - measured.height) / 2,
+          x: interior.x + xEdges[column]! + (cellWidth - measured.width) / 2,
+          y: interior.y + yEdges[row]! + (rowHeight - measured.height) / 2,
         },
         measured,
       ),
@@ -254,4 +260,9 @@ function nodeNumbers(size: SizedSection): readonly number[] {
 }
 function sectionNumbers(size: SizedSection): readonly number[] {
   return [Number(size.id.slice('section-'.length)), ...size.children.flatMap(sectionNumbers)];
+}
+
+/** Cumulative owner-supplied cells define placement and the exact shared street axes. */
+export function gridEdges(sizes: readonly number[]): readonly number[] {
+  return sizes.reduce<readonly number[]>((edges, size) => [...edges, edges.at(-1)! + size], [0]);
 }

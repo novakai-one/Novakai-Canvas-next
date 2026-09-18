@@ -129,6 +129,8 @@ export const moduleEnvelope = z
     columns: z.number().int().positive(),
     childColumns: z.number().int().positive(),
     pitch: z.strictObject({ x: dimension, y: dimension }).readonly(),
+    columnWidths: z.array(dimension).readonly(),
+    rowHeights: z.array(dimension).readonly(),
   })
   .readonly();
 export type ModuleEnvelope = z.infer<typeof moduleEnvelope>;

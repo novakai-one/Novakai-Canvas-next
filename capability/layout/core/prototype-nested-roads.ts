@@ -5,7 +5,7 @@ import type {
   PrototypeRoad,
 } from '../contract/records/road-prototype.js';
 import type { SectionPlacement } from './prototype-nested-placement.js';
-import { nestedSpacing } from './prototype-nested-placement.js';
+import { nestedSpacing, gridEdges } from './prototype-nested-placement.js';
 import { reject } from './nested-support-graph.js';
 import { axes } from './prototype-road-geometry.js';
 import { readPrototypeNodePorts } from './prototype-road-nodes.js';
@@ -40,21 +40,23 @@ function frame(owner: string | null, b: PrototypeBounds, origin: string): Street
 }
 function internalStreets(p: SectionPlacement): StreetSpan[] {
   const { size, interior: b } = p;
-  const ownHeight = size.rows * size.pitch.y;
+  const xEdges = gridEdges(size.columnWidths),
+    yEdges = gridEdges(size.rowHeights);
+  const ownHeight = yEdges.at(-1)!;
   return [
     ...frame(size.id, b, `${size.id}:frame`),
-    ...Array.from({ length: size.rows - 1 }, (_, i) => ({
+    ...yEdges.slice(1, -1).map((at, i) => ({
       owner: size.id,
       axis: 'horizontal' as const,
-      at: b.y + (i + 1) * size.pitch.y,
+      at: b.y + at,
       start: b.x,
       end: b.x + size.ownWidth,
       origins: [`${size.id}:row:${i}`],
     })),
-    ...Array.from({ length: size.columns }, (_, i) => ({
+    ...xEdges.slice(1).map((at, i) => ({
       owner: size.id,
       axis: 'vertical' as const,
-      at: b.x + ((i + 1) * size.ownWidth) / size.columns,
+      at: b.x + at,
       start: b.y,
       end: b.y + ownHeight,
       origins: [`${size.id}:column:${i}`],
@@ -212,11 +214,10 @@ function accessDirection(port: PrototypePortLocation): Pick<PrototypeRoad, 'axis
 /** Interior grid crossings are emitted with the grid, not discovered by pairing roads. */
 export function nestedCrossings(placements: readonly SectionPlacement[]) {
   return placements.flatMap((p) =>
-    Array.from({ length: p.size.rows - 1 }, (_, row) =>
-      Array.from({ length: p.size.columns + 1 }, (_, column) => ({
-        x: p.interior.x + (column * p.size.ownWidth) / p.size.columns,
-        y: p.interior.y + (row + 1) * p.size.pitch.y,
-      })),
-    ).flat(),
+    gridEdges(p.size.rowHeights)
+      .slice(1, -1)
+      .flatMap((y) =>
+        gridEdges(p.size.columnWidths).map((x) => ({ x: p.interior.x + x, y: p.interior.y + y })),
+      ),
   );
 }

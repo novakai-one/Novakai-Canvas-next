@@ -28,8 +28,9 @@ function connect(state: SessionState, event: EventOf<'connect'>): Transition {
   if (!canMutate(state))
     return reject('mutation-unavailable', event.id, 'Connections are unavailable');
   checkEndpoint(state, event.endpoint);
-  if (state.connection === null) return changed(state, { ...state, connection: event.endpoint });
-  return completeConnection(state, event);
+  const cleared = { ...state, hover: null };
+  if (state.connection === null) return changed(state, { ...cleared, connection: event.endpoint });
+  return completeConnection(cleared, event);
 }
 /** Connections cannot silently span sections; cross-section reuse is a canonical host/model decision. */
 function completeConnection(state: SessionState, event: EventOf<'connect'>): Transition {

@@ -56,6 +56,7 @@ export function openSession(reader: SceneAdmission, input: OpenInput): SessionSt
     camera,
     profile: input.profile,
     selection: [],
+    hover: null,
     tool: 'select',
     connection: null,
     draft: null,

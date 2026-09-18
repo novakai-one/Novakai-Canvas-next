@@ -31,6 +31,8 @@ export const event = z
       mode: z.enum(['replace', 'toggle', 'add']),
     }),
     z.strictObject({ kind: z.literal('marquee'), box, additive: z.boolean() }),
+    z.strictObject({ kind: z.literal('target-enter'), target }),
+    z.strictObject({ kind: z.literal('target-leave'), target }),
     z.strictObject({ kind: z.literal('tool'), tool: z.enum(['select', 'hand', 'connect']) }),
     z.strictObject({ kind: z.literal('inspect'), target }),
     z.strictObject({

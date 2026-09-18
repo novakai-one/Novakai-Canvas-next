@@ -27,7 +27,11 @@ const modes = {
 /** Selection changes only scoped addresses; there is deliberately no camera or inspector visibility update. */
 export function selectTargets(state: SessionState, event: EventOf<'select'>): SessionState {
   event.targets.forEach((target) => targetInfo(state.index, target));
-  return { ...state, selection: modes[event.mode](state.selection, distinct(event.targets)) };
+  return {
+    ...state,
+    selection: modes[event.mode](state.selection, distinct(event.targets)),
+    hover: null,
+  };
 }
 /** Marquee selects visible node appearances; section backgrounds cannot swallow their entire contents. */
 export function marquee(state: SessionState, bounds: Box, additive: boolean): SessionState {

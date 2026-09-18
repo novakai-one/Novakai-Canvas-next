@@ -14,7 +14,12 @@ import { rejectDraft, removeRecovery } from '../drafts/reconcile.js';
 export function draftHandlers(): readonly Handler[] {
   return [
     handler('begin', (state, event) =>
-      changed(state, { ...state, routePreview: null, draft: beginDraft(state, event) }),
+      changed(state, {
+        ...state,
+        routePreview: null,
+        hover: null,
+        draft: beginDraft(state, event),
+      }),
     ),
     handler('move', (state, event) => changed(state, { ...state, draft: moveDraft(state, event) })),
     handler('resize', (state, event) =>

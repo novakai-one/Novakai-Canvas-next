@@ -21,7 +21,8 @@
       [data-shape='module'],
       [data-shape='entity'],
       [data-shape='interface'],
-      [data-shape='function']
+      [data-shape='function'],
+      [data-frame='card'][data-node-role='neutral']
     )
     .frame {
     fill: var(--nv-canvas-node-surface);
@@ -49,7 +50,15 @@
     stroke: var(--nv-canvas-node-boundary);
   }
 
-  .heading text {
+  .root:is(
+      [data-shape='module'],
+      [data-shape='entity'],
+      [data-shape='interface'],
+      [data-shape='function'],
+      [data-frame='card'][data-node-role='neutral']
+    )
+    .heading
+    text {
     fill: var(--nv-canvas-heading);
   }
 
@@ -57,7 +66,15 @@
     fill: var(--nv-canvas-group-heading);
   }
 
-  .body text {
+  .root:is(
+      [data-shape='module'],
+      [data-shape='entity'],
+      [data-shape='interface'],
+      [data-shape='function'],
+      [data-frame='card'][data-node-role='neutral']
+    )
+    .body
+    text {
     fill: var(--nv-canvas-member);
   }
 

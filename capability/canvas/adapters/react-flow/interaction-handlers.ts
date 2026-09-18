@@ -147,7 +147,7 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     dispatch({
       kind: 'resize',
       id: active.id,
-      box: { ...box, x: box.x + origin.x, y: box.y + origin.y },
+      box: { x: box.x + origin.x, y: box.y + origin.y, width: box.width, height: box.height },
     });
   }
   /** Selection changes are the only React Flow change records consumed; dimensions/positions remain derived. */

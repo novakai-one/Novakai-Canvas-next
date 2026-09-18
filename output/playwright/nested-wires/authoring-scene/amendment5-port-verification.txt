@@ -1,0 +1,2 @@
+PASS memory-only extraction: aliases, mixed/type-only imports, external imports, empty directories, symlink/node_modules exclusion, deterministic retry
+PASS all five named failure codes, root/descendant escapes, original failure evidence, retry after failures; no real filesystem required

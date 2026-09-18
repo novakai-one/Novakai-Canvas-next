@@ -1,0 +1,8 @@
+Authoritative Amendment-5 baseline commit: 534fd8dd4e6b22e143008b975795125c1b538c73
+EXTRACTED nodes=47; sections=15; wires=119; excluded type-only imports=111; excluded type symbols=231; external imports=20
+PASS run=1 baseline byte identity scene-spec.json; bytes=18883; sha256=1a2fbaad6e783c9a41bbf1af18c7bb637bcad68537742048ea606848c4851e0f
+PASS run=1 baseline byte identity extraction-manifest.json; bytes=165383; sha256=e142fc0d2b0eb6ac196ec4ec3f009b71d3c8d29fd0869b3bcd24f7fdc56fd059
+EXTRACTED nodes=47; sections=15; wires=119; excluded type-only imports=111; excluded type symbols=231; external imports=20
+PASS run=2 baseline byte identity scene-spec.json; bytes=18883; sha256=1a2fbaad6e783c9a41bbf1af18c7bb637bcad68537742048ea606848c4851e0f
+PASS run=2 baseline byte identity extraction-manifest.json; bytes=165383; sha256=e142fc0d2b0eb6ac196ec4ec3f009b71d3c8d29fd0869b3bcd24f7fdc56fd059
+PASS git diff --exit-code against the just-created baseline commit; both artifacts unchanged

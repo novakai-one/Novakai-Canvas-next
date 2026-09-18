@@ -1,0 +1,12 @@
+NODE COUNT extracted=47 | find=47
+PASS w36 capability/authoring/core/admission/pipeline.ts:19 — readShape
+PASS w30 capability/authoring/core/admission/pipeline.ts:5 — digest
+PASS w84 capability/authoring/core/transactions/apply.ts:10 — reject
+PASS w38 capability/authoring/core/admission/pipeline.ts:21 — canonical
+PASS w24 capability/authoring/core/admission/candidate.ts:7 — netWrite, installWrites
+PASS w10 capability/authoring/contract/compose.ts:1 — createNodeIdentity
+PASS w76 capability/authoring/core/records/changes.ts:9 — canonical
+PASS w106 capability/authoring/tests/fixtures.ts:2 — createAuthoring, recordId, workspaceId, digest, requestId, actorId, plannerId, requestSchema
+PASS w87 capability/authoring/core/transactions/commit.ts:6 — accepted, reject
+PASS w22 capability/authoring/core/admission/candidate.ts:5 — versionSchema
+PASS 119 wire citations; bare ID labels=0; type-only wires=0; excluded type-only imports=111; excluded type symbols=231; external=20

@@ -1,0 +1,2 @@
+PASS two offline scene builds byte-identical; bytes=1957744; sha256=152ccd8fdc094ffab342ac80fe2ba0524f7d0f3d07157dc24d8f9a003ca39c20
+Determinism only. Known-illegal scene remains dark pending M10f; no legality or visual acceptance asserted.

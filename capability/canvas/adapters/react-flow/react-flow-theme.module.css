@@ -11,6 +11,19 @@
     outline: var(--nv-focus-width) solid var(--nv-action-accent);
     outline-offset: var(--nv-focus-offset);
   }
+  :global(.react-flow__minimap) {
+    border: var(--nv-stroke-base) solid var(--nv-canvas-group-boundary);
+    border-radius: var(--nv-radius-panel);
+    background: var(--nv-surface-raised);
+    box-shadow: var(--nv-elevation-offset-x) var(--nv-elevation-offset-y)
+      var(--nv-elevation-blur) var(--nv-shadow-opacity-color);
+  }
+  :global(.react-flow__minimap-mask) {
+    fill: var(--nv-canvas-group-surface);
+  }
+  :global(.react-flow__minimap-node) {
+    fill: var(--nv-canvas-node-boundary);
+  }
   :global(.react-flow__attribution) {
     background: var(--nv-surface-raised);
     color: var(--nv-text-secondary);

@@ -65,7 +65,15 @@ function measure(
           .length,
     ),
   );
-  const nodeGap = Math.ceil(Math.max(gap, (nodeTraffic + 1) * terminalPitch * 2 + gap));
+  const annotationTraffic = Math.max(3, annotationDensity(leaves, section.wires));
+  const nodeGap = Math.ceil(
+    Math.max(
+      gap,
+      (annotationTraffic + 1) * terminalPitch * 2 +
+        Math.max(0, nodeTraffic - annotationTraffic) * lanePitch * 2 +
+        gap,
+    ),
+  );
   const intent =
     section.groups.find((group) => group.id === parent?.groupId)?.layout ?? section.layout;
   const columns = Math.max(
@@ -127,4 +135,20 @@ function descendants(
       all,
     ),
   ]);
+}
+
+/** Each relationship can place its annotation at its less crowded endpoint. */
+function annotationDensity(nodes: readonly VisualNode[], wires: readonly VisualWire[]): number {
+  const counts = new Map<string, number>();
+  wires.forEach((wire) =>
+    [wire.source.node, wire.target.node].forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1)),
+  );
+  const ids = new Set(nodes.map((node) => node.id));
+  const related = wires.filter((wire) => ids.has(wire.source.node) || ids.has(wire.target.node));
+  return Math.max(
+    0,
+    ...related.map((wire) =>
+      Math.min(counts.get(wire.source.node) ?? 0, counts.get(wire.target.node) ?? 0),
+    ),
+  );
 }

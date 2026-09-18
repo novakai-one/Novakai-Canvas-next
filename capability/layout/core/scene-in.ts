@@ -157,6 +157,7 @@ export function toEngineScene(
   const scene = createNestedRoadScene({
     spec,
     fixedGeometry: true,
+    annotateTerminals: true,
     lanePitch: {
       horizontal: required(source.envelope, source.id).lanePitch,
       vertical: required(source.envelope, source.id).lanePitch,

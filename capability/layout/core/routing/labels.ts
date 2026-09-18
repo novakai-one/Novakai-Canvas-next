@@ -4,7 +4,7 @@ import type { Segment } from './paths.js';
 import { segments } from './paths.js';
 import { overlaps } from '../geometry/intersections.js';
 import { expand } from '../geometry/bounds.js';
-/** Label candidates remain adjacent to their actual wire segment; no detached fallback label is fabricated. */
+/** Route bounds extend one pixel right/down; positive-side candidates clear that same footprint. */
 function atFraction(
   segment: Segment,
   content: MeasuredContent,
@@ -15,13 +15,15 @@ function atFraction(
   const y = segment.a.y + (segment.b.y - segment.a.y) * fraction;
   const width = content.width;
   const height = content.height;
+  // pointBounds gives zero-width strokes a one-pixel right/bottom footprint.
+  const positiveGap = gap + 1;
   if (segment.a.y === segment.b.y)
     return [
       { x: x - width / 2, y: y - gap - height, width, height },
-      { x: x - width / 2, y: y + gap, width, height },
+      { x: x - width / 2, y: y + positiveGap, width, height },
     ];
   return [
-    { x: x + gap, y: y - height / 2, width, height },
+    { x: x + positiveGap, y: y - height / 2, width, height },
     { x: x - gap - width, y: y - height / 2, width, height },
   ];
 }

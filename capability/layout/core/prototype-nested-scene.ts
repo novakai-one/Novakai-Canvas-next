@@ -38,7 +38,10 @@ import { roadNetwork } from './prototype-road-network.js';
  * The caller owns reconstruction; no committed scene or shared state is mutated on failure.
  */
 export function createNestedRoadScene(
-  options: Pick<PrototypeLayoutOptions, 'measure' | 'sectionInPortsLeft' | 'lanePitch'> & {
+  options: Pick<
+    PrototypeLayoutOptions,
+    'measure' | 'sectionInPortsLeft' | 'lanePitch' | 'annotateTerminals' | 'annotationTerminalLimit'
+  > & {
     readonly copies?: 1 | 2;
     readonly fixedGeometry?: boolean;
     readonly spec?: NestedSceneSpec;
@@ -97,10 +100,16 @@ export function createNestedRoadScene(
   const registry = wireRegistry(reserved, topology.contacts, measure);
   const plan = routeNestedWires(reserved, registry, measure, requests);
   if (!plan.ok) return { ...reserved, wiring: plan };
-  const allocation = measure('lane-allocation', () =>
-    allocateNestedLanes(plan.value, registry.roads),
+  const configuredRoads = terminalCapacity(topology.roads, plan.value, options);
+  const configured = new Map(configuredRoads.map((road) => [road.id, road]));
+  const allocation = measure('lane-allocation', () => allocateNestedLanes(plan.value, configured));
+  const final = capacityRoads(
+    configuredRoads,
+    allocation.demand,
+    topology.contacts,
+    measure,
+    ports,
   );
-  const final = capacityRoads(topology.roads, allocation.demand, topology.contacts, measure, ports);
   try {
     if (options.fixedGeometry) {
       const network = measure('network', () => roadNetwork(final.roads, final.contacts));
@@ -130,7 +139,7 @@ export function createNestedRoadScene(
     const input = retainedSupportRecords(
       supportScene,
       placement,
-      topology.roads,
+      configuredRoads,
       topology.contacts,
       topology.origins,
       plan.value,
@@ -211,4 +220,35 @@ function activePorts(
       ),
     })),
   }));
+}
+
+/** Every wire reserves annotation room on its less crowded endpoint approach. */
+function terminalCapacity(
+  roads: RoadPrototypeScene['roads'],
+  wires: readonly import('../contract/records/nested-wires.js').NestedWire[],
+  options: Pick<
+    PrototypeLayoutOptions,
+    'lanePitch' | 'annotateTerminals' | 'annotationTerminalLimit'
+  >,
+): RoadPrototypeScene['roads'] {
+  if (!options.annotateTerminals) return roads;
+  const counts = new Map<string, number>();
+  wires.forEach((wire) =>
+    new Set(wire.segments.map((segment) => segment.corridorId)).forEach((id) =>
+      counts.set(id, (counts.get(id) ?? 0) + 1),
+    ),
+  );
+  const annotated = new Set(
+    wires.map((wire) => {
+      const source = `drive:${wire.sourcePortId}`,
+        target = `drive:${wire.targetPortId}`;
+      return (counts.get(source) ?? 0) <= (counts.get(target) ?? 0) ? source : target;
+    }),
+  );
+  return roads.map((road) => {
+    if (road.access === null || road.access.nodeId === road.sectionId || annotated.has(road.id))
+      return road;
+    if ((counts.get(road.id) ?? 0) <= (options.annotationTerminalLimit ?? 3)) return road;
+    return { ...road, lanePitch: options.lanePitch?.[road.axis] ?? nestedLanePitch };
+  });
 }

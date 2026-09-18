@@ -57,6 +57,8 @@ export type PrototypeLayoutStage =
 /** Optional caller-owned measurement; geometry never reads a clock. */
 export type PrototypeLayoutMeasure = <T>(stage: PrototypeLayoutStage, operation: () => T) => T;
 export interface PrototypeLayoutOptions {
+  readonly annotateTerminals?: boolean;
+  readonly annotationTerminalLimit?: number;
   readonly lanePitch?: {
     readonly horizontal: number;
     readonly vertical: number;

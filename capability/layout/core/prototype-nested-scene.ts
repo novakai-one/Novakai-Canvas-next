@@ -40,7 +40,12 @@ import { roadNetwork } from './prototype-road-network.js';
 export function createNestedRoadScene(
   options: Pick<
     PrototypeLayoutOptions,
-    'measure' | 'sectionInPortsLeft' | 'lanePitch' | 'annotateTerminals' | 'annotationTerminalLimit'
+    | 'measure'
+    | 'sectionInPortsLeft'
+    | 'lanePitch'
+    | 'annotateTerminals'
+    | 'annotationTerminalLimit'
+    | 'annotationPitches'
   > & {
     readonly copies?: 1 | 2;
     readonly fixedGeometry?: boolean;
@@ -228,15 +233,17 @@ function terminalCapacity(
   wires: readonly import('../contract/records/nested-wires.js').NestedWire[],
   options: Pick<
     PrototypeLayoutOptions,
-    'lanePitch' | 'annotateTerminals' | 'annotationTerminalLimit'
+    'lanePitch' | 'annotateTerminals' | 'annotationTerminalLimit' | 'annotationPitches'
   >,
 ): RoadPrototypeScene['roads'] {
   if (!options.annotateTerminals) return roads;
   const counts = new Map<string, number>();
-  wires.forEach((wire) =>
-    new Set(wire.segments.map((segment) => segment.corridorId)).forEach((id) =>
-      counts.set(id, (counts.get(id) ?? 0) + 1),
-    ),
+  const pitches = new Map<string, number>();
+  wires.forEach((wire, index) =>
+    new Set(wire.segments.map((segment) => segment.corridorId)).forEach((id) => {
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+      pitches.set(id, Math.max(pitches.get(id) ?? 0, options.annotationPitches?.[index] ?? 0));
+    }),
   );
   const annotated = new Set(
     wires.map((wire) => {
@@ -246,9 +253,13 @@ function terminalCapacity(
     }),
   );
   return roads.map((road) => {
-    if (road.access === null || road.access.nodeId === road.sectionId || annotated.has(road.id))
-      return road;
-    if ((counts.get(road.id) ?? 0) <= (options.annotationTerminalLimit ?? 3)) return road;
+    if (road.access === null || road.access.nodeId === road.sectionId) return road;
+    const annotatedRoad = {
+      ...road,
+      lanePitch: pitches.get(road.id) || road.lanePitch || nestedLanePitch,
+    };
+    if (annotated.has(road.id)) return annotatedRoad;
+    if ((counts.get(road.id) ?? 0) <= (options.annotationTerminalLimit ?? 3)) return annotatedRoad;
     return { ...road, lanePitch: options.lanePitch?.[road.axis] ?? nestedLanePitch };
   });
 }

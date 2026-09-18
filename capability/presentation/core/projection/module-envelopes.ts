@@ -69,10 +69,16 @@ function measure(
   );
   const cells = leaves.map((node) => {
     const demand = nodeDemand(node.id, section.wires);
+    const incidentPitch = Math.max(
+      lanePitch * 2,
+      ...section.wires
+        .filter((wire) => wire.source.node === node.id || wire.target.node === node.id)
+        .map((wire) => wire.label.height + lanePitch * 2),
+    );
     const reserve =
       demand.traffic === 0
         ? 0
-        : (demand.annotation + 1) * terminalPitch * 2 +
+        : (demand.annotation + 1) * incidentPitch * 2 +
           Math.max(0, demand.traffic - demand.annotation) * lanePitch * 2;
     return {
       x: Math.ceil(Math.max(node.width, node.placement?.width ?? 0) + reserve + gap),

@@ -1,4 +1,4 @@
-import type { VisualSection } from '../../contract/records/input.js';
+import type { Projection, VisualSection } from '../../contract/records/input.js';
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type {
   DerivationContext,
@@ -20,7 +20,7 @@ import { admitNested } from '../scene-in.js';
 import { deriveNestedSection } from '../scene-out.js';
 import { accumulate } from './sequential.js';
 import { arrangeSections } from './collection.js';
-import { engaged, requestKey, sectionKey, versions } from './keys.js';
+import { derivationStamps, engaged, requestKey, sectionKey, versions } from './keys.js';
 import { adjustments, warnings } from './notices.js';
 import { union } from '../geometry/bounds.js';
 import { inspectSections } from '../validation/sections.js';
@@ -49,11 +49,6 @@ function inspected(
   same(warnings(sections, request.projection, request.options), scene.warnings, 'warnings');
   return { ...scene, sections };
 }
-/** One derived section plus whether the nested engine arranged it. */
-interface ArrangedSection {
-  readonly section: PlacedSection;
-  readonly nested: boolean;
-}
 /** A protected nested derivation returns nothing on any structured failure; legacy always remains available. */
 function attempted(
   source: VisualSection,
@@ -80,13 +75,13 @@ async function sectionOf(
   prior: SectionCandidate | null,
   metrics: SupplementalMeasurements,
   context: DerivationContext,
-): Promise<ArrangedSection> {
+): Promise<PlacedSection> {
   const derived = nestedArranged(source, metrics, context);
-  if (derived !== null) return { section: derived, nested: true };
-  return { section: await arrangeSection(source, prior, metrics, context), nested: false };
+  if (derived !== null) return derived;
+  return arrangeSection(source, prior, metrics, context);
 }
-/** Every placed section resolves its authoritative source for the execution-accurate restamp. */
-function sourceOf(request: CheckedLayoutRequest, id: string): VisualSection {
+/** Every placed section resolves its authoritative source for the derivation stamp rule. */
+function sourceOf(request: { readonly projection: Projection }, id: string): VisualSection {
   const source = request.projection.sections.find((section) => section.id === id);
   if (source === undefined)
     return reject('engine-failed', id, 'Placed section is missing its source');
@@ -100,7 +95,7 @@ export async function arrange(
   same(requestKey(request, dependencies), request.job.inputKey, 'job.inputKey');
   const prior = previous(request);
   const context = { dependencies, options: request.options, job: request.job };
-  const local = await accumulate<VisualSection, readonly ArrangedSection[]>(
+  const local = await accumulate<VisualSection, readonly PlacedSection[]>(
     request.projection.sections.toSorted((a, b) => a.order - b.order),
     [],
     async (result, source) => {
@@ -114,17 +109,8 @@ export async function arrange(
       return [...result, section];
     },
   );
-  const engines = local.some((item) => item.nested)
-    ? engaged(dependencies)
-    : versions(dependencies);
-  const arranged = requireValue(
-    await arrangeSections(
-      local.map((item) => item.section),
-      request.projection,
-      prior,
-      context,
-    ),
-  );
+  const engines = derivationStamps(request.projection, dependencies);
+  const arranged = requireValue(await arrangeSections(local, request.projection, prior, context));
   const sections = arranged.map((section): PlacedSection => ({
     ...section,
     inputKey: sectionKey(
@@ -216,17 +202,27 @@ export async function reroute(
       return [...result, section];
     },
   );
+  const engines = derivationStamps(request.projection, dependencies);
+  const stamped = sections.map((section): PlacedSection => ({
+    ...section,
+    inputKey: sectionKey(
+      sourceOf(request, section.id),
+      request.measurements,
+      request.options,
+      engines,
+    ),
+  }));
   const scene: Scene = {
     collectionId: request.projection.collectionId,
     revision: request.projection.revision,
     inputKey: request.job.inputKey,
-    engineVersions: versions(dependencies),
-    sections,
-    bounds: union(sections.map((item) => item.box)),
-    warnings: warnings(sections, request.projection, request.options),
-    adjustments: adjustments(sections, request.projection, request.fixed),
+    engineVersions: engines,
+    sections: stamped,
+    bounds: union(stamped.map((item) => item.box)),
+    warnings: warnings(stamped, request.projection, request.options),
+    adjustments: adjustments(stamped, request.projection, request.fixed),
   };
-  const result = inspected(scene, request, versions(dependencies));
+  const result = inspected(scene, request, engines);
   requireValue(await dependencies.jobs.checkpoint(request.job));
   return result;
 }

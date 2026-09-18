@@ -30,8 +30,12 @@ export function engaged(dependencies: VersionedEngines): readonly string[] {
   if (nested === undefined) return versions(dependencies);
   return [nested.version, nativeEngineVersions.policy];
 }
-/** The request key anticipates engagement so flag variants never share one cache identity for equal content. */
-function anticipated(projection: Projection, dependencies: VersionedEngines): readonly string[] {
+/** One deterministic pre-execution stamp rule for keys and scenes: the nested set exactly when the
+ * nested engine is present and the projection holds at least one eligible modules section. */
+export function derivationStamps(
+  projection: Projection,
+  dependencies: VersionedEngines,
+): readonly string[] {
   if (dependencies.nested === undefined) return versions(dependencies);
   if (!projection.sections.some((section) => admitNested(section))) return versions(dependencies);
   return engaged(dependencies);
@@ -72,7 +76,7 @@ export function requestKey(
     measurements: request.measurements,
     options: request.options,
     previous: request.previous?.sections.map(geometry) ?? null,
-    engines: anticipated(request.projection, dependencies),
+    engines: derivationStamps(request.projection, dependencies),
   });
   return parse(inputKey, canonicalInput);
 }

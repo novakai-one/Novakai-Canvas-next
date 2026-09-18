@@ -69,6 +69,7 @@ function nodeSpec(node: VisualNode, number: number, advance: number): NestedNode
   return {
     number,
     label: node.label,
+    ...(node.placement === null ? {} : { position: { x: node.placement.x, y: node.placement.y } }),
     measured: { ...dimensions(node), ports: ports(node, number, advance) },
   };
 }
@@ -94,6 +95,10 @@ function tree(
 ): NestedSectionSpec {
   return {
     number,
+    measured: required(
+      parent === null ? source.envelope : source.nodes.find((node) => node.id === parent)?.envelope,
+      parent ?? source.id,
+    ),
     nodes: source.nodes
       .filter((n) => n.parent === parent && n.groupId === null)
       .map((n) => nodeSpec(n, required(numbers.get(n.id), n.id), advance)),
@@ -127,12 +132,14 @@ export function toEngineScene(
   source: VisualSection,
   metrics: SupplementalMeasurements,
   measure?: PrototypeLayoutMeasure,
+  fixedNodes?: readonly PlacedNode[],
 ): EngineScene {
+  const positionedSource = fixedSource(source, fixedNodes);
   const numbers = new Map(source.nodes.map((node, i) => [node.id, i + 1]));
   const spec: NestedSceneSpec = {
     sections: [
       tree(
-        source,
+        positionedSource,
         numbers,
         null,
         1,
@@ -147,7 +154,16 @@ export function toEngineScene(
     ],
     requests: source.wires.map((wire) => request(wire, numbers)),
   };
-  const scene = createNestedRoadScene({ spec, ...(measure === undefined ? {} : { measure }) });
+  const scene = createNestedRoadScene({
+    spec,
+    fixedGeometry: true,
+    lanePitch: {
+      horizontal: required(source.envelope, source.id).lanePitch,
+      vertical: required(source.envelope, source.id).lanePitch,
+      terminal: required(source.envelope, source.id).terminalPitch,
+    },
+    ...(measure === undefined ? {} : { measure }),
+  });
   if (scene.embeddingFailure !== undefined)
     return reject('constraint-conflict', source.id, JSON.stringify(scene.embeddingFailure));
   const wiring = required(scene.wiring, source.id);
@@ -162,6 +178,7 @@ export function toEngineScene(
       failures,
     );
   return {
+    frame: required(scene.sections[0], source.id).bounds,
     nodes: placed(source, numbers, scene),
     roads: scene.roads,
     blocks: scene.nodes.map((node) => ({
@@ -174,5 +191,24 @@ export function toEngineScene(
       path: [...wire.segments.slice(0, 1).map((s) => s.from), ...wire.segments.map((s) => s.to)],
       lanes: wire.segments.flatMap((s) => (s.laneId === undefined ? [] : [s.laneId])),
     })),
+  };
+}
+
+/** Route-only supplies existing boxes; manual moves use the same parent-local representation on reload. */
+function fixedSource(source: VisualSection, fixed?: readonly PlacedNode[]): VisualSection {
+  if (fixed === undefined) return source;
+  return {
+    ...source,
+    nodes: source.nodes.map((node) => {
+      const box = required(
+        fixed.find((item) => item.id === node.id),
+        node.id,
+      ).box;
+      const parent = fixed.find((item) => item.id === node.parent)?.box ?? { x: 0, y: 0 };
+      return {
+        ...node,
+        placement: { ...box, x: box.x - parent.x, y: box.y - parent.y, locked: true },
+      };
+    }),
   };
 }

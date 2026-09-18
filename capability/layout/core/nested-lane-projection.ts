@@ -7,10 +7,9 @@ import type {
 } from '../contract/records/road-prototype.js';
 import type { AssignedTravel } from './nested-wire-lanes.js';
 import { axes, contains, samePoint } from './prototype-road-geometry.js';
-import { nestedLanePitch } from './prototype-nested-placement.js';
 import { reject } from './nested-support-graph.js';
 import { validateSupportedProjection } from './nested-projection-support.js';
-import { terminalPin, terminalStem } from './nested-terminal-pins.js';
+import { terminalPin, terminalStem, roadLanePitch } from './nested-terminal-pins.js';
 
 interface Connection {
   readonly from: PrototypePoint;
@@ -105,7 +104,7 @@ function leftConnection(
   const road = roads.get(next.road.id) ?? next.road;
   const a = axes[t.road.axis];
   const from = point(t, edge(road, t, 0.5));
-  const to = point(next, t.at + (next.direction * nestedLanePitch) / 4);
+  const to = point(next, t.at + (next.direction * roadLanePitch(t.road)) / 4);
   return {
     from,
     to,
@@ -144,7 +143,9 @@ function edge(
   const a = axes[travel.road.axis],
     b = road.bounds;
   return (
-    b[a.along] + b[a.length] / 2 - travel.direction * (b[a.length] / 2 - rank * nestedLanePitch)
+    b[a.along] +
+    b[a.length] / 2 -
+    travel.direction * (b[a.length] / 2 - rank * roadLanePitch(travel.road))
   );
 }
 function crossing(
@@ -175,7 +176,8 @@ function streetBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRo
     return medianBridge(t, next, road);
   const turn = Math.sign(next.at - t.at) * (t.road.axis === 'horizontal' ? -1 : 1);
   // Distinct destination ranks reserve nested turn rows instead of sharing the outer row.
-  const depth = (next.count - next.lane.index - 0.5) * nestedLanePitch;
+  const pitch = Math.min(roadLanePitch(next.road), b[a.length] / (2 * (next.count + 1)));
+  const depth = (next.count - next.lane.index - 0.5) * pitch;
   const at = b[a.along] + b[a.length] / 2 + turn * (b[a.length] / 2 - depth);
   return { from: point(t, at), to: point(next, at), roadId: road.id };
 }
@@ -203,10 +205,15 @@ function medianBridge(t: AssignedTravel, next: AssignedTravel, road: PrototypeRo
   const a = axes[t.road.axis],
     b = road.bounds;
   const middle = b[a.along] + b[a.length] / 2;
-  const radius = (b[a.length] - nestedLanePitch) / 2;
-  const near = middle - t.direction * radius,
-    far = middle + t.direction * radius;
-  const median = (t.at + next.at) / 2;
+  const half = b[a.length] / 2;
+  const entryDepth = (half * (t.lane.index + 0.25)) / (t.count + 1);
+  const exitDepth = (half * (next.lane.index + 0.75)) / (next.count + 1);
+  const near = middle - t.direction * (half - entryDepth),
+    far = middle + t.direction * (half - exitDepth);
+  const displacement = next.at - t.at;
+  const median =
+    t.at +
+    Math.sign(displacement) * Math.min(Math.abs(displacement) / 2, roadLanePitch(t.road) / 4);
   return {
     from: point(t, near),
     to: point(next, far),
@@ -231,8 +238,8 @@ function connect(
 function fan(t: AssignedTravel, endpoint: PrototypePoint, sign: number) {
   const a = axes[t.road.axis];
   const pin = terminalPin(endpoint, a.across, t.lane, t.count, t.road.access?.fixed);
-  const stem = terminalStem(t.road.access ?? undefined);
-  const distance = stem + (t.count - t.lane.index - 1) * nestedLanePitch;
+  const stem = terminalStem(t.road.access ?? undefined, roadLanePitch(t.road));
+  const distance = stem + (t.count - t.lane.index - 1) * roadLanePitch(t.road);
   const along = endpoint[a.along] + sign * t.direction * distance;
   return { pin, bend: { ...pin, [a.along]: along }, end: point(t, along) };
 }
@@ -330,7 +337,7 @@ function forwardConnection(
 ): Connection {
   if (!previous || !c.via) return c;
   const axis = axes[t.road.axis].along;
-  const start = previous.to[axis] + (t.direction * nestedLanePitch) / 4;
+  const start = previous.to[axis] + (t.direction * roadLanePitch(t.road)) / 4;
   if (t.direction * (c.from[axis] - start) >= 0) return c;
   return {
     ...c,
@@ -347,7 +354,7 @@ function forwardColumns(
 ): readonly PrototypePoint[] {
   const far = points[1];
   if (far === undefined) return points.map((p) => ({ ...p, [axis]: start }));
-  if (travel.direction * (far[axis] - start) < nestedLanePitch / 4)
+  if (travel.direction * (far[axis] - start) < roadLanePitch(travel.road) / 4)
     return reject('unsupported-support', [travel.wireId, travel.road.id, 'median-columns']);
   return points.map((p, ordinal) => (ordinal === 0 ? { ...p, [axis]: start } : p));
 }

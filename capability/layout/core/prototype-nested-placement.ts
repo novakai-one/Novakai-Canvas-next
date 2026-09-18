@@ -10,18 +10,17 @@ import { placePrototypeNode, measuredNode } from './prototype-road-nodes.js';
 export const nestedSpacing = { road: 48, driveway: 24, clearance: 72, side: 64, top: 112 } as const;
 export const nestedLanePitch = 6;
 /** Symmetric capacity reserves both traffic sides; reconstruction is pure and retry-safe. */
-export function nestedLaneWidth(lanes: number): number {
-  return nestedLanePitch * 2 + lanes * nestedLanePitch * 2;
+export function nestedLaneWidth(lanes: number, pitch = nestedLanePitch): number {
+  return pitch * 2 + lanes * pitch * 2;
 }
 const clearancePair = nestedSpacing.clearance * 2;
-const horizontalPadding = nestedSpacing.side * 2;
-const verticalPadding = nestedSpacing.top + nestedSpacing.side;
 import type {
   NestedNodeSpec as NodeSpec,
   NestedSectionSpec as SectionSpec,
 } from '../contract/records/nested-scene-spec.js';
 export interface SizedSection {
   readonly id: string;
+  readonly measured?: SectionSpec['measured'];
   readonly label: string;
   readonly count: number;
   readonly nodes: readonly NodeSpec[];
@@ -49,16 +48,15 @@ interface Row {
 function sizeSection(spec: SectionSpec): SizedSection {
   // Empty leaves retain the section header and padding without synthesizing content.
   const count = spec.nodes.length;
-  const columns = Math.ceil(Math.sqrt(count));
+  const measured = spec.measured;
+  if (measured === undefined) throw new Error('Presentation must supply a section envelope');
+  const columns = measured.columns;
   const rows = count === 0 ? 0 : Math.ceil(count / columns);
   const children = spec.children.map(sizeSection);
-  const footprints = spec.nodes.map(measuredNode);
-  const pitch = {
-    x: Math.ceil(Math.max(0, ...footprints.map((node) => node.width))) + clearancePair,
-    y: Math.ceil(Math.max(0, ...footprints.map((node) => node.height))) + clearancePair,
-  };
-  const ownWidth = columns * pitch.x;
+  const pitch = measured.pitch;
+  const ownWidth = count === 0 ? 0 : columns * pitch.x;
   return {
+    measured,
     id: `section-${spec.number}`,
     label: `Section ${spec.number}`,
     count,
@@ -69,13 +67,8 @@ function sizeSection(spec: SectionSpec): SizedSection {
     ownWidth,
     pitch,
     children,
-    width:
-      ownWidth +
-      children.reduce((sum, child) => sum + child.width + clearancePair, 0) +
-      horizontalPadding,
-    height:
-      Math.max(rows * pitch.y, ...children.map((child) => child.height + clearancePair)) +
-      verticalPadding,
+    width: measured.width,
+    height: measured.height,
   };
 }
 function appendRow(rows: readonly Row[], size: SizedSection, limit: number): readonly Row[] {
@@ -129,7 +122,7 @@ function leftEntrance(port: PrototypeNodePort, bounds: PrototypeBounds): Prototy
 }
 function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   if (size.count === 0) return [];
-  const rowHeight = interior.height / size.rows;
+  const rowHeight = size.pitch.y;
   return size.nodes.map((node, i) => {
     const measured = measuredNode(node);
     return {
@@ -162,10 +155,10 @@ function positionSection(
     height: size.height,
   };
   const interior = {
-    x: bounds.x + nestedSpacing.side,
-    y: bounds.y + nestedSpacing.top,
-    width: bounds.width - horizontalPadding,
-    height: bounds.height - verticalPadding,
+    x: bounds.x + (size.measured?.gap ?? 0) / 2,
+    y: bounds.y + (size.measured?.header ?? 0),
+    width: bounds.width - (size.measured?.gap ?? 0),
+    height: bounds.height - (size.measured?.header ?? 0) - (size.measured?.gap ?? 0) / 2,
   };
   const section = {
     id: size.id,
@@ -175,12 +168,29 @@ function positionSection(
     description: sectionDescription(size),
     ports: sectionPorts(size.id, bounds, inPortsLeft),
   };
-  const own = { section, size, surrounding, interior, nodes: gridNodes(size, interior) };
-  let x = interior.x + size.ownWidth;
-  const children = size.children.flatMap((child) => {
-    const box = { x, y: interior.y, width: child.width + clearancePair, height: interior.height };
-    x += box.width;
-    const placed = positionSection(child, box, size.id, inPortsLeft);
+  const nodes = gridNodes(size, interior).map((node, i) => {
+    const position = size.nodes[i]?.position;
+    return position === undefined
+      ? node
+      : { ...node, bounds: { ...node.bounds, x: bounds.x + position.x, y: bounds.y + position.y } };
+  });
+  const own = { section, size, surrounding, interior, nodes };
+  const columns = size.measured?.childColumns ?? 1;
+  const gap = size.measured?.gap ?? 0;
+  const rows = Array.from({ length: Math.ceil(size.children.length / columns) }, (_, i) =>
+    size.children.slice(i * columns, (i + 1) * columns),
+  );
+  let y = interior.y;
+  const children = rows.flatMap((row) => {
+    const height = Math.max(...row.map((child) => child.height + gap));
+    let x = interior.x + size.ownWidth;
+    const placed = row.flatMap((child) => {
+      const width = child.width + gap;
+      const result = positionSection(child, { x, y, width, height }, size.id, inPortsLeft);
+      x += width;
+      return result;
+    });
+    y += height;
     return placed;
   });
   return [own, ...children];
@@ -195,6 +205,15 @@ export function positionNestedSections(
   copies = 1,
   inPortsLeft = false,
 ): readonly SectionPlacement[] {
+  if (original.length === 1 && original[0]?.items.length === 1 && copies === 1) {
+    const size = original[0].items[0]!;
+    return positionSection(
+      size,
+      { x: 0, y: 0, width: size.width, height: size.height },
+      null,
+      inPortsLeft,
+    );
+  }
   const nodeStride = Math.max(...original.flatMap((row) => row.items.flatMap(nodeNumbers)));
   const sectionStride = Math.max(...original.flatMap((row) => row.items.flatMap(sectionNumbers)));
   const rows = Array.from({ length: copies }, (_, copy) =>

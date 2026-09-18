@@ -7,7 +7,7 @@ export function nodeObstacle(node: PlacedNode): Obstacle {
     id: node.id,
     box: {
       ...node.box,
-      width: Math.min(node.box.width, node.measured.width),
+      width: Math.min(node.box.width, node.measured.content.width),
       height: node.measured.headerHeight,
     },
   };

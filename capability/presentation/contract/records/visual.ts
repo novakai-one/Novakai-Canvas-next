@@ -117,6 +117,21 @@ const linkTarget = z.discriminatedUnion('kind', [
 const navigation = z
   .strictObject({ member: z.string(), label: z.string(), target: linkTarget })
   .readonly();
+/** Fixed app-owned module frame and whitespace budget, supplied before layout/routing. */
+export const moduleEnvelope = z
+  .strictObject({
+    width: dimension,
+    height: dimension,
+    header: dimension,
+    gap: dimension,
+    lanePitch: dimension,
+    terminalPitch: dimension,
+    columns: z.number().int().positive(),
+    childColumns: z.number().int().positive(),
+    pitch: z.strictObject({ x: dimension, y: dimension }).readonly(),
+  })
+  .readonly();
+export type ModuleEnvelope = z.infer<typeof moduleEnvelope>;
 /** Node geometry describes minimum measured content bounds; global position remains Layout's decision. */
 export const visualNode = z
   .strictObject({
@@ -136,6 +151,7 @@ export const visualNode = z
     width: dimension,
     height: dimension,
     headerHeight: dimension,
+    envelope: moduleEnvelope.optional(),
     chromeStyle: chromeResolvedStyle.optional(),
     radius: dimension,
     strokeWidth: dimension,
@@ -179,6 +195,7 @@ export interface VisualSequenceItem {
   readonly marker: MarkerKind;
 }
 export interface VisualSection {
+  readonly envelope?: ModuleEnvelope | undefined;
   readonly id: string;
   readonly title: MeasuredContent;
   readonly mode: Section['mode'];

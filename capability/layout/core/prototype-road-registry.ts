@@ -26,7 +26,7 @@ export function roadRegistry(roads: readonly PrototypeRoad[]): RoadRegistry {
   const entries = new Map(roads.map((r) => [r.id, entry(r)]));
   const lines = new Map<string, RoadEntry[]>();
   entries.forEach((e) => {
-    const key = `${e.road.axis}:${e.at}`;
+    const key = `${e.road.axis}:${e.at.toFixed(6)}`;
     lines.set(key, [...(lines.get(key) ?? []), e]);
   });
   return { entries, lines };
@@ -37,7 +37,7 @@ export function streetAt(
   point: PrototypePoint,
 ): readonly RoadEntry[] {
   const a = axes[axis];
-  return (registry.lines.get(`${axis}:${point[a.across]}`) ?? []).filter(
+  return (registry.lines.get(`${axis}:${point[a.across].toFixed(6)}`) ?? []).filter(
     (e) => e.road.kind === 'street' && point[a.along] >= e.low && point[a.along] <= e.high,
   );
 }

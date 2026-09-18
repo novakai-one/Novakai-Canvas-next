@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { sceneId } from '../brands.js';
 import { connectionStyle } from './style.js';
-import { content, markerKind, visualNode } from './visual.js';
+import { content, markerKind, visualNode, moduleEnvelope } from './visual.js';
 import { PROJECTION_CAPACITY } from './limits.js';
 /** Serialized visual fields are owned here; Model fragments remain unknown until owner validation and equality checks. */
 const endpoint = z.strictObject({ node: sceneId, member: z.string().nullable() }).readonly();
@@ -28,6 +28,7 @@ const section = z
   .strictObject({
     id: z.string(),
     title: content,
+    envelope: moduleEnvelope.optional(),
     mode: z.string(),
     order: z.number().int().nonnegative(),
     layout: z.unknown(),

@@ -13,6 +13,7 @@ export interface EngineWirePath {
   readonly lanes: readonly string[];
 }
 export interface EngineScene {
+  readonly frame: Box;
   readonly blocks: readonly MeasuredBlock[];
   readonly nodes: readonly PlacedNode[];
   readonly wires: readonly EngineWirePath[];
@@ -25,6 +26,7 @@ export interface NestedLayout {
     metrics: SupplementalMeasurements,
     options: LayoutOptions,
     versions: readonly string[],
+    fixedNodes?: readonly PlacedNode[],
   ): PlacedSection;
   readonly measure?: PrototypeLayoutMeasure;
 }

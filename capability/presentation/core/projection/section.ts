@@ -1,3 +1,4 @@
+import { moduleEnvelopes } from './module-envelopes.js';
 import type { Section, Endpoint, Relationship } from '../../contract/records/input.js';
 import type {
   VisualSection,
@@ -54,23 +55,26 @@ export function projectSection(section: Section, context: ContentContext): Visua
     ...section.groups.map((group) => projectGroup(group, section, context)),
     ...section.appearances.map((view) => projectNode(view, section, context)),
   ];
-  return {
-    id: section.id,
-    title: sectionTitle(section.title, context),
-    mode: section.mode,
-    order: section.order,
-    layout: section.layout,
-    placement: section.placement ?? null,
-    nodes,
-    wires: section.wires.map((item) => wire(item, section, nodes, context)),
-    sequence: section.sequence.map((item) => ({
-      item,
-      label: labelContent(sequenceLabel(item), context, 'annotation'),
-      marker: sequenceMarker(item),
-    })),
-    groups: section.groups,
-    root: section.root ?? null,
-  };
+  return moduleEnvelopes(
+    {
+      id: section.id,
+      title: sectionTitle(section.title, context),
+      mode: section.mode,
+      order: section.order,
+      layout: section.layout,
+      placement: section.placement ?? null,
+      nodes,
+      wires: section.wires.map((item) => wire(item, section, nodes, context)),
+      sequence: section.sequence.map((item) => ({
+        item,
+        label: labelContent(sequenceLabel(item), context, 'annotation'),
+        marker: sequenceMarker(item),
+      })),
+      groups: section.groups,
+      root: section.root ?? null,
+    },
+    context,
+  );
 }
 /** Section headings may use the generic large-band ceiling; measured width remains content-driven. */
 function sectionTitle(title: string, context: ContentContext): VisualSection['title'] {

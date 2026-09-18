@@ -5,7 +5,7 @@ import type {
 } from '../contract/records/nested-wires.js';
 import type { PrototypeRoad } from '../contract/records/road-prototype.js';
 import { axes } from './prototype-road-geometry.js';
-import { nestedLanePitch } from './prototype-nested-placement.js';
+import { roadLanePitch } from './nested-terminal-pins.js';
 import { laneOrder } from './nested-lane-order.js';
 
 export interface Travel {
@@ -57,7 +57,7 @@ function rightHand(road: PrototypeRoad): number {
   return road.axis === 'horizontal' ? 1 : -1;
 }
 function assign(t: Travel, index: number, count: number): AssignedTravel {
-  const offset = (index + 0.5) * nestedLanePitch * t.direction * rightHand(t.road);
+  const offset = (index + 0.5) * roadLanePitch(t.road) * t.direction * rightHand(t.road);
   const a = axes[t.road.axis],
     b = t.road.bounds;
   return {

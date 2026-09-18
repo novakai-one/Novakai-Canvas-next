@@ -3,6 +3,7 @@ import type { PrototypeNodePort } from './road-prototype.js';
 export interface NestedNodeSpec {
   readonly number: number;
   readonly label: string;
+  readonly position?: { readonly x: number; readonly y: number };
   readonly measured?: {
     readonly width: number;
     readonly height: number;
@@ -10,6 +11,15 @@ export interface NestedNodeSpec {
   };
 }
 export interface NestedSectionSpec {
+  readonly measured?: {
+    readonly width: number;
+    readonly height: number;
+    readonly header: number;
+    readonly gap: number;
+    readonly columns: number;
+    readonly childColumns: number;
+    readonly pitch: { readonly x: number; readonly y: number };
+  };
   readonly number: number;
   readonly nodes: readonly NestedNodeSpec[];
   readonly children: readonly NestedSectionSpec[];

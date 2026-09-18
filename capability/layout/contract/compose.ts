@@ -1,3 +1,4 @@
+import { protect, reject } from '../core/validation/outcomes.js';
 import { toEngineScene } from '../core/scene-in.js';
 import { toAppSection } from '../core/scene-out.js';
 import { nativeEngineVersions, nestedEngineVersions } from './records/engines.js';
@@ -58,10 +59,10 @@ export async function composeLayout(owners: LayoutOwners): Promise<Result<Layout
           ? {}
           : {
               nested: {
-                version: nestedEngineVersions[0] ?? 'nested-roads-1',
-                section: (source, metrics, options, versions) =>
+                version: nestedEngineVersions[0] ?? 'nested-roads-2',
+                section: (source, metrics, options, versions, fixedNodes) =>
                   toAppSection(
-                    toEngineScene(source, metrics, owners.measure),
+                    toEngineScene(source, metrics, owners.measure, fixedNodes),
                     source,
                     metrics,
                     options,
@@ -74,4 +75,24 @@ export async function composeLayout(owners: LayoutOwners): Promise<Result<Layout
   } catch {
     return failure('engine-failed', 'composition', 'Layout dependencies could not be composed');
   }
+}
+
+/** Portable custom routing for a pending human move; measured sizes and fixed boxes remain caller-owned. */
+export function routeModuleSection(
+  source: import('./records/input.js').VisualSection,
+  metrics: import('./types.js').SupplementalMeasurements,
+  options: import('./types.js').LayoutOptions,
+  fixedNodes: readonly import('./records/geometry.js').PlacedNode[],
+): Result<import('./records/geometry.js').PlacedSection> {
+  return protect(() => {
+    if (source.mode !== 'modules')
+      return reject('invalid-input', source.id, 'Custom preview requires a module section');
+    return toAppSection(
+      toEngineScene(source, metrics, undefined, fixedNodes),
+      source,
+      metrics,
+      options,
+      nestedEngineVersions,
+    );
+  });
 }

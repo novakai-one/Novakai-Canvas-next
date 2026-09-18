@@ -1,4 +1,3 @@
-import { same } from '../core/validation/facts.js';
 import { nestedEngineVersions } from './records/engines.js';
 import type { LayoutInputKey } from './brands.js';
 import type { SceneReaderOwners } from './types.js';
@@ -30,20 +29,7 @@ export function createLayout(dependencies: Dependencies): Layout {
   function route(input: unknown): Promise<Result<Scene>> {
     return execute(() => {
       const request = readRoute(input, dependencies.projection);
-      const keyInput = { ...request, previous: request.fixed };
-      same(
-        requestKey(keyInput, forProjection(dependencies, request.projection)),
-        request.job.inputKey,
-        'job.inputKey',
-      );
-      const inputKey = requestKey(keyInput, dependencies);
-      return reroute(
-        { ...request, job: { ...request.job, inputKey } },
-        {
-          ...dependencies,
-          jobs: { checkpoint: () => dependencies.jobs.checkpoint(request.job) },
-        },
-      );
+      return reroute(request, forProjection(dependencies, request.projection));
     });
   }
   /** Recheck authoritative content and required geometry without invoking any native placement/router. */
@@ -72,7 +58,7 @@ export function readScene(input: unknown, owners: SceneReaderOwners): Result<Sce
   });
 }
 
-/** Admit only registered producer identities, including the explicitly retained legacy reroute. */
+/** Admit only registered producer identities, including mixed-mode collections. */
 function admittedVersions(
   actual: readonly string[],
   expected: readonly string[],

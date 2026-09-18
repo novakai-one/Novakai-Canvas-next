@@ -38,7 +38,15 @@ function validateWire(
       port = required(ports, id);
     const owned = segments.get(travel.road.id) ?? [];
     if (!owned.some((segment) => crossing(segment, travel, port)))
-      reject('unsupported-support', [wire.id, id, 'owned-normal-crossing']);
+      reject(
+        'unsupported-support',
+        [wire.id, id, 'owned-normal-crossing'],
+        [
+          port.point[axes[travel.road.axis].along],
+          port.point[axes[travel.road.axis].across] + travel.lane.offset,
+        ],
+        owned.flatMap((segment) => [segment.from.x, segment.from.y, segment.to.x, segment.to.y]),
+      );
   });
 }
 function supportedSegment(
@@ -50,7 +58,12 @@ function supportedSegment(
   const orthogonal = segment.from.x === segment.to.x || segment.from.y === segment.to.y;
   const contained = [segment.from, segment.to].every((point) => contains(road.bounds, point));
   if (![orthogonal, contained].every(Boolean))
-    reject('unsupported-support', [wireId, String(ordinal + 1), road.id, 'final-footprint-gap']);
+    reject(
+      'unsupported-support',
+      [wireId, String(ordinal + 1), road.id, 'final-footprint-gap'],
+      [segment.from.x, segment.from.y, segment.to.x, segment.to.y],
+      [road.bounds.x, road.bounds.y, road.bounds.width, road.bounds.height],
+    );
 }
 function crossing(
   segment: NestedWireSegment,

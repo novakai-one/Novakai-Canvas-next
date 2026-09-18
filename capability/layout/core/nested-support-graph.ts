@@ -64,7 +64,7 @@ export function anchor(
   return value;
 }
 function matching(prior: Anchor, axis: Anchor['axis'], position: number): Anchor {
-  if (prior.axis !== axis || prior.position !== position)
+  if (prior.axis !== axis || Math.abs(prior.position - position) > 0.0000001)
     reject('mismatched-contact', [prior.key], [prior.position], [position]);
   return prior;
 }
@@ -120,7 +120,12 @@ function vertices(graph: SupportGraph): readonly NestedSupportVertex[] {
       axis: first.axis,
       position: first.position,
       aliases: group.map((a) => a.key),
-      aliasOffsets: Object.fromEntries(group.map((a) => [a.key, a.position - first.position])),
+      aliasOffsets: Object.fromEntries(
+        group.map((a) => [
+          a.key,
+          Math.abs(a.position - first.position) < 0.0000001 ? 0 : a.position - first.position,
+        ]),
+      ),
     };
   });
 }
@@ -141,7 +146,7 @@ function constraint(
     kind: relation.kind,
     from,
     to,
-    required,
+    required: Math.abs(required) < 0.0000001 ? 0 : required,
     available,
     deficit: Math.max(0, required - available),
     provenance: relation.provenance,

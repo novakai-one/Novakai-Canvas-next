@@ -6,6 +6,8 @@ import type {
 } from '../contract/records/road-prototype.js';
 import type { SectionPlacement } from './prototype-nested-placement.js';
 import { nestedSpacing } from './prototype-nested-placement.js';
+import { reject } from './nested-support-graph.js';
+import { axes } from './prototype-road-geometry.js';
 import { readPrototypeNodePorts } from './prototype-road-nodes.js';
 const half = nestedSpacing.road / 2;
 interface StreetSpan {
@@ -38,12 +40,13 @@ function frame(owner: string | null, b: PrototypeBounds, origin: string): Street
 }
 function internalStreets(p: SectionPlacement): StreetSpan[] {
   const { size, interior: b } = p;
+  const ownHeight = size.rows * size.pitch.y;
   return [
     ...frame(size.id, b, `${size.id}:frame`),
     ...Array.from({ length: size.rows - 1 }, (_, i) => ({
       owner: size.id,
       axis: 'horizontal' as const,
-      at: b.y + ((i + 1) * b.height) / size.rows,
+      at: b.y + (i + 1) * size.pitch.y,
       start: b.x,
       end: b.x + size.ownWidth,
       origins: [`${size.id}:row:${i}`],
@@ -53,25 +56,10 @@ function internalStreets(p: SectionPlacement): StreetSpan[] {
       axis: 'vertical' as const,
       at: b.x + ((i + 1) * size.ownWidth) / size.columns,
       start: b.y,
-      end: b.y + b.height,
+      end: b.y + ownHeight,
       origins: [`${size.id}:column:${i}`],
     })),
-    ...childBoundaries(p),
   ];
-}
-function childBoundaries(p: SectionPlacement): StreetSpan[] {
-  let x = p.interior.x + p.size.ownWidth;
-  return p.size.children.map((child, ordinal) => {
-    x += child.width + nestedSpacing.clearance * 2;
-    return {
-      owner: p.size.id,
-      axis: 'vertical',
-      at: x,
-      start: p.interior.y,
-      end: p.interior.y + p.interior.height,
-      origins: [`${p.size.id}:child-boundary:${ordinal}`],
-    };
-  });
 }
 function mergeSpan(spans: readonly StreetSpan[], next: StreetSpan): readonly StreetSpan[] {
   const last = spans.at(-1);
@@ -106,9 +94,9 @@ export function nestedMainRoads(
   retain?: (road: PrototypeRoad, origins: readonly string[]) => void,
 ): readonly PrototypeRoad[] {
   const spans = [
-    ...placements
-      .filter((p) => p.section.parentSectionId === null)
-      .flatMap((p) => frame(null, p.surrounding, `${p.section.id}:surrounding`)),
+    ...placements.flatMap((p) =>
+      frame(p.section.parentSectionId ?? null, p.surrounding, `${p.section.id}:surrounding`),
+    ),
     ...placements.flatMap(internalStreets),
   ];
   const groups = new Map<string, StreetSpan[]>();
@@ -165,15 +153,29 @@ function accessRoad(port: PrototypePortLocation, start: number, end: number): Pr
     },
   };
 }
-function nodeDrive(port: PrototypePortLocation, cell: PrototypeBounds): PrototypeRoad {
-  const intervals = {
-    top: [cell.y + half, port.point.y],
-    left: [cell.x + half, port.point.x],
-    bottom: [port.point.y, cell.y + cell.height - half],
-    right: [port.point.x, cell.x + cell.width - half],
-  };
-  const [start = 0, end = 0] = intervals[port.side];
-  return accessRoad(port, start, end);
+/** A moved node connects to the nearest admitted road on its authored side. */
+function nodeDrive(port: PrototypePortLocation, roads: readonly PrototypeRoad[]): PrototypeRoad {
+  const vertical = ['top', 'bottom'].includes(port.side);
+  const a = axes[vertical ? 'vertical' : 'horizontal'];
+  const sign = ['top', 'left'].includes(port.side) ? -1 : 1;
+  const candidates = roads.filter((road) => {
+    const b = road.bounds;
+    return (
+      road.sectionId === port.sectionId &&
+      road.axis !== (vertical ? 'vertical' : 'horizontal') &&
+      port.point[a.across] >= b[a.across] &&
+      port.point[a.across] <= b[a.across] + b[a.breadth] &&
+      sign * (b[a.along] + b[a.length] / 2 - port.point[a.along]) > b[a.length] / 2
+    );
+  });
+  const street = candidates.toSorted(
+    (left, right) =>
+      Math.abs(left.bounds[a.along] + left.bounds[a.length] / 2 - port.point[a.along]) -
+      Math.abs(right.bounds[a.along] + right.bounds[a.length] / 2 - port.point[a.along]),
+  )[0];
+  if (street === undefined) return reject('missing-contact', [port.nodeId, port.portId]);
+  const edge = street.bounds[a.along] + (sign < 0 ? street.bounds[a.length] : 0);
+  return accessRoad(port, Math.min(port.point[a.along], edge), Math.max(port.point[a.along], edge));
 }
 function sectionDrive(port: PrototypePortLocation, p: SectionPlacement): PrototypeRoad {
   const a = p.surrounding,
@@ -187,19 +189,14 @@ function sectionDrive(port: PrototypePortLocation, p: SectionPlacement): Prototy
   const [start = 0, end = 0] = intervals[port.side];
   return accessRoad(port, start, end);
 }
-export function nestedDriveways(p: SectionPlacement): readonly PrototypeRoad[] {
-  const width = p.size.ownWidth / p.size.columns,
-    height = p.interior.height / p.size.rows;
+export function nestedDriveways(
+  p: SectionPlacement,
+  roads: readonly PrototypeRoad[],
+): readonly PrototypeRoad[] {
   return [
-    ...p.nodes.flatMap((node, i) => {
-      const cell = {
-        x: p.interior.x + (i % p.size.columns) * width,
-        y: p.interior.y + Math.floor(i / p.size.columns) * height,
-        width,
-        height,
-      };
-      return readPrototypeNodePorts(node).map((port) => nodeDrive(port, cell));
-    }),
+    ...p.nodes.flatMap((node) =>
+      readPrototypeNodePorts(node).map((port) => nodeDrive(port, roads)),
+    ),
     ...nestedSectionPorts(p).map((port) => sectionDrive(port, p)),
   ];
 }
@@ -218,7 +215,7 @@ export function nestedCrossings(placements: readonly SectionPlacement[]) {
     Array.from({ length: p.size.rows - 1 }, (_, row) =>
       Array.from({ length: p.size.columns + 1 }, (_, column) => ({
         x: p.interior.x + (column * p.size.ownWidth) / p.size.columns,
-        y: p.interior.y + ((row + 1) * p.interior.height) / p.size.rows,
+        y: p.interior.y + (row + 1) * p.size.pitch.y,
       })),
     ).flat(),
   );

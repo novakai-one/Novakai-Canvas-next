@@ -133,11 +133,21 @@ export async function reroute(
     async (result, source) => {
       const fixed = fixedSection(source, request);
       const nodes = inspectNodes(source, fixed.nodes, request.options);
-      const local = await completeSection(source, nodes, request.measurements, {
-        dependencies,
-        options: request.options,
-        job: request.job,
-      });
+      const custom = source.mode === 'modules' ? dependencies.nested : undefined;
+      const local =
+        custom === undefined
+          ? await completeSection(source, nodes, request.measurements, {
+              dependencies,
+              options: request.options,
+              job: request.job,
+            })
+          : custom.section(
+              source,
+              request.measurements,
+              request.options,
+              versions(dependencies),
+              nodes,
+            );
       const section = {
         ...local,
         origin: fixed.origin,

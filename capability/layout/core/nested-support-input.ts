@@ -30,7 +30,7 @@ export function retainSupportInput(request: NestedSupportRequest) {
   );
   const origins = new Map<string, readonly string[]>();
   const main = nestedMainRoads(placements, (road, keys) => origins.set(road.id, keys));
-  const drives = placements.flatMap(nestedDriveways);
+  const drives = placements.flatMap((p) => nestedDriveways(p, main));
   drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
   const roads = [...main, ...drives];
   const contacts = constructedContacts(

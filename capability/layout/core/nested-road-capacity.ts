@@ -4,7 +4,7 @@ import type {
   PrototypePortLocation,
 } from '../contract/records/road-prototype.js';
 import type { RoadContact } from './prototype-road-registry.js';
-import { terminalDepth } from './nested-terminal-pins.js';
+import { terminalDepth, roadLanePitch } from './nested-terminal-pins.js';
 import { axes } from './prototype-road-geometry.js';
 import { nestedLaneWidth, nestedSpacing } from './prototype-nested-placement.js';
 
@@ -13,7 +13,10 @@ function terminalExtent(road: PrototypeRoad, port: PrototypePortLocation): Proto
   const a = axes[road.axis],
     b = road.bounds;
   // (count - 1) fan rows plus a quarter-pitch forward stem; gates retain their port plane.
-  const depth = port.nodeId === port.sectionId ? 0 : terminalDepth(port, road.wireLaneCount ?? 0);
+  const depth =
+    port.nodeId === port.sectionId
+      ? 0
+      : terminalDepth(port, road.wireLaneCount ?? 0, roadLanePitch(road));
   const sign = ['top', 'left'].includes(port.side) ? -1 : 1;
   const pin = port.point[a.along],
     fan = pin + sign * depth;
@@ -29,7 +32,7 @@ function admitTerminal(roads: Map<string, PrototypeRoad>, port: PrototypePortLoc
 function sized(road: PrototypeRoad, count: number): PrototypeRoad {
   const a = axes[road.axis],
     b = road.bounds,
-    width = nestedLaneWidth(count);
+    width = nestedLaneWidth(count, roadLanePitch(road));
   return {
     ...road,
     wireLaneCount: count,

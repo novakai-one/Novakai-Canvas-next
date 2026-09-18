@@ -38,11 +38,20 @@ export function inspectSection(
   const content = contentBounds(nodes, wires, sequence);
   const title = {
     content: source.title,
-    box: titleBox(content, source.title, context.options.padding),
+    box:
+      source.envelope === undefined
+        ? titleBox(content, source.title, context.options.padding)
+        : {
+            x: context.options.padding,
+            y: context.options.padding,
+            width: source.title.width,
+            height: source.title.height,
+          },
   };
   same(title, candidate.title, source.id);
   const bounds = sectionBounds(content, title.box, context.options.padding);
-  checkBounds(bounds, candidate);
+  if (source.envelope === undefined) checkBounds(bounds, candidate);
+  else checkEnvelope(source, candidate, content);
   checkLock(source, candidate);
   return {
     id: source.id,
@@ -120,4 +129,13 @@ function requiredSection(
   const found = candidate.sections.find((section) => section.id === source.id);
   if (!found) return reject('invalid-input', source.id, 'Candidate section is missing');
   return inspectSection(source, found, context);
+}
+
+/** Fixed app-owned envelope must contain all content; routing cannot silently grow it. */
+function checkEnvelope(source: VisualSection, candidate: SectionCandidate, content: Box): void {
+  const envelope = source.envelope!;
+  same([candidate.box.width, candidate.box.height], [envelope.width, envelope.height], source.id);
+  const local = { x: 0, y: 0, width: envelope.width, height: envelope.height };
+  if (!contains(local, content))
+    reject('constraint-conflict', source.id, 'Content exceeds measured section envelope');
 }

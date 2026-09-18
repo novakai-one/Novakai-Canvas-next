@@ -1,3 +1,4 @@
+import { obstacleQuery } from './geometry/box-index.js';
 import type { EngineScene } from '../contract/records/engine-scene.js';
 import type { VisualSection, VisualWire, Projection } from '../contract/records/input.js';
 import type { Box, Point, PlacedSection, RoutedWire } from '../contract/records/geometry.js';
@@ -5,18 +6,18 @@ import type { LayoutOptions, SupplementalMeasurements } from '../contract/types.
 import { endpoints } from './routing/endpoints.js';
 import { labelBox } from './routing/labels.js';
 import { linePath, curvePath, segments } from './routing/paths.js';
-import { contentBoxes } from './routing/obstacles.js';
+import { contentBoxes, labelObstacles } from './routing/obstacles.js';
 import { markerBox } from './routing/checks.js';
-import { contentBounds, titleBox, sectionBounds } from './arrangement/bounds.js';
 import { sectionKey } from './arrangement/keys.js';
 import { pointBounds } from './geometry/bounds.js';
 import { reject } from './validation/outcomes.js';
 
-/** Preserve every custom road bend; only redundant identical points are removed. */
+/** Preserve lane changes; redundant collinear checkpoints do not create extra SVG vertices. */
 function points(engine: EngineScene, id: string): readonly Point[] {
   const path = engine.wires.find((w) => w.wireId === id)?.path;
   if (path === undefined) return reject('engine-failed', id, 'Custom engine omitted wire');
-  return path.filter((p, i) => p.x !== path[i - 1]?.x || p.y !== path[i - 1]?.y);
+  const distinct = path.filter((p, i) => p.x !== path[i - 1]?.x || p.y !== path[i - 1]?.y);
+  return distinct.filter((p, i) => !straight(distinct[i - 1], p, distinct[i + 1]));
 }
 function routeObstacles(engine: EngineScene): readonly Box[] {
   return engine.wires.flatMap((wire) => segments(wire.path).map((s) => pointBounds([s.a, s.b])));
@@ -39,9 +40,10 @@ function labeled(
   engine: EngineScene,
   occupied: readonly Box[],
   options: LayoutOptions,
+  blocked: (box: Box) => boolean,
 ): RoutedWire {
   const path = points(engine, wire.id);
-  const label = labelBox(path, wire.label, occupied, options.labelGap);
+  const label = labelBox(path, wire.label, occupied, options.labelGap, blocked);
   if (label === null)
     return reject('constraint-conflict', wire.id, 'No clear label position on custom roads');
   return {
@@ -64,14 +66,21 @@ function paths(
   options: LayoutOptions,
 ): readonly RoutedWire[] {
   const obstacles = [
-    ...contentBoxes(engine.nodes),
+    ...labelObstacles(engine.nodes),
     ...routeObstacles(engine),
     ...markerObstacles(source, engine, metrics),
   ];
+  const blocked = obstacleQuery(obstacles);
   const wires = source.wires.reduce<readonly RoutedWire[]>(
     (done, wire) => [
       ...done,
-      labeled(wire, engine, [...obstacles, ...done.map((w) => w.labelBox)], options),
+      labeled(
+        wire,
+        engine,
+        done.map((w) => w.labelBox),
+        options,
+        blocked,
+      ),
     ],
     [],
   );
@@ -98,12 +107,19 @@ export function toAppSection(
     activations: [],
     source: source.sequence,
   };
-  const content = contentBounds(engine.nodes, wires, sequence);
-  const title = { content: source.title, box: titleBox(content, source.title, options.padding) };
+  const title = {
+    content: source.title,
+    box: {
+      x: engine.frame.x + options.padding,
+      y: engine.frame.y + options.padding,
+      width: source.title.width,
+      height: source.title.height,
+    },
+  };
   return {
     id: source.id,
     origin: { x: 0, y: 0 },
-    box: sectionBounds(content, title.box, options.padding),
+    box: engine.frame,
     title,
     nodes: engine.nodes,
     wires,
@@ -139,4 +155,12 @@ export function placeAppSections(
     y += Math.max(...row.map((s) => s.box.height)) + gap;
     return placed;
   });
+}
+
+function straight(before: Point | undefined, point: Point, after: Point | undefined): boolean {
+  if (before === undefined || after === undefined) return false;
+  return (
+    Math.sign(point.x - before.x) === Math.sign(after.x - point.x) &&
+    Math.sign(point.y - before.y) === Math.sign(after.y - point.y)
+  );
 }

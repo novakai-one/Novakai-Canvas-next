@@ -13,6 +13,6 @@ export const defaultEngineVersions: readonly string[] = Object.freeze([
 ]);
 
 export const nestedEngineVersions: readonly string[] = Object.freeze([
-  'nested-roads-1',
+  'nested-roads-2',
   nativeEngineVersions.policy,
 ]);

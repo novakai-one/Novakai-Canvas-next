@@ -31,7 +31,16 @@ export function candidates(
   content: MeasuredContent,
   gap: number,
 ): readonly Box[] {
-  return [0.5, 0.25, 0.75].flatMap((fraction) => atFraction(segment, content, gap, fraction));
+  const span = length(segment);
+  const extent = segment.a.y === segment.b.y ? content.width : content.height;
+  const steps = Math.max(1, Math.min(32, Math.floor(span / (extent + gap * 2))));
+  const fractions = [
+    0.5,
+    0.25,
+    0.75,
+    ...Array.from({ length: steps }, (_, i) => (i + 0.5) / steps),
+  ];
+  return fractions.flatMap((fraction) => atFraction(segment, content, gap, fraction));
 }
 /** Search longest segments first so an engineering label reads with a substantial part of its wire. */
 export function labelBox(
@@ -39,12 +48,16 @@ export function labelBox(
   content: MeasuredContent,
   occupied: readonly Box[],
   gap: number,
+  blocked: (box: Box) => boolean = () => false,
 ): Box | null {
   const ordered = labelSegments(points).toSorted((a, b) => length(b) - length(a));
   const boxes = ordered.flatMap((segment) => candidates(segment, content, gap));
   return (
-    boxes.find((candidate) => occupied.every((box) => !overlaps(expand(candidate, gap), box))) ??
-    null
+    boxes.find(
+      (candidate) =>
+        !blocked(expand(candidate, gap)) &&
+        occupied.every((box) => !overlaps(expand(candidate, gap), box)),
+    ) ?? null
   );
 }
 /** Manhattan length is exact for the inspected orthogonal corridor. */

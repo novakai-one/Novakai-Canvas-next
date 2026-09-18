@@ -1,0 +1,22 @@
+@layer components {
+  .label {
+    pointer-events: none;
+  }
+
+  .backing {
+    fill: var(--nv-surface-raised);
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-stroke-base);
+    rx: var(--nv-radius-control);
+    ry: var(--nv-radius-control);
+  }
+
+  .label :global(svg rect) {
+    fill: var(--nv-surface-raised);
+    stroke: var(--nv-border-default);
+  }
+
+  .label :global(text) {
+    fill: var(--nv-text-primary);
+  }
+}

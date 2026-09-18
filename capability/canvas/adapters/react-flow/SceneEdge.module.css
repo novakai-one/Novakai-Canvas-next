@@ -4,9 +4,64 @@
   }
   .wire {
     fill: none;
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: opacity;
   }
-  .wire[data-selected='true'] {
-    filter: drop-shadow(0 0 var(--nv-stroke-base) var(--nv-action-accent));
+  .underlay {
+    fill: none;
+    pointer-events: none;
+    stroke: var(--nv-text-secondary);
+    stroke-width: calc(var(--nv-focus-width) + var(--nv-stroke-base));
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: opacity, stroke;
+  }
+  .underlay[data-emphasis='primary'] {
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-space-1);
+  }
+  .underlay[data-emphasis='secondary'] {
+    stroke: var(--nv-text-secondary);
+  }
+  .wire[data-emphasis='primary'] {
+    stroke: var(--nv-action-accent) !important;
+    stroke-width: var(--nv-focus-width);
+  }
+  .wire[data-emphasis='secondary'] {
+    stroke: var(--nv-text-secondary) !important;
+  }
+  .underlay[data-emphasis='muted'],
+  .wire[data-emphasis='muted'],
+  .marker[data-emphasis='muted'],
+  .markerContrast[data-emphasis='muted'] {
+    opacity: var(--nv-canvas-muted-opacity);
+  }
+  .marker,
+  .markerContrast {
+    pointer-events: none;
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: opacity;
+  }
+  .markerContrast :global(path),
+  .markerContrast :global(circle) {
+    stroke: var(--nv-text-secondary) !important;
+    stroke-width: var(--nv-focus-width);
+  }
+  .markerContrast :global(path:not([fill='none'])) {
+    fill: var(--nv-text-secondary) !important;
+  }
+  .markerContrast[data-emphasis='primary'] :global(path),
+  .markerContrast[data-emphasis='primary'] :global(circle),
+  .marker[data-emphasis='primary'] :global(path),
+  .marker[data-emphasis='primary'] :global(circle) {
+    stroke: var(--nv-action-accent) !important;
+  }
+  .markerContrast[data-emphasis='primary'] :global(path:not([fill='none'])),
+  .marker[data-emphasis='primary'] :global(path:not([fill='none'])) {
+    fill: var(--nv-action-accent) !important;
+  }
+  .marker[data-emphasis='secondary'] :global(path),
+  .marker[data-emphasis='secondary'] :global(circle) {
+    stroke: var(--nv-text-secondary) !important;
   }
   .hit {
     fill: none;

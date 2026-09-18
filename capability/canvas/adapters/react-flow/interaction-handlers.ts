@@ -50,6 +50,7 @@ function stillActive(
 }
 /** Translate React Flow events to public Canvas commands. Host drains effects, retains drafts and repairs reported callback failures; canceled pointer IDs never replay. */
 export function createInteractions(owners: InteractionOwners): Interactions {
+  const hoverSuppression = new Set<'drag' | 'pan' | 'connect'>();
   /** Typed failures are reported to the host; they never trigger a fallback save or guessed state change. */
   function dispatch(event: CanvasEvent): void {
     const result = owners.session.dispatch(event);
@@ -59,9 +60,26 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     }
     result.value.diagnostics.forEach((diagnostic) => owners.onError(diagnostic));
   }
+  /** Gesture suppression is adapter-local because React Flow owns pan/connect lifecycle boundaries. */
+  function suppressHover(reason: 'drag' | 'pan' | 'connect'): void {
+    hoverSuppression.add(reason);
+    clearHover();
+  }
+  function resumeHover(reason: 'drag' | 'pan' | 'connect'): void {
+    hoverSuppression.delete(reason);
+  }
+  function clearHover(): void {
+    const hover = owners.session.getSnapshot().hover;
+    if (hover !== null) dispatch({ kind: 'target-leave', target: hover });
+  }
+  function enterHover(target: Target): void {
+    if (hoverSuppression.size > 0) return;
+    dispatch({ kind: 'target-enter', target });
+  }
   /** Initial geometry comes from the admitted view, not a possibly already-moved callback position. */
   function startDrag(event: MouseEvent | TouchEvent, node: FlowNode, nodes: FlowNode[]): void {
     if (owners.input.ownsNativeInput(event.target)) return;
+    suppressHover('drag');
     const id = owners.nextGestureId();
     owners.session.writePointer({
       id,
@@ -90,20 +108,24 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) {
       owners.session.writePointer(null);
+      resumeHover('drag');
       return;
     }
     dispatch({ kind: 'finish', id: active.id });
     owners.session.writePointer(null);
+    resumeHover('drag');
   }
   /** Pointer cancellation never emits an edit intent; only the active gesture is cleared. */
   function cancelGeometry(): void {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) {
       owners.session.writePointer(null);
+      resumeHover('drag');
       return;
     }
     dispatch({ kind: 'cancel', id: active.id });
     owners.session.writePointer(null);
+    resumeHover('drag');
   }
   /** Resize controls operate on one target and retain the same gesture identity through their lifecycle. */
   function beginResize(target: Target): void {
@@ -206,11 +228,21 @@ export function createInteractions(owners: InteractionOwners): Interactions {
         if (!owners.input.ownsNativeInput(event.target))
           dispatch({ kind: 'inspect', target: node.data.view.target });
       },
+      onNodeMouseEnter: (_event, node) => enterHover(node.data.view.target),
+      onNodeMouseLeave: (_event, node) =>
+        dispatch({ kind: 'target-leave', target: node.data.view.target }),
       onEdgeClick: () => undefined,
       onEdgeDoubleClick: (_event, edge) => {
         if (edge.data) dispatch({ kind: 'inspect', target: edge.data.view.target });
       },
+      onEdgeMouseEnter: (_event, edge) => {
+        if (edge.data) enterHover(edge.data.view.target);
+      },
+      onEdgeMouseLeave: (_event, edge) => {
+        if (edge.data) dispatch({ kind: 'target-leave', target: edge.data.view.target });
+      },
       onPaneClick: () => dispatch({ kind: 'select', targets: [], mode: 'replace' }),
+      onPaneMouseLeave: clearHover,
       onNodesChange: selection,
       onEdgesChange: selection,
       onViewportChange: (viewport) =>
@@ -218,7 +250,13 @@ export function createInteractions(owners: InteractionOwners): Interactions {
           kind: 'viewport',
           camera: { ...owners.session.getSnapshot().camera, ...viewport },
         }),
+      onMoveStart: (event) => {
+        if (event) suppressHover('pan');
+      },
+      onMoveEnd: () => resumeHover('pan'),
       onConnect: connect,
+      onConnectStart: () => suppressHover('connect'),
+      onConnectEnd: () => resumeHover('connect'),
     },
   };
 }

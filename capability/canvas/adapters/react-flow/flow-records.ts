@@ -77,6 +77,7 @@ function flowEdges(
       editable: snapshot.view.editable,
       paint,
       nudge: snapshot.state.profile.nudge,
+      zoom: view.showLabel ? snapshot.view.camera.zoom : 1,
     },
     selected: view.selected,
     hidden: view.hidden,
@@ -131,6 +132,7 @@ function stableFlowEdge(next: FlowEdge, previous: FlowEdge | undefined): FlowEdg
     next.data?.editable === previous.data?.editable,
     next.data?.paint === previous.data?.paint,
     next.data?.nudge === previous.data?.nudge,
+    next.data?.zoom === previous.data?.zoom,
   ].every(Boolean);
   return equal ? previous : next;
 }

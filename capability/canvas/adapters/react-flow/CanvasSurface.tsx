@@ -93,6 +93,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           multiSelectionKeyCode="Shift"
           deleteKeyCode={null}
           disableKeyboardA11y
+          elevateEdgesOnSelect
           nodeDragThreshold={snapshot.state.profile[pointer]}
           nodeClickDistance={snapshot.state.profile.fineThreshold}
           onlyRenderVisibleElements

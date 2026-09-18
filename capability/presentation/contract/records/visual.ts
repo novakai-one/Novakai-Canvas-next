@@ -10,10 +10,13 @@ import type {
   Section,
   Relationship,
 } from './input.js';
+export const lodRole = z.enum(['heading', 'detail']);
+export type LodRole = z.infer<typeof lodRole>;
 /** Renderer input primitives carry final local positions; renderer never rewraps or guesses sizes. */
 export const textRun = z
   .strictObject({
     kind: z.literal('text'),
+    lodRole: lodRole.optional(),
     text: z.string().max(100000),
     x: coordinate,
     y: coordinate,
@@ -26,6 +29,7 @@ export const textRun = z
 export const mediaRun = z
   .strictObject({
     kind: z.literal('media'),
+    lodRole: lodRole.optional(),
     digest: z.string(),
     alt: z.string(),
     dataUri: z.string().regex(/^data:image\/(png|svg\+xml|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/),
@@ -39,6 +43,7 @@ export const mediaRun = z
 export const rule = z
   .strictObject({
     kind: z.literal('rule'),
+    lodRole: lodRole.optional(),
     x1: coordinate,
     y1: coordinate,
     x2: coordinate,
@@ -51,6 +56,7 @@ export const rule = z
 export const badgeRun = z
   .strictObject({
     kind: z.literal('badge'),
+    lodRole: lodRole.optional(),
     x: coordinate,
     y: coordinate,
     width: dimension,

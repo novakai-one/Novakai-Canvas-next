@@ -19,7 +19,7 @@ export function createMarkupRenderer(
   native: StaticRenderer = renderToStaticMarkup,
 ): RenderPort {
   return {
-    version: 'react-19.3/presentation-7',
+    version: 'react-19.3/presentation-8',
     render: (node) => render(createElement(bindings.NodeContent, { node }), native),
     marker: (kind, paint) => render(createElement(bindings.Marker, { kind, paint }), native),
   };

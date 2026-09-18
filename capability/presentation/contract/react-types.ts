@@ -9,6 +9,8 @@ export interface ContentBlocksProps {
 export interface NodeContentProps {
   readonly node: VisualNode;
   readonly embedFonts?: boolean;
+  readonly surface?: 'canvas' | 'static';
+  readonly detail?: 'overview' | 'names' | 'members' | 'full';
   readonly emphasis?: 'normal' | 'primary' | 'secondary' | 'muted';
 }
 /** Browser paint roles are injected once; shared/native renderers remain stylesheet-free. */

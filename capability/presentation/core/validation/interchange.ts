@@ -1,6 +1,11 @@
 import type { DomainReader } from '../../contract/ports/domain.js';
 import type { InputCollection, Section } from '../../contract/records/input.js';
-import type { Projection, VisualSection, VisualWire } from '../../contract/records/visual.js';
+import type {
+  Projection,
+  VisualNode,
+  VisualSection,
+  VisualWire,
+} from '../../contract/records/visual.js';
 import { projectionEnvelope } from '../../contract/records/interchange.js';
 import type { SectionEnvelope, WireEnvelope } from '../../contract/records/interchange.js';
 import { clone, parse, reject, requireValue } from './outcomes.js';
@@ -43,6 +48,22 @@ function readWire(raw: WireEnvelope, section: Section, collection: InputCollecti
   equal([section.id, relationship.kind, route], [raw.sectionId, raw.kind, raw.route], raw.id);
   return { ...raw, kind: relationship.kind, route };
 }
+/** Canonical kind selects semantic admission even when an explicit frame projects a generic card shape. */
+function readNode(raw: VisualNode, collection: InputCollection): VisualNode {
+  if (raw.objectId === null) return raw;
+  const source = required(
+    collection.objects.find((item) => item.id === raw.objectId),
+    raw.id,
+  );
+  if (source.kind === 'module' || source.kind === 'entity') requireLodRoles(raw);
+  return { ...raw, kind: source.kind };
+}
+
+/** Admitted semantic nodes must carry explicit role metadata; transport readers never infer it. */
+function requireLodRoles(node: VisualNode): void {
+  if (node.content.primitives.some((primitive) => primitive.lodRole === undefined))
+    reject('invalid-input', node.id, 'Module/entity primitive is missing its semantic LOD role');
+}
 /** Section intent and sequence semantics belong to Model; visual measurements retain their checked shapes. */
 function readSection(raw: SectionEnvelope, collection: InputCollection): VisualSection {
   const source = required(
@@ -76,6 +97,7 @@ function readSection(raw: SectionEnvelope, collection: InputCollection): VisualS
     layout: source.layout,
     placement: source.placement ?? null,
     groups: source.groups,
+    nodes: raw.nodes.map((node) => readNode(node, collection)),
     wires: raw.wires.map((wire) => readWire(wire, source, collection)),
     sequence,
   };

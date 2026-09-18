@@ -28,7 +28,7 @@ const LEFT_ALIGNED_SHAPES: readonly string[] = [
   'function',
   'container',
 ];
-const COMPARTMENT_SHAPES: readonly string[] = ['entity', 'module', 'interface', 'function'];
+const COMPARTMENT_KINDS: readonly string[] = ['entity', 'module', 'interface', 'function'];
 /** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
 function contentSlack(node: VisualNode): number {
   if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
@@ -45,11 +45,18 @@ export function createContentRenderer(
   function NodeContent({
     node,
     embedFonts = true,
+    surface = 'static',
+    detail = 'full',
     emphasis = 'normal',
   }: NodeContentProps): ReactElement {
     const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
     const Chrome = chrome.Component;
-    const content = compartments(node, separatesHeading(node, chrome, slots.classes));
+    const content = compartments(
+      node,
+      separatesHeading(node, chrome, slots.classes),
+      surface,
+      detail,
+    );
     return (
       <svg
         className={slots.classes?.root}
@@ -94,7 +101,7 @@ function separatesHeading(
   classes: NodeSlots['classes'],
 ): boolean {
   if (chrome.separateHeading === true) return true;
-  return classes !== undefined && COMPARTMENT_SHAPES.includes(node.shape);
+  return classes !== undefined && COMPARTMENT_KINDS.includes(node.kind);
 }
 /** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
 function resolveChrome(chromes: NodeChromeRegistry, name: ChromeName | 'card'): NodeChrome {
@@ -176,11 +183,42 @@ export function createFontDefinitions(boundFonts: FontSet): ComponentType<FontDe
 function compartments(
   node: VisualNode,
   separate: boolean | undefined,
+  surface: NonNullable<NodeContentProps['surface']>,
+  detail: NonNullable<NodeContentProps['detail']>,
 ): { readonly heading: readonly Primitive[]; readonly body: readonly Primitive[] } {
-  if (!separate) return { heading: [], body: node.content.primitives };
-  const heading = (item: Primitive): boolean => item.kind === 'text' && item.y <= node.headerHeight;
+  const visible = node.content.primitives.filter((item) =>
+    visibleAtDetail(node, item, surface, detail),
+  );
+  if (!separate) return { heading: [], body: visible };
+  const heading = (item: Primitive): boolean => headingPrimitive(node, item);
   return {
-    heading: node.content.primitives.filter(heading),
-    body: node.content.primitives.filter((item) => !heading(item)),
+    heading: visible.filter(heading),
+    body: visible.filter((item) => !heading(item)),
   };
 }
+
+/** Explicit roles replace geometry classification only for the semantic LOD kinds introduced here. */
+function headingPrimitive(node: VisualNode, primitive: Primitive): boolean {
+  if (node.kind === 'module' || node.kind === 'entity') return primitive.lodRole === 'heading';
+  return primitive.kind === 'text' && primitive.y <= node.headerHeight;
+}
+
+/** Canvas filters explicit semantics only; static output and unrelated notation retain admitted content. */
+function visibleAtDetail(
+  node: VisualNode,
+  primitive: Primitive,
+  surface: NonNullable<NodeContentProps['surface']>,
+  detail: NonNullable<NodeContentProps['detail']>,
+): boolean {
+  if (surface === 'static') return true;
+  if (primitive.lodRole === undefined) return true;
+  return detailFilters[detail](node, primitive);
+}
+
+type DetailFilter = (node: VisualNode, primitive: Primitive) => boolean;
+const detailFilters: Readonly<Record<NonNullable<NodeContentProps['detail']>, DetailFilter>> = {
+  overview: (node, primitive) => node.groupId !== null && primitive.lodRole === 'heading',
+  names: (_node, primitive) => primitive.lodRole === 'heading',
+  members: () => true,
+  full: () => true,
+};

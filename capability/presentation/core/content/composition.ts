@@ -1,6 +1,6 @@
 import type { DiagramObject, ContentBlock } from '../../contract/records/input.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
-import type { MeasuredContent } from '../../contract/records/visual.js';
+import type { LodRole, MeasuredContent } from '../../contract/records/visual.js';
 import type { BodySelection } from './node-body.js';
 import { measureNodeBody } from './node-body.js';
 import { moduleChrome } from './chrome.js';
@@ -54,7 +54,7 @@ function bodyWithoutFigure(request: CompositionRequest, figure: MediaBlock): Bod
 
 /** Heading and body reuse the same measurements for stacked and side-by-side arrangements. */
 function textColumn(request: CompositionRequest): ComposedNodeContent {
-  const heading = nodeHeading(request.object, request.context);
+  const heading = tagged(nodeHeading(request.object, request.context), request.object, 'heading');
   const body = labelledBody(request);
   return {
     content: stack([heading, body], request.headingGap),
@@ -76,6 +76,19 @@ function figureContent(figure: MediaBlock, context: ContentContext): MeasuredCon
   );
 }
 
+/** Module/entity roles are assigned before offsets and composition so geometry never becomes policy. */
+function tagged(
+  content: MeasuredContent,
+  object: DiagramObject,
+  lodRole: LodRole,
+): MeasuredContent {
+  if (object.kind !== 'module' && object.kind !== 'entity') return content;
+  return {
+    ...content,
+    primitives: content.primitives.map((primitive) => ({ ...primitive, lodRole })),
+  };
+}
+
 /** Narrow text columns center under the media band; the infographic idiom is figure-led, not left-hung. */
 function centered(content: MeasuredContent, width: number): MeasuredContent {
   const slack = Math.max(0, width - content.width);
@@ -85,7 +98,7 @@ function centered(content: MeasuredContent, width: number): MeasuredContent {
 /** Media sits above the heading; engineering title separators follow that complete heading region. */
 function mediaAbove(request: CompositionRequest): ComposedNodeContent {
   const figure = requireFigure(request);
-  const media = figureContent(figure, request.context);
+  const media = tagged(figureContent(figure, request.context), request.object, 'detail');
   const text = textColumn({ ...request, selection: bodyWithoutFigure(request, figure) });
   return {
     content: stack([media, centered(text.content, media.width)], request.context.style.gap),
@@ -110,7 +123,7 @@ function mediaBeside(request: CompositionRequest): ComposedNodeContent {
   const figure = requireFigure(request);
   const context = request.context;
   const width = Math.min(context.style.contentSizing.figureBox[figure.size], context.width / 2);
-  const media = figureContent(figure, { ...context, width });
+  const media = tagged(figureContent(figure, { ...context, width }), request.object, 'detail');
   const text = textColumn({
     ...request,
     selection: bodyWithoutFigure(request, figure),
@@ -142,11 +155,15 @@ export function composeNodeContent(
 
 /** Optional compartment caption belongs to the chrome policy and is measured with shared pinned fonts. */
 function labelledBody(request: CompositionRequest): MeasuredContent {
-  const body = measureNodeBody(request.object, request.selection, bodyContext(request));
+  const body = tagged(
+    measureNodeBody(request.object, request.selection, bodyContext(request)),
+    request.object,
+    'detail',
+  );
   const label = moduleChrome(request.object, request.context)?.sectionLabel;
   if (label === undefined) return body;
   return stack(
-    [labelContent(label, request.context, 'annotation'), body],
+    [tagged(labelContent(label, request.context, 'annotation'), request.object, 'detail'), body],
     request.context.style.gap,
   );
 }

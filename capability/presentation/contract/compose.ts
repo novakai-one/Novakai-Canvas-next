@@ -55,7 +55,7 @@ async function bindReact(
 ): Promise<ReactBindings> {
   const [content, nodes, card, folder, accent] = await reactModules();
   const chromes: NodeChromeRegistry = injected ?? {
-    card: { Component: card.CardChrome, showKind: true, separateHeading: true },
+    card: { Component: card.CardChrome, showKind: true },
     [chromeName.parse('folder-tab')]: {
       Component: folder.createFolderTabChrome(folderPath),
       showKind: false,

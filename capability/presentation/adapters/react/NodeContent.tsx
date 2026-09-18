@@ -28,6 +28,7 @@ const LEFT_ALIGNED_SHAPES: readonly string[] = [
   'function',
   'container',
 ];
+const COMPARTMENT_SHAPES: readonly string[] = ['entity', 'module', 'interface', 'function'];
 /** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
 function contentSlack(node: VisualNode): number {
   if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
@@ -44,7 +45,7 @@ export function createContentRenderer(
   function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
     const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
     const Chrome = chrome.Component;
-    const content = compartments(node, chrome.separateHeading);
+    const content = compartments(node, separatesHeading(node, chrome, slots.classes));
     return (
       <svg
         className={slots.classes?.root}
@@ -80,6 +81,15 @@ export function createContentRenderer(
     );
   }
   return NodeContent;
+}
+/** Browser engineering cards expose heading/body paint roles; every other renderer keeps prior grouping. */
+function separatesHeading(
+  node: VisualNode,
+  chrome: NodeChrome,
+  classes: NodeSlots['classes'],
+): boolean {
+  if (chrome.separateHeading === true) return true;
+  return classes !== undefined && COMPARTMENT_SHAPES.includes(node.shape);
 }
 /** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
 function resolveChrome(chromes: NodeChromeRegistry, name: ChromeName | 'card'): NodeChrome {

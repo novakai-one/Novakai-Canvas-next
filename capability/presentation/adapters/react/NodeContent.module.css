@@ -60,4 +60,8 @@
   .body text {
     fill: var(--nv-canvas-member);
   }
+
+  .root[data-shape='container'] .body text {
+    fill: var(--nv-canvas-group-heading);
+  }
 }

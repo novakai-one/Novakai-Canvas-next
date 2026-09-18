@@ -46,23 +46,32 @@ function decode(input: unknown): RenderDocument {
       return checked;
     },
   };
-  const projection = accepted(readMeasuredProjection(payload.projection, collection, domain));
+  let projection: ReturnType<typeof readMeasuredProjection> | undefined;
   const measurements = accepted(readSupplementalMeasurements(payload.measurements));
   const scene = accepted(
     readScene(
-      { projection, measurements, options: payload.options, candidate: payload.scene },
+      {
+        projection: payload.projection,
+        measurements,
+        options: payload.options,
+        candidate: payload.scene,
+      },
       {
         engineVersions: defaultEngineVersions,
         projection: {
-          read: (input) => layoutResult(readMeasuredProjection(input, collection, domain)),
+          read: (input) => {
+            projection = readMeasuredProjection(input, collection, domain);
+            return layoutResult(projection);
+          },
           content: (input) => layoutResult(readMeasuredContent(input)),
         },
       },
     ),
   );
+  if (projection === undefined) throw new DiagramRejected('Layout omitted projection admission');
   return {
     collection,
-    projection,
+    projection: accepted(projection),
     measurements,
     scene,
     fonts: fontSet.parse(payload.fonts),

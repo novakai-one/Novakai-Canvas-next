@@ -94,7 +94,8 @@ export function relate(
 ): void {
   if (from.axis !== to.axis || !Number.isFinite(required))
     reject('unsupported-support', provenance);
-  graph.relations.push({ from, to, required, kind, provenance });
+  const minimum = kind === 'structure' ? Math.max(required, to.position - from.position) : required;
+  graph.relations.push({ from, to, required: minimum, kind, provenance });
 }
 function vertices(graph: SupportGraph): readonly NestedSupportVertex[] {
   const groups = new Map<string, Anchor[]>();

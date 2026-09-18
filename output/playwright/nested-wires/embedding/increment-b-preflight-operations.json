@@ -1,0 +1,358 @@
+{
+  "definition": "Same retained AST meter: numeric +, subtraction, comparisons, Math.abs, min/max n-1; excludes multiply/divide, strings, native iteration/map/JSON internals. Separately measured read-only operation, including one authoritative reservation/routing/allocation replay.",
+  "scenes": {
+    "default": {
+      "outcome": "admitted",
+      "counts": {
+        "T": 93,
+        "C": 175,
+        "G": 16,
+        "V": 85,
+        "E": 715
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 6858,
+          "comparisons": 2898,
+          "total": 9756
+        },
+        "structure": {
+          "arithmetic": 751,
+          "comparisons": 893,
+          "total": 1644
+        },
+        "paths": {
+          "arithmetic": 1596,
+          "comparisons": 504,
+          "total": 2100
+        },
+        "mouths": {
+          "arithmetic": 675,
+          "comparisons": 842,
+          "total": 1517
+        },
+        "admission": {
+          "arithmetic": 2578,
+          "comparisons": 1516,
+          "total": 4094
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 112,
+          "total": 112
+        }
+      },
+      "total": 19223,
+      "support": 9467,
+      "reservationReplay": 9756,
+      "pathsPerTravel": 22.580645161290324,
+      "allSupportPerTravel": 101.79569892473118,
+      "travelOnlyEstimate": [
+        1488,
+        5952
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "hub": {
+      "outcome": "admitted",
+      "counts": {
+        "T": 146,
+        "C": 186,
+        "G": 16,
+        "V": 87,
+        "E": 881
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 8268,
+          "comparisons": 3926,
+          "total": 12194
+        },
+        "structure": {
+          "arithmetic": 792,
+          "comparisons": 945,
+          "total": 1737
+        },
+        "paths": {
+          "arithmetic": 2549,
+          "comparisons": 817,
+          "total": 3366
+        },
+        "mouths": {
+          "arithmetic": 760,
+          "comparisons": 982,
+          "total": 1742
+        },
+        "admission": {
+          "arithmetic": 3060,
+          "comparisons": 1850,
+          "total": 4910
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 116,
+          "total": 116
+        }
+      },
+      "total": 24065,
+      "support": 11871,
+      "reservationReplay": 12194,
+      "pathsPerTravel": 23.054794520547944,
+      "allSupportPerTravel": 81.3082191780822,
+      "travelOnlyEstimate": [
+        2336,
+        9344
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "templates": {
+      "outcome": "admitted",
+      "counts": {
+        "T": 233,
+        "C": 204,
+        "G": 36,
+        "V": 147,
+        "E": 1381
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 12174,
+          "comparisons": 6656,
+          "total": 18830
+        },
+        "structure": {
+          "arithmetic": 983,
+          "comparisons": 1119,
+          "total": 2102
+        },
+        "paths": {
+          "arithmetic": 3942,
+          "comparisons": 1386,
+          "total": 5328
+        },
+        "mouths": {
+          "arithmetic": 1139,
+          "comparisons": 1480,
+          "total": 2619
+        },
+        "admission": {
+          "arithmetic": 4730,
+          "comparisons": 2910,
+          "total": 7640
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 188,
+          "total": 188
+        }
+      },
+      "total": 36707,
+      "support": 17877,
+      "reservationReplay": 18830,
+      "pathsPerTravel": 22.86695278969957,
+      "allSupportPerTravel": 76.72532188841201,
+      "travelOnlyEstimate": [
+        3728,
+        14912
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "scale": {
+      "outcome": "admitted",
+      "counts": {
+        "T": 333,
+        "C": 380,
+        "G": 48,
+        "V": 222,
+        "E": 2019
+      },
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 17492,
+          "comparisons": 9117,
+          "total": 26609
+        },
+        "structure": {
+          "arithmetic": 1719,
+          "comparisons": 2009,
+          "total": 3728
+        },
+        "paths": {
+          "arithmetic": 5870,
+          "comparisons": 2024,
+          "total": 7894
+        },
+        "mouths": {
+          "arithmetic": 1744,
+          "comparisons": 2154,
+          "total": 3898
+        },
+        "admission": {
+          "arithmetic": 7096,
+          "comparisons": 4261,
+          "total": 11357
+        },
+        "preflight-assembly": {
+          "arithmetic": 0,
+          "comparisons": 296,
+          "total": 296
+        }
+      },
+      "total": 53782,
+      "support": 27173,
+      "reservationReplay": 26609,
+      "pathsPerTravel": 23.705705705705707,
+      "allSupportPerTravel": 81.6006006006006,
+      "travelOnlyEstimate": [
+        5328,
+        21312
+      ],
+      "instrumentedByteIdentical": true
+    },
+    "authoring": {
+      "outcome": {
+        "code": "infeasible-embedding",
+        "reason": "cyclic-constraints",
+        "provenance": [
+          "[null,\"horizontal\",[\"section-15:surrounding:horizontal:1\"]]:end",
+          "[null,\"horizontal\",[\"section-5:surrounding:horizontal:1\",\"section-15:surrounding:horizontal:0\"]]",
+          "[null,\"vertical\",[\"section-2:surrounding:vertical:1\",\"section-5:surrounding:vertical:1\",\"section-15:surrounding:vertical:1\"]]:end",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]:end",
+          "[\"section-5\",\"horizontal\",[\"section-5:frame:horizontal:1\"]]:end",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:1\"]]",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:2\"]]",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:3\"]]",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:4\"]]",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:5\"]]",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:6\"]]",
+          "[\"section-5\",\"vertical\",[\"section-5:child-boundary:7\"]]",
+          "[\"section-7\",\"vertical\",[\"section-7:frame:vertical:0\",\"section-7:frame:vertical:1\"]]:end",
+          "[\"section-7\",\"horizontal\",[\"section-7:frame:horizontal:0\",\"section-7:frame:horizontal:1\"]]:end",
+          "[\"section-8\",\"horizontal\",[\"section-8:row:0\"]]:start",
+          "[\"section-8\",\"horizontal\",[\"section-8:row:0\"]]:end",
+          "[\"section-8\",\"vertical\",[\"section-8:column:0\"]]",
+          "[\"section-9\",\"horizontal\",[\"section-9:frame:horizontal:1\"]]:start",
+          "[\"section-9\",\"horizontal\",[\"section-9:frame:horizontal:1\"]]:end",
+          "[\"section-9\",\"vertical\",[\"section-9:column:0\"]]",
+          "[\"section-10\",\"vertical\",[\"section-10:frame:vertical:0\",\"section-10:frame:vertical:1\"]]:end",
+          "[\"section-10\",\"horizontal\",[\"section-10:frame:horizontal:0\",\"section-10:frame:horizontal:1\"]]:end",
+          "[\"section-11\",\"vertical\",[\"section-11:frame:vertical:0\",\"section-11:frame:vertical:1\"]]:end",
+          "[\"section-11\",\"horizontal\",[\"section-11:frame:horizontal:0\",\"section-11:frame:horizontal:1\"]]:end",
+          "[\"section-12\",\"horizontal\",[\"section-12:row:0\"]]:start",
+          "[\"section-12\",\"horizontal\",[\"section-12:row:0\"]]:end",
+          "[\"section-12\",\"vertical\",[\"section-12:column:0\"]]",
+          "[\"section-13\",\"horizontal\",[\"section-13:row:0\"]]:start",
+          "[\"section-13\",\"horizontal\",[\"section-13:row:0\"]]:end",
+          "[\"section-13\",\"vertical\",[\"section-13:column:0\"]]",
+          "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:start",
+          "[\"section-14\",\"horizontal\",[\"section-14:row:0\"]]:end",
+          "[\"section-14\",\"vertical\",[\"section-14:column:0\"]]",
+          "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:start",
+          "[\"section-15\",\"vertical\",[\"section-15:column:1\"]]:end",
+          "[\"section-15\",\"horizontal\",[\"section-15:row:0\"]]",
+          "[\"section-15\",\"horizontal\",[\"section-15:row:1\"]]",
+          "section-5:exit-bottom:center",
+          "section-7:entry-top:center",
+          "section-7:entry-left:center",
+          "section-7:exit-bottom:center",
+          "section-7:exit-right:center",
+          "[\"section-8\",\"vertical\",[\"[\\\"section-8\\\",\\\"vertical\\\",\\\"node-26\\\",\\\"node-26:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "[\"section-8\",\"vertical\",[\"[\\\"section-8\\\",\\\"vertical\\\",\\\"node-25\\\",\\\"node-25:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "section-8:entry-top:center",
+          "section-8:exit-bottom:center",
+          "[\"section-9\",\"vertical\",[\"[\\\"section-9\\\",\\\"vertical\\\",\\\"node-27\\\",\\\"node-27:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "[\"section-9\",\"vertical\",[\"[\\\"section-9\\\",\\\"vertical\\\",\\\"node-28\\\",\\\"node-28:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "section-9:entry-top:center",
+          "section-9:exit-bottom:center",
+          "section-10:entry-top:center",
+          "section-10:entry-left:center",
+          "section-10:exit-bottom:center",
+          "section-10:exit-right:center",
+          "section-11:entry-top:center",
+          "section-11:entry-left:center",
+          "section-11:exit-bottom:center",
+          "section-11:exit-right:center",
+          "[\"section-12\",\"vertical\",[\"[\\\"section-12\\\",\\\"vertical\\\",\\\"node-31\\\",\\\"node-31:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "[\"section-12\",\"vertical\",[\"[\\\"section-12\\\",\\\"vertical\\\",\\\"node-30\\\",\\\"node-30:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "section-12:entry-top:center",
+          "section-12:exit-bottom:center",
+          "[\"section-13\",\"vertical\",[\"[\\\"section-13\\\",\\\"vertical\\\",\\\"node-34\\\",\\\"node-34:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "[\"section-13\",\"vertical\",[\"[\\\"section-13\\\",\\\"vertical\\\",\\\"node-33\\\",\\\"node-33:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "section-13:entry-top:center",
+          "section-13:exit-bottom:center",
+          "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-37\\\",\\\"node-37:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "[\"section-14\",\"vertical\",[\"[\\\"section-14\\\",\\\"vertical\\\",\\\"node-38\\\",\\\"node-38:exit-bottom\\\",\\\"bottom\\\",\\\"exit\\\"]\"]]",
+          "section-14:entry-top:center",
+          "section-14:exit-bottom:center",
+          "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-41\\\",\\\"node-41:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+          "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-44\\\",\\\"node-44:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+          "[\"section-15\",\"horizontal\",[\"[\\\"section-15\\\",\\\"horizontal\\\",\\\"node-47\\\",\\\"node-47:exit-right\\\",\\\"right\\\",\\\"exit\\\"]\"]]",
+          "section-15:entry-left:center",
+          "section-15:exit-right:center",
+          "section-5:x:high",
+          "section-5:y:high",
+          "section-7:x:high",
+          "section-7:y:high",
+          "section-8:x:low",
+          "section-8:x:high",
+          "section-9:x:low",
+          "section-9:x:high",
+          "section-10:x:low",
+          "section-10:x:high",
+          "section-10:y:high",
+          "section-11:x:low",
+          "section-11:x:high",
+          "section-11:y:high",
+          "section-12:x:low",
+          "section-12:x:high",
+          "section-13:x:low",
+          "section-13:x:high",
+          "section-14:x:low",
+          "section-14:x:high",
+          "section-15:y:low",
+          "section-15:y:high"
+        ],
+        "required": [],
+        "available": []
+      },
+      "counts": null,
+      "stages": {
+        "reservation-replay": {
+          "arithmetic": 46556,
+          "comparisons": 27118,
+          "total": 73674
+        },
+        "structure": {
+          "arithmetic": 2061,
+          "comparisons": 2404,
+          "total": 4465
+        },
+        "paths": {
+          "arithmetic": 17353,
+          "comparisons": 7085,
+          "total": 24438
+        },
+        "mouths": {
+          "arithmetic": 2708,
+          "comparisons": 3826,
+          "total": 6534
+        },
+        "admission": {
+          "arithmetic": 11936,
+          "comparisons": 7725,
+          "total": 19661
+        }
+      },
+      "total": 128772,
+      "support": 55098,
+      "reservationReplay": 73674,
+      "pathsPerTravel": 26.62091503267974,
+      "allSupportPerTravel": 60.01960784313726,
+      "travelOnlyEstimate": [
+        14688,
+        58752
+      ],
+      "instrumentedByteIdentical": true
+    }
+  }
+}

@@ -30,7 +30,9 @@ export function supportMouths(
   },
 ): readonly NestedSupportGate[] {
   const context: MouthContext = { ...request, footprints: footprintIndex(request.footprints) };
-  const gates = new Set(context.input.wires.flatMap((w) => w.gates));
+  const gates = new Set(
+    context.scene.ports.filter((port) => port.nodeId === port.sectionId).map((port) => port.portId),
+  );
   const results: NestedSupportGate[] = [];
   context.scene.ports.forEach((port) => {
     const drive = context.input.final.get(`drive:${port.portId}`);

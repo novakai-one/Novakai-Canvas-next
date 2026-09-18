@@ -157,6 +157,8 @@ function sectionAxis(
     high = boundsAnchor(graph, p.section.id, bounds, axis, true);
   const insideLow = frameLine(lines, p.section.id, 'frame', axis, false),
     insideHigh = frameLine(lines, p.section.id, 'frame', axis, true);
+  // Amendment 1: moving the low wall must never contract the retained section extent.
+  relate(graph, low, high, bounds[dimensions[axis]], 'structure', [p.section.id, 'grow-only']);
   relate(graph, low, insideLow, 0, 'structure', [p.section.id]);
   relate(graph, insideLow, insideHigh, 0, 'structure', [p.section.id]);
   relate(graph, insideHigh, high, 0, 'structure', [p.section.id]);
@@ -223,6 +225,8 @@ function bodyCell(
   count: number,
 ): void {
   const center = anchor(graph, `${id}:${axis}:center`, axis, b[axis] + b[dimensions[axis]] / 2);
+  const track = anchor(graph, `${p.section.id}:${axis}:track:${ordinal}`, axis, center.position);
+  equate(graph, track, center);
   const low = cellLine(lines, p, axis, ordinal, count),
     high = cellLine(lines, p, axis, ordinal + 1, count);
   relate(graph, low, center, b[dimensions[axis]] / 2, 'structure', [id]);

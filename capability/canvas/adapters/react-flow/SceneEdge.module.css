@@ -4,9 +4,9 @@
   }
   .wire {
     fill: none;
-    opacity: var(--nv-canvas-wire-idle-opacity);
+    stroke-opacity: var(--nv-canvas-wire-idle-opacity);
     transition-duration: var(--nv-canvas-transition);
-    transition-property: opacity;
+    transition-property: stroke-opacity;
   }
   .underlay {
     fill: none;
@@ -25,13 +25,17 @@
     stroke: var(--nv-text-secondary);
   }
   .wire[data-emphasis='primary'] {
+    stroke-opacity: 1;
     stroke: var(--nv-action-accent) !important;
     stroke-width: var(--nv-focus-width);
   }
   .wire[data-emphasis='secondary'] {
+    stroke-opacity: 1;
     stroke: var(--nv-text-secondary) !important;
   }
-  .wire[data-emphasis='muted'],
+  .wire[data-emphasis='muted'] {
+    stroke-opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
+  }
   .marker[data-emphasis='muted'] {
     opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
   }

@@ -12,9 +12,12 @@ interface VersionedEngines {
   readonly placement: { readonly version: string };
   readonly solver: { readonly version: string };
   readonly routing: { readonly version: string };
+  readonly nested?: { readonly version: string };
 }
 /** Engine versions form part of every derivation key; injected providers cannot silently reuse another implementation's geometry. */
 export function versions(dependencies: VersionedEngines): readonly string[] {
+  if (dependencies.nested)
+    return [dependencies.nested.version, nativeEngineVersions.policy];
   return [
     dependencies.placement.version,
     dependencies.solver.version,

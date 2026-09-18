@@ -6,8 +6,12 @@ import {
   fontSet,
 } from '@novakai/canvas-presentation';
 import type { Result as PresentationResult } from '@novakai/canvas-presentation';
-import { readScene, defaultEngineVersions, options } from '@novakai/canvas-layout';
-import type { Result as LayoutResult } from '@novakai/canvas-layout';
+import { readScene, defaultEngineVersions, nestedEngineVersions, options } from '@novakai/canvas-layout';
+import type {
+  Result as LayoutResult,
+  Scene,
+  SceneReaderOwners,
+} from '@novakai/canvas-layout';
 import { renderEnvelope } from '../contract/records/worker.js';
 import type { RenderingJob, RenderDocument } from '../contract/records/rendering.js';
 import { failure, type Result } from '../contract/errors.js';
@@ -28,6 +32,16 @@ function translated<T>(result: PresentationResult<T>): LayoutResult<T> {
   if (result.ok) return result;
   return { ok: false, error: { ...result.error, code: 'invalid-input', targets: [] } };
 }
+/** Scenes stamped by either the legacy native engines or the nested engine are admitted. */
+function readAdmittedScene(
+  input: unknown,
+  projection: SceneReaderOwners['projection'],
+): LayoutResult<Scene> {
+  const legacy = readScene(input, { engineVersions: defaultEngineVersions, projection });
+  return legacy.ok
+    ? legacy
+    : readScene(input, { engineVersions: nestedEngineVersions, projection });
+}
 /** Reconstruct all scene payloads using admitted job semantics; no wire payload is cast into trusted records. */
 function decode(input: unknown, job: RenderingJob): RenderDocument {
   const raw = renderEnvelope.parse(input);
@@ -44,14 +58,11 @@ function decode(input: unknown, job: RenderingJob): RenderDocument {
   const projection = accepted(readMeasuredProjection(raw.projection, job.collection, domain));
   const measurements = accepted(readSupplementalMeasurements(raw.measurements));
   const scene = accepted(
-    readScene(
+    readAdmittedScene(
       { projection, measurements, options: raw.options, candidate: raw.scene },
       {
-        engineVersions: defaultEngineVersions,
-        projection: {
-          read: (input) => translated(readMeasuredProjection(input, job.collection, domain)),
-          content: (input) => translated(readMeasuredContent(input)),
-        },
+        read: (input) => translated(readMeasuredProjection(input, job.collection, domain)),
+        content: (input) => translated(readMeasuredContent(input)),
       },
     ),
   );

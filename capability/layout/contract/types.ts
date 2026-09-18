@@ -8,6 +8,7 @@ import type { PlacementPort } from './ports/placement.js';
 import type { SolverPort } from './ports/solver.js';
 import type { RoutingPort } from './ports/routing.js';
 import type { JobControl, Job } from './ports/scheduling.js';
+import type { NestedEngine } from './records/engine-scene.js';
 const positive = z.number().finite().positive().max(10000);
 /** Spacing comes from host-resolved tokens; no production UI palette or typography default is stored here. */
 export const options = z
@@ -66,6 +67,8 @@ export interface Dependencies {
   readonly solver: SolverPort;
   readonly routing: RoutingPort;
   readonly jobs: JobControl;
+  /** Present only when composed with the nested engine; dispatch arrives in a later task. */
+  readonly nested?: NestedEngine;
 }
 /** Geometry derivation consumes engine/scheduling roles only; the facade alone decodes Projection input. */
 export type GeometryDependencies = Omit<Dependencies, 'projection'>;

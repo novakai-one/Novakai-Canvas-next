@@ -11,3 +11,9 @@ export const defaultEngineVersions: readonly string[] = Object.freeze([
   nativeEngineVersions.routing,
   nativeEngineVersions.policy,
 ]);
+/** In-repo nested-roads engine replaces the native trio under its own stamp; policy is unchanged. */
+export const nestedEngineVersion = 'nested-roads-1/layout-1';
+export const nestedEngineVersions: readonly string[] = Object.freeze([
+  nestedEngineVersion,
+  nativeEngineVersions.policy,
+]);

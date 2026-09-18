@@ -9,8 +9,12 @@ import {
   fontSet,
 } from '@novakai/canvas-presentation';
 import type { Result as PresentationResult } from '@novakai/canvas-presentation';
-import { readScene, defaultEngineVersions, options } from '@novakai/canvas-layout';
-import type { Result as LayoutResult } from '@novakai/canvas-layout';
+import { readScene, defaultEngineVersions, nestedEngineVersions, options } from '@novakai/canvas-layout';
+import type {
+  Result as LayoutResult,
+  Scene,
+  SceneReaderOwners,
+} from '@novakai/canvas-layout';
 import type { SceneAdmission } from '@novakai/canvas-canvas';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
@@ -25,6 +29,16 @@ function accepted<T>(result: { readonly ok: true; readonly value: T } | { readon
 function layoutResult<T>(result: PresentationResult<T>): LayoutResult<T> {
   if (result.ok) return result;
   return { ok: false, error: { ...result.error, code: 'invalid-input', targets: [] } };
+}
+/** Scenes stamped by either the legacy native engines or the nested engine are admitted. */
+function readAdmittedScene(
+  input: unknown,
+  projection: SceneReaderOwners['projection'],
+): LayoutResult<Scene> {
+  const legacy = readScene(input, { engineVersions: defaultEngineVersions, projection });
+  return legacy.ok
+    ? legacy
+    : readScene(input, { engineVersions: nestedEngineVersions, projection });
 }
 /** Canonical shape, measured content, routing and engine versions all receive their owner's independent admission. */
 function decode(input: unknown): RenderDocument {
@@ -49,14 +63,11 @@ function decode(input: unknown): RenderDocument {
   const projection = accepted(readMeasuredProjection(payload.projection, collection, domain));
   const measurements = accepted(readSupplementalMeasurements(payload.measurements));
   const scene = accepted(
-    readScene(
+    readAdmittedScene(
       { projection, measurements, options: payload.options, candidate: payload.scene },
       {
-        engineVersions: defaultEngineVersions,
-        projection: {
-          read: (input) => layoutResult(readMeasuredProjection(input, collection, domain)),
-          content: (input) => layoutResult(readMeasuredContent(input)),
-        },
+        read: (input) => layoutResult(readMeasuredProjection(input, collection, domain)),
+        content: (input) => layoutResult(readMeasuredContent(input)),
       },
     ),
   );

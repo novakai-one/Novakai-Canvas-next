@@ -62,7 +62,8 @@ export { toCollection, toSection, toParent } from './api.js';
 export { readScene } from './api.js';
 export type { SceneReaderOwners } from './types.js';
 
-export { defaultEngineVersions } from './records/engines.js';
+export { defaultEngineVersions, nestedEngineVersions } from './records/engines.js';
+export type { NestedEngine, NestedEngineRequest } from './records/engine-scene.js';
 
 export type { LayoutInputKey } from './brands.js';
 export { inputKey as layoutInputKey } from './brands.js';

@@ -101,6 +101,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           <Background variant={BackgroundVariant.Dots} />
           <MiniMap pannable zoomable ariaLabel="Collection minimap" />
           <Sequence
+            followsInterfaceRoles={props.followsInterfaceRoles === true}
             sections={snapshot.view.sections}
             nodes={snapshot.view.nodes}
             actions={interactions.actions}

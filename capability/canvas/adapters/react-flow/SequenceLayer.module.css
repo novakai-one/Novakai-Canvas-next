@@ -4,6 +4,9 @@
     overflow: visible;
     pointer-events: none;
   }
+  .layer[data-follows-interface-roles='true'] :global(text) {
+    fill: var(--nv-text-primary);
+  }
   .layer [role='button'] {
     pointer-events: visiblePainted;
     cursor: pointer;

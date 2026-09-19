@@ -59,6 +59,7 @@ export interface WireLabelProps {
   readonly anchor: Point;
 }
 export interface SurfaceProps {
+  readonly followsInterfaceRoles?: boolean;
   readonly session: SurfaceSession;
   readonly reader: ViewReader;
   readonly nextGestureId: () => string;
@@ -118,6 +119,7 @@ export interface OutlineProps {
   readonly editable: boolean;
 }
 export interface SequenceProps {
+  readonly followsInterfaceRoles?: boolean;
   readonly sections: readonly ViewSection[];
   readonly nodes: readonly ViewNode[];
   readonly actions: Pick<ViewActions, 'dispatch'>;

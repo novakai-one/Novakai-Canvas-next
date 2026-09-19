@@ -136,10 +136,26 @@ export function createSequenceLayer(
   }
   /** Collapsed section annotations are omitted only from the reading projection; stored geometry is unchanged. */
   function SequenceLayer(props: SequenceProps): ReactElement {
+    const rendered = props.followsInterfaceRoles
+      ? {
+          ...props,
+          paint: {
+            fill: 'var(--nv-canvas-group-surface)',
+            stroke: 'var(--nv-text-secondary)',
+            text: 'var(--nv-text-secondary)',
+          },
+        }
+      : props;
     return (
       <ViewportPortal>
-        <svg className={styles.layer} width="1" height="1" aria-label="Sequence annotations">
-          {props.sections.filter((view) => !view.collapsed).map((view) => section(view, props))}
+        <svg
+          className={styles.layer}
+          data-follows-interface-roles={props.followsInterfaceRoles}
+          width="1"
+          height="1"
+          aria-label="Sequence annotations"
+        >
+          {props.sections.filter((view) => !view.collapsed).map((view) => section(view, rendered))}
         </svg>
       </ViewportPortal>
     );

@@ -29,6 +29,7 @@ export function createWorkspaceShell(slots: ChromeSlots): ComponentType<Workspac
           <main className={styles.canvas} data-canvas-host aria-label="Diagram workspace">
             {view.active ? (
               <CanvasSurface
+                followsInterfaceRoles={view.active.document.style.followsInterfaceRoles === true}
                 session={view.active.session}
                 reader={view.active.canvas}
                 nextGestureId={slots.nextGestureId}

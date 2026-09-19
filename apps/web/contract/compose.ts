@@ -7,8 +7,9 @@ import { createLibraryBrowser } from '../adapters/react/LibraryBrowser.js';
 import { createLibraryFilters } from '../adapters/react/LibraryFilters.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
 import { createLibraryOrganization } from '../adapters/react/LibraryOrganization.js';
-import type { ComponentType } from 'react';
+import { createElement, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
+import type { LibraryBrowserProps } from './library-react.js';
 import { createPreferenceController } from '../adapters/preference-session.js';
 import { readEnvironment, observeEnvironment } from '../adapters/browser-preferences.js';
 import { createInterfacePreferences } from '../adapters/react/InterfacePreferences.js';
@@ -139,10 +140,13 @@ function featureSections(
   design: DesignBindings,
   preferences: PreferenceController,
   ThemeSelector: ComponentType<ThemeSelectorProps>,
-  Browser: ComponentType<FeatureProps>,
+  Browser: ComponentType<LibraryBrowserProps>,
 ): readonly RegisteredSection[] {
+  function LibrarySection(props: FeatureProps): ReactElement {
+    return createElement(Browser, { controller: props.controller, view: props.view });
+  }
   return [
-    { tab: 'browse', id: 'collections', title: 'Collections', Content: Browser },
+    { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
     { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
     { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
     {

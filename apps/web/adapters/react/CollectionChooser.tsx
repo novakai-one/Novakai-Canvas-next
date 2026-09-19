@@ -79,6 +79,7 @@ function ChooserBody({
       <Browser
         controller={controller}
         view={view}
+        className={styles.browser ?? ''}
         onSelect={controller.chooseCollection}
         currentId={selection.activeId}
         pendingId={pendingId}

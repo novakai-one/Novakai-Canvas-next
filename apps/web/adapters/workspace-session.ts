@@ -20,6 +20,7 @@ interface RenderRequest {
   readonly token: number;
   readonly id: string;
   readonly revision: number;
+  readonly workspace: string;
   readonly generation: string;
   readonly mode: 'navigation' | 'chooser';
   readonly job: AbortController;
@@ -120,6 +121,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       latest.snapshot.sequence < (state.snapshot?.sequence ?? 0)
     )
       return;
+    settleChangedRender(latest, generation);
     update({
       snapshot: latest.snapshot,
       collections: latest.collections,
@@ -131,6 +133,31 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     source.reconcile(latest.snapshot, generation);
     updateMutationAvailability();
     refreshActive();
+  }
+  /** A checked snapshot can invalidate the current request before it is allowed to install. */
+  function settleChangedRender(
+    latest: {
+      readonly snapshot: import('../contract/records/owners.js').Snapshot;
+      readonly collections: WorkspaceView['collections'];
+    },
+    generation: string,
+  ): void {
+    const request = rendering;
+    if (request === null || !currentRequest(request)) return;
+    const target = latest.collections.find((item) => item.id === request.id);
+    if (
+      request.workspace !== latest.snapshot.workspace ||
+      request.generation !== generation ||
+      request.revision !== (target?.revision ?? -1)
+    )
+      settleFailure(
+        request,
+        diagnostic(
+          'render-input-changed',
+          'The workspace changed while opening this collection',
+          'Choose the collection again to retry.',
+        ),
+      );
   }
   /** Foreign commits request a new render only when the active collection revision changed. No update performs Fit. */
   function refreshActive(): void {
@@ -193,9 +220,33 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   function finishRequest(request: RenderRequest, document: RenderDocument): void {
     if (!currentRequest(request)) return;
-    const installed = install(document);
+    const installed = installAdmitted(request, document);
     if (!installed.ok) return settleFailure(request, installed.error);
     settleSuccess(request);
+  }
+  function installAdmitted(request: RenderRequest, document: RenderDocument): Result<void> {
+    const admission = admitRender(request, document);
+    if (!admission.ok) return admission;
+    return install(document);
+  }
+  function admitRender(request: RenderRequest, document: RenderDocument): Result<void> {
+    const current = state.collections.find((item) => item.id === request.id);
+    const changed =
+      state.snapshot?.workspace !== request.workspace ||
+      state.generation !== request.generation ||
+      current?.revision !== request.revision ||
+      document.collection.revision !== request.revision;
+    if (changed) void refresh();
+    if (changed)
+      return {
+        ok: false,
+        error: diagnostic(
+          'render-input-changed',
+          'The workspace changed while opening this collection',
+          'Choose the collection again to retry.',
+        ),
+      };
+    return { ok: true, value: undefined };
   }
   /** A request captures the checked revision and service generation used for its admission. */
   function beginRender(id: string, mode: RenderRequest['mode']): RenderRequest | null {
@@ -206,6 +257,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       token: ++requestToken,
       id,
       revision: state.collections.find((item) => item.id === id)?.revision ?? -1,
+      workspace: state.snapshot?.workspace ?? '',
       generation: state.generation,
       mode,
       job,
@@ -239,7 +291,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     id: string,
     generation: string,
   ): Result<RenderDocument> {
-    if (generation !== state.generation) return generationMismatch();
+    if (response.generation !== generation || generation !== state.generation)
+      return generationMismatch();
     return response.outcome.ok ? readRender(response.outcome.value, id) : response.outcome;
   }
   function generationMismatch(): Result<RenderDocument> {
@@ -368,6 +421,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Failed chooser attempts are recoverable and never replace the retained active diagram. */
   function settleFailure(request: RenderRequest, error: Diagnostic): void {
     if (!currentRequest(request)) return;
+    request.job.abort();
     rendering = null;
     renderJob = null;
     const problem = owned(error);
@@ -642,8 +696,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Opening the chooser is a presentation intent; it never disposes the retained Canvas session. */
   function beginCollectionSwitch(): void {
-    if (state.collectionSwitch.phase !== 'idle') return;
-    update({ collectionSwitch: { phase: 'choosing', activeId: activeId() } });
+    if (state.collectionSwitch.phase === 'loading') return;
+    invalidateRender();
+    update({
+      opening: null,
+      collectionSwitch: { phase: 'choosing', activeId: activeId() },
+      ...renderProblemUpdate(),
+    });
   }
   /** Cancellation invalidates transport ownership before closing the controlled dialog. */
   function cancelCollectionSwitch(): void {
@@ -655,6 +714,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       status: state.active === null ? 'Ready' : editStatus(),
       ...renderProblemUpdate(),
     });
+    refreshActive();
   }
   /** A newer explicit target always supersedes an older target, including an in-flight request. */
   function chooseCollection(id: string): void {
@@ -686,15 +746,23 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     state.active?.session.dispatch({ kind: 'connected', value: connected });
   }
   /** Mount and unmount own the event stream; no global listener survives disposal. */
-  async function start(): Promise<void> {
+  async function startWorkspace(): Promise<void> {
     await refresh();
+    if (disposed) return;
     restoreEdits();
     await restoreLocation();
+  }
+  function markReady(): void {
+    if (!state.sourceDirty) update({ status: 'Ready' });
+  }
+  async function start(): Promise<void> {
+    await startWorkspace();
+    if (disposed) return;
     unsubscribe = bindings.client.changes(() => {
       // The local receipt refresh includes every commit made while its submission was in flight.
       if (!state.busy) void refresh();
     }, connection);
-    if (!state.sourceDirty) update({ status: 'Ready' });
+    markReady();
   }
   /** A saved collection link restores the actual canonical diagram, including human placement records. */
   async function restoreLocation(): Promise<void> {

@@ -3,7 +3,8 @@ import type { ComponentType, ReactElement, ReactNode } from 'react';
 import type { ReactBindings as DesignBindings } from '@novakai/canvas-design-system';
 import type { SurfaceProps } from '@novakai/canvas-canvas';
 import type { FontDefinitionsProps } from '@novakai/canvas-presentation';
-import type { WorkspaceController, WorkspaceView } from './records/workspace.js';
+import type { CollectionSwitch, WorkspaceController, WorkspaceView } from './records/workspace.js';
+import type { LibraryWorkspace, LibraryWorkspaceView } from './library-react.js';
 /** Feature views receive readonly presentation and intent callbacks. No component owns canonical diagram state. */
 export interface WorkspaceProps {
   readonly controller: WorkspaceController;
@@ -38,9 +39,20 @@ export interface CreateDialogProps {
   readonly onCreate: (title: string) => void;
   readonly portal: HTMLElement;
 }
+export type CollectionChooserController = Pick<
+  WorkspaceController,
+  'beginCollectionSwitch' | 'cancelCollectionSwitch' | 'chooseCollection' | 'retryCollectionSwitch'
+> &
+  LibraryWorkspace;
+export interface CollectionChooserView extends LibraryWorkspaceView {
+  readonly active: WorkspaceView['active'];
+  readonly collections: WorkspaceView['collections'];
+  readonly collectionSwitch: CollectionSwitch;
+  readonly problem: WorkspaceView['problem'];
+}
 export interface CollectionChooserProps {
-  readonly controller: WorkspaceController;
-  readonly view: WorkspaceView;
+  readonly controller: CollectionChooserController;
+  readonly view: CollectionChooserView;
   readonly onCreate: () => void;
   readonly portal: HTMLElement;
 }

@@ -88,7 +88,7 @@ function WorkspaceFrame({
         hidden={hidden}
         setCreating={setCreating}
       />
-      <ProblemSlot hidden={hidden} view={view} />
+      <ProblemSlot hidden={hidden || view.collectionSwitch.phase !== 'idle'} view={view} />
       <RecoverySlot hidden={hidden} Recovery={slots.Recovery} controller={controller} view={view} />
       <StatusSlot hidden={hidden} view={view} />
       <RevealSlot hidden={hidden} Reveal={slots.Reveal} onReveal={slots.panels.revealInterface} />

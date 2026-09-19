@@ -11,6 +11,7 @@ export function createLibraryBrowser(
   function LibraryBrowser({
     controller,
     view,
+    className,
     onSelect,
     currentId,
     pendingId,
@@ -18,7 +19,7 @@ export function createLibraryBrowser(
     const library = controller.library;
     const state = useSyncExternalStore(library.subscribe, library.getSnapshot);
     return (
-      <div className={styles.editor}>
+      <div className={[styles.editor, className].filter(Boolean).join(' ')}>
         <LibraryProblem problem={state.problem} />
         {slots.map(({ id, Content }) => (
           <Content

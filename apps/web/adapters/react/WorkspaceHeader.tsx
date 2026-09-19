@@ -24,9 +24,9 @@ export function createWorkspaceHeader(
           onClick={onOpenChooser}
         >
           <span className={styles.mark} aria-hidden="true">
-            N
+            &gt;_
           </span>
-          <span>Canvas</span>
+          <span>novakai</span>
         </button>
         <div className={styles.context}>
           <span className={styles.eyebrow}>Workspace</span>

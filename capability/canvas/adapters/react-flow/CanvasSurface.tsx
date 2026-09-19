@@ -58,6 +58,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     if (!result.ok) return <div role="alert">Canvas unavailable: {result.error.message}</div>;
     const snapshot = result.value;
     const chrome = props.chrome ?? defaultChrome;
+    const controlsVisible = chrome.tools || chrome.zoom || chrome.outline;
     const hand = snapshot.view.tool === 'hand';
     return (
       <div
@@ -116,13 +117,15 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
             paint={props.paint}
           />
         </ReactFlow>
-        <Controls
-          snapshot={snapshot}
-          actions={interactions.actions}
-          outlineOpen={outlineOpen}
-          onOutline={() => setOutlineOpen((value) => !value)}
-          visibility={chrome}
-        />
+        {controlsVisible && (
+          <Controls
+            snapshot={snapshot}
+            actions={interactions.actions}
+            outlineOpen={outlineOpen}
+            onOutline={() => setOutlineOpen((value) => !value)}
+            visibility={chrome}
+          />
+        )}
         {outlineOpen && chrome.outline && (
           <Outline
             sections={snapshot.outline}

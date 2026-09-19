@@ -36,10 +36,14 @@ export function createStylesheetBindings(): Promise<Result<StylesheetReader>> {
     return createStylesheetReader();
   });
 }
+/** Establish the browser cascade before importing host components; headless imports remain CSS-free. */
+export async function loadBrowserStyles(): Promise<void> {
+  await import('../adapters/styles/entry.css');
+}
 /** Call once during host composition, before mounting; returned component identities remain stable across renders. */
 export function createReactBindings(): Promise<Result<ReactBindings>> {
   return protectAsync(async () => {
-    await import('../adapters/styles/entry.css');
+    await loadBrowserStyles();
     const [
       button,
       field,

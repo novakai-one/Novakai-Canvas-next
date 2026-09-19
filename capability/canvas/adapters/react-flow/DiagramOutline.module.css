@@ -4,7 +4,9 @@
     top: var(--nv-space-8);
     right: var(--nv-space-3);
     width: min(100%, var(--nv-panel-right));
-    max-height: calc(100% - var(--nv-space-8));
+    max-height: calc(
+      100% - var(--nv-control-height) - var(--nv-space-8) * var(--nv-scalar-two) - var(--nv-space-6)
+    );
     overflow: auto;
     padding: var(--nv-space-4);
     background: var(--nv-surface-raised);

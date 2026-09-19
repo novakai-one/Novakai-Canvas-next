@@ -41,7 +41,17 @@ export interface ButtonProps {
   readonly disabled?: boolean | undefined;
   readonly selected?: boolean;
 }
-export type ControlIconName = 'select' | 'hand' | 'connect' | 'minus' | 'plus' | 'outline';
+export type ControlIconName =
+  | 'select'
+  | 'hand'
+  | 'connect'
+  | 'minus'
+  | 'plus'
+  | 'outline'
+  | 'fit'
+  | 'reading'
+  | 'previous'
+  | 'next';
 export interface CanvasChromeVisibility {
   readonly tools: boolean;
   readonly zoom: boolean;

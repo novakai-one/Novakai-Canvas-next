@@ -153,5 +153,5 @@ export function createPanelController(bindings: PanelBindings): PanelController 
 }
 
 function defaultInterfaceVisibility(): InterfaceVisibility {
-  return { hidden: false, tools: true, zoom: true, minimap: true, outline: true };
+  return { hidden: false, tools: true, zoom: true, minimap: false, outline: true };
 }

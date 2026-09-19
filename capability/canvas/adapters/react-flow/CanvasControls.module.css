@@ -1,8 +1,6 @@
 @layer components {
   .controls {
     position: absolute;
-    top: var(--nv-space-3);
-    left: var(--nv-space-3);
     display: flex;
     flex-wrap: wrap;
     gap: var(--nv-space-1);
@@ -14,8 +12,25 @@
     border-radius: var(--nv-radius-panel);
     color: var(--nv-text-primary);
   }
+  .tools {
+    top: var(--nv-space-3);
+    left: var(--nv-space-3);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    max-height: calc(100% - var(--nv-space-6));
+    overflow-y: auto;
+  }
+  .viewport {
+    flex-wrap: nowrap;
+    right: var(--nv-space-3);
+    bottom: var(--nv-space-6);
+  }
   .controls output {
     font: inherit;
     padding-inline: var(--nv-space-2);
   }
+}
+
+.controls:empty {
+  display: none;
 }

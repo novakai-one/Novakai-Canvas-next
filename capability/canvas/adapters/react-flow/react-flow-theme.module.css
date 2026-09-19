@@ -8,11 +8,12 @@
     --xy-minimap-mask-background-color: var(--nv-canvas-surface);
   }
   .theme :global(.react-flow__minimap) {
+    bottom: calc(var(--nv-control-height) + var(--nv-space-8) + var(--nv-space-6));
     border: var(--nv-stroke-base) solid var(--nv-canvas-group-boundary);
     border-radius: var(--nv-radius-panel);
     background: var(--nv-surface-raised);
-    box-shadow: var(--nv-elevation-offset-x) var(--nv-elevation-offset-y)
-      var(--nv-elevation-blur) var(--nv-shadow-opacity-color);
+    box-shadow: var(--nv-elevation-offset-x) var(--nv-elevation-offset-y) var(--nv-elevation-blur)
+      var(--nv-shadow-opacity-color);
   }
   .theme :global(.react-flow__minimap-mask) {
     fill: var(--nv-canvas-group-surface);

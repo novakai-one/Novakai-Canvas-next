@@ -32,81 +32,108 @@ export function createCanvasControls(
       />
     ));
     return (
-      <div className={`nodrag nopan ${styles.controls}`} role="toolbar" aria-label="Canvas tools">
-        {visibility.tools && (
-          <>
-            {toolButtons}
+      <>
+        <div
+          className={`nodrag nopan ${styles.controls} ${styles.tools}`}
+          role="toolbar"
+          aria-label="Canvas tools"
+        >
+          {visibility.tools && (
+            <>
+              {toolButtons}
+              <Button
+                label={state.reading === null ? 'Reading mode' : 'Exit reading'}
+                title={state.reading === null ? 'Reading mode' : 'Exit reading'}
+                icon={<Icon name="reading" />}
+                iconOnly
+                selected={state.reading !== null}
+                onClick={() =>
+                  actions.dispatch({
+                    kind: 'reading',
+                    action: state.reading === null ? 'enter' : 'exit',
+                  })
+                }
+              />
+              {state.reading !== null && (
+                <>
+                  <Button
+                    label="Previous section"
+                    title="Previous section"
+                    icon={<Icon name="previous" />}
+                    iconOnly
+                    onClick={() => actions.dispatch({ kind: 'reading', action: 'previous' })}
+                  />
+                  <Button
+                    label="Next section"
+                    title="Next section"
+                    icon={<Icon name="next" />}
+                    iconOnly
+                    onClick={() => actions.dispatch({ kind: 'reading', action: 'next' })}
+                  />
+                </>
+              )}
+            </>
+          )}
+          {visibility.outline && (
+            <Button
+              label="Diagram outline"
+              title="Diagram outline"
+              icon={<Icon name="outline" />}
+              iconOnly
+              selected={outlineOpen}
+              onClick={onOutline}
+            />
+          )}
+        </div>
+        <div
+          className={`nodrag nopan ${styles.controls} ${styles.viewport}`}
+          role="toolbar"
+          aria-label="Canvas view controls"
+        >
+          {visibility.zoom && (
+            <>
+              <Button
+                label="Zoom out"
+                title="Zoom out"
+                icon={<Icon name="minus" />}
+                iconOnly
+                onClick={() =>
+                  actions.dispatch({
+                    kind: 'zoom',
+                    factor:
+                      Math.max(state.profile.zoomMin, view.camera.zoom - state.profile.zoomStep) /
+                      view.camera.zoom,
+                    pointer: center,
+                  })
+                }
+              />
+              <output aria-label="Zoom level">{Math.round(view.camera.zoom * 100)}%</output>
+              <Button
+                label="Zoom in"
+                title="Zoom in"
+                icon={<Icon name="plus" />}
+                iconOnly
+                onClick={() =>
+                  actions.dispatch({
+                    kind: 'zoom',
+                    factor: (view.camera.zoom + state.profile.zoomStep) / view.camera.zoom,
+                    pointer: center,
+                  })
+                }
+              />
+            </>
+          )}
+          {visibility.tools && (
             <Button
               label="Fit collection"
+              title="Fit collection"
+              icon={<Icon name="fit" />}
+              iconOnly
               onClick={() => actions.dispatch({ kind: 'fit', target: null })}
             />
-            <Button
-              label={state.reading === null ? 'Reading mode' : 'Exit reading'}
-              onClick={() =>
-                actions.dispatch({
-                  kind: 'reading',
-                  action: state.reading === null ? 'enter' : 'exit',
-                })
-              }
-            />
-            {state.reading !== null && (
-              <>
-                <Button
-                  label="Previous section"
-                  onClick={() => actions.dispatch({ kind: 'reading', action: 'previous' })}
-                />
-                <Button
-                  label="Next section"
-                  onClick={() => actions.dispatch({ kind: 'reading', action: 'next' })}
-                />
-              </>
-            )}
-          </>
-        )}
-        {visibility.zoom && (
-          <>
-            <Button
-              label="Zoom out"
-              title="Zoom out"
-              icon={<Icon name="minus" />}
-              iconOnly
-              onClick={() =>
-                actions.dispatch({
-                  kind: 'zoom',
-                  factor:
-                    Math.max(state.profile.zoomMin, view.camera.zoom - state.profile.zoomStep) /
-                    view.camera.zoom,
-                  pointer: center,
-                })
-              }
-            />
-            <output aria-label="Zoom level">{Math.round(view.camera.zoom * 100)}%</output>
-            <Button
-              label="Zoom in"
-              title="Zoom in"
-              icon={<Icon name="plus" />}
-              iconOnly
-              onClick={() =>
-                actions.dispatch({
-                  kind: 'zoom',
-                  factor: (view.camera.zoom + state.profile.zoomStep) / view.camera.zoom,
-                  pointer: center,
-                })
-              }
-            />
-          </>
-        )}
-        {visibility.outline && (
-          <Button
-            label="Diagram outline"
-            title="Diagram outline"
-            icon={<Icon name="outline" />}
-            iconOnly
-            selected={outlineOpen}
-            onClick={onOutline}
-          />
-        )}
-      </div>
+          )}
+        </div>
+      </>
     );
   }
   return CanvasControls;

@@ -7,6 +7,12 @@ import type { Language } from '@novakai/canvas-language';
 import type { WorkspaceInputs } from '../contract/ports/workspace.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
+import type { CapturedCollectionBase, EditingBase } from '../contract/records/editor-recovery.js';
+import { baseWorkspace, captureCollectionBase, collectionRecord } from '../contract/api.js';
+import {
+  capturedCollectionBaseSchema,
+  hasRecoveryTag,
+} from '../contract/schemas/editor-recovery.js';
 /** Invalid canonical data is surfaced, not hidden as an empty collection. */
 function collections(snapshot: Snapshot): Result<readonly Collection[]> {
   const candidates = snapshot.records
@@ -26,36 +32,63 @@ function snapshot(input: unknown): ReturnType<WorkspaceInputs['snapshot']> {
 }
 /** Request identity is credential-derived and all expected versions come from the caller's captured snapshot. */
 function request(
-  snapshot: Snapshot,
+  snapshot: EditingBase,
   id: string,
   planner: string,
   payload: unknown,
   collection: string,
   create: boolean,
 ): Result<Request> {
-  const key = { kind: 'collection', id: collection };
-  const previous = snapshot.records.find(
-    (item) => item.key.kind === 'collection' && item.key.id === collection,
-  );
-  const version = previous?.version ?? 'absent';
-  const catalog = snapshot.records
-    .filter((item) => item.key.kind === 'catalog' && !item.deleted)
-    .map((item) => ({ key: item.key, version: item.version }));
-  const expected = create ? [{ key, version: 'absent' }, ...catalog] : [{ key, version }];
+  const expected = expectedVersions(snapshot, collection, create);
+  if (!expected.ok) return expected;
   const checked = requestSchema.safeParse({
-    workspace: snapshot.workspace,
+    workspace: baseWorkspace(snapshot),
     request: id,
     version: 1,
     actor: { id: 'human:browser', kind: 'human' },
     assets: [],
-    expected,
-    scope: expected.map((item) => item.key),
+    expected: expected.value,
+    scope: expected.value.map((item) => item.key),
     intent: { kind: 'change', planner, payload },
   });
   if (!checked.success)
     return failure('invalid-request', 'The diagram change could not be prepared');
   return { ok: true, value: checked.data };
 }
+function expectedVersions(
+  base: EditingBase,
+  collection: string,
+  create: boolean,
+): Result<readonly ExpectedVersion[]> {
+  return create ? createVersions(base, collection) : replaceVersions(base, collection);
+}
+function createVersions(base: EditingBase, collection: string): Result<readonly ExpectedVersion[]> {
+  if ('record' in base)
+    return failure(
+      'invalid-request',
+      'A captured collection cannot be used to create a collection',
+    );
+  const key = { kind: 'collection' as const, id: collection };
+  const catalog = base.records
+    .filter((item) => item.key.kind === 'catalog' && !item.deleted)
+    .map((item) => ({ key: item.key, version: item.version }));
+  return { ok: true, value: [{ key, version: 'absent' }, ...catalog] };
+}
+function replaceVersions(
+  base: EditingBase,
+  collection: string,
+): Result<readonly ExpectedVersion[]> {
+  const record = collectionRecord(base, collection);
+  if (!record.ok) return record;
+  return {
+    ok: true,
+    value: [{ key: record.value.key, version: record.value.version }],
+  };
+}
+type ExpectedVersion = {
+  readonly key: { readonly kind: string; readonly id: string };
+  readonly version: number | 'absent';
+};
 /** Human starter content is ordinary readable DSL, admitted through the same Language and Authoring path as agent source. */
 function newSource(id: string, title: string): string {
   return `canvas 1\ncollection @${id} ${JSON.stringify(title)} theme=paper {\n  node @start start "Start" {}\n  node @step step "Describe the next step" {}\n  node @end end "Done" {}\n  wire @first @start -> @step "begin"\n  wire @next @step -> @end "complete"\n  section @process "Process" mode=flow layout=flow direction=right {\n    show @start @step @end\n    connect @first @next\n  }\n}`;
@@ -70,23 +103,7 @@ export function createWorkspaceInputs(
     diagram,
     newSource,
     library: libraryRequest,
-    sourceRecovery: (input) => {
-      const checked = z
-        .strictObject({
-          source: z.string(),
-          snapshot: snapshotSchema,
-          generation: z.string(),
-          collection: z.string(),
-          edit: z.number().int().nonnegative(),
-        })
-        .safeParse(input);
-      if (!checked.success)
-        return failure(
-          'invalid-recovery',
-          'Stored source draft is invalid; it was preserved for recovery',
-        );
-      return { ok: true, value: checked.data };
-    },
+    sourceRecovery,
     dsl: (snapshot, collection, source, mode, id) =>
       request(snapshot, id, 'dsl', { source, mode }, collection, mode === 'create'),
     model: (snapshot, collection, changes: readonly Change[], id) =>
@@ -102,6 +119,101 @@ export function createWorkspaceInputs(
       return { ok: true, value: result.value.source };
     },
   };
+}
+
+const currentSource = z.strictObject({
+  kind: z.literal('source-draft'),
+  schemaVersion: z.literal(1),
+  source: z.string(),
+  base: capturedCollectionBaseSchema,
+  generation: z.string(),
+  collection: z.string(),
+  edit: z.number().int().nonnegative(),
+});
+const legacySource = z.strictObject({
+  source: z.string(),
+  snapshot: snapshotSchema,
+  generation: z.string(),
+  collection: z.string(),
+  edit: z.number().int().nonnegative(),
+});
+interface SourceInput {
+  readonly source: string;
+  readonly base: EditingBase;
+  readonly generation: string;
+  readonly collection: string;
+  readonly edit: number;
+}
+function sourceRecovery(input: unknown): ReturnType<WorkspaceInputs['sourceRecovery']> {
+  const parsed = sourceInput(input);
+  if (!parsed.ok) return parsed;
+  const base = captureCollectionBase(parsed.value.base, parsed.value.collection);
+  if (!base.ok) return base;
+  return admitSource({ ...parsed.value, base: base.value });
+}
+function sourceInput(input: unknown): Result<SourceInput> {
+  const checked = parseSource(input);
+  if (!checked.success)
+    return failure(
+      'invalid-recovery',
+      'Stored source draft is invalid; it was preserved for recovery',
+    );
+  return 'base' in checked.data
+    ? currentSourceValue(checked.data)
+    : legacySourceValue(checked.data);
+}
+function parseSource(input: unknown) {
+  return hasRecoveryTag(input) ? currentSource.safeParse(input) : legacySource.safeParse(input);
+}
+function currentSourceValue(input: z.infer<typeof currentSource>): Result<SourceInput> {
+  return { ok: true, value: input };
+}
+function legacySourceValue(input: z.infer<typeof legacySource>): Result<SourceInput> {
+  return {
+    ok: true,
+    value: {
+      source: input.source,
+      base: input.snapshot,
+      generation: input.generation,
+      collection: input.collection,
+      edit: input.edit,
+    },
+  };
+}
+function admitSource(
+  input: SourceInput & { readonly base: CapturedCollectionBase },
+): ReturnType<WorkspaceInputs['sourceRecovery']> {
+  const collection = admittedCollection(input);
+  if (!collection.ok) return collection;
+  return {
+    ok: true,
+    value: {
+      source: input.source,
+      base: input.base,
+      generation: input.generation,
+      collection: input.collection,
+      edit: input.edit,
+    },
+  };
+}
+function admittedCollection(
+  input: SourceInput & { readonly base: CapturedCollectionBase },
+): Result<Collection> {
+  const collection = validate(input.base.record.value);
+  if (!collection.ok)
+    return failure('invalid-recovery', 'Stored source collection identity is invalid');
+  return checkedSourceCollection(collection.value, input.collection, input.base.record.version);
+}
+function checkedSourceCollection(
+  collection: Collection,
+  id: string,
+  version: number,
+): Result<Collection> {
+  if (collection.id !== id)
+    return failure('invalid-recovery', 'Stored source collection identity is invalid');
+  if (collection.revision !== version)
+    return failure('invalid-recovery', 'Stored source collection revision is invalid');
+  return { ok: true, value: collection };
 }
 
 /** Organization changes acquire only the observed catalog's write scope; Library owns their validation. */

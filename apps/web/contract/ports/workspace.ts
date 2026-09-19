@@ -7,6 +7,7 @@ import type { WorkspaceNavigation } from './navigation.js';
 import type { PanelController } from '../panel-types.js';
 import type { SubmissionFactory } from '../records/submission.js';
 import type { Result } from '../errors.js';
+import type { EditingBase } from '../records/editor-recovery.js';
 import type {
   Collection,
   Snapshot,
@@ -27,20 +28,20 @@ export interface WorkspaceInputs {
   source(collection: Collection): Result<string>;
   sourceRecovery(input: unknown): Result<{
     readonly source: string;
-    readonly snapshot: Snapshot;
+    readonly base: EditingBase;
     readonly generation: string;
     readonly collection: string;
     readonly edit: number;
   }>;
   dsl(
-    snapshot: Snapshot,
+    snapshot: EditingBase,
     id: string,
     source: string,
     mode: 'create' | 'replace',
     request: string,
   ): Result<Request>;
   model(
-    snapshot: Snapshot,
+    snapshot: EditingBase,
     collection: string,
     changes: readonly Change[],
     request: string,

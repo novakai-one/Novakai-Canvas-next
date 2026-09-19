@@ -24,7 +24,14 @@ import { createWireEndpoints } from '../adapters/react/WireEndpoints.js';
 import { createWireRouting } from '../adapters/react/WireRouting.js';
 import type { InspectorBindings, InspectorSession } from './records/inspector.js';
 import type { WireEditorBindings, WireEditorSession } from './records/wire-editor.js';
-import { retainObjectCommand, retainWireCommand, editedObject, wireChanges } from './api.js';
+import {
+  retainObjectCommand,
+  retainWireCommand,
+  editedObject,
+  wireChanges,
+  encodeObjectRecovery,
+  encodeWireRecovery,
+} from './api.js';
 import { readInspectorDrafts } from '../adapters/inspector-reader.js';
 import { createSourceController } from '../adapters/source-session.js';
 import { createWorkspaceNavigation } from '../adapters/browser-navigation.js';
@@ -406,6 +413,7 @@ export function createInspectorSession(bindings: InspectorBindings): InspectorSe
   return createRetainedEditor({
     ...bindings,
     namespace: 'inspector',
+    encode: encodeObjectRecovery,
     edit: retainObjectCommand,
     apply: (draft) => bindings.apply(draft, editedObject(draft)),
   });
@@ -415,6 +423,7 @@ export function createWireSession(bindings: WireEditorBindings): WireEditorSessi
   return createRetainedEditor({
     ...bindings,
     namespace: 'wire-inspector',
+    encode: encodeWireRecovery,
     edit: retainWireCommand,
     apply: (draft) => bindings.apply(draft, wireChanges(draft)),
   });

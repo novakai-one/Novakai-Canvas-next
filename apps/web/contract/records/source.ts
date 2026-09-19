@@ -1,4 +1,5 @@
 import type { Snapshot, Request, Receipt } from './owners.js';
+import type { EditingBase } from './editor-recovery.js';
 import type { ActiveDiagram } from './workspace.js';
 import type { Submission } from './submission.js';
 import type { Result, Diagnostic } from '../errors.js';
@@ -9,7 +10,7 @@ export interface SourceView {
   readonly sourceOpen: boolean;
   readonly source: string;
   readonly sourceDirty: boolean;
-  readonly sourceBase: Snapshot | null;
+  readonly sourceBase: EditingBase | null;
   readonly sourceGeneration: string;
   readonly sourceCollection: string;
   readonly sourceEdit: number;

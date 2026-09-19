@@ -1,0 +1,31 @@
+canvas 1
+collection @f-review "06 / Flowchart — Review a change" theme=walkthrough {
+ node @f-request start "Change proposed" role=primary size=small {}
+ node @f-scope step "Frame the change" size=medium { text @f-scope-detail "Name the user impact, risk and rollback." }
+ node @f-check step "Run automated checks" size=medium { text @f-check-detail "Build, lint and focused tests." }
+ node @f-signal decision "Checks green?" role=decision size=medium {}
+ node @f-review step "Checks pass: review evidence" size=medium { text @f-review-detail "Inspect diff, behavior and operational impact." }
+ node @f-ask step "Not ready: request revisions" role=warning size=medium { text @f-ask-detail "Turn findings into small, actionable changes." }
+ node @f-repair step "Resolve failures or findings" role=warning size=medium { text @f-repair-detail "Update code, tests or release notes." }
+ node @f-approve decision "Ready to release?" role=decision size=medium {}
+ node @f-ship step "Ready: stage release" role=supporting size=medium { text @f-ship-detail "Prepare the candidate and owner handoff." }
+ node @f-done end "Review recorded" role=success size=small {}
+ wire @f-start @f-request -> @f-scope "open review" kind=flow step=1
+ wire @f-automate @f-scope -> @f-check "submit candidate" kind=flow step=2
+ wire @f-green @f-check -> @f-signal "publish checks" kind=flow step=3
+ wire @f-pass @f-signal -> @f-review "yes: inspect evidence" kind=flow
+ wire @f-fail @f-signal -> @f-repair "no: fix failures" kind=flow
+ wire @f-retry @f-repair -> @f-check "rerun checks" kind=flow style=dashed
+ wire @f-findings @f-review -> @f-approve "share recommendation" kind=flow step=4
+ wire @f-revise @f-approve -> @f-ask "no: request revisions" kind=flow
+ wire @f-loop @f-ask -> @f-repair "resolve findings" kind=flow style=dashed
+ wire @f-ready @f-approve -> @f-ship "yes: hand off" kind=flow
+ wire @f-release @f-ship -> @f-done "record decision" kind=flow
+ section @f-flow "06 / Flowchart — Review a change" mode=flow layout=layered direction=right gap=compact {
+  group @f-validation "VALIDATE" layout=layered direction=down gap=compact { show @f-request @f-scope @f-check @f-signal }
+  group @f-assessment "REVIEW + REPAIR" layout=layered direction=down gap=compact { show @f-review @f-approve @f-ask @f-repair }
+  group @f-release-stage "RELEASE" layout=layered direction=down gap=compact { show @f-ship @f-done }
+  connect @f-start @f-automate @f-green @f-pass @f-findings @f-ready @f-release source-side=auto target-side=auto
+  connect @f-fail @f-revise @f-loop @f-retry source-side=auto target-side=auto
+ }
+}

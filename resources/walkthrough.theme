@@ -1,0 +1,10 @@
+theme 1 @walkthrough "Walkthrough / midnight" version=1.0.0 base=ink
+font body source="./fonts/inter-latin-400-normal.woff2"
+font mono source="./fonts/jetbrains-mono-latin-400-normal.woff2"
+font strong source="./fonts/inter-tight-latin-700-normal.woff2"
+set color action.accent="#72dbe8"
+set color text.primary="#f1f5ff"
+set color text.secondary="#b7c6dd"
+set number ratio.caption=1
+set number ratio.title=1.3
+set number lineHeight.body=1.3

@@ -1,0 +1,30 @@
+canvas 1
+collection @walkthrough-sequence "Submit a change for release review" theme=walkthrough {
+ node @q-author participant "Author" role=primary {}
+ node @q-gateway participant "Review gateway" role=supporting {}
+ node @q-agent participant "Review agent" {}
+ node @q-policy participant "Policy service" {}
+ node @q-store participant "Review store" role=success {}
+ section @q-submit "05 / Sequence — Submit a change" mode=sequence direction=down gap=compact {
+  show @q-author @q-gateway @q-agent @q-policy @q-store
+  event @q-submit-request @q-author -> @q-gateway "Submit change and commit SHA" kind=call activate=true
+  event @q-create-review @q-gateway -> @q-store "Create pending review" kind=call
+  event @q-accepted @q-store -> @q-gateway "Return review identity" kind=return activate=false
+  event @q-start-agent @q-gateway -> @q-agent "Start contextual review" kind=async activate=true
+  event @q-load-policy @q-agent -> @q-policy "Load policy version" kind=call
+  fragment @q-policy-check alt "Policy check outcome" {
+   branch @q-allowed "Policy allows review" {
+    event @q-policy-result @q-policy -> @q-agent "Return policy constraints" kind=return activate=false
+  fragment @q-findings loop "Collect findings until checks settle" {
+   event @q-scan @q-agent -> @q-agent "Scan changed area" kind=call
+   event @q-record-finding @q-agent -> @q-store "Record finding batch" kind=call
+  }
+   }
+   branch @q-blocked "Policy blocks review" {
+    event @q-policy-block @q-policy -> @q-agent "Return blocking constraint" kind=return activate=false
+   }
+  }
+  event @q-propose @q-agent -> @q-gateway "Propose review decision" kind=return activate=false
+  event @q-notify @q-gateway -> @q-author "Notify outcome and evidence" kind=async activate=false
+ }
+}

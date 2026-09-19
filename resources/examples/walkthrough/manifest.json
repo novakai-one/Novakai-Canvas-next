@@ -1,0 +1,105 @@
+[
+  {
+    "file": "01-infographic.canvas",
+    "collection": "walkthrough-infographic",
+    "title": "01 / Infographics",
+    "sections": [
+      {
+        "id": "agent-run",
+        "title": "01.1 / Infographic \u2014 Inside an agent run"
+      },
+      {
+        "id": "i-builtins",
+        "title": "01.2 / Infographic \u2014 Built-in figures, no image assets"
+      }
+    ]
+  },
+  {
+    "file": "02-modules.canvas",
+    "collection": "walkthrough-modules",
+    "title": "Agent-assisted release review",
+    "sections": [
+      {
+        "id": "m-review-map",
+        "title": "02 / Modules \u2014 Release review"
+      }
+    ]
+  },
+  {
+    "file": "03-entities.canvas",
+    "collection": "walkthrough-entities",
+    "title": "Release review records",
+    "sections": [
+      {
+        "id": "e-review-model",
+        "title": "03 / Entities \u2014 Review records"
+      }
+    ]
+  },
+  {
+    "file": "04-repo-tree.canvas",
+    "collection": "walkthrough-repo-tree",
+    "title": "04 / Repo tree",
+    "sections": [
+      {
+        "id": "r-tree",
+        "title": "04 / Repo tree \u2014 Real capability boundaries"
+      }
+    ]
+  },
+  {
+    "file": "05-sequence.canvas",
+    "collection": "walkthrough-sequence",
+    "title": "Submit a change for release review",
+    "sections": [
+      {
+        "id": "q-submit",
+        "title": "05 / Sequence \u2014 Submit a change"
+      }
+    ]
+  },
+  {
+    "file": "06-flowchart.canvas",
+    "collection": "f-review",
+    "title": "06 / Flowchart \u2014 Review a change",
+    "sections": [
+      {
+        "id": "f-flow",
+        "title": "06 / Flowchart \u2014 Review a change"
+      }
+    ]
+  },
+  {
+    "file": "07-state.canvas",
+    "collection": "s-lifecycle",
+    "title": "07 / State \u2014 Change lifecycle",
+    "sections": [
+      {
+        "id": "s-state",
+        "title": "07 / State \u2014 Change lifecycle"
+      }
+    ]
+  },
+  {
+    "file": "08-mindmap.canvas",
+    "collection": "t-credible",
+    "title": "08 / Mindmap \u2014 What makes a review credible?",
+    "sections": [
+      {
+        "id": "t-map",
+        "title": "08 / Mindmap \u2014 Credible review"
+      }
+    ]
+  },
+  {
+    "file": "09-comparison.canvas",
+    "collection": "g-views",
+    "title": "09 / Comparison \u2014 Choose the right view",
+    "sections": [
+      {
+        "id": "g-grid",
+        "title": "09 / Comparison \u2014 Review responsibilities"
+      }
+    ]
+  }
+]

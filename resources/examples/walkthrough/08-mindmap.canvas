@@ -1,0 +1,33 @@
+canvas 1
+collection @t-credible "08 / Mindmap — What makes a review credible?" theme=walkthrough {
+ node @t-root concept "Credible review" role=primary size=large { text @t-detail "A decision another engineer can trust and replay." }
+ node @t-scope concept "Clear scope" role=supporting size=medium {}
+ node @t-change concept "Small change" size=small { text @t-change-detail "One outcome, one owner." }
+ node @t-risk concept "Known risk" size=small { text @t-risk-detail "Name blast radius and rollback." }
+ node @t-evidence concept "Strong evidence" role=success size=medium {}
+ node @t-tests concept "Checks" size=small { list @t-tests-points ["Focused tests", "Failure path", "Regression guard"] }
+ node @t-runtime concept "Runtime signal" size=small { text @t-runtime-detail "Logs, metrics or a safe trial." }
+ node @t-reasoning concept "Sound reasoning" size=medium {}
+ node @t-tradeoff concept "Tradeoffs" size=small { text @t-tradeoff-detail "Explain the chosen seam." }
+ node @t-alternatives concept "Alternatives" size=small { text @t-alternatives-detail "Record what was considered." }
+ node @t-ownership concept "Clear ownership" role=warning size=medium {}
+ node @t-rollback concept "Rollback owner" size=small { text @t-rollback-detail "Someone can stop the change." }
+ node @t-followup concept "Follow-up" size=small { text @t-followup-detail "Close the remaining uncertainty." }
+ wire @t-scope @t-root -> @t-scope "starts with" kind=parent
+ wire @t-change @t-scope -> @t-change "narrows to" kind=parent
+ wire @t-risk @t-scope -> @t-risk "names" kind=parent
+ wire @t-evidence @t-root -> @t-evidence "demonstrates" kind=parent
+ wire @t-tests @t-evidence -> @t-tests "checks" kind=parent
+ wire @t-runtime @t-evidence -> @t-runtime "observes" kind=parent
+ wire @t-reasoning @t-root -> @t-reasoning "explains" kind=parent
+ wire @t-tradeoff @t-reasoning -> @t-tradeoff "states" kind=parent
+ wire @t-alternatives @t-reasoning -> @t-alternatives "compares" kind=parent
+ wire @t-ownership @t-root -> @t-ownership "assigns" kind=parent
+ wire @t-rollback @t-ownership -> @t-rollback "protects" kind=parent
+ wire @t-followup @t-ownership -> @t-followup "tracks" kind=parent
+ section @t-map "08 / Mindmap — Credible review" mode=tree layout=tree direction=right gap=compact {
+  show @t-root @t-scope @t-change @t-risk @t-evidence @t-tests @t-runtime @t-reasoning @t-tradeoff @t-alternatives @t-ownership @t-rollback @t-followup
+  connect @t-scope @t-change @t-risk @t-evidence @t-tests @t-runtime @t-reasoning @t-tradeoff @t-alternatives @t-ownership @t-rollback @t-followup source-side=right target-side=left
+  root @t-root
+ }
+}

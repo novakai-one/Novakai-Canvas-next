@@ -1,74 +1,6 @@
-# Novakai Canvas
-
-**Make the plan visible. Keep its meaning intact.**
-
-A deterministic, lossless **diagram language** for coding with agents—human to agent, and agent to agent.
-
-Long prose specs bury the important parts. One paraphrased constraint can become the wrong implementation. Novakai Canvas makes the objects, boundaries, relationships and sequence explicit in a readable DSL, with a canvas humans can inspect.
-
-The target is **100% shared comprehension**: spend frontier-model reasoning on planning, then give token-efficient builders—such as Codex Luna—a precise, reviewable contract. Make a 24-hour build traceable against its plan, rather than trusting a long conversation from memory.
-
-That is the direction, not a guarantee of perfect agent understanding. Today, “lossless” means preserving the supported diagram semantics through DSL read/write; “deterministic” assumes the same diagram, pinned resources, engine version and retained human layout state.
-
-## Try the walkthrough
-
-```sh
-pnpm install --frozen-lockfile
-pnpm --filter @novakai/canvas-web build
-pnpm dev --port 5210 --workspace .novakai/walkthrough
-```
-
-In another terminal, from the repo root:
-
-```sh
-pnpm canvas theme admit resources/walkthrough.theme --request walkthrough-theme \
-  --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
-pnpm canvas create resources/examples/walkthrough/all-diagrams.canvas \
-  --request walkthrough-create --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
-```
-
-Open **[the combined walkthrough](http://127.0.0.1:5210/?collection=walkthrough)**. Choose **Inspect → Settings → Dark**, then **Reading mode** in the canvas toolbar. **Next section** steps through the examples; **View → Hide all interface** removes the controls, and **Escape** restores them.
-
-**Reading mode is an overview.** Zoom in to reveal module bodies and ports; fitting a large section can hide this detail. If the toolbar overlaps content, zoom out once or use **Hide all interface** for an unobstructed view.
-
-![Reading view stepping through the same collection](docs/walkthrough/reading-view.gif)
-
-Nine example collections, ten sections in the combined canvas. Start with the idea, then move through its structure, data and behaviour. The illustration and process examples are a fictional release-review system; the repo tree uses actual paths.
-
-<details>
-<summary>Load each example as its own collection</summary>
-
-```sh
-for file in resources/examples/walkthrough/0*.canvas; do
-  name=$(basename "$file" .canvas)
-  pnpm canvas create "$file" --request "example-$name" \
-    --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
-done
-```
-
-Run each create once per workspace. For an existing collection, read its current revision and use `replace --revision N` with a fresh request ID.
-
-</details>
-
-## What you can author
-
-Each screenshot below is from the running app. Expand its DSL to see the complete source, or open the linked file. The app calculates positions and wire paths.
-
-### Infographics
-
-Explain an idea with illustrations, captions and real connections. Two sections demonstrate reusable SVG assets and built-in parametric figures. Neither requires authored node coordinates.
-
-![Infographics in the running app](docs/walkthrough/01-infographic.png)
-
-[Open the DSL](resources/examples/walkthrough/01-infographic.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
 canvas 1
-collection @walkthrough-infographic "01 / Infographics" theme=walkthrough description="Original illustrated infographics. Conceptual examples, not measured performance or a claim about a particular model architecture." {
-  asset @context-art image source="./assets/context.svg" alt="Three translucent layers of context"
+collection @walkthrough "Novakai Canvas — Agent communication walkthrough" theme=walkthrough layout=grid columns=3 gap=normal description="Nine examples in ten ordered sections. Illustrative release-review system, plus selected real repository paths." {
+asset @context-art image source="./assets/context.svg" alt="Three translucent layers of context"
   asset @reason-art image source="./assets/reason.svg" alt="A luminous reasoning core surrounded by orbital rings"
   asset @tools-art image source="./assets/tools.svg" alt="A terminal and callable tool interface"
   asset @evidence-art image source="./assets/evidence.svg" alt="An evidence document with a verification mark"
@@ -122,30 +54,8 @@ collection @walkthrough-infographic "01 / Infographics" theme=walkthrough descri
     show @i-draft @i-check @i-store @i-queue
     connect @i-review @i-save @i-next source-side=right target-side=left
   }
-}
-```
 
-</details>
-
-**No SVG asset required:** the second section uses built-in `window`, `gate`, `store` and `queue` figures. SVG images are an optional supported asset path for custom illustration; they do not replace the semantic nodes or routing.
-
-![Built-in infographic figures](docs/walkthrough/01-builtins.png)
-
-### Module diagrams
-
-Make responsibilities, callable interfaces and nested capability boundaries visible. This example has 11 nodes across input, review and record-keeping groups.
-
-![Module diagrams in the running app](docs/walkthrough/02-modules.png)
-
-[Open the DSL](resources/examples/walkthrough/02-modules.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @walkthrough-modules "Agent-assisted release review" theme=walkthrough {
- node @m-intake module "Change intake" size=medium {
+node @m-intake module "Change intake" size=medium {
   code @m-intake-exports "submitChange()"
   port @m-change out "change" type="ChangeRequest"
   port @m-submit in "submit" type="SubmitRequest"
@@ -218,26 +128,8 @@ collection @walkthrough-modules "Agent-assisted release review" theme=walkthroug
   }
   connect @m-intake-route @m-context-route @m-policy-use @m-evidence-route @m-risk-use @m-decision-use @m-workflow-plan @m-workflow-decision @m-store @m-notify-route @m-audit-route source-side=right target-side=left
  }
-}
-```
 
-</details>
-
-### Entity diagrams
-
-Seven entities connect changes, reviews, findings and evidence. Fields, primary/foreign keys and cardinalities carry meaning beyond a box label.
-
-![Entity diagrams in the running app](docs/walkthrough/03-entities.png)
-
-[Open the DSL](resources/examples/walkthrough/03-entities.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @walkthrough-entities "Release review records" theme=walkthrough {
- node @e-repository entity "Repository" size=medium {
+node @e-repository entity "Repository" size=medium {
   field @e-repository-id "repository_id" type="RepositoryId"
   field @e-repository-name "name" type="string"
   keygroup @e-repository-key kind=primary fields=[@e-repository-id]
@@ -299,26 +191,8 @@ collection @walkthrough-entities "Release review records" theme=walkthrough {
   show @e-repository @e-change @e-review @e-finding @e-evidence @e-decision @e-audit
   connect @e-repo-changes @e-change-review @e-review-findings @e-review-evidence @e-review-decision @e-review-audit
  }
-}
-```
 
-</details>
-
-### Repo trees
-
-Follow 16 selected real paths through this repository. This is the current parent-child diagram view; an interactive, collapsible file explorer is not implemented yet.
-
-![Repo trees in the running app](docs/walkthrough/04-repo-tree.png)
-
-[Open the DSL](resources/examples/walkthrough/04-repo-tree.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @walkthrough-repo-tree "04 / Repo tree" theme=walkthrough description="Selected real paths in this repository; a semantic parent-child tree, not a collapsible file explorer." {
-  node @r-root concept "Novakai-Canvas-next/" size=small role=primary {}
+node @r-root concept "Novakai-Canvas-next/" size=small role=primary {}
   node @r-apps concept "apps/" size=small {}
   node @r-cap concept "capability/" size=small {}
   node @r-web concept "web/" size=small {}
@@ -354,26 +228,8 @@ collection @walkthrough-repo-tree "04 / Repo tree" theme=walkthrough description
     connect @r-edge-apps @r-edge-cap @r-edge-web @r-edge-service @r-edge-layout @r-edge-model @r-edge-wc @r-edge-sc @r-edge-lc @r-edge-mc @r-edge-wi @r-edge-si @r-edge-place @r-edge-route @r-edge-mi
     root @r-root
   }
-}
-```
 
-</details>
-
-### Sequence diagrams
-
-Follow five participants through submission, a policy decision and repeated evidence collection. Messages, alternatives and loops remain structured DSL.
-
-![Sequence diagrams in the running app](docs/walkthrough/05-sequence.png)
-
-[Open the DSL](resources/examples/walkthrough/05-sequence.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @walkthrough-sequence "Submit a change for release review" theme=walkthrough {
- node @q-author participant "Author" role=primary {}
+node @q-author participant "Author" role=primary {}
  node @q-gateway participant "Review gateway" role=supporting {}
  node @q-agent participant "Review agent" {}
  node @q-policy participant "Policy service" {}
@@ -400,26 +256,8 @@ collection @walkthrough-sequence "Submit a change for release review" theme=walk
   event @q-propose @q-agent -> @q-gateway "Propose review decision" kind=return activate=false
   event @q-notify @q-gateway -> @q-author "Notify outcome and evidence" kind=async activate=false
  }
-}
-```
 
-</details>
-
-### Flowcharts
-
-Trace a ten-step review with decisions and repair loops. Successful and unsuccessful paths are named in the nodes as well as the connections.
-
-![Flowcharts in the running app](docs/walkthrough/06-flowchart.png)
-
-[Open the DSL](resources/examples/walkthrough/06-flowchart.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @f-review "06 / Flowchart — Review a change" theme=walkthrough {
- node @f-request start "Change proposed" role=primary size=small {}
+node @f-request start "Change proposed" role=primary size=small {}
  node @f-scope step "Frame the change" size=medium { text @f-scope-detail "Name the user impact, risk and rollback." }
  node @f-check step "Run automated checks" size=medium { text @f-check-detail "Build, lint and focused tests." }
  node @f-signal decision "Checks green?" role=decision size=medium {}
@@ -447,26 +285,8 @@ collection @f-review "06 / Flowchart — Review a change" theme=walkthrough {
   connect @f-start @f-automate @f-green @f-pass @f-findings @f-ready @f-release source-side=auto target-side=auto
   connect @f-fail @f-revise @f-loop @f-retry source-side=auto target-side=auto
  }
-}
-```
 
-</details>
-
-### State diagrams
-
-Separate a change’s seven lifecycle states from the events that move it forward. Transition guards and effects are retained in the source; select a wire to inspect its label.
-
-![State diagrams in the running app](docs/walkthrough/07-state.png)
-
-[Open the DSL](resources/examples/walkthrough/07-state.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @s-lifecycle "07 / State — Change lifecycle" theme=walkthrough {
- node @s-draft start "Draft" size=small {}
+node @s-draft start "Draft" size=small {}
  node @s-review state "In review" role=primary size=large { text @s-review-detail "Evidence and ownership are being checked." }
  node @s-rework state "Changes requested" role=warning size=medium { text @s-rework-detail "The author has concrete findings to resolve." }
  node @s-approved state "Approved" role=success size=medium { text @s-approved-detail "Required reviewers accept the candidate." }
@@ -489,26 +309,8 @@ collection @s-lifecycle "07 / State — Change lifecycle" theme=walkthrough {
   }
   connect @s-submit @s-request @s-resubmit @s-accept @s-prepare @s-deploy @s-close source-side=right target-side=left
  }
-}
-```
 
-</details>
-
-### Mindmaps
-
-Organise 13 concepts into scope, evidence, reasoning and ownership. The same tree semantics used for files can organise an argument.
-
-![Mindmaps in the running app](docs/walkthrough/08-mindmap.png)
-
-[Open the DSL](resources/examples/walkthrough/08-mindmap.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @t-credible "08 / Mindmap — What makes a review credible?" theme=walkthrough {
- node @t-root concept "Credible review" role=primary size=large { text @t-detail "A decision another engineer can trust and replay." }
+node @t-root concept "Credible review" role=primary size=large { text @t-detail "A decision another engineer can trust and replay." }
  node @t-scope concept "Clear scope" role=supporting size=medium {}
  node @t-change concept "Small change" size=small { text @t-change-detail "One outcome, one owner." }
  node @t-risk concept "Known risk" size=small { text @t-risk-detail "Name blast radius and rollback." }
@@ -538,26 +340,8 @@ collection @t-credible "08 / Mindmap — What makes a review credible?" theme=wa
   connect @t-scope @t-change @t-risk @t-evidence @t-tests @t-runtime @t-reasoning @t-tradeoff @t-alternatives @t-ownership @t-rollback @t-followup source-side=right target-side=left
   root @t-root
  }
-}
-```
 
-</details>
-
-### Comparison grids
-
-Compare planning, building and review side by side. Three groups share the same questions, so responsibilities can be scanned rather than buried in paragraphs.
-
-![Comparison grids in the running app](docs/walkthrough/09-comparison.png)
-
-[Open the DSL](resources/examples/walkthrough/09-comparison.canvas)
-
-<details>
-<summary>DSL that authors this diagram</summary>
-
-```text
-canvas 1
-collection @g-views "09 / Comparison — Choose the right view" theme=walkthrough {
- node @g-plan concept "Planning view" role=primary size=large { text @g-plan-purpose "Shape the work before implementation." }
+node @g-plan concept "Planning view" role=primary size=large { text @g-plan-purpose "Shape the work before implementation." }
  node @g-plan-scope note "Best for scope" size=small { text @g-plan-use "Goals, risks and acceptance signals." }
  node @g-plan-risk note "Watch for drift" role=warning size=small { text @g-plan-risk-use "Recheck assumptions as evidence arrives." }
  node @g-build concept "Building view" role=supporting size=large { text @g-build-purpose "Make the change and prove behavior." }
@@ -572,39 +356,3 @@ collection @g-views "09 / Comparison — Choose the right view" theme=walkthroug
   group @g-reviewing "REVIEW / Is it ready?" represents=@g-review layout=grid columns=1 gap=compact { show @g-review-evidence @g-review-decision }
  }
 }
-```
-
-</details>
-
-## From a diagram to an agent build
-
-1. **Plan together.** Define modules, entities, flows and constraints. Review the canvas with a frontier model.
-2. **Build in small changes.** Give a builder the relevant DSL and acceptance criteria; keep stable IDs across edits.
-3. **Review for drift.** Keep the `.canvas` source in Git, export the diagram, and compare each PR with the declared responsibilities and relationships. Code-to-plan review is currently a human/agent workflow, not an automatic proof of implementation correctness.
-
-The export capability supports SVG, PNG, PDF, offline HTML and editable bundles. Editable bundles retain the resources and layout metadata needed for a portable diagram; a screenshot alone does not.
-
-## Deterministic layout, owned routing
-
-Agents describe meaning and grouping, never node coordinates. Presentation measures content; layout places it. Module diagrams use the custom roads-and-lanes engine, including nested boundaries and port attachments. Other diagram families currently use their existing engines; broader custom-engine coverage is future work.
-
-Historical local measurements for the 50-module work showed **about 0.51–0.75 seconds from selection to paint**. A separate drag measurement was **110 ms to paint, including 54 ms calculation**. These are development observations, not a 100 ms full-load promise or a fresh cold-start benchmark. [Recorded measurements](docs/walkthrough/timing-evidence.json).
-
-## Working with the source
-
-```sh
-pnpm canvas describe
-pnpm canvas read walkthrough --out .novakai/current.canvas \
-  --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
-pnpm canvas preview resources/examples/walkthrough/all-diagrams.canvas \
-  --mode replace --revision 0 --request walkthrough-edit \
-  --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
-pnpm canvas apply walkthrough-edit \
-  --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
-```
-
-Use the revision returned by `read`/`list`, not a guessed number. Preview validates before commit; apply returns a receipt. Matching replacements preserve human layout edits, and explicit resets clear them.
-
-Old local collections and workspace history are archived under ignored `.novakai/`. The curated walkthrough, its assets and screenshots remain tracked so a clone can reproduce it. Existing regression-corpus diagrams remain in `resources/examples` because tests depend on them.
-
-For development: [capability structure](docs/standards/REPO-FOLDER-STRUCTURE.md), [engineering contract](AGENTS.md), [agent authoring SOP](docs/agent-diagrams/visual-quality/SOP.md). Application code changes use `pnpm check`.

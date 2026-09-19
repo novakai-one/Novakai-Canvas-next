@@ -1,0 +1,57 @@
+canvas 1
+collection @walkthrough-infographic "01 / Infographics" theme=walkthrough description="Original illustrated infographics. Conceptual examples, not measured performance or a claim about a particular model architecture." {
+  asset @context-art image source="./assets/context.svg" alt="Three translucent layers of context"
+  asset @reason-art image source="./assets/reason.svg" alt="A luminous reasoning core surrounded by orbital rings"
+  asset @tools-art image source="./assets/tools.svg" alt="A terminal and callable tool interface"
+  asset @evidence-art image source="./assets/evidence.svg" alt="An evidence document with a verification mark"
+
+  node @context concept "01 / Ground the task" frame=none composition=media-top {
+    image @art asset=@context-art size=large
+    text @caption "Goal + constraints + relevant evidence." role=caption
+  }
+  node @reason concept "02 / Choose the next step" frame=none composition=media-top {
+    image @art asset=@reason-art size=large
+    text @caption "Use the current context to choose an action." role=caption
+  }
+  node @tools concept "03 / Act through tools" frame=none composition=media-top {
+    image @art asset=@tools-art size=large
+    text @caption "Read, calculate or change an external system." role=caption
+  }
+  node @proof concept "04 / Check the result" frame=none composition=media-top {
+    image @art asset=@evidence-art size=large
+    text @caption "Verify the result. Continue if the goal is unmet." role=caption
+  }
+  wire @grounded @context -> @reason "context" kind=flow step=1
+  wire @action @reason -> @tools "action" kind=flow step=2
+  wire @observed @tools -> @proof "observation" kind=flow step=3
+  wire @feedback @proof -> @reason "continue if needed" kind=reference style=dashed
+  section @agent-run "01.1 / Infographic — Inside an agent run" mode=story layout=grid columns=4 direction=right gap=normal {
+    show @context @reason @tools @proof
+    connect @grounded @action @observed source-side=right target-side=left
+    connect @feedback source-side=bottom target-side=bottom
+  }
+
+  node @i-draft concept "Describe the change" frame=none composition=media-top {
+    figure @i-art window fill=half size=large
+    text @i-caption "Write intent and boundaries." role=caption
+  }
+  node @i-check concept "Check the contract" frame=none composition=media-top {
+    figure @i-art gate pass=one size=large
+    text @i-caption "Reject invalid changes before commit." role=caption
+  }
+  node @i-store concept "Retain the evidence" frame=none composition=media-top {
+    figure @i-art store size=large
+    text @i-caption "Keep the revision and its receipt." role=caption
+  }
+  node @i-queue concept "Work in small steps" frame=none composition=media-top {
+    figure @i-art queue level=half size=large
+    text @i-caption "Review one bounded change at a time." role=caption
+  }
+  wire @i-review @i-draft -> @i-check "validate" kind=flow
+  wire @i-save @i-check -> @i-store "commit" kind=flow
+  wire @i-next @i-store -> @i-queue "continue" kind=flow
+  section @i-builtins "01.2 / Infographic — Built-in figures, no image assets" mode=story layout=grid columns=4 direction=right gap=normal {
+    show @i-draft @i-check @i-store @i-queue
+    connect @i-review @i-save @i-next source-side=right target-side=left
+  }
+}

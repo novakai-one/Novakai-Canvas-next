@@ -146,4 +146,11 @@
     stroke: var(--nv-canvas-secondary);
     stroke-width: var(--nv-focus-width);
   }
+  .root[data-hovered='true'][data-emphasis='normal'][data-shape][data-node-role]:not(
+      [data-shape='container']
+    )
+    .frame {
+    stroke: var(--nv-canvas-secondary);
+    stroke-width: var(--nv-stroke-base);
+  }
 }

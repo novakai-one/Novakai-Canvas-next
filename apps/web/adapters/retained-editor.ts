@@ -30,11 +30,16 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
       return reject(
         failure('unavailable', 'Recover this workspace before changing retained forms').error,
       );
-    const result = bindings.retention.write(`${bindings.namespace}.${workspace}`, drafts);
     publish({ ...state, drafts });
+    const result = writeDrafts(drafts);
     if (!result.ok) return reject(result.error);
     publish({ drafts, problem: null });
     return result;
+  }
+  function writeDrafts(drafts: readonly Draft[]): Result<void> {
+    const encoded = bindings.encode(drafts);
+    if (!encoded.ok) return encoded;
+    return bindings.retention.write(`${bindings.namespace}.${workspace}`, encoded.value);
   }
   /** Read failure blocks all writes while preserving previous forms and both workspaces' stored data. */
   function restore(id: string): Result<void> {
@@ -52,8 +57,15 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
   }
   /** Foreign-workspace payloads cannot become forms under a newly admitted storage key. */
   function restored(drafts: readonly Draft[], id: string): Result<void> {
+    if (drafts.some((draft) => draft.base.workspace !== id))
+      return reject(
+        failure(
+          'wrong-workspace',
+          'Stored forms belong to a different workspace; data was retained',
+        ).error,
+      );
     workspace = id;
-    publish({ drafts: drafts.filter((draft) => draft.base.workspace === id), problem: null });
+    publish({ drafts, problem: null });
     return { ok: true, value: undefined };
   }
   /** The feature captures the first version and replays later edits against it. */

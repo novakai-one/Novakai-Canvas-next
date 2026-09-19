@@ -7,6 +7,7 @@ import type {
   Change,
 } from './owners.js';
 import type { Snapshot, Receipt } from './owners.js';
+import type { EditingBase } from './editor-recovery.js';
 import type { Diagnostic, Result } from '../errors.js';
 import type { DraftRetention } from '../ports/workspace.js';
 /** The semantic relationship is shared; only the selected section owns the route controls. */
@@ -37,7 +38,8 @@ export type WireEdit =
       readonly value: WireAppearance['sourceSide'];
     }
   | { readonly kind: 'automatic-route' };
-export interface WireDraft extends WireSelection {
+export interface WireDraft extends Omit<WireSelection, 'base'> {
+  readonly base: EditingBase;
   readonly key: string;
   readonly edits: readonly WireEdit[];
 }

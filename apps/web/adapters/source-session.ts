@@ -8,6 +8,8 @@ import type {
 } from '../contract/records/owners.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Result } from '../contract/errors.js';
+import { encodeSourceRecovery } from '../contract/api.js';
+import { failure } from '../contract/errors.js';
 /** Source editor owns its draft, captured base and recovery record. It cannot commit without the injected submission owner. */
 export function createSourceController(bindings: SourceBindings): SourceController {
   let state: SourceView = {
@@ -21,6 +23,7 @@ export function createSourceController(bindings: SourceBindings): SourceControll
     sourceEdit: 0,
   };
   let sourceReceipt: Receipt | null = null;
+  let admittedWorkspace: string | null = null;
   /** Every update publishes an immutable editor snapshot; other workspace state has a different owner. */
   function update(patch: Partial<SourceView>): void {
     state = { ...state, ...patch };
@@ -116,14 +119,24 @@ export function createSourceController(bindings: SourceBindings): SourceControll
   }
   /** Clean source has no recoverable draft; dirty source persists its exact authoring base. */
   function persistSource(key: string): Result<void> {
+    if (!sourceAdmission(key))
+      return failure(
+        'recovery-unavailable',
+        'Source recovery has not admitted this workspace; stored data was retained',
+      );
+    return persistAdmittedSource(key);
+  }
+  function persistAdmittedSource(key: string): Result<void> {
     if (!state.sourceDirty) return bindings.retention.remove(key);
-    return bindings.retention.write(key, {
+    const encoded = encodeSourceRecovery({
       source: state.source,
-      snapshot: state.sourceBase,
+      base: state.sourceBase,
       generation: state.sourceGeneration,
       collection: state.sourceCollection,
       edit: state.sourceEdit,
     });
+    if (!encoded.ok) return encoded;
+    return bindings.retention.write(key, encoded.value);
   }
   /** Closing a dirty editor is an explicit human choice; keeping it never discards its source/base. */
   function closeSource(decision: 'keep' | 'discard' | 'stay'): void {
@@ -139,12 +152,17 @@ export function createSourceController(bindings: SourceBindings): SourceControll
   }
   /** Browser recovery never rewrites a draft's captured revision to the latest remote version. */
   function restoreSource(workspace: string): void {
+    admittedWorkspace = null;
     const stored = bindings.retention.read(`source-draft.${workspace}`);
     if (!stored.ok) {
       report(stored.error);
       return;
     }
-    if (stored.value !== null) restoreCheckedSource(stored.value, workspace);
+    if (stored.value === null) {
+      admittedWorkspace = workspace;
+      return;
+    }
+    restoreCheckedSource(stored.value, workspace);
   }
   /** Reject cross-workspace recovery records even when their source and snapshot are individually valid. */
   function restoreCheckedSource(input: unknown, workspace: string): void {
@@ -153,11 +171,17 @@ export function createSourceController(bindings: SourceBindings): SourceControll
       report(checked.error);
       return;
     }
-    if (checked.value.snapshot.workspace !== workspace) return;
+    if (checked.value.base.workspace !== workspace) {
+      report(
+        failure('wrong-workspace', 'The retained source belongs to a different workspace').error,
+      );
+      return;
+    }
     const value = checked.value;
+    admittedWorkspace = workspace;
     update({
       source: value.source,
-      sourceBase: value.snapshot,
+      sourceBase: value.base,
       sourceGeneration: value.generation,
       sourceCollection: value.collection,
       sourceEdit: value.edit,
@@ -165,11 +189,28 @@ export function createSourceController(bindings: SourceBindings): SourceControll
       sourceOpen: true,
     });
   }
+  function sourceAdmission(key: string): boolean {
+    const baseWorkspace = state.sourceBase?.workspace;
+    return baseWorkspace === admittedWorkspace && key === `source-draft.${admittedWorkspace}`;
+  }
+  function admittedSourceBase(): NonNullable<SourceView['sourceBase']> | null {
+    const base = state.sourceBase;
+    if (base === null) return null;
+    if (admittedWorkspace === base.workspace) return base;
+    report(
+      failure(
+        'recovery-unavailable',
+        'Source recovery has not admitted this workspace; apply was refused',
+      ).error,
+    );
+    return null;
+  }
   /** Apply uses captured source preconditions even if an agent has since committed a newer collection. */
   async function applySource(): Promise<void> {
-    if (state.sourceBase === null) return;
+    const base = admittedSourceBase();
+    if (base === null) return;
     const request = bindings.inputs.dsl(
-      state.sourceBase,
+      base,
       state.sourceCollection,
       state.source,
       'replace',

@@ -1,5 +1,6 @@
 import type { Collection, DiagramObject, ObjectKind, DescendantId } from '@novakai/canvas-model';
 import type { Snapshot, Receipt } from './owners.js';
+import type { EditingBase } from './editor-recovery.js';
 import type { Result, Diagnostic } from '../errors.js';
 import type { DraftRetention } from '../ports/workspace.js';
 /** UI edit commands retain incomplete text without pretending it is an admitted Model record. */
@@ -34,7 +35,7 @@ export type ObjectEdit =
 /** Captured scope never advances across another author's commit. Commands replay against this exact object. */
 export interface ObjectDraft {
   readonly key: string;
-  readonly base: Snapshot;
+  readonly base: EditingBase;
   readonly generation: string;
   readonly collection: Collection;
   readonly object: DiagramObject;

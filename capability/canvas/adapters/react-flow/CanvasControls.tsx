@@ -13,6 +13,7 @@ export function createCanvasControls(
     actions,
     outlineOpen,
     onOutline,
+    visibility,
   }: ControlsProps): ReactElement {
     const { state, view } = snapshot;
     const center = { x: view.camera.viewport.width / 2, y: view.camera.viewport.height / 2 };
@@ -32,65 +33,78 @@ export function createCanvasControls(
     ));
     return (
       <div className={`nodrag nopan ${styles.controls}`} role="toolbar" aria-label="Canvas tools">
-        {toolButtons}
-        <Button
-          label="Zoom out"
-          title="Zoom out"
-          icon={<Icon name="minus" />}
-          iconOnly
-          onClick={() =>
-            actions.dispatch({
-              kind: 'zoom',
-              factor:
-                Math.max(state.profile.zoomMin, view.camera.zoom - state.profile.zoomStep) /
-                view.camera.zoom,
-              pointer: center,
-            })
-          }
-        />
-        <output aria-label="Zoom level">{Math.round(view.camera.zoom * 100)}%</output>
-        <Button
-          label="Zoom in"
-          title="Zoom in"
-          icon={<Icon name="plus" />}
-          iconOnly
-          onClick={() =>
-            actions.dispatch({
-              kind: 'zoom',
-              factor: (view.camera.zoom + state.profile.zoomStep) / view.camera.zoom,
-              pointer: center,
-            })
-          }
-        />
-        <Button
-          label="Fit collection"
-          onClick={() => actions.dispatch({ kind: 'fit', target: null })}
-        />
-        <Button
-          label="Diagram outline"
-          title="Diagram outline"
-          icon={<Icon name="outline" />}
-          iconOnly
-          selected={outlineOpen}
-          onClick={onOutline}
-        />
-        <Button
-          label={state.reading === null ? 'Reading mode' : 'Exit reading'}
-          onClick={() =>
-            actions.dispatch({ kind: 'reading', action: state.reading === null ? 'enter' : 'exit' })
-          }
-        />
-        {state.reading !== null && (
+        {visibility.tools && (
+          <>
+            {toolButtons}
+            <Button
+              label="Fit collection"
+              onClick={() => actions.dispatch({ kind: 'fit', target: null })}
+            />
+            <Button
+              label={state.reading === null ? 'Reading mode' : 'Exit reading'}
+              onClick={() =>
+                actions.dispatch({
+                  kind: 'reading',
+                  action: state.reading === null ? 'enter' : 'exit',
+                })
+              }
+            />
+            {state.reading !== null && (
+              <>
+                <Button
+                  label="Previous section"
+                  onClick={() => actions.dispatch({ kind: 'reading', action: 'previous' })}
+                />
+                <Button
+                  label="Next section"
+                  onClick={() => actions.dispatch({ kind: 'reading', action: 'next' })}
+                />
+              </>
+            )}
+          </>
+        )}
+        {visibility.zoom && (
           <>
             <Button
-              label="Previous section"
-              onClick={() => actions.dispatch({ kind: 'reading', action: 'previous' })}
+              label="Zoom out"
+              title="Zoom out"
+              icon={<Icon name="minus" />}
+              iconOnly
+              onClick={() =>
+                actions.dispatch({
+                  kind: 'zoom',
+                  factor:
+                    Math.max(state.profile.zoomMin, view.camera.zoom - state.profile.zoomStep) /
+                    view.camera.zoom,
+                  pointer: center,
+                })
+              }
             />
+            <output aria-label="Zoom level">{Math.round(view.camera.zoom * 100)}%</output>
             <Button
-              label="Next section"
-              onClick={() => actions.dispatch({ kind: 'reading', action: 'next' })}
+              label="Zoom in"
+              title="Zoom in"
+              icon={<Icon name="plus" />}
+              iconOnly
+              onClick={() =>
+                actions.dispatch({
+                  kind: 'zoom',
+                  factor: (view.camera.zoom + state.profile.zoomStep) / view.camera.zoom,
+                  pointer: center,
+                })
+              }
             />
           </>
+        )}
+        {visibility.outline && (
+          <Button
+            label="Diagram outline"
+            title="Diagram outline"
+            icon={<Icon name="outline" />}
+            iconOnly
+            selected={outlineOpen}
+            onClick={onOutline}
+          />
         )}
       </div>
     );

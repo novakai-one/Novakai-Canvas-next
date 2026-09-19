@@ -3,6 +3,14 @@ import type { DraftRetention } from './ports/workspace.js';
 export type PanelId = 'left' | 'right';
 export type PanelTab = 'add' | 'browse' | 'inspect' | 'settings';
 export type PanelMode = 'docked' | 'overlay' | 'sheet';
+export type InterfaceControl = 'tools' | 'zoom' | 'minimap' | 'outline';
+export interface InterfaceVisibility {
+  readonly hidden: boolean;
+  readonly tools: boolean;
+  readonly zoom: boolean;
+  readonly minimap: boolean;
+  readonly outline: boolean;
+}
 /** Definitions describe trusted features; persisted layout contains only stable IDs and preferences. */
 export interface PanelSectionDefinition {
   readonly id: string;
@@ -28,6 +36,7 @@ export interface PanelState {
   readonly lastOpened: PanelId;
   readonly customize: boolean;
   readonly preferences: PanelPreferences;
+  readonly interfaceVisibility: InterfaceVisibility;
 }
 export interface PanelSizing {
   readonly canvasMinimum?: number;
@@ -50,6 +59,9 @@ export interface PanelController {
   move(id: string, side: PanelId, index: number): void;
   customize(open: boolean): void;
   reset(): void;
+  setInterfaceVisibility(control: InterfaceControl, visible: boolean): void;
+  hideInterface(): void;
+  revealInterface(): void;
 }
 export interface PanelBindings {
   readonly definitions: readonly PanelSectionDefinition[];

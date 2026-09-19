@@ -158,7 +158,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       revision: state.collections.find((item) => item.id === id)?.revision ?? -1,
       generation,
     };
-    update({ opening: id, status: 'Rendering diagram…', problem: null });
+    update({ opening: id, status: 'Rendering diagram…', ...renderProblemUpdate() });
     const response = await bindings.client.get(
       `/api/v1/render?id=${encodeURIComponent(id)}`,
       job.signal,
@@ -247,7 +247,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         session: session.value,
       },
       status: editStatus(),
-      problem: null,
+      ...renderProblemUpdate(),
     });
     source.refreshReadout();
     updateMutationAvailability();
@@ -285,10 +285,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       opening: null,
       active: { ...active, generation: state.generation, document, base },
       status: editStatus(),
-      problem: null,
+      ...renderProblemUpdate(),
     });
     source.refreshReadout();
     updateMutationAvailability();
+  }
+  /** A panel-owned migration notice survives diagram navigation; load failures clear on the next render attempt. */
+  function renderProblemUpdate(): Partial<WorkspaceView> {
+    if (state.problem?.owner === 'panel-preferences') return {};
+    return { problem: null };
   }
   /** Mutations wait for the scene's own transport generation and any in-flight request; navigation stays available. */
   function updateMutationAvailability(): void {

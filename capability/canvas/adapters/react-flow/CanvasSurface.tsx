@@ -9,6 +9,7 @@ import type {
   FlowEdge,
   ViewSnapshot,
   ViewActions,
+  CanvasChromeVisibility,
 } from '../../contract/react-types.js';
 import type { Result } from '../../contract/errors.js';
 import styles from './CanvasSurface.module.css';
@@ -25,6 +26,12 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
   const Controls = slots.CanvasControls;
   const Outline = slots.DiagramOutline;
   const Sequence = slots.SequenceLayer;
+  const defaultChrome: CanvasChromeVisibility = {
+    tools: true,
+    zoom: true,
+    minimap: true,
+    outline: true,
+  };
   /** Surface is controlled by Canvas session; native gestures never write React Flow data directly to storage. */
   function CanvasSurface(props: SurfaceProps): ReactElement {
     const result = slots.useScene(props.session, props.reader);
@@ -50,6 +57,8 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     );
     if (!result.ok) return <div role="alert">Canvas unavailable: {result.error.message}</div>;
     const snapshot = result.value;
+    const chrome = props.chrome ?? defaultChrome;
+    const controlsVisible = chrome.tools || chrome.zoom || chrome.outline;
     const hand = snapshot.view.tool === 'hand';
     return (
       <div
@@ -99,7 +108,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           onlyRenderVisibleElements
         >
           <Background variant={BackgroundVariant.Dots} />
-          <MiniMap pannable zoomable ariaLabel="Collection minimap" />
+          {chrome.minimap && <MiniMap pannable zoomable ariaLabel="Collection minimap" />}
           <Sequence
             followsInterfaceRoles={props.followsInterfaceRoles === true}
             sections={snapshot.view.sections}
@@ -108,13 +117,16 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
             paint={props.paint}
           />
         </ReactFlow>
-        <Controls
-          snapshot={snapshot}
-          actions={interactions.actions}
-          outlineOpen={outlineOpen}
-          onOutline={() => setOutlineOpen((value) => !value)}
-        />
-        {outlineOpen && (
+        {controlsVisible && (
+          <Controls
+            snapshot={snapshot}
+            actions={interactions.actions}
+            outlineOpen={outlineOpen}
+            onOutline={() => setOutlineOpen((value) => !value)}
+            visibility={chrome}
+          />
+        )}
+        {outlineOpen && chrome.outline && (
           <Outline
             sections={snapshot.outline}
             actions={interactions.actions}

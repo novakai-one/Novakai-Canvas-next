@@ -42,6 +42,12 @@ export interface ButtonProps {
   readonly selected?: boolean;
 }
 export type ControlIconName = 'select' | 'hand' | 'connect' | 'minus' | 'plus' | 'outline';
+export interface CanvasChromeVisibility {
+  readonly tools: boolean;
+  readonly zoom: boolean;
+  readonly minimap: boolean;
+  readonly outline: boolean;
+}
 export interface ControlIconProps {
   readonly name: ControlIconName;
 }
@@ -66,6 +72,7 @@ export interface SurfaceProps {
   readonly onError: (diagnostic: Diagnostic) => void;
   readonly paint: Paint;
   readonly label: string;
+  readonly chrome?: CanvasChromeVisibility;
 }
 export interface ViewSnapshot {
   readonly state: SessionState;
@@ -112,6 +119,7 @@ export interface ControlsProps {
   readonly actions: Pick<ViewActions, 'dispatch'>;
   readonly outlineOpen: boolean;
   readonly onOutline: () => void;
+  readonly visibility: CanvasChromeVisibility;
 }
 export interface OutlineProps {
   readonly sections: readonly OutlineSection[];

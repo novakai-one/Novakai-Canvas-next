@@ -21,7 +21,7 @@ export interface RetainedEditor<Selection, Command, Draft> {
 export interface RetainedEditorBindings<Selection, Command, Draft extends RetainedDraft> {
   readonly namespace: string;
   readonly retention: Pick<DraftRetention, 'read' | 'write'>;
-  readonly encode?: (drafts: readonly Draft[]) => Result<unknown>;
+  readonly encode: (drafts: readonly Draft[]) => Result<unknown>;
   read(input: unknown): Result<readonly Draft[]>;
   edit(selection: Selection, command: Command, drafts: readonly Draft[]): Draft;
   apply(draft: Draft): Promise<Result<unknown>>;

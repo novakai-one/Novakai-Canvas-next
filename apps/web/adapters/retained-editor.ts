@@ -37,7 +37,7 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
     return result;
   }
   function writeDrafts(drafts: readonly Draft[]): Result<void> {
-    const encoded = bindings.encode?.(drafts) ?? { ok: true as const, value: drafts };
+    const encoded = bindings.encode(drafts);
     if (!encoded.ok) return encoded;
     return bindings.retention.write(`${bindings.namespace}.${workspace}`, encoded.value);
   }

@@ -49,13 +49,13 @@ const command: z.ZodType<WireEdit> = z.discriminatedUnion('kind', [
   }),
   z.strictObject({ kind: z.literal('automatic-route') }),
 ]);
-const legacyRecord = z.strictObject({
+const legacyRecord = z.object({
   key: z.string(),
   base: snapshotSchema,
   generation: z.string(),
-  collection: z.strictObject({ id: z.string() }),
-  section: z.strictObject({ id: z.string() }),
-  relationship: z.strictObject({ id: z.string() }),
+  collection: z.object({ id: z.string() }),
+  section: z.object({ id: z.string() }),
+  relationship: z.object({ id: z.string() }),
   edits: z.array(command).readonly(),
 });
 const currentRecord = z.strictObject({

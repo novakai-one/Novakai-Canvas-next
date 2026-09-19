@@ -31,19 +31,23 @@ export function baseWorkspace(base: EditingBase): Snapshot['workspace'] {
 
 export function collectionRecord(base: EditingBase, collection: string): Result<StoredRecord> {
   const matches = records(base).filter(
-    (item) => liveCollection(item) && item.key.id === collection,
+    (item) => item.key.kind === 'collection' && item.key.id === collection,
   );
   if (matches.length !== 1)
     return rejected(
       'invalid-recovery',
       'The captured base must contain exactly one live collection',
     );
-  const record = matches[0];
+  return collectionMatch(matches[0]);
+}
+function collectionMatch(record: StoredRecord | undefined): Result<StoredRecord> {
   if (record === undefined)
     return rejected(
       'invalid-recovery',
       'The captured base must contain exactly one live collection',
     );
+  if (!liveCollection(record))
+    return rejected('invalid-recovery', 'The captured collection must be live');
   return { ok: true, value: record };
 }
 

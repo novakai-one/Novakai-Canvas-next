@@ -64,12 +64,12 @@ const command: z.ZodType<ObjectEdit> = z.discriminatedUnion('kind', [
     content: z.enum(['text', 'field', 'member', 'signature']),
   }),
 ]);
-const legacyDraftRecord = z.strictObject({
+const legacyDraftRecord = z.object({
   key: z.string(),
   base: snapshotSchema,
   generation: z.string(),
-  collection: z.strictObject({ id: z.string() }),
-  object: z.strictObject({ id: z.string() }),
+  collection: z.object({ id: z.string() }),
+  object: z.object({ id: z.string() }),
   edits: z.array(command).readonly(),
 });
 const currentDraftRecord = z.strictObject({

@@ -241,6 +241,7 @@ function CanvasSlot({
           }}
           label={active.document.collection.title}
           chrome={chrome}
+          showRoads={panelState.interfaceVisibility.roads && !hidden}
         />
       )}
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}

@@ -26,6 +26,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
   const Controls = slots.CanvasControls;
   const Outline = slots.DiagramOutline;
   const Sequence = slots.SequenceLayer;
+  const Roads = slots.RoutingRoads;
   const defaultChrome: CanvasChromeVisibility = {
     tools: true,
     zoom: true,
@@ -108,6 +109,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           onlyRenderVisibleElements
         >
           {chrome.minimap && <MiniMap pannable zoomable ariaLabel="Collection minimap" />}
+          {props.showRoads && <Roads sections={snapshot.view.sections} />}
           <Sequence
             followsInterfaceRoles={props.followsInterfaceRoles === true}
             sections={snapshot.view.sections}

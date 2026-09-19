@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { routingOverlay } from './routing-overlay.js';
 import { identity, inputKey } from '../brands.js';
 import { box, point, endpoint } from './geometry.js';
 import { PROJECTION_CAPACITY } from './limits.js';
@@ -81,6 +82,7 @@ const section = z
     nodes: z.array(node).max(PROJECTION_CAPACITY.maxNodes).readonly(),
     wires: z.array(wire).max(PROJECTION_CAPACITY.maxWires).readonly(),
     sequence,
+    routing: routingOverlay.optional(),
   })
   .readonly();
 const warning = z

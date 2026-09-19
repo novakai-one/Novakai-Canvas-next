@@ -74,7 +74,11 @@ export interface WireLabelProps {
   readonly zoom: number;
   readonly anchor: Point;
 }
+export interface RoutingRoadsProps {
+  readonly sections: readonly ViewSection[];
+}
 export interface SurfaceProps {
+  readonly showRoads?: boolean;
   readonly followsInterfaceRoles?: boolean;
   readonly session: SurfaceSession;
   readonly reader: ViewReader;
@@ -198,6 +202,7 @@ export type GraphSelector = (
   paint: Paint,
 ) => { nodes: FlowNode[]; edges: FlowEdge[] };
 export interface SurfaceSlots {
+  readonly RoutingRoads: ComponentType<RoutingRoadsProps>;
   readonly FontDefinitions: ComponentType;
   readonly createGraphSelector: () => GraphSelector;
   readonly useScene: UseScene;

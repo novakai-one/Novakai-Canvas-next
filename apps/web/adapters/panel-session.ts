@@ -131,6 +131,7 @@ export function createPanelController(bindings: PanelBindings): PanelController 
         zoom: state.interfaceVisibility.zoom,
         minimap: state.interfaceVisibility.minimap,
         outline: state.interfaceVisibility.outline,
+        roads: state.interfaceVisibility.roads,
       };
       publish({
         ...state,
@@ -140,6 +141,7 @@ export function createPanelController(bindings: PanelBindings): PanelController 
           zoom: false,
           minimap: false,
           outline: false,
+          roads: false,
         },
       });
     },
@@ -153,5 +155,5 @@ export function createPanelController(bindings: PanelBindings): PanelController 
 }
 
 function defaultInterfaceVisibility(): InterfaceVisibility {
-  return { hidden: false, tools: true, zoom: true, minimap: false, outline: true };
+  return { hidden: false, tools: true, zoom: true, minimap: false, outline: true, roads: false };
 }

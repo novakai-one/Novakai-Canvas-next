@@ -204,6 +204,21 @@ export function toEngineScene(
     frame: required(scene.sections[0], source.id).bounds,
     nodes: placed(source, numbers, scene),
     roads: scene.roads,
+    routing: {
+      roads: scene.roads.map(({ id, kind, axis, bounds, access }) => ({
+        id,
+        kind,
+        axis,
+        bounds,
+        accessRole: access?.role ?? null,
+      })),
+      lanes: scene.lanes.map(({ id, roadId, direction, bounds }) => ({
+        id,
+        roadId,
+        direction,
+        bounds,
+      })),
+    },
     blocks: scene.nodes.map((node) => ({
       nodeId: required(source.nodes[Number(node.id.slice(5)) - 1], node.id).id,
       bounds: node.bounds,

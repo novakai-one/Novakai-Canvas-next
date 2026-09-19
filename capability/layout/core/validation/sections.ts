@@ -13,6 +13,7 @@ import { contains, samePoint } from '../geometry/intersections.js';
 import { union } from '../geometry/bounds.js';
 import { same, sameIds, disjoint, equations } from './facts.js';
 import { reject } from './outcomes.js';
+import { inspectRouting } from './routing-overlay.js';
 export interface InspectionContext {
   readonly options: LayoutOptions;
   readonly measurements: SupplementalMeasurements;
@@ -54,6 +55,7 @@ export function inspectSection(
   else checkEnvelope(source, candidate, content);
   checkLock(source, candidate);
   return {
+    routing: inspectRouting(source, candidate),
     id: source.id,
     origin: candidate.origin,
     box: candidate.box,

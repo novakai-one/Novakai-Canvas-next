@@ -1,3 +1,4 @@
+import type { RoutingOverlay } from './routing-overlay.js';
 import type { LayoutInputKey } from '../brands.js';
 import { z } from 'zod';
 import { identity, coordinate, dimension } from '../brands.js';
@@ -84,6 +85,7 @@ export interface SequenceGeometry {
   readonly source: readonly VisualSequenceItem[];
 }
 export interface PlacedSection {
+  readonly routing?: RoutingOverlay | undefined;
   readonly id: string;
   readonly origin: Point;
   readonly box: Box;

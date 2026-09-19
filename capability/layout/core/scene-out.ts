@@ -124,6 +124,7 @@ export function toAppSection(
     },
   };
   return {
+    routing: engine.routing,
     id: source.id,
     origin: { x: 0, y: 0 },
     box: engine.frame,

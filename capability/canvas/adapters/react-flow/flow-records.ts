@@ -9,7 +9,7 @@ import type {
 import type { Result } from '../../contract/errors.js';
 import type { ViewNode } from '../../contract/records/view.js';
 /** Group interiors belong to the camera; only their explicit boundary hit surface receives input. */
-function nodeSurfaceStyle(view: ViewNode): FlowNode['style'] {
+function nodeSurfaceStyle(view: ViewNode): NonNullable<FlowNode['style']> {
   return {
     width: view.box.width,
     height: view.box.height,

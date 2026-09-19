@@ -29,10 +29,27 @@ const LEFT_ALIGNED_SHAPES: readonly string[] = [
   'container',
 ];
 const COMPARTMENT_KINDS: readonly string[] = ['entity', 'module', 'interface', 'function'];
-/** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
+interface HorizontalBounds {
+  readonly left: number;
+  readonly right: number;
+}
+/** Primitive coordinates already include frame padding and shape insets. */
+function horizontalBounds(primitive: Primitive): HorizontalBounds {
+  if (primitive.kind === 'rule')
+    return {
+      left: Math.min(primitive.x1, primitive.x2),
+      right: Math.max(primitive.x1, primitive.x2),
+    };
+  return { left: primitive.x, right: primitive.x + primitive.width };
+}
+/** Center the painted content bounds, including only slack introduced outside measurement. */
 function contentSlack(node: VisualNode): number {
   if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
-  return Math.max(0, (node.width - node.content.width) / 2);
+  const bounds = node.content.primitives.map(horizontalBounds);
+  if (bounds.length === 0) return 0;
+  const left = Math.min(...bounds.map((bound) => bound.left));
+  const right = Math.max(...bounds.map((bound) => bound.right));
+  return node.width / 2 - (left + right) / 2;
 }
 /** Bind stable slots once; no component type is created during a React render. */
 export function createContentRenderer(

@@ -42,7 +42,12 @@ export function createSceneNode(
     const { view, actions, editable } = data;
     const node = { ...view.placed.measured, width: view.box.width, height: view.box.height };
     return (
-      <div className={styles.node} data-preview={view.draft} data-emphasis={view.emphasis}>
+      <div
+        className={styles.node}
+        data-preview={view.draft}
+        data-emphasis={view.emphasis}
+        data-hovered={view.hovered}
+      >
         <Content
           embedFonts={false}
           node={node}

@@ -15,7 +15,7 @@ export function createThemeSelector(
     const value = view.preferences;
     return (
       <fieldset className={styles.selector} data-compact={compact}>
-        <legend>Theme</legend>
+        <legend>Interface theme</legend>
         <div className={styles.choices}>
           <Button
             label="System"

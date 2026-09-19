@@ -39,6 +39,7 @@ export function viewNode(
     box: bounds,
     placed: node,
     selected: selected(state, info.key),
+    hovered: state.hover !== null && targetKey(state.hover) === info.key,
     emphasis,
     detail: visibleDetail(detail, emphasis),
     hidden: hiddenByReading(state, info),

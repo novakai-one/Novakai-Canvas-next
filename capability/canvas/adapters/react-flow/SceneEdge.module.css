@@ -38,6 +38,9 @@
   .wire[data-emphasis='muted'] {
     stroke-opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
   }
+  .edge[data-hovered='true'] .wire {
+    stroke-opacity: var(--nv-canvas-wire-hover-opacity);
+  }
   .marker[data-emphasis='muted'] {
     opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
   }
@@ -50,6 +53,9 @@
   }
   .markerContrast {
     opacity: 0;
+  }
+  .edge[data-hovered='true'] .marker {
+    opacity: var(--nv-canvas-wire-hover-opacity);
   }
   :is(.wire, .marker, .markerContrast):is([data-emphasis='primary'], [data-emphasis='secondary']) {
     opacity: 1;

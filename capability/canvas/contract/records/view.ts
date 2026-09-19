@@ -10,6 +10,7 @@ export interface ViewNode {
   readonly box: Box;
   readonly placed: PlacedNode;
   readonly selected: boolean;
+  readonly hovered: boolean;
   readonly emphasis: Emphasis;
   readonly detail: DetailTier;
   readonly hidden: boolean;
@@ -23,6 +24,7 @@ export interface ViewWire {
   readonly wire: RoutedWire;
   readonly origin: Point;
   readonly selected: boolean;
+  readonly hovered: boolean;
   readonly emphasis: Emphasis;
   readonly showLabel: boolean;
   readonly hidden: boolean;

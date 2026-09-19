@@ -78,6 +78,7 @@
   --nv-canvas-transition: 120ms;
   --nv-canvas-primary-surface: #d8e6ff;
   --nv-canvas-secondary: #55708e;
+  --nv-canvas-wire-hover-opacity: 0.78;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;

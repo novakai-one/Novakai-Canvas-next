@@ -843,6 +843,10 @@
     "mutedOpacity": {
       "$type": "number",
       "$value": 0.36
+    },
+    "hoverOpacity": {
+      "$type": "number",
+      "$value": 0.78
     }
   }
 }

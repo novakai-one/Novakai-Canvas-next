@@ -8,24 +8,14 @@ function graphTargets(targets: readonly Target[]): readonly Target[] {
   return targets.filter((target) => target.kind === 'node' || target.kind === 'wire');
 }
 
-/** Active selection wins over hover; only an empty selection may project temporary focus. */
+/** Only an active graph selection projects a neighborhood; hover remains local presentation state. */
 function focusTargets(state: SessionState): {
   readonly source: FocusSource;
   readonly targets: readonly Target[];
 } {
   const selected = graphTargets(state.selection);
   if (selected.length > 0) return { source: 'selection', targets: selected };
-  return hoverFocus(state);
-}
-
-/** A non-graph selection blocks hover; otherwise the admitted hover may become temporary focus. */
-function hoverFocus(state: SessionState): {
-  readonly source: FocusSource;
-  readonly targets: readonly Target[];
-} {
-  if (state.selection.length > 0 || state.hover === null) return { source: 'none', targets: [] };
-  const hovered = graphTargets([state.hover]);
-  return { source: hovered.length === 0 ? 'none' : 'hover', targets: hovered };
+  return { source: 'none', targets: [] };
 }
 
 /** A prior projection remains valid across camera-only state changes. */
@@ -34,7 +24,6 @@ function reusable(state: SessionState, previous: FocusProjection | undefined): b
   return [
     previous.inputs.scene === state.scene,
     previous.inputs.selection === state.selection,
-    previous.inputs.hover === state.hover,
   ].every(Boolean);
 }
 
@@ -81,7 +70,7 @@ export function projectFocus(state: SessionState, previous?: FocusProjection): F
     source: focus.source,
     primary,
     secondary,
-    inputs: { scene: state.scene, selection: state.selection, hover: state.hover },
+    inputs: { scene: state.scene, selection: state.selection },
   };
 }
 

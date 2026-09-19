@@ -114,6 +114,7 @@ export function viewWire(
       y: section.origin.y + delta.y,
     },
     selected: state.selection.some((value) => targetKey(value) === key),
+    hovered: state.hover !== null && targetKey(state.hover) === key,
     emphasis: emphasisFor(focus, key),
     showLabel: focus.source === 'selection' && focus.primary.has(key),
     hidden: hiddenByReading(state, sourceInfo) || hiddenByReading(state, targetData),

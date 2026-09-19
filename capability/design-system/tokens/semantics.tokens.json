@@ -788,6 +788,10 @@
     "secondary": {
       "$type": "color",
       "$value": "{canvasTone.secondary}"
+    },
+    "wireHoverOpacity": {
+      "$type": "number",
+      "$value": "{canvasEmphasis.hoverOpacity}"
     }
   }
 }

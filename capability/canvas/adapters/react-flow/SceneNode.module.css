@@ -15,15 +15,22 @@
     height: var(--nv-space-2);
     background: var(--nv-canvas-node-surface);
     border-color: var(--nv-canvas-node-boundary);
+    opacity: var(--nv-canvas-wire-idle-opacity);
     transition-duration: var(--nv-canvas-transition);
-    transition-property: background-color, border-color, box-shadow;
+    transition-property: background-color, border-color, box-shadow, opacity;
+  }
+  .node[data-hovered='true'] :global(.react-flow__handle) {
+    border-color: var(--nv-canvas-secondary);
+    opacity: 1;
   }
   .node[data-emphasis='primary'] :global(.react-flow__handle) {
     border-color: var(--nv-action-accent);
     box-shadow: 0 0 var(--nv-space-1) var(--nv-action-accent);
+    opacity: 1;
   }
   .node[data-emphasis='secondary'] :global(.react-flow__handle) {
-    border-color: var(--nv-text-secondary);
+    border-color: var(--nv-canvas-secondary);
+    opacity: 1;
   }
   .node[data-emphasis='muted'] :global(.react-flow__handle) {
     opacity: var(--nv-canvas-muted-opacity);

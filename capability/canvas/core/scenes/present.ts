@@ -11,6 +11,7 @@ function stableNode(next: ViewNode, previous: ViewNode | undefined): ViewNode {
   const equal = [
     next.placed === previous.placed,
     next.selected === previous.selected,
+    next.hovered === previous.hovered,
     next.emphasis === previous.emphasis,
     next.detail === previous.detail,
     next.hidden === previous.hidden,
@@ -28,6 +29,7 @@ function stableWire(next: ViewWire, previous: ViewWire | undefined): ViewWire {
   const equal = [
     next.wire === previous.wire,
     next.selected === previous.selected,
+    next.hovered === previous.hovered,
     next.emphasis === previous.emphasis,
     next.showLabel === previous.showLabel,
     next.hidden === previous.hidden,

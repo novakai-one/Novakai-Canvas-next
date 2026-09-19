@@ -102,6 +102,7 @@
   --nv-canvas-depth-grid-opacity: 0.24;
   --nv-canvas-depth-node-boundary-opacity: 0.5;
   --nv-canvas-emphasis-muted-opacity: 0.36;
+  --nv-canvas-emphasis-hover-opacity: 0.78;
   --nv-canvas-wire-idle-opacity: 0.42;
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
@@ -180,6 +181,7 @@
   --nv-canvas-transition: 120ms;
   --nv-canvas-primary-surface: #d8e6ff;
   --nv-canvas-secondary: #55708e;
+  --nv-canvas-wire-hover-opacity: 0.78;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -292,6 +294,7 @@
   --nv-canvas-depth-grid-opacity: 0.24;
   --nv-canvas-depth-node-boundary-opacity: 0.5;
   --nv-canvas-emphasis-muted-opacity: 0.36;
+  --nv-canvas-emphasis-hover-opacity: 0.78;
   --nv-canvas-wire-idle-opacity: 0.42;
   --nv-color-panel: #22262c;
   --nv-color-content: #f1f3f5;
@@ -370,6 +373,7 @@
   --nv-canvas-transition: 120ms;
   --nv-canvas-primary-surface: #243b67;
   --nv-canvas-secondary: #8ca8c6;
+  --nv-canvas-wire-hover-opacity: 0.78;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;

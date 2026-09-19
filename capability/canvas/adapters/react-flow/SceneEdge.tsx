@@ -82,6 +82,7 @@ export function createSceneEdge(
         transform={`translate(${view.origin.x} ${view.origin.y})`}
         data-preview={view.draft}
         data-emphasis={view.emphasis}
+        data-hovered={view.hovered}
       >
         <path className={styles.hit} d={path} />
         <path

@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "b12c13c",
+  "scope": "Historical local development observations, not a current-version cold-start benchmark.",
+  "selection": {
+    "collection": "model-files-compact",
+    "description": "50 modules plus group boxes; 3 actual UI selections in an independent headless inspection; warmed exclusive service.",
+    "paintMs": [
+      646.8999999761581,
+      747.3000000715256,
+      514.3000000715256
+    ]
+  },
+  "drag": {
+    "collection": "model-files-import-graph",
+    "nodes": 50,
+    "wires": 77,
+    "calculationMs": 53.800000071525574,
+    "paintMs": 110.39999997615814
+  }
+}

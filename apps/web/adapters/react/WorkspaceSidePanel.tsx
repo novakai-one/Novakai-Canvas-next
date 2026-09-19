@@ -1,21 +1,41 @@
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import type { PanelProps, FeatureProps, DesignSlots } from '../../contract/react-types.js';
+import type {
+  PanelProps,
+  FeatureProps,
+  DesignSlots,
+  PanelTabsProps,
+} from '../../contract/react-types.js';
 import type {
   PanelController,
   PanelSizing,
   PanelMode,
   PanelId,
+  PanelTab,
 } from '../../contract/panel-types.js';
+import { panelGeometry } from '../../contract/api.js';
 import styles from './WorkspaceSidePanel.module.css';
 /** Definitions and renderers are trusted registration data; user preferences can arrange IDs but cannot supply code. */
 export interface RegisteredSection {
+  readonly tab: PanelTab;
   readonly id: string;
   readonly title: string;
   readonly Content: ComponentType<FeatureProps>;
 }
 export interface PanelSlots extends DesignSlots {
   readonly sections: readonly RegisteredSection[];
+  readonly Tabs: ComponentType<PanelTabsProps>;
+  readonly tabs: Readonly<
+    Record<
+      PanelId,
+      readonly {
+        readonly id: PanelTab;
+        readonly label: string;
+        readonly scope: string;
+        readonly empty: string;
+      }[]
+    >
+  >;
   readonly panels: PanelController;
   readonly sizing: PanelSizing;
   readonly portal: HTMLElement;
@@ -31,12 +51,14 @@ export function createWorkspaceSidePanel(slots: PanelSlots): ComponentType<Panel
     PanelSectionHeader,
     Dialog,
     Button,
+    Tabs,
   } = slots;
   /** Panel preferences own order, visibility and collapse; changing the body requires registration data only. */
   function WorkspaceSidePanel(props: PanelProps): ReactElement {
     const state = useSyncExternalStore(slots.panels.subscribe, slots.panels.getSnapshot);
     const preferences = state.preferences;
-    const title = { left: 'Collection', right: 'Inspector' }[props.side];
+    const title = { left: 'Add & Browse', right: 'Inspect & Settings' }[props.side];
+    const geometry = panelGeometry(state, slots.sizing, props.side);
     const registered = preferences.sections[props.side].flatMap((id) =>
       slots.sections.filter((item) => item.id === id),
     );
@@ -53,77 +75,94 @@ export function createWorkspaceSidePanel(slots: PanelSlots): ComponentType<Panel
       />
     );
     const body = (
-      <PanelBody
-        header={
-          <PanelBodyHeader
-            title={props.view.active?.document.collection.title ?? 'Workspace'}
-            scope="Shared collection"
-            actions={actions}
-          />
-        }
-      >
-        {state.customize && (
-          <div className={styles.customize}>
-            <p>Move, hide or reorder sections. Diagram content is unchanged.</p>
-            <Button label="Reset panel layout" onClick={slots.panels.reset} />
-          </div>
-        )}
-        {sections.map((section, index) => {
-          const Content = section.Content;
-          const expanded = !preferences.collapsed.includes(section.id);
-          return (
-            <div key={section.id}>
-              {state.customize && (
-                <div className={styles.customize} aria-label={`Customize ${section.title}`}>
-                  <Button
-                    label={`Move ${section.title} up`}
-                    icon="↑"
-                    iconOnly
-                    disabled={index === 0}
-                    onClick={() => slots.panels.move(section.id, props.side, index - 1)}
-                  />
-                  <Button
-                    label={`Move ${section.title} down`}
-                    icon="↓"
-                    iconOnly
-                    disabled={index === sections.length - 1}
-                    onClick={() => slots.panels.move(section.id, props.side, index + 1)}
-                  />
-                  <Button
-                    label={`Move ${section.title} to other panel`}
-                    icon="↔"
-                    iconOnly
-                    onClick={() =>
-                      slots.panels.move(section.id, props.side === 'left' ? 'right' : 'left', 0)
-                    }
-                  />
-                  <Button
-                    label={`${preferences.hidden.includes(section.id) ? 'Show' : 'Hide'} ${section.title}`}
-                    selected={preferences.hidden.includes(section.id)}
-                    onClick={() =>
-                      slots.panels.hide(section.id, !preferences.hidden.includes(section.id))
-                    }
-                  />
-                </div>
-              )}
-              <PanelSection
-                id={section.id}
-                expanded={expanded}
+      <div className={styles.tabs}>
+        <Tabs
+          label={title}
+          value={preferences.tabs[props.side]}
+          onSelect={slots.panels.selectTab}
+          items={slots.tabs[props.side].map((tab) => ({
+            id: tab.id,
+            label: tab.label,
+            content: (
+              <PanelBody
                 header={
-                  <PanelSectionHeader
-                    id={section.id}
-                    title={section.title}
-                    expanded={expanded}
-                    onExpandedChange={(open) => slots.panels.expand(section.id, open)}
+                  <PanelBodyHeader
+                    title={props.view.active?.document.collection.title ?? 'Workspace'}
+                    scope={tab.scope}
+                    actions={actions}
                   />
                 }
               >
-                <Content {...props} />
-              </PanelSection>
-            </div>
-          );
-        })}
-      </PanelBody>
+                {state.customize && (
+                  <div className={styles.customize}>
+                    <p>Hide or reorder sections within their role. Diagram content is unchanged.</p>
+                    <Button label="Reset panel layout" onClick={slots.panels.reset} />
+                  </div>
+                )}
+                {sections.filter((section) => section.tab === tab.id).length === 0 && (
+                  <p className={styles.empty}>{tab.empty}</p>
+                )}
+                {sections
+                  .filter((section) => section.tab === tab.id)
+                  .map((section) => {
+                    const index = preferences.sections[props.side].indexOf(section.id);
+                    const Content = section.Content;
+                    const expanded = !preferences.collapsed.includes(section.id);
+                    return (
+                      <div key={section.id}>
+                        {state.customize && (
+                          <div
+                            className={styles.customize}
+                            aria-label={`Customize ${section.title}`}
+                          >
+                            <Button
+                              label={`Move ${section.title} up`}
+                              icon="↑"
+                              iconOnly
+                              disabled={index === 0}
+                              onClick={() => slots.panels.move(section.id, props.side, index - 1)}
+                            />
+                            <Button
+                              label={`Move ${section.title} down`}
+                              icon="↓"
+                              iconOnly
+                              disabled={index === preferences.sections[props.side].length - 1}
+                              onClick={() => slots.panels.move(section.id, props.side, index + 1)}
+                            />
+                            <Button
+                              label={`${preferences.hidden.includes(section.id) ? 'Show' : 'Hide'} ${section.title}`}
+                              selected={preferences.hidden.includes(section.id)}
+                              onClick={() =>
+                                slots.panels.hide(
+                                  section.id,
+                                  !preferences.hidden.includes(section.id),
+                                )
+                              }
+                            />
+                          </div>
+                        )}
+                        <PanelSection
+                          id={section.id}
+                          expanded={expanded}
+                          header={
+                            <PanelSectionHeader
+                              id={section.id}
+                              title={section.title}
+                              expanded={expanded}
+                              onExpandedChange={(open) => slots.panels.expand(section.id, open)}
+                            />
+                          }
+                        >
+                          <Content {...props} />
+                        </PanelSection>
+                      </div>
+                    );
+                  })}
+              </PanelBody>
+            ),
+          }))}
+        />
+      </div>
     );
     if (state.mode !== 'docked')
       return (
@@ -143,9 +182,9 @@ export function createWorkspaceSidePanel(slots: PanelSlots): ComponentType<Panel
         id={`panel-${props.side}`}
         side={props.side}
         label={title}
-        width={preferences.widths[props.side]}
-        minimum={slots.sizing.sides[props.side].minimum}
-        maximum={slots.sizing.sides[props.side].maximum}
+        width={geometry.width}
+        minimum={geometry.minimum}
+        maximum={geometry.maximum}
         onResize={(width) => slots.panels.resize(props.side, width)}
         header={<PanelHeader title={title} onClose={() => slots.panels.open(props.side, false)} />}
         body={body}

@@ -41,6 +41,7 @@ export function defaultPanels(
 ): PanelPreferences {
   return {
     schemaVersion: 1,
+    tabs: { left: 'browse', right: 'inspect' },
     workspace,
     sections: {
       left: defaultsOnSide(definitions, 'left'),
@@ -63,4 +64,47 @@ function defaultsOnSide(
 function lastDockedPanel(state: PanelState): PanelId | null {
   if (!state.docked[state.lastOpened]) return null;
   return state.lastOpened;
+}
+
+/** Tab roles are shell-owned; features cannot migrate into a different semantic role. */
+export function panelTabSide(tab: import('../../contract/panel-types.js').PanelTab): PanelId {
+  const sides: Readonly<Record<import('../../contract/panel-types.js').PanelTab, PanelId>> = {
+    add: 'left',
+    browse: 'left',
+    inspect: 'right',
+    settings: 'right',
+  };
+  return sides[tab];
+}
+/** Effective widths share the viewport budget without overwriting retained preferred widths. */
+export function panelGeometry(
+  state: PanelState,
+  sizing: PanelSizing,
+  side: PanelId,
+): { readonly width: number; readonly minimum: number; readonly maximum: number } {
+  const bounds = sizing.sides[side];
+  const other = side === 'left' ? 'right' : 'left';
+  const reserve = visibleWidth(state, sizing, other);
+  const minimumCanvas =
+    sizing.canvasMinimum ?? sizing.large - sizing.sides.left.maximum - sizing.sides.right.maximum;
+  const budget = Math.max(0, state.viewportWidth - minimumCanvas);
+  const own = state.preferences.widths[side];
+  const excess = Math.max(0, own + reserve - budget);
+  const room = own - bounds.minimum;
+  const otherRoom = Math.max(0, reserve - sizing.sides[other].minimum);
+  const reduction = (excess * room) / Math.max(1, room + otherRoom);
+  const width = Math.max(bounds.minimum, own - reduction);
+  return {
+    minimum: bounds.minimum,
+    width,
+    maximum: Math.max(
+      bounds.minimum,
+      Math.min(bounds.maximum, budget - reserve + excess - reduction),
+    ),
+  };
+}
+/** Closed panes reserve no canvas space. */
+function visibleWidth(state: PanelState, sizing: PanelSizing, side: PanelId): number {
+  if (!panelVisible(state, side)) return 0;
+  return Math.max(sizing.sides[side].minimum, state.preferences.widths[side]);
 }

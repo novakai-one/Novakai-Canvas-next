@@ -5,25 +5,19 @@
       "sectionIds": [
         "collections",
         "sections",
-        "objects",
-        "create"
+        "objects"
       ]
     },
     "right": {
       "sectionIds": [
         "shared-content",
-        "appearance",
         "connection",
-        "collection-theme",
         "interface"
       ]
     }
   },
   "collapsedSectionIds": [
-    "collections",
-    "create",
-    "collection-theme",
-    "interface"
+    "collections"
   ],
   "hiddenSectionIds": []
 }

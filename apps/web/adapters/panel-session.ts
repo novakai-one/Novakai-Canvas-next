@@ -4,6 +4,7 @@ import type {
   PanelState,
   PanelPreferences,
   PanelId,
+  PanelTab,
 } from '../contract/panel-types.js';
 import {
   defaultPanels,
@@ -13,13 +14,16 @@ import {
   movePanelSection,
   panelMembership,
   panelWidth,
+  panelGeometry,
+  panelTabSide,
   reconcilePanelPreferences,
 } from '../contract/api.js';
 /** This external store owns only panel presentation. Preference failures are reported; no operation changes a diagram or draft. */
 export function createPanelController(bindings: PanelBindings): PanelController {
   let state: PanelState = {
     mode: panelMode(bindings.initialWidth, bindings.sizing),
-    docked: { left: true, right: false },
+    viewportWidth: bindings.initialWidth,
+    docked: { left: false, right: false },
     overlay: null,
     lastOpened: 'left',
     customize: false,
@@ -74,10 +78,18 @@ export function createPanelController(bindings: PanelBindings): PanelController 
   /** Numeric layout inputs are bounded; invalid reorder indices cannot move or duplicate a section. */
   function move(id: string, side: PanelId, index: number): void {
     if (!Number.isInteger(index)) return;
-    if (!bindings.definitions.some((item) => item.id === id)) return;
+    if (!bindings.definitions.some((item) => item.id === id && item.defaultSide === side)) return;
     save(movePanelSection(state.preferences, id, side, index));
   }
+  /** Selecting a role retains the other panel's tab and all feature-owned drafts. */
+  function selectTab(tab: PanelTab): void {
+    const side = panelTabSide(tab);
+    const tabs = { ...state.preferences.tabs, [side]: tab };
+    save({ ...state.preferences, tabs });
+    publish(openPanel(state, side, true));
+  }
   return {
+    selectTab,
     getSnapshot: () => state,
     subscribe: (listener) => {
       listeners.add(listener);
@@ -85,13 +97,14 @@ export function createPanelController(bindings: PanelBindings): PanelController 
     },
     restore,
     open: (side, open) => publish(openPanel(state, side, open)),
-    viewport: (width) => publish(resizePanels(state, panelMode(width, bindings.sizing))),
+    viewport: (width) =>
+      publish(resizePanels({ ...state, viewportWidth: width }, panelMode(width, bindings.sizing))),
     resize: (side, width) =>
       save({
         ...state.preferences,
         widths: {
           ...state.preferences.widths,
-          [side]: panelWidth(width, bindings.sizing.sides[side]),
+          [side]: panelWidth(width, panelGeometry(state, bindings.sizing, side)),
         },
       }),
     expand: (id, expanded) => membership(id, 'collapsed', !expanded),

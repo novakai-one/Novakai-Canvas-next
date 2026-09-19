@@ -41,9 +41,12 @@ export function reconcilePanelPreferences(
   sizing: PanelSizing,
 ): PanelPreferences {
   const known = new Set(definitions.map((item) => item.id));
-  const left = [...new Set(saved.sections.left)].filter((id) => known.has(id));
-  const right = [...new Set(saved.sections.right)].filter(
-    (id) => known.has(id) && !left.includes(id),
+  const ordered = [...new Set([...saved.sections.left, ...saved.sections.right])];
+  const left = ordered.filter((id) =>
+    definitions.some((item) => item.id === id && item.defaultSide === 'left'),
+  );
+  const right = ordered.filter((id) =>
+    definitions.some((item) => item.id === id && item.defaultSide === 'right'),
   );
   const missing = definitions.filter((item) => !left.includes(item.id) && !right.includes(item.id));
   return {

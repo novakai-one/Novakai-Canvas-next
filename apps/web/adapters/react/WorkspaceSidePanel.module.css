@@ -1,4 +1,14 @@
 @layer components {
+  .tabs {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+  .empty {
+    padding: var(--nv-space-4);
+    margin: 0;
+    color: var(--nv-color-subtle);
+  }
   .customize {
     display: flex;
     flex-wrap: wrap;

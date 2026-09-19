@@ -8,6 +8,8 @@ export {
   openPanel,
   resizePanels,
   panelVisible,
+  panelGeometry,
+  panelTabSide,
 } from '../core/workspace/panel-state.js';
 export {
   movePanelSection,

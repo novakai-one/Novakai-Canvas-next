@@ -1,29 +1,20 @@
+import { useState } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { DesignSlots } from '../../contract/react-types.js';
 import type { LibraryFeatureProps } from '../../contract/library-react.js';
-import styles from './ObjectEditor.module.css';
+import editorStyles from './ObjectEditor.module.css';
+import styles from './LibraryFilters.module.css';
 /** Search, folder scope and archive filters use Library's public query semantics. */
-export function createLibraryFilters({
-  Field,
-  Button,
-}: Pick<DesignSlots, 'Field' | 'Button'>): ComponentType<LibraryFeatureProps> {
+export function createLibraryFilters(
+  { Field, Button }: Pick<DesignSlots, 'Field' | 'Button'>,
+  options: { readonly compact?: boolean } = {},
+): ComponentType<LibraryFeatureProps> {
   /** Filter edits change discovery only; they never mutate the diagram or move its camera. */
   function LibraryFilters({ library, state }: LibraryFeatureProps): ReactElement {
     const filters = state.filters;
-    return (
-      <div className={styles.editor}>
-        <Field
-          label="Search collections and diagrams"
-          control={(props) => (
-            <input
-              {...props}
-              type="search"
-              value={filters.text}
-              placeholder="Title, object or concept…"
-              onChange={(event) => library.filter({ ...filters, text: event.target.value })}
-            />
-          )}
-        />
+    const [advancedOpen, setAdvancedOpen] = useState(!options.compact);
+    const advanced = (
+      <div className={styles.advanced}>
         <Field
           label="Folder"
           control={(props) => (
@@ -87,6 +78,34 @@ export function createLibraryFilters({
             library.filter({ text: '', folder: null, archived: 'exclude', sort: 'order' })
           }
         />
+      </div>
+    );
+    return (
+      <div className={editorStyles.editor}>
+        <Field
+          label="Search collections and diagrams"
+          control={(props) => (
+            <input
+              {...props}
+              type="search"
+              value={filters.text}
+              placeholder="Title, object or concept…"
+              onChange={(event) => library.filter({ ...filters, text: event.target.value })}
+            />
+          )}
+        />
+        {options.compact ? (
+          <details
+            className={styles.filters}
+            open={advancedOpen}
+            onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
+          >
+            <summary className={styles.summary}>Advanced filters</summary>
+            {advanced}
+          </details>
+        ) : (
+          advanced
+        )}
       </div>
     );
   }

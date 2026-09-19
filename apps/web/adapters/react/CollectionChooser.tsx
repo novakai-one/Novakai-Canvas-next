@@ -30,7 +30,7 @@ export function createCollectionChooser({
         title="Choose a collection"
         description="Switch collections while keeping your current canvas available until the new one is ready."
         portal={portal}
-        placement="center"
+        placement={chooserPlacement(portal)}
       >
         <ChooserBody
           controller={controller}
@@ -43,6 +43,17 @@ export function createCollectionChooser({
     );
   }
   return CollectionChooser;
+}
+
+/** Small viewports use the Design System sheet token so the chooser actions stay reachable. */
+function chooserPlacement(portal: HTMLElement): 'center' | 'bottom' {
+  const window = portal.ownerDocument.defaultView;
+  const breakpoint = Number.parseFloat(
+    window?.getComputedStyle(portal).getPropertyValue('--nv-breakpoint-medium') ?? '',
+  );
+  return window !== null && Number.isFinite(breakpoint) && window.innerWidth < breakpoint
+    ? 'bottom'
+    : 'center';
 }
 
 function ChooserBody({

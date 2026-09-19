@@ -299,7 +299,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     { id: 'organization', Content: createLibraryOrganization(design) },
   ]);
   const ChooserBrowser = createLibraryBrowser([
-    { id: 'filters', Content: createLibraryFilters(design) },
+    { id: 'filters', Content: createLibraryFilters(design, { compact: true }) },
     { id: 'results', Content: createLibraryResults(design) },
   ]);
   const ThemeSelector = createThemeSelector(design, preferences, themes);

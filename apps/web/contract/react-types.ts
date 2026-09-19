@@ -14,6 +14,7 @@ export interface FeatureProps {
 }
 export interface HeaderProps extends FeatureProps {
   readonly onCreate: () => void;
+  readonly onOpenChooser: () => void;
 }
 export interface ViewMenuProps {
   readonly controller: Pick<WorkspaceController, 'showSource'>;
@@ -25,7 +26,9 @@ export interface RevealInterfaceProps {
 export interface ThemeSelectorProps {
   readonly compact?: boolean;
 }
-export type LibraryProps = HeaderProps;
+export interface LibraryProps extends FeatureProps {
+  readonly onCreate: () => void;
+}
 export interface PanelProps extends FeatureProps {
   readonly side: 'left' | 'right';
 }
@@ -33,6 +36,12 @@ export interface CreateDialogProps {
   readonly open: boolean;
   readonly onClose: () => void;
   readonly onCreate: (title: string) => void;
+  readonly portal: HTMLElement;
+}
+export interface CollectionChooserProps {
+  readonly controller: WorkspaceController;
+  readonly view: WorkspaceView;
+  readonly onCreate: () => void;
   readonly portal: HTMLElement;
 }
 export interface ChromeSlots {
@@ -44,6 +53,7 @@ export interface ChromeSlots {
   readonly Reveal: ComponentType<RevealInterfaceProps>;
   readonly Source: ComponentType<FeatureProps>;
   readonly CreateDialog: ComponentType<CreateDialogProps>;
+  readonly Chooser: ComponentType<CollectionChooserProps>;
   readonly CanvasSurface: ComponentType<SurfaceProps>;
   readonly FontDefinitions: ComponentType<FontDefinitionsProps>;
   readonly portal: HTMLElement;

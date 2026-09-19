@@ -7,13 +7,23 @@ interface LibraryResultsProps {
   readonly state: LibraryFeatureProps['state'];
   readonly library: Pick<LibraryFeatureProps['library'], 'next'>;
   readonly workspace: Pick<LibraryFeatureProps['workspace'], 'open'>;
+  readonly onSelect?: LibraryFeatureProps['onSelect'];
+  readonly currentId?: string | null;
+  readonly pendingId?: string | null;
 }
 /** Search results expose their scope; selection opens its collection. LibraryBrowser reports failures; reload retries discovery without changing stored diagrams. */
 export function createLibraryResults({
   Button,
 }: Pick<DesignSlots, 'Button'>): FunctionComponent<LibraryResultsProps> {
   /** Exact Library pagination tokens stay inside the controller. */
-  function LibraryResults({ library, state, workspace }: LibraryResultsProps): ReactElement {
+  function LibraryResults({
+    library,
+    state,
+    workspace,
+    onSelect,
+    currentId = null,
+    pendingId = null,
+  }: LibraryResultsProps): ReactElement {
     const page = state.page;
     if (page === null) return unavailable(state.problem);
     return (
@@ -25,8 +35,11 @@ export function createLibraryResults({
               <button
                 type="button"
                 className={styles.row}
+                aria-current={hit.collection === currentId ? 'page' : undefined}
+                aria-busy={hit.collection === pendingId}
                 onClick={() => {
-                  void workspace.open(hit.collection);
+                  if (onSelect) onSelect(hit.collection);
+                  else void workspace.open(hit.collection);
                 }}
               >
                 <strong>{hit.label}</strong>
@@ -34,6 +47,8 @@ export function createLibraryResults({
                   {hit.kind} ·{' '}
                   {state.source?.collections.find((item) => item.id === hit.collection)?.title}
                 </small>
+                {hit.collection === currentId && <span>Current</span>}
+                {hit.collection === pendingId && <span>Opening…</span>}
               </button>
             </li>
           ))}

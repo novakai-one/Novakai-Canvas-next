@@ -13,12 +13,27 @@ export interface ActiveDiagram {
   readonly canvas: Canvas;
   readonly session: SessionStore;
 }
+export type CollectionSwitch =
+  | { readonly phase: 'idle'; readonly activeId: string | null }
+  | { readonly phase: 'choosing'; readonly activeId: string | null }
+  | {
+      readonly phase: 'loading';
+      readonly activeId: string | null;
+      readonly targetId: string;
+    }
+  | {
+      readonly phase: 'failed';
+      readonly activeId: string | null;
+      readonly targetId: string;
+      readonly problem: Diagnostic;
+    };
 export interface WorkspaceView extends SourceView {
   readonly snapshot: Snapshot | null;
   readonly generation: string;
   readonly collections: readonly Collection[];
   readonly active: ActiveDiagram | null;
   readonly opening: string | null;
+  readonly collectionSwitch: CollectionSwitch;
   readonly status: string;
   readonly problem: Diagnostic | null;
   readonly connected: boolean;
@@ -34,6 +49,10 @@ export interface WorkspaceController {
   subscribe(listener: () => void): () => void;
   start(): Promise<void>;
   open(id: string): Promise<void>;
+  beginCollectionSwitch(): void;
+  cancelCollectionSwitch(): void;
+  chooseCollection(id: string): void;
+  retryCollectionSwitch(): void;
   showLibrary(): void;
   refresh(): Promise<void>;
   showSource(open: boolean): Promise<void>;

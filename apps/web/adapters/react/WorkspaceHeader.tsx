@@ -11,15 +11,17 @@ export function createWorkspaceHeader(
   ViewMenu: ComponentType<ViewMenuProps>,
 ): ComponentType<HeaderProps> {
   /** Diagram identity is the title; tool labels describe actions without exposing capability internals. */
-  function WorkspaceHeader({ controller, view }: HeaderProps): ReactElement {
+  function WorkspaceHeader({ controller, view, onOpenChooser }: HeaderProps): ReactElement {
     const panelState = useSyncExternalStore(panels.subscribe, panels.getSnapshot);
     return (
       <header className={styles.header} data-mode={panelState.mode}>
         <button
           type="button"
           className={styles.brand}
-          aria-label="Open collection library"
-          onClick={controller.showLibrary}
+          aria-label="Open collection chooser"
+          aria-haspopup="dialog"
+          aria-expanded={view.collectionSwitch.phase !== 'idle'}
+          onClick={onOpenChooser}
         >
           <span className={styles.mark} aria-hidden="true">
             N
@@ -28,7 +30,18 @@ export function createWorkspaceHeader(
         </button>
         <div className={styles.context}>
           <span className={styles.eyebrow}>Workspace</span>
-          <h1>{view.active?.document.collection.title ?? 'Your collections'}</h1>
+          <h1>
+            <button
+              type="button"
+              className={styles.titleTrigger}
+              aria-label="Choose a collection"
+              aria-haspopup="dialog"
+              aria-expanded={view.collectionSwitch.phase !== 'idle'}
+              onClick={onOpenChooser}
+            >
+              {view.active?.document.collection.title ?? 'Your collections'}
+            </button>
+          </h1>
         </div>
         <nav aria-label="Workspace actions" className={styles.actions}>
           <Button

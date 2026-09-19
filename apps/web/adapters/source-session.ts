@@ -98,7 +98,6 @@ export function createSourceController(bindings: SourceBindings): SourceControll
       report(printed.error);
       return;
     }
-    admittedWorkspace = current.active.base.workspace;
     update({
       source: printed.value,
       sourceBase: current.active.base,

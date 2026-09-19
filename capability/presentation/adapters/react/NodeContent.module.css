@@ -69,6 +69,11 @@
     --nv-interface-role-text: var(--nv-role-warning-text);
   }
 
+  .root[data-follows-interface-roles='true'][data-shape='container'] {
+    --nv-interface-role-fill: var(--nv-canvas-group-surface);
+    --nv-interface-role-text: var(--nv-canvas-group-heading);
+  }
+
   .root[data-follows-interface-roles='true']:is(
       [data-node-role='primary'],
       [data-node-role='supporting'],
@@ -132,12 +137,12 @@
     fill: var(--nv-canvas-group-heading);
   }
 
-  .root[data-emphasis='primary'][data-shape] .frame {
+  .root[data-emphasis='primary'][data-shape][data-node-role] .frame {
     stroke: var(--nv-action-accent);
     stroke-width: var(--nv-focus-width);
   }
 
-  .root[data-emphasis='secondary'][data-shape] .frame {
+  .root[data-emphasis='secondary'][data-shape][data-node-role] .frame {
     stroke: var(--nv-canvas-secondary);
     stroke-width: var(--nv-focus-width);
   }

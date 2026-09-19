@@ -7,8 +7,9 @@ import { createLibraryBrowser } from '../adapters/react/LibraryBrowser.js';
 import { createLibraryFilters } from '../adapters/react/LibraryFilters.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
 import { createLibraryOrganization } from '../adapters/react/LibraryOrganization.js';
-import type { ComponentType } from 'react';
+import { createElement, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
+import type { LibraryBrowserProps } from './library-react.js';
 import { createPreferenceController } from '../adapters/preference-session.js';
 import { readEnvironment, observeEnvironment } from '../adapters/browser-preferences.js';
 import { createInterfacePreferences } from '../adapters/react/InterfacePreferences.js';
@@ -59,6 +60,7 @@ import { createSubmissionSession } from '../adapters/submission-session.js';
 import { createSubmissionReaders } from '../adapters/submission-readers.js';
 import { createWorkspaceController } from '../adapters/workspace-session.js';
 import { createWorkspaceHeader } from '../adapters/react/WorkspaceHeader.js';
+import { createCollectionChooser } from '../adapters/react/CollectionChooser.js';
 import { createViewMenu } from '../adapters/react/ViewMenu.js';
 import { RevealInterface } from '../adapters/react/RevealInterface.js';
 import { createCollectionLibrary } from '../adapters/react/CollectionLibrary.js';
@@ -138,10 +140,13 @@ function featureSections(
   design: DesignBindings,
   preferences: PreferenceController,
   ThemeSelector: ComponentType<ThemeSelectorProps>,
-  Browser: ComponentType<FeatureProps>,
+  Browser: ComponentType<LibraryBrowserProps>,
 ): readonly RegisteredSection[] {
+  function LibrarySection(props: FeatureProps): ReactElement {
+    return createElement(Browser, { controller: props.controller, view: props.view });
+  }
   return [
-    { tab: 'browse', id: 'collections', title: 'Collections', Content: Browser },
+    { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
     { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
     { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
     {
@@ -293,6 +298,10 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     { id: 'results', Content: createLibraryResults(design) },
     { id: 'organization', Content: createLibraryOrganization(design) },
   ]);
+  const ChooserBrowser = createLibraryBrowser([
+    { id: 'filters', Content: createLibraryFilters(design, { compact: true }) },
+    { id: 'results', Content: createLibraryResults(design) },
+  ]);
   const ThemeSelector = createThemeSelector(design, preferences, themes);
   const sections = featureSections(design, preferences, ThemeSelector, Browser);
   const sizing = panelSizing(element);
@@ -359,6 +368,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     Recovery: createRequestRecovery(design),
     Reveal: RevealInterface,
     CreateDialog: createCollectionDialog(design),
+    Chooser: createCollectionChooser({ ...design, Browser: ChooserBrowser }),
     CanvasSurface: surface.CanvasSurface,
     FontDefinitions: presentation.FontDefinitions,
     portal: element,

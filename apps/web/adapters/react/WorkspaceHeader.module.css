@@ -44,6 +44,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .titleTrigger {
+    border: 0;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    max-inline-size: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .eyebrow {
     color: var(--nv-color-subtle);
     font-size: var(--nv-font-caption);

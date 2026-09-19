@@ -3,7 +3,6 @@ import type { ObjectDraft } from '../contract/records/inspector.js';
 import type { DiagramObject } from '../contract/records/owners.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
-import type { Result } from '../contract/errors.js';
 import type {
   WorkspaceController,
   WorkspaceView,
@@ -16,7 +15,16 @@ import type {
   RenderDocument,
   EditIntent,
 } from '../contract/records/owners.js';
-import type { Diagnostic } from '../contract/errors.js';
+import type { Diagnostic, Result } from '../contract/errors.js';
+interface RenderRequest {
+  readonly token: number;
+  readonly id: string;
+  readonly revision: number;
+  readonly workspace: string;
+  readonly generation: string;
+  readonly mode: 'navigation' | 'chooser';
+  readonly job: AbortController;
+}
 /** Ephemeral orchestration state contains immutable snapshots. Authoring is the sole owner of committed diagram data. */
 export function createWorkspaceController(bindings: WorkspaceBindings): WorkspaceController {
   const source = bindings.source({
@@ -34,6 +42,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     collections: [],
     active: null,
     opening: null,
+    collectionSwitch: { phase: 'idle', activeId: null },
     status: 'Connecting…',
     problem: null,
     connected: false,
@@ -45,7 +54,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   const confirmedGestures = new Set<string>();
   let unsubscribe = (): void => undefined;
   let renderJob: AbortController | null = null;
-  let rendering: { id: string; revision: number; generation: string } | null = null;
+  let rendering: RenderRequest | null = null;
+  let requestToken = 0;
+  let disposed = false;
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
   const inspector = bindings.inspector({ apply: applyObject, report });
@@ -78,7 +89,6 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     response: Awaited<ReturnType<WorkspaceBindings['client']['get']>>,
   ): void {
     if (!response.ok) {
-      update({ opening: null });
       report(response.error);
       return;
     }
@@ -111,6 +121,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       latest.snapshot.sequence < (state.snapshot?.sequence ?? 0)
     )
       return;
+    settleChangedRender(latest, generation);
     update({
       snapshot: latest.snapshot,
       collections: latest.collections,
@@ -123,122 +134,219 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     updateMutationAvailability();
     refreshActive();
   }
+  /** A checked snapshot can invalidate the current request before it is allowed to install. */
+  function settleChangedRender(
+    latest: {
+      readonly snapshot: import('../contract/records/owners.js').Snapshot;
+      readonly collections: WorkspaceView['collections'];
+    },
+    generation: string,
+  ): void {
+    const request = rendering;
+    if (request === null || !currentRequest(request)) return;
+    const target = latest.collections.find((item) => item.id === request.id);
+    if (
+      request.workspace !== latest.snapshot.workspace ||
+      request.generation !== generation ||
+      request.revision !== (target?.revision ?? -1)
+    )
+      settleFailure(
+        request,
+        diagnostic(
+          'render-input-changed',
+          'The workspace changed while opening this collection',
+          'Choose the collection again to retry.',
+        ),
+      );
+  }
   /** Foreign commits request a new render only when the active collection revision changed. No update performs Fit. */
   function refreshActive(): void {
     const active = state.active;
     if (active === null) return;
+    if (state.collectionSwitch.phase !== 'idle') return;
     refreshDisplayed(active);
   }
   /** Missing collections return to the library; changed render inputs retain the viewing session. */
   function refreshDisplayed(active: ActiveDiagram): void {
     const current = state.collections.find((item) => item.id === active.document.collection.id);
-    if (current === undefined) {
-      active.session.dispose();
-      update({ active: null, opening: null, status: 'Collection is no longer available' });
-      return;
-    }
+    if (current === undefined) return clearMissingActive(active);
+    if (shouldSkipRefresh(active, current)) return;
+    void open(active.document.collection.id);
+  }
+  function clearMissingActive(active: ActiveDiagram): void {
+    active.session.dispose();
+    update({ active: null, opening: null, status: 'Collection is no longer available' });
+  }
+  function requestMatches(current: WorkspaceView['collections'][number]): boolean {
     const requested = rendering;
-    if (
+    return (
       requested?.id === current.id &&
       requested.revision === current.revision &&
       requested.generation === state.generation
-    )
-      return;
-    if (renderChanged(active, current.revision, state.generation))
-      void open(active.document.collection.id);
+    );
+  }
+  function shouldSkipRefresh(
+    active: ActiveDiagram,
+    current: WorkspaceView['collections'][number],
+  ): boolean {
+    return requestMatches(current) || !renderChanged(active, current.revision, state.generation);
   }
   /** One latest render request owns delivery. Cancelled/superseded jobs cannot mount their results. */
   async function open(id: string): Promise<void> {
-    renderJob?.abort();
-    const job = new AbortController();
-    renderJob = job;
-    const generation = state.generation;
-    rendering = {
-      id,
-      revision: state.collections.find((item) => item.id === id)?.revision ?? -1,
-      generation,
-    };
-    update({ opening: id, status: 'Rendering diagram…', ...renderProblemUpdate() });
+    await requestOpen(id, 'navigation');
+  }
+  /** Explicit choices supersede every older render; token checks decide delivery after transport aborts. */
+  async function requestOpen(id: string, mode: RenderRequest['mode']): Promise<void> {
+    const request = beginRender(id, mode);
+    if (request === null) return;
     const response = await bindings.client.get(
       `/api/v1/render?id=${encodeURIComponent(id)}`,
-      job.signal,
+      request.job.signal,
     );
-    if (job.signal.aborted) return;
-    if (generation !== state.generation) return;
-    rendering = null;
-    receiveRender(response, id, generation);
+    deliverResponse(request, id, response);
+  }
+  function deliverResponse(
+    request: RenderRequest,
+    id: string,
+    response: Awaited<ReturnType<WorkspaceBindings['client']['get']>>,
+  ): void {
+    const document = currentRequest(request) ? receiveRender(response, id, request) : null;
+    if (document === null) return;
+    settleDocument(request, document);
+  }
+  function settleDocument(request: RenderRequest, document: Result<RenderDocument>): void {
+    if (!document.ok) return settleFailure(request, document.error);
+    finishRequest(request, document.value);
+  }
+  function finishRequest(request: RenderRequest, document: RenderDocument): void {
+    if (!currentRequest(request)) return;
+    const installed = installAdmitted(request, document);
+    if (!installed.ok) return settleFailure(request, installed.error);
+    settleSuccess(request);
+  }
+  function installAdmitted(request: RenderRequest, document: RenderDocument): Result<void> {
+    const admission = admitRender(request, document);
+    if (!admission.ok) return admission;
+    return install(document);
+  }
+  function admitRender(request: RenderRequest, document: RenderDocument): Result<void> {
+    const current = state.collections.find((item) => item.id === request.id);
+    const changed =
+      state.snapshot?.workspace !== request.workspace ||
+      state.generation !== request.generation ||
+      current?.revision !== request.revision ||
+      document.collection.revision !== request.revision;
+    if (changed) void refresh();
+    if (changed)
+      return {
+        ok: false,
+        error: diagnostic(
+          'render-input-changed',
+          'The workspace changed while opening this collection',
+          'Choose the collection again to retry.',
+        ),
+      };
+    return { ok: true, value: undefined };
+  }
+  /** A request captures the checked revision and service generation used for its admission. */
+  function beginRender(id: string, mode: RenderRequest['mode']): RenderRequest | null {
+    if (disposed) return null;
+    invalidateRender();
+    const job = new AbortController();
+    const request: RenderRequest = {
+      token: ++requestToken,
+      id,
+      revision: state.collections.find((item) => item.id === id)?.revision ?? -1,
+      workspace: state.snapshot?.workspace ?? '',
+      generation: state.generation,
+      mode,
+      job,
+    };
+    renderJob = job;
+    rendering = request;
+    update(renderPatch(id, mode));
+    return request;
+  }
+  function renderPatch(id: string, mode: RenderRequest['mode']): Partial<WorkspaceView> {
+    if (mode === 'chooser')
+      return {
+        opening: id,
+        status: `Opening ${collectionTitle(id)}…`,
+        collectionSwitch: { phase: 'loading', activeId: activeId(), targetId: id },
+        ...renderProblemUpdate(),
+      };
+    return { opening: id, status: 'Rendering diagram…', ...renderProblemUpdate() };
   }
   /** Successful HTTP payloads require owner validation before Canvas sees them. */
   function receiveRender(
     response: Awaited<ReturnType<WorkspaceBindings['client']['get']>>,
     id: string,
-    generation: string,
-  ): void {
-    if (!response.ok) {
-      update({ opening: null });
-      report(response.error);
-      return;
-    }
-    receiveCurrentRender(response.value, id, generation);
+    request: RenderRequest,
+  ): Result<RenderDocument> {
+    if (!response.ok) return response;
+    return transportDocument(response.value, id, request.generation);
   }
-  /** A restart response requires a fresh workspace snapshot before any diagram can become editable. */
-  function receiveCurrentRender(
+  function transportDocument(
     response: import('../contract/records/owners.js').TransportResponse,
     id: string,
     generation: string,
-  ): void {
-    if (response.generation !== generation) {
-      update({ opening: null, connected: false, status: 'Reconnecting to workspace…' });
-      void refresh();
-      return;
-    }
-    if (!response.outcome.ok) {
-      update({ opening: null });
-      report(response.outcome.error);
-      return;
-    }
-    readRender(response.outcome.value, id);
+  ): Result<RenderDocument> {
+    if (response.generation !== generation || generation !== state.generation)
+      return generationMismatch();
+    return response.outcome.ok ? readRender(response.outcome.value, id) : response.outcome;
+  }
+  function generationMismatch(): Result<RenderDocument> {
+    void refresh();
+    return {
+      ok: false,
+      error: diagnostic(
+        'workspace-generation',
+        'The workspace changed while opening this collection',
+        'Refresh the workspace, then try again.',
+      ),
+    };
   }
   /** Selected collection identity must match the requested document, even if a delayed server returns another valid diagram. */
-  function readRender(input: unknown, id: string): void {
+  function readRender(input: unknown, id: string): Result<RenderDocument> {
     const document = bindings.inputs.diagram(input);
-    if (!document.ok) {
-      report(document.error);
-      return;
-    }
-    if (document.value.collection.id !== id) {
-      report({
-        code: 'stale-diagram',
-        message: 'An unrelated diagram response was ignored',
-        recovery: 'Open the intended collection again.',
-      });
-      return;
-    }
-    install(document.value);
+    if (!document.ok) return document;
+    if (document.value.collection.id !== id)
+      return {
+        ok: false,
+        error: diagnostic(
+          'stale-diagram',
+          'The response was for a different collection',
+          'Choose the collection again to retry.',
+        ),
+      };
+    return document;
   }
-  /** Reuse the existing Canvas session for edits; only explicit collection switching constructs an initially fitted session. */
-  function install(document: RenderDocument): void {
+  /** Reuse the existing Canvas session for edits; only admitted documents may replace the retained scene. */
+  function install(document: RenderDocument): Result<void> {
     const base = matchingSnapshot(document);
-    if (base === null) return;
-    installCurrent(document, base);
+    if (!base.ok) return base;
+    return installCurrent(document, base.value);
   }
   /** Bind the displayed document to its matching canonical snapshot before any edit can use its preconditions. */
   function installCurrent(
     document: RenderDocument,
     base: NonNullable<WorkspaceView['snapshot']>,
-  ): void {
+  ): Result<void> {
     const active = state.active;
-    if (updateExisting(active, document, base)) return;
+    const reused = updateExisting(active, document, base);
+    if (!reused.ok) return reused;
+    if (reused.value) return { ok: true, value: undefined };
+    return installNew(active, document, base);
+  }
+  function installNew(
+    active: ActiveDiagram | null,
+    document: RenderDocument,
+    base: NonNullable<WorkspaceView['snapshot']>,
+  ): Result<void> {
     const session = bindings.sessions.open(document, effects);
-    if (!session.ok) {
-      report(session.error);
-      return;
-    }
+    if (!session.ok) return session;
     retainCamera(active, session.value, document, base);
-    active?.session.dispose();
-    updateLocation(document.collection.id);
     update({
-      opening: null,
       active: {
         generation: state.generation,
         document,
@@ -249,19 +357,30 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       status: editStatus(),
       ...renderProblemUpdate(),
     });
+    active?.session.dispose();
+    updateLocation(document.collection.id);
     source.refreshReadout();
     updateMutationAvailability();
+    return { ok: true, value: undefined };
   }
   /** Reuse is an explicit decision, not a type predicate: a valid active session may belong to another collection. */
   function updateExisting(
     active: ActiveDiagram | null,
     document: RenderDocument,
     base: NonNullable<WorkspaceView['snapshot']>,
-  ): boolean {
-    if (active === null) return false;
-    if (!reusableSession(active, document, base)) return false;
-    updateCanvas(active, document, base);
-    return true;
+  ): Result<boolean> {
+    if (active === null) return { ok: true, value: false };
+    if (!reusableSession(active, document, base)) return { ok: true, value: false };
+    return updateExistingSession(active, document, base);
+  }
+  function updateExistingSession(
+    active: ActiveDiagram,
+    document: RenderDocument,
+    base: NonNullable<WorkspaceView['snapshot']>,
+  ): Result<boolean> {
+    const updated = updateCanvas(active, document, base);
+    if (!updated.ok) return updated;
+    return { ok: true, value: true };
   }
   /** A navigation failure is visible but does not undo a successfully opened diagram. */
   function updateLocation(id: string): void {
@@ -274,12 +393,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     active: ActiveDiagram,
     document: RenderDocument,
     base: NonNullable<WorkspaceView['snapshot']>,
-  ): void {
+  ): Result<void> {
     const updated = bindings.sessions.update(active.session, document);
-    if (!updated.ok) {
-      report(updated.error);
-      return;
-    }
+    if (!updated.ok) return updated;
     releaseConfirmed(active.session);
     update({
       opening: null,
@@ -289,6 +405,75 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     });
     source.refreshReadout();
     updateMutationAvailability();
+    return { ok: true, value: undefined };
+  }
+  /** A settled request clears only its own pending metadata and leaves a newer request untouched. */
+  function settleSuccess(request: RenderRequest): void {
+    if (!currentRequest(request)) return;
+    rendering = null;
+    renderJob = null;
+    update({
+      opening: null,
+      collectionSwitch: { phase: 'idle', activeId: activeId() },
+      status: editStatus(),
+    });
+  }
+  /** Failed chooser attempts are recoverable and never replace the retained active diagram. */
+  function settleFailure(request: RenderRequest, error: Diagnostic): void {
+    if (!currentRequest(request)) return;
+    request.job.abort();
+    rendering = null;
+    renderJob = null;
+    const problem = owned(error);
+    update(failurePatch(request, problem));
+  }
+  function failurePatch(request: RenderRequest, problem: Diagnostic): Partial<WorkspaceView> {
+    const basePatch: Partial<WorkspaceView> = {
+      opening: null,
+      problem,
+      status:
+        request.mode === 'chooser'
+          ? `Could not open ${collectionTitle(request.id)}`
+          : problem.message,
+    };
+    return request.mode === 'chooser'
+      ? {
+          ...basePatch,
+          collectionSwitch: {
+            phase: 'failed',
+            activeId: activeId(),
+            targetId: request.id,
+            problem,
+          },
+        }
+      : basePatch;
+  }
+  /** Transport aborts are an optimization; invalidation is the ownership boundary. */
+  function invalidateRender(): void {
+    requestToken += 1;
+    renderJob?.abort();
+    renderJob = null;
+    rendering = null;
+  }
+  function currentRequest(request: RenderRequest): boolean {
+    return (
+      !disposed &&
+      requestToken === request.token &&
+      rendering === request &&
+      !request.job.signal.aborted
+    );
+  }
+  function activeId(): string | null {
+    return state.active?.document.collection.id ?? null;
+  }
+  function collectionTitle(id: string): string {
+    return state.collections.find((item) => item.id === id)?.title ?? 'this collection';
+  }
+  function owned(error: Diagnostic): Diagnostic {
+    return error.owner === undefined ? { ...error, owner: 'workspace' } : error;
+  }
+  function diagnostic(code: string, message: string, recovery: string): Diagnostic {
+    return { code, message, recovery, owner: 'workspace' };
   }
   /** A panel-owned migration notice survives diagram navigation; load failures clear on the next render attempt. */
   function renderProblemUpdate(): Partial<WorkspaceView> {
@@ -402,17 +587,16 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   ): Promise<Result<Receipt>> {
     update({ status: 'Saving…', problem: null });
     const result = await submissions.submit({ request, generation, sourceEdit, gesture });
-    if (!result.ok) {
-      report(result.error);
-      void refresh();
-      if (gesture !== null)
-        state.active?.session.dispatch({
-          kind: 'reject',
-          id: gesture,
-          message: result.error.message,
-        });
-    }
+    if (!result.ok) handleSubmitFailure(result.error, gesture);
     return result;
+  }
+  function handleSubmitFailure(error: Diagnostic, gesture: string | null): void {
+    report(error);
+    void refresh();
+    if (gesture !== null) rejectGesture(gesture, error.message);
+  }
+  function rejectGesture(gesture: string, message: string): void {
+    state.active?.session.dispatch({ kind: 'reject', id: gesture, message });
   }
   /** Only a matching Authoring receipt may acknowledge a gesture or mark its submitted source generation saved. */
   function confirmed(submission: Submission, receipt: Receipt): void {
@@ -430,19 +614,34 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Receipt alone cannot remove a drag preview while the canvas still displays the old revision. */
   function releaseConfirmed(session: ActiveDiagram['session']): void {
     const snapshot = session.getSnapshot();
-    for (const retained of snapshot.recovery) {
-      if (!confirmedGestures.has(retained.draft.id)) continue;
-      if (snapshot.stamp.revision <= retained.draft.base.revision) continue;
-      session.dispatch({ kind: 'confirmed', id: retained.draft.id });
-      confirmedGestures.delete(retained.draft.id);
+    const retained = snapshot.recovery.filter(
+      (item) =>
+        confirmedGestures.has(item.draft.id) && snapshot.stamp.revision > item.draft.base.revision,
+    );
+    for (const item of retained) {
+      session.dispatch({ kind: 'confirmed', id: item.draft.id });
+      confirmedGestures.delete(item.draft.id);
     }
   }
   /** A response racing a newer snapshot is discarded; old rendered data never gains new write preconditions. */
-  function matchingSnapshot(document: RenderDocument): WorkspaceView['snapshot'] {
-    const current = state.collections.find((item) => item.id === document.collection.id);
-    if (current?.revision === document.collection.revision) return state.snapshot;
+  function matchingSnapshot(
+    document: RenderDocument,
+  ): Result<NonNullable<WorkspaceView['snapshot']>> {
+    if (snapshotMatches(document))
+      return { ok: true, value: state.snapshot as NonNullable<WorkspaceView['snapshot']> };
     void refresh();
-    return null;
+    return {
+      ok: false,
+      error: diagnostic(
+        'snapshot-mismatch',
+        'The collection changed while it was opening',
+        'Refresh the library, then try the collection again.',
+      ),
+    };
+  }
+  function snapshotMatches(document: RenderDocument): boolean {
+    const current = state.collections.find((item) => item.id === document.collection.id);
+    return state.snapshot !== null && current?.revision === document.collection.revision;
   }
   /** Human creation is an ordinary DSL creation with absent collection and observed catalog preconditions. */
   async function create(title: string): Promise<void> {
@@ -495,10 +694,46 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!request.ok) return request;
     return submit(request.value, state.generation, state.sourceEdit, null);
   }
+  /** Opening the chooser is a presentation intent; it never disposes the retained Canvas session. */
+  function beginCollectionSwitch(): void {
+    if (state.collectionSwitch.phase === 'loading') return;
+    invalidateRender();
+    update({
+      opening: null,
+      collectionSwitch: { phase: 'choosing', activeId: activeId() },
+      ...renderProblemUpdate(),
+    });
+  }
+  /** Cancellation invalidates transport ownership before closing the controlled dialog. */
+  function cancelCollectionSwitch(): void {
+    if (state.collectionSwitch.phase === 'idle') return;
+    invalidateRender();
+    update({
+      opening: null,
+      collectionSwitch: { phase: 'idle', activeId: activeId() },
+      status: state.active === null ? 'Ready' : editStatus(),
+      ...renderProblemUpdate(),
+    });
+    refreshActive();
+  }
+  /** A newer explicit target always supersedes an older target, including an in-flight request. */
+  function chooseCollection(id: string): void {
+    if (id === activeId()) {
+      cancelCollectionSwitch();
+      return;
+    }
+    if (state.collectionSwitch.phase === 'idle') beginCollectionSwitch();
+    void requestOpen(id, 'chooser');
+  }
+  /** Retry uses the failed target but captures the current snapshot and generation again. */
+  function retryCollectionSwitch(): void {
+    if (state.collectionSwitch.phase !== 'failed') return;
+    chooseCollection(state.collectionSwitch.targetId);
+  }
   /** Returning to discovery retains source and inspector drafts but disposes the old viewing session. */
   function showLibrary(): void {
-    renderJob?.abort();
-    rendering = null;
+    invalidateRender();
+    update({ collectionSwitch: { phase: 'idle', activeId: null } });
     state.active?.session.dispose();
     source.close('keep');
     update({ active: null, opening: null });
@@ -511,15 +746,23 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     state.active?.session.dispatch({ kind: 'connected', value: connected });
   }
   /** Mount and unmount own the event stream; no global listener survives disposal. */
-  async function start(): Promise<void> {
+  async function startWorkspace(): Promise<void> {
     await refresh();
+    if (disposed) return;
     restoreEdits();
     await restoreLocation();
+  }
+  function markReady(): void {
+    if (!state.sourceDirty) update({ status: 'Ready' });
+  }
+  async function start(): Promise<void> {
+    await startWorkspace();
+    if (disposed) return;
     unsubscribe = bindings.client.changes(() => {
       // The local receipt refresh includes every commit made while its submission was in flight.
       if (!state.busy) void refresh();
     }, connection);
-    if (!state.sourceDirty) update({ status: 'Ready' });
+    markReady();
   }
   /** A saved collection link restores the actual canonical diagram, including human placement records. */
   async function restoreLocation(): Promise<void> {
@@ -561,6 +804,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     wires,
     library,
     showLibrary,
+    beginCollectionSwitch,
+    cancelCollectionSwitch,
+    chooseCollection,
+    retryCollectionSwitch,
     getSnapshot: () => state,
     subscribe: (listener) => {
       listeners.add(listener);
@@ -582,8 +829,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     create,
     report,
     dispose: () => {
+      disposed = true;
       unsubscribe();
-      renderJob?.abort();
+      invalidateRender();
       snapshotRead += 1;
       state.active?.session.dispose();
       listeners.clear();

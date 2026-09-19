@@ -1,12 +1,13 @@
 import type { ComponentType, ReactElement } from 'react';
-import type { LibraryProps, DesignSlots, FeatureProps } from '../../contract/react-types.js';
+import type { LibraryProps, DesignSlots } from '../../contract/react-types.js';
+import type { LibraryBrowserProps } from '../../contract/library-react.js';
 import styles from './CollectionLibrary.module.css';
 /** The library presents actual committed collections; opening one is an explicit camera-navigation action. */
 export function createCollectionLibrary({
   Button,
   Browser,
 }: Pick<DesignSlots, 'Button'> & {
-  readonly Browser: ComponentType<FeatureProps>;
+  readonly Browser: ComponentType<LibraryBrowserProps>;
 }): ComponentType<LibraryProps> {
   /** Empty and populated views share a clear creation action and readable collection metadata. */
   function CollectionLibrary({ controller, view, onCreate }: LibraryProps): ReactElement {

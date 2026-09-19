@@ -68,7 +68,7 @@ function WorkspaceFrame({
   creating,
   setCreating,
 }: WorkspaceFrameProps): ReactElement {
-  const { FontDefinitions, Header, CreateDialog } = slots;
+  const { FontDefinitions, Header, CreateDialog, Chooser } = slots;
   return (
     <div className={styles.shell}>
       <FontDefinitions fonts={view.active?.document.fonts} />
@@ -88,10 +88,19 @@ function WorkspaceFrame({
         hidden={hidden}
         setCreating={setCreating}
       />
-      <ProblemSlot hidden={hidden} view={view} />
+      <ProblemSlot hidden={hidden || view.collectionSwitch.phase !== 'idle'} view={view} />
       <RecoverySlot hidden={hidden} Recovery={slots.Recovery} controller={controller} view={view} />
       <StatusSlot hidden={hidden} view={view} />
       <RevealSlot hidden={hidden} Reveal={slots.Reveal} onReveal={slots.panels.revealInterface} />
+      <Chooser
+        controller={controller}
+        view={view}
+        onCreate={() => {
+          controller.cancelCollectionSwitch();
+          setCreating(true);
+        }}
+        portal={slots.portal}
+      />
       <CreateDialog
         open={creating}
         onClose={() => setCreating(false)}
@@ -119,7 +128,14 @@ function HeaderSlot({
   readonly setCreating: (value: boolean) => void;
 }): ReactElement | null {
   if (hidden) return null;
-  return <Header controller={controller} view={view} onCreate={() => setCreating(true)} />;
+  return (
+    <Header
+      controller={controller}
+      view={view}
+      onCreate={() => setCreating(true)}
+      onOpenChooser={controller.beginCollectionSwitch}
+    />
+  );
 }
 
 function WorkspaceBody({

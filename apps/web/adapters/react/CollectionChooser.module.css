@@ -1,0 +1,62 @@
+@layer components {
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-4);
+    min-block-size: 0;
+    max-block-size: min(60dvh, 36rem);
+    overflow: hidden;
+  }
+
+  .browser {
+    flex: 1;
+    min-block-size: 0;
+    overflow: auto;
+    padding-inline-end: var(--nv-space-2);
+  }
+
+  .content > .browser {
+    min-block-size: 0;
+  }
+
+  .pending {
+    margin: 0;
+    padding: var(--nv-space-3);
+    border-inline-start: var(--nv-stroke-base) solid var(--nv-action-accent);
+    color: var(--nv-color-subtle);
+    background: var(--nv-color-canvas);
+  }
+
+  .failure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-3);
+  }
+
+  .failure h2,
+  .failure p {
+    margin: 0;
+  }
+
+  .failure p:first-of-type {
+    color: var(--nv-status-error);
+  }
+
+  .failure details {
+    color: var(--nv-color-subtle);
+  }
+
+  .failure code {
+    display: block;
+    margin-block-start: var(--nv-space-2);
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-2);
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+}

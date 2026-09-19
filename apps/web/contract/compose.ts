@@ -1,3 +1,4 @@
+import { previewModuleRoutes } from '../adapters/route-preview.js';
 import type { Diagnostic } from './errors.js';
 import { folderId } from '@novakai/canvas-library';
 import { createLibraryController } from '../adapters/library-session.js';
@@ -236,6 +237,7 @@ function controller(
       }),
     sessions: createCanvasSessions(canvas, () => viewport(element)),
     edits: { plan: planCanvasEdit },
+    previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>
       createSubmissionSession({
         client,

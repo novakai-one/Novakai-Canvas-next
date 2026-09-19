@@ -14,7 +14,10 @@ export function contentBounds(
 ): Box {
   return union([
     ...nodes.map((item) => item.box),
-    ...wires.flatMap((item) => [item.labelBox, pointBounds(item.points)]),
+    ...wires.flatMap((item) => [
+      pointBounds(item.points),
+      ...(item.labelVisible === false ? [] : [item.labelBox]),
+    ]),
     ...sequence.events.flatMap((item) => [item.labelBox, pointBounds(item.points)]),
     ...sequence.fragments.map((item) => item.box),
     ...sequence.activations.map((item) => item.box),

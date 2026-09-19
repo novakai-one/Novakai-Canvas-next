@@ -4,7 +4,7 @@ import type { Segment } from './paths.js';
 import { segments } from './paths.js';
 import { overlaps } from '../geometry/intersections.js';
 import { expand } from '../geometry/bounds.js';
-/** Label candidates remain adjacent to their actual wire segment; no detached fallback label is fabricated. */
+/** Route bounds extend one pixel right/down; positive-side candidates clear that same footprint. */
 function atFraction(
   segment: Segment,
   content: MeasuredContent,
@@ -15,13 +15,15 @@ function atFraction(
   const y = segment.a.y + (segment.b.y - segment.a.y) * fraction;
   const width = content.width;
   const height = content.height;
+  // pointBounds gives zero-width strokes a one-pixel right/bottom footprint.
+  const positiveGap = gap + 1;
   if (segment.a.y === segment.b.y)
     return [
       { x: x - width / 2, y: y - gap - height, width, height },
-      { x: x - width / 2, y: y + gap, width, height },
+      { x: x - width / 2, y: y + positiveGap, width, height },
     ];
   return [
-    { x: x + gap, y: y - height / 2, width, height },
+    { x: x + positiveGap, y: y - height / 2, width, height },
     { x: x - gap - width, y: y - height / 2, width, height },
   ];
 }
@@ -31,7 +33,19 @@ export function candidates(
   content: MeasuredContent,
   gap: number,
 ): readonly Box[] {
-  return [0.5, 0.25, 0.75].flatMap((fraction) => atFraction(segment, content, gap, fraction));
+  const span = length(segment);
+  const extent = segment.a.y === segment.b.y ? content.width : content.height;
+  const inset = (extent / 2 + gap) / span;
+  const steps = Math.max(1, Math.min(32, Math.floor(span / (extent + gap * 2))));
+  const fractions = [
+    0.5,
+    0.25,
+    0.75,
+    // Flush against either end with the same measured clearance, without extending past a bend.
+    ...(inset <= 0.5 ? [inset, 1 - inset] : []),
+    ...Array.from({ length: steps }, (_, i) => (i + 0.5) / steps),
+  ];
+  return fractions.flatMap((fraction) => atFraction(segment, content, gap, fraction));
 }
 /** Search longest segments first so an engineering label reads with a substantial part of its wire. */
 export function labelBox(
@@ -39,12 +53,16 @@ export function labelBox(
   content: MeasuredContent,
   occupied: readonly Box[],
   gap: number,
+  blocked: (box: Box) => boolean = () => false,
 ): Box | null {
   const ordered = labelSegments(points).toSorted((a, b) => length(b) - length(a));
   const boxes = ordered.flatMap((segment) => candidates(segment, content, gap));
   return (
-    boxes.find((candidate) => occupied.every((box) => !overlaps(expand(candidate, gap), box))) ??
-    null
+    boxes.find(
+      (candidate) =>
+        !blocked(expand(candidate, gap)) &&
+        occupied.every((box) => !overlaps(expand(candidate, gap), box)),
+    ) ?? null
   );
 }
 /** Manhattan length is exact for the inspected orthogonal corridor. */

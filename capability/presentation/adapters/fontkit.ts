@@ -2,6 +2,7 @@ import { create } from 'fontkit';
 import type { Font } from 'fontkit';
 import { createHash } from 'node:crypto';
 import type { FontSet, FontSource, FontRef } from '../contract/records/style.js';
+import { contextualAlternates } from '../contract/records/style.js';
 import type { MeasurementPort, TextMetrics } from '../contract/ports/measurement.js';
 import { fail } from '../contract/errors.js';
 import type { Result } from '../contract/errors.js';
@@ -10,7 +11,10 @@ export type FontParser = (bytes: Uint8Array) => Font;
 interface LoadedFont {
   readonly source: FontSource;
   readonly font: Font;
+  readonly metrics: Map<string, Result<TextMetrics>>;
 }
+/** Bounded native provider cache contains font objects and text metrics, never scene geometry. */
+const nativeFonts = new Map<string, LoadedFont>();
 /** Font collections are not silently resolved to their first member. */
 function parseNative(bytes: Uint8Array): Font {
   const parsed = create(Buffer.from(bytes));
@@ -22,7 +26,13 @@ function load(source: FontSource, parser: FontParser): LoadedFont {
   const bytes = Buffer.from(source.base64, 'base64');
   const actual = createHash('sha256').update(bytes).digest('hex');
   if (actual !== source.digest) throw new Error('Font digest mismatch');
-  return { source, font: parser(bytes) };
+  if (parser !== parseNative) return { source, font: parser(bytes), metrics: new Map() };
+  const prior = nativeFonts.get(source.digest);
+  if (prior !== undefined) return prior;
+  const loaded = { source, font: parser(bytes), metrics: new Map<string, Result<TextMetrics>>() };
+  if (nativeFonts.size >= 8) nativeFonts.delete(nativeFonts.keys().next().value!);
+  nativeFonts.set(source.digest, loaded);
+  return loaded;
 }
 /** Unsupported codepoints are explicit failures; invisible substitution would invalidate measured layout. */
 function missingGlyph(text: string, font: Font): string | undefined {
@@ -39,7 +49,7 @@ function shape(text: string, loaded: LoadedFont, size: number): Result<TextMetri
       loaded.source.digest,
       `Pinned font ${loaded.source.family} does not contain ${JSON.stringify(missing)} (${codepoint(missing)})`,
     );
-  const run = loaded.font.layout(text);
+  const run = loaded.font.layout(text, { calt: contextualAlternates });
   const scale = size / loaded.font.unitsPerEm;
   return {
     ok: true,
@@ -63,7 +73,13 @@ function measure(
 ): Result<TextMetrics> {
   const found = fonts.find((item) => item.source.digest === font.digest);
   if (!found) return fail('missing-resource', font.digest, 'Pinned font is unavailable');
-  return protectShape(text, found, size);
+  const key = `${size}:${text}`;
+  const prior = found.metrics.get(key);
+  if (prior !== undefined) return prior;
+  const result = protectShape(text, found, size);
+  if (found.metrics.size >= 8192) found.metrics.delete(found.metrics.keys().next().value!);
+  found.metrics.set(key, result);
+  return result;
 }
 /** Native shaping failure remains typed; caller restores the resource or corrects unsupported text. */
 function protectShape(text: string, font: LoadedFont, size: number): Result<TextMetrics> {
@@ -83,7 +99,7 @@ export function createFontMetrics(
     return {
       ok: true,
       value: {
-        version: 'fontkit-2.0.4/presentation-6',
+        version: 'fontkit-2.0.4/presentation-7',
         measure: (text, font, size) => measure(text, font, size, loaded),
       },
     };

@@ -1,9 +1,9 @@
 import type { WorkspaceId, RequestId, Digest } from '../brands.js';
 import type { Result } from '../errors.js';
-import type { Snapshot, Receipt, Write, ReadVersion, CommitOutcome } from '../records/storage.js';
-/** One immutable consistent snapshot; no background refresh may mutate returned data. */
+import type { Receipt, Write, ReadVersion, CommitOutcome } from '../records/storage.js';
+/** One consistent raw snapshot; Authoring alone admits its shape, identities and invariants. */
 export interface SnapshotReader {
-  read(workspace: WorkspaceId): Promise<Result<Snapshot>>;
+  read(workspace: WorkspaceId): Promise<Result<unknown>>;
 }
 /** Successful receipts survive source-file deletion and alias changes. */
 export interface ReceiptReader {

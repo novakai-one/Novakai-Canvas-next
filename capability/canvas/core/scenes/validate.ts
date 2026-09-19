@@ -57,9 +57,19 @@ function validateWire(wire: RoutedWire, section: PlacedSection): void {
   if (wire.points.length < 2 || wire.points.length > 10000)
     reject('invalid-scene', wire.id, 'Route needs2..10000points');
   wire.points.forEach((value) => parse(point, value));
-  parse(box, wire.labelBox);
+  validateWireLabel(wire);
   validateEndpoint(wire.source, section);
   validateEndpoint(wire.target, section);
+}
+/** Hidden annotations have an explicit empty footprint; visible annotations still need positive bounds. */
+export function validateWireLabel(wire: RoutedWire): void {
+  if (wire.labelVisible !== false) {
+    parse(box, wire.labelBox);
+    return;
+  }
+  parse(point, { x: wire.labelBox.x, y: wire.labelBox.y });
+  if (wire.labelBox.width !== 0 || wire.labelBox.height !== 0)
+    reject('invalid-scene', wire.id, 'Hidden wire labels must have empty bounds');
 }
 /** Admission checks namespace/geometry only; supplied measured notation is validated by its owning port. */
 function validateSection(section: PlacedSection): void {

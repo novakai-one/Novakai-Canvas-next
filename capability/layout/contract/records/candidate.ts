@@ -13,6 +13,10 @@ const node = z
   })
   .readonly();
 const marker = z.enum(['none', 'arrow', 'open-arrow', 'one', 'zero-one', 'one-many', 'zero-many']);
+const hiddenLabelBox = point
+  .unwrap()
+  .extend({ width: z.literal(0), height: z.literal(0) })
+  .readonly();
 const wire = z
   .strictObject({
     id: identity,
@@ -20,8 +24,9 @@ const wire = z
     target: endpoint,
     points: z.array(point).min(2).max(10000).readonly(),
     path: z.string().max(100000),
-    labelBox: box,
+    labelBox: z.union([box, hiddenLabelBox]),
     measuredLabel: z.unknown(),
+    labelVisible: z.boolean().optional(),
     appearance: z.unknown(),
     sourceMarker: marker,
     targetMarker: marker,

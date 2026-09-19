@@ -6,12 +6,15 @@ import { handler, type Handler } from './handler.js';
 import { changed } from './changes.js';
 import { fitBounds, locateBounds, zoomAt } from '../camera/navigate.js';
 import { resizeCamera } from '../camera/resize.js';
+import { previewBox } from '../scenes/preview.js';
 import { targetInfo } from '../scenes/address.js';
 import { parse } from '../validation/outcomes.js';
 /** Explicit fit chooses admitted collection/target bounds; selection updates cannot enter this handler. */
 function fitted(state: SessionState, event: EventOf<'fit'>): Camera {
   const bounds =
-    event.target === null ? state.scene.bounds : targetInfo(state.index, event.target).box;
+    event.target === null
+      ? (state.routePreview?.bounds ?? state.scene.bounds)
+      : previewBox(state, targetInfo(state.index, event.target));
   return fitBounds(state.camera, bounds, state.profile);
 }
 /** Camera handlers validate final arithmetic as well as input, rejecting nonfinite/out-of-range positions. */

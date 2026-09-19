@@ -154,3 +154,6 @@ export const visualAsset = z
   })
   .readonly();
 export type VisualAsset = z.infer<typeof visualAsset>;
+
+/** Measure and render literal text forms without optional contextual substitutions. */
+export const contextualAlternates = false;

@@ -32,18 +32,30 @@ function translate<T>(result: StorageResult<T>): Result<T> {
   );
   return mapped;
 }
-/** Decode storage rows into Authoring-owned identities; a malformed stored snapshot cannot authorize a write. */
-function snapshot(storage: ConditionalStorage, workspace: WorkspaceId): Result<Snapshot> {
+/** Map physical storage without interpreting Authoring's shape; the consumer admits this raw snapshot. */
+function rawSnapshot(storage: ConditionalStorage, workspace: WorkspaceId): Result<unknown> {
   const current = translate(storage.readSnapshot());
   if (!current.ok) return current;
-  return checkedSnapshot(
-    {
+  if (String(current.value.workspace) !== workspace)
+    return failure(
+      'permission-denied',
+      'workspace',
+      'Workspace does not belong to this service session',
+    );
+  return {
+    ok: true,
+    value: {
       workspace: current.value.workspace,
       sequence: current.value.sequence,
       records: current.value.slots,
     },
-    workspace,
-  );
+  };
+}
+/** Receipt and commit bridges retain their existing checked Authoring identities before physical operations. */
+function snapshot(storage: ConditionalStorage, workspace: WorkspaceId): Result<Snapshot> {
+  const current = rawSnapshot(storage, workspace);
+  if (!current.ok) return current;
+  return checkedSnapshot(current.value, workspace);
 }
 /** Expected workspace identity is checked separately from schema validity to prevent accidental cross-workspace bridges. */
 function checkedSnapshot(input: unknown, workspace: WorkspaceId): Result<Snapshot> {
@@ -92,7 +104,7 @@ function commit(storage: ConditionalStorage, request: CommitRequest): Result<Rec
 /** Trusted service composition alone binds this bridge; Authoring owns admission and uncertain-commit recovery. */
 export function createAuthoringStore(storage: ConditionalStorage): AuthoringStore {
   return {
-    snapshots: { read: async (workspace) => snapshot(storage, workspace) },
+    snapshots: { read: async (workspace) => rawSnapshot(storage, workspace) },
     receipts: { find: async (workspace, request) => receipt(storage, workspace, request) },
     commits: { commit: async (request) => commit(storage, request) },
   };

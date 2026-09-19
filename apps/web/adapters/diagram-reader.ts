@@ -46,23 +46,32 @@ function decode(input: unknown): RenderDocument {
       return checked;
     },
   };
-  const projection = accepted(readMeasuredProjection(payload.projection, collection, domain));
+  let projection: ReturnType<typeof readMeasuredProjection> | undefined;
   const measurements = accepted(readSupplementalMeasurements(payload.measurements));
   const scene = accepted(
     readScene(
-      { projection, measurements, options: payload.options, candidate: payload.scene },
+      {
+        projection: payload.projection,
+        measurements,
+        options: payload.options,
+        candidate: payload.scene,
+      },
       {
         engineVersions: defaultEngineVersions,
         projection: {
-          read: (input) => layoutResult(readMeasuredProjection(input, collection, domain)),
+          read: (input) => {
+            projection = readMeasuredProjection(input, collection, domain);
+            return layoutResult(projection);
+          },
           content: (input) => layoutResult(readMeasuredContent(input)),
         },
       },
     ),
   );
+  if (projection === undefined) throw new DiagramRejected('Layout omitted projection admission');
   return {
     collection,
-    projection,
+    projection: accepted(projection),
     measurements,
     scene,
     fonts: fontSet.parse(payload.fonts),
@@ -70,10 +79,23 @@ function decode(input: unknown): RenderDocument {
     options: options.parse(payload.options),
   };
 }
-/** Browser transport success alone cannot mount a scene. Any owner rejection leaves the existing canvas available. */
+/** Only our own immutable admission results can reuse an owner check within this page. */
+const admittedDocuments = new WeakMap<object, RenderDocument>();
+function immutable<T>(value: T): T {
+  if (value === null || typeof value !== 'object' || Object.isFrozen(value)) return value;
+  Object.values(value).forEach(immutable);
+  return Object.freeze(value);
+}
+/** Raw transport data always receives every owner check; already admitted immutable identity is reusable. */
 export function readDiagram(input: unknown): Result<RenderDocument> {
   try {
-    return { ok: true, value: decode(input) };
+    if (input !== null && typeof input === 'object') {
+      const admitted = admittedDocuments.get(input);
+      if (admitted !== undefined) return { ok: true, value: admitted };
+    }
+    const document = immutable(decode(input));
+    admittedDocuments.set(document, document);
+    return { ok: true, value: document };
   } catch {
     return failure('invalid-diagram', 'The rendered diagram could not be validated');
   }

@@ -1,3 +1,5 @@
+import { prepareLayoutRuntime } from '@novakai/canvas-layout';
+import { prepareNativePresentation } from '@novakai/canvas-presentation';
 import { openAssets } from '@novakai/canvas-assets';
 import { openSqlite } from '@novakai/canvas-persistence';
 import { composeAuthoring, failure as authoringFailure } from '@novakai/canvas-authoring';
@@ -30,6 +32,10 @@ export async function runRenderWorker(): Promise<Result<void>> {
       import('../adapters/rendering-input.js'),
       import('../adapters/rendering.js'),
     ]);
+    const prepared = await Promise.all([prepareNativePresentation(), prepareLayoutRuntime()]);
+    for (const result of prepared) {
+      if (!result.ok) return failure('unavailable', 'worker', result.error.message, result.error);
+    }
     return entry.serveRenderWorker({
       producer: { produce: rendering.produceDiagram },
       read: input.readRenderingJob,
@@ -47,6 +53,7 @@ export async function createDiagramProducer(timeoutMs = 30000): Promise<Result<D
       import('../adapters/rendering-output.js'),
     ]);
     const transport = worker.createRenderTransport(timeoutMs);
+    await transport.ready;
     return {
       ok: true,
       value: {

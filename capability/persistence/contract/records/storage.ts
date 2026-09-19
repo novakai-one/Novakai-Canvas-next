@@ -36,6 +36,16 @@ export const workspaceState = z.strictObject({
   receipts: z.array(receipt),
 });
 export const versionHeader = z.object({ schemaVersion: z.number() });
+/** Internal structural schema: payloads must be exact values from this read's detached JSON admission. */
+export function admittedWorkspaceState(payloads: readonly Json[]) {
+  const admitted = new Set<unknown>(payloads);
+  const payload = z.custom<Json>((value) => admitted.has(value));
+  return workspaceState.extend({
+    slots: z.array(slot.extend({ value: payload })),
+    receipts: z.array(receipt.extend({ outcome: payload })),
+  });
+}
+
 /** Composite storage identity, independent of any diagram-specific record type. */
 export interface RecordKey {
   readonly kind: z.infer<typeof recordKey>['kind'];

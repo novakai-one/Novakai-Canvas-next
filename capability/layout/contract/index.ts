@@ -1,6 +1,11 @@
 /** Layout public boundary: consumers never import its geometry policies or concrete native adapters. */
 export { createLayout } from './api.js';
-export { composeLayout } from './compose.js';
+export {
+  composeLayout,
+  routeModuleSection,
+  prepareLayoutRuntime,
+  previewModuleCollection,
+} from './compose.js';
 export type { LayoutOwners } from './compose.js';
 export { options } from './types.js';
 export type {
@@ -66,3 +71,6 @@ export { defaultEngineVersions } from './records/engines.js';
 
 export type { LayoutInputKey } from './brands.js';
 export { inputKey as layoutInputKey } from './brands.js';
+
+export { nestedEngineVersions } from './records/engines.js';
+export type { EngineScene, MeasuredBlock, EngineWirePath } from './records/engine-scene.js';

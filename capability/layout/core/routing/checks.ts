@@ -4,6 +4,7 @@ import type { SupplementalMeasurements } from '../../contract/types.js';
 import { samePoint, overlaps } from '../geometry/intersections.js';
 import { approach } from './endpoints.js';
 import { clear, segments } from './paths.js';
+import type { Segment } from './paths.js';
 import { reject } from '../validation/outcomes.js';
 /** Determine whether the first/last segment extends outward along the resolved named side. */
 function outward(
@@ -91,9 +92,11 @@ export function checkLabel(box: Box, wire: VisualWire, occupied: readonly Box[])
 }
 /** Crossings are warnings rather than silently classified as a semantic invalidity. Layout execute catches structured faults; Authoring retains the scene and owns correction. */
 export function crosses(a: RoutedWire, b: RoutedWire): boolean {
-  return segments(a.points).some((left) =>
-    segments(b.points).some((right) => crossing(left.a, left.b, right.a, right.b)),
-  );
+  return crossesSegments(segments(a.points), segments(b.points));
+}
+/** Reuse each wire's segment list throughout an inspection without storing derived geometry. */
+export function crossesSegments(a: readonly Segment[], b: readonly Segment[]): boolean {
+  return a.some((left) => b.some((right) => crossing(left.a, left.b, right.a, right.b)));
 }
 /** Strict interior intersection excludes shared endpoints and collinear overlap. */
 function crossing(a: Point, b: Point, c: Point, d: Point): boolean {

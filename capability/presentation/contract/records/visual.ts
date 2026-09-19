@@ -117,6 +117,29 @@ const linkTarget = z.discriminatedUnion('kind', [
 const navigation = z
   .strictObject({ member: z.string(), label: z.string(), target: linkTarget })
   .readonly();
+/** Fixed app-owned module frame and whitespace budget, supplied before layout/routing. */
+export const moduleEnvelope = z
+  .strictObject({
+    width: dimension,
+    height: dimension,
+    header: dimension,
+    gap: dimension,
+    lanePitch: dimension,
+    annotationGap: dimension,
+    terminalPitch: dimension,
+    columns: z.number().int().positive(),
+    childColumns: z.number().int().positive(),
+    childColumnWidths: z.array(dimension).readonly(),
+    childRowHeights: z.array(dimension).readonly(),
+    childInsets: z.array(z.strictObject({ x: dimension, y: dimension }).readonly()).readonly(),
+    pitch: z.strictObject({ x: dimension, y: dimension }).readonly(),
+    columnWidths: z.array(dimension).readonly(),
+    rowHeights: z.array(dimension).readonly(),
+    columnCenters: z.array(dimension).readonly(),
+    rowCenters: z.array(dimension).readonly(),
+  })
+  .readonly();
+export type ModuleEnvelope = z.infer<typeof moduleEnvelope>;
 /** Node geometry describes minimum measured content bounds; global position remains Layout's decision. */
 export const visualNode = z
   .strictObject({
@@ -136,6 +159,7 @@ export const visualNode = z
     width: dimension,
     height: dimension,
     headerHeight: dimension,
+    envelope: moduleEnvelope.optional(),
     chromeStyle: chromeResolvedStyle.optional(),
     radius: dimension,
     strokeWidth: dimension,
@@ -160,6 +184,8 @@ export interface VisualEndpoint {
 }
 type SceneIdentity = z.infer<typeof sceneId>;
 export interface VisualWire {
+  readonly labelVisible?: boolean | undefined;
+  readonly annotationEndpoint?: 'source' | 'target' | undefined;
   readonly id: SceneIdentity;
   readonly relationshipId: string;
   readonly sectionId: string;
@@ -179,6 +205,7 @@ export interface VisualSequenceItem {
   readonly marker: MarkerKind;
 }
 export interface VisualSection {
+  readonly envelope?: ModuleEnvelope | undefined;
   readonly id: string;
   readonly title: MeasuredContent;
   readonly mode: Section['mode'];

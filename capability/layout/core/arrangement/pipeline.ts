@@ -1,3 +1,4 @@
+import { placeAppSections } from '../scene-out.js';
 import type { VisualSection } from '../../contract/records/input.js';
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { GeometryDependencies, Inspection } from '../../contract/types.js';
@@ -53,6 +54,12 @@ export async function arrange(
     [],
     async (result, source) => {
       requireValue(await dependencies.jobs.checkpoint(request.job));
+      const custom = moduleEngine(source, dependencies);
+      if (custom !== undefined)
+        return [
+          ...result,
+          custom.section(source, request.measurements, request.options, versions(dependencies)),
+        ];
       const section = await arrangeSection(
         source,
         prior?.sections.find((section) => section.id === source.id) ?? null,
@@ -62,7 +69,9 @@ export async function arrange(
       return [...result, section];
     },
   );
-  const sections = requireValue(await arrangeSections(local, request.projection, prior, context));
+  const sections = request.projection.sections.some((s) => s.mode === 'modules')
+    ? placeAppSections(local, request.projection, request.options)
+    : requireValue(await arrangeSections(local, request.projection, prior, context));
   const scene: Scene = {
     collectionId: request.projection.collectionId,
     revision: request.projection.revision,
@@ -122,11 +131,21 @@ export async function reroute(
     async (result, source) => {
       const fixed = fixedSection(source, request);
       const nodes = inspectNodes(source, fixed.nodes, request.options);
-      const local = await completeSection(source, nodes, request.measurements, {
-        dependencies,
-        options: request.options,
-        job: request.job,
-      });
+      const custom = moduleEngine(source, dependencies);
+      const local =
+        custom === undefined
+          ? await completeSection(source, nodes, request.measurements, {
+              dependencies,
+              options: request.options,
+              job: request.job,
+            })
+          : custom.section(
+              source,
+              request.measurements,
+              request.options,
+              versions(dependencies),
+              nodes,
+            );
       const section = {
         ...local,
         origin: fixed.origin,
@@ -155,4 +174,12 @@ function fixedSection(source: VisualSection, request: CheckedRouteRequest): Sect
   const fixed = request.fixed.sections.find((item) => item.id === source.id);
   if (!fixed) return reject('invalid-input', source.id, 'Fixed section is missing');
   return fixed;
+}
+
+/** Module routing has one implementation; missing composition is an error, never native fallback. */
+function moduleEngine(source: VisualSection, dependencies: GeometryDependencies) {
+  if (source.mode !== 'modules') return undefined;
+  if (dependencies.nested === undefined)
+    return reject('invalid-input', source.id, 'Module sections require the custom roads engine');
+  return dependencies.nested;
 }

@@ -1,4 +1,5 @@
 import { jsonValue } from '../../contract/records/storage.js';
+import type { Json } from '../../contract/records/storage.js';
 import { fail } from '../../contract/errors.js';
 import type { ErrorCode, Result } from '../../contract/errors.js';
 interface Parser<T> {
@@ -21,7 +22,7 @@ export function parse<T>(schema: Parser<T>, input: unknown, code: ErrorCode): Re
   return fail(code, issue?.path.map(String).join('.') ?? '$', issue?.message ?? 'Invalid data');
 }
 /** Bounded JSON read boundary; protect() owns malformed/cyclic/oversized-input recovery. */
-export function boundedClone(input: unknown, limit = 64 * 1024 * 1024): unknown {
+export function boundedClone(input: unknown, limit = 64 * 1024 * 1024): Json {
   const checked = jsonValue.safeParse(input);
   if (!checked.success) throw new TypeError('Unsupported JSON value');
   const serialized = JSON.stringify(checked.data);

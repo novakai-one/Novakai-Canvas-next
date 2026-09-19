@@ -18,17 +18,53 @@ function key(wire: Ends): string {
       .toSorted(),
   );
 }
-/** Reject shared interior lanes, allowing only coincident endpoint stubs. Pure replay is safe; Layout owns route retry. */
+interface PreparedLane {
+  readonly segments: readonly Segment[];
+  readonly ends: readonly Segment[];
+  readonly horizontal: ReadonlyMap<number, readonly Segment[]>;
+  readonly vertical: ReadonlyMap<number, readonly Segment[]>;
+}
+/** Per-inspection working data indexes exact collinear axes; it never survives the calculation. */
+export function prepareLane(points: readonly Point[]): PreparedLane {
+  const lines = segments(points);
+  return {
+    segments: lines,
+    ends: endpointSegments(points),
+    horizontal: axisIndex(lines.filter(horizontal), (line) => line.a.y),
+    vertical: axisIndex(
+      lines.filter((line) => line.a.x === line.b.x),
+      (line) => line.a.x,
+    ),
+  };
+}
+function axisIndex(lines: readonly Segment[], coordinate: (line: Segment) => number) {
+  const indexed = new Map<number, Segment[]>();
+  lines.forEach((line) => {
+    const at = coordinate(line);
+    indexed.set(at, [...(indexed.get(at) ?? []), line]);
+  });
+  return indexed;
+}
+/** Reject shared interior lanes, allowing only coincident endpoint stubs. */
 export function distinctLane(a: readonly Point[], b: readonly Point[]): boolean {
-  const stubs = sharedStubs(a, b);
-  return segments(a).every((left): boolean =>
-    segments(b).every((right): boolean => clearPair(left, right, stubs)),
+  return distinctPreparedLane(prepareLane(a), prepareLane(b));
+}
+/** Only segments on the same exact axis can share an interior run. */
+export function distinctPreparedLane(a: PreparedLane, b: PreparedLane): boolean {
+  const stubs = sharedStubs(a.ends, b.ends);
+  return a.segments.every((left) =>
+    parallel(left, b).every((right) => clearPair(left, right, stubs)),
   );
 }
+function parallel(line: Segment, prepared: PreparedLane): readonly Segment[] {
+  if (horizontal(line)) return prepared.horizontal.get(line.a.y) ?? [];
+  if (line.a.x === line.b.x) return prepared.vertical.get(line.a.x) ?? [];
+  return [];
+}
 /** Shared endpoint rays permit only the longer of the two explicit endpoint stubs. */
-function sharedStubs(a: readonly Point[], b: readonly Point[]): readonly Segment[] {
-  return endpointSegments(a).flatMap((left): readonly Segment[] =>
-    endpointSegments(b)
+function sharedStubs(a: readonly Segment[], b: readonly Segment[]): readonly Segment[] {
+  return a.flatMap((left): readonly Segment[] =>
+    b
       .filter((right): boolean => left.a.x === right.a.x && left.a.y === right.a.y)
       .flatMap((right): readonly Segment[] => [left, right]),
   );

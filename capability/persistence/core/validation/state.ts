@@ -1,7 +1,7 @@
 import { fail } from '../../contract/errors.js';
 import type { Result } from '../../contract/errors.js';
-import { versionHeader, workspaceState } from '../../contract/records/storage.js';
-import type { WorkspaceState, Slot } from '../../contract/records/storage.js';
+import { versionHeader, admittedWorkspaceState } from '../../contract/records/storage.js';
+import type { WorkspaceState, Slot, Json } from '../../contract/records/storage.js';
 import { hasDuplicates, keyText } from '../transaction/keys.js';
 import { boundedClone, parse, success } from './outcomes.js';
 /** Tombstones cannot retain reachable bytes or semantic content. */
@@ -32,9 +32,30 @@ export function validateState(input: unknown): Result<WorkspaceState> {
     return fail('unsupported-version', 'schemaVersion', 'Unsupported storage schema');
   return checkState(detached);
 }
+/** Only detached JSON objects can provide payload fields; arrays and primitives never do. */
+function jsonRecord(value: Json | undefined): value is { readonly [key: string]: Json } {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+/** Missing required payloads never enter the admitted set, including undefined. */
+function presentPayload(record: { readonly [key: string]: Json }, key: string): readonly Json[] {
+  if (!Object.hasOwn(record, key)) return [];
+  const value = record[key];
+  return value === undefined ? [] : [value];
+}
+/** Collect only leaves already validated and detached by boundedClone in this invocation. */
+function payloads(input: Json, records: string, key: string): readonly Json[] {
+  if (!jsonRecord(input)) return [];
+  const entries = input[records];
+  if (!Array.isArray(entries)) return [];
+  return entries.filter(jsonRecord).flatMap((entry) => presentPayload(entry, key));
+}
 /** Validate all state invariants after shape parsing; never repair or silently reset data. */
-function checkState(input: unknown): Result<WorkspaceState> {
-  const parsed = parse(workspaceState, input, 'corrupt-record');
+function checkState(input: Json): Result<WorkspaceState> {
+  const schema = admittedWorkspaceState([
+    ...payloads(input, 'slots', 'value'),
+    ...payloads(input, 'receipts', 'outcome'),
+  ]);
+  const parsed = parse(schema, input, 'corrupt-record');
   if (!parsed.ok) return parsed;
   if (stateRules.some((violated) => violated(parsed.value)))
     return fail('corrupt-record', '$', 'Storage identity, sequence or tombstone invariant failed');

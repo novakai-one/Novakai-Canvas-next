@@ -3,7 +3,7 @@ import type { ViewWire } from '../../contract/records/view.js';
 import type { PlacedSection, RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import { targetInfo, targetKey } from './address.js';
-import { previewBox, hiddenByReading } from './preview.js';
+import { previewBox, previewOrigin, hiddenByReading } from './preview.js';
 /** Endpoint deltas exclude section translation, because that is applied once by the wire's origin. */
 function nodeDelta(
   state: SessionState,
@@ -39,13 +39,37 @@ function projectedWire(
   state: SessionState,
   wire: RoutedWire,
   key: string,
+  section: string,
   source: Point,
   target: Point,
 ): RoutedWire {
   if (isRouteTarget(state, key)) return { ...wire, points: routePoints(state, wire.points) };
+  const preview = releasedWire(state, wire, section);
+  if (preview !== undefined) return preview;
+  return movingWire(wire, source, target);
+}
+/** Pointer-only stretching remains distinct from a fully inspected released route. */
+function movingWire(wire: RoutedWire, source: Point, target: Point): RoutedWire {
   const unchanged = [source.x, source.y, target.x, target.y].every((delta) => delta === 0);
-  if (unchanged) return wire;
-  return movedWire(wire, source, target);
+  return unchanged ? wire : movedWire(wire, source, target);
+}
+function releasedWire(
+  state: SessionState,
+  wire: RoutedWire,
+  section: string,
+): RoutedWire | undefined {
+  if (state.draft !== null) return undefined;
+  const preview = state.routePreview?.wires.find(
+    (item) => item.section === section && item.id === wire.id,
+  );
+  if (preview === undefined) return undefined;
+  return {
+    ...wire,
+    source: preview.source,
+    target: preview.target,
+    points: preview.points,
+    labelBox: preview.labelBox,
+  };
 }
 /** Wire view reuses labels/markers and marks endpoint-stretched paths as previews, never feasible committed geometry. */
 export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedSection): ViewWire {
@@ -68,6 +92,7 @@ export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedS
     state,
     wire,
     key,
+    section.id,
     nodeDelta(state, section, wire.source.node, delta),
     nodeDelta(state, section, wire.target.node, delta),
   );
@@ -77,7 +102,10 @@ export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedS
     sourceId: sourceInfo.key,
     targetId: targetData.key,
     wire: projected,
-    origin: { x: section.origin.x + delta.x, y: section.origin.y + delta.y },
+    origin: previewOrigin(state, section.id) ?? {
+      x: section.origin.x + delta.x,
+      y: section.origin.y + delta.y,
+    },
     selected: state.selection.some((value) => targetKey(value) === key),
     hidden: hiddenByReading(state, sourceInfo) || hiddenByReading(state, targetData),
     draft: projected !== wire,

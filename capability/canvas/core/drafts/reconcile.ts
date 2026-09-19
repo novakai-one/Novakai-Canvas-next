@@ -49,6 +49,7 @@ function reconcileScene(
     index,
     stamp: event.stamp,
     connection: null,
+    routePreview: null,
   };
   const selection = survivingSelection(updated, state.selection);
   return changed(state, refreshReadingOrder({ ...updated, selection }), [
@@ -61,11 +62,19 @@ export function rejectDraft(state: SessionState, id: string, message: string): S
     if (entry.draft.id !== id) return entry;
     return { ...entry, reason: 'rejected', message };
   });
-  return { ...state, recovery };
+  return {
+    ...state,
+    recovery,
+    routePreview: state.routePreview?.gesture === id ? null : (state.routePreview ?? null),
+  };
 }
 /** Receipt confirmation and explicit discard remove a single matching recovery copy; replay is harmless. */
 export function removeRecovery(state: SessionState, id: string): SessionState {
-  return { ...state, recovery: state.recovery.filter((entry) => entry.draft.id !== id) };
+  return {
+    ...state,
+    recovery: state.recovery.filter((entry) => entry.draft.id !== id),
+    routePreview: state.routePreview?.gesture === id ? null : (state.routePreview ?? null),
+  };
 }
 
 /** A removed target is retained as recovery data only; it cannot be projected onto an unrelated replacement scene. */

@@ -29,6 +29,7 @@ export interface ResolvedEndpoint {
   readonly side: Side;
 }
 export interface RoutedWire {
+  readonly labelVisible?: boolean | undefined;
   readonly id: string;
   readonly source: ResolvedEndpoint;
   readonly target: ResolvedEndpoint;

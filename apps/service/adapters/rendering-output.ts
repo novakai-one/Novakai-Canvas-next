@@ -41,23 +41,27 @@ function decode(input: unknown, job: RenderingJob): RenderDocument {
       value: job.collection,
     }),
   };
-  const projection = accepted(readMeasuredProjection(raw.projection, job.collection, domain));
+  let projection: ReturnType<typeof readMeasuredProjection> | undefined;
   const measurements = accepted(readSupplementalMeasurements(raw.measurements));
   const scene = accepted(
     readScene(
-      { projection, measurements, options: raw.options, candidate: raw.scene },
+      { projection: raw.projection, measurements, options: raw.options, candidate: raw.scene },
       {
         engineVersions: defaultEngineVersions,
         projection: {
-          read: (input) => translated(readMeasuredProjection(input, job.collection, domain)),
+          read: (input) => {
+            projection = readMeasuredProjection(input, job.collection, domain);
+            return translated(projection);
+          },
           content: (input) => translated(readMeasuredContent(input)),
         },
       },
     ),
   );
+  if (projection === undefined) throw new ReadoutFault('Layout omitted projection admission');
   return {
     collection: job.collection,
-    projection,
+    projection: accepted(projection),
     measurements,
     scene,
     fonts: fontSet.parse(raw.fonts),

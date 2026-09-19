@@ -81,11 +81,17 @@ function memberPoint(node: PlacedNode, member: string, side: Side): Point {
     return reject('invalid-input', member, 'Measured member anchor is missing', [node.id, member]);
   return { ...edge(node, side), y: node.box.y + anchor.y };
 }
+/** The semantically selected endpoint keeps a stable lateral approach, independent of label visibility. */
+export function preferredSide(wire: VisualWire, endpoint: 'source' | 'target'): Side | 'auto' {
+  const requested = endpoint === 'source' ? wire.route.sourceSide : wire.route.targetSide;
+  if (requested !== 'auto' || wire.annotationEndpoint !== endpoint) return requested;
+  return endpoint === 'source' ? 'right' : 'left';
+}
 /** Resolve both ends before invoking native routing; automatic self-loops leave on different sides. Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function endpoints(wire: VisualWire, nodes: readonly PlacedNode[]): Attachments {
   const source = visible(wire.source.node, nodes);
   const target = visible(wire.target.node, nodes);
-  const sourceSide = chooseSide(wire.route.sourceSide, wire.source.member, source, target);
+  const sourceSide = chooseSide(preferredSide(wire, 'source'), wire.source.member, source, target);
   const targetSide = selfTarget(wire, source, target);
   return {
     source: {
@@ -104,11 +110,11 @@ export function endpoints(wire: VisualWire, nodes: readonly PlacedNode[]): Attac
 function selfTarget(wire: VisualWire, source: PlacedNode, target: PlacedNode): Side {
   if (
     wire.source.node === wire.target.node &&
-    wire.route.targetSide === 'auto' &&
+    preferredSide(wire, 'target') === 'auto' &&
     wire.target.member === null
   )
     return 'bottom';
-  return chooseSide(wire.route.targetSide, wire.target.member, target, source);
+  return chooseSide(preferredSide(wire, 'target'), wire.target.member, target, source);
 }
 /** Exact outward points define marker stubs; the native adapter routes their free corridor without a directed ConnEnd constructor. Layout execute catches faults; Authoring retains the scene and owns correction. */
 export function approach(endpoint: ResolvedEndpoint, distance: number): Point {

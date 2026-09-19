@@ -1,9 +1,11 @@
 import type { FailureSource } from './records/failure-source.js';
+export type DiagnosticOwner = 'panel-preferences' | 'workspace';
 /** Web failures preserve human drafts and expose an action; protocol uncertainty never becomes an optimistic Saved state. */
 export interface Diagnostic {
   readonly code: string;
   readonly message: string;
   readonly recovery: string;
+  readonly owner?: DiagnosticOwner;
   readonly source?: FailureSource | undefined;
 }
 /** Locally owned success/failure envelope; E retains the owning capability's structured failure. */

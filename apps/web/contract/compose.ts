@@ -307,6 +307,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
         code: 'panel-preferences',
         message,
         recovery: 'Customize or reset the panel layout.',
+        owner: 'panel-preferences',
       }),
   });
   const runtime: WorkspaceController = controller(client, element, panels);

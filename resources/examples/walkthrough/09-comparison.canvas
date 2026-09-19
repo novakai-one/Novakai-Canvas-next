@@ -1,0 +1,17 @@
+canvas 1
+collection @g-views "09 / Comparison — Choose the right view" theme=walkthrough {
+ node @g-plan concept "Planning view" role=primary size=large { text @g-plan-purpose "Shape the work before implementation." }
+ node @g-plan-scope note "Best for scope" size=small { text @g-plan-use "Goals, risks and acceptance signals." }
+ node @g-plan-risk note "Watch for drift" role=warning size=small { text @g-plan-risk-use "Recheck assumptions as evidence arrives." }
+ node @g-build concept "Building view" role=supporting size=large { text @g-build-purpose "Make the change and prove behavior." }
+ node @g-build-flow note "Best for flow" size=small { text @g-build-flow-use "Dependencies, checks and repair loops." }
+ node @g-build-proof note "Watch for gaps" role=warning size=small { text @g-build-proof-use "Connect code changes to observable proof." }
+ node @g-review concept "Review view" role=success size=large { text @g-review-purpose "Decide whether the change is ready." }
+ node @g-review-evidence note "Best for evidence" size=small { text @g-review-evidence-use "Diff, tests, runtime signals and ownership." }
+ node @g-review-decision note "Watch for ambiguity" role=warning size=small { text @g-review-decision-use "State the decision and next action." }
+ section @g-grid "09 / Comparison — Review responsibilities" mode=grid layout=grid columns=3 gap=compact {
+  group @g-planning "PLAN / What should change?" represents=@g-plan layout=grid columns=1 gap=compact { show @g-plan-scope @g-plan-risk }
+  group @g-building "BUILD / How does it work?" represents=@g-build layout=grid columns=1 gap=compact { show @g-build-flow @g-build-proof }
+  group @g-reviewing "REVIEW / Is it ready?" represents=@g-review layout=grid columns=1 gap=compact { show @g-review-evidence @g-review-decision }
+ }
+}

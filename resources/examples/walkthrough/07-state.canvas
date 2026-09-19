@@ -1,0 +1,26 @@
+canvas 1
+collection @s-lifecycle "07 / State — Change lifecycle" theme=walkthrough {
+ node @s-draft start "Draft" size=small {}
+ node @s-review state "In review" role=primary size=large { text @s-review-detail "Evidence and ownership are being checked." }
+ node @s-rework state "Changes requested" role=warning size=medium { text @s-rework-detail "The author has concrete findings to resolve." }
+ node @s-approved state "Approved" role=success size=medium { text @s-approved-detail "Required reviewers accept the candidate." }
+ node @s-staged state "Staged" role=supporting size=medium { text @s-staged-detail "Release controls and rollback are ready." }
+ node @s-live state "Released" role=success size=medium { text @s-live-detail "The change is observable in production." }
+ node @s-closed end "Closed" size=small {}
+ wire @s-submit @s-draft -> @s-review "submit for review" kind=transition guard="owner ready" effect="capture revision"
+ wire @s-request @s-review -> @s-rework "request changes" kind=transition guard="evidence incomplete" effect="record findings"
+ wire @s-resubmit @s-rework -> @s-review "resubmit revision" kind=transition guard="findings addressed" effect="start review again"
+ wire @s-accept @s-review -> @s-approved "approve candidate" kind=transition guard="checks and review pass" effect="record approval"
+ wire @s-prepare @s-approved -> @s-staged "prepare release" kind=transition guard="release window open" effect="verify rollback"
+ wire @s-deploy @s-staged -> @s-live "release change" kind=transition guard="owner confirms" effect="start monitoring"
+ wire @s-close @s-live -> @s-closed "close review" kind=transition guard="signals stable" effect="archive receipt"
+ section @s-state "07 / State — Change lifecycle" mode=state layout=layered direction=right gap=compact {
+  group @s-active "Authoring and review" layout=layered direction=down gap=compact { show @s-draft @s-review @s-rework
+   rank @s-draft @s-review @s-rework
+  }
+  group @s-release "Release outcome" layout=layered direction=right gap=compact { show @s-approved @s-staged @s-live @s-closed
+   rank @s-approved @s-staged @s-live @s-closed
+  }
+  connect @s-submit @s-request @s-resubmit @s-accept @s-prepare @s-deploy @s-close source-side=right target-side=left
+ }
+}

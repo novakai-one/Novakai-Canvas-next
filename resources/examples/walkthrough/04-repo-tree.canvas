@@ -1,0 +1,39 @@
+canvas 1
+collection @walkthrough-repo-tree "04 / Repo tree" theme=walkthrough description="Selected real paths in this repository; a semantic parent-child tree, not a collapsible file explorer." {
+  node @r-root concept "Novakai-Canvas-next/" size=small role=primary {}
+  node @r-apps concept "apps/" size=small {}
+  node @r-cap concept "capability/" size=small {}
+  node @r-web concept "web/" size=small {}
+  node @r-service concept "service/" size=small {}
+  node @r-layout concept "layout/" size=small {}
+  node @r-model concept "model/" size=small {}
+  node @r-wc concept "contract/" size=small {}
+  node @r-sc concept "contract/" size=small {}
+  node @r-lc concept "core/" size=small {}
+  node @r-mc concept "contract/" size=small {}
+  node @r-wi concept "index.ts" size=small {}
+  node @r-si concept "index.ts" size=small {}
+  node @r-place concept "placement/" size=small {}
+  node @r-route concept "routing/" size=small {}
+  node @r-mi concept "index.ts" size=small {}
+  wire @r-edge-apps @r-root -> @r-apps "contains" kind=parent
+  wire @r-edge-cap @r-root -> @r-cap "contains" kind=parent
+  wire @r-edge-web @r-apps -> @r-web "contains" kind=parent
+  wire @r-edge-service @r-apps -> @r-service "contains" kind=parent
+  wire @r-edge-layout @r-cap -> @r-layout "contains" kind=parent
+  wire @r-edge-model @r-cap -> @r-model "contains" kind=parent
+  wire @r-edge-wc @r-web -> @r-wc "contains" kind=parent
+  wire @r-edge-sc @r-service -> @r-sc "contains" kind=parent
+  wire @r-edge-lc @r-layout -> @r-lc "contains" kind=parent
+  wire @r-edge-mc @r-model -> @r-mc "contains" kind=parent
+  wire @r-edge-wi @r-wc -> @r-wi "contains" kind=parent
+  wire @r-edge-si @r-sc -> @r-si "contains" kind=parent
+  wire @r-edge-place @r-lc -> @r-place "contains" kind=parent
+  wire @r-edge-route @r-lc -> @r-route "contains" kind=parent
+  wire @r-edge-mi @r-mc -> @r-mi "contains" kind=parent
+  section @r-tree "04 / Repo tree — Real capability boundaries" mode=tree direction=down gap=compact {
+    show @r-root @r-apps @r-cap @r-web @r-service @r-layout @r-model @r-wc @r-sc @r-lc @r-mc @r-wi @r-si @r-place @r-route @r-mi
+    connect @r-edge-apps @r-edge-cap @r-edge-web @r-edge-service @r-edge-layout @r-edge-model @r-edge-wc @r-edge-sc @r-edge-lc @r-edge-mc @r-edge-wi @r-edge-si @r-edge-place @r-edge-route @r-edge-mi
+    root @r-root
+  }
+}

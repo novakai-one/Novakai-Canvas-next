@@ -1,0 +1,65 @@
+canvas 1
+collection @walkthrough-entities "Release review records" theme=walkthrough {
+ node @e-repository entity "Repository" size=medium {
+  field @e-repository-id "repository_id" type="RepositoryId"
+  field @e-repository-name "name" type="string"
+  keygroup @e-repository-key kind=primary fields=[@e-repository-id]
+ }
+ node @e-change entity "Change request" size=large {
+  field @e-change-id "change_id" type="ChangeId"
+  field @e-change-repo "repository_id" type="RepositoryId"
+  field @e-change-author "author_id" type="ActorId"
+  field @e-change-sha "head_sha" type="CommitSha"
+  keygroup @e-change-key kind=primary fields=[@e-change-id]
+  keygroup @e-change-repo-ref kind=foreign fields=[@e-change-repo] references=[@e-repository.@e-repository-id]
+ }
+ node @e-review entity "Review" size=large {
+  field @e-review-id "review_id" type="ReviewId"
+  field @e-review-change "change_id" type="ChangeId"
+  field @e-review-policy "policy_version" type="PolicyVersion"
+  field @e-review-status "status" type="ReviewStatus"
+  keygroup @e-review-key kind=primary fields=[@e-review-id]
+  keygroup @e-review-change-ref kind=foreign fields=[@e-review-change] references=[@e-change.@e-change-id]
+ }
+ node @e-finding entity "Finding" role=warning size=medium {
+  field @e-finding-id "finding_id" type="FindingId"
+  field @e-finding-review "review_id" type="ReviewId"
+  field @e-finding-severity "severity" type="Severity"
+  field @e-finding-path "file_path" type="string"
+  keygroup @e-finding-key kind=primary fields=[@e-finding-id]
+  keygroup @e-finding-review-ref kind=foreign fields=[@e-finding-review] references=[@e-review.@e-review-id]
+ }
+ node @e-evidence entity "Evidence bundle" size=medium {
+  field @e-evidence-id "evidence_id" type="EvidenceId"
+  field @e-evidence-review "review_id" type="ReviewId"
+  field @e-evidence-hash "content_hash" type="Digest"
+  keygroup @e-evidence-key kind=primary fields=[@e-evidence-id]
+  keygroup @e-evidence-review-ref kind=foreign fields=[@e-evidence-review] references=[@e-review.@e-review-id]
+ }
+ node @e-decision entity "Review decision" role=success size=medium {
+  field @e-decision-id "decision_id" type="DecisionId"
+  field @e-decision-review "review_id" type="ReviewId"
+  field @e-decision-outcome "outcome" type="DecisionOutcome"
+  field @e-decision-by "decided_by" type="ActorId"
+  keygroup @e-decision-key kind=primary fields=[@e-decision-id]
+  keygroup @e-decision-review-ref kind=foreign fields=[@e-decision-review] references=[@e-review.@e-review-id]
+ }
+ node @e-audit entity "Audit entry" size=medium {
+  field @e-audit-id "audit_id" type="AuditId"
+  field @e-audit-review "review_id" type="ReviewId"
+  field @e-audit-action "action" type="AuditAction"
+  field @e-audit-at "recorded_at" type="Instant"
+  keygroup @e-audit-key kind=primary fields=[@e-audit-id]
+  keygroup @e-audit-review-ref kind=foreign fields=[@e-audit-review] references=[@e-review.@e-review-id]
+ }
+ wire @e-repo-changes @e-repository.@e-repository-id -> @e-change.@e-change-repo "contains changes" kind=association from=1 to=0..many
+ wire @e-change-review @e-change.@e-change-id -> @e-review.@e-review-change "is reviewed by" kind=association from=1 to=0..many
+ wire @e-review-findings @e-review.@e-review-id -> @e-finding.@e-finding-review "produces findings" kind=association from=1 to=0..many
+ wire @e-review-evidence @e-review.@e-review-id -> @e-evidence.@e-evidence-review "packages evidence" kind=association from=1 to=0..many
+ wire @e-review-decision @e-review.@e-review-id -> @e-decision.@e-decision-review "receives decision" kind=association from=1 to=0..1
+ wire @e-review-audit @e-review.@e-review-id -> @e-audit.@e-audit-review "records actions" kind=association from=1 to=0..many
+ section @e-review-model "03 / Entities — Review records" mode=er layout=grid columns=4 direction=right gap=compact {
+  show @e-repository @e-change @e-review @e-finding @e-evidence @e-decision @e-audit
+  connect @e-repo-changes @e-change-review @e-review-findings @e-review-evidence @e-review-decision @e-review-audit
+ }
+}

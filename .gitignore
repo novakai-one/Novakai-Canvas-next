@@ -16,3 +16,6 @@ coverage/
 
 # Transient browser automation state; selected audit evidence is retained under output/.
 .playwright-cli/
+
+# Local diagram collections, history, credentials and authoring scratch.
+.novakai/

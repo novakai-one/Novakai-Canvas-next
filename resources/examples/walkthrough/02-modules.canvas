@@ -1,0 +1,76 @@
+canvas 1
+collection @walkthrough-modules "Agent-assisted release review" theme=walkthrough {
+ node @m-intake module "Change intake" size=medium {
+  code @m-intake-exports "submitChange()"
+  port @m-change out "change" type="ChangeRequest"
+  port @m-submit in "submit" type="SubmitRequest"
+ }
+ node @m-context module "Context loader" size=medium {
+  code @m-context-exports "loadSnapshot()"
+  port @m-context-change in "change" type="ChangeRequest"
+  port @m-snapshot out "snapshot" type="RepositorySnapshot"
+ }
+ node @m-policy interface "Review policy" role=supporting size=medium {
+  member @m-check "check" type="(Change, Snapshot) => Result" visibility=public
+ }
+ node @m-review function "Review planner" size=medium {
+  signature @m-plan "planReview" parameters=["change", "snapshot"] returns="ReviewPlan"
+ }
+ node @m-evidence module "Evidence collector" size=medium {
+  code @m-evidence-exports "collectFindings()"
+  port @m-findings in "findings" type="Finding[]"
+  port @m-evidence-out out "evidence" type="EvidenceBundle"
+ }
+ node @m-risk interface "Risk assessor" role=warning size=medium {
+  member @m-score "score" type="(EvidenceBundle) => RiskScore" visibility=public
+ }
+ node @m-decision function "Decision engine" size=medium {
+  signature @m-decide "decide" parameters=["review", "risk"] returns="ReviewDecision"
+ }
+ node @m-workflow module "Review workflow" size=medium {
+  code @m-workflow-exports "runReview()"
+  port @m-plan-in in "plan" type="ReviewPlan"
+  port @m-decision-in in "decision" type="ReviewDecision"
+  port @m-decision-out out "decision" type="ReviewDecision"
+ }
+ node @m-persist module "Review store" size=medium {
+  code @m-persist-exports "saveReview()"
+  port @m-record in "record" type="ReviewRecord"
+ }
+ node @m-notify module "Release notifier" role=success size=medium {
+  code @m-notify-exports "notifyOwner()"
+  port @m-outcome in "outcome" type="ReviewDecision"
+ }
+ node @m-audit module "Audit log" size=small {
+  code @m-audit-exports "appendEntry()"
+  port @m-entry in "entry" type="AuditEntry"
+ }
+ wire @m-intake-route @m-intake.@m-change -> @m-context.@m-context-change "requests repository context" kind=reference
+ wire @m-context-route @m-context.@m-snapshot -> @m-review "calls planner with snapshot" kind=calls
+ wire @m-policy-use @m-review -> @m-policy.@m-check "checks policy constraints" kind=reference
+ wire @m-evidence-route @m-review -> @m-evidence.@m-findings "collects changed-area findings" kind=reference
+ wire @m-risk-use @m-evidence.@m-evidence-out -> @m-risk "supplies evidence to risk contract" kind=reference
+ wire @m-decision-use @m-risk.@m-score -> @m-decision "supplies assessed risk" kind=reference
+ wire @m-workflow-plan @m-review -> @m-workflow.@m-plan-in "starts review workflow" kind=reference
+ wire @m-workflow-decision @m-decision -> @m-workflow.@m-decision-in "returns decision" kind=reference
+ wire @m-store @m-workflow.@m-decision-out -> @m-persist.@m-record "persists review record" kind=reference
+ wire @m-notify-route @m-workflow.@m-decision-out -> @m-notify.@m-outcome "notifies release owner" kind=reference
+ wire @m-audit-route @m-workflow.@m-decision-out -> @m-audit.@m-entry "appends audit entry" kind=reference
+ section @m-review-map "02 / Modules — Release review" mode=modules layout=grid columns=3 direction=right gap=compact {
+  group @m-inputs "INPUTS" frame=panel layout=grid columns=1 direction=down gap=compact {
+   show @m-intake @m-context
+  }
+  group @m-core "REVIEW CORE" frame=panel layout=grid columns=1 direction=right gap=compact {
+   group @m-analysis "ANALYSIS" layout=grid columns=2 direction=down gap=compact {
+    show @m-policy @m-review @m-evidence @m-risk
+   }
+   group @m-outcome "DECISION" layout=grid columns=2 direction=down gap=compact {
+    show @m-decision @m-workflow
+   }
+  }
+  group @m-records "RECORDS" frame=panel layout=grid columns=1 direction=down gap=compact {
+   show @m-persist @m-notify @m-audit
+  }
+  connect @m-intake-route @m-context-route @m-policy-use @m-evidence-route @m-risk-use @m-decision-use @m-workflow-plan @m-workflow-decision @m-store @m-notify-route @m-audit-route source-side=right target-side=left
+ }
+}

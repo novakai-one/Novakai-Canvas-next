@@ -1,0 +1,1 @@
+Original SVG illustrations authored for Novakai Canvas: context layers, reasoning core, tool terminal and evidence document. Used as individual DSL image blocks, never as a flattened diagram. Built-in figure examples require no image assets.

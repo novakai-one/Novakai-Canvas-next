@@ -15,6 +15,9 @@ export interface FeatureProps {
 export interface HeaderProps extends FeatureProps {
   readonly onCreate: () => void;
 }
+export interface RevealInterfaceProps {
+  readonly onReveal: () => void;
+}
 export interface ThemeSelectorProps {
   readonly compact?: boolean;
 }
@@ -34,6 +37,7 @@ export interface ChromeSlots {
   readonly Library: ComponentType<LibraryProps>;
   readonly Panel: ComponentType<PanelProps>;
   readonly Recovery: ComponentType<FeatureProps>;
+  readonly Reveal: ComponentType<RevealInterfaceProps>;
   readonly Source: ComponentType<FeatureProps>;
   readonly CreateDialog: ComponentType<CreateDialogProps>;
   readonly CanvasSurface: ComponentType<SurfaceProps>;
@@ -46,6 +50,7 @@ export type DesignSlots = Pick<
   | 'Button'
   | 'Field'
   | 'Dialog'
+  | 'Menu'
   | 'PanelHeader'
   | 'PanelBody'
   | 'PanelBodyHeader'

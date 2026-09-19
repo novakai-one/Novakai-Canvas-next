@@ -5,6 +5,8 @@ import type {
   PanelPreferences,
   PanelId,
   PanelTab,
+  InterfaceControl,
+  InterfaceVisibility,
 } from '../contract/panel-types.js';
 import {
   defaultPanels,
@@ -28,7 +30,9 @@ export function createPanelController(bindings: PanelBindings): PanelController 
     lastOpened: 'left',
     customize: false,
     preferences: defaultPanels('', bindings.definitions, bindings.sizing),
+    interfaceVisibility: defaultInterfaceVisibility(),
   };
+  let beforeHide: Omit<InterfaceVisibility, 'hidden'> | null = null;
   const listeners = new Set<() => void>();
   /** Stable snapshots allow React to subscribe without mirroring props into component state. */
   function publish(next: PanelState): void {
@@ -113,5 +117,41 @@ export function createPanelController(bindings: PanelBindings): PanelController 
     customize: (customize) => publish({ ...state, customize }),
     reset: () =>
       save(defaultPanels(state.preferences.workspace, bindings.definitions, bindings.sizing)),
+    setInterfaceVisibility: (control: InterfaceControl, visible: boolean) => {
+      if (state.interfaceVisibility.hidden) return;
+      publish({
+        ...state,
+        interfaceVisibility: { ...state.interfaceVisibility, [control]: visible },
+      });
+    },
+    hideInterface: () => {
+      if (state.interfaceVisibility.hidden) return;
+      beforeHide = {
+        tools: state.interfaceVisibility.tools,
+        zoom: state.interfaceVisibility.zoom,
+        minimap: state.interfaceVisibility.minimap,
+        outline: state.interfaceVisibility.outline,
+      };
+      publish({
+        ...state,
+        interfaceVisibility: {
+          hidden: true,
+          tools: false,
+          zoom: false,
+          minimap: false,
+          outline: false,
+        },
+      });
+    },
+    revealInterface: () => {
+      if (!state.interfaceVisibility.hidden) return;
+      const restored = beforeHide ?? defaultInterfaceVisibility();
+      beforeHide = null;
+      publish({ ...state, interfaceVisibility: { hidden: false, ...restored } });
+    },
   };
+}
+
+function defaultInterfaceVisibility(): InterfaceVisibility {
+  return { hidden: false, tools: true, zoom: true, minimap: true, outline: true };
 }

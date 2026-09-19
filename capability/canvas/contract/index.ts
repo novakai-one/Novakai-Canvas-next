@@ -42,6 +42,7 @@ export type {
   ViewActions,
   ViewReader,
   SurfaceSession,
+  CanvasChromeVisibility,
 } from './react-types.js';
 
 export type { FlowNode, FlowEdge } from './react-types.js';

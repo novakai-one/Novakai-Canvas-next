@@ -59,6 +59,8 @@ import { createSubmissionSession } from '../adapters/submission-session.js';
 import { createSubmissionReaders } from '../adapters/submission-readers.js';
 import { createWorkspaceController } from '../adapters/workspace-session.js';
 import { createWorkspaceHeader } from '../adapters/react/WorkspaceHeader.js';
+import { createViewMenu } from '../adapters/react/ViewMenu.js';
+import { RevealInterface } from '../adapters/react/RevealInterface.js';
 import { createCollectionLibrary } from '../adapters/react/CollectionLibrary.js';
 import { createCollectionDialog } from '../adapters/react/CreateCollectionDialog.js';
 import { createPanelTabs } from '../adapters/react/PanelTabs.js';
@@ -311,7 +313,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
   const stopWidth = observeWorkspaceWidth(element, panels.viewport);
   const Workspace = createWorkspaceShell({
     panels,
-    Header: createWorkspaceHeader(design, panels),
+    Header: createWorkspaceHeader(design, panels, createViewMenu(design, panels, element)),
     Library: createCollectionLibrary({ ...design, Browser }),
     Panel: createWorkspaceSidePanel({
       ...design,
@@ -354,6 +356,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     }),
     Source: createSourceEditor(design, element),
     Recovery: createRequestRecovery(design),
+    Reveal: RevealInterface,
     CreateDialog: createCollectionDialog(design),
     CanvasSurface: surface.CanvasSurface,
     FontDefinitions: presentation.FontDefinitions,

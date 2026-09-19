@@ -4,6 +4,9 @@
     width: 100%;
     height: 100%;
   }
+  .node :global(.react-flow__resize-control) {
+    pointer-events: auto;
+  }
   .node[data-preview='true'] {
     outline: var(--nv-stroke-base) dashed var(--nv-action-accent);
   }

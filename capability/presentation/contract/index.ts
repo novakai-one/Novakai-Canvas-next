@@ -2,6 +2,7 @@
 export { createPresentation } from './api.js';
 export {
   composePresentation,
+  createBrowserReactBindings,
   createReactBindings,
   prepareNativePresentation,
   remeasureModuleEnvelopes,
@@ -46,7 +47,7 @@ export type {
   Paint,
   VisualAsset,
 } from './records/style.js';
-export { visualNode, markerKind, content, shape } from './records/visual.js';
+export { visualNode, markerKind, content, shape, lodRole } from './records/visual.js';
 export type {
   VisualNode,
   VisualWire,
@@ -60,6 +61,7 @@ export type {
   Anchor,
   MarkerKind,
   Shape,
+  LodRole,
 } from './records/visual.js';
 export type {
   ReactBindings,
@@ -69,6 +71,7 @@ export type {
   MarkerProps,
   FontDefinitionsProps,
   StaticRenderer,
+  NodeRenderClasses,
 } from './react-types.js';
 export { PROJECTION_CAPACITY } from './records/limits.js';
 

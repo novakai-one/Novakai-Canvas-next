@@ -669,5 +669,129 @@
       "$type": "color",
       "$value": "{text.secondary}"
     }
+  },
+  "canvas": {
+    "surface": {
+      "$type": "color",
+      "$value": "{canvasTone.surface}"
+    },
+    "grid": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{border.default}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.gridOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "nodeSurface": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeSurface}"
+    },
+    "nodeHeader": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeHeader}"
+    },
+    "nodeBoundary": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeBoundary}"
+    },
+    "nodeRim": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeRim}"
+    },
+    "nodeShadow": {
+      "$type": "color",
+      "$value": "{shadow.opacityColor}"
+    },
+    "nodeAmbientShadow": {
+      "$type": "color",
+      "$value": null,
+      "$extensions": {
+        "novakai": {
+          "recipe": {
+            "op": "alpha",
+            "color": {
+              "op": "reference",
+              "value": "{shadow.color}"
+            },
+            "scalar": {
+              "op": "reference",
+              "value": "{canvasDepth.ambientOpacity}"
+            }
+          }
+        }
+      }
+    },
+    "nodeOffsetY": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.nodeOffsetY}"
+    },
+    "nodeBlur": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.nodeBlur}"
+    },
+    "ambientOffsetY": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.ambientOffsetY}"
+    },
+    "ambientBlur": {
+      "$type": "dimension",
+      "$value": "{canvasDepth.ambientBlur}"
+    },
+    "heading": {
+      "$type": "color",
+      "$value": "{text.primary}"
+    },
+    "member": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    },
+    "groupSurface": {
+      "$type": "color",
+      "$value": "{canvasTone.groupSurface}"
+    },
+    "groupBoundary": {
+      "$type": "color",
+      "$value": "{canvasTone.groupBoundary}"
+    },
+    "groupHeading": {
+      "$type": "color",
+      "$value": "{text.secondary}"
+    },
+    "mutedOpacity": {
+      "$type": "number",
+      "$value": "{canvasEmphasis.mutedOpacity}"
+    },
+    "transition": {
+      "$type": "duration",
+      "$value": "{motion.duration}"
+    },
+    "wireIdleOpacity": {
+      "$type": "number",
+      "$value": 0.42
+    },
+    "primarySurface": {
+      "$type": "color",
+      "$value": "{canvasTone.primarySurface}"
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "{canvasTone.secondary}"
+    },
+    "wireHoverOpacity": {
+      "$type": "number",
+      "$value": "{canvasEmphasis.hoverOpacity}"
+    }
   }
 }

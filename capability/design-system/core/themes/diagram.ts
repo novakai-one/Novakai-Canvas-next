@@ -56,6 +56,7 @@ export function resolveDiagram(
   );
   const digest = accepted(identity.hash(canonical({ scope, values: resolved.values, fonts, pin })));
   return {
+    ...interfaceRoleField(portable.theme.base === null),
     ...chromeField(portable.theme.chrome),
     definitionVersion: source.definitionVersion,
     inputDigest,
@@ -71,6 +72,11 @@ export function resolveDiagram(
     provenance: { ui: null, diagram: pin },
     forcedColors: false,
   };
+}
+/** Only UI-derived diagram themes follow the browser interface palette for standard semantic roles. */
+function interfaceRoleField(enabled: boolean): { readonly followsInterfaceRoles?: true } {
+  if (!enabled) return {};
+  return { followsInterfaceRoles: true };
 }
 /** Re-evaluate admitted roots; the public resolver owns rejection and the host retains its prior scope. */
 export function rootsOnly(source: SourceSet, values: TokenValues): TokenValues {
@@ -99,6 +105,7 @@ export function projectDiagram(resolved: ResolvedTokenSet): StyleProjection {
   const values = resolved.values;
   const color = (id: string): string => colorText(member(values, id), id);
   return {
+    ...interfaceRoleField(resolved.followsInterfaceRoles === true),
     ...chromeProjection(resolved),
     digest: resolved.digest,
     bodyFont: fontReference(requirePinnedFont('font.body', values, resolved.fonts)),

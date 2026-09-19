@@ -1,4 +1,9 @@
-import type { Environment, UiPreferences, ResolvedTokenSet } from '@novakai/canvas-design-system';
+import type {
+  Environment,
+  UiPreferences,
+  UiThemePin,
+  ResolvedTokenSet,
+} from '@novakai/canvas-design-system';
 import type {
   PreferenceBindings,
   PreferenceController,
@@ -71,14 +76,36 @@ function session(
     const saved = bindings.retention.write('ui-preferences', preferences);
     if (!saved.ok) report(diagnostic(saved.error));
   }
-  /** Restore never rewrites corrupt or stale records; Reset is an explicit user action. */
+  /** Restore retains malformed or unknown records; recognized shipped-theme pins advance to the current release. */
   function restore(): void {
     const stored = bindings.retention.read('ui-preferences');
     if (!stored.ok) {
       report(diagnostic(stored.error));
       return;
     }
-    if (stored.value !== null) install(stored.value);
+    admitStored(stored.value);
+  }
+  /** Admission stays separate from storage I/O so either failure keeps the active installation intact. */
+  function admitStored(stored: unknown | null): void {
+    if (stored === null) return;
+    const checked = bindings.tokens.readPreferences(stored);
+    if (!checked.ok) {
+      report(diagnostic(checked.error));
+      return;
+    }
+    applyStored(checked.value);
+  }
+  /** An accepted browser choice may advance only to the current owner-issued pin with the same ID. */
+  function applyStored(stored: UiPreferences): void {
+    const current = currentTheme(stored, bindings.themes);
+    if (!installChecked(current)) return;
+    persistMigration(stored, current);
+  }
+  /** Persist release migration separately; the installed theme remains usable when storage is unavailable. */
+  function persistMigration(stored: UiPreferences, current: UiPreferences): void {
+    if (current === stored) return;
+    const saved = bindings.retention.write('ui-preferences', current);
+    if (!saved.ok) report(diagnostic(saved.error));
   }
   restore();
   return {
@@ -98,6 +125,21 @@ function session(
       return lease.cleanup();
     },
   };
+}
+/** A shipped UI release keeps the chosen theme ID while storing its new exact owner provenance. */
+function currentTheme(
+  preferences: UiPreferences,
+  themes: PreferenceBindings['themes'],
+): UiPreferences {
+  if (preferences.theme.mode === 'system' || themes === undefined) return preferences;
+  const pinned = preferences.theme.theme;
+  const selected = themes.find((theme) => theme.id === pinned.id);
+  if (!selected || samePin(selected, pinned)) return preferences;
+  return { ...preferences, theme: { mode: 'pinned', theme: selected } };
+}
+/** Exact fields stay owner-issued; the host compares provenance but never constructs it. */
+function samePin(left: UiThemePin, right: UiThemePin): boolean {
+  return left.id === right.id && left.version === right.version && left.digest === right.digest;
 }
 /** Owner validation controls system/pinned selection, contrast and all emitted CSS variables. */
 function resolve(

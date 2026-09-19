@@ -28,10 +28,28 @@ const LEFT_ALIGNED_SHAPES: readonly string[] = [
   'function',
   'container',
 ];
-/** Layout may stretch a node beyond its measured content; non-compartment shapes center that slack. */
+const COMPARTMENT_KINDS: readonly string[] = ['entity', 'module', 'interface', 'function'];
+interface HorizontalBounds {
+  readonly left: number;
+  readonly right: number;
+}
+/** Primitive coordinates already include frame padding and shape insets. */
+function horizontalBounds(primitive: Primitive): HorizontalBounds {
+  if (primitive.kind === 'rule')
+    return {
+      left: Math.min(primitive.x1, primitive.x2),
+      right: Math.max(primitive.x1, primitive.x2),
+    };
+  return { left: primitive.x, right: primitive.x + primitive.width };
+}
+/** Center the painted content bounds, including only slack introduced outside measurement. */
 function contentSlack(node: VisualNode): number {
   if (LEFT_ALIGNED_SHAPES.includes(node.shape)) return 0;
-  return Math.max(0, (node.width - node.content.width) / 2);
+  const bounds = node.content.primitives.map(horizontalBounds);
+  if (bounds.length === 0) return 0;
+  const left = Math.min(...bounds.map((bound) => bound.left));
+  const right = Math.max(...bounds.map((bound) => bound.right));
+  return node.width / 2 - (left + right) / 2;
 }
 /** Bind stable slots once; no component type is created during a React render. */
 export function createContentRenderer(
@@ -41,12 +59,24 @@ export function createContentRenderer(
   const css = fontRules(fonts);
   const Blocks = slots.ContentBlocks;
   /** Render validated measured node props; the host reports React failures and retains its current scene. */
-  function NodeContent({ node, embedFonts = true }: NodeContentProps): ReactElement {
+  function NodeContent({
+    node,
+    embedFonts = true,
+    surface = 'static',
+    detail = 'full',
+    emphasis = 'normal',
+  }: NodeContentProps): ReactElement {
     const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
     const Chrome = chrome.Component;
-    const content = compartments(node, chrome.separateHeading);
+    const content = compartments(
+      node,
+      separatesHeading(node, chrome, slots.classes),
+      surface,
+      detail,
+    );
     return (
       <svg
+        className={slots.classes?.root}
         display="block"
         overflow="visible"
         xmlns="http://www.w3.org/2000/svg"
@@ -54,25 +84,42 @@ export function createContentRenderer(
         height={node.height}
         viewBox={`0 0 ${node.width} ${node.height}`}
         role="img"
-        aria-label={node.content.outline.join('; ')}
+        aria-label={node.label}
         data-shape={node.shape}
         data-frame={node.frame}
+        data-follows-interface-roles={node.followsInterfaceRoles}
+        data-node-role={node.role}
         data-node-id={node.id}
+        data-emphasis={emphasis}
       >
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}
         <Chrome
           node={node}
           style={node.chromeStyle}
-          heading={<Blocks primitives={content.heading} />}
+          classes={slots.classes}
+          heading={
+            <g className={slots.classes?.heading}>
+              <Blocks primitives={content.heading} />
+            </g>
+          }
         />
-        <g transform={`translate(${contentSlack(node)} 0)`}>
+        <g className={slots.classes?.body} transform={`translate(${contentSlack(node)} 0)`}>
           <Blocks primitives={content.body} />
         </g>
       </svg>
     );
   }
   return NodeContent;
+}
+/** Browser engineering cards expose heading/body paint roles; every other renderer keeps prior grouping. */
+function separatesHeading(
+  node: VisualNode,
+  chrome: NodeChrome,
+  classes: NodeSlots['classes'],
+): boolean {
+  if (chrome.separateHeading === true) return true;
+  return classes !== undefined && COMPARTMENT_KINDS.includes(node.kind);
 }
 /** Only own registered names select a chrome; inherited and absent keys retain the card frame. */
 function resolveChrome(chromes: NodeChromeRegistry, name: ChromeName | 'card'): NodeChrome {
@@ -154,11 +201,42 @@ export function createFontDefinitions(boundFonts: FontSet): ComponentType<FontDe
 function compartments(
   node: VisualNode,
   separate: boolean | undefined,
+  surface: NonNullable<NodeContentProps['surface']>,
+  detail: NonNullable<NodeContentProps['detail']>,
 ): { readonly heading: readonly Primitive[]; readonly body: readonly Primitive[] } {
-  if (!separate) return { heading: [], body: node.content.primitives };
-  const heading = (item: Primitive): boolean => item.kind === 'text' && item.y <= node.headerHeight;
+  const visible = node.content.primitives.filter((item) =>
+    visibleAtDetail(node, item, surface, detail),
+  );
+  if (!separate) return { heading: [], body: visible };
+  const heading = (item: Primitive): boolean => headingPrimitive(node, item);
   return {
-    heading: node.content.primitives.filter(heading),
-    body: node.content.primitives.filter((item) => !heading(item)),
+    heading: visible.filter(heading),
+    body: visible.filter((item) => !heading(item)),
   };
 }
+
+/** Explicit roles replace geometry classification only for the semantic LOD kinds introduced here. */
+function headingPrimitive(node: VisualNode, primitive: Primitive): boolean {
+  if (node.kind === 'module' || node.kind === 'entity') return primitive.lodRole === 'heading';
+  return primitive.kind === 'text' && primitive.y <= node.headerHeight;
+}
+
+/** Canvas filters explicit semantics only; static output and unrelated notation retain admitted content. */
+function visibleAtDetail(
+  node: VisualNode,
+  primitive: Primitive,
+  surface: NonNullable<NodeContentProps['surface']>,
+  detail: NonNullable<NodeContentProps['detail']>,
+): boolean {
+  if (surface === 'static') return true;
+  if (primitive.lodRole === undefined) return true;
+  return detailFilters[detail](node, primitive);
+}
+
+type DetailFilter = (node: VisualNode, primitive: Primitive) => boolean;
+const detailFilters: Readonly<Record<NonNullable<NodeContentProps['detail']>, DetailFilter>> = {
+  overview: (node, primitive) => node.groupId !== null && primitive.lodRole === 'heading',
+  names: (_node, primitive) => primitive.lodRole === 'heading',
+  members: () => true,
+  full: () => true,
+};

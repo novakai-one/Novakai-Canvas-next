@@ -4,27 +4,36 @@ import { chromeName, type ChromeName, tokenId, type TokenId } from '../../contra
 import { parsed, member } from '../validation/input.js';
 import { resolveDefinitions } from '../tokens/resolve.js';
 import { changedDefinitions } from './overrides.js';
-/** Extension membership is a versioned token namespace, not a theme-name switch. */
-function extension(id: TokenId): boolean {
+/** Optional diagram chrome remains absent from legacy payloads until a preset selects it. */
+function chromeExtension(id: TokenId): boolean {
   return /^(elevation\.|chrome\.|role\.[^.]+\.(header|secondary)$)/.test(id);
+}
+/** Browser-only canvas treatment never enters a portable diagram theme or its pinned payload. */
+function browserExtension(id: TokenId): boolean {
+  return /^(canvasDepth\.|canvasEmphasis\.|canvasTone\.|canvas\.)/.test(id);
+}
+/** Serialization omits browser values always and chrome values only for legacy payloads. */
+function omitted(id: TokenId, chrome: unknown): boolean {
+  if (browserExtension(id)) return true;
+  return chrome === undefined && chromeExtension(id);
 }
 /** Legacy serialization retains exactly its original token vocabulary and digest. */
 export function chromeTokens(values: TokenValues, chrome: unknown): TokenValues {
-  if (chrome !== undefined) return values;
-  return Object.fromEntries(Object.entries(values).filter(([id]) => !extension(tokenId.parse(id))));
+  return Object.fromEntries(
+    Object.entries(values).filter(([id]) => !omitted(tokenId.parse(id), chrome)),
+  );
 }
 /** Explicit selectors are validated once; absence never inserts a default into a hashed payload. */
 export function chromeField(chrome: unknown): { readonly chrome?: ChromeName } {
   if (chrome === undefined) return {};
   return { chrome: parsed(chromeName, chrome, 'chrome') };
 }
-/** Hydrate only the new extension namespace; missing legacy tokens still fail normal completeness validation. */
+/** Hydrate optional extension namespaces; missing legacy tokens still fail completeness validation. */
 export function completeChromeTokens(
   supplied: TokenValues,
   source: SourceSet,
   chrome: ChromeName | undefined,
 ): TokenValues {
-  if (chrome !== undefined) return supplied;
   const roots = Object.fromEntries(
     source.definitions
       .filter((item) => item.expression.op === 'literal')
@@ -33,7 +42,9 @@ export function completeChromeTokens(
   );
   const defaults = resolveDefinitions(changedDefinitions(source, roots)).values;
   return {
-    ...Object.fromEntries(Object.entries(defaults).filter(([id]) => extension(tokenId.parse(id)))),
+    ...Object.fromEntries(
+      Object.entries(defaults).filter(([id]) => omitted(tokenId.parse(id), chrome)),
+    ),
     ...supplied,
   };
 }

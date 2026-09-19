@@ -9,6 +9,19 @@ export interface ContentBlocksProps {
 export interface NodeContentProps {
   readonly node: VisualNode;
   readonly embedFonts?: boolean;
+  readonly surface?: 'canvas' | 'static';
+  readonly detail?: 'overview' | 'names' | 'members' | 'full';
+  readonly emphasis?: 'normal' | 'primary' | 'secondary' | 'muted';
+}
+/** Browser paint roles are injected once; shared/native renderers remain stylesheet-free. */
+export interface NodeRenderClasses {
+  readonly root: string;
+  readonly frame: string;
+  readonly rim: string;
+  readonly header: string;
+  readonly separator: string;
+  readonly heading: string;
+  readonly body: string;
 }
 /** Measured labels/titles reuse exact font bytes and primitives without inventing a node frame. */
 export interface MeasuredContentProps {
@@ -36,6 +49,7 @@ export interface NodeChromeProps {
   readonly node: VisualNode;
   readonly style?: ResolvedStyle | undefined;
   readonly heading?: ReactNode;
+  readonly classes?: NodeRenderClasses | undefined;
 }
 /** Registered React frame and its immutable measurement policy share one selection key. */
 export interface NodeChrome extends ChromePolicy {
@@ -49,6 +63,7 @@ export type NodeChromeRegistry = Readonly<Record<ChromeName, NodeChrome>> & {
 export interface NodeSlots {
   readonly chromes: NodeChromeRegistry;
   readonly ContentBlocks: ComponentType<ContentBlocksProps>;
+  readonly classes?: NodeRenderClasses | undefined;
 }
 export type StaticRenderer = (element: ReactNode) => string;
 export type NodeElement = (props: NodeContentProps) => ReactElement;

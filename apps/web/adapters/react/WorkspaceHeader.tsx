@@ -2,12 +2,13 @@ import { useSyncExternalStore } from 'react';
 import type { PanelController } from '../../contract/panel-types.js';
 import { panelVisible } from '../../contract/api.js';
 import type { ComponentType, ReactElement } from 'react';
-import type { HeaderProps, DesignSlots } from '../../contract/react-types.js';
+import type { HeaderProps, DesignSlots, ThemeSelectorProps } from '../../contract/react-types.js';
 import styles from './WorkspaceHeader.module.css';
 /** Stable header slots expose human actions; status and editing behavior remain controller-owned. */
 export function createWorkspaceHeader(
   { Button }: Pick<DesignSlots, 'Button'>,
   panels: PanelController,
+  ThemeSelector: ComponentType<ThemeSelectorProps>,
 ): ComponentType<HeaderProps> {
   /** Diagram identity is the title; tool labels describe actions without exposing capability internals. */
   function WorkspaceHeader({ controller, view, onCreate }: HeaderProps): ReactElement {
@@ -29,6 +30,7 @@ export function createWorkspaceHeader(
           <span className={styles.eyebrow}>Workspace</span>
           <h1>{view.active?.document.collection.title ?? 'Your collections'}</h1>
         </div>
+        <ThemeSelector compact />
         <nav aria-label="Workspace actions" className={styles.actions}>
           <Button
             label="New collection"

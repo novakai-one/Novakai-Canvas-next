@@ -1,6 +1,11 @@
 import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import type { SceneEdgeProps, RenderSlots, RouteHandlesProps } from '../../contract/react-types.js';
+import type {
+  SceneEdgeProps,
+  RenderSlots,
+  RouteHandlesProps,
+  WireLabelProps,
+} from '../../contract/react-types.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';
@@ -18,15 +23,36 @@ function wireDash(wire: RoutedWire): string | undefined {
   if (wire.style === 'dashed') return wire.appearance.dash.join(' ');
   return undefined;
 }
+/** Arc midpoint follows cumulative route length rather than the label's obsolete layout reservation. */
+function pathMidpoint(points: readonly Point[]): Point {
+  const lengths = points.slice(1).map((point, index) => {
+    const prior = points[index] ?? point;
+    return Math.hypot(point.x - prior.x, point.y - prior.y);
+  });
+  const halfway = lengths.reduce((total, length) => total + length, 0) / 2;
+  let travelled = 0;
+  const index = lengths.findIndex((length) => {
+    travelled += length;
+    return travelled >= halfway;
+  });
+  const end = points[index + 1];
+  const start = points[index];
+  if (!start || !end) return points[0] ?? { x: 0, y: 0 };
+  const length = lengths[index] ?? 0;
+  const ratio = (halfway - (travelled - length)) / Math.max(length, Number.EPSILON);
+  return { x: start.x + (end.x - start.x) * ratio, y: start.y + (end.y - start.y) * ratio };
+}
 /** Binding keeps measured labels/notation outside Canvas policy; host owns content admission and render recovery. */
 export function createSceneEdge(
   slots: Pick<RenderSlots, 'MeasuredContent' | 'Marker'> & {
     readonly RouteHandles: ComponentType<RouteHandlesProps>;
+    readonly WireLabel: ComponentType<WireLabelProps>;
   },
 ): ComponentType<SceneEdgeProps> {
-  const Content = slots.MeasuredContent;
   const Marker = slots.Marker;
+  const Content = slots.MeasuredContent;
   const Handles = slots.RouteHandles;
+  const Label = slots.WireLabel;
   /** Render actual React Flow edge paths with independently positioned measured labels and complete crow's-foot notation. */
   function SceneEdge({ data }: SceneEdgeProps): ReactElement | null {
     if (!data) return null;
@@ -43,20 +69,35 @@ export function createSceneEdge(
     const penultimate = wire.points.at(-2);
     if (!first || !second || !last || !penultimate) return null;
     const path = view.draft ? wirePath(wire.points) : wire.path;
+    const labelAnchor = pathMidpoint(wire.points);
+    const label = wire.measuredLabel;
+    const labelBottom = labelAnchor.y + label.height / (2 * data.zoom);
+    const controlPosition = {
+      x: labelAnchor.x - label.width / (2 * data.zoom),
+      y: labelBottom + label.height / data.zoom,
+    };
     return (
       <g
         className={styles.edge}
         transform={`translate(${view.origin.x} ${view.origin.y})`}
         data-preview={view.draft}
+        data-emphasis={view.emphasis}
+        data-hovered={view.hovered}
       >
         <path className={styles.hit} d={path} />
+        <path
+          className={styles.underlay}
+          d={path}
+          strokeDasharray={wireDash(wire)}
+          data-emphasis={view.emphasis}
+        />
         <path
           className={styles.wire}
           d={path}
           stroke={paint.stroke}
           strokeWidth={wire.appearance.width}
           strokeDasharray={wireDash(wire)}
-          data-selected={view.selected}
+          data-emphasis={view.emphasis}
           data-style={wire.style}
         />
         {wire.labelVisible !== false && (
@@ -65,13 +106,32 @@ export function createSceneEdge(
           </g>
         )}
         <g transform={endpointTransform(first, second)}>
-          <Marker kind={wire.sourceMarker} paint={paint} />
+          <g aria-hidden="true" className={styles.markerContrast} data-emphasis={view.emphasis}>
+            <Marker kind={wire.sourceMarker} paint={paint} />
+          </g>
+          <g className={styles.marker} data-emphasis={view.emphasis}>
+            <Marker kind={wire.sourceMarker} paint={paint} />
+          </g>
         </g>
         <g transform={endpointTransform(last, penultimate)}>
-          <Marker kind={wire.targetMarker} paint={paint} />
+          <g aria-hidden="true" className={styles.markerContrast} data-emphasis={view.emphasis}>
+            <Marker kind={wire.targetMarker} paint={paint} />
+          </g>
+          <g className={styles.marker} data-emphasis={view.emphasis}>
+            <Marker kind={wire.targetMarker} paint={paint} />
+          </g>
         </g>
         {view.selected && (
-          <Handles edge={view} actions={actions} editable={editable} nudge={data.nudge} />
+          <Handles
+            edge={view}
+            actions={actions}
+            editable={editable}
+            nudge={data.nudge}
+            controlPosition={controlPosition}
+          />
+        )}
+        {wire.labelVisible === false && view.showLabel && (
+          <Label wire={wire} zoom={data.zoom} anchor={labelAnchor} />
         )}
       </g>
     );

@@ -22,6 +22,7 @@ export interface SessionState {
   readonly profile: InteractionProfile;
   readonly readOnly: boolean;
   readonly selection: readonly Target[];
+  readonly hover: Target | null;
   readonly tool: 'select' | 'hand' | 'connect';
   readonly connection: Endpoint | null;
   readonly draft: GestureDraft | null;

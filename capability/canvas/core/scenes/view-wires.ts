@@ -4,6 +4,8 @@ import type { PlacedSection, RoutedWire } from '../../contract/records/scene.js'
 import type { Point } from '../../contract/records/camera.js';
 import { targetInfo, targetKey } from './address.js';
 import { previewBox, previewOrigin, hiddenByReading } from './preview.js';
+import type { FocusProjection } from '../../contract/records/focus.js';
+import { emphasisFor } from './focus.js';
 /** Endpoint deltas exclude section translation, because that is applied once by the wire's origin. */
 function nodeDelta(
   state: SessionState,
@@ -72,7 +74,12 @@ function releasedWire(
   };
 }
 /** Wire view reuses labels/markers and marks endpoint-stretched paths as previews, never feasible committed geometry. */
-export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedSection): ViewWire {
+export function viewWire(
+  state: SessionState,
+  wire: RoutedWire,
+  section: PlacedSection,
+  focus: FocusProjection,
+): ViewWire {
   const target = { kind: 'wire' as const, section: section.id, id: wire.id };
   const key = targetKey(target);
   const sectionInfo = targetInfo(state.index, { kind: 'section', id: section.id });
@@ -107,6 +114,9 @@ export function viewWire(state: SessionState, wire: RoutedWire, section: PlacedS
       y: section.origin.y + delta.y,
     },
     selected: state.selection.some((value) => targetKey(value) === key),
+    hovered: state.hover !== null && targetKey(state.hover) === key,
+    emphasis: emphasisFor(focus, key),
+    showLabel: focus.source === 'selection' && focus.primary.has(key),
     hidden: hiddenByReading(state, sourceInfo) || hiddenByReading(state, targetData),
     draft: projected !== wire,
   };

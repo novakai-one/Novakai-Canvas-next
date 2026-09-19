@@ -11,6 +11,7 @@ export function RouteHandles({
   actions,
   editable,
   nudge,
+  controlPosition,
 }: RouteHandlesProps): ReactElement | null {
   const flow = useReactFlow();
   const active = useRef<string | null>(null);
@@ -134,11 +135,7 @@ export function RouteHandles({
           onKeyDown={(event) => key(event, index + 1)}
         />
       ))}
-      <foreignObject
-        x={edge.wire.labelBox.x}
-        y={edge.wire.labelBox.y + edge.wire.labelBox.height}
-        className={styles.toolBox}
-      >
+      <foreignObject x={controlPosition.x} y={controlPosition.y} className={styles.toolBox}>
         <div className={`nodrag nopan nowheel ${styles.tools}`}>
           <button type="button" onClick={addBend}>
             Add bend

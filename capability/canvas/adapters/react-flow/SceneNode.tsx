@@ -4,6 +4,7 @@ import { Handle, Position, NodeResizer } from '@xyflow/react';
 import type { SceneNodeProps, RenderSlots } from '../../contract/react-types.js';
 import type { Anchor } from '@novakai/canvas-presentation';
 import styles from './SceneNode.module.css';
+import boundary from './GroupBoundary.module.css';
 /** Measured member handles use exact row positions, with separate source/target handles for bidirectional members. */
 function anchorHandles(anchor: Anchor, isConnectable: boolean): ReactElement {
   return (
@@ -41,8 +42,24 @@ export function createSceneNode(
     const { view, actions, editable } = data;
     const node = { ...view.placed.measured, width: view.box.width, height: view.box.height };
     return (
-      <div className={styles.node} data-preview={view.draft}>
-        <Content embedFonts={false} node={node} />
+      <div
+        className={styles.node}
+        data-preview={view.draft}
+        data-emphasis={view.emphasis}
+        data-hovered={view.hovered}
+      >
+        <Content
+          embedFonts={false}
+          node={node}
+          surface="canvas"
+          detail={view.detail}
+          emphasis={view.emphasis}
+        />
+        {node.groupId !== null && (
+          <svg className={boundary.hit} aria-hidden="true">
+            <rect width="100%" height="100%" vectorEffect="non-scaling-stroke" />
+          </svg>
+        )}
         <Handle
           isConnectable={isConnectable}
           type="target"

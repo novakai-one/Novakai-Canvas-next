@@ -7,6 +7,15 @@ import type {
   FlowEdge,
 } from '../../contract/react-types.js';
 import type { Result } from '../../contract/errors.js';
+import type { ViewNode } from '../../contract/records/view.js';
+/** Group interiors belong to the camera; only their explicit boundary hit surface receives input. */
+function nodeSurfaceStyle(view: ViewNode): NonNullable<FlowNode['style']> {
+  return {
+    width: view.box.width,
+    height: view.box.height,
+    pointerEvents: view.placed.measured.groupId === null ? 'auto' : 'none',
+  };
+}
 /** Convert admitted node/section views to controlled React Flow records; generated JSON never leaves this adapter. */
 function flowNodes(
   snapshot: ViewSnapshot,
@@ -20,7 +29,7 @@ function flowNodes(
     width: view.box.width,
     height: view.box.height,
     measured: { width: view.box.width, height: view.box.height },
-    style: { width: view.box.width, height: view.box.height },
+    style: { width: view.box.width, height: view.box.height, pointerEvents: 'none' },
     data: { view, paint },
     selected: view.selected,
     dragHandle: '.section-drag-handle',
@@ -36,7 +45,7 @@ function flowNodes(
     width: view.box.width,
     height: view.box.height,
     measured: { width: view.box.width, height: view.box.height },
-    style: { width: view.box.width, height: view.box.height },
+    style: nodeSurfaceStyle(view),
     data: { view, actions, editable: snapshot.view.editable },
     selected: view.selected,
     hidden: view.hidden,
@@ -77,6 +86,7 @@ function flowEdges(
       editable: snapshot.view.editable,
       paint,
       nudge: snapshot.state.profile.nudge,
+      zoom: view.showLabel ? snapshot.view.camera.zoom : 1,
     },
     selected: view.selected,
     hidden: view.hidden,
@@ -131,6 +141,7 @@ function stableFlowEdge(next: FlowEdge, previous: FlowEdge | undefined): FlowEdg
     next.data?.editable === previous.data?.editable,
     next.data?.paint === previous.data?.paint,
     next.data?.nudge === previous.data?.nudge,
+    next.data?.zoom === previous.data?.zoom,
   ].every(Boolean);
   return equal ? previous : next;
 }

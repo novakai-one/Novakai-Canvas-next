@@ -4,9 +4,83 @@
   }
   .wire {
     fill: none;
+    stroke-opacity: var(--nv-canvas-wire-idle-opacity);
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: stroke-opacity;
   }
-  .wire[data-selected='true'] {
-    filter: drop-shadow(0 0 var(--nv-stroke-base) var(--nv-action-accent));
+  .underlay {
+    fill: none;
+    stroke-opacity: 0;
+    pointer-events: none;
+    stroke: var(--nv-canvas-node-boundary);
+    stroke-width: var(--nv-focus-width);
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: stroke-opacity, stroke;
+  }
+  .underlay[data-emphasis='primary'] {
+    stroke-opacity: 1;
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-space-1);
+  }
+  .underlay[data-emphasis='secondary'] {
+    stroke-opacity: 1;
+    stroke: var(--nv-text-secondary);
+  }
+  .wire[data-emphasis='primary'] {
+    stroke-opacity: 1;
+    stroke: var(--nv-action-accent) !important;
+    stroke-width: var(--nv-focus-width);
+  }
+  .wire[data-emphasis='secondary'] {
+    stroke-opacity: 1;
+    stroke: var(--nv-text-secondary) !important;
+  }
+  .wire[data-emphasis='muted'] {
+    stroke-opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
+  }
+  .edge[data-hovered='true'] .wire {
+    stroke-opacity: var(--nv-canvas-wire-hover-opacity);
+  }
+  .marker[data-emphasis='muted'] {
+    opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
+  }
+  .marker,
+  .markerContrast {
+    pointer-events: none;
+    opacity: var(--nv-canvas-wire-idle-opacity);
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: opacity;
+  }
+  .markerContrast {
+    opacity: 0;
+  }
+  .edge[data-hovered='true'] .marker {
+    opacity: var(--nv-canvas-wire-hover-opacity);
+  }
+  :is(.wire, .marker, .markerContrast):is([data-emphasis='primary'], [data-emphasis='secondary']) {
+    opacity: 1;
+  }
+  .markerContrast :global(path),
+  .markerContrast :global(circle) {
+    stroke: var(--nv-canvas-node-boundary) !important;
+    stroke-width: var(--nv-focus-width);
+  }
+  .markerContrast :global(path:not([fill='none'])) {
+    fill: var(--nv-canvas-node-boundary) !important;
+  }
+  .markerContrast[data-emphasis='primary'] :global(path),
+  .markerContrast[data-emphasis='primary'] :global(circle),
+  .marker[data-emphasis='primary'] :global(path),
+  .marker[data-emphasis='primary'] :global(circle) {
+    stroke: var(--nv-action-accent) !important;
+  }
+  .markerContrast[data-emphasis='primary'] :global(path:not([fill='none'])),
+  .marker[data-emphasis='primary'] :global(path:not([fill='none'])) {
+    fill: var(--nv-action-accent) !important;
+  }
+  .marker[data-emphasis='secondary'] :global(path),
+  .marker[data-emphasis='secondary'] :global(circle) {
+    stroke: var(--nv-text-secondary) !important;
   }
   .hit {
     fill: none;

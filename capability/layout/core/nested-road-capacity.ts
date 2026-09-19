@@ -39,6 +39,24 @@ function sized(road: PrototypeRoad, count: number, measuredWidth?: number): Prot
     bounds: { ...b, [a.across]: b[a.across] + (b[a.breadth] - width) / 2, [a.breadth]: width },
   };
 }
+/** Entry and exit ports at one physical mouth share its envelope, so nested turns use one boundary. */
+function mouthKey(road: PrototypeRoad): string {
+  const a = axes[road.axis];
+  return JSON.stringify([
+    road.access?.nodeId,
+    road.access?.side,
+    road.axis,
+    road.bounds[a.across] + road.bounds[a.breadth] / 2,
+  ]);
+}
+function sharedMouths(roads: readonly PrototypeRoad[]): readonly PrototypeRoad[] {
+  const widths = new Map<string, number>();
+  roads.forEach((road) => {
+    const key = mouthKey(road);
+    widths.set(key, Math.max(widths.get(key) ?? 0, road.bounds[axes[road.axis].breadth]));
+  });
+  return roads.map((road) => sized(road, road.wireLaneCount ?? 0, widths.get(mouthKey(road))));
+}
 function contactDrive(c: RoadContact): RoadContact | undefined {
   if (c.a.kind === 'driveway') return { a: c.b, b: c.a };
   if (c.b.kind === 'driveway') return c;
@@ -92,9 +110,11 @@ export function capacityRoads(
     return [...result.values()];
   });
   const roads = measure('driveways', () => {
-    const drives = templates
-      .filter((r) => r.kind === 'driveway')
-      .map((r) => sized(r, demand.get(r.id) ?? 0, allocatedWidths?.get(r.id)));
+    const drives = sharedMouths(
+      templates
+        .filter((r) => r.kind === 'driveway')
+        .map((r) => sized(r, demand.get(r.id) ?? 0, allocatedWidths?.get(r.id))),
+    );
     const result = new Map([...streets, ...drives].map((r) => [r.id, r]));
     contacts.forEach((c) => attach(result, c));
     ports.forEach((port) => admitTerminal(result, port));

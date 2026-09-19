@@ -35,6 +35,7 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       interactions,
       records,
       icons,
+      labels,
     ] = await Promise.all([
       import('../adapters/react-flow/CanvasSurface.js'),
       import('../adapters/react-flow/SceneNode.js'),
@@ -48,6 +49,7 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       import('../adapters/react-flow/interaction-handlers.js'),
       import('../adapters/react-flow/flow-records.js'),
       import('../adapters/react-flow/ControlIcon.js'),
+      import('../adapters/react-flow/WireLabel.js'),
     ]);
     const CanvasSurface = surface.createCanvasSurface({
       FontDefinitions: slots.FontDefinitions,
@@ -57,7 +59,11 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
         interactions.createInteractions({ ...owners, input: { ownsNativeInput, focusedId } }),
       observeSize,
       SceneNode: node.createSceneNode(slots),
-      SceneEdge: edge.createSceneEdge({ ...slots, RouteHandles: route.RouteHandles }),
+      SceneEdge: edge.createSceneEdge({
+        ...slots,
+        RouteHandles: route.RouteHandles,
+        WireLabel: labels.createWireLabel(slots),
+      }),
       SectionFrame: section.createSectionFrame(slots),
       CanvasControls: controls.createCanvasControls({ ...slots, Icon: icons.ControlIcon }),
       DiagramOutline: outline.createDiagramOutline(slots),

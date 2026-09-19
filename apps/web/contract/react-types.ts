@@ -15,6 +15,9 @@ export interface FeatureProps {
 export interface HeaderProps extends FeatureProps {
   readonly onCreate: () => void;
 }
+export interface ThemeSelectorProps {
+  readonly compact?: boolean;
+}
 export type LibraryProps = HeaderProps;
 export interface PanelProps extends FeatureProps {
   readonly side: 'left' | 'right';

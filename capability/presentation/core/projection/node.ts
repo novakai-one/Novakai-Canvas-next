@@ -79,6 +79,9 @@ export function projectNode(
     scoped,
   );
   return parse(visualNode, {
+    ...(context.style.followsInterfaceRoles === true
+      ? { followsInterfaceRoles: true as const }
+      : {}),
     ...chromeStyle(source, view.frame ?? source.frame, context),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
@@ -130,6 +133,9 @@ export function projectGroup(group: Group, section: Section, context: ContentCon
   );
   const heading = labelContent(group.title, scoped, 'nodeHeading');
   return parse(visualNode, {
+    ...(context.style.followsInterfaceRoles === true
+      ? { followsInterfaceRoles: true as const }
+      : {}),
     id: identity(section.id, 'group', group.id),
     objectId: null,
     groupId: group.id,

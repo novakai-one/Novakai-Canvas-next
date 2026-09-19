@@ -11,6 +11,8 @@ export interface ContrastEvidence {
 }
 /** Complete detached scope; numeric values, CSS and contrast share one resolved identity. */
 export interface ResolvedTokenSet {
+  /** UI-derived diagram themes may follow the active interface palette for standard semantic roles. */
+  readonly followsInterfaceRoles?: true | undefined;
   readonly chrome?: ChromeName | undefined;
   readonly definitionVersion: Version;
   readonly inputDigest: Digest;

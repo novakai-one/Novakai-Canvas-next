@@ -35,7 +35,7 @@ function selectAdjacent(state: SessionState, key: keyof typeof arrows): Transiti
   const next = Math.max(0, Math.min(order.length - 1, current + delta));
   const target = state.index.targets[order[next] ?? '']?.target;
   if (!target) return changed(state, state);
-  return changed(state, { ...state, selection: [target] });
+  return changed(state, { ...state, selection: [target], hover: null });
 }
 /** Enter is an explicit inspect request; missing selection is a harmless no-op. */
 function inspectSelected(state: SessionState): Transition {

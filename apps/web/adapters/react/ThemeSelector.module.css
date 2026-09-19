@@ -1,0 +1,36 @@
+@layer components {
+  .selector {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+  .selector legend {
+    padding: 0;
+    color: var(--nv-color-subtle);
+    font-size: var(--nv-font-caption);
+  }
+  .choices {
+    display: flex;
+    gap: var(--nv-stroke-base);
+    padding: var(--nv-stroke-base);
+    border: var(--nv-stroke-base) solid var(--nv-color-input-boundary);
+    border-radius: var(--nv-radius-control);
+    background: var(--nv-surface-base);
+  }
+  .choices > :global(button) {
+    min-block-size: var(--nv-control-height);
+    border-color: transparent;
+    background: transparent;
+  }
+  .choices > :global(button)[aria-pressed='true'] {
+    border-color: var(--nv-color-action);
+    background: var(--nv-color-panel);
+    color: var(--nv-color-action);
+  }
+  .selector[data-compact='true'] .choices > :global(button) {
+    padding-inline: var(--nv-space-2);
+  }
+}

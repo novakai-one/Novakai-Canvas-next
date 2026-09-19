@@ -4,10 +4,10 @@
   --nv-color-panel: #ffffff;
   --nv-color-content: #17212b;
   --nv-color-subtle: #526170;
-  --nv-color-action: #355ccd;
+  --nv-color-action: #245fe5;
   --nv-color-on-action: #ffffff;
   --nv-color-input-boundary: #526170;
-  --nv-color-focus: #355ccd;
+  --nv-color-focus: #245fe5;
   --nv-color-hover: #f4f6f8;
   --nv-space-1: 4px;
   --nv-space-2: 8px;
@@ -31,8 +31,8 @@
   --nv-role-neutral-text: #17212b;
   --nv-role-neutral-header: #f2f7fc;
   --nv-role-neutral-secondary: #526170;
-  --nv-role-primary-fill: #355ccd;
-  --nv-role-primary-stroke: #355ccd;
+  --nv-role-primary-fill: #245fe5;
+  --nv-role-primary-stroke: #245fe5;
   --nv-role-primary-text: #ffffff;
   --nv-role-primary-header: #f2f7fc;
   --nv-role-primary-secondary: #ffffff;
@@ -56,8 +56,29 @@
   --nv-role-warning-text: #17212b;
   --nv-role-warning-header: #f2f7fc;
   --nv-role-warning-secondary: #526170;
-  --nv-chrome-wire: #355ccd;
+  --nv-chrome-wire: #245fe5;
   --nv-chrome-external-wire: #526170;
+  --nv-canvas-surface: #e9ecef;
+  --nv-canvas-grid: #bbc5d03d;
+  --nv-canvas-node-surface: #ffffff;
+  --nv-canvas-node-header: #f4f6f8;
+  --nv-canvas-node-boundary: #7d8794;
+  --nv-canvas-node-rim: #b5bec8;
+  --nv-canvas-node-ambient-shadow: #00000038;
+  --nv-canvas-node-offset-y: 3px;
+  --nv-canvas-node-blur: 4px;
+  --nv-canvas-ambient-offset-y: 10px;
+  --nv-canvas-ambient-blur: 18px;
+  --nv-canvas-heading: #17212b;
+  --nv-canvas-member: #526170;
+  --nv-canvas-group-surface: #d9dfe5;
+  --nv-canvas-group-boundary: #919aa6;
+  --nv-canvas-group-heading: #526170;
+  --nv-canvas-muted-opacity: 0.36;
+  --nv-canvas-transition: 120ms;
+  --nv-canvas-primary-surface: #e3ecff;
+  --nv-canvas-secondary: #177c82;
+  --nv-canvas-wire-hover-opacity: 0.78;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;
@@ -66,5 +87,6 @@
   --nv-diagram-figure-medium: 128px;
   --nv-diagram-figure-large: 192px;
   --nv-control-height: 36px;
+  --nv-canvas-node-shadow: #0000001f;
 }
 }

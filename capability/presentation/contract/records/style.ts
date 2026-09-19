@@ -88,6 +88,7 @@ export const elevation = z
 /** Numeric/CSS styles come from the same token resolver; no palette or size default is duplicated here. */
 export const resolvedStyle = z
   .strictObject({
+    followsInterfaceRoles: z.literal(true).optional(),
     chrome: chromeName.optional(),
     /** Theme-defined role name → header band tint; keys match the open roles map. */
     headers: z.record(z.string(), hexColor).readonly().optional(),

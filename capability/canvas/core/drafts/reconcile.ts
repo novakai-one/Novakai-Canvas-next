@@ -49,6 +49,7 @@ function reconcileScene(
     index,
     stamp: event.stamp,
     connection: null,
+    hover: null,
     routePreview: null,
   };
   const selection = survivingSelection(updated, state.selection);

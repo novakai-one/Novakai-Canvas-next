@@ -25,6 +25,7 @@ import type {
 import type { CanvasEvent } from './events.js';
 import type { Target } from './records/selection.js';
 import type { Point, Box } from './records/camera.js';
+import type { Emphasis } from './records/focus.js';
 import type { Diagnostic, Result } from './errors.js';
 export type SurfaceSession = Pick<
   SessionStore,
@@ -52,7 +53,13 @@ export interface RenderSlots {
   readonly Marker: ComponentType<MarkerProps>;
   readonly Button: ComponentType<ButtonProps>;
 }
+export interface WireLabelProps {
+  readonly wire: ViewWire['wire'];
+  readonly zoom: number;
+  readonly anchor: Point;
+}
 export interface SurfaceProps {
+  readonly followsInterfaceRoles?: boolean;
   readonly session: SurfaceSession;
   readonly reader: ViewReader;
   readonly nextGestureId: () => string;
@@ -90,6 +97,7 @@ export interface EdgeData extends Record<string, unknown> {
   readonly editable: boolean;
   readonly paint: Paint;
   readonly nudge: number;
+  readonly zoom: number;
 }
 export type FlowNode = Node<NodeData, 'scene'> | Node<SectionData, 'section'>;
 export type FlowEdge = Edge<EdgeData, 'scene'>;
@@ -111,6 +119,7 @@ export interface OutlineProps {
   readonly editable: boolean;
 }
 export interface SequenceProps {
+  readonly followsInterfaceRoles?: boolean;
   readonly sections: readonly ViewSection[];
   readonly nodes: readonly ViewNode[];
   readonly actions: Pick<ViewActions, 'dispatch'>;
@@ -121,6 +130,7 @@ export interface RouteHandlesProps {
   readonly actions: Pick<ViewActions, 'dispatch' | 'nextId'>;
   readonly editable: boolean;
   readonly nudge: number;
+  readonly controlPosition: Point;
 }
 export interface Interactions {
   readonly actions: ViewActions;
@@ -134,13 +144,22 @@ export interface Interactions {
     | 'onSelectionDragStop'
     | 'onNodeClick'
     | 'onNodeDoubleClick'
+    | 'onNodeMouseEnter'
+    | 'onNodeMouseLeave'
     | 'onEdgeClick'
     | 'onEdgeDoubleClick'
+    | 'onEdgeMouseEnter'
+    | 'onEdgeMouseLeave'
     | 'onPaneClick'
     | 'onNodesChange'
     | 'onEdgesChange'
     | 'onViewportChange'
+    | 'onMoveStart'
+    | 'onMoveEnd'
     | 'onConnect'
+    | 'onConnectStart'
+    | 'onConnectEnd'
+    | 'onPaneMouseLeave'
   >;
   keyboard(event: KeyboardEvent<HTMLDivElement>): void;
 }
@@ -181,3 +200,4 @@ export interface ReactBindings {
 }
 export type CanvasElement = (props: SurfaceProps) => ReactElement;
 export type ScreenPoint = Point;
+export type ViewEmphasis = Emphasis;

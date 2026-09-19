@@ -18,6 +18,7 @@ const tokenValue = z.discriminatedUnion('type', [
 ]);
 /** Resolved output crosses the DOM boundary only as a complete safe vocabulary and CSS-equivalent snapshot. */
 export const resolvedScope = z.strictObject({
+  followsInterfaceRoles: z.literal(true).optional(),
   chrome: chromeName.optional(),
   definitionVersion: version,
   inputDigest: digest,

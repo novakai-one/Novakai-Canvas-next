@@ -6,6 +6,7 @@ export type { Result, Diagnostic, ErrorCode } from './errors.js';
 export type { SessionState, Transition, ReadingState } from './records/state.js';
 export type { CanvasEvent, EventOf } from './events.js';
 export type { Target, NodeTarget, WireTarget } from './records/selection.js';
+export type { DetailTier, Emphasis, FocusProjection, FocusSource } from './records/focus.js';
 export type { Camera, Point, Box, Viewport } from './records/camera.js';
 export type { InteractionProfile, GestureInput, GestureDecision } from './records/profile.js';
 export type { Scene, SceneStamp, SceneIndex, TargetInfo } from './records/scene.js';

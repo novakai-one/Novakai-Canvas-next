@@ -1,7 +1,13 @@
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
+import { panelVisible } from '../../contract/api.js';
 import type { ComponentType, ReactElement } from 'react';
 import type { ViewMenuProps, DesignSlots } from '../../contract/react-types.js';
-import type { PanelController, InterfaceControl } from '../../contract/panel-types.js';
+import type {
+  PanelController,
+  InterfaceControl,
+  PanelId,
+  PanelState,
+} from '../../contract/panel-types.js';
 
 /** View owns temporary interface visibility while the workspace retains diagram and draft state. */
 export function createViewMenu(
@@ -11,8 +17,8 @@ export function createViewMenu(
 ): ComponentType<ViewMenuProps> {
   function ViewMenu({ controller, view }: ViewMenuProps): ReactElement {
     const [open, setOpen] = useState(false);
-    const visibility = panels.getSnapshot().interfaceVisibility;
-    const items = viewItems(view, visibility, controller, panels);
+    const state = useSyncExternalStore(panels.subscribe, panels.getSnapshot);
+    const items = viewItems(view, state, controller, panels);
     return (
       <Menu
         label="View options"
@@ -29,11 +35,14 @@ export function createViewMenu(
 
 function viewItems(
   view: ViewMenuProps['view'],
-  visibility: ReturnType<PanelController['getSnapshot']>['interfaceVisibility'],
+  state: PanelState,
   controller: ViewMenuProps['controller'],
   panels: PanelController,
 ) {
+  const visibility = state.interfaceVisibility;
   return [
+    panelItem('left', panelVisible(state, 'left'), 'Browse', panels, view.active === null),
+    panelItem('right', panelVisible(state, 'right'), 'Details', panels, view.active === null),
     {
       id: 'source',
       label: sourceLabel(view.sourceOpen),
@@ -67,5 +76,20 @@ function controlItem(
     id: control,
     label: `${visible ? 'Hide' : 'Show'} ${label}`,
     onSelect: () => panels.setInterfaceVisibility(control, !visible),
+  };
+}
+
+function panelItem(
+  side: PanelId,
+  visible: boolean,
+  label: string,
+  panels: Pick<PanelController, 'open'>,
+  disabled: boolean,
+) {
+  return {
+    id: `${side}-panel`,
+    label: `${visible ? 'Hide' : 'Show'} ${label} panel`,
+    disabled,
+    onSelect: () => panels.open(side, !visible),
   };
 }

@@ -1,8 +1,10 @@
-import { startWeb } from '../contract/index.js';
+import { loadBrowserStyles } from '@novakai/canvas-design-system';
 /** The browser owns its mount target. Failure is visible before React exists and never implies diagram data was lost. */
 async function main(): Promise<void> {
   const element = document.getElementById('app');
   if (element === null) return;
+  await loadBrowserStyles();
+  const { startWeb } = await import('../contract/index.js');
   const started = await startWeb(element);
   if (!started.ok) element.textContent = `${started.error.message}. ${started.error.recovery}`;
 }

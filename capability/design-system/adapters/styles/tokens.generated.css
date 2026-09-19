@@ -6,7 +6,7 @@
   --nv-text-primary: #17212b;
   --nv-text-secondary: #526170;
   --nv-border-default: #bbc5d0;
-  --nv-action-accent: #355ccd;
+  --nv-action-accent: #245fe5;
   --nv-action-on-accent: #ffffff;
   --nv-font-body: system-ui, sans-serif;
   --nv-font-mono: ui-monospace, monospace;
@@ -83,6 +83,15 @@
   --nv-chrome-header-decision: #f2f7fc;
   --nv-chrome-header-success: #f2f7fc;
   --nv-chrome-header-warning: #f2f7fc;
+  --nv-canvas-tone-surface: #dbe5f0;
+  --nv-canvas-tone-node-surface: #ffffff;
+  --nv-canvas-tone-node-header: #e4effd;
+  --nv-canvas-tone-node-boundary: #6b7f95;
+  --nv-canvas-tone-node-rim: #9db0c3;
+  --nv-canvas-tone-group-surface: #c9d7e7;
+  --nv-canvas-tone-group-boundary: #6f879e;
+  --nv-canvas-tone-primary-surface: #d8e6ff;
+  --nv-canvas-tone-secondary: #55708e;
   --nv-canvas-depth-node-offset-y: 3px;
   --nv-canvas-depth-node-blur: 4px;
   --nv-canvas-depth-ambient-offset-y: 10px;

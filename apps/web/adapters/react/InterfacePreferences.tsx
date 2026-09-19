@@ -1,14 +1,14 @@
 import { formatFailure } from '../../contract/api.js';
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import type { PreferenceController, ThemeChoice } from '../../contract/records/preferences.js';
-import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
+import type { PreferenceController } from '../../contract/records/preferences.js';
+import type { FeatureProps, DesignSlots, ThemeSelectorProps } from '../../contract/react-types.js';
 import styles from './InterfacePreferences.module.css';
 /** Personal controls consume one preference session, so panel movement or collapse never resets them. */
 export function createInterfacePreferences(
   { Button, Field }: Pick<DesignSlots, 'Button' | 'Field'>,
   preferences: PreferenceController,
-  themes: readonly ThemeChoice[],
+  ThemeSelector: ComponentType<ThemeSelectorProps>,
 ): ComponentType<FeatureProps> {
   /** Diagram themes are separate authored data; these controls affect this browser's interface only. */
   function InterfacePreferences(): ReactElement {
@@ -17,26 +17,7 @@ export function createInterfacePreferences(
     return (
       <div className={styles.preferences}>
         <p>Personal to this browser</p>
-        <fieldset>
-          <legend>Interface theme</legend>
-          <div className={styles.choices}>
-            <Button
-              label="System"
-              selected={value.theme.mode === 'system'}
-              onClick={() => preferences.change({ ...value, theme: { mode: 'system' } })}
-            />
-            {themes.map((theme) => (
-              <Button
-                key={theme.pin.id}
-                label={theme.label}
-                selected={value.theme.mode === 'pinned' && value.theme.theme.id === theme.pin.id}
-                onClick={() =>
-                  preferences.change({ ...value, theme: { mode: 'pinned', theme: theme.pin } })
-                }
-              />
-            ))}
-          </div>
-        </fieldset>
+        <ThemeSelector />
         <Field
           label="Interface text size"
           help="12–20 px; diagram text is unchanged"

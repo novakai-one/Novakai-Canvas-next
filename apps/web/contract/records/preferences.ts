@@ -28,6 +28,7 @@ export interface PreferenceBindings {
   readonly installer: ScopeInstaller;
   readonly retention: DraftRetention;
   readonly environment: Environment;
+  readonly themes?: readonly UiThemePin[];
 }
 export interface PreferenceInstallation {
   readonly lease: ScopeLease;

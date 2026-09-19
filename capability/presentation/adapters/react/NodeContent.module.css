@@ -22,26 +22,23 @@
     transition-property: fill, stroke;
   }
 
-  .root:is(
-      [data-shape='module'],
-      [data-shape='entity'],
-      [data-shape='interface'],
-      [data-shape='function'],
-      [data-frame='card'][data-node-role='neutral']
-    )
-    .frame {
+  .root[data-node-role='neutral']:not([data-shape='container']) .frame {
     fill: var(--nv-canvas-node-surface);
     stroke: var(--nv-canvas-node-boundary);
   }
 
-  .root[data-shape='container'] .frame {
+  .root[data-shape='container'][data-node-role='neutral'] .frame {
     fill: var(--nv-canvas-group-surface);
     filter: none;
     stroke: var(--nv-canvas-group-boundary);
   }
 
-  .header {
+  .root[data-node-role='neutral'] .header {
     fill: var(--nv-canvas-node-header);
+  }
+
+  .root[data-emphasis='primary'][data-node-role='neutral'] .header {
+    fill: var(--nv-canvas-primary-surface);
   }
 
   .rim {
@@ -55,35 +52,19 @@
     stroke: var(--nv-canvas-node-boundary);
   }
 
-  .root:is(
-      [data-shape='module'],
-      [data-shape='entity'],
-      [data-shape='interface'],
-      [data-shape='function'],
-      [data-frame='card'][data-node-role='neutral']
-    )
-    .heading
-    text {
+  .root[data-node-role='neutral']:not([data-shape='container']) .heading text {
     fill: var(--nv-canvas-heading);
   }
 
-  .root[data-shape='container'] .heading text {
+  .root[data-shape='container'][data-node-role='neutral'] .heading text {
     fill: var(--nv-canvas-group-heading);
   }
 
-  .root:is(
-      [data-shape='module'],
-      [data-shape='entity'],
-      [data-shape='interface'],
-      [data-shape='function'],
-      [data-frame='card'][data-node-role='neutral']
-    )
-    .body
-    text {
+  .root[data-node-role='neutral']:not([data-shape='container']) .body text {
     fill: var(--nv-canvas-member);
   }
 
-  .root[data-shape='container'] .body text {
+  .root[data-shape='container'][data-node-role='neutral'] .body text {
     fill: var(--nv-canvas-group-heading);
   }
 
@@ -93,7 +74,7 @@
   }
 
   .root[data-emphasis='secondary'][data-shape] .frame {
-    stroke: var(--nv-text-secondary);
+    stroke: var(--nv-canvas-secondary);
     stroke-width: var(--nv-focus-width);
   }
 }

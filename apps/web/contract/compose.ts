@@ -8,10 +8,11 @@ import { createLibraryFilters } from '../adapters/react/LibraryFilters.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
 import { createLibraryOrganization } from '../adapters/react/LibraryOrganization.js';
 import type { ComponentType } from 'react';
-import type { FeatureProps } from './react-types.js';
+import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
 import { createPreferenceController } from '../adapters/preference-session.js';
 import { readEnvironment, observeEnvironment } from '../adapters/browser-preferences.js';
 import { createInterfacePreferences } from '../adapters/react/InterfacePreferences.js';
+import { createThemeSelector } from '../adapters/react/ThemeSelector.js';
 import type { PreferenceController, ThemeChoice } from './records/preferences.js';
 import { createEngineeringFields } from '../adapters/react/EngineeringFields.js';
 import { createRetainedEditor } from '../adapters/retained-editor.js';
@@ -120,7 +121,7 @@ function themeChoices(
     );
     const pin = resolved.provenance.ui;
     if (pin === null) throw new InitializationRejected('UI theme provenance is missing');
-    return { label: scheme === 'light' ? 'Paper' : 'Ink', pin };
+    return { label: scheme === 'light' ? 'Light' : 'Dark', pin };
   });
 }
 /** Numeric panel bounds are read from the resolved token scope, preserving one CSS/TS authority. */
@@ -133,7 +134,7 @@ function dimension(element: HTMLElement, variable: string): number {
 function featureSections(
   design: DesignBindings,
   preferences: PreferenceController,
-  themes: readonly ThemeChoice[],
+  ThemeSelector: ComponentType<ThemeSelectorProps>,
   Browser: ComponentType<FeatureProps>,
 ): readonly RegisteredSection[] {
   return [
@@ -155,7 +156,7 @@ function featureSections(
     {
       id: 'interface',
       title: 'Interface',
-      Content: createInterfacePreferences(design, preferences, themes),
+      Content: createInterfacePreferences(design, preferences, ThemeSelector),
     },
     {
       id: 'shared-content',
@@ -259,6 +260,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
   const scope = accepted(createScopeInstaller(design.createScopeTarget(element)));
   const tokens = composeDesignSystem();
   const environment = readEnvironment(window);
+  const themes = themeChoices(tokens, installed.tokens, environment);
   const preferences = accepted(
     createPreferenceController({
       tokens,
@@ -266,6 +268,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
       installer: scope,
       retention: createDraftRetention(localStorage),
       environment,
+      themes: themes.map(({ pin }) => pin),
     }),
   );
   const stopPreferences = observeEnvironment(window, preferences.environment);
@@ -276,12 +279,8 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     { id: 'results', Content: createLibraryResults(design) },
     { id: 'organization', Content: createLibraryOrganization(design) },
   ]);
-  const sections = featureSections(
-    design,
-    preferences,
-    themeChoices(tokens, installed.tokens, environment),
-    Browser,
-  );
+  const ThemeSelector = createThemeSelector(design, preferences, themes);
+  const sections = featureSections(design, preferences, ThemeSelector, Browser);
   const sizing = panelSizing(element);
   const panels: PanelController = createPanelController({
     definitions: panelDefinitions(sections),
@@ -300,7 +299,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
   const stopWidth = observeWorkspaceWidth(element, panels.viewport);
   const Workspace = createWorkspaceShell({
     panels,
-    Header: createWorkspaceHeader(design, panels),
+    Header: createWorkspaceHeader(design, panels, ThemeSelector),
     Library: createCollectionLibrary({ ...design, Browser }),
     Panel: createWorkspaceSidePanel({ ...design, sections, panels, sizing, portal: element }),
     Source: createSourceEditor(design, element),

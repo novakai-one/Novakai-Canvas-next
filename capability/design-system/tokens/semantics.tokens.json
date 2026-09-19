@@ -673,7 +673,7 @@
   "canvas": {
     "surface": {
       "$type": "color",
-      "$value": "{surface.base}"
+      "$value": "{canvasTone.surface}"
     },
     "grid": {
       "$type": "color",
@@ -696,71 +696,19 @@
     },
     "nodeSurface": {
       "$type": "color",
-      "$value": "{surface.raised}"
+      "$value": "{canvasTone.nodeSurface}"
     },
     "nodeHeader": {
       "$type": "color",
-      "$value": null,
-      "$extensions": {
-        "novakai": {
-          "recipe": {
-            "op": "alpha",
-            "color": {
-              "op": "reference",
-              "value": "{text.primary}"
-            },
-            "scalar": {
-              "op": "multiply",
-              "value": {
-                "op": "reference",
-                "value": "{canvasDepth.rimOpacity}"
-              },
-              "scalar": {
-                "op": "reference",
-                "value": "{canvasEmphasis.mutedOpacity}"
-              }
-            }
-          }
-        }
-      }
+      "$value": "{canvasTone.nodeHeader}"
     },
     "nodeBoundary": {
       "$type": "color",
-      "$value": null,
-      "$extensions": {
-        "novakai": {
-          "recipe": {
-            "op": "alpha",
-            "color": {
-              "op": "reference",
-              "value": "{text.primary}"
-            },
-            "scalar": {
-              "op": "reference",
-              "value": "{canvasDepth.nodeBoundaryOpacity}"
-            }
-          }
-        }
-      }
+      "$value": "{canvasTone.nodeBoundary}"
     },
     "nodeRim": {
       "$type": "color",
-      "$value": null,
-      "$extensions": {
-        "novakai": {
-          "recipe": {
-            "op": "alpha",
-            "color": {
-              "op": "reference",
-              "value": "{text.primary}"
-            },
-            "scalar": {
-              "op": "reference",
-              "value": "{canvasDepth.rimOpacity}"
-            }
-          }
-        }
-      }
+      "$value": "{canvasTone.nodeRim}"
     },
     "nodeShadow": {
       "$type": "color",
@@ -811,41 +759,11 @@
     },
     "groupSurface": {
       "$type": "color",
-      "$value": null,
-      "$extensions": {
-        "novakai": {
-          "recipe": {
-            "op": "alpha",
-            "color": {
-              "op": "reference",
-              "value": "{surface.raised}"
-            },
-            "scalar": {
-              "op": "reference",
-              "value": "{canvasDepth.groupOpacity}"
-            }
-          }
-        }
-      }
+      "$value": "{canvasTone.groupSurface}"
     },
     "groupBoundary": {
       "$type": "color",
-      "$value": null,
-      "$extensions": {
-        "novakai": {
-          "recipe": {
-            "op": "alpha",
-            "color": {
-              "op": "reference",
-              "value": "{border.default}"
-            },
-            "scalar": {
-              "op": "reference",
-              "value": "{canvasEmphasis.mutedOpacity}"
-            }
-          }
-        }
-      }
+      "$value": "{canvasTone.groupBoundary}"
     },
     "groupHeading": {
       "$type": "color",
@@ -862,6 +780,14 @@
     "wireIdleOpacity": {
       "$type": "number",
       "$value": 0.42
+    },
+    "primarySurface": {
+      "$type": "color",
+      "$value": "{canvasTone.primarySurface}"
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "{canvasTone.secondary}"
     }
   }
 }

@@ -2,13 +2,13 @@ import { useSyncExternalStore } from 'react';
 import type { PanelController } from '../../contract/panel-types.js';
 import { panelVisible } from '../../contract/api.js';
 import type { ComponentType, ReactElement } from 'react';
-import type { HeaderProps, DesignSlots, FeatureProps } from '../../contract/react-types.js';
+import type { HeaderProps, DesignSlots, ViewMenuProps } from '../../contract/react-types.js';
 import styles from './WorkspaceHeader.module.css';
 /** Stable header slots expose human actions; status and editing behavior remain controller-owned. */
 export function createWorkspaceHeader(
   { Button }: Pick<DesignSlots, 'Button'>,
   panels: PanelController,
-  ViewMenu: ComponentType<FeatureProps>,
+  ViewMenu: ComponentType<ViewMenuProps>,
 ): ComponentType<HeaderProps> {
   /** Diagram identity is the title; tool labels describe actions without exposing capability internals. */
   function WorkspaceHeader({ controller, view }: HeaderProps): ReactElement {

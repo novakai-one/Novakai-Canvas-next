@@ -15,6 +15,10 @@ export interface FeatureProps {
 export interface HeaderProps extends FeatureProps {
   readonly onCreate: () => void;
 }
+export interface ViewMenuProps {
+  readonly controller: Pick<WorkspaceController, 'showSource'>;
+  readonly view: Pick<WorkspaceView, 'active' | 'sourceOpen'>;
+}
 export interface RevealInterfaceProps {
   readonly onReveal: () => void;
 }

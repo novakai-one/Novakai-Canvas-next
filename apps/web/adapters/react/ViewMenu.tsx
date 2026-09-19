@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
+import type { ViewMenuProps, DesignSlots } from '../../contract/react-types.js';
 import type { PanelController, InterfaceControl } from '../../contract/panel-types.js';
 
 /** View owns temporary interface visibility while the workspace retains diagram and draft state. */
@@ -8,8 +8,8 @@ export function createViewMenu(
   { Button, Menu }: Pick<DesignSlots, 'Button' | 'Menu'>,
   panels: PanelController,
   portal: HTMLElement,
-): ComponentType<FeatureProps> {
-  function ViewMenu({ controller, view }: FeatureProps): ReactElement {
+): ComponentType<ViewMenuProps> {
+  function ViewMenu({ controller, view }: ViewMenuProps): ReactElement {
     const [open, setOpen] = useState(false);
     const visibility = panels.getSnapshot().interfaceVisibility;
     const items = viewItems(view, visibility, controller, panels);
@@ -28,9 +28,9 @@ export function createViewMenu(
 }
 
 function viewItems(
-  view: FeatureProps['view'],
+  view: ViewMenuProps['view'],
   visibility: ReturnType<PanelController['getSnapshot']>['interfaceVisibility'],
-  controller: FeatureProps['controller'],
+  controller: ViewMenuProps['controller'],
   panels: PanelController,
 ) {
   return [
@@ -44,7 +44,12 @@ function viewItems(
     controlItem('zoom', visibility.zoom, 'zoom controls', panels),
     controlItem('minimap', visibility.minimap, 'minimap', panels),
     controlItem('outline', visibility.outline, 'diagram outline', panels),
-    { id: 'hide-all', label: 'Hide all interface', onSelect: () => panels.hideInterface() },
+    {
+      id: 'hide-all',
+      label: 'Hide all interface',
+      disabled: view.active === null,
+      onSelect: () => panels.hideInterface(),
+    },
   ];
 }
 

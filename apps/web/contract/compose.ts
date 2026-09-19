@@ -61,6 +61,7 @@ import { createWorkspaceController } from '../adapters/workspace-session.js';
 import { createWorkspaceHeader } from '../adapters/react/WorkspaceHeader.js';
 import { createCollectionLibrary } from '../adapters/react/CollectionLibrary.js';
 import { createCollectionDialog } from '../adapters/react/CreateCollectionDialog.js';
+import { createPanelTabs } from '../adapters/react/PanelTabs.js';
 import { createWorkspaceSidePanel } from '../adapters/react/WorkspaceSidePanel.js';
 import { createRequestRecovery } from '../adapters/react/RequestRecovery.js';
 import { createSourceEditor } from '../adapters/react/SourceEditor.js';
@@ -138,10 +139,11 @@ function featureSections(
   Browser: ComponentType<FeatureProps>,
 ): readonly RegisteredSection[] {
   return [
-    { id: 'collections', title: 'Collections', Content: Browser },
-    { id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
-    { id: 'objects', title: 'Objects', Content: ObjectOutline },
+    { tab: 'browse', id: 'collections', title: 'Collections', Content: Browser },
+    { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
+    { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
     {
+      tab: 'inspect',
       id: 'connection',
       title: 'Connection',
       Content: createWireEditor({
@@ -154,11 +156,13 @@ function featureSections(
       }),
     },
     {
+      tab: 'settings',
       id: 'interface',
       title: 'Interface',
       Content: createInterfacePreferences(design, preferences, ThemeSelector),
     },
     {
+      tab: 'inspect',
       id: 'shared-content',
       title: 'Selection',
       Content: createObjectEditor({
@@ -190,6 +194,8 @@ function panelDefinitions(
 /** Layout thresholds and dimensions are read from the same installed token scope as UI CSS. */
 function panelSizing(element: HTMLElement): PanelSizing {
   return {
+    canvasMinimum:
+      dimension(element, '--nv-breakpoint-medium') - dimension(element, '--nv-panel-right'),
     medium: dimension(element, '--nv-breakpoint-medium'),
     large: dimension(element, '--nv-breakpoint-large'),
     sides: { left: panelDimensions(element, 'left'), right: panelDimensions(element, 'right') },
@@ -218,7 +224,13 @@ function controller(
   const inputs = createWorkspaceInputs(readDiagram, language);
   return createWorkspaceController({
     client,
-    panels,
+    panels: {
+      restore: panels.restore,
+      open: (side, open) => {
+        panels.open(side, open);
+        if (side === 'right' && open) panels.selectTab('inspect');
+      },
+    },
     navigation: createWorkspaceNavigation(window.location, window.history),
     inputs,
     library: (callbacks) =>
@@ -299,9 +311,47 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
   const stopWidth = observeWorkspaceWidth(element, panels.viewport);
   const Workspace = createWorkspaceShell({
     panels,
-    Header: createWorkspaceHeader(design, panels, ThemeSelector),
+    Header: createWorkspaceHeader(design, panels),
     Library: createCollectionLibrary({ ...design, Browser }),
-    Panel: createWorkspaceSidePanel({ ...design, sections, panels, sizing, portal: element }),
+    Panel: createWorkspaceSidePanel({
+      ...design,
+      sections,
+      panels,
+      sizing,
+      portal: element,
+      Tabs: createPanelTabs(design),
+      tabs: {
+        left: [
+          {
+            id: 'add',
+            label: 'Add',
+            scope: 'Create diagram content',
+            empty:
+              'Creation tools are not available in this preview. Use Source to author nodes, groups, sections and connections.',
+          },
+          {
+            id: 'browse',
+            label: 'Browse',
+            scope: 'Shared collection',
+            empty: 'All Browse sections are hidden. Customize to show them.',
+          },
+        ],
+        right: [
+          {
+            id: 'inspect',
+            label: 'Inspect',
+            scope: 'Selected diagram content',
+            empty: 'All Inspect sections are hidden. Customize to show them.',
+          },
+          {
+            id: 'settings',
+            label: 'Settings',
+            scope: 'Personal to this browser',
+            empty: 'Settings are hidden. Customize to show them.',
+          },
+        ],
+      },
+    }),
     Source: createSourceEditor(design, element),
     Recovery: createRequestRecovery(design),
     CreateDialog: createCollectionDialog(design),

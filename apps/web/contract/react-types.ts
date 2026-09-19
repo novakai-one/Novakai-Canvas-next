@@ -1,5 +1,5 @@
-import type { PanelController } from './panel-types.js';
-import type { ComponentType, ReactElement } from 'react';
+import type { PanelController, PanelTab } from './panel-types.js';
+import type { ComponentType, ReactElement, ReactNode } from 'react';
 import type { ReactBindings as DesignBindings } from '@novakai/canvas-design-system';
 import type { SurfaceProps } from '@novakai/canvas-canvas';
 import type { FontDefinitionsProps } from '@novakai/canvas-presentation';
@@ -55,3 +55,15 @@ export type DesignSlots = Pick<
 >;
 export type WorkspaceComponent = ComponentType<WorkspaceProps>;
 export type WorkspaceElement = (props: WorkspaceProps) => ReactElement;
+
+/** The shared tab strip receives content slots, never feature implementations. */
+export interface PanelTabsProps {
+  readonly label: string;
+  readonly value: PanelTab;
+  readonly onSelect: (tab: PanelTab) => void;
+  readonly items: readonly {
+    readonly id: PanelTab;
+    readonly label: string;
+    readonly content: ReactNode;
+  }[];
+}

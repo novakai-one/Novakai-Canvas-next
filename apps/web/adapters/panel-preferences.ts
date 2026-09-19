@@ -6,6 +6,9 @@ const ids = z.array(z.string().min(1)).max(100);
 const preferences = z.strictObject({
   schemaVersion: z.literal(1),
   workspace: z.string(),
+  tabs: z
+    .strictObject({ left: z.enum(['add', 'browse']), right: z.enum(['inspect', 'settings']) })
+    .default({ left: 'browse', right: 'inspect' }),
   sections: z.strictObject({ left: ids, right: ids }),
   collapsed: ids,
   hidden: ids,

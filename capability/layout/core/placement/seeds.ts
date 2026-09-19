@@ -20,7 +20,9 @@ export function previousNode(
   previous: SectionCandidate | null,
 ): SectionCandidate['nodes'][number] | undefined {
   if (constrained(node, section)) return undefined;
-  return previous?.nodes.find((item): boolean => item.id === node.id);
+  const prior = previous?.nodes.find((item): boolean => item.id === node.id);
+  if (node.treeRow !== undefined) return undefined;
+  return prior;
 }
 /** Explicit columns require derivation even when an independently inspected previous scene is otherwise reusable. */
 export function hasColumns(section: VisualSection): boolean {

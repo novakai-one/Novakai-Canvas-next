@@ -1,3 +1,4 @@
+import { foldedTreeAncestor, treeFolder } from './tree.js';
 import type { SessionState } from '../../contract/records/state.js';
 import type { ViewNode, ViewSection } from '../../contract/records/view.js';
 import type { PlacedNode, PlacedSection } from '../../contract/records/scene.js';
@@ -38,11 +39,19 @@ export function viewNode(
     position: { x: bounds.x - parent.x, y: bounds.y - parent.y },
     box: bounds,
     placed: node,
+    ...(!section.tree?.rows.some((row) => row.node === node.id)
+      ? {}
+      : {
+          tree: {
+            folder: treeFolder(state, target),
+            collapsed: state.treeCollapsed?.includes(info.key) ?? false,
+          },
+        }),
     selected: selected(state, info.key),
     hovered: state.hover !== null && targetKey(state.hover) === info.key,
     emphasis,
     detail: visibleDetail(detail, emphasis),
-    hidden: hiddenByReading(state, info),
+    hidden: hiddenByReading(state, info) || foldedTreeAncestor(state, section, node.id),
     draft: bounds !== info.box,
   };
 }

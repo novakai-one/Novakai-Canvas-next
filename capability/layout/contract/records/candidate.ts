@@ -72,6 +72,25 @@ const sequence = z
     source: z.array(z.unknown()).readonly(),
   })
   .readonly();
+const tree = z
+  .strictObject({
+    root: identity.nullable(),
+    edges: z
+      .array(z.strictObject({ id: identity, source: identity, target: identity }).readonly())
+      .readonly(),
+    rows: z
+      .array(
+        z
+          .strictObject({
+            node: identity,
+            parent: identity.nullable(),
+            depth: z.number().int().nonnegative(),
+          })
+          .readonly(),
+      )
+      .readonly(),
+  })
+  .readonly();
 const section = z
   .strictObject({
     id: identity,
@@ -83,6 +102,7 @@ const section = z
     wires: z.array(wire).max(PROJECTION_CAPACITY.maxWires).readonly(),
     sequence,
     routing: routingOverlay.optional(),
+    tree: tree.optional(),
   })
   .readonly();
 const warning = z

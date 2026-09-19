@@ -14,6 +14,7 @@ import { union } from '../geometry/bounds.js';
 import { same, sameIds, disjoint, equations } from './facts.js';
 import { reject } from './outcomes.js';
 import { inspectRouting } from './routing-overlay.js';
+import { treeGeometry } from '../tree.js';
 export interface InspectionContext {
   readonly options: LayoutOptions;
   readonly measurements: SupplementalMeasurements;
@@ -37,34 +38,43 @@ export function inspectSection(
   const sequence = sequenceGeometry(source, nodes, context.measurements, context.options);
   same(sequence, candidate.sequence, source.id);
   const content = contentBounds(nodes, wires, sequence);
-  const title = {
-    content: source.title,
-    box:
-      source.envelope === undefined
-        ? titleBox(content, source.title, context.options.padding)
-        : {
-            x: context.options.padding,
-            y: context.options.padding,
-            width: source.title.width,
-            height: source.title.height,
-          },
-  };
+  const title = sectionTitle(source, content, context.options.padding);
   same(title, candidate.title, source.id);
   const bounds = sectionBounds(content, title.box, context.options.padding);
   if (source.envelope === undefined) checkBounds(bounds, candidate);
   else checkEnvelope(source, candidate, content);
   checkLock(source, candidate);
+  const tree = treeGeometry(source);
+  same(tree, candidate.tree, source.id);
+  return withTree(
+    {
+      routing: inspectRouting(source, candidate),
+      id: source.id,
+      origin: candidate.origin,
+      box: candidate.box,
+      title,
+      inputKey: candidate.inputKey,
+      nodes,
+      wires,
+      sequence,
+    },
+    tree,
+  );
+}
+function sectionTitle(
+  source: VisualSection,
+  content: Box,
+  padding: number,
+): PlacedSection['title'] {
+  if (source.envelope === undefined)
+    return { content: source.title, box: titleBox(content, source.title, padding) };
   return {
-    routing: inspectRouting(source, candidate),
-    id: source.id,
-    origin: candidate.origin,
-    box: candidate.box,
-    title,
-    inputKey: candidate.inputKey,
-    nodes,
-    wires,
-    sequence,
+    content: source.title,
+    box: { x: padding, y: padding, width: source.title.width, height: source.title.height },
   };
+}
+function withTree(section: PlacedSection, tree: PlacedSection['tree']): PlacedSection {
+  return tree === undefined ? section : { ...section, tree };
 }
 /** Collection-space bounds enclose all local geometry after applying the explicit origin exactly once. */
 function checkBounds(local: Box, candidate: SectionCandidate): void {
@@ -135,7 +145,8 @@ function requiredSection(
 
 /** Fixed app-owned envelope must contain all content; routing cannot silently grow it. */
 function checkEnvelope(source: VisualSection, candidate: SectionCandidate, content: Box): void {
-  const envelope = source.envelope!;
+  const envelope = source.envelope;
+  if (envelope === undefined) return;
   same([candidate.box.width, candidate.box.height], [envelope.width, envelope.height], source.id);
   const local = { x: 0, y: 0, width: envelope.width, height: envelope.height };
   if (!contains(local, content))

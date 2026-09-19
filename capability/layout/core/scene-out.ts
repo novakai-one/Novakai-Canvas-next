@@ -11,6 +11,7 @@ import { markerBox } from './routing/checks.js';
 import { sectionKey } from './arrangement/keys.js';
 import { pointBounds } from './geometry/bounds.js';
 import { reject } from './validation/outcomes.js';
+import { treeGeometry } from './tree.js';
 
 /** Preserve lane changes; redundant collinear checkpoints do not create extra SVG vertices. */
 function points(engine: EngineScene, id: string): readonly Point[] {
@@ -132,6 +133,7 @@ export function toAppSection(
     nodes: engine.nodes,
     wires,
     sequence,
+    ...(treeGeometry(source) === undefined ? {} : { tree: treeGeometry(source) }),
     inputKey: sectionKey(source, metrics, options, versions),
   };
 }

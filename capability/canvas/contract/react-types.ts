@@ -74,6 +74,10 @@ export interface WireLabelProps {
   readonly zoom: number;
   readonly anchor: Point;
 }
+export interface TreeRowProps {
+  readonly view: ViewNode;
+  readonly actions: Pick<ViewActions, 'dispatch'>;
+}
 export interface RoutingRoadsProps {
   readonly sections: readonly ViewSection[];
 }
@@ -105,7 +109,7 @@ export interface ViewActions {
 }
 export interface NodeData extends Record<string, unknown> {
   readonly view: ViewNode;
-  readonly actions: Pick<ViewActions, 'beginResize' | 'resize' | 'finishGeometry'>;
+  readonly actions: Pick<ViewActions, 'beginResize' | 'resize' | 'finishGeometry' | 'dispatch'>;
   readonly editable: boolean;
 }
 export interface SectionData extends Record<string, unknown> {

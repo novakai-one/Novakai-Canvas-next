@@ -1,3 +1,4 @@
+import { treeFolder } from './tree.js';
 import type { SessionState } from '../../contract/records/state.js';
 import type { Target } from '../../contract/records/selection.js';
 import { targetKey, targetInfo } from './address.js';
@@ -63,13 +64,12 @@ export function readingAction(
 }
 /** Collapse is session-only and requires reading mode; descendants/wires are hidden by the view projection. */
 export function collapseTarget(state: SessionState, target: Target): SessionState {
+  if (treeFolder(state, target)) return collapseTree(state, target);
   if (state.reading === null)
     return reject('invalid-gesture', 'reading', 'Detail collapse is available in reading mode');
   targetInfo(state.index, target);
   const key = targetKey(target);
-  const collapsed = state.reading.collapsed.includes(key)
-    ? state.reading.collapsed.filter((item) => item !== key)
-    : [...state.reading.collapsed, key];
+  const collapsed = toggled(state.reading.collapsed, key);
   return { ...state, reading: { ...state.reading, collapsed } };
 }
 
@@ -84,4 +84,15 @@ export function refreshReadingOrder(state: SessionState): SessionState {
   const active = found < 0 ? fallback : found;
   const collapsed = reading.collapsed.filter((key) => state.index.targets[key] !== undefined);
   return { ...state, reading: { ...reading, sections, active, collapsed } };
+}
+
+function toggled(current: readonly string[], key: string): readonly string[] {
+  return current.includes(key) ? current.filter((id) => id !== key) : [...current, key];
+}
+function collapseTree(state: SessionState, target: Target): SessionState {
+  return {
+    ...state,
+    treeCollapsed: toggled(state.treeCollapsed ?? [], targetKey(target)),
+    hover: null,
+  };
 }

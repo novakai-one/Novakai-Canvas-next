@@ -54,6 +54,7 @@ export function createSceneNode(
           surface="canvas"
           detail={view.detail}
           emphasis={view.emphasis}
+          hovered={view.hovered}
         />
         {node.groupId !== null && (
           <svg className={boundary.hit} aria-hidden="true">

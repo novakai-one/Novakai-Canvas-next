@@ -65,6 +65,7 @@ export function createContentRenderer(
     surface = 'static',
     detail = 'full',
     emphasis = 'normal',
+    hovered = false,
   }: NodeContentProps): ReactElement {
     const chrome = resolveChrome(slots.chromes, node.chromeStyle?.chrome ?? 'card');
     const Chrome = chrome.Component;
@@ -91,6 +92,7 @@ export function createContentRenderer(
         data-node-role={node.role}
         data-node-id={node.id}
         data-emphasis={emphasis}
+        data-hovered={hovered}
       >
         <title>{node.label}</title>
         {embedFonts && <style>{css}</style>}

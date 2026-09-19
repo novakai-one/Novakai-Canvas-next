@@ -12,6 +12,7 @@ export interface NodeContentProps {
   readonly surface?: 'canvas' | 'static';
   readonly detail?: 'overview' | 'names' | 'members' | 'full';
   readonly emphasis?: 'normal' | 'primary' | 'secondary' | 'muted';
+  readonly hovered?: boolean;
 }
 /** Browser paint roles are injected once; shared/native renderers remain stylesheet-free. */
 export interface NodeRenderClasses {

@@ -71,6 +71,8 @@ export interface ChromeMetrics {
 }
 /** Complete numeric projection; consumers keep the prior scene on validation failure. */
 export interface StyleProjection {
+  /** Presentation may bind standard semantic roles to the current interface palette. */
+  readonly followsInterfaceRoles?: true | undefined;
   readonly chrome?: ChromeName | undefined;
   /** Theme-defined role name → header band tint; roles are open, matching the roles map. */
   readonly headers?: Readonly<Record<string, HexColor>>;

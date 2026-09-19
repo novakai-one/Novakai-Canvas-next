@@ -22,19 +22,75 @@
     transition-property: fill, stroke;
   }
 
-  .root[data-node-role='neutral']:not([data-shape='container']) .frame {
+  .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
+    .frame {
     fill: var(--nv-canvas-node-surface);
     stroke: var(--nv-canvas-node-boundary);
   }
 
-  .root[data-shape='container'][data-node-role='neutral'] .frame {
+  .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
+    .frame {
     fill: var(--nv-canvas-group-surface);
     filter: none;
     stroke: var(--nv-canvas-group-boundary);
   }
 
-  .root[data-node-role='neutral'] .header {
+  .root[data-follows-interface-roles='true'][data-node-role='neutral'] .header {
     fill: var(--nv-canvas-node-header);
+  }
+
+  .root[data-follows-interface-roles='true'][data-node-role='primary'] {
+    --nv-interface-role-fill: var(--nv-role-primary-fill);
+    --nv-interface-role-stroke: var(--nv-role-primary-stroke);
+    --nv-interface-role-text: var(--nv-role-primary-text);
+  }
+
+  .root[data-follows-interface-roles='true'][data-node-role='supporting'] {
+    --nv-interface-role-fill: var(--nv-role-supporting-fill);
+    --nv-interface-role-stroke: var(--nv-role-supporting-stroke);
+    --nv-interface-role-text: var(--nv-role-supporting-text);
+  }
+
+  .root[data-follows-interface-roles='true'][data-node-role='decision'] {
+    --nv-interface-role-fill: var(--nv-role-decision-fill);
+    --nv-interface-role-stroke: var(--nv-role-decision-stroke);
+    --nv-interface-role-text: var(--nv-role-decision-text);
+  }
+
+  .root[data-follows-interface-roles='true'][data-node-role='success'] {
+    --nv-interface-role-fill: var(--nv-role-success-fill);
+    --nv-interface-role-stroke: var(--nv-role-success-stroke);
+    --nv-interface-role-text: var(--nv-role-success-text);
+  }
+
+  .root[data-follows-interface-roles='true'][data-node-role='warning'] {
+    --nv-interface-role-fill: var(--nv-role-warning-fill);
+    --nv-interface-role-stroke: var(--nv-role-warning-stroke);
+    --nv-interface-role-text: var(--nv-role-warning-text);
+  }
+
+  .root[data-follows-interface-roles='true']:is(
+      [data-node-role='primary'],
+      [data-node-role='supporting'],
+      [data-node-role='decision'],
+      [data-node-role='success'],
+      [data-node-role='warning']
+    )
+    :is(.frame, .header) {
+    fill: var(--nv-interface-role-fill);
+    stroke: var(--nv-interface-role-stroke);
+  }
+
+  .root[data-follows-interface-roles='true']:is(
+      [data-node-role='primary'],
+      [data-node-role='supporting'],
+      [data-node-role='decision'],
+      [data-node-role='success'],
+      [data-node-role='warning']
+    )
+    :is(.heading, .body)
+    text {
+    fill: var(--nv-interface-role-text);
   }
 
   .root[data-emphasis='primary'][data-node-role='neutral'] .header {
@@ -52,19 +108,27 @@
     stroke: var(--nv-canvas-node-boundary);
   }
 
-  .root[data-node-role='neutral']:not([data-shape='container']) .heading text {
+  .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
+    .heading
+    text {
     fill: var(--nv-canvas-heading);
   }
 
-  .root[data-shape='container'][data-node-role='neutral'] .heading text {
+  .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
+    .heading
+    text {
     fill: var(--nv-canvas-group-heading);
   }
 
-  .root[data-node-role='neutral']:not([data-shape='container']) .body text {
+  .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
+    .body
+    text {
     fill: var(--nv-canvas-member);
   }
 
-  .root[data-shape='container'][data-node-role='neutral'] .body text {
+  .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
+    .body
+    text {
     fill: var(--nv-canvas-group-heading);
   }
 

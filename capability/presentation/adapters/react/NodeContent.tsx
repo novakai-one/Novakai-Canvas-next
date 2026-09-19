@@ -70,6 +70,7 @@ export function createContentRenderer(
         aria-label={node.label}
         data-shape={node.shape}
         data-frame={node.frame}
+        data-follows-interface-roles={node.followsInterfaceRoles}
         data-node-role={node.role}
         data-node-id={node.id}
         data-emphasis={emphasis}

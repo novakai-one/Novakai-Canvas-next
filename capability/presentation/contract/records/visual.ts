@@ -149,6 +149,7 @@ export type ModuleEnvelope = z.infer<typeof moduleEnvelope>;
 /** Node geometry describes minimum measured content bounds; global position remains Layout's decision. */
 export const visualNode = z
   .strictObject({
+    followsInterfaceRoles: z.literal(true).optional(),
     id: sceneId,
     objectId: z.string().nullable(),
     groupId: z.string().nullable(),

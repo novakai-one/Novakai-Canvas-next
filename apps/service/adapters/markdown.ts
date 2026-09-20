@@ -1,6 +1,7 @@
 import {
   definitionDisplay,
   fieldTypeDisplay,
+  typeUseDisplay,
   type Collection,
   type ContentBlock,
   type DiagramObject,
@@ -248,9 +249,10 @@ const contentHandlers: Record<ContentBlock['kind'], ContentHandler> = {
     appendField(lines, block as Extract<ContentBlock, { kind: 'field' }>, object, collection),
   keygroup: (lines, block) =>
     appendKeyGroup(lines, block as Extract<ContentBlock, { kind: 'keygroup' }>),
-  signature: (lines, block) =>
-    appendSignature(lines, block as Extract<ContentBlock, { kind: 'signature' }>),
-  member: (lines, block) => appendMember(lines, block as Extract<ContentBlock, { kind: 'member' }>),
+  signature: (lines, block, _object, collection) =>
+    appendSignature(lines, block as Extract<ContentBlock, { kind: 'signature' }>, collection),
+  member: (lines, block, _object, collection) =>
+    appendMember(lines, block as Extract<ContentBlock, { kind: 'member' }>, collection),
   table: (lines, block) => appendTable(lines, block as Extract<ContentBlock, { kind: 'table' }>),
 };
 
@@ -305,15 +307,26 @@ function appendLink(lines: string[], block: Extract<ContentBlock, { kind: 'link'
 function appendSignature(
   lines: string[],
   block: Extract<ContentBlock, { kind: 'signature' }>,
+  collection: Collection,
 ): void {
+  const parameterText = block.parameters.map((parameter) =>
+    typeof parameter === 'string'
+      ? inline(parameter)
+      : `${inline(parameter.name)}: ${inline(typeUseDisplay(collection, parameter.type))}`,
+  );
+  const returns = inline(typeUseDisplay(collection, block.returns));
   lines.push(
-    `  - Signature \`${block.id}\`: ${inline(block.label)}(${block.parameters.map(inline).join(', ')}) → ${inline(block.returns)}`,
+    `  - Signature \`${block.id}\`: ${inline(block.label)}(${parameterText.join(', ')}) → ${returns}`,
   );
 }
 
-function appendMember(lines: string[], block: Extract<ContentBlock, { kind: 'member' }>): void {
+function appendMember(
+  lines: string[],
+  block: Extract<ContentBlock, { kind: 'member' }>,
+  collection: Collection,
+): void {
   lines.push(
-    `  - Member \`${block.id}\`: ${block.visibility} ${inline(block.label)} : ${inline(block.type)}`,
+    `  - Member \`${block.id}\`: ${block.visibility} ${inline(block.label)} : ${inline(typeUseDisplay(collection, block.type))}`,
   );
 }
 
@@ -496,8 +509,9 @@ function appendEvent(
   const source = sequenceEndpoint(objects, item.source);
   const target = sequenceEndpoint(objects, item.target);
   const activation = activationDetail(item.activate);
+  const operation = item.operation === undefined ? '' : `; operation ${endpoint(item.operation)}`;
   lines.push(
-    `${prefix}\`${item.id}\` ${source} → ${target}: **${inline(item.label)}** (${item.message}${activation})`,
+    `${prefix}\`${item.id}\` ${source} → ${target}: **${inline(item.label)}** (${item.message}${activation}${operation})`,
   );
 }
 
@@ -561,8 +575,9 @@ function inline(value: string): string {
     .replaceAll('\r', '\n')
     .replaceAll('\n', '\n  ')
     .replace(/^([ \t]*)(#{1,6}|>|[-+*]|\d+[.)])(?=\s)/gm, '$1\\$2')
-    .replace(/^([ \t]*)([-=*_~])\2*\s*$/gm, (line, indent) =>
-      `${indent}\\${line.slice(indent.length)}`,
+    .replace(
+      /^([ \t]*)([-=*_~])\2*\s*$/gm,
+      (line, indent) => `${indent}\\${line.slice(indent.length)}`,
     );
 }
 

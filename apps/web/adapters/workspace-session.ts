@@ -14,6 +14,7 @@ import {
   genericMemberEndpoints,
   sourceEndpoints,
   targetEndpoints,
+  resolveCallableEndpoint,
 } from '@novakai/canvas-model';
 import type { DefinitionDraft } from '../contract/records/definitions.js';
 import type { Submission } from '../contract/records/submission.js';
@@ -197,14 +198,43 @@ function connectionAppearance(id: Relationship['id']): Section['wires'][number] 
 
 function connectionKinds(
   mode: Section['mode'],
+  collection: ActiveDiagram['document']['collection'],
   source: ConnectionDraft['source']['kind'],
-  target: ConnectionDraft['target']['kind'],
+  target: ConnectionDraft['target'],
 ): readonly RelationshipKind[] {
   const candidates = compatibleWires[mode] ?? allRelationshipKinds;
-  return candidates.filter(
-    (kind) =>
-      (sourceEndpoints[kind] === undefined || sourceEndpoints[kind]?.includes(source)) &&
-      (targetEndpoints[kind] === undefined || targetEndpoints[kind]?.includes(target)),
+  return candidates.filter((kind) => connectionKindAllowed(kind, source, target, collection));
+}
+
+function connectionKindAllowed(
+  kind: RelationshipKind,
+  source: ConnectionDraft['source']['kind'],
+  target: ConnectionDraft['target'],
+  collection: ActiveDiagram['document']['collection'],
+): boolean {
+  return (
+    endpointKindAllowed(sourceEndpoints[kind], source) &&
+    endpointKindAllowed(targetEndpoints[kind], target.kind) &&
+    (kind !== 'calls' || callableTargetExists(collection, target))
+  );
+}
+
+function endpointKindAllowed(
+  allowed: readonly ConnectionDraft['source']['kind'][] | undefined,
+  kind: ConnectionDraft['source']['kind'],
+): boolean {
+  return allowed === undefined || allowed.includes(kind);
+}
+
+function callableTargetExists(
+  collection: ActiveDiagram['document']['collection'],
+  target: ConnectionDraft['target'],
+): boolean {
+  return (
+    resolveCallableEndpoint(collection, {
+      object: target.object,
+      ...(target.member === undefined ? {} : { member: target.member }),
+    } as Relationship['target']) !== undefined
   );
 }
 
@@ -315,8 +345,9 @@ function buildConnectionDraft(
   if (!endpoints.ok) return endpoints;
   const kinds = connectionKinds(
     section.mode,
+    active.document.collection,
     endpoints.value.source.kind,
-    endpoints.value.target.kind,
+    endpoints.value.target,
   );
   if (kinds.length === 0)
     return {
@@ -422,10 +453,7 @@ function definitionChanges(
   return [{ op: draft.operation, target: 'definitions', value: draft.definition }];
 }
 
-function definitionRequest(
-  draft: DefinitionDraft,
-  bindings: WorkspaceBindings,
-): Result<Request> {
+function definitionRequest(draft: DefinitionDraft, bindings: WorkspaceBindings): Result<Request> {
   if (draft.request !== undefined) return { ok: true, value: draft.request };
   return bindings.inputs.model(
     draft.base,

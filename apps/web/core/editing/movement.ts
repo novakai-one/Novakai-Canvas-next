@@ -163,6 +163,36 @@ function exactBox(before: Box, after: Box): boolean {
   );
 }
 
+function completePreview(document: RenderDocument, preview: GeometryPreview): Result<ReadonlyMap<string, Box>> {
+  const expected = [
+    ...document.scene.sections.map((section) => targetKey({ kind: 'section' as const, id: section.id })),
+    ...document.scene.sections.flatMap((section) => section.nodes.map((node) => targetKey({ kind: 'node' as const, section: section.id, id: node.id }))),
+  ];
+  const actual = new Map<string, Box>();
+  for (const item of preview.boxes) {
+    const key = targetKey(item.target);
+    if (!expected.includes(key) || actual.has(key)) return failure('invalid-edit', 'Movement preview contains an unexpected or duplicate geometry target');
+    actual.set(key, item.box);
+  }
+  if (actual.size !== expected.length || expected.some((key) => !actual.has(key))) return failure('invalid-edit', 'Movement preview did not preserve the complete captured target set');
+  return { ok: true, value: actual };
+}
+
+function closureKeys(document: RenderDocument, entry: PlacementIntent['entries'][number]): ReadonlySet<string> {
+  const keys = new Set<string>();
+  if (entry.target.kind !== 'node') return keys;
+  const section = document.scene.sections.find((item) => item.id === ('section' in entry.target ? entry.target.section : ''));
+  if (!section) return keys;
+  for (const node of section.nodes) {
+    let current: string | null = node.id;
+    while (current !== null) {
+      if (current === entry.target.id) { keys.add(targetKey({ kind: 'node', section: section.id, id: node.id })); break; }
+      current = section.nodes.find((item) => item.id === current)?.parent ?? null;
+    }
+  }
+  return keys;
+}
+
 function normalizedEntries(
   document: RenderDocument,
   intent: PlacementIntent,
@@ -443,12 +473,14 @@ export function buildExpandOption(
     ancestor = ancestor.parent === null ? undefined : sceneSection.nodes.find((item) => item.id === ancestor?.parent);
   }
   const groupGrowth = [...expanded.values()].some(({ node: candidate, width, height }) => width !== candidate.box.width || height !== candidate.box.height);
-  const sectionNeedsGrowth = requiredRight > sceneSection.box.x + sceneSection.box.width || requiredBottom > sceneSection.box.y + sceneSection.box.height;
+  const sectionLocalX = sceneSection.box.x - sceneSection.origin.x;
+  const sectionLocalY = sceneSection.box.y - sceneSection.origin.y;
+  const sectionNeedsGrowth = requiredRight > sectionLocalX + sceneSection.box.width || requiredBottom > sectionLocalY + sceneSection.box.height;
   if (!groupGrowth && !sectionNeedsGrowth) return { ok: true, value: null };
   const currentRight = sceneSection.nodes.reduce((value, item) => Math.max(value, item.box.x + item.box.width), 0);
   const currentBottom = sceneSection.nodes.reduce((value, item) => Math.max(value, item.box.y + item.box.height), 0);
-  const rightReserve = sceneSection.box.width - currentRight;
-  const bottomReserve = sceneSection.box.height - currentBottom;
+  const rightReserve = sectionLocalX + sceneSection.box.width - currentRight;
+  const bottomReserve = sectionLocalY + sceneSection.box.height - currentBottom;
   const expandedRight = Math.max(currentRight, requiredRight, ...[...expanded.values()].map(({ node: candidate, width }) => candidate.box.x + width));
   const expandedBottom = Math.max(currentBottom, requiredBottom, ...[...expanded.values()].map(({ node: candidate, height }) => candidate.box.y + height));
   const sectionWidth = Math.max(sceneSection.box.width, expandedRight + rightReserve);
@@ -542,6 +574,7 @@ export function buildRearrangeOption(
   if (projection?.mode !== 'modules') return failure('unsupported-edit', 'Rearrangement supports module sections only');
   if (scene === undefined || source === undefined || selected === undefined) return failure('stale-target', 'The rearrangement target is missing');
   const ancestors = new Set<string>();
+  const selectedGroupId = selected.measured.groupId;
   let parent = selected.parent;
   while (parent !== null) {
     ancestors.add(parent);
@@ -555,21 +588,32 @@ export function buildRearrangeOption(
       const node = scene.nodes.find((item) => item.measured.groupId === group.id);
       if (node === undefined) throw new Error('captured rearrangement group missing');
       const parentNode = node.parent === null ? undefined : scene.nodes.find((item) => item.id === node.parent);
-      if (node.id === selected.id || ancestors.has(node.id)) {
-        return { ...group, placement: sourcePlacement(group.placement, node.box.x - (parentNode?.box.x ?? 0), node.box.y - (parentNode?.box.y ?? 0), node.box.width, node.box.height) };
+      let inSelectedClosure = node.id === selected.id || ancestors.has(node.id);
+      let current: string | null = node.parent;
+      while (current !== null) {
+        if (current === selected.id) inSelectedClosure = true;
+        current = scene.nodes.find((item) => item.id === current)?.parent ?? null;
       }
+      if (node.measured.groupId === selectedGroupId) {
+        return { ...group, placement: sourcePlacement(group.placement, entry.placement.x, entry.placement.y, node.box.width, node.box.height) };
+      }
+      if (inSelectedClosure) return { ...group, placement: sourcePlacement(group.placement, node.box.x - (parentNode?.box.x ?? 0), node.box.y - (parentNode?.box.y ?? 0), node.box.width, node.box.height) };
       return { ...group, placement: undefined };
     });
     const appearances = section.appearances.map((appearance) => {
       const node = scene.nodes.find((item) => item.measured.groupId === null && item.measured.objectId === appearance.object);
       if (node === undefined) throw new Error('captured rearrangement appearance missing');
       const parentNode = node.parent === null ? undefined : scene.nodes.find((item) => item.id === node.parent);
-      if (node.id === selected.id) {
+      if (node.id === selected.id && selectedGroupId === null) {
         return { ...appearance, placement: sourcePlacement(appearance.placement, entry.placement.x, entry.placement.y, node.box.width, node.box.height) };
       }
-      if (ancestors.has(node.parent ?? '')) {
-        return { ...appearance, placement: sourcePlacement(appearance.placement, node.box.x - (parentNode?.box.x ?? 0), node.box.y - (parentNode?.box.y ?? 0), node.box.width, node.box.height) };
+      let inSelectedClosure = node.id === selected.id;
+      let current: string | null = node.parent;
+      while (current !== null) {
+        if (current === selected.id) inSelectedClosure = true;
+        current = scene.nodes.find((item) => item.id === current)?.parent ?? null;
       }
+      if (inSelectedClosure || ancestors.has(node.parent ?? '')) return { ...appearance, placement: sourcePlacement(appearance.placement, node.box.x - (parentNode?.box.x ?? 0), node.box.y - (parentNode?.box.y ?? 0), node.box.width, node.box.height) };
       return { ...appearance, placement: undefined };
     });
     return { ...section, groups, appearances };
@@ -581,15 +625,30 @@ export function buildRearrangeOption(
   if (first.value === null) return failure('invalid-edit', 'Native rearrangement preview produced no geometry');
   const expected = expectedBoxes(context.document, normalized.value);
   if (!expected.ok) return expected;
-  const selectedAfter = first.value.boxes.find((item) => targetKey(item.target) === targetKey(entry.target));
+  const firstMapResult = completePreview(context.document, first.value);
+  if (!firstMapResult.ok) return firstMapResult;
+  const firstMap = firstMapResult.value;
+  const closure = closureKeys(context.document, entry);
   const selectedBefore = sceneBox(context.document, entry.target);
-  if (selectedAfter === undefined || selectedBefore === undefined) return failure('stale-target', 'The rearrangement target geometry is missing');
+  if (selectedBefore === undefined) return failure('stale-target', 'The rearrangement target geometry is missing');
   const parentOrigin = selected.parent === null ? { x: scene.origin.x, y: scene.origin.y } : (() => {
     const item = scene.nodes.find((node) => node.id === selected.parent);
     return item === undefined ? { x: scene.origin.x, y: scene.origin.y } : { x: scene.origin.x + item.box.x, y: scene.origin.y + item.box.y };
   })();
   const wanted = { ...selectedBefore, x: parentOrigin.x + entry.placement.x, y: parentOrigin.y + entry.placement.y };
-  if (!exactBox(selectedAfter.box, wanted)) return { ok: true, value: null };
+  for (const [key, actual] of firstMap) {
+    const target = first.value.boxes.find((item) => targetKey(item.target) === key)?.target;
+    if (target === undefined) return failure('invalid-edit', 'Movement preview target identity is missing');
+    if (target.kind === 'section' && target.id === sectionId && (actual.x !== scene.box.x || actual.y !== scene.box.y)) return { ok: true, value: null };
+    if (target.kind === 'section' && target.id !== sectionId) {
+      const captured = sceneBox(context.document, target);
+      if (captured === undefined || !exactBox(captured, actual)) return { ok: true, value: null };
+    }
+    if (closure.has(key)) {
+      const expectedBox = key === targetKey(entry.target) ? wanted : expected.value.get(key);
+      if (expectedBox === undefined || !exactBox(expectedBox, actual)) return { ok: true, value: null };
+    }
+  }
   const geometryChanges = first.value.boxes.flatMap((item) => {
     const before = sceneBox(context.document, item.target);
     return before !== undefined && !exactBox(before, item.box) ? [{ target: item.target, before, after: item.box }] : [];
@@ -597,7 +656,8 @@ export function buildRearrangeOption(
   const selectedKey = targetKey(entry.target);
   const unselectedChange = geometryChanges.some((change) => targetKey(change.target) !== selectedKey && ('section' in change.target ? change.target.section === sectionId : false));
   if (!unselectedChange) return { ok: true, value: null };
-  const finalSections = candidate.map((section) => {
+  let finalSections: readonly Section[];
+  try { finalSections = candidate.map((section) => {
     if (section.id !== sectionId) return section;
     const sectionBox = first.value!.boxes.find((item) => item.target.kind === 'section' && item.target.id === sectionId)?.box;
     if (sectionBox === undefined) throw new Error('native rearrangement omitted section');
@@ -621,15 +681,29 @@ export function buildRearrangeOption(
       return { ...appearance, placement: sourcePlacement(appearance.placement, box.x - parentBox.x, box.y - parentBox.y, box.width, box.height) };
     });
     return { ...section, placement: sectionPlacement, groups, appearances };
-  });
+  }); } catch { return failure('invalid-edit', 'Rearrangement native preview omitted required geometry'); }
   let finalChanges: readonly Change[];
   try { finalChanges = changes(context.document, finalSections); } catch { return failure('invalid-edit', 'Rearrangement could not be materialized'); }
   const second = context.preview(context.document, { ...intent, entries: normalized.value }, finalChanges);
   if (!second.ok) return second;
-  if (second.value === null || second.value.boxes.length !== first.value.boxes.length) return { ok: true, value: null };
-  for (const item of first.value.boxes) {
-    const counterpart = second.value.boxes.find((other) => targetKey(other.target) === targetKey(item.target));
-    if (counterpart === undefined || !exactBox(counterpart.box, item.box)) return { ok: true, value: null };
+  if (second.value === null) return { ok: true, value: null };
+  const secondMapResult = completePreview(context.document, second.value);
+  if (!secondMapResult.ok) return secondMapResult;
+  const secondMap = secondMapResult.value;
+  for (const [key, firstBox] of firstMap) {
+    const counterpart = secondMap.get(key);
+    if (counterpart === undefined || !exactBox(counterpart, firstBox)) return { ok: true, value: null };
+  }
+  for (const [key, firstBox] of firstMap) {
+    const target = first.value.boxes.find((item) => targetKey(item.target) === key)?.target;
+    if (target?.kind === 'section' && target.id !== sectionId) {
+      const captured = sceneBox(context.document, target);
+      if (captured === undefined || !exactBox(captured, firstBox)) return { ok: true, value: null };
+    }
+    if (closure.has(key)) {
+      const expectedBox = key === selectedKey ? wanted : expected.value.get(key);
+      if (expectedBox === undefined || !exactBox(expectedBox, firstBox)) return { ok: true, value: null };
+    }
   }
   return { ok: true, value: { id: 'rearrange-section', kind: 'rearrange', label: 'Rearrange section', section: sectionId, changes: finalChanges, geometryChanges, preview: second.value } };
 }

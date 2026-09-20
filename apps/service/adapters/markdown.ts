@@ -268,10 +268,13 @@ function appendText(lines: string[], block: Extract<ContentBlock, { kind: 'text'
 }
 
 function appendCode(lines: string[], block: Extract<ContentBlock, { kind: 'code' }>): void {
-  const language = block.language === undefined ? '' : block.language;
   const fence = codeFence(block.text);
   lines.push(`  - Code \`${block.id}\`:`);
-  lines.push(`    ${fence}${language}`);
+  if (block.language !== undefined) {
+    lines.push('    Language metadata:');
+    lines.push(...multiline(block.language).map((line) => `      ${line}`));
+  }
+  lines.push(`    ${fence}`);
   lines.push(
     ...block.text
       .replaceAll('\r\n', '\n')
@@ -555,7 +558,11 @@ function inline(value: string): string {
     .replaceAll('\r\n', '\n')
     .replaceAll('\r', '\n')
     .replaceAll('\n', '\n  ')
-    .replace(/^([ \t]*)(#{1,6}|>|[-+*]|\d+[.)])(?=\s)/gm, '$1\\$2');
+    .replace(/^([ \t]*)(#{1,6}|>|[-+*]|\d+[.)])(?=\s)/gm, '$1\\$2')
+    .replace(
+      /^([ \t]*)([-*_]){3,}\s*$/gm,
+      (line, indent) => `${indent}\\${line.slice(indent.length)}`,
+    );
 }
 
 function multiline(value: string): readonly string[] {

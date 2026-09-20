@@ -160,10 +160,13 @@ function dispatchSize(actions: Pick<ViewActions, 'dispatch'>, width: number, hei
 /** Minimap nodes carry their role color so the overview map encodes meaning, not just geometry. */
 function minimapColor(node: FlowNode): string {
   if (node.type === 'section') return 'var(--nv-canvas-group-boundary)';
-  const measured = node.data?.view?.placed?.measured;
-  if (!measured) return 'var(--nv-canvas-group-boundary)';
+  const measured = node.data.view.placed.measured;
   if (measured.groupId !== null) return 'var(--nv-canvas-group-boundary)';
-  const role = measured.role;
+  return minimapRoleColor(measured.role);
+}
+
+/** Neutral nodes stay quiet; authored roles keep their shared palette color. */
+function minimapRoleColor(role: string): string {
   if (role === 'neutral') return 'var(--nv-canvas-constellation-wire)';
   return `var(--nv-role-${role}-fill, var(--nv-canvas-constellation-wire))`;
 }

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
+import type { ViewWire } from '../../contract/records/view.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';
@@ -37,6 +38,25 @@ function pathMidpoint(points: readonly Point[]): Point {
   const ratio = (halfway - (travelled - length)) / Math.max(length, Number.EPSILON);
   return { x: start.x + (end.x - start.x) * ratio, y: start.y + (end.y - start.y) * ratio };
 }
+/** Selected and connected traces share endpoint halo eligibility. */
+function highlighted(view: ViewWire): boolean {
+  return ['primary', 'secondary'].includes(view.emphasis);
+}
+/** Motion belongs to an active admitted route, never a geometry draft. */
+function pulseVisible(view: ViewWire): boolean {
+  return !view.draft && (view.hovered === true || highlighted(view));
+}
+/** Coincident endpoints cannot define a gradient direction; keep their actual paint. */
+function directedStroke(id: string, fallback: string, first: Point, last: Point): string {
+  if (first.x === last.x && first.y === last.y) return fallback;
+  return `url(#${id}) ${fallback}`;
+}
+/** Selection uses the accent gradient while supporting routes keep their neutral flow. */
+function traceStroke(view: ViewWire, id: string, first: Point, last: Point): string {
+  if (view.emphasis === 'primary')
+    return directedStroke(`${id}-accent`, 'var(--nv-action-accent)', first, last);
+  return directedStroke(id, view.wire.appearance.paint.stroke, first, last);
+}
 /** Binding keeps measured labels/notation outside Canvas policy; host owns content admission and render recovery. */
 export function createSceneEdge(
   slots: Pick<RenderSlots, 'MeasuredContent' | 'Marker'> & {
@@ -65,16 +85,7 @@ export function createSceneEdge(
     const labelAnchor = pathMidpoint(wire.points);
     /** Living traces: flow direction gradient spans the actual route endpoints; pulse rides active paths only. */
     const flowId = `nv-flow-${wire.id}`;
-    const energized =
-      view.hovered === true || view.emphasis === 'primary' || view.emphasis === 'secondary';
-    const flowStroke =
-      first.x === last.x && first.y === last.y ? paint.stroke : `url(#${flowId}) ${paint.stroke}`;
-    /** Selected wires pour light toward their target: accent gathers at the far end. */
-    const primaryStroke =
-      first.x === last.x && first.y === last.y
-        ? 'var(--nv-action-accent)'
-        : `url(#${flowId}-accent) var(--nv-action-accent)`;
-    const stroke = view.emphasis === 'primary' ? primaryStroke : flowStroke;
+    const stroke = traceStroke(view, flowId, first, last);
     return (
       <g
         className={styles.edge}
@@ -124,10 +135,10 @@ export function createSceneEdge(
           data-emphasis={view.emphasis}
           data-style={wire.style}
         />
-        {energized && !view.draft && (
+        {pulseVisible(view) && (
           <path className={styles.pulse} d={path} pathLength={100} pointerEvents="none" />
         )}
-        {(view.emphasis === 'primary' || view.emphasis === 'secondary') && (
+        {highlighted(view) && (
           <>
             <circle
               className={styles.halo}

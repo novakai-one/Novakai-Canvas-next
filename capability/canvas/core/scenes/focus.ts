@@ -15,9 +15,15 @@ function focusTargets(state: SessionState): {
 } {
   const selected = graphTargets(state.selection);
   if (selected.length > 0) return { source: 'selection', targets: selected };
-  if (state.hover !== null && graphTargets([state.hover]).length > 0)
-    return { source: 'hover', targets: [state.hover] };
+  const hovered = hoverTargets(state);
+  if (hovered.length > 0) return { source: 'hover', targets: hovered };
   return { source: 'none', targets: [] };
+}
+
+/** Hover can identify a graph target without becoming a persisted selection. */
+function hoverTargets(state: SessionState): readonly Target[] {
+  if (state.hover === null) return [];
+  return graphTargets([state.hover]);
 }
 
 /** A prior projection remains valid across camera-only state changes. */

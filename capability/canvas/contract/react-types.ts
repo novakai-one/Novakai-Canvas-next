@@ -114,6 +114,8 @@ export interface NodeData extends Record<string, unknown> {
 }
 export interface SectionData extends Record<string, unknown> {
   readonly view: ViewSection;
+  readonly actions: Pick<ViewActions, 'beginResize' | 'resize' | 'finishGeometry'>;
+  readonly editable: boolean;
   readonly paint: Paint;
 }
 export interface EdgeData extends Record<string, unknown> {

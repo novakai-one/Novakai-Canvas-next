@@ -1,24 +1,40 @@
-# Canvas development contract
+# Novakai Canvas — repository map
 
-## Authority and scope
+A local React diagram workspace. Humans and agents author semantic DSL; the app measures, lays out and routes it.
+Start with [README.md](README.md) for the walkthrough and running instructions.
 
-- Model owns diagram validity; Library owns catalog validity; Authoring alone admits/commits workspace and diagram changes; Persistence executes physical transactions.
-- React and React Flow are required. Agents author semantic DSL, never JSON coordinates.
-- Web shell owns panel visibility/layout. Canvas owns diagram selection/camera/gestures and emits inspect requests.
-- Side panels compose header/body/section components with registered feature contents and declarative placement. UI color/theme changes use Design System tokens.
-- Do not create fake implementations, empty TSX components, placeholder passing tests, or a fake green CI workflow.
-- Do not use subagents unless the user specifically requests them.
+## Find the code
 
-## Standards and imports
+| Work on | Start here |
+|---|---|
+| Web header, menus, collection chooser, inspector and settings | `apps/web/adapters/react/` (`WorkspaceHeader.tsx`, `LibraryBrowser.tsx`, `InterfacePreferences.tsx`); editors include `ObjectEditor.tsx` and `SourceEditor.tsx` |
+| Panel placement and defaults | `apps/web/core/panels/`, `resources/ui/panels.default.json` |
+| Canvas nodes, wires, trees, camera controls | `capability/canvas/adapters/react-flow/` (`CanvasSurface.tsx`, `SceneNode.tsx`, `SceneEdge.tsx`, `TreeRow.tsx`) |
+| Selection, hover, zoom, drag and folding behavior | `capability/canvas/core/interaction/`, `core/scenes/`, `core/drafts/` |
+| Node appearance, content and measured size | `capability/presentation/adapters/react/` (`NodeContent.tsx`, `CardChrome.tsx`); measurement in `capability/presentation/core/content/` |
+| Shared React controls and resizable panels | `capability/design-system/adapters/react/`; panel components in its `panels/` folder |
+| Colors, typography, spacing and themes | `capability/design-system/tokens/`; see [Design System guide](capability/design-system/README.md) for source vs generated CSS |
+| Node placement, module roads/lanes and wire routing | `capability/layout/core/`; see [Layout guide](capability/layout/README.md) |
+| DSL grammar, parsing, printing and patches | `capability/language/core/`; [Language guide](capability/language/README.md) |
+| Diagram records and validity / collection catalog and search | `capability/model/` / `capability/library/` |
+| Applying edits, revisions and recovery / physical storage | `capability/authoring/` / `capability/persistence/` |
+| Assets, reusable recipes and export | `capability/assets/`, `capability/templates/`, `capability/export/` |
+| Local server and CLI | `apps/service/cli/serve.ts`, `apps/cli/cli/main.ts` |
 
-- Follow docs/standards/CODING-STANDARDS.md and REPO-FOLDER-STRUCTURE.md. Each first-party source file requires evidence of >144/160; Sonar cognitive complexity <=2 per function. No pre-awarded scores or silent exceptions.
-- Outside imports enter only a capability's contract/index.ts. Own core imports own core and declaration-only contract modules; never adapters, hosts, React, another capability, api, compose or index.
-- Only contract/compose.ts binds own concrete adapters. Inject narrow stable slots; no sibling adapter behavior imports. Local CSS assets are build resources.
-- React-only declaration types stay out of core. Domain behavior between capabilities is injected through consumer-owned ports.
-- Keep CSS values in the centralized token system.
-- Tests use public contracts; adapter suites share the same behavioral contract. Coverage alone is not correctness.
+## Author or edit a diagram
 
-## Working agreement
+- Read `resources/examples/walkthrough/*.canvas`; smaller starters are in `resources/recipes/`.
+- Run `pnpm canvas describe` for the supported DSL vocabulary. Author semantic DSL, never node coordinates.
+- Run `pnpm canvas list`, then `pnpm canvas read ID --out /tmp/diagram.canvas` to obtain editable source and its revision.
+- Create with `pnpm canvas create FILE`; update with `pnpm canvas replace FILE --revision N` or `pnpm canvas patch FILE --revision N`.
+- Pass `--server http://127.0.0.1:PORT --workspace PATH` for the running workspace; `preview` and `apply` support reviewing edits first.
+- Local workspace databases, assets and archived diagrams live in ignored `.novakai/`; committed examples live in `resources/examples/`.
+- Inspect the actual rendered result; authoring guidance and approved references are in [visual-quality SOP](docs/agent-diagrams/visual-quality/SOP.md).
 
-- Gate every change with `pnpm check`. Do not claim completion from a green suite alone: rendered-output work is done only when inspected against docs/agent-diagrams/visual-quality/References.md and the benchmark gates in docs/maintenance/diagram-quality-improvements.md.
-- Agent diagram work follows docs/agent-diagrams/visual-quality/SOP.md. Preserve the approved reference images and semantic authoring constraints.
+## Make a code change
+
+- Read the owning folder's README first. `core/` is behavior, `adapters/` contains React and I/O, `contract/` describes and composes the capability, `tests/` verifies it.
+- React components are `.tsx`; nearby `.module.css` styles them. Shared UI colors and dimensions come from the Design System tokens.
+- Follow [coding standards](CODING-STANDARDS.md) and [folder structure](docs/standards/REPO-FOLDER-STRUCTURE.md) for engineering rules and responsibility boundaries.
+- Run `pnpm check`; inspect visual changes in the app. Report existing failures rather than claiming a clean check.
+- Only use subagents when the user requests them.

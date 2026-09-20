@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { routingOverlay } from './routing-overlay.js';
 import { identity, inputKey } from '../brands.js';
 import { box, point, endpoint } from './geometry.js';
 import { PROJECTION_CAPACITY } from './limits.js';
@@ -71,6 +72,25 @@ const sequence = z
     source: z.array(z.unknown()).readonly(),
   })
   .readonly();
+const tree = z
+  .strictObject({
+    root: identity.nullable(),
+    edges: z
+      .array(z.strictObject({ id: identity, source: identity, target: identity }).readonly())
+      .readonly(),
+    rows: z
+      .array(
+        z
+          .strictObject({
+            node: identity,
+            parent: identity.nullable(),
+            depth: z.number().int().nonnegative(),
+          })
+          .readonly(),
+      )
+      .readonly(),
+  })
+  .readonly();
 const section = z
   .strictObject({
     id: identity,
@@ -81,6 +101,8 @@ const section = z
     nodes: z.array(node).max(PROJECTION_CAPACITY.maxNodes).readonly(),
     wires: z.array(wire).max(PROJECTION_CAPACITY.maxWires).readonly(),
     sequence,
+    routing: routingOverlay.optional(),
+    tree: tree.optional(),
   })
   .readonly();
 const warning = z

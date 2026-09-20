@@ -1,3 +1,4 @@
+import { foldedTreeAncestor } from './tree.js';
 import type { SessionState } from '../../contract/records/state.js';
 import type { ViewWire } from '../../contract/records/view.js';
 import type { PlacedSection, RoutedWire } from '../../contract/records/scene.js';
@@ -117,7 +118,11 @@ export function viewWire(
     hovered: state.hover !== null && targetKey(state.hover) === key,
     emphasis: emphasisFor(focus, key),
     showLabel: focus.source === 'selection' && focus.primary.has(key),
-    hidden: hiddenByReading(state, sourceInfo) || hiddenByReading(state, targetData),
+    hidden:
+      hiddenByReading(state, sourceInfo) ||
+      hiddenByReading(state, targetData) ||
+      foldedTreeAncestor(state, section, wire.source.node) ||
+      foldedTreeAncestor(state, section, wire.target.node),
     draft: projected !== wire,
   };
 }

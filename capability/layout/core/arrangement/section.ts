@@ -14,6 +14,7 @@ import { inspectSection } from '../validation/sections.js';
 import { execute, requireValue, protect } from '../validation/outcomes.js';
 import { LayoutFault } from '../../contract/errors.js';
 import type { Diagnostic } from '../../contract/errors.js';
+import { treeGeometry } from '../tree.js';
 /** Cache geometry is accepted only after full current-source inspection; a bad hint falls back to derivation. */
 function cached(
   source: VisualSection,
@@ -114,5 +115,6 @@ export async function completeSection(
     nodes,
     wires,
     sequence,
+    ...(treeGeometry(source) === undefined ? {} : { tree: treeGeometry(source) }),
   };
 }

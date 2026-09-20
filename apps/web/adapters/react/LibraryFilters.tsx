@@ -83,13 +83,13 @@ export function createLibraryFilters(
     return (
       <div className={editorStyles.editor}>
         <Field
-          label="Search collections and diagrams"
+          label="Search collections"
           control={(props) => (
             <input
               {...props}
               type="search"
               value={filters.text}
-              placeholder="Title, object or concept…"
+              placeholder="Collection title…"
               onChange={(event) => library.filter({ ...filters, text: event.target.value })}
             />
           )}

@@ -172,6 +172,10 @@ export const visualNode = z
     strokeWidth: dimension,
     placement: placement.nullable(),
     parent: sceneId.nullable(),
+    treeRow: z
+      .strictObject({ content, width: dimension, height: dimension, gutter: dimension })
+      .readonly()
+      .optional(),
   })
   .readonly();
 export type VisualNode = z.infer<typeof visualNode>;

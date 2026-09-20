@@ -4,20 +4,35 @@ import type { ComponentType, ReactElement } from 'react';
 import type { PreferenceController } from '../../contract/records/preferences.js';
 import type { FeatureProps, DesignSlots, ThemeSelectorProps } from '../../contract/react-types.js';
 import styles from './InterfacePreferences.module.css';
+import type { PanelController } from '../../contract/panel-types.js';
 /** Personal controls consume one preference session, so panel movement or collapse never resets them. */
 export function createInterfacePreferences(
   { Button, Field }: Pick<DesignSlots, 'Button' | 'Field'>,
   preferences: PreferenceController,
   ThemeSelector: ComponentType<ThemeSelectorProps>,
+  panels: Pick<PanelController, 'subscribe' | 'getSnapshot' | 'setInterfaceVisibility'>,
 ): ComponentType<FeatureProps> {
   /** Diagram themes are separate authored data; these controls affect this browser's interface only. */
   function InterfacePreferences(): ReactElement {
     const view = useSyncExternalStore(preferences.subscribe, preferences.getSnapshot);
     const value = view.preferences;
+    const panel = useSyncExternalStore(panels.subscribe, panels.getSnapshot);
     return (
       <div className={styles.preferences}>
         <p>Personal to this browser</p>
         <ThemeSelector />
+        <fieldset>
+          <legend>Routing diagnostics</legend>
+          <label className={styles.toggle}>
+            <input
+              type="checkbox"
+              checked={panel.interfaceVisibility.roads}
+              onChange={(event) => panels.setInterfaceVisibility('roads', event.target.checked)}
+            />{' '}
+            Show routing roads and lanes
+          </label>
+          <p>Module diagrams only. Display only; does not change routing.</p>
+        </fieldset>
         <Field
           label="Interface text size"
           help="12–20 px; diagram text is unchanged"

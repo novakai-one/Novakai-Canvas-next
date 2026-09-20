@@ -148,6 +148,7 @@ function featureSections(
   preferences: PreferenceController,
   ThemeSelector: ComponentType<ThemeSelectorProps>,
   Browser: ComponentType<LibraryBrowserProps>,
+  roadVisibility: Pick<PanelController, 'subscribe' | 'getSnapshot' | 'setInterfaceVisibility'>,
 ): readonly RegisteredSection[] {
   function LibrarySection(props: FeatureProps): ReactElement {
     return createElement(Browser, { controller: props.controller, view: props.view });
@@ -173,7 +174,7 @@ function featureSections(
       tab: 'settings',
       id: 'interface',
       title: 'Interface',
-      Content: createInterfacePreferences(design, preferences, ThemeSelector),
+      Content: createInterfacePreferences(design, preferences, ThemeSelector, roadVisibility),
     },
     {
       tab: 'inspect',
@@ -310,7 +311,11 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     { id: 'results', Content: createLibraryResults(design) },
   ]);
   const ThemeSelector = createThemeSelector(design, preferences, themes);
-  const sections = featureSections(design, preferences, ThemeSelector, Browser);
+  const sections = featureSections(design, preferences, ThemeSelector, Browser, {
+    subscribe: (listener) => panels.subscribe(listener),
+    getSnapshot: () => panels.getSnapshot(),
+    setInterfaceVisibility: (control, visible) => panels.setInterfaceVisibility(control, visible),
+  });
   const sizing = panelSizing(element);
   const panels: PanelController = createPanelController({
     definitions: panelDefinitions(sections),

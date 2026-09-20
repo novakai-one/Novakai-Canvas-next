@@ -219,7 +219,8 @@ function compartments(
 
 /** Explicit roles replace geometry classification only for the semantic LOD kinds introduced here. */
 function headingPrimitive(node: VisualNode, primitive: Primitive): boolean {
-  if (node.kind === 'module' || node.kind === 'entity') return primitive.lodRole === 'heading';
+  if (['module', 'entity', 'function', 'interface'].includes(node.kind))
+    return primitive.lodRole === 'heading';
   return primitive.kind === 'text' && primitive.y <= node.headerHeight;
 }
 

@@ -36,6 +36,8 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       records,
       icons,
       labels,
+      roads,
+      tree,
     ] = await Promise.all([
       import('../adapters/react-flow/CanvasSurface.js'),
       import('../adapters/react-flow/SceneNode.js'),
@@ -50,15 +52,18 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       import('../adapters/react-flow/flow-records.js'),
       import('../adapters/react-flow/ControlIcon.js'),
       import('../adapters/react-flow/WireLabel.js'),
+      import('../adapters/react-flow/RoutingRoads.js'),
+      import('../adapters/react-flow/TreeRow.js'),
     ]);
     const CanvasSurface = surface.createCanvasSurface({
+      RoutingRoads: roads.RoutingRoads,
       FontDefinitions: slots.FontDefinitions,
       createGraphSelector: records.createGraphSelector,
       useScene: scene.useScene,
       createInteractions: (owners) =>
         interactions.createInteractions({ ...owners, input: { ownsNativeInput, focusedId } }),
       observeSize,
-      SceneNode: node.createSceneNode(slots),
+      SceneNode: node.createSceneNode({ ...slots, TreeRow: tree.createTreeRow(slots) }),
       SceneEdge: edge.createSceneEdge({
         ...slots,
         RouteHandles: route.RouteHandles,

@@ -1,3 +1,4 @@
+import { treeRows } from './tree.js';
 import { requireValue } from '../validation/outcomes.js';
 import type { VisualNode, VisualSection, LayoutIntent } from '../../contract/records/input.js';
 import type { PlacementValue, PlacementProblem } from '../../contract/records/problem.js';
@@ -99,6 +100,13 @@ export async function seedScope(
     height: item.root.box.height,
     header: 0,
   }));
+  const tree = treeRows(
+    section,
+    branches.map((item) => item.root),
+    context.options.gap[layout.gap],
+    layout.algorithm,
+  );
+  if (tree !== undefined) return tree.flatMap((item) => flatten(item, branches));
   const placed = requireValue(
     await placeScope(
       {

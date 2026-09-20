@@ -29,6 +29,14 @@
     outline: var(--nv-focus-width) solid var(--nv-color-focus);
     outline-offset: var(--nv-focus-offset);
   }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+  }
+  .toggle input {
+    width: auto;
+  }
   .choices {
     display: flex;
     flex-wrap: wrap;

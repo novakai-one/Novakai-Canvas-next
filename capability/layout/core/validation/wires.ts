@@ -1,3 +1,4 @@
+import { treeBranch } from '../routing/tree.js';
 import type { VisualSection, VisualWire } from '../../contract/records/input.js';
 import type { SectionCandidate } from '../../contract/records/candidate.js';
 import type { PlacedNode, RoutedWire, Box } from '../../contract/records/geometry.js';
@@ -19,11 +20,17 @@ interface Context {
   readonly candidates: SectionCandidate['wires'];
   readonly lanes: ReadonlyMap<string, ReturnType<typeof prepareLane>>;
   readonly pairs: Map<string, Map<string, boolean>>;
+  readonly branches: ReadonlySet<string>;
 }
 /** Reconstruct only authoritative wire data after exact attachment/route/label validation. */
 function rebind(wire: VisualWire, context: Context): RoutedWire {
   const candidate = context.candidates.find((item) => item.id === wire.id);
   if (!candidate) return reject('invalid-input', wire.id, 'Candidate wire is missing');
+  const branch = treeBranch(wire, context.nodes);
+  if (branch !== undefined) {
+    same(branch, candidate, wire.id);
+    return branch;
+  }
   const attachments = endpoints(wire, context.nodes);
   same(attachments, { source: candidate.source, target: candidate.target }, wire.id);
   same(wire.label, candidate.measuredLabel, wire.id);
@@ -137,6 +144,9 @@ export function inspectWires(
   );
   const context: Context = {
     candidates,
+    branches: new Set(
+      source.wires.filter((wire) => treeBranch(wire, nodes) !== undefined).map((wire) => wire.id),
+    ),
     nodes,
     metrics,
     options,
@@ -148,7 +158,9 @@ export function inspectWires(
 
 /** Inspect final routes independently; an interior shared run hides which relationship reaches which endpoint. */
 function checkSharedRuns(wire: SectionCandidate['wires'][number], context: Context): void {
-  const others = context.candidates.filter((item) => item.id !== wire.id);
+  const others = context.candidates.filter(
+    (item) => item.id !== wire.id && !context.branches.has(item.id),
+  );
   const hidden = others.find((item) => !clearLanes(wire, item, context));
   if (hidden !== undefined)
     reject('constraint-conflict', wire.id, 'Wires share an obscuring interior route', [

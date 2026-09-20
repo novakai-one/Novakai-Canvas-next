@@ -7,6 +7,10 @@
   .node :global(.react-flow__resize-control) {
     pointer-events: auto;
   }
+  .node[data-tree='true'] :global(.react-flow__handle) {
+    visibility: hidden;
+    pointer-events: none;
+  }
   .node[data-preview='true'] {
     outline: var(--nv-stroke-base) dashed var(--nv-action-accent);
   }

@@ -1,3 +1,4 @@
+import type { RoutingOverlay } from './routing-overlay.js';
 import type { LayoutInputKey } from '../brands.js';
 import { z } from 'zod';
 import { identity, coordinate, dimension } from '../brands.js';
@@ -83,7 +84,23 @@ export interface SequenceGeometry {
   readonly activations: readonly Activation[];
   readonly source: readonly VisualSequenceItem[];
 }
+export interface TreeEdge {
+  readonly id: string;
+  readonly source: string;
+  readonly target: string;
+}
+export interface TreeRow {
+  readonly node: string;
+  readonly parent: string | null;
+  readonly depth: number;
+}
+export interface TreeGeometry {
+  readonly root: string | null;
+  readonly edges: readonly TreeEdge[];
+  readonly rows: readonly TreeRow[];
+}
 export interface PlacedSection {
+  readonly routing?: RoutingOverlay | undefined;
   readonly id: string;
   readonly origin: Point;
   readonly box: Box;
@@ -92,6 +109,7 @@ export interface PlacedSection {
   readonly nodes: readonly PlacedNode[];
   readonly wires: readonly RoutedWire[];
   readonly sequence: SequenceGeometry;
+  readonly tree?: TreeGeometry | undefined;
 }
 export interface Warning {
   readonly code: 'wire-crossing' | 'constraint-relaxed';

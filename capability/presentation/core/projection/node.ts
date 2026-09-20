@@ -57,6 +57,7 @@ export function projectNode(
   view: Appearance,
   section: Section,
   context: ContentContext,
+  compact = true,
 ): VisualNode {
   const source = object(view.object, context);
   const role = view.role ?? source.role;
@@ -78,6 +79,7 @@ export function projectNode(
     headingGap(shape, context),
     scoped,
   );
+  const treeRow = compactTreeRow(section, view, source, context, compact);
   return parse(visualNode, {
     ...(context.style.followsInterfaceRoles === true
       ? { followsInterfaceRoles: true as const }
@@ -103,7 +105,57 @@ export function projectNode(
     strokeWidth: context.style.stroke,
     placement: view.placement ?? null,
     parent: parent(section.id, view.group),
+    ...(treeRow === undefined
+      ? {}
+      : {
+          content: treeRow.content,
+          width: treeRow.width,
+          height: treeRow.height,
+          headerHeight: treeRow.height,
+          treeRow,
+        }),
   });
+}
+function compactTreeRow(
+  section: Section,
+  view: Appearance,
+  source: DiagramObject,
+  context: ContentContext,
+  enabled: boolean,
+):
+  | {
+      readonly content: MeasuredContent;
+      readonly width: number;
+      readonly height: number;
+      readonly gutter: number;
+    }
+  | undefined {
+  if (
+    ![
+      enabled,
+      section.mode === 'tree',
+      treeParticipant(view, source),
+      source.content.length === 0,
+      source.ports.length === 0,
+    ].every(Boolean)
+  )
+    return undefined;
+  const label = labelContent(source.label, context, 'mono');
+  const icon = context.style.contentSizing.iconBox.small;
+  const padding = context.style.gap / 2;
+  const gutter = icon + context.style.gap;
+  const width = label.width + gutter + padding * 2;
+  const height = Math.max(label.height, icon) + padding * 2;
+  return {
+    content: { ...offset(label, padding + gutter, padding), width, height },
+    width,
+    height,
+    gutter,
+  };
+}
+function treeParticipant(view: Appearance, source: DiagramObject): boolean {
+  if (view.participation !== undefined) return view.participation === 'tree';
+  return source.kind !== 'note';
 }
 /** Explicit chrome changes visual geometry only; the canonical kind and member anchors remain unchanged. */
 function appearanceShape(
@@ -169,6 +221,7 @@ function represented(group: Group, section: Section, context: ContentContext): V
     },
     section,
     context,
+    false,
   );
   return {
     ...node,

@@ -29,6 +29,7 @@ export interface SessionState {
   readonly routePreview?: (GeometryPreview & { readonly gesture: string }) | null;
   readonly recovery: readonly RecoverableDraft[];
   readonly reading: ReadingState | null;
+  readonly treeCollapsed?: readonly string[];
   readonly connected: boolean;
   readonly mutationAvailable: boolean;
 }

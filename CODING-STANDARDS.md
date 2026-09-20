@@ -2,6 +2,15 @@
 
 Authority: [16-principle scoring SOP](docs/standards/CODING-STANDARDS.md) and [import matrix](docs/standards/REPO-FOLDER-STRUCTURE.md). Examples below illustrate boundaries; ellipses/comments are explanatory snippets, not production implementations. Every source file requires an evidence-based score >144/160. Sonar complexity ≤2 per function.
 
+
+## Ownership and implementation
+
+- Model owns diagram validity; Library owns catalog validity; Authoring alone admits/commits changes; Persistence executes physical transactions.
+- React and React Flow are required. Web owns panel layout; Canvas owns selection, camera and gestures; Presentation owns content measurement.
+- Panels compose reusable header/body/section components and registered contents. UI styling uses centralized Design System tokens.
+- Do not create fake implementations, empty TSX components, placeholder passing tests or fake green CI.
+- Run `pnpm check`; rendered-output changes also require inspection against `docs/agent-diagrams/visual-quality/References.md` and `docs/maintenance/diagram-quality-improvements.md`.
+
 ## 1. SRP
 
 Bad:

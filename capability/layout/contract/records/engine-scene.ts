@@ -1,3 +1,4 @@
+import type { RoutingOverlay } from './routing-overlay.js';
 import type { VisualSection } from './input.js';
 import type { Box, Point, PlacedNode, PlacedSection } from './geometry.js';
 import type { PrototypeNodePort, PrototypeRoad, PrototypeLayoutMeasure } from './road-prototype.js';
@@ -13,6 +14,7 @@ export interface EngineWirePath {
   readonly lanes: readonly string[];
 }
 export interface EngineScene {
+  readonly routing?: RoutingOverlay | undefined;
   readonly frame: Box;
   readonly blocks: readonly MeasuredBlock[];
   readonly nodes: readonly PlacedNode[];

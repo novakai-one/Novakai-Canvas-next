@@ -9,6 +9,7 @@ export interface ViewNode {
   readonly position: Point;
   readonly box: Box;
   readonly placed: PlacedNode;
+  readonly tree?: { readonly folder: boolean; readonly collapsed: boolean };
   readonly selected: boolean;
   readonly hovered: boolean;
   readonly emphasis: Emphasis;

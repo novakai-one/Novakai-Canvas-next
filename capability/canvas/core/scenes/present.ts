@@ -10,6 +10,8 @@ function stableNode(next: ViewNode, previous: ViewNode | undefined): ViewNode {
   if (!previous) return next;
   const equal = [
     next.placed === previous.placed,
+    next.tree?.collapsed === previous.tree?.collapsed,
+    next.tree?.folder === previous.tree?.folder,
     next.selected === previous.selected,
     next.hovered === previous.hovered,
     next.emphasis === previous.emphasis,

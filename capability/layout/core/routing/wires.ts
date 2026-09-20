@@ -1,3 +1,4 @@
+import { treeBranch } from './tree.js';
 import type { VisualSection } from '../../contract/records/input.js';
 import type { PlacedNode, RoutedWire, Box, Point } from '../../contract/records/geometry.js';
 import type { RouteValue, Obstacle } from '../../contract/records/problem.js';
@@ -264,8 +265,10 @@ export async function routeWires(
   placement: RoutingContext,
 ): Promise<readonly RoutedWire[]> {
   const context: WireContext = { metrics, placement, obstacles: obstacles(nodes), prior: [] };
-  const plans = section.wires.map((item, index): RoutePlan =>
-    plan(item, nodes, metrics, placement, parallel(section, index), index),
+  const branches = new Map(section.wires.map((item) => [item.id, treeBranch(item, nodes)]));
+  const ordinary = section.wires.filter((item) => branches.get(item.id) === undefined);
+  const plans = ordinary.map((item, index): RoutePlan =>
+    plan(item, nodes, metrics, placement, parallel(section, section.wires.indexOf(item)), index),
   );
   const saved = plans.flatMap(
     (item): RouteValue | readonly RouteValue[] => manual(item, context.obstacles, metrics) ?? [],
@@ -276,7 +279,13 @@ export async function routeWires(
     [...labelObstacles(nodes), ...reserved(plans, context)],
     context,
   );
-  return finalPaths(labelled, section, context);
+  const routed = new Map(finalPaths(labelled, section, context).map((item) => [item.id, item]));
+  return section.wires.map(
+    (item) =>
+      branches.get(item.id) ??
+      routed.get(item.id) ??
+      reject('engine-failed', item.id, 'Wire route missing'),
+  );
 }
 
 /** Every completed wire keeps an attributable interior lane; only shared endpoint stubs may coincide. */

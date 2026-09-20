@@ -27,6 +27,7 @@ export interface HttpSecurity {
 }
 /** Restart changes generation and browser credential, while the persisted agent credential stays local. */
 export interface HttpAdmission {
+  readonly cookieName: string;
   bootstrap(metadata: HttpMetadata): Result<void>;
   authenticate(metadata: HttpMetadata): Result<Caller>;
   mutation(input: unknown, caller: Caller): Result<Request>;

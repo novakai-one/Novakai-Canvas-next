@@ -1,0 +1,38 @@
+@layer components {
+  .layer,
+  .section,
+  .road,
+  .lane {
+    position: absolute;
+    pointer-events: none;
+  }
+  .layer {
+    z-index: var(--nv-layer-tools);
+    inset: 0;
+  }
+  .road {
+    background: color-mix(in srgb, var(--nv-action-accent) 18%, transparent);
+    outline: var(--nv-stroke-base) solid
+      color-mix(in srgb, var(--nv-action-accent) 35%, transparent);
+  }
+  .road[data-kind='driveway'] {
+    background: color-mix(in srgb, var(--nv-text-secondary) 18%, transparent);
+  }
+  .road[data-access='entry'] {
+    outline-color: var(--nv-rolefill-success);
+  }
+  .road[data-access='exit'] {
+    outline-color: var(--nv-action-accent);
+  }
+  .lane {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: var(--nv-stroke-base) solid
+      color-mix(in srgb, var(--nv-text-secondary) 35%, transparent);
+    color: var(--nv-text-secondary);
+    font: var(--nv-type-base) var(--nv-font-mono);
+  }
+}

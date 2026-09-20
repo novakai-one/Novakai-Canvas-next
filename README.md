@@ -33,13 +33,13 @@ Open **[the combined walkthrough](http://127.0.0.1:5210/?collection=walkthrough)
 
 ![Reading view stepping through the same collection](docs/walkthrough/reading-view.gif)
 
-Nine example collections, ten sections in the combined canvas. Start with the idea, then move through its structure, data and behaviour. The illustration and process examples are a fictional release-review system; the repo tree uses actual paths.
+Ten example collections, eleven sections in the combined canvas. Start with the idea, then move through its structure, data and behaviour. The illustration and process examples are a fictional release-review system; the repo tree uses actual paths.
 
 <details>
 <summary>Load each example as its own collection</summary>
 
 ```sh
-for file in resources/examples/walkthrough/0*.canvas; do
+for file in resources/examples/walkthrough/[0-9][0-9]-*.canvas; do
   name=$(basename "$file" .canvas)
   pnpm canvas create "$file" --request "example-$name" \
     --server http://127.0.0.1:5210 --workspace .novakai/walkthrough
@@ -130,6 +130,63 @@ collection @walkthrough-infographic "01 / Infographics" theme=walkthrough descri
 **No SVG asset required:** the second section uses built-in `window`, `gate`, `store` and `queue` figures. SVG images are an optional supported asset path for custom illustration; they do not replace the semantic nodes or routing.
 
 ![Built-in infographic figures](docs/walkthrough/01-builtins.png)
+
+**A separate asset-free example:** follow the path from repository source to an automatically laid-out diagram. Every illustration below is a built-in `figure` block.
+
+![Source code to canvas using native figures](docs/walkthrough/10-native-infographic.png)
+
+[Open the DSL](resources/examples/walkthrough/10-native-infographic.canvas)
+
+<details>
+<summary>DSL for the asset-free infographic</summary>
+
+```canvas
+canvas 1
+collection @native-infographic "Infographic / From source code to a diagram" theme=walkthrough description="Built-in parametric figures only: no SVG assets, no manually authored positions. A conceptual explanation of static function-import mapping, not a runtime call graph." {
+  node @n-sources concept "01 / Read the source" frame=none composition=media-top {
+    figure @art stack layers=some size=large
+    text @detail "Discover JavaScript and TypeScript modules." role=caption
+  }
+  node @n-functions concept "02 / Keep functions" frame=none composition=media-top {
+    figure @art gate pass=few size=large
+    text @detail "Resolve exported functions. Exclude types and data constants." role=caption
+  }
+  node @n-dsl concept "03 / Write semantic DSL" frame=none composition=media-top {
+    figure @art window fill=half size=large
+    text @detail "Files become nodes; function imports become wires." role=caption
+  }
+  node @n-valid concept "04 / Admit the diagram" frame=none composition=media-top {
+    figure @art gate pass=one size=large
+    text @detail "Preview checks semantics and layout feasibility." role=caption
+  }
+  node @n-layout concept "05 / Calculate geometry" frame=none composition=media-top {
+    figure @art queue level=half size=large
+    text @detail "The app places nodes and routes roads and lanes." role=caption
+  }
+  node @n-canvas concept "06 / Explore the result" frame=none composition=media-top {
+    figure @art store size=large
+    text @detail "Retain the collection. Select a wire to trace an import." role=caption
+  }
+  wire @n-read @n-sources -> @n-functions "source files" kind=flow step=1
+  wire @n-write @n-functions -> @n-dsl "resolved function imports" kind=flow step=2
+  wire @n-admit @n-dsl -> @n-valid "authored semantics" kind=flow step=3
+  wire @n-position @n-valid -> @n-layout "valid diagram" kind=flow step=4
+  wire @n-render @n-layout -> @n-canvas "computed scene" kind=flow step=5
+  section @n-pipeline "01.3 / Infographic — Source code to canvas, without image assets" mode=story layout=grid columns=1 direction=down gap=normal {
+    group @n-extract "EXTRACT MEANING — SCRIPT" frame=panel layout=grid columns=3 direction=right gap=normal {
+      show @n-sources @n-functions @n-dsl
+    }
+    group @n-display "TURN MEANING INTO GEOMETRY — APP" frame=panel layout=grid columns=3 direction=right gap=normal {
+      show @n-canvas @n-layout @n-valid
+    }
+    connect @n-read @n-write source-side=right target-side=left
+    connect @n-admit source-side=bottom target-side=top
+    connect @n-position @n-render source-side=left target-side=right
+  }
+}
+```
+
+</details>
 
 ### Module diagrams
 

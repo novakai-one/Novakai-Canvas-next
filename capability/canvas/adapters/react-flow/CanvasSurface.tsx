@@ -1,6 +1,6 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import { ReactFlow, MiniMap, Background, BackgroundVariant } from '@xyflow/react';
+import { ReactFlow, MiniMap } from '@xyflow/react';
 import type { NodeTypes, EdgeTypes } from '@xyflow/react';
 import type {
   SurfaceProps,
@@ -26,6 +26,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
   const Controls = slots.CanvasControls;
   const Outline = slots.DiagramOutline;
   const Sequence = slots.SequenceLayer;
+  const Roads = slots.RoutingRoads;
   const defaultChrome: CanvasChromeVisibility = {
     tools: true,
     zoom: true,
@@ -107,8 +108,8 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           nodeClickDistance={snapshot.state.profile.fineThreshold}
           onlyRenderVisibleElements
         >
-          <Background variant={BackgroundVariant.Dots} />
           {chrome.minimap && <MiniMap pannable zoomable ariaLabel="Collection minimap" />}
+          {props.showRoads && <Roads sections={snapshot.view.sections} />}
           <Sequence
             followsInterfaceRoles={props.followsInterfaceRoles === true}
             sections={snapshot.view.sections}

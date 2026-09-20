@@ -1,0 +1,6 @@
+@layer tokens {
+  [data-nv-scope='ui'] {
+    /* UI brand color stays outside the diagram token registry and render-resource schema. */
+    --nv-brand-logo: #d0a14b;
+  }
+}

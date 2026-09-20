@@ -1,3 +1,4 @@
+import { treeNode } from '../scenes/tree.js';
 import { ancestorKeys } from '../scenes/ancestry.js';
 import type { SessionState } from '../../contract/records/state.js';
 import type { Target } from '../../contract/records/selection.js';
@@ -28,6 +29,8 @@ function originalGeometry(
 function geometryEntry(state: SessionState, target: Target): GeometryEntry {
   if (target.kind === 'wire' || target.kind === 'sequence')
     reject('invalid-gesture', targetKey(target), 'This target cannot be moved as a node');
+  if (treeNode(state, target))
+    reject('invalid-gesture', targetKey(target), 'Move the whole tree section instead');
   const info = targetInfo(state.index, target);
   return { target, box: info.box, locked: info.locked };
 }

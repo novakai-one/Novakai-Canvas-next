@@ -12,23 +12,19 @@
     border: 0;
     padding: 0;
     background: transparent;
-    color: inherit;
-    font: inherit;
+    color: var(--nv-brand-logo);
+    font-family: var(--nv-font-mono);
+    font-size: var(--nv-font-title);
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: var(--nv-space-2);
-    font-weight: 600;
-    font-size: var(--nv-font-title);
   }
   .mark {
-    display: grid;
-    place-items: center;
-    width: var(--nv-control-height);
-    height: var(--nv-control-height);
-    background: var(--nv-action-accent);
-    color: var(--nv-action-on-accent);
-    border-radius: var(--nv-radius-control);
+    color: inherit;
+    font: inherit;
+    letter-spacing: -0.08em;
   }
   .context {
     min-width: 0;

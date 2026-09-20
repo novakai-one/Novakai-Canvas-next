@@ -28,7 +28,7 @@ export function createLibraryResults({
     if (page === null) return unavailable(state.problem);
     return (
       <div>
-        <p role="status">{page.total} results</p>
+        <p role="status">{page.total} collections</p>
         <ul className={styles.list}>
           {page.hits.map((hit) => (
             <li key={JSON.stringify([hit.collection, hit.kind, hit.id])}>

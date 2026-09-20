@@ -55,14 +55,14 @@ function readNode(raw: VisualNode, collection: InputCollection): VisualNode {
     collection.objects.find((item) => item.id === raw.objectId),
     raw.id,
   );
-  if (source.kind === 'module' || source.kind === 'entity') requireLodRoles(raw);
+  if (['module', 'entity', 'function', 'interface'].includes(source.kind)) requireLodRoles(raw);
   return { ...raw, kind: source.kind };
 }
 
 /** Admitted semantic nodes must carry explicit role metadata; transport readers never infer it. */
 function requireLodRoles(node: VisualNode): void {
   if (node.content.primitives.some((primitive) => primitive.lodRole === undefined))
-    reject('invalid-input', node.id, 'Module/entity primitive is missing its semantic LOD role');
+    reject('invalid-input', node.id, 'Engineering node primitive is missing its semantic LOD role');
 }
 /** Section intent and sequence semantics belong to Model; visual measurements retain their checked shapes. */
 function readSection(raw: SectionEnvelope, collection: InputCollection): VisualSection {

@@ -15,6 +15,17 @@
     ]
   },
   {
+    "file": "10-native-infographic.canvas",
+    "collection": "native-infographic",
+    "title": "Infographic / From source code to a diagram",
+    "sections": [
+      {
+        "id": "n-pipeline",
+        "title": "01.3 / Infographic \u2014 Source code to canvas, without image assets"
+      }
+    ]
+  },
+  {
     "file": "02-modules.canvas",
     "collection": "walkthrough-modules",
     "title": "Agent-assisted release review",

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import { Handle, Position, NodeResizer } from '@xyflow/react';
-import type { SceneNodeProps, RenderSlots } from '../../contract/react-types.js';
+import type { SceneNodeProps, RenderSlots, TreeRowProps } from '../../contract/react-types.js';
 import type { Anchor } from '@novakai/canvas-presentation';
 import styles from './SceneNode.module.css';
 import boundary from './GroupBoundary.module.css';
@@ -34,9 +34,10 @@ function anchorHandles(anchor: Anchor, isConnectable: boolean): ReactElement {
 }
 /** Bind shared measured content once; React Flow owns actual node interaction and Canvas owns typed intent translation. */
 export function createSceneNode(
-  slots: Pick<RenderSlots, 'NodeContent'>,
+  slots: Pick<RenderSlots, 'NodeContent'> & { readonly TreeRow: ComponentType<TreeRowProps> },
 ): ComponentType<SceneNodeProps> {
   const Content = slots.NodeContent;
+  const TreeRow = slots.TreeRow;
   /** Render a real custom node with explicit minimum resize dimensions; host handles rendering failures. */
   function SceneNode({ data, selected, isConnectable }: SceneNodeProps): ReactElement {
     const { view, actions, editable } = data;
@@ -45,17 +46,22 @@ export function createSceneNode(
       <div
         className={styles.node}
         data-preview={view.draft}
+        data-tree={view.tree !== undefined}
         data-emphasis={view.emphasis}
         data-hovered={view.hovered}
       >
-        <Content
-          embedFonts={false}
-          node={node}
-          surface="canvas"
-          detail={view.detail}
-          emphasis={view.emphasis}
-          hovered={view.hovered}
-        />
+        {view.tree ? (
+          <TreeRow view={view} actions={actions} />
+        ) : (
+          <Content
+            embedFonts={false}
+            node={node}
+            surface="canvas"
+            detail={view.detail}
+            emphasis={view.emphasis}
+            hovered={view.hovered}
+          />
+        )}
         {node.groupId !== null && (
           <svg className={boundary.hit} aria-hidden="true">
             <rect width="100%" height="100%" vectorEffect="non-scaling-stroke" />

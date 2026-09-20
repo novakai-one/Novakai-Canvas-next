@@ -11,10 +11,10 @@ collection @walkthrough-modules "Agent-assisted release review" theme=walkthroug
   port @m-snapshot out "snapshot" type="RepositorySnapshot"
  }
  node @m-policy interface "Review policy" role=supporting size=medium {
-  member @m-check "check" type="(Change, Snapshot) => Result" visibility=public
+  signature @m-check "check" parameters=["change", "snapshot"] returns="Result"
  }
  node @m-review function "Review planner" size=medium {
-  signature @m-plan "planReview" parameters=["change", "snapshot"] returns="ReviewPlan"
+  signature @m-plan "planReview" parameters=["change", "snapshot", "policy: ReviewPolicy"] returns="ReviewPlan"
  }
  node @m-evidence module "Evidence collector" size=medium {
   code @m-evidence-exports "collectFindings()"
@@ -22,7 +22,7 @@ collection @walkthrough-modules "Agent-assisted release review" theme=walkthroug
   port @m-evidence-out out "evidence" type="EvidenceBundle"
  }
  node @m-risk interface "Risk assessor" role=warning size=medium {
-  member @m-score "score" type="(EvidenceBundle) => RiskScore" visibility=public
+  signature @m-score "score" parameters=["evidence"] returns="RiskScore"
  }
  node @m-decision function "Decision engine" size=medium {
   signature @m-decide "decide" parameters=["review", "risk"] returns="ReviewDecision"
@@ -71,6 +71,6 @@ collection @walkthrough-modules "Agent-assisted release review" theme=walkthroug
   group @m-records "RECORDS" frame=panel layout=grid columns=1 direction=down gap=compact {
    show @m-persist @m-notify @m-audit
   }
-  connect @m-intake-route @m-context-route @m-policy-use @m-evidence-route @m-risk-use @m-decision-use @m-workflow-plan @m-workflow-decision @m-store @m-notify-route @m-audit-route source-side=right target-side=left
+  connect @m-intake-route @m-context-route @m-policy-use @m-evidence-route @m-risk-use @m-decision-use @m-workflow-plan @m-workflow-decision @m-store @m-notify-route @m-audit-route
  }
 }

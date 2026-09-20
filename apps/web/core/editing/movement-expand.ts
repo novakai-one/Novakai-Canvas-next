@@ -287,14 +287,15 @@ function materializeExpansion(
   geometry: ExpansionGeometry,
   document: RenderDocument,
 ): Result<{ readonly sections: readonly Section[]; readonly changes: readonly Change[] }> {
+  let sections: readonly Section[];
   try {
-    const sections = plannedSections(document, prepared.intent).map((candidate) =>
+    sections = plannedSections(document, prepared.intent).map((candidate) =>
       expandSection(candidate, prepared, geometry, document),
     );
-    return { ok: true, value: { sections, changes: changes(document, sections) } };
   } catch {
     return failure('stale-target', 'Captured expansion placements are no longer available');
   }
+  return { ok: true, value: { sections, changes: changes(document, sections) } };
 }
 
 function expandSection(

@@ -17,6 +17,7 @@ import type {
   EditIntent,
 } from '../contract/records/owners.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
+import { chooseMoveOption as chooseReviewedMoveOption } from '../contract/api.js';
 interface RenderRequest {
   readonly token: number;
   readonly id: string;
@@ -792,8 +793,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     start: number,
     rejected: boolean,
   ): 'rejected' | 'review' {
-    if (rejected) return 'rejected';
-    return restoreMovementPreview(active, intent, preview, start) ? 'review' : 'rejected';
+    const restored = restoreMovementPreview(active, intent, preview, start);
+    return rejected || !restored ? 'rejected' : 'review';
   }
   function restoreMovementPreview(
     active: ActiveDiagram,
@@ -1454,7 +1455,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         >['value']
       >
     | undefined {
-    const chosen = bindings.chooseMoveOption?.(capture.review, optionId, currentStamp);
+    const chosen =
+      bindings.chooseMoveOption?.(capture.review, optionId, currentStamp) ??
+      chooseReviewedMoveOption(capture.review, optionId, currentStamp);
     if (chosen === undefined) return undefined;
     const selected = selectedMovementChoice(chosen);
     return isCurrentMovementChoice(capture, chosen, selected, currentStamp) ? selected : undefined;

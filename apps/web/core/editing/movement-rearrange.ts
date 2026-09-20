@@ -45,6 +45,22 @@ type ReleasedCandidate = {
   readonly sections: readonly Section[];
   readonly changes: readonly Change[];
 };
+type ReleasedInspection = {
+  readonly prepared: RearrangementPreparation;
+  readonly candidate: readonly Section[];
+  readonly firstPreview: MoveOption['preview'];
+  readonly firstMap: ReadonlyMap<string, Box>;
+  readonly expected: ReadonlyMap<string, Box>;
+  readonly closure: ReadonlySet<string>;
+  readonly wanted: Box;
+  readonly context: MovementPreviewContext;
+};
+type MaterializedCandidate = ReleasedInspection & {
+  readonly geometryChanges: readonly GeometryChange[];
+};
+type MaterializedPreview = MaterializedCandidate & {
+  readonly finalChanges: readonly Change[];
+};
 
 /** Build a deliberate release/reflow candidate for one module section. */
 export function buildRearrangeOption(
@@ -346,30 +362,30 @@ function inspectReleasedRearrangement(
   firstPreview: MoveOption['preview'],
   context: MovementPreviewContext,
 ): Result<MoveOption | null> {
-  const firstMapResult = completePreview(context.document, firstPreview);
-  return firstMapResult.ok
-    ? inspectReleasedGeometry(prepared, candidate, firstPreview, firstMapResult.value, context)
-    : firstMapResult;
+  const expected = expectedBoxes(context.document, prepared.intent.entries);
+  return expected.ok
+    ? completeReleasedPreview(prepared, candidate, firstPreview, expected.value, context)
+    : expected;
 }
 
-function inspectReleasedGeometry(
+function completeReleasedPreview(
   prepared: RearrangementPreparation,
   candidate: readonly Section[],
   firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
+  expected: ReadonlyMap<string, Box>,
   context: MovementPreviewContext,
 ): Result<MoveOption | null> {
-  const expected = expectedBoxes(context.document, prepared.intent.entries);
-  return expected.ok
+  const firstMapResult = completePreview(context.document, firstPreview);
+  return firstMapResult.ok
     ? inspectReleasedTargetsAndMaterialize(
         prepared,
         candidate,
         firstPreview,
-        firstMap,
-        expected.value,
+        firstMapResult.value,
+        expected,
         context,
       )
-    : expected;
+    : firstMapResult;
 }
 
 function inspectReleasedTargetsAndMaterialize(
@@ -383,77 +399,31 @@ function inspectReleasedTargetsAndMaterialize(
   const selectedBefore = sceneBox(context.document, prepared.entry.target);
   return selectedBefore === undefined
     ? failure('stale-target', 'The rearrangement target geometry is missing')
-    : inspectReleasedTargetSet(
+    : inspectReleasedTargetSet({
         prepared,
         candidate,
         firstPreview,
         firstMap,
         expected,
-        selectedBefore,
+        closure: closureKeys(context.document, prepared.entry),
+        wanted: wantedBox(prepared, selectedBefore),
         context,
-      );
+      });
 }
 
-function inspectReleasedTargetSet(
-  prepared: RearrangementPreparation,
-  candidate: readonly Section[],
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  selectedBefore: Box,
-  context: MovementPreviewContext,
-): Result<MoveOption | null> {
-  const closure = closureKeys(context.document, prepared.entry);
-  const wanted = wantedBox(prepared, selectedBefore);
-  const targetCheck = inspectReleasedTargets(
-    prepared,
-    firstMap,
-    firstPreview,
-    expected,
-    closure,
-    wanted,
-    context.document,
-  );
-  return targetCheck.ok
-    ? finishReleasedTargetSet(
-        prepared,
-        candidate,
-        firstPreview,
-        firstMap,
-        expected,
-        closure,
-        wanted,
-        targetCheck.value,
-        context,
-      )
-    : targetCheck;
+function inspectReleasedTargetSet(input: ReleasedInspection): Result<MoveOption | null> {
+  const targetCheck = inspectReleasedTargets(input);
+  return targetCheck.ok ? finishReleasedTargetSet(input, targetCheck.value) : targetCheck;
 }
 
 function finishReleasedTargetSet(
-  prepared: RearrangementPreparation,
-  candidate: readonly Section[],
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
+  input: ReleasedInspection,
   targetsValid: boolean,
-  context: MovementPreviewContext,
 ): Result<MoveOption | null> {
   if (!targetsValid) return { ok: true, value: null };
-  const geometryChanges = geometryDelta(context.document, firstPreview);
-  return hasUnselectedChange(prepared, geometryChanges)
-    ? materializeRearrangement(
-        prepared,
-        candidate,
-        firstPreview,
-        firstMap,
-        expected,
-        closure,
-        wanted,
-        geometryChanges,
-        context,
-      )
+  const geometryChanges = geometryDelta(input.context.document, input.firstPreview);
+  return hasUnselectedChange(input.prepared, geometryChanges)
+    ? materializeRearrangement({ ...input, geometryChanges })
     : { ok: true, value: null };
 }
 
@@ -482,62 +452,43 @@ function wantedBox(prepared: RearrangementPreparation, selectedBefore: Box): Box
   };
 }
 
-function inspectReleasedTargets(
-  prepared: RearrangementPreparation,
-  firstMap: ReadonlyMap<string, Box>,
-  firstPreview: MoveOption['preview'],
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  document: RenderDocument,
-): Result<boolean> {
-  const results = [...firstMap].map(([key, actual]) =>
-    inspectReleasedTargetEntry(
-      prepared,
-      key,
-      actual,
-      firstPreview,
-      expected,
-      closure,
-      wanted,
-      document,
-    ),
+function inspectReleasedTargets(input: ReleasedInspection): Result<boolean> {
+  const results = [...input.firstMap].map(([key, actual]) =>
+    inspectReleasedTargetEntry(input, key, actual),
   );
   const rejected = results.find((result) => !result.ok || !result.value);
   return rejected === undefined ? { ok: true, value: true } : rejected;
 }
 
 function inspectReleasedTargetEntry(
-  prepared: RearrangementPreparation,
+  input: ReleasedInspection,
   key: string,
   actual: Box,
-  preview: MoveOption['preview'],
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  document: RenderDocument,
 ): Result<boolean> {
-  const target = preview.boxes.find((item) => targetKey(item.target) === key)?.target;
+  const target = input.firstPreview.boxes.find((item) => targetKey(item.target) === key)?.target;
   return target === undefined
     ? failure('invalid-edit', 'Movement preview target identity is missing')
-    : inspectReleasedTarget(prepared, target, actual, expected, closure, wanted, document);
+    : inspectReleasedTarget(input, target, actual);
 }
 
 function inspectReleasedTarget(
-  prepared: RearrangementPreparation,
+  input: ReleasedInspection,
   target: Target,
   actual: Box,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  document: RenderDocument,
 ): Result<boolean> {
   return {
     ok: true,
     value:
-      sectionOriginMatches(prepared, target, actual) &&
-      otherSectionMatches(prepared, target, actual, document) &&
-      closureGeometryMatches(prepared, target, actual, expected, closure, wanted),
+      sectionOriginMatches(input.prepared, target, actual) &&
+      otherSectionMatches(input.prepared, target, actual, input.context.document) &&
+      closureGeometryMatches(
+        input.prepared,
+        target,
+        actual,
+        input.expected,
+        input.closure,
+        input.wanted,
+      ),
   };
 }
 
@@ -613,40 +564,22 @@ function geometryDelta(
   });
 }
 
-function materializeRearrangement(
-  prepared: RearrangementPreparation,
-  candidate: readonly Section[],
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  geometryChanges: readonly GeometryChange[],
-  context: MovementPreviewContext,
-): Result<MoveOption | null> {
+function materializeRearrangement(input: MaterializedCandidate): Result<MoveOption | null> {
   let finalSections: readonly Section[];
   try {
-    finalSections = candidate.map((section) => materializeSection(section, prepared, firstPreview));
+    finalSections = input.candidate.map((section) =>
+      materializeSection(section, input.prepared, input.firstPreview),
+    );
   } catch {
     return failure('invalid-edit', 'Rearrangement native preview omitted required geometry');
   }
   let finalChanges: readonly Change[];
   try {
-    finalChanges = changes(context.document, finalSections);
+    finalChanges = changes(input.context.document, finalSections);
   } catch {
     return failure('invalid-edit', 'Rearrangement could not be materialized');
   }
-  return previewMaterializedRearrangement(
-    prepared,
-    finalChanges,
-    firstPreview,
-    firstMap,
-    expected,
-    closure,
-    wanted,
-    geometryChanges,
-    context,
-  );
+  return previewMaterializedRearrangement({ ...input, finalChanges });
 }
 
 function materializeSection(
@@ -783,117 +716,39 @@ function previewParentBox(
   return box;
 }
 
-function previewMaterializedRearrangement(
-  prepared: RearrangementPreparation,
-  finalChanges: readonly Change[],
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  geometryChanges: readonly GeometryChange[],
-  context: MovementPreviewContext,
-): Result<MoveOption | null> {
-  const preview = context.preview;
+function previewMaterializedRearrangement(input: MaterializedPreview): Result<MoveOption | null> {
+  const preview = input.context.preview;
   return preview === undefined
     ? failure('invalid-edit', 'Movement preview is not available')
-    : callMaterializedPreview(
-        prepared,
-        finalChanges,
-        firstPreview,
-        firstMap,
-        expected,
-        closure,
-        wanted,
-        geometryChanges,
-        context,
-        preview,
-      );
+    : callMaterializedPreview(input, preview);
 }
 
 function callMaterializedPreview(
-  prepared: RearrangementPreparation,
-  finalChanges: readonly Change[],
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  geometryChanges: readonly GeometryChange[],
-  context: MovementPreviewContext,
+  input: MaterializedPreview,
   preview: NonNullable<MovementPreviewContext['preview']>,
 ): Result<MoveOption | null> {
-  const second = preview(context.document, prepared.intent, finalChanges);
-  return second.ok
-    ? inspectMaterializedPreview(
-        prepared,
-        firstPreview,
-        firstMap,
-        second.value,
-        expected,
-        closure,
-        wanted,
-        finalChanges,
-        geometryChanges,
-        context,
-      )
-    : second;
+  const second = preview(input.context.document, input.prepared.intent, input.finalChanges);
+  return second.ok ? inspectMaterializedPreview(input, second.value) : second;
 }
 
 function inspectMaterializedPreview(
-  prepared: RearrangementPreparation,
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
+  input: MaterializedPreview,
   secondPreview: MoveOption['preview'] | null,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  finalChanges: readonly Change[],
-  geometryChanges: readonly GeometryChange[],
-  context: MovementPreviewContext,
 ): Result<MoveOption | null> {
   if (secondPreview === null) return { ok: true, value: null };
-  const secondMapResult = completePreview(context.document, secondPreview);
+  const secondMapResult = completePreview(input.context.document, secondPreview);
   return secondMapResult.ok
-    ? acceptRearrangement(
-        prepared,
-        firstPreview,
-        secondPreview,
-        firstMap,
-        secondMapResult.value,
-        expected,
-        closure,
-        wanted,
-        finalChanges,
-        geometryChanges,
-        context,
-      )
+    ? acceptRearrangement(input, secondPreview, secondMapResult.value)
     : secondMapResult;
 }
 
 function acceptRearrangement(
-  prepared: RearrangementPreparation,
-  firstPreview: MoveOption['preview'],
+  input: MaterializedPreview,
   secondPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
   secondMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  finalChanges: readonly Change[],
-  geometryChanges: readonly GeometryChange[],
-  context: MovementPreviewContext,
 ): Result<MoveOption | null> {
-  if (!sameGeometryMap(firstMap, secondMap)) return { ok: true, value: null };
-  const accepted = inspectSecondTargets(
-    prepared,
-    firstPreview,
-    firstMap,
-    expected,
-    closure,
-    wanted,
-    context.document,
-  );
+  if (!sameGeometryMap(input.firstMap, secondMap)) return { ok: true, value: null };
+  const accepted = inspectSecondTargets(input);
   if (!accepted) return { ok: true, value: null };
   return {
     ok: true,
@@ -901,26 +756,16 @@ function acceptRearrangement(
       id: 'rearrange-section',
       kind: 'rearrange',
       label: 'Rearrange section',
-      section: prepared.sectionId,
-      changes: finalChanges,
-      geometryChanges,
+      section: input.prepared.sectionId,
+      changes: input.finalChanges,
+      geometryChanges: input.geometryChanges,
       preview: secondPreview,
     },
   };
 }
 
-function inspectSecondTargets(
-  prepared: RearrangementPreparation,
-  firstPreview: MoveOption['preview'],
-  firstMap: ReadonlyMap<string, Box>,
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  document: RenderDocument,
-): boolean {
-  return [...firstMap].every(([key, firstBox]) =>
-    inspectSecondTarget(prepared, key, firstBox, firstPreview, expected, closure, wanted, document),
-  );
+function inspectSecondTargets(input: MaterializedPreview): boolean {
+  return [...input.firstMap].every(([key, firstBox]) => inspectSecondTarget(input, key, firstBox));
 }
 
 function sameGeometryMap(
@@ -933,20 +778,18 @@ function sameGeometryMap(
   });
 }
 
-function inspectSecondTarget(
-  prepared: RearrangementPreparation,
-  key: string,
-  firstBox: Box,
-  preview: MoveOption['preview'],
-  expected: ReadonlyMap<string, Box>,
-  closure: ReadonlySet<string>,
-  wanted: Box,
-  document: RenderDocument,
-): boolean {
-  const target = preview.boxes.find((item) => targetKey(item.target) === key)?.target;
+function inspectSecondTarget(input: MaterializedPreview, key: string, firstBox: Box): boolean {
+  const target = input.firstPreview.boxes.find((item) => targetKey(item.target) === key)?.target;
   return (
     target !== undefined &&
-    otherSectionMatches(prepared, target, firstBox, document) &&
-    closureGeometryMatches(prepared, target, firstBox, expected, closure, wanted)
+    otherSectionMatches(input.prepared, target, firstBox, input.context.document) &&
+    closureGeometryMatches(
+      input.prepared,
+      target,
+      firstBox,
+      input.expected,
+      input.closure,
+      input.wanted,
+    )
   );
 }

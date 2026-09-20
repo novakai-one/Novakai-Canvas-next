@@ -45,19 +45,20 @@ function prepareMovePlan(
 ): Result<PreparedMove> {
   const normalized = normalizedEntries(context.document, intent);
   if (!normalized.ok) return normalized;
+  const preparedIntent = { ...intent, entries: normalized.value };
+  let sections: readonly import('../../contract/records/owners.js').Section[];
   try {
-    const preparedIntent = { ...intent, entries: normalized.value };
-    const sections = plannedSections(context.document, preparedIntent);
-    return {
-      ok: true,
-      value: {
-        intent: preparedIntent,
-        changes: changes(context.document, sections),
-      },
-    };
+    sections = plannedSections(context.document, preparedIntent);
   } catch {
     return failure('stale-target', 'The movement target is no longer available');
   }
+  return {
+    ok: true,
+    value: {
+      intent: preparedIntent,
+      changes: changes(context.document, sections),
+    },
+  };
 }
 
 function previewMove(

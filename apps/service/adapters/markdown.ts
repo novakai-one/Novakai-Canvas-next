@@ -29,7 +29,9 @@ export function formatMarkdown(collection: Collection, scope: MarkdownScope): st
     '- Revision: `' + String(collection.revision) + '`',
     '',
   ];
-  if (collection.description !== undefined) lines.push(collection.description, '');
+  if (collection.description !== undefined) {
+    lines.push(...multiline(collection.description), '');
+  }
   appendDefinitions(lines, collection);
   appendSources(lines, collection);
   sections.forEach((section) => appendSection(lines, section, collection, objects, relationships));
@@ -62,7 +64,7 @@ function appendDefinitions(lines: string[], collection: Collection): void {
     const resolved = definitionDisplay(collection, definition.id);
     const resolvedText = resolved.ok ? `; resolved: ${inline(resolved.value)}` : '';
     lines.push(
-      `- \`${definition.id}\` **${inline(definition.label)}** = \`${typeExpression(definition.expression)}\`${resolvedText}`,
+      `- \`${definition.id}\` **${inline(definition.label)}** = ${codeSpan(typeExpression(definition.expression))}${resolvedText}`,
     );
   });
   lines.push('');
@@ -126,26 +128,57 @@ function appendGroups(lines: string[], section: Section): void {
 function sectionObjectsInOrder(
   section: Section,
   objects: ReadonlyMap<string, DiagramObject>,
-): readonly DiagramObject[] {
-  const ids = section.appearances.map((appearance) => appearance.object);
+): readonly SectionObject[] {
+  const entries = new Map<string, SectionObject>();
+  section.appearances.forEach((appearance) => {
+    const existing = entries.get(appearance.object);
+    const groups =
+      appearance.group === undefined
+        ? (existing?.groups ?? [])
+        : [...(existing?.groups ?? []), appearance.group];
+    entries.set(appearance.object, {
+      object: objects.get(appearance.object),
+      groups: unique(groups),
+      representedBy: existing?.representedBy ?? [],
+    });
+  });
   section.groups.forEach((group) => {
-    if (group.represents !== undefined) ids.push(group.represents);
+    if (group.represents === undefined) return;
+    const existing = entries.get(group.represents);
+    entries.set(group.represents, {
+      object: objects.get(group.represents),
+      groups: existing?.groups ?? [],
+      representedBy: unique([...(existing?.representedBy ?? []), group.id]),
+    });
   });
+  const ids = [...entries.keys()];
   section.sequence.forEach((item) => {
-    if (item.kind === 'event') ids.push(item.source, item.target);
+    if (item.kind !== 'event') return;
+    [item.source, item.target].forEach((id) => {
+      if (entries.has(id)) return;
+      entries.set(id, { object: objects.get(id), groups: [], representedBy: [] });
+      ids.push(id);
+    });
   });
-  const seen = new Set<string>();
   return ids.flatMap((id) => {
-    if (seen.has(id)) return [];
-    seen.add(id);
-    const object = objects.get(id);
-    return object === undefined ? [] : [object];
+    const entry = entries.get(id);
+    return entry?.object === undefined ? [] : [entry];
   });
+}
+
+interface SectionObject {
+  readonly object: DiagramObject | undefined;
+  readonly groups: readonly string[];
+  readonly representedBy: readonly string[];
+}
+
+function unique(values: readonly string[]): readonly string[] {
+  return [...new Set(values)];
 }
 
 function appendObjects(
   lines: string[],
-  objects: readonly DiagramObject[],
+  objects: readonly SectionObject[],
   collection: Collection,
 ): void {
   lines.push('### Canonical objects', '');
@@ -153,13 +186,14 @@ function appendObjects(
     lines.push('_No canonical objects are shown in this section._', '');
     return;
   }
-  objects.forEach((object) => appendObject(lines, object, collection));
+  objects.forEach((entry) => appendObject(lines, entry, collection));
   lines.push('');
 }
 
-function appendObject(lines: string[], object: DiagramObject, collection: Collection): void {
-  const role = object.role === 'neutral' ? '' : `; role ${inline(object.role)}`;
-  lines.push(`- \`${object.id}\` **${inline(object.label)}** (${object.kind}${role})`);
+function appendObject(lines: string[], entry: SectionObject, collection: Collection): void {
+  const object = entry.object;
+  if (object === undefined) return;
+  lines.push(objectHeading(object, entry));
   appendOptionalObjectFields(lines, object);
   object.ports.forEach((port) =>
     lines.push(
@@ -169,64 +203,115 @@ function appendObject(lines: string[], object: DiagramObject, collection: Collec
   object.content.forEach((block) => appendContent(lines, block, object, collection));
 }
 
+function objectHeading(object: DiagramObject, entry: SectionObject): string {
+  return `- \`${object.id}\` **${inline(object.label)}** (${object.kind}${objectRole(object)}; group: ${groupList(entry)}${representedGroups(entry)})`;
+}
+
+function objectRole(object: DiagramObject): string {
+  return object.role === 'neutral' ? '' : `; role ${inline(object.role)}`;
+}
+
+function groupList(entry: SectionObject): string {
+  return entry.groups.length === 0 ? 'ungrouped' : entry.groups.map((id) => `\`${id}\``).join(', ');
+}
+
+function representedGroups(entry: SectionObject): string {
+  return entry.representedBy.length === 0
+    ? ''
+    : `; represented by ${entry.representedBy.map((id) => `\`${id}\``).join(', ')}`;
+}
+
 function appendOptionalObjectFields(lines: string[], object: DiagramObject): void {
   if (object.step !== undefined) lines.push(`  - Step: ${object.step}`);
   if (object.sources.length > 0)
     lines.push(`  - Sources: ${object.sources.map((source) => `\`${source}\``).join(', ')}`);
 }
 
-// Exhaustive rendering of the closed content schema is intentionally a dispatch switch.
-// eslint-disable-next-line sonarjs/cognitive-complexity
+type ContentHandler = (
+  lines: string[],
+  block: ContentBlock,
+  object: DiagramObject,
+  collection: Collection,
+) => void;
+
+const contentHandlers: Record<ContentBlock['kind'], ContentHandler> = {
+  text: (lines, block) => appendText(lines, block as Extract<ContentBlock, { kind: 'text' }>),
+  code: (lines, block) => appendCode(lines, block as Extract<ContentBlock, { kind: 'code' }>),
+  list: (lines, block) => appendList(lines, block as Extract<ContentBlock, { kind: 'list' }>),
+  image: (lines, block) =>
+    appendAsset(lines, block as Extract<ContentBlock, { kind: 'image' | 'icon' }>),
+  icon: (lines, block) =>
+    appendAsset(lines, block as Extract<ContentBlock, { kind: 'image' | 'icon' }>),
+  figure: (lines, block) => appendFigure(lines, block as Extract<ContentBlock, { kind: 'figure' }>),
+  link: (lines, block) => appendLink(lines, block as Extract<ContentBlock, { kind: 'link' }>),
+  field: (lines, block, object, collection) =>
+    appendField(lines, block as Extract<ContentBlock, { kind: 'field' }>, object, collection),
+  keygroup: (lines, block) =>
+    appendKeyGroup(lines, block as Extract<ContentBlock, { kind: 'keygroup' }>),
+  signature: (lines, block) =>
+    appendSignature(lines, block as Extract<ContentBlock, { kind: 'signature' }>),
+  member: (lines, block) => appendMember(lines, block as Extract<ContentBlock, { kind: 'member' }>),
+  table: (lines, block) => appendTable(lines, block as Extract<ContentBlock, { kind: 'table' }>),
+};
+
 function appendContent(
   lines: string[],
   block: ContentBlock,
   object: DiagramObject,
   collection: Collection,
 ): void {
-  switch (block.kind) {
-    case 'text':
-      lines.push(`  - Text \`${block.id}\`: ${inline(block.text)} (${block.role})`);
-      break;
-    case 'code':
-      lines.push(
-        `  - Code \`${block.id}\`${block.language === undefined ? '' : ` (${inline(block.language)})`}: \`${inline(block.text)}\``,
-      );
-      break;
-    case 'list':
-      appendList(lines, block);
-      break;
-    case 'image':
-    case 'icon':
-      lines.push(
-        `  - ${block.kind} \`${block.id}\`: asset \`${block.asset}\` (${block.fit}, ${block.size})`,
-      );
-      break;
-    case 'figure':
-      lines.push(`  - Figure \`${block.id}\`: ${block.form} (${figureDetails(block)})`);
-      break;
-    case 'link':
-      lines.push(`  - Link \`${block.id}\`: ${inline(block.label)} → ${linkTarget(block.target)}`);
-      break;
-    case 'field':
-      appendField(lines, block, object, collection);
-      break;
-    case 'keygroup':
-      appendKeyGroup(lines, block);
-      break;
-    case 'signature':
-      lines.push(
-        `  - Signature \`${block.id}\`: ${inline(block.label)}(${block.parameters.map(inline).join(', ')}) → ${inline(block.returns)}`,
-      );
-      break;
-    case 'member':
-      lines.push(
-        `  - Member \`${block.id}\`: ${block.visibility} ${inline(block.label)} : ${inline(block.type)}`,
-      );
-      break;
-    case 'table':
-      appendTable(lines, block);
-      break;
-  }
+  contentHandlers[block.kind](lines, block, object, collection);
+}
+
+function appendText(lines: string[], block: Extract<ContentBlock, { kind: 'text' }>): void {
+  lines.push(`  - Text \`${block.id}\`: ${inline(block.text)} (${block.role})`);
+}
+
+function appendCode(lines: string[], block: Extract<ContentBlock, { kind: 'code' }>): void {
+  const language = block.language === undefined ? '' : block.language;
+  const fence = codeFence(block.text);
+  lines.push(`  - Code \`${block.id}\`:`);
+  lines.push(`    ${fence}${language}`);
+  lines.push(
+    ...block.text
+      .replaceAll('\r\n', '\n')
+      .replaceAll('\r', '\n')
+      .split('\n')
+      .map((line) => `    ${line}`),
+  );
+  lines.push(`    ${fence}`);
+}
+
+function appendAsset(
+  lines: string[],
+  block: Extract<ContentBlock, { kind: 'image' | 'icon' }>,
+): void {
+  lines.push(
+    `  - ${block.kind} \`${block.id}\`: asset \`${block.asset}\` (${block.fit}, ${block.size})`,
+  );
+}
+
+function appendFigure(lines: string[], block: Extract<ContentBlock, { kind: 'figure' }>): void {
+  lines.push(`  - Figure \`${block.id}\`: ${block.form} (${figureDetails(block)})`);
+}
+
+function appendLink(lines: string[], block: Extract<ContentBlock, { kind: 'link' }>): void {
+  lines.push(`  - Link \`${block.id}\`: ${inline(block.label)} → ${linkTarget(block.target)}`);
+}
+
+function appendSignature(
+  lines: string[],
+  block: Extract<ContentBlock, { kind: 'signature' }>,
+): void {
+  lines.push(
+    `  - Signature \`${block.id}\`: ${inline(block.label)}(${block.parameters.map(inline).join(', ')}) → ${inline(block.returns)}`,
+  );
+}
+
+function appendMember(lines: string[], block: Extract<ContentBlock, { kind: 'member' }>): void {
+  lines.push(
+    `  - Member \`${block.id}\`: ${block.visibility} ${inline(block.label)} : ${inline(block.type)}`,
+  );
 }
 
 function appendList(lines: string[], block: Extract<ContentBlock, { kind: 'list' }>): void {
@@ -245,11 +330,18 @@ function appendField(
   object: DiagramObject,
   collection: Collection,
 ): void {
-  const type = fieldTypeDisplay(collection, block);
+  const type = fieldType(collection, block);
   const details = fieldDetails(block);
-  lines.push(
-    `  - Field \`${object.id}.${block.id}\`: ${inline(block.label)} : ${inline(type)}${details}`,
-  );
+  lines.push(`  - Field \`${object.id}.${block.id}\`: ${inline(block.label)} : ${type}${details}`);
+}
+
+function fieldType(
+  collection: Collection,
+  block: Extract<ContentBlock, { kind: 'field' }>,
+): string {
+  const display = fieldTypeDisplay(collection, block);
+  if (typeof block.type === 'string') return inline(display);
+  return `${inline(display)} (definition ${codeSpan(block.type.id)})`;
 }
 
 function fieldDetails(block: Extract<ContentBlock, { kind: 'field' }>): string {
@@ -398,12 +490,17 @@ function appendEvent(
   item: Extract<SequenceItem, { kind: 'event' }>,
   objects: ReadonlyMap<string, DiagramObject>,
 ): void {
-  const source = objects.get(item.source)?.label ?? item.source;
-  const target = objects.get(item.target)?.label ?? item.target;
+  const source = sequenceEndpoint(objects, item.source);
+  const target = sequenceEndpoint(objects, item.target);
   const activation = activationDetail(item.activate);
   lines.push(
-    `${prefix}\`${item.id}\` ${inline(source)} → ${inline(target)}: **${inline(item.label)}** (${item.message}${activation})`,
+    `${prefix}\`${item.id}\` ${source} → ${target}: **${inline(item.label)}** (${item.message}${activation})`,
   );
+}
+
+function sequenceEndpoint(objects: ReadonlyMap<string, DiagramObject>, id: string): string {
+  const label = objects.get(id)?.label;
+  return label === undefined ? codeSpan(id) : `${inline(label)} (${codeSpan(id)})`;
 }
 
 function activationDetail(value: boolean | undefined): string {
@@ -447,5 +544,38 @@ function inline(value: string): string {
     .replaceAll('`', '\\`')
     .replaceAll('*', '\\*')
     .replaceAll('_', '\\_')
-    .replaceAll('\n', ' ');
+    .replaceAll('#', '\\#')
+    .replaceAll('>', '\\>')
+    .replaceAll('<', '\\<')
+    .replaceAll('&', '\\&')
+    .replaceAll('[', '\\[')
+    .replaceAll(']', '\\]')
+    .replaceAll('(', '\\(')
+    .replaceAll(')', '\\)')
+    .replaceAll('\r\n', '\n')
+    .replaceAll('\r', '\n')
+    .replaceAll('\n', '\n  ')
+    .replace(/^([ \t]*)(#{1,6}|>|[-+*]|\d+[.)])(?=\s)/gm, '$1\\$2');
+}
+
+function multiline(value: string): readonly string[] {
+  return inline(value).split('\n');
+}
+
+function codeSpan(value: string): string {
+  const fence = inlineCodeFence(value);
+  const padding = value.startsWith('`') || value.endsWith('`') ? ' ' : '';
+  return `${fence}${padding}${value}${padding}${fence}`;
+}
+
+function inlineCodeFence(value: string): string {
+  const runs = value.match(/`+/g) ?? [];
+  const longest = runs.reduce((length, run) => Math.max(length, run.length), 0);
+  return '`'.repeat(Math.max(1, longest + 1));
+}
+
+function codeFence(value: string): string {
+  const runs = value.match(/`+/g) ?? [];
+  const longest = runs.reduce((length, run) => Math.max(length, run.length), 0);
+  return '`'.repeat(Math.max(3, longest + 1));
 }

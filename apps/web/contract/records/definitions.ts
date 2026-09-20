@@ -17,6 +17,13 @@ export interface DefinitionDraft {
   readonly definition: Definition;
   readonly operation: 'create' | 'replace' | 'remove';
   readonly request?: Request | undefined;
+  readonly literalDrafts?: readonly LiteralDraft[] | undefined;
+}
+
+export interface LiteralDraft {
+  readonly path: readonly number[];
+  readonly kind: 'string' | 'number' | 'boolean';
+  readonly text: string;
 }
 
 /** Draft keys currently being transmitted; controls remain frozen until their receipt settles. */
@@ -31,7 +38,11 @@ export interface DefinitionSession {
   subscribe(listener: () => void): () => void;
   restore(workspace: string): Result<void>;
   create(selection: DefinitionSelection, definition: Definition): Result<void>;
-  edit(selection: DefinitionSelection, definition: Definition): Result<void>;
+  edit(
+    selection: DefinitionSelection,
+    definition: Definition,
+    literalDraft?: LiteralDraft,
+  ): Result<void>;
   remove(selection: DefinitionSelection, definition: Definition): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
@@ -39,6 +50,8 @@ export interface DefinitionSession {
   bindRequest(key: string, request: Request): Result<void>;
   confirmed(requestId: string): void;
   released(requestId: string): void;
+  /** Clears only a temporary Apply lock when no request was retained. */
+  unlockWithoutRequest(key: string): void;
 }
 
 export type DefinitionFactory = (

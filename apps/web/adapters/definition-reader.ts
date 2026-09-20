@@ -16,6 +16,16 @@ const draftSchema = z.strictObject({
   definition: z.unknown(),
   operation: z.enum(['create', 'replace', 'remove']),
   request: requestSchema.optional(),
+  literalDrafts: z
+    .array(
+      z.strictObject({
+        path: z.array(z.number().int().nonnegative()).max(20),
+        kind: z.enum(['string', 'number', 'boolean']),
+        text: z.string(),
+      }),
+    )
+    .max(20)
+    .optional(),
 });
 
 export function readDefinitionDrafts(input: unknown): Result<readonly DefinitionDraft[]> {
@@ -49,6 +59,7 @@ function buildDraft(record: z.infer<typeof draftSchema>): Result<DefinitionDraft
       definition: definition.value,
       operation: record.operation,
       request: record.request,
+      literalDrafts: record.literalDrafts,
     },
   };
 }

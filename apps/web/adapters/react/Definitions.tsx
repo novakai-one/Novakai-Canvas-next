@@ -7,7 +7,7 @@ import {
   type Collection,
 } from '@novakai/canvas-model';
 import type { DesignSlots, FeatureProps } from '../../contract/react-types.js';
-import type { DefinitionSelection } from '../../contract/records/definitions.js';
+import type { DefinitionSelection, LiteralDraft } from '../../contract/records/definitions.js';
 import { definitionDraftId } from '../definition-session.js';
 import { formatFailure } from '../../contract/api.js';
 import styles from './ObjectEditor.module.css';
@@ -124,9 +124,13 @@ function DefinitionCard({
       />
       <ExpressionEditor
         expression={definition.expression}
+        literalDrafts={draft?.literalDrafts ?? []}
         collection={collection}
         disabled={pending}
         onChange={(expression) => session.edit(selection, { ...definition, expression })}
+        onLiteralDraft={(literalDraft) =>
+          session.edit(selection, definition, literalDraft)
+        }
         Field={Field}
         Button={Button}
       />
@@ -218,6 +222,9 @@ function draftActions(
 
 function ExpressionEditor({
   expression,
+  literalDrafts,
+  path = [],
+  onLiteralDraft,
   onChange,
   Field,
   collection,
@@ -225,7 +232,10 @@ function ExpressionEditor({
   disabled = false,
 }: {
   readonly expression: TypeExpression;
+  readonly literalDrafts: readonly LiteralDraft[];
+  readonly path?: readonly number[];
   readonly onChange: (expression: TypeExpression) => void;
+  readonly onLiteralDraft: (literalDraft: LiteralDraft) => void;
   readonly Field: DesignSlots['Field'];
   readonly collection: Collection;
   readonly Button: DesignSlots['Button'];
@@ -239,6 +249,8 @@ function ExpressionEditor({
             <ExpressionEditor
               key={index}
               expression={item}
+              literalDrafts={literalDrafts}
+              path={[...path, index]}
               Field={Field}
               collection={collection}
               Button={Button}
@@ -251,6 +263,7 @@ function ExpressionEditor({
                   ),
                 })
               }
+              onLiteralDraft={onLiteralDraft}
             />
           ))}
           <Button
@@ -332,7 +345,10 @@ function ExpressionEditor({
       return (
         <LiteralEditor
           value={expression.value}
+          raw={literalDrafts.find((item) => samePath(item.path, path))}
+          path={path}
           onChange={onChange}
+          onRawChange={onLiteralDraft}
           Field={Field}
           disabled={disabled}
         />
@@ -344,22 +360,28 @@ function ExpressionEditor({
 
 function LiteralEditor({
   value,
+  raw,
+  path,
   onChange,
+  onRawChange,
   Field,
   disabled,
 }: {
   readonly value: string | number | boolean;
+  readonly raw: LiteralDraft | undefined;
+  readonly path: readonly number[];
   readonly onChange: (expression: Extract<TypeExpression, { kind: 'literal' }>) => void;
+  readonly onRawChange: (literalDraft: LiteralDraft) => void;
   readonly Field: DesignSlots['Field'];
   readonly disabled: boolean;
 }): ReactElement {
   const kind = literalKind(value);
-  const [kindDraft, setKindDraft] = useState(kind);
-  const [draft, setDraft] = useState(String(value));
+  const [kindDraft, setKindDraft] = useState(raw?.kind ?? kind);
+  const [draft, setDraft] = useState(raw?.text ?? String(value));
   useEffect(() => {
-    setDraft(String(value));
-    setKindDraft(kind);
-  }, [value, kind]);
+    setDraft(raw?.text ?? String(value));
+    setKindDraft(raw?.kind ?? kind);
+  }, [value, kind, raw]);
   return (
     <Field
       label="Literal kind and value"
@@ -375,7 +397,7 @@ function LiteralEditor({
             value={kindDraft}
             onChange={(event) => {
               setKindDraft(event.target.value as typeof kindDraft);
-              setLiteralKind(event.target.value, draft, onChange);
+              setLiteralKind(event.target.value, draft, path, onChange, onRawChange);
             }}
           >
             <option value="string">string</option>
@@ -402,7 +424,7 @@ function LiteralEditor({
               disabled={disabled}
               value={draft}
               onChange={(event) =>
-                updateLiteralText(kindDraft, event.target.value, setDraft, onChange)
+                updateLiteralText(kindDraft, event.target.value, path, setDraft, onChange, onRawChange)
               }
             />
           )}
@@ -424,14 +446,18 @@ function literalKind(value: string | number | boolean): 'string' | 'number' | 'b
 function setLiteralKind(
   kind: string,
   value: string,
+  path: readonly number[],
   onChange: (expression: Extract<TypeExpression, { kind: 'literal' }>) => void,
+  onRawChange: (literalDraft: LiteralDraft) => void,
 ): void {
+  const number = finiteNumber(value);
   const handlers: Record<string, () => void> = {
     boolean: () => onChange({ kind: 'literal', value: value === 'true' }),
-    number: () => {
-      if (completeNumber(value)) onChange({ kind: 'literal', value: Number(value) });
-    },
     string: () => onChange({ kind: 'literal', value }),
+    number: () =>
+      number === null
+        ? onRawChange({ path, kind: 'number', text: value })
+        : onChange({ kind: 'literal', value: number }),
   };
   handlers[kind]?.();
 }
@@ -439,14 +465,31 @@ function setLiteralKind(
 function updateLiteralText(
   kind: 'string' | 'number',
   value: string,
+  path: readonly number[],
   setDraft: (value: string) => void,
   onChange: (expression: Extract<TypeExpression, { kind: 'literal' }>) => void,
+  onRawChange: (literalDraft: LiteralDraft) => void,
 ): void {
   setDraft(value);
-  if (kind === 'string') onChange({ kind: 'literal', value });
-  else if (completeNumber(value)) onChange({ kind: 'literal', value: Number(value) });
+  const handlers: Record<'string' | 'number', () => void> = {
+    string: () => onChange({ kind: 'literal', value }),
+    number: () => {
+      const number = finiteNumber(value);
+      if (number === null) onRawChange({ path, kind, text: value });
+      else onChange({ kind: 'literal', value: number });
+    },
+  };
+  handlers[kind]();
 }
 
 function completeNumber(value: string): boolean {
   return /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/.test(value);
+}
+
+function finiteNumber(value: string): number | null {
+  return completeNumber(value) && Number.isFinite(Number(value)) ? Number(value) : null;
+}
+
+function samePath(left: readonly number[], right: readonly number[]): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
 }

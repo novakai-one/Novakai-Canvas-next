@@ -9,6 +9,7 @@ import type {
   DefinitionSelection,
   DefinitionSession,
   DefinitionState,
+  LiteralDraft,
 } from '../contract/records/definitions.js';
 import { captureCollectionBase } from '../contract/api.js';
 
@@ -56,21 +57,23 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     selection: DefinitionSelection,
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
+    literalDraft?: LiteralDraft,
   ) => {
     const scope = checkScope(selection, workspace);
     if (!scope.ok) return reject(scope.error);
-    return retainInScope(selection, definition, operation);
+    return retainInScope(selection, definition, operation, literalDraft);
   };
   const retainInScope = (
     selection: DefinitionSelection,
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
+    literalDraft?: LiteralDraft,
   ): Result<void> => {
     const key = `${selection.collection.id}:${definition.id}`;
     const current = state.drafts.find((draft) => draft.key === key);
     const locked = lockedDefinition(state, current, key);
     if (locked !== null) return reject(locked);
-    return saveDefinition(current, key, selection, definition, operation);
+    return saveDefinition(current, key, selection, definition, operation, literalDraft);
   };
   const saveDefinition = (
     current: DefinitionDraft | undefined,
@@ -78,26 +81,27 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     selection: DefinitionSelection,
     definition: Definition,
     operation: DefinitionDraft['operation'],
+    literalDraft?: LiteralDraft,
   ): Result<void> => {
     if (uncommittedDelete(current, operation))
       return write(state.drafts.filter((item) => item.key !== key));
-    const draft = draftValue(key, current, selection, definition, operation);
+    const draft = draftValue(key, current, selection, definition, operation, literalDraft);
     return saveDraftResult(draft, key, state.drafts, write, reject);
   };
   const apply = async (key: string): Promise<Result<void>> => {
     const draft = state.drafts.find((item) => item.key === key);
     if (!draft) return { ok: true, value: undefined };
-    if (state.pending.includes(key))
-      return {
-        ok: false,
-        error: failure('pending-request', 'This definition is already being submitted').error,
-      };
+    const guard = applyGuard(state, key, draft);
+    if (!guard.ok) return reject(guard.error);
     publish({ ...state, pending: [...state.pending, key], problem: null });
     return settleApply(key, draft);
   };
   async function settleApply(key: string, draft: DefinitionDraft): Promise<Result<void>> {
     const result = await bindings.apply(draft);
-    if (!result.ok) return reject(result.error);
+    if (!result.ok) {
+      unlockWithoutRequest(key);
+      return reject(result.error);
+    }
     return write(state.drafts.filter((item) => item.key !== key));
   }
   const bindRequest = (key: string, request: Request): Result<void> => {
@@ -119,6 +123,11 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     );
     publish({ ...state, pending: state.pending.filter((item) => item !== draft.key) });
   };
+  const unlockWithoutRequest = (key: string): void => {
+    const draft = state.drafts.find((item) => item.key === key);
+    if (draft?.request !== undefined) return;
+    publish({ ...state, pending: state.pending.filter((item) => item !== key) });
+  };
   return {
     getSnapshot: () => state,
     subscribe: (listener) => {
@@ -127,7 +136,8 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     },
     restore,
     create: (selection, definition) => retain(selection, definition, 'create'),
-    edit: (selection, definition) => retain(selection, definition, 'replace'),
+    edit: (selection, definition, literalDraft) =>
+      retain(selection, definition, 'replace', literalDraft),
     remove: (selection, definition) => retain(selection, definition, 'remove'),
     discard: (key) =>
       state.pending.includes(key) ||
@@ -141,7 +151,24 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     bindRequest,
     confirmed,
     released,
+    unlockWithoutRequest,
   };
+}
+
+function applyGuard(
+  state: DefinitionState,
+  key: string,
+  draft: DefinitionDraft,
+): Result<void> {
+  if (state.pending.includes(key))
+    return failure('pending-request', 'This definition is already being submitted');
+  return literalDraftGuard(draft);
+}
+
+function literalDraftGuard(draft: DefinitionDraft): Result<void> {
+  if (draft.literalDrafts && draft.literalDrafts.length > 0)
+    return failure('invalid-literal-draft', 'Finish the literal value before applying this definition');
+  return { ok: true, value: undefined };
 }
 
 function capturedBase(
@@ -194,6 +221,7 @@ function draftValue(
   selection: DefinitionSelection,
   definition: Definition,
   operation: DefinitionDraft['operation'],
+  literalDraft?: LiteralDraft,
 ): Result<DefinitionDraft> {
   const base = capturedBase(current?.base, selection);
   if (!base.ok) return base;
@@ -207,6 +235,14 @@ function draftValue(
       definition,
       operation: nextOperation(current?.operation, operation),
       request: current?.request,
+      literalDrafts: literalDraft
+        ? [
+            ...(current?.literalDrafts ?? []).filter(
+              (item) => item.path.join('.') !== literalDraft.path.join('.'),
+            ),
+            literalDraft,
+          ]
+        : undefined,
     },
   };
 }
@@ -231,6 +267,7 @@ function encodeDraft(draft: DefinitionDraft): unknown {
     definition: draft.definition,
     operation: draft.operation,
     request: draft.request,
+    literalDrafts: draft.literalDrafts,
   };
 }
 

@@ -1554,10 +1554,16 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       draft.request === undefined
         ? bindings.inputs.model(draft.base, draft.collection.id, changes, bindings.nextId())
         : { ok: true as const, value: draft.request };
-    if (!request.ok) return request;
+    if (!request.ok) {
+      definitions.unlockWithoutRequest(draft.key);
+      return request;
+    }
     if (draft.request === undefined) {
       const retained = definitions.bindRequest(draft.key, request.value);
-      if (!retained.ok) return retained;
+      if (!retained.ok) {
+        definitions.unlockWithoutRequest(draft.key);
+        return retained;
+      }
     }
     return submit(request.value, draft.generation, state.sourceEdit, null);
   }

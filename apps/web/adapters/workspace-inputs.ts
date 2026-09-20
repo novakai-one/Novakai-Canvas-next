@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { snapshotSchema, requestSchema } from '@novakai/canvas-authoring';
+import { snapshotSchema, requestSchema, historyStatusSchema } from '@novakai/canvas-authoring';
 import type { Snapshot, Request } from '@novakai/canvas-authoring';
 import { validate } from '@novakai/canvas-model';
 import type { Collection, Change } from '@novakai/canvas-model';
@@ -100,6 +100,7 @@ export function createWorkspaceInputs(
 ): WorkspaceInputs {
   return {
     snapshot,
+    history,
     diagram,
     newSource,
     library: libraryRequest,
@@ -237,5 +238,32 @@ function libraryRequest(
   });
   if (!parsed.success)
     return failure('invalid-library-request', 'The catalog change could not be prepared');
+  return { ok: true, value: parsed.data };
+}
+
+/** Inverse requests use the selected target's exact snapshot and never claim reserved history scope. */
+function history(input: unknown, direction: 'undo' | 'redo', id: string): Result<Request | null> {
+  const checked = historyStatusSchema.safeParse(input);
+  if (!checked.success) return failure('invalid-history', 'History status is invalid');
+  return historyRequest(checked.data, direction, id);
+}
+function historyRequest(
+  status: import('@novakai/canvas-authoring').HistoryStatus,
+  direction: 'undo' | 'redo',
+  id: string,
+): Result<Request | null> {
+  const action = status[direction];
+  if (action === null) return { ok: true, value: null };
+  const parsed = requestSchema.safeParse({
+    version: 1,
+    workspace: status.workspace,
+    request: id,
+    actor: { id: 'human:browser', kind: 'human' },
+    assets: [],
+    scope: action.scope,
+    expected: action.expected,
+    intent: { kind: direction, transaction: action.transaction },
+  });
+  if (!parsed.success) return failure('invalid-history', 'History request is invalid');
   return { ok: true, value: parsed.data };
 }

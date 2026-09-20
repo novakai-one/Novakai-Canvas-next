@@ -34,7 +34,14 @@ export type {
 } from './records/storage.js';
 export type { Request, Intent, ApplyOptions } from './records/request.js';
 export type { Preparation, Proposal, FeasibilityReport } from './records/proposal.js';
-export type { Transaction, HistoryHead } from './records/history.js';
+export type {
+  Transaction,
+  HistoryHead,
+  HistoryStatus,
+  HistoryAction,
+  HistoryNavigation,
+} from './records/history.js';
+export { historyStatusSchema } from './records/history.js';
 export type { SnapshotReader, ReceiptReader, Committer, CommitRequest } from './ports/store.js';
 export type { IntentPlanner, CandidateValidator, Feasibility } from './ports/planning.js';
 export type { ResourceAdmission, ResourceLease } from './ports/resources.js';

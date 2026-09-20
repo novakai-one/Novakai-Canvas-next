@@ -5,6 +5,8 @@ import type { HistoryHead, Transaction } from '../../contract/records/history.js
 import { readTransaction, readHead, transactionKey, headKey } from './read.js';
 import { compareVersions, uniqueKeys } from '../records/versions.js';
 import { keyText, versionOf } from '../records/keys.js';
+import { readNavigation, nextAction, navigationKey } from './navigation.js';
+import { findRecord } from '../records/keys.js';
 import { reject } from '../validation/outcomes.js';
 /** Null/tombstoned original state becomes a deletion; live state restores exact prior content/resources. */
 function restoreRecord(
@@ -32,10 +34,32 @@ function checkParticipants(transaction: Transaction, head: HistoryHead): void {
 }
 /** Branch state and versions both matter; equal content after a divergent edit is still a conflict. */
 function checkHead(snapshot: Snapshot, request: Request, head: HistoryHead): void {
-  const required = request.intent.kind === 'undo' ? 'active' : 'undone';
+  const required = requiredState(request);
   if (head.state !== required)
     reject('revision-conflict', 'history', 'Transaction is not in the required undo/redo state');
-  compareVersions(snapshot, head.participants);
+  const stored = findRecord(snapshot, navigationKey);
+  if (stored === null) return compareVersions(snapshot, head.participants);
+  checkNavigation(snapshot, request);
+}
+function requiredState(request: Request): HistoryHead['state'] {
+  return request.intent.kind === 'undo' ? 'active' : 'undone';
+}
+function checkNavigation(snapshot: Snapshot, request: Request): void {
+  if (request.intent.kind === 'change') return;
+  const history = readNavigation(snapshot);
+  if (nextAction(history, request.intent.kind) !== request.intent.transaction)
+    reject(
+      'revision-conflict',
+      'history',
+      'Only the next chronological action can be undone or redone',
+    );
+  checkNavigationToken(snapshot, request);
+}
+function checkNavigationToken(snapshot: Snapshot, request: Request): void {
+  const token = request.expected.find((item) => keyText(item.key) === keyText(navigationKey));
+  if (token === undefined)
+    reject('invalid-input', 'expected', 'An inverse requires the observed navigation version');
+  compareVersions(snapshot, [token]);
 }
 /** Internal history planner returns ordinary data for the same candidate/resource/feasibility guards. */
 export function planInverse(request: Request, snapshot: Snapshot): Proposal {
@@ -53,7 +77,7 @@ export function planInverse(request: Request, snapshot: Snapshot): Proposal {
       restoreRecord(item, direction === 'undo' ? item.before : item.after),
     ),
     reads: [
-      ...head.participants,
+      ...head.participants.map((item) => versionOf(snapshot, item.key)),
       versionOf(snapshot, transactionKey(original)),
       versionOf(snapshot, headKey(original)),
     ],

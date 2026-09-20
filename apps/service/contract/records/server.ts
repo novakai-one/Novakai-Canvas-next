@@ -47,6 +47,7 @@ export interface RouterBindings {
     | 'workspace'
     | 'installation'
     | 'read'
+    | 'history'
     | 'apply'
     | 'prepare'
     | 'receipt'

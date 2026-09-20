@@ -11,6 +11,11 @@ export function createWorkspaceSession(dependencies: SessionDependencies): Works
     workspace: dependencies.workspace,
     installation: dependencies.installation,
     resources: dependencies.resources,
+    history: () =>
+      lifetime.run(
+        () => dependencies.authoring(dependencies.readSignal).history(dependencies.workspace),
+        dependencies.unavailable,
+      ),
     read: () =>
       lifetime.run(
         () => dependencies.authoring(dependencies.readSignal).read(dependencies.workspace),

@@ -9,6 +9,8 @@ import { readSnapshot, readReceipt } from '../core/validation/snapshot.js';
 import { accepted, protect, reject } from '../core/validation/outcomes.js';
 import { validateRegistry } from '../core/admission/registry.js';
 import { withCandidate } from '../core/admission/prepare.js';
+import { historyStatus } from '../core/history/navigation.js';
+import { initializeHistory as adoptHistory } from '../core/history/adoption.js';
 import { applyCandidate } from '../core/transactions/apply.js';
 /** Assert an explicit convenience method without inventing a second request fingerprint/envelope. */
 function requireKind(request: Request, kind: Request['intent']['kind'] | null): void {
@@ -80,5 +82,14 @@ export function createAuthoring(deps: Dependencies): Authoring {
   function redo(input: unknown, options: unknown = {}): Promise<Result<Receipt>> {
     return submit(input, options, 'redo');
   }
-  return Object.freeze({ read, receipt, prepare, apply, undo, redo });
+  function history(workspace: unknown) {
+    return protect(async () => historyStatus(accepted(await read(workspace))), 'authoring-history');
+  }
+  function initializeHistory(workspace: unknown) {
+    return protect(async () => {
+      accepted(registration);
+      return adoptHistory(readShape(workspaceId, workspace), deps);
+    }, 'authoring-history-adoption');
+  }
+  return Object.freeze({ read, receipt, prepare, apply, undo, redo, history, initializeHistory });
 }

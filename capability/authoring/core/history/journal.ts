@@ -12,6 +12,7 @@ import type { Clock } from '../../contract/ports/runtime.js';
 import { timestamp } from '../../contract/brands.js';
 import type { Digest } from '../../contract/brands.js';
 import { findRecord, versionOf } from '../records/keys.js';
+import { navigationKey, readNavigation, advance } from './navigation.js';
 import { transactionKey, headKey } from './read.js';
 import { checkDependencies } from '../admission/dependencies.js';
 import { readShape } from '../validation/input.js';
@@ -64,6 +65,7 @@ function historyWrites(
       actor: request.actor,
       timestamp: readShape(timestamp, accepted(clock.now())),
       mode: request.intent.kind,
+      label: actionLabel(candidate),
       target,
       transitions: candidate.preparation.changes.map((write) => transition(candidate, write)),
     },
@@ -93,6 +95,7 @@ function historyWrites(
       resources,
     },
     { kind: 'put', key: headKey(original), value: copyJson(head), resources: [] },
+    ...navigationWrites(request, candidate),
   ];
 }
 /** Deleted/previously absent data contributes no resource list; retained before-images do. */
@@ -114,8 +117,7 @@ export function createJournal(
 ): Journal {
   const prepared = candidate.preparation;
   const result = outcome(request, candidate);
-  if (prepared.changes.length === 0)
-    return { writes: [], expected: prepared.reads, outcome: result };
+  if (prepared.changes.length === 0) return unchanged(request, prepared.reads, result);
   checkJournalIdentity(request, candidate);
   const history = historyWrites(request, candidate, clock);
   const reads = history.map((write) => versionOf(candidate.before, write.key));
@@ -134,4 +136,54 @@ function requireAbsent(candidate: PreparedCandidate, key: RecordKey): void {
       'history',
       'Generated history already exists without a reconciled receipt',
     );
+}
+
+/** Navigation participates in the same CAS/transaction as every eligible semantic change. */
+function navigationWrites(request: Request, candidate: PreparedCandidate): readonly Write[] {
+  if (findRecord(candidate.before, navigationKey) === null) return [];
+  const navigation = readNavigation(candidate.before);
+  const versions = candidate.preparation.changes.map((write) =>
+    versionOf(candidate.after, write.key),
+  );
+  return [
+    {
+      kind: 'put',
+      key: navigationKey,
+      value: copyJson(advance(navigation, request, versions), storedLimits),
+      resources: [],
+    },
+  ];
+}
+function unchanged(
+  request: Request,
+  expected: readonly ReadVersion[],
+  outcome: CommitOutcome,
+): Journal {
+  if (request.intent.kind !== 'change')
+    reject('invariant-violation', 'history', 'An inverse must restore a changed record');
+  return { writes: [], expected, outcome };
+}
+
+/** Persist a human description with the transaction instead of displaying an opaque request ID. */
+function actionLabel(candidate: PreparedCandidate): string {
+  const labels = candidate.preparation.changes.map((write) => changedLabel(candidate, write));
+  return labels.join('; ');
+}
+function changedLabel(candidate: PreparedCandidate, write: Write): string {
+  const before = findRecord(candidate.before, write.key);
+  const after = findRecord(candidate.after, write.key);
+  const title = recordTitle(after) ?? recordTitle(before) ?? write.key.id;
+  if (write.kind === 'delete') return `Delete ${title}`;
+  return `${changeVerb(before)} ${title}`;
+}
+function changeVerb(before: StoredRecord | null): string {
+  return before === null || before.deleted ? 'Create' : 'Edit';
+}
+function recordTitle(record: StoredRecord | null): string | null {
+  const value = record?.value;
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return null;
+  return titleValue(value);
+}
+function titleValue(value: object): string | null {
+  return 'title' in value && typeof value.title === 'string' ? value.title : null;
 }

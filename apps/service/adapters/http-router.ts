@@ -87,6 +87,7 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
     'POST /api/v1/resources/prepare': (call) => resource(call, prepare),
     'POST /api/v1/resources/instantiate': (call) => resource(call, instantiate),
     'GET /api/v1/workspace': () => owners.session.read(),
+    'GET /api/v1/history': () => owners.session.history(),
     'GET /api/v1/installation': async () => ({
       ok: true,
       value: {

@@ -11,6 +11,7 @@ import {
   feasibilitySchema,
 } from '../../contract/records/proposal.js';
 import type { PreparedCandidate, FeasibilityReport } from '../../contract/records/proposal.js';
+import { navigationDependencies } from '../history/navigation.js';
 import { planIntent } from './registry.js';
 import { createCandidate } from './candidate.js';
 import type { Candidate } from './candidate.js';
@@ -66,6 +67,7 @@ export async function buildCandidate(
   const candidate = await createCandidate(request, before, proposal, deps.validation);
   const reads = checkDependencies(before, [
     request.expected,
+    navigationDependencies(before),
     resolved.reads,
     proposal.reads,
     candidate.reads,

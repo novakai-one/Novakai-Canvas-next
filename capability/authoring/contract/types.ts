@@ -7,6 +7,10 @@ import type { ResourceAdmission } from './ports/resources.js';
 import type { Hasher, Clock, Cancellation, Notifications } from './ports/runtime.js';
 /** Read-only interface consumers never receive commit authority through a storage object. */
 export interface Authoring {
+  history(workspace: unknown): Promise<Result<import('./records/history.js').HistoryStatus>>;
+  initializeHistory(
+    workspace: unknown,
+  ): Promise<Result<import('./records/history.js').HistoryStatus>>;
   read(workspace: unknown): Promise<Result<Snapshot>>;
   receipt(workspace: unknown, request: unknown): Promise<Result<Receipt | null>>;
   prepare(request: unknown, preview?: boolean): Promise<Result<Preparation | Receipt>>;

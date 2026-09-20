@@ -37,8 +37,12 @@ export function pinnedSections(
 ): readonly Section[] {
   const affected = new Set(
     intent.entries
-      .filter((entry) => entry.target.kind === 'node')
-      .map((entry) => ('section' in entry.target ? entry.target.section : '')),
+      .map((entry) => {
+        if (entry.target.kind === 'section') return entry.target.id;
+        if (entry.target.kind === 'node') return entry.target.section;
+        return '';
+      })
+      .filter((id) => id !== ''),
   );
   return document.collection.sections.map((source) => pinSection(document, source, affected));
 }

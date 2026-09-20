@@ -47,6 +47,11 @@
   }
   .button[aria-pressed='true'] {
     border-color: var(--nv-color-action);
+    color: var(--nv-color-action);
+    background: color-mix(in srgb, var(--nv-color-action) 14%, var(--nv-color-panel));
+  }
+  .button[aria-pressed='true']:focus-visible {
+    outline-offset: 0;
   }
   .button:focus-visible {
     outline: var(--nv-focus-width) solid var(--nv-color-focus);

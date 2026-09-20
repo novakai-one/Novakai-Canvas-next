@@ -2,5 +2,51 @@
   "id": "paper",
   "version": "1.4.1",
   "baseVersion": "1.4.1",
-  "overrides": {}
+  "overrides": {
+    "action.accent": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7019607843137254,
+        0.3254901960784314,
+        0.03529411764705882
+      ],
+      "alpha": 1
+    },
+    "canvasTone.wireIdle": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7058823529411765,
+        0.7333333333333333,
+        0.7686274509803922
+      ],
+      "alpha": 1
+    },
+    "canvasTone.groupBoundary": {
+      "colorSpace": "srgb",
+      "components": [
+        0.796078431372549,
+        0.8196078431372549,
+        0.8509803921568627
+      ],
+      "alpha": 1
+    },
+    "canvasTone.secondary": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2901960784313726,
+        0.48627450980392156,
+        0.5254901960784314
+      ],
+      "alpha": 1
+    },
+    "canvasTone.primarySurface": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9882352941176471,
+        0.8941176470588236,
+        0.7764705882352941
+      ],
+      "alpha": 1
+    }
+  }
 }

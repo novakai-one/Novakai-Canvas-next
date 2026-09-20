@@ -684,7 +684,7 @@
             "op": "alpha",
             "color": {
               "op": "reference",
-              "value": "{border.default}"
+              "value": "{text.primary}"
             },
             "scalar": {
               "op": "reference",
@@ -697,6 +697,18 @@
     "nodeSurface": {
       "$type": "color",
       "$value": "{canvasTone.nodeSurface}"
+    },
+    "nodeSurfaceTop": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeSurfaceTop}"
+    },
+    "nodeSurfaceBottom": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeSurfaceBottom}"
+    },
+    "nodeHighlight": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeHighlight}"
     },
     "nodeHeader": {
       "$type": "color",
@@ -779,7 +791,19 @@
     },
     "wireIdleOpacity": {
       "$type": "number",
-      "$value": 0.42
+      "$value": 1.0
+    },
+    "wireIdle": {
+      "$type": "color",
+      "$value": "{canvasTone.wireIdle}"
+    },
+    "primaryGlow": {
+      "$type": "color",
+      "$value": "{canvasEmphasis.primaryGlow}"
+    },
+    "primarySurfaceRaise": {
+      "$type": "color",
+      "$value": "{canvasEmphasis.primarySurface.raise}"
     },
     "primarySurface": {
       "$type": "color",
@@ -788,6 +812,18 @@
     "secondary": {
       "$type": "color",
       "$value": "{canvasTone.secondary}"
+    },
+    "ambientGlow": {
+      "$type": "color",
+      "$value": "{canvasTone.ambientGlow}"
+    },
+    "nodeEdgeTop": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeEdgeTop}"
+    },
+    "nodeEdgeBottom": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeEdgeBottom}"
     },
     "wireHoverOpacity": {
       "$type": "number",

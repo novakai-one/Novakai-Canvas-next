@@ -69,13 +69,24 @@ async function invokeApi(
   }
   const outcome = await bindings.router.invoke({
     path: exchange.url.pathname,
-    query: Object.fromEntries(exchange.url.searchParams),
+    query: queryValues(exchange.url.searchParams),
     caller,
     signal: exchange.signal,
     metadata: exchange.metadata,
     body: body.value,
   });
   bindings.io.json(exchange.response, outcome, bindings.security.generation);
+}
+
+function queryValues(params: URLSearchParams): Readonly<Record<string, string>> {
+  const values = new Map<string, string>();
+  for (const [key, value] of params) appendQueryValue(values, key, value);
+  return Object.fromEntries(values);
+}
+
+function appendQueryValue(values: Map<string, string>, key: string, value: string): void {
+  if (values.has(key)) values.set(key, `${values.get(key)}\u0000${value}`);
+  else values.set(key, value);
 }
 /** A navigation grants only an HttpOnly browser session. Subsequent resource reads still pass exact host/origin admission. */
 function browserAccess(exchange: Exchange, bindings: ServerBindings): Result<void> {

@@ -46,13 +46,35 @@ function validSourceScope(
   section: string | undefined,
   selected: string | undefined,
 ): Result<import('@novakai/canvas-language').Scope> {
-  if (selected === undefined) return { ok: true, value: { kind: 'all' } };
-  if (!/^[A-Za-z0-9_-]+$/.test(selected))
-    return failure('invalid-input', 'scope', 'Scope IDs must be non-empty canonical IDs');
+  const duplicate = duplicateScopeError(section, selected);
+  if (duplicate !== undefined) return duplicate;
   return sourceScopeValue(section, selected);
 }
 
+function duplicateScopeError(
+  section: string | undefined,
+  selected: string | undefined,
+): Result<import('@novakai/canvas-language').Scope> | undefined {
+  return hasDuplicateScopeValue(section) || hasDuplicateScopeValue(selected)
+    ? failure('invalid-input', 'scope', 'Each read scope query may be provided only once')
+    : undefined;
+}
+
+function hasDuplicateScopeValue(value: string | undefined): boolean {
+  return value?.includes('\u0000') ?? false;
+}
+
 function sourceScopeValue(
+  section: string | undefined,
+  id: string | undefined,
+): Result<import('@novakai/canvas-language').Scope> {
+  if (id === undefined) return { ok: true, value: { kind: 'all' } };
+  if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(id))
+    return failure('invalid-input', 'scope', 'Scope IDs must be non-empty canonical IDs');
+  return sourceScopeChoice(section, id);
+}
+
+function sourceScopeChoice(
   section: string | undefined,
   id: string,
 ): Result<import('@novakai/canvas-language').Scope> {

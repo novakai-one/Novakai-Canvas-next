@@ -15,6 +15,16 @@ export function readArguments(
   args: readonly string[],
   defaultWorkspace: string,
 ): Result<CliOptions> {
+  const duplicateScope = duplicateScopeFlag(args);
+  return duplicateScope === undefined
+    ? readArgumentsAfterDuplicateCheck(args, defaultWorkspace)
+    : duplicateScope;
+}
+
+function readArgumentsAfterDuplicateCheck(
+  args: readonly string[],
+  defaultWorkspace: string,
+): Result<CliOptions> {
   try {
     const parsed = parseArgs({
       args: [...args],
@@ -177,9 +187,19 @@ function invalidReadScope(
 }
 
 function invalidScopeId(selected: string | undefined): Result<Command> | undefined {
-  if (selected === undefined || !/^[A-Za-z0-9_-]+$/.test(selected))
+  if (selected === undefined || !/^[A-Za-z][A-Za-z0-9_-]*$/.test(selected))
     return failure('invalid-arguments', 'Read scope IDs must be non-empty canonical IDs.');
   return undefined;
+}
+
+function duplicateScopeFlag(args: readonly string[]): Result<CliOptions> | undefined {
+  const names = args.flatMap((argument) => {
+    const name = argument.split('=', 1)[0]?.replace(/^--/, '');
+    return name === 'section' || name === 'object' ? [name] : [];
+  });
+  return names.some((name) => names.indexOf(name) !== names.lastIndexOf(name))
+    ? failure('invalid-arguments', 'Each read scope flag may be provided only once.')
+    : undefined;
 }
 
 function validatedMode(name: Command['name'], fallback: string): Result<Command['mode']> {

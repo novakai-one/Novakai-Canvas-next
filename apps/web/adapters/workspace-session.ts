@@ -8,7 +8,13 @@ import type {
   AddObjectDraft,
 } from '../contract/records/creation.js';
 import type { ConnectionDraft, ConnectionEdit } from '../contract/records/connection.js';
-import { compatibleWires, sourceEndpoints, targetEndpoints } from '@novakai/canvas-model';
+import {
+  compatibleWires,
+  memberEndpoints,
+  genericMemberEndpoints,
+  sourceEndpoints,
+  targetEndpoints,
+} from '@novakai/canvas-model';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
 import type {
@@ -26,6 +32,385 @@ import type {
 import type { Diagnostic, Result } from '../contract/errors.js';
 import type { RelationshipKind } from '@novakai/canvas-model';
 import { chooseMoveOption as chooseReviewedMoveOption } from '../contract/api.js';
+
+const allRelationshipKinds: readonly RelationshipKind[] = [
+  'flow',
+  'association',
+  'imports',
+  'calls',
+  'implements',
+  'contains',
+  'parent',
+  'reference',
+  'transition',
+];
+type CanonicalMemberKind = 'field' | 'member' | 'signature' | 'port' | 'row';
+
+function connectionSection(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+  occupied: boolean,
+): Result<Section> {
+  const blocker = connectionSectionBlocker(active, intent, occupied);
+  if (blocker !== null) return blocker;
+  return findConnectionSection(active, intent.source.section);
+}
+
+function connectionSectionBlocker(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+  occupied: boolean,
+): Result<Section> | null {
+  if (occupied)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'pending-request',
+        'Finish or cancel the current connection first.',
+        'Apply or cancel the retained connection draft.',
+      ),
+    };
+  if (intent.base.collectionId !== active.document.collection.id)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'stale-gesture',
+        'The diagram changed while this connection was being edited.',
+        'Reconnect the endpoints on the current diagram.',
+      ),
+    };
+  return null;
+}
+
+function findConnectionSection(active: ActiveDiagram, sectionId: string): Result<Section> {
+  const section = active.document.collection.sections.find((item) => item.id === sectionId);
+  if (section === undefined || section.mode === 'sequence')
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'unsupported-edit',
+        'Connections are unavailable in sequence diagrams.',
+        'Choose a compatible diagram section.',
+      ),
+    };
+  return { ok: true, value: section };
+}
+
+function canonicalMemberKind(
+  object: DiagramObject,
+  member: string,
+): CanonicalMemberKind | undefined {
+  return memberPortKind(object, member) ?? contentMemberKind(object, member);
+}
+
+function memberPortKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+  return object.ports.some((port) => port.id === member) ? 'port' : undefined;
+}
+
+function contentMemberKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+  const block = object.content.find((item) => item.id === member);
+  if (block !== undefined && block.kind !== 'table') return block.kind as CanonicalMemberKind;
+  return tableRowKind(object, member);
+}
+
+function tableRowKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+  const table = object.content.find(
+    (item) => item.kind === 'table' && item.rows.some((row) => row.id === member),
+  );
+  return table === undefined ? undefined : 'row';
+}
+
+function canonicalMemberAllowed(object: DiagramObject, member: string): boolean {
+  const kind = canonicalMemberKind(object, member);
+  const allowed = memberEndpoints[object.kind] ?? genericMemberEndpoints;
+  return kind !== undefined && (allowed as readonly string[]).includes(kind);
+}
+
+function editedConnection(draft: ConnectionDraft, edit: ConnectionEdit): ConnectionDraft {
+  if (edit.kind === 'label') return { ...draft, label: edit.value, problem: null };
+  if (edit.kind === 'relationship-kind') return { ...draft, kind: edit.value, problem: null };
+  return { ...draft, [edit.side]: edit.value, problem: null };
+}
+
+function connectionRequest(
+  bindings: WorkspaceBindings,
+  draft: ConnectionDraft,
+  label: string,
+): Result<Request> {
+  const id = `relationship-${draft.id}` as Relationship['id'];
+  const relationship: Relationship = {
+    id,
+    kind: draft.kind,
+    label,
+    source: endpointValue(draft.source),
+    target: endpointValue(draft.target),
+    ...associationCardinality(draft),
+    style: 'solid',
+    sources: [],
+  };
+  const section: Section = {
+    ...draft.section,
+    wires: [
+      ...draft.section.wires,
+      {
+        ...connectionAppearance(id),
+      },
+    ],
+  };
+  return bindings.inputs.model(
+    draft.base,
+    draft.collection.id,
+    [
+      { op: 'create', target: 'relationships', value: relationship },
+      { op: 'replace', target: 'sections', value: section },
+    ],
+    draft.id,
+  );
+}
+
+function associationCardinality(draft: ConnectionDraft): Partial<Relationship> {
+  if (draft.kind !== 'association') return {};
+  return {
+    ...cardinalityEntry('from', draft.from),
+    ...cardinalityEntry('to', draft.to),
+  };
+}
+
+function cardinalityEntry(
+  side: 'from' | 'to',
+  value: ConnectionDraft['from'],
+): Partial<Relationship> {
+  return value === 'none' ? {} : { [side]: value };
+}
+
+function connectionAppearance(id: Relationship['id']): Section['wires'][number] {
+  return {
+    relationship: id,
+    route: 'orthogonal',
+    sourceSide: 'auto',
+    targetSide: 'auto',
+    locked: false,
+  };
+}
+
+function connectionKinds(
+  mode: Section['mode'],
+  source: ConnectionDraft['source']['kind'],
+  target: ConnectionDraft['target']['kind'],
+): readonly RelationshipKind[] {
+  const candidates = compatibleWires[mode] ?? allRelationshipKinds;
+  return candidates.filter(
+    (kind) =>
+      (sourceEndpoints[kind] === undefined || sourceEndpoints[kind]?.includes(source)) &&
+      (targetEndpoints[kind] === undefined || targetEndpoints[kind]?.includes(target)),
+  );
+}
+
+function connectionEndpointNode(
+  active: ActiveDiagram,
+  endpoint: Extract<EditIntent, { kind: 'connection' }>['source'],
+) {
+  const sceneSection = active.document.scene.sections.find((item) => item.id === endpoint.section);
+  return sceneSection?.nodes.find((item) => item.id === endpoint.node);
+}
+
+function connectionEndpointObject(
+  active: ActiveDiagram,
+  node: ReturnType<typeof connectionEndpointNode>,
+) {
+  const objectId = node?.measured.objectId;
+  return objectId === null || objectId === undefined
+    ? undefined
+    : active.document.collection.objects.find((item) => item.id === objectId);
+}
+
+function connectionEndpointValue(
+  object: DiagramObject,
+  anchor: { readonly member: string; readonly label: string } | undefined,
+): ConnectionDraft['source'] {
+  return {
+    object: object.id,
+    kind: object.kind,
+    label: object.label,
+    ...(anchor === undefined ? {} : { member: anchor.member, memberLabel: anchor.label }),
+  };
+}
+
+function connectionEndpointMember(
+  object: DiagramObject,
+  node: NonNullable<ReturnType<typeof connectionEndpointNode>>,
+  member: string | null,
+): Result<ConnectionDraft['source']> {
+  if (member === null) return { ok: true, value: connectionEndpointValue(object, undefined) };
+  return addressConnectionMember(object, node, member);
+}
+
+function addressConnectionMember(
+  object: DiagramObject,
+  node: NonNullable<ReturnType<typeof connectionEndpointNode>>,
+  member: string,
+): Result<ConnectionDraft['source']> {
+  const anchor = node.measured.content.anchors.find((item) => item.member === member);
+  if (anchor === undefined)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'stale-target',
+        'The selected member is no longer available.',
+        'Reconnect the current members.',
+      ),
+    };
+  if (!canonicalMemberAllowed(object, anchor.member))
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'unsupported-edit',
+        'The selected member is not a legal connection endpoint for this object.',
+        'Choose a field, member, signature, port or row supported by the object.',
+      ),
+    };
+  return { ok: true, value: connectionEndpointValue(object, anchor) };
+}
+
+function resolveConnectionEndpoint(
+  active: ActiveDiagram,
+  endpoint: Extract<EditIntent, { kind: 'connection' }>['source'],
+): Result<ConnectionDraft['source']> {
+  const node = connectionEndpointNode(active, endpoint);
+  const object = connectionEndpointObject(active, node);
+  if (node === undefined || object === undefined)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'stale-target',
+        'The connection endpoint is no longer represented by a canonical object.',
+        'Reconnect the current nodes.',
+      ),
+    };
+  return connectionEndpointMember(object, node, endpoint.member);
+}
+
+function resolveConnectionEndpoints(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+): Result<{
+  readonly source: ConnectionDraft['source'];
+  readonly target: ConnectionDraft['target'];
+}> {
+  const source = resolveConnectionEndpoint(active, intent.source);
+  if (!source.ok) return source;
+  const target = resolveConnectionEndpoint(active, intent.target);
+  if (!target.ok) return target;
+  return { ok: true, value: { source: source.value, target: target.value } };
+}
+
+function buildConnectionDraft(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+  section: Section,
+): Result<ConnectionDraft> {
+  const endpoints = resolveConnectionEndpoints(active, intent);
+  if (!endpoints.ok) return endpoints;
+  const kinds = connectionKinds(
+    section.mode,
+    endpoints.value.source.kind,
+    endpoints.value.target.kind,
+  );
+  if (kinds.length === 0)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'unsupported-edit',
+        'These endpoints have no compatible relationship kind.',
+        'Choose endpoints supported by this diagram.',
+      ),
+    };
+  return {
+    ok: true,
+    value: {
+      id: intent.id,
+      base: active.base,
+      generation: active.generation,
+      collection: active.document.collection,
+      section,
+      source: endpoints.value.source,
+      target: endpoints.value.target,
+      kinds,
+      kind: kinds[0] as RelationshipKind,
+      label: '',
+      from: 'none',
+      to: 'none',
+      problem: null,
+      requestState: 'draft',
+    },
+  };
+}
+
+function connectionCaptureCheck(
+  capture: { readonly draft: ConnectionDraft } | null,
+): Result<ConnectionDraft> {
+  return capture === null
+    ? {
+        ok: false,
+        error: connectionDiagnostic(
+          'invalid-edit',
+          'No connection is awaiting review.',
+          'Connect two compatible endpoints first.',
+        ),
+      }
+    : { ok: true, value: capture.draft };
+}
+
+function connectionActiveCheck(
+  active: ActiveDiagram | null,
+  draft: Result<ConnectionDraft>,
+): Result<void> {
+  if (!draft.ok) return draft;
+  return active === null ||
+    active.document.collection.id !== draft.value.collection.id ||
+    active.generation !== draft.value.generation
+    ? {
+        ok: false,
+        error: connectionDiagnostic(
+          'stale-gesture',
+          'The connection belongs to another collection or generation.',
+          'Return to the captured collection and retry, or cancel this draft.',
+        ),
+      }
+    : { ok: true, value: undefined };
+}
+
+function connectionLabelCheck(draft: Result<ConnectionDraft>): Result<string> {
+  if (!draft.ok) return draft;
+  const label = draft.value.label.trim();
+  return label.length === 0
+    ? {
+        ok: false,
+        error: connectionDiagnostic(
+          'invalid-edit',
+          'Give the connection a label before applying it.',
+          'Enter a short relationship label.',
+        ),
+      }
+    : { ok: true, value: label };
+}
+
+function connectionChecks(
+  capture: { readonly draft: ConnectionDraft } | null,
+  active: ActiveDiagram | null,
+): readonly Result<unknown>[] {
+  const draft = connectionCaptureCheck(capture);
+  return [draft, connectionActiveCheck(active, draft), connectionLabelCheck(draft)];
+}
+
+function endpointValue(endpoint: ConnectionDraft['source']): Relationship['source'] {
+  return endpoint.member === undefined
+    ? { object: endpoint.object as Relationship['source']['object'] }
+    : {
+        object: endpoint.object as Relationship['source']['object'],
+        member: endpoint.member as Relationship['source']['member'],
+      };
+}
 interface RenderRequest {
   readonly token: number;
   readonly id: string;
@@ -130,13 +515,25 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
     holdConfirmedHistory(pending);
+    const connection = pendingConnectionView(pending);
     update({
       pending,
       busy: pending.some((item) => item.state === 'sending'),
       creation: { ...state.creation, busy: creationLocked() },
+      ...(connection === undefined ? {} : { connection }),
     });
     updateMutationAvailability();
     if (movementCapture?.intent.id !== undefined) updateMovementRecovery(movementCapture.intent.id);
+  }
+  function pendingConnectionView(pending: readonly Submission[]): ConnectionDraft | undefined {
+    if (connectionCapture?.request === null || connectionCapture === null) return undefined;
+    const item = pending.find(
+      (entry) => entry.request.request === connectionCapture?.request?.request,
+    );
+    if (item === undefined) return undefined;
+    const requestState = item.state;
+    connectionCapture.draft = { ...connectionCapture.draft, requestState };
+    return connectionCapture.draft;
   }
   /** Listeners receive a new immutable view; Canvas panning has its own narrower subscription. */
   function update(patch: Partial<WorkspaceView>): void {
@@ -374,7 +771,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     void refresh();
     return {
       ok: false,
-      error: diagnostic(
+      error: connectionDiagnostic(
         'workspace-generation',
         'The workspace changed while opening this collection',
         'Refresh the workspace, then try again.',
@@ -738,136 +1135,17 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (await reviewPlacementIfSupported(active, intent)) return;
     planAndSubmit(active, intent);
   }
-  // One bounded validation seam owns endpoint resolution, compatibility and draft capture.
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   function beginConnection(
     active: ActiveDiagram,
     intent: Extract<EditIntent, { kind: 'connection' }>,
   ): void {
-    if (connectionCapture !== null) {
-      report(
-        diagnostic(
-          'pending-request',
-          'Finish or cancel the current connection first.',
-          'Apply or cancel the retained connection draft.',
-        ),
-      );
-      return;
-    }
-    if (intent.base.collectionId !== active.document.collection.id) {
-      report(
-        diagnostic(
-          'stale-gesture',
-          'The diagram changed while this connection was being edited.',
-          'Reconnect the endpoints on the current diagram.',
-        ),
-      );
-      return;
-    }
-    const section = active.document.collection.sections.find(
-      (item) => item.id === intent.source.section,
-    );
-    if (section === undefined || section.mode === 'sequence') {
-      report(
-        diagnostic(
-          'unsupported-edit',
-          'Connections are unavailable in sequence diagrams.',
-          'Choose a compatible diagram section.',
-        ),
-      );
-      return;
-    }
-    const source = connectionEndpoint(active, intent.source);
-    const target = connectionEndpoint(active, intent.target);
-    if (!source.ok) return report(source.error);
-    if (!target.ok) return report(target.error);
-    const kinds = connectionKinds(section.mode, source.value.kind, target.value.kind);
-    if (kinds.length === 0) {
-      report(
-        diagnostic(
-          'unsupported-edit',
-          'These endpoints have no compatible relationship kind.',
-          'Choose endpoints supported by this diagram.',
-        ),
-      );
-      return;
-    }
-    const draft: ConnectionDraft = {
-      id: intent.id,
-      base: active.base,
-      generation: active.generation,
-      collection: active.document.collection,
-      section,
-      source: source.value,
-      target: target.value,
-      kinds,
-      kind: kinds[0] as RelationshipKind,
-      label: '',
-      from: 'none',
-      to: 'none',
-      problem: null,
-    };
-    connectionCapture = { draft, request: null };
+    const section = connectionSection(active, intent, connectionCapture !== null);
+    if (!section.ok) return report(section.error);
+    const draft = buildConnectionDraft(active, intent, section.value);
+    if (!draft.ok) return report(draft.error);
+    connectionCapture = { draft: draft.value, request: null };
     bindings.panels.open('right', true);
-    update({ connection: draft, status: 'Review new connection', problem: null });
-  }
-  // Scene-to-canonical resolution must remain together so generated scene IDs never leak.
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  function connectionEndpoint(
-    active: ActiveDiagram,
-    endpoint: Extract<EditIntent, { kind: 'connection' }>['source'],
-  ): Result<ConnectionDraft['source']> {
-    const sceneSection = active.document.scene.sections.find(
-      (item) => item.id === endpoint.section,
-    );
-    const node = sceneSection?.nodes.find((item) => item.id === endpoint.node);
-    const objectId = node?.measured.objectId;
-    const object =
-      objectId === null || objectId === undefined
-        ? undefined
-        : active.document.collection.objects.find((item) => item.id === objectId);
-    if (node === undefined || object === undefined)
-      return {
-        ok: false,
-        error: diagnostic(
-          'stale-target',
-          'The connection endpoint is no longer represented by a canonical object.',
-          'Reconnect the current nodes.',
-        ),
-      };
-    const anchor =
-      endpoint.member === null
-        ? undefined
-        : node.measured.content.anchors.find((item) => item.member === endpoint.member);
-    if (endpoint.member !== null && anchor === undefined)
-      return {
-        ok: false,
-        error: diagnostic(
-          'stale-target',
-          'The selected member is no longer available.',
-          'Reconnect the current members.',
-        ),
-      };
-    return {
-      ok: true,
-      value: {
-        object: object.id,
-        kind: object.kind,
-        label: object.label,
-        ...(anchor === undefined ? {} : { member: anchor.member, memberLabel: anchor.label }),
-      },
-    };
-  }
-  function connectionKinds(
-    mode: Section['mode'],
-    source: ConnectionDraft['source']['kind'],
-    target: ConnectionDraft['target']['kind'],
-  ): readonly RelationshipKind[] {
-    return (compatibleWires[mode] ?? []).filter(
-      (kind) =>
-        (sourceEndpoints[kind] === undefined || sourceEndpoints[kind]?.includes(source)) &&
-        (targetEndpoints[kind] === undefined || targetEndpoints[kind]?.includes(target)),
-    );
+    update({ connection: draft.value, status: 'Review new connection', problem: null });
   }
   async function reviewPlacementIfSupported(
     active: ActiveDiagram,
@@ -1474,95 +1752,57 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       },
     });
   }
-  // One retained draft reducer keeps label, kind and cardinality edits on the captured base.
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   function editConnection(edit: ConnectionEdit): void {
     if (connectionCapture?.request !== null || connectionCapture === null) return;
     const current = connectionCapture.draft;
-    const next: ConnectionDraft =
-      edit.kind === 'label'
-        ? { ...current, label: edit.value, problem: null }
-        : edit.kind === 'relationship-kind'
-          ? { ...current, kind: edit.value, problem: null }
-          : { ...current, [edit.side]: edit.value, problem: null };
+    const next = editedConnection(current, edit);
     connectionCapture.draft = next;
     update({ connection: next, problem: null });
   }
-  // Relationship plus section appearance are assembled and submitted as one captured request.
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   async function applyConnection(): Promise<Result<Receipt>> {
     const capture = connectionCapture;
-    if (capture === null)
-      return {
-        ok: false,
-        error: diagnostic(
-          'invalid-edit',
-          'No connection is awaiting review.',
-          'Connect two compatible endpoints first.',
-        ),
-      };
-    const draft = capture.draft;
-    const label = draft.label.trim();
-    if (label.length === 0) {
-      const error = diagnostic(
-        'invalid-edit',
-        'Give the connection a label before applying it.',
-        'Enter a short relationship label.',
-      );
-      update({ connection: { ...draft, problem: error.message }, problem: error });
-      return { ok: false, error };
-    }
-    const id = `relationship-${draft.id}` as Relationship['id'];
-    const relationship: Relationship = {
-      id,
-      kind: draft.kind,
+    const checks = connectionChecks(capture, state.active);
+    const failure = checks.find((check) => !check.ok);
+    if (failure !== undefined) return retainConnectionFailure(capture?.draft, failure.error);
+    const capturedDraft = (checks[0] as Extract<(typeof checks)[number], { ok: true }>)
+      .value as ConnectionDraft;
+    const label = (checks[2] as Extract<(typeof checks)[number], { ok: true }>).value as string;
+    return submitConnectionRequest(
+      capture as { draft: ConnectionDraft; request: Request | null },
+      capturedDraft,
       label,
-      source: endpointValue(draft.source),
-      target: endpointValue(draft.target),
-      ...(draft.kind === 'association' && draft.from !== 'none' ? { from: draft.from } : {}),
-      ...(draft.kind === 'association' && draft.to !== 'none' ? { to: draft.to } : {}),
-      style: 'solid',
-      sources: [],
-    };
-    const section: Section = {
-      ...draft.section,
-      wires: [
-        ...draft.section.wires,
-        {
-          relationship: id,
-          route: 'orthogonal',
-          sourceSide: 'auto',
-          targetSide: 'auto',
-          locked: false,
-        },
-      ],
-    };
-    const request = bindings.inputs.model(
-      draft.base,
-      draft.collection.id,
-      [
-        { op: 'create', target: 'relationships', value: relationship },
-        { op: 'replace', target: 'sections', value: section },
-      ],
-      draft.id,
     );
+  }
+  function retainConnectionFailure(
+    draft: ConnectionDraft | undefined,
+    error: Diagnostic,
+  ): Result<Receipt> {
+    if (draft !== undefined)
+      update({ connection: { ...draft, problem: error.message }, problem: error });
+    return { ok: false, error };
+  }
+  async function submitConnectionRequest(
+    capture: { draft: ConnectionDraft; request: Request | null },
+    draft: ConnectionDraft,
+    label: string,
+  ): Promise<Result<Receipt>> {
+    const request = connectionRequest(bindings, draft, label);
     if (!request.ok) {
-      update({ connection: { ...draft, problem: request.error.message }, problem: request.error });
+      update({
+        connection: { ...draft, problem: request.error.message },
+        problem: request.error,
+      });
       return request;
     }
     capture.request ??= request.value;
+    update({ connection: { ...draft, requestState: 'sending' } });
     const result = await submit(capture.request, draft.generation, state.sourceEdit, draft.id);
     if (!result.ok)
-      update({ connection: { ...draft, problem: result.error.message }, problem: result.error });
+      update({
+        connection: { ...draft, problem: result.error.message },
+        problem: result.error,
+      });
     return result;
-  }
-  function endpointValue(endpoint: ConnectionDraft['source']): Relationship['source'] {
-    return endpoint.member === undefined
-      ? { object: endpoint.object as Relationship['source']['object'] }
-      : {
-          object: endpoint.object as Relationship['source']['object'],
-          member: endpoint.member as Relationship['source']['member'],
-        };
   }
   function cancelConnection(): void {
     if (connectionCapture?.request !== null) return;
@@ -1583,7 +1823,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const released =
       releaseDiagramRequest(requestId) ||
       releaseObjectRequest(requestId) ||
-      releaseGroupRequest(requestId);
+      releaseGroupRequest(requestId) ||
+      releaseConnectionRequest(requestId);
     if (!released) return;
     clearDismissedCreationView();
   }
@@ -1600,6 +1841,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function releaseGroupRequest(requestId: string): boolean {
     if (groupCapture?.request?.request !== requestId) return false;
     groupCapture = null;
+    return true;
+  }
+  function releaseConnectionRequest(requestId: string): boolean {
+    if (connectionCapture?.request?.request !== requestId) return false;
+    connectionCapture.request = null;
+    connectionCapture.draft = { ...connectionCapture.draft, problem: null, requestState: 'draft' };
+    update({ connection: connectionCapture.draft });
     return true;
   }
   function clearDismissedCreationView(): void {
@@ -2319,6 +2567,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       listeners.clear();
     },
   };
+}
+
+function connectionDiagnostic(code: string, message: string, recovery: string): Diagnostic {
+  return { code, message, recovery } as Diagnostic;
 }
 /** Same-workspace monotonic revisions can update the existing session without losing its camera or selection. */
 function reusableSession(

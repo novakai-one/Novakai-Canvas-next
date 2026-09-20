@@ -5,6 +5,7 @@ import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type { WireFieldsProps } from '../../contract/wire-react.js';
 import type { WireEdit } from '../../contract/records/wire-editor.js';
 import type { ConnectionDraft, Cardinality } from '../../contract/records/connection.js';
+import type { SessionState } from '@novakai/canvas-canvas';
 import { selectedWire, wireDraftKey, editedWire } from '../../contract/api.js';
 import styles from './ObjectEditor.module.css';
 /** Injected field groups stay mounted across ordinary edits and can be reorganized at composition. */
@@ -19,8 +20,6 @@ export function createWireEditor({
   }[];
 }): ComponentType<FeatureProps> {
   /** Selection changes show another retained form; they never move the camera or submit an edit. */
-  // The panel has one intentional gate between a pending connection form and wire inspection.
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   function WireEditor({ controller, view }: FeatureProps): ReactElement {
     const canvas = useSyncExternalStore(
       view.active?.session.subscribe ?? emptySubscribe,
@@ -41,54 +40,83 @@ export function createWireEditor({
           cancel={controller.cancelConnection}
         />
       );
-    const selection = selectedWire(view, canvas?.selection[0]);
-    if (selection === null) return <p>Select a wire to edit its label, endpoints or route.</p>;
-    const key = wireDraftKey(
-      selection.collection.id,
-      selection.section.id,
-      selection.relationship.id,
-    );
-    const draft = forms.drafts.find((draft) => draft.key === key);
-    const value = draft ? editedWire(draft) : selection;
-    const edit = (command: WireEdit): void => {
-      session.edit(selection, command);
-    };
     return (
-      <div className={styles.editor}>
-        <header>
-          <strong>{selection.relationship.label}</strong>
-          <p>
-            {selection.section.title} · {selection.relationship.id}
-          </p>
-        </header>
-        {fields.map(({ id, Content }) => (
-          <Content key={id} value={value} collection={selection.collection} edit={edit} />
-        ))}
-        {forms.problem && <p role="alert">{formatFailure(forms.problem).join(' · ')}</p>}
-        {draft && (
-          <footer>
-            <p>
-              Draft from revision {draft.collection.revision}. Shared meaning and local routing
-              apply together.
-            </p>
-            <div className={styles.choices}>
-              <Button
-                label="Apply wire"
-                variant="primary"
-                disabled={view.busy || !view.connected}
-                pending={view.busy}
-                onClick={() => {
-                  void session.apply(key);
-                }}
-              />
-              <Button label="Discard wire draft" onClick={() => session.discard(key)} />
-            </div>
-          </footer>
-        )}
-      </div>
+      <WireSelectionEditor
+        view={view}
+        canvas={canvas}
+        session={session}
+        forms={forms}
+        fields={fields}
+        Button={Button}
+      />
     );
   }
   return WireEditor;
+}
+
+function WireSelectionEditor({
+  view,
+  canvas,
+  session,
+  forms,
+  fields,
+  Button,
+}: Pick<FeatureProps, 'view'> & {
+  readonly canvas: SessionState | null;
+  readonly session: FeatureProps['controller']['wires'];
+  readonly forms: ReturnType<FeatureProps['controller']['wires']['getSnapshot']>;
+  readonly fields: readonly {
+    readonly id: string;
+    readonly Content: ComponentType<WireFieldsProps>;
+  }[];
+  readonly Button: DesignSlots['Button'];
+}): ReactElement {
+  const selection = selectedWire(view, canvas?.selection[0]);
+  if (selection === null) return <p>Select a wire to edit its label, endpoints or route.</p>;
+  const key = wireDraftKey(
+    selection.collection.id,
+    selection.section.id,
+    selection.relationship.id,
+  );
+  const draft = forms.drafts.find((item) => item.key === key);
+  const value = draft ? editedWire(draft) : selection;
+  const edit = (command: WireEdit): void => {
+    session.edit(selection, command);
+  };
+  return (
+    <div className={styles.editor}>
+      <header>
+        <strong>{selection.relationship.label}</strong>
+        <p>
+          {selection.section.title} · {selection.relationship.id}
+        </p>
+      </header>
+      {fields.map(({ id, Content }) => (
+        <Content key={id} value={value} collection={selection.collection} edit={edit} />
+      ))}
+      {forms.problem && <p role="alert">{formatFailure(forms.problem).join(' · ')}</p>}
+      {draft && (
+        <footer>
+          <p>
+            Draft from revision {draft.collection.revision}. Shared meaning and local routing apply
+            together.
+          </p>
+          <div className={styles.choices}>
+            <Button
+              label="Apply wire"
+              variant="primary"
+              disabled={view.busy || !view.connected}
+              pending={view.busy}
+              onClick={() => {
+                void session.apply(key);
+              }}
+            />
+            <Button label="Discard wire draft" onClick={() => session.discard(key)} />
+          </div>
+        </footer>
+      )}
+    </div>
+  );
 }
 
 function ConnectionForm({
@@ -112,6 +140,7 @@ function ConnectionForm({
 }): ReactElement {
   const endpoint = (side: 'Source' | 'Target', value: ConnectionDraft['source']): string =>
     `${side}: ${value.label}${value.memberLabel ? ` · ${value.memberLabel}` : ''}`;
+  const locked = busy || draft.requestState !== 'draft';
   return (
     <div className={styles.editor}>
       <header>
@@ -127,7 +156,7 @@ function ConnectionForm({
           <input
             {...props}
             value={draft.label}
-            disabled={busy}
+            disabled={locked}
             onChange={(event) => edit({ kind: 'label', value: event.target.value })}
           />
         )}
@@ -138,7 +167,7 @@ function ConnectionForm({
           <select
             {...props}
             value={draft.kind}
-            disabled={busy}
+            disabled={locked}
             onChange={(event) => {
               const value = draft.kinds.find((kind) => kind === event.target.value);
               if (value !== undefined) edit({ kind: 'relationship-kind', value });
@@ -168,13 +197,16 @@ function ConnectionForm({
           />
         </>
       )}
+      {draft.requestState !== 'draft' && (
+        <p role="status">This request is unresolved. Reconcile or retry it from pending edits.</p>
+      )}
       {draft.problem !== null && <p role="alert">{draft.problem}</p>}
       <div className={styles.choices}>
-        <Button label="Cancel connection" disabled={busy} onClick={cancel} />
+        <Button label="Cancel connection" disabled={locked} onClick={cancel} />
         <Button
           label="Apply connection"
           variant="primary"
-          disabled={busy || !connected || draft.label.trim().length === 0}
+          disabled={locked || !connected || draft.label.trim().length === 0}
           pending={busy}
           onClick={() => {
             void apply();

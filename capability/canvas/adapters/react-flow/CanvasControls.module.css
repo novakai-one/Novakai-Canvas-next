@@ -7,10 +7,13 @@
     align-items: center;
     max-width: calc(100% - var(--nv-space-6));
     padding: var(--nv-space-2);
-    background: var(--nv-surface-raised);
+    background: var(--nv-surface-overlay);
+    backdrop-filter: blur(14px) saturate(1.25);
     border: var(--nv-stroke-base) solid var(--nv-border-default);
     border-radius: var(--nv-radius-panel);
     color: var(--nv-text-primary);
+    box-shadow: var(--nv-elevation-offset-x) var(--nv-elevation-offset-y) var(--nv-elevation-blur)
+      var(--nv-shadow-opacity-color);
   }
   .tools {
     top: var(--nv-space-3);

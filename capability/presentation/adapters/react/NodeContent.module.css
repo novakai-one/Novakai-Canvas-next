@@ -19,13 +19,7 @@
           var(--nv-canvas-node-ambient-shadow)
       );
     transition-duration: var(--nv-canvas-transition);
-    transition-property: fill, stroke;
-  }
-
-  .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
-    .frame {
-    fill: var(--nv-canvas-node-surface);
-    stroke: var(--nv-canvas-node-boundary);
+    transition-property: fill, stroke, stroke-width, filter;
   }
 
   .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
@@ -105,7 +99,7 @@
   .rim {
     fill: none;
     pointer-events: none;
-    stroke: var(--nv-canvas-node-rim);
+    stroke: var(--nv-canvas-node-highlight);
     stroke-width: var(--nv-stroke-base);
   }
 
@@ -140,11 +134,21 @@
   .root[data-emphasis='primary'][data-shape][data-node-role] .frame {
     stroke: var(--nv-action-accent);
     stroke-width: var(--nv-focus-width);
+    filter: drop-shadow(
+        var(--nv-elevation-offset-x) var(--nv-canvas-node-offset-y) var(--nv-canvas-node-blur)
+          var(--nv-canvas-node-shadow)
+      )
+      drop-shadow(
+        var(--nv-elevation-offset-x) var(--nv-canvas-ambient-offset-y) var(--nv-canvas-ambient-blur)
+          var(--nv-canvas-node-ambient-shadow)
+      )
+      drop-shadow(0 0 22px var(--nv-canvas-primary-glow))
+      drop-shadow(0 8px 24px var(--nv-canvas-primary-surface-raise));
   }
 
   .root[data-emphasis='secondary'][data-shape][data-node-role] .frame {
     stroke: var(--nv-canvas-secondary);
-    stroke-width: var(--nv-focus-width);
+    stroke-width: var(--nv-stroke-base);
   }
   .root[data-hovered='true'][data-emphasis='normal'][data-shape][data-node-role]:not(
       [data-shape='container']

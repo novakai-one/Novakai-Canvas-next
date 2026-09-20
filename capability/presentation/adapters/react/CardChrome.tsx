@@ -12,6 +12,51 @@ function frame(node: VisualNode, classes?: NodeRenderClasses): ReactElement | nu
   if (node.frame === 'none') return null;
   return visibleFrame(node, classes);
 }
+/** Neutral browser frames carry their own paint server: SVG fill cannot use CSS gradients, and static export keeps flat paint. */
+function gradientEligible(node: VisualNode, classes?: NodeRenderClasses): boolean {
+  return (
+    classes !== undefined &&
+    node.followsInterfaceRoles === true &&
+    node.role === 'neutral' &&
+    node.shape !== 'container'
+  );
+}
+/** Per-node gradient identity follows the established chrome filter pattern. */
+function surfaceGradientId(node: VisualNode): string {
+  return `node-surface-${node.id}`;
+}
+/** Vertical edge light: the frame border catches the same top light as the fill gradient. */
+function edgeGradientId(node: VisualNode): string {
+  return `node-edge-${node.id}`;
+}
+/** Eligible frames paint the token gradient with the flat projection fill as fallback. */
+function frameFill(node: VisualNode, classes?: NodeRenderClasses): string {
+  return gradientEligible(node, classes)
+    ? `url(#${surfaceGradientId(node)}) ${node.paint.fill}`
+    : node.paint.fill;
+}
+/** Eligible frames stroke a top-to-bottom edge light with the flat projection stroke as fallback. */
+function frameStroke(node: VisualNode, classes?: NodeRenderClasses): string {
+  return gradientEligible(node, classes)
+    ? `url(#${edgeGradientId(node)}) ${node.paint.stroke}`
+    : node.paint.stroke;
+}
+/** Vertical top-to-bottom token gradient; stop colors resolve against the installed scope. */
+function surfaceGradient(node: VisualNode, classes?: NodeRenderClasses): ReactElement | null {
+  if (!gradientEligible(node, classes)) return null;
+  return (
+    <defs>
+      <linearGradient id={surfaceGradientId(node)} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style={{ stopColor: 'var(--nv-canvas-node-surface-top)' }} />
+        <stop offset="1" style={{ stopColor: 'var(--nv-canvas-node-surface-bottom)' }} />
+      </linearGradient>
+      <linearGradient id={edgeGradientId(node)} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style={{ stopColor: 'var(--nv-canvas-node-edge-top)' }} />
+        <stop offset="1" style={{ stopColor: 'var(--nv-canvas-node-edge-bottom)' }} />
+      </linearGradient>
+    </defs>
+  );
+}
 /** Explicit cards/panels use rounded regions; auto retains semantic shape notation. */
 function visibleFrame(node: VisualNode, classes?: NodeRenderClasses): ReactElement {
   if (node.shape === 'diamond' && node.frame === 'auto')
@@ -20,8 +65,8 @@ function visibleFrame(node: VisualNode, classes?: NodeRenderClasses): ReactEleme
         className={classes?.frame}
         vectorEffect="non-scaling-stroke"
         points={`${node.width / 2},0 ${node.width},${node.height / 2} ${node.width / 2},${node.height} 0,${node.height / 2}`}
-        fill={node.paint.fill}
-        stroke={node.paint.stroke}
+        fill={frameFill(node, classes)}
+        stroke={frameStroke(node, classes)}
         strokeWidth={node.strokeWidth}
       />
     );
@@ -32,8 +77,8 @@ function visibleFrame(node: VisualNode, classes?: NodeRenderClasses): ReactEleme
       width={node.width}
       height={node.height}
       rx={radius(node)}
-      fill={node.paint.fill}
-      stroke={node.paint.stroke}
+      fill={frameFill(node, classes)}
+      stroke={frameStroke(node, classes)}
       strokeWidth={node.strokeWidth}
     />
   );
@@ -86,6 +131,7 @@ function rim(node: VisualNode, classes?: NodeRenderClasses): ReactElement | null
 export function CardChrome({ node, heading, classes }: NodeChromeProps): ReactElement {
   return (
     <>
+      {surfaceGradient(node, classes)}
       {frame(node, classes)}
       {header(node, classes)}
       {rim(node, classes)}

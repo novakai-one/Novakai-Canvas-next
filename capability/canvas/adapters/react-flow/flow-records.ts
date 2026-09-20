@@ -29,7 +29,7 @@ function flowNodes(
     width: view.box.width,
     height: view.box.height,
     measured: { width: view.box.width, height: view.box.height },
-    style: { width: view.box.width, height: view.box.height, pointerEvents: 'auto' },
+    style: { width: view.box.width, height: view.box.height, pointerEvents: 'none' },
     data: {
       view,
       actions,

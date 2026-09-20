@@ -20,6 +20,7 @@ function SectionResizeControls({
       <NodeResizeControl
         position={Position.Right}
         resizeDirection="horizontal"
+        style={{ pointerEvents: 'auto' }}
         minWidth={view.box.width}
         minHeight={view.box.height}
         onResizeStart={() => actions.beginResize(view.target)}
@@ -29,6 +30,7 @@ function SectionResizeControls({
       <NodeResizeControl
         position={Position.Bottom}
         resizeDirection="vertical"
+        style={{ pointerEvents: 'auto' }}
         minWidth={view.box.width}
         minHeight={view.box.height}
         onResizeStart={() => actions.beginResize(view.target)}

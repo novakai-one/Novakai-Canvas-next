@@ -555,6 +555,8 @@ function inline(value: string): string {
     .replaceAll(']', '\\]')
     .replaceAll('(', '\\(')
     .replaceAll(')', '\\)')
+    .replaceAll('=', '\\=')
+    .replaceAll('~', '\\~')
     .replaceAll('\r\n', '\n')
     .replaceAll('\r', '\n')
     .replaceAll('\n', '\n  ')

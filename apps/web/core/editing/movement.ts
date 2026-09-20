@@ -394,3 +394,96 @@ export function chooseMoveOption(
     return failure('invalid-edit', 'That movement option is no longer available');
   return { ok: true, value: selected };
 }
+
+/** Build the supported right/bottom container expansion candidate. */
+export function buildExpandOption(
+  intent: PlacementIntent,
+  context: MovementPreviewContext,
+): Result<MoveOption | null> {
+  if (!sameStamp(intent, context.stamp) || context.preview === undefined) return { ok: true, value: null };
+  const normalized = normalizedEntries(context.document, intent);
+  if (!normalized.ok || normalized.value.length !== 1) return { ok: true, value: null };
+  const entry = normalized.value[0];
+  if (entry === undefined || entry.target.kind !== 'node') return { ok: true, value: null };
+  const sectionId = 'section' in entry.target ? entry.target.section : '';
+  const sceneSection = context.document.scene.sections.find((item) => item.id === sectionId);
+  const node = sceneSection?.nodes.find((item) => item.id === entry.target.id);
+  if (sceneSection === undefined || node === undefined || node.parent === null) return { ok: true, value: null };
+  const parent = sceneSection.nodes.find((item) => item.id === node.parent);
+  if (node.parent !== null && parent === undefined) return { ok: true, value: null };
+  const before = worldBox(context.document, entry.target);
+  if (before === undefined) return { ok: true, value: null };
+  const parentX = sceneSection.origin.x + (parent?.box.x ?? 0);
+  const parentY = sceneSection.origin.y + (parent?.box.y ?? 0);
+  const dx = parentX + entry.placement.x - before.x;
+  const dy = parentY + entry.placement.y - before.y;
+  const groupNode = parent;
+  if (groupNode === undefined) return { ok: true, value: null };
+  const expanded = new Map<string, { node: typeof groupNode; width: number; height: number }>();
+  let ancestor: typeof groupNode | undefined = groupNode;
+  let requiredRight = before.x + dx + before.width;
+  let requiredBottom = before.y + dy + before.height;
+  while (ancestor !== undefined) {
+    const children = sceneSection.nodes.filter((item) => item.parent === ancestor?.id);
+    const childRight = children.reduce((value, item) => Math.max(value, item.box.x + item.box.width), ancestor.box.x);
+    const childBottom = children.reduce((value, item) => Math.max(value, item.box.y + item.box.height), ancestor.box.y);
+    const rightReserve = ancestor.box.x + ancestor.box.width - childRight;
+    const bottomReserve = ancestor.box.y + ancestor.box.height - childBottom;
+    const width = Math.max(ancestor.box.width, requiredRight - ancestor.box.x + rightReserve);
+    const height = Math.max(ancestor.box.height, requiredBottom - ancestor.box.y + bottomReserve);
+    requiredRight = Math.max(requiredRight, ancestor.box.x + width);
+    requiredBottom = Math.max(requiredBottom, ancestor.box.y + height);
+    if (ancestor.measured.groupId !== null) { expanded.set(ancestor.measured.groupId, { node: ancestor, width, height }); }
+    ancestor = ancestor.parent === null ? undefined : sceneSection.nodes.find((item) => item.id === ancestor?.parent);
+  }
+  if (expanded.size === 0 || [...expanded.values()].every(({ node, width, height }) => width === node.box.width && height === node.box.height)) {
+    return { ok: true, value: null };
+  }
+  const planned = plannedSections(context.document, { ...intent, entries: normalized.value }).map((candidate) => {
+    if (candidate.id !== sceneSection.id) return candidate;
+    return {
+      ...candidate,
+      groups: candidate.groups.map((group) => {
+        const change = expanded.get(group.id);
+        if (change === undefined) return group;
+        const source = candidate.groups.find((item) => item.id === group.id);
+        if (source === undefined) return group;
+        const groupParent = change.node.parent === null ? undefined : sceneSection.nodes.find((item) => item.id === change.node.parent);
+        const placement = sourcePlacement(source.placement, change.node.box.x - (groupParent?.box.x ?? 0), change.node.box.y - (groupParent?.box.y ?? 0), change.width, change.height);
+        return { ...group, placement };
+      }),
+    };
+  });
+  const plannedChanges = changes(context.document, planned);
+  const preview = context.preview(context.document, { ...intent, entries: normalized.value }, plannedChanges);
+  if (!preview.ok || preview.value === null) return { ok: true, value: null };
+  const expected = expectedBoxes(context.document, normalized.value);
+  if (!expected.ok) return expected;
+  const expectedWithExpansion = new Map(expected.value);
+  const expandedSection = preview.value.boxes.find((item) => item.target.kind === 'section' && item.target.id === sceneSection.id);
+  if (expandedSection !== undefined) expectedWithExpansion.set(targetKey(expandedSection.target), expandedSection.box);
+  for (const change of expanded.values()) {
+    const target: Target = { kind: 'node', section: sceneSection.id, id: change.node.id };
+    const prior = worldBox(context.document, target);
+    if (prior === undefined) return { ok: true, value: null };
+    expectedWithExpansion.set(targetKey(target), { ...prior, width: change.width, height: change.height });
+  }
+  const actual = new Map<string, Box>();
+  for (const item of preview.value.boxes) {
+    const key = targetKey(item.target);
+    if (actual.has(key)) return { ok: true, value: null };
+    actual.set(key, item.box);
+  }
+  if (actual.size !== expectedWithExpansion.size) return { ok: true, value: null };
+  const geometryChanges: GeometryChange[] = [];
+  for (const [key, expectedBox] of expectedWithExpansion) {
+    const after = actual.get(key);
+    const item = preview.value.boxes.find((candidate) => targetKey(candidate.target) === key);
+    if (after === undefined || item === undefined || !exactBox(after, expectedBox)) return { ok: true, value: null };
+    const prior = sceneBox(context.document, item.target);
+    if (prior === undefined) return { ok: true, value: null };
+    if (!exactBox(prior, after)) geometryChanges.push({ target: item.target, before: prior, after });
+  }
+  if (geometryChanges.length === 0) return { ok: true, value: null };
+  return { ok: true, value: { id: 'expand-container', kind: 'expand', label: 'Expand container', section: sceneSection.id, changes: plannedChanges, geometryChanges, preview: preview.value } };
+}

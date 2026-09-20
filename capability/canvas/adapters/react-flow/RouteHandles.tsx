@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import type { ReactElement, PointerEvent, KeyboardEvent, ChangeEvent } from 'react';
+import type { ReactElement, PointerEvent, KeyboardEvent } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import type { RouteHandlesProps } from '../../contract/react-types.js';
 import type { Point } from '../../contract/records/camera.js';
@@ -11,7 +11,6 @@ export function RouteHandles({
   actions,
   editable,
   nudge,
-  controlPosition,
 }: RouteHandlesProps): ReactElement | null {
   const flow = useReactFlow();
   const active = useRef<string | null>(null);
@@ -57,14 +56,10 @@ export function RouteHandles({
     actions.dispatch({ kind: 'route', id, points, sourceSide, targetSide, locked: 'preserve' });
   }
   /** Keyboard/form changes use the same begin-update-finish route lifecycle as pointer edits. */
-  function commit(
-    points: readonly Point[],
-    source: AttachmentSide = 'preserve',
-    target: AttachmentSide = 'preserve',
-  ): void {
+  function commit(points: readonly Point[]): void {
     const id = actions.nextId();
     actions.dispatch({ kind: 'begin', id, gesture: 'route', targets: [edge.target] });
-    update(id, points, source, target);
+    update(id, points);
     actions.dispatch({ kind: 'finish', id });
   }
   /** Interior points can move or be removed; endpoints remain owned by their chosen attachment sides. */
@@ -94,27 +89,6 @@ export function RouteHandles({
     event.preventDefault();
     commit(edge.wire.points.filter((_point, position) => position !== index));
   }
-  /** Add a bend at the first segment midpoint; keyboard access needs no pixel-coordinate authoring. */
-  function addBend(): void {
-    const first = edge.wire.points[0];
-    const second = edge.wire.points[1];
-    if (!first || !second) return;
-    commit([
-      first,
-      { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 },
-      ...edge.wire.points.slice(1),
-    ]);
-  }
-  /** Only the named finite side vocabulary is admitted from a DOM select. */
-  function side(event: ChangeEvent<HTMLSelectElement>, which: 'source' | 'target'): void {
-    const value = event.target.value;
-    if (!isSide(value)) return;
-    if (which === 'source') {
-      commit(edge.wire.points, value);
-      return;
-    }
-    commit(edge.wire.points, 'preserve', value);
-  }
   if (!editable) return null;
   return (
     <g className={styles.handles}>
@@ -135,38 +109,6 @@ export function RouteHandles({
           onKeyDown={(event) => key(event, index + 1)}
         />
       ))}
-      <foreignObject x={controlPosition.x} y={controlPosition.y} className={styles.toolBox}>
-        <div className={`nodrag nopan nowheel ${styles.tools}`}>
-          <button type="button" onClick={addBend}>
-            Add bend
-          </button>
-          <label>
-            Source side
-            <select value="preserve" onChange={(event) => side(event, 'source')}>
-              {sides.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Target side
-            <select value="preserve" onChange={(event) => side(event, 'target')}>
-              {sides.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </foreignObject>
     </g>
   );
-}
-const sides = ['preserve', 'auto', 'top', 'right', 'bottom', 'left'] as const;
-/** Literal membership narrows DOM input without an unchecked type assertion. */
-function isSide(value: string): value is AttachmentSide {
-  return sides.some((side) => side === value);
 }

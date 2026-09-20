@@ -24,6 +24,11 @@ export type ObjectEdit =
       readonly id: DescendantId;
       readonly target: import('@novakai/canvas-model').Endpoint;
     }
+  | {
+      readonly kind: 'field-type';
+      readonly id: DescendantId;
+      readonly value: import('@novakai/canvas-model').FieldType;
+    }
   | { readonly kind: 'parameters'; readonly id: DescendantId; readonly value: readonly string[] }
   | { readonly kind: 'nullable'; readonly id: DescendantId; readonly value: boolean }
   | { readonly kind: 'remove-content'; readonly id: DescendantId }

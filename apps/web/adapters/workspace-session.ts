@@ -15,6 +15,7 @@ import {
   sourceEndpoints,
   targetEndpoints,
 } from '@novakai/canvas-model';
+import type { DefinitionDraft } from '../contract/records/definitions.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
 import type {
@@ -501,6 +502,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let historySnapshotReady = false;
   let removeHistoryKeys = (): void => undefined;
   const inspector = bindings.inspector({ apply: applyObject, report });
+  const definitions = bindings.definitions({ apply: applyDefinition, report });
   const wires = bindings.wires({ apply: applyChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
@@ -1542,9 +1544,17 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   async function applyObject(draft: ObjectDraft, object: DiagramObject): Promise<Result<Receipt>> {
     return applyChanges(draft, [{ op: 'replace', target: 'objects', value: object }]);
   }
+  async function applyDefinition(draft: DefinitionDraft): Promise<Result<Receipt>> {
+    return applyChanges(
+      draft,
+      draft.operation === 'remove'
+        ? [{ op: 'remove', target: 'definitions', id: draft.definition.id }]
+        : [{ op: draft.operation, target: 'definitions', value: draft.definition }],
+    );
+  }
   /** Captured Model changes share request assembly; their feature decides the semantic change list. */
   async function applyChanges(
-    draft: Pick<ObjectDraft, 'base' | 'collection' | 'generation'>,
+    draft: Pick<ObjectDraft | DefinitionDraft, 'base' | 'collection' | 'generation'>,
     changes: readonly import('../contract/records/owners.js').Change[],
   ): Promise<Result<Receipt>> {
     const request = bindings.inputs.model(
@@ -2167,6 +2177,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     void reconcileHistory();
     source.restore(state.snapshot.workspace);
     inspector.restore(state.snapshot.workspace);
+    definitions.restore(state.snapshot.workspace);
     wires.restore(state.snapshot.workspace);
   }
   /** Human-triggered reconciliation is read-only and makes missing confirmation explicit. */
@@ -2533,6 +2544,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   return {
     navigateHistory,
     inspector,
+    definitions,
     wires,
     library,
     showLibrary,

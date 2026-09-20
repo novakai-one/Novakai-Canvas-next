@@ -22,6 +22,7 @@ export type { Collection } from './records/collection.js';
 export type { DiagramObject, ObjectKind } from './records/object.js';
 export type { ContentBlock, Endpoint } from './records/content.js';
 export type { Definition, TypeExpression, FieldType } from './records/definition.js';
+export { definitionSchema } from './records/definition.js';
 export { definitionDisplay, definitionUsages, fieldTypeDisplay } from './api.js';
 export type { DefinitionUsage } from './api.js';
 export type { Relationship, RelationshipKind } from './records/relationship.js';

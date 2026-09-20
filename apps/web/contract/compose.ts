@@ -33,6 +33,8 @@ import {
   encodeWireRecovery,
 } from './api.js';
 import { readInspectorDrafts } from '../adapters/inspector-reader.js';
+import { createDefinitionSession } from '../adapters/definition-session.js';
+import { readDefinitionDrafts } from '../adapters/definition-reader.js';
 import { createSourceController } from '../adapters/source-session.js';
 import { createWorkspaceNavigation } from '../adapters/browser-navigation.js';
 import panelDefaults from '../../../resources/ui/panels.default.json' with { type: 'json' };
@@ -81,6 +83,7 @@ import { createMovementReview } from '../adapters/react/MovementReview.js';
 import { createSourceEditor } from '../adapters/react/SourceEditor.js';
 import { createExportPanel } from '../adapters/react/ExportPanel.js';
 import { createObjectEditor } from '../adapters/react/ObjectEditor.js';
+import { createDefinitionsEditor } from '../adapters/react/Definitions.js';
 import { createContentEditor } from '../adapters/react/ContentEditor.js';
 import { descendantId } from '@novakai/canvas-model';
 import { createSectionNavigator } from '../adapters/react/SectionNavigator.js';
@@ -172,6 +175,12 @@ function featureSections(
     { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
     { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
     { tab: 'browse', id: 'export', title: 'Export', Content: createExportPanel(design) },
+    {
+      tab: 'browse',
+      id: 'definitions',
+      title: 'Definitions',
+      Content: createDefinitionsEditor(design),
+    },
     {
       tab: 'inspect',
       id: 'connection',
@@ -331,6 +340,8 @@ function controller(
     wires: (callbacks) => createWireSession({ retention, read: readWireDrafts, ...callbacks }),
     inspector: (callbacks) =>
       createInspectorSession({ retention, read: readInspectorDrafts, ...callbacks }),
+    definitions: (callbacks) =>
+      createDefinitionSession({ retention, read: readDefinitionDrafts, ...callbacks }),
     source: (callbacks) =>
       createSourceController({
         inputs,

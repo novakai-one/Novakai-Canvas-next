@@ -16,6 +16,7 @@ const operations: Readonly<
   nullable: editNullable,
   'field-key': editKey,
   'field-reference': editReference,
+  'field-type': editType,
   parameters: editParameters,
   'remove-content': removeContent,
   'add-content': addContent,
@@ -139,6 +140,17 @@ function withKey(
 function editReference(object: DiagramObject, edit: ObjectEdit): DiagramObject {
   if (edit.kind !== 'field-reference') return object;
   return { ...object, content: object.content.map((item) => referenceField(item, edit)) };
+}
+function editType(object: DiagramObject, edit: ObjectEdit): DiagramObject {
+  if (edit.kind !== 'field-type') return object;
+  return { ...object, content: object.content.map((item) => typeField(item, edit)) };
+}
+function typeField(
+  item: ContentBlock,
+  edit: Extract<ObjectEdit, { kind: 'field-type' }>,
+): ContentBlock {
+  if (item.kind !== 'field' || item.id !== edit.id) return item;
+  return { ...item, type: edit.value };
 }
 /** A reference selection also explicitly marks the row as a foreign key. */
 function referenceField(

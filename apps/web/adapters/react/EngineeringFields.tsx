@@ -2,6 +2,7 @@ import type { ComponentType, ReactElement } from 'react';
 import type { ContentEditorProps } from '../../contract/inspector-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
 import type { Collection, ContentBlock } from '../../contract/records/owners.js';
+import { fieldTypeDisplay } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
 /** ER keys and callable signatures have dedicated controls; shared text inputs remain in the content row component. */
 export function createEngineeringFields({
@@ -56,6 +57,42 @@ export function createEngineeringFields({
     if (item.kind !== 'field') return null;
     return (
       <div className={styles.editor}>
+        <Field
+          label="Type source"
+          control={(props) => (
+            <select
+              {...props}
+              value={typeChoice(item)}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (value === 'unlinked') {
+                  edit({
+                    kind: 'field-type',
+                    id: item.id,
+                    value: fieldTypeDisplay(collection, item),
+                  });
+                  return;
+                }
+                const definition = collection.definitions.find(
+                  (candidate) => candidate.id === value,
+                );
+                if (definition)
+                  edit({
+                    kind: 'field-type',
+                    id: item.id,
+                    value: { kind: 'definition', id: definition.id },
+                  });
+              }}
+            >
+              <option value="unlinked">Unlinked (authored type)</option>
+              {collection.definitions.map((definition) => (
+                <option key={definition.id} value={definition.id}>
+                  Shared: {definition.label} · @{definition.id}
+                </option>
+              ))}
+            </select>
+          )}
+        />
         <Field
           label="Key"
           control={(props) => (
@@ -127,4 +164,7 @@ function referenceTargets(collection: Collection) {
 function referenceValue(field: Extract<ContentBlock, { kind: 'field' }>): string {
   if (!field.references) return '';
   return JSON.stringify([field.references.object, field.references.member]);
+}
+function typeChoice(field: Extract<ContentBlock, { kind: 'field' }>): string {
+  return typeof field.type === 'string' ? 'unlinked' : field.type.id;
 }

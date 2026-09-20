@@ -2,6 +2,7 @@ import type { LibraryFactory } from '../records/library.js';
 import type { CatalogChange } from '@novakai/canvas-library';
 import type { WireEditorFactory } from '../records/wire-editor.js';
 import type { InspectorFactory } from '../records/inspector.js';
+import type { DefinitionFactory } from '../records/definitions.js';
 import type { SourceFactory } from '../records/source.js';
 import type { WorkspaceNavigation } from './navigation.js';
 import type { PanelController } from '../panel-types.js';
@@ -92,6 +93,7 @@ export interface WorkspaceBindings {
   readonly submissions: SubmissionFactory;
   readonly source: SourceFactory;
   readonly inspector: InspectorFactory;
+  readonly definitions: DefinitionFactory;
   readonly wires: WireEditorFactory;
   readonly library: LibraryFactory;
   readonly panels: Pick<PanelController, 'open' | 'restore'>;

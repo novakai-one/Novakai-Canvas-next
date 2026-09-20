@@ -1,6 +1,7 @@
 import type { LibraryController } from './library.js';
 import type { WireEditorSession } from './wire-editor.js';
 import type { InspectorSession } from './inspector.js';
+import type { DefinitionSession } from './definitions.js';
 import type { SourceView } from './source.js';
 import type { Collection, Snapshot, RenderDocument, Canvas, SessionStore } from './owners.js';
 import type { Submission } from './submission.js';
@@ -64,6 +65,7 @@ export interface WorkspaceView extends SourceView {
 export interface WorkspaceController {
   navigateHistory(direction: 'undo' | 'redo'): Promise<void>;
   readonly inspector: InspectorSession;
+  readonly definitions: DefinitionSession;
   readonly wires: WireEditorSession;
   readonly library: LibraryController;
   getSnapshot(): WorkspaceView;

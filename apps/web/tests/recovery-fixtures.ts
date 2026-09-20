@@ -5,6 +5,8 @@ import { createWireSession } from '../contract/index.js';
 import { readWireDrafts } from '../adapters/wire-reader.js';
 import { createInspectorSession } from '../contract/index.js';
 import { readInspectorDrafts } from '../adapters/inspector-reader.js';
+import { createDefinitionSession } from '../adapters/definition-session.js';
+import { readDefinitionDrafts } from '../adapters/definition-reader.js';
 import { createSourceController } from '../adapters/source-session.js';
 import { assert } from 'vitest';
 import { snapshotSchema, requestSchema, receiptSchema } from '@novakai/canvas-authoring';
@@ -119,6 +121,8 @@ export function controller(client: ServiceClient, retention: DraftRetention) {
     wires: (callbacks) => createWireSession({ retention, read: readWireDrafts, ...callbacks }),
     inspector: (callbacks) =>
       createInspectorSession({ retention, read: readInspectorDrafts, ...callbacks }),
+    definitions: (callbacks) =>
+      createDefinitionSession({ retention, read: readDefinitionDrafts, ...callbacks }),
     source: (callbacks) =>
       createSourceController({
         inputs,

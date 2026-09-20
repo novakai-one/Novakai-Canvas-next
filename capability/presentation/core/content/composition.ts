@@ -76,13 +76,13 @@ function figureContent(figure: MediaBlock, context: ContentContext): MeasuredCon
   );
 }
 
-/** Module/entity roles are assigned before offsets and composition so geometry never becomes policy. */
+/** Engineering node roles are assigned before offsets and composition so geometry never becomes policy. */
 function tagged(
   content: MeasuredContent,
   object: DiagramObject,
   lodRole: LodRole,
 ): MeasuredContent {
-  if (object.kind !== 'module' && object.kind !== 'entity') return content;
+  if (!['module', 'entity', 'function', 'interface'].includes(object.kind)) return content;
   return {
     ...content,
     primitives: content.primitives.map((primitive) => ({ ...primitive, lodRole })),

@@ -1,7 +1,8 @@
 import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
-import type { DiagramObject } from '../contract/records/owners.js';
+import type { DiagramObject, Section } from '../contract/records/owners.js';
+import type { AddDiagramDraft, AddObjectDraft } from '../contract/records/creation.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
 import type {
@@ -1052,6 +1053,140 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!request.ok) return request;
     return submit(request.value, draft.generation, state.sourceEdit, null);
   }
+  /** Add keeps diagram and object creation on the existing Model → Authoring receipt path. */
+  async function addDiagram(draft: AddDiagramDraft): Promise<Result<Receipt>> {
+    const active = state.active;
+    if (active === null || state.snapshot === null)
+      return creationFailure('Open a collection first.');
+    const title = draft.title.trim();
+    if (title.length === 0) return creationFailure('Give the diagram a name before adding it.');
+    const id = `section-${bindings.nextId()}` as Section['id'];
+    const section = {
+      id,
+      title,
+      mode: draft.mode,
+      order: active.document.collection.sections.length,
+      layout: {
+        algorithm: 'grid' as const,
+        direction: 'right' as const,
+        gap: 'normal' as const,
+        constraints: [],
+      },
+      appearances: [],
+      groups: [],
+      wires: [],
+      sequence: [],
+    };
+    return applyChanges(
+      { base: active.base, collection: active.document.collection, generation: active.generation },
+      [{ op: 'create', target: 'sections', value: section }],
+    );
+  }
+  /** New objects are created once; reuse only adds a section-local appearance of the same ID. */
+  async function addObject(draft: AddObjectDraft): Promise<Result<Receipt>> {
+    const context = creationContext(draft);
+    if (!context.ok) return context;
+    const payload = creationPayload(context.value, draft);
+    if (!payload.ok) return payload;
+    const changes = creationChanges(payload.value.object, draft.reuseObject, payload.value.section);
+    return applyChanges(
+      {
+        base: context.value.active.base,
+        collection: context.value.active.document.collection,
+        generation: context.value.active.generation,
+      },
+      changes,
+    );
+  }
+  function creationPayload(
+    context: { active: ActiveDiagram; section: Section },
+    draft: AddObjectDraft,
+  ): Result<{ object: DiagramObject; section: Section }> {
+    const object = creationObject(context.active.document.collection.objects, draft);
+    if (!object.ok) return object;
+    const checked = checkAppearance(context.section, object.value);
+    if (!checked.ok) return checked;
+    return {
+      ok: true,
+      value: {
+        object: object.value,
+        section: {
+          ...context.section,
+          appearances: [
+            ...context.section.appearances,
+            { object: object.value.id, detail: 'full' as const },
+          ],
+        },
+      },
+    };
+  }
+  function creationContext(
+    draft: AddObjectDraft,
+  ): Result<{ active: ActiveDiagram; section: Section }> {
+    const active = state.active;
+    if (active === null) return creationFailure('Open a collection first.');
+    const section = active.document.collection.sections.find((item) => item.id === draft.section);
+    return section === undefined
+      ? creationFailure('Choose an existing diagram.')
+      : { ok: true, value: { active, section } };
+  }
+  function creationObject(
+    objects: readonly DiagramObject[],
+    draft: AddObjectDraft,
+  ): Result<DiagramObject> {
+    if (draft.reuseObject !== null) {
+      return existingObject(objects, draft.reuseObject);
+    }
+    const label = draft.label.trim();
+    if (label.length === 0) return creationFailure('Give the object a name before adding it.');
+    return { ok: true, value: newObject(bindings.nextId(), draft.kind, label) };
+  }
+  function existingObject(objects: readonly DiagramObject[], id: string): Result<DiagramObject> {
+    const object = objects.find((item) => item.id === id);
+    return object === undefined
+      ? creationFailure('Choose an existing object to reuse.')
+      : { ok: true, value: object };
+  }
+  function newObject(id: string, kind: AddObjectDraft['kind'], label: string): DiagramObject {
+    return {
+      id: `object-${id}` as DiagramObject['id'],
+      kind,
+      label,
+      role: 'neutral',
+      size: 'medium',
+      frame: 'auto',
+      composition: 'stack',
+      content: [],
+      ports: [],
+      sources: [],
+    };
+  }
+  function checkAppearance(section: Section, object: DiagramObject): Result<void> {
+    return section.appearances.some((appearance) => appearance.object === object.id)
+      ? creationFailure('That object is already in this diagram.')
+      : { ok: true, value: undefined };
+  }
+  function creationChanges(
+    object: DiagramObject,
+    reuseObject: string | null,
+    section: Section,
+  ): readonly import('../contract/records/owners.js').Change[] {
+    const appearance = { op: 'replace' as const, target: 'sections' as const, value: section };
+    return reuseObject === null
+      ? [{ op: 'create' as const, target: 'objects' as const, value: object }, appearance]
+      : [appearance];
+  }
+  function creationFailure<T = never>(message: string): Result<T> {
+    return {
+      ok: false,
+      error: {
+        code: 'invalid-creation',
+        message,
+        recovery: 'Correct the Add form and try again.',
+        owner: 'workspace',
+      },
+    };
+  }
   /** Library commands use the same durable request journal and captured catalog versions as diagram editing. */
   async function applyLibrary(
     base: import('../contract/records/owners.js').Snapshot,
@@ -1528,6 +1663,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     },
     retryRequest,
     create,
+    addDiagram,
+    addObject,
     report,
     applyMove,
     chooseMoveOption,

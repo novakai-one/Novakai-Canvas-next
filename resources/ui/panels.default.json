@@ -2,22 +2,12 @@
   "schemaVersion": 1,
   "panels": {
     "left": {
-      "sectionIds": [
-        "collections",
-        "sections",
-        "objects"
-      ]
+      "sectionIds": ["creation", "collections", "sections", "objects"]
     },
     "right": {
-      "sectionIds": [
-        "shared-content",
-        "connection",
-        "interface"
-      ]
+      "sectionIds": ["shared-content", "connection", "interface"]
     }
   },
-  "collapsedSectionIds": [
-    "collections"
-  ],
+  "collapsedSectionIds": ["collections"],
   "hiddenSectionIds": []
 }

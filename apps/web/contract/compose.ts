@@ -75,6 +75,7 @@ import { createCollectionLibrary } from '../adapters/react/CollectionLibrary.js'
 import { createCollectionDialog } from '../adapters/react/CreateCollectionDialog.js';
 import { createPanelTabs } from '../adapters/react/PanelTabs.js';
 import { createWorkspaceSidePanel } from '../adapters/react/WorkspaceSidePanel.js';
+import { createAddTools } from '../adapters/react/AddTools.js';
 import { createRequestRecovery } from '../adapters/react/RequestRecovery.js';
 import { createMovementReview } from '../adapters/react/MovementReview.js';
 import { createSourceEditor } from '../adapters/react/SourceEditor.js';
@@ -165,6 +166,7 @@ function featureSections(
     return createElement(Browser, { controller: props.controller, view: props.view });
   }
   return [
+    { tab: 'add', id: 'creation', title: 'Create', Content: createAddTools(design) },
     { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
     { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
     { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
@@ -425,8 +427,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
             id: 'add',
             label: 'Add',
             scope: 'Create diagram content',
-            empty:
-              'Creation tools are not available in this preview. Use Source to author nodes, groups, sections and connections.',
+            empty: 'Creation tools are hidden. Customize panels to show them.',
           },
           {
             id: 'browse',

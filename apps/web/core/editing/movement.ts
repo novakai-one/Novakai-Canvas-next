@@ -400,25 +400,33 @@ export function buildExpandOption(
   intent: PlacementIntent,
   context: MovementPreviewContext,
 ): Result<MoveOption | null> {
-  if (!sameStamp(intent, context.stamp) || context.preview === undefined) return { ok: true, value: null };
+  if (!sameStamp(intent, context.stamp)) return failure('stale-gesture', 'The diagram changed while expansion was being evaluated');
+  if (context.preview === undefined) return failure('invalid-edit', 'Movement preview is not available');
+  if (intent.entries.length !== 1 || intent.entries.some((item) => item.placement.width !== undefined || item.placement.height !== undefined)) {
+    return failure('unsupported-edit', 'Container expansion supports one position-only module move');
+  }
   const normalized = normalizedEntries(context.document, intent);
-  if (!normalized.ok || normalized.value.length !== 1) return { ok: true, value: null };
+  if (!normalized.ok) return normalized;
+  if (normalized.value.length !== 1) return failure('unsupported-edit', 'Container expansion supports one selected node');
   const entry = normalized.value[0];
-  if (entry === undefined || entry.target.kind !== 'node') return { ok: true, value: null };
+  if (entry === undefined || entry.target.kind !== 'node') return failure('unsupported-edit', 'Container expansion supports module nodes only');
   const sectionId = 'section' in entry.target ? entry.target.section : '';
   const sceneSection = context.document.scene.sections.find((item) => item.id === sectionId);
   const node = sceneSection?.nodes.find((item) => item.id === entry.target.id);
-  if (sceneSection === undefined || node === undefined || node.parent === null) return { ok: true, value: null };
+  const moduleSection = context.document.projection.sections.find((item) => item.id === sectionId);
+  if (moduleSection?.mode !== 'modules') return failure('unsupported-edit', 'Container expansion supports module sections only');
+  if (sceneSection === undefined || node === undefined) return failure('stale-target', 'The expansion target is missing');
+  if (node.parent === null) return failure('unsupported-edit', 'Top-level node expansion is not supported');
   const parent = sceneSection.nodes.find((item) => item.id === node.parent);
-  if (node.parent !== null && parent === undefined) return { ok: true, value: null };
+  if (parent === undefined) return failure('stale-target', 'The expansion parent is missing');
   const before = worldBox(context.document, entry.target);
-  if (before === undefined) return { ok: true, value: null };
+  if (before === undefined) return failure('stale-target', 'The expansion geometry is missing');
   const parentX = sceneSection.origin.x + (parent?.box.x ?? 0);
   const parentY = sceneSection.origin.y + (parent?.box.y ?? 0);
   const dx = parentX + entry.placement.x - before.x;
   const dy = parentY + entry.placement.y - before.y;
   const groupNode = parent;
-  if (groupNode === undefined) return { ok: true, value: null };
+  if (groupNode === undefined) return failure('stale-target', 'The expansion group is missing');
   const expanded = new Map<string, { node: typeof groupNode; width: number; height: number }>();
   let ancestor: typeof groupNode | undefined = groupNode;
   let requiredRight = before.x - sceneSection.origin.x + dx + before.width;
@@ -447,7 +455,9 @@ export function buildExpandOption(
   const expandedBottom = Math.max(currentBottom, ...[...expanded.values()].map(({ node, height }) => node.box.y + height));
   const sectionWidth = Math.max(sceneSection.box.width, expandedRight + rightReserve);
   const sectionHeight = Math.max(sceneSection.box.height, expandedBottom + bottomReserve);
-  const planned = plannedSections(context.document, { ...intent, entries: normalized.value }).map((candidate) => {
+  let planned: readonly Section[];
+  try {
+    planned = plannedSections(context.document, { ...intent, entries: normalized.value }).map((candidate) => {
     if (candidate.id !== sceneSection.id) return candidate;
     const sectionSource = context.document.collection.sections.find((item) => item.id === sceneSection.id);
     if (sectionSource === undefined) return candidate;
@@ -471,10 +481,14 @@ export function buildExpandOption(
         return { ...group, placement };
       }),
     };
-  });
+    });
+  } catch {
+    return failure('stale-target', 'Captured expansion placements are no longer available');
+  }
   const plannedChanges = changes(context.document, planned);
   const preview = context.preview(context.document, { ...intent, entries: normalized.value }, plannedChanges);
-  if (!preview.ok || preview.value === null) return { ok: true, value: null };
+  if (!preview.ok) return preview;
+  if (preview.value === null) return failure('invalid-edit', 'Native movement preview produced no geometry');
   const expected = expectedBoxes(context.document, normalized.value);
   if (!expected.ok) return expected;
   const expectedWithExpansion = new Map(expected.value);

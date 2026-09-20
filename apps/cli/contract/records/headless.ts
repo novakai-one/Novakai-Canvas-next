@@ -5,13 +5,13 @@ import type { createHeadlessBindings } from '@novakai/canvas-service';
 import type { Diagnostic } from '../errors.js';
 import type { FailureSource } from './failure-source.js';
 /** Filesystem path at the native CLI edge; Node resolves it and resource owners enforce confinement. */
-export const filePath = z.string().brand<'HeadlessFilePath'>();
+export const filePath = z.string().min(1).brand<'HeadlessFilePath'>();
 /** Checked filesystem text, distinct from a semantic collection or theme selector. */
 export type FilePath = z.infer<typeof filePath>;
 /** CLI collection selector; Language/Templates validate the path, shipped collection ID or recipe ID. */
 const collectionSelector = z.string().min(1).brand<'HeadlessCollectionSelector'>();
 /** CLI theme selection text; Templates resolves bare IDs and exact immutable pins. */
-const themeSelector = z.string().brand<'HeadlessThemeSelector'>();
+const themeSelector = z.string().min(1).brand<'HeadlessThemeSelector'>();
 /** Read-only render request with checked selectors and native paths; no canonical workspace mutation. */
 export const headlessOptions = z
   .strictObject({
@@ -44,6 +44,13 @@ export const headlessFault = z.discriminatedUnion('code', [
     })
     .readonly(),
   z.strictObject({ code: z.literal('collection-required') }).readonly(),
+  z
+    .strictObject({
+      code: z.literal('invalid-theme'),
+      message: z.string(),
+      recovery: z.string(),
+    })
+    .readonly(),
   z.strictObject({ code: z.literal('collection-title-required') }).readonly(),
   z
     .strictObject({

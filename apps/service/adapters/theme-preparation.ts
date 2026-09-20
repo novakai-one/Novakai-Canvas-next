@@ -8,7 +8,8 @@ import type { Result, Json } from '@novakai/canvas-authoring';
 const config = z.looseObject({
   kind: z.literal('theme'),
   raw: z.strictObject({
-    chrome: chromeName.optional(),
+    // chromeField rejects malformed selectors instead of bypassing source preparation.
+    chrome: z.unknown().optional(),
     base: z.string(),
     overrides: z.record(
       z.string(),
@@ -140,9 +141,7 @@ function colorAlpha(hex: string): number {
 /** Preserve an explicitly authored chrome selector through resource preparation. */
 function chromeField(raw: unknown): { readonly chrome?: ChromeName } {
   // Project one field from the guarded source envelope; unrelated admission keys stay intact.
-  const record = z.record(z.string(), z.unknown()).safeParse(raw);
-  if (!record.success) return {};
-  const value = chromeName.safeParse(record.data.chrome);
-  if (!value.success) return {};
-  return { chrome: value.data };
+  const record = z.record(z.string(), z.unknown()).parse(raw);
+  if (record.chrome === undefined) return {};
+  return { chrome: chromeName.parse(record.chrome) };
 }

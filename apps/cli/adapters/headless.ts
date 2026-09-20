@@ -11,6 +11,7 @@ import {
 } from '../../../capability/design-system/contract/index.js';
 import {
   composeTemplates,
+  themeInput,
   type Catalog,
   type Templates,
 } from '../../../capability/templates/contract/index.js';
@@ -21,7 +22,7 @@ import {
   type LoweredIntent,
 } from '@novakai/canvas-language';
 import { validate as validateLibrary } from '../../../capability/library/contract/index.js';
-import { validate, plan, stage, type Collection } from '@novakai/canvas-model';
+import { digest, validate, plan, stage, type Collection } from '@novakai/canvas-model';
 import { createReactBindings } from '../../../capability/presentation/contract/index.js';
 import {
   composeExport,
@@ -186,7 +187,7 @@ function resources(catalog: Catalog, assets: Collection['assets'] = []): Resolve
           {
             id: preset.id,
             version: preset.version,
-            digest: 'sha256:' + preset.digest,
+            digest: digest.parse('sha256:' + preset.digest),
             roles: preset.payload.roles,
           },
         ]),
@@ -224,13 +225,23 @@ async function collectionSource(
 async function selectedTheme(
   options: HeadlessOptions,
   owners: HeadlessOwners,
-  original: Collection['theme']['id'],
-): Promise<Collection['theme']['id']> {
+  original: Collection['theme']['id'] | null,
+): Promise<Collection['theme']['id'] | null> {
   if (options.theme) return options.theme;
   if (!options.themeFile) return original;
   const parsed = accepted(owners.readTheme(await readFile(resolve(options.themeFile), 'utf8')));
-  // Admission is opaque at this system edge; guard its envelope before reading the owner-validated ID.
-  return z.string().parse(z.record(z.string(), z.unknown()).parse(parsed.admission).id);
+  return themeSelection(parsed.admission);
+}
+/** Owner envelope failures are invalid theme input; renderHeadless retains the file for correction. */
+function themeSelection(admission: unknown): Collection['theme']['id'] {
+  const input = themeInput.safeParse(admission);
+  if (!input.success)
+    throw new RenderFault({
+      code: 'invalid-theme',
+      message: 'Invalid theme admission envelope',
+      recovery: 'Correct the theme file and retry.',
+    });
+  return input.data.id;
 }
 /** Override an ephemeral validated copy; never write or mutate the source collection or its pin. */
 async function input(
@@ -252,7 +263,7 @@ async function input(
       resources: bindings,
     }),
   ).collection;
-  const theme = await selectedTheme(options, owners, original.theme.id);
+  const theme = (await selectedTheme(options, owners, original.theme.id)) ?? original.theme.id;
   const pin = bindings.themes[theme];
   if (!pin) throw new RenderFault(headlessFault.parse({ code: 'missing-theme', theme }));
   return accepted(validate({ ...original, theme: pin }));
@@ -556,8 +567,8 @@ async function overrideSource(
   owners: HeadlessOwners,
   env: Environment,
 ): Promise<SourceFile> {
-  const selected = await selectedTheme(options, owners, '');
-  if (!selected) return source;
+  const selected = await selectedTheme(options, owners, null);
+  if (selected === null) return source;
   return { ...source, source: sourceWithTheme(source.source, selected, env) };
 }
 /** Raw UTF-8 source stays text at the Language serialization edge; parser-provided UTF16 spans preserve all authored content; the chosen pin is verified normally during lowering. */

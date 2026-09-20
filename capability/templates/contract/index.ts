@@ -1,4 +1,5 @@
 /** Public Templates boundary; no parser, token resolver, store or private helper escapes. */
+export { themeInput } from './records/preset.js';
 export { createTemplates } from './api.js';
 export { composeTemplates } from './compose.js';
 export { presetId, version, digest } from './brands.js';

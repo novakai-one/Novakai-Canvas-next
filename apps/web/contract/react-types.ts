@@ -62,6 +62,7 @@ export interface ChromeSlots {
   readonly Library: ComponentType<LibraryProps>;
   readonly Panel: ComponentType<PanelProps>;
   readonly Recovery: ComponentType<FeatureProps>;
+  readonly MovementReview: ComponentType<FeatureProps>;
   readonly Reveal: ComponentType<RevealInterfaceProps>;
   readonly Source: ComponentType<FeatureProps>;
   readonly CreateDialog: ComponentType<CreateDialogProps>;

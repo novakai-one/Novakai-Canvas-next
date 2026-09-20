@@ -52,5 +52,7 @@ export function describeLanguage(version: number, policies: Description['policie
       'provider-failure',
       'unrepresentable',
     ],
+    definitionSyntax: 'type @id "Label" = <expression>',
+    definitionEditing: 'full-source-replacement',
   });
 }

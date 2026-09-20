@@ -18,6 +18,7 @@ export function validateIdentity(collection: Collection): readonly Diagnostic[] 
   const sectionIssues = duplicates(collection.sections, recordId, 'sections');
   const assetIssues = duplicates(collection.assets, recordId, 'assets');
   const sourceIssues = duplicates(collection.sources, recordId, 'sources');
+  const definitionIssues = duplicates(collection.definitions, recordId, 'definitions');
   const roleIssues = duplicates(collection.theme.roles, (role) => role, 'theme.roles');
   return [
     ...objectIssues,
@@ -25,6 +26,7 @@ export function validateIdentity(collection: Collection): readonly Diagnostic[] 
     ...sectionIssues,
     ...assetIssues,
     ...sourceIssues,
+    ...definitionIssues,
     ...roleIssues,
   ];
 }

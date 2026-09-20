@@ -9,6 +9,7 @@ import type { ChangeChannel, CommittedChange } from './ports/notifications.js';
 import type { RenderDocument } from './records/rendering.js';
 import type { InspectionReport } from './records/inspection.js';
 import type { Result } from './errors.js';
+import type { RouteOutcome } from './records/protocol.js';
 /** Session transport authenticates each caller before forwarding the explicit Authoring envelope. */
 export interface WorkspaceSession {
   readonly workspace: string;
@@ -29,6 +30,7 @@ export interface WorkspaceSession {
   receipt(request: unknown): Promise<AuthoringResult<Receipt | null>>;
   render(collection: string, signal: AbortSignal): Promise<Result<RenderDocument>>;
   inspect(collection: string, signal: AbortSignal): Promise<Result<InspectionReport>>;
+  exportArtifact(input: unknown, signal: AbortSignal): Promise<RouteOutcome>;
   subscribe(listener: (change: CommittedChange) => void): () => void;
   close(): Promise<Result<void>>;
 }
@@ -39,6 +41,7 @@ export interface SessionDependencies {
   readonly resources: ResourceCommands;
   readonly views: WorkspaceReader;
   readonly renderer: CollectionRenderer;
+  readonly exporter: (input: unknown, signal: AbortSignal) => Promise<RouteOutcome>;
   readonly changes: ChangeChannel;
   readonly lifetime: SessionLifetime;
   readonly readSignal: AbortSignal;

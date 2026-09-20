@@ -57,15 +57,15 @@ export const properties = {
   agitator: { type: 'boolean', field: 'agitator' },
   mark: { type: 'word', field: 'mark', values: ['none', 'check', 'shield'] },
   debris: { type: 'word', field: 'debris', values: ['none', 'some'] },
-  type: { type: 'string', field: 'type', required: true },
+  type: { type: 'type-expression', field: 'type', required: true },
   key: { type: 'word', field: 'key', values: ['primary', 'foreign', 'unique'] },
   nullable: { type: 'boolean', field: 'nullable', fallback: false },
   references: { type: 'endpoint', field: 'references' },
   keyKind: { type: 'word', field: 'key', values: ['primary', 'foreign', 'unique'], required: true },
   fields: { type: 'ids', field: 'fields', required: true },
   referenceList: { type: 'endpoints', field: 'references' },
-  parameters: { type: 'strings', field: 'parameters', required: true },
-  returns: { type: 'string', field: 'returns', required: true },
+  parameters: { type: 'signature-parameters', field: 'parameters', required: true },
+  returns: { type: 'type-expression', field: 'returns', required: true },
   visibility: {
     type: 'word',
     field: 'visibility',
@@ -104,6 +104,7 @@ export const properties = {
     fallback: 'call',
   },
   activate: { type: 'boolean', field: 'activate' },
+  operation: { type: 'endpoint', field: 'operation' },
 } as const satisfies Readonly<Record<string, Property>>;
 /** Scope columns are integer tracks; table columns retain their distinct string-list vocabulary. */
 export const layoutProperties = {

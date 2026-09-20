@@ -33,6 +33,8 @@ import {
   encodeWireRecovery,
 } from './api.js';
 import { readInspectorDrafts } from '../adapters/inspector-reader.js';
+import { createDefinitionSession } from '../adapters/definition-session.js';
+import { readDefinitionDrafts } from '../adapters/definition-reader.js';
 import { createSourceController } from '../adapters/source-session.js';
 import { createWorkspaceNavigation } from '../adapters/browser-navigation.js';
 import panelDefaults from '../../../resources/ui/panels.default.json' with { type: 'json' };
@@ -75,9 +77,13 @@ import { createCollectionLibrary } from '../adapters/react/CollectionLibrary.js'
 import { createCollectionDialog } from '../adapters/react/CreateCollectionDialog.js';
 import { createPanelTabs } from '../adapters/react/PanelTabs.js';
 import { createWorkspaceSidePanel } from '../adapters/react/WorkspaceSidePanel.js';
+import { createAddTools } from '../adapters/react/AddTools.js';
 import { createRequestRecovery } from '../adapters/react/RequestRecovery.js';
+import { createMovementReview } from '../adapters/react/MovementReview.js';
 import { createSourceEditor } from '../adapters/react/SourceEditor.js';
+import { createExportPanel } from '../adapters/react/ExportPanel.js';
 import { createObjectEditor } from '../adapters/react/ObjectEditor.js';
+import { createDefinitionsEditor } from '../adapters/react/Definitions.js';
 import { createContentEditor } from '../adapters/react/ContentEditor.js';
 import { descendantId } from '@novakai/canvas-model';
 import { createSectionNavigator } from '../adapters/react/SectionNavigator.js';
@@ -85,10 +91,19 @@ import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
 import { planCanvasEdit } from './api.js';
+import {
+  buildMoveReview,
+  buildExpandOption,
+  buildRearrangeOption,
+  chooseMoveOption,
+} from '../core/editing/movement.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import type { ServiceClient } from './ports/client.js';
+import type { WorkspaceBindings } from './ports/workspace.js';
 import type { WorkspaceController } from './records/workspace.js';
+import type { EditIntent, RenderDocument } from './records/owners.js';
+import type { MoveReview } from './records/movement.js';
 /** Only fonts and public token source data are delivered at browser initialization; installation credentials are never included. */
 const installation = z.strictObject({ fonts: fontSet, tokens: z.unknown() });
 /** A typed initialization fault is caught once at startWeb; no half-mounted workspace is reported as ready. */
@@ -155,9 +170,17 @@ function featureSections(
     return createElement(Browser, { controller: props.controller, view: props.view });
   }
   return [
+    { tab: 'add', id: 'creation', title: 'Create', Content: createAddTools(design) },
     { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
     { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
     { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
+    { tab: 'browse', id: 'export', title: 'Export', Content: createExportPanel(design) },
+    {
+      tab: 'browse',
+      id: 'definitions',
+      title: 'Definitions',
+      Content: createDefinitionsEditor(design),
+    },
     {
       tab: 'inspect',
       id: 'connection',
@@ -228,6 +251,63 @@ function panelDimensions(
     maximum: dimension(element, `--nv-panel-${side}-maximum`),
   };
 }
+function createMovementReviewBinding(
+  document: RenderDocument,
+  intent: Extract<EditIntent, { kind: 'placement' }>,
+  stamp: Parameters<NonNullable<WorkspaceBindings['moveReview']>>[2],
+): Result<MoveReview> {
+  const context = {
+    document,
+    stamp,
+    preview: (
+      previewDocument: typeof document,
+      previewIntent: typeof intent,
+      changes: readonly import('./records/owners.js').Change[],
+    ) => previewModuleRoutes(previewDocument, previewIntent, changes),
+  };
+  const move = buildMoveReview(intent, context);
+  if (hasMoveOnlyOption(move)) return move;
+  const expanded = buildExpandOption(intent, context);
+  const rearranged = buildRearrangeOption(intent, context);
+  const options = movementReviewOptions(move, expanded, rearranged);
+  if (options.length === 0) return move;
+  const base = movementReviewBase(move, document, intent, stamp);
+  return { ok: true, value: { ...base, options, selectedOption: options[0]?.id ?? null } };
+}
+function hasMoveOnlyOption(move: Result<MoveReview>): boolean {
+  return move.ok && move.value.options.length > 0;
+}
+function movementReviewOptions(
+  move: Result<MoveReview>,
+  expanded: Result<MoveReview['options'][number] | null>,
+  rearranged: Result<MoveReview['options'][number] | null>,
+): MoveReview['options'] {
+  return [
+    ...(move.ok ? move.value.options : []),
+    ...optionResult(expanded),
+    ...optionResult(rearranged),
+  ];
+}
+function optionResult<T>(result: Result<T | null>): readonly T[] {
+  return result.ok && result.value !== null ? [result.value] : [];
+}
+function movementReviewBase(
+  move: Result<MoveReview>,
+  document: RenderDocument,
+  intent: Extract<EditIntent, { kind: 'placement' }>,
+  stamp: Parameters<NonNullable<WorkspaceBindings['moveReview']>>[2],
+): MoveReview {
+  if (move.ok) return move.value;
+  return {
+    id: intent.id,
+    intent,
+    stamp,
+    collectionId: document.collection.id,
+    revision: document.collection.revision,
+    options: [],
+    selectedOption: null,
+  };
+}
 /** Native adapters receive narrow roles; every human mutation uses captured Authoring preconditions. */
 function controller(
   client: ServiceClient,
@@ -260,6 +340,8 @@ function controller(
     wires: (callbacks) => createWireSession({ retention, read: readWireDrafts, ...callbacks }),
     inspector: (callbacks) =>
       createInspectorSession({ retention, read: readInspectorDrafts, ...callbacks }),
+    definitions: (callbacks) =>
+      createDefinitionSession({ retention, read: readDefinitionDrafts, ...callbacks }),
     source: (callbacks) =>
       createSourceController({
         inputs,
@@ -269,6 +351,8 @@ function controller(
       }),
     sessions: createCanvasSessions(canvas, () => viewport(element)),
     edits: { plan: planCanvasEdit },
+    moveReview: createMovementReviewBinding,
+    chooseMoveOption: chooseMoveOption,
     previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>
       createSubmissionSession({
@@ -356,8 +440,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
             id: 'add',
             label: 'Add',
             scope: 'Create diagram content',
-            empty:
-              'Creation tools are not available in this preview. Use Source to author nodes, groups, sections and connections.',
+            empty: 'Creation tools are hidden. Customize panels to show them.',
           },
           {
             id: 'browse',
@@ -384,6 +467,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     }),
     Source: createSourceEditor(design, element),
     Recovery: createRequestRecovery(design),
+    MovementReview: createMovementReview(design),
     Reveal: RevealInterface,
     CreateDialog: createCollectionDialog(design),
     Chooser: createCollectionChooser({ ...design, Browser: ChooserBrowser }),

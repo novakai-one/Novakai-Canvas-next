@@ -5,6 +5,7 @@ import type { SequenceContext } from './records.js';
 import { body } from './frames.js';
 import { activations } from './activations.js';
 import { union, center } from '../geometry/bounds.js';
+import { isSequenceParticipant } from './eligibility.js';
 /** Sequence whitespace scales against configured normal spacing; measured content and padding stay intact.
  * LayoutFault propagates to createLayout().arrange/inspect for typed rejection; Authoring retains
  * the committed scene while callers correct invalid measurements and retry this pure derivation.
@@ -17,7 +18,9 @@ export function sequenceGeometry(
 ): SequenceGeometry {
   if (section.sequence.length === 0)
     return { lifelines: [], events: [], fragments: [], activations: [], source: section.sequence };
-  const participants = nodes.filter((node): boolean => node.measured.kind === 'participant');
+  const participants = nodes.filter((node): boolean =>
+    isSequenceParticipant(node.measured, section),
+  );
   const extent = union(participants.map((node): typeof node.box => node.box));
   const localOptions: LayoutOptions = {
     ...options,

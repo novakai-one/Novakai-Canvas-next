@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse, Server } from 'node:http';
 import type { HttpMetadata } from '../contract/records/http.js';
 import type { Caller } from '../contract/records/http.js';
 import type { LocalServer, ServerBindings, ServerOptions } from '../contract/records/server.js';
+import type { RouteOutcome } from '../contract/records/protocol.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 
@@ -69,13 +70,43 @@ async function invokeApi(
   }
   const outcome = await bindings.router.invoke({
     path: exchange.url.pathname,
-    query: Object.fromEntries(exchange.url.searchParams),
+    query: queryValues(exchange.url.searchParams, exchange.url.pathname === '/api/v1/source'),
     caller,
     signal: exchange.signal,
     metadata: exchange.metadata,
     body: body.value,
   });
+  if (isBytes(outcome)) {
+    bindings.io.bytes(exchange.response, outcome.file);
+    return;
+  }
   bindings.io.json(exchange.response, outcome, bindings.security.generation);
+}
+
+function isBytes(outcome: RouteOutcome): outcome is Extract<RouteOutcome, { kind: 'bytes' }> {
+  return 'kind' in outcome && outcome.kind === 'bytes';
+}
+
+function queryValues(
+  params: URLSearchParams,
+  preserveScopeDuplicates: boolean,
+): Readonly<Record<string, string>> {
+  if (!preserveScopeDuplicates) return Object.fromEntries(params);
+  const values = new Map<string, string>();
+  for (const [key, value] of params) appendQueryValue(values, key, value);
+  return Object.fromEntries(values);
+}
+
+function appendQueryValue(values: Map<string, string>, key: string, value: string): void {
+  if (key !== 'section' && key !== 'object') {
+    values.set(key, value);
+    return;
+  }
+  values.set(key, joinedScopeValue(values.get(key), value));
+}
+
+function joinedScopeValue(previous: string | undefined, value: string): string {
+  return previous === undefined ? value : `${previous}\u0000${value}`;
 }
 /** A navigation grants only an HttpOnly browser session. Subsequent resource reads still pass exact host/origin admission. */
 function browserAccess(exchange: Exchange, bindings: ServerBindings): Result<void> {

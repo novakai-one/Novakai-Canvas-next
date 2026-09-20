@@ -154,15 +154,20 @@ export function placeAppSections(
     let x = 0;
     const placed = row.map((section) => {
       const authored = projection.sections.find((s) => s.id === section.id)?.placement;
+      const box = {
+        ...section.box,
+        width: authored?.width ?? section.box.width,
+        height: authored?.height ?? section.box.height,
+      };
       const origin = authored ?? { x: x - section.box.x, y: y - section.box.y };
-      x += section.box.width + gap;
+      x += box.width + gap;
       return {
         ...section,
         origin: { x: origin.x, y: origin.y },
-        box: { ...section.box, x: section.box.x + origin.x, y: section.box.y + origin.y },
+        box: { ...box, x: section.box.x + origin.x, y: section.box.y + origin.y },
       };
     });
-    y += Math.max(...row.map((s) => s.box.height)) + gap;
+    y += Math.max(...placed.map((s) => s.box.height)) + gap;
     return placed;
   });
 }

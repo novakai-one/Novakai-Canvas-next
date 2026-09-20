@@ -283,6 +283,9 @@ describe('Layout arrangement acceptance', () => {
       'async',
     ]);
     expect(sequence.events[1]?.points).toHaveLength(4);
+    expect(sequence.events[2]?.labelBox.y).toBeGreaterThan(
+      sequence.events[1]?.points.at(-1)?.y ?? -Infinity,
+    );
     expect(sequence.activations[0]).toMatchObject({ fromEvent: 'call', toEvent: 'return' });
     expect(sequence.lifelines).toHaveLength(2);
     expect(sequence.lifelines[0]?.to.y).toBeGreaterThan(
@@ -390,6 +393,43 @@ describe('Layout arrangement acceptance', () => {
     expect(inspected.diagnostics[0]?.message).toBe(
       'Mutually exclusive alternatives cannot share an activation interval',
     );
+  });
+  it('renders canonical module endpoints as sequence lifelines without adding objects', async (): Promise<void> => {
+    const source = project(
+      collection({
+        objects: [object('api', 'module'), object('worker', 'module'), object('unused', 'module')],
+        sections: [
+          section('sequence', ['api', 'worker', 'unused'], {
+            mode: 'sequence',
+            layout: { algorithm: 'sequence' },
+            sequence: [
+              {
+                id: 'request',
+                kind: 'event',
+                source: 'api',
+                target: 'worker',
+                label: 'Request',
+                message: 'call',
+                order: 0,
+              },
+            ],
+          }),
+        ],
+      }),
+    );
+    const engine = await harness([source]);
+    const scene = value(await engine.arrange(request(engine, source)));
+    const sequence = scene.sections[0]?.sequence;
+    assert(sequence);
+    expect(sequence.lifelines.map((lifeline) => lifeline.participant)).toEqual([
+      'sequence:object:api',
+      'sequence:object:worker',
+    ]);
+    expect(scene.sections[0]?.nodes.map((node) => node.measured.objectId)).toEqual([
+      'api',
+      'worker',
+      'unused',
+    ]);
   });
 });
 

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { Result } from '../errors.js';
 import type { Caller, HttpAdmission, HttpMetadata } from './http.js';
 import type { Request } from './owners.js';
+import type { StaticFile } from './server.js';
 /** A transport generation prevents a retained request from silently targeting a restarted/restored owner set. */
 export const mutationEnvelope = z.strictObject({
   version: z.literal(1),
@@ -25,6 +26,7 @@ export interface CommandAdmission {
 }
 /** Owner error codes remain stable in transport; consumers can retain richer owner-specific diagnostics. */
 export type WireOutcome = Result<unknown, OperationSource>;
+export type RouteOutcome = WireOutcome | { readonly kind: 'bytes'; readonly file: StaticFile };
 
 export interface ApiCall {
   readonly path: string;
@@ -35,7 +37,7 @@ export interface ApiCall {
   readonly body: string;
 }
 export interface ApiRouter {
-  invoke(call: ApiCall): Promise<WireOutcome>;
+  invoke(call: ApiCall): Promise<RouteOutcome>;
 }
 export interface CommandDecoder {
   read(body: string, context: CommandAdmission): Result<AdmittedMutation>;

@@ -30,8 +30,11 @@ function fieldBadge(field: Field, context: ContentContext): string {
     .join('/');
 }
 /** Optionality is visible without repeating the word required in every row; the full meaning remains in its accessible outline. */
-function typeLabel(field: Field): string {
-  return field.nullable ? `${field.type}?` : field.type;
+function typeLabel(field: Field, context: ContentContext): string {
+  const type =
+    context.resolveFieldType?.(field) ??
+    (typeof field.type === 'string' ? field.type : `@${field.type.id}`);
+  return field.nullable ? `${type}?` : type;
 }
 /** Actual pinned glyph metrics determine column minimums; atomic identifiers retain their full width. */
 function column(values: readonly string[], context: ContentContext): number {
@@ -66,7 +69,10 @@ export function fieldColumns(
       fields.map((field) => `${field.label}:`),
       context,
     ),
-    type: column(fields.map(typeLabel), context),
+    type: column(
+      fields.map((field) => typeLabel(field, context)),
+      context,
+    ),
   };
 }
 /** Each cell is measured in its assigned column and vertically padded with diagram tokens. */
@@ -88,7 +94,7 @@ export function measureField(field: Field, context: ContentContext): MeasuredCon
   const values = [
     cell(fieldBadge(field, context), columns.key, 0, context),
     cell(`${field.label}:`, columns.name, columns.key, context),
-    cell(typeLabel(field), columns.type, columns.key + columns.name, context),
+    cell(typeLabel(field, context), columns.type, columns.key + columns.name, context),
   ];
   const height =
     Math.max(context.style.contentSizing.rowMinimum, ...values.map((value) => value.height)) +
@@ -96,7 +102,7 @@ export function measureField(field: Field, context: ContentContext): MeasuredCon
   const width = columns.key + columns.name + columns.type;
   const nullability = field.nullable ? 'nullable' : 'required';
   const label =
-    `${fieldBadge(field, context)} ${field.label}: ${field.type} · ${nullability}`.trim();
+    `${fieldBadge(field, context)} ${field.label}: ${typeLabel(field, context).replace(/\?$/, '')} · ${nullability}`.trim();
   return {
     width,
     height,

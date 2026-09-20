@@ -13,7 +13,9 @@ export type ValueType =
   | 'link'
   | 'targets'
   | 'references'
-  | 'reference-value';
+  | 'reference-value'
+  | 'signature-parameters'
+  | 'type-expression';
 export interface Property {
   readonly type: ValueType;
   readonly field: string;
@@ -43,6 +45,8 @@ export interface Description {
   readonly defaults: Readonly<Record<string, string>>;
   readonly examples: readonly string[];
   readonly diagnostics: readonly string[];
+  readonly definitionSyntax: 'type @id "Label" = <expression>';
+  readonly definitionEditing: 'full-source-replacement';
   /** Acceptance policies published verbatim from Model's declaration records; discover without opening core. */
   readonly policies: {
     readonly layouts: Readonly<Record<string, readonly string[]>>;

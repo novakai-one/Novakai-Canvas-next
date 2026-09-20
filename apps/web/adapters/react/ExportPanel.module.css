@@ -1,0 +1,25 @@
+@layer components {
+  .panel {
+    display: grid;
+    gap: var(--nv-space-3);
+  }
+  .panel h2 {
+    margin: 0;
+    font-size: var(--nv-font-title);
+  }
+  .hint,
+  .error {
+    margin: 0;
+    font-size: var(--nv-font-caption);
+  }
+  .hint {
+    color: var(--nv-color-subtle);
+  }
+  .error {
+    color: var(--nv-color-danger, var(--nv-color-content));
+  }
+  .form {
+    display: grid;
+    gap: var(--nv-space-3);
+  }
+}

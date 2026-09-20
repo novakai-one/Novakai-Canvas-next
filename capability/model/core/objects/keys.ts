@@ -91,7 +91,7 @@ function validateForeignKey(
     'Foreign references must match an ordered primary or unique key',
   );
   const typesDiffer = localFields.some(
-    (field, index) => field.type !== resolvedFields[index]?.type,
+    (field, index) => !sameFieldType(field, resolvedFields[index]),
   );
   const typeIssues = diagnoseWhen(
     typesDiffer,
@@ -100,6 +100,14 @@ function validateForeignKey(
     'Foreign field types must match target types',
   );
   return [...arityIssues, ...entityIssues, ...referenceIssues, ...keyIssues, ...typeIssues];
+}
+
+/** Shared refs compare by canonical ID and legacy types retain exact string equality. */
+function sameFieldType(left: Field, right: Field | undefined): boolean {
+  if (right === undefined) return false;
+  if (typeof left.type === 'string' || typeof right.type === 'string')
+    return left.type === right.type;
+  return left.type.id === right.type.id;
 }
 
 /** A scalar foreign field must declare a reference; every other field forbids one. */

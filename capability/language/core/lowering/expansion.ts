@@ -25,11 +25,12 @@ function expandedRecipe(input: ExpansionRequest, deps: Dependencies): LoweredInt
       id: { value: input.namespace, span: parsed.declaration.span },
     },
   };
-  return accepted(
+  const lowered = accepted(
     lowerDocument(
       { ...parsed, collection: input.namespace, declaration },
       { source: input.source, mode: 'create', snapshot: null, resources: input.resources },
       deps,
     ),
   );
+  return lowered;
 }

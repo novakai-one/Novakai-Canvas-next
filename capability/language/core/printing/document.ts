@@ -43,6 +43,7 @@ function printEnvelope(collection: Collection, scope: Scope): string {
 /** Canonical namespaces are independent, while order inside each namespace remains stable. */
 function printDeclarations(collection: Collection): readonly string[] {
   return [
+    ...collection.definitions.map(printDefinition),
     ...collection.assets.map(printAsset),
     ...collection.sources.map((item) => header('source', item)),
     ...collection.objects.map(printNode),
@@ -50,6 +51,59 @@ function printDeclarations(collection: Collection): readonly string[] {
     ...collection.sections.map(printSection),
   ];
 }
+
+function printDefinition(definition: Collection['definitions'][number]): string {
+  return `type @${definition.id} ${JSON.stringify(definition.label)} = ${printDefinitionExpression(definition.expression)}`;
+}
+
+function printDefinitionExpression(
+  expression: Collection['definitions'][number]['expression'],
+): string {
+  if (expression.kind === 'union') return printDefinitionUnion(expression.items);
+  return printDefinitionAtom(expression);
+}
+
+function printDefinitionUnion(
+  items: readonly Collection['definitions'][number]['expression'][],
+): string {
+  return items
+    .map((item) =>
+      item.kind === 'union'
+        ? `(${printDefinitionExpression(item)})`
+        : printDefinitionExpression(item),
+    )
+    .join(' | ');
+}
+
+function printDefinitionAtom(
+  expression: Exclude<Collection['definitions'][number]['expression'], { readonly kind: 'union' }>,
+): string {
+  return definitionAtomPrinters[expression.kind](expression as never);
+}
+
+const definitionAtomPrinters = {
+  primitive: (
+    expression: Extract<
+      Collection['definitions'][number]['expression'],
+      { readonly kind: 'primitive' }
+    >,
+  ): string => expression.name,
+  reference: (
+    expression: Extract<
+      Collection['definitions'][number]['expression'],
+      { readonly kind: 'reference' }
+    >,
+  ): string => `@${expression.id}`,
+  literal: (
+    expression: Extract<
+      Collection['definitions'][number]['expression'],
+      { readonly kind: 'literal' }
+    >,
+  ): string =>
+    typeof expression.value === 'string'
+      ? JSON.stringify(expression.value)
+      : String(expression.value),
+};
 /** Media kind is an admission hint; exact bytes/type/metadata come from the pinned supplied record. */
 function printAsset(asset: Collection['assets'][number]): string {
   const kind = assetKind(asset.mediaType);

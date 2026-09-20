@@ -11,6 +11,7 @@ import { ownerValue, sourceMappings } from './diagnostics.js';
 import { partitionLayout } from './layout-fields.js';
 import type { Result } from '../../contract/errors.js';
 import { accepted, protect, reject } from '../validation/outcomes.js';
+import { lowerDefinition } from './definitions.js';
 /** Build complete raw canonical data; Model validates identities; Language owns correction and Authoring owns commit recovery. Retries have no writes. */
 export function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
   return protect(() => {
@@ -30,6 +31,7 @@ export function lowerDocumentData(document: Document, request: LowerRequest): Re
       sections: records(item, 'section').map((section) => accepted(lowerSection(section))),
       sources: records(item, 'source').map(lowerRecord),
       assets: records(item, 'asset').map((asset) => lowerAsset(asset, request.resources)),
+      definitions: records(item, 'type').map(lowerDefinition),
     };
   });
 }
@@ -87,6 +89,7 @@ export function lowerDocument(
       sections: [],
       assets: [],
       sources: [],
+      definitions: [],
       arrangement: { ...candidate.arrangement, constraints: [] },
     };
     const original =

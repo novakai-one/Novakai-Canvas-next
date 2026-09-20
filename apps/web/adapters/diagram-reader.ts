@@ -1,6 +1,6 @@
 import { renderEnvelope } from '@novakai/canvas-service';
 import type { RenderDocument } from '@novakai/canvas-service';
-import { validate } from '@novakai/canvas-model';
+import { validate, fieldTypeDisplay, typeUseDisplay } from '@novakai/canvas-model';
 import {
   readMeasuredProjection,
   readMeasuredContent,
@@ -45,6 +45,8 @@ function decode(input: unknown): RenderDocument {
         };
       return checked;
     },
+    resolveFieldType: fieldTypeDisplay,
+    resolveTypeUse: typeUseDisplay,
   };
   let projection: ReturnType<typeof readMeasuredProjection> | undefined;
   const measurements = accepted(readSupplementalMeasurements(payload.measurements));

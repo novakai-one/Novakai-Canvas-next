@@ -199,6 +199,83 @@ test('validate flow and state', () => {
       .relationships,
   ).toHaveLength(2);
 });
+test('validate canonical modules as direct sequence endpoints', () => {
+  const input = base({
+    objects: [node('api', 'module'), node('worker', 'module'), node('human', 'participant')],
+    sections: [
+      section('sequence', 'sequence', {
+        layout: layout('sequence'),
+        appearances: [{ object: 'api' }, { object: 'worker' }, { object: 'human' }],
+        sequence: [
+          {
+            id: 'request',
+            kind: 'event',
+            source: 'api',
+            target: 'worker',
+            label: 'Request',
+            message: 'call',
+            order: 0,
+          },
+          {
+            id: 'reply',
+            kind: 'event',
+            source: 'worker',
+            target: 'human',
+            label: 'Reply',
+            message: 'return',
+            order: 1,
+          },
+        ],
+      }),
+    ],
+  });
+  const validated = value(validate(input));
+  expect(validated.sections[0]?.sequence[0]).toMatchObject({ source: 'api', target: 'worker' });
+  expect(validated.objects.map((object) => object.id)).toEqual(['api', 'worker', 'human']);
+  const hidden = {
+    ...input,
+    sections: [
+      section('sequence', 'sequence', {
+        layout: layout('sequence'),
+        appearances: [{ object: 'api' }, { object: 'human' }],
+        sequence: [
+          {
+            id: 'request',
+            kind: 'event',
+            source: 'api',
+            target: 'worker',
+            label: 'Request',
+            message: 'call',
+            order: 0,
+          },
+        ],
+      }),
+    ],
+  };
+  rejects(hidden, 'sequence', 'sequence.request.worker');
+  const grouped = {
+    ...input,
+    sections: [
+      section('sequence', 'sequence', {
+        layout: layout('sequence'),
+        groups: [{ id: 'g', title: 'Group', layout: layout() }],
+        appearances: [{ object: 'api', group: 'g' }, { object: 'worker' }, { object: 'human' }],
+        sequence: [
+          {
+            id: 'request',
+            kind: 'event',
+            source: 'api',
+            target: 'worker',
+            label: 'Request',
+            message: 'call',
+            order: 0,
+          },
+        ],
+      }),
+    ],
+  };
+  rejects(grouped, 'sequence', 'sequence.request.api');
+});
 function tree(extra: Readonly<Record<string, unknown>> = {}): ReturnType<typeof base> {
   return base({
     objects: [node('root', 'concept'), node('child', 'concept'), node('note', 'note')],

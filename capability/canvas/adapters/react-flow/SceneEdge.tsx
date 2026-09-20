@@ -1,11 +1,6 @@
 import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import type {
-  SceneEdgeProps,
-  RenderSlots,
-  RouteHandlesProps,
-  WireLabelProps,
-} from '../../contract/react-types.js';
+import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';
@@ -45,13 +40,11 @@ function pathMidpoint(points: readonly Point[]): Point {
 /** Binding keeps measured labels/notation outside Canvas policy; host owns content admission and render recovery. */
 export function createSceneEdge(
   slots: Pick<RenderSlots, 'MeasuredContent' | 'Marker'> & {
-    readonly RouteHandles: ComponentType<RouteHandlesProps>;
     readonly WireLabel: ComponentType<WireLabelProps>;
   },
 ): ComponentType<SceneEdgeProps> {
   const Marker = slots.Marker;
   const Content = slots.MeasuredContent;
-  const Handles = slots.RouteHandles;
   const Label = slots.WireLabel;
   /** Render actual React Flow edge paths with independently positioned measured labels and complete crow's-foot notation. */
   function SceneEdge({ data }: SceneEdgeProps): ReactElement | null {
@@ -60,7 +53,7 @@ export function createSceneEdge(
   }
   /** Admitted routes always have two points; missing geometry stays visibly absent rather than inventing a wire. */
   function renderEdge(data: NonNullable<SceneEdgeProps['data']>): ReactElement | null {
-    const { view, actions, editable } = data;
+    const { view } = data;
     const wire = view.wire;
     const paint = wire.appearance.paint;
     const first = wire.points[0];
@@ -70,12 +63,6 @@ export function createSceneEdge(
     if (!first || !second || !last || !penultimate) return null;
     const path = view.draft ? wirePath(wire.points) : wire.path;
     const labelAnchor = pathMidpoint(wire.points);
-    const label = wire.measuredLabel;
-    const labelBottom = labelAnchor.y + label.height / (2 * data.zoom);
-    const controlPosition = {
-      x: labelAnchor.x - label.width / (2 * data.zoom),
-      y: labelBottom + label.height / data.zoom,
-    };
     return (
       <g
         className={styles.edge}
@@ -121,15 +108,6 @@ export function createSceneEdge(
             <Marker kind={wire.targetMarker} paint={paint} />
           </g>
         </g>
-        {view.selected && (
-          <Handles
-            edge={view}
-            actions={actions}
-            editable={editable}
-            nudge={data.nudge}
-            controlPosition={controlPosition}
-          />
-        )}
         {wire.labelVisible === false && view.showLabel && (
           <Label wire={wire} zoom={data.zoom} anchor={labelAnchor} />
         )}

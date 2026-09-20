@@ -21,6 +21,9 @@ export const assetId = identifier.brand<'AssetId'>();
 /** Checked identity of a provenance entry within its collection. */
 export const sourceId = identifier.brand<'SourceId'>();
 
+/** Checked identity of a shared type definition within its collection. */
+export const definitionId = identifier.brand<'DefinitionId'>();
+
 /** Checked identity of a container within one section. */
 export const groupId = identifier.brand<'GroupId'>();
 
@@ -58,6 +61,9 @@ export type AssetId = z.infer<typeof assetId>;
 
 /** Provenance identity produced by the checked sourceId schema. */
 export type SourceId = z.infer<typeof sourceId>;
+
+/** Shared definition identity produced by the checked definitionId schema. */
+export type DefinitionId = z.infer<typeof definitionId>;
 
 /** Section-local container identity produced by the checked groupId schema. */
 export type GroupId = z.infer<typeof groupId>;

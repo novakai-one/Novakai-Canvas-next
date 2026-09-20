@@ -5,6 +5,8 @@ import type { Section, SequenceItem } from '../../contract/records/section.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
+import { resolveCallableEndpoint } from '../relationships/callable.js';
+import { referenceIssue } from '../invariants/issues.js';
 
 type Fragment = Extract<SequenceItem, { kind: 'fragment' }>;
 
@@ -61,11 +63,33 @@ function validateParent(item: SequenceItem, section: Section, path: string): rea
   return validateBranchMembership(item, owner, path);
 }
 
-/** A sequence endpoint must resolve to a participant currently visible in this section. */
+/** A sequence endpoint must resolve to a visible participant or a directly shown module used by an event. */
 function isVisibleParticipant(id: ObjectId, section: Section, collection: Collection): boolean {
-  const visible = visibleObjects(section).includes(id);
   const object = collection.objects.find((candidate) => candidate.id === id);
-  return visible && object?.kind === 'participant';
+  if (!visibleObjects(section).includes(id)) return false;
+  return canParticipate(object, id, section);
+}
+
+function canParticipate(
+  object: Collection['objects'][number] | undefined,
+  id: ObjectId,
+  section: Section,
+): boolean {
+  if (object === undefined) return false;
+  switch (object.kind) {
+    case 'participant':
+      return true;
+    case 'module':
+      return directAppearance(id, section);
+    default:
+      return false;
+  }
+}
+
+function directAppearance(id: ObjectId, section: Section): boolean {
+  return section.appearances.some(
+    (appearance) => appearance.object === id && appearance.group === undefined,
+  );
 }
 
 /** Fragments carry no endpoints; message events validate both participants independently. */
@@ -76,14 +100,67 @@ function validateEvent(
   path: string,
 ): readonly Diagnostic[] {
   if (item.kind !== 'event') return [];
-  return [item.source, item.target].flatMap((id) =>
+  const endpointIssues = [item.source, item.target].flatMap((id) =>
     diagnoseWhen(
       !isVisibleParticipant(id, section, collection),
       'sequence',
       `${path}.${id}`,
-      'Event endpoint must be a visible participant',
+      'Event endpoint must be a visible participant or direct top-level module',
     ),
   );
+  return [...endpointIssues, ...validateOperation(item, collection, path)];
+}
+
+function validateOperation(
+  item: Extract<SequenceItem, { kind: 'event' }>,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
+  if (item.operation === undefined) return [];
+  const operation = item.operation;
+  const operationPath = `${path}.operation`;
+  if (item.message === 'return')
+    return operationDiagnostic(operationPath, 'Return events cannot reference an operation');
+  return validateOperationTarget(item, operation, collection, operationPath);
+}
+
+function validateOperationTarget(
+  item: Extract<SequenceItem, { kind: 'event' }>,
+  operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
+  collection: Collection,
+  operationPath: string,
+): readonly Diagnostic[] {
+  if (operation.object !== item.target)
+    return operationDiagnostic(operationPath, 'Operation owner must equal the event target');
+  const owner = collection.objects.find((object) => object.id === operation.object);
+  return owner === undefined
+    ? referenceIssue(true, operationPath)
+    : validateCallableOperation(collection, operation, operationPath);
+}
+
+function validateCallableOperation(
+  collection: Collection,
+  operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
+  operationPath: string,
+): readonly Diagnostic[] {
+  if (resolveCallableEndpoint(collection, operation) !== undefined) return [];
+  return invalidOperation(operation, operationPath);
+}
+
+function operationDiagnostic(path: string, message: string): readonly Diagnostic[] {
+  return [{ code: 'sequence', path, message }];
+}
+
+function invalidOperation(
+  operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
+  operationPath: string,
+): readonly Diagnostic[] {
+  if (operation.member === undefined)
+    return operationDiagnostic(
+      operationPath,
+      'Operation must address a canonical function or signature',
+    );
+  return operationDiagnostic(`${operationPath}.member`, 'Operation must resolve to a signature');
 }
 
 /** No parent means root scope; unresolved parents are diagnosed independently of cycles. */

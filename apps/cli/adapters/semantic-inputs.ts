@@ -19,6 +19,12 @@ const readout = z.looseObject({
   source: z.string(),
   collection: z.string(),
   revision: z.number().int().nonnegative(),
+  scope: z
+    .union([
+      z.object({ kind: z.literal('all') }),
+      z.object({ kind: z.enum(['section', 'object']), id: z.string() }),
+    ])
+    .default({ kind: 'all' }),
   manual: z.array(manualTarget).readonly().optional(),
 });
 /** Parse the server snapshot through Authoring, rather than asserting the JSON response type. */
@@ -161,8 +167,14 @@ function sourceReadout(input: unknown): Result<string> {
     return failure('invalid-response', 'Service returned an invalid source readout');
   return {
     ok: true,
-    value: `# ${parsed.data.collection} revision=${parsed.data.revision}${manualNote(parsed.data.manual)}\n${parsed.data.source}`,
+    value: `${scopeNotice(parsed.data.scope)}# ${parsed.data.collection} revision=${parsed.data.revision}${manualNote(parsed.data.manual)}\n${parsed.data.source}`,
   };
+}
+
+function scopeNotice(scope: { readonly kind: string }): string {
+  return scope.kind === 'all'
+    ? ''
+    : '# Read-only partial context; referenced objects/views and manual geometry may be omitted. Read those IDs separately or use the full collection.\n';
 }
 /** Receipt output reports confirmed identity and sequence, not an optimistic saved status. */
 function receipt(input: unknown, expected: ReceiptExpectation): Result<string> {
@@ -192,6 +204,17 @@ function receiptReadout(input: unknown, request: string): Result<string> {
 /** All CLI semantic interpretation uses owning capability contracts; host output remains a small readable vocabulary. */
 export function createSemanticInputs(language: Pick<Language, 'parse'>): SemanticInputs {
   return {
+    profileParse: (source) => {
+      const result = language.parse(source);
+      if (!result.ok)
+        return failure(
+          'invalid-source',
+          'Language rejected this source',
+          'Correct the named source diagnostics and retry.',
+          { code: 'validation-failed', diagnostics: result.error.diagnostics },
+        );
+      return { ok: true, value: result.value };
+    },
     snapshot,
     checkedRequest,
     requests: (source) => {

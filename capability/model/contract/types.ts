@@ -1,6 +1,7 @@
 import type { Collection } from './records/collection.js';
 /** Collection record namespaces supported by structural operations and impact reporting. */
-export type Target = 'objects' | 'relationships' | 'sections' | 'assets' | 'sources';
+export type Target =
+  'objects' | 'relationships' | 'sections' | 'assets' | 'sources' | 'definitions';
 /** One net record change; collection denotes metadata rather than a child-record namespace. */
 export interface Impact {
   readonly target: Target | 'collection';

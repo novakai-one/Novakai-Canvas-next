@@ -10,6 +10,7 @@ import {
 } from '../brands.js';
 import { layoutSchema, placementSchema, pointSchema } from './layout.js';
 import { frameSchema, compositionSchema, containerFrameSchema } from './composition.js';
+import { endpointSchema } from './content.js';
 
 /** Section-local view of one object. Omitted overrides inherit semantic defaults or automatic layout. */
 export const appearanceSchema = z
@@ -72,6 +73,7 @@ const sequenceEventSchema = z
     target: objectId,
     label,
     message: z.enum(['call', 'return', 'async']),
+    operation: endpointSchema.optional(),
     activate: z.boolean().optional(),
   })
   .readonly();

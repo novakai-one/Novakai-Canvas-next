@@ -1,6 +1,7 @@
 import type { Dependencies } from '../../contract/types.js';
 import type { Projection, VisualSection } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
+import type { InputCollection } from '../../contract/records/input.js';
 import { resolvedStyle } from '../../contract/records/style.js';
 import { clone, parse, requireValue, reject } from '../validation/outcomes.js';
 import { projectSection } from './section.js';
@@ -45,6 +46,7 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
     width: style.contentSizing.widths.medium.preferred,
     metrics: deps.measurement,
     assets: deps.assets,
+    ...projectionResolvers(collection, deps.domain),
   };
   const sections = collection.sections.map((section): VisualSection =>
     projectSection(section, context),
@@ -80,6 +82,30 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
       ...new Set([style.bodyFont.digest, style.monoFont.digest, style.strongFont.digest]),
     ],
   };
+}
+
+function projectionResolvers(
+  collection: InputCollection,
+  domain: ProjectionDependencies['domain'],
+): Pick<ContentContext, 'resolveFieldType' | 'resolveTypeUse'> {
+  return {
+    ...fieldResolver(collection, domain.resolveFieldType),
+    ...typeResolver(collection, domain.resolveTypeUse),
+  };
+}
+
+function fieldResolver(
+  collection: InputCollection,
+  resolver: ProjectionDependencies['domain']['resolveFieldType'],
+): Pick<ContentContext, 'resolveFieldType'> {
+  return resolver === undefined ? {} : { resolveFieldType: (field) => resolver(collection, field) };
+}
+
+function typeResolver(
+  collection: InputCollection,
+  resolver: ProjectionDependencies['domain']['resolveTypeUse'],
+): Pick<ContentContext, 'resolveTypeUse'> {
+  return resolver === undefined ? {} : { resolveTypeUse: (type) => resolver(collection, type) };
 }
 
 /** Total scene budget includes wire/sequence labels and headings, not only each node's private limit. */

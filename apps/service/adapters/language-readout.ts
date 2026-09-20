@@ -7,8 +7,8 @@ export function createSourceReadout(
 ): RouterBindings['source'] {
   return {
     describe: () => language.describe(),
-    print: (collection) => {
-      const printed = language.print({ collection, scope: { kind: 'all' } });
+    print: (collection, scope = { kind: 'all' }) => {
+      const printed = language.print({ collection, scope });
       if (!printed.ok)
         return failure(
           'invalid-input',

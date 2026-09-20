@@ -2,6 +2,7 @@ import type { ComponentType, ReactElement } from 'react';
 import type { ContentEditorProps } from '../../contract/inspector-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
 import type { Collection, ContentBlock } from '../../contract/records/owners.js';
+import { fieldTypeDisplay } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
 /** ER keys and callable signatures have dedicated controls; shared text inputs remain in the content row component. */
 export function createEngineeringFields({
@@ -20,7 +21,8 @@ export function createEngineeringFields({
               control={(props) => (
                 <input
                   {...props}
-                  value={parameter}
+                  value={parameterValue(parameter)}
+                  readOnly={typeof parameter !== 'string'}
                   onChange={(event) =>
                     edit({
                       kind: 'parameters',
@@ -56,6 +58,47 @@ export function createEngineeringFields({
     if (item.kind !== 'field') return null;
     return (
       <div className={styles.editor}>
+        <Field
+          label="Type source"
+          control={(props) => (
+            <select
+              {...props}
+              value={typeChoice(item)}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (value === 'mode:unlinked') {
+                  edit({
+                    kind: 'field-type',
+                    id: item.id,
+                    value: fieldTypeDisplay(collection, item),
+                  });
+                  return;
+                }
+                const definition = collection.definitions.find(
+                  (candidate) => `definition:${candidate.id}` === value,
+                );
+                if (definition)
+                  edit({
+                    kind: 'field-type',
+                    id: item.id,
+                    value: { kind: 'definition', id: definition.id },
+                  });
+              }}
+            >
+              <option value="mode:unlinked">Unlinked (authored type)</option>
+              {collection.definitions.map((definition) => (
+                <option key={definition.id} value={`definition:${definition.id}`}>
+                  Shared: {definition.label} ·{' '}
+                  {fieldTypeDisplay(collection, {
+                    ...item,
+                    type: { kind: 'definition', id: definition.id },
+                  })}{' '}
+                  · @{definition.id}
+                </option>
+              ))}
+            </select>
+          )}
+        />
         <Field
           label="Key"
           control={(props) => (
@@ -104,6 +147,18 @@ export function createEngineeringFields({
   }
   return EngineeringFields;
 }
+
+function parameterValue(
+  parameter:
+    | string
+    | {
+        readonly name: string;
+        readonly type: string | { readonly kind: 'definition'; readonly id: string };
+      },
+): string {
+  if (typeof parameter === 'string') return parameter;
+  return `${parameter.name}: ${typeof parameter.type === 'string' ? parameter.type : `@${parameter.type.id}`}`;
+}
 const keys = ['none', 'primary', 'foreign', 'unique'] as const;
 const keyLabels = {
   none: 'No key',
@@ -127,4 +182,7 @@ function referenceTargets(collection: Collection) {
 function referenceValue(field: Extract<ContentBlock, { kind: 'field' }>): string {
   if (!field.references) return '';
   return JSON.stringify([field.references.object, field.references.member]);
+}
+function typeChoice(field: Extract<ContentBlock, { kind: 'field' }>): string {
+  return typeof field.type === 'string' ? 'mode:unlinked' : `definition:${field.type.id}`;
 }

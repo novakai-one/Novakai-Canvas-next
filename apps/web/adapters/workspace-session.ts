@@ -1,7 +1,22 @@
 import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
-import type { DiagramObject } from '../contract/records/owners.js';
+import type { DiagramObject, Group, Relationship, Section } from '../contract/records/owners.js';
+import type {
+  AddDiagramDraft,
+  AddGroupDraft,
+  AddObjectDraft,
+} from '../contract/records/creation.js';
+import type { ConnectionDraft, ConnectionEdit } from '../contract/records/connection.js';
+import {
+  compatibleWires,
+  memberEndpoints,
+  genericMemberEndpoints,
+  sourceEndpoints,
+  targetEndpoints,
+  resolveCallableEndpoint,
+} from '@novakai/canvas-model';
+import type { DefinitionDraft } from '../contract/records/definitions.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
 import type {
@@ -17,6 +32,436 @@ import type {
   EditIntent,
 } from '../contract/records/owners.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
+import type { RelationshipKind } from '@novakai/canvas-model';
+import type { BinaryResponse } from '../contract/ports/client.js';
+import { chooseMoveOption as chooseReviewedMoveOption } from '../contract/api.js';
+
+const allRelationshipKinds: readonly RelationshipKind[] = [
+  'flow',
+  'association',
+  'imports',
+  'calls',
+  'implements',
+  'contains',
+  'parent',
+  'reference',
+  'transition',
+];
+type CanonicalMemberKind = 'field' | 'member' | 'signature' | 'port' | 'row';
+
+function connectionSection(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+  occupied: boolean,
+): Result<Section> {
+  const blocker = connectionSectionBlocker(active, intent, occupied);
+  if (blocker !== null) return blocker;
+  return findConnectionSection(active, intent.source.section);
+}
+
+function connectionSectionBlocker(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+  occupied: boolean,
+): Result<Section> | null {
+  if (occupied)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'pending-request',
+        'Finish or cancel the current connection first.',
+        'Apply or cancel the retained connection draft.',
+      ),
+    };
+  if (intent.base.collectionId !== active.document.collection.id)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'stale-gesture',
+        'The diagram changed while this connection was being edited.',
+        'Reconnect the endpoints on the current diagram.',
+      ),
+    };
+  return null;
+}
+
+function findConnectionSection(active: ActiveDiagram, sectionId: string): Result<Section> {
+  const section = active.document.collection.sections.find((item) => item.id === sectionId);
+  if (section === undefined || section.mode === 'sequence')
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'unsupported-edit',
+        'Connections are unavailable in sequence diagrams.',
+        'Choose a compatible diagram section.',
+      ),
+    };
+  return { ok: true, value: section };
+}
+
+function canonicalMemberKind(
+  object: DiagramObject,
+  member: string,
+): CanonicalMemberKind | undefined {
+  return memberPortKind(object, member) ?? contentMemberKind(object, member);
+}
+
+function memberPortKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+  return object.ports.some((port) => port.id === member) ? 'port' : undefined;
+}
+
+function contentMemberKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+  const block = object.content.find((item) => item.id === member);
+  if (block !== undefined && block.kind !== 'table') return block.kind as CanonicalMemberKind;
+  return tableRowKind(object, member);
+}
+
+function tableRowKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+  const table = object.content.find(
+    (item) => item.kind === 'table' && item.rows.some((row) => row.id === member),
+  );
+  return table === undefined ? undefined : 'row';
+}
+
+function canonicalMemberAllowed(object: DiagramObject, member: string): boolean {
+  const kind = canonicalMemberKind(object, member);
+  const allowed = memberEndpoints[object.kind] ?? genericMemberEndpoints;
+  return kind !== undefined && (allowed as readonly string[]).includes(kind);
+}
+
+function editedConnection(draft: ConnectionDraft, edit: ConnectionEdit): ConnectionDraft {
+  if (edit.kind === 'label') return { ...draft, label: edit.value, problem: null };
+  if (edit.kind === 'relationship-kind') return { ...draft, kind: edit.value, problem: null };
+  return { ...draft, [edit.side]: edit.value, problem: null };
+}
+
+function connectionRequest(
+  bindings: WorkspaceBindings,
+  draft: ConnectionDraft,
+  label: string,
+): Result<Request> {
+  const id = `relationship-${draft.id}` as Relationship['id'];
+  const relationship: Relationship = {
+    id,
+    kind: draft.kind,
+    label,
+    source: endpointValue(draft.source),
+    target: endpointValue(draft.target),
+    ...associationCardinality(draft),
+    style: 'solid',
+    sources: [],
+  };
+  const section: Section = {
+    ...draft.section,
+    wires: [
+      ...draft.section.wires,
+      {
+        ...connectionAppearance(id),
+      },
+    ],
+  };
+  return bindings.inputs.model(
+    draft.base,
+    draft.collection.id,
+    [
+      { op: 'create', target: 'relationships', value: relationship },
+      { op: 'replace', target: 'sections', value: section },
+    ],
+    draft.id,
+  );
+}
+
+function associationCardinality(draft: ConnectionDraft): Partial<Relationship> {
+  if (draft.kind !== 'association') return {};
+  return {
+    ...cardinalityEntry('from', draft.from),
+    ...cardinalityEntry('to', draft.to),
+  };
+}
+
+function cardinalityEntry(
+  side: 'from' | 'to',
+  value: ConnectionDraft['from'],
+): Partial<Relationship> {
+  return value === 'none' ? {} : { [side]: value };
+}
+
+function connectionAppearance(id: Relationship['id']): Section['wires'][number] {
+  return {
+    relationship: id,
+    route: 'orthogonal',
+    sourceSide: 'auto',
+    targetSide: 'auto',
+    locked: false,
+  };
+}
+
+function connectionKinds(
+  mode: Section['mode'],
+  collection: ActiveDiagram['document']['collection'],
+  source: ConnectionDraft['source']['kind'],
+  target: ConnectionDraft['target'],
+): readonly RelationshipKind[] {
+  const candidates = compatibleWires[mode] ?? allRelationshipKinds;
+  return candidates.filter((kind) => connectionKindAllowed(kind, source, target, collection));
+}
+
+function connectionKindAllowed(
+  kind: RelationshipKind,
+  source: ConnectionDraft['source']['kind'],
+  target: ConnectionDraft['target'],
+  collection: ActiveDiagram['document']['collection'],
+): boolean {
+  return (
+    endpointKindAllowed(sourceEndpoints[kind], source) &&
+    endpointKindAllowed(targetEndpoints[kind], target.kind) &&
+    (kind !== 'calls' || callableTargetExists(collection, target))
+  );
+}
+
+function endpointKindAllowed(
+  allowed: readonly ConnectionDraft['source']['kind'][] | undefined,
+  kind: ConnectionDraft['source']['kind'],
+): boolean {
+  return allowed === undefined || allowed.includes(kind);
+}
+
+function callableTargetExists(
+  collection: ActiveDiagram['document']['collection'],
+  target: ConnectionDraft['target'],
+): boolean {
+  return (
+    resolveCallableEndpoint(collection, {
+      object: target.object,
+      ...(target.member === undefined ? {} : { member: target.member }),
+    } as Relationship['target']) !== undefined
+  );
+}
+
+function connectionEndpointNode(
+  active: ActiveDiagram,
+  endpoint: Extract<EditIntent, { kind: 'connection' }>['source'],
+) {
+  const sceneSection = active.document.scene.sections.find((item) => item.id === endpoint.section);
+  return sceneSection?.nodes.find((item) => item.id === endpoint.node);
+}
+
+function connectionEndpointObject(
+  active: ActiveDiagram,
+  node: ReturnType<typeof connectionEndpointNode>,
+) {
+  const objectId = node?.measured.objectId;
+  return objectId === null || objectId === undefined
+    ? undefined
+    : active.document.collection.objects.find((item) => item.id === objectId);
+}
+
+function connectionEndpointValue(
+  object: DiagramObject,
+  anchor: { readonly member: string; readonly label: string } | undefined,
+): ConnectionDraft['source'] {
+  return {
+    object: object.id,
+    kind: object.kind,
+    label: object.label,
+    ...(anchor === undefined ? {} : { member: anchor.member, memberLabel: anchor.label }),
+  };
+}
+
+function connectionEndpointMember(
+  object: DiagramObject,
+  node: NonNullable<ReturnType<typeof connectionEndpointNode>>,
+  member: string | null,
+): Result<ConnectionDraft['source']> {
+  if (member === null) return { ok: true, value: connectionEndpointValue(object, undefined) };
+  return addressConnectionMember(object, node, member);
+}
+
+function addressConnectionMember(
+  object: DiagramObject,
+  node: NonNullable<ReturnType<typeof connectionEndpointNode>>,
+  member: string,
+): Result<ConnectionDraft['source']> {
+  const anchor = node.measured.content.anchors.find((item) => item.member === member);
+  if (anchor === undefined)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'stale-target',
+        'The selected member is no longer available.',
+        'Reconnect the current members.',
+      ),
+    };
+  if (!canonicalMemberAllowed(object, anchor.member))
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'unsupported-edit',
+        'The selected member is not a legal connection endpoint for this object.',
+        'Choose a field, member, signature, port or row supported by the object.',
+      ),
+    };
+  return { ok: true, value: connectionEndpointValue(object, anchor) };
+}
+
+function resolveConnectionEndpoint(
+  active: ActiveDiagram,
+  endpoint: Extract<EditIntent, { kind: 'connection' }>['source'],
+): Result<ConnectionDraft['source']> {
+  const node = connectionEndpointNode(active, endpoint);
+  const object = connectionEndpointObject(active, node);
+  if (node === undefined || object === undefined)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'stale-target',
+        'The connection endpoint is no longer represented by a canonical object.',
+        'Reconnect the current nodes.',
+      ),
+    };
+  return connectionEndpointMember(object, node, endpoint.member);
+}
+
+function resolveConnectionEndpoints(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+): Result<{
+  readonly source: ConnectionDraft['source'];
+  readonly target: ConnectionDraft['target'];
+}> {
+  const source = resolveConnectionEndpoint(active, intent.source);
+  if (!source.ok) return source;
+  const target = resolveConnectionEndpoint(active, intent.target);
+  if (!target.ok) return target;
+  return { ok: true, value: { source: source.value, target: target.value } };
+}
+
+function buildConnectionDraft(
+  active: ActiveDiagram,
+  intent: Extract<EditIntent, { kind: 'connection' }>,
+  section: Section,
+): Result<ConnectionDraft> {
+  const endpoints = resolveConnectionEndpoints(active, intent);
+  if (!endpoints.ok) return endpoints;
+  const kinds = connectionKinds(
+    section.mode,
+    active.document.collection,
+    endpoints.value.source.kind,
+    endpoints.value.target,
+  );
+  if (kinds.length === 0)
+    return {
+      ok: false,
+      error: connectionDiagnostic(
+        'unsupported-edit',
+        'These endpoints have no compatible relationship kind.',
+        'Choose endpoints supported by this diagram.',
+      ),
+    };
+  return {
+    ok: true,
+    value: {
+      id: intent.id,
+      base: active.base,
+      generation: active.generation,
+      collection: active.document.collection,
+      section,
+      source: endpoints.value.source,
+      target: endpoints.value.target,
+      kinds,
+      kind: kinds[0] as RelationshipKind,
+      label: '',
+      from: 'none',
+      to: 'none',
+      problem: null,
+      requestState: 'draft',
+    },
+  };
+}
+
+function connectionCaptureCheck(
+  capture: { readonly draft: ConnectionDraft } | null,
+): Result<ConnectionDraft> {
+  return capture === null
+    ? {
+        ok: false,
+        error: connectionDiagnostic(
+          'invalid-edit',
+          'No connection is awaiting review.',
+          'Connect two compatible endpoints first.',
+        ),
+      }
+    : { ok: true, value: capture.draft };
+}
+
+function connectionActiveCheck(
+  active: ActiveDiagram | null,
+  draft: Result<ConnectionDraft>,
+): Result<void> {
+  if (!draft.ok) return draft;
+  return active === null ||
+    active.document.collection.id !== draft.value.collection.id ||
+    active.generation !== draft.value.generation
+    ? {
+        ok: false,
+        error: connectionDiagnostic(
+          'stale-gesture',
+          'The connection belongs to another collection or generation.',
+          'Return to the captured collection and retry, or cancel this draft.',
+        ),
+      }
+    : { ok: true, value: undefined };
+}
+
+function connectionLabelCheck(draft: Result<ConnectionDraft>): Result<string> {
+  if (!draft.ok) return draft;
+  const label = draft.value.label.trim();
+  return label.length === 0
+    ? {
+        ok: false,
+        error: connectionDiagnostic(
+          'invalid-edit',
+          'Give the connection a label before applying it.',
+          'Enter a short relationship label.',
+        ),
+      }
+    : { ok: true, value: label };
+}
+
+function connectionChecks(
+  capture: { readonly draft: ConnectionDraft } | null,
+  active: ActiveDiagram | null,
+): readonly Result<unknown>[] {
+  const draft = connectionCaptureCheck(capture);
+  return [draft, connectionActiveCheck(active, draft), connectionLabelCheck(draft)];
+}
+
+function endpointValue(endpoint: ConnectionDraft['source']): Relationship['source'] {
+  return endpoint.member === undefined
+    ? { object: endpoint.object as Relationship['source']['object'] }
+    : {
+        object: endpoint.object as Relationship['source']['object'],
+        member: endpoint.member as Relationship['source']['member'],
+      };
+}
+
+function definitionChanges(
+  draft: DefinitionDraft,
+): readonly import('../contract/records/owners.js').Change[] {
+  if (draft.operation === 'remove')
+    return [{ op: 'remove', target: 'definitions', id: draft.definition.id }];
+  return [{ op: draft.operation, target: 'definitions', value: draft.definition }];
+}
+
+function definitionRequest(draft: DefinitionDraft, bindings: WorkspaceBindings): Result<Request> {
+  if (draft.request !== undefined) return { ok: true, value: draft.request };
+  return bindings.inputs.model(
+    draft.base,
+    draft.collection.id,
+    definitionChanges(draft),
+    bindings.nextId(),
+  );
+}
 interface RenderRequest {
   readonly token: number;
   readonly id: string;
@@ -49,6 +494,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     connected: false,
     busy: false,
     pending: [],
+    movementReview: null,
+    connection: null,
+    creation: {
+      diagram: { title: '', mode: 'grid' },
+      object: { section: '', label: '', kind: 'module', reuseObject: null, group: null },
+      group: { section: '', title: '' },
+      problem: null,
+      busy: false,
+    },
     history: { status: null, busy: false },
     ...source.getSnapshot(),
   };
@@ -62,12 +516,42 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
   let historyGate = false;
+  let movementCapture: {
+    active: ActiveDiagram;
+    intent: Extract<EditIntent, { kind: 'placement' }>;
+    review: import('../contract/records/movement.js').MoveReview;
+    workspace: string;
+  } | null = null;
+  let movementApplying = false;
+  let connectionCapture: { draft: ConnectionDraft; request: Request | null } | null = null;
   let historyRead = 0;
   let historyRefreshing = false;
+  let diagramCapture: {
+    readonly id: Section['id'];
+    readonly base: NonNullable<WorkspaceView['snapshot']>;
+    readonly collection: ActiveDiagram['document']['collection'];
+    readonly generation: string;
+    request: Request | null;
+  } | null = null;
+  let objectCapture: {
+    readonly id: DiagramObject['id'];
+    readonly base: NonNullable<WorkspaceView['snapshot']>;
+    readonly collection: ActiveDiagram['document']['collection'];
+    readonly generation: string;
+    request: Request | null;
+  } | null = null;
+  let groupCapture: {
+    readonly id: Group['id'];
+    readonly base: NonNullable<WorkspaceView['snapshot']>;
+    readonly collection: ActiveDiagram['document']['collection'];
+    readonly generation: string;
+    request: Request | null;
+  } | null = null;
   let historySequence = 0;
   let historySnapshotReady = false;
   let removeHistoryKeys = (): void => undefined;
   const inspector = bindings.inspector({ apply: applyObject, report });
+  const definitions = bindings.definitions({ apply: applyDefinition, report });
   const wires = bindings.wires({ apply: applyChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
@@ -83,8 +567,25 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
     holdConfirmedHistory(pending);
-    update({ pending, busy: pending.some((item) => item.state === 'sending') });
+    const connection = pendingConnectionView(pending);
+    update({
+      pending,
+      busy: pending.some((item) => item.state === 'sending'),
+      creation: { ...state.creation, busy: creationLocked() },
+      ...(connection === undefined ? {} : { connection }),
+    });
     updateMutationAvailability();
+    if (movementCapture?.intent.id !== undefined) updateMovementRecovery(movementCapture.intent.id);
+  }
+  function pendingConnectionView(pending: readonly Submission[]): ConnectionDraft | undefined {
+    if (connectionCapture?.request === null || connectionCapture === null) return undefined;
+    const item = pending.find(
+      (entry) => entry.request.request === connectionCapture?.request?.request,
+    );
+    if (item === undefined) return undefined;
+    const requestState = item.state;
+    connectionCapture.draft = { ...connectionCapture.draft, requestState };
+    return connectionCapture.draft;
   }
   /** Listeners receive a new immutable view; Canvas panning has its own narrower subscription. */
   function update(patch: Partial<WorkspaceView>): void {
@@ -322,7 +823,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     void refresh();
     return {
       ok: false,
-      error: diagnostic(
+      error: connectionDiagnostic(
         'workspace-generation',
         'The workspace changed while opening this collection',
         'Refresh the workspace, then try again.',
@@ -508,7 +1009,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function updateMutationAvailability(): void {
     state.active?.session.dispatch({
       kind: 'mutation-available',
-      value: !historyBlocked() && state.active.generation === state.generation,
+      value:
+        movementCapture === null &&
+        !movementApplying &&
+        !historyBlocked() &&
+        state.active.generation === state.generation,
     });
   }
   /** Rendering acknowledges geometry only, never an unconfirmed edit. */
@@ -530,39 +1035,310 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     if (item.kind === 'edit-intent') void editCanvas(item.intent);
   }
-  /** A busy client retains subsequent gestures as recoverable drafts; no second browser request is submitted concurrently. */
-  async function editCanvas(intent: EditIntent): Promise<void> {
-    const active = state.active;
-    if (active === null) return;
+
+  function supportsMoveReview(
+    document: RenderDocument,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+  ): boolean {
+    if (
+      intent.entries.some(
+        (entry) => entry.placement.width !== undefined || entry.placement.height !== undefined,
+      )
+    )
+      return false;
+    const moduleTargets = intent.entries.filter((entry) =>
+      entry.target.kind === 'section'
+        ? document.projection.sections.some(
+            (section) => section.id === entry.target.id && section.mode === 'modules',
+          )
+        : entry.target.kind === 'node' &&
+          document.projection.sections.some(
+            (section) =>
+              section.id === ('section' in entry.target ? entry.target.section : '') &&
+              section.mode === 'modules',
+          ),
+    );
+    return moduleTargets.length > 0;
+  }
+  function movementOption(
+    review: import('../contract/records/movement.js').MoveReview,
+  ): import('../contract/records/movement.js').MoveOption | undefined {
+    return review.options.find((item) => item.kind === 'expand' || item.kind === 'rearrange');
+  }
+  function movementBaseError(
+    review: import('../contract/records/movement.js').MoveReview,
+  ): Diagnostic {
+    return {
+      code: 'unsupported-edit',
+      message:
+        review.reason ?? 'This movement has no valid move-only option; keep the draft for review.',
+      recovery: 'Adjust the position or use the inspector.',
+      owner: 'workspace',
+    };
+  }
+  async function handleMovementReview(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+  ): Promise<boolean> {
+    const moveReview = bindings.moveReview;
+    if (moveReview === undefined) return false;
+    return reviewMovement(active, intent, moveReview);
+  }
+  async function reviewMovement(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    moveReview: NonNullable<WorkspaceBindings['moveReview']>,
+  ): Promise<boolean> {
+    if (!canReviewMovement(active.document, intent)) return false;
+    const reviewed = moveReview(active.document, intent, active.session.getSnapshot().stamp);
+    if (!reviewed.ok) return rejectMovement(active, intent, reviewed.error);
+    return handleReviewedMovement(active, intent, reviewed.value);
+  }
+  function handleReviewedMovement(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    review: import('../contract/records/movement.js').MoveReview,
+  ): boolean {
+    const option = movementOption(review);
+    if (option !== undefined) return retainMovementReview(active, intent, review, option);
+    const selected = review.options[0];
+    if (review.options.length !== 1 || selected === undefined)
+      return rejectMovement(active, intent, movementBaseError(review));
+    void submitFeasibleCanvas(active, intent, selected.changes, selected.preview);
+    return true;
+  }
+  function canReviewMovement(
+    document: RenderDocument,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+  ): boolean {
+    return bindings.moveReview !== undefined && supportsMoveReview(document, intent);
+  }
+  function rejectMovement(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    error: Diagnostic,
+  ): boolean {
+    active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
+    report(error);
+    return true;
+  }
+  function retainMovementReview(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    review: import('../contract/records/movement.js').MoveReview,
+    option: import('../contract/records/movement.js').MoveOption,
+  ): boolean {
+    movementCapture = { active, intent, review, workspace: state.snapshot?.workspace ?? '' };
+    const accepted = active.session.dispatch({
+      kind: 'preview-routes',
+      id: intent.id,
+      ...option.preview,
+    });
+    if (!accepted.ok || accepted.value.state.routePreview?.gesture !== intent.id) {
+      movementCapture = null;
+      return rejectMovement(active, intent, {
+        code: 'invalid-edit',
+        message: 'The movement preview could not be accepted.',
+        recovery: 'Keep the draft and try the gesture again.',
+        owner: 'workspace',
+      });
+    }
+    update({
+      movementReview: { review, optionId: option.id, phase: 'review', document: active.document },
+      status: 'Review movement options',
+    });
+    updateMutationAvailability();
+    return true;
+  }
+  function rejectWhileMovementActive(intent: EditIntent): void {
+    const error = {
+      code: 'pending-request',
+      message: 'Review or cancel the current movement before starting another.',
+      recovery: 'Apply or cancel the retained movement review.',
+      owner: 'workspace' as const,
+    };
+    if (intent.kind === 'placement' && state.active !== null)
+      state.active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
+    report(error);
+  }
+  function planAndSubmit(active: ActiveDiagram, intent: EditIntent): void {
     const planned = bindings.edits.plan(intent, {
       document: active.document,
       stamp: active.session.getSnapshot().stamp,
     });
-    if (!planned.ok) {
-      report(planned.error);
+    if (!planned.ok) return report(planned.error);
+    void submitFeasibleCanvas(active, intent, planned.value);
+  }
+  /** A busy client retains subsequent gestures as recoverable drafts; no second browser request is submitted concurrently. */
+  async function editCanvas(intent: EditIntent): Promise<void> {
+    if (movementCapture !== null) {
+      rejectWhileMovementActive(intent);
       return;
     }
-    submitFeasibleCanvas(active, intent, planned.value);
+    const active = state.active;
+    if (active === null) return;
+    await continueCanvasEdit(active, intent);
+  }
+  async function continueCanvasEdit(active: ActiveDiagram, intent: EditIntent): Promise<void> {
+    if (intent.kind === 'connection') {
+      beginConnection(active, intent);
+      return;
+    }
+    if (await reviewPlacementIfSupported(active, intent)) return;
+    planAndSubmit(active, intent);
+  }
+  function beginConnection(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'connection' }>,
+  ): void {
+    const section = connectionSection(active, intent, connectionCapture !== null);
+    if (!section.ok) return report(section.error);
+    const draft = buildConnectionDraft(active, intent, section.value);
+    if (!draft.ok) return report(draft.error);
+    connectionCapture = { draft: draft.value, request: null };
+    bindings.panels.open('right', true);
+    update({ connection: draft.value, status: 'Review new connection', problem: null });
+  }
+  async function reviewPlacementIfSupported(
+    active: ActiveDiagram,
+    intent: EditIntent,
+  ): Promise<boolean> {
+    if (intent.kind !== 'placement') return false;
+    return handleMovementReview(active, intent);
   }
   /** Reject infeasible local geometry before any Authoring submission; retain the human draft. */
-  function submitFeasibleCanvas(
+  function movementPreview(
     active: ActiveDiagram,
     intent: EditIntent,
     changes: readonly import('../contract/records/owners.js').Change[],
+    acceptedPreview?: GeometryPreview,
+  ): Result<GeometryPreview | null> {
+    return previewAcceptedOrRoutes(active, intent, changes, acceptedPreview);
+  }
+  function previewAcceptedOrRoutes(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    changes: readonly import('../contract/records/owners.js').Change[],
+    acceptedPreview: GeometryPreview | undefined,
+  ): Result<GeometryPreview | null> {
+    if (acceptedPreview !== undefined) return { ok: true, value: acceptedPreview };
+    return previewMovementRoutes(active, intent, changes);
+  }
+  function previewMovementRoutes(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    changes: readonly import('../contract/records/owners.js').Change[],
+  ): Result<GeometryPreview | null> {
+    return bindings.previewRoutes?.(active.document, intent, changes) ?? { ok: true, value: null };
+  }
+  function rejectPreview(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    preview: Extract<Result<GeometryPreview | null>, { ok: false }>,
+  ): Result<Receipt> {
+    active.session.dispatch({ kind: 'reject', id: intent.id, message: preview.error.message });
+    report(preview.error);
+    rejectMovementPreview(intent.id);
+    return { ok: false, error: preview.error };
+  }
+  function rejectMovementPreview(intentId: string): void {
+    if (movementCapture?.intent.id !== intentId) return;
+    movementApplying = false;
+    update({
+      movementReview: state.movementReview ? { ...state.movementReview, phase: 'rejected' } : null,
+    });
+    updateMutationAvailability();
+  }
+  function retainInitialPreview(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    preview: GeometryPreview | null,
+    start: number,
   ): void {
-    const start = performance.now();
-    const preview = bindings.previewRoutes?.(active.document, intent, changes) ?? {
-      ok: true,
-      value: null,
-    };
-    if (!preview.ok) {
-      active.session.dispatch({ kind: 'reject', id: intent.id, message: preview.error.message });
-      report(preview.error);
+    if (preview !== null) publishPreview(active, intent, preview, start);
+  }
+  function updateFailedMovement(
+    intent: EditIntent,
+    active: ActiveDiagram,
+    preview: GeometryPreview | null,
+    start: number,
+  ): void {
+    if (intent.kind !== 'placement') return;
+    const retained = state.pending.find((item) => item.request.request === intent.id);
+    if (isPendingMovement(retained)) {
+      retainUncertainMovementReview(intent.id);
       return;
     }
-    submitCanvas(intent, changes);
-    if (preview.value === null) return;
-    publishPreview(active, intent, preview.value, start);
+    settleFailedMovement(intent, active, preview, start, retained?.state === 'rejected');
+  }
+  function isPendingMovement(item: Submission | undefined): boolean {
+    return item?.state === 'uncertain' || item?.state === 'sending';
+  }
+  function retainUncertainMovementReview(requestId: string): void {
+    update({
+      movementReview: state.movementReview
+        ? { ...state.movementReview, phase: 'uncertain', requestId }
+        : null,
+    });
+  }
+  function settleFailedMovement(
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    active: ActiveDiagram,
+    preview: GeometryPreview | null,
+    start: number,
+    rejected: boolean,
+  ): void {
+    movementApplying = false;
+    const phase = failedMovementPhase(active, intent, preview, start, rejected);
+    update({ movementReview: state.movementReview ? { ...state.movementReview, phase } : null });
+    updateMutationAvailability();
+  }
+  function failedMovementPhase(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    preview: GeometryPreview | null,
+    start: number,
+    rejected: boolean,
+  ): 'rejected' | 'review' {
+    const restored = restoreMovementPreview(active, intent, preview, start);
+    return rejected || !restored ? 'rejected' : 'review';
+  }
+  function restoreMovementPreview(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    preview: GeometryPreview | null,
+    start: number,
+  ): boolean {
+    return preview !== null && publishPreview(active, intent, preview, start);
+  }
+  async function submitFeasibleCanvas(
+    active: ActiveDiagram,
+    intent: EditIntent,
+    changes: readonly import('../contract/records/owners.js').Change[],
+    acceptedPreview?: GeometryPreview,
+  ): Promise<Result<Receipt> | null> {
+    const start = performance.now();
+    const preview = movementPreview(active, intent, changes, acceptedPreview);
+    if (!preview.ok) return rejectPreview(active, intent, preview);
+    const submission = submitCanvas(active, intent, changes);
+    const retainedAtStart = state.pending.find(
+      (item) => item.request.request === intent.id && item.state === 'sending',
+    );
+    if (retainedAtStart !== undefined) retainInitialPreview(active, intent, preview.value, start);
+    const result = await submission;
+    updateMovementAfterSubmission(result, intent, active, preview.value, start);
+    return result;
+  }
+  function updateMovementAfterSubmission(
+    result: Result<Receipt>,
+    intent: EditIntent,
+    active: ActiveDiagram,
+    preview: GeometryPreview | null,
+    start: number,
+  ): void {
+    if (intent.kind !== 'placement') return;
+    if (result.ok || movementCapture?.intent.id !== intent.id) return;
+    updateFailedMovement(intent, active, preview, start);
   }
   /** Measure only inspected routes accepted by the Canvas gesture currently awaiting confirmation. */
   function publishPreview(
@@ -570,37 +1346,38 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     intent: EditIntent,
     geometry: GeometryPreview,
     start: number,
-  ): void {
+  ): boolean {
     const accepted = active.session.dispatch({
       kind: 'preview-routes',
       id: intent.id,
       ...geometry,
     });
-    if (!accepted.ok) return;
-    if (accepted.value.state.routePreview?.gesture !== intent.id) return;
+    if (!accepted.ok) return false;
+    if (accepted.value.state.routePreview?.gesture !== intent.id) return false;
     performance.measure('canvas:released-route-preview', {
       start,
       end: performance.now(),
       detail: { gesture: intent.id },
     });
+    return true;
   }
   /** Capture the snapshot shown with the gesture; changing versions later is never part of retry. */
-  function submitCanvas(
+  async function submitCanvas(
+    active: ActiveDiagram,
     intent: EditIntent,
     changes: readonly import('../contract/records/owners.js').Change[],
-  ): void {
-    if (state.active === null) return;
+  ): Promise<Result<Receipt>> {
     const request = bindings.inputs.model(
-      state.active.base,
+      active.base,
       intent.base.collectionId,
       changes,
       intent.id,
     );
     if (!request.ok) {
       report(request.error);
-      return;
+      return request;
     }
-    void submit(request.value, state.active.generation, state.sourceEdit, intent.id);
+    return submit(request.value, active.generation, state.sourceEdit, intent.id);
   }
   function allowSubmission(request: Request): Result<void> {
     if (blockedByHistory(request))
@@ -621,6 +1398,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function unresolvedInverse(item: Submission): boolean {
     return item.state !== 'rejected' && item.request.intent.kind !== 'change';
   }
+  function rejectBlocked(request: Request, gesture: string | null): Result<void> {
+    const allowed = allowSubmission(request);
+    if (allowed.ok) return allowed;
+    report(allowed.error);
+    if (gesture !== null) rejectGesture(gesture, allowed.error.message);
+    return allowed;
+  }
   /** Submission owns the durable journal and receipt checks; UI retains all drafts on failure. */
   async function submit(
     request: Request,
@@ -628,7 +1412,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     sourceEdit: number,
     gesture: string | null,
   ): Promise<Result<Receipt>> {
-    const allowed = allowSubmission(request);
+    const allowed = rejectBlocked(request, gesture);
     if (!allowed.ok) return allowed;
     update({ status: 'Saving…', problem: null });
     const result = await submissions.submit({ request, generation, sourceEdit, gesture });
@@ -638,7 +1422,37 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function handleSubmitFailure(error: Diagnostic, gesture: string | null): void {
     report(error);
     void refresh();
-    if (gesture !== null) rejectGesture(gesture, error.message);
+    if (gesture !== null) handleGestureFailure(error, gesture);
+  }
+  function handleGestureFailure(error: Diagnostic, gesture: string): void {
+    const retained = state.pending.find((item) => item.request.request === gesture);
+    if (isUncertainMovement(gesture, retained)) return retainUncertainMovement(gesture);
+    clearMovementApplying(gesture);
+    rejectGesture(gesture, error.message);
+    settleGestureFailure(gesture, retained?.state === 'rejected');
+  }
+  function isUncertainMovement(gesture: string, retained: Submission | undefined): boolean {
+    return movementCapture?.intent.id === gesture && isPendingMovement(retained);
+  }
+  function clearMovementApplying(gesture: string): void {
+    if (movementCapture?.intent.id === gesture) movementApplying = false;
+  }
+  function settleGestureFailure(gesture: string, rejected: boolean): void {
+    if (movementCapture?.intent.id !== gesture) return;
+    const phase = gestureFailurePhase(rejected);
+    update({ movementReview: state.movementReview ? { ...state.movementReview, phase } : null });
+    updateMutationAvailability();
+  }
+  function gestureFailurePhase(rejected: boolean): 'rejected' | 'review' {
+    return rejected ? 'rejected' : 'review';
+  }
+  function retainUncertainMovement(gesture: string): void {
+    movementApplying = true;
+    update({
+      movementReview: state.movementReview
+        ? { ...state.movementReview, phase: 'uncertain', requestId: gesture }
+        : null,
+    });
   }
   function rejectGesture(gesture: string, message: string): void {
     state.active?.session.dispatch({ kind: 'reject', id: gesture, message });
@@ -647,7 +1461,70 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function confirmed(submission: Submission, receipt: Receipt): void {
     source.confirmed(submission, receipt);
     update({ status: editStatus() });
+    definitions.confirmed(submission.request.request);
     confirmGesture(submission.gesture);
+    clearConfirmedMovement(submission.gesture);
+    settleConfirmedCreation(submission.request.request);
+    finishConfirmedSubmission(submission, receipt);
+  }
+  function settleConfirmedCreation(requestId: string): void {
+    const diagramCleared = diagramCapture?.request?.request === requestId;
+    const objectCleared = objectCapture?.request?.request === requestId;
+    const groupCleared = groupCapture?.request?.request === requestId;
+    settleDiagramCapture(requestId);
+    settleObjectCapture(requestId);
+    settleGroupCapture(requestId);
+    settleConnectionCapture(requestId);
+    if (!diagramCleared && !objectCleared && !groupCleared) return;
+    update({ creation: settledCreationView(diagramCleared, objectCleared, groupCleared) });
+  }
+  function settledCreationView(
+    diagramCleared: boolean,
+    objectCleared: boolean,
+    groupCleared: boolean,
+  ): WorkspaceView['creation'] {
+    return {
+      diagram: settledDiagramDraft(diagramCleared),
+      object: settledObjectDraft(objectCleared),
+      group: settledGroupDraft(groupCleared),
+      problem: null,
+      busy: creationLocked(),
+    };
+  }
+  function settledDiagramDraft(cleared: boolean): AddDiagramDraft {
+    return cleared ? resetDiagramDraft('diagram', state.creation.diagram) : state.creation.diagram;
+  }
+  function settledObjectDraft(cleared: boolean): AddObjectDraft {
+    return cleared ? resetObjectDraft('object', state.creation.object) : state.creation.object;
+  }
+  function settledGroupDraft(cleared: boolean): AddGroupDraft {
+    return cleared ? resetGroupDraft('group', state.creation.group) : state.creation.group;
+  }
+  function settleDiagramCapture(requestId: string): void {
+    if (diagramCapture?.request?.request === requestId) diagramCapture = null;
+  }
+  function settleObjectCapture(requestId: string): void {
+    if (objectCapture?.request?.request === requestId) objectCapture = null;
+  }
+  function settleGroupCapture(requestId: string): void {
+    if (groupCapture?.request?.request === requestId) groupCapture = null;
+  }
+  function settleConnectionCapture(requestId: string): void {
+    if (connectionCapture?.request?.request !== requestId) return;
+    connectionCapture = null;
+    update({ connection: null });
+  }
+  function clearConfirmedMovement(gesture: string | null): void {
+    if (movementCapture === null || submissionGestureMatches(gesture) === false) return;
+    movementCapture = null;
+    movementApplying = false;
+    update({ movementReview: null });
+    updateMutationAvailability();
+  }
+  function submissionGestureMatches(gesture: string | null): boolean {
+    return gesture === movementCapture?.intent.id;
+  }
+  function finishConfirmedSubmission(submission: Submission, receipt: Receipt): void {
     if (submission.request.intent.kind !== 'change') void finishHistory(receipt.sequence);
     else void refresh();
   }
@@ -717,9 +1594,28 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   async function applyObject(draft: ObjectDraft, object: DiagramObject): Promise<Result<Receipt>> {
     return applyChanges(draft, [{ op: 'replace', target: 'objects', value: object }]);
   }
+  function retainDefinitionRequest(draft: DefinitionDraft, request: Request): Result<Request> {
+    if (draft.request !== undefined) return { ok: true, value: request };
+    const retained = definitions.bindRequest(draft.key, request);
+    if (!retained.ok) return retained;
+    return { ok: true, value: request };
+  }
+  async function applyDefinition(draft: DefinitionDraft): Promise<Result<Receipt>> {
+    const request = definitionRequest(draft, bindings);
+    if (!request.ok) {
+      definitions.unlockWithoutRequest(draft.key);
+      return request;
+    }
+    const retained = retainDefinitionRequest(draft, request.value);
+    if (!retained.ok) {
+      definitions.unlockWithoutRequest(draft.key);
+      return retained;
+    }
+    return submit(retained.value, draft.generation, state.sourceEdit, null);
+  }
   /** Captured Model changes share request assembly; their feature decides the semantic change list. */
   async function applyChanges(
-    draft: Pick<ObjectDraft, 'base' | 'collection' | 'generation'>,
+    draft: Pick<ObjectDraft | DefinitionDraft, 'base' | 'collection' | 'generation'>,
     changes: readonly import('../contract/records/owners.js').Change[],
   ): Promise<Result<Receipt>> {
     const request = bindings.inputs.model(
@@ -730,6 +1626,517 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     );
     if (!request.ok) return request;
     return submit(request.value, draft.generation, state.sourceEdit, null);
+  }
+  /** Add keeps diagram and object creation on the existing Model → Authoring receipt path. */
+  async function addDiagram(draft: AddDiagramDraft): Promise<Result<Receipt>> {
+    const active = state.active;
+    const draftError = diagramDraftError(active, state.snapshot, draft);
+    if (draftError !== null) return retainCreationFailure(draftError);
+    const title = draft.title.trim();
+    const captured = diagramTarget(active as ActiveDiagram);
+    if (!captured.ok) return retainCreationFailure(captured);
+    const capture = captured.value;
+    update({ creation: { ...state.creation, diagram: draft, problem: null, busy: true } });
+    const section = {
+      id: capture.id,
+      title,
+      mode: draft.mode,
+      order: capture.collection.sections.length,
+      layout: {
+        algorithm: 'grid' as const,
+        direction: 'right' as const,
+        gap: 'normal' as const,
+        constraints: [],
+      },
+      appearances: [],
+      groups: [],
+      wires: [],
+      sequence: [],
+    };
+    const result = await submitCreation(capture, [
+      { op: 'create', target: 'sections', value: section },
+    ]);
+    return finishCreation(result, 'diagram');
+  }
+  function diagramDraftError(
+    active: ActiveDiagram | null,
+    snapshot: WorkspaceView['snapshot'],
+    draft: AddDiagramDraft,
+  ): Extract<Result<never>, { ok: false }> | null {
+    if (active === null || snapshot === null) return creationFailure('Open a collection first.');
+    return draft.title.trim().length === 0
+      ? creationFailure('Give the diagram a name before adding it.')
+      : null;
+  }
+  function diagramTarget(active: ActiveDiagram): Result<NonNullable<typeof diagramCapture>> {
+    const capture =
+      diagramCapture ??
+      (diagramCapture = {
+        id: `section-${bindings.nextId()}` as Section['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+        request: null,
+      });
+    const error = captureCollectionError(capture.collection.id, active.document.collection.id);
+    return error === null ? { ok: true, value: capture } : error;
+  }
+  /** New objects are created once; reuse only adds a section-local appearance of the same ID. */
+  async function addObject(draft: AddObjectDraft): Promise<Result<Receipt>> {
+    const context = creationContext(draft);
+    if (!context.ok) return retainCreationFailure(context);
+    objectCapture ??= {
+      id: `object-${bindings.nextId()}` as DiagramObject['id'],
+      base: context.value.active.base,
+      collection: context.value.active.document.collection,
+      generation: context.value.active.generation,
+      request: null,
+    };
+    update({ creation: { ...state.creation, object: draft, problem: null, busy: true } });
+    const payload = creationPayload(context.value, draft);
+    if (!payload.ok) return retainCreationFailure(payload);
+    const changes = creationChanges(payload.value.object, draft.reuseObject, payload.value.section);
+    const result = await submitCreation(objectCapture, changes);
+    return finishCreation(result, 'object');
+  }
+  async function addGroup(draft: AddGroupDraft): Promise<Result<Receipt>> {
+    const context = groupContext(draft);
+    if (!context.ok) return retainCreationFailure(context);
+    groupCapture ??= {
+      id: `group-${bindings.nextId()}` as Group['id'],
+      base: context.value.active.base,
+      collection: context.value.active.document.collection,
+      generation: context.value.active.generation,
+      request: null,
+    };
+    const title = draft.title.trim();
+    if (title.length === 0)
+      return retainCreationFailure(creationFailure('Give the group a name before adding it.'));
+    update({ creation: { ...state.creation, group: draft, problem: null, busy: true } });
+    const group: Group = {
+      id: groupCapture.id,
+      title,
+      frame: 'panel' as const,
+      role: 'neutral',
+      layout: {
+        algorithm: 'flow' as const,
+        direction: 'right' as const,
+        gap: 'normal' as const,
+        constraints: [],
+      },
+    };
+    const section: Section = {
+      ...context.value.section,
+      groups: [...context.value.section.groups, group],
+    };
+    const result = await submitCreation(groupCapture, [
+      { op: 'replace', target: 'sections', value: section },
+    ]);
+    return finishCreation(result, 'group');
+  }
+  async function submitCreation(
+    capture: {
+      readonly base: NonNullable<WorkspaceView['snapshot']>;
+      readonly collection: ActiveDiagram['document']['collection'];
+      readonly generation: string;
+      request: Request | null;
+    },
+    changes: readonly import('../contract/records/owners.js').Change[],
+  ): Promise<Result<Receipt>> {
+    const request =
+      capture.request === null
+        ? bindings.inputs.model(capture.base, capture.collection.id, changes, bindings.nextId())
+        : { ok: true as const, value: capture.request };
+    if (!request.ok) return retainCreationFailure(request);
+    capture.request ??= request.value;
+    return submit(capture.request, capture.generation, state.sourceEdit, null);
+  }
+  function finishCreation(
+    result: Result<Receipt>,
+    kind: 'diagram' | 'object' | 'group',
+  ): Result<Receipt> {
+    if (!result.ok) {
+      update({
+        creation: { ...state.creation, problem: result.error.message, busy: creationLocked() },
+      });
+      return result;
+    }
+    clearCreationCapture(kind);
+    update({
+      creation: creationAfterSuccess(kind),
+    });
+    return result;
+  }
+  function creationAfterSuccess(kind: 'diagram' | 'object' | 'group'): WorkspaceView['creation'] {
+    return {
+      diagram: successDiagramDraft(kind),
+      object: successObjectDraft(kind),
+      group: successGroupDraft(kind),
+      problem: null,
+      busy: false,
+    };
+  }
+  function successDiagramDraft(kind: 'diagram' | 'object' | 'group'): AddDiagramDraft {
+    return kind === 'diagram'
+      ? resetDiagramDraft('diagram', state.creation.diagram)
+      : state.creation.diagram;
+  }
+  function successObjectDraft(kind: 'diagram' | 'object' | 'group'): AddObjectDraft {
+    return kind === 'object'
+      ? resetObjectDraft('object', state.creation.object)
+      : state.creation.object;
+  }
+  function successGroupDraft(kind: 'diagram' | 'object' | 'group'): AddGroupDraft {
+    return kind === 'group' ? resetGroupDraft('group', state.creation.group) : state.creation.group;
+  }
+  function retainCreationFailure<T>(
+    result: Extract<Result<T>, { ok: false }>,
+  ): Extract<Result<T>, { ok: false }> {
+    update({ creation: { ...state.creation, problem: result.error.message, busy: false } });
+    return result;
+  }
+  function setDiagramDraft(draft: AddDiagramDraft): void {
+    if (creationLocked()) return;
+    captureDiagramDraft();
+    update({ creation: { ...state.creation, diagram: draft, problem: null } });
+  }
+  function setObjectDraft(draft: AddObjectDraft): void {
+    if (creationLocked()) return;
+    captureObjectDraft();
+    update({ creation: { ...state.creation, object: draft, problem: null } });
+  }
+  function setGroupDraft(draft: AddGroupDraft): void {
+    if (creationLocked()) return;
+    captureGroupDraft();
+    update({ creation: { ...state.creation, group: draft, problem: null } });
+  }
+  function cancelCreation(kind: 'diagram' | 'object' | 'group'): void {
+    if (creationLocked()) return;
+    clearCreationCapture(kind);
+    update({
+      creation: {
+        ...state.creation,
+        diagram: resetDiagramDraft(kind, state.creation.diagram),
+        object: resetObjectDraft(kind, state.creation.object),
+        group: resetGroupDraft(kind, state.creation.group),
+        problem: null,
+        busy: false,
+      },
+    });
+  }
+  function editConnection(edit: ConnectionEdit): void {
+    if (connectionCapture?.request !== null || connectionCapture === null) return;
+    const current = connectionCapture.draft;
+    const next = editedConnection(current, edit);
+    connectionCapture.draft = next;
+    update({ connection: next, problem: null });
+  }
+  async function applyConnection(): Promise<Result<Receipt>> {
+    const capture = connectionCapture;
+    const checks = connectionChecks(capture, state.active);
+    const failure = checks.find((check) => !check.ok);
+    if (failure !== undefined) return retainConnectionFailure(capture?.draft, failure.error);
+    const capturedDraft = (checks[0] as Extract<(typeof checks)[number], { ok: true }>)
+      .value as ConnectionDraft;
+    const label = (checks[2] as Extract<(typeof checks)[number], { ok: true }>).value as string;
+    return submitConnectionRequest(
+      capture as { draft: ConnectionDraft; request: Request | null },
+      capturedDraft,
+      label,
+    );
+  }
+  function retainConnectionFailure(
+    draft: ConnectionDraft | undefined,
+    error: Diagnostic,
+  ): Result<Receipt> {
+    if (draft !== undefined)
+      update({ connection: { ...draft, problem: error.message }, problem: error });
+    return { ok: false, error };
+  }
+  function connectionErrorView(draft: ConnectionDraft, error: Diagnostic): ConnectionDraft {
+    const current = state.connection?.id === draft.id ? state.connection : draft;
+    return { ...current, problem: error.message };
+  }
+  async function submitConnectionRequest(
+    capture: { draft: ConnectionDraft; request: Request | null },
+    draft: ConnectionDraft,
+    label: string,
+  ): Promise<Result<Receipt>> {
+    const request = connectionRequest(bindings, draft, label);
+    if (!request.ok) {
+      update({
+        connection: connectionErrorView(draft, request.error),
+        problem: request.error,
+      });
+      return request;
+    }
+    capture.request ??= request.value;
+    update({ connection: { ...draft, requestState: 'sending' } });
+    const result = await submit(capture.request, draft.generation, state.sourceEdit, draft.id);
+    if (!result.ok)
+      update({
+        connection: connectionErrorView(draft, result.error),
+        problem: result.error,
+      });
+    return result;
+  }
+  function cancelConnection(): void {
+    if (connectionCapture?.request !== null) return;
+    connectionCapture = null;
+    update({ connection: null, problem: null, status: editStatus() });
+  }
+  function creationLocked(): boolean {
+    return (
+      captureHasRequest(diagramCapture) ||
+      captureHasRequest(objectCapture) ||
+      captureHasRequest(groupCapture)
+    );
+  }
+  function captureHasRequest(capture: { readonly request: Request | null } | null): boolean {
+    return capture !== null && capture.request !== null;
+  }
+  function releaseDismissedCreation(requestId: string): void {
+    const released =
+      releaseDiagramRequest(requestId) ||
+      releaseObjectRequest(requestId) ||
+      releaseGroupRequest(requestId) ||
+      releaseConnectionRequest(requestId);
+    if (!released) return;
+    clearDismissedCreationView();
+  }
+  function releaseDiagramRequest(requestId: string): boolean {
+    if (diagramCapture?.request?.request !== requestId) return false;
+    diagramCapture = null;
+    return true;
+  }
+  function releaseObjectRequest(requestId: string): boolean {
+    if (objectCapture?.request?.request !== requestId) return false;
+    objectCapture = null;
+    return true;
+  }
+  function releaseGroupRequest(requestId: string): boolean {
+    if (groupCapture?.request?.request !== requestId) return false;
+    groupCapture = null;
+    return true;
+  }
+  function releaseConnectionRequest(requestId: string): boolean {
+    if (connectionCapture?.request?.request !== requestId) return false;
+    connectionCapture.request = null;
+    connectionCapture.draft = { ...connectionCapture.draft, problem: null, requestState: 'draft' };
+    update({ connection: connectionCapture.draft });
+    return true;
+  }
+  function clearDismissedCreationView(): void {
+    update({ creation: { ...state.creation, problem: null, busy: false } });
+  }
+  function captureDiagramDraft(): void {
+    const active = state.active;
+    if (diagramCapture === null && active !== null)
+      diagramCapture = {
+        id: `section-${bindings.nextId()}` as Section['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+        request: null,
+      };
+  }
+  function captureObjectDraft(): void {
+    const active = state.active;
+    if (objectCapture === null && active !== null)
+      objectCapture = {
+        id: `object-${bindings.nextId()}` as DiagramObject['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+        request: null,
+      };
+  }
+  function captureGroupDraft(): void {
+    const active = state.active;
+    if (groupCapture !== null || active === null) return;
+    groupCapture = {
+      id: `group-${bindings.nextId()}` as Group['id'],
+      base: active.base,
+      collection: active.document.collection,
+      generation: active.generation,
+      request: null,
+    };
+  }
+  function clearCreationCapture(kind: 'diagram' | 'object' | 'group'): void {
+    const clearers: Readonly<Record<typeof kind, () => void>> = {
+      diagram: () => {
+        diagramCapture = null;
+      },
+      object: () => {
+        objectCapture = null;
+      },
+      group: () => {
+        groupCapture = null;
+      },
+    };
+    clearers[kind]();
+  }
+  function resetDiagramDraft(
+    kind: 'diagram' | 'object' | 'group',
+    current: AddDiagramDraft,
+  ): AddDiagramDraft {
+    return kind === 'diagram' ? { title: '', mode: 'grid' } : current;
+  }
+  function resetObjectDraft(
+    kind: 'diagram' | 'object' | 'group',
+    current: AddObjectDraft,
+  ): AddObjectDraft {
+    return kind === 'object'
+      ? { section: '', label: '', kind: 'module', reuseObject: null, group: null }
+      : current;
+  }
+  function resetGroupDraft(
+    kind: 'diagram' | 'object' | 'group',
+    current: AddGroupDraft,
+  ): AddGroupDraft {
+    return kind === 'group' ? { section: '', title: '' } : current;
+  }
+  function creationPayload(
+    context: { active: ActiveDiagram; section: Section },
+    draft: AddObjectDraft,
+  ): Result<{ object: DiagramObject; section: Section }> {
+    const object = creationObject(context.active.document.collection.objects, draft);
+    if (!object.ok) return object;
+    const checked = checkAppearance(context.section, object.value);
+    if (!checked.ok) return checked;
+    return {
+      ok: true,
+      value: {
+        object: object.value,
+        section: {
+          ...context.section,
+          appearances: [
+            ...context.section.appearances,
+            appearanceFor(object.value.id, draft.group),
+          ],
+        },
+      },
+    };
+  }
+  function appearanceFor(
+    object: DiagramObject['id'],
+    group: string | null,
+  ): Section['appearances'][number] {
+    return group === null
+      ? { object, detail: 'full' }
+      : { object, detail: 'full', group: group as Group['id'] };
+  }
+  function creationContext(
+    draft: AddObjectDraft,
+  ): Result<{ active: ActiveDiagram; section: Section }> {
+    const active = state.active;
+    if (active === null) return creationFailure('Open a collection first.');
+    const captureError = captureCollectionError(
+      objectCapture?.collection.id,
+      active.document.collection.id,
+    );
+    if (captureError !== null) return captureError;
+    const collection = objectCapture?.collection ?? active.document.collection;
+    const section = collection.sections.find((item) => item.id === draft.section);
+    return sectionResult(section, active, objectCapture, collection);
+  }
+  function groupContext(draft: AddGroupDraft): Result<{ active: ActiveDiagram; section: Section }> {
+    const active = state.active;
+    if (active === null) return creationFailure('Open a collection first.');
+    const captureError = captureCollectionError(
+      groupCapture?.collection.id,
+      active.document.collection.id,
+    );
+    if (captureError !== null) return captureError;
+    const collection = groupCapture?.collection ?? active.document.collection;
+    const section = collection.sections.find((item) => item.id === draft.section);
+    return sectionResult(section, active, groupCapture, collection);
+  }
+  function sectionResult(
+    section: Section | undefined,
+    active: ActiveDiagram,
+    capture: NonNullable<typeof objectCapture> | NonNullable<typeof groupCapture> | null,
+    collection: ActiveDiagram['document']['collection'],
+  ): Result<{ active: ActiveDiagram; section: Section }> {
+    if (section === undefined) return creationFailure('Choose an existing diagram.');
+    const target =
+      capture === null
+        ? active
+        : {
+            ...active,
+            base: capture.base,
+            generation: capture.generation,
+            document: { ...active.document, collection },
+          };
+    return { ok: true, value: { active: target, section } };
+  }
+  function captureCollectionError(
+    captured: string | undefined,
+    current: string,
+  ): Extract<Result<never>, { ok: false }> | null {
+    return captured !== undefined && captured !== current
+      ? creationFailure('This draft belongs to another collection. Reopen it there or cancel it.')
+      : null;
+  }
+  function creationObject(
+    objects: readonly DiagramObject[],
+    draft: AddObjectDraft,
+  ): Result<DiagramObject> {
+    if (draft.reuseObject !== null) {
+      return existingObject(objects, draft.reuseObject);
+    }
+    const label = draft.label.trim();
+    if (label.length === 0) return creationFailure('Give the object a name before adding it.');
+    return {
+      ok: true,
+      value: newObject(objectCapture?.id ?? bindings.nextId(), draft.kind, label),
+    };
+  }
+  function existingObject(objects: readonly DiagramObject[], id: string): Result<DiagramObject> {
+    const object = objects.find((item) => item.id === id);
+    return object === undefined
+      ? creationFailure('Choose an existing object to reuse.')
+      : { ok: true, value: object };
+  }
+  function newObject(id: string, kind: AddObjectDraft['kind'], label: string): DiagramObject {
+    return {
+      id: `object-${id}` as DiagramObject['id'],
+      kind,
+      label,
+      role: 'neutral',
+      size: 'medium',
+      frame: 'auto',
+      composition: 'stack',
+      content: [],
+      ports: [],
+      sources: [],
+    };
+  }
+  function checkAppearance(section: Section, object: DiagramObject): Result<void> {
+    return section.appearances.some((appearance) => appearance.object === object.id)
+      ? creationFailure('That object is already in this diagram.')
+      : { ok: true, value: undefined };
+  }
+  function creationChanges(
+    object: DiagramObject,
+    reuseObject: string | null,
+    section: Section,
+  ): readonly import('../contract/records/owners.js').Change[] {
+    const appearance = { op: 'replace' as const, target: 'sections' as const, value: section };
+    return reuseObject === null
+      ? [{ op: 'create' as const, target: 'objects' as const, value: object }, appearance]
+      : [appearance];
+  }
+  function creationFailure<T = never>(message: string): Extract<Result<T>, { ok: false }> {
+    return {
+      ok: false,
+      error: {
+        code: 'invalid-creation',
+        message,
+        recovery: 'Correct the Add form and try again.',
+        owner: 'workspace',
+      },
+    };
   }
   /** Library commands use the same durable request journal and captured catalog versions as diagram editing. */
   async function applyLibrary(
@@ -831,6 +2238,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     void reconcileHistory();
     source.restore(state.snapshot.workspace);
     inspector.restore(state.snapshot.workspace);
+    definitions.restore(state.snapshot.workspace);
     wires.restore(state.snapshot.workspace);
   }
   /** Human-triggered reconciliation is read-only and makes missing confirmation explicit. */
@@ -840,13 +2248,36 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(result.error);
       return;
     }
-    if (result.value === null)
-      update({ status: 'No receipt found — retry remains an explicit action' });
+    handleReconciliationResult(result.value, id);
+  }
+  function handleReconciliationResult(receipt: Receipt | null, id: string): void {
+    if (receipt === null) update({ status: 'No receipt found — retry remains an explicit action' });
+    else settleConfirmedCreation(id);
   }
   /** Retry retains the exact request body while using the current authenticated transport session. */
   async function retryRequest(id: string): Promise<void> {
     const result = await submissions.retry(id, state.generation);
     if (!result.ok) report(result.error);
+    else settleConfirmedCreation(id);
+    updateMovementRecovery(id);
+  }
+  function updateMovementRecovery(requestId: string): void {
+    if (movementCapture?.intent.id !== requestId || state.movementReview === null) return;
+    const pending = state.pending.find((item) => item.request.request === requestId);
+    applyMovementRecoveryPhase(requestId, pending);
+  }
+  function applyMovementRecoveryPhase(requestId: string, pending: Submission | undefined): void {
+    if (pending?.state === 'rejected') return retainRejectedMovement(requestId);
+    if (isPendingMovement(pending)) retainUncertainMovement(requestId);
+  }
+  function retainRejectedMovement(requestId: string): void {
+    movementApplying = false;
+    update({
+      movementReview: state.movementReview
+        ? { ...state.movementReview, phase: 'rejected', requestId }
+        : null,
+    });
+    updateMutationAvailability();
   }
   /** Status reads never change navigation; stale responses cannot replace newer status. */
   async function refreshHistory(): Promise<void> {
@@ -960,9 +2391,221 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         item.revision === active.document.collection.revision,
     );
   }
+  function chooseMoveOption(optionId: string): void {
+    const capture = movementCapture;
+    if (!canChooseMovementOption(capture)) return;
+    if (!applyMovementOption(capture, optionId)) return;
+    updateChosenMovementOption(optionId);
+  }
+  function updateChosenMovementOption(optionId: string): void {
+    update({ movementReview: state.movementReview ? { ...state.movementReview, optionId } : null });
+  }
+  function applyMovementOption(
+    capture: NonNullable<typeof movementCapture>,
+    optionId: string,
+  ): boolean {
+    const option = capture.review.options.find((item) => item.id === optionId);
+    if (option === undefined) return false;
+    return acceptMovementOptionPreview(capture, option);
+  }
+  function canChooseMovementOption(
+    capture: typeof movementCapture,
+  ): capture is NonNullable<typeof movementCapture> {
+    const phase = state.movementReview?.phase;
+    return capture !== null && !movementApplying && (phase === 'review' || phase === 'rejected');
+  }
+  function acceptMovementOptionPreview(
+    capture: NonNullable<typeof movementCapture>,
+    option: NonNullable<typeof movementCapture>['review']['options'][number],
+  ): boolean {
+    const accepted = capture.active.session.dispatch({
+      kind: 'preview-routes',
+      id: capture.intent.id,
+      ...option.preview,
+    });
+    if (accepted.ok && accepted.value.state.routePreview?.gesture === capture.intent.id)
+      return true;
+    report({
+      code: 'invalid-edit',
+      message: 'The selected movement preview could not be accepted.',
+      recovery: 'Keep the current preview or cancel the draft.',
+      owner: 'workspace',
+    });
+    return false;
+  }
+
+  async function applyMove(optionId: string): Promise<void> {
+    const prepared = prepareMovementApplication(optionId);
+    if (prepared === null) return;
+    const { capture, currentStamp } = prepared;
+    const selected = resolveMovementSelection(capture, optionId, currentStamp);
+    if (selected === undefined || !hasCurrentMovementPreview(capture)) return;
+    movementApplying = true;
+    update({
+      movementReview: {
+        review: capture.review,
+        optionId,
+        phase: 'sending',
+        requestId: capture.intent.id,
+        document: capture.active.document,
+      },
+      status: 'Saving…',
+    });
+    updateMutationAvailability();
+    await submitFeasibleCanvas(capture.active, capture.intent, selected.changes, selected.preview);
+  }
+  function prepareMovementApplication(optionId: string): {
+    capture: NonNullable<typeof movementCapture>;
+    currentStamp: ReturnType<ActiveDiagram['session']['getSnapshot']>['stamp'];
+  } | null {
+    const capture = movementCapture;
+    if (!canApplyMovement(capture, optionId)) return null;
+    if (movementSubmissionBlocked()) {
+      reportMovementSubmissionBlocked();
+      return null;
+    }
+    return { capture, currentStamp: capture.active.session.getSnapshot().stamp };
+  }
+  function canApplyMovement(
+    capture: typeof movementCapture,
+    optionId: string,
+  ): capture is NonNullable<typeof movementCapture> {
+    return (
+      capture !== null &&
+      !movementApplying &&
+      state.movementReview?.optionId === optionId &&
+      state.movementReview.phase === 'review'
+    );
+  }
+  function movementSubmissionBlocked(): boolean {
+    return (
+      state.pending.some((item) => item.state !== 'rejected') ||
+      historyBlocked() ||
+      state.history?.busy === true
+    );
+  }
+  function reportMovementSubmissionBlocked(): void {
+    report({
+      code: 'pending-request',
+      message: 'Wait for the current operation to finish',
+      recovery: 'Your movement draft is retained.',
+      owner: 'workspace',
+    });
+  }
+  function isCurrentMovementChoice(
+    capture: NonNullable<typeof movementCapture>,
+    chosen: ReturnType<NonNullable<WorkspaceBindings['chooseMoveOption']>>,
+    selected: Extract<typeof chosen, { ok: true }>['value'] | undefined,
+    currentStamp: ReturnType<ActiveDiagram['session']['getSnapshot']>['stamp'],
+  ): selected is NonNullable<typeof selected> {
+    if (movementChoiceMatches(capture, chosen, selected, currentStamp)) return true;
+    reportMovementChoiceError(chosen);
+    return false;
+  }
+  function movementChoiceMatches(
+    capture: NonNullable<typeof movementCapture>,
+    chosen: ReturnType<NonNullable<WorkspaceBindings['chooseMoveOption']>>,
+    selected: Extract<typeof chosen, { ok: true }>['value'] | undefined,
+    currentStamp: ReturnType<ActiveDiagram['session']['getSnapshot']>['stamp'],
+  ): boolean {
+    return [
+      chosen.ok,
+      selected !== undefined,
+      capture.active === state.active,
+      capture.active.generation === state.generation,
+      currentDiagram(capture.active),
+      state.snapshot?.workspace === capture.workspace,
+      currentStamp.revision === capture.review.stamp.revision,
+      currentStamp.inputKey === capture.review.stamp.inputKey,
+      currentStamp.generation === capture.review.stamp.generation,
+    ].every(Boolean);
+  }
+  function reportMovementChoiceError(
+    chosen: ReturnType<NonNullable<WorkspaceBindings['chooseMoveOption']>>,
+  ): void {
+    report(
+      chosen.ok
+        ? {
+            code: 'stale-gesture',
+            message: 'This movement review is stale; the draft was retained.',
+            recovery: 'Reload the diagram before applying it.',
+            owner: 'workspace',
+          }
+        : chosen.error,
+    );
+  }
+  function resolveMovementSelection(
+    capture: NonNullable<typeof movementCapture>,
+    optionId: string,
+    currentStamp: ReturnType<ActiveDiagram['session']['getSnapshot']>['stamp'],
+  ):
+    | NonNullable<
+        Extract<
+          ReturnType<NonNullable<WorkspaceBindings['chooseMoveOption']>>,
+          { ok: true }
+        >['value']
+      >
+    | undefined {
+    const chosen =
+      bindings.chooseMoveOption?.(capture.review, optionId, currentStamp) ??
+      chooseReviewedMoveOption(capture.review, optionId, currentStamp);
+    if (chosen === undefined) return undefined;
+    const selected = selectedMovementChoice(chosen);
+    return isCurrentMovementChoice(capture, chosen, selected, currentStamp) ? selected : undefined;
+  }
+  function selectedMovementChoice(
+    chosen: ReturnType<NonNullable<WorkspaceBindings['chooseMoveOption']>>,
+  ): Extract<typeof chosen, { ok: true }>['value'] | undefined {
+    return chosen.ok ? chosen.value : undefined;
+  }
+  function hasCurrentMovementPreview(capture: NonNullable<typeof movementCapture>): boolean {
+    if (capture.active.session.getSnapshot().routePreview?.gesture === capture.intent.id)
+      return true;
+    report({
+      code: 'invalid-edit',
+      message: 'The inspected movement preview is no longer displayed.',
+      recovery: 'Restore the preview or cancel this retained draft.',
+      owner: 'workspace',
+    });
+    return false;
+  }
+  function cancelMove(): void {
+    const capture = movementCapture;
+    if (
+      capture === null ||
+      movementApplying ||
+      (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')
+    ) {
+      report({
+        code: 'pending-request',
+        message: 'This movement is already being saved; wait for confirmation before cancelling.',
+        recovery: 'Check the retained request for its receipt.',
+        owner: 'workspace',
+      });
+      return;
+    }
+    capture.active.session.dispatch({ kind: 'discard', id: capture.intent.id });
+    movementCapture = null;
+    movementApplying = false;
+    update({ movementReview: null, status: 'Movement cancelled', problem: null });
+    updateMutationAvailability();
+  }
+  async function exportArtifact(input: unknown): Promise<Result<BinaryResponse>> {
+    if (bindings.client.bytes === undefined)
+      return {
+        ok: false,
+        error: {
+          code: 'export-unavailable',
+          message: 'Export is unavailable in this service session.',
+          recovery: 'Reconnect to the workspace and try again.',
+        },
+      };
+    return bindings.client.bytes('/api/v1/export', input);
+  }
   return {
     navigateHistory,
     inspector,
+    definitions,
     wires,
     library,
     showLibrary,
@@ -986,10 +2629,28 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     dismissRequest: (id) => {
       const result = submissions.dismiss(id);
       if (!result.ok) report(result.error);
+      else {
+        releaseDismissedCreation(id);
+        definitions.released(id);
+      }
     },
     retryRequest,
     create,
+    addDiagram,
+    addObject,
+    addGroup,
+    setDiagramDraft,
+    setObjectDraft,
+    setGroupDraft,
+    cancelCreation,
+    editConnection,
+    applyConnection,
+    cancelConnection,
+    exportArtifact,
     report,
+    applyMove,
+    chooseMoveOption,
+    cancelMove,
     dispose: () => {
       disposed = true;
       removeHistoryKeys();
@@ -1000,6 +2661,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       listeners.clear();
     },
   };
+}
+
+function connectionDiagnostic(code: string, message: string, recovery: string): Diagnostic {
+  return { code, message, recovery } as Diagnostic;
 }
 /** Same-workspace monotonic revisions can update the existing session without losing its camera or selection. */
 function reusableSession(

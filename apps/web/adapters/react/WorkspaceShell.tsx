@@ -245,6 +245,7 @@ function CanvasSlot({
         />
       )}
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}
+      <slots.MovementReview controller={controller} view={view} />
     </main>
   );
 }

@@ -10,6 +10,7 @@ import {
   targetEndpoints,
 } from '../../contract/records/policies.js';
 import { descendants, type ObjectDescendant } from '../objects/content.js';
+import { resolveCallableEndpoint } from './callable.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
 
 /** A missing member differs from an existing descendant of the wrong semantic kind. */
@@ -110,8 +111,35 @@ function validateRelationship(
     `${path}.target`,
     targetEndpoints[relationship.kind],
   );
+  const callableIssues =
+    relationship.kind === 'calls'
+      ? validateCallableTarget(relationship.target, collection, `${path}.target`)
+      : [];
   const cardinalityIssues = validateCardinalities(relationship, path);
-  return [...sourceIssues, ...targetIssues, ...cardinalityIssues];
+  return [...sourceIssues, ...targetIssues, ...callableIssues, ...cardinalityIssues];
+}
+
+function validateCallableTarget(
+  endpoint: Endpoint,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
+  if (resolveCallableEndpoint(collection, endpoint) !== undefined) return [];
+  return endpoint.member === undefined
+    ? [
+        {
+          code: 'endpoint',
+          path,
+          message: 'Calls target must address a signature or whole function',
+        },
+      ]
+    : [
+        {
+          code: 'endpoint',
+          path: `${path}.member`,
+          message: 'Calls target must resolve to a signature',
+        },
+      ];
 }
 
 /**

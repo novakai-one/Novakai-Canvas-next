@@ -16,4 +16,6 @@ export type {
   Section,
   ContentBlock,
   Change,
+  TypeExpression,
+  DefinitionId,
 } from '@novakai/canvas-model';

@@ -1,19 +1,91 @@
-import type { ApiCall, ApiRouter, WireOutcome } from '../contract/records/protocol.js';
+import type {
+  ApiCall,
+  ApiRouter,
+  RouteOutcome,
+  WireOutcome,
+} from '../contract/records/protocol.js';
 import type { Snapshot } from '@novakai/canvas-authoring';
 import type { RouterBindings } from '../contract/records/server.js';
 import { httpBodyLimit } from '../contract/records/http.js';
 import { failure } from '../contract/errors.js';
+import type { Result } from '../contract/errors.js';
 import type { ResourceCommands } from '../contract/records/resource-commands.js';
 type ResourceHandler = (input: unknown) => Promise<WireOutcome>;
 /** Read one current collection without reinterpreting its semantic shape; Language/Presentation validate before their use. */
 async function source(call: ApiCall, owners: RouterBindings): Promise<WireOutcome> {
+  const scope = sourceScope(call.query);
+  if (!scope.ok) return scope;
+  return readSourceRecord(call, owners, scope.value);
+}
+
+async function readSourceRecord(
+  call: ApiCall,
+  owners: RouterBindings,
+  scope: import('@novakai/canvas-language').Scope,
+): Promise<WireOutcome> {
   const snapshot = await owners.session.read();
   if (!snapshot.ok) return snapshot;
   const record = snapshot.value.records.find(
     (item) => item.key.kind === 'collection' && item.key.id === call.query.id && !item.deleted,
   );
   if (!record) return failure('not-found', 'collection', 'Collection was not found');
-  return owners.source.print(record.value);
+  return owners.source.print(record.value, scope);
+}
+
+function sourceScope(
+  query: Readonly<Record<string, string>>,
+): Result<import('@novakai/canvas-language').Scope> {
+  const section = query.section;
+  const object = query.object;
+  if (bothScopes(section, object))
+    return failure('invalid-input', 'scope', 'Use either section or object, not both');
+  const selected = section === undefined ? object : section;
+  return validSourceScope(section, selected);
+}
+
+function bothScopes(section: string | undefined, object: string | undefined): boolean {
+  return section !== undefined && object !== undefined;
+}
+
+function validSourceScope(
+  section: string | undefined,
+  selected: string | undefined,
+): Result<import('@novakai/canvas-language').Scope> {
+  const duplicate = duplicateScopeError(section, selected);
+  if (duplicate !== undefined) return duplicate;
+  return sourceScopeValue(section, selected);
+}
+
+function duplicateScopeError(
+  section: string | undefined,
+  selected: string | undefined,
+): Result<import('@novakai/canvas-language').Scope> | undefined {
+  return hasDuplicateScopeValue(section) || hasDuplicateScopeValue(selected)
+    ? failure('invalid-input', 'scope', 'Each read scope query may be provided only once')
+    : undefined;
+}
+
+function hasDuplicateScopeValue(value: string | undefined): boolean {
+  return value?.includes('\u0000') ?? false;
+}
+
+function sourceScopeValue(
+  section: string | undefined,
+  id: string | undefined,
+): Result<import('@novakai/canvas-language').Scope> {
+  if (id === undefined) return { ok: true, value: { kind: 'all' } };
+  if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(id))
+    return failure('invalid-input', 'scope', 'Scope IDs must be non-empty canonical IDs');
+  return sourceScopeChoice(section, id);
+}
+
+function sourceScopeChoice(
+  section: string | undefined,
+  id: string,
+): Result<import('@novakai/canvas-language').Scope> {
+  return section === undefined
+    ? { ok: true, value: { kind: 'object', id } }
+    : { ok: true, value: { kind: 'section', id } };
 }
 /** Mutation routes share the exact decoder and Authoring session; no route writes storage directly. */
 async function mutate(
@@ -76,7 +148,7 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
   const instantiate = semanticResource(owners, (commands, input, snapshot) =>
     commands.instantiate(input, snapshot),
   );
-  const routes: Readonly<Record<string, (call: ApiCall) => Promise<WireOutcome>>> = {
+  const routes: Readonly<Record<string, (call: ApiCall) => Promise<RouteOutcome>>> = {
     'POST /api/v1/resources/stage': (call) =>
       resource(call, (input) => owners.session.resources.stage(input)),
     'POST /api/v1/resources/restore': (call) =>
@@ -106,6 +178,7 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
     'GET /api/v1/receipt': (call) => owners.session.receipt(call.query.id),
     'POST /api/v1/authoring/preview': (call) => mutate(call, owners, true),
     'POST /api/v1/authoring/apply': (call) => mutate(call, owners, false),
+    'POST /api/v1/export': (call) => exportRoute(call, owners),
   };
   return {
     invoke: async (call) => {
@@ -115,4 +188,12 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
       return handler(call);
     },
   };
+}
+
+async function exportRoute(call: ApiCall, owners: RouterBindings): Promise<RouteOutcome> {
+  const checked = resourcePolicy(call);
+  if (!checked.ok) return checked;
+  if (owners.exporter === undefined)
+    return failure('unavailable', 'export', 'Export is unavailable in this service composition');
+  return owners.exporter(checked.value, call.signal);
 }

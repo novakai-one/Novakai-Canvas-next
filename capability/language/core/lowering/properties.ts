@@ -4,9 +4,24 @@ import { isList, isReference } from '../parsing/value-types.js';
 import { endpoint, type RawRecord } from './fields.js';
 /** References lower according to owning property meaning, never by guessing strings. */
 export function lowerValue(value: SyntaxValue, type: ValueType): unknown {
+  if (type === 'signature-parameters') return lowerSignatureParameters(value);
+  return lowerComposite(value, type);
+}
+
+function lowerComposite(value: SyntaxValue, type: ValueType): unknown {
   if (isList(value)) return value.map((item) => lowerValue(item, scalarType(type)));
   if (isReference(value)) return lowerReference(value, type);
   return value;
+}
+
+function lowerSignatureParameters(value: SyntaxValue): readonly unknown[] {
+  if (!isList(value)) return [];
+  return value.map((item) => {
+    if (typeof item === 'string') return item;
+    if (!isList(item) || item.length !== 2) return item;
+    const name = item[0];
+    return { name, type: lowerValue(item[1] as SyntaxValue, 'type-expression') };
+  });
 }
 /** List element kinds retain endpoint-versus-identity distinction. */
 function scalarType(type: ValueType): ValueType {
@@ -18,6 +33,7 @@ function lowerReference(
   type: ValueType,
 ): unknown {
   if (type === 'endpoint') return endpoint(value);
+  if (type === 'type-expression') return { kind: 'definition', id: value.id };
   return value.id;
 }
 /** Map only supplied fields; callers explicitly decide when declaration defaults are needed. */

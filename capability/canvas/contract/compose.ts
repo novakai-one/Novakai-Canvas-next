@@ -30,7 +30,6 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       controls,
       outline,
       sequence,
-      route,
       scene,
       interactions,
       records,
@@ -46,7 +45,6 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       import('../adapters/react-flow/CanvasControls.js'),
       import('../adapters/react-flow/DiagramOutline.js'),
       import('../adapters/react-flow/SequenceLayer.js'),
-      import('../adapters/react-flow/RouteHandles.js'),
       import('../adapters/react-flow/use-scene.js'),
       import('../adapters/react-flow/interaction-handlers.js'),
       import('../adapters/react-flow/flow-records.js'),
@@ -66,7 +64,6 @@ export function createReactBindings(slots: RenderSlots): Promise<Result<ReactBin
       SceneNode: node.createSceneNode({ ...slots, TreeRow: tree.createTreeRow(slots) }),
       SceneEdge: edge.createSceneEdge({
         ...slots,
-        RouteHandles: route.RouteHandles,
         WireLabel: labels.createWireLabel(slots),
       }),
       SectionFrame: section.createSectionFrame(slots),

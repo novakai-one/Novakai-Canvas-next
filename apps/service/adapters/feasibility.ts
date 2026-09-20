@@ -92,7 +92,7 @@ function report(documents: readonly RenderDocument[], preview: boolean): Feasibi
         adjustments: item.scene.adjustments,
       })),
     ),
-    preview: preview ? z.json().parse(documents) : null,
+    preview: preview ? z.json().parse(JSON.parse(JSON.stringify(documents))) : null,
   };
 }
 

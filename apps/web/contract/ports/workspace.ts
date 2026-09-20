@@ -2,6 +2,7 @@ import type { LibraryFactory } from '../records/library.js';
 import type { CatalogChange } from '@novakai/canvas-library';
 import type { WireEditorFactory } from '../records/wire-editor.js';
 import type { InspectorFactory } from '../records/inspector.js';
+import type { DefinitionFactory } from '../records/definitions.js';
 import type { SourceFactory } from '../records/source.js';
 import type { WorkspaceNavigation } from './navigation.js';
 import type { PanelController } from '../panel-types.js';
@@ -20,6 +21,7 @@ import type {
 } from '../records/owners.js';
 import type { ServiceClient } from './client.js';
 import type { EditPlanner } from '../records/editing.js';
+import type { MoveOption, MoveReview } from '../records/movement.js';
 export interface WorkspaceInputs {
   history(input: unknown, direction: 'undo' | 'redo', id: string): Result<Request | null>;
   snapshot(
@@ -65,7 +67,7 @@ export interface DraftRetention {
   remove(key: string): Result<void>;
 }
 export interface WorkspaceBindings {
-  readonly client: Pick<ServiceClient, 'get' | 'changes'>;
+  readonly client: Pick<ServiceClient, 'get' | 'changes'> & Partial<Pick<ServiceClient, 'bytes'>>;
   readonly navigation: WorkspaceNavigation;
   readonly inputs: Pick<
     WorkspaceInputs,
@@ -73,6 +75,16 @@ export interface WorkspaceBindings {
   >;
   readonly sessions: CanvasSessions;
   readonly edits: EditPlanner;
+  readonly moveReview?: (
+    document: RenderDocument,
+    intent: Extract<import('../records/owners.js').EditIntent, { kind: 'placement' }>,
+    stamp: import('../records/owners.js').SceneStamp,
+  ) => Result<MoveReview>;
+  readonly chooseMoveOption?: (
+    review: MoveReview,
+    optionId: string,
+    current: import('../records/owners.js').SceneStamp,
+  ) => Result<MoveOption>;
   readonly previewRoutes?: (
     document: RenderDocument,
     intent: import('../records/owners.js').EditIntent,
@@ -81,6 +93,7 @@ export interface WorkspaceBindings {
   readonly submissions: SubmissionFactory;
   readonly source: SourceFactory;
   readonly inspector: InspectorFactory;
+  readonly definitions: DefinitionFactory;
   readonly wires: WireEditorFactory;
   readonly library: LibraryFactory;
   readonly panels: Pick<PanelController, 'open' | 'restore'>;

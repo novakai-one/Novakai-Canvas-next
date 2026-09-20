@@ -7,6 +7,7 @@ import type {
 import type { Result } from '../errors.js';
 import type { Snapshot, Request, TransportResponse } from '../records/owners.js';
 import type { Command } from '../records/command.js';
+import type { ParsedSource } from '@novakai/canvas-language';
 export interface Transport {
   get(path: string): Promise<Result<TransportResponse>>;
   post(path: string, body: unknown): Promise<Result<TransportResponse>>;
@@ -23,6 +24,7 @@ export interface RequestFiles {
   output(path: string, text: string): Promise<Result<void>>;
 }
 export interface SemanticInputs extends ResourceSyntax {
+  profileParse(source: string): Result<ParsedSource>;
   checkedRequest(input: unknown): Result<Request>;
   admissionDigest(input: unknown): Result<string>;
   backup(input: unknown): Result<ByteBackup>;

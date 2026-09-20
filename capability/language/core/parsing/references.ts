@@ -29,7 +29,10 @@ export function readReference(cursor: Cursor): Parsed<LocatedValue> {
   if (peek(cursor).kind === 'word') return readNamespaced(cursor);
   const id = readIdentity(cursor);
   const tail = readAddressTail(id.value, id.next);
-  return { value: { value: tail.value, span: consumedSpan(cursor, tail.next) }, next: tail.next };
+  return {
+    value: { value: tail.value, span: consumedSpan(cursor, tail.next), token: peek(cursor) },
+    next: tail.next,
+  };
 }
 /** Reject unknown namespaces before resolving any domain record. */
 function readNamespaced(cursor: Cursor): Parsed<LocatedValue> {

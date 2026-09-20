@@ -50,7 +50,7 @@ export const sourceEndpoints: Readonly<Partial<Record<RelationshipKind, readonly
 export const targetEndpoints: Readonly<Partial<Record<RelationshipKind, readonly ObjectKind[]>>> = {
   association: ['entity'],
   imports: ['module', 'interface', 'function'],
-  calls: ['function'],
+  calls: ['module', 'interface', 'function'],
   implements: ['interface'],
   transition: ['state', 'end'],
 };

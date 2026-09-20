@@ -1,5 +1,6 @@
 import type { ContentBlock } from '../../contract/records/input.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
+import type { TypeUse } from '../../contract/records/input.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import { measureText, offset } from './text.js';
 import { reject, requireValue } from '../validation/outcomes.js';
@@ -22,16 +23,37 @@ function validDimension(value: number): boolean {
   return Number.isFinite(value) && value >= 0;
 }
 /** Commas bind to their preceding parameter and the result binds to the closing parameter. */
-function groups(block: Signature): readonly string[] {
-  const parameters = block.parameters.map((parameter, index) => parameter + suffix(index, block));
-  if (parameters.length === 0) return [`${block.label}(): ${block.returns}`];
+function groups(block: Signature, context: ContentContext): readonly string[] {
+  const parameters = block.parameters.map(
+    (parameter, index) => parameterText(parameter, context) + suffix(index, block, context),
+  );
+  if (parameters.length === 0)
+    return [`${block.label}(): ${resolvedTypeText(block.returns, context)}`];
   const [first, ...rest] = parameters;
   return [`${block.label}(${first}`, ...rest];
 }
 /** Last parameter retains closing punctuation and result as one lexical unit. */
-function suffix(index: number, block: Signature): string {
-  if (index === block.parameters.length - 1) return `): ${block.returns}`;
+function suffix(index: number, block: Signature, context: ContentContext): string {
+  if (index === block.parameters.length - 1)
+    return `): ${resolvedTypeText(block.returns, context)}`;
   return ',';
+}
+
+function typeText(type: TypeUse): string {
+  return typeof type === 'string' ? type : `@${type.id}`;
+}
+
+function resolvedTypeText(type: TypeUse, context: ContentContext): string {
+  return context.resolveTypeUse?.(type) ?? typeText(type);
+}
+
+function parameterText(
+  parameter: string | { readonly name: string; readonly type: TypeUse },
+  context: ContentContext,
+): string {
+  return typeof parameter === 'string'
+    ? parameter
+    : `${parameter.name}: ${resolvedTypeText(parameter.type, context)}`;
 }
 /** Punctuation binds to the preceding lexical group so wrapping never creates a symbol-only row. */
 function appendMemberUnit(groups: Lines, unit: string): Lines {
@@ -39,9 +61,9 @@ function appendMemberUnit(groups: Lines, unit: string): Lines {
   return { complete: [...groups.complete, groups.current], current: unit };
 }
 /** Member declarations wrap only at whitespace-delimited lexical groups; identifiers remain whole. */
-function memberGroups(block: Member): readonly string[] {
+function memberGroups(block: Member, context: ContentContext): readonly string[] {
   const heading = `${block.visibility} ${block.label}:`;
-  const grouped = block.type
+  const grouped = resolvedTypeText(block.type, context)
     .trim()
     .split(/\s+/u)
     .reduce<Lines>((result, unit) => appendMemberUnit(result, unit), {
@@ -89,11 +111,11 @@ function measured(
 }
 /** Callable rows preserve lexical groups; public project owns rejection and retains the prior scene. */
 export function measureSignature(block: Signature, context: ContentContext): MeasuredContent {
-  const units = groups(block);
+  const units = groups(block, context);
   return measured(units, units.join(' '), block.id, context);
 }
 /** Member rows preserve lexical groups; public project owns rejection and retains the prior scene. */
 export function measureMember(block: Member, context: ContentContext): MeasuredContent {
-  const label = `${block.visibility} ${block.label}: ${block.type}`;
-  return measured(memberGroups(block), label, block.id, context);
+  const label = `${block.visibility} ${block.label}: ${resolvedTypeText(block.type, context)}`;
+  return measured(memberGroups(block, context), label, block.id, context);
 }

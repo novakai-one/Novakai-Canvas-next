@@ -19,6 +19,7 @@
     "@novakai/canvas-design-system": "workspace:*",
     "@novakai/canvas-canvas": "workspace:*",
     "@novakai/canvas-export": "workspace:*",
+    "@resvg/resvg-wasm": "2.6.2",
     "zod": "4.6.2",
     "tsx": "4.23.13"
   },

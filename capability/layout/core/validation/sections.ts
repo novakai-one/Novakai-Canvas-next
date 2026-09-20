@@ -41,7 +41,7 @@ export function inspectSection(
   const title = sectionTitle(source, content, context.options.padding);
   same(title, candidate.title, source.id);
   const bounds = sectionBounds(content, title.box, context.options.padding);
-  if (source.envelope === undefined) checkBounds(bounds, candidate);
+  if (source.envelope === undefined) checkBounds(bounds, candidate, source.placement);
   else checkEnvelope(source, candidate, content);
   checkLock(source, candidate);
   const tree = treeGeometry(source);
@@ -77,10 +77,19 @@ function withTree(section: PlacedSection, tree: PlacedSection['tree']): PlacedSe
   return tree === undefined ? section : { ...section, tree };
 }
 /** Collection-space bounds enclose all local geometry after applying the explicit origin exactly once. */
-function checkBounds(local: Box, candidate: SectionCandidate): void {
-  const expected = { ...local, x: local.x + candidate.origin.x, y: local.y + candidate.origin.y };
-  if (!contains(candidate.box, expected))
+function checkBounds(
+  local: Box,
+  candidate: SectionCandidate,
+  placement: VisualSection['placement'],
+): void {
+  const content = { ...local, x: local.x + candidate.origin.x, y: local.y + candidate.origin.y };
+  if (!contains(candidate.box, content))
     reject('constraint-conflict', candidate.id, 'Section bounds omit visible content');
+  const expected = {
+    ...content,
+    width: placement?.width ?? content.width,
+    height: placement?.height ?? content.height,
+  };
   if (!samePoint(expected, candidate.box))
     reject('constraint-conflict', candidate.id, 'Section origin differs from visible bounds');
 }

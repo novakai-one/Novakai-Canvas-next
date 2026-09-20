@@ -38,8 +38,23 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
   references: (value) => listOf(value, isIdentity),
   targets: (value) => listOf(value, isReference),
   'reference-value': (value) => isEndpoint(value) || listOf(value, isEndpoint),
+  'type-expression': (value) => typeof value === 'string' || isIdentity(value),
+  'signature-parameters': (value) => listOf(value, signatureParameter),
   link: (value) => typeof value === 'string' || isIdentity(value),
 };
+function signatureParameter(item: SyntaxValue): boolean {
+  if (typeof item === 'string') return true;
+  return validSignatureTuple(item);
+}
+
+function validSignatureTuple(item: SyntaxValue): boolean {
+  if (!isList(item) || item.length !== 2) return false;
+  const name = item[0];
+  const type = item[1];
+  return (
+    typeof name === 'string' && type !== undefined && (typeof type === 'string' || isIdentity(type))
+  );
+}
 /** Cardinality one is lexed as an integer but has an explicit word enum in the grammar. */
 function normalizeEnum(value: SyntaxValue, property: Property): SyntaxValue {
   if (property.values === undefined) return value;

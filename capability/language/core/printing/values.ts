@@ -16,9 +16,26 @@ export function string(value: unknown): string {
 }
 /** Format canonical properties using the same declared scalar/list type used by the parser. */
 export function printValue(value: unknown, type: ValueType): string {
+  if (type === 'signature-parameters') return printSignatureParameters(value);
+  return printSimpleValue(value, type);
+}
+
+function printSimpleValue(value: unknown, type: ValueType): string {
   if (Array.isArray(value)) return printList(value, type);
   if (type === 'endpoint') return printEndpoint(value);
   return printScalar(value, type);
+}
+
+function printSignatureParameters(value: unknown): string {
+  if (!Array.isArray(value))
+    reject('unrepresentable', origin, 'Signature parameters', 'Cannot print parameters');
+  return `[${value
+    .map((item) => {
+      if (typeof item === 'string') return quote(item);
+      const parameter = record(item);
+      return `[${quote(string(parameter.name))}, ${printValue(parameter.type, 'type-expression')}]`;
+    })
+    .join(', ')}]`;
 }
 /** Scalars have explicit delimiters; theme pins are quoted when they are not bare vocabulary words. */
 function printScalar(value: unknown, type: ValueType): string {
@@ -28,6 +45,7 @@ function printScalar(value: unknown, type: ValueType): string {
     id: () => `@${string(value)}`,
     boolean: () => String(value),
     integer: () => String(value),
+    'type-expression': () => printTypeExpression(value),
   };
   const print = printers[type];
   if (print === undefined)
@@ -39,6 +57,20 @@ function printScalar(value: unknown, type: ValueType): string {
       type,
     );
   return print();
+}
+
+function printTypeExpression(value: unknown): string {
+  if (typeof value === 'string') return quote(value);
+  requireTypeRecord(value);
+  const recordValue = record(value);
+  if (recordValue.kind !== 'definition')
+    reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
+  return `@${string(recordValue.id)}`;
+}
+
+function requireTypeRecord(value: unknown): asserts value is object {
+  if (value === null || typeof value !== 'object' || Array.isArray(value))
+    reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
 }
 /** Bare words remain readable; punctuation-bearing theme pins retain exact identity inside quotes. */
 function word(value: unknown): string {

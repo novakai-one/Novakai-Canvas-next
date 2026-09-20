@@ -11,8 +11,8 @@
 export { validate, plan, stage } from './api.js';
 
 /** Checked ID schemas mint identities without casts. */
-export { digest, objectId, collectionId, descendantId, assetId } from './brands.js';
-export type { ObjectId, SectionId, DescendantId } from './brands.js';
+export { digest, objectId, collectionId, descendantId, assetId, definitionId } from './brands.js';
+export type { ObjectId, SectionId, DescendantId, DefinitionId } from './brands.js';
 
 /** Typed result and machine-readable failure codes returned by every operation. */
 export type { Result, DiagnosticCode } from './errors.js';
@@ -21,6 +21,11 @@ export type { Result, DiagnosticCode } from './errors.js';
 export type { Collection } from './records/collection.js';
 export type { DiagramObject, ObjectKind } from './records/object.js';
 export type { ContentBlock, Endpoint } from './records/content.js';
+export type { Definition, TypeExpression, FieldType, TypeUse } from './records/definition.js';
+export { definitionSchema } from './records/definition.js';
+export { definitionDisplay, definitionUsages, fieldTypeDisplay, typeUseDisplay } from './api.js';
+export { resolveCallableEndpoint } from './api.js';
+export type { CallableEndpoint, DefinitionUsage } from './api.js';
 export type { Relationship, RelationshipKind } from './records/relationship.js';
 export type {
   Section,

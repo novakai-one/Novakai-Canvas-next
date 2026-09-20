@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { descendantId, objectId, validate } from '@novakai/canvas-model';
+import { descendantId, objectId, definitionId, validate } from '@novakai/canvas-model';
 import { snapshotSchema } from '@novakai/canvas-authoring';
 import type { ObjectDraft, ObjectEdit } from '../contract/records/inspector.js';
 import type { CapturedCollectionBase, EditingBase } from '../contract/records/editor-recovery.js';
@@ -50,6 +50,14 @@ const command: z.ZodType<ObjectEdit> = z.discriminatedUnion('kind', [
     kind: z.literal('field-reference'),
     id: descendantId,
     target: z.strictObject({ object: objectId, member: descendantId.optional() }),
+  }),
+  z.strictObject({
+    kind: z.literal('field-type'),
+    id: descendantId,
+    value: z.union([
+      z.string(),
+      z.strictObject({ kind: z.literal('definition'), id: definitionId }),
+    ]),
   }),
   z.strictObject({
     kind: z.literal('parameters'),

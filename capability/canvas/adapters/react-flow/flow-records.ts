@@ -30,7 +30,12 @@ function flowNodes(
     height: view.box.height,
     measured: { width: view.box.width, height: view.box.height },
     style: { width: view.box.width, height: view.box.height, pointerEvents: 'none' },
-    data: { view, paint },
+    data: {
+      view,
+      actions,
+      editable: snapshot.view.editable,
+      paint,
+    },
     selected: view.selected,
     dragHandle: '.section-drag-handle',
     draggable: snapshot.view.editable && snapshot.view.tool === 'select',

@@ -3,7 +3,7 @@ import type { EditContext } from '../../contract/records/editing.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
 import { EditRejected } from './targets.js';
-import { placeEntries } from './placements.js';
+import { plannedSections } from './movement-capture.js';
 import { routeWire } from './routes.js';
 /** A gesture authored on another revision, layout input or display generation is kept as a draft instead of rebased silently. */
 function current(intent: EditIntent, context: EditContext): boolean {
@@ -26,7 +26,7 @@ function replacements(sections: readonly Section[], context: EditContext): reado
 /** Each supported Canvas intent has an explicit semantic adapter; unsupported intents fail visibly rather than reporting success. */
 function planned(intent: EditIntent, context: EditContext): Result<readonly Change[]> {
   if (intent.kind === 'placement')
-    return { ok: true, value: replacements(placeEntries(intent, context.document), context) };
+    return { ok: true, value: replacements(plannedSections(context.document, intent), context) };
   if (intent.kind === 'route')
     return { ok: true, value: replacements(routeWire(intent, context.document), context) };
   return failure('unsupported-edit', 'Use the inspector to complete this diagram edit');

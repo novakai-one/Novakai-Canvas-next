@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { assetId, objectId, relationshipId, sectionId, sourceId } from '../brands.js';
+import { assetId, definitionId, objectId, relationshipId, sectionId, sourceId } from '../brands.js';
 import { collectionSchema, assetSchema, sourceSchema } from './collection.js';
 import { objectSchema } from './object.js';
 import { sectionSchema } from './section.js';
 import { relationshipSchema } from './relationship.js';
+import { definitionSchema } from './definition.js';
 
 /** Create requires an absent ID; replace requires an existing ID. */
 const recordOperationSchema = z.enum(['create', 'replace']);
@@ -26,6 +27,13 @@ const assetChangeSchema = z
 const sourceChangeSchema = z
   .strictObject({ op: recordOperationSchema, target: z.literal('sources'), value: sourceSchema })
   .readonly();
+const definitionChangeSchema = z
+  .strictObject({
+    op: recordOperationSchema,
+    target: z.literal('definitions'),
+    value: definitionSchema,
+  })
+  .readonly();
 
 /** Complete-record create or replace. Target selects the exact payload schema. */
 export const recordChangeSchema = z.union([
@@ -34,6 +42,7 @@ export const recordChangeSchema = z.union([
   sectionChangeSchema,
   assetChangeSchema,
   sourceChangeSchema,
+  definitionChangeSchema,
 ]);
 
 /** Removal alone does not cascade; final-batch validation rejects unresolved references. */
@@ -54,6 +63,9 @@ const removeChangeSchema = z.union([
   z.strictObject({ op: z.literal('remove'), target: z.literal('assets'), id: assetId }).readonly(),
   z
     .strictObject({ op: z.literal('remove'), target: z.literal('sources'), id: sourceId })
+    .readonly(),
+  z
+    .strictObject({ op: z.literal('remove'), target: z.literal('definitions'), id: definitionId })
     .readonly(),
 ]);
 

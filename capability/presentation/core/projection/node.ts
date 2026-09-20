@@ -62,29 +62,35 @@ export function projectNode(
   const source = object(view.object, context);
   const role = view.role ?? source.role;
   const size = view.size ?? source.size;
-  const shape = appearanceShape(source.kind, view.frame ?? source.frame);
+  const sequence = sequencePresentation(source, view, section);
+  const shape = sequence.shape;
+  const presentationSource = sequence.source;
   const appearance = appearanceContext(view, role, size, shape, { ...context, owner: source });
   const initial = contentForeground(view.frame ?? source.frame, view.group, section, appearance);
   const visible = visibleBody(source, view.detail);
   const scoped = plannedContext(
-    { ...source, content: visible.content },
+    { ...presentationSource, content: visible.content },
     initial,
     context.style.contentSizing.widths[size],
     view.placement?.width !== undefined,
   );
   const composed = composeNodeContent(
-    source,
+    presentationSource,
     visible,
     view.composition ?? source.composition,
     headingGap(shape, context),
-    scoped,
+    compositionContext(sequence.module, scoped),
   );
   const treeRow = compactTreeRow(section, view, source, context, compact);
   return parse(visualNode, {
     ...(context.style.followsInterfaceRoles === true
       ? { followsInterfaceRoles: true as const }
       : {}),
-    ...chromeStyle(source, view.frame ?? source.frame, context),
+    ...chromeStyle(
+      chromeSource(sequence.module, presentationSource),
+      view.frame ?? source.frame,
+      context,
+    ),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -116,6 +122,53 @@ export function projectNode(
         }),
   });
 }
+
+function sequencePresentation(
+  source: DiagramObject,
+  view: Appearance,
+  section: Section,
+): {
+  readonly shape: VisualNode['shape'];
+  readonly source: DiagramObject;
+  readonly module: boolean;
+} {
+  if (!isSequenceModuleParticipant(source, view, section))
+    return {
+      shape: appearanceShape(source.kind, view.frame ?? source.frame),
+      source,
+      module: false,
+    };
+  return { shape: 'participant', source, module: true };
+}
+
+function compositionContext(module: boolean, context: ContentContext): ContentContext {
+  if (!module) return context;
+  return { ...context, chromePolicies: {} };
+}
+
+function chromeSource(module: boolean, source: DiagramObject): DiagramObject {
+  return module ? participantSource(source) : source;
+}
+
+function isSequenceModuleParticipant(
+  source: DiagramObject,
+  view: Appearance,
+  section: Section,
+): boolean {
+  if (section.mode !== 'sequence') return false;
+  if (!isDirectModuleAppearance(source, view)) return false;
+  return section.sequence.some(
+    (item) => item.kind === 'event' && (item.source === source.id || item.target === source.id),
+  );
+}
+
+function isDirectModuleAppearance(source: DiagramObject, view: Appearance): boolean {
+  return source.kind === 'module' && view.group === undefined;
+}
+
+function participantSource(source: DiagramObject): DiagramObject {
+  return { ...source, kind: 'participant' };
+}
 function compactTreeRow(
   section: Section,
   view: Appearance,
@@ -146,8 +199,19 @@ function compactTreeRow(
   const gutter = icon + context.style.gap;
   const width = label.width + gutter + padding * 2;
   const height = Math.max(label.height, icon) + padding * 2;
+  const taggedLabel = {
+    ...label,
+    primitives: label.primitives.map((primitive) => ({
+      ...primitive,
+      lodRole: 'heading' as const,
+    })),
+  };
   return {
-    content: { ...offset(label, padding + gutter, padding), width, height },
+    content: {
+      ...offset(taggedLabel, padding + gutter, padding),
+      width,
+      height,
+    },
     width,
     height,
     gutter,

@@ -84,10 +84,9 @@ export function emphasisFor(focus: FocusProjection, key: string): Emphasis {
   return focusedEmphasis(focus, key);
 }
 
-/** Hover previews the same one-hop neighborhood as selection but never mutes the rest of the scene. */
+/** Hover uses supporting paint throughout its neighborhood; primary paint and vignette require selection. */
 function hoveredEmphasis(focus: FocusProjection, key: string): Emphasis {
-  if (focus.primary.has(key)) return 'primary';
-  if (focus.secondary.has(key)) return 'secondary';
+  if (focus.primary.has(key) || focus.secondary.has(key)) return 'secondary';
   return 'normal';
 }
 

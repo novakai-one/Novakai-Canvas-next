@@ -73,16 +73,21 @@ it('measures combined PK/FK rows and preserves long signatures and addressable f
   const callable = projection.sections[0]?.nodes.find((node) => node.objectId === 'publish');
   assert(link && callable);
   const runs = link.content.primitives.filter((run) => run.kind === 'text');
-  const badges = runs.filter((run) => run.text === 'PK/FK');
-  expect(badges).toHaveLength(2);
+  const primary = runs.filter((run) => run.text === 'PK');
+  const foreign = runs.filter((run) => run.text === 'FK');
+  expect(primary).toHaveLength(2);
+  expect(foreign).toHaveLength(2);
   const names = ['tenant_id:', 'external_record_id:'].map((text) =>
     runs.find((run) => run.text === text),
   );
   names.forEach((name, index) => {
-    const badge = badges[index];
-    assert(name && badge);
-    expect(badge.x + badge.width).toBeLessThan(name.x);
-    expect(badge.y).toBe(name.y);
+    const pk = primary[index];
+    const fk = foreign[index];
+    assert(name && pk && fk);
+    expect(pk.x + pk.width).toBeLessThan(fk.x);
+    expect(fk.x + fk.width).toBeLessThan(name.x);
+    expect(pk.y).toBe(name.y);
+    expect(fk.y).toBe(name.y);
   });
   expect(names[0]?.x).toBe(names[1]?.x);
   expect(link.content.anchors.map((anchor) => anchor.member)).toEqual(['tenant', 'record']);

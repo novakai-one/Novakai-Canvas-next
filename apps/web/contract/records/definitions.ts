@@ -42,6 +42,7 @@ export interface DefinitionSession {
     selection: DefinitionSelection,
     definition: Definition,
     literalDraft?: LiteralDraft,
+    editedPath?: readonly number[],
   ): Result<void>;
   remove(selection: DefinitionSelection, definition: Definition): Result<void>;
   discard(key: string): Result<void>;

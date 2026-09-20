@@ -58,22 +58,24 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
     literalDraft?: LiteralDraft,
+    editedPath?: readonly number[],
   ) => {
     const scope = checkScope(selection, workspace);
     if (!scope.ok) return reject(scope.error);
-    return retainInScope(selection, definition, operation, literalDraft);
+    return retainInScope(selection, definition, operation, literalDraft, editedPath);
   };
   const retainInScope = (
     selection: DefinitionSelection,
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
     literalDraft?: LiteralDraft,
+    editedPath?: readonly number[],
   ): Result<void> => {
     const key = `${selection.collection.id}:${definition.id}`;
     const current = state.drafts.find((draft) => draft.key === key);
     const locked = lockedDefinition(state, current, key);
     if (locked !== null) return reject(locked);
-    return saveDefinition(current, key, selection, definition, operation, literalDraft);
+    return saveDefinition(current, key, selection, definition, operation, literalDraft, editedPath);
   };
   const saveDefinition = (
     current: DefinitionDraft | undefined,
@@ -82,10 +84,19 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     definition: Definition,
     operation: DefinitionDraft['operation'],
     literalDraft?: LiteralDraft,
+    editedPath?: readonly number[],
   ): Result<void> => {
     if (uncommittedDelete(current, operation))
       return write(state.drafts.filter((item) => item.key !== key));
-    const draft = draftValue(key, current, selection, definition, operation, literalDraft);
+    const draft = draftValue(
+      key,
+      current,
+      selection,
+      definition,
+      operation,
+      literalDraft,
+      editedPath,
+    );
     return saveDraftResult(draft, key, state.drafts, write, reject);
   };
   const apply = async (key: string): Promise<Result<void>> => {
@@ -136,8 +147,8 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     },
     restore,
     create: (selection, definition) => retain(selection, definition, 'create'),
-    edit: (selection, definition, literalDraft) =>
-      retain(selection, definition, 'replace', literalDraft),
+    edit: (selection, definition, literalDraft, editedPath) =>
+      retain(selection, definition, 'replace', literalDraft, editedPath),
     remove: (selection, definition) => retain(selection, definition, 'remove'),
     discard: (key) =>
       state.pending.includes(key) ||
@@ -221,10 +232,11 @@ function draftValue(
   definition: Definition,
   operation: DefinitionDraft['operation'],
   literalDraft?: LiteralDraft,
+  editedPath?: readonly number[],
 ): Result<DefinitionDraft> {
   const base = capturedBase(current?.base, selection);
   if (!base.ok) return base;
-  const literalDrafts = nextLiteralDrafts(current, definition, literalDraft);
+  const literalDrafts = nextLiteralDrafts(current, definition, literalDraft, editedPath);
   return {
     ok: true,
     value: {
@@ -244,9 +256,10 @@ function nextLiteralDrafts(
   current: DefinitionDraft | undefined,
   definition: Definition,
   literalDraft: LiteralDraft | undefined,
+  editedPath: readonly number[] | undefined,
 ): readonly LiteralDraft[] | undefined {
   const retained = (current?.literalDrafts ?? []).filter((item) =>
-    canRetainLiteralDraft(current, definition, item, literalDraft),
+    canRetainLiteralDraft(definition, item, editedPath),
   );
   return withLiteralDraft(retained, literalDraft);
 }
@@ -265,20 +278,13 @@ function emptyRetained(retained: readonly LiteralDraft[]): readonly LiteralDraft
 }
 
 function canRetainLiteralDraft(
-  current: DefinitionDraft | undefined,
   definition: Definition,
   literalDraft: LiteralDraft,
-  nextLiteralDraft: LiteralDraft | undefined,
+  editedPath: readonly number[] | undefined,
 ): boolean {
-  const previous =
-    current === undefined
-      ? undefined
-      : expressionAtPath(current.definition.expression, literalDraft.path);
   const next = expressionAtPath(definition.expression, literalDraft.path);
-  return (
-    next?.kind === 'literal' &&
-    (sameExpression(previous, next) || nextLiteralDraft !== undefined || previous === undefined)
-  );
+  return next?.kind === 'literal' &&
+    (editedPath === undefined || !isPathWithin(literalDraft.path, editedPath));
 }
 
 function expressionAtPath(
@@ -295,13 +301,8 @@ function samePath(left: readonly number[], right: readonly number[]): boolean {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
-function sameExpression(
-  left: Definition['expression'] | undefined,
-  right: Definition['expression'] | undefined,
-): boolean {
-  return (
-    left !== undefined && right !== undefined && JSON.stringify(left) === JSON.stringify(right)
-  );
+function isPathWithin(path: readonly number[], ancestor: readonly number[]): boolean {
+  return ancestor.length <= path.length && ancestor.every((value, index) => path[index] === value);
 }
 
 function nextOperation(

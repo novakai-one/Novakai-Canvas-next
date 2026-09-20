@@ -127,7 +127,9 @@ function DefinitionCard({
         literalDrafts={draft?.literalDrafts ?? []}
         collection={collection}
         disabled={pending}
-        onChange={(expression) => session.edit(selection, { ...definition, expression })}
+        onChange={(expression, editedPath) =>
+          session.edit(selection, { ...definition, expression }, undefined, editedPath)
+        }
         onLiteralDraft={(literalDraft) =>
           session.edit(selection, definition, literalDraft)
         }
@@ -234,7 +236,7 @@ function ExpressionEditor({
   readonly expression: TypeExpression;
   readonly literalDrafts: readonly LiteralDraft[];
   readonly path?: readonly number[];
-  readonly onChange: (expression: TypeExpression) => void;
+  readonly onChange: (expression: TypeExpression, editedPath?: readonly number[]) => void;
   readonly onLiteralDraft: (literalDraft: LiteralDraft) => void;
   readonly Field: DesignSlots['Field'];
   readonly collection: Collection;
@@ -261,7 +263,7 @@ function ExpressionEditor({
                   items: expression.items.map((value, position) =>
                     position === index ? next : value,
                   ),
-                })
+                }, path)
               }
               onLiteralDraft={onLiteralDraft}
             />
@@ -299,7 +301,7 @@ function ExpressionEditor({
                     TypeExpression,
                     { kind: 'primitive' }
                   >['name'],
-                })
+                }, path)
               }
             >
               {['string', 'number', 'boolean', 'unknown', 'void'].map((name) => (
@@ -329,7 +331,7 @@ function ExpressionEditor({
                   }
                     ? I
                     : never,
-                })
+                }, path)
               }
             >
               {collection.definitions.map((definition) => (
@@ -370,7 +372,10 @@ function LiteralEditor({
   readonly value: string | number | boolean;
   readonly raw: LiteralDraft | undefined;
   readonly path: readonly number[];
-  readonly onChange: (expression: Extract<TypeExpression, { kind: 'literal' }>) => void;
+  readonly onChange: (
+    expression: Extract<TypeExpression, { kind: 'literal' }>,
+    editedPath?: readonly number[],
+  ) => void;
   readonly onRawChange: (literalDraft: LiteralDraft) => void;
   readonly Field: DesignSlots['Field'];
   readonly disabled: boolean;
@@ -411,7 +416,7 @@ function LiteralEditor({
               disabled={disabled}
               value={draft}
               onChange={(event) =>
-                onChange({ kind: 'literal', value: event.target.value === 'true' })
+                onChange({ kind: 'literal', value: event.target.value === 'true' }, path)
               }
             >
               <option value="true">true</option>
@@ -447,17 +452,20 @@ function setLiteralKind(
   kind: string,
   value: string,
   path: readonly number[],
-  onChange: (expression: Extract<TypeExpression, { kind: 'literal' }>) => void,
+  onChange: (
+    expression: Extract<TypeExpression, { kind: 'literal' }>,
+    editedPath?: readonly number[],
+  ) => void,
   onRawChange: (literalDraft: LiteralDraft) => void,
 ): void {
   const number = finiteNumber(value);
   const handlers: Record<string, () => void> = {
-    boolean: () => onChange({ kind: 'literal', value: value === 'true' }),
-    string: () => onChange({ kind: 'literal', value }),
+    boolean: () => onChange({ kind: 'literal', value: value === 'true' }, path),
+    string: () => onChange({ kind: 'literal', value }, path),
     number: () =>
       number === null
         ? onRawChange({ path, kind: 'number', text: value })
-        : onChange({ kind: 'literal', value: number }),
+        : onChange({ kind: 'literal', value: number }, path),
   };
   handlers[kind]?.();
 }
@@ -467,16 +475,19 @@ function updateLiteralText(
   value: string,
   path: readonly number[],
   setDraft: (value: string) => void,
-  onChange: (expression: Extract<TypeExpression, { kind: 'literal' }>) => void,
+  onChange: (
+    expression: Extract<TypeExpression, { kind: 'literal' }>,
+    editedPath?: readonly number[],
+  ) => void,
   onRawChange: (literalDraft: LiteralDraft) => void,
 ): void {
   setDraft(value);
   const handlers: Record<'string' | 'number', () => void> = {
-    string: () => onChange({ kind: 'literal', value }),
+    string: () => onChange({ kind: 'literal', value }, path),
     number: () => {
       const number = finiteNumber(value);
       if (number === null) onRawChange({ path, kind, text: value });
-      else onChange({ kind: 'literal', value: number });
+      else onChange({ kind: 'literal', value: number }, path);
     },
   };
   handlers[kind]();

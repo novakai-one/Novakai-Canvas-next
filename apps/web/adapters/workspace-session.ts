@@ -535,20 +535,25 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     document: RenderDocument,
     intent: Extract<EditIntent, { kind: 'placement' }>,
   ): boolean {
-    return intent.entries.every((entry) => {
-      if (entry.placement.width !== undefined || entry.placement.height !== undefined) return false;
-      if (entry.target.kind === 'section') {
-        return document.projection.sections.some(
-          (section) => section.id === entry.target.id && section.mode === 'modules',
-        );
-      }
-      if (entry.target.kind !== 'node') return false;
-      return document.projection.sections.some(
-        (section) =>
-          section.id === ('section' in entry.target ? entry.target.section : '') &&
-          section.mode === 'modules',
-      );
-    });
+    if (
+      intent.entries.some(
+        (entry) => entry.placement.width !== undefined || entry.placement.height !== undefined,
+      )
+    )
+      return false;
+    const moduleTargets = intent.entries.filter((entry) =>
+      entry.target.kind === 'section'
+        ? document.projection.sections.some(
+            (section) => section.id === entry.target.id && section.mode === 'modules',
+          )
+        : entry.target.kind === 'node' &&
+          document.projection.sections.some(
+            (section) =>
+              section.id === ('section' in entry.target ? entry.target.section : '') &&
+              section.mode === 'modules',
+          ),
+    );
+    return moduleTargets.length > 0;
   }
   /** A busy client retains subsequent gestures as recoverable drafts; no second browser request is submitted concurrently. */
   async function editCanvas(intent: EditIntent): Promise<void> {
@@ -565,28 +570,33 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         active.session.getSnapshot().stamp,
       );
       if (!reviewed.ok) {
+        active.session.dispatch({ kind: 'reject', id: intent.id, message: reviewed.error.message });
         report(reviewed.error);
         return;
       }
       if (reviewed.value.options.length !== 1) {
-        report({
+        const error: Diagnostic = {
           code: 'unsupported-edit',
           message:
             reviewed.value.reason ??
             'This movement has no valid move-only option; keep the draft for review.',
           recovery: 'Adjust the position or use the inspector.',
           owner: 'workspace',
-        });
+        };
+        active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
+        report(error);
         return;
       }
       const option = reviewed.value.options[0];
       if (option === undefined) {
-        report({
+        const error: Diagnostic = {
           code: 'unsupported-edit',
           message: 'This movement produced no usable move-only option.',
           recovery: 'Adjust the position or use the inspector.',
           owner: 'workspace',
-        });
+        };
+        active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
+        report(error);
         return;
       }
       submitFeasibleCanvas(active, intent, option.changes, option.preview);

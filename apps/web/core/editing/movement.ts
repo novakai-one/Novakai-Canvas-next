@@ -304,6 +304,8 @@ export function buildMoveReview(
 ): Result<MoveReview> {
   if (!sameStamp(intent, context.stamp))
     return failure('stale-gesture', 'The diagram changed while this gesture was being edited');
+  if (intent.entries.some((entry) => entry.target.kind === 'section' && context.document.projection.sections.every((section) => section.id !== entry.target.id || section.mode !== 'modules')))
+    return failure('unsupported-edit', 'Movement review supports module sections only');
   if (
     intent.entries.length === 0 ||
     intent.entries.some((entry) => {

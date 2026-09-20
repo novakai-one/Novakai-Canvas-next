@@ -45,62 +45,90 @@ function signedValue(value: number): string {
 export function createMovementReview({
   Button,
 }: Pick<DesignSlots, 'Button'>): ComponentType<FeatureProps> {
-  function MovementReview({ controller, view }: FeatureProps): ReactElement | null {
-    const review = view.movementReview;
-    if (review === null) return null;
-    const option = review.review.options.find((item) => item.id === review.optionId);
-    if (option === undefined) return null;
-    const waiting = ['sending', 'uncertain'].includes(review.phase);
-    const canApply = review.phase === 'review';
-    return (
-      <aside className={styles.review} aria-label="Movement review">
-        <div className={styles.options} aria-label="Movement options">
-          {review.review.options.map((candidate) => (
-            <Button
-              key={candidate.id}
-              label={candidate.label}
-              selected={candidate.id === review.optionId}
-              disabled={waiting}
-              onClick={() => controller.chooseMoveOption(candidate.id)}
-            />
-          ))}
-        </div>
-        <div className={styles.header}>
-          <div>
-            <strong>{option.label}</strong>
-            <p>{phaseMessage(review.phase)}</p>
-          </div>
-          <span className={styles.count}>{option.geometryChanges.length} changes</span>
-        </div>
-        <ul className={styles.changes} aria-label="Changed geometry">
-          {option.geometryChanges.map((change) => {
-            const target = change.target as MovementTarget;
-            const resized = isResized(change.before, change.after);
-            return (
-              <li key={`${target.kind}:${target.section ?? ''}:${target.id}`}>
-                <strong>{labelFor(review.document, target)}</strong>
-                <span>
-                  {resized ? 'Container resized' : 'Moved'} ·{' '}
-                  {deltaText(change.before, change.after)}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-        <div className={styles.actions}>
-          <Button label="Cancel" disabled={waiting} onClick={() => controller.cancelMove()} />
-          <Button
-            label={waiting ? 'Saving…' : 'Apply preview'}
-            variant="primary"
-            pending={waiting}
-            disabled={!canApply}
-            onClick={() => void controller.applyMove(option.id)}
-          />
-        </div>
-      </aside>
-    );
+  function MovementReview(props: FeatureProps): ReactElement | null {
+    return renderMovementReview(Button, props);
   }
   return MovementReview;
+}
+function renderMovementReview(
+  Button: DesignSlots['Button'],
+  { controller, view }: FeatureProps,
+): ReactElement | null {
+  const review = view.movementReview;
+  if (review === null) return null;
+  return renderMovementContent(Button, controller, review);
+}
+function renderMovementContent(
+  Button: DesignSlots['Button'],
+  controller: FeatureProps['controller'],
+  review: NonNullable<FeatureProps['view']['movementReview']>,
+): ReactElement | null {
+  const option = selectedOption(review);
+  if (option === undefined) return null;
+  const waiting = ['sending', 'uncertain'].includes(review.phase);
+  const canApply = review.phase === 'review';
+  return (
+    <aside className={styles.review} aria-label="Movement review">
+      <div className={styles.options} aria-label="Movement options">
+        {review.review.options.map((candidate) => (
+          <Button
+            key={candidate.id}
+            label={candidate.label}
+            selected={candidate.id === review.optionId}
+            disabled={waiting}
+            onClick={() => controller.chooseMoveOption(candidate.id)}
+          />
+        ))}
+      </div>
+      <div className={styles.header}>
+        <div>
+          <strong>{option.label}</strong>
+          <p>{phaseMessage(review.phase)}</p>
+        </div>
+        <span className={styles.count}>{option.geometryChanges.length} changes</span>
+      </div>
+      <ChangeList document={review.document} option={option} />
+      <div className={styles.actions}>
+        <Button label="Cancel" disabled={waiting} onClick={() => controller.cancelMove()} />
+        <Button
+          label={waiting ? 'Saving…' : 'Apply preview'}
+          variant="primary"
+          pending={waiting}
+          disabled={!canApply}
+          onClick={() => void controller.applyMove(option.id)}
+        />
+      </div>
+    </aside>
+  );
+}
+function selectedOption(
+  review: NonNullable<FeatureProps['view']['movementReview']>,
+): NonNullable<FeatureProps['view']['movementReview']>['review']['options'][number] | undefined {
+  return review.review.options.find((item) => item.id === review.optionId);
+}
+function ChangeList({
+  document,
+  option,
+}: {
+  document: MovementDocument;
+  option: NonNullable<FeatureProps['view']['movementReview']>['review']['options'][number];
+}): ReactElement {
+  return (
+    <ul className={styles.changes} aria-label="Changed geometry">
+      {option.geometryChanges.map((change) => {
+        const target = change.target as MovementTarget;
+        const resized = isResized(change.before, change.after);
+        return (
+          <li key={`${target.kind}:${target.section ?? ''}:${target.id}`}>
+            <strong>{labelFor(document, target)}</strong>
+            <span>
+              {resized ? 'Container resized' : 'Moved'} · {deltaText(change.before, change.after)}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 function phaseMessage(phase: 'review' | 'sending' | 'uncertain' | 'rejected'): string {
   return {

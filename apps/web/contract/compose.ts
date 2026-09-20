@@ -95,7 +95,10 @@ import {
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import type { ServiceClient } from './ports/client.js';
+import type { WorkspaceBindings } from './ports/workspace.js';
 import type { WorkspaceController } from './records/workspace.js';
+import type { EditIntent, RenderDocument } from './records/owners.js';
+import type { MoveReview } from './records/movement.js';
 /** Only fonts and public token source data are delivered at browser initialization; installation credentials are never included. */
 const installation = z.strictObject({ fonts: fontSet, tokens: z.unknown() });
 /** A typed initialization fault is caught once at startWeb; no half-mounted workspace is reported as ready. */
@@ -235,6 +238,63 @@ function panelDimensions(
     maximum: dimension(element, `--nv-panel-${side}-maximum`),
   };
 }
+function createMovementReviewBinding(
+  document: RenderDocument,
+  intent: Extract<EditIntent, { kind: 'placement' }>,
+  stamp: Parameters<NonNullable<WorkspaceBindings['moveReview']>>[2],
+): Result<MoveReview> {
+  const context = {
+    document,
+    stamp,
+    preview: (
+      previewDocument: typeof document,
+      previewIntent: typeof intent,
+      changes: readonly import('./records/owners.js').Change[],
+    ) => previewModuleRoutes(previewDocument, previewIntent, changes),
+  };
+  const move = buildMoveReview(intent, context);
+  if (hasMoveOnlyOption(move)) return move;
+  const expanded = buildExpandOption(intent, context);
+  const rearranged = buildRearrangeOption(intent, context);
+  const options = movementReviewOptions(move, expanded, rearranged);
+  if (options.length === 0) return move;
+  const base = movementReviewBase(move, document, intent, stamp);
+  return { ok: true, value: { ...base, options, selectedOption: options[0]?.id ?? null } };
+}
+function hasMoveOnlyOption(move: Result<MoveReview>): boolean {
+  return move.ok && move.value.options.length > 0;
+}
+function movementReviewOptions(
+  move: Result<MoveReview>,
+  expanded: Result<MoveReview['options'][number] | null>,
+  rearranged: Result<MoveReview['options'][number] | null>,
+): MoveReview['options'] {
+  return [
+    ...(move.ok ? move.value.options : []),
+    ...optionResult(expanded),
+    ...optionResult(rearranged),
+  ];
+}
+function optionResult<T>(result: Result<T | null>): readonly T[] {
+  return result.ok && result.value !== null ? [result.value] : [];
+}
+function movementReviewBase(
+  move: Result<MoveReview>,
+  document: RenderDocument,
+  intent: Extract<EditIntent, { kind: 'placement' }>,
+  stamp: Parameters<NonNullable<WorkspaceBindings['moveReview']>>[2],
+): MoveReview {
+  if (move.ok) return move.value;
+  return {
+    id: intent.id,
+    intent,
+    stamp,
+    collectionId: document.collection.id,
+    revision: document.collection.revision,
+    options: [],
+    selectedOption: null,
+  };
+}
 /** Native adapters receive narrow roles; every human mutation uses captured Authoring preconditions. */
 function controller(
   client: ServiceClient,
@@ -276,44 +336,7 @@ function controller(
       }),
     sessions: createCanvasSessions(canvas, () => viewport(element)),
     edits: { plan: planCanvasEdit },
-    moveReview: (document, intent, stamp) => {
-      const context = {
-        document,
-        stamp,
-        preview: (
-          previewDocument: typeof document,
-          previewIntent: typeof intent,
-          changes: readonly import('./records/owners.js').Change[],
-        ) => previewModuleRoutes(previewDocument, previewIntent, changes),
-      };
-      const move = buildMoveReview(intent, context);
-      if (move.ok && move.value.options.length > 0) return move;
-      const expanded = buildExpandOption(intent, context);
-      const rearranged = buildRearrangeOption(intent, context);
-      const options = [
-        ...(move.ok ? move.value.options : []),
-        ...(expanded.ok && expanded.value !== null ? [expanded.value] : []),
-        ...(rearranged.ok && rearranged.value !== null ? [rearranged.value] : []),
-      ];
-      if (options.length > 0) {
-        const base = move.ok
-          ? move.value
-          : {
-              id: intent.id,
-              intent,
-              stamp,
-              collectionId: document.collection.id,
-              revision: document.collection.revision,
-              options: [],
-              selectedOption: null,
-            };
-        return {
-          ok: true as const,
-          value: { ...base, options, selectedOption: options[0]?.id ?? null },
-        };
-      }
-      return move;
-    },
+    moveReview: createMovementReviewBinding,
     chooseMoveOption: chooseMoveOption,
     previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>

@@ -28,10 +28,14 @@ function nearestSpan(path: string, mappings: readonly SourceMapping[], fallback:
 /** Stable IDs produce diagnostic anchors without depending on formatting or declaration order. */
 export function sourceMappings(item: Declaration, prefix = ''): readonly SourceMapping[] {
   const name = mappingPath(item, prefix);
-  return [
+  const own = [
     { path: name, span: item.span },
+    ...(item.kind === 'type' && item.fields.expression !== undefined
+      ? [{ path: `${name}.expression`, span: item.fields.expression.span }]
+      : []),
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
+  return own;
 }
 /** Match canonical owner path namespaces, including nested content, rows and groups. */
 function mappingPath(item: Declaration, prefix: string): string {

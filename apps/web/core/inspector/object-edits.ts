@@ -55,6 +55,14 @@ function replaceText(
   edit: Extract<ObjectEdit, { kind: 'content-text' }>,
 ): ContentBlock {
   if (item.id !== edit.id) return item;
+  return replaceEditableText(item, edit);
+}
+
+function replaceEditableText(
+  item: ContentBlock,
+  edit: Extract<ObjectEdit, { kind: 'content-text' }>,
+): ContentBlock {
+  if (item.kind === 'field' && edit.field === 'type' && typeof item.type !== 'string') return item;
   return { ...item, [edit.field]: edit.value };
 }
 /** Nullable belongs to an ER field, never to an arbitrary content block. */

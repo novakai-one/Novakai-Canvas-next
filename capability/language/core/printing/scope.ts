@@ -1,4 +1,5 @@
 import type { Collection } from '../../contract/ports/model.js';
+import type { DefinitionId, TypeExpression } from '../../contract/ports/model.js';
 import type { Scope } from '../../contract/records/requests.js';
 import { reject, origin } from '../validation/outcomes.js';
 /** Scoped data is a display projection and never asserted to be a valid standalone collection. */
@@ -61,11 +62,7 @@ function resourceScope(collection: Collection): Collection {
     changed = false;
     collection.definitions.forEach((definition) => {
       if (!referenced.has(definition.id)) return;
-      const refs = definition.expression.kind === 'reference'
-        ? [definition.expression.id]
-        : definition.expression.kind === 'union'
-          ? definition.expression.items.filter((item) => item.kind === 'reference').map((item) => item.id)
-          : [];
+      const refs = expressionReferenceIds(definition.expression);
       refs.forEach((id) => { if (!referenced.has(id)) { referenced.add(id); changed = true; } });
     });
   }
@@ -75,4 +72,31 @@ function resourceScope(collection: Collection): Collection {
     sources: collection.sources.filter((item) => sources.includes(item.id)),
     definitions: collection.definitions.filter((definition) => referenced.has(definition.id)),
   };
+}
+
+function expressionReferenceIds(expression: TypeExpression): readonly DefinitionId[] {
+  const refs: DefinitionId[] = [];
+  const stack: TypeExpression[] = [expression];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    visitExpressionIfPresent(current, refs, stack);
+  }
+  return refs;
+}
+
+function visitExpressionIfPresent(current: TypeExpression | undefined, refs: DefinitionId[], stack: TypeExpression[]): void {
+  if (current !== undefined) visitExpression(current, refs, stack);
+}
+
+function visitExpression(current: TypeExpression, refs: DefinitionId[], stack: TypeExpression[]): void {
+  addExpressionReference(current, refs);
+  addExpressionChildren(current, stack);
+}
+
+function addExpressionReference(current: TypeExpression, refs: DefinitionId[]): void {
+  if (current.kind === 'reference') refs.push(current.id);
+}
+
+function addExpressionChildren(current: TypeExpression, stack: TypeExpression[]): void {
+  if (current.kind === 'union') stack.push(...current.items);
 }

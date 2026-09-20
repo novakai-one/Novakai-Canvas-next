@@ -18,26 +18,91 @@ export interface DefinitionUsage {
   readonly field?: string;
 }
 
-function exprNodes(expression: TypeExpression, path: string, depth: number, seen: Set<string>): readonly Diagnostic[] {
-  if (depth > MAX_DEPTH) return [{ code: 'limit', path, message: 'Definition expression nesting exceeds the limit' }];
-  if (seen.size > MAX_NODES) return [{ code: 'limit', path, message: 'Definition expression is too large' }];
-  if (expression.kind !== 'union') return [];
-  const next = new Set(seen);
-  next.add(path);
-  return expression.items.flatMap((item, index) => exprNodes(item, `${path}.items.${index}`, depth + 1, next));
+function exprNodes(expression: TypeExpression, path: string): readonly Diagnostic[] {
+  const stack: [TypeExpression, string, number][] = [[expression, path, 0]];
+  let nodes = 0;
+  let issue: Diagnostic | undefined;
+  while (stack.length > 0) issue = issue ?? visitNodeFrame(stack, () => { nodes += 1; return nodes; });
+  return issue === undefined ? [] : [issue];
+}
+
+function visitNodeFrame(
+  stack: [TypeExpression, string, number][],
+  nextNode: () => number,
+): Diagnostic | undefined {
+  const [current, currentPath, depth] = stack.pop() as [TypeExpression, string, number];
+  const issue = expressionLimit(depth, nextNode(), currentPath);
+  pushExpressionChildren(current, currentPath, depth, stack);
+  if (issue !== undefined) stack.length = 0;
+  return issue;
+}
+
+function expressionLimit(depth: number, nodes: number, path: string): Diagnostic | undefined {
+  return depthLimit(depth, path) ?? nodeLimit(nodes, path);
+}
+
+function depthLimit(depth: number, path: string): Diagnostic | undefined {
+  if (depth > MAX_DEPTH) return { code: 'limit', path, message: 'Definition expression nesting exceeds the limit' };
+  return undefined;
+}
+
+function nodeLimit(nodes: number, path: string): Diagnostic | undefined {
+  if (nodes > MAX_NODES) return { code: 'limit', path, message: 'Definition expression is too large' };
+  return undefined;
+}
+
+function pushExpressionChildren(
+  expression: TypeExpression,
+  path: string,
+  depth: number,
+  stack: [TypeExpression, string, number][],
+): void {
+  if (expression.kind !== 'union') return;
+  expression.items.forEach((item, index) => stack.push([item, `${path}.items.${index}`, depth + 1]));
 }
 
 function expressionReferences(expression: TypeExpression, path: string): readonly { id: DefinitionId; path: string }[] {
-  if (expression.kind === 'reference') return [{ id: expression.id, path }];
-  if (expression.kind !== 'union') return [];
-  return expression.items.flatMap((item, index) => expressionReferences(item, `${path}.items.${index}`));
+  const references: { id: DefinitionId; path: string }[] = [];
+  const stack: [TypeExpression, string][] = [[expression, path]];
+  while (stack.length > 0) {
+    const frame = stack.pop() as [TypeExpression, string];
+    visitReferences(frame, references, stack);
+  }
+  return references;
+}
+
+function visitReferences(
+  frame: [TypeExpression, string],
+  references: { id: DefinitionId; path: string }[],
+  stack: [TypeExpression, string][],
+): void {
+  const [current, currentPath] = frame;
+  addReference(current, currentPath, references);
+  pushReferenceChildren(current, currentPath, stack);
+}
+
+function addReference(
+  expression: TypeExpression,
+  path: string,
+  references: { id: DefinitionId; path: string }[],
+): void {
+  if (expression.kind === 'reference') references.push({ id: expression.id, path });
+}
+
+function pushReferenceChildren(
+  expression: TypeExpression,
+  path: string,
+  stack: [TypeExpression, string][],
+): void {
+  if (expression.kind !== 'union') return;
+  expression.items.forEach((item, index) => stack.push([item, `${path}.items.${index}`]));
 }
 
 function validateDefinitions(collection: Collection): readonly Diagnostic[] {
   const ids = new Set(collection.definitions.map((definition) => definition.id));
   return collection.definitions.flatMap((definition) => {
     const path = `definitions.${definition.id}.expression`;
-    const bounds = exprNodes(definition.expression, path, 0, new Set());
+    const bounds = exprNodes(definition.expression, path);
     const unknown = expressionReferences(definition.expression, path).flatMap((reference) =>
       referenceIssue(!ids.has(reference.id), reference.path),
     );
@@ -45,21 +110,101 @@ function validateDefinitions(collection: Collection): readonly Diagnostic[] {
   });
 }
 
-function hasCycle(collection: Collection, start: DefinitionId, current: DefinitionId, visiting: Set<DefinitionId>): boolean {
-  if (visiting.has(current)) return current === start;
-  const definition = collection.definitions.find((item) => item.id === current);
-  if (definition === undefined) return false;
-  const next = new Set(visiting);
-  next.add(current);
-  return expressionReferences(definition.expression, `definitions.${current}.expression`).some((reference) =>
-    hasCycle(collection, start, reference.id, next),
-  );
+function cycleDefinitions(collection: Collection): ReadonlySet<DefinitionId> {
+  const adjacency = new Map(collection.definitions.map((definition) => [definition.id, expressionReferences(definition.expression, `definitions.${definition.id}.expression`).map((item) => item.id)]));
+  const colors = new Map<DefinitionId, 0 | 1 | 2>();
+  const cycles = new Set<DefinitionId>();
+  collection.definitions.forEach((definition) => visitGraphRoot(definition.id, adjacency, colors, cycles));
+  return cycles;
+}
+
+function visitGraphRoot(
+  id: DefinitionId,
+  adjacency: ReadonlyMap<DefinitionId, readonly DefinitionId[]>,
+  colors: Map<DefinitionId, 0 | 1 | 2>,
+  cycles: Set<DefinitionId>,
+): void {
+  if (colors.get(id) !== undefined) return;
+  const stack: { id: DefinitionId; index: number }[] = [{ id, index: 0 }];
+  colors.set(id, 1);
+  while (stack.length > 0) visitGraphStep(stack, adjacency, colors, cycles);
+}
+
+function visitGraphStep(
+  stack: { id: DefinitionId; index: number }[],
+  adjacency: ReadonlyMap<DefinitionId, readonly DefinitionId[]>,
+  colors: Map<DefinitionId, 0 | 1 | 2>,
+  cycles: Set<DefinitionId>,
+): void {
+  const frame = stack[stack.length - 1];
+  if (frame === undefined) return;
+  const target = (adjacency.get(frame.id) ?? [])[frame.index];
+  if (target === undefined) return finishGraphFrame(stack, colors, frame);
+  frame.index += 1;
+  visitGraphTarget(target, stack, adjacency, colors, cycles);
+}
+
+function finishGraphFrame(
+  stack: { id: DefinitionId; index: number }[],
+  colors: Map<DefinitionId, 0 | 1 | 2>,
+  frame: { id: DefinitionId; index: number },
+): void {
+  colors.set(frame.id, 2);
+  stack.pop();
+}
+
+function visitGraphTarget(
+  target: DefinitionId,
+  stack: { id: DefinitionId; index: number }[],
+  adjacency: ReadonlyMap<DefinitionId, readonly DefinitionId[]>,
+  colors: Map<DefinitionId, 0 | 1 | 2>,
+  cycles: Set<DefinitionId>,
+): void {
+  if (adjacency.get(target) === undefined) return;
+  const color = targetColor(colors, target);
+  visitGraphColor(color, target, stack, colors, cycles);
+}
+
+function visitGraphColor(
+  color: 0 | 1 | 2,
+  target: DefinitionId,
+  stack: { id: DefinitionId; index: number }[],
+  colors: Map<DefinitionId, 0 | 1 | 2>,
+  cycles: Set<DefinitionId>,
+): void {
+  if (color === 1) markCycle(stack, target, cycles);
+  if (color === 0) descendGraph(target, stack, colors);
+}
+
+function targetColor(colors: ReadonlyMap<DefinitionId, 0 | 1 | 2>, target: DefinitionId): 0 | 1 | 2 {
+  const color = colors.get(target);
+  return color === undefined ? 0 : color;
+}
+
+function markCycle(
+  stack: readonly { id: DefinitionId; index: number }[],
+  target: DefinitionId,
+  cycles: Set<DefinitionId>,
+): void {
+  const start = stack.findIndex((frame) => frame.id === target);
+  stack.slice(start < 0 ? 0 : start).forEach((frame) => cycles.add(frame.id));
+  cycles.add(target);
+}
+
+function descendGraph(
+  target: DefinitionId,
+  stack: { id: DefinitionId; index: number }[],
+  colors: Map<DefinitionId, 0 | 1 | 2>,
+): void {
+  colors.set(target, 1);
+  stack.push({ id: target, index: 0 });
 }
 
 function validateCycles(collection: Collection): readonly Diagnostic[] {
+  const cycles = cycleDefinitions(collection);
   return collection.definitions.flatMap((definition) =>
     diagnoseWhen(
-      hasCycle(collection, definition.id, definition.id, new Set()),
+      cycles.has(definition.id),
       'reference',
       `definitions.${definition.id}.expression`,
       'Definition references form a cycle',
@@ -88,27 +233,78 @@ function displayLiteral(value: string | number | boolean): string {
 }
 
 function displayExpression(expression: TypeExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string {
-  if (budget.remaining-- <= 0) return '…';
-  if (expression.kind === 'primitive') return expression.name;
-  if (expression.kind === 'literal') return displayLiteral(expression.value);
-  if (expression.kind === 'union') return expression.items.map((item) => displayExpression(item, collection, seen, budget)).join(' | ');
-  if (seen.has(expression.id)) return `@${expression.id}`;
-  const target = collection.definitions.find((definition) => definition.id === expression.id);
-  if (target === undefined) return `@${expression.id}`;
+  if (budget.remaining <= 0) return '…';
+  budget.remaining -= 1;
+  return displayKind(expression, collection, seen, budget);
+}
+
+function displayKind(
+  expression: TypeExpression,
+  collection: Collection,
+  seen: Set<DefinitionId>,
+  budget: { remaining: number },
+): string {
+  if (expression.kind === 'union') return displayUnion(expression.items, collection, seen, budget);
+  return displayNonUnion(expression, collection, seen, budget);
+}
+
+function displayNonUnion(
+  expression: Exclude<TypeExpression, { readonly kind: 'union' }>,
+  collection: Collection,
+  seen: Set<DefinitionId>,
+  budget: { remaining: number },
+): string {
+  return nonUnionPrinters[expression.kind](expression, collection, seen, budget);
+}
+
+const nonUnionPrinters = {
+  primitive: (expression: NonUnionExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string => { void collection; void seen; void budget; return (expression as Extract<TypeExpression, { readonly kind: 'primitive' }>).name; },
+  literal: (expression: NonUnionExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string => { void collection; void seen; void budget; return displayLiteral((expression as Extract<TypeExpression, { readonly kind: 'literal' }>).value); },
+  reference: (expression: NonUnionExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string => displayReference((expression as Extract<TypeExpression, { readonly kind: 'reference' }>).id, collection, seen, budget),
+};
+
+type NonUnionExpression = Exclude<TypeExpression, { readonly kind: 'union' }>;
+
+function displayUnion(
+  items: readonly TypeExpression[],
+  collection: Collection,
+  seen: Set<DefinitionId>,
+  budget: { remaining: number },
+): string {
+  const visibleCount = Math.min(items.length, budget.remaining);
+  const parts = items.slice(0, visibleCount).map((item) => displayExpression(item, collection, seen, budget));
+  if (parts.length < items.length) parts.push('…');
+  return parts.join(' | ');
+}
+
+function displayReference(
+  id: DefinitionId,
+  collection: Collection,
+  seen: Set<DefinitionId>,
+  budget: { remaining: number },
+): string {
+  if (seen.has(id)) return `@${id}`;
+  const target = collection.definitions.find((definition) => definition.id === id);
+  if (target === undefined) return `@${id}`;
   const next = new Set(seen);
-  next.add(expression.id);
+  next.add(id);
   return displayExpression(target.expression, collection, next, budget);
 }
 
 /** Resolve one definition ref to deterministic display text, expanding shared aliases with a bound. */
-export function definitionDisplay(collection: Collection, id: DefinitionId): string {
+function resolvedDefinitionDisplay(collection: Collection, id: DefinitionId): string {
   const definition = collection.definitions.find((item) => item.id === id);
   return definition === undefined ? `@${id}` : displayExpression(definition.expression, collection, new Set([id]), { remaining: MAX_NODES });
 }
 
+export function definitionDisplay(collection: Collection, id: DefinitionId): Result<string> {
+  if (!collection.definitions.some((definition) => definition.id === id)) return failure('not-found', `definitions.${id}`, 'Definition ID must exist');
+  return success(resolvedDefinitionDisplay(collection, id));
+}
+
 /** Resolve a field's old string or shared reference without ever stringifying an object. */
 export function fieldTypeDisplay(collection: Collection, field: Field): string {
-  return typeof field.type === 'string' ? field.type : definitionDisplay(collection, field.type.id);
+  return typeof field.type === 'string' ? field.type : resolvedDefinitionDisplay(collection, field.type.id);
 }
 
 /** Direct usages are unique, stable and include definition-to-definition paths. */

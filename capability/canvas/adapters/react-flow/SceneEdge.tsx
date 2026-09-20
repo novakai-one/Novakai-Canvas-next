@@ -76,6 +76,12 @@ export function createSceneEdge(
       x: labelAnchor.x - label.width / (2 * data.zoom),
       y: labelBottom + label.height / data.zoom,
     };
+    /** Living traces: flow direction gradient spans the actual route endpoints; pulse rides active paths only. */
+    const flowId = `nv-flow-${wire.id}`;
+    const energized =
+      view.hovered === true || view.emphasis === 'primary' || view.emphasis === 'secondary';
+    const flowStroke =
+      first.x === last.x && first.y === last.y ? paint.stroke : `url(#${flowId}) ${paint.stroke}`;
     return (
       <g
         className={styles.edge}
@@ -84,6 +90,19 @@ export function createSceneEdge(
         data-emphasis={view.emphasis}
         data-hovered={view.hovered}
       >
+        <defs>
+          <linearGradient
+            id={flowId}
+            gradientUnits="userSpaceOnUse"
+            x1={first.x}
+            y1={first.y}
+            x2={last.x}
+            y2={last.y}
+          >
+            <stop offset="0" style={{ stopColor: 'var(--nv-canvas-wire-flow-from)' }} />
+            <stop offset="1" style={{ stopColor: 'var(--nv-canvas-wire-flow-to)' }} />
+          </linearGradient>
+        </defs>
         <path className={styles.hit} d={path} />
         <path
           className={styles.underlay}
@@ -94,12 +113,15 @@ export function createSceneEdge(
         <path
           className={styles.wire}
           d={path}
-          stroke={paint.stroke}
+          stroke={flowStroke}
           strokeWidth={wire.appearance.width}
           strokeDasharray={wireDash(wire)}
           data-emphasis={view.emphasis}
           data-style={wire.style}
         />
+        {energized && !view.draft && (
+          <path className={styles.pulse} d={path} pathLength={100} pointerEvents="none" />
+        )}
         {wire.labelVisible !== false && (
           <g transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
             <Content embedFonts={false} content={wire.measuredLabel} />

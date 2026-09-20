@@ -797,6 +797,18 @@
       "$type": "color",
       "$value": "{canvasTone.wireIdle}"
     },
+    "wireFlowFrom": {
+      "$type": "color",
+      "$value": "{canvasTone.wireFlowFrom}"
+    },
+    "wireFlowTo": {
+      "$type": "color",
+      "$value": "{canvasTone.wireFlowTo}"
+    },
+    "wirePulse": {
+      "$type": "color",
+      "$value": "{canvasTone.wirePulse}"
+    },
     "primaryGlow": {
       "$type": "color",
       "$value": "{canvasEmphasis.primaryGlow}"

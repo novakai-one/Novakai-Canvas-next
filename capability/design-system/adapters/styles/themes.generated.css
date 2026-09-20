@@ -19,6 +19,7 @@
   --nv-shape-radius: 6px;
   --nv-stroke-base: 1px;
   --nv-motion-duration: 120ms;
+  --nv-motion-trace: 2400ms;
   --nv-shadow-strength: 0.12;
   --nv-shadow-color: #000000;
   --nv-status-success: #17663f;
@@ -95,6 +96,9 @@
   --nv-canvas-tone-node-surface-bottom: #f4f6f8;
   --nv-canvas-tone-node-highlight: #0000000f;
   --nv-canvas-tone-wire-idle: #b4bbc4;
+  --nv-canvas-tone-wire-flow-from: #aeb6c2;
+  --nv-canvas-tone-wire-flow-to: #7e8896;
+  --nv-canvas-tone-wire-pulse: #b45309e6;
   --nv-canvas-tone-primary-surface: #fce4c6;
   --nv-canvas-tone-secondary: #4a7c86;
   --nv-canvas-tone-ambient-glow: #f8fafb;
@@ -195,6 +199,9 @@
   --nv-canvas-muted-opacity: 0.36;
   --nv-canvas-transition: 120ms;
   --nv-canvas-wire-idle: #b4bbc4;
+  --nv-canvas-wire-flow-from: #aeb6c2;
+  --nv-canvas-wire-flow-to: #7e8896;
+  --nv-canvas-wire-pulse: #b45309e6;
   --nv-canvas-primary-surface: #fce4c6;
   --nv-canvas-secondary: #4a7c86;
   --nv-canvas-ambient-glow: #f8fafb;
@@ -232,6 +239,7 @@
   --nv-shape-radius: 6px;
   --nv-stroke-base: 1px;
   --nv-motion-duration: 120ms;
+  --nv-motion-trace: 2400ms;
   --nv-shadow-strength: 0.32;
   --nv-shadow-color: #000000;
   --nv-status-success: #7bd4a4;
@@ -308,6 +316,9 @@
   --nv-canvas-tone-node-surface-bottom: #1a1f27;
   --nv-canvas-tone-node-highlight: #ffffff0f;
   --nv-canvas-tone-wire-idle: #3e4550;
+  --nv-canvas-tone-wire-flow-from: #3e4550;
+  --nv-canvas-tone-wire-flow-to: #6e7887;
+  --nv-canvas-tone-wire-pulse: #ff9e40e6;
   --nv-canvas-tone-primary-surface: #1d3355;
   --nv-canvas-tone-secondary: #6b93a6;
   --nv-canvas-tone-ambient-glow: #1d2532;
@@ -408,6 +419,9 @@
   --nv-canvas-muted-opacity: 0.36;
   --nv-canvas-transition: 120ms;
   --nv-canvas-wire-idle: #3e4550;
+  --nv-canvas-wire-flow-from: #3e4550;
+  --nv-canvas-wire-flow-to: #6e7887;
+  --nv-canvas-wire-pulse: #ff9e40e6;
   --nv-canvas-primary-surface: #1d3355;
   --nv-canvas-secondary: #6b93a6;
   --nv-canvas-ambient-glow: #1d2532;

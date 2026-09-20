@@ -4,10 +4,29 @@
   }
   .wire {
     fill: none;
-    stroke: var(--nv-canvas-wire-idle);
+    /* Idle stroke comes from the per-wire flow-gradient attribute; emphasis rules below override it. */
     stroke-opacity: var(--nv-canvas-wire-idle-opacity);
     transition-duration: var(--nv-canvas-transition);
     transition-property: stroke, stroke-opacity, filter;
+  }
+  .pulse {
+    fill: none;
+    stroke: var(--nv-canvas-wire-pulse);
+    stroke-width: var(--nv-focus-width);
+    stroke-linecap: round;
+    stroke-dasharray: 8 92;
+    filter: drop-shadow(0 0 4px var(--nv-canvas-wire-pulse));
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pulse {
+      animation: nv-trace var(--nv-motion-trace) linear infinite;
+    }
+  }
+  @keyframes nv-trace {
+    to {
+      stroke-dashoffset: -100;
+    }
   }
   .underlay {
     fill: none;

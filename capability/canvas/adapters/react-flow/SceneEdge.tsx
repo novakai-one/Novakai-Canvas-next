@@ -121,7 +121,7 @@ export function createSceneEdge(
             <Marker kind={wire.targetMarker} paint={paint} />
           </g>
         </g>
-        {view.selected && (
+        {view.selected && view.wire.points.length > 2 && (
           <Handles
             edge={view}
             actions={actions}

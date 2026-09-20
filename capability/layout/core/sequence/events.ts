@@ -47,7 +47,14 @@ export function eventBody(input: EventInput, top: number, context: SequenceConte
     marker: input.marker,
     message: input.item.message,
   };
-  return { events: [event], fragments: [], bottom: y + context.options.sequenceGap };
+  // A self-call returns below its outgoing leg. Leave a measured label gap after
+  // that return leg so the following event label cannot sit on the loop.
+  const returnClearance = source.id === target.id ? context.options.labelGap : 0;
+  return {
+    events: [event],
+    fragments: [],
+    bottom: y + context.options.sequenceGap + returnClearance,
+  };
 }
 /** Different-participant labels centre on their message; self labels sit in the loop's reserved width. */
 function labelLeft(source: PlacedNode, target: PlacedNode, width: number, gap: number): number {

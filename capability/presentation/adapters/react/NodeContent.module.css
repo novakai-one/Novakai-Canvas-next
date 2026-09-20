@@ -164,6 +164,18 @@
     pointer-events: none;
   }
 
+  /* Constellation overview: at zoomed-out tiers every card gains a soft halo ring and
+     headings lift, so the network reads as a star chart instead of gray bricks. */
+  :global([data-zoom-tier='overview']) .root:not([data-emphasis='primary']) .ring {
+    display: block;
+    stroke: var(--nv-canvas-constellation-halo);
+    stroke-width: 2px;
+  }
+
+  :global([data-zoom-tier='overview']) .root .heading text {
+    fill: var(--nv-canvas-constellation-heading);
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .root[data-emphasis='primary'] .ring {
       display: block;

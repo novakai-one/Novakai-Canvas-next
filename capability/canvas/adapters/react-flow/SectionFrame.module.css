@@ -18,4 +18,11 @@
   .title text {
     fill: var(--nv-canvas-group-heading);
   }
+  /* Constellation overview: group frames become luminous pools with legible titles. */
+  :global([data-zoom-tier='overview']) .frame:not([data-selected='true']) {
+    border-color: var(--nv-canvas-constellation-wire);
+  }
+  :global([data-zoom-tier='overview']) .title text {
+    fill: var(--nv-canvas-constellation-heading);
+  }
 }

@@ -817,6 +817,18 @@
       "$type": "color",
       "$value": "{action.accent}"
     },
+    "constellationHalo": {
+      "$type": "color",
+      "$value": "{canvasTone.constellationHalo}"
+    },
+    "constellationWire": {
+      "$type": "color",
+      "$value": "{canvasTone.constellationWire}"
+    },
+    "constellationHeading": {
+      "$type": "color",
+      "$value": "{canvasTone.constellationHeading}"
+    },
     "primaryGlow": {
       "$type": "color",
       "$value": "{canvasEmphasis.primaryGlow}"

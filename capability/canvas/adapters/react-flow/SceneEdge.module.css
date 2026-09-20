@@ -2,6 +2,14 @@
   .edge {
     pointer-events: visiblePainted;
   }
+  /* Constellation overview: wires become crisp constant-width hairlines in a brighter
+     tone so the network itself carries the zoomed-out picture. Emphasis rules below
+     still win via !important. */
+  :global([data-zoom-tier='overview']) .wire {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1px;
+    stroke: var(--nv-canvas-constellation-wire);
+  }
   .wire {
     fill: none;
     /* Idle stroke comes from the per-wire flow-gradient attribute; emphasis rules below override it. */

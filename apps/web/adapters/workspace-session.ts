@@ -89,6 +89,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     holdConfirmedHistory(pending);
     update({ pending, busy: pending.some((item) => item.state === 'sending') });
     updateMutationAvailability();
+    if (movementCapture?.intent.id !== undefined) updateMovementRecovery(movementCapture.intent.id);
   }
   /** Listeners receive a new immutable view; Canvas panning has its own narrower subscription. */
   function update(patch: Partial<WorkspaceView>): void {
@@ -597,7 +598,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
             updateMutationAvailability();
             return;
           }
-          update({ movementReview: { review: reviewed.value, optionId: option.id, phase: 'review' }, status: 'Review movement options' });
+          update({ movementReview: { review: reviewed.value, optionId: option.id, phase: 'review', document: active.document }, status: 'Review movement options' });
           updateMutationAvailability();
           return;
         }
@@ -657,23 +658,25 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(preview.error);
       if (movementCapture?.intent.id === intent.id) {
         movementApplying = false;
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'review' } : null });
+        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'rejected' } : null });
         updateMutationAvailability();
       }
       return { ok: false, error: preview.error };
     }
-    const result = await submitCanvas(active, intent, changes);
+    const submission = submitCanvas(active, intent, changes);
+    const retainedAtStart = state.pending.find((item) => item.request.request === intent.id && item.state === 'sending');
+    if (retainedAtStart !== undefined && preview.value !== null) publishPreview(active, intent, preview.value, start);
+    const result = await submission;
     if (!result.ok && movementCapture?.intent.id === intent.id) {
       const retained = state.pending.find((item) => item.request.request === intent.id);
       if (retained?.state === 'uncertain' || retained?.state === 'sending') {
         update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'uncertain', requestId: intent.id } : null });
       } else {
         movementApplying = false;
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'review' } : null });
+        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: retained?.state === 'rejected' ? 'rejected' : 'review' } : null });
         updateMutationAvailability();
       }
     }
-    if (preview.value !== null) publishPreview(active, intent, preview.value, start);
     return result;
   }
   /** Measure only inspected routes accepted by the Canvas gesture currently awaiting confirmation. */
@@ -763,7 +766,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         if (movementCapture?.intent.id === gesture) movementApplying = false;
         rejectGesture(gesture, error.message);
         if (movementCapture?.intent.id === gesture) {
-          update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'review' } : null });
+          update({ movementReview: state.movementReview ? { ...state.movementReview, phase: retained?.state === 'rejected' ? 'rejected' : 'review' } : null });
           updateMutationAvailability();
         }
       }
@@ -977,6 +980,19 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   async function retryRequest(id: string): Promise<void> {
     const result = await submissions.retry(id, state.generation);
     if (!result.ok) report(result.error);
+    updateMovementRecovery(id);
+  }
+  function updateMovementRecovery(requestId: string): void {
+    if (movementCapture?.intent.id !== requestId || state.movementReview === null) return;
+    const pending = state.pending.find((item) => item.request.request === requestId);
+    if (pending?.state === 'rejected') {
+      movementApplying = false;
+      update({ movementReview: { ...state.movementReview, phase: 'rejected', requestId } });
+      updateMutationAvailability();
+    } else if (pending?.state === 'uncertain' || pending?.state === 'sending') {
+      movementApplying = true;
+      update({ movementReview: { ...state.movementReview, phase: 'uncertain', requestId } });
+    }
   }
   /** Status reads never change navigation; stale responses cannot replace newer status. */
   async function refreshHistory(): Promise<void> {
@@ -1092,7 +1108,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   function chooseMoveOption(optionId: string): void {
     const capture = movementCapture;
-    if (capture === null || movementApplying || state.movementReview?.phase !== 'review') return;
+    if (capture === null || movementApplying || (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')) return;
     const option = capture.review.options.find((item) => item.id === optionId);
     if (option === undefined) return;
     const accepted = capture.active.session.dispatch({ kind: 'preview-routes', id: capture.intent.id, ...option.preview });
@@ -1110,18 +1126,18 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const currentStamp = capture.active.session.getSnapshot().stamp;
     const chosen = chooseReviewedMoveOption(capture.review, optionId, currentStamp);
     const selected = chosen.ok ? chosen.value : undefined;
-    if (!chosen.ok || selected === undefined || capture.active !== state.active || capture.active.generation !== state.generation || state.snapshot?.workspace !== capture.workspace || currentStamp.revision !== capture.review.stamp.revision || currentStamp.inputKey !== capture.review.stamp.inputKey || currentStamp.generation !== capture.review.stamp.generation) {
+    if (!chosen.ok || selected === undefined || capture.active !== state.active || capture.active.generation !== state.generation || !currentDiagram(capture.active) || state.snapshot?.workspace !== capture.workspace || currentStamp.revision !== capture.review.stamp.revision || currentStamp.inputKey !== capture.review.stamp.inputKey || currentStamp.generation !== capture.review.stamp.generation) {
       report(chosen.ok ? { code: 'stale-gesture', message: 'This movement review is stale; the draft was retained.', recovery: 'Reload the diagram before applying it.', owner: 'workspace' } : chosen.error);
       return;
     }
     movementApplying = true;
-    update({ movementReview: { review: capture.review, optionId, phase: 'sending', requestId: capture.intent.id }, status: 'Saving…' });
+    update({ movementReview: { review: capture.review, optionId, phase: 'sending', requestId: capture.intent.id, document: capture.active.document }, status: 'Saving…' });
     updateMutationAvailability();
     await submitFeasibleCanvas(capture.active, capture.intent, selected.changes, selected.preview);
   }
   function cancelMove(): void {
     const capture = movementCapture;
-    if (capture === null || movementApplying || state.movementReview?.phase !== 'review') {
+    if (capture === null || movementApplying || (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')) {
       report({ code: 'pending-request', message: 'This movement is already being saved; wait for confirmation before cancelling.', recovery: 'Check the retained request for its receipt.', owner: 'workspace' });
       return;
     }

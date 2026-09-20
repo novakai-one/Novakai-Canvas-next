@@ -130,9 +130,7 @@ function DefinitionCard({
         onChange={(expression, editedPath) =>
           session.edit(selection, { ...definition, expression }, undefined, editedPath)
         }
-        onLiteralDraft={(literalDraft) =>
-          session.edit(selection, definition, literalDraft)
-        }
+        onLiteralDraft={(literalDraft) => session.edit(selection, definition, literalDraft)}
         Field={Field}
         Button={Button}
       />
@@ -258,12 +256,15 @@ function ExpressionEditor({
               Button={Button}
               disabled={disabled}
               onChange={(next) =>
-                onChange({
-                  kind: 'union',
-                  items: expression.items.map((value, position) =>
-                    position === index ? next : value,
-                  ),
-                }, path)
+                onChange(
+                  {
+                    kind: 'union',
+                    items: expression.items.map((value, position) =>
+                      position === index ? next : value,
+                    ),
+                  },
+                  path,
+                )
               }
               onLiteralDraft={onLiteralDraft}
             />
@@ -295,13 +296,16 @@ function ExpressionEditor({
               disabled={disabled}
               value={expression.name}
               onChange={(event) =>
-                onChange({
-                  kind: 'primitive',
-                  name: event.target.value as Extract<
-                    TypeExpression,
-                    { kind: 'primitive' }
-                  >['name'],
-                }, path)
+                onChange(
+                  {
+                    kind: 'primitive',
+                    name: event.target.value as Extract<
+                      TypeExpression,
+                      { kind: 'primitive' }
+                    >['name'],
+                  },
+                  path,
+                )
               }
             >
               {['string', 'number', 'boolean', 'unknown', 'void'].map((name) => (
@@ -323,15 +327,18 @@ function ExpressionEditor({
               disabled={disabled}
               value={expression.id}
               onChange={(event) =>
-                onChange({
-                  kind: 'reference',
-                  id: event.target.value as TypeExpression extends {
-                    kind: 'reference';
-                    id: infer I;
-                  }
-                    ? I
-                    : never,
-                }, path)
+                onChange(
+                  {
+                    kind: 'reference',
+                    id: event.target.value as TypeExpression extends {
+                      kind: 'reference';
+                      id: infer I;
+                    }
+                      ? I
+                      : never,
+                  },
+                  path,
+                )
               }
             >
               {collection.definitions.map((definition) => (
@@ -429,7 +436,14 @@ function LiteralEditor({
               disabled={disabled}
               value={draft}
               onChange={(event) =>
-                updateLiteralText(kindDraft, event.target.value, path, setDraft, onChange, onRawChange)
+                updateLiteralText(
+                  kindDraft,
+                  event.target.value,
+                  path,
+                  setDraft,
+                  onChange,
+                  onRawChange,
+                )
               }
             />
           )}

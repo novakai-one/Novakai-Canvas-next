@@ -283,8 +283,10 @@ function canRetainLiteralDraft(
   editedPath: readonly number[] | undefined,
 ): boolean {
   const next = expressionAtPath(definition.expression, literalDraft.path);
-  return next?.kind === 'literal' &&
-    (editedPath === undefined || !isPathWithin(literalDraft.path, editedPath));
+  return (
+    next?.kind === 'literal' &&
+    (editedPath === undefined || !isPathWithin(literalDraft.path, editedPath))
+  );
 }
 
 function expressionAtPath(

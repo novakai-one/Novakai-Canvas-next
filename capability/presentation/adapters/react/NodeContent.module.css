@@ -157,4 +157,39 @@
     stroke: var(--nv-canvas-secondary);
     stroke-width: var(--nv-stroke-base);
   }
+
+  .ring {
+    display: none;
+    fill: none;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .root[data-emphasis='primary'] .ring {
+      display: block;
+      stroke: var(--nv-canvas-primary-ring);
+      stroke-width: var(--nv-focus-width);
+      stroke-linecap: round;
+      stroke-dasharray: 22 78;
+      animation:
+        nv-orbit var(--nv-motion-orbit) linear infinite,
+        nv-ring-breathe var(--nv-motion-breathe) ease-in-out infinite;
+    }
+  }
+
+  @keyframes nv-orbit {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  @keyframes nv-ring-breathe {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
 }

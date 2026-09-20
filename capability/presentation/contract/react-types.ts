@@ -19,6 +19,7 @@ export interface NodeRenderClasses {
   readonly root: string;
   readonly frame: string;
   readonly rim: string;
+  readonly ring: string;
   readonly header: string;
   readonly separator: string;
   readonly heading: string;

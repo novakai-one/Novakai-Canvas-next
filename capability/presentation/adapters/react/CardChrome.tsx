@@ -127,6 +127,21 @@ function rim(node: VisualNode, classes?: NodeRenderClasses): ReactElement | null
     />
   );
 }
+/** Comet ring: a normalized-perimeter outline the primary-selection CSS animates; hidden by default. */
+function ring(node: VisualNode, classes?: NodeRenderClasses): ReactElement | null {
+  if (classes === undefined || node.frame === 'none' || node.shape === 'diamond') return null;
+  const r = radius(node);
+  const w = node.width;
+  const h = node.height;
+  return (
+    <path
+      className={classes.ring}
+      d={`M${r} 0 H${w - r} Q${w} 0 ${w} ${r} V${h - r} Q${w} ${h} ${w - r} ${h} H${r} Q0 ${h} 0 ${h - r} V${r} Q0 0 ${r} 0 Z`}
+      pathLength={100}
+      vectorEffect="non-scaling-stroke"
+    />
+  );
+}
 /** Shared browser roles skin the frame; absent roles preserve native/static markup and paint. */
 export function CardChrome({ node, heading, classes }: NodeChromeProps): ReactElement {
   return (
@@ -135,6 +150,7 @@ export function CardChrome({ node, heading, classes }: NodeChromeProps): ReactEl
       {frame(node, classes)}
       {header(node, classes)}
       {rim(node, classes)}
+      {ring(node, classes)}
       {headerRule(node, classes)}
       {heading}
     </>

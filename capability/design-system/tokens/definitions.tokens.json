@@ -192,6 +192,20 @@
         "value": 2400,
         "unit": "ms"
       }
+    },
+    "orbit": {
+      "$type": "duration",
+      "$value": {
+        "value": 5000,
+        "unit": "ms"
+      }
+    },
+    "breathe": {
+      "$type": "duration",
+      "$value": {
+        "value": 2800,
+        "unit": "ms"
+      }
     }
   },
   "shadow": {
@@ -865,6 +879,18 @@
           0.03529411764705882
         ],
         "alpha": 0.9
+      }
+    },
+    "vignette": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "alpha": 0.55
       }
     },
     "primarySurface": {

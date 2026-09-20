@@ -17,4 +17,15 @@
     outline: var(--nv-focus-width) solid var(--nv-color-focus);
     outline-offset: var(--nv-focus-offset);
   }
+  .vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--nv-canvas-transition);
+    background: radial-gradient(120% 100% at 50% 45%, transparent 55%, var(--nv-canvas-vignette) 100%);
+  }
+  .vignette[data-active='true'] {
+    opacity: 1;
+  }
 }

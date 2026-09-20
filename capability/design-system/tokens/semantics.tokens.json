@@ -809,6 +809,14 @@
       "$type": "color",
       "$value": "{canvasTone.wirePulse}"
     },
+    "vignette": {
+      "$type": "color",
+      "$value": "{canvasTone.vignette}"
+    },
+    "primaryRing": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    },
     "primaryGlow": {
       "$type": "color",
       "$value": "{canvasEmphasis.primaryGlow}"

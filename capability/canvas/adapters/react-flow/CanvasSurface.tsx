@@ -61,6 +61,9 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     const chrome = props.chrome ?? defaultChrome;
     const controlsVisible = chrome.tools || chrome.zoom || chrome.outline;
     const hand = snapshot.view.tool === 'hand';
+    const energized =
+      snapshot.view.nodes.some((node) => node.emphasis === 'primary') ||
+      snapshot.view.wires.some((wire) => wire.emphasis === 'primary');
     return (
       <div
         ref={ref}
@@ -118,6 +121,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
             paint={props.paint}
           />
         </ReactFlow>
+        <div aria-hidden="true" className={styles.vignette} data-active={energized} />
         {controlsVisible && (
           <Controls
             snapshot={snapshot}

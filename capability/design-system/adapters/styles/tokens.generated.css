@@ -20,6 +20,8 @@
   --nv-stroke-base: 1px;
   --nv-motion-duration: 120ms;
   --nv-motion-trace: 2400ms;
+  --nv-motion-orbit: 5000ms;
+  --nv-motion-breathe: 2800ms;
   --nv-shadow-strength: 0.12;
   --nv-shadow-color: #000000;
   --nv-status-success: #17663f;
@@ -99,6 +101,7 @@
   --nv-canvas-tone-wire-flow-from: #aeb6c2;
   --nv-canvas-tone-wire-flow-to: #7e8896;
   --nv-canvas-tone-wire-pulse: #b45309e6;
+  --nv-canvas-tone-vignette: #ffffff8c;
   --nv-canvas-tone-primary-surface: #fce4c6;
   --nv-canvas-tone-secondary: #4a7c86;
   --nv-canvas-tone-ambient-glow: #f8fafb;

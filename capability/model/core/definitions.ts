@@ -22,7 +22,13 @@ function exprNodes(expression: TypeExpression, path: string): readonly Diagnosti
   const stack: [TypeExpression, string, number][] = [[expression, path, 0]];
   let nodes = 0;
   let issue: Diagnostic | undefined;
-  while (stack.length > 0) issue = issue ?? visitNodeFrame(stack, () => { nodes += 1; return nodes; });
+  while (stack.length > 0)
+    issue =
+      issue ??
+      visitNodeFrame(stack, () => {
+        nodes += 1;
+        return nodes;
+      });
   return issue === undefined ? [] : [issue];
 }
 
@@ -42,12 +48,14 @@ function expressionLimit(depth: number, nodes: number, path: string): Diagnostic
 }
 
 function depthLimit(depth: number, path: string): Diagnostic | undefined {
-  if (depth > MAX_DEPTH) return { code: 'limit', path, message: 'Definition expression nesting exceeds the limit' };
+  if (depth > MAX_DEPTH)
+    return { code: 'limit', path, message: 'Definition expression nesting exceeds the limit' };
   return undefined;
 }
 
 function nodeLimit(nodes: number, path: string): Diagnostic | undefined {
-  if (nodes > MAX_NODES) return { code: 'limit', path, message: 'Definition expression is too large' };
+  if (nodes > MAX_NODES)
+    return { code: 'limit', path, message: 'Definition expression is too large' };
   return undefined;
 }
 
@@ -58,10 +66,15 @@ function pushExpressionChildren(
   stack: [TypeExpression, string, number][],
 ): void {
   if (expression.kind !== 'union') return;
-  expression.items.forEach((item, index) => stack.push([item, `${path}.items.${index}`, depth + 1]));
+  expression.items.forEach((item, index) =>
+    stack.push([item, `${path}.items.${index}`, depth + 1]),
+  );
 }
 
-function expressionReferences(expression: TypeExpression, path: string): readonly { id: DefinitionId; path: string }[] {
+function expressionReferences(
+  expression: TypeExpression,
+  path: string,
+): readonly { id: DefinitionId; path: string }[] {
   const references: { id: DefinitionId; path: string }[] = [];
   const stack: [TypeExpression, string][] = [[expression, path]];
   while (stack.length > 0) {
@@ -111,10 +124,19 @@ function validateDefinitions(collection: Collection): readonly Diagnostic[] {
 }
 
 function cycleDefinitions(collection: Collection): ReadonlySet<DefinitionId> {
-  const adjacency = new Map(collection.definitions.map((definition) => [definition.id, expressionReferences(definition.expression, `definitions.${definition.id}.expression`).map((item) => item.id)]));
+  const adjacency = new Map(
+    collection.definitions.map((definition) => [
+      definition.id,
+      expressionReferences(definition.expression, `definitions.${definition.id}.expression`).map(
+        (item) => item.id,
+      ),
+    ]),
+  );
   const colors = new Map<DefinitionId, 0 | 1 | 2>();
   const cycles = new Set<DefinitionId>();
-  collection.definitions.forEach((definition) => visitGraphRoot(definition.id, adjacency, colors, cycles));
+  collection.definitions.forEach((definition) =>
+    visitGraphRoot(definition.id, adjacency, colors, cycles),
+  );
   return cycles;
 }
 
@@ -176,7 +198,10 @@ function visitGraphColor(
   if (color === 0) descendGraph(target, stack, colors);
 }
 
-function targetColor(colors: ReadonlyMap<DefinitionId, 0 | 1 | 2>, target: DefinitionId): 0 | 1 | 2 {
+function targetColor(
+  colors: ReadonlyMap<DefinitionId, 0 | 1 | 2>,
+  target: DefinitionId,
+): 0 | 1 | 2 {
   const color = colors.get(target);
   return color === undefined ? 0 : color;
 }
@@ -223,7 +248,10 @@ function validateFieldTypes(collection: Collection): readonly Diagnostic[] {
   return collection.objects.flatMap((object) =>
     object.content.flatMap((block) => {
       if (block.kind !== 'field' || typeof block.type === 'string') return [];
-      return referenceIssue(!ids.has(block.type.id), `objects.${object.id}.content.${block.id}.type`);
+      return referenceIssue(
+        !ids.has(block.type.id),
+        `objects.${object.id}.content.${block.id}.type`,
+      );
     }),
   );
 }
@@ -232,8 +260,21 @@ function displayLiteral(value: string | number | boolean): string {
   return typeof value === 'string' ? JSON.stringify(value) : String(value);
 }
 
-function displayExpression(expression: TypeExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string {
-  if (budget.remaining <= 0) return '…';
+interface DisplayBudget {
+  remaining: number;
+  truncated: boolean;
+}
+
+function displayExpression(
+  expression: TypeExpression,
+  collection: Collection,
+  seen: Set<DefinitionId>,
+  budget: DisplayBudget,
+): string {
+  if (budget.remaining <= 0) {
+    budget.truncated = true;
+    return '';
+  }
   budget.remaining -= 1;
   return displayKind(expression, collection, seen, budget);
 }
@@ -242,7 +283,7 @@ function displayKind(
   expression: TypeExpression,
   collection: Collection,
   seen: Set<DefinitionId>,
-  budget: { remaining: number },
+  budget: DisplayBudget,
 ): string {
   if (expression.kind === 'union') return displayUnion(expression.items, collection, seen, budget);
   return displayNonUnion(expression, collection, seen, budget);
@@ -252,15 +293,48 @@ function displayNonUnion(
   expression: Exclude<TypeExpression, { readonly kind: 'union' }>,
   collection: Collection,
   seen: Set<DefinitionId>,
-  budget: { remaining: number },
+  budget: DisplayBudget,
 ): string {
   return nonUnionPrinters[expression.kind](expression, collection, seen, budget);
 }
 
 const nonUnionPrinters = {
-  primitive: (expression: NonUnionExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string => { void collection; void seen; void budget; return (expression as Extract<TypeExpression, { readonly kind: 'primitive' }>).name; },
-  literal: (expression: NonUnionExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string => { void collection; void seen; void budget; return displayLiteral((expression as Extract<TypeExpression, { readonly kind: 'literal' }>).value); },
-  reference: (expression: NonUnionExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string => displayReference((expression as Extract<TypeExpression, { readonly kind: 'reference' }>).id, collection, seen, budget),
+  primitive: (
+    expression: NonUnionExpression,
+    collection: Collection,
+    seen: Set<DefinitionId>,
+    budget: DisplayBudget,
+  ): string => {
+    void collection;
+    void seen;
+    void budget;
+    return (expression as Extract<TypeExpression, { readonly kind: 'primitive' }>).name;
+  },
+  literal: (
+    expression: NonUnionExpression,
+    collection: Collection,
+    seen: Set<DefinitionId>,
+    budget: DisplayBudget,
+  ): string => {
+    void collection;
+    void seen;
+    void budget;
+    return displayLiteral(
+      (expression as Extract<TypeExpression, { readonly kind: 'literal' }>).value,
+    );
+  },
+  reference: (
+    expression: NonUnionExpression,
+    collection: Collection,
+    seen: Set<DefinitionId>,
+    budget: DisplayBudget,
+  ): string =>
+    displayReference(
+      (expression as Extract<TypeExpression, { readonly kind: 'reference' }>).id,
+      collection,
+      seen,
+      budget,
+    ),
 };
 
 type NonUnionExpression = Exclude<TypeExpression, { readonly kind: 'union' }>;
@@ -269,19 +343,27 @@ function displayUnion(
   items: readonly TypeExpression[],
   collection: Collection,
   seen: Set<DefinitionId>,
-  budget: { remaining: number },
+  budget: DisplayBudget,
 ): string {
-  const visibleCount = Math.min(items.length, budget.remaining);
-  const parts = items.slice(0, visibleCount).map((item) => displayExpression(item, collection, seen, budget));
-  if (parts.length < items.length) parts.push('…');
-  return parts.join(' | ');
+  const parts: string[] = [];
+  let index = 0;
+  while (index < items.length && budget.remaining > 0) {
+    parts.push(displayExpression(items[index] as TypeExpression, collection, seen, budget));
+    index += 1;
+  }
+  markTruncated(budget, index, items.length);
+  return parts.filter((part) => part.length > 0).join(' | ');
+}
+
+function markTruncated(budget: DisplayBudget, index: number, length: number): void {
+  if (index < length && budget.remaining <= 0) budget.truncated = true;
 }
 
 function displayReference(
   id: DefinitionId,
   collection: Collection,
   seen: Set<DefinitionId>,
-  budget: { remaining: number },
+  budget: DisplayBudget,
 ): string {
   if (seen.has(id)) return `@${id}`;
   const target = collection.definitions.find((definition) => definition.id === id);
@@ -294,27 +376,44 @@ function displayReference(
 /** Resolve one definition ref to deterministic display text, expanding shared aliases with a bound. */
 function resolvedDefinitionDisplay(collection: Collection, id: DefinitionId): string {
   const definition = collection.definitions.find((item) => item.id === id);
-  return definition === undefined ? `@${id}` : displayExpression(definition.expression, collection, new Set([id]), { remaining: MAX_NODES });
+  if (definition === undefined) return `@${id}`;
+  const budget = { remaining: MAX_NODES, truncated: false };
+  const display = displayExpression(definition.expression, collection, new Set([id]), budget);
+  return budget.truncated ? `${display} …` : display;
 }
 
 export function definitionDisplay(collection: Collection, id: DefinitionId): Result<string> {
-  if (!collection.definitions.some((definition) => definition.id === id)) return failure('not-found', `definitions.${id}`, 'Definition ID must exist');
+  if (!collection.definitions.some((definition) => definition.id === id))
+    return failure('not-found', `definitions.${id}`, 'Definition ID must exist');
   return success(resolvedDefinitionDisplay(collection, id));
 }
 
 /** Resolve a field's old string or shared reference without ever stringifying an object. */
 export function fieldTypeDisplay(collection: Collection, field: Field): string {
-  return typeof field.type === 'string' ? field.type : resolvedDefinitionDisplay(collection, field.type.id);
+  return typeof field.type === 'string'
+    ? field.type
+    : resolvedDefinitionDisplay(collection, field.type.id);
 }
 
 /** Direct usages are unique, stable and include definition-to-definition paths. */
-export function definitionUsages(collection: Collection, id: DefinitionId): Result<readonly DefinitionUsage[]> {
+export function definitionUsages(
+  collection: Collection,
+  id: DefinitionId,
+): Result<readonly DefinitionUsage[]> {
   if (!collection.definitions.some((definition) => definition.id === id))
     return failure('not-found', `definitions.${id}`, 'Definition ID must exist');
   const fieldUses: DefinitionUsage[] = collection.objects.flatMap((object) =>
     object.content.flatMap((block) =>
       block.kind === 'field' && typeof block.type !== 'string' && block.type.id === id
-        ? [{ kind: 'field', definition: id, path: `objects.${object.id}.content.${block.id}.type`, object: object.id, field: block.id }]
+        ? [
+            {
+              kind: 'field',
+              definition: id,
+              path: `objects.${object.id}.content.${block.id}.type`,
+              object: object.id,
+              field: block.id,
+            },
+          ]
         : [],
     ),
   );
@@ -323,5 +422,7 @@ export function definitionUsages(collection: Collection, id: DefinitionId): Resu
       .filter((reference) => reference.id === id)
       .map((reference) => ({ kind: 'definition', definition: id, path: reference.path })),
   );
-  return success([...fieldUses, ...definitionUses].toSorted((a, b) => a.path.localeCompare(b.path)));
+  return success(
+    [...fieldUses, ...definitionUses].toSorted((a, b) => a.path.localeCompare(b.path)),
+  );
 }

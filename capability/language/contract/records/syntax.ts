@@ -19,6 +19,7 @@ export type SyntaxValue = string | number | boolean | Reference | readonly Synta
 export interface LocatedValue {
   readonly value: SyntaxValue;
   readonly span: Span;
+  readonly tokens?: readonly Token[];
 }
 export type Fields = Readonly<Record<string, LocatedValue>>;
 export type Construct =

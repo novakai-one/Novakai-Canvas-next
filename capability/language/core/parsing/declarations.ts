@@ -1,4 +1,10 @@
-import type { Declaration, Construct, Fields, LocatedValue, Token } from '../../contract/records/syntax.js';
+import type {
+  Declaration,
+  Construct,
+  Fields,
+  LocatedValue,
+  Token,
+} from '../../contract/records/syntax.js';
 import type { ConstructDefinition, PositionRule } from '../../contract/records/vocabulary.js';
 import { constructs } from '../vocabulary/constructs.js';
 import { reject, accepted } from '../validation/outcomes.js';
@@ -30,19 +36,35 @@ export function readDeclaration(
 
 function declarationDefinition(cursor: Cursor, allowed: readonly Construct[]): ConstructDefinition {
   const definition = constructs.find((item) => item.kind === peek(cursor).text);
-  if (definition === undefined) reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
-  if (!allowed.includes(definition.kind)) reject('syntax', peek(cursor).span, allowed.join(' / '), 'Declaration is not allowed in this body');
+  if (definition === undefined)
+    reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
+  if (!allowed.includes(definition.kind))
+    reject(
+      'syntax',
+      peek(cursor).span,
+      allowed.join(' / '),
+      'Declaration is not allowed in this body',
+    );
   return definition;
 }
 
-function compactTypeDeclaration(cursor: Cursor, allowed: readonly Construct[]): Parsed<Declaration> | undefined {
+function compactTypeDeclaration(
+  cursor: Cursor,
+  allowed: readonly Construct[],
+): Parsed<Declaration> | undefined {
   if (peek(cursor).text !== 'type' || peek(cursor, 3).text !== '=') return undefined;
   requireAllowedType(cursor, allowed);
   return readType(cursor);
 }
 
 function requireAllowedType(cursor: Cursor, allowed: readonly Construct[]): void {
-  if (!allowed.includes('type')) reject('syntax', peek(cursor).span, allowed.join(' / '), 'Declaration is not allowed in this body');
+  if (!allowed.includes('type'))
+    reject(
+      'syntax',
+      peek(cursor).span,
+      allowed.join(' / '),
+      'Declaration is not allowed in this body',
+    );
 }
 
 /** Read the compact shared-definition form: type @id "Label" = "A" | "B". */
@@ -56,14 +78,18 @@ function readType(cursor: Cursor): Parsed<Declaration> {
   const expressionTokens = readTypeTokens(expressionStart);
   const next = expressionTokens.next;
   const expression: LocatedValue = {
-    value: expressionTokens.value,
+    value: expressionTokens.value.text,
     span: consumedSpan(expressionStart, next),
+    tokens: expressionTokens.value.tokens,
   };
   return {
     value: {
       kind: 'type',
       fields: {
-        id: { value: { kind: 'reference', id: identity.value }, span: peek(advance(cursor, 1)).span },
+        id: {
+          value: { kind: 'reference', id: identity.value },
+          span: peek(advance(cursor, 1)).span,
+        },
         label: labelValue.value,
         expression,
       },
@@ -74,18 +100,25 @@ function readType(cursor: Cursor): Parsed<Declaration> {
   };
 }
 
-function readTypeTokens(cursor: Cursor): Parsed<string> {
+interface TypeTokens {
+  readonly text: string;
+  readonly tokens: readonly Token[];
+}
+
+function readTypeTokens(cursor: Cursor): Parsed<TypeTokens> {
   const tokens: string[] = [];
+  const sourceTokens: Token[] = [];
   let current = cursor;
   let depth = 0;
   while (!endsTypeDeclaration(peek(current), depth)) {
     const token = peek(current);
     tokens.push(token.text);
+    sourceTokens.push(token);
     depth = nextTypeDepth(token.text, depth);
     current = advance(current);
   }
   requireCompleteType(tokens, depth, peek(current).span);
-  return { value: joinTypeTokens(tokens), next: current };
+  return { value: { text: joinTypeTokens(tokens), tokens: sourceTokens }, next: current };
 }
 
 function nextTypeDepth(token: string, depth: number): number {
@@ -95,12 +128,28 @@ function nextTypeDepth(token: string, depth: number): number {
 }
 
 function requireCompleteType(tokens: readonly string[], depth: number, span: Token['span']): void {
-  if (tokens.length === 0 || depth !== 0) reject('syntax', span, 'Type expression', 'Expected a complete type expression');
+  if (tokens.length === 0 || depth !== 0)
+    reject('syntax', span, 'Type expression', 'Expected a complete type expression');
 }
 
 function endsTypeDeclaration(token: Token, depth: number): boolean {
   if (depth > 0) return false;
-  return token.text === '}' || (token.kind === 'word' && ['type', 'asset', 'source', 'node', 'wire', 'section', 'rank', 'align', 'before', 'below'].includes(token.text));
+  return (
+    token.text === '}' ||
+    (token.kind === 'word' &&
+      [
+        'type',
+        'asset',
+        'source',
+        'node',
+        'wire',
+        'section',
+        'rank',
+        'align',
+        'before',
+        'below',
+      ].includes(token.text))
+  );
 }
 
 function joinTypeTokens(tokens: readonly string[]): string {
@@ -108,9 +157,20 @@ function joinTypeTokens(tokens: readonly string[]): string {
 }
 
 function joinTypeToken(source: string, token: string): string {
-  if (token === '.') return `${source}.`;
+  if (token === '.' || exponentContinuation(source, token)) return `${source}${token}`;
   return needsTypeSpace(source) ? `${source} ${token}` : `${source}${token}`;
 }
+
+function exponentContinuation(source: string, token: string): boolean {
+  return exponentMatchers.some((matcher) => matcher(source, token));
+}
+
+const exponentMatchers: readonly ((source: string, token: string) => boolean)[] = [
+  (source, token) => (token === 'e' || token === 'E') && /\d$/u.test(source),
+  (source, token) => /^e[+-]?\d+$/u.test(token) && /\d$/u.test(source),
+  (source, token) => (token === '+' || token === '-') && /[eE]$/u.test(source),
+  (source, token) => /^[+-]?\d+$/u.test(token) && /[eE][+-]?$/u.test(source),
+];
 
 function needsTypeSpace(source: string): boolean {
   return source.length > 0 && !source.endsWith('.');

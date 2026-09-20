@@ -1,4 +1,4 @@
-import type { Span, Declaration } from '../../contract/records/syntax.js';
+import type { Span, Declaration, LocatedValue, Token } from '../../contract/records/syntax.js';
 import type { SourceMapping } from '../../contract/records/requests.js';
 import { LanguageFault } from '../../contract/errors.js';
 import { id } from './fields.js';
@@ -28,14 +28,80 @@ function nearestSpan(path: string, mappings: readonly SourceMapping[], fallback:
 /** Stable IDs produce diagnostic anchors without depending on formatting or declaration order. */
 export function sourceMappings(item: Declaration, prefix = ''): readonly SourceMapping[] {
   const name = mappingPath(item, prefix);
+  const expression = item.kind === 'type' ? item.fields.expression : undefined;
   const own = [
     { path: name, span: item.span },
-    ...(item.kind === 'type' && item.fields.expression !== undefined
-      ? [{ path: `${name}.expression`, span: item.fields.expression.span }]
-      : []),
+    ...expressionMapping(name, expression),
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
   return own;
+}
+
+function expressionMapping(
+  name: string,
+  expression: LocatedValue | undefined,
+): readonly SourceMapping[] {
+  if (expression === undefined) return [];
+  return [
+    { path: `${name}.expression`, span: expression.span },
+    ...expressionReferenceMappings(expression.tokens ?? [], `${name}.expression`),
+  ];
+}
+
+interface MappingParse {
+  readonly next: number;
+  readonly mappings: readonly SourceMapping[];
+}
+
+function expressionReferenceMappings(
+  tokens: readonly Token[],
+  path: string,
+): readonly SourceMapping[] {
+  if (tokens.length === 0) return [];
+  return hasTopLevelUnion(tokens)
+    ? mapUnion(tokens, 0, path).mappings
+    : mapAtom(tokens, 0, path).mappings;
+}
+
+function hasTopLevelUnion(tokens: readonly Token[]): boolean {
+  let depth = 0;
+  return tokens.some((token) => {
+    depth = unionDepth(token.text, depth);
+    return depth === 0 && token.text === '|';
+  });
+}
+
+function unionDepth(token: string, depth: number): number {
+  return depth + (unionDepthDelta[token] ?? 0);
+}
+
+const unionDepthDelta: Readonly<Record<string, number>> = { '(': 1, ')': -1 };
+
+function mapUnion(tokens: readonly Token[], start: number, path: string): MappingParse {
+  const mappings: SourceMapping[] = [];
+  let next = start;
+  let item = 0;
+  let continueUnion = true;
+  while (continueUnion) {
+    const parsed = mapAtom(tokens, next, `${path}.items.${item}`);
+    mappings.push(...parsed.mappings);
+    next = parsed.next;
+    continueUnion = tokens[next]?.text === '|';
+    next += Number(continueUnion);
+    item += Number(continueUnion);
+  }
+  return { next, mappings };
+}
+
+function mapAtom(tokens: readonly Token[], start: number, path: string): MappingParse {
+  const token = tokens[start];
+  if (token?.text === '(') {
+    const nested = mapUnion(tokens, start + 1, path);
+    return { next: nested.next + 1, mappings: nested.mappings };
+  }
+  if (token?.text.startsWith('@') === true)
+    return { next: start + 1, mappings: [{ path, span: token.span }] };
+  return { next: start + 1, mappings: [] };
 }
 /** Match canonical owner path namespaces, including nested content, rows and groups. */
 function mappingPath(item: Declaration, prefix: string): string {

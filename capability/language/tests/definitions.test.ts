@@ -62,9 +62,33 @@ describe('shared definition expressions', () => {
       type: { kind: 'definition', id: 'alias' },
     });
     expect(expanded.changes[0]).toEqual({ op: 'replace-document', value: expanded.collection });
-    expect(expanded.sourceMap).toEqual(expect.arrayContaining([
-      expect.objectContaining({ path: 'definitions.actor' }),
-      expect.objectContaining({ path: 'definitions.actor.expression' }),
-    ]));
+    expect(expanded.sourceMap).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ path: 'definitions.actor' }),
+        expect.objectContaining({ path: 'definitions.actor.expression' }),
+      ]),
+    );
+  });
+
+  it('roundtrips finite exponent literals emitted by the canonical printer', () => {
+    const numbers = create(`canvas 1 collection @numbers "Numbers" {
+  type @finite "Finite" = 1e-7 | 1e+21
+}`);
+    const printed = value(language.print({ collection: numbers, scope: { kind: 'all' } }));
+    expect(printed.source).toContain('1e-7 | 1e+21');
+    expect(create(printed.source).definitions).toEqual(numbers.definitions);
+  });
+
+  it('maps unknown reference diagnostics to the reference atom span', () => {
+    const spanSource = `canvas 1 collection @spans "Spans" {
+  type @a "A" = "Known" | @missing
+}`;
+    const invalid = language.parse(spanSource);
+    const parsed = value(invalid);
+    const mapping = parsed.sourceMap.find(
+      (item) => item.path === 'definitions.a.expression.items.1',
+    );
+    expect(mapping?.span.start.offset).toBe(spanSource.indexOf('@missing'));
+    expect(mapping?.span.end.offset).toBe(spanSource.indexOf('@missing') + '@missing'.length);
   });
 });

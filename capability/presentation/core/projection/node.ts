@@ -8,7 +8,7 @@ import type { ContentContext } from '../content/blocks.js';
 import { offset } from '../content/text.js';
 import { labelContent } from '../content/headings.js';
 import { visibleBody } from '../content/node-body.js';
-import { composeNodeContent } from '../content/composition.js';
+import { composeNodeContent, type ComposedNodeContent } from '../content/composition.js';
 import { moduleChrome } from '../content/chrome.js';
 import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
@@ -81,6 +81,7 @@ export function projectNode(
     headingGap(shape, context),
     scoped,
   );
+  const measured = measuredContent(sequence.module, composed);
   const treeRow = compactTreeRow(section, view, source, context, compact);
   return parse(visualNode, {
     ...(context.style.followsInterfaceRoles === true
@@ -101,8 +102,8 @@ export function projectNode(
     shape,
     frame: view.frame ?? source.frame,
     paint: rolePaint(role, context),
-    ...frame(composed.content, shape, scoped),
-    headerHeight: composed.headerHeight + context.style.padding * 2,
+    ...frame(measured.content, shape, scoped),
+    headerHeight: measured.headerHeight + context.style.padding * 2,
     radius: context.style.radius,
     strokeWidth: context.style.stroke,
     placement: view.placement ?? null,
@@ -123,10 +124,35 @@ function sequencePresentation(
   source: DiagramObject,
   view: Appearance,
   section: Section,
-): { readonly shape: VisualNode['shape']; readonly source: DiagramObject } {
+): {
+  readonly shape: VisualNode['shape'];
+  readonly source: DiagramObject;
+  readonly module: boolean;
+} {
   if (!isSequenceModuleParticipant(source, view, section))
-    return { shape: appearanceShape(source.kind, view.frame ?? source.frame), source };
-  return { shape: 'participant', source: participantSource(source) };
+    return {
+      shape: appearanceShape(source.kind, view.frame ?? source.frame),
+      source,
+      module: false,
+    };
+  return { shape: 'participant', source: participantSource(source), module: true };
+}
+
+function tagModuleContent(content: ComposedNodeContent): ComposedNodeContent {
+  return {
+    ...content,
+    content: {
+      ...content.content,
+      primitives: content.content.primitives.map((primitive) => ({
+        ...primitive,
+        lodRole: 'detail' as const,
+      })),
+    },
+  };
+}
+
+function measuredContent(module: boolean, content: ComposedNodeContent): ComposedNodeContent {
+  return module ? tagModuleContent(content) : content;
 }
 
 function isSequenceModuleParticipant(

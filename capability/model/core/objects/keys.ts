@@ -90,7 +90,9 @@ function validateForeignKey(
     path,
     'Foreign references must match an ordered primary or unique key',
   );
-  const typesDiffer = localFields.some((field, index) => !sameFieldType(field, resolvedFields[index]));
+  const typesDiffer = localFields.some(
+    (field, index) => !sameFieldType(field, resolvedFields[index]),
+  );
   const typeIssues = diagnoseWhen(
     typesDiffer,
     'key',
@@ -103,7 +105,8 @@ function validateForeignKey(
 /** Shared refs compare by canonical ID and legacy types retain exact string equality. */
 function sameFieldType(left: Field, right: Field | undefined): boolean {
   if (right === undefined) return false;
-  if (typeof left.type === 'string' || typeof right.type === 'string') return left.type === right.type;
+  if (typeof left.type === 'string' || typeof right.type === 'string')
+    return left.type === right.type;
   return left.type.id === right.type.id;
 }
 

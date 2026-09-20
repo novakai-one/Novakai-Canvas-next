@@ -1,10 +1,6 @@
 import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
-import type {
-  SceneEdgeProps,
-  RenderSlots,
-  WireLabelProps,
-} from '../../contract/react-types.js';
+import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';

@@ -11,4 +11,10 @@ export { editedObject, objectDraftKey } from './api.js';
 export { buildMoveReview, chooseMoveOption } from './api.js';
 export { editedWire, wireDraftKey, wireChanges } from './api.js';
 export type { InspectorBindings, ObjectSelection } from './records/inspector.js';
-export type { GeometryChange, MoveOption, MoveOptionKind, MovePolicy, MoveReview } from './records/movement.js';
+export type {
+  GeometryChange,
+  MoveOption,
+  MoveOptionKind,
+  MovePolicy,
+  MoveReview,
+} from './records/movement.js';

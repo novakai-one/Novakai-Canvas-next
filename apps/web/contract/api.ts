@@ -1,3 +1,5 @@
+import { definitionId } from '@novakai/canvas-model';
+
 export { planCanvasEdit } from '../core/editing/plan.js';
 
 export { blocksSubmission, submissionStatus, refused } from '../core/editing/submissions.js';
@@ -35,3 +37,7 @@ export {
 
 export { formatFailure } from '../core/output/diagnostics.js';
 export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';
+
+export function definitionDraftId(value: string): import('@novakai/canvas-model').Definition['id'] {
+  return definitionId.parse(value);
+}

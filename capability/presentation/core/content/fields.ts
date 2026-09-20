@@ -31,7 +31,9 @@ function fieldBadge(field: Field, context: ContentContext): string {
 }
 /** Optionality is visible without repeating the word required in every row; the full meaning remains in its accessible outline. */
 function typeLabel(field: Field, context: ContentContext): string {
-  const type = context.resolveFieldType?.(field) ?? (typeof field.type === 'string' ? field.type : `@${field.type.id}`);
+  const type =
+    context.resolveFieldType?.(field) ??
+    (typeof field.type === 'string' ? field.type : `@${field.type.id}`);
   return field.nullable ? `${type}?` : type;
 }
 /** Actual pinned glyph metrics determine column minimums; atomic identifiers retain their full width. */
@@ -67,7 +69,10 @@ export function fieldColumns(
       fields.map((field) => `${field.label}:`),
       context,
     ),
-    type: column(fields.map((field) => typeLabel(field, context)), context),
+    type: column(
+      fields.map((field) => typeLabel(field, context)),
+      context,
+    ),
   };
 }
 /** Each cell is measured in its assigned column and vertically padded with diagram tokens. */

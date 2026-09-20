@@ -160,10 +160,7 @@ function invalidOperation(
       operationPath,
       'Operation must address a canonical function or signature',
     );
-  return operationDiagnostic(
-    `${operationPath}.member`,
-    'Operation must resolve to a signature',
-  );
+  return operationDiagnostic(`${operationPath}.member`, 'Operation must resolve to a signature');
 }
 
 /** No parent means root scope; unresolved parents are diagnosed independently of cycles. */

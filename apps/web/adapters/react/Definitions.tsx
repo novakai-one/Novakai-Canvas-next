@@ -8,8 +8,7 @@ import {
 } from '@novakai/canvas-model';
 import type { DesignSlots, FeatureProps } from '../../contract/react-types.js';
 import type { DefinitionSelection, LiteralDraft } from '../../contract/records/definitions.js';
-import { definitionDraftId } from '../definition-session.js';
-import { formatFailure } from '../../contract/api.js';
+import { definitionDraftId, formatFailure } from '../../contract/api.js';
 import styles from './ObjectEditor.module.css';
 
 /** Collection owned definitions are edited through the same retained session as object forms. */

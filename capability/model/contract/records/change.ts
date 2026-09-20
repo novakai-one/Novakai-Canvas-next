@@ -28,7 +28,11 @@ const sourceChangeSchema = z
   .strictObject({ op: recordOperationSchema, target: z.literal('sources'), value: sourceSchema })
   .readonly();
 const definitionChangeSchema = z
-  .strictObject({ op: recordOperationSchema, target: z.literal('definitions'), value: definitionSchema })
+  .strictObject({
+    op: recordOperationSchema,
+    target: z.literal('definitions'),
+    value: definitionSchema,
+  })
   .readonly();
 
 /** Complete-record create or replace. Target selects the exact payload schema. */
@@ -61,7 +65,7 @@ const removeChangeSchema = z.union([
     .strictObject({ op: z.literal('remove'), target: z.literal('sources'), id: sourceId })
     .readonly(),
   z
-      .strictObject({ op: z.literal('remove'), target: z.literal('definitions'), id: definitionId })
+    .strictObject({ op: z.literal('remove'), target: z.literal('definitions'), id: definitionId })
     .readonly(),
 ]);
 

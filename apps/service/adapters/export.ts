@@ -21,7 +21,7 @@ import type { Authoring } from '../contract/records/owners.js';
 import type { RouteOutcome } from '../contract/records/protocol.js';
 import type { StaticFile } from '../contract/records/server.js';
 import type { OperationSource } from '../contract/records/failure-source.js';
-import { formatMarkdown, type MarkdownScope } from './markdown.js';
+import { formatMarkdown, type MarkdownScope } from '@novakai/canvas-export';
 import { failure, type Result } from '../contract/errors.js';
 type ExportResult<T> = import('@novakai/canvas-export').Result<T>;
 

@@ -1,6 +1,8 @@
 /** Export public boundary: revision-pinned artifacts and uncommitted portable import candidates. */
 export { createExport } from './api.js';
 export { composeExport, initializeRaster } from './compose.js';
+export { formatMarkdown } from './markdown.js';
+export type { MarkdownScope } from './markdown.js';
 export type { ExportOwners, ExportBindings } from './compose.js';
 export type { Export, Dependencies, TransferDependencies } from './types.js';
 export type { Result, Diagnostic, ErrorCode } from './errors.js';

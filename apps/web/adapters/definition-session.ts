@@ -1,5 +1,4 @@
 import type { Definition } from '@novakai/canvas-model';
-import { definitionId } from '@novakai/canvas-model';
 import type { Result, Diagnostic } from '../contract/errors.js';
 import type { Request } from '../contract/records/owners.js';
 import { failure } from '../contract/errors.js';
@@ -333,8 +332,4 @@ function encodeDraft(draft: DefinitionDraft): unknown {
 
 function draftsWithRequests(drafts: readonly DefinitionDraft[]): readonly string[] {
   return drafts.filter((draft) => draft.request !== undefined).map((draft) => draft.key);
-}
-
-export function definitionDraftId(value: string): Definition['id'] {
-  return definitionId.parse(value);
 }

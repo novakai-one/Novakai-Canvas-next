@@ -155,11 +155,7 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
   };
 }
 
-function applyGuard(
-  state: DefinitionState,
-  key: string,
-  draft: DefinitionDraft,
-): Result<void> {
+function applyGuard(state: DefinitionState, key: string, draft: DefinitionDraft): Result<void> {
   if (state.pending.includes(key))
     return failure('pending-request', 'This definition is already being submitted');
   return literalDraftGuard(draft);
@@ -167,7 +163,10 @@ function applyGuard(
 
 function literalDraftGuard(draft: DefinitionDraft): Result<void> {
   if (draft.literalDrafts && draft.literalDrafts.length > 0)
-    return failure('invalid-literal-draft', 'Finish the literal value before applying this definition');
+    return failure(
+      'invalid-literal-draft',
+      'Finish the literal value before applying this definition',
+    );
   return { ok: true, value: undefined };
 }
 
@@ -225,6 +224,7 @@ function draftValue(
 ): Result<DefinitionDraft> {
   const base = capturedBase(current?.base, selection);
   if (!base.ok) return base;
+  const literalDrafts = nextLiteralDrafts(current, definition, literalDraft);
   return {
     ok: true,
     value: {
@@ -235,16 +235,73 @@ function draftValue(
       definition,
       operation: nextOperation(current?.operation, operation),
       request: current?.request,
-      literalDrafts: literalDraft
-        ? [
-            ...(current?.literalDrafts ?? []).filter(
-              (item) => item.path.join('.') !== literalDraft.path.join('.'),
-            ),
-            literalDraft,
-          ]
-        : undefined,
+      literalDrafts,
     },
   };
+}
+
+function nextLiteralDrafts(
+  current: DefinitionDraft | undefined,
+  definition: Definition,
+  literalDraft: LiteralDraft | undefined,
+): readonly LiteralDraft[] | undefined {
+  const retained = (current?.literalDrafts ?? []).filter((item) =>
+    canRetainLiteralDraft(current, definition, item, literalDraft),
+  );
+  return withLiteralDraft(retained, literalDraft);
+}
+
+function withLiteralDraft(
+  retained: readonly LiteralDraft[],
+  literalDraft: LiteralDraft | undefined,
+): readonly LiteralDraft[] | undefined {
+  return literalDraft === undefined
+    ? emptyRetained(retained)
+    : [...retained.filter((item) => !samePath(item.path, literalDraft.path)), literalDraft];
+}
+
+function emptyRetained(retained: readonly LiteralDraft[]): readonly LiteralDraft[] | undefined {
+  return retained.length > 0 ? retained : undefined;
+}
+
+function canRetainLiteralDraft(
+  current: DefinitionDraft | undefined,
+  definition: Definition,
+  literalDraft: LiteralDraft,
+  nextLiteralDraft: LiteralDraft | undefined,
+): boolean {
+  const previous =
+    current === undefined
+      ? undefined
+      : expressionAtPath(current.definition.expression, literalDraft.path);
+  const next = expressionAtPath(definition.expression, literalDraft.path);
+  return (
+    next?.kind === 'literal' &&
+    (sameExpression(previous, next) || nextLiteralDraft !== undefined || previous === undefined)
+  );
+}
+
+function expressionAtPath(
+  expression: Definition['expression'],
+  path: readonly number[],
+): Definition['expression'] | undefined {
+  return path.reduce<Definition['expression'] | undefined>(
+    (current, index) => (current?.kind === 'union' ? current.items[index] : undefined),
+    expression,
+  );
+}
+
+function samePath(left: readonly number[], right: readonly number[]): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function sameExpression(
+  left: Definition['expression'] | undefined,
+  right: Definition['expression'] | undefined,
+): boolean {
+  return (
+    left !== undefined && right !== undefined && JSON.stringify(left) === JSON.stringify(right)
+  );
 }
 
 function nextOperation(

@@ -89,8 +89,15 @@ function queryValues(
 }
 
 function appendQueryValue(values: Map<string, string>, key: string, value: string): void {
-  if (values.has(key)) values.set(key, `${values.get(key)}\u0000${value}`);
-  else values.set(key, value);
+  if (key !== 'section' && key !== 'object') {
+    values.set(key, value);
+    return;
+  }
+  values.set(key, joinedScopeValue(values.get(key), value));
+}
+
+function joinedScopeValue(previous: string | undefined, value: string): string {
+  return previous === undefined ? value : `${previous}\u0000${value}`;
 }
 /** A navigation grants only an HttpOnly browser session. Subsequent resource reads still pass exact host/origin admission. */
 function browserAccess(exchange: Exchange, bindings: ServerBindings): Result<void> {

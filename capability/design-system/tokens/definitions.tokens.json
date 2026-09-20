@@ -1157,5 +1157,43 @@
         }
       }
     }
+  },
+  "canvasSequence": {
+    "messageOpacity": {
+      "$type": "number",
+      "$value": 0.85
+    },
+    "lifelineHeadOpacity": {
+      "$type": "number",
+      "$value": 0.55
+    },
+    "haloOpacity": {
+      "$type": "number",
+      "$value": 0.3
+    },
+    "activationFillOpacity": {
+      "$type": "number",
+      "$value": 0.14
+    },
+    "activationEdgeOpacity": {
+      "$type": "number",
+      "$value": 0.4
+    },
+    "activationTopOpacity": {
+      "$type": "number",
+      "$value": 0.5
+    },
+    "activationGlowOpacity": {
+      "$type": "number",
+      "$value": 0.1
+    },
+    "instantOpacity": {
+      "$type": "number",
+      "$value": 0.18
+    },
+    "chipStrokeOpacity": {
+      "$type": "number",
+      "$value": 0.22
+    }
   }
 }

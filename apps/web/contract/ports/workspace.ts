@@ -21,6 +21,7 @@ import type {
 import type { ServiceClient } from './client.js';
 import type { EditPlanner } from '../records/editing.js';
 export interface WorkspaceInputs {
+  history(input: unknown, direction: 'undo' | 'redo', id: string): Result<Request | null>;
   snapshot(
     input: unknown,
   ): Result<{ readonly snapshot: Snapshot; readonly collections: readonly Collection[] }>;
@@ -68,7 +69,7 @@ export interface WorkspaceBindings {
   readonly navigation: WorkspaceNavigation;
   readonly inputs: Pick<
     WorkspaceInputs,
-    'snapshot' | 'diagram' | 'model' | 'dsl' | 'newSource' | 'library'
+    'snapshot' | 'diagram' | 'model' | 'dsl' | 'newSource' | 'library' | 'history'
   >;
   readonly sessions: CanvasSessions;
   readonly edits: EditPlanner;

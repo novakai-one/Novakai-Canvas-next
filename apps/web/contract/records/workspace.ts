@@ -28,6 +28,10 @@ export type CollectionSwitch =
       readonly problem: Diagnostic;
     };
 export interface WorkspaceView extends SourceView {
+  readonly history?: {
+    readonly status: import('@novakai/canvas-authoring').HistoryStatus | null;
+    readonly busy: boolean;
+  };
   readonly snapshot: Snapshot | null;
   readonly generation: string;
   readonly collections: readonly Collection[];
@@ -42,6 +46,7 @@ export interface WorkspaceView extends SourceView {
 }
 /** UI actions are intentions; the runtime binds server mutations and Canvas effects at composition. */
 export interface WorkspaceController {
+  navigateHistory(direction: 'undo' | 'redo'): Promise<void>;
   readonly inspector: InspectorSession;
   readonly wires: WireEditorSession;
   readonly library: LibraryController;

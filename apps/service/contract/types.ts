@@ -15,6 +15,7 @@ export interface WorkspaceSession {
   readonly installation: BuiltinResources;
   readonly resources: ResourceCommands;
   read(): Promise<AuthoringResult<Snapshot>>;
+  history(): ReturnType<Authoring['history']>;
   prepare(
     request: unknown,
     signal: AbortSignal,

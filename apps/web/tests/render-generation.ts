@@ -11,13 +11,17 @@ export async function verifyRenderGeneration(
   let renders = 0;
   const delayed = deferred<Result<TransportResponse>>();
   const current = deferred<void>();
+  async function renderResponse(path: string) {
+    if (path === '/api/v1/workspace') return response(snapshot, generation);
+    renders += 1;
+    if (renders === 2) return delayed.promise;
+    return response(document, generation);
+  }
   const host = controller(
     {
       get: async (path) => {
-        if (path === '/api/v1/workspace') return response(snapshot, generation);
-        renders += 1;
-        if (renders === 2) return delayed.promise;
-        return response(document, generation);
+        if (path === '/api/v1/history') return response(null, generation);
+        return renderResponse(path);
       },
       post: async () => {
         throw new Error('A render cannot submit an edit');

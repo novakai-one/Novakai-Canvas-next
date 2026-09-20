@@ -9,6 +9,7 @@ export function createWorkspaceHeader(
   { Button }: Pick<DesignSlots, 'Button'>,
   panels: PanelController,
   ViewMenu: ComponentType<ViewMenuProps>,
+  HistoryControls: ComponentType<Pick<HeaderProps, 'controller' | 'view'>>,
 ): ComponentType<HeaderProps> {
   /** Diagram identity is the title; tool labels describe actions without exposing capability internals. */
   function WorkspaceHeader({ controller, view, onOpenChooser }: HeaderProps): ReactElement {
@@ -44,6 +45,7 @@ export function createWorkspaceHeader(
           </h1>
         </div>
         <nav aria-label="Workspace actions" className={styles.actions}>
+          <HistoryControls controller={controller} view={view} />
           <Button
             label="Add"
             selected={

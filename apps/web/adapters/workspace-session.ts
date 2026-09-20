@@ -1,3 +1,4 @@
+import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
 import type { DiagramObject } from '../contract/records/owners.js';
@@ -48,6 +49,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     connected: false,
     busy: false,
     pending: [],
+    history: { status: null, busy: false },
     ...source.getSnapshot(),
   };
   const listeners = new Set<() => void>();
@@ -59,12 +61,28 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let disposed = false;
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
+  let historyGate = false;
+  let historyRead = 0;
+  let historyRefreshing = false;
+  let historySequence = 0;
+  let historySnapshotReady = false;
+  let removeHistoryKeys = (): void => undefined;
   const inspector = bindings.inspector({ apply: applyObject, report });
   const wires = bindings.wires({ apply: applyChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
+  function holdConfirmedHistory(pending: readonly Submission[]): void {
+    const finished = state.pending.some(
+      (item) =>
+        item.request.intent.kind !== 'change' &&
+        item.state !== 'rejected' &&
+        !pending.some((other) => other.request.request === item.request.request),
+    );
+    if (finished) setHistoryGate(true);
+  }
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
+    holdConfirmedHistory(pending);
     update({ pending, busy: pending.some((item) => item.state === 'sending') });
     updateMutationAvailability();
   }
@@ -128,11 +146,16 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       generation,
       connected: true,
     });
+    observeHistorySnapshot(latest.snapshot.sequence);
     restoreEdits();
     library.refresh(latest.snapshot, latest.collections);
     source.reconcile(latest.snapshot, generation);
     updateMutationAvailability();
     refreshActive();
+    void refreshHistory();
+  }
+  function observeHistorySnapshot(sequence: number): void {
+    if (historyRefreshing && sequence >= historySequence) historySnapshotReady = true;
   }
   /** A checked snapshot can invalidate the current request before it is allowed to install. */
   function settleChangedRender(
@@ -417,6 +440,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       collectionSwitch: { phase: 'idle', activeId: activeId() },
       status: editStatus(),
     });
+    releaseHistory();
   }
   /** Failed chooser attempts are recoverable and never replace the retained active diagram. */
   function settleFailure(request: RenderRequest, error: Diagnostic): void {
@@ -484,7 +508,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function updateMutationAvailability(): void {
     state.active?.session.dispatch({
       kind: 'mutation-available',
-      value: !state.busy && state.active.generation === state.generation,
+      value: !historyBlocked() && state.active.generation === state.generation,
     });
   }
   /** Rendering acknowledges geometry only, never an unconfirmed edit. */
@@ -578,6 +602,25 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     void submit(request.value, state.active.generation, state.sourceEdit, intent.id);
   }
+  function allowSubmission(request: Request): Result<void> {
+    if (blockedByHistory(request))
+      return {
+        ok: false,
+        error: diagnostic(
+          'pending-request',
+          'Wait for undo or redo to finish',
+          'Your draft is retained.',
+        ),
+      };
+    return { ok: true, value: undefined };
+  }
+  function blockedByHistory(request: Request): boolean {
+    if (historyGate && request.intent.kind === 'change') return true;
+    return state.pending.some(unresolvedInverse);
+  }
+  function unresolvedInverse(item: Submission): boolean {
+    return item.state !== 'rejected' && item.request.intent.kind !== 'change';
+  }
   /** Submission owns the durable journal and receipt checks; UI retains all drafts on failure. */
   async function submit(
     request: Request,
@@ -585,6 +628,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     sourceEdit: number,
     gesture: string | null,
   ): Promise<Result<Receipt>> {
+    const allowed = allowSubmission(request);
+    if (!allowed.ok) return allowed;
     update({ status: 'Saving…', problem: null });
     const result = await submissions.submit({ request, generation, sourceEdit, gesture });
     if (!result.ok) handleSubmitFailure(result.error, gesture);
@@ -603,7 +648,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     source.confirmed(submission, receipt);
     update({ status: editStatus() });
     confirmGesture(submission.gesture);
-    void refresh();
+    if (submission.request.intent.kind !== 'change') void finishHistory(receipt.sequence);
+    else void refresh();
   }
   /** Canvas is notified only when the receipt belongs to a submitted gesture. */
   function confirmGesture(gesture: string | null): void {
@@ -715,6 +761,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       ...renderProblemUpdate(),
     });
     refreshActive();
+    void refreshHistory();
   }
   /** A newer explicit target always supersedes an older target, including an in-flight request. */
   function chooseCollection(id: string): void {
@@ -756,6 +803,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!state.sourceDirty) update({ status: 'Ready' });
   }
   async function start(): Promise<void> {
+    removeHistoryKeys = bindHistoryKeys(navigateHistory);
     await startWorkspace();
     if (disposed) return;
     unsubscribe = bindings.client.changes(() => {
@@ -780,6 +828,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     restoredWorkspace = state.snapshot.workspace;
     bindings.panels.restore(state.snapshot.workspace);
     submissions.restore(state.snapshot.workspace);
+    void reconcileHistory();
     source.restore(state.snapshot.workspace);
     inspector.restore(state.snapshot.workspace);
     wires.restore(state.snapshot.workspace);
@@ -799,7 +848,120 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const result = await submissions.retry(id, state.generation);
     if (!result.ok) report(result.error);
   }
+  /** Status reads never change navigation; stale responses cannot replace newer status. */
+  async function refreshHistory(): Promise<void> {
+    const token = ++historyRead;
+    const response = await bindings.client.get('/api/v1/history');
+    if (token !== historyRead) return;
+    receiveHistory(response);
+  }
+  function receiveHistory(response: Awaited<ReturnType<WorkspaceBindings['client']['get']>>): void {
+    if (!response.ok) return clearHistory();
+    receiveHistoryOutcome(response.value.outcome);
+  }
+  function receiveHistoryOutcome(outcome: Result<unknown>): void {
+    if (!outcome.ok) return clearHistory();
+    const checked = historyStatusSchema.safeParse(outcome.value);
+    if (!checked.success) return clearHistory();
+    update({ history: { status: checked.data, busy: historyGate } });
+    releaseHistory();
+  }
+  function clearHistory(): void {
+    update({ history: { status: null, busy: historyGate } });
+  }
+  function historyBlocked(): boolean {
+    return historyGate || state.pending.some((item) => item.state !== 'rejected');
+  }
+  function setHistoryGate(busy: boolean): void {
+    historyGate = busy;
+    update({ history: { status: state.history?.status ?? null, busy } });
+    updateMutationAvailability();
+  }
+  /** Claim synchronously before any await, then retain the exact selected request through submission recovery. */
+  function cannotNavigateHistory(): boolean {
+    return historyBlocked() || Boolean(state.active?.session.getSnapshot().draft);
+  }
+  async function navigateHistory(direction: 'undo' | 'redo'): Promise<void> {
+    if (cannotNavigateHistory()) return;
+    const status = state.history?.status;
+    if (!status) return;
+    setHistoryGate(true);
+    await submitHistory(status, direction);
+  }
+  async function submitHistory(
+    status: NonNullable<WorkspaceView['history']>['status'],
+    direction: 'undo' | 'redo',
+  ): Promise<void> {
+    try {
+      await sendHistory(status, direction);
+    } finally {
+      releaseNavigationAttempt();
+    }
+  }
+  function releaseNavigationAttempt(): void {
+    if (!historyRefreshing) setHistoryGate(false);
+  }
+  async function sendHistory(status: unknown, direction: 'undo' | 'redo'): Promise<void> {
+    const request = bindings.inputs.history(status, direction, bindings.nextId());
+    if (!request.ok) return report(request.error);
+    if (request.value !== null) await applyHistoryRequest(request.value);
+  }
+  async function applyHistoryRequest(request: Request): Promise<void> {
+    const result = await submit(request, state.generation, state.sourceEdit, null);
+    if (!result.ok) await finishHistory();
+  }
+  async function reconcileHistory(): Promise<void> {
+    const inverses = state.pending.filter(
+      (item) => item.request.intent.kind !== 'change' && item.state !== 'rejected',
+    );
+    for (const item of inverses) await reconcileRequest(item.request.request);
+  }
+  /** A receipt does not release editing until the canonical scene and targets have caught up. */
+  async function finishHistory(sequence = state.snapshot?.sequence ?? 0): Promise<void> {
+    historyRefreshing = true;
+    historySequence = sequence;
+    historySnapshotReady = false;
+    historyRead += 1;
+    clearHistory();
+    setHistoryGate(true);
+    await refresh();
+    await refreshHistory();
+    releaseHistory();
+  }
+  function releaseHistory(): void {
+    if (!historyReady()) return;
+    historyRefreshing = false;
+    setHistoryGate(false);
+  }
+  function historyReady(): boolean {
+    return (
+      historyRefreshing &&
+      rendering === null &&
+      historySnapshotReady &&
+      matchingHistoryVersion() &&
+      displayedHistoryCurrent()
+    );
+  }
+  function matchingHistoryVersion(): boolean {
+    const token = state.history?.status?.navigationVersion;
+    if (!token) return false;
+    const record = state.snapshot?.records.find(
+      (item) => item.key.kind === token.key.kind && item.key.id === token.key.id,
+    );
+    return record?.version === token.version;
+  }
+  function displayedHistoryCurrent(): boolean {
+    return state.active === null || currentDiagram(state.active);
+  }
+  function currentDiagram(active: ActiveDiagram): boolean {
+    return state.collections.some(
+      (item) =>
+        item.id === active.document.collection.id &&
+        item.revision === active.document.collection.revision,
+    );
+  }
   return {
+    navigateHistory,
     inspector,
     wires,
     library,
@@ -830,6 +992,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     report,
     dispose: () => {
       disposed = true;
+      removeHistoryKeys();
       unsubscribe();
       invalidateRender();
       snapshotRead += 1;
@@ -876,4 +1039,36 @@ function sameCollection(
 /** Transport generation is part of the render input even when the collection revision is unchanged. */
 function renderChanged(active: ActiveDiagram, revision: number, generation: string): boolean {
   return revision !== active.document.collection.revision || active.generation !== generation;
+}
+
+/** Keep browser editing shortcuts native, including composition and nested editable elements. */
+function editorOwns(event: KeyboardEvent): boolean {
+  if (event.defaultPrevented || event.isComposing) return true;
+  return event.composedPath().some(editableTarget);
+}
+function editableTarget(target: EventTarget): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.matches('input, textarea, select'))
+  );
+}
+function direction(event: KeyboardEvent): 'undo' | 'redo' | null {
+  if (!historyKey(event) || editorOwns(event)) return null;
+  return event.shiftKey ? 'redo' : 'undo';
+}
+function historyKey(event: KeyboardEvent): boolean {
+  return (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !event.altKey;
+}
+
+/** The host owns shortcuts even when all interface chrome is hidden. */
+function bindHistoryKeys(navigate: (direction: 'undo' | 'redo') => Promise<void>): () => void {
+  if (typeof window === 'undefined') return () => undefined;
+  const handle = (event: KeyboardEvent): void => {
+    const target = direction(event);
+    if (target === null) return;
+    event.preventDefault();
+    if (!event.repeat) void navigate(target);
+  };
+  window.addEventListener('keydown', handle);
+  return () => window.removeEventListener('keydown', handle);
 }

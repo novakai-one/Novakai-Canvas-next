@@ -111,6 +111,7 @@ export async function prepareInstallation(
 }
 
 interface WiredWorkspace {
+  adopt(): ReturnType<Authoring['initializeHistory']>;
   readonly session: WorkspaceSession;
   readonly validation: CandidateValidator;
   readonly initialize: AuthoringResult<Request>;
@@ -266,7 +267,18 @@ async function wireWorkspace(
       resources,
     }),
   });
-  return { session, validation, initialize: installationModule.installationRequest(initial) };
+  const adopt = () =>
+    requestAuthoring(
+      runtime,
+      new AbortController().signal,
+      feasibilityModule.createFeasibility,
+    ).initializeHistory(options.workspace);
+  return {
+    session,
+    validation,
+    adopt,
+    initialize: installationModule.installationRequest(initial),
+  };
 }
 /** Existing workspaces are validated without rewriting them; new workspaces receive one ordinary atomic initialization request. */
 async function initialize(wired: WiredWorkspace): Promise<Result<WorkspaceSession>> {
@@ -276,7 +288,9 @@ async function initialize(wired: WiredWorkspace): Promise<Result<WorkspaceSessio
   const existing = snapshot.value.records.some(
     (item) => item.key.kind === 'workspace' && !item.deleted,
   );
-  return initialized(existing, snapshot.value, wired);
+  const ready = await initialized(existing, snapshot.value, wired);
+  if (!ready.ok) return ready;
+  return started(await wired.adopt(), wired.session);
 }
 /** Startup never replaces an existing catalog after a failed read or failed owner validation. */
 async function initialized(

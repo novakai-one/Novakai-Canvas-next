@@ -1240,11 +1240,24 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     });
   }
   function creationLocked(): boolean {
-    return (
-      state.creation.busy ||
-      (diagramCapture !== null && diagramCapture.request !== null) ||
-      (objectCapture !== null && objectCapture.request !== null)
-    );
+    return captureHasRequest(diagramCapture) || captureHasRequest(objectCapture);
+  }
+  function captureHasRequest(capture: { readonly request: Request | null } | null): boolean {
+    return capture !== null && capture.request !== null;
+  }
+  function releaseDismissedCreation(requestId: string): void {
+    if (diagramCapture?.request?.request === requestId) {
+      diagramCapture = null;
+      clearDismissedCreationView();
+      return;
+    }
+    if (objectCapture?.request?.request === requestId) {
+      objectCapture = null;
+      clearDismissedCreationView();
+    }
+  }
+  function clearDismissedCreationView(): void {
+    update({ creation: { ...state.creation, problem: null, busy: false } });
   }
   function captureDiagramDraft(): void {
     const active = state.active;
@@ -1882,6 +1895,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     dismissRequest: (id) => {
       const result = submissions.dismiss(id);
       if (!result.ok) report(result.error);
+      else releaseDismissedCreation(id);
     },
     retryRequest,
     create,

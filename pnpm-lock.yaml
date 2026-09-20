@@ -102,6 +102,9 @@ importers:
       '@novakai/canvas-templates':
         specifier: workspace:*
         version: link:../../capability/templates
+      '@resvg/resvg-wasm':
+        specifier: 2.6.2
+        version: 2.6.2
       tsx:
         specifier: 4.23.13
         version: 4.23.13

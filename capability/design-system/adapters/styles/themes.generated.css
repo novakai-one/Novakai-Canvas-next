@@ -93,6 +93,11 @@
   --nv-canvas-tone-node-boundary: #7d8794;
   --nv-canvas-tone-node-rim: #b5bec8;
   --nv-canvas-tone-group-surface: #d9dfe5;
+  --nv-canvas-tone-group-surface2: #edf0f4;
+  --nv-canvas-tone-group-surface3: #f6f8fa;
+  --nv-canvas-tone-group-boundary2: #b8c1cc;
+  --nv-canvas-tone-group-boundary3: #a6b1bf;
+  --nv-canvas-tone-group-shadow: #1a1f292e;
   --nv-canvas-tone-group-boundary: #cbd1d9;
   --nv-canvas-tone-node-surface-top: #ffffff;
   --nv-canvas-tone-node-surface-bottom: #f4f6f8;
@@ -200,6 +205,11 @@
   --nv-canvas-heading: #17212b;
   --nv-canvas-member: #526170;
   --nv-canvas-group-surface: #d9dfe5;
+  --nv-canvas-group-surface2: #edf0f4;
+  --nv-canvas-group-surface3: #f6f8fa;
+  --nv-canvas-group-boundary2: #b8c1cc;
+  --nv-canvas-group-boundary3: #a6b1bf;
+  --nv-canvas-group-shadow: #1a1f292e;
   --nv-canvas-group-boundary: #cbd1d9;
   --nv-canvas-group-heading: #526170;
   --nv-canvas-muted-opacity: 0.36;
@@ -324,6 +334,11 @@
   --nv-canvas-tone-node-boundary: #687483;
   --nv-canvas-tone-node-rim: #424d5c;
   --nv-canvas-tone-group-surface: #11141a;
+  --nv-canvas-tone-group-surface2: #171c25;
+  --nv-canvas-tone-group-surface3: #1d2430;
+  --nv-canvas-tone-group-boundary2: #2e3644;
+  --nv-canvas-tone-group-boundary3: #3b4657;
+  --nv-canvas-tone-group-shadow: #00000080;
   --nv-canvas-tone-group-boundary: #21262d;
   --nv-canvas-tone-node-surface-top: #242b34;
   --nv-canvas-tone-node-surface-bottom: #1a1f27;
@@ -431,6 +446,11 @@
   --nv-canvas-heading: #f1f3f5;
   --nv-canvas-member: #b8c1ca;
   --nv-canvas-group-surface: #11141a;
+  --nv-canvas-group-surface2: #171c25;
+  --nv-canvas-group-surface3: #1d2430;
+  --nv-canvas-group-boundary2: #2e3644;
+  --nv-canvas-group-boundary3: #3b4657;
+  --nv-canvas-group-shadow: #00000080;
   --nv-canvas-group-boundary: #21262d;
   --nv-canvas-group-heading: #b8c1ca;
   --nv-canvas-muted-opacity: 0.36;

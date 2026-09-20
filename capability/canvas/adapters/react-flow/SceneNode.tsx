@@ -49,6 +49,7 @@ export function createSceneNode(
         data-tree={view.tree !== undefined}
         data-emphasis={view.emphasis}
         data-hovered={view.hovered}
+        data-depth={Math.min(data.depth ?? 0, 3)}
       >
         {view.tree ? (
           <TreeRow view={view} actions={actions} />

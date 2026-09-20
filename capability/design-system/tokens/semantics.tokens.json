@@ -773,6 +773,26 @@
       "$type": "color",
       "$value": "{canvasTone.groupSurface}"
     },
+    "groupSurface2": {
+      "$type": "color",
+      "$value": "{canvasTone.groupSurface2}"
+    },
+    "groupSurface3": {
+      "$type": "color",
+      "$value": "{canvasTone.groupSurface3}"
+    },
+    "groupBoundary2": {
+      "$type": "color",
+      "$value": "{canvasTone.groupBoundary2}"
+    },
+    "groupBoundary3": {
+      "$type": "color",
+      "$value": "{canvasTone.groupBoundary3}"
+    },
+    "groupShadow": {
+      "$type": "color",
+      "$value": "{canvasTone.groupShadow}"
+    },
     "groupBoundary": {
       "$type": "color",
       "$value": "{canvasTone.groupBoundary}"

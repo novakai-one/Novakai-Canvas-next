@@ -785,6 +785,66 @@
         "alpha": 1
       }
     },
+    "groupSurface2": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9294117647058824,
+          0.9411764705882353,
+          0.9568627450980393
+        ],
+        "alpha": 1
+      }
+    },
+    "groupSurface3": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9647058823529412,
+          0.9725490196078431,
+          0.9803921568627451
+        ],
+        "alpha": 1
+      }
+    },
+    "groupBoundary2": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.7215686274509804,
+          0.7568627450980392,
+          0.8
+        ],
+        "alpha": 1
+      }
+    },
+    "groupBoundary3": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.6509803921568628,
+          0.6941176470588235,
+          0.7490196078431373
+        ],
+        "alpha": 1
+      }
+    },
+    "groupShadow": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.1,
+          0.12,
+          0.16
+        ],
+        "alpha": 0.18
+      }
+    },
     "groupBoundary": {
       "$type": "color",
       "$value": {

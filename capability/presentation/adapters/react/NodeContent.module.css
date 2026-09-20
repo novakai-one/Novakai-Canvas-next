@@ -68,6 +68,25 @@
     --nv-interface-role-text: var(--nv-canvas-group-heading);
   }
 
+  /* Stacked boards: each nesting depth lifts the floor one material step and strengthens
+     the boundary, so 3-deep containment reads as physical stacking. The attribute list
+     matches the neutral-container base rule above and adds [data-depth] to win it.
+     No cast shadows here — nested group shadows compound into murk; cards own shadows. */
+  :global([data-depth='2'])
+    .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
+    .frame {
+    fill: var(--nv-canvas-group-surface2);
+    stroke: var(--nv-canvas-group-boundary2);
+    filter: none;
+  }
+  :global([data-depth='3'])
+    .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
+    .frame {
+    fill: var(--nv-canvas-group-surface3);
+    stroke: var(--nv-canvas-group-boundary3);
+    filter: none;
+  }
+
   .root[data-follows-interface-roles='true']:is(
       [data-node-role='primary'],
       [data-node-role='supporting'],

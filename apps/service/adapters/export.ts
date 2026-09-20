@@ -21,6 +21,7 @@ import type { Authoring } from '../contract/records/owners.js';
 import type { RouteOutcome } from '../contract/records/protocol.js';
 import type { StaticFile } from '../contract/records/server.js';
 import type { OperationSource } from '../contract/records/failure-source.js';
+import { formatMarkdown, type MarkdownScope } from './markdown.js';
 import { failure, type Result } from '../contract/errors.js';
 type ExportResult<T> = import('@novakai/canvas-export').Result<T>;
 
@@ -66,7 +67,7 @@ export interface ExportHandler {
 interface ExportInput {
   readonly collectionId: string;
   readonly revision: number;
-  readonly format: 'dsl' | 'svg' | 'png';
+  readonly format: 'dsl' | 'svg' | 'png' | 'markdown';
   readonly scope: { readonly kind: 'all' } | { readonly kind: 'section'; readonly id: string };
   readonly scale: number;
 }
@@ -141,7 +142,9 @@ function validRevision(value: unknown): value is number {
 }
 
 function inputFormat(value: unknown): ExportInput['format'] | null {
-  return value === 'dsl' || value === 'svg' || value === 'png' ? value : null;
+  return value === 'dsl' || value === 'svg' || value === 'png' || value === 'markdown'
+    ? value
+    : null;
 }
 
 function inputScope(value: unknown): ExportInput['scope'] | null {
@@ -163,7 +166,23 @@ async function dispatchExport(
   signal: AbortSignal,
   prepareRaster: () => Promise<Result<void>>,
 ): Promise<RouteOutcome> {
-  if (request.format === 'dsl') return dsl(request, owners, signal);
+  switch (request.format) {
+    case 'dsl':
+      return dsl(request, owners, signal);
+    case 'markdown':
+      return markdown(request, owners, signal);
+    default:
+      return nativeExport(request, owners, presentation, signal, prepareRaster);
+  }
+}
+
+async function nativeExport(
+  request: ExportInput,
+  owners: ExportOwners,
+  presentation: ReactBindings,
+  signal: AbortSignal,
+  prepareRaster: () => Promise<Result<void>>,
+): Promise<RouteOutcome> {
   const prepared = await prepareFormat(request.format, prepareRaster);
   if (!prepared.ok) return prepared;
   return encodeNative(request, owners, presentation, signal);
@@ -551,6 +570,59 @@ async function dsl(
   const acquired = await acquireSnapshot(input, owners, signal);
   if (!acquired.ok) return routeFailure(acquired);
   return settleDsl(input, owners, signal, acquired.value);
+}
+
+async function markdown(
+  input: ExportInput,
+  owners: ExportOwners,
+  signal: AbortSignal,
+): Promise<RouteOutcome> {
+  const acquired = await acquireSnapshot(input, owners, signal);
+  if (!acquired.ok) return routeFailure(acquired);
+  return settleMarkdown(input, signal, acquired.value);
+}
+
+async function settleMarkdown(
+  input: ExportInput,
+  signal: AbortSignal,
+  lease: import('@novakai/canvas-export').SnapshotLease,
+): Promise<RouteOutcome> {
+  const primary = markdownSource(signal, lease.snapshot.collection, input.scope);
+  const settled = settledFailure(primary, await lease.release());
+  return settled.ok ? markdownFile(input, settled.value) : routeFailure(settled);
+}
+
+function markdownSource(
+  signal: AbortSignal,
+  collection: import('@novakai/canvas-model').Collection,
+  scope: MarkdownScope,
+): ExportResult<string> {
+  if (signal.aborted) return cancelledExport();
+  const source = formatMarkdown(collection, scope);
+  if (source === undefined)
+    return rejected('invalid-input', 'scope', 'The requested section does not exist');
+  return markdownCompletion(source, signal);
+}
+
+function markdownCompletion(source: string, signal: AbortSignal): ExportResult<string> {
+  return signal.aborted ? cancelledExport() : { ok: true, value: source };
+}
+
+function cancelledExport(): ExportResult<never> {
+  return rejected('cancelled', 'export', 'Export was cancelled');
+}
+
+function markdownFile(input: ExportInput, source: string): RouteOutcome {
+  const scope = input.scope.kind === 'all' ? 'all' : input.scope.id;
+  return {
+    kind: 'bytes',
+    file: {
+      bytes: Buffer.from(source, 'utf8'),
+      mediaType: 'text/markdown; charset=utf-8',
+      filename: `${input.collectionId}-${input.revision}-${scope}.md`,
+      headers: { 'X-Novakai-Export-Revision': String(input.revision) },
+    },
+  };
 }
 
 async function settleDsl(

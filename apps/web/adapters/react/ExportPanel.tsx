@@ -8,7 +8,7 @@ export function createExportPanel({
   Button,
 }: Pick<DesignSlots, 'Field' | 'Button'>): ComponentType<FeatureProps> {
   function ExportPanel({ controller, view }: FeatureProps): ReactElement {
-    const [format, setFormat] = useState<'dsl' | 'svg' | 'png'>('dsl');
+    const [format, setFormat] = useState<'dsl' | 'svg' | 'png' | 'markdown'>('dsl');
     const [scope, setScope] = useState('all');
     const [busy, setBusy] = useState(false);
     const [problem, setProblem] = useState<string | null>(null);
@@ -64,6 +64,7 @@ export function createExportPanel({
                 onChange={(event) => setFormat(event.target.value as typeof format)}
               >
                 <option value="dsl">Canonical DSL</option>
+                <option value="markdown">Markdown</option>
                 <option value="svg">SVG</option>
                 <option value="png">PNG</option>
               </select>

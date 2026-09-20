@@ -7,6 +7,7 @@ import type { Submission } from './submission.js';
 import type { Diagnostic } from '../errors.js';
 import type { MoveReview } from './movement.js';
 import type { AddDiagramDraft, AddGroupDraft, AddObjectDraft, CreationView } from './creation.js';
+import type { ConnectionDraft, ConnectionEdit } from './connection.js';
 import type { Receipt } from './owners.js';
 import type { Result } from '../errors.js';
 /** UI owns form drafts and selected collection; committed records are immutable Authoring snapshots. */
@@ -55,6 +56,7 @@ export interface WorkspaceView extends SourceView {
   readonly busy: boolean;
   readonly pending: readonly Submission[];
   readonly movementReview: MovementReviewState | null;
+  readonly connection: ConnectionDraft | null;
   readonly creation: CreationView;
 }
 /** UI actions are intentions; the runtime binds server mutations and Canvas effects at composition. */
@@ -88,6 +90,9 @@ export interface WorkspaceController {
   setObjectDraft(draft: AddObjectDraft): void;
   setGroupDraft(draft: AddGroupDraft): void;
   cancelCreation(kind: 'diagram' | 'object' | 'group'): void;
+  editConnection(edit: ConnectionEdit): void;
+  applyConnection(): Promise<Result<Receipt>>;
+  cancelConnection(): void;
   report(error: Diagnostic): void;
   applyMove(optionId: string): Promise<void>;
   chooseMoveOption(optionId: string): void;

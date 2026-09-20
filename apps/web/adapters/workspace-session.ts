@@ -1,12 +1,14 @@
 import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
-import type { DiagramObject, Group, Section } from '../contract/records/owners.js';
+import type { DiagramObject, Group, Relationship, Section } from '../contract/records/owners.js';
 import type {
   AddDiagramDraft,
   AddGroupDraft,
   AddObjectDraft,
 } from '../contract/records/creation.js';
+import type { ConnectionDraft, ConnectionEdit } from '../contract/records/connection.js';
+import { compatibleWires, sourceEndpoints, targetEndpoints } from '@novakai/canvas-model';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
 import type {
@@ -22,6 +24,7 @@ import type {
   EditIntent,
 } from '../contract/records/owners.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
+import type { RelationshipKind } from '@novakai/canvas-model';
 import { chooseMoveOption as chooseReviewedMoveOption } from '../contract/api.js';
 interface RenderRequest {
   readonly token: number;
@@ -56,6 +59,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     busy: false,
     pending: [],
     movementReview: null,
+    connection: null,
     creation: {
       diagram: { title: '', mode: 'grid' },
       object: { section: '', label: '', kind: 'module', reuseObject: null, group: null },
@@ -83,6 +87,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     workspace: string;
   } | null = null;
   let movementApplying = false;
+  let connectionCapture: { draft: ConnectionDraft; request: Request | null } | null = null;
   let historyRead = 0;
   let historyRefreshing = false;
   let diagramCapture: {
@@ -726,8 +731,143 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     await continueCanvasEdit(active, intent);
   }
   async function continueCanvasEdit(active: ActiveDiagram, intent: EditIntent): Promise<void> {
+    if (intent.kind === 'connection') {
+      beginConnection(active, intent);
+      return;
+    }
     if (await reviewPlacementIfSupported(active, intent)) return;
     planAndSubmit(active, intent);
+  }
+  // One bounded validation seam owns endpoint resolution, compatibility and draft capture.
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  function beginConnection(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'connection' }>,
+  ): void {
+    if (connectionCapture !== null) {
+      report(
+        diagnostic(
+          'pending-request',
+          'Finish or cancel the current connection first.',
+          'Apply or cancel the retained connection draft.',
+        ),
+      );
+      return;
+    }
+    if (intent.base.collectionId !== active.document.collection.id) {
+      report(
+        diagnostic(
+          'stale-gesture',
+          'The diagram changed while this connection was being edited.',
+          'Reconnect the endpoints on the current diagram.',
+        ),
+      );
+      return;
+    }
+    const section = active.document.collection.sections.find(
+      (item) => item.id === intent.source.section,
+    );
+    if (section === undefined || section.mode === 'sequence') {
+      report(
+        diagnostic(
+          'unsupported-edit',
+          'Connections are unavailable in sequence diagrams.',
+          'Choose a compatible diagram section.',
+        ),
+      );
+      return;
+    }
+    const source = connectionEndpoint(active, intent.source);
+    const target = connectionEndpoint(active, intent.target);
+    if (!source.ok) return report(source.error);
+    if (!target.ok) return report(target.error);
+    const kinds = connectionKinds(section.mode, source.value.kind, target.value.kind);
+    if (kinds.length === 0) {
+      report(
+        diagnostic(
+          'unsupported-edit',
+          'These endpoints have no compatible relationship kind.',
+          'Choose endpoints supported by this diagram.',
+        ),
+      );
+      return;
+    }
+    const draft: ConnectionDraft = {
+      id: intent.id,
+      base: active.base,
+      generation: active.generation,
+      collection: active.document.collection,
+      section,
+      source: source.value,
+      target: target.value,
+      kinds,
+      kind: kinds[0] as RelationshipKind,
+      label: '',
+      from: 'none',
+      to: 'none',
+      problem: null,
+    };
+    connectionCapture = { draft, request: null };
+    bindings.panels.open('right', true);
+    update({ connection: draft, status: 'Review new connection', problem: null });
+  }
+  // Scene-to-canonical resolution must remain together so generated scene IDs never leak.
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  function connectionEndpoint(
+    active: ActiveDiagram,
+    endpoint: Extract<EditIntent, { kind: 'connection' }>['source'],
+  ): Result<ConnectionDraft['source']> {
+    const sceneSection = active.document.scene.sections.find(
+      (item) => item.id === endpoint.section,
+    );
+    const node = sceneSection?.nodes.find((item) => item.id === endpoint.node);
+    const objectId = node?.measured.objectId;
+    const object =
+      objectId === null || objectId === undefined
+        ? undefined
+        : active.document.collection.objects.find((item) => item.id === objectId);
+    if (node === undefined || object === undefined)
+      return {
+        ok: false,
+        error: diagnostic(
+          'stale-target',
+          'The connection endpoint is no longer represented by a canonical object.',
+          'Reconnect the current nodes.',
+        ),
+      };
+    const anchor =
+      endpoint.member === null
+        ? undefined
+        : node.measured.content.anchors.find((item) => item.member === endpoint.member);
+    if (endpoint.member !== null && anchor === undefined)
+      return {
+        ok: false,
+        error: diagnostic(
+          'stale-target',
+          'The selected member is no longer available.',
+          'Reconnect the current members.',
+        ),
+      };
+    return {
+      ok: true,
+      value: {
+        object: object.id,
+        kind: object.kind,
+        label: object.label,
+        ...(anchor === undefined ? {} : { member: anchor.member, memberLabel: anchor.label }),
+      },
+    };
+  }
+  function connectionKinds(
+    mode: Section['mode'],
+    source: ConnectionDraft['source']['kind'],
+    target: ConnectionDraft['target']['kind'],
+  ): readonly RelationshipKind[] {
+    return (compatibleWires[mode] ?? []).filter(
+      (kind) =>
+        (sourceEndpoints[kind] === undefined || sourceEndpoints[kind]?.includes(source)) &&
+        (targetEndpoints[kind] === undefined || targetEndpoints[kind]?.includes(target)),
+    );
   }
   async function reviewPlacementIfSupported(
     active: ActiveDiagram,
@@ -1003,6 +1143,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     settleDiagramCapture(requestId);
     settleObjectCapture(requestId);
     settleGroupCapture(requestId);
+    settleConnectionCapture(requestId);
     if (!diagramCleared && !objectCleared && !groupCleared) return;
     update({ creation: settledCreationView(diagramCleared, objectCleared, groupCleared) });
   }
@@ -1036,6 +1177,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   function settleGroupCapture(requestId: string): void {
     if (groupCapture?.request?.request === requestId) groupCapture = null;
+  }
+  function settleConnectionCapture(requestId: string): void {
+    if (connectionCapture?.request?.request !== requestId) return;
+    connectionCapture = null;
+    update({ connection: null });
   }
   function clearConfirmedMovement(gesture: string | null): void {
     if (movementCapture === null || submissionGestureMatches(gesture) === false) return;
@@ -1327,6 +1473,101 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         busy: false,
       },
     });
+  }
+  // One retained draft reducer keeps label, kind and cardinality edits on the captured base.
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  function editConnection(edit: ConnectionEdit): void {
+    if (connectionCapture?.request !== null || connectionCapture === null) return;
+    const current = connectionCapture.draft;
+    const next: ConnectionDraft =
+      edit.kind === 'label'
+        ? { ...current, label: edit.value, problem: null }
+        : edit.kind === 'relationship-kind'
+          ? { ...current, kind: edit.value, problem: null }
+          : { ...current, [edit.side]: edit.value, problem: null };
+    connectionCapture.draft = next;
+    update({ connection: next, problem: null });
+  }
+  // Relationship plus section appearance are assembled and submitted as one captured request.
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  async function applyConnection(): Promise<Result<Receipt>> {
+    const capture = connectionCapture;
+    if (capture === null)
+      return {
+        ok: false,
+        error: diagnostic(
+          'invalid-edit',
+          'No connection is awaiting review.',
+          'Connect two compatible endpoints first.',
+        ),
+      };
+    const draft = capture.draft;
+    const label = draft.label.trim();
+    if (label.length === 0) {
+      const error = diagnostic(
+        'invalid-edit',
+        'Give the connection a label before applying it.',
+        'Enter a short relationship label.',
+      );
+      update({ connection: { ...draft, problem: error.message }, problem: error });
+      return { ok: false, error };
+    }
+    const id = `relationship-${draft.id}` as Relationship['id'];
+    const relationship: Relationship = {
+      id,
+      kind: draft.kind,
+      label,
+      source: endpointValue(draft.source),
+      target: endpointValue(draft.target),
+      ...(draft.kind === 'association' && draft.from !== 'none' ? { from: draft.from } : {}),
+      ...(draft.kind === 'association' && draft.to !== 'none' ? { to: draft.to } : {}),
+      style: 'solid',
+      sources: [],
+    };
+    const section: Section = {
+      ...draft.section,
+      wires: [
+        ...draft.section.wires,
+        {
+          relationship: id,
+          route: 'orthogonal',
+          sourceSide: 'auto',
+          targetSide: 'auto',
+          locked: false,
+        },
+      ],
+    };
+    const request = bindings.inputs.model(
+      draft.base,
+      draft.collection.id,
+      [
+        { op: 'create', target: 'relationships', value: relationship },
+        { op: 'replace', target: 'sections', value: section },
+      ],
+      draft.id,
+    );
+    if (!request.ok) {
+      update({ connection: { ...draft, problem: request.error.message }, problem: request.error });
+      return request;
+    }
+    capture.request ??= request.value;
+    const result = await submit(capture.request, draft.generation, state.sourceEdit, draft.id);
+    if (!result.ok)
+      update({ connection: { ...draft, problem: result.error.message }, problem: result.error });
+    return result;
+  }
+  function endpointValue(endpoint: ConnectionDraft['source']): Relationship['source'] {
+    return endpoint.member === undefined
+      ? { object: endpoint.object as Relationship['source']['object'] }
+      : {
+          object: endpoint.object as Relationship['source']['object'],
+          member: endpoint.member as Relationship['source']['member'],
+        };
+  }
+  function cancelConnection(): void {
+    if (connectionCapture?.request !== null) return;
+    connectionCapture = null;
+    update({ connection: null, problem: null, status: editStatus() });
   }
   function creationLocked(): boolean {
     return (
@@ -2061,6 +2302,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     setObjectDraft,
     setGroupDraft,
     cancelCreation,
+    editConnection,
+    applyConnection,
+    cancelConnection,
     report,
     applyMove,
     chooseMoveOption,

@@ -1,10 +1,11 @@
 import type { Target } from '../../contract/records/selection.js';
 import type { SceneIndex, TargetInfo } from '../../contract/records/scene.js';
 import { reject } from '../validation/outcomes.js';
-/** JSON tuples preserve section namespaces without delimiter collisions; callers never parse the key. */
+/** URI-encoded JSON tuples preserve namespaces and remain safe in React Flow CSS selectors; callers never parse the key. */
 export function targetKey(target: Target): string {
-  if (target.kind === 'section') return JSON.stringify(['section', target.id]);
-  return JSON.stringify([target.kind, target.section, target.id]);
+  const address =
+    target.kind === 'section' ? ['section', target.id] : [target.kind, target.section, target.id];
+  return encodeURIComponent(JSON.stringify(address));
 }
 /** Section lookup is explicit for all target variants; no encoded scene ID conventions leak. */
 export function sectionId(target: Target): string {

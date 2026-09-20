@@ -34,3 +34,4 @@ export {
 } from '../core/recovery/editor-records.js';
 
 export { formatFailure } from '../core/output/diagnostics.js';
+export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';

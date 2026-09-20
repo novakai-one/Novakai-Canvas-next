@@ -28,6 +28,12 @@ export function createDefinitionsEditor({
       (definition) =>
         drafts.find((draft) => draft.definition.id === definition.id)?.definition ?? definition,
     );
+    const created = drafts
+      .filter(
+        (draft) =>
+          !collection.definitions.some((definition) => definition.id === draft.definition.id),
+      )
+      .map((draft) => draft.definition);
     const create = (): void => {
       const id = definitionDraftId(`definition-${crypto.randomUUID()}`);
       session.create(selection, {
@@ -49,7 +55,7 @@ export function createDefinitionsEditor({
           <p>Collection owned · {collection.definitions.length} saved</p>
         </header>
         <Button label="New definition" onClick={create} disabled={view.busy || !view.connected} />
-        {values.map((definition) => (
+        {[...values, ...created].map((definition) => (
           <DefinitionCard
             key={definition.id}
             definition={definition}

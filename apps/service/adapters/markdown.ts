@@ -559,9 +559,8 @@ function inline(value: string): string {
     .replaceAll('\r', '\n')
     .replaceAll('\n', '\n  ')
     .replace(/^([ \t]*)(#{1,6}|>|[-+*]|\d+[.)])(?=\s)/gm, '$1\\$2')
-    .replace(
-      /^([ \t]*)([-*_]){3,}\s*$/gm,
-      (line, indent) => `${indent}\\${line.slice(indent.length)}`,
+    .replace(/^([ \t]*)([-=*_~])\2*\s*$/gm, (line, indent) =>
+      `${indent}\\${line.slice(indent.length)}`,
     );
 }
 

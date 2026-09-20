@@ -5,7 +5,6 @@ import type { Section, SequenceItem } from '../../contract/records/section.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
-import { descendants } from '../objects/content.js';
 import { resolveCallableEndpoint } from '../relationships/callable.js';
 import { referenceIssue } from '../invariants/issues.js';
 
@@ -136,17 +135,16 @@ function validateOperationTarget(
   const owner = collection.objects.find((object) => object.id === operation.object);
   return owner === undefined
     ? referenceIssue(true, operationPath)
-    : validateCallableOperation(collection, operation, owner, operationPath);
+    : validateCallableOperation(collection, operation, operationPath);
 }
 
 function validateCallableOperation(
   collection: Collection,
   operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
-  owner: Collection['objects'][number],
   operationPath: string,
 ): readonly Diagnostic[] {
   if (resolveCallableEndpoint(collection, operation) !== undefined) return [];
-  return invalidOperation(operation, owner, operationPath);
+  return invalidOperation(operation, operationPath);
 }
 
 function operationDiagnostic(path: string, message: string): readonly Diagnostic[] {
@@ -155,7 +153,6 @@ function operationDiagnostic(path: string, message: string): readonly Diagnostic
 
 function invalidOperation(
   operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
-  owner: Collection['objects'][number],
   operationPath: string,
 ): readonly Diagnostic[] {
   if (operation.member === undefined)
@@ -163,21 +160,10 @@ function invalidOperation(
       operationPath,
       'Operation must address a canonical function or signature',
     );
-  const member = descendants(owner).find((candidate) => candidate.id === operation.member);
-  return [
-    ...diagnoseWhen(
-      member?.kind !== 'signature',
-      'sequence',
-      `${operationPath}.member`,
-      'Operation must resolve to a signature',
-    ),
-    ...diagnoseWhen(
-      !['module', 'interface', 'function'].includes(owner.kind),
-      'sequence',
-      operationPath,
-      'Operation owner must be callable',
-    ),
-  ];
+  return operationDiagnostic(
+    `${operationPath}.member`,
+    'Operation must resolve to a signature',
+  );
 }
 
 /** No parent means root scope; unresolved parents are diagnosed independently of cycles. */

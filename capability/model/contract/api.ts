@@ -19,4 +19,5 @@ export {
   typeUseDisplay,
 } from '../core/definitions.js';
 export { resolveCallableEndpoint } from '../core/relationships/callable.js';
+export type { CallableEndpoint } from '../core/relationships/callable.js';
 export type { DefinitionUsage } from '../core/definitions.js';

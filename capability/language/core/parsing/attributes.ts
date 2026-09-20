@@ -41,7 +41,47 @@ function readAttribute(
   const raw = readValue(start);
   requireIntegerValue(raw, property, name);
   requireQuotedValues(start, raw.next, property);
+  requireSignatureParameters(raw.value, property);
   return { value: [name, checkValue(raw.value, property, name)], next: raw.next };
+}
+
+function requireSignatureParameters(raw: LocatedValue, property: Property): void {
+  if (property.type !== 'signature-parameters') return;
+  const items = raw.items ?? [];
+  items.forEach((item) => {
+    if (typeof item.value === 'string') {
+      if (item.token?.kind !== 'string')
+        reject('syntax', item.span, 'Quoted string', 'Legacy parameter must be quoted');
+      return;
+    }
+    if (!Array.isArray(item.value) || item.items?.length !== 2)
+      reject('invalid-value', item.span, '[name, type]', 'Structured parameter needs two items');
+    const [name, type] = item.items;
+    if (name?.token?.kind !== 'string')
+      reject('syntax', name?.span ?? item.span, 'Quoted string', 'Parameter name must be quoted');
+    if (typeof type?.value === 'string') {
+      if (type.token?.kind !== 'string')
+        reject('syntax', type.span, 'Quoted string', 'Unlinked parameter type must be quoted');
+    } else if (!isIdentityReference(type?.value)) {
+      reject(
+        'invalid-value',
+        type?.span ?? item.span,
+        'Definition reference',
+        'Linked parameter type must be a plain definition reference',
+      );
+    }
+  });
+}
+
+function isIdentityReference(value: LocatedValue['value'] | undefined): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.keys(value).length === 2 &&
+    'kind' in value &&
+    value.kind === 'reference'
+  );
 }
 /** Duplicate properties never silently use last-write-wins semantics. */
 function insertUnique(fields: Fields, [name, value]: Attribute): Fields {

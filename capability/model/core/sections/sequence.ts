@@ -5,6 +5,8 @@ import type { Section, SequenceItem } from '../../contract/records/section.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
+import { descendants } from '../objects/content.js';
+import { referenceIssue } from '../invariants/issues.js';
 
 type Fragment = Extract<SequenceItem, { kind: 'fragment' }>;
 
@@ -98,7 +100,7 @@ function validateEvent(
   path: string,
 ): readonly Diagnostic[] {
   if (item.kind !== 'event') return [];
-  return [item.source, item.target].flatMap((id) =>
+  const endpointIssues = [item.source, item.target].flatMap((id) =>
     diagnoseWhen(
       !isVisibleParticipant(id, section, collection),
       'sequence',
@@ -106,6 +108,57 @@ function validateEvent(
       'Event endpoint must be a visible participant or direct top-level module',
     ),
   );
+  return [...endpointIssues, ...validateOperation(item, collection, path)];
+}
+
+function validateOperation(
+  item: Extract<SequenceItem, { kind: 'event' }>,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
+  if (item.operation === undefined) return [];
+  const operation = item.operation;
+  const operationPath = `${path}.operation`;
+  if (item.message === 'return')
+    return [
+      {
+        code: 'sequence',
+        path: operationPath,
+        message: 'Return events cannot reference an operation',
+      },
+    ];
+  if (operation.object !== item.target)
+    return [
+      {
+        code: 'sequence',
+        path: operationPath,
+        message: 'Operation owner must equal the event target',
+      },
+    ];
+  const owner = collection.objects.find((object) => object.id === operation.object);
+  if (owner === undefined) return referenceIssue(true, operationPath);
+  if (operation.member === undefined)
+    return diagnoseWhen(
+      owner.kind !== 'function',
+      'sequence',
+      operationPath,
+      'Operation must address a canonical function or signature',
+    );
+  const member = descendants(owner).find((candidate) => candidate.id === operation.member);
+  return [
+    ...diagnoseWhen(
+      member?.kind !== 'signature',
+      'sequence',
+      `${operationPath}.member`,
+      'Operation must resolve to a signature',
+    ),
+    ...diagnoseWhen(
+      !['module', 'interface', 'function'].includes(owner.kind),
+      'sequence',
+      operationPath,
+      'Operation owner must be callable',
+    ),
+  ];
 }
 
 /** No parent means root scope; unresolved parents are diagnosed independently of cycles. */

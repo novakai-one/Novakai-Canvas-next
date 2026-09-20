@@ -1,5 +1,5 @@
 import type { FailureSource } from '../contract/records/failure-source.js';
-import { validate, fieldTypeDisplay } from '@novakai/canvas-model';
+import { validate, fieldTypeDisplay, typeUseDisplay } from '@novakai/canvas-model';
 import {
   composePresentation,
   readMeasuredProjection,
@@ -43,6 +43,7 @@ function domain(input: unknown): PresentationResult<InputCollection> {
 const presentationDomain = {
   read: domain,
   resolveFieldType: fieldTypeDisplay,
+  resolveTypeUse: typeUseDisplay,
 };
 /** Missing immutable media is an explicit preview failure, never an empty visual substitute. */
 function asset(digest: string, assets: readonly VisualAsset[]): PresentationResult<VisualAsset> {

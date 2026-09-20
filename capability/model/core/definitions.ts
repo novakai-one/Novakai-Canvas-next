@@ -1,8 +1,8 @@
 import type { DefinitionId } from '../contract/brands.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
 import type { Collection } from '../contract/records/collection.js';
-import type { TypeExpression } from '../contract/records/definition.js';
-import type { Field } from '../contract/records/content.js';
+import type { TypeExpression, TypeUse } from '../contract/records/definition.js';
+import type { ContentBlock, Field } from '../contract/records/content.js';
 import { failure, success } from './invariants/issues.js';
 import { diagnoseWhen, referenceIssue } from './invariants/issues.js';
 
@@ -11,11 +11,12 @@ const MAX_DEPTH = 32;
 
 /** A stable semantic address for a direct field or definition-expression use. */
 export interface DefinitionUsage {
-  readonly kind: 'field' | 'definition';
+  readonly kind: 'field' | 'signature-parameter' | 'signature-return' | 'member' | 'definition';
   readonly definition: DefinitionId;
   readonly path: string;
   readonly object?: string;
   readonly field?: string;
+  readonly parameter?: number;
 }
 
 function exprNodes(expression: TypeExpression, path: string): readonly Diagnostic[] {
@@ -246,14 +247,42 @@ export function validateDefinitionGraph(collection: Collection): readonly Diagno
 function validateFieldTypes(collection: Collection): readonly Diagnostic[] {
   const ids = new Set(collection.definitions.map((definition) => definition.id));
   return collection.objects.flatMap((object) =>
-    object.content.flatMap((block) => {
-      if (block.kind !== 'field' || typeof block.type === 'string') return [];
-      return referenceIssue(
-        !ids.has(block.type.id),
-        `objects.${object.id}.content.${block.id}.type`,
-      );
-    }),
+    object.content.flatMap((block) => validateContentTypes(block, object.id, ids)),
   );
+}
+
+function validateContentTypes(
+  block: ContentBlock,
+  object: string,
+  ids: ReadonlySet<string>,
+): readonly Diagnostic[] {
+  if (block.kind === 'field')
+    return typeUseIssue(block.type, `objects.${object}.content.${block.id}.type`, ids);
+  if (block.kind === 'member')
+    return typeUseIssue(block.type, `objects.${object}.content.${block.id}.type`, ids);
+  if (block.kind !== 'signature') return [];
+  const parameters = block.parameters.flatMap((parameter, index) =>
+    typeof parameter === 'string'
+      ? []
+      : typeUseIssue(
+          parameter.type,
+          `objects.${object}.content.${block.id}.parameters.${index}.type`,
+          ids,
+        ),
+  );
+  return [
+    ...parameters,
+    ...typeUseIssue(block.returns, `objects.${object}.content.${block.id}.returns`, ids),
+  ];
+}
+
+function typeUseIssue(
+  type: TypeUse,
+  path: string,
+  ids: ReadonlySet<string>,
+): readonly Diagnostic[] {
+  if (typeof type === 'string') return [];
+  return referenceIssue(!ids.has(type.id), path);
 }
 
 function displayLiteral(value: string | number | boolean): string {
@@ -390,9 +419,11 @@ export function definitionDisplay(collection: Collection, id: DefinitionId): Res
 
 /** Resolve a field's old string or shared reference without ever stringifying an object. */
 export function fieldTypeDisplay(collection: Collection, field: Field): string {
-  return typeof field.type === 'string'
-    ? field.type
-    : resolvedDefinitionDisplay(collection, field.type.id);
+  return typeUseDisplay(collection, field.type);
+}
+
+export function typeUseDisplay(collection: Collection, type: TypeUse): string {
+  return typeof type === 'string' ? type : resolvedDefinitionDisplay(collection, type.id);
 }
 
 /** Direct usages are unique, stable and include definition-to-definition paths. */
@@ -403,19 +434,7 @@ export function definitionUsages(
   if (!collection.definitions.some((definition) => definition.id === id))
     return failure('not-found', `definitions.${id}`, 'Definition ID must exist');
   const fieldUses: DefinitionUsage[] = collection.objects.flatMap((object) =>
-    object.content.flatMap((block) =>
-      block.kind === 'field' && typeof block.type !== 'string' && block.type.id === id
-        ? [
-            {
-              kind: 'field',
-              definition: id,
-              path: `objects.${object.id}.content.${block.id}.type`,
-              object: object.id,
-              field: block.id,
-            },
-          ]
-        : [],
-    ),
+    object.content.flatMap((block) => usageForContent(block, object.id, id)),
   );
   const definitionUses: DefinitionUsage[] = collection.definitions.flatMap((definition) =>
     expressionReferences(definition.expression, `definitions.${definition.id}.expression`)
@@ -425,4 +444,43 @@ export function definitionUsages(
   return success(
     [...fieldUses, ...definitionUses].toSorted((a, b) => a.path.localeCompare(b.path)),
   );
+}
+
+function usageForContent(
+  block: ContentBlock,
+  object: string,
+  id: DefinitionId,
+): readonly DefinitionUsage[] {
+  const use = (
+    type: TypeUse,
+    path: string,
+    kind: DefinitionUsage['kind'],
+    extra: Partial<DefinitionUsage> = {},
+  ) =>
+    typeof type !== 'string' && type.id === id
+      ? [{ kind, definition: id, path, object, ...extra }]
+      : [];
+  if (block.kind === 'field' || block.kind === 'member')
+    return use(
+      block.type,
+      `objects.${object}.content.${block.id}.type`,
+      block.kind === 'field' ? 'field' : 'member',
+      { field: block.id },
+    );
+  if (block.kind !== 'signature') return [];
+  return [
+    ...block.parameters.flatMap((parameter, index) =>
+      typeof parameter === 'string'
+        ? []
+        : use(
+            parameter.type,
+            `objects.${object}.content.${block.id}.parameters.${index}.type`,
+            'signature-parameter',
+            { field: block.id, parameter: index },
+          ),
+    ),
+    ...use(block.returns, `objects.${object}.content.${block.id}.returns`, 'signature-return', {
+      field: block.id,
+    }),
+  ];
 }

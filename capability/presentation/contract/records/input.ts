@@ -14,3 +14,4 @@ export type {
   ObjectKind,
   RelationshipKind,
 } from '@novakai/canvas-model';
+export type { TypeUse } from '@novakai/canvas-model';

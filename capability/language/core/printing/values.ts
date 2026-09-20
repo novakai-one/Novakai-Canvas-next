@@ -16,9 +16,22 @@ export function string(value: unknown): string {
 }
 /** Format canonical properties using the same declared scalar/list type used by the parser. */
 export function printValue(value: unknown, type: ValueType): string {
+  if (type === 'signature-parameters') return printSignatureParameters(value);
   if (Array.isArray(value)) return printList(value, type);
   if (type === 'endpoint') return printEndpoint(value);
   return printScalar(value, type);
+}
+
+function printSignatureParameters(value: unknown): string {
+  if (!Array.isArray(value))
+    reject('unrepresentable', origin, 'Signature parameters', 'Cannot print parameters');
+  return `[${value
+    .map((item) => {
+      if (typeof item === 'string') return quote(item);
+      const parameter = record(item);
+      return `[${quote(string(parameter.name))}, ${printValue(parameter.type, 'type-expression')}]`;
+    })
+    .join(', ')}]`;
 }
 /** Scalars have explicit delimiters; theme pins are quoted when they are not bare vocabulary words. */
 function printScalar(value: unknown, type: ValueType): string {

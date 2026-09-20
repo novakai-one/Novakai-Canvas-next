@@ -14,6 +14,7 @@ export type ValueType =
   | 'targets'
   | 'references'
   | 'reference-value'
+  | 'signature-parameters'
   | 'type-expression';
 export interface Property {
   readonly type: ValueType;

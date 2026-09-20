@@ -39,6 +39,7 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
       'Resolved theme digest does not match the pinned theme',
     );
   const resolver = deps.domain.resolveFieldType;
+  const typeResolver = deps.domain.resolveTypeUse;
   const context: ContentContext = {
     collection,
     chromePolicies: deps.chromePolicies,
@@ -46,9 +47,10 @@ export function projectCollection(input: unknown, deps: ProjectionDependencies):
     width: style.contentSizing.widths.medium.preferred,
     metrics: deps.measurement,
     assets: deps.assets,
-    ...(resolver === undefined
+    ...(resolver === undefined ? {} : { resolveFieldType: (field) => resolver(collection, field) }),
+    ...(typeResolver === undefined
       ? {}
-      : { resolveFieldType: (field) => resolver(collection, field) }),
+      : { resolveTypeUse: (type) => typeResolver(collection, type) }),
   };
   const sections = collection.sections.map((section): VisualSection =>
     projectSection(section, context),

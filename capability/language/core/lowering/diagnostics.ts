@@ -39,10 +39,37 @@ export function sourceMappings(item: Declaration, prefix = ''): readonly SourceM
   const expression = item.kind === 'type' ? item.fields.expression : undefined;
   const own = [
     { path: name, span: item.span },
+    ...contentMappings(name, item),
     ...expressionMapping(name, expression),
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
   return own;
+}
+
+function contentMappings(name: string, item: Declaration): readonly SourceMapping[] {
+  const mappings: SourceMapping[] = [];
+  const operation = item.fields.operation;
+  if (operation !== undefined) mappings.push({ path: `${name}.operation`, span: operation.span });
+  if (item.kind !== 'signature') {
+    const type = item.kind === 'member' ? item.fields.type : undefined;
+    if (type !== undefined) mappings.push({ path: `${name}.type`, span: type.span });
+    return mappings;
+  }
+  const returns = item.fields.returns;
+  if (returns !== undefined) mappings.push({ path: `${name}.returns`, span: returns.span });
+  const parameters = item.fields.parameters;
+  (parameters?.items ?? []).forEach((parameter, index) => {
+    if (typeof parameter.value === 'string') {
+      mappings.push({ path: `${name}.parameters.${index}`, span: parameter.span });
+      return;
+    }
+    const tuple = parameter.items ?? [];
+    if (tuple[0] !== undefined)
+      mappings.push({ path: `${name}.parameters.${index}.name`, span: tuple[0].span });
+    if (tuple[1] !== undefined)
+      mappings.push({ path: `${name}.parameters.${index}.type`, span: tuple[1].span });
+  });
+  return mappings;
 }
 
 function expressionMapping(

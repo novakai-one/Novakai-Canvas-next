@@ -110,8 +110,35 @@ function validateRelationship(
     `${path}.target`,
     targetEndpoints[relationship.kind],
   );
+  const callableIssues =
+    relationship.kind === 'calls'
+      ? validateCallableTarget(relationship.target, collection, `${path}.target`)
+      : [];
   const cardinalityIssues = validateCardinalities(relationship, path);
-  return [...sourceIssues, ...targetIssues, ...cardinalityIssues];
+  return [...sourceIssues, ...targetIssues, ...callableIssues, ...cardinalityIssues];
+}
+
+function validateCallableTarget(
+  endpoint: Endpoint,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
+  const object = resolveEndpoint(endpoint, collection);
+  if (object === undefined) return [];
+  if (endpoint.member === undefined)
+    return diagnoseWhen(
+      object.kind !== 'function',
+      'endpoint',
+      path,
+      'Calls target must address a signature or whole function',
+    );
+  const member = descendants(object).find((item) => item.id === endpoint.member);
+  return diagnoseWhen(
+    member?.kind !== 'signature',
+    'endpoint',
+    `${path}.member`,
+    'Calls target must resolve to a signature',
+  );
 }
 
 /**

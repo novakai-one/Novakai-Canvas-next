@@ -20,6 +20,8 @@ export interface LocatedValue {
   readonly value: SyntaxValue;
   readonly span: Span;
   readonly tokens?: readonly Token[];
+  readonly token?: Token;
+  readonly items?: readonly LocatedValue[];
 }
 export type Fields = Readonly<Record<string, LocatedValue>>;
 export type Construct =

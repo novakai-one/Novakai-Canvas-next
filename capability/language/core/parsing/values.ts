@@ -23,7 +23,10 @@ export function readValue(cursor: Cursor): Parsed<LocatedValue> {
 /** Namespaced layout references are distinguishable from ordinary enum words by the colon. */
 function readScalarOrNamespace(cursor: Cursor): Parsed<LocatedValue> {
   if (peek(cursor, 1).text === ':') return readReference(cursor);
-  return { value: { value: scalar(cursor), span: peek(cursor).span }, next: advance(cursor) };
+  return {
+    value: { value: scalar(cursor), span: peek(cursor).span, token: peek(cursor) },
+    next: advance(cursor),
+  };
 }
 /** Text remains inert; integer parsing never admits Infinity or imprecise identifiers. */
 function scalar(cursor: Cursor): SyntaxValue {
@@ -57,8 +60,9 @@ function readList(cursor: Cursor): Parsed<LocatedValue> {
   if (peek(start).text === ']') return finishList(cursor, advance(start), []);
   const first = readValue(start);
   const rest = accepted(repeat(first.next, (item) => peek(item).text === ',', readFollowingItem));
-  const items = [first.value.value, ...rest.value.map((item) => item.value)];
-  return finishList(cursor, consume(rest.next, ']'), items);
+  const locatedItems = [first.value, ...rest.value];
+  const items = locatedItems.map((item) => item.value);
+  return finishList(cursor, consume(rest.next, ']'), items, locatedItems);
 }
 /** Every comma must be followed by a value. */
 function readFollowingItem(cursor: Cursor): Parsed<LocatedValue> {
@@ -69,8 +73,12 @@ function finishList(
   start: Cursor,
   end: Cursor,
   items: readonly SyntaxValue[],
+  locatedItems: readonly LocatedValue[] = [],
 ): Parsed<LocatedValue> {
-  return { value: { value: items, span: consumedSpan(start, end) }, next: leave(end) };
+  return {
+    value: { value: items, span: consumedSpan(start, end), items: locatedItems },
+    next: leave(end),
+  };
 }
 /** Whitespace-delimited references support show/connect and relative constraint declarations. */
 export function readReferenceList(cursor: Cursor): Parsed<LocatedValue> {

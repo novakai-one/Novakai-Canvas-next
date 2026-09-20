@@ -21,7 +21,7 @@ export function createEngineeringFields({
               control={(props) => (
                 <input
                   {...props}
-                  value={parameter}
+                  value={parameterValue(parameter)}
                   onChange={(event) =>
                     edit({
                       kind: 'parameters',
@@ -145,6 +145,18 @@ export function createEngineeringFields({
     );
   }
   return EngineeringFields;
+}
+
+function parameterValue(
+  parameter:
+    | string
+    | {
+        readonly name: string;
+        readonly type: string | { readonly kind: 'definition'; readonly id: string };
+      },
+): string {
+  if (typeof parameter === 'string') return parameter;
+  return `${parameter.name}: ${typeof parameter.type === 'string' ? parameter.type : `@${parameter.type.id}`}`;
 }
 const keys = ['none', 'primary', 'foreign', 'unique'] as const;
 const keyLabels = {

@@ -50,20 +50,19 @@ function resourceScope(collection: Collection): Collection {
     ...collection.objects.flatMap((item) => item.sources),
     ...collection.relationships.flatMap((item) => item.sources),
   ];
-  const referenced = new Set(
-    collection.objects.flatMap((item) =>
-      item.content.flatMap((block) =>
-        block.kind === 'field' && typeof block.type !== 'string' ? [block.type.id] : [],
-      ),
-    ),
-  );
+  const referenced = new Set(collection.objects.flatMap((item) => item.content.flatMap(typeUses)));
   let changed = true;
   while (changed) {
     changed = false;
     collection.definitions.forEach((definition) => {
       if (!referenced.has(definition.id)) return;
       const refs = expressionReferenceIds(definition.expression);
-      refs.forEach((id) => { if (!referenced.has(id)) { referenced.add(id); changed = true; } });
+      refs.forEach((id) => {
+        if (!referenced.has(id)) {
+          referenced.add(id);
+          changed = true;
+        }
+      });
     });
   }
   return {
@@ -72,6 +71,22 @@ function resourceScope(collection: Collection): Collection {
     sources: collection.sources.filter((item) => sources.includes(item.id)),
     definitions: collection.definitions.filter((definition) => referenced.has(definition.id)),
   };
+}
+
+function typeUses(
+  block: Collection['objects'][number]['content'][number],
+): readonly DefinitionId[] {
+  const direct = (
+    type: string | { readonly kind: 'definition'; readonly id: DefinitionId },
+  ): readonly DefinitionId[] => (typeof type === 'string' ? [] : [type.id]);
+  if (block.kind === 'field' || block.kind === 'member') return direct(block.type);
+  if (block.kind !== 'signature') return [];
+  return [
+    ...block.parameters.flatMap((parameter) =>
+      typeof parameter === 'string' ? [] : direct(parameter.type),
+    ),
+    ...direct(block.returns),
+  ];
 }
 
 function expressionReferenceIds(expression: TypeExpression): readonly DefinitionId[] {
@@ -84,11 +99,19 @@ function expressionReferenceIds(expression: TypeExpression): readonly Definition
   return refs;
 }
 
-function visitExpressionIfPresent(current: TypeExpression | undefined, refs: DefinitionId[], stack: TypeExpression[]): void {
+function visitExpressionIfPresent(
+  current: TypeExpression | undefined,
+  refs: DefinitionId[],
+  stack: TypeExpression[],
+): void {
   if (current !== undefined) visitExpression(current, refs, stack);
 }
 
-function visitExpression(current: TypeExpression, refs: DefinitionId[], stack: TypeExpression[]): void {
+function visitExpression(
+  current: TypeExpression,
+  refs: DefinitionId[],
+  stack: TypeExpression[],
+): void {
   addExpressionReference(current, refs);
   addExpressionChildren(current, stack);
 }

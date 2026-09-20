@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assetId, descendantId, label, objectId, sectionId, size } from '../brands.js';
-import { fieldTypeSchema } from './definition.js';
+import { fieldTypeSchema, typeUseSchema } from './definition.js';
 import { figureLevelSchema, textRoleSchema } from './composition.js';
 
 /** Canonical object address, optionally narrowed to an addressable descendant. */
@@ -175,8 +175,10 @@ const signatureSchema = z
     kind: z.literal('signature'),
     id: descendantId,
     label,
-    parameters: z.array(label).readonly(),
-    returns: label,
+    parameters: z
+      .array(z.union([label, z.strictObject({ name: label, type: typeUseSchema }).readonly()]))
+      .readonly(),
+    returns: typeUseSchema,
   })
   .readonly();
 const memberSchema = z
@@ -184,7 +186,7 @@ const memberSchema = z
     kind: z.literal('member'),
     id: descendantId,
     label,
-    type: label,
+    type: typeUseSchema,
     visibility: z.enum(['public', 'private', 'protected']).default('public'),
   })
   .readonly();

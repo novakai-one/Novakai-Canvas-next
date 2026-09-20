@@ -104,5 +104,5 @@ function bodyField(item: ContentBlock): readonly TextField[] {
 /** Return types are distinct from member types in callable signatures. */
 function returnField(item: ContentBlock): readonly TextField[] {
   if (item.kind !== 'signature') return [];
-  return [{ name: 'returns', label: 'Returns', value: item.returns }];
+  return [{ name: 'returns', label: 'Returns', value: typeValue(item.returns) }];
 }

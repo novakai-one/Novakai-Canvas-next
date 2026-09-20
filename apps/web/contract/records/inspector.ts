@@ -1,4 +1,10 @@
-import type { Collection, DiagramObject, ObjectKind, DescendantId } from '@novakai/canvas-model';
+import type {
+  Collection,
+  DiagramObject,
+  ObjectKind,
+  DescendantId,
+  TypeUse,
+} from '@novakai/canvas-model';
 import type { Snapshot, Receipt } from './owners.js';
 import type { EditingBase } from './editor-recovery.js';
 import type { Result, Diagnostic } from '../errors.js';
@@ -29,7 +35,11 @@ export type ObjectEdit =
       readonly id: DescendantId;
       readonly value: import('@novakai/canvas-model').FieldType;
     }
-  | { readonly kind: 'parameters'; readonly id: DescendantId; readonly value: readonly string[] }
+  | {
+      readonly kind: 'parameters';
+      readonly id: DescendantId;
+      readonly value: readonly (string | { readonly name: string; readonly type: TypeUse })[];
+    }
   | { readonly kind: 'nullable'; readonly id: DescendantId; readonly value: boolean }
   | { readonly kind: 'remove-content'; readonly id: DescendantId }
   | {

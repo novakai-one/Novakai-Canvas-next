@@ -19,7 +19,18 @@ export const constructs: readonly ConstructDefinition[] = [
       { name: 'title', type: 'string' },
     ],
     properties: { theme: p.theme, description: p.description, ...layoutProperties },
-    children: ['type', 'asset', 'source', 'node', 'wire', 'section', 'rank', 'align', 'before', 'below'],
+    children: [
+      'type',
+      'asset',
+      'source',
+      'node',
+      'wire',
+      'section',
+      'rank',
+      'align',
+      'before',
+      'below',
+    ],
   },
   {
     kind: 'asset',
@@ -295,7 +306,7 @@ export const constructs: readonly ConstructDefinition[] = [
       { name: 'target', type: 'id' },
       { name: 'label', type: 'string' },
     ],
-    properties: { kind: p.message, activate: p.activate },
+    properties: { kind: p.message, activate: p.activate, operation: p.operation },
     children: null,
   },
   {

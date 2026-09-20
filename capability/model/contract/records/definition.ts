@@ -16,7 +16,12 @@ const typeExpressionSchema: z.ZodType<TypeExpression> = z.lazy(() =>
     z.strictObject({ kind: z.literal('primitive'), name: primitiveType }).readonly(),
     z.strictObject({ kind: z.literal('literal'), value: literalType }).readonly(),
     z.strictObject({ kind: z.literal('reference'), id: definitionId }).readonly(),
-    z.strictObject({ kind: z.literal('union'), items: z.array(typeExpressionSchema).min(2).readonly() }).readonly(),
+    z
+      .strictObject({
+        kind: z.literal('union'),
+        items: z.array(typeExpressionSchema).min(2).readonly(),
+      })
+      .readonly(),
   ]),
 );
 
@@ -34,3 +39,7 @@ export const fieldTypeSchema = z.union([
 ]);
 
 export type FieldType = z.infer<typeof fieldTypeSchema>;
+
+/** Shared type use consumed by fields, members and callable signatures. */
+export const typeUseSchema = fieldTypeSchema;
+export type TypeUse = FieldType;

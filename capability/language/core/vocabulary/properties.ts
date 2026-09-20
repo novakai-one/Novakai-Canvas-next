@@ -64,8 +64,8 @@ export const properties = {
   keyKind: { type: 'word', field: 'key', values: ['primary', 'foreign', 'unique'], required: true },
   fields: { type: 'ids', field: 'fields', required: true },
   referenceList: { type: 'endpoints', field: 'references' },
-  parameters: { type: 'strings', field: 'parameters', required: true },
-  returns: { type: 'string', field: 'returns', required: true },
+  parameters: { type: 'signature-parameters', field: 'parameters', required: true },
+  returns: { type: 'type-expression', field: 'returns', required: true },
   visibility: {
     type: 'word',
     field: 'visibility',
@@ -104,6 +104,7 @@ export const properties = {
     fallback: 'call',
   },
   activate: { type: 'boolean', field: 'activate' },
+  operation: { type: 'endpoint', field: 'operation' },
 } as const satisfies Readonly<Record<string, Property>>;
 /** Scope columns are integer tracks; table columns retain their distinct string-list vocabulary. */
 export const layoutProperties = {

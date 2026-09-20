@@ -54,7 +54,7 @@ async function bytes(
       redirect: 'error',
       headers: { 'Content-Type': 'application/json' },
     });
-    return response.ok ? binarySuccess(response) : binaryFailure(response);
+    return response.ok ? await binarySuccess(response) : await binaryFailure(response);
   } catch {
     return failure('connection-uncertain', 'The artifact response could not be confirmed');
   }

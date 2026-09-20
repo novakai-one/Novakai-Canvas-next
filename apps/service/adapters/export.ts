@@ -20,6 +20,7 @@ import type { BuiltinResources } from '../contract/records/builtins.js';
 import type { Authoring } from '../contract/records/owners.js';
 import type { RouteOutcome } from '../contract/records/protocol.js';
 import type { StaticFile } from '../contract/records/server.js';
+import type { OperationSource } from '../contract/records/failure-source.js';
 import { failure, type Result } from '../contract/errors.js';
 type ExportResult<T> = import('@novakai/canvas-export').Result<T>;
 
@@ -235,8 +236,16 @@ function readWorkspaceResult(
   current: ReturnType<Authoring['read']> extends Promise<infer T> ? T : never,
   signal: AbortSignal,
 ): ExportResult<import('@novakai/canvas-authoring').Snapshot> {
-  if (!current.ok) return rejected('encoding-failed', 'workspace', current.error.message);
+  if (!current.ok) return readFailure(current.error);
   return signal.aborted ? rejected('cancelled', 'export', 'Export was cancelled') : current;
+}
+
+function readFailure(error: { readonly code: string; readonly message: string }) {
+  return rejected(
+    error.code === 'cancelled' ? 'cancelled' : 'encoding-failed',
+    'workspace',
+    error.message,
+  );
 }
 
 type SelectedCollection = {
@@ -326,7 +335,15 @@ async function renderDocument(
   signal: AbortSignal,
 ): Promise<ExportResult<import('../contract/records/rendering.js').RenderDocument>> {
   const document = await owners.renderer.render(selected.collection, selected.view, signal);
-  return document.ok ? document : rejected('encoding-failed', 'render', document.error.message);
+  return document.ok ? document : renderFailure(document.error);
+}
+
+function renderFailure(error: { readonly code: string; readonly message: string }) {
+  return rejected(
+    error.code === 'cancelled' ? 'cancelled' : 'encoding-failed',
+    'render',
+    error.message,
+  );
 }
 
 function buildSnapshot(
@@ -610,7 +627,17 @@ function routeFailure(
   result: Extract<ExportResult<unknown>, { readonly ok: false }>,
 ): RouteOutcome {
   const code = result.error.code === 'cancelled' ? 'cancelled' : 'invalid-input';
-  return failure(code, result.error.path, result.error.message);
+  return failure(code, result.error.path, result.error.message, exportSource(result.error));
+}
+
+function exportSource(error: import('@novakai/canvas-export').Diagnostic): OperationSource {
+  return {
+    code: error.code,
+    path: error.path,
+    message: error.message,
+    recovery: error.recovery,
+    cleanup: error.cleanup === undefined ? undefined : exportSource(error.cleanup),
+  };
 }
 
 function rejected(

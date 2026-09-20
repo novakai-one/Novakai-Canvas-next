@@ -8,6 +8,7 @@ import type {
 } from './owners.js';
 import type { Result } from '../errors.js';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
+import type { Box } from '@novakai/canvas-layout';
 
 export type MoveOptionKind = 'move-only' | 'expand' | 'rearrange';
 
@@ -19,8 +20,8 @@ export interface MovePolicy {
 
 export interface GeometryChange {
   readonly target: Target;
-  readonly before: import('@novakai/canvas-layout').Box;
-  readonly after: import('@novakai/canvas-layout').Box;
+  readonly before: Box;
+  readonly after: Box;
 }
 
 export interface MoveOption {

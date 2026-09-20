@@ -86,7 +86,12 @@ import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
 import { planCanvasEdit } from './api.js';
-import { buildMoveReview, buildExpandOption, buildRearrangeOption } from '../core/editing/movement.js';
+import {
+  buildMoveReview,
+  buildExpandOption,
+  buildRearrangeOption,
+  chooseMoveOption,
+} from '../core/editing/movement.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import type { ServiceClient } from './ports/client.js';
@@ -275,8 +280,11 @@ function controller(
       const context = {
         document,
         stamp,
-        preview: (previewDocument: typeof document, previewIntent: typeof intent, changes: readonly import('./records/owners.js').Change[]) =>
-          previewModuleRoutes(previewDocument, previewIntent, changes),
+        preview: (
+          previewDocument: typeof document,
+          previewIntent: typeof intent,
+          changes: readonly import('./records/owners.js').Change[],
+        ) => previewModuleRoutes(previewDocument, previewIntent, changes),
       };
       const move = buildMoveReview(intent, context);
       if (move.ok && move.value.options.length > 0) return move;
@@ -288,11 +296,25 @@ function controller(
         ...(rearranged.ok && rearranged.value !== null ? [rearranged.value] : []),
       ];
       if (options.length > 0) {
-        const base = move.ok ? move.value : { id: intent.id, intent, stamp, collectionId: document.collection.id, revision: document.collection.revision, options: [], selectedOption: null };
-        return { ok: true as const, value: { ...base, options, selectedOption: options[0]?.id ?? null } };
+        const base = move.ok
+          ? move.value
+          : {
+              id: intent.id,
+              intent,
+              stamp,
+              collectionId: document.collection.id,
+              revision: document.collection.revision,
+              options: [],
+              selectedOption: null,
+            };
+        return {
+          ok: true as const,
+          value: { ...base, options, selectedOption: options[0]?.id ?? null },
+        };
       }
       return move;
     },
+    chooseMoveOption: chooseMoveOption,
     previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>
       createSubmissionSession({

@@ -17,7 +17,6 @@ import type {
   EditIntent,
 } from '../contract/records/owners.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
-import { chooseMoveOption as chooseReviewedMoveOption } from '../core/editing/movement.js';
 interface RenderRequest {
   readonly token: number;
   readonly id: string;
@@ -64,7 +63,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
   let historyGate = false;
-  let movementCapture: { active: ActiveDiagram; intent: Extract<EditIntent, { kind: 'placement' }>; review: import('../contract/records/movement.js').MoveReview; workspace: string } | null = null;
+  let movementCapture: {
+    active: ActiveDiagram;
+    intent: Extract<EditIntent, { kind: 'placement' }>;
+    review: import('../contract/records/movement.js').MoveReview;
+    workspace: string;
+  } | null = null;
   let movementApplying = false;
   let historyRead = 0;
   let historyRefreshing = false;
@@ -513,7 +517,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function updateMutationAvailability(): void {
     state.active?.session.dispatch({
       kind: 'mutation-available',
-      value: movementCapture === null && !movementApplying && !historyBlocked() && state.active.generation === state.generation,
+      value:
+        movementCapture === null &&
+        !movementApplying &&
+        !historyBlocked() &&
+        state.active.generation === state.generation,
     });
   }
   /** Rendering acknowledges geometry only, never an unconfirmed edit. */
@@ -560,10 +568,88 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     );
     return moduleTargets.length > 0;
   }
+  function movementOption(
+    review: import('../contract/records/movement.js').MoveReview,
+  ): import('../contract/records/movement.js').MoveOption | undefined {
+    return review.options.find((item) => item.kind === 'expand' || item.kind === 'rearrange');
+  }
+  function movementBaseError(
+    review: import('../contract/records/movement.js').MoveReview,
+  ): Diagnostic {
+    return {
+      code: 'unsupported-edit',
+      message:
+        review.reason ?? 'This movement has no valid move-only option; keep the draft for review.',
+      recovery: 'Adjust the position or use the inspector.',
+      owner: 'workspace',
+    };
+  }
+  async function handleMovementReview(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+  ): Promise<boolean> {
+    if (bindings.moveReview === undefined || !supportsMoveReview(active.document, intent))
+      return false;
+    const reviewed = bindings.moveReview(
+      active.document,
+      intent,
+      active.session.getSnapshot().stamp,
+    );
+    if (!reviewed.ok) return rejectMovement(active, intent, reviewed.error);
+    const option = movementOption(reviewed.value);
+    if (option !== undefined) return retainMovementReview(active, intent, reviewed.value, option);
+    const selected = reviewed.value.options[0];
+    if (reviewed.value.options.length !== 1 || selected === undefined)
+      return rejectMovement(active, intent, movementBaseError(reviewed.value));
+    void submitFeasibleCanvas(active, intent, selected.changes, selected.preview);
+    return true;
+  }
+  function rejectMovement(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    error: Diagnostic,
+  ): boolean {
+    active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
+    report(error);
+    return true;
+  }
+  function retainMovementReview(
+    active: ActiveDiagram,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+    review: import('../contract/records/movement.js').MoveReview,
+    option: import('../contract/records/movement.js').MoveOption,
+  ): boolean {
+    movementCapture = { active, intent, review, workspace: state.snapshot?.workspace ?? '' };
+    const accepted = active.session.dispatch({
+      kind: 'preview-routes',
+      id: intent.id,
+      ...option.preview,
+    });
+    if (!accepted.ok || accepted.value.state.routePreview?.gesture !== intent.id) {
+      movementCapture = null;
+      return rejectMovement(active, intent, {
+        code: 'invalid-edit',
+        message: 'The movement preview could not be accepted.',
+        recovery: 'Keep the draft and try the gesture again.',
+        owner: 'workspace',
+      });
+    }
+    update({
+      movementReview: { review, optionId: option.id, phase: 'review', document: active.document },
+      status: 'Review movement options',
+    });
+    updateMutationAvailability();
+    return true;
+  }
   /** A busy client retains subsequent gestures as recoverable drafts; no second browser request is submitted concurrently. */
   async function editCanvas(intent: EditIntent): Promise<void> {
     if (movementCapture !== null) {
-      const error = { code: 'pending-request', message: 'Review or cancel the current movement before starting another.', recovery: 'Apply or cancel the retained movement review.', owner: 'workspace' as const };
+      const error = {
+        code: 'pending-request',
+        message: 'Review or cancel the current movement before starting another.',
+        recovery: 'Apply or cancel the retained movement review.',
+        owner: 'workspace' as const,
+      };
       if (intent.kind === 'placement' && state.active !== null)
         state.active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
       report(error);
@@ -571,66 +657,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     const active = state.active;
     if (active === null) return;
-    if (
-      intent.kind === 'placement' &&
-      bindings.moveReview !== undefined &&
-      supportsMoveReview(active.document, intent)
-    ) {
-      const reviewed = bindings.moveReview(
-        active.document,
-        intent,
-        active.session.getSnapshot().stamp,
-      );
-      if (!reviewed.ok) {
-        active.session.dispatch({ kind: 'reject', id: intent.id, message: reviewed.error.message });
-        report(reviewed.error);
-        return;
-      }
-      if (reviewed.value.options.length > 1 || reviewed.value.options.some((option) => option.kind === 'expand' || option.kind === 'rearrange')) {
-        const option = reviewed.value.options.find((item) => item.kind === 'expand' || item.kind === 'rearrange');
-        if (option !== undefined) {
-          movementCapture = { active, intent, review: reviewed.value, workspace: state.snapshot?.workspace ?? '' };
-          const accepted = active.session.dispatch({ kind: 'preview-routes', id: intent.id, ...option.preview });
-          if (!accepted.ok || accepted.value.state.routePreview?.gesture !== intent.id) {
-            movementCapture = null;
-            active.session.dispatch({ kind: 'reject', id: intent.id, message: 'The movement preview could not be accepted.' });
-            report({ code: 'invalid-edit', message: 'The movement preview could not be accepted.', recovery: 'Keep the draft and try the gesture again.', owner: 'workspace' });
-            updateMutationAvailability();
-            return;
-          }
-          update({ movementReview: { review: reviewed.value, optionId: option.id, phase: 'review', document: active.document }, status: 'Review movement options' });
-          updateMutationAvailability();
-          return;
-        }
-      }
-      if (reviewed.value.options.length !== 1) {
-        const error: Diagnostic = {
-          code: 'unsupported-edit',
-          message:
-            reviewed.value.reason ??
-            'This movement has no valid move-only option; keep the draft for review.',
-          recovery: 'Adjust the position or use the inspector.',
-          owner: 'workspace',
-        };
-        active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
-        report(error);
-        return;
-      }
-      const option = reviewed.value.options[0];
-      if (option === undefined) {
-        const error: Diagnostic = {
-          code: 'unsupported-edit',
-          message: 'This movement produced no usable move-only option.',
-          recovery: 'Adjust the position or use the inspector.',
-          owner: 'workspace',
-        };
-        active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
-        report(error);
-        return;
-      }
-      submitFeasibleCanvas(active, intent, option.changes, option.preview);
-      return;
-    }
+    if (intent.kind === 'placement' && (await handleMovementReview(active, intent))) return;
     const planned = bindings.edits.plan(intent, {
       document: active.document,
       stamp: active.session.getSnapshot().stamp,
@@ -658,23 +685,42 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(preview.error);
       if (movementCapture?.intent.id === intent.id) {
         movementApplying = false;
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'rejected' } : null });
+        update({
+          movementReview: state.movementReview
+            ? { ...state.movementReview, phase: 'rejected' }
+            : null,
+        });
         updateMutationAvailability();
       }
       return { ok: false, error: preview.error };
     }
     const submission = submitCanvas(active, intent, changes);
-    const retainedAtStart = state.pending.find((item) => item.request.request === intent.id && item.state === 'sending');
-    if (retainedAtStart !== undefined && preview.value !== null) publishPreview(active, intent, preview.value, start);
+    const retainedAtStart = state.pending.find(
+      (item) => item.request.request === intent.id && item.state === 'sending',
+    );
+    if (retainedAtStart !== undefined && preview.value !== null)
+      publishPreview(active, intent, preview.value, start);
     const result = await submission;
     if (!result.ok && movementCapture?.intent.id === intent.id) {
       const retained = state.pending.find((item) => item.request.request === intent.id);
       if (retained?.state === 'uncertain' || retained?.state === 'sending') {
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'uncertain', requestId: intent.id } : null });
+        update({
+          movementReview: state.movementReview
+            ? { ...state.movementReview, phase: 'uncertain', requestId: intent.id }
+            : null,
+        });
       } else {
         movementApplying = false;
-        const restored = preview.value !== null && publishPreview(active, intent, preview.value, start);
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: retained?.state === 'rejected' || !restored ? 'rejected' : 'review' } : null });
+        const restored =
+          preview.value !== null && publishPreview(active, intent, preview.value, start);
+        update({
+          movementReview: state.movementReview
+            ? {
+                ...state.movementReview,
+                phase: retained?.state === 'rejected' || !restored ? 'rejected' : 'review',
+              }
+            : null,
+        });
         updateMutationAvailability();
       }
     }
@@ -761,14 +807,28 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     void refresh();
     if (gesture !== null) {
       const retained = state.pending.find((item) => item.request.request === gesture);
-      if (movementCapture?.intent.id === gesture && (retained?.state === 'uncertain' || retained?.state === 'sending')) {
+      if (
+        movementCapture?.intent.id === gesture &&
+        (retained?.state === 'uncertain' || retained?.state === 'sending')
+      ) {
         movementApplying = true;
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'uncertain', requestId: gesture } : null });
+        update({
+          movementReview: state.movementReview
+            ? { ...state.movementReview, phase: 'uncertain', requestId: gesture }
+            : null,
+        });
       } else {
         if (movementCapture?.intent.id === gesture) movementApplying = false;
         rejectGesture(gesture, error.message);
         if (movementCapture?.intent.id === gesture) {
-          update({ movementReview: state.movementReview ? { ...state.movementReview, phase: retained?.state === 'rejected' ? 'rejected' : 'review' } : null });
+          update({
+            movementReview: state.movementReview
+              ? {
+                  ...state.movementReview,
+                  phase: retained?.state === 'rejected' ? 'rejected' : 'review',
+                }
+              : null,
+          });
           updateMutationAvailability();
         }
       }
@@ -782,7 +842,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     source.confirmed(submission, receipt);
     update({ status: editStatus() });
     confirmGesture(submission.gesture);
-    if (movementCapture !== null && submission.gesture === movementCapture.intent.id) { movementCapture = null; movementApplying = false; update({ movementReview: null }); updateMutationAvailability(); }
+    if (movementCapture !== null && submission.gesture === movementCapture.intent.id) {
+      movementCapture = null;
+      movementApplying = false;
+      update({ movementReview: null });
+      updateMutationAvailability();
+    }
     if (submission.request.intent.kind !== 'change') void finishHistory(receipt.sequence);
     else void refresh();
   }
@@ -1110,12 +1175,26 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   function chooseMoveOption(optionId: string): void {
     const capture = movementCapture;
-    if (capture === null || movementApplying || (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')) return;
+    if (
+      capture === null ||
+      movementApplying ||
+      (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')
+    )
+      return;
     const option = capture.review.options.find((item) => item.id === optionId);
     if (option === undefined) return;
-    const accepted = capture.active.session.dispatch({ kind: 'preview-routes', id: capture.intent.id, ...option.preview });
+    const accepted = capture.active.session.dispatch({
+      kind: 'preview-routes',
+      id: capture.intent.id,
+      ...option.preview,
+    });
     if (!accepted.ok || accepted.value.state.routePreview?.gesture !== capture.intent.id) {
-      report({ code: 'invalid-edit', message: 'The selected movement preview could not be accepted.', recovery: 'Keep the current preview or cancel the draft.', owner: 'workspace' });
+      report({
+        code: 'invalid-edit',
+        message: 'The selected movement preview could not be accepted.',
+        recovery: 'Keep the current preview or cancel the draft.',
+        owner: 'workspace',
+      });
       return;
     }
     update({ movementReview: state.movementReview ? { ...state.movementReview, optionId } : null });
@@ -1123,28 +1202,90 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
 
   async function applyMove(optionId: string): Promise<void> {
     const capture = movementCapture;
-    if (capture === null || movementApplying || state.movementReview === null || state.movementReview.optionId !== optionId || state.movementReview.phase !== 'review') return;
-    if (state.pending.some((item) => item.state !== 'rejected') || historyBlocked() || state.history?.busy) { report({ code: 'pending-request', message: 'Wait for the current operation to finish', recovery: 'Your movement draft is retained.', owner: 'workspace' }); return; }
+    if (
+      capture === null ||
+      movementApplying ||
+      state.movementReview === null ||
+      state.movementReview.optionId !== optionId ||
+      state.movementReview.phase !== 'review'
+    )
+      return;
+    if (
+      state.pending.some((item) => item.state !== 'rejected') ||
+      historyBlocked() ||
+      state.history?.busy
+    ) {
+      report({
+        code: 'pending-request',
+        message: 'Wait for the current operation to finish',
+        recovery: 'Your movement draft is retained.',
+        owner: 'workspace',
+      });
+      return;
+    }
     const currentStamp = capture.active.session.getSnapshot().stamp;
-    const chosen = chooseReviewedMoveOption(capture.review, optionId, currentStamp);
+    const chosen = bindings.chooseMoveOption?.(capture.review, optionId, currentStamp);
+    if (chosen === undefined) return;
     const selected = chosen.ok ? chosen.value : undefined;
-    if (!chosen.ok || selected === undefined || capture.active !== state.active || capture.active.generation !== state.generation || !currentDiagram(capture.active) || state.snapshot?.workspace !== capture.workspace || currentStamp.revision !== capture.review.stamp.revision || currentStamp.inputKey !== capture.review.stamp.inputKey || currentStamp.generation !== capture.review.stamp.generation) {
-      report(chosen.ok ? { code: 'stale-gesture', message: 'This movement review is stale; the draft was retained.', recovery: 'Reload the diagram before applying it.', owner: 'workspace' } : chosen.error);
+    if (
+      !chosen.ok ||
+      selected === undefined ||
+      capture.active !== state.active ||
+      capture.active.generation !== state.generation ||
+      !currentDiagram(capture.active) ||
+      state.snapshot?.workspace !== capture.workspace ||
+      currentStamp.revision !== capture.review.stamp.revision ||
+      currentStamp.inputKey !== capture.review.stamp.inputKey ||
+      currentStamp.generation !== capture.review.stamp.generation
+    ) {
+      report(
+        chosen.ok
+          ? {
+              code: 'stale-gesture',
+              message: 'This movement review is stale; the draft was retained.',
+              recovery: 'Reload the diagram before applying it.',
+              owner: 'workspace',
+            }
+          : chosen.error,
+      );
       return;
     }
     if (capture.active.session.getSnapshot().routePreview?.gesture !== capture.intent.id) {
-      report({ code: 'invalid-edit', message: 'The inspected movement preview is no longer displayed.', recovery: 'Restore the preview or cancel this retained draft.', owner: 'workspace' });
+      report({
+        code: 'invalid-edit',
+        message: 'The inspected movement preview is no longer displayed.',
+        recovery: 'Restore the preview or cancel this retained draft.',
+        owner: 'workspace',
+      });
       return;
     }
     movementApplying = true;
-    update({ movementReview: { review: capture.review, optionId, phase: 'sending', requestId: capture.intent.id, document: capture.active.document }, status: 'Saving…' });
+    update({
+      movementReview: {
+        review: capture.review,
+        optionId,
+        phase: 'sending',
+        requestId: capture.intent.id,
+        document: capture.active.document,
+      },
+      status: 'Saving…',
+    });
     updateMutationAvailability();
     await submitFeasibleCanvas(capture.active, capture.intent, selected.changes, selected.preview);
   }
   function cancelMove(): void {
     const capture = movementCapture;
-    if (capture === null || movementApplying || (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')) {
-      report({ code: 'pending-request', message: 'This movement is already being saved; wait for confirmation before cancelling.', recovery: 'Check the retained request for its receipt.', owner: 'workspace' });
+    if (
+      capture === null ||
+      movementApplying ||
+      (state.movementReview?.phase !== 'review' && state.movementReview?.phase !== 'rejected')
+    ) {
+      report({
+        code: 'pending-request',
+        message: 'This movement is already being saved; wait for confirmation before cancelling.',
+        recovery: 'Check the retained request for its receipt.',
+        owner: 'workspace',
+      });
       return;
     }
     capture.active.session.dispatch({ kind: 'discard', id: capture.intent.id });

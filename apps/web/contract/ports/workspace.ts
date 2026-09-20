@@ -20,7 +20,7 @@ import type {
 } from '../records/owners.js';
 import type { ServiceClient } from './client.js';
 import type { EditPlanner } from '../records/editing.js';
-import type { MoveReview } from '../records/movement.js';
+import type { MoveOption, MoveReview } from '../records/movement.js';
 export interface WorkspaceInputs {
   history(input: unknown, direction: 'undo' | 'redo', id: string): Result<Request | null>;
   snapshot(
@@ -79,6 +79,11 @@ export interface WorkspaceBindings {
     intent: Extract<import('../records/owners.js').EditIntent, { kind: 'placement' }>,
     stamp: import('../records/owners.js').SceneStamp,
   ) => Result<MoveReview>;
+  readonly chooseMoveOption?: (
+    review: MoveReview,
+    optionId: string,
+    current: import('../records/owners.js').SceneStamp,
+  ) => Result<MoveOption>;
   readonly previewRoutes?: (
     document: RenderDocument,
     intent: import('../records/owners.js').EditIntent,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { language, value, create } from './fixtures.js';
+import { language, value, create, resources } from './fixtures.js';
 
 const source = `canvas 1
 collection @definitions "Definitions" {
@@ -50,5 +50,21 @@ describe('shared definition expressions', () => {
     const description = value(language.describe());
     expect(description.definitionSyntax).toBe('type @id "Label" = <expression>');
     expect(description.definitionEditing).toBe('full-source-replacement');
+  });
+
+  it('keeps collection-local definition aliases when expanding a recipe root', () => {
+    const expanded = value(language.expand({ source, namespace: 'new', resources }));
+    expect(expanded.collection.id).toBe('new');
+    expect(expanded.collection.definitions.map((item) => item.id)).toEqual(['actor', 'alias']);
+    expect(expanded.collection.objects[0]?.id).toBe('people');
+    expect(expanded.collection.objects[0]?.content[0]).toMatchObject({
+      kind: 'field',
+      type: { kind: 'definition', id: 'alias' },
+    });
+    expect(expanded.changes[0]).toEqual({ op: 'replace-document', value: expanded.collection });
+    expect(expanded.sourceMap).toEqual(expect.arrayContaining([
+      expect.objectContaining({ path: 'definitions.actor' }),
+      expect.objectContaining({ path: 'definitions.actor.expression' }),
+    ]));
   });
 });

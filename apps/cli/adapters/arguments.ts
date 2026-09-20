@@ -100,7 +100,6 @@ function operands(
   return fields(name, positionals[1] ?? '', flags);
 }
 /** Value validation returns named input errors instead of allowing NaN or negative revisions into preconditions. */
-// eslint-disable-next-line sonarjs/cognitive-complexity -- command flag validation intentionally keeps all pre-I/O rejection in one boundary.
 function fields(
   name: Command['name'],
   target: string,
@@ -113,27 +112,15 @@ function fields(
     readonly profile?: string;
   },
 ): Result<Command> {
-  if (flags.profile !== undefined && name !== 'profile-lint')
-    return failure('invalid-arguments', `--profile is only valid with profile lint.`);
-  if (name === 'profile-lint' && flags.profile === undefined)
-    return failure('invalid-arguments', `profile lint requires --profile build-spec@1.`);
-  if (
-    name !== 'profile-scaffold' &&
-    name !== 'recipe-admit' &&
-    (flags.preset?.id !== undefined || flags.preset?.title !== undefined)
-  )
-    return failure(
-      'invalid-arguments',
-      `--id and --title are only valid with profile scaffold or recipe admit.`,
-    );
-  const selected = ['create', 'replace', 'patch'].includes(name) ? name : flags.mode;
-  const checked = mode.safeParse(selected);
-  if (!checked.success) return failure('invalid-mode', 'Mode must be create, replace or patch');
+  const profileFlags = profileFlagFailure(name, flags);
+  if (profileFlags !== undefined) return profileFlags;
+  const checked = validatedMode(name, flags.mode);
+  if (!checked.ok) return checked;
   return versioned(
     {
       name,
       target,
-      mode: checked.data,
+      mode: checked.value,
       request: flags.request ?? null,
       output: flags.out ?? null,
       preset: flags.preset,
@@ -141,6 +128,14 @@ function fields(
     },
     flags.revision,
   );
+}
+
+function validatedMode(name: Command['name'], fallback: string): Result<Command['mode']> {
+  const selected = ['create', 'replace', 'patch'].includes(name) ? name : fallback;
+  const checked = mode.safeParse(selected);
+  return checked.success
+    ? { ok: true, value: checked.data }
+    : failure('invalid-mode', 'Mode must be create, replace or patch');
 }
 /** A revision is optional for read/create commands; semantic admission makes it mandatory for existing diagram changes. */
 function versioned(command: Omit<Command, 'revision'>, input: string | undefined): Result<Command> {
@@ -152,14 +147,53 @@ function versioned(command: Omit<Command, 'revision'>, input: string | undefined
 }
 
 /** Help is a local command and never needs a running workspace. */
-// eslint-disable-next-line sonarjs/cognitive-complexity -- operand normalization has three explicit command families.
 function commandOperands(
   help: boolean | undefined,
   positionals: readonly string[],
 ): readonly string[] {
   if (help) return ['help'];
-  if (['theme', 'recipe'].includes(positionals[0] ?? ''))
-    return [`${positionals[0]}-${positionals[1]}`, ...positionals.slice(2)];
-  if (positionals[0] === 'profile') return [`profile-${positionals[1]}`, ...positionals.slice(2)];
+  const family = { theme: 'theme', recipe: 'recipe', profile: 'profile' }[positionals[0] ?? ''];
+  if (family !== undefined) return [`${family}-${positionals[1]}`, ...positionals.slice(2)];
   return positionals;
+}
+
+function profileFlagFailure(
+  name: Command['name'],
+  flags: { readonly preset?: Command['preset']; readonly profile?: string },
+): Result<Command> | undefined {
+  const rules = [
+    profileFlagMessage(name, flags),
+    profileRequirementMessage(name, flags),
+    scaffoldFlagMessage(name, flags),
+  ];
+  const message = rules.find((rule) => rule !== undefined);
+  return message === undefined ? undefined : failure('invalid-arguments', message.trim());
+}
+
+function profileFlagMessage(
+  name: Command['name'],
+  flags: { readonly profile?: string },
+): string | undefined {
+  return flags.profile !== undefined && name !== 'profile-lint'
+    ? '--profile is only valid with profile lint.'
+    : undefined;
+}
+
+function profileRequirementMessage(
+  name: Command['name'],
+  flags: { readonly profile?: string },
+): string | undefined {
+  return name === 'profile-lint' && flags.profile === undefined
+    ? 'profile lint requires --profile build-spec@1.'
+    : undefined;
+}
+
+function scaffoldFlagMessage(
+  name: Command['name'],
+  flags: { readonly preset?: Command['preset'] },
+): string | undefined {
+  const hasScaffoldFlags = flags.preset?.id !== undefined || flags.preset?.title !== undefined;
+  return name !== 'profile-scaffold' && name !== 'recipe-admit' && hasScaffoldFlags
+    ? '--id and --title are only valid with profile scaffold or recipe admit.'
+    : undefined;
 }

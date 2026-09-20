@@ -46,46 +46,132 @@ function displayDescriptor(): string {
   ].join('\n');
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity -- local profile commands share one strict, side-effect-bounded dispatch boundary.
 export async function executeProfile(
   command: Command,
   dependencies: ProfileDependencies,
 ): Promise<Result<string>> {
-  if (command.name === 'profile-describe') {
-    if (command.target !== buildSpecProfile.id) return profileError(command.target);
-    return { ok: true, value: displayDescriptor() };
-  }
-  if (command.name === 'profile-scaffold') {
-    if (command.target !== buildSpecProfile.id) return profileError(command.target);
-    const id = validText(command.preset?.id, 'id');
-    if (!id.ok) return id;
-    const title = validText(command.preset?.title, 'title');
-    if (!title.ok) return title;
-    if (!/^[-a-zA-Z0-9_]+$/.test(id.value))
-      return failure('invalid-arguments', 'Scaffold --id must be a simple collection ID.');
-    const source = scaffoldBuildSpec(id.value, title.value);
-    if (command.output === null) return { ok: true, value: source };
-    const saved = await dependencies.files.output(command.output, source);
-    if (!saved.ok) return saved;
-    return { ok: true, value: `Written: ${command.output}` };
-  }
-  if (command.name === 'profile-lint') {
-    if (command.profile !== buildSpecProfile.id) return profileError(command.profile ?? 'missing');
-    const source = await dependencies.files.source(command.target);
-    if (!source.ok) return source;
-    const parsed = dependencies.semantic.profileParse(source.value);
-    if (!parsed.ok) return parsed;
-    const result = lintBuildSpec(parsed.value);
-    if (!result.valid) {
-      return failure(
+  const handler = profileHandlers[command.name];
+  return handler === undefined
+    ? failure('invalid-command', `Unsupported profile command: ${command.name}`)
+    : handler(command, dependencies);
+}
+
+type ProfileHandler = (
+  command: Command,
+  dependencies: ProfileDependencies,
+) => Promise<Result<string>>;
+
+const profileHandlers: Partial<Record<Command['name'], ProfileHandler>> = {
+  'profile-describe': describeProfile,
+  'profile-scaffold': scaffoldProfile,
+  'profile-lint': lintProfile,
+};
+
+function describeProfile(
+  command: Command,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  void dependencies;
+  const result: Result<string> =
+    command.target === buildSpecProfile.id
+      ? { ok: true, value: displayDescriptor() }
+      : profileError(command.target);
+  return Promise.resolve(result);
+}
+
+async function scaffoldProfile(
+  command: Command,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  const profile = requireProfile(command.target);
+  return profile.ok ? scaffoldWithProfile(command, dependencies) : Promise.resolve(profile);
+}
+
+function scaffoldWithProfile(
+  command: Command,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  const id = validText(command.preset?.id, 'id');
+  return id.ok ? scaffoldWithId(command, dependencies, id.value) : Promise.resolve(id);
+}
+
+function scaffoldWithId(
+  command: Command,
+  dependencies: ProfileDependencies,
+  id: string,
+): Promise<Result<string>> {
+  const title = validText(command.preset?.title, 'title');
+  return title.ok ? writeScaffold(command, dependencies, id, title.value) : Promise.resolve(title);
+}
+
+async function writeScaffold(
+  command: Command,
+  dependencies: ProfileDependencies,
+  id: string,
+  title: string,
+): Promise<Result<string>> {
+  const validId = /^[-a-zA-Z0-9_]+$/.test(id);
+  if (!validId)
+    return Promise.resolve(
+      failure('invalid-arguments', 'Scaffold --id must be a simple collection ID.'),
+    );
+  const source = scaffoldBuildSpec(id, title);
+  return command.output === null
+    ? Promise.resolve({ ok: true, value: source })
+    : writeScaffoldFile(command.output, source, dependencies);
+}
+
+async function writeScaffoldFile(
+  output: string,
+  source: string,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  const saved = await dependencies.files.output(output, source);
+  return saved.ok ? { ok: true, value: `Written: ${output}` } : saved;
+}
+
+async function lintProfile(
+  command: Command,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  const profile = requireProfile(command.profile ?? 'missing');
+  return profile.ok ? lintSourceFile(command.target, dependencies) : Promise.resolve(profile);
+}
+
+async function lintSourceFile(
+  target: string,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  const source = await dependencies.files.source(target);
+  return source.ok ? parseProfileSource(source.value, dependencies) : source;
+}
+
+function parseProfileSource(
+  source: string,
+  dependencies: ProfileDependencies,
+): Promise<Result<string>> {
+  const parsed = dependencies.semantic.profileParse(source);
+  return parsed.ok ? Promise.resolve(lintParsedProfile(parsed.value)) : Promise.resolve(parsed);
+}
+
+type ParsedProfile =
+  ReturnType<SemanticInputs['profileParse']> extends Result<infer Value> ? Value : never;
+
+function lintParsedProfile(source: ParsedProfile): Result<string> {
+  const result = lintBuildSpec(source);
+  return result.valid
+    ? { ok: true, value: result.summary }
+    : failure(
         'profile-structure',
         `${result.summary}\n${result.findings.map(findingLine).join('\n')}`,
         'Fix the reported structural findings and rerun profile lint.',
       );
-    }
-    return { ok: true, value: result.summary };
-  }
-  return failure('invalid-command', `Unsupported profile command: ${command.name}`);
+}
+
+function requireProfile(value: string): Result<true> {
+  return value === buildSpecProfile.id
+    ? { ok: true, value: true }
+    : failure('unknown-profile', `Unknown profile: ${value}`, 'Use build-spec@1.');
 }
 
 export function isProfileCommand(command: Command): boolean {

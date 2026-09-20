@@ -44,33 +44,39 @@ function sourcePlacement(
   };
 }
 
-function pinnedSections(document: RenderDocument): readonly Section[] {
+function originPlacement(prior: Placement | undefined, x: number, y: number): Placement {
+  return prior === undefined ? { x, y, locked: false } : { ...prior, x, y };
+}
+
+function pinnedSections(
+  document: RenderDocument,
+  intent: PlacementIntent,
+): readonly Section[] {
+  const affected = new Set(
+    intent.entries
+      .filter((entry) => entry.target.kind === 'node')
+      .map((entry) => ('section' in entry.target ? entry.target.section : '')),
+  );
   return document.collection.sections.map((source) => {
     const scene = document.scene.sections.find((item) => item.id === source.id);
     if (scene === undefined) throw new Error('captured section missing');
-    if (source.mode !== 'modules') {
-      return {
-        ...source,
-        placement: sourcePlacement(
-          source.placement,
-          scene.origin.x,
-          scene.origin.y,
-          source.placement?.width ?? scene.box.width,
-          source.placement?.height ?? scene.box.height,
-        ),
-      };
-    }
+    const sectionPlacement = originPlacement(source.placement, scene.origin.x, scene.origin.y);
+    if (!affected.has(source.id) || source.mode !== 'modules')
+      return { ...source, placement: sectionPlacement };
 
     const nodes = new Map(scene.nodes.map((node) => [node.id, node]));
     const groups = source.groups.map((group) => {
       const node = scene.nodes.find((candidate) => candidate.measured.groupId === group.id);
       if (node === undefined) throw new Error('captured group missing');
+      const parent = node.parent === null ? undefined : nodes.get(node.parent);
+      if (node.parent !== null && parent === undefined)
+        throw new Error('captured group parent missing');
       return {
         ...group,
         placement: sourcePlacement(
           group.placement,
-          node.box.x - (node.parent === null ? 0 : (nodes.get(node.parent)?.box.x ?? (() => { throw new Error('captured group parent missing'); })())),
-          node.box.y - (node.parent === null ? 0 : (nodes.get(node.parent)?.box.y ?? (() => { throw new Error('captured group parent missing'); })())),
+          node.box.x - (parent?.box.x ?? 0),
+          node.box.y - (parent?.box.y ?? 0),
           node.box.width,
           node.box.height,
         ),
@@ -84,7 +90,8 @@ function pinnedSections(document: RenderDocument): readonly Section[] {
       );
       if (node === undefined) throw new Error('captured appearance missing');
       const parent = node.parent === null ? undefined : nodes.get(node.parent);
-      if (node.parent !== null && parent === undefined) throw new Error('captured appearance parent missing');
+      if (node.parent !== null && parent === undefined)
+        throw new Error('captured appearance parent missing');
       return {
         ...appearance,
         placement: sourcePlacement(
@@ -96,19 +103,7 @@ function pinnedSections(document: RenderDocument): readonly Section[] {
         ),
       };
     });
-
-    return {
-      ...source,
-      placement: sourcePlacement(
-        source.placement,
-        scene.origin.x,
-        scene.origin.y,
-        scene.box.width,
-        scene.box.height,
-      ),
-      groups,
-      appearances,
-    };
+    return { ...source, placement: sectionPlacement, groups, appearances };
   });
 }
 
@@ -116,7 +111,7 @@ function plannedSections(
   document: RenderDocument,
   intent: PlacementIntent,
 ): readonly Section[] {
-  const frozen = pinnedSections(document);
+  const frozen = pinnedSections(document, intent);
   const pinnedDocument = {
     ...document,
     collection: { ...document.collection, sections: frozen },
@@ -179,6 +174,11 @@ function normalizedEntries(
     byKey.set(key, entry);
   }
   const entries = [...byKey.values()];
+  for (const entry of entries) {
+    if (entry.target.kind !== 'node') continue;
+    if (byKey.has(targetKey({ kind: 'section', id: entry.target.section })))
+      return failure('invalid-edit', 'Select either a section or one of its nodes, not both');
+  }
   for (const entry of entries) {
     if (entry.target.kind !== 'node') continue;
     const section = document.scene.sections.find((item) => item.id === ('section' in entry.target ? entry.target.section : ''));

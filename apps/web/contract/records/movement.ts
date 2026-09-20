@@ -30,7 +30,7 @@ export interface MoveOption {
   readonly section?: string;
   readonly changes: readonly Change[];
   readonly geometryChanges: readonly GeometryChange[];
-  readonly preview?: GeometryPreview;
+  readonly preview: GeometryPreview;
   readonly reason?: string;
 }
 

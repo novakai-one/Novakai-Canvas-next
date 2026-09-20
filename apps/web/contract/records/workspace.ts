@@ -5,6 +5,7 @@ import type { SourceView } from './source.js';
 import type { Collection, Snapshot, RenderDocument, Canvas, SessionStore } from './owners.js';
 import type { Submission } from './submission.js';
 import type { Diagnostic } from '../errors.js';
+import type { MoveReview } from './movement.js';
 /** UI owns form drafts and selected collection; committed records are immutable Authoring snapshots. */
 export interface ActiveDiagram {
   readonly generation: string;
@@ -27,6 +28,10 @@ export type CollectionSwitch =
       readonly targetId: string;
       readonly problem: Diagnostic;
     };
+export interface MovementReviewState {
+  readonly review: MoveReview;
+  readonly optionId: string;
+}
 export interface WorkspaceView extends SourceView {
   readonly history?: {
     readonly status: import('@novakai/canvas-authoring').HistoryStatus | null;
@@ -43,6 +48,7 @@ export interface WorkspaceView extends SourceView {
   readonly connected: boolean;
   readonly busy: boolean;
   readonly pending: readonly Submission[];
+  readonly movementReview: MovementReviewState | null;
 }
 /** UI actions are intentions; the runtime binds server mutations and Canvas effects at composition. */
 export interface WorkspaceController {
@@ -69,5 +75,7 @@ export interface WorkspaceController {
   retryRequest(id: string): Promise<void>;
   create(title: string): Promise<void>;
   report(error: Diagnostic): void;
+  applyMove(optionId: string): Promise<void>;
+  cancelMove(): void;
   dispose(): void;
 }

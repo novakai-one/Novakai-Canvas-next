@@ -49,6 +49,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     connected: false,
     busy: false,
     pending: [],
+    movementReview: null,
     history: { status: null, busy: false },
     ...source.getSnapshot(),
   };
@@ -62,6 +63,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
   let historyGate = false;
+  let movementCapture: { active: ActiveDiagram; intent: Extract<EditIntent, { kind: 'placement' }>; review: import('../contract/records/movement.js').MoveReview } | null = null;
+  let movementApplying = false;
   let historyRead = 0;
   let historyRefreshing = false;
   let historySequence = 0;
@@ -557,6 +560,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** A busy client retains subsequent gestures as recoverable drafts; no second browser request is submitted concurrently. */
   async function editCanvas(intent: EditIntent): Promise<void> {
+    if (movementCapture !== null) { report({ code: 'pending-request', message: 'Review or cancel the current movement before starting another.', recovery: 'Apply or cancel the retained movement review.', owner: 'workspace' }); return; }
     const active = state.active;
     if (active === null) return;
     if (
@@ -573,6 +577,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         active.session.dispatch({ kind: 'reject', id: intent.id, message: reviewed.error.message });
         report(reviewed.error);
         return;
+      }
+      if (reviewed.value.options.some((option) => option.kind === 'expand' || option.kind === 'rearrange')) {
+        const option = reviewed.value.options.find((item) => item.kind === 'expand' || item.kind === 'rearrange');
+        if (option !== undefined) {
+          movementCapture = { active, intent, review: reviewed.value };
+          update({ movementReview: { review: reviewed.value, optionId: option.id }, status: 'Review movement options' });
+          active.session.dispatch({ kind: 'preview-routes', id: intent.id, ...option.preview });
+          return;
+        }
       }
       if (reviewed.value.options.length !== 1) {
         const error: Diagnostic = {
@@ -711,7 +724,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function handleSubmitFailure(error: Diagnostic, gesture: string | null): void {
     report(error);
     void refresh();
-    if (gesture !== null) rejectGesture(gesture, error.message);
+    if (gesture !== null) { if (movementCapture?.intent.id === gesture) movementApplying = false; rejectGesture(gesture, error.message); }
   }
   function rejectGesture(gesture: string, message: string): void {
     state.active?.session.dispatch({ kind: 'reject', id: gesture, message });
@@ -721,6 +734,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     source.confirmed(submission, receipt);
     update({ status: editStatus() });
     confirmGesture(submission.gesture);
+    if (movementCapture !== null && submission.gesture === movementCapture.intent.id) { movementCapture = null; movementApplying = false; update({ movementReview: null }); }
     if (submission.request.intent.kind !== 'change') void finishHistory(receipt.sequence);
     else void refresh();
   }
@@ -1033,6 +1047,22 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         item.revision === active.document.collection.revision,
     );
   }
+  async function applyMove(optionId: string): Promise<void> {
+    const capture = movementCapture;
+    if (capture === null || movementApplying || state.movementReview === null || state.movementReview.optionId !== optionId) return;
+    if (state.pending.some((item) => item.state !== 'rejected')) { report({ code: 'pending-request', message: 'Wait for the current operation to finish', recovery: 'Your movement draft is retained.', owner: 'workspace' }); return; }
+    const selected = capture.review.options.find((item) => item.id === optionId);
+    if (selected === undefined || capture.active !== state.active || capture.active.session.getSnapshot().stamp.revision !== capture.review.stamp.revision) { report({ code: 'stale-gesture', message: 'This movement review is stale; the draft was retained.', recovery: 'Reload the diagram before applying it.', owner: 'workspace' }); return; }
+    movementApplying = true;
+    submitFeasibleCanvas(capture.active, capture.intent, selected.changes, selected.preview);
+  }
+  function cancelMove(): void {
+    const capture = movementCapture;
+    if (capture !== null) capture.active.session.dispatch({ kind: 'discard', id: capture.intent.id });
+    movementCapture = null;
+    movementApplying = false;
+    update({ movementReview: null, status: 'Movement cancelled', problem: null });
+  }
   return {
     navigateHistory,
     inspector,
@@ -1063,6 +1093,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     retryRequest,
     create,
     report,
+    applyMove,
+    cancelMove,
     dispose: () => {
       disposed = true;
       removeHistoryKeys();

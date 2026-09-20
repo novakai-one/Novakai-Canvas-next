@@ -6,6 +6,7 @@ import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js'
 import type { PanelState } from '../../contract/panel-types.js';
 import type { WorkspaceController, WorkspaceView } from '../../contract/records/workspace.js';
 import styles from './WorkspaceShell.module.css';
+import { MovementReview } from './MovementReview.js';
 /** The work surface is the primary content; chrome uses stable injected sections and shared design tokens. */
 export function createWorkspaceShell(slots: ChromeSlots): ComponentType<WorkspaceProps> {
   /** Mount owns subscription lifetime. Selection and panning remain entirely inside the Canvas session. */
@@ -245,6 +246,7 @@ function CanvasSlot({
         />
       )}
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}
+      <MovementReview controller={controller} view={view} />
     </main>
   );
 }

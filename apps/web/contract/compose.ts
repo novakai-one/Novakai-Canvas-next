@@ -85,7 +85,7 @@ import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
 import { planCanvasEdit } from './api.js';
-import { buildMoveReview } from '../core/editing/movement.js';
+import { buildMoveReview, buildExpandOption } from '../core/editing/movement.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import type { ServiceClient } from './ports/client.js';
@@ -270,13 +270,20 @@ function controller(
       }),
     sessions: createCanvasSessions(canvas, () => viewport(element)),
     edits: { plan: planCanvasEdit },
-    moveReview: (document, intent, stamp) =>
-      buildMoveReview(intent, {
+    moveReview: (document, intent, stamp) => {
+      const context = {
         document,
         stamp,
-        preview: (previewDocument, previewIntent, changes) =>
+        preview: (previewDocument: typeof document, previewIntent: typeof intent, changes: readonly import('./records/owners.js').Change[]) =>
           previewModuleRoutes(previewDocument, previewIntent, changes),
-      }),
+      };
+      const move = buildMoveReview(intent, context);
+      if (!move.ok || move.value.options.length > 0) return move;
+      const expanded = buildExpandOption(intent, context);
+      if (!expanded.ok) return expanded;
+      if (expanded.value === null) return move;
+      return { ok: true as const, value: { ...move.value, options: [expanded.value], selectedOption: expanded.value.id } };
+    },
     previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>
       createSubmissionSession({

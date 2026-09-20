@@ -16,6 +16,9 @@ export const commandName = z.enum([
   'theme-admit',
   'recipe-admit',
   'recipe-instantiate',
+  'profile-describe',
+  'profile-scaffold',
+  'profile-lint',
 ]);
 export type CommandName = z.infer<typeof commandName>;
 export interface Command {
@@ -34,6 +37,7 @@ export interface Command {
         readonly namespace?: string;
       }
     | undefined;
+  readonly profile?: string | undefined;
 }
 export interface CliOptions {
   readonly command: Command;

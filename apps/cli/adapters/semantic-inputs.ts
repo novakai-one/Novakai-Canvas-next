@@ -192,6 +192,17 @@ function receiptReadout(input: unknown, request: string): Result<string> {
 /** All CLI semantic interpretation uses owning capability contracts; host output remains a small readable vocabulary. */
 export function createSemanticInputs(language: Pick<Language, 'parse'>): SemanticInputs {
   return {
+    profileParse: (source) => {
+      const result = language.parse(source);
+      if (!result.ok)
+        return failure(
+          'invalid-source',
+          'Language rejected this source',
+          'Correct the named source diagnostics and retry.',
+          { code: 'validation-failed', diagnostics: result.error.diagnostics },
+        );
+      return { ok: true, value: result.value };
+    },
     snapshot,
     checkedRequest,
     requests: (source) => {

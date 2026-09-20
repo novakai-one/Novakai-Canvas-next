@@ -15,6 +15,9 @@ canvas recipe instantiate PIN           Requires --namespace ID; --out FILE emit
 canvas apply REQUEST_ID                 Apply a retained preview
 canvas receipt REQUEST_ID               Check a committed receipt
 canvas retry REQUEST_ID                 Reconcile, then retry the identical retained request
+canvas profile describe build-spec@1    Show the build-spec conventions
+canvas profile scaffold build-spec@1 --id ID --title "Title" [--out FILE]
+canvas profile lint FILE --profile build-spec@1
 
 Options: --server URL --workspace DIR --request ID --out FILE
 Modes: create, replace, patch. Agents never need JSON coordinates.

@@ -11,6 +11,7 @@ import { createRequestFiles } from '../adapters/files.js';
 import { createTransport } from '../adapters/transport.js';
 import { createSemanticInputs } from '../adapters/semantic-inputs.js';
 import { executeCommand, usage } from './api.js';
+import { executeProfile, isProfileCommand } from '../core/commands/profiles.js';
 import type { Diagnostic, Result } from './errors.js';
 import type { HeadlessFailure, HeadlessOptions, HeadlessReport } from './records/headless.js';
 import { failure } from './errors.js';
@@ -54,7 +55,20 @@ async function run(options: import('./records/command.js').CliOptions): Promise<
 /** Local help needs no infrastructure; authoring commands bind their real runtime before executing. */
 function dispatch(options: import('./records/command.js').CliOptions): Promise<Result<string>> {
   if (options.command.name === 'help') return Promise.resolve({ ok: true, value: usage });
+  if (isProfileCommand(options.command)) return runProfile(options);
   return run(options);
+}
+
+/** Profile discovery/scaffold/lint bind only the Language parser and local files. */
+async function runProfile(
+  options: import('./records/command.js').CliOptions,
+): Promise<Result<string>> {
+  const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
+  const semantic = createSemanticInputs(language);
+  return executeProfile(options.command, {
+    files: createRequestFiles(resolve(options.workspaceDirectory, 'requests')),
+    semantic,
+  });
 }
 
 /** Headless export binds the same theme grammar and service owners without starting an HTTP server. */

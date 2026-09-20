@@ -4,6 +4,7 @@ import type { CliDependencies } from '../../contract/ports/runtime.js';
 import type { Result } from '../../contract/errors.js';
 import { admitPreset, instantiateRecipe } from './presets.js';
 import { author, retry } from './author.js';
+import { executeProfile } from './profiles.js';
 /** Read failures preserve the service diagnostic; successful payloads still pass their owner-specific readout. */
 async function query(
   path: string,
@@ -24,6 +25,12 @@ export async function execute(
   command: Command,
   dependencies: CliDependencies,
 ): Promise<Result<string>> {
+  if (
+    command.name === 'profile-describe' ||
+    command.name === 'profile-scaffold' ||
+    command.name === 'profile-lint'
+  )
+    return executeProfile(command, { files: dependencies.files, semantic: dependencies.semantic });
   const operations: Record<CommandName, () => Promise<Result<string>>> = {
     'theme-admit': () => admitPreset(command, dependencies),
     'recipe-admit': () => admitPreset(command, dependencies),
@@ -52,6 +59,12 @@ export async function execute(
     preview: () => author(command, dependencies),
     retry: () => retry(command, dependencies),
     apply: () => retry(command, dependencies),
+    'profile-describe': () =>
+      executeProfile(command, { files: dependencies.files, semantic: dependencies.semantic }),
+    'profile-scaffold': () =>
+      executeProfile(command, { files: dependencies.files, semantic: dependencies.semantic }),
+    'profile-lint': () =>
+      executeProfile(command, { files: dependencies.files, semantic: dependencies.semantic }),
   };
   const outcome = await operations[command.name]();
   if (!outcome.ok) return outcome;

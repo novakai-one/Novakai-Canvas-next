@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { parseArgs } from 'node:util';
 import { commandName } from '../contract/records/command.js';
 import type { CliOptions, Command } from '../contract/records/command.js';
@@ -32,6 +33,7 @@ export function readArguments(
         family: { type: 'string' },
         title: { type: 'string' },
         namespace: { type: 'string' },
+        profile: { type: 'string' },
       },
     });
     const command = readCommand(commandOperands(parsed.values.help, parsed.positionals), {
@@ -72,14 +74,12 @@ function readCommand(
     readonly mode: string;
     readonly request?: string;
     readonly out?: string;
+    readonly profile?: string;
   },
 ): Result<Command> {
   const parsed = commandName.safeParse(positionals[0]);
   if (!parsed.success)
-    return failure(
-      'invalid-command',
-      'Choose describe, list, read, inspect, create, replace, patch, preview, receipt, retry or apply',
-    );
+    return failure('invalid-command', 'Choose a supported canvas or profile command');
   return operands(parsed.data, positionals, flags);
 }
 /** Operands cannot be silently ignored: commands accept exactly the arguments shown in their help vocabulary. */
@@ -92,6 +92,7 @@ function operands(
     readonly mode: string;
     readonly request?: string;
     readonly out?: string;
+    readonly profile?: string;
   },
 ): Result<Command> {
   const count = ['help', 'describe', 'list'].includes(name) ? 1 : 2;
@@ -109,8 +110,22 @@ function fields(
     readonly mode: string;
     readonly request?: string;
     readonly out?: string;
+    readonly profile?: string;
   },
 ): Result<Command> {
+  if (flags.profile !== undefined && name !== 'profile-lint')
+    return failure('invalid-arguments', `--profile is only valid with profile lint.`);
+  if (name === 'profile-lint' && flags.profile === undefined)
+    return failure('invalid-arguments', `profile lint requires --profile build-spec@1.`);
+  if (
+    name !== 'profile-scaffold' &&
+    name !== 'recipe-admit' &&
+    (flags.preset?.id !== undefined || flags.preset?.title !== undefined)
+  )
+    return failure(
+      'invalid-arguments',
+      `--id and --title are only valid with profile scaffold or recipe admit.`,
+    );
   const selected = ['create', 'replace', 'patch'].includes(name) ? name : flags.mode;
   const checked = mode.safeParse(selected);
   if (!checked.success) return failure('invalid-mode', 'Mode must be create, replace or patch');
@@ -122,6 +137,7 @@ function fields(
       request: flags.request ?? null,
       output: flags.out ?? null,
       preset: flags.preset,
+      profile: flags.profile,
     },
     flags.revision,
   );
@@ -143,5 +159,6 @@ function commandOperands(
   if (help) return ['help'];
   if (['theme', 'recipe'].includes(positionals[0] ?? ''))
     return [`${positionals[0]}-${positionals[1]}`, ...positionals.slice(2)];
+  if (positionals[0] === 'profile') return [`profile-${positionals[1]}`, ...positionals.slice(2)];
   return positionals;
 }

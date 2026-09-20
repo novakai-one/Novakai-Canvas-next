@@ -1,6 +1,5 @@
 import { createServer } from 'node:http';
 import type { IncomingMessage, ServerResponse, Server } from 'node:http';
-import { browserCookieName } from '../contract/records/http.js';
 import type { HttpMetadata } from '../contract/records/http.js';
 import type { Caller } from '../contract/records/http.js';
 import type { LocalServer, ServerBindings, ServerOptions } from '../contract/records/server.js';
@@ -97,7 +96,7 @@ function establishBrowserAccess(exchange: Exchange, bindings: ServerBindings): R
   if (!navigation.ok) return navigation;
   exchange.response.setHeader(
     'Set-Cookie',
-    `${browserCookieName}=${bindings.security.browserSession}; HttpOnly; SameSite=Strict; Path=/`,
+    `${bindings.admission.cookieName}=${bindings.security.browserSession}; HttpOnly; SameSite=Strict; Path=/`,
   );
   return { ok: true, value: undefined };
 }

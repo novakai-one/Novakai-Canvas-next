@@ -5,7 +5,7 @@ import type {
   HttpSecurity,
   MutationOwner,
 } from '../../contract/records/http.js';
-import { browserCookieName } from '../../contract/records/http.js';
+import { sessionCookieName } from './session-cookie.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
 import type { Request } from '../../contract/records/owners.js';
@@ -34,8 +34,8 @@ function admitNavigation(metadata: HttpMetadata, security: HttpSecurity): Result
   return { ok: true, value: undefined };
 }
 /** Duplicate cookies are ambiguous and rejected instead of accepting a prefix or a later injected value. */
-function sessionCookie(header: string): string {
-  const prefix = `${browserCookieName}=`;
+function sessionCookie(header: string, host: string): string {
+  const prefix = `${sessionCookieName(host)}=`;
   const values = header
     .split(';')
     .map((item) => item.trim())
@@ -49,7 +49,7 @@ function browserCaller(metadata: HttpMetadata, security: HttpSecurity): Result<C
   const allowed =
     metadata.site === 'same-origin' &&
     trustedOrigin &&
-    security.equal(sessionCookie(metadata.cookie), security.browserSession);
+    security.equal(sessionCookie(metadata.cookie, security.host), security.browserSession);
   if (!allowed)
     return failure('unauthorized', 'session', 'Reload this workspace from its loopback address');
   return { ok: true, value: { id: 'human:browser', kind: 'human' } };
@@ -102,6 +102,7 @@ function plannerRequest(request: Request, caller: Caller): Result<Request> {
 /** Bind a pure ingress policy. Hosts own token storage and constant-time equality; failed admission is safe to correct and retry. */
 export function createAdmission(security: HttpSecurity, owner: MutationOwner): HttpAdmission {
   return {
+    cookieName: sessionCookieName(security.host),
     bootstrap: (metadata) => bootstrap(metadata, security),
     authenticate: (metadata) => authenticate(metadata, security),
     mutation: (input, caller) => mutation(input, caller, owner),

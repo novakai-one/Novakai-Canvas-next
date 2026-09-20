@@ -31,7 +31,7 @@ export function createLibraryReader(): LibraryReader {
             text: filters.text,
             archived: filters.archived,
             sort: filters.sort,
-            kinds: ['collection', 'section', 'object'],
+            kinds: ['collection'],
             limit: 50,
             ...folderFilter(filters.folder),
             ...cursorFilter(cursor),

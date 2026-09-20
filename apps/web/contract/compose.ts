@@ -79,6 +79,7 @@ import { createAddTools } from '../adapters/react/AddTools.js';
 import { createRequestRecovery } from '../adapters/react/RequestRecovery.js';
 import { createMovementReview } from '../adapters/react/MovementReview.js';
 import { createSourceEditor } from '../adapters/react/SourceEditor.js';
+import { createExportPanel } from '../adapters/react/ExportPanel.js';
 import { createObjectEditor } from '../adapters/react/ObjectEditor.js';
 import { createContentEditor } from '../adapters/react/ContentEditor.js';
 import { descendantId } from '@novakai/canvas-model';
@@ -170,6 +171,7 @@ function featureSections(
     { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
     { tab: 'browse', id: 'sections', title: 'Diagrams', Content: createSectionNavigator(design) },
     { tab: 'browse', id: 'objects', title: 'Objects', Content: ObjectOutline },
+    { tab: 'browse', id: 'export', title: 'Export', Content: createExportPanel(design) },
     {
       tab: 'inspect',
       id: 'connection',

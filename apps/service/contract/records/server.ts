@@ -38,6 +38,8 @@ export interface HttpIo {
 export interface StaticFile {
   readonly bytes: Uint8Array;
   readonly mediaType: string;
+  readonly filename?: string;
+  readonly headers?: Readonly<Record<string, string>>;
 }
 export interface StaticFiles {
   read(path: string): Promise<Result<StaticFile>>;
@@ -63,6 +65,10 @@ export interface RouterBindings {
     describe(): unknown;
     print(collection: unknown, scope?: Scope): WireReadout;
   };
+  readonly exporter?: (
+    input: unknown,
+    signal: AbortSignal,
+  ) => Promise<import('./protocol.js').RouteOutcome>;
 }
 /** Language diagnostics use an array, so this adapter translates them into the single transport diagnostic. */
 export type WireReadout = Result<unknown>;

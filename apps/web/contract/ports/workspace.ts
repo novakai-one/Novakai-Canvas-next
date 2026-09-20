@@ -66,7 +66,7 @@ export interface DraftRetention {
   remove(key: string): Result<void>;
 }
 export interface WorkspaceBindings {
-  readonly client: Pick<ServiceClient, 'get' | 'changes'>;
+  readonly client: Pick<ServiceClient, 'get' | 'changes'> & Partial<Pick<ServiceClient, 'bytes'>>;
   readonly navigation: WorkspaceNavigation;
   readonly inputs: Pick<
     WorkspaceInputs,

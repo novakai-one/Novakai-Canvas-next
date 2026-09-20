@@ -31,6 +31,7 @@ import type {
 } from '../contract/records/owners.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
 import type { RelationshipKind } from '@novakai/canvas-model';
+import type { BinaryResponse } from '../contract/ports/client.js';
 import { chooseMoveOption as chooseReviewedMoveOption } from '../contract/api.js';
 
 const allRelationshipKinds: readonly RelationshipKind[] = [
@@ -2517,6 +2518,18 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     update({ movementReview: null, status: 'Movement cancelled', problem: null });
     updateMutationAvailability();
   }
+  async function exportArtifact(input: unknown): Promise<Result<BinaryResponse>> {
+    if (bindings.client.bytes === undefined)
+      return {
+        ok: false,
+        error: {
+          code: 'export-unavailable',
+          message: 'Export is unavailable in this service session.',
+          recovery: 'Reconnect to the workspace and try again.',
+        },
+      };
+    return bindings.client.bytes('/api/v1/export', input);
+  }
   return {
     navigateHistory,
     inspector,
@@ -2557,6 +2570,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     editConnection,
     applyConnection,
     cancelConnection,
+    exportArtifact,
     report,
     applyMove,
     chooseMoveOption,

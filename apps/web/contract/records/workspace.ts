@@ -10,6 +10,7 @@ import type { AddDiagramDraft, AddGroupDraft, AddObjectDraft, CreationView } fro
 import type { ConnectionDraft, ConnectionEdit } from './connection.js';
 import type { Receipt } from './owners.js';
 import type { Result } from '../errors.js';
+import type { BinaryResponse } from '../ports/client.js';
 /** UI owns form drafts and selected collection; committed records are immutable Authoring snapshots. */
 export interface ActiveDiagram {
   readonly generation: string;
@@ -93,6 +94,7 @@ export interface WorkspaceController {
   editConnection(edit: ConnectionEdit): void;
   applyConnection(): Promise<Result<Receipt>>;
   cancelConnection(): void;
+  exportArtifact(input: unknown): Promise<Result<BinaryResponse>>;
   report(error: Diagnostic): void;
   applyMove(optionId: string): Promise<void>;
   chooseMoveOption(optionId: string): void;

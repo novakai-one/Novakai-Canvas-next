@@ -24,6 +24,7 @@ import type { DiagramProducer } from './ports/rendering.js';
 import { produce } from '../core/rendering/produce.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
+import { createWorkspaceExporter } from '../adapters/export.js';
 /** Explicit worker lifecycle keeps native measurement away from browser imports; the parent owns worker failure/retry. */
 export async function runRenderWorker(): Promise<Result<void>> {
   try {
@@ -249,6 +250,25 @@ async function wireWorkspace(
     changes,
     feasibility: { workspace: views, jobs, producer },
   };
+  const renderer = rendererModule.createCollectionRenderer({
+    assets: native.assets,
+    jobs,
+    producer,
+    resources,
+  });
+  const exporter = await createWorkspaceExporter({
+    workspace: options.workspace,
+    installation,
+    assets: native.assets,
+    templates,
+    language,
+    views,
+    resources,
+    renderer,
+    authoring: (signal) => requestAuthoring(runtime, signal, feasibilityModule.createFeasibility),
+    readSignal: new AbortController().signal,
+  });
+  if (!exporter.ok) throw new Error(exporter.error.message);
   const session = createWorkspaceSession({
     workspace: options.workspace,
     installation,
@@ -260,12 +280,8 @@ async function wireWorkspace(
     unavailable: () =>
       authoringFailure('storage-unavailable', 'session', 'Workspace is closing or closed'),
     authoring: (signal) => requestAuthoring(runtime, signal, feasibilityModule.createFeasibility),
-    renderer: rendererModule.createCollectionRenderer({
-      assets: native.assets,
-      jobs,
-      producer,
-      resources,
-    }),
+    renderer,
+    exporter: exporter.value.invoke,
   });
   const adopt = () =>
     requestAuthoring(
@@ -395,6 +411,7 @@ export async function serveWorkspace(
         admission,
         decoder: { read: readCommand },
         source: source.createSourceReadout(language),
+        exporter: session.exportArtifact,
       }),
     });
   } catch {

@@ -102,6 +102,9 @@ function bytes(response: ServerResponse, file: StaticFile): void {
   headers(response);
   response.statusCode = 200;
   response.setHeader('Content-Type', file.mediaType);
+  if (file.filename !== undefined)
+    response.setHeader('Content-Disposition', `attachment; filename="${file.filename}"`);
+  for (const [name, value] of Object.entries(file.headers ?? {})) response.setHeader(name, value);
   response.end(file.bytes);
 }
 /** Pure policy is supplied elsewhere; this binding owns native socket encoding and bounded body reads. */

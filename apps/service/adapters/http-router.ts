@@ -1,4 +1,9 @@
-import type { ApiCall, ApiRouter, WireOutcome } from '../contract/records/protocol.js';
+import type {
+  ApiCall,
+  ApiRouter,
+  RouteOutcome,
+  WireOutcome,
+} from '../contract/records/protocol.js';
 import type { Snapshot } from '@novakai/canvas-authoring';
 import type { RouterBindings } from '../contract/records/server.js';
 import { httpBodyLimit } from '../contract/records/http.js';
@@ -143,7 +148,7 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
   const instantiate = semanticResource(owners, (commands, input, snapshot) =>
     commands.instantiate(input, snapshot),
   );
-  const routes: Readonly<Record<string, (call: ApiCall) => Promise<WireOutcome>>> = {
+  const routes: Readonly<Record<string, (call: ApiCall) => Promise<RouteOutcome>>> = {
     'POST /api/v1/resources/stage': (call) =>
       resource(call, (input) => owners.session.resources.stage(input)),
     'POST /api/v1/resources/restore': (call) =>
@@ -173,6 +178,7 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
     'GET /api/v1/receipt': (call) => owners.session.receipt(call.query.id),
     'POST /api/v1/authoring/preview': (call) => mutate(call, owners, true),
     'POST /api/v1/authoring/apply': (call) => mutate(call, owners, false),
+    'POST /api/v1/export': (call) => exportRoute(call, owners),
   };
   return {
     invoke: async (call) => {
@@ -182,4 +188,12 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
       return handler(call);
     },
   };
+}
+
+async function exportRoute(call: ApiCall, owners: RouterBindings): Promise<RouteOutcome> {
+  const checked = resourcePolicy(call);
+  if (!checked.ok) return checked;
+  if (owners.exporter === undefined)
+    return failure('unavailable', 'export', 'Export is unavailable in this service composition');
+  return owners.exporter(checked.value, call.signal);
 }

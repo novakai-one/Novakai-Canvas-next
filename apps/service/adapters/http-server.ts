@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse, Server } from 'node:http';
 import type { HttpMetadata } from '../contract/records/http.js';
 import type { Caller } from '../contract/records/http.js';
 import type { LocalServer, ServerBindings, ServerOptions } from '../contract/records/server.js';
+import type { RouteOutcome } from '../contract/records/protocol.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 
@@ -75,7 +76,15 @@ async function invokeApi(
     metadata: exchange.metadata,
     body: body.value,
   });
+  if (isBytes(outcome)) {
+    bindings.io.bytes(exchange.response, outcome.file);
+    return;
+  }
   bindings.io.json(exchange.response, outcome, bindings.security.generation);
+}
+
+function isBytes(outcome: RouteOutcome): outcome is Extract<RouteOutcome, { kind: 'bytes' }> {
+  return 'kind' in outcome && outcome.kind === 'bytes';
 }
 
 function queryValues(

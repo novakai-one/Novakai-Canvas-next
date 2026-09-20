@@ -2,6 +2,7 @@ import type { SessionDependencies, WorkspaceSession } from './types.js';
 import { failure } from './errors.js';
 import { renderCollection } from '../core/rendering/collection.js';
 import { inspectCollection } from '../core/rendering/inspection.js';
+import type { RouteOutcome } from './records/protocol.js';
 export { createAdmission as createHttpAdmission } from '../core/transport/admission.js';
 export { readCommand } from '../core/transport/command.js';
 /** Bind a persistent workspace to read, mutation and render consumers; HTTP owns authentication and caller identity. */
@@ -47,8 +48,25 @@ export function createWorkspaceSession(dependencies: SessionDependencies): Works
         () => inspectCollection(id, signal, dependencies),
         () => failure('unavailable', 'session', 'Workspace is closing or closed'),
       ),
+    exportArtifact: (input, signal) =>
+      lifetime.run(
+        () => dependencies.exporter(input, signal),
+        () => unavailableExport(),
+      ),
     subscribe: (listener) => dependencies.changes.subscribe(listener),
     close: () => lifetime.close(),
+  };
+}
+
+function unavailableExport(): RouteOutcome {
+  return {
+    ok: false,
+    error: {
+      code: 'unavailable',
+      path: 'session',
+      message: 'Workspace is closing or closed',
+      recovery: 'Reconnect and retry the export.',
+    },
   };
 }
 

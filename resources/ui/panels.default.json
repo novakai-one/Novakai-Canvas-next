@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "panels": {
     "left": {
-      "sectionIds": ["creation", "collections", "sections", "objects"]
+      "sectionIds": ["creation", "collections", "sections", "objects", "export"]
     },
     "right": {
       "sectionIds": ["shared-content", "connection", "interface"]

@@ -421,8 +421,8 @@ export function buildExpandOption(
   if (groupNode === undefined) return { ok: true, value: null };
   const expanded = new Map<string, { node: typeof groupNode; width: number; height: number }>();
   let ancestor: typeof groupNode | undefined = groupNode;
-  let requiredRight = before.x + dx + before.width;
-  let requiredBottom = before.y + dy + before.height;
+  let requiredRight = before.x - sceneSection.origin.x + dx + before.width;
+  let requiredBottom = before.y - sceneSection.origin.y + dy + before.height;
   while (ancestor !== undefined) {
     const children = sceneSection.nodes.filter((item) => item.parent === ancestor?.id);
     const childRight = children.reduce((value, item) => Math.max(value, item.box.x + item.box.width), ancestor.box.x);
@@ -439,10 +439,28 @@ export function buildExpandOption(
   if (expanded.size === 0 || [...expanded.values()].every(({ node, width, height }) => width === node.box.width && height === node.box.height)) {
     return { ok: true, value: null };
   }
+  const currentRight = sceneSection.nodes.reduce((value, item) => Math.max(value, item.box.x + item.box.width), 0);
+  const currentBottom = sceneSection.nodes.reduce((value, item) => Math.max(value, item.box.y + item.box.height), 0);
+  const rightReserve = sceneSection.box.width - currentRight;
+  const bottomReserve = sceneSection.box.height - currentBottom;
+  const expandedRight = Math.max(currentRight, ...[...expanded.values()].map(({ node, width }) => node.box.x + width));
+  const expandedBottom = Math.max(currentBottom, ...[...expanded.values()].map(({ node, height }) => node.box.y + height));
+  const sectionWidth = Math.max(sceneSection.box.width, expandedRight + rightReserve);
+  const sectionHeight = Math.max(sceneSection.box.height, expandedBottom + bottomReserve);
   const planned = plannedSections(context.document, { ...intent, entries: normalized.value }).map((candidate) => {
     if (candidate.id !== sceneSection.id) return candidate;
+    const sectionSource = context.document.collection.sections.find((item) => item.id === sceneSection.id);
+    if (sectionSource === undefined) return candidate;
+    const sectionPlacement = sourcePlacement(
+      sectionSource.placement,
+      sceneSection.origin.x,
+      sceneSection.origin.y,
+      sectionWidth,
+      sectionHeight,
+    );
     return {
       ...candidate,
+      placement: sectionPlacement,
       groups: candidate.groups.map((group) => {
         const change = expanded.get(group.id);
         if (change === undefined) return group;
@@ -460,8 +478,11 @@ export function buildExpandOption(
   const expected = expectedBoxes(context.document, normalized.value);
   if (!expected.ok) return expected;
   const expectedWithExpansion = new Map(expected.value);
-  const expandedSection = preview.value.boxes.find((item) => item.target.kind === 'section' && item.target.id === sceneSection.id);
-  if (expandedSection !== undefined) expectedWithExpansion.set(targetKey(expandedSection.target), expandedSection.box);
+  expectedWithExpansion.set(targetKey({ kind: 'section', id: sceneSection.id }), {
+    ...sceneSection.box,
+    width: sectionWidth,
+    height: sectionHeight,
+  });
   for (const change of expanded.values()) {
     const target: Target = { kind: 'node', section: sceneSection.id, id: change.node.id };
     const prior = worldBox(context.document, target);

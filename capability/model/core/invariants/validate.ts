@@ -12,6 +12,7 @@ import { validateLayouts } from '../sections/layout.js';
 import { freeze } from './freeze.js';
 import { failure, success, rejected } from './issues.js';
 import { shapeErrors } from './shape-diagnostics.js';
+import { validateDefinitionGraph } from '../definitions.js';
 
 type CollectionRule = (collection: Collection) => readonly Diagnostic[];
 const collectionRules: readonly CollectionRule[] = [
@@ -23,6 +24,7 @@ const collectionRules: readonly CollectionRule[] = [
   validateRelationships,
   validateSections,
   validateLayouts,
+  validateDefinitionGraph,
 ];
 
 /** Parse and detach first. Domain rules must never receive structurally invalid data. */

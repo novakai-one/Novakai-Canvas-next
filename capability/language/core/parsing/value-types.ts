@@ -38,6 +38,7 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
   references: (value) => listOf(value, isIdentity),
   targets: (value) => listOf(value, isReference),
   'reference-value': (value) => isEndpoint(value) || listOf(value, isEndpoint),
+  'type-expression': (value) => typeof value === 'string' || isIdentity(value),
   link: (value) => typeof value === 'string' || isIdentity(value),
 };
 /** Cardinality one is lexed as an integer but has an explicit word enum in the grammar. */

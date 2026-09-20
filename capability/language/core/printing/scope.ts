@@ -49,9 +49,30 @@ function resourceScope(collection: Collection): Collection {
     ...collection.objects.flatMap((item) => item.sources),
     ...collection.relationships.flatMap((item) => item.sources),
   ];
+  const referenced = new Set(
+    collection.objects.flatMap((item) =>
+      item.content.flatMap((block) =>
+        block.kind === 'field' && typeof block.type !== 'string' ? [block.type.id] : [],
+      ),
+    ),
+  );
+  let changed = true;
+  while (changed) {
+    changed = false;
+    collection.definitions.forEach((definition) => {
+      if (!referenced.has(definition.id)) return;
+      const refs = definition.expression.kind === 'reference'
+        ? [definition.expression.id]
+        : definition.expression.kind === 'union'
+          ? definition.expression.items.filter((item) => item.kind === 'reference').map((item) => item.id)
+          : [];
+      refs.forEach((id) => { if (!referenced.has(id)) { referenced.add(id); changed = true; } });
+    });
+  }
   return {
     ...collection,
     assets: collection.assets.filter((item) => assets.includes(item.id)),
     sources: collection.sources.filter((item) => sources.includes(item.id)),
+    definitions: collection.definitions.filter((definition) => referenced.has(definition.id)),
   };
 }

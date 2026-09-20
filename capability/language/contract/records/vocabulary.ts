@@ -13,7 +13,8 @@ export type ValueType =
   | 'link'
   | 'targets'
   | 'references'
-  | 'reference-value';
+  | 'reference-value'
+  | 'type-expression';
 export interface Property {
   readonly type: ValueType;
   readonly field: string;

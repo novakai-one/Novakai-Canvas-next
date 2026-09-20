@@ -47,6 +47,7 @@ function ownedPath(item: Declaration, prefix: string): string {
     section: 'sections',
     asset: 'assets',
     source: 'sources',
+    type: 'definitions',
   };
   const top = namespaces[item.kind];
   if (top !== undefined) return `${top}.${id(item.fields)}`;

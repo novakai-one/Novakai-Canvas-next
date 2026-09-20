@@ -18,6 +18,7 @@ function lowerReference(
   type: ValueType,
 ): unknown {
   if (type === 'endpoint') return endpoint(value);
+  if (type === 'type-expression') return { kind: 'definition', id: value.id };
   return value.id;
 }
 /** Map only supplied fields; callers explicitly decide when declaration defaults are needed. */

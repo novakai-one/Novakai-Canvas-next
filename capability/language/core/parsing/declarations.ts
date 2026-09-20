@@ -1,4 +1,4 @@
-import type { Declaration, Construct, Fields } from '../../contract/records/syntax.js';
+import type { Declaration, Construct, Fields, LocatedValue } from '../../contract/records/syntax.js';
 import type { ConstructDefinition, PositionRule } from '../../contract/records/vocabulary.js';
 import { constructs } from '../vocabulary/constructs.js';
 import { reject, accepted } from '../validation/outcomes.js';
@@ -16,11 +16,14 @@ import { readAttributes } from './attributes.js';
 import { readValue, readReferenceList } from './values.js';
 import { checkValue } from './value-types.js';
 import { repeat } from './repetition.js';
+import { readIdentity } from './references.js';
 /** Dispatch only a shipped construct accepted by the current owning body. */
 export function readDeclaration(
   cursor: Cursor,
   allowed: readonly Construct[],
 ): Parsed<Declaration> {
+  const compactType = compactTypeDeclaration(cursor, allowed);
+  if (compactType !== undefined) return compactType;
   const definition = constructs.find((item) => item.kind === peek(cursor).text);
   if (definition === undefined)
     reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
@@ -32,6 +35,53 @@ export function readDeclaration(
       'Declaration is not allowed in this body',
     );
   return readDefined(cursor, definition);
+}
+
+function compactTypeDeclaration(cursor: Cursor, allowed: readonly Construct[]): Parsed<Declaration> | undefined {
+  if (peek(cursor).text !== 'type' || peek(cursor, 3).text !== '=') return undefined;
+  if (!allowed.includes('type')) reject('syntax', peek(cursor).span, allowed.join(' / '), 'Declaration is not allowed in this body');
+  return readType(cursor);
+}
+
+/** Read the compact shared-definition form: type @id "Label" = "A" | "B". */
+function readType(cursor: Cursor): Parsed<Declaration> {
+  const start = cursor;
+  const identity = readIdentity(advance(cursor, 1));
+  const labelValue = readValue(identity.next);
+  if (typeof labelValue.value.value !== 'string')
+    reject('syntax', labelValue.value.span, 'Quoted label', 'Definition label must be text');
+  const expressionStart = consume(labelValue.next, '=');
+  const atoms: string[] = [];
+  let next = expressionStart;
+  while (true) {
+    const token = peek(next);
+    requireTypeAtom(token);
+    atoms.push(token.text);
+    next = advance(next);
+    if (peek(next).text !== '|') break;
+    next = advance(next);
+  }
+  const expression: LocatedValue = {
+    value: atoms.join(' | '),
+    span: consumedSpan(expressionStart, next),
+  };
+  return {
+    value: {
+      kind: 'type',
+      fields: {
+        id: { value: { kind: 'reference', id: identity.value }, span: peek(advance(cursor, 1)).span },
+        label: labelValue.value,
+        expression,
+      },
+      children: [],
+      span: consumedSpan(start, next),
+    },
+    next,
+  };
+}
+
+function requireTypeAtom(token: ReturnType<typeof peek>): void {
+  if (!['string', 'word', 'id', 'integer'].includes(token.kind)) reject('syntax', token.span, 'Type expression', 'Expected a type expression atom');
 }
 /** Positions, attributes and children are separate grammar stages with named intermediate results. */
 function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<Declaration> {

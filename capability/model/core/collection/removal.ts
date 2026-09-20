@@ -87,6 +87,7 @@ function removeFromNamespace(collection: Collection, change: RecordRemoval): Col
     sections: () => ({ ...collection, sections: withoutRecord(collection.sections, change.id) }),
     assets: () => ({ ...collection, assets: withoutRecord(collection.assets, change.id) }),
     sources: () => ({ ...collection, sources: withoutRecord(collection.sources, change.id) }),
+    definitions: () => ({ ...collection, definitions: withoutRecord(collection.definitions, change.id) }),
   };
   return removers[change.target]();
 }

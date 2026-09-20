@@ -66,6 +66,12 @@ function writeSources(collection: Collection, change: RecordChange): Collection 
   return { ...collection, sources };
 }
 
+function writeDefinitions(collection: Collection, change: RecordChange): Collection {
+  if (change.target !== 'definitions') return collection;
+  const definitions = writeRecordList(collection.definitions, change.value, change.op);
+  return { ...collection, definitions };
+}
+
 type RecordWriter = (collection: Collection, change: RecordChange) => Collection;
 const recordWriters: Readonly<Record<RecordChange['target'], RecordWriter>> = {
   objects: writeObjects,
@@ -73,6 +79,7 @@ const recordWriters: Readonly<Record<RecordChange['target'], RecordWriter>> = {
   sections: writeSections,
   assets: writeAssets,
   sources: writeSources,
+  definitions: writeDefinitions,
 };
 
 /** Replacement must resolve an existing ID; creation was checked at the entry point. */

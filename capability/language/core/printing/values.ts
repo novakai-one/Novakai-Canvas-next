@@ -28,6 +28,7 @@ function printScalar(value: unknown, type: ValueType): string {
     id: () => `@${string(value)}`,
     boolean: () => String(value),
     integer: () => String(value),
+    'type-expression': () => printTypeExpression(value),
   };
   const print = printers[type];
   if (print === undefined)
@@ -39,6 +40,20 @@ function printScalar(value: unknown, type: ValueType): string {
       type,
     );
   return print();
+}
+
+function printTypeExpression(value: unknown): string {
+  if (typeof value === 'string') return quote(value);
+  requireTypeRecord(value);
+  const recordValue = record(value);
+  if (recordValue.kind !== 'definition')
+    reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
+  return `@${string(recordValue.id)}`;
+}
+
+function requireTypeRecord(value: unknown): asserts value is object {
+  if (value === null || typeof value !== 'object' || Array.isArray(value))
+    reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
 }
 /** Bare words remain readable; punctuation-bearing theme pins retain exact identity inside quotes. */
 function word(value: unknown): string {

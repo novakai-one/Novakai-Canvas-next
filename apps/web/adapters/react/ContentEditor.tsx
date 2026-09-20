@@ -77,7 +77,13 @@ function labelField(item: ContentBlock): readonly TextField[] {
 /** Engineering types are explicit strings owned by the semantic record. */
 function typeField(item: ContentBlock): readonly TextField[] {
   if (!('type' in item)) return [];
-  return [{ name: 'type', label: 'Type', value: item.type }];
+  return [
+    {
+      name: 'type',
+      label: 'Type',
+      value: typeof item.type === 'string' ? item.type : `@${item.type.id}`,
+    },
+  ];
 }
 /** Text and code retain their authored content exactly. */
 function bodyField(item: ContentBlock): readonly TextField[] {

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { assetId, descendantId, label, objectId, sectionId, size } from '../brands.js';
+import { fieldTypeSchema } from './definition.js';
 import { figureLevelSchema, textRoleSchema } from './composition.js';
 
 /** Canonical object address, optionally narrowed to an addressable descendant. */
@@ -150,7 +151,7 @@ const fieldSchema = z
     kind: z.literal('field'),
     id: descendantId,
     label,
-    type: label,
+    type: fieldTypeSchema,
     nullable: z.boolean().default(false),
     key: z.enum(['primary', 'foreign', 'unique']).optional(),
     references: endpointSchema.optional(),

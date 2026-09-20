@@ -34,12 +34,13 @@ function describeRecordImpact(
 
 /** Child records have their own impact entries; this comparison covers only collection metadata. */
 function collectionMetadata(collection: Collection): CollectionMetadata {
-  const { objects, relationships, sections, assets, sources, ...metadata } = collection;
+  const { objects, relationships, sections, assets, sources, definitions, ...metadata } = collection;
   void objects;
   void relationships;
   void sections;
   void assets;
   void sources;
+  void definitions;
   return metadata;
 }
 
@@ -48,7 +49,7 @@ function collectionMetadata(collection: Collection): CollectionMetadata {
  * Pure and repeatable; planChanges returns this report and Authoring owns commit/recovery.
  */
 export function describeImpact(before: Collection, after: Collection): readonly Impact[] {
-  const targets: readonly Target[] = ['objects', 'relationships', 'sections', 'assets', 'sources'];
+  const targets: readonly Target[] = ['objects', 'relationships', 'sections', 'assets', 'sources', 'definitions'];
   const records = targets.flatMap((target) => describeRecordImpact(before, after, target));
   const metadataChanged = hasChanged(collectionMetadata(before), collectionMetadata(after));
   if (!metadataChanged) return records;

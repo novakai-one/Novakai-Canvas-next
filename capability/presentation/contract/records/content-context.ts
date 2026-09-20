@@ -1,4 +1,4 @@
-import type { InputCollection, DiagramObject } from './input.js';
+import type { InputCollection, DiagramObject, ContentBlock } from './input.js';
 import type { ResolvedStyle } from './style.js';
 import type { MeasurementPort } from '../ports/measurement.js';
 import type { AssetReader } from '../ports/resources.js';
@@ -13,6 +13,7 @@ export interface ContentContext {
   readonly fields?: FieldColumns;
   /** Canonical owner scopes descendant IDs, including fields omitted by compact appearance detail. */
   readonly owner?: DiagramObject;
+  readonly resolveFieldType?: (field: Extract<ContentBlock, { kind: 'field' }>) => string;
 }
 export interface FieldColumns {
   readonly key: number;

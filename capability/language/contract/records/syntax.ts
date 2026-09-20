@@ -23,6 +23,7 @@ export interface LocatedValue {
 export type Fields = Readonly<Record<string, LocatedValue>>;
 export type Construct =
   | 'collection'
+  | 'type'
   | 'asset'
   | 'source'
   | 'node'

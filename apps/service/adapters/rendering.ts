@@ -1,5 +1,5 @@
 import type { FailureSource } from '../contract/records/failure-source.js';
-import { validate } from '@novakai/canvas-model';
+import { validate, fieldTypeDisplay } from '@novakai/canvas-model';
 import {
   composePresentation,
   readMeasuredProjection,
@@ -40,6 +40,10 @@ function domain(input: unknown): PresentationResult<InputCollection> {
     },
   };
 }
+const presentationDomain = {
+  read: domain,
+  resolveFieldType: fieldTypeDisplay,
+};
 /** Missing immutable media is an explicit preview failure, never an empty visual substitute. */
 function asset(digest: string, assets: readonly VisualAsset[]): PresentationResult<VisualAsset> {
   const found = assets.find((item) => item.digest === digest);
@@ -65,7 +69,7 @@ function forLayout<T>(result: PresentationResult<T>): LayoutResult<T> {
 /** Bind one immutable canonical collection; transported projections are decoded by their owner on every read. */
 function projectionReader(job: RenderingJob): ProjectionReader {
   return {
-    read: (input) => forLayout(readMeasuredProjection(input, job.collection, { read: domain })),
+    read: (input) => forLayout(readMeasuredProjection(input, job.collection, presentationDomain)),
     content: (input) => forLayout(readMeasuredContent(input)),
   };
 }
@@ -78,7 +82,7 @@ async function derive(job: RenderingJob, signal: AbortSignal): Promise<RenderDoc
   const bound = accepted(
     await composePresentation(
       {
-        domain: { read: domain },
+        domain: presentationDomain,
         themes: { resolve: () => ({ ok: true, value: job.style }) },
         assets: { read: (digest) => asset(digest, job.assets) },
       },

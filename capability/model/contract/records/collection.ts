@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { assetId, collectionId, digest, label, sourceId } from '../brands.js';
+import { definitionSchema } from './definition.js';
 import { objectSchema } from './object.js';
 import { relationshipSchema } from './relationship.js';
 import { sectionSchema } from './section.js';
@@ -47,6 +48,8 @@ export const collectionSchema = z
     objects: z.array(objectSchema).readonly().default([]),
     relationships: z.array(relationshipSchema).readonly().default([]),
     sources: z.array(sourceSchema).readonly().default([]),
+    /** Shared definitions were added after schema version 1; old records default to empty. */
+    definitions: z.array(definitionSchema).readonly().default([]),
     assets: z.array(assetSchema).readonly().default([]),
     arrangement: layoutSchema,
   })

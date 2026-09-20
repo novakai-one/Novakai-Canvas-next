@@ -43,12 +43,24 @@ function printEnvelope(collection: Collection, scope: Scope): string {
 /** Canonical namespaces are independent, while order inside each namespace remains stable. */
 function printDeclarations(collection: Collection): readonly string[] {
   return [
+    ...collection.definitions.map(printDefinition),
     ...collection.assets.map(printAsset),
     ...collection.sources.map((item) => header('source', item)),
     ...collection.objects.map(printNode),
     ...collection.relationships.map((item) => header('wire', item)),
     ...collection.sections.map(printSection),
   ];
+}
+
+function printDefinition(definition: Collection['definitions'][number]): string {
+  return `type @${definition.id} ${JSON.stringify(definition.label)} = ${printDefinitionExpression(definition.expression)}`;
+}
+
+function printDefinitionExpression(expression: Collection['definitions'][number]['expression']): string {
+  if (expression.kind === 'primitive') return expression.name;
+  if (expression.kind === 'reference') return `@${expression.id}`;
+  if (expression.kind === 'literal') return typeof expression.value === 'string' ? JSON.stringify(expression.value) : String(expression.value);
+  return expression.items.map(printDefinitionExpression).join(' | ');
 }
 /** Media kind is an admission hint; exact bytes/type/metadata come from the pinned supplied record. */
 function printAsset(asset: Collection['assets'][number]): string {

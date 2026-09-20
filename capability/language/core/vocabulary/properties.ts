@@ -57,7 +57,7 @@ export const properties = {
   agitator: { type: 'boolean', field: 'agitator' },
   mark: { type: 'word', field: 'mark', values: ['none', 'check', 'shield'] },
   debris: { type: 'word', field: 'debris', values: ['none', 'some'] },
-  type: { type: 'string', field: 'type', required: true },
+  type: { type: 'type-expression', field: 'type', required: true },
   key: { type: 'word', field: 'key', values: ['primary', 'foreign', 'unique'] },
   nullable: { type: 'boolean', field: 'nullable', fallback: false },
   references: { type: 'endpoint', field: 'references' },

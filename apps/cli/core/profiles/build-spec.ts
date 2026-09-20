@@ -53,14 +53,14 @@ export const buildSpecProfile: ProfileDescriptor = {
   ],
   notes: [
     'These are logical documents in one ordinary collection, not five files.',
-    'Sequence lifelines reuse canonical modules and interfaces; participant objects are reserved for external actors.',
+    'Sequence lifelines reuse canonical modules; interface lifelines use a linked participant proxy.',
     'Lint checks structure only; it does not certify prose, implementation completeness or rendering.',
   ],
 };
 
 /** Small native current-DSL starter; profile commands never depend on a service or workspace. */
 export const buildSpecStarter = String.raw`# Editable build-spec@1 starter using current native DSL.
-# Sequence lifelines reuse the canonical module and interface objects declared above.
+# Sequence lifelines reuse canonical modules; the interface uses a linked participant proxy.
 canvas 1
 collection @build-spec-starter "Edit a title safely — build spec starter" theme=paper {
   node @root concept "example-app/" {}
@@ -144,13 +144,16 @@ collection @build-spec-starter "Edit a title safely — build spec starter" them
   }
 
   node @p-human participant "Human" {}
+  node @p-store participant "title-store.ts" {
+    link @store-link "Interface" target=@store section=@modules
+  }
   section @sequence-52 "5.2 / Commit a valid title" mode=sequence order=5 {
-    show @p-human @controller @validator @store detail=label
+    show @p-human @controller @validator @p-store detail=label
     event @submit @p-human -> @controller "renameTitle(edit)" kind=call
     event @check @controller -> @validator "validateTitle(edit)" kind=call
     event @accepted @validator -> @controller "ValidatedTitle" kind=return
-    event @save-title @controller -> @store "saveTitle(title)" kind=call
-    event @saved @store -> @controller "Receipt" kind=return
+    event @save-title @controller -> @p-store "saveTitle(title)" kind=call
+    event @saved @p-store -> @controller "Receipt" kind=return
     event @confirm @controller -> @p-human "Confirmed revision" kind=return
   }
 }`;

@@ -1204,13 +1204,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return finishCreation(result, 'object');
   }
   async function addGroup(draft: AddGroupDraft): Promise<Result<Receipt>> {
-    const context = creationContext({
-      section: draft.section,
-      label: '',
-      kind: 'module',
-      reuseObject: null,
-      group: null,
-    });
+    const context = groupContext(draft);
     if (!context.ok) return retainCreationFailure(context);
     groupCapture ??= {
       id: `group-${bindings.nextId()}` as Group['id'],
@@ -1320,7 +1314,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     captureGroupDraft();
     update({ creation: { ...state.creation, group: draft, problem: null } });
   }
-  function cancelCreation(kind: 'diagram' | 'object'): void {
+  function cancelCreation(kind: 'diagram' | 'object' | 'group'): void {
     if (creationLocked()) return;
     clearCreationCapture(kind);
     update({
@@ -1328,6 +1322,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         ...state.creation,
         diagram: resetDiagramDraft(kind, state.creation.diagram),
         object: resetObjectDraft(kind, state.creation.object),
+        group: resetGroupDraft(kind, state.creation.group),
         problem: null,
         busy: false,
       },
@@ -1417,12 +1412,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     clearers[kind]();
   }
   function resetDiagramDraft(
-    kind: 'diagram' | 'object',
+    kind: 'diagram' | 'object' | 'group',
     current: AddDiagramDraft,
   ): AddDiagramDraft {
     return kind === 'diagram' ? { title: '', mode: 'grid' } : current;
   }
-  function resetObjectDraft(kind: 'diagram' | 'object', current: AddObjectDraft): AddObjectDraft {
+  function resetObjectDraft(
+    kind: 'diagram' | 'object' | 'group',
+    current: AddObjectDraft,
+  ): AddObjectDraft {
     return kind === 'object'
       ? { section: '', label: '', kind: 'module', reuseObject: null, group: null }
       : current;
@@ -1477,10 +1475,22 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const section = collection.sections.find((item) => item.id === draft.section);
     return sectionResult(section, active, objectCapture, collection);
   }
+  function groupContext(draft: AddGroupDraft): Result<{ active: ActiveDiagram; section: Section }> {
+    const active = state.active;
+    if (active === null) return creationFailure('Open a collection first.');
+    const captureError = captureCollectionError(
+      groupCapture?.collection.id,
+      active.document.collection.id,
+    );
+    if (captureError !== null) return captureError;
+    const collection = groupCapture?.collection ?? active.document.collection;
+    const section = collection.sections.find((item) => item.id === draft.section);
+    return sectionResult(section, active, groupCapture, collection);
+  }
   function sectionResult(
     section: Section | undefined,
     active: ActiveDiagram,
-    capture: typeof objectCapture,
+    capture: NonNullable<typeof objectCapture> | NonNullable<typeof groupCapture> | null,
     collection: ActiveDiagram['document']['collection'],
   ): Result<{ active: ActiveDiagram; section: Section }> {
     if (section === undefined) return creationFailure('Choose an existing diagram.');

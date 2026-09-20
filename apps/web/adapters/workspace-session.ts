@@ -17,7 +17,7 @@ import type {
   EditIntent,
 } from '../contract/records/owners.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
-import { chooseMoveOption } from '../core/editing/movement.js';
+import { chooseMoveOption as chooseReviewedMoveOption } from '../core/editing/movement.js';
 interface RenderRequest {
   readonly token: number;
   readonly id: string;
@@ -585,7 +585,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         report(reviewed.error);
         return;
       }
-      if (reviewed.value.options.some((option) => option.kind === 'expand' || option.kind === 'rearrange')) {
+      if (reviewed.value.options.length > 1 || reviewed.value.options.some((option) => option.kind === 'expand' || option.kind === 'rearrange')) {
         const option = reviewed.value.options.find((item) => item.kind === 'expand' || item.kind === 'rearrange');
         if (option !== undefined) {
           movementCapture = { active, intent, review: reviewed.value, workspace: state.snapshot?.workspace ?? '' };
@@ -1090,12 +1090,25 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         item.revision === active.document.collection.revision,
     );
   }
+  function chooseMoveOption(optionId: string): void {
+    const capture = movementCapture;
+    if (capture === null || movementApplying || state.movementReview?.phase !== 'review') return;
+    const option = capture.review.options.find((item) => item.id === optionId);
+    if (option === undefined) return;
+    const accepted = capture.active.session.dispatch({ kind: 'preview-routes', id: capture.intent.id, ...option.preview });
+    if (!accepted.ok || accepted.value.state.routePreview?.gesture !== capture.intent.id) {
+      report({ code: 'invalid-edit', message: 'The selected movement preview could not be accepted.', recovery: 'Keep the current preview or cancel the draft.', owner: 'workspace' });
+      return;
+    }
+    update({ movementReview: state.movementReview ? { ...state.movementReview, optionId } : null });
+  }
+
   async function applyMove(optionId: string): Promise<void> {
     const capture = movementCapture;
     if (capture === null || movementApplying || state.movementReview === null || state.movementReview.optionId !== optionId || state.movementReview.phase !== 'review') return;
     if (state.pending.some((item) => item.state !== 'rejected') || historyBlocked() || state.history?.busy) { report({ code: 'pending-request', message: 'Wait for the current operation to finish', recovery: 'Your movement draft is retained.', owner: 'workspace' }); return; }
     const currentStamp = capture.active.session.getSnapshot().stamp;
-    const chosen = chooseMoveOption(capture.review, optionId, currentStamp);
+    const chosen = chooseReviewedMoveOption(capture.review, optionId, currentStamp);
     const selected = chosen.ok ? chosen.value : undefined;
     if (!chosen.ok || selected === undefined || capture.active !== state.active || capture.active.generation !== state.generation || state.snapshot?.workspace !== capture.workspace || currentStamp.revision !== capture.review.stamp.revision || currentStamp.inputKey !== capture.review.stamp.inputKey || currentStamp.generation !== capture.review.stamp.generation) {
       report(chosen.ok ? { code: 'stale-gesture', message: 'This movement review is stale; the draft was retained.', recovery: 'Reload the diagram before applying it.', owner: 'workspace' } : chosen.error);
@@ -1149,6 +1162,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     create,
     report,
     applyMove,
+    chooseMoveOption,
     cancelMove,
     dispose: () => {
       disposed = true;

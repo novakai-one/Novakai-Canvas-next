@@ -78,6 +78,7 @@ export interface WorkspaceController {
   create(title: string): Promise<void>;
   report(error: Diagnostic): void;
   applyMove(optionId: string): Promise<void>;
+  chooseMoveOption(optionId: string): void;
   cancelMove(): void;
   dispose(): void;
 }

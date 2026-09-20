@@ -22,6 +22,11 @@ export function createMovementReview({ Button }: Pick<DesignSlots, 'Button'>): C
     const waiting = review.phase !== 'review';
     return (
       <aside className={styles.review} aria-label="Movement review">
+        <div className={styles.options} aria-label="Movement options">
+          {review.review.options.map((candidate) => (
+            <Button key={candidate.id} label={candidate.label} selected={candidate.id === review.optionId} disabled={waiting} onClick={() => controller.chooseMoveOption(candidate.id)} />
+          ))}
+        </div>
         <div className={styles.header}>
           <div>
             <strong>{option.label}</strong>

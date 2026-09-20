@@ -416,9 +416,8 @@ export function buildExpandOption(
   const moduleSection = context.document.projection.sections.find((item) => item.id === sectionId);
   if (moduleSection?.mode !== 'modules') return failure('unsupported-edit', 'Container expansion supports module sections only');
   if (sceneSection === undefined || node === undefined) return failure('stale-target', 'The expansion target is missing');
-  if (node.parent === null) return failure('unsupported-edit', 'Top-level node expansion is not supported');
-  const parent = sceneSection.nodes.find((item) => item.id === node.parent);
-  if (parent === undefined) return failure('stale-target', 'The expansion parent is missing');
+  const parent = node.parent === null ? undefined : sceneSection.nodes.find((item) => item.id === node.parent);
+  if (node.parent !== null && parent === undefined) return failure('stale-target', 'The expansion parent is missing');
   const before = worldBox(context.document, entry.target);
   if (before === undefined) return failure('stale-target', 'The expansion geometry is missing');
   const parentX = sceneSection.origin.x + (parent?.box.x ?? 0);
@@ -426,9 +425,8 @@ export function buildExpandOption(
   const dx = parentX + entry.placement.x - before.x;
   const dy = parentY + entry.placement.y - before.y;
   const groupNode = parent;
-  if (groupNode === undefined) return failure('stale-target', 'The expansion group is missing');
-  const expanded = new Map<string, { node: typeof groupNode; width: number; height: number }>();
-  let ancestor: typeof groupNode | undefined = groupNode;
+  const expanded = new Map<string, { node: typeof node; width: number; height: number }>();
+  let ancestor: typeof node | undefined = groupNode;
   let requiredRight = before.x - sceneSection.origin.x + dx + before.width;
   let requiredBottom = before.y - sceneSection.origin.y + dy + before.height;
   while (ancestor !== undefined) {
@@ -444,15 +442,15 @@ export function buildExpandOption(
     if (ancestor.measured.groupId !== null) { expanded.set(ancestor.measured.groupId, { node: ancestor, width, height }); }
     ancestor = ancestor.parent === null ? undefined : sceneSection.nodes.find((item) => item.id === ancestor?.parent);
   }
-  if (expanded.size === 0 || [...expanded.values()].every(({ node, width, height }) => width === node.box.width && height === node.box.height)) {
-    return { ok: true, value: null };
-  }
+  const groupGrowth = [...expanded.values()].some(({ node: candidate, width, height }) => width !== candidate.box.width || height !== candidate.box.height);
+  const sectionNeedsGrowth = requiredRight > sceneSection.box.x + sceneSection.box.width || requiredBottom > sceneSection.box.y + sceneSection.box.height;
+  if (!groupGrowth && !sectionNeedsGrowth) return { ok: true, value: null };
   const currentRight = sceneSection.nodes.reduce((value, item) => Math.max(value, item.box.x + item.box.width), 0);
   const currentBottom = sceneSection.nodes.reduce((value, item) => Math.max(value, item.box.y + item.box.height), 0);
   const rightReserve = sceneSection.box.width - currentRight;
   const bottomReserve = sceneSection.box.height - currentBottom;
-  const expandedRight = Math.max(currentRight, ...[...expanded.values()].map(({ node, width }) => node.box.x + width));
-  const expandedBottom = Math.max(currentBottom, ...[...expanded.values()].map(({ node, height }) => node.box.y + height));
+  const expandedRight = Math.max(currentRight, requiredRight, ...[...expanded.values()].map(({ node: candidate, width }) => candidate.box.x + width));
+  const expandedBottom = Math.max(currentBottom, requiredBottom, ...[...expanded.values()].map(({ node: candidate, height }) => candidate.box.y + height));
   const sectionWidth = Math.max(sceneSection.box.width, expandedRight + rightReserve);
   const sectionHeight = Math.max(sceneSection.box.height, expandedBottom + bottomReserve);
   let planned: readonly Section[];
@@ -521,4 +519,117 @@ export function buildExpandOption(
   }
   if (geometryChanges.length === 0) return { ok: true, value: null };
   return { ok: true, value: { id: 'expand-container', kind: 'expand', label: 'Expand container', section: sceneSection.id, changes: plannedChanges, geometryChanges, preview: preview.value } };
+}
+
+/** Build a deliberate release/reflow candidate for one module section. */
+export function buildRearrangeOption(
+  intent: PlacementIntent,
+  context: MovementPreviewContext,
+): Result<MoveOption | null> {
+  if (!sameStamp(intent, context.stamp)) return failure('stale-gesture', 'The diagram changed while rearrangement was being evaluated');
+  if (context.preview === undefined) return failure('invalid-edit', 'Movement preview is not available');
+  if (intent.entries.length !== 1 || intent.entries.some((entry) => entry.target.kind !== 'node' || entry.placement.width !== undefined || entry.placement.height !== undefined))
+    return failure('unsupported-edit', 'Rearrangement supports one position-only module node');
+  const normalized = normalizedEntries(context.document, intent);
+  if (!normalized.ok) return normalized;
+  const entry = normalized.value[0];
+  if (entry === undefined || entry.target.kind !== 'node') return failure('unsupported-edit', 'Rearrangement supports one selected node');
+  const sectionId = 'section' in entry.target ? entry.target.section : '';
+  const projection = context.document.projection.sections.find((section) => section.id === sectionId);
+  const scene = context.document.scene.sections.find((section) => section.id === sectionId);
+  const source = context.document.collection.sections.find((section) => section.id === sectionId);
+  const selected = scene?.nodes.find((node) => node.id === entry.target.id);
+  if (projection?.mode !== 'modules') return failure('unsupported-edit', 'Rearrangement supports module sections only');
+  if (scene === undefined || source === undefined || selected === undefined) return failure('stale-target', 'The rearrangement target is missing');
+  const ancestors = new Set<string>();
+  let parent = selected.parent;
+  while (parent !== null) {
+    ancestors.add(parent);
+    parent = scene.nodes.find((node) => node.id === parent)?.parent ?? null;
+  }
+  let frozen: readonly Section[];
+  try { frozen = pinnedSections(context.document, intent); } catch { return failure('stale-target', 'Captured rearrangement placements are no longer available'); }
+  const candidate = frozen.map((section) => {
+    if (section.id !== sectionId) return section;
+    const groups = section.groups.map((group) => {
+      const node = scene.nodes.find((item) => item.measured.groupId === group.id);
+      if (node === undefined) throw new Error('captured rearrangement group missing');
+      const parentNode = node.parent === null ? undefined : scene.nodes.find((item) => item.id === node.parent);
+      if (node.id === selected.id || ancestors.has(node.id)) {
+        return { ...group, placement: sourcePlacement(group.placement, node.box.x - (parentNode?.box.x ?? 0), node.box.y - (parentNode?.box.y ?? 0), node.box.width, node.box.height) };
+      }
+      return { ...group, placement: undefined };
+    });
+    const appearances = section.appearances.map((appearance) => {
+      const node = scene.nodes.find((item) => item.measured.groupId === null && item.measured.objectId === appearance.object);
+      if (node === undefined) throw new Error('captured rearrangement appearance missing');
+      const parentNode = node.parent === null ? undefined : scene.nodes.find((item) => item.id === node.parent);
+      if (node.id === selected.id) {
+        return { ...appearance, placement: sourcePlacement(appearance.placement, entry.placement.x, entry.placement.y, node.box.width, node.box.height) };
+      }
+      if (ancestors.has(node.parent ?? '')) {
+        return { ...appearance, placement: sourcePlacement(appearance.placement, node.box.x - (parentNode?.box.x ?? 0), node.box.y - (parentNode?.box.y ?? 0), node.box.width, node.box.height) };
+      }
+      return { ...appearance, placement: undefined };
+    });
+    return { ...section, groups, appearances };
+  });
+  let firstChanges: readonly Change[];
+  try { firstChanges = changes(context.document, candidate); } catch { return failure('stale-target', 'Captured rearrangement placements are no longer available'); }
+  const first = context.preview(context.document, { ...intent, entries: normalized.value }, firstChanges);
+  if (!first.ok) return first;
+  if (first.value === null) return failure('invalid-edit', 'Native rearrangement preview produced no geometry');
+  const expected = expectedBoxes(context.document, normalized.value);
+  if (!expected.ok) return expected;
+  const selectedAfter = first.value.boxes.find((item) => targetKey(item.target) === targetKey(entry.target));
+  const selectedBefore = sceneBox(context.document, entry.target);
+  if (selectedAfter === undefined || selectedBefore === undefined) return failure('stale-target', 'The rearrangement target geometry is missing');
+  const parentOrigin = selected.parent === null ? { x: scene.origin.x, y: scene.origin.y } : (() => {
+    const item = scene.nodes.find((node) => node.id === selected.parent);
+    return item === undefined ? { x: scene.origin.x, y: scene.origin.y } : { x: scene.origin.x + item.box.x, y: scene.origin.y + item.box.y };
+  })();
+  const wanted = { ...selectedBefore, x: parentOrigin.x + entry.placement.x, y: parentOrigin.y + entry.placement.y };
+  if (!exactBox(selectedAfter.box, wanted)) return { ok: true, value: null };
+  const geometryChanges = first.value.boxes.flatMap((item) => {
+    const before = sceneBox(context.document, item.target);
+    return before !== undefined && !exactBox(before, item.box) ? [{ target: item.target, before, after: item.box }] : [];
+  });
+  const selectedKey = targetKey(entry.target);
+  const unselectedChange = geometryChanges.some((change) => targetKey(change.target) !== selectedKey && ('section' in change.target ? change.target.section === sectionId : false));
+  if (!unselectedChange) return { ok: true, value: null };
+  const finalSections = candidate.map((section) => {
+    if (section.id !== sectionId) return section;
+    const sectionBox = first.value!.boxes.find((item) => item.target.kind === 'section' && item.target.id === sectionId)?.box;
+    if (sectionBox === undefined) throw new Error('native rearrangement omitted section');
+    const sectionPlacement = sourcePlacement(section.placement, scene.origin.x, scene.origin.y, sectionBox.width, sectionBox.height);
+    const groups = section.groups.map((group) => {
+      const node = scene.nodes.find((item) => item.measured.groupId === group.id);
+      if (node === undefined) throw new Error('native rearrangement omitted group');
+      const box = first.value!.boxes.find((item) => item.target.kind === 'node' && item.target.section === sectionId && item.target.id === node.id)?.box;
+      if (box === undefined) throw new Error('native rearrangement omitted group geometry');
+      const parentBox = node.parent === null ? sectionBox : first.value!.boxes.find((item) => item.target.kind === 'node' && item.target.section === sectionId && item.target.id === node.parent)?.box;
+      if (parentBox === undefined) throw new Error('native rearrangement omitted parent geometry');
+      return { ...group, placement: sourcePlacement(group.placement, box.x - parentBox.x, box.y - parentBox.y, box.width, box.height) };
+    });
+    const appearances = section.appearances.map((appearance) => {
+      const node = scene.nodes.find((item) => item.measured.groupId === null && item.measured.objectId === appearance.object);
+      if (node === undefined) throw new Error('native rearrangement omitted appearance');
+      const box = first.value!.boxes.find((item) => item.target.kind === 'node' && item.target.section === sectionId && item.target.id === node.id)?.box;
+      if (box === undefined) throw new Error('native rearrangement omitted appearance geometry');
+      const parentBox = node.parent === null ? sectionBox : first.value!.boxes.find((item) => item.target.kind === 'node' && item.target.section === sectionId && item.target.id === node.parent)?.box;
+      if (parentBox === undefined) throw new Error('native rearrangement omitted appearance parent');
+      return { ...appearance, placement: sourcePlacement(appearance.placement, box.x - parentBox.x, box.y - parentBox.y, box.width, box.height) };
+    });
+    return { ...section, placement: sectionPlacement, groups, appearances };
+  });
+  let finalChanges: readonly Change[];
+  try { finalChanges = changes(context.document, finalSections); } catch { return failure('invalid-edit', 'Rearrangement could not be materialized'); }
+  const second = context.preview(context.document, { ...intent, entries: normalized.value }, finalChanges);
+  if (!second.ok) return second;
+  if (second.value === null || second.value.boxes.length !== first.value.boxes.length) return { ok: true, value: null };
+  for (const item of first.value.boxes) {
+    const counterpart = second.value.boxes.find((other) => targetKey(other.target) === targetKey(item.target));
+    if (counterpart === undefined || !exactBox(counterpart.box, item.box)) return { ok: true, value: null };
+  }
+  return { ok: true, value: { id: 'rearrange-section', kind: 'rearrange', label: 'Rearrange section', section: sectionId, changes: finalChanges, geometryChanges, preview: second.value } };
 }

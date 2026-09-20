@@ -86,7 +86,7 @@ import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
 import { planCanvasEdit } from './api.js';
-import { buildMoveReview, buildExpandOption } from '../core/editing/movement.js';
+import { buildMoveReview, buildExpandOption, buildRearrangeOption } from '../core/editing/movement.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import type { ServiceClient } from './ports/client.js';
@@ -281,9 +281,15 @@ function controller(
       const move = buildMoveReview(intent, context);
       if (move.ok && move.value.options.length > 0) return move;
       const expanded = buildExpandOption(intent, context);
-      if (expanded.ok && expanded.value !== null) {
+      const rearranged = buildRearrangeOption(intent, context);
+      const options = [
+        ...(move.ok ? move.value.options : []),
+        ...(expanded.ok && expanded.value !== null ? [expanded.value] : []),
+        ...(rearranged.ok && rearranged.value !== null ? [rearranged.value] : []),
+      ];
+      if (options.length > 0) {
         const base = move.ok ? move.value : { id: intent.id, intent, stamp, collectionId: document.collection.id, revision: document.collection.revision, options: [], selectedOption: null };
-        return { ok: true as const, value: { ...base, options: [expanded.value], selectedOption: expanded.value.id } };
+        return { ok: true as const, value: { ...base, options, selectedOption: options[0]?.id ?? null } };
       }
       return move;
     },

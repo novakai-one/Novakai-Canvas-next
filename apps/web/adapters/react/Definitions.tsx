@@ -255,7 +255,7 @@ function ExpressionEditor({
               collection={collection}
               Button={Button}
               disabled={disabled}
-              onChange={(next) =>
+              onChange={(next, editedPath) =>
                 onChange(
                   {
                     kind: 'union',
@@ -263,7 +263,7 @@ function ExpressionEditor({
                       position === index ? next : value,
                     ),
                   },
-                  path,
+                  editedPath,
                 )
               }
               onLiteralDraft={onLiteralDraft}

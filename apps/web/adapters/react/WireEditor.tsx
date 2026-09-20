@@ -184,14 +184,14 @@ function ConnectionForm({
           <CardinalityField
             label="Source cardinality"
             value={draft.from}
-            disabled={busy}
+            disabled={locked}
             Field={Field}
             edit={(value) => edit({ kind: 'cardinality', side: 'from', value })}
           />
           <CardinalityField
             label="Target cardinality"
             value={draft.to}
-            disabled={busy}
+            disabled={locked}
             Field={Field}
             edit={(value) => edit({ kind: 'cardinality', side: 'to', value })}
           />

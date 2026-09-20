@@ -1781,6 +1781,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       update({ connection: { ...draft, problem: error.message }, problem: error });
     return { ok: false, error };
   }
+  function connectionErrorView(draft: ConnectionDraft, error: Diagnostic): ConnectionDraft {
+    const current = state.connection?.id === draft.id ? state.connection : draft;
+    return { ...current, problem: error.message };
+  }
   async function submitConnectionRequest(
     capture: { draft: ConnectionDraft; request: Request | null },
     draft: ConnectionDraft,
@@ -1789,7 +1793,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const request = connectionRequest(bindings, draft, label);
     if (!request.ok) {
       update({
-        connection: { ...draft, problem: request.error.message },
+        connection: connectionErrorView(draft, request.error),
         problem: request.error,
       });
       return request;
@@ -1799,7 +1803,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const result = await submit(capture.request, draft.generation, state.sourceEdit, draft.id);
     if (!result.ok)
       update({
-        connection: { ...draft, problem: result.error.message },
+        connection: connectionErrorView(draft, result.error),
         problem: result.error,
       });
     return result;

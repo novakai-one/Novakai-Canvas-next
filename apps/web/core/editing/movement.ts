@@ -54,53 +54,78 @@ function pinnedSections(document: RenderDocument, intent: PlacementIntent): read
       .filter((entry) => entry.target.kind === 'node')
       .map((entry) => ('section' in entry.target ? entry.target.section : '')),
   );
-  return document.collection.sections.map((source) => {
-    const scene = document.scene.sections.find((item) => item.id === source.id);
-    if (scene === undefined) throw new Error('captured section missing');
-    const sectionPlacement = originPlacement(source.placement, scene.origin.x, scene.origin.y);
-    if (!affected.has(source.id) || source.mode !== 'modules')
-      return { ...source, placement: sectionPlacement };
+  return document.collection.sections.map((source) => pinSection(document, source, affected));
+}
 
-    const nodes = new Map(scene.nodes.map((node) => [node.id, node]));
-    const groups = source.groups.map((group) => {
-      const node = scene.nodes.find((candidate) => candidate.measured.groupId === group.id);
-      if (node === undefined) throw new Error('captured group missing');
-      const parent = node.parent === null ? undefined : nodes.get(node.parent);
-      if (node.parent !== null && parent === undefined)
-        throw new Error('captured group parent missing');
-      return {
-        ...group,
-        placement: sourcePlacement(
-          group.placement,
-          node.box.x - (parent?.box.x ?? 0),
-          node.box.y - (parent?.box.y ?? 0),
-          node.box.width,
-          node.box.height,
-        ),
-      };
-    });
-    const appearances = source.appearances.map((appearance) => {
-      const node = scene.nodes.find(
-        (candidate) =>
-          candidate.measured.groupId === null && candidate.measured.objectId === appearance.object,
-      );
-      if (node === undefined) throw new Error('captured appearance missing');
-      const parent = node.parent === null ? undefined : nodes.get(node.parent);
-      if (node.parent !== null && parent === undefined)
-        throw new Error('captured appearance parent missing');
-      return {
-        ...appearance,
-        placement: sourcePlacement(
-          appearance.placement,
-          node.box.x - (parent?.box.x ?? 0),
-          node.box.y - (parent?.box.y ?? 0),
-          node.box.width,
-          node.box.height,
-        ),
-      };
-    });
-    return { ...source, placement: sectionPlacement, groups, appearances };
-  });
+function pinSection(
+  document: RenderDocument,
+  source: Section,
+  affected: ReadonlySet<string>,
+): Section {
+  const scene = document.scene.sections.find((item) => item.id === source.id);
+  if (scene === undefined) throw new Error('captured section missing');
+  const placement = originPlacement(source.placement, scene.origin.x, scene.origin.y);
+  if (!affected.has(source.id) || source.mode !== 'modules') return { ...source, placement };
+  const nodes = new Map(scene.nodes.map((node) => [node.id, node]));
+  return {
+    ...source,
+    placement,
+    groups: source.groups.map((group) => pinGroup(group, scene.nodes, nodes)),
+    appearances: source.appearances.map((appearance) =>
+      pinAppearance(appearance, scene.nodes, nodes),
+    ),
+  };
+}
+function parentBox(
+  node: { readonly parent: string | null; readonly box: Box },
+  nodes: ReadonlyMap<string, { readonly box: Box }>,
+): Box | undefined {
+  return node.parent === null ? undefined : nodes.get(node.parent)?.box;
+}
+function pinGroup(
+  group: Section['groups'][number],
+  nodes: readonly RenderDocument['scene']['sections'][number]['nodes'][number][],
+  indexed: ReadonlyMap<string, RenderDocument['scene']['sections'][number]['nodes'][number]>,
+): Section['groups'][number] {
+  const node = nodes.find((candidate) => candidate.measured.groupId === group.id);
+  if (node === undefined) throw new Error('captured group missing');
+  const parent = parentBox(node, indexed);
+  if (node.parent !== null && parent === undefined)
+    throw new Error('captured group parent missing');
+  return {
+    ...group,
+    placement: sourcePlacement(
+      group.placement,
+      node.box.x - (parent?.x ?? 0),
+      node.box.y - (parent?.y ?? 0),
+      node.box.width,
+      node.box.height,
+    ),
+  };
+}
+function pinAppearance(
+  appearance: Section['appearances'][number],
+  nodes: readonly RenderDocument['scene']['sections'][number]['nodes'][number][],
+  indexed: ReadonlyMap<string, RenderDocument['scene']['sections'][number]['nodes'][number]>,
+): Section['appearances'][number] {
+  const node = nodes.find(
+    (candidate) =>
+      candidate.measured.groupId === null && candidate.measured.objectId === appearance.object,
+  );
+  if (node === undefined) throw new Error('captured appearance missing');
+  const parent = parentBox(node, indexed);
+  if (node.parent !== null && parent === undefined)
+    throw new Error('captured appearance parent missing');
+  return {
+    ...appearance,
+    placement: sourcePlacement(
+      appearance.placement,
+      node.box.x - (parent?.x ?? 0),
+      node.box.y - (parent?.y ?? 0),
+      node.box.width,
+      node.box.height,
+    ),
+  };
 }
 
 function plannedSections(document: RenderDocument, intent: PlacementIntent): readonly Section[] {
@@ -121,26 +146,29 @@ function changes(document: RenderDocument, sections: readonly Section[]): readon
 }
 
 function sceneBox(document: RenderDocument, target: Target): Box | undefined {
-  if (target.kind === 'section') {
-    return document.scene.sections.find((section) => section.id === target.id)?.box;
-  }
-  if (target.kind !== 'node') return undefined;
+  return target.kind === 'section'
+    ? sectionBox(document, target.id)
+    : target.kind === 'node'
+      ? nodeWorldBox(document, target)
+      : undefined;
+}
+function sectionBox(document: RenderDocument, id: string): Box | undefined {
+  return document.scene.sections.find((section) => section.id === id)?.box;
+}
+function nodeWorldBox(
+  document: RenderDocument,
+  target: Extract<Target, { kind: 'node' }>,
+): Box | undefined {
   const section = document.scene.sections.find((item) => item.id === target.section);
   const node = section?.nodes.find((item) => item.id === target.id);
-  if (section === undefined || node === undefined) return undefined;
-  return {
-    ...node.box,
-    x: node.box.x + section.origin.x,
-    y: node.box.y + section.origin.y,
-  };
+  return section === undefined || node === undefined
+    ? undefined
+    : { ...node.box, x: node.box.x + section.origin.x, y: node.box.y + section.origin.y };
 }
 
 function targetKey(target: Target): string {
-  return target.kind === 'section'
-    ? `section:${target.id}`
-    : target.kind === 'node'
-      ? `node:${target.section}:${target.id}`
-      : `${target.kind}:${target.section}:${target.id}`;
+  if (target.kind === 'section') return `section:${target.id}`;
+  return `node:${target.section}:${target.id}`;
 }
 
 function exactBox(before: Box, after: Box): boolean {
@@ -194,17 +222,20 @@ function closureKeys(
     (item) => item.id === ('section' in entry.target ? entry.target.section : ''),
   );
   if (!section) return keys;
-  for (const node of section.nodes) {
-    let current: string | null = node.id;
-    while (current !== null) {
-      if (current === entry.target.id) {
-        keys.add(targetKey({ kind: 'node', section: section.id, id: node.id }));
-        break;
-      }
-      current = section.nodes.find((item) => item.id === current)?.parent ?? null;
-    }
-  }
+  section.nodes
+    .filter((node) => containsAncestor(section.nodes, node.id, entry.target.id))
+    .forEach((node) => keys.add(targetKey({ kind: 'node', section: section.id, id: node.id })));
   return keys;
+}
+function containsAncestor(
+  nodes: readonly { readonly id: string; readonly parent: string | null }[],
+  start: string,
+  wanted: string,
+): boolean {
+  let current: string | null = start;
+  while (current !== null && current !== wanted)
+    current = nodes.find((item) => item.id === current)?.parent ?? null;
+  return current === wanted;
 }
 
 function normalizedEntries(
@@ -219,30 +250,36 @@ function normalizedEntries(
     byKey.set(key, entry);
   }
   const entries = [...byKey.values()];
-  for (const entry of entries) {
-    if (entry.target.kind !== 'node') continue;
-    if (byKey.has(targetKey({ kind: 'section', id: entry.target.section })))
-      return failure('invalid-edit', 'Select either a section or one of its nodes, not both');
-  }
-  for (const entry of entries) {
-    if (entry.target.kind !== 'node') continue;
-    const section = document.scene.sections.find(
-      (item) => item.id === ('section' in entry.target ? entry.target.section : ''),
-    );
-    const node = section?.nodes.find((item) => item.id === entry.target.id);
-    if (section === undefined || node === undefined)
-      return failure('stale-target', 'The selected movement target is missing');
-    let parent = node.parent;
-    while (parent !== null) {
-      if (byKey.has(targetKey({ kind: 'node', section: section.id, id: parent })))
-        return failure('invalid-edit', 'Select either an ancestor or its descendant, not both');
-      const parentNode = section.nodes.find((item) => item.id === parent);
-      if (parentNode === undefined)
-        return failure('stale-target', 'The selected movement parent is missing');
-      parent = parentNode.parent;
-    }
-  }
+  const conflict = entries
+    .map((entry) => validateEntry(document, entry, byKey))
+    .find((result) => !result.ok);
+  if (conflict !== undefined) return conflict;
   return { ok: true, value: entries };
+}
+function validateEntry(
+  document: RenderDocument,
+  entry: PlacementIntent['entries'][number],
+  byKey: ReadonlyMap<string, PlacementIntent['entries'][number]>,
+): Result<void> {
+  if (entry.target.kind !== 'node') return { ok: true, value: undefined };
+  if (byKey.has(targetKey({ kind: 'section', id: entry.target.section })))
+    return failure('invalid-edit', 'Select either a section or one of its nodes, not both');
+  const section = document.scene.sections.find(
+    (item) => item.id === ('section' in entry.target ? entry.target.section : ''),
+  );
+  const node = section?.nodes.find((item) => item.id === entry.target.id);
+  if (section === undefined || node === undefined)
+    return failure('stale-target', 'The selected movement target is missing');
+  let parent = node.parent;
+  while (parent !== null) {
+    if (byKey.has(targetKey({ kind: 'node', section: section.id, id: parent })))
+      return failure('invalid-edit', 'Select either an ancestor or its descendant, not both');
+    const parentNode = section.nodes.find((item) => item.id === parent);
+    if (parentNode === undefined)
+      return failure('stale-target', 'The selected movement parent is missing');
+    parent = parentNode.parent;
+  }
+  return { ok: true, value: undefined };
 }
 
 function worldBox(document: RenderDocument, target: Target): Box | undefined {

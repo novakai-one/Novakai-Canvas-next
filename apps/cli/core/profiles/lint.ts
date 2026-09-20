@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/cognitive-complexity */
 import type {
   ProfileDeclaration,
   ProfileDeclarationIndex,
@@ -101,6 +100,7 @@ function order(section: Declaration): number | undefined {
   return typeof value === 'number' ? value : undefined;
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity -- this is the single structural slot/order pass over parsed declarations.
 function lintSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
   const seen = new Map<string, Declaration>();
   for (const section of indexed.sections) {
@@ -137,13 +137,24 @@ function lintSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding
     }
     if (text(section, 'mode') !== slot.modes[0])
       finding(findings, section, `section ${slot.id}`, `Expected mode ${slot.modes[0]}.`, 'mode');
-    const sectionOrder = order(section);
-    if (sectionOrder !== undefined && sectionOrder !== slot.order - 1)
+  }
+
+  const requiredSections = buildSpecProfile.slots.flatMap((slot) => {
+    const section = sectionById(indexed.sections, slot.id.slice(1));
+    return section === undefined ? [] : [{ slot, section }];
+  });
+  for (let index = 1; index < requiredSections.length; index += 1) {
+    const previous = requiredSections[index - 1];
+    const current = requiredSections[index];
+    if (previous === undefined || current === undefined) continue;
+    const previousOrder = order(previous.section);
+    const currentOrder = order(current.section);
+    if (previousOrder === undefined || currentOrder === undefined || currentOrder <= previousOrder)
       finding(
         findings,
-        section,
-        `section ${slot.id}`,
-        `Expected numeric order ${slot.order - 1}.`,
+        current.section,
+        `section ${current.slot.id}`,
+        `Required section order must increase after ${previous.slot.id}; extra sections may appear anywhere.`,
         'order',
       );
   }
@@ -164,7 +175,8 @@ function lintSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding
     );
   const appendixNumbers = new Set<number>();
   let previousNumber = 0;
-  let previousOrder = order(sectionById(indexed.sections, 'ownership') ?? indexed.declaration) ?? 3;
+  const ownership = sectionById(indexed.sections, 'ownership');
+  let previousOrder = ownership === undefined ? undefined : order(ownership);
   for (const appendix of appendices.sort((a, b) => a.number - b.number)) {
     if (appendixNumbers.has(appendix.number))
       finding(
@@ -193,7 +205,7 @@ function lintSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding
         'mode',
       );
     const currentOrder = order(appendix.section);
-    if (currentOrder === undefined || currentOrder <= previousOrder)
+    if (currentOrder === undefined || previousOrder === undefined || currentOrder <= previousOrder)
       finding(
         findings,
         appendix.section,
@@ -201,32 +213,87 @@ function lintSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding
         'Appendix order must be greater than the ownership order and strictly increasing.',
         'order',
       );
-    previousOrder = currentOrder ?? previousOrder;
+    if (currentOrder !== undefined) previousOrder = currentOrder;
   }
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity -- repo projection validation deliberately checks root, scope and reachability together.
 function lintRepo(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
   const section = sectionById(indexed.sections, 'repo');
   if (section === undefined) return;
-  const root = section.children.find((child) => child.kind === 'root');
-  const rootId = root === undefined ? undefined : id(root);
-  if (rootId === undefined)
+  const roots = section.children.filter((child) => child.kind === 'root');
+  const rootIds = roots.flatMap((root) => {
+    const rootId = id(root);
+    return rootId === undefined ? [] : [rootId];
+  });
+  if (roots.length !== 1 || rootIds.length !== 1)
     finding(findings, section, 'section @repo', 'Tree section must declare one root.', 'id');
+  const rootId = rootIds[0];
+  const shownIds = new Set(shown(section));
+  if (rootId !== undefined && !shownIds.has(rootId))
+    finding(
+      findings,
+      section,
+      `section @repo root @${rootId}`,
+      'Tree root must be shown in the repo projection.',
+    );
   const connected = new Set(
     section.children
       .filter((child) => child.kind === 'connect')
       .flatMap((child) => ids(child, 'ids')),
   );
-  const parentWires = indexed.wires
-    .filter((wire) => text(wire, 'kind') === 'parent')
-    .map((wire) => id(wire));
-  if (
-    parentWires.length === 0 ||
-    parentWires.some((wireId) => wireId !== undefined && !connected.has(wireId))
-  )
+  const parentWires = indexed.wires.filter(
+    (wire) => text(wire, 'kind') === 'parent' && connected.has(id(wire) ?? ''),
+  );
+  if (parentWires.length === 0)
     finding(findings, section, 'section @repo', 'Tree section must show and connect parent wires.');
+  const childrenByParent = new Map<string, string[]>();
+  for (const wire of parentWires) {
+    const wireId = id(wire);
+    const source = reference(field(wire, 'source'))?.id;
+    const target = reference(field(wire, 'target'))?.id;
+    if (wireId === undefined || source === undefined || target === undefined) {
+      finding(
+        findings,
+        wire,
+        `wire @${wireId ?? '?'}`,
+        'Parent wire must have source and target objects.',
+      );
+      continue;
+    }
+    if (!shownIds.has(source) || !shownIds.has(target))
+      finding(
+        findings,
+        wire,
+        `wire @${wireId}`,
+        'Parent wire endpoints must be shown in the repo projection.',
+      );
+    childrenByParent.set(source, [...(childrenByParent.get(source) ?? []), target]);
+  }
+  if (rootId !== undefined) {
+    const reachable = new Set<string>([rootId]);
+    const queue = [rootId];
+    while (queue.length > 0) {
+      const current = queue.shift();
+      if (current === undefined) continue;
+      for (const child of childrenByParent.get(current) ?? [])
+        if (!reachable.has(child)) {
+          reachable.add(child);
+          queue.push(child);
+        }
+    }
+    for (const objectId of shownIds)
+      if (!reachable.has(objectId))
+        finding(
+          findings,
+          section,
+          `section @repo show @${objectId}`,
+          'Every shown repo object must be connected to the declared root by parent wires.',
+        );
+  }
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity -- module reuse validation has one bounded candidate check.
 function lintModules(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
   const repo = sectionById(indexed.sections, 'repo');
   const modules = sectionById(indexed.sections, 'modules');
@@ -248,6 +315,7 @@ function lintModules(indexed: ProfileDeclarationIndex, findings: ProfileFinding[
   }
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity -- CRUD validation accumulates independent structural findings in source order.
 function lintEntitiesAndCrud(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
   const entities = sectionById(indexed.sections, 'entities');
   const ownership = sectionById(indexed.sections, 'ownership');
@@ -305,8 +373,10 @@ function lintEntitiesAndCrud(indexed: ProfileDeclarationIndex, findings: Profile
     );
   const rows = descendants(table, 'row');
   const expectedRows = new Set(entityIds.map((entityId) => `${entityId}-row`));
+  const rowCounts = new Map<string, number>();
   for (const row of rows) {
     const rowId = id(row);
+    if (rowId !== undefined) rowCounts.set(rowId, (rowCounts.get(rowId) ?? 0) + 1);
     if (rowId === undefined || !expectedRows.has(rowId))
       finding(
         findings,
@@ -321,6 +391,63 @@ function lintEntitiesAndCrud(indexed: ProfileDeclarationIndex, findings: Profile
   for (const expectedRow of expectedRows)
     if (!rows.some((row) => id(row) === expectedRow))
       finding(findings, table, `row @${expectedRow}`, 'CRUD table is missing a row for an entity.');
+  for (const [rowId, count] of rowCounts)
+    if (count > 1)
+      finding(
+        findings,
+        rows.find((row) => id(row) === rowId) ?? table,
+        `row @${rowId}`,
+        'CRUD table must contain exactly one row for each entity.',
+      );
+}
+
+// eslint-disable-next-line sonarjs/cognitive-complexity -- appendix mode checks intentionally share one native-content rule.
+function lintAppendices(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+  for (const section of indexed.sections) {
+    const sectionId = id(section);
+    const match = sectionId === undefined ? null : appendixPattern.exec(sectionId);
+    if (match === null || sectionId === undefined) continue;
+    const mode = text(section, 'mode');
+    const shownIds = shown(section);
+    const shownNodes = shownIds
+      .map((objectId) => indexed.nodes.find((node) => id(node) === objectId))
+      .filter((node): node is Declaration => node !== undefined);
+    if (mode === 'sequence') {
+      if (!section.children.some((child) => child.kind === 'event' || child.kind === 'fragment'))
+        finding(
+          findings,
+          section,
+          `section @${sectionId}`,
+          'Sequence appendix must contain native event or fragment declarations.',
+        );
+      continue;
+    }
+    const allowedKinds =
+      mode === 'flow'
+        ? new Set(['start', 'step', 'decision', 'end', 'fork', 'join'])
+        : new Set(['state']);
+    if (!shownNodes.some((node) => allowedKinds.has(text(node, 'kind') ?? '')))
+      finding(
+        findings,
+        section,
+        `section @${sectionId}`,
+        `${mode} appendix must show native ${mode} objects.`,
+      );
+    const connectedIds = section.children
+      .filter((child) => child.kind === 'connect')
+      .flatMap((child) => ids(child, 'ids'));
+    const nativeWire = indexed.wires.some(
+      (wire) => connectedIds.includes(id(wire) ?? '') && text(wire, 'kind') === mode,
+    );
+    if (!nativeWire)
+      finding(
+        findings,
+        section,
+        `section @${sectionId}`,
+        `${mode} appendix must connect native ${mode} wires.`,
+      );
+    void match;
+  }
 }
 
 export function lintBuildSpec(source: ParsedSource): ProfileLintResult {
@@ -338,6 +465,7 @@ export function lintBuildSpec(source: ParsedSource): ProfileLintResult {
   lintRepo(indexed, findings);
   lintModules(indexed, findings);
   lintEntitiesAndCrud(indexed, findings);
+  lintAppendices(indexed, findings);
   return {
     profile: buildSpecProfile.id,
     valid: findings.length === 0,

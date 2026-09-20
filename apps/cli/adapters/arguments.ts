@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/cognitive-complexity */
 import { parseArgs } from 'node:util';
 import { commandName } from '../contract/records/command.js';
 import type { CliOptions, Command } from '../contract/records/command.js';
@@ -101,6 +100,7 @@ function operands(
   return fields(name, positionals[1] ?? '', flags);
 }
 /** Value validation returns named input errors instead of allowing NaN or negative revisions into preconditions. */
+// eslint-disable-next-line sonarjs/cognitive-complexity -- command flag validation intentionally keeps all pre-I/O rejection in one boundary.
 function fields(
   name: Command['name'],
   target: string,
@@ -152,6 +152,7 @@ function versioned(command: Omit<Command, 'revision'>, input: string | undefined
 }
 
 /** Help is a local command and never needs a running workspace. */
+// eslint-disable-next-line sonarjs/cognitive-complexity -- operand normalization has three explicit command families.
 function commandOperands(
   help: boolean | undefined,
   positionals: readonly string[],

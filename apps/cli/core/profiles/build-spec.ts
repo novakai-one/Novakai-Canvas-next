@@ -45,6 +45,12 @@ export const buildSpecProfile: ProfileDescriptor = {
     modes: ['flow', 'sequence', 'state'],
     description: 'At least one numbered 5.N flow, sequence or state appendix.',
   },
+  conventions: [
+    'Required section numeric orders must increase: repo < entities < modules < ownership < every appendix; extra sections may appear anywhere.',
+    'Appendix IDs use @flow-5N, @sequence-5N or @state-5N; the prefix must match the native mode and N is positive.',
+    'CRUD row IDs are @<entity-id>-row, exactly one five-cell row for each entity shown in @entities.',
+    'Extra non-profile sections are preserved and do not satisfy or invalidate a reserved profile slot.',
+  ],
   notes: [
     'These are logical documents in one ordinary collection, not five files.',
     'The starter uses explicit participant proxies where direct canonical lifelines are unavailable.',

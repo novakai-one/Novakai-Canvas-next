@@ -24,6 +24,7 @@ export interface ProfileDescriptor {
     readonly modes: readonly string[];
     readonly description: string;
   };
+  readonly conventions: readonly string[];
   readonly notes: readonly string[];
 }
 

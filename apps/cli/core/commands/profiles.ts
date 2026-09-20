@@ -1,7 +1,6 @@
 import { buildSpecProfile, scaffoldBuildSpec } from '../profiles/build-spec.js';
 import { lintBuildSpec } from '../profiles/lint.js';
 import type { Command } from '../../contract/records/command.js';
-/* eslint-disable sonarjs/cognitive-complexity */
 import type { SemanticInputs } from '../../contract/ports/runtime.js';
 import type { RequestFiles } from '../../contract/ports/runtime.js';
 import type { Result } from '../../contract/errors.js';
@@ -40,10 +39,14 @@ function displayDescriptor(): string {
     ),
     `  5.N appendix (${buildSpecProfile.appendix.modes.join('|')}) — ${buildSpecProfile.appendix.description}`,
     '',
+    'Structural conventions:',
+    ...buildSpecProfile.conventions.map((convention) => `  ${convention}`),
+    '',
     ...buildSpecProfile.notes.map((note) => `Note: ${note}`),
   ].join('\n');
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity -- local profile commands share one strict, side-effect-bounded dispatch boundary.
 export async function executeProfile(
   command: Command,
   dependencies: ProfileDependencies,

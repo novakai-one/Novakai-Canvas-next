@@ -87,22 +87,23 @@ function displayLiteral(value: string | number | boolean): string {
   return typeof value === 'string' ? JSON.stringify(value) : String(value);
 }
 
-function displayExpression(expression: TypeExpression, collection: Collection, seen: Set<DefinitionId>): string {
+function displayExpression(expression: TypeExpression, collection: Collection, seen: Set<DefinitionId>, budget: { remaining: number }): string {
+  if (budget.remaining-- <= 0) return '…';
   if (expression.kind === 'primitive') return expression.name;
   if (expression.kind === 'literal') return displayLiteral(expression.value);
-  if (expression.kind === 'union') return expression.items.map((item) => displayExpression(item, collection, seen)).join(' | ');
+  if (expression.kind === 'union') return expression.items.map((item) => displayExpression(item, collection, seen, budget)).join(' | ');
   if (seen.has(expression.id)) return `@${expression.id}`;
   const target = collection.definitions.find((definition) => definition.id === expression.id);
   if (target === undefined) return `@${expression.id}`;
   const next = new Set(seen);
   next.add(expression.id);
-  return displayExpression(target.expression, collection, next);
+  return displayExpression(target.expression, collection, next, budget);
 }
 
 /** Resolve one definition ref to deterministic display text, expanding shared aliases with a bound. */
 export function definitionDisplay(collection: Collection, id: DefinitionId): string {
   const definition = collection.definitions.find((item) => item.id === id);
-  return definition === undefined ? `@${id}` : displayExpression(definition.expression, collection, new Set([id]));
+  return definition === undefined ? `@${id}` : displayExpression(definition.expression, collection, new Set([id]), { remaining: MAX_NODES });
 }
 
 /** Resolve a field's old string or shared reference without ever stringifying an object. */

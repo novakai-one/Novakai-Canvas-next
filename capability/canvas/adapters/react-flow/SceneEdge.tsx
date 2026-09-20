@@ -67,7 +67,6 @@ export function createSceneEdge(
     if (!first || !second || !last || !penultimate) return null;
     const path = view.draft ? wirePath(wire.points) : wire.path;
     const labelAnchor = pathMidpoint(wire.points);
-    const label = wire.measuredLabel;
     return (
       <g
         className={styles.edge}

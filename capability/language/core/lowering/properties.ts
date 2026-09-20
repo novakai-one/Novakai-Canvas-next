@@ -5,6 +5,10 @@ import { endpoint, type RawRecord } from './fields.js';
 /** References lower according to owning property meaning, never by guessing strings. */
 export function lowerValue(value: SyntaxValue, type: ValueType): unknown {
   if (type === 'signature-parameters') return lowerSignatureParameters(value);
+  return lowerComposite(value, type);
+}
+
+function lowerComposite(value: SyntaxValue, type: ValueType): unknown {
   if (isList(value)) return value.map((item) => lowerValue(item, scalarType(type)));
   if (isReference(value)) return lowerReference(value, type);
   return value;

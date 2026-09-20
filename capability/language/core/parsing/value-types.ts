@@ -44,6 +44,10 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
 };
 function signatureParameter(item: SyntaxValue): boolean {
   if (typeof item === 'string') return true;
+  return validSignatureTuple(item);
+}
+
+function validSignatureTuple(item: SyntaxValue): boolean {
   if (!isList(item) || item.length !== 2) return false;
   const name = item[0];
   const type = item[1];

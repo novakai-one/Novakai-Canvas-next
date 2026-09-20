@@ -22,6 +22,7 @@ export function createEngineeringFields({
                 <input
                   {...props}
                   value={parameterValue(parameter)}
+                  readOnly={typeof parameter !== 'string'}
                   onChange={(event) =>
                     edit({
                       kind: 'parameters',

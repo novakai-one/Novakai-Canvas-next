@@ -6,6 +6,7 @@ import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
 import { descendants } from '../objects/content.js';
+import { resolveCallableEndpoint } from '../relationships/callable.js';
 import { referenceIssue } from '../invariants/issues.js';
 
 type Fragment = Extract<SequenceItem, { kind: 'fragment' }>;
@@ -120,27 +121,45 @@ function validateOperation(
   const operation = item.operation;
   const operationPath = `${path}.operation`;
   if (item.message === 'return')
-    return [
-      {
-        code: 'sequence',
-        path: operationPath,
-        message: 'Return events cannot reference an operation',
-      },
-    ];
+    return operationDiagnostic(operationPath, 'Return events cannot reference an operation');
+  return validateOperationTarget(item, operation, collection, operationPath);
+}
+
+function validateOperationTarget(
+  item: Extract<SequenceItem, { kind: 'event' }>,
+  operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
+  collection: Collection,
+  operationPath: string,
+): readonly Diagnostic[] {
   if (operation.object !== item.target)
-    return [
-      {
-        code: 'sequence',
-        path: operationPath,
-        message: 'Operation owner must equal the event target',
-      },
-    ];
+    return operationDiagnostic(operationPath, 'Operation owner must equal the event target');
   const owner = collection.objects.find((object) => object.id === operation.object);
-  if (owner === undefined) return referenceIssue(true, operationPath);
+  return owner === undefined
+    ? referenceIssue(true, operationPath)
+    : validateCallableOperation(collection, operation, owner, operationPath);
+}
+
+function validateCallableOperation(
+  collection: Collection,
+  operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
+  owner: Collection['objects'][number],
+  operationPath: string,
+): readonly Diagnostic[] {
+  if (resolveCallableEndpoint(collection, operation) !== undefined) return [];
+  return invalidOperation(operation, owner, operationPath);
+}
+
+function operationDiagnostic(path: string, message: string): readonly Diagnostic[] {
+  return [{ code: 'sequence', path, message }];
+}
+
+function invalidOperation(
+  operation: NonNullable<Extract<SequenceItem, { kind: 'event' }>['operation']>,
+  owner: Collection['objects'][number],
+  operationPath: string,
+): readonly Diagnostic[] {
   if (operation.member === undefined)
-    return diagnoseWhen(
-      owner.kind !== 'function',
-      'sequence',
+    return operationDiagnostic(
       operationPath,
       'Operation must address a canonical function or signature',
     );

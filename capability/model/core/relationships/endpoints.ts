@@ -10,6 +10,7 @@ import {
   targetEndpoints,
 } from '../../contract/records/policies.js';
 import { descendants, type ObjectDescendant } from '../objects/content.js';
+import { resolveCallableEndpoint } from './callable.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
 
 /** A missing member differs from an existing descendant of the wrong semantic kind. */
@@ -123,22 +124,22 @@ function validateCallableTarget(
   collection: Collection,
   path: string,
 ): readonly Diagnostic[] {
-  const object = resolveEndpoint(endpoint, collection);
-  if (object === undefined) return [];
-  if (endpoint.member === undefined)
-    return diagnoseWhen(
-      object.kind !== 'function',
-      'endpoint',
-      path,
-      'Calls target must address a signature or whole function',
-    );
-  const member = descendants(object).find((item) => item.id === endpoint.member);
-  return diagnoseWhen(
-    member?.kind !== 'signature',
-    'endpoint',
-    `${path}.member`,
-    'Calls target must resolve to a signature',
-  );
+  if (resolveCallableEndpoint(collection, endpoint) !== undefined) return [];
+  return endpoint.member === undefined
+    ? [
+        {
+          code: 'endpoint',
+          path,
+          message: 'Calls target must address a signature or whole function',
+        },
+      ]
+    : [
+        {
+          code: 'endpoint',
+          path: `${path}.member`,
+          message: 'Calls target must resolve to a signature',
+        },
+      ];
 }
 
 /**

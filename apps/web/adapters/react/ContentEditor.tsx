@@ -26,6 +26,7 @@ export function createContentEditor({
               <input
                 {...props}
                 value={field.value}
+                readOnly={field.readOnly}
                 onChange={(event) =>
                   edit({
                     kind: 'content-text',
@@ -64,6 +65,7 @@ interface TextField {
   readonly name: 'label' | 'type' | 'text' | 'returns';
   readonly label: string;
   readonly value: string;
+  readonly readOnly?: boolean;
 }
 /** Structural narrowing exposes available text fields without casts or duplicating Model validation. */
 function textFields(item: ContentBlock): readonly TextField[] {
@@ -77,7 +79,8 @@ function labelField(item: ContentBlock): readonly TextField[] {
 /** Engineering types are explicit strings owned by the semantic record. */
 function typeField(item: ContentBlock): readonly TextField[] {
   if (!('type' in item)) return [];
-  if (linkedField(item)) return [];
+  if (linkedType(item))
+    return [{ name: 'type', label: 'Type (source)', value: typeValue(item.type), readOnly: true }];
   return [
     {
       name: 'type',
@@ -92,9 +95,8 @@ function typeValue(type: Extract<ContentBlock, { readonly type: unknown }>['type
   return `@${type.id}`;
 }
 
-function linkedField(item: ContentBlock & { readonly type?: unknown }): boolean {
-  if (item.kind !== 'field') return false;
-  return typeof item.type !== 'string';
+function linkedType(item: ContentBlock & { readonly type?: unknown }): boolean {
+  return 'type' in item && typeof item.type !== 'string';
 }
 /** Text and code retain their authored content exactly. */
 function bodyField(item: ContentBlock): readonly TextField[] {
@@ -104,5 +106,12 @@ function bodyField(item: ContentBlock): readonly TextField[] {
 /** Return types are distinct from member types in callable signatures. */
 function returnField(item: ContentBlock): readonly TextField[] {
   if (item.kind !== 'signature') return [];
-  return [{ name: 'returns', label: 'Returns', value: typeValue(item.returns) }];
+  return [
+    {
+      name: 'returns',
+      label: typeof item.returns === 'string' ? 'Returns' : 'Returns (source)',
+      value: typeValue(item.returns),
+      readOnly: typeof item.returns !== 'string',
+    },
+  ];
 }

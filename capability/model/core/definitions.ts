@@ -256,11 +256,24 @@ function validateContentTypes(
   object: string,
   ids: ReadonlySet<string>,
 ): readonly Diagnostic[] {
-  if (block.kind === 'field')
-    return typeUseIssue(block.type, `objects.${object}.content.${block.id}.type`, ids);
-  if (block.kind === 'member')
-    return typeUseIssue(block.type, `objects.${object}.content.${block.id}.type`, ids);
-  if (block.kind !== 'signature') return [];
+  if (block.kind === 'signature') return validateSignatureTypes(block, object, ids);
+  return 'type' in block ? validateDirectType(block.type, object, block.id, ids) : [];
+}
+
+function validateDirectType(
+  type: TypeUse,
+  object: string,
+  id: string,
+  ids: ReadonlySet<string>,
+): readonly Diagnostic[] {
+  return typeUseIssue(type, `objects.${object}.content.${id}.type`, ids);
+}
+
+function validateSignatureTypes(
+  block: Extract<ContentBlock, { kind: 'signature' }>,
+  object: string,
+  ids: ReadonlySet<string>,
+): readonly Diagnostic[] {
   const parameters = block.parameters.flatMap((parameter, index) =>
     typeof parameter === 'string'
       ? []
@@ -451,36 +464,65 @@ function usageForContent(
   object: string,
   id: DefinitionId,
 ): readonly DefinitionUsage[] {
-  const use = (
-    type: TypeUse,
-    path: string,
-    kind: DefinitionUsage['kind'],
-    extra: Partial<DefinitionUsage> = {},
-  ) =>
-    typeof type !== 'string' && type.id === id
-      ? [{ kind, definition: id, path, object, ...extra }]
-      : [];
-  if (block.kind === 'field' || block.kind === 'member')
-    return use(
-      block.type,
-      `objects.${object}.content.${block.id}.type`,
-      block.kind === 'field' ? 'field' : 'member',
-      { field: block.id },
-    );
-  if (block.kind !== 'signature') return [];
+  if (block.kind === 'signature') return signatureUsages(block, object, id);
+  return 'type' in block ? directUsage(block, object, id, block.kind) : [];
+}
+
+function directUsage(
+  block: Extract<ContentBlock, { kind: 'field' | 'member' }>,
+  object: string,
+  id: DefinitionId,
+  kind: 'field' | 'member',
+): readonly DefinitionUsage[] {
+  return usageForType(block.type, `objects.${object}.content.${block.id}.type`, kind, object, id, {
+    field: block.id,
+  });
+}
+
+function signatureUsages(
+  block: Extract<ContentBlock, { kind: 'signature' }>,
+  object: string,
+  id: DefinitionId,
+): readonly DefinitionUsage[] {
+  const parameters = block.parameters.flatMap((parameter, index) =>
+    typeof parameter === 'string'
+      ? []
+      : usageForType(
+          parameter.type,
+          `objects.${object}.content.${block.id}.parameters.${index}.type`,
+          'signature-parameter',
+          object,
+          id,
+          {
+            field: block.id,
+            parameter: index,
+          },
+        ),
+  );
   return [
-    ...block.parameters.flatMap((parameter, index) =>
-      typeof parameter === 'string'
-        ? []
-        : use(
-            parameter.type,
-            `objects.${object}.content.${block.id}.parameters.${index}.type`,
-            'signature-parameter',
-            { field: block.id, parameter: index },
-          ),
+    ...parameters,
+    ...usageForType(
+      block.returns,
+      `objects.${object}.content.${block.id}.returns`,
+      'signature-return',
+      object,
+      id,
+      {
+        field: block.id,
+      },
     ),
-    ...use(block.returns, `objects.${object}.content.${block.id}.returns`, 'signature-return', {
-      field: block.id,
-    }),
   ];
+}
+
+function usageForType(
+  type: TypeUse,
+  path: string,
+  kind: DefinitionUsage['kind'],
+  object: string,
+  id: DefinitionId,
+  extra: Partial<DefinitionUsage>,
+): readonly DefinitionUsage[] {
+  return typeof type !== 'string' && type.id === id
+    ? [{ kind, definition: id, path, object, ...extra }]
+    : [];
 }

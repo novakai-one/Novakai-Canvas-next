@@ -47,29 +47,60 @@ export function sourceMappings(item: Declaration, prefix = ''): readonly SourceM
 }
 
 function contentMappings(name: string, item: Declaration): readonly SourceMapping[] {
-  const mappings: SourceMapping[] = [];
+  return [operationMapping(name, item), ...typeMappings(name, item)].filter(isMapping);
+}
+
+function operationMapping(name: string, item: Declaration): SourceMapping | undefined {
   const operation = item.fields.operation;
-  if (operation !== undefined) mappings.push({ path: `${name}.operation`, span: operation.span });
-  if (item.kind !== 'signature') {
-    const type = item.kind === 'member' ? item.fields.type : undefined;
-    if (type !== undefined) mappings.push({ path: `${name}.type`, span: type.span });
-    return mappings;
-  }
-  const returns = item.fields.returns;
-  if (returns !== undefined) mappings.push({ path: `${name}.returns`, span: returns.span });
-  const parameters = item.fields.parameters;
-  (parameters?.items ?? []).forEach((parameter, index) => {
-    if (typeof parameter.value === 'string') {
-      mappings.push({ path: `${name}.parameters.${index}`, span: parameter.span });
-      return;
-    }
-    const tuple = parameter.items ?? [];
-    if (tuple[0] !== undefined)
-      mappings.push({ path: `${name}.parameters.${index}.name`, span: tuple[0].span });
-    if (tuple[1] !== undefined)
-      mappings.push({ path: `${name}.parameters.${index}.type`, span: tuple[1].span });
-  });
-  return mappings;
+  return operation === undefined ? undefined : { path: `${name}.operation`, span: operation.span };
+}
+
+function typeMappings(name: string, item: Declaration): readonly SourceMapping[] {
+  if (item.kind === 'member') return propertyMapping(name, 'type', item.fields.type);
+  if (item.kind !== 'signature') return [];
+  return [
+    ...propertyMapping(name, 'returns', item.fields.returns),
+    ...(item.fields.parameters?.items ?? []).flatMap((parameter, index) =>
+      parameterMappings(name, parameter, index),
+    ),
+  ];
+}
+
+function propertyMapping(
+  name: string,
+  property: string,
+  value: LocatedValue | undefined,
+): readonly SourceMapping[] {
+  return value === undefined ? [] : [{ path: `${name}.${property}`, span: value.span }];
+}
+
+function parameterMappings(
+  name: string,
+  parameter: LocatedValue,
+  index: number,
+): readonly SourceMapping[] {
+  if (typeof parameter.value === 'string')
+    return [{ path: `${name}.parameters.${index}`, span: parameter.span }];
+  const tuple = parameter.items ?? [];
+  return [
+    parameterPartMapping(name, index, 'name', tuple[0]),
+    parameterPartMapping(name, index, 'type', tuple[1]),
+  ].filter(isMapping);
+}
+
+function parameterPartMapping(
+  name: string,
+  index: number,
+  part: 'name' | 'type',
+  value: LocatedValue | undefined,
+): SourceMapping | undefined {
+  return value === undefined
+    ? undefined
+    : { path: `${name}.parameters.${index}.${part}`, span: value.span };
+}
+
+function isMapping(value: SourceMapping | undefined): value is SourceMapping {
+  return value !== undefined;
 }
 
 function expressionMapping(

@@ -17,6 +17,10 @@ export function string(value: unknown): string {
 /** Format canonical properties using the same declared scalar/list type used by the parser. */
 export function printValue(value: unknown, type: ValueType): string {
   if (type === 'signature-parameters') return printSignatureParameters(value);
+  return printSimpleValue(value, type);
+}
+
+function printSimpleValue(value: unknown, type: ValueType): string {
   if (Array.isArray(value)) return printList(value, type);
   if (type === 'endpoint') return printEndpoint(value);
   return printScalar(value, type);

@@ -63,8 +63,24 @@ function replaceEditableText(
   item: ContentBlock,
   edit: Extract<ObjectEdit, { kind: 'content-text' }>,
 ): ContentBlock {
-  if (item.kind === 'field' && edit.field === 'type' && typeof item.type !== 'string') return item;
+  if (preservesLinkedType(item, edit.field)) return item;
   return { ...item, [edit.field]: edit.value };
+}
+
+function preservesLinkedType(
+  item: ContentBlock,
+  field: 'label' | 'type' | 'text' | 'returns',
+): boolean {
+  if (field === 'type') return 'type' in item && typeof item.type !== 'string';
+  return preservesLinkedReturn(item, field);
+}
+
+function preservesLinkedReturn(
+  item: ContentBlock,
+  field: 'label' | 'type' | 'text' | 'returns',
+): boolean {
+  if (field !== 'returns' || item.kind !== 'signature') return false;
+  return typeof item.returns !== 'string';
 }
 /** Nullable belongs to an ER field, never to an arbitrary content block. */
 function editNullable(object: DiagramObject, edit: ObjectEdit): DiagramObject {

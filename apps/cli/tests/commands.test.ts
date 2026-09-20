@@ -34,6 +34,21 @@ it('host 8 maps readable arguments and files to exact requests, rejects invalid 
     expect(help).toMatchObject({ ok: true, value: expect.stringContaining('canvas create FILE') });
     expect(readArguments(['create', file, '--unknown'], root)).toMatchObject({ ok: false });
     expect(readArguments(['read', 'one', 'ignored'], root)).toMatchObject({ ok: false });
+    expect(readArguments(['read', 'one', '--section', 'modules'], root)).toMatchObject({
+      ok: true,
+      value: { command: { scope: { kind: 'section', id: 'modules' } } },
+    });
+    expect(readArguments(['read', 'one', '--object', 'shell'], root)).toMatchObject({
+      ok: true,
+      value: { command: { scope: { kind: 'object', id: 'shell' } } },
+    });
+    expect(
+      readArguments(['read', 'one', '--section', 'modules', '--object', 'shell'], root),
+    ).toMatchObject({ ok: false });
+    expect(readArguments(['read', 'one', '--section', ''], root)).toMatchObject({ ok: false });
+    expect(readArguments(['create', file, '--section', 'modules'], root)).toMatchObject({
+      ok: false,
+    });
     for (const revision of ['', ' ', '-1', '1.5', '9007199254740992']) {
       expect(readArguments(['patch', file, '--revision', revision], root)).toMatchObject({
         ok: false,
@@ -72,6 +87,14 @@ it('host 8 maps readable arguments and files to exact requests, rejects invalid 
     expect(semantic.readout({ source: 'canvas 1', collection: 'demo', revision: 0 })).toMatchObject(
       { ok: true, value: expect.not.stringContaining('manual geometry') },
     );
+    expect(
+      semantic.readout({
+        source: 'view 1 @demo revision=2 scope=section:modules {}',
+        collection: 'demo',
+        revision: 2,
+        scope: { kind: 'section', id: 'modules' },
+      }),
+    ).toMatchObject({ ok: true, value: expect.stringContaining('Read-only partial context') });
     const files = createRequestFiles(join(root, 'requests'));
     const sent: Request[] = [];
     let knownReceipt: unknown = null;

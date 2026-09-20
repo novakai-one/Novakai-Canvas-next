@@ -3,17 +3,62 @@ import type { Snapshot } from '@novakai/canvas-authoring';
 import type { RouterBindings } from '../contract/records/server.js';
 import { httpBodyLimit } from '../contract/records/http.js';
 import { failure } from '../contract/errors.js';
+import type { Result } from '../contract/errors.js';
 import type { ResourceCommands } from '../contract/records/resource-commands.js';
 type ResourceHandler = (input: unknown) => Promise<WireOutcome>;
 /** Read one current collection without reinterpreting its semantic shape; Language/Presentation validate before their use. */
 async function source(call: ApiCall, owners: RouterBindings): Promise<WireOutcome> {
+  const scope = sourceScope(call.query);
+  if (!scope.ok) return scope;
+  return readSourceRecord(call, owners, scope.value);
+}
+
+async function readSourceRecord(
+  call: ApiCall,
+  owners: RouterBindings,
+  scope: import('@novakai/canvas-language').Scope,
+): Promise<WireOutcome> {
   const snapshot = await owners.session.read();
   if (!snapshot.ok) return snapshot;
   const record = snapshot.value.records.find(
     (item) => item.key.kind === 'collection' && item.key.id === call.query.id && !item.deleted,
   );
   if (!record) return failure('not-found', 'collection', 'Collection was not found');
-  return owners.source.print(record.value);
+  return owners.source.print(record.value, scope);
+}
+
+function sourceScope(
+  query: Readonly<Record<string, string>>,
+): Result<import('@novakai/canvas-language').Scope> {
+  const section = query.section;
+  const object = query.object;
+  if (bothScopes(section, object))
+    return failure('invalid-input', 'scope', 'Use either section or object, not both');
+  const selected = section === undefined ? object : section;
+  return validSourceScope(section, selected);
+}
+
+function bothScopes(section: string | undefined, object: string | undefined): boolean {
+  return section !== undefined && object !== undefined;
+}
+
+function validSourceScope(
+  section: string | undefined,
+  selected: string | undefined,
+): Result<import('@novakai/canvas-language').Scope> {
+  if (selected === undefined) return { ok: true, value: { kind: 'all' } };
+  if (!/^[A-Za-z0-9_-]+$/.test(selected))
+    return failure('invalid-input', 'scope', 'Scope IDs must be non-empty canonical IDs');
+  return sourceScopeValue(section, selected);
+}
+
+function sourceScopeValue(
+  section: string | undefined,
+  id: string,
+): Result<import('@novakai/canvas-language').Scope> {
+  return section === undefined
+    ? { ok: true, value: { kind: 'object', id } }
+    : { ok: true, value: { kind: 'section', id } };
 }
 /** Mutation routes share the exact decoder and Authoring session; no route writes storage directly. */
 async function mutate(

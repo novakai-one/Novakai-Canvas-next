@@ -174,3 +174,23 @@ it('preserves all compiler evidence through readout and rejects empty diagnostic
     }).success,
   ).toBe(false);
 });
+
+it('passes an explicit read scope to Language and preserves the view envelope metadata', () => {
+  const print = vi.fn(
+    ({ scope }: { readonly scope: import('@novakai/canvas-language').Scope }) => ({
+      ok: true as const,
+      value: {
+        source: 'view 1 @demo revision=4 scope=section:modules {}',
+        collection: 'demo',
+        revision: 4,
+        scope,
+        manual: [],
+        pins: { theme: 'paper', assets: [] },
+      },
+    }),
+  );
+  const readout = createSourceReadout({ describe: unexpected, print });
+  const result = readout.print({}, { kind: 'section', id: 'modules' });
+  expect(result).toMatchObject({ ok: true, value: { scope: { kind: 'section', id: 'modules' } } });
+  expect(print).toHaveBeenCalledWith({ collection: {}, scope: { kind: 'section', id: 'modules' } });
+});

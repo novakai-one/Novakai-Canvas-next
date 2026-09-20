@@ -33,6 +33,8 @@ export function readArguments(
         title: { type: 'string' },
         namespace: { type: 'string' },
         profile: { type: 'string' },
+        section: { type: 'string' },
+        object: { type: 'string' },
       },
     });
     const command = readCommand(commandOperands(parsed.values.help, parsed.positionals), {
@@ -74,6 +76,8 @@ function readCommand(
     readonly request?: string;
     readonly out?: string;
     readonly profile?: string;
+    readonly section?: string;
+    readonly object?: string;
   },
 ): Result<Command> {
   const parsed = commandName.safeParse(positionals[0]);
@@ -92,6 +96,8 @@ function operands(
     readonly request?: string;
     readonly out?: string;
     readonly profile?: string;
+    readonly section?: string;
+    readonly object?: string;
   },
 ): Result<Command> {
   const count = ['help', 'describe', 'list'].includes(name) ? 1 : 2;
@@ -110,12 +116,32 @@ function fields(
     readonly request?: string;
     readonly out?: string;
     readonly profile?: string;
+    readonly section?: string;
+    readonly object?: string;
   },
 ): Result<Command> {
-  const profileFlags = profileFlagFailure(name, flags);
-  if (profileFlags !== undefined) return profileFlags;
+  const invalid = profileFlagFailure(name, flags) ?? readScopeFailure(name, flags);
+  if (invalid !== undefined) return invalid;
+  return validFields(name, target, flags);
+}
+
+function validFields(
+  name: Command['name'],
+  target: string,
+  flags: {
+    readonly preset?: Command['preset'];
+    readonly revision?: string;
+    readonly mode: string;
+    readonly request?: string;
+    readonly out?: string;
+    readonly profile?: string;
+    readonly section?: string;
+    readonly object?: string;
+  },
+): Result<Command> {
   const checked = validatedMode(name, flags.mode);
   if (!checked.ok) return checked;
+  const scope = readScope(name, flags);
   return versioned(
     {
       name,
@@ -125,9 +151,35 @@ function fields(
       output: flags.out ?? null,
       preset: flags.preset,
       profile: flags.profile,
+      ...(scope === undefined ? {} : { scope }),
     },
     flags.revision,
   );
+}
+
+function readScopeFailure(
+  name: Command['name'],
+  flags: { readonly section?: string; readonly object?: string },
+): Result<Command> | undefined {
+  const selected = [flags.section, flags.object].filter((value) => value !== undefined);
+  if (selected.length > 1)
+    return failure('invalid-arguments', '--section and --object are mutually exclusive for read.');
+  return selected.length === 0 ? undefined : invalidReadScope(name, selected[0]);
+}
+
+function invalidReadScope(
+  name: Command['name'],
+  selected: string | undefined,
+): Result<Command> | undefined {
+  if (name !== 'read')
+    return failure('invalid-arguments', '--section and --object are only valid with read.');
+  return invalidScopeId(selected);
+}
+
+function invalidScopeId(selected: string | undefined): Result<Command> | undefined {
+  if (selected === undefined || !/^[A-Za-z0-9_-]+$/.test(selected))
+    return failure('invalid-arguments', 'Read scope IDs must be non-empty canonical IDs.');
+  return undefined;
 }
 
 function validatedMode(name: Command['name'], fallback: string): Result<Command['mode']> {
@@ -136,6 +188,23 @@ function validatedMode(name: Command['name'], fallback: string): Result<Command[
   return checked.success
     ? { ok: true, value: checked.data }
     : failure('invalid-mode', 'Mode must be create, replace or patch');
+}
+
+function readScope(
+  name: Command['name'],
+  flags: { readonly section?: string; readonly object?: string },
+): Command['scope'] {
+  if (name !== 'read') return undefined;
+  return scopeValue(flags);
+}
+
+function scopeValue(flags: {
+  readonly section?: string;
+  readonly object?: string;
+}): Command['scope'] {
+  if (flags.section !== undefined) return { kind: 'section', id: flags.section };
+  if (flags.object !== undefined) return { kind: 'object', id: flags.object };
+  return { kind: 'all' };
 }
 /** A revision is optional for read/create commands; semantic admission makes it mandatory for existing diagram changes. */
 function versioned(command: Omit<Command, 'revision'>, input: string | undefined): Result<Command> {

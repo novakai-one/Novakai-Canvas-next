@@ -38,12 +38,7 @@ export async function execute(
     help: async () => ({ ok: true, value: usage }),
     describe: () => query('/api/v1/language', describe, dependencies),
     list: () => query('/api/v1/workspace', dependencies.semantic.collections, dependencies),
-    read: () =>
-      query(
-        `/api/v1/source?id=${encodeURIComponent(command.target)}`,
-        dependencies.semantic.readout,
-        dependencies,
-      ),
+    read: () => query(sourcePath(command), dependencies.semantic.readout, dependencies),
     receipt: () =>
       query(
         `/api/v1/receipt?id=${encodeURIComponent(command.target)}`,
@@ -69,6 +64,13 @@ export async function execute(
   const outcome = await operations[command.name]();
   if (!outcome.ok) return outcome;
   return output(command.output, outcome.value, dependencies);
+}
+
+function sourcePath(command: Command): string {
+  const query = new URLSearchParams({ id: command.target });
+  if (command.scope?.kind === 'section') query.set('section', command.scope.id);
+  if (command.scope?.kind === 'object') query.set('object', command.scope.id);
+  return `/api/v1/source?${query.toString()}`;
 }
 /** Source files are only written at the explicit --out path; stdout remains the default. */
 async function output(

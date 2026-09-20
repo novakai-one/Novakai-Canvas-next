@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Scope } from '@novakai/canvas-language';
 /** Replacement and patch commands require an explicit read revision; omission cannot become a blind latest-version overwrite. */
 export const commandName = z.enum([
   'help',
@@ -28,6 +29,8 @@ export interface Command {
   readonly mode: 'create' | 'replace' | 'patch';
   readonly request: string | null;
   readonly output: string | null;
+  /** Read-only source context; omitted means the complete collection for legacy callers. */
+  readonly scope?: Scope;
   readonly preset?:
     | {
         readonly id?: string;

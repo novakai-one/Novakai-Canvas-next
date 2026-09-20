@@ -4,6 +4,7 @@ import type { ApiRouter, CommandDecoder } from './protocol.js';
 import type { Result } from '../errors.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { WireOutcome } from './protocol.js';
+import type { Scope } from '@novakai/canvas-language';
 /** Body readers expose only the iterator control needed to preserve a rejected native socket. */
 export interface BodyStream {
   iterator(options: { readonly destroyOnReturn: false }): AsyncIterableIterator<unknown>;
@@ -60,7 +61,7 @@ export interface RouterBindings {
   readonly decoder: CommandDecoder;
   readonly source: {
     describe(): unknown;
-    print(collection: unknown): WireReadout;
+    print(collection: unknown, scope?: Scope): WireReadout;
   };
 }
 /** Language diagnostics use an array, so this adapter translates them into the single transport diagnostic. */

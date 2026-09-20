@@ -403,6 +403,8 @@
     "canvasSequence.messageOpacity": 0.82,
     "canvasSequence.lifelineHeadOpacity": 0.6,
     "canvasSequence.haloOpacity": 0.4,
+    "canvasDepth.figureHaloOpacity": 1.0,
+    "canvasDepth.figureShadowOpacity": 0.6,
     "canvasSequence.activationFillOpacity": 0.12,
     "canvasSequence.activationEdgeOpacity": 0.4,
     "canvasSequence.activationTopOpacity": 0.55,

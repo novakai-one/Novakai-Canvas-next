@@ -101,6 +101,8 @@
   --nv-canvas-node-edge-top: #a5afba;
   --nv-canvas-node-edge-bottom: #6b7683;
   --nv-canvas-wire-hover-opacity: 0.78;
+  --nv-canvas-figure-halo-opacity: 0.55;
+  --nv-canvas-figure-shadow-opacity: 0.5;
   --nv-diagram-width-extra-large: 437.5px;
   --nv-diagram-icon-small: 24px;
   --nv-diagram-icon-medium: 32px;

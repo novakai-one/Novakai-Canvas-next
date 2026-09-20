@@ -1098,6 +1098,14 @@
     "nodeBoundaryOpacity": {
       "$type": "number",
       "$value": 0.5
+    },
+    "figureHaloOpacity": {
+      "$type": "number",
+      "$value": 0.55
+    },
+    "figureShadowOpacity": {
+      "$type": "number",
+      "$value": 0.5
     }
   },
   "canvasEmphasis": {

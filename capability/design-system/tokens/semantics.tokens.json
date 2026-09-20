@@ -880,6 +880,14 @@
     "wireHoverOpacity": {
       "$type": "number",
       "$value": "{canvasEmphasis.hoverOpacity}"
+    },
+    "figureHaloOpacity": {
+      "$type": "number",
+      "$value": "{canvasDepth.figureHaloOpacity}"
+    },
+    "figureShadowOpacity": {
+      "$type": "number",
+      "$value": "{canvasDepth.figureShadowOpacity}"
     }
   }
 }

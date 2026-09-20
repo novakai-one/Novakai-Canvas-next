@@ -123,6 +123,8 @@ export const tokenNames = [
   '--nv-canvas-depth-group-opacity',
   '--nv-canvas-depth-grid-opacity',
   '--nv-canvas-depth-node-boundary-opacity',
+  '--nv-canvas-depth-figure-halo-opacity',
+  '--nv-canvas-depth-figure-shadow-opacity',
   '--nv-canvas-emphasis-muted-opacity',
   '--nv-canvas-emphasis-hover-opacity',
   '--nv-canvas-emphasis-primary-glow-alpha',
@@ -248,4 +250,6 @@ export const tokenNames = [
   '--nv-canvas-node-edge-top',
   '--nv-canvas-node-edge-bottom',
   '--nv-canvas-wire-hover-opacity',
+  '--nv-canvas-figure-halo-opacity',
+  '--nv-canvas-figure-shadow-opacity',
 ] as const;

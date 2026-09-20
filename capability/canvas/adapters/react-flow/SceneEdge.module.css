@@ -120,6 +120,15 @@
     stroke-width: var(--nv-space-4);
     cursor: pointer;
   }
+  /* Crossing knockout: a canvas-colored bridge under each wire so the upper trace
+     passes cleanly over whatever was painted earlier (edges sit below node chrome).
+     Width stays tight (3px) so parallel corridor wires within ~4px are untouched. */
+  .knockout {
+    fill: none;
+    stroke: var(--nv-canvas-surface);
+    stroke-width: 3px;
+    pointer-events: none;
+  }
   .edge[data-preview='true'] .wire {
     stroke-dasharray: var(--nv-space-1);
   }

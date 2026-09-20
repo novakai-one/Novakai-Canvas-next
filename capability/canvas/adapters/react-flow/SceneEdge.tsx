@@ -121,6 +121,7 @@ export function createSceneEdge(
           </linearGradient>
         </defs>
         <path className={styles.hit} d={path} />
+        <path className={styles.knockout} d={path} />
         <path
           className={styles.underlay}
           d={path}

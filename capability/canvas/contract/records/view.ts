@@ -48,6 +48,7 @@ export interface CanvasView {
   readonly editable: boolean;
   readonly tool: 'select' | 'hand' | 'connect';
   readonly focus: FocusProjection;
+  readonly detail: DetailTier;
 }
 export interface OutlineEntry {
   readonly target: Target;

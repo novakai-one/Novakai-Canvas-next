@@ -8,13 +8,15 @@ function graphTargets(targets: readonly Target[]): readonly Target[] {
   return targets.filter((target) => target.kind === 'node' || target.kind === 'wire');
 }
 
-/** Only an active graph selection projects a neighborhood; hover remains local presentation state. */
+/** Selection projects a neighborhood first; without one, hover previews it without muting the rest. */
 function focusTargets(state: SessionState): {
   readonly source: FocusSource;
   readonly targets: readonly Target[];
 } {
   const selected = graphTargets(state.selection);
   if (selected.length > 0) return { source: 'selection', targets: selected };
+  if (state.hover !== null && graphTargets([state.hover]).length > 0)
+    return { source: 'hover', targets: [state.hover] };
   return { source: 'none', targets: [] };
 }
 
@@ -24,6 +26,7 @@ function reusable(state: SessionState, previous: FocusProjection | undefined): b
   return [
     previous.inputs.scene === state.scene,
     previous.inputs.selection === state.selection,
+    previous.inputs.hover === state.hover,
   ].every(Boolean);
 }
 
@@ -70,14 +73,22 @@ export function projectFocus(state: SessionState, previous?: FocusProjection): F
     source: focus.source,
     primary,
     secondary,
-    inputs: { scene: state.scene, selection: state.selection },
+    inputs: { scene: state.scene, selection: state.selection, hover: state.hover },
   };
 }
 
 /** Focus presence maps every graph object to one paint role without changing true selection. */
 export function emphasisFor(focus: FocusProjection, key: string): Emphasis {
   if (focus.source === 'none') return 'normal';
+  if (focus.source === 'hover') return hoveredEmphasis(focus, key);
   return focusedEmphasis(focus, key);
+}
+
+/** Hover previews the same one-hop neighborhood as selection but never mutes the rest of the scene. */
+function hoveredEmphasis(focus: FocusProjection, key: string): Emphasis {
+  if (focus.primary.has(key)) return 'primary';
+  if (focus.secondary.has(key)) return 'secondary';
+  return 'normal';
 }
 
 /** Membership precedence ensures an explicit multi-selection never renders as its own neighbour. */

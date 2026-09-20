@@ -34,7 +34,7 @@ const processors: Readonly<Record<ContentBlock['kind'], Processor>> = {
         width: context.width,
         ...context.style.typography[block.role],
         strong: context.style.strongFont,
-        fill: context.style.text,
+        fill: block.role === 'caption' ? context.style.secondary : context.style.text,
       },
       context.metrics,
     );

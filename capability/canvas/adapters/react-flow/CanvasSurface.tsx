@@ -61,6 +61,9 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     const chrome = props.chrome ?? defaultChrome;
     const controlsVisible = chrome.tools || chrome.zoom || chrome.outline;
     const hand = snapshot.view.tool === 'hand';
+    const energized =
+      snapshot.view.nodes.some((node) => node.emphasis === 'primary') ||
+      snapshot.view.wires.some((wire) => wire.emphasis === 'primary');
     return (
       <div
         ref={ref}
@@ -68,6 +71,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
         role="region"
         aria-label={props.label}
         tabIndex={0}
+        data-zoom-tier={snapshot.view.detail}
         onKeyDown={interactions.keyboard}
         onPointerCancel={interactions.actions.cancelGeometry}
         onPointerDownCapture={(event) => setPointer(pointerThreshold(event.pointerType))}
@@ -108,7 +112,14 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           nodeClickDistance={snapshot.state.profile.fineThreshold}
           onlyRenderVisibleElements
         >
-          {chrome.minimap && <MiniMap pannable zoomable ariaLabel="Collection minimap" />}
+          {chrome.minimap && (
+            <MiniMap
+              pannable
+              zoomable
+              ariaLabel="Collection minimap"
+              nodeColor={(node) => minimapColor(node as FlowNode)}
+            />
+          )}
           {props.showRoads && <Roads sections={snapshot.view.sections} />}
           <Sequence
             followsInterfaceRoles={props.followsInterfaceRoles === true}
@@ -118,6 +129,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
             paint={props.paint}
           />
         </ReactFlow>
+        <div aria-hidden="true" className={styles.vignette} data-active={energized} />
         {controlsVisible && (
           <Controls
             snapshot={snapshot}
@@ -143,6 +155,17 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
 function dispatchSize(actions: Pick<ViewActions, 'dispatch'>, width: number, height: number): void {
   if (width <= 0 || height <= 0) return;
   actions.dispatch({ kind: 'resize-viewport', viewport: { width, height } });
+}
+
+/** Minimap nodes carry their role color so the overview map encodes meaning, not just geometry. */
+function minimapColor(node: FlowNode): string {
+  if (node.type === 'section') return 'var(--nv-canvas-group-boundary)';
+  const measured = node.data?.view?.placed?.measured;
+  if (!measured) return 'var(--nv-canvas-group-boundary)';
+  if (measured.groupId !== null) return 'var(--nv-canvas-group-boundary)';
+  const role = measured.role;
+  if (role === 'neutral') return 'var(--nv-canvas-constellation-wire)';
+  return `var(--nv-role-${role}-fill, var(--nv-canvas-constellation-wire))`;
 }
 
 /** Touch input uses the coarse threshold; mouse and pen retain precise manipulation. */

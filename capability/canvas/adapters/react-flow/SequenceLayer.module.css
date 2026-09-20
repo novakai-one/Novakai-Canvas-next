@@ -11,10 +11,83 @@
     pointer-events: visiblePainted;
     cursor: pointer;
   }
+  /* Sequence material system: messages rest slightly quiet, round every join, and rise to
+     full presence only while their conversation is spotlighted. */
+  .message {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-opacity: var(--nv-canvas-sequence-message-opacity);
+  }
   .message[data-message='return'] {
     stroke-dasharray: var(--nv-space-1);
   }
+  .marker {
+    opacity: var(--nv-canvas-sequence-message-opacity);
+  }
+  .event[data-lit='true'] .message {
+    stroke-opacity: 1;
+  }
+  .event[data-lit='true'] .marker {
+    opacity: 1;
+  }
+  /* Lifelines stroke their per-participant role gradient attribute; CSS owns only the dash rhythm. */
   .lifeline {
-    stroke-dasharray: var(--nv-space-1);
+    stroke-linecap: round;
+    stroke-dasharray: 2px 6px;
+  }
+  .lifelineLit {
+    stroke-linecap: round;
+    stroke-dasharray: 2px 6px;
+    stroke-width: 1.4px;
+    pointer-events: none;
+  }
+  .halo {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .halo[data-lit='true'] {
+    opacity: 1;
+  }
+  /* Machined activations: token radius clamps to a pill on narrow slots; tint comes from attributes. */
+  .activation {
+    rx: var(--nv-radius-control);
+    stroke-opacity: var(--nv-canvas-sequence-activation-edge-opacity);
+  }
+  .activationGlow {
+    rx: var(--nv-radius-control);
+    opacity: var(--nv-canvas-sequence-activation-glow-opacity);
+    pointer-events: none;
+  }
+  /* Label chips: rounded backing with a resting hairline; spotlight lights the rim and lifts it. */
+  .chip {
+    rx: var(--nv-radius-control);
+    stroke-opacity: var(--nv-canvas-sequence-chip-stroke-opacity);
+  }
+  .chip[data-lit='true'] {
+    stroke: var(--nv-canvas-primary-ring);
+    stroke-opacity: 1;
+    filter: drop-shadow(0 1px 4px var(--nv-canvas-primary-glow));
+  }
+  .instant {
+    stroke-width: 1px;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .message,
+    .marker,
+    .halo,
+    .chip {
+      transition-duration: var(--nv-canvas-transition);
+      transition-property: opacity, stroke-opacity, stroke, filter;
+    }
+    .instant,
+    .lifelineLit {
+      animation: nv-seq-reveal var(--nv-canvas-transition) ease-out;
+    }
+  }
+  @keyframes nv-seq-reveal {
+    from {
+      opacity: 0;
+    }
   }
 }

@@ -11,12 +11,12 @@
     inset: 0;
   }
   .road {
-    background: color-mix(in srgb, var(--nv-action-accent) 18%, transparent);
+    background: color-mix(in srgb, var(--nv-action-accent) 7%, transparent);
     outline: var(--nv-stroke-base) solid
-      color-mix(in srgb, var(--nv-action-accent) 35%, transparent);
+      color-mix(in srgb, var(--nv-action-accent) 12%, transparent);
   }
   .road[data-kind='driveway'] {
-    background: color-mix(in srgb, var(--nv-text-secondary) 18%, transparent);
+    background: color-mix(in srgb, var(--nv-text-secondary) 7%, transparent);
   }
   .road[data-access='entry'] {
     outline-color: var(--nv-rolefill-success);
@@ -31,7 +31,7 @@
     overflow: hidden;
     box-sizing: border-box;
     border: var(--nv-stroke-base) solid
-      color-mix(in srgb, var(--nv-text-secondary) 35%, transparent);
+      color-mix(in srgb, var(--nv-text-secondary) 12%, transparent);
     color: var(--nv-text-secondary);
     font: var(--nv-type-base) var(--nv-font-mono);
   }

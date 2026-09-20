@@ -684,7 +684,7 @@
             "op": "alpha",
             "color": {
               "op": "reference",
-              "value": "{border.default}"
+              "value": "{text.primary}"
             },
             "scalar": {
               "op": "reference",
@@ -697,6 +697,18 @@
     "nodeSurface": {
       "$type": "color",
       "$value": "{canvasTone.nodeSurface}"
+    },
+    "nodeSurfaceTop": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeSurfaceTop}"
+    },
+    "nodeSurfaceBottom": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeSurfaceBottom}"
+    },
+    "nodeHighlight": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeHighlight}"
     },
     "nodeHeader": {
       "$type": "color",
@@ -761,6 +773,26 @@
       "$type": "color",
       "$value": "{canvasTone.groupSurface}"
     },
+    "groupSurface2": {
+      "$type": "color",
+      "$value": "{canvasTone.groupSurface2}"
+    },
+    "groupSurface3": {
+      "$type": "color",
+      "$value": "{canvasTone.groupSurface3}"
+    },
+    "groupBoundary2": {
+      "$type": "color",
+      "$value": "{canvasTone.groupBoundary2}"
+    },
+    "groupBoundary3": {
+      "$type": "color",
+      "$value": "{canvasTone.groupBoundary3}"
+    },
+    "groupShadow": {
+      "$type": "color",
+      "$value": "{canvasTone.groupShadow}"
+    },
     "groupBoundary": {
       "$type": "color",
       "$value": "{canvasTone.groupBoundary}"
@@ -779,7 +811,51 @@
     },
     "wireIdleOpacity": {
       "$type": "number",
-      "$value": 0.42
+      "$value": 1.0
+    },
+    "wireIdle": {
+      "$type": "color",
+      "$value": "{canvasTone.wireIdle}"
+    },
+    "wireFlowFrom": {
+      "$type": "color",
+      "$value": "{canvasTone.wireFlowFrom}"
+    },
+    "wireFlowTo": {
+      "$type": "color",
+      "$value": "{canvasTone.wireFlowTo}"
+    },
+    "wirePulse": {
+      "$type": "color",
+      "$value": "{canvasTone.wirePulse}"
+    },
+    "vignette": {
+      "$type": "color",
+      "$value": "{canvasTone.vignette}"
+    },
+    "primaryRing": {
+      "$type": "color",
+      "$value": "{action.accent}"
+    },
+    "constellationHalo": {
+      "$type": "color",
+      "$value": "{canvasTone.constellationHalo}"
+    },
+    "constellationWire": {
+      "$type": "color",
+      "$value": "{canvasTone.constellationWire}"
+    },
+    "constellationHeading": {
+      "$type": "color",
+      "$value": "{canvasTone.constellationHeading}"
+    },
+    "primaryGlow": {
+      "$type": "color",
+      "$value": "{canvasEmphasis.primaryGlow}"
+    },
+    "primarySurfaceRaise": {
+      "$type": "color",
+      "$value": "{canvasEmphasis.primarySurface.raise}"
     },
     "primarySurface": {
       "$type": "color",
@@ -789,9 +865,29 @@
       "$type": "color",
       "$value": "{canvasTone.secondary}"
     },
+    "ambientGlow": {
+      "$type": "color",
+      "$value": "{canvasTone.ambientGlow}"
+    },
+    "nodeEdgeTop": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeEdgeTop}"
+    },
+    "nodeEdgeBottom": {
+      "$type": "color",
+      "$value": "{canvasTone.nodeEdgeBottom}"
+    },
     "wireHoverOpacity": {
       "$type": "number",
       "$value": "{canvasEmphasis.hoverOpacity}"
+    },
+    "figureHaloOpacity": {
+      "$type": "number",
+      "$value": "{canvasDepth.figureHaloOpacity}"
+    },
+    "figureShadowOpacity": {
+      "$type": "number",
+      "$value": "{canvasDepth.figureShadowOpacity}"
     }
   }
 }

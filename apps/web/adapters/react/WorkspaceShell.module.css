@@ -9,6 +9,8 @@
     font-family: var(--nv-font-body);
     font-size: var(--nv-type-base);
     line-height: var(--nv-line-height-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   .workspace {
     flex: 1;

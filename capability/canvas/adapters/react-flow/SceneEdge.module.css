@@ -2,11 +2,57 @@
   .edge {
     pointer-events: visiblePainted;
   }
+  /* Constellation overview: wires become crisp constant-width hairlines in a brighter
+     tone so the network itself carries the zoomed-out picture. Emphasis rules below
+     still win via !important. */
+  :global([data-zoom-tier='overview']) .wire {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1px;
+    stroke: var(--nv-canvas-constellation-wire);
+  }
   .wire {
     fill: none;
+    /* Idle stroke comes from the per-wire flow-gradient attribute; emphasis rules below override it. */
     stroke-opacity: var(--nv-canvas-wire-idle-opacity);
     transition-duration: var(--nv-canvas-transition);
-    transition-property: stroke-opacity;
+    transition-property: stroke, stroke-opacity, filter;
+  }
+  .pulse {
+    fill: none;
+    stroke: var(--nv-canvas-wire-pulse);
+    stroke-width: var(--nv-focus-width);
+    stroke-linecap: round;
+    stroke-dasharray: 8 92;
+    filter: drop-shadow(0 0 4px var(--nv-canvas-wire-pulse));
+    pointer-events: none;
+  }
+  /* Endpoint halos: emphasized wires terminate in a soft glowing ring on each connected
+     row anchor, so relationships read as threads between rows rather than boxes. */
+  .halo {
+    fill: none;
+    r: var(--nv-space-3);
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-focus-width);
+    pointer-events: none;
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: stroke, stroke-opacity, filter;
+  }
+  .halo[data-emphasis='primary'] {
+    filter: drop-shadow(0 0 10px var(--nv-canvas-primary-glow));
+  }
+  .halo[data-emphasis='secondary'] {
+    stroke-opacity: 0.65;
+    filter: drop-shadow(0 0 6px var(--nv-canvas-primary-glow));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pulse {
+      animation: nv-trace var(--nv-motion-trace) linear infinite;
+    }
+  }
+  @keyframes nv-trace {
+    to {
+      stroke-dashoffset: -100;
+    }
   }
   .underlay {
     fill: none;
@@ -28,8 +74,9 @@
   }
   .wire[data-emphasis='primary'] {
     stroke-opacity: 1;
-    stroke: var(--nv-action-accent) !important;
+    /* stroke arrives as the per-wire accent gradient attribute; only weight and glow here */
     stroke-width: var(--nv-focus-width);
+    filter: drop-shadow(0 0 18px var(--nv-canvas-primary-glow));
   }
   .wire[data-emphasis='secondary'] {
     stroke-opacity: 1;
@@ -40,6 +87,9 @@
   }
   .edge[data-hovered='true'] .wire {
     stroke-opacity: var(--nv-canvas-wire-hover-opacity);
+  }
+  .edge[data-hovered='true'] .wire:is([data-emphasis='primary'], [data-emphasis='secondary']) {
+    stroke-opacity: 1;
   }
   .marker[data-emphasis='muted'] {
     opacity: calc(var(--nv-canvas-wire-idle-opacity) * var(--nv-canvas-muted-opacity));
@@ -87,6 +137,15 @@
     stroke: transparent;
     stroke-width: var(--nv-space-4);
     cursor: pointer;
+  }
+  /* Crossing knockout: a canvas-colored bridge under each wire so the upper trace
+     passes cleanly over whatever was painted earlier (edges sit below node chrome).
+     Width stays tight (3px) so parallel corridor wires within ~4px are untouched. */
+  .knockout {
+    fill: none;
+    stroke: var(--nv-canvas-surface);
+    stroke-width: 3px;
+    pointer-events: none;
   }
   .edge[data-preview='true'] .wire {
     stroke-dasharray: var(--nv-space-1);

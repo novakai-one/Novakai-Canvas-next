@@ -51,6 +51,15 @@ function contentSlack(node: VisualNode): number {
   const right = Math.max(...bounds.map((bound) => bound.right));
   return node.width / 2 - (left + right) / 2;
 }
+/** Compartment headings center against the final frame width; bodies stay left-aligned. */
+function headingSlack(node: VisualNode, heading: readonly Primitive[]): number {
+  if (!COMPARTMENT_KINDS.includes(node.kind)) return 0;
+  const bounds = heading.map(horizontalBounds);
+  if (bounds.length === 0) return 0;
+  const left = Math.min(...bounds.map((bound) => bound.left));
+  const right = Math.max(...bounds.map((bound) => bound.right));
+  return Math.max(0, node.width / 2 - (left + right) / 2);
+}
 /** Bind stable slots once; no component type is created during a React render. */
 export function createContentRenderer(
   fonts: FontSet,
@@ -101,7 +110,10 @@ export function createContentRenderer(
           style={node.chromeStyle}
           classes={slots.classes}
           heading={
-            <g className={slots.classes?.heading}>
+            <g
+              className={slots.classes?.heading}
+              transform={`translate(${headingSlack(node, content.heading)} 0)`}
+            >
               <Blocks primitives={content.heading} />
             </g>
           }

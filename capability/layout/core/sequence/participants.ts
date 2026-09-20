@@ -2,13 +2,14 @@ import type { VisualSection, VisualNode } from '../../contract/records/input.js'
 import type { LinearConstraint } from '../../contract/records/problem.js';
 import { equation, term } from '../constraints/compile.js';
 import { before } from '../constraints/relative.js';
+import { isSequenceParticipant } from './eligibility.js';
 /** Sequence time flows vertically; participant headers share a horizontal baseline independently of other annotations. */
 export function participantConstraints(
   section: VisualSection,
   gap: number,
 ): readonly LinearConstraint[] {
   if (section.mode !== 'sequence') return [];
-  const nodes = section.nodes.filter((node) => node.kind === 'participant');
+  const nodes = section.nodes.filter((node) => isSequenceParticipant(node, section));
   return nodes
     .slice(1)
     .flatMap((node, index) => pair(nodes[index], node, gap, section.layout.direction === 'left'));

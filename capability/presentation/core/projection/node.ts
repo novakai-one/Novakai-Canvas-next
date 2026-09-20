@@ -62,18 +62,20 @@ export function projectNode(
   const source = object(view.object, context);
   const role = view.role ?? source.role;
   const size = view.size ?? source.size;
-  const shape = appearanceShape(source.kind, view.frame ?? source.frame);
+  const sequence = sequencePresentation(source, view, section);
+  const shape = sequence.shape;
+  const presentationSource = sequence.source;
   const appearance = appearanceContext(view, role, size, shape, { ...context, owner: source });
   const initial = contentForeground(view.frame ?? source.frame, view.group, section, appearance);
   const visible = visibleBody(source, view.detail);
   const scoped = plannedContext(
-    { ...source, content: visible.content },
+    { ...presentationSource, content: visible.content },
     initial,
     context.style.contentSizing.widths[size],
     view.placement?.width !== undefined,
   );
   const composed = composeNodeContent(
-    source,
+    presentationSource,
     visible,
     view.composition ?? source.composition,
     headingGap(shape, context),
@@ -84,7 +86,7 @@ export function projectNode(
     ...(context.style.followsInterfaceRoles === true
       ? { followsInterfaceRoles: true as const }
       : {}),
-    ...chromeStyle(source, view.frame ?? source.frame, context),
+    ...chromeStyle(presentationSource, view.frame ?? source.frame, context),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -115,6 +117,36 @@ export function projectNode(
           treeRow,
         }),
   });
+}
+
+function sequencePresentation(
+  source: DiagramObject,
+  view: Appearance,
+  section: Section,
+): { readonly shape: VisualNode['shape']; readonly source: DiagramObject } {
+  if (!isSequenceModuleParticipant(source, view, section))
+    return { shape: appearanceShape(source.kind, view.frame ?? source.frame), source };
+  return { shape: 'participant', source: participantSource(source) };
+}
+
+function isSequenceModuleParticipant(
+  source: DiagramObject,
+  view: Appearance,
+  section: Section,
+): boolean {
+  if (section.mode !== 'sequence') return false;
+  if (!isDirectModuleAppearance(source, view)) return false;
+  return section.sequence.some(
+    (item) => item.kind === 'event' && (item.source === source.id || item.target === source.id),
+  );
+}
+
+function isDirectModuleAppearance(source: DiagramObject, view: Appearance): boolean {
+  return source.kind === 'module' && view.group === undefined;
+}
+
+function participantSource(source: DiagramObject): DiagramObject {
+  return { ...source, kind: 'participant' };
 }
 function compactTreeRow(
   section: Section,

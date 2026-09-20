@@ -61,11 +61,33 @@ function validateParent(item: SequenceItem, section: Section, path: string): rea
   return validateBranchMembership(item, owner, path);
 }
 
-/** A sequence endpoint must resolve to a participant currently visible in this section. */
+/** A sequence endpoint must resolve to a visible participant or a directly shown module used by an event. */
 function isVisibleParticipant(id: ObjectId, section: Section, collection: Collection): boolean {
-  const visible = visibleObjects(section).includes(id);
   const object = collection.objects.find((candidate) => candidate.id === id);
-  return visible && object?.kind === 'participant';
+  if (!visibleObjects(section).includes(id)) return false;
+  return canParticipate(object, id, section);
+}
+
+function canParticipate(
+  object: Collection['objects'][number] | undefined,
+  id: ObjectId,
+  section: Section,
+): boolean {
+  if (object === undefined) return false;
+  switch (object.kind) {
+    case 'participant':
+      return true;
+    case 'module':
+      return directAppearance(id, section);
+    default:
+      return false;
+  }
+}
+
+function directAppearance(id: ObjectId, section: Section): boolean {
+  return section.appearances.some(
+    (appearance) => appearance.object === id && appearance.group === undefined,
+  );
 }
 
 /** Fragments carry no endpoints; message events validate both participants independently. */

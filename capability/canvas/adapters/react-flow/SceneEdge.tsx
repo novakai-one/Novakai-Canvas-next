@@ -82,6 +82,12 @@ export function createSceneEdge(
       view.hovered === true || view.emphasis === 'primary' || view.emphasis === 'secondary';
     const flowStroke =
       first.x === last.x && first.y === last.y ? paint.stroke : `url(#${flowId}) ${paint.stroke}`;
+    /** Selected wires pour light toward their target: accent gathers at the far end. */
+    const primaryStroke =
+      first.x === last.x && first.y === last.y
+        ? 'var(--nv-action-accent)'
+        : `url(#${flowId}-accent) var(--nv-action-accent)`;
+    const stroke = view.emphasis === 'primary' ? primaryStroke : flowStroke;
     return (
       <g
         className={styles.edge}
@@ -102,6 +108,17 @@ export function createSceneEdge(
             <stop offset="0" style={{ stopColor: 'var(--nv-canvas-wire-flow-from)' }} />
             <stop offset="1" style={{ stopColor: 'var(--nv-canvas-wire-flow-to)' }} />
           </linearGradient>
+          <linearGradient
+            id={`${flowId}-accent`}
+            gradientUnits="userSpaceOnUse"
+            x1={first.x}
+            y1={first.y}
+            x2={last.x}
+            y2={last.y}
+          >
+            <stop offset="0" style={{ stopColor: 'var(--nv-action-accent)', stopOpacity: 0.35 }} />
+            <stop offset="1" style={{ stopColor: 'var(--nv-action-accent)', stopOpacity: 1 }} />
+          </linearGradient>
         </defs>
         <path className={styles.hit} d={path} />
         <path
@@ -113,7 +130,7 @@ export function createSceneEdge(
         <path
           className={styles.wire}
           d={path}
-          stroke={flowStroke}
+          stroke={stroke}
           strokeWidth={wire.appearance.width}
           strokeDasharray={wireDash(wire)}
           data-emphasis={view.emphasis}

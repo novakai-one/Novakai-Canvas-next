@@ -56,7 +56,7 @@
   }
   .wire[data-emphasis='primary'] {
     stroke-opacity: 1;
-    stroke: var(--nv-action-accent) !important;
+    /* stroke arrives as the per-wire accent gradient attribute; only weight and glow here */
     stroke-width: var(--nv-focus-width);
     filter: drop-shadow(0 0 18px var(--nv-canvas-primary-glow));
   }

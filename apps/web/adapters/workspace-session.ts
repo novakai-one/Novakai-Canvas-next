@@ -1,8 +1,12 @@
 import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
-import type { DiagramObject, Section } from '../contract/records/owners.js';
-import type { AddDiagramDraft, AddObjectDraft } from '../contract/records/creation.js';
+import type { DiagramObject, Group, Section } from '../contract/records/owners.js';
+import type {
+  AddDiagramDraft,
+  AddGroupDraft,
+  AddObjectDraft,
+} from '../contract/records/creation.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Receipt } from '../contract/records/owners.js';
 import type {
@@ -54,7 +58,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     movementReview: null,
     creation: {
       diagram: { title: '', mode: 'grid' },
-      object: { section: '', label: '', kind: 'module', reuseObject: null },
+      object: { section: '', label: '', kind: 'module', reuseObject: null, group: null },
+      group: { section: '', title: '' },
       problem: null,
       busy: false,
     },
@@ -89,6 +94,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   } | null = null;
   let objectCapture: {
     readonly id: DiagramObject['id'];
+    readonly base: NonNullable<WorkspaceView['snapshot']>;
+    readonly collection: ActiveDiagram['document']['collection'];
+    readonly generation: string;
+    request: Request | null;
+  } | null = null;
+  let groupCapture: {
+    readonly id: Group['id'];
     readonly base: NonNullable<WorkspaceView['snapshot']>;
     readonly collection: ActiveDiagram['document']['collection'];
     readonly generation: string;
@@ -987,27 +999,43 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function settleConfirmedCreation(requestId: string): void {
     const diagramCleared = diagramCapture?.request?.request === requestId;
     const objectCleared = objectCapture?.request?.request === requestId;
+    const groupCleared = groupCapture?.request?.request === requestId;
     settleDiagramCapture(requestId);
     settleObjectCapture(requestId);
-    if (!diagramCleared && !objectCleared) return;
-    update({ creation: settledCreationView(diagramCleared, objectCleared) });
+    settleGroupCapture(requestId);
+    if (!diagramCleared && !objectCleared && !groupCleared) return;
+    update({ creation: settledCreationView(diagramCleared, objectCleared, groupCleared) });
   }
   function settledCreationView(
     diagramCleared: boolean,
     objectCleared: boolean,
+    groupCleared: boolean,
   ): WorkspaceView['creation'] {
     return {
-      diagram: resetDiagramDraft(diagramCleared ? 'diagram' : 'object', state.creation.diagram),
-      object: resetObjectDraft(objectCleared ? 'object' : 'diagram', state.creation.object),
+      diagram: settledDiagramDraft(diagramCleared),
+      object: settledObjectDraft(objectCleared),
+      group: settledGroupDraft(groupCleared),
       problem: null,
       busy: creationLocked(),
     };
+  }
+  function settledDiagramDraft(cleared: boolean): AddDiagramDraft {
+    return cleared ? resetDiagramDraft('diagram', state.creation.diagram) : state.creation.diagram;
+  }
+  function settledObjectDraft(cleared: boolean): AddObjectDraft {
+    return cleared ? resetObjectDraft('object', state.creation.object) : state.creation.object;
+  }
+  function settledGroupDraft(cleared: boolean): AddGroupDraft {
+    return cleared ? resetGroupDraft('group', state.creation.group) : state.creation.group;
   }
   function settleDiagramCapture(requestId: string): void {
     if (diagramCapture?.request?.request === requestId) diagramCapture = null;
   }
   function settleObjectCapture(requestId: string): void {
     if (objectCapture?.request?.request === requestId) objectCapture = null;
+  }
+  function settleGroupCapture(requestId: string): void {
+    if (groupCapture?.request?.request === requestId) groupCapture = null;
   }
   function clearConfirmedMovement(gesture: string | null): void {
     if (movementCapture === null || submissionGestureMatches(gesture) === false) return;
@@ -1175,6 +1203,47 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const result = await submitCreation(objectCapture, changes);
     return finishCreation(result, 'object');
   }
+  async function addGroup(draft: AddGroupDraft): Promise<Result<Receipt>> {
+    const context = creationContext({
+      section: draft.section,
+      label: '',
+      kind: 'module',
+      reuseObject: null,
+      group: null,
+    });
+    if (!context.ok) return retainCreationFailure(context);
+    groupCapture ??= {
+      id: `group-${bindings.nextId()}` as Group['id'],
+      base: context.value.active.base,
+      collection: context.value.active.document.collection,
+      generation: context.value.active.generation,
+      request: null,
+    };
+    const title = draft.title.trim();
+    if (title.length === 0)
+      return retainCreationFailure(creationFailure('Give the group a name before adding it.'));
+    update({ creation: { ...state.creation, group: draft, problem: null, busy: true } });
+    const group: Group = {
+      id: groupCapture.id,
+      title,
+      frame: 'panel' as const,
+      role: 'neutral',
+      layout: {
+        algorithm: 'flow' as const,
+        direction: 'right' as const,
+        gap: 'normal' as const,
+        constraints: [],
+      },
+    };
+    const section: Section = {
+      ...context.value.section,
+      groups: [...context.value.section.groups, group],
+    };
+    const result = await submitCreation(groupCapture, [
+      { op: 'replace', target: 'sections', value: section },
+    ]);
+    return finishCreation(result, 'group');
+  }
   async function submitCreation(
     capture: {
       readonly base: NonNullable<WorkspaceView['snapshot']>;
@@ -1192,7 +1261,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     capture.request ??= request.value;
     return submit(capture.request, capture.generation, state.sourceEdit, null);
   }
-  function finishCreation(result: Result<Receipt>, kind: 'diagram' | 'object'): Result<Receipt> {
+  function finishCreation(
+    result: Result<Receipt>,
+    kind: 'diagram' | 'object' | 'group',
+  ): Result<Receipt> {
     if (!result.ok) {
       update({
         creation: { ...state.creation, problem: result.error.message, busy: creationLocked() },
@@ -1201,14 +1273,31 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     clearCreationCapture(kind);
     update({
-      creation: {
-        diagram: resetDiagramDraft(kind, state.creation.diagram),
-        object: resetObjectDraft(kind, state.creation.object),
-        problem: null,
-        busy: false,
-      },
+      creation: creationAfterSuccess(kind),
     });
     return result;
+  }
+  function creationAfterSuccess(kind: 'diagram' | 'object' | 'group'): WorkspaceView['creation'] {
+    return {
+      diagram: successDiagramDraft(kind),
+      object: successObjectDraft(kind),
+      group: successGroupDraft(kind),
+      problem: null,
+      busy: false,
+    };
+  }
+  function successDiagramDraft(kind: 'diagram' | 'object' | 'group'): AddDiagramDraft {
+    return kind === 'diagram'
+      ? resetDiagramDraft('diagram', state.creation.diagram)
+      : state.creation.diagram;
+  }
+  function successObjectDraft(kind: 'diagram' | 'object' | 'group'): AddObjectDraft {
+    return kind === 'object'
+      ? resetObjectDraft('object', state.creation.object)
+      : state.creation.object;
+  }
+  function successGroupDraft(kind: 'diagram' | 'object' | 'group'): AddGroupDraft {
+    return kind === 'group' ? resetGroupDraft('group', state.creation.group) : state.creation.group;
   }
   function retainCreationFailure<T>(
     result: Extract<Result<T>, { ok: false }>,
@@ -1226,6 +1315,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     captureObjectDraft();
     update({ creation: { ...state.creation, object: draft, problem: null } });
   }
+  function setGroupDraft(draft: AddGroupDraft): void {
+    if (creationLocked()) return;
+    captureGroupDraft();
+    update({ creation: { ...state.creation, group: draft, problem: null } });
+  }
   function cancelCreation(kind: 'diagram' | 'object'): void {
     if (creationLocked()) return;
     clearCreationCapture(kind);
@@ -1240,21 +1334,37 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     });
   }
   function creationLocked(): boolean {
-    return captureHasRequest(diagramCapture) || captureHasRequest(objectCapture);
+    return (
+      captureHasRequest(diagramCapture) ||
+      captureHasRequest(objectCapture) ||
+      captureHasRequest(groupCapture)
+    );
   }
   function captureHasRequest(capture: { readonly request: Request | null } | null): boolean {
     return capture !== null && capture.request !== null;
   }
   function releaseDismissedCreation(requestId: string): void {
-    if (diagramCapture?.request?.request === requestId) {
-      diagramCapture = null;
-      clearDismissedCreationView();
-      return;
-    }
-    if (objectCapture?.request?.request === requestId) {
-      objectCapture = null;
-      clearDismissedCreationView();
-    }
+    const released =
+      releaseDiagramRequest(requestId) ||
+      releaseObjectRequest(requestId) ||
+      releaseGroupRequest(requestId);
+    if (!released) return;
+    clearDismissedCreationView();
+  }
+  function releaseDiagramRequest(requestId: string): boolean {
+    if (diagramCapture?.request?.request !== requestId) return false;
+    diagramCapture = null;
+    return true;
+  }
+  function releaseObjectRequest(requestId: string): boolean {
+    if (objectCapture?.request?.request !== requestId) return false;
+    objectCapture = null;
+    return true;
+  }
+  function releaseGroupRequest(requestId: string): boolean {
+    if (groupCapture?.request?.request !== requestId) return false;
+    groupCapture = null;
+    return true;
   }
   function clearDismissedCreationView(): void {
     update({ creation: { ...state.creation, problem: null, busy: false } });
@@ -1281,9 +1391,30 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         request: null,
       };
   }
-  function clearCreationCapture(kind: 'diagram' | 'object'): void {
-    if (kind === 'diagram') diagramCapture = null;
-    if (kind === 'object') objectCapture = null;
+  function captureGroupDraft(): void {
+    const active = state.active;
+    if (groupCapture !== null || active === null) return;
+    groupCapture = {
+      id: `group-${bindings.nextId()}` as Group['id'],
+      base: active.base,
+      collection: active.document.collection,
+      generation: active.generation,
+      request: null,
+    };
+  }
+  function clearCreationCapture(kind: 'diagram' | 'object' | 'group'): void {
+    const clearers: Readonly<Record<typeof kind, () => void>> = {
+      diagram: () => {
+        diagramCapture = null;
+      },
+      object: () => {
+        objectCapture = null;
+      },
+      group: () => {
+        groupCapture = null;
+      },
+    };
+    clearers[kind]();
   }
   function resetDiagramDraft(
     kind: 'diagram' | 'object',
@@ -1293,8 +1424,14 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   function resetObjectDraft(kind: 'diagram' | 'object', current: AddObjectDraft): AddObjectDraft {
     return kind === 'object'
-      ? { section: '', label: '', kind: 'module', reuseObject: null }
+      ? { section: '', label: '', kind: 'module', reuseObject: null, group: null }
       : current;
+  }
+  function resetGroupDraft(
+    kind: 'diagram' | 'object' | 'group',
+    current: AddGroupDraft,
+  ): AddGroupDraft {
+    return kind === 'group' ? { section: '', title: '' } : current;
   }
   function creationPayload(
     context: { active: ActiveDiagram; section: Section },
@@ -1312,11 +1449,19 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
           ...context.section,
           appearances: [
             ...context.section.appearances,
-            { object: object.value.id, detail: 'full' as const },
+            appearanceFor(object.value.id, draft.group),
           ],
         },
       },
     };
+  }
+  function appearanceFor(
+    object: DiagramObject['id'],
+    group: string | null,
+  ): Section['appearances'][number] {
+    return group === null
+      ? { object, detail: 'full' }
+      : { object, detail: 'full', group: group as Group['id'] };
   }
   function creationContext(
     draft: AddObjectDraft,
@@ -1901,8 +2046,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     create,
     addDiagram,
     addObject,
+    addGroup,
     setDiagramDraft,
     setObjectDraft,
+    setGroupDraft,
     cancelCreation,
     report,
     applyMove,

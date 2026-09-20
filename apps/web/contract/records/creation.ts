@@ -12,11 +12,18 @@ export interface AddObjectDraft {
   readonly label: string;
   readonly kind: ObjectKind;
   readonly reuseObject: string | null;
+  readonly group: string | null;
+}
+
+export interface AddGroupDraft {
+  readonly section: string;
+  readonly title: string;
 }
 
 export interface CreationView {
   readonly diagram: AddDiagramDraft;
   readonly object: AddObjectDraft;
+  readonly group: AddGroupDraft;
   readonly problem: string | null;
   readonly busy: boolean;
 }

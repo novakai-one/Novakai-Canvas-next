@@ -6,7 +6,7 @@ import type { Collection, Snapshot, RenderDocument, Canvas, SessionStore } from 
 import type { Submission } from './submission.js';
 import type { Diagnostic } from '../errors.js';
 import type { MoveReview } from './movement.js';
-import type { AddDiagramDraft, AddObjectDraft, CreationView } from './creation.js';
+import type { AddDiagramDraft, AddGroupDraft, AddObjectDraft, CreationView } from './creation.js';
 import type { Receipt } from './owners.js';
 import type { Result } from '../errors.js';
 /** UI owns form drafts and selected collection; committed records are immutable Authoring snapshots. */
@@ -83,9 +83,11 @@ export interface WorkspaceController {
   create(title: string): Promise<void>;
   addDiagram(draft: AddDiagramDraft): Promise<Result<Receipt>>;
   addObject(draft: AddObjectDraft): Promise<Result<Receipt>>;
+  addGroup(draft: AddGroupDraft): Promise<Result<Receipt>>;
   setDiagramDraft(draft: AddDiagramDraft): void;
   setObjectDraft(draft: AddObjectDraft): void;
-  cancelCreation(kind: 'diagram' | 'object'): void;
+  setGroupDraft(draft: AddGroupDraft): void;
+  cancelCreation(kind: 'diagram' | 'object' | 'group'): void;
   report(error: Diagnostic): void;
   applyMove(optionId: string): Promise<void>;
   chooseMoveOption(optionId: string): void;

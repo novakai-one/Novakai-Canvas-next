@@ -1,6 +1,10 @@
 import { useEffect, useState, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
-import type { AddDiagramDraft, AddObjectDraft } from '../../contract/records/creation.js';
+import type {
+  AddDiagramDraft,
+  AddGroupDraft,
+  AddObjectDraft,
+} from '../../contract/records/creation.js';
 import type { DiagramObject, Section } from '../../contract/records/owners.js';
 import styles from './AddTools.module.css';
 
@@ -12,6 +16,7 @@ export function createAddTools({
   function AddTools({ controller, view }: FeatureProps): ReactElement {
     const [diagram, setDiagramLocal] = useState<AddDiagramDraft>(view.creation.diagram);
     const [object, setObjectLocal] = useState<AddObjectDraft>(view.creation.object);
+    const [group, setGroupLocal] = useState<AddGroupDraft>(view.creation.group);
     const [busy, setBusy] = useState(view.creation.busy);
     const setDiagram = (draft: AddDiagramDraft): void => {
       setDiagramLocal(draft);
@@ -21,9 +26,14 @@ export function createAddTools({
       setObjectLocal(draft);
       controller.setObjectDraft(draft);
     };
+    const setGroup = (draft: AddGroupDraft): void => {
+      setGroupLocal(draft);
+      controller.setGroupDraft(draft);
+    };
     useEffect(() => {
       setDiagramLocal(view.creation.diagram);
       setObjectLocal(view.creation.object);
+      setGroupLocal(view.creation.group);
       setBusy(view.creation.busy);
     }, [view.creation]);
     const sections = (view.active?.document.collection.sections ?? []).filter(
@@ -31,6 +41,7 @@ export function createAddTools({
     );
     const objects = view.active?.document.collection.objects ?? [];
     const targetSection = selectedSection(object.section, sections);
+    const target = sections.find((section) => section.id === targetSection);
     return (
       <div className={styles.tools}>
         <DiagramForm
@@ -51,6 +62,7 @@ export function createAddTools({
           Button={Button}
           sections={sections}
           objects={objects}
+          groups={target?.groups ?? []}
           targetSection={targetSection}
           draft={object}
           busy={busy}
@@ -60,6 +72,23 @@ export function createAddTools({
           onSubmit={async () => {
             setBusy(true);
             await controller.addObject({ ...object, section: targetSection });
+          }}
+        />
+        <GroupForm
+          Field={Field}
+          Button={Button}
+          sections={sections}
+          draft={group}
+          busy={busy}
+          onDraft={setGroup}
+          problem={view.creation.problem}
+          onCancel={() => controller.cancelCreation('group')}
+          onSubmit={async () => {
+            setBusy(true);
+            await controller.addGroup({
+              ...group,
+              section: selectedSection(group.section, sections),
+            });
           }}
         />
       </div>
@@ -133,6 +162,7 @@ function ObjectForm({
   Button,
   sections,
   objects,
+  groups,
   targetSection,
   draft,
   busy,
@@ -143,6 +173,7 @@ function ObjectForm({
 }: FormSlots & {
   sections: readonly Section[];
   objects: readonly DiagramObject[];
+  groups: ReadonlyArray<Section['groups'][number]>;
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
@@ -158,6 +189,7 @@ function ObjectForm({
       Button={Button}
       sections={sections}
       objects={objects}
+      groups={groups}
       targetSection={targetSection}
       draft={draft}
       busy={busy}
@@ -181,6 +213,7 @@ function ObjectReady({
   Button,
   sections,
   objects,
+  groups,
   targetSection,
   draft,
   busy,
@@ -191,6 +224,7 @@ function ObjectReady({
 }: FormSlots & {
   sections: readonly Section[];
   objects: readonly DiagramObject[];
+  groups: ReadonlyArray<Section['groups'][number]>;
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
@@ -246,6 +280,24 @@ function ObjectReady({
           )}
         />
         {moduleField(Field, draft, busy, onDraft)}
+        <Field
+          label="Group"
+          control={(field) => (
+            <select
+              {...field}
+              disabled={busy}
+              value={draft.group ?? ''}
+              onChange={(event) => onDraft({ ...draft, group: event.target.value || null })}
+            >
+              <option value="">No group</option>
+              {groups.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.title}
+                </option>
+              ))}
+            </select>
+          )}
+        />
         {problem !== null && <p role="alert">{problem}</p>}
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
@@ -254,6 +306,81 @@ function ObjectReady({
             type="submit"
             variant="primary"
             disabled={objectDisabled(busy, draft)}
+          />
+        </div>
+      </form>
+    </section>
+  );
+}
+
+function GroupForm({
+  Field,
+  Button,
+  sections,
+  draft,
+  busy,
+  problem,
+  onCancel,
+  onDraft,
+  onSubmit,
+}: FormSlots & {
+  sections: readonly Section[];
+  draft: AddGroupDraft;
+  busy: boolean;
+  problem: string | null;
+  onCancel: () => void;
+  onDraft: (draft: AddGroupDraft) => void;
+  onSubmit: () => Promise<void>;
+}): ReactElement {
+  if (sections.length === 0) return <ObjectEmpty />;
+  return (
+    <section aria-labelledby="add-group-title">
+      <h3 id="add-group-title">Group</h3>
+      <form
+        className={styles.form}
+        onSubmit={(event) => {
+          event.preventDefault();
+          void onSubmit();
+        }}
+      >
+        <Field
+          label="Diagram"
+          required
+          control={(field) => (
+            <select
+              {...field}
+              disabled={busy}
+              value={draft.section || sections[0]?.id || ''}
+              onChange={(event) => onDraft({ ...draft, section: event.target.value })}
+            >
+              {sections.map((section) => (
+                <option key={section.id} value={section.id}>
+                  {section.title}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        <Field
+          label="Group name"
+          required
+          control={(field) => (
+            <input
+              {...field}
+              disabled={busy}
+              value={draft.title}
+              onChange={(event) => onDraft({ ...draft, title: event.target.value })}
+            />
+          )}
+        />
+        <div className={styles.actions}>
+          {problem !== null && <p role="alert">{problem}</p>}
+          <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
+          <Button
+            label={busy ? 'Adding…' : 'Add group'}
+            type="submit"
+            variant="primary"
+            disabled={busy || draft.title.trim().length === 0}
           />
         </div>
       </form>

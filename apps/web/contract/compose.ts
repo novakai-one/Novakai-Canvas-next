@@ -76,6 +76,7 @@ import { createCollectionDialog } from '../adapters/react/CreateCollectionDialog
 import { createPanelTabs } from '../adapters/react/PanelTabs.js';
 import { createWorkspaceSidePanel } from '../adapters/react/WorkspaceSidePanel.js';
 import { createRequestRecovery } from '../adapters/react/RequestRecovery.js';
+import { createMovementReview } from '../adapters/react/MovementReview.js';
 import { createSourceEditor } from '../adapters/react/SourceEditor.js';
 import { createObjectEditor } from '../adapters/react/ObjectEditor.js';
 import { createContentEditor } from '../adapters/react/ContentEditor.js';
@@ -401,6 +402,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     }),
     Source: createSourceEditor(design, element),
     Recovery: createRequestRecovery(design),
+    MovementReview: createMovementReview(design),
     Reveal: RevealInterface,
     CreateDialog: createCollectionDialog(design),
     Chooser: createCollectionChooser({ ...design, Browser: ChooserBrowser }),

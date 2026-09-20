@@ -31,6 +31,8 @@ export type CollectionSwitch =
 export interface MovementReviewState {
   readonly review: MoveReview;
   readonly optionId: string;
+  readonly phase: 'review' | 'sending' | 'uncertain';
+  readonly requestId?: string;
 }
 export interface WorkspaceView extends SourceView {
   readonly history?: {

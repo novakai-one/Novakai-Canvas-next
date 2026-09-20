@@ -59,8 +59,8 @@ function pinnedSections(document: RenderDocument): readonly Section[] {
         ...group,
         placement: sourcePlacement(
           group.placement,
-          node.box.x,
-          node.box.y,
+          node.box.x - (node.parent === null ? 0 : nodes.get(node.parent)?.box.x ?? 0),
+          node.box.y - (node.parent === null ? 0 : nodes.get(node.parent)?.box.y ?? 0),
           node.box.width,
           node.box.height,
         ),
@@ -160,8 +160,35 @@ function equalBox(before: Box, after: Box): boolean {
   );
 }
 
+function targetKey(target: Target): string {
+  return target.kind === 'section' ? `section:${target.id}` : target.kind === 'node' ? `node:${target.section}:${target.id}` : `${target.kind}:${target.section}:${target.id}`;
+}
+
+function allowedTargets(document: RenderDocument, intent: PlacementIntent): Set<string> {
+  const selected = new Set(intent.entries.map((entry) => entry.target));
+  const allowed = new Set<string>();
+  for (const section of document.scene.sections) {
+    for (const node of section.nodes) {
+      const target = { kind: 'node' as const, section: section.id, id: node.id };
+      let currentId: string | null = node.id;
+      while (currentId !== null) {
+        const current = { kind: 'node' as const, section: section.id, id: currentId };
+        if ([...selected].some((item) => targetKey(item) === targetKey(current))) {
+          allowed.add(targetKey(target));
+          break;
+        }
+        currentId = section.nodes.find((candidate) => candidate.id === currentId)?.parent ?? null;
+      }
+      if ([...selected].some((item) => item.kind === 'section' && item.id === section.id)) allowed.add(targetKey(target));
+    }
+    if ([...selected].some((item) => item.kind === 'section' && item.id === section.id)) allowed.add(targetKey({ kind: 'section', id: section.id }));
+  }
+  return allowed;
+}
+
 function geometryChanges(
   document: RenderDocument,
+  intent: PlacementIntent,
   preview: GeometryPreview,
 ): Result<readonly GeometryChange[]> {
   const targets = document.scene.sections.flatMap((section) => [
@@ -173,12 +200,17 @@ function geometryChanges(
     })),
   ]);
   const result: GeometryChange[] = [];
+  const allowed = allowedTargets(document, intent);
   for (const target of targets) {
     const before = sceneBox(document, target);
     const after = previewBox(preview, target);
     if (before === undefined || after === undefined)
       return failure('invalid-edit', 'Movement preview omitted an existing scene target');
-    if (!equalBox(before, after)) result.push({ target, before, after });
+    if (!equalBox(before, after)) {
+      if (!allowed.has(targetKey(target)))
+        return failure('invalid-edit', 'Movement changed geometry outside the effective selection');
+      result.push({ target, before, after });
+    }
   }
   return { ok: true, value: result };
 }
@@ -218,7 +250,7 @@ export function buildMoveReview(
   if (!preview.ok) return preview;
   if (preview.value === null)
     return failure('invalid-edit', 'Movement preview produced no geometry');
-  const inspected = geometryChanges(context.document, preview.value);
+  const inspected = geometryChanges(context.document, intent, preview.value);
   if (!inspected.ok) return inspected;
   if (inspected.value.length === 0)
     return { ok: true, value: {

@@ -530,10 +530,68 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     if (item.kind === 'edit-intent') void editCanvas(item.intent);
   }
+
+  function supportsMoveReview(
+    document: RenderDocument,
+    intent: Extract<EditIntent, { kind: 'placement' }>,
+  ): boolean {
+    return intent.entries.every((entry) => {
+      if (entry.placement.width !== undefined || entry.placement.height !== undefined) return false;
+      if (entry.target.kind === 'section') {
+        return document.projection.sections.some(
+          (section) => section.id === entry.target.id && section.mode === 'modules',
+        );
+      }
+      if (entry.target.kind !== 'node') return false;
+      return document.projection.sections.some(
+        (section) =>
+          section.id === ('section' in entry.target ? entry.target.section : '') &&
+          section.mode === 'modules',
+      );
+    });
+  }
   /** A busy client retains subsequent gestures as recoverable drafts; no second browser request is submitted concurrently. */
   async function editCanvas(intent: EditIntent): Promise<void> {
     const active = state.active;
     if (active === null) return;
+    if (
+      intent.kind === 'placement' &&
+      bindings.moveReview !== undefined &&
+      supportsMoveReview(active.document, intent)
+    ) {
+      const reviewed = bindings.moveReview(
+        active.document,
+        intent,
+        active.session.getSnapshot().stamp,
+      );
+      if (!reviewed.ok) {
+        report(reviewed.error);
+        return;
+      }
+      if (reviewed.value.options.length !== 1) {
+        report({
+          code: 'unsupported-edit',
+          message:
+            reviewed.value.reason ??
+            'This movement has no valid move-only option; keep the draft for review.',
+          recovery: 'Adjust the position or use the inspector.',
+          owner: 'workspace',
+        });
+        return;
+      }
+      const option = reviewed.value.options[0];
+      if (option === undefined) {
+        report({
+          code: 'unsupported-edit',
+          message: 'This movement produced no usable move-only option.',
+          recovery: 'Adjust the position or use the inspector.',
+          owner: 'workspace',
+        });
+        return;
+      }
+      submitFeasibleCanvas(active, intent, option.changes, option.preview);
+      return;
+    }
     const planned = bindings.edits.plan(intent, {
       document: active.document,
       stamp: active.session.getSnapshot().stamp,
@@ -549,18 +607,19 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     active: ActiveDiagram,
     intent: EditIntent,
     changes: readonly import('../contract/records/owners.js').Change[],
+    acceptedPreview?: GeometryPreview,
   ): void {
     const start = performance.now();
-    const preview = bindings.previewRoutes?.(active.document, intent, changes) ?? {
-      ok: true,
-      value: null,
-    };
+    const preview =
+      acceptedPreview === undefined
+        ? (bindings.previewRoutes?.(active.document, intent, changes) ?? { ok: true, value: null })
+        : { ok: true as const, value: acceptedPreview };
     if (!preview.ok) {
       active.session.dispatch({ kind: 'reject', id: intent.id, message: preview.error.message });
       report(preview.error);
       return;
     }
-    submitCanvas(intent, changes);
+    submitCanvas(active, intent, changes);
     if (preview.value === null) return;
     publishPreview(active, intent, preview.value, start);
   }
@@ -586,12 +645,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Capture the snapshot shown with the gesture; changing versions later is never part of retry. */
   function submitCanvas(
+    active: ActiveDiagram,
     intent: EditIntent,
     changes: readonly import('../contract/records/owners.js').Change[],
   ): void {
-    if (state.active === null) return;
     const request = bindings.inputs.model(
-      state.active.base,
+      active.base,
       intent.base.collectionId,
       changes,
       intent.id,
@@ -600,7 +659,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(request.error);
       return;
     }
-    void submit(request.value, state.active.generation, state.sourceEdit, intent.id);
+    void submit(request.value, active.generation, state.sourceEdit, intent.id);
   }
   function allowSubmission(request: Request): Result<void> {
     if (blockedByHistory(request))
@@ -629,7 +688,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     gesture: string | null,
   ): Promise<Result<Receipt>> {
     const allowed = allowSubmission(request);
-    if (!allowed.ok) return allowed;
+    if (!allowed.ok) {
+      report(allowed.error);
+      if (gesture !== null) rejectGesture(gesture, allowed.error.message);
+      return allowed;
+    }
     update({ status: 'Saving…', problem: null });
     const result = await submissions.submit({ request, generation, sourceEdit, gesture });
     if (!result.ok) handleSubmitFailure(result.error, gesture);

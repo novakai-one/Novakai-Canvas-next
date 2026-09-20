@@ -85,6 +85,7 @@ import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
 import { planCanvasEdit } from './api.js';
+import { buildMoveReview } from '../core/editing/movement.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import type { ServiceClient } from './ports/client.js';
@@ -269,6 +270,13 @@ function controller(
       }),
     sessions: createCanvasSessions(canvas, () => viewport(element)),
     edits: { plan: planCanvasEdit },
+    moveReview: (document, intent, stamp) =>
+      buildMoveReview(intent, {
+        document,
+        stamp,
+        preview: (previewDocument, previewIntent, changes) =>
+          previewModuleRoutes(previewDocument, previewIntent, changes),
+      }),
     previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>
       createSubmissionSession({

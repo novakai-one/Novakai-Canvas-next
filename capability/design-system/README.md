@@ -9,3 +9,18 @@ Import only `@novakai/canvas-design-system`. `composeDesignSystem()` loads no br
 `createTokenFileBindings(absoluteRoot)` explicitly loads local source/artifact I/O. `createStylesheetBindings()` loads the CSS parser. `createReactBindings()` loads styles and stable control identities once during host composition, before rendering. Its `createScopeTarget(element)` binds a DOM target for `createScopeInstaller(target)`; install complete validated scopes on both content and portal roots. Lease cleanup cannot overwrite newer installations.
 
 Run `pnpm tokens:build` after an intentional source change, then `pnpm tokens:check`. Compiler snapshots are never manually edited. Runtime output generations live in ignored `.generated/`; only a fully verified generation becomes active.
+
+## Where to edit
+
+| Change | Source |
+|---|---|
+| Button, Field, Tabs, Modal and other shared controls | `adapters/react/*.tsx` and adjacent `.module.css` |
+| Reusable panel header/body/sections and resize frame | `adapters/react/panels/` |
+| Base colors, spacing and typography | `tokens/definitions.tokens.json` |
+| Semantic UI roles | `tokens/semantics.tokens.json` |
+| Light/dark theme values | `tokens/themes/` |
+| Accessibility and UI preference tokens | `tokens/preferences.tokens.json` |
+| Token source manifest | `tokens/source.json` |
+| Brand wordmark styling and stylesheet entry | `adapters/styles/brand.css`, `adapters/styles/entry.css` |
+
+The JSON files are authoring sources. `adapters/styles/*.generated.css` are compiler output; edit tokens and run `pnpm tokens:build`, then `pnpm tokens:check`. Diagram-theme DSL resources in `resources/` are distinct from these interface tokens.

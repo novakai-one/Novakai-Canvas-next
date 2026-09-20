@@ -1,5 +1,14 @@
-# web host
+# Web host
 
-React Flow workspace served by the service. Owns panel layout/chrome, collection selection, camera and human gestures; renders measured scenes from the service and submits edits through Authoring.
+Owns the header, collection chooser, inspector/settings panels, panel visibility and workspace navigation. Canvas owns camera, selection and diagram gestures; this host submits its edits through Authoring.
 
-UI color/theme changes use Design System tokens only. Composition follows the same contract/core/adapters shape and import gates as the capabilities.
+| Find | Location |
+|---|---|
+| React shell and library UI | `adapters/react/` |
+| Inspector and source panel contents | `adapters/react/ObjectEditor.tsx`, `WireEditor.tsx`, `SourceEditor.tsx`, `InterfacePreferences.tsx` |
+| Panel visibility/layout behavior | `core/panels/` |
+| Default panel arrangement | `../../resources/ui/panels.default.json` |
+| Feature and renderer registration | `contract/compose.ts` |
+| Shared controls, styles and tokens | `../../capability/design-system/` |
+
+Build the served browser assets with `pnpm --dir apps/web exec vite build`. The local service serves that build; source edits require a rebuild when using the service directly.

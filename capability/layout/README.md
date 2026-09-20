@@ -1,9 +1,17 @@
 # Layout
 
-Responsibility: derive stable spatial geometry and labelled routes from measured Presentation input, without changing diagram meaning.
+Derives positions and wire geometry from Presentation's measured nodes. It does not size node content or commit diagrams.
 
-Public entry: `@novakai/canvas-layout`. `createLayout` accepts required owner/native roles; `composeLayout` binds pinned ELK, Kiwi and libavoid adapters with the host's Projection reader, job control and replaceable Wasm resource. `key` derives full request identity before the host schedules `arrange` or `route`; `inspect` independently checks candidate identities, constraints and geometry. Route-only fixes nodes and section origins.
+| Find | Location |
+|---|---|
+| Arrange/route dispatch and cache identity | `core/arrangement/` |
+| App-to-custom-engine conversion | `core/scene-in.ts` |
+| Module roads, lanes and nested sections | `core/prototype-nested-*.ts`, `core/nested-wire-*.ts` (production engine despite historical names) |
+| General placement and compact tree rows | `core/placement/` |
+| General wire routing and tree branches | `core/routing/` |
+| Engine composition | `contract/compose.ts` |
+| ELK, Kiwi and libavoid bindings for other modes | `adapters/` |
 
-Acceptance cases exercise real engines, nested scopes, relative constraints, locks, incremental reuse, conditional sequence activity, ports/manual routes/labels/markers, cancellation, native cleanup attempts and a 1000-node/1500-wire collection.
+Module sections use the custom roads engine; there is no native fallback for modules. Other modes retain their existing placement/routing paths. `key`, `arrange`, `route` and `inspect` are exposed through the public contract. Route-only operations retain node positions and section origins.
 
-Core imports only own declaration contracts/helpers. Operation-specific contexts carry only consumed roles. Native adapters own numeric mapping and per-call state; host workers own cancellation/lifetime. Authoring owns admission/commit.
+Canvas paints optional roads/lanes using the returned geometry in `../canvas/adapters/react-flow/RoutingRoads.tsx`. Toggling that overlay does not run layout.

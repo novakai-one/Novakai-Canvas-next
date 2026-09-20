@@ -7,11 +7,15 @@
     --xy-minimap-background-color: var(--nv-surface-raised);
     --xy-minimap-mask-background-color: var(--nv-canvas-surface);
   }
+  .theme :global(.react-flow__background) {
+    mask-image: radial-gradient(90% 80% at 50% 45%, black 55%, transparent 100%);
+  }
   .theme :global(.react-flow__minimap) {
     bottom: calc(var(--nv-control-height) + var(--nv-space-8) + var(--nv-space-6));
     border: var(--nv-stroke-base) solid var(--nv-canvas-group-boundary);
     border-radius: var(--nv-radius-panel);
-    background: var(--nv-surface-raised);
+    background: var(--nv-surface-overlay);
+    backdrop-filter: blur(14px) saturate(1.25);
     box-shadow: var(--nv-elevation-offset-x) var(--nv-elevation-offset-y) var(--nv-elevation-blur)
       var(--nv-shadow-opacity-color);
   }

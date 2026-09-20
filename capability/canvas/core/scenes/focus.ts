@@ -8,14 +8,22 @@ function graphTargets(targets: readonly Target[]): readonly Target[] {
   return targets.filter((target) => target.kind === 'node' || target.kind === 'wire');
 }
 
-/** Only an active graph selection projects a neighborhood; hover remains local presentation state. */
+/** Selection projects a neighborhood first; without one, hover previews it without muting the rest. */
 function focusTargets(state: SessionState): {
   readonly source: FocusSource;
   readonly targets: readonly Target[];
 } {
   const selected = graphTargets(state.selection);
   if (selected.length > 0) return { source: 'selection', targets: selected };
+  const hovered = hoverTargets(state);
+  if (hovered.length > 0) return { source: 'hover', targets: hovered };
   return { source: 'none', targets: [] };
+}
+
+/** Hover can identify a graph target without becoming a persisted selection. */
+function hoverTargets(state: SessionState): readonly Target[] {
+  if (state.hover === null) return [];
+  return graphTargets([state.hover]);
 }
 
 /** A prior projection remains valid across camera-only state changes. */
@@ -24,6 +32,7 @@ function reusable(state: SessionState, previous: FocusProjection | undefined): b
   return [
     previous.inputs.scene === state.scene,
     previous.inputs.selection === state.selection,
+    previous.inputs.hover === state.hover,
   ].every(Boolean);
 }
 
@@ -70,14 +79,21 @@ export function projectFocus(state: SessionState, previous?: FocusProjection): F
     source: focus.source,
     primary,
     secondary,
-    inputs: { scene: state.scene, selection: state.selection },
+    inputs: { scene: state.scene, selection: state.selection, hover: state.hover },
   };
 }
 
 /** Focus presence maps every graph object to one paint role without changing true selection. */
 export function emphasisFor(focus: FocusProjection, key: string): Emphasis {
   if (focus.source === 'none') return 'normal';
+  if (focus.source === 'hover') return hoveredEmphasis(focus, key);
   return focusedEmphasis(focus, key);
+}
+
+/** Hover uses supporting paint throughout its neighborhood; primary paint and vignette require selection. */
+function hoveredEmphasis(focus: FocusProjection, key: string): Emphasis {
+  if (focus.primary.has(key) || focus.secondary.has(key)) return 'secondary';
+  return 'normal';
 }
 
 /** Membership precedence ensures an explicit multi-selection never renders as its own neighbour. */

@@ -111,6 +111,8 @@ export interface NodeData extends Record<string, unknown> {
   readonly view: ViewNode;
   readonly actions: Pick<ViewActions, 'beginResize' | 'resize' | 'finishGeometry' | 'dispatch'>;
   readonly editable: boolean;
+  /** Containment depth (0 = top level); presentation tiers nested group floors by depth. */
+  readonly depth?: number | undefined;
 }
 export interface SectionData extends Record<string, unknown> {
   readonly view: ViewSection;

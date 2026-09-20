@@ -12,6 +12,7 @@ export const nodeRenderClasses: NodeRenderClasses = {
   root: requiredClass('root', styles.root),
   frame: requiredClass('frame', styles.frame),
   rim: requiredClass('rim', styles.rim),
+  ring: requiredClass('ring', styles.ring),
   header: requiredClass('header', styles.header),
   separator: requiredClass('separator', styles.separator),
   heading: requiredClass('heading', styles.heading),

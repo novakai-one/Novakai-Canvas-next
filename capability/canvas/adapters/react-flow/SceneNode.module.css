@@ -19,24 +19,26 @@
     height: var(--nv-space-2);
     background: var(--nv-canvas-node-surface);
     border-color: var(--nv-canvas-node-boundary);
-    opacity: var(--nv-canvas-wire-idle-opacity);
+    opacity: 0;
+    pointer-events: none;
     transition-duration: var(--nv-canvas-transition);
     transition-property: background-color, border-color, box-shadow, opacity;
   }
-  .node[data-hovered='true'] :global(.react-flow__handle) {
-    border-color: var(--nv-canvas-secondary);
-    opacity: 1;
-  }
-  .node[data-emphasis='primary'] :global(.react-flow__handle) {
-    border-color: var(--nv-action-accent);
-    box-shadow: 0 0 var(--nv-space-1) var(--nv-action-accent);
-    opacity: 1;
-  }
-  .node[data-emphasis='secondary'] :global(.react-flow__handle) {
-    border-color: var(--nv-canvas-secondary);
-    opacity: 1;
-  }
   .node[data-emphasis='muted'] :global(.react-flow__handle) {
-    opacity: var(--nv-canvas-muted-opacity);
+    opacity: 0;
+  }
+  /* Material mount: cards rise and fade in, staggered by column via --nv-mount-delay.
+     TODO(tokens): promote 360ms to a motion.mount token when the token files are free. */
+  @media (prefers-reduced-motion: no-preference) {
+    .node {
+      animation: nv-mount 360ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+      animation-delay: var(--nv-mount-delay, 0ms);
+    }
+    @keyframes nv-mount {
+      from {
+        opacity: 0;
+        translate: 0 6px;
+      }
+    }
   }
 }

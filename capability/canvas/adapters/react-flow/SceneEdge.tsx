@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
+import type { ViewWire } from '../../contract/records/view.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
 import type { Point } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';
@@ -37,6 +38,25 @@ function pathMidpoint(points: readonly Point[]): Point {
   const ratio = (halfway - (travelled - length)) / Math.max(length, Number.EPSILON);
   return { x: start.x + (end.x - start.x) * ratio, y: start.y + (end.y - start.y) * ratio };
 }
+/** Selected and connected traces share endpoint halo eligibility. */
+function highlighted(view: ViewWire): boolean {
+  return ['primary', 'secondary'].includes(view.emphasis);
+}
+/** Motion belongs to an active admitted route, never a geometry draft. */
+function pulseVisible(view: ViewWire): boolean {
+  return !view.draft && (view.hovered === true || highlighted(view));
+}
+/** Coincident endpoints cannot define a gradient direction; keep their actual paint. */
+function directedStroke(id: string, fallback: string, first: Point, last: Point): string {
+  if (first.x === last.x && first.y === last.y) return fallback;
+  return `url(#${id}) ${fallback}`;
+}
+/** Selection uses the accent gradient while supporting routes keep their neutral flow. */
+function traceStroke(view: ViewWire, id: string, first: Point, last: Point): string {
+  if (view.emphasis === 'primary')
+    return directedStroke(`${id}-accent`, 'var(--nv-action-accent)', first, last);
+  return directedStroke(id, view.wire.appearance.paint.stroke, first, last);
+}
 /** Binding keeps measured labels/notation outside Canvas policy; host owns content admission and render recovery. */
 export function createSceneEdge(
   slots: Pick<RenderSlots, 'MeasuredContent' | 'Marker'> & {
@@ -63,6 +83,9 @@ export function createSceneEdge(
     if (!first || !second || !last || !penultimate) return null;
     const path = view.draft ? wirePath(wire.points) : wire.path;
     const labelAnchor = pathMidpoint(wire.points);
+    /** Living traces: flow direction gradient spans the actual route endpoints; pulse rides active paths only. */
+    const flowId = `nv-flow-${wire.id}`;
+    const stroke = traceStroke(view, flowId, first, last);
     return (
       <g
         className={styles.edge}
@@ -71,7 +94,32 @@ export function createSceneEdge(
         data-emphasis={view.emphasis}
         data-hovered={view.hovered}
       >
+        <defs>
+          <linearGradient
+            id={flowId}
+            gradientUnits="userSpaceOnUse"
+            x1={first.x}
+            y1={first.y}
+            x2={last.x}
+            y2={last.y}
+          >
+            <stop offset="0" style={{ stopColor: 'var(--nv-canvas-wire-flow-from)' }} />
+            <stop offset="1" style={{ stopColor: 'var(--nv-canvas-wire-flow-to)' }} />
+          </linearGradient>
+          <linearGradient
+            id={`${flowId}-accent`}
+            gradientUnits="userSpaceOnUse"
+            x1={first.x}
+            y1={first.y}
+            x2={last.x}
+            y2={last.y}
+          >
+            <stop offset="0" style={{ stopColor: 'var(--nv-action-accent)', stopOpacity: 0.35 }} />
+            <stop offset="1" style={{ stopColor: 'var(--nv-action-accent)', stopOpacity: 1 }} />
+          </linearGradient>
+        </defs>
         <path className={styles.hit} d={path} />
+        <path className={styles.knockout} d={path} />
         <path
           className={styles.underlay}
           d={path}
@@ -81,12 +129,33 @@ export function createSceneEdge(
         <path
           className={styles.wire}
           d={path}
-          stroke={paint.stroke}
+          stroke={stroke}
           strokeWidth={wire.appearance.width}
           strokeDasharray={wireDash(wire)}
           data-emphasis={view.emphasis}
           data-style={wire.style}
         />
+        {pulseVisible(view) && (
+          <path className={styles.pulse} d={path} pathLength={100} pointerEvents="none" />
+        )}
+        {highlighted(view) && (
+          <>
+            <circle
+              className={styles.halo}
+              cx={first.x}
+              cy={first.y}
+              data-emphasis={view.emphasis}
+              pointerEvents="none"
+            />
+            <circle
+              className={styles.halo}
+              cx={last.x}
+              cy={last.y}
+              data-emphasis={view.emphasis}
+              pointerEvents="none"
+            />
+          </>
+        )}
         {wire.labelVisible !== false && (
           <g transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
             <Content embedFonts={false} content={wire.measuredLabel} />

@@ -384,7 +384,18 @@ describe('Presentation measured content', () => {
     );
     assert(image?.kind === 'media');
     expect([image.width, image.height, image.alt]).toEqual([180, 90, 'A sample image']);
-    expect(image.x).toBe(42);
+    // The print mat reserves an offset shadow while keeping the full artwork visible.
+    const mat = node(value(app.project(source)), 'Photo').content.primitives.find(
+      (item) =>
+        item.kind === 'badge' &&
+        item.x < image.x &&
+        item.y < image.y &&
+        item.width > image.width &&
+        item.height > image.height,
+    );
+    assert(mat?.kind === 'badge');
+    expect(image.x + image.width).toBeLessThan(mat.x + mat.width);
+    expect(image.y + image.height).toBeLessThan(mat.y + mat.height);
     expect((await fixture()).presentation.project(source)).toMatchObject({
       ok: false,
       error: { code: 'missing-resource' },
@@ -425,12 +436,20 @@ describe('Presentation measured content', () => {
     });
     const mediaNode = node(value(portrait.project(mediaSource)), 'Photo');
     const slots = mediaNode.content.primitives.filter((item) => item.kind === 'media');
-    expect(
-      slots.map((slot) => [slot.x, slot.y, slot.width, slot.height, slot.alt, slot.fit]),
-    ).toEqual([
-      [12, 50, 76, 76, 'Cover portrait', 'cover'],
-      [38, 134, 24, 24, 'Contained icon', 'contain'],
+    expect(slots.map((slot) => [slot.alt, slot.fit])).toEqual([
+      ['Cover portrait', 'cover'],
+      ['Contained icon', 'contain'],
     ]);
+    const [cover, icon] = slots;
+    assert(cover && icon);
+    expect(cover.width).toBe(cover.height);
+    expect([icon.width, icon.height]).toEqual([24, 24]);
+    slots.forEach((slot) => {
+      expect(slot.x).toBeGreaterThan(0);
+      expect(slot.x + slot.width).toBeLessThan(mediaNode.width);
+      expect(slot.y + slot.height).toBeLessThan(mediaNode.height);
+    });
+    expect(icon.y).toBeGreaterThan(cover.y + cover.height);
     const markup = value(portrait.renderContent(mediaNode));
     const coverViewport = markup.match(
       /<svg[^>]+aria-label="Cover portrait"[^>]*>[\s\S]*?<\/svg>/,
@@ -439,12 +458,12 @@ describe('Presentation measured content', () => {
       /<svg[^>]+aria-label="Contained icon"[^>]*>[\s\S]*?<\/svg>/,
     )?.[0];
     expect(coverViewport).toContain(
-      '<svg x="12" y="50" width="76" height="76" overflow="hidden" aria-label="Cover portrait">',
+      `<svg x="${cover.x}" y="${cover.y}" width="${cover.width}" height="${cover.height}" overflow="hidden" aria-label="Cover portrait">`,
     );
     expect(coverViewport).toContain('preserveAspectRatio="xMidYMid slice"');
     expect(coverViewport).toContain('<title>Cover portrait</title>');
     expect(iconViewport).toContain(
-      '<svg x="38" y="134" width="24" height="24" overflow="hidden" aria-label="Contained icon">',
+      `<svg x="${icon.x}" y="${icon.y}" width="24" height="24" overflow="hidden" aria-label="Contained icon">`,
     );
     expect(iconViewport).toContain('preserveAspectRatio="xMidYMid meet"');
     expect(iconViewport).toContain('<title>Contained icon</title>');

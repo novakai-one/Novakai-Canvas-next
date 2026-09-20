@@ -77,5 +77,6 @@ export function presentScene(state: SessionState, previous?: CanvasView): Canvas
     editable: canMutate(state),
     tool: state.tool,
     focus,
+    detail,
   };
 }

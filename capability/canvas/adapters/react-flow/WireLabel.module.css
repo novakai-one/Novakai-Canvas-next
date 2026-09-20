@@ -5,7 +5,7 @@
 
   .backing {
     fill: var(--nv-surface-raised);
-    stroke: var(--nv-action-accent);
+    stroke: var(--nv-border-default);
     stroke-width: var(--nv-stroke-base);
     rx: var(--nv-radius-control);
     ry: var(--nv-radius-control);

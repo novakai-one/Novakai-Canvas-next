@@ -16,12 +16,32 @@ function nodeSurfaceStyle(view: ViewNode): NonNullable<FlowNode['style']> {
     pointerEvents: view.placed.measured.groupId === null ? 'auto' : 'none',
   };
 }
+/** Containment depth per node, memoized along the parent chain; admitted acyclic references guarantee progress. */
+function depthMap(views: readonly ViewNode[]): ReadonlyMap<string, number> {
+  const parents = new Map(views.map((view) => [view.id, view.parentId]));
+  const memo = new Map<string, number>();
+  const depth = (id: string, seen: ReadonlySet<string>): number => {
+    const cached = memo.get(id);
+    if (cached !== undefined) return cached;
+    const parent = parents.get(id);
+    if (parent === undefined || seen.has(id)) {
+      memo.set(id, 0);
+      return 0;
+    }
+    const value = depth(parent, new Set(seen).add(id)) + 1;
+    memo.set(id, value);
+    return value;
+  };
+  views.forEach((view) => depth(view.id, new Set()));
+  return memo;
+}
 /** Convert admitted node/section views to controlled React Flow records; generated JSON never leaves this adapter. */
 function flowNodes(
   snapshot: ViewSnapshot,
   actions: ViewActions,
   paint: SurfaceProps['paint'],
 ): FlowNode[] {
+  const depths = depthMap(snapshot.view.nodes);
   const sections: FlowNode[] = snapshot.view.sections.map((view) => ({
     id: view.id,
     type: 'section',
@@ -51,7 +71,12 @@ function flowNodes(
     height: view.box.height,
     measured: { width: view.box.width, height: view.box.height },
     style: nodeSurfaceStyle(view),
-    data: { view, actions, editable: snapshot.view.editable && view.tree === undefined },
+    data: {
+      view,
+      actions,
+      editable: snapshot.view.editable && view.tree === undefined,
+      depth: depths.get(view.id) ?? 0,
+    },
     selected: view.selected,
     hidden: view.hidden,
     draggable: [

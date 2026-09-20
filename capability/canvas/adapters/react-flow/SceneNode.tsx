@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import type { ComponentType, ReactElement } from 'react';
+import type { ComponentType, CSSProperties, ReactElement } from 'react';
 import { Handle, Position, NodeResizer } from '@xyflow/react';
 import type { SceneNodeProps, RenderSlots, TreeRowProps } from '../../contract/react-types.js';
 import type { Anchor } from '@novakai/canvas-presentation';
@@ -42,6 +42,8 @@ export function createSceneNode(
   function SceneNode({ data, selected, isConnectable }: SceneNodeProps): ReactElement {
     const { view, actions, editable } = data;
     const node = { ...view.placed.measured, width: view.box.width, height: view.box.height };
+    /** Mount choreography: cards rise in column order, left to right, capped past ~8 columns. */
+    const mountDelay = Math.min(8, Math.max(0, Math.floor(view.position.x / 300))) * 45;
     return (
       <div
         className={styles.node}
@@ -49,6 +51,8 @@ export function createSceneNode(
         data-tree={view.tree !== undefined}
         data-emphasis={view.emphasis}
         data-hovered={view.hovered}
+        data-depth={Math.min(data.depth ?? 0, 3)}
+        style={{ '--nv-mount-delay': `${mountDelay}ms` } as CSSProperties}
       >
         {view.tree ? (
           <TreeRow view={view} actions={actions} />

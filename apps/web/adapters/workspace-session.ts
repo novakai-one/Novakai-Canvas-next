@@ -113,7 +113,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
     holdConfirmedHistory(pending);
-    update({ pending, busy: pending.some((item) => item.state === 'sending') });
+    update({
+      pending,
+      busy: pending.some((item) => item.state === 'sending'),
+      creation: { ...state.creation, busy: creationLocked() },
+    });
     updateMutationAvailability();
     if (movementCapture?.intent.id !== undefined) updateMovementRecovery(movementCapture.intent.id);
   }
@@ -977,7 +981,33 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     update({ status: editStatus() });
     confirmGesture(submission.gesture);
     clearConfirmedMovement(submission.gesture);
+    settleConfirmedCreation(submission.request.request);
     finishConfirmedSubmission(submission, receipt);
+  }
+  function settleConfirmedCreation(requestId: string): void {
+    const diagramCleared = diagramCapture?.request?.request === requestId;
+    const objectCleared = objectCapture?.request?.request === requestId;
+    settleDiagramCapture(requestId);
+    settleObjectCapture(requestId);
+    if (!diagramCleared && !objectCleared) return;
+    update({ creation: settledCreationView(diagramCleared, objectCleared) });
+  }
+  function settledCreationView(
+    diagramCleared: boolean,
+    objectCleared: boolean,
+  ): WorkspaceView['creation'] {
+    return {
+      diagram: resetDiagramDraft(diagramCleared ? 'diagram' : 'object', state.creation.diagram),
+      object: resetObjectDraft(objectCleared ? 'object' : 'diagram', state.creation.object),
+      problem: null,
+      busy: creationLocked(),
+    };
+  }
+  function settleDiagramCapture(requestId: string): void {
+    if (diagramCapture?.request?.request === requestId) diagramCapture = null;
+  }
+  function settleObjectCapture(requestId: string): void {
+    if (objectCapture?.request?.request === requestId) objectCapture = null;
   }
   function clearConfirmedMovement(gesture: string | null): void {
     if (movementCapture === null || submissionGestureMatches(gesture) === false) return;
@@ -1164,7 +1194,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   function finishCreation(result: Result<Receipt>, kind: 'diagram' | 'object'): Result<Receipt> {
     if (!result.ok) {
-      update({ creation: { ...state.creation, problem: result.error.message, busy: false } });
+      update({
+        creation: { ...state.creation, problem: result.error.message, busy: creationLocked() },
+      });
       return result;
     }
     clearCreationCapture(kind);
@@ -1185,15 +1217,17 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return result;
   }
   function setDiagramDraft(draft: AddDiagramDraft): void {
+    if (creationLocked()) return;
     captureDiagramDraft();
     update({ creation: { ...state.creation, diagram: draft, problem: null } });
   }
   function setObjectDraft(draft: AddObjectDraft): void {
+    if (creationLocked()) return;
     captureObjectDraft();
     update({ creation: { ...state.creation, object: draft, problem: null } });
   }
   function cancelCreation(kind: 'diagram' | 'object'): void {
-    if (state.creation.busy) return;
+    if (creationLocked()) return;
     clearCreationCapture(kind);
     update({
       creation: {
@@ -1204,6 +1238,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         busy: false,
       },
     });
+  }
+  function creationLocked(): boolean {
+    return (
+      state.creation.busy ||
+      (diagramCapture !== null && diagramCapture.request !== null) ||
+      (objectCapture !== null && objectCapture.request !== null)
+    );
   }
   function captureDiagramDraft(): void {
     const active = state.active;
@@ -1473,13 +1514,17 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       report(result.error);
       return;
     }
-    if (result.value === null)
-      update({ status: 'No receipt found — retry remains an explicit action' });
+    handleReconciliationResult(result.value, id);
+  }
+  function handleReconciliationResult(receipt: Receipt | null, id: string): void {
+    if (receipt === null) update({ status: 'No receipt found — retry remains an explicit action' });
+    else settleConfirmedCreation(id);
   }
   /** Retry retains the exact request body while using the current authenticated transport session. */
   async function retryRequest(id: string): Promise<void> {
     const result = await submissions.retry(id, state.generation);
     if (!result.ok) report(result.error);
+    else settleConfirmedCreation(id);
     updateMovementRecovery(id);
   }
   function updateMovementRecovery(requestId: string): void {

@@ -446,13 +446,20 @@ function reachableObjects(
   childrenByParent: ReadonlyMap<string, readonly string[]>,
 ): Set<string> {
   const reachable = new Set<string>([rootId]);
-  const visit = (current: string): void => {
-    if (reachable.has(current)) return;
-    reachable.add(current);
-    (childrenByParent.get(current) ?? []).forEach(visit);
-  };
-  (childrenByParent.get(rootId) ?? []).forEach(visit);
+  const queue = [...(childrenByParent.get(rootId) ?? [])];
+  while (queue.length > 0) processReachability(queue, reachable, childrenByParent);
   return reachable;
+}
+
+function processReachability(
+  queue: string[],
+  reachable: Set<string>,
+  childrenByParent: ReadonlyMap<string, readonly string[]>,
+): void {
+  const current = queue.shift();
+  if (current === undefined || reachable.has(current)) return;
+  reachable.add(current);
+  queue.push(...(childrenByParent.get(current) ?? []));
 }
 
 function lintModules(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {

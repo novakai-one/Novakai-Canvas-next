@@ -53,14 +53,14 @@ export const buildSpecProfile: ProfileDescriptor = {
   ],
   notes: [
     'These are logical documents in one ordinary collection, not five files.',
-    'The starter uses explicit participant proxies where direct canonical lifelines are unavailable.',
+    'Sequence lifelines reuse canonical modules and interfaces; participant objects are reserved for external actors.',
     'Lint checks structure only; it does not certify prose, implementation completeness or rendering.',
   ],
 };
 
 /** Small native current-DSL starter; profile commands never depend on a service or workspace. */
 export const buildSpecStarter = String.raw`# Editable build-spec@1 starter using current native DSL.
-# Sequence lifelines are explicit participant objects linked to canonical modules until direct module lifelines are supported.
+# Sequence lifelines reuse the canonical module and interface objects declared above.
 canvas 1
 collection @build-spec-starter "Edit a title safely — build spec starter" theme=paper {
   node @root concept "example-app/" {}
@@ -144,24 +144,14 @@ collection @build-spec-starter "Edit a title safely — build spec starter" them
   }
 
   node @p-human participant "Human" {}
-  node @p-controller participant "title-controller.ts" {
-    link @controller-link "Module" target=@controller section=@modules
-  }
-  node @p-validator participant "validate-title.ts" {
-    link @validator-link "Module" target=@validator section=@modules
-  }
-  node @p-store participant "title-store.ts" {
-    link @store-link "Module" target=@store section=@modules
-  }
-
   section @sequence-52 "5.2 / Commit a valid title" mode=sequence order=5 {
-    show @p-human @p-controller @p-validator @p-store detail=label
-    event @submit @p-human -> @p-controller "renameTitle(edit)" kind=call
-    event @check @p-controller -> @p-validator "validateTitle(edit)" kind=call
-    event @accepted @p-validator -> @p-controller "ValidatedTitle" kind=return
-    event @save-title @p-controller -> @p-store "saveTitle(title)" kind=call
-    event @saved @p-store -> @p-controller "Receipt" kind=return
-    event @confirm @p-controller -> @p-human "Confirmed revision" kind=return
+    show @p-human @controller @validator @store detail=label
+    event @submit @p-human -> @controller "renameTitle(edit)" kind=call
+    event @check @controller -> @validator "validateTitle(edit)" kind=call
+    event @accepted @validator -> @controller "ValidatedTitle" kind=return
+    event @save-title @controller -> @store "saveTitle(title)" kind=call
+    event @saved @store -> @controller "Receipt" kind=return
+    event @confirm @controller -> @p-human "Confirmed revision" kind=return
   }
 }`;
 

@@ -635,7 +635,15 @@ describe('Presentation measured content', () => {
   it('projects direct module sequence endpoints with participant chrome and stable identity', async () => {
     const source = collection({
       objects: [
-        object('api', 'module'),
+        object('api', 'module', [
+          {
+            kind: 'signature',
+            id: 'request',
+            label: 'request',
+            parameters: ['input: Request'],
+            returns: 'Result<Response>',
+          },
+        ]),
         object('worker', 'module'),
         object('human', 'participant'),
       ],
@@ -662,6 +670,9 @@ describe('Presentation measured content', () => {
     const worker = projected.sections[0]?.nodes.find((node) => node.objectId === 'worker');
     expect(api).toMatchObject({ objectId: 'api', kind: 'module', shape: 'participant' });
     expect(worker).toMatchObject({ objectId: 'worker', kind: 'module', shape: 'participant' });
+    expect(api?.content.primitives.map((primitive) => primitive.lodRole)).toEqual(
+      expect.arrayContaining(['heading', 'detail']),
+    );
   });
   it('8 keys content and resolved style and freezes detached output', async () => {
     const pinned = fonts();

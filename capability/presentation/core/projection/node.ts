@@ -8,7 +8,7 @@ import type { ContentContext } from '../content/blocks.js';
 import { offset } from '../content/text.js';
 import { labelContent } from '../content/headings.js';
 import { visibleBody } from '../content/node-body.js';
-import { composeNodeContent, type ComposedNodeContent } from '../content/composition.js';
+import { composeNodeContent } from '../content/composition.js';
 import { moduleChrome } from '../content/chrome.js';
 import { nodeShape } from '../notation/nodes.js';
 import { planContent } from '../content/sizing.js';
@@ -79,15 +79,18 @@ export function projectNode(
     visible,
     view.composition ?? source.composition,
     headingGap(shape, context),
-    scoped,
+    compositionContext(sequence.module, scoped),
   );
-  const measured = measuredContent(sequence.module, composed);
   const treeRow = compactTreeRow(section, view, source, context, compact);
   return parse(visualNode, {
     ...(context.style.followsInterfaceRoles === true
       ? { followsInterfaceRoles: true as const }
       : {}),
-    ...chromeStyle(presentationSource, view.frame ?? source.frame, context),
+    ...chromeStyle(
+      chromeSource(sequence.module, presentationSource),
+      view.frame ?? source.frame,
+      context,
+    ),
     id: identity(section.id, 'object', source.id),
     objectId: source.id,
     groupId: null,
@@ -102,8 +105,8 @@ export function projectNode(
     shape,
     frame: view.frame ?? source.frame,
     paint: rolePaint(role, context),
-    ...frame(measured.content, shape, scoped),
-    headerHeight: measured.headerHeight + context.style.padding * 2,
+    ...frame(composed.content, shape, scoped),
+    headerHeight: composed.headerHeight + context.style.padding * 2,
     radius: context.style.radius,
     strokeWidth: context.style.stroke,
     placement: view.placement ?? null,
@@ -135,24 +138,16 @@ function sequencePresentation(
       source,
       module: false,
     };
-  return { shape: 'participant', source: participantSource(source), module: true };
+  return { shape: 'participant', source, module: true };
 }
 
-function tagModuleContent(content: ComposedNodeContent): ComposedNodeContent {
-  return {
-    ...content,
-    content: {
-      ...content.content,
-      primitives: content.content.primitives.map((primitive) => ({
-        ...primitive,
-        lodRole: 'detail' as const,
-      })),
-    },
-  };
+function compositionContext(module: boolean, context: ContentContext): ContentContext {
+  if (!module) return context;
+  return { ...context, chromePolicies: {} };
 }
 
-function measuredContent(module: boolean, content: ComposedNodeContent): ComposedNodeContent {
-  return module ? tagModuleContent(content) : content;
+function chromeSource(module: boolean, source: DiagramObject): DiagramObject {
+  return module ? participantSource(source) : source;
 }
 
 function isSequenceModuleParticipant(

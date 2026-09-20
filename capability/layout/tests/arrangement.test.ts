@@ -283,6 +283,9 @@ describe('Layout arrangement acceptance', () => {
       'async',
     ]);
     expect(sequence.events[1]?.points).toHaveLength(4);
+    expect(sequence.events[2]?.labelBox.y).toBeGreaterThan(
+      sequence.events[1]?.points.at(-1)?.y ?? -Infinity,
+    );
     expect(sequence.activations[0]).toMatchObject({ fromEvent: 'call', toEvent: 'return' });
     expect(sequence.lifelines).toHaveLength(2);
     expect(sequence.lifelines[0]?.to.y).toBeGreaterThan(

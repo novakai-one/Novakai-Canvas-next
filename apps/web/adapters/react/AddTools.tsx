@@ -1,4 +1,4 @@
-import { useState, type ComponentType, type ReactElement } from 'react';
+import { useEffect, useState, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type { AddDiagramDraft, AddObjectDraft } from '../../contract/records/creation.js';
 import type { DiagramObject, Section } from '../../contract/records/owners.js';
@@ -10,15 +10,25 @@ export function createAddTools({
   Button,
 }: Pick<DesignSlots, 'Field' | 'Button'>): ComponentType<FeatureProps> {
   function AddTools({ controller, view }: FeatureProps): ReactElement {
-    const [diagram, setDiagram] = useState<AddDiagramDraft>({ title: '', mode: 'grid' });
-    const [object, setObject] = useState<AddObjectDraft>({
-      section: '',
-      label: '',
-      kind: 'module',
-      reuseObject: null,
-    });
-    const [busy, setBusy] = useState(false);
-    const sections = view.active?.document.collection.sections ?? [];
+    const [diagram, setDiagramLocal] = useState<AddDiagramDraft>(view.creation.diagram);
+    const [object, setObjectLocal] = useState<AddObjectDraft>(view.creation.object);
+    const [busy, setBusy] = useState(view.creation.busy);
+    const setDiagram = (draft: AddDiagramDraft): void => {
+      setDiagramLocal(draft);
+      controller.setDiagramDraft(draft);
+    };
+    const setObject = (draft: AddObjectDraft): void => {
+      setObjectLocal(draft);
+      controller.setObjectDraft(draft);
+    };
+    useEffect(() => {
+      setDiagramLocal(view.creation.diagram);
+      setObjectLocal(view.creation.object);
+      setBusy(view.creation.busy);
+    }, [view.creation]);
+    const sections = (view.active?.document.collection.sections ?? []).filter(
+      (section) => section.mode !== 'tree',
+    );
     const objects = view.active?.document.collection.objects ?? [];
     const targetSection = selectedSection(object.section, sections);
     return (
@@ -29,11 +39,11 @@ export function createAddTools({
           draft={diagram}
           busy={busy}
           onDraft={setDiagram}
+          problem={view.creation.problem}
+          onCancel={() => controller.cancelCreation('diagram')}
           onSubmit={async () => {
             setBusy(true);
-            const result = await controller.addDiagram(diagram);
-            setBusy(false);
-            resetDiagram(result, setDiagram);
+            await controller.addDiagram(diagram);
           }}
         />
         <ObjectForm
@@ -45,11 +55,11 @@ export function createAddTools({
           draft={object}
           busy={busy}
           onDraft={setObject}
+          problem={view.creation.problem}
+          onCancel={() => controller.cancelCreation('object')}
           onSubmit={async () => {
             setBusy(true);
-            const result = await controller.addObject({ ...object, section: targetSection });
-            setBusy(false);
-            resetObject(result, targetSection, setObject);
+            await controller.addObject({ ...object, section: targetSection });
           }}
         />
       </div>
@@ -61,31 +71,21 @@ export function createAddTools({
 function selectedSection(current: string, sections: readonly Section[]): string {
   return current || sections[0]?.id || '';
 }
-function resetDiagram(
-  result: Awaited<ReturnType<FeatureProps['controller']['addDiagram']>>,
-  setDraft: (draft: AddDiagramDraft) => void,
-): void {
-  if (result.ok) setDraft({ title: '', mode: 'grid' });
-}
-function resetObject(
-  result: Awaited<ReturnType<FeatureProps['controller']['addObject']>>,
-  section: string,
-  setDraft: (draft: AddObjectDraft) => void,
-): void {
-  if (result.ok) setDraft({ section, label: '', kind: 'module', reuseObject: null });
-}
-
 type FormSlots = Pick<DesignSlots, 'Field' | 'Button'>;
 function DiagramForm({
   Field,
   Button,
   draft,
   busy,
+  problem,
+  onCancel,
   onDraft,
   onSubmit,
 }: FormSlots & {
   draft: AddDiagramDraft;
   busy: boolean;
+  problem: string | null;
+  onCancel: () => void;
   onDraft: (draft: AddDiagramDraft) => void;
   onSubmit: () => Promise<void>;
 }): ReactElement {
@@ -114,13 +114,10 @@ function DiagramForm({
           )}
         />
         <div className={styles.actions}>
+          {problem !== null && <p role="alert">{problem}</p>}
+          <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
-            label="Cancel"
-            type="button"
-            onClick={() => onDraft({ title: '', mode: 'grid' })}
-          />
-          <Button
-            label="Add diagram"
+            label={busy ? 'Adding…' : 'Add diagram'}
             type="submit"
             variant="primary"
             disabled={busy || draft.title.trim().length === 0}
@@ -138,6 +135,8 @@ function ObjectForm({
   targetSection,
   draft,
   busy,
+  problem,
+  onCancel,
   onDraft,
   onSubmit,
 }: FormSlots & {
@@ -146,6 +145,8 @@ function ObjectForm({
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
+  problem: string | null;
+  onCancel: () => void;
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
 }): ReactElement {
@@ -159,6 +160,8 @@ function ObjectForm({
       targetSection={targetSection}
       draft={draft}
       busy={busy}
+      problem={problem}
+      onCancel={onCancel}
       onDraft={onDraft}
       onSubmit={onSubmit}
     />
@@ -180,6 +183,8 @@ function ObjectReady({
   targetSection,
   draft,
   busy,
+  problem,
+  onCancel,
   onDraft,
   onSubmit,
 }: FormSlots & {
@@ -188,6 +193,8 @@ function ObjectReady({
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
+  problem: string | null;
+  onCancel: () => void;
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
 }): ReactElement {
@@ -236,14 +243,9 @@ function ObjectReady({
           )}
         />
         {moduleField(Field, draft, onDraft)}
+        {problem !== null && <p role="alert">{problem}</p>}
         <div className={styles.actions}>
-          <Button
-            label="Cancel"
-            type="button"
-            onClick={() =>
-              onDraft({ section: targetSection, label: '', kind: 'module', reuseObject: null })
-            }
-          />
+          <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
             label={objectActionLabel(draft)}
             type="submit"

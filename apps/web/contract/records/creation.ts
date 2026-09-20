@@ -13,3 +13,10 @@ export interface AddObjectDraft {
   readonly kind: ObjectKind;
   readonly reuseObject: string | null;
 }
+
+export interface CreationView {
+  readonly diagram: AddDiagramDraft;
+  readonly object: AddObjectDraft;
+  readonly problem: string | null;
+  readonly busy: boolean;
+}

@@ -52,6 +52,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     busy: false,
     pending: [],
     movementReview: null,
+    creation: {
+      diagram: { title: '', mode: 'grid' },
+      object: { section: '', label: '', kind: 'module', reuseObject: null },
+      problem: null,
+      busy: false,
+    },
     history: { status: null, busy: false },
     ...source.getSnapshot(),
   };
@@ -74,6 +80,18 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let movementApplying = false;
   let historyRead = 0;
   let historyRefreshing = false;
+  let diagramCapture: {
+    readonly id: Section['id'];
+    readonly base: NonNullable<WorkspaceView['snapshot']>;
+    readonly collection: ActiveDiagram['document']['collection'];
+    readonly generation: string;
+  } | null = null;
+  let objectCapture: {
+    readonly id: DiagramObject['id'];
+    readonly base: NonNullable<WorkspaceView['snapshot']>;
+    readonly collection: ActiveDiagram['document']['collection'];
+    readonly generation: string;
+  } | null = null;
   let historySequence = 0;
   let historySnapshotReady = false;
   let removeHistoryKeys = (): void => undefined;
@@ -1060,12 +1078,20 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       return creationFailure('Open a collection first.');
     const title = draft.title.trim();
     if (title.length === 0) return creationFailure('Give the diagram a name before adding it.');
-    const id = `section-${bindings.nextId()}` as Section['id'];
+    const capture =
+      diagramCapture ??
+      (diagramCapture = {
+        id: `section-${bindings.nextId()}` as Section['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+      });
+    update({ creation: { ...state.creation, diagram: draft, problem: null, busy: true } });
     const section = {
-      id,
+      id: capture.id,
       title,
       mode: draft.mode,
-      order: active.document.collection.sections.length,
+      order: capture.collection.sections.length,
       layout: {
         algorithm: 'grid' as const,
         direction: 'right' as const,
@@ -1077,26 +1103,90 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       wires: [],
       sequence: [],
     };
-    return applyChanges(
-      { base: active.base, collection: active.document.collection, generation: active.generation },
+    const result = await applyChanges(
+      { base: capture.base, collection: capture.collection, generation: capture.generation },
       [{ op: 'create', target: 'sections', value: section }],
     );
+    return finishCreation(result, 'diagram');
   }
   /** New objects are created once; reuse only adds a section-local appearance of the same ID. */
   async function addObject(draft: AddObjectDraft): Promise<Result<Receipt>> {
     const context = creationContext(draft);
     if (!context.ok) return context;
+    objectCapture ??= {
+      id: `object-${bindings.nextId()}` as DiagramObject['id'],
+      base: context.value.active.base,
+      collection: context.value.active.document.collection,
+      generation: context.value.active.generation,
+    };
+    update({ creation: { ...state.creation, object: draft, problem: null, busy: true } });
     const payload = creationPayload(context.value, draft);
-    if (!payload.ok) return payload;
+    if (!payload.ok) return retainCreationFailure(payload);
     const changes = creationChanges(payload.value.object, draft.reuseObject, payload.value.section);
-    return applyChanges(
+    const result = await applyChanges(
       {
-        base: context.value.active.base,
-        collection: context.value.active.document.collection,
-        generation: context.value.active.generation,
+        base: objectCapture.base,
+        collection: objectCapture.collection,
+        generation: objectCapture.generation,
       },
       changes,
     );
+    return finishCreation(result, 'object');
+  }
+  function finishCreation(result: Result<Receipt>, kind: 'diagram' | 'object'): Result<Receipt> {
+    if (!result.ok) {
+      update({ creation: { ...state.creation, problem: result.error.message, busy: false } });
+      return result;
+    }
+    clearCreationCapture(kind);
+    update({
+      creation: {
+        diagram: resetDiagramDraft(kind, state.creation.diagram),
+        object: resetObjectDraft(kind, state.creation.object),
+        problem: null,
+        busy: false,
+      },
+    });
+    return result;
+  }
+  function retainCreationFailure<T>(
+    result: Extract<Result<T>, { ok: false }>,
+  ): Extract<Result<T>, { ok: false }> {
+    update({ creation: { ...state.creation, problem: result.error.message, busy: false } });
+    return result;
+  }
+  function setDiagramDraft(draft: AddDiagramDraft): void {
+    update({ creation: { ...state.creation, diagram: draft, problem: null } });
+  }
+  function setObjectDraft(draft: AddObjectDraft): void {
+    update({ creation: { ...state.creation, object: draft, problem: null } });
+  }
+  function cancelCreation(kind: 'diagram' | 'object'): void {
+    clearCreationCapture(kind);
+    update({
+      creation: {
+        ...state.creation,
+        diagram: resetDiagramDraft(kind, state.creation.diagram),
+        object: resetObjectDraft(kind, state.creation.object),
+        problem: null,
+        busy: false,
+      },
+    });
+  }
+  function clearCreationCapture(kind: 'diagram' | 'object'): void {
+    if (kind === 'diagram') diagramCapture = null;
+    if (kind === 'object') objectCapture = null;
+  }
+  function resetDiagramDraft(
+    kind: 'diagram' | 'object',
+    current: AddDiagramDraft,
+  ): AddDiagramDraft {
+    return kind === 'diagram' ? { title: '', mode: 'grid' } : current;
+  }
+  function resetObjectDraft(kind: 'diagram' | 'object', current: AddObjectDraft): AddObjectDraft {
+    return kind === 'object'
+      ? { section: '', label: '', kind: 'module', reuseObject: null }
+      : current;
   }
   function creationPayload(
     context: { active: ActiveDiagram; section: Section },
@@ -1139,7 +1229,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     const label = draft.label.trim();
     if (label.length === 0) return creationFailure('Give the object a name before adding it.');
-    return { ok: true, value: newObject(bindings.nextId(), draft.kind, label) };
+    return {
+      ok: true,
+      value: newObject(objectCapture?.id ?? bindings.nextId(), draft.kind, label),
+    };
   }
   function existingObject(objects: readonly DiagramObject[], id: string): Result<DiagramObject> {
     const object = objects.find((item) => item.id === id);
@@ -1665,6 +1758,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     create,
     addDiagram,
     addObject,
+    setDiagramDraft,
+    setObjectDraft,
+    cancelCreation,
     report,
     applyMove,
     chooseMoveOption,

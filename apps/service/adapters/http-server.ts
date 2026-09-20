@@ -69,7 +69,7 @@ async function invokeApi(
   }
   const outcome = await bindings.router.invoke({
     path: exchange.url.pathname,
-    query: queryValues(exchange.url.searchParams),
+    query: queryValues(exchange.url.searchParams, exchange.url.pathname === '/api/v1/source'),
     caller,
     signal: exchange.signal,
     metadata: exchange.metadata,
@@ -78,7 +78,11 @@ async function invokeApi(
   bindings.io.json(exchange.response, outcome, bindings.security.generation);
 }
 
-function queryValues(params: URLSearchParams): Readonly<Record<string, string>> {
+function queryValues(
+  params: URLSearchParams,
+  preserveScopeDuplicates: boolean,
+): Readonly<Record<string, string>> {
+  if (!preserveScopeDuplicates) return Object.fromEntries(params);
   const values = new Map<string, string>();
   for (const [key, value] of params) appendQueryValue(values, key, value);
   return Object.fromEntries(values);

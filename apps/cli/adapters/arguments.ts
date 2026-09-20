@@ -15,20 +15,11 @@ export function readArguments(
   args: readonly string[],
   defaultWorkspace: string,
 ): Result<CliOptions> {
-  const duplicateScope = duplicateScopeFlag(args);
-  return duplicateScope === undefined
-    ? readArgumentsAfterDuplicateCheck(args, defaultWorkspace)
-    : duplicateScope;
-}
-
-function readArgumentsAfterDuplicateCheck(
-  args: readonly string[],
-  defaultWorkspace: string,
-): Result<CliOptions> {
   try {
     const parsed = parseArgs({
       args: [...args],
       allowPositionals: true,
+      tokens: true,
       options: {
         help: { type: 'boolean', short: 'h' },
         server: { type: 'string', default: 'http://127.0.0.1:5174' },
@@ -47,18 +38,22 @@ function readArgumentsAfterDuplicateCheck(
         object: { type: 'string' },
       },
     });
-    const command = readCommand(commandOperands(parsed.values.help, parsed.positionals), {
-      ...parsed.values,
-      preset: Object.fromEntries(
-        Object.entries({
-          id: parsed.values.id,
-          version: parsed.values.version,
-          family: parsed.values.family,
-          title: parsed.values.title,
-          namespace: parsed.values.namespace,
-        }).filter(([, value]) => value !== undefined),
-      ),
-    });
+    const command = readCommand(
+      commandOperands(parsed.values.help, parsed.positionals),
+      {
+        ...parsed.values,
+        preset: Object.fromEntries(
+          Object.entries({
+            id: parsed.values.id,
+            version: parsed.values.version,
+            family: parsed.values.family,
+            title: parsed.values.title,
+            namespace: parsed.values.namespace,
+          }).filter(([, value]) => value !== undefined),
+        ),
+      },
+      parsed.tokens,
+    );
     if (!command.ok) return command;
     return {
       ok: true,
@@ -89,7 +84,10 @@ function readCommand(
     readonly section?: string;
     readonly object?: string;
   },
+  tokens: readonly { readonly kind: string; readonly name?: string }[],
 ): Result<Command> {
+  if (duplicateScopeFlag(tokens))
+    return failure('invalid-arguments', 'Each read scope flag may be provided only once.');
   const parsed = commandName.safeParse(positionals[0]);
   if (!parsed.success)
     return failure('invalid-command', 'Choose a supported canvas or profile command');
@@ -192,14 +190,15 @@ function invalidScopeId(selected: string | undefined): Result<Command> | undefin
   return undefined;
 }
 
-function duplicateScopeFlag(args: readonly string[]): Result<CliOptions> | undefined {
-  const names = args.flatMap((argument) => {
-    const name = argument.split('=', 1)[0]?.replace(/^--/, '');
-    return name === 'section' || name === 'object' ? [name] : [];
-  });
-  return names.some((name) => names.indexOf(name) !== names.lastIndexOf(name))
-    ? failure('invalid-arguments', 'Each read scope flag may be provided only once.')
-    : undefined;
+function duplicateScopeFlag(
+  tokens: readonly { readonly kind: string; readonly name?: string }[],
+): boolean {
+  const names = tokens.flatMap((token) =>
+    token.kind === 'option' && (token.name === 'section' || token.name === 'object')
+      ? [token.name]
+      : [],
+  );
+  return names.some((name) => names.indexOf(name) !== names.lastIndexOf(name));
 }
 
 function validatedMode(name: Command['name'], fallback: string): Result<Command['mode']> {

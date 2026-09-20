@@ -32,3 +32,10 @@ function hiddenParent(
     hiddenParent(state, section, parents.get(parent), parents)
   );
 }
+
+/** Tree rows are positioned together; moving the containing section remains available. */
+export function treeNode(state: SessionState, target: Target): boolean {
+  if (target.kind !== 'node') return false;
+  const section = state.scene.sections.find((item) => item.id === target.section);
+  return section?.tree?.rows.some((row) => row.node === target.id) ?? false;
+}

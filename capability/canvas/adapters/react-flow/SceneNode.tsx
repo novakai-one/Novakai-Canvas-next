@@ -46,6 +46,7 @@ export function createSceneNode(
       <div
         className={styles.node}
         data-preview={view.draft}
+        data-tree={view.tree !== undefined}
         data-emphasis={view.emphasis}
         data-hovered={view.hovered}
       >

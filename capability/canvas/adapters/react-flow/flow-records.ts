@@ -46,12 +46,17 @@ function flowNodes(
     height: view.box.height,
     measured: { width: view.box.width, height: view.box.height },
     style: nodeSurfaceStyle(view),
-    data: { view, actions, editable: snapshot.view.editable },
+    data: { view, actions, editable: snapshot.view.editable && view.tree === undefined },
     selected: view.selected,
     hidden: view.hidden,
-    draggable: snapshot.view.editable && snapshot.view.tool === 'select',
+    draggable: [
+      snapshot.view.editable,
+      snapshot.view.tool === 'select',
+      view.tree === undefined,
+    ].every(Boolean),
     selectable: true,
-    connectable: snapshot.view.editable && snapshot.view.tool === 'connect',
+    connectable:
+      snapshot.view.editable && snapshot.view.tool === 'connect' && view.tree === undefined,
     zIndex: 1,
   }));
   return [...sections, ...parentOrder(nodes)];

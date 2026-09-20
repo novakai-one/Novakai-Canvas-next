@@ -1,3 +1,4 @@
+import { treeNode } from '../scenes/tree.js';
 import type { SessionState, Transition } from '../../contract/records/state.js';
 import type { Endpoint, EditIntent } from '../../contract/records/intent.js';
 import type { EventOf } from '../../contract/events.js';
@@ -58,12 +59,13 @@ const directions = {
 };
 /** Keyboard nudge reuses exactly the drag capture/conversion/recovery path, producing one transaction intent. */
 export function nudgeSelection(state: SessionState, event: EventOf<'nudge'>): Transition {
-  if (state.selection.length === 0) return changed(state, state);
+  const targets = state.selection.filter((target) => !treeNode(state, target));
+  if (targets.length === 0) return changed(state, state);
   const draft = beginDraft(state, {
     kind: 'begin',
     id: event.id,
     gesture: 'move',
-    targets: state.selection,
+    targets,
   });
   const captured = { ...state, draft };
   const amount = event.coarse ? state.profile.coarseNudge : state.profile.nudge;
@@ -99,14 +101,16 @@ export function commandHandlers(): readonly Handler[] {
       }),
     ),
     handler('align', (state, event) =>
-      emitIntent(state, {
-        kind: 'align',
-        id: event.id,
-        base: state.stamp,
-        scope: 'appearance',
-        targets: state.selection,
-        axis: event.axis,
-      }),
+      state.selection.every((target) => treeNode(state, target))
+        ? changed(state, state)
+        : emitIntent(state, {
+            kind: 'align',
+            id: event.id,
+            base: state.stamp,
+            scope: 'appearance',
+            targets: state.selection.filter((target) => !treeNode(state, target)),
+            axis: event.axis,
+          }),
     ),
   ];
 }

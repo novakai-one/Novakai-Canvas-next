@@ -266,7 +266,6 @@ async function wireWorkspace(
     resources,
     renderer,
     authoring: (signal) => requestAuthoring(runtime, signal, feasibilityModule.createFeasibility),
-    readSignal: new AbortController().signal,
   });
   if (!exporter.ok) throw new Error(exporter.error.message);
   const session = createWorkspaceSession({

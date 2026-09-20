@@ -40,7 +40,6 @@ function changes(changed: () => void, connection: (connected: boolean) => void):
   return () => stream.close();
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity -- binary transport keeps status and envelope checks explicit.
 async function bytes(
   path: string,
   input: unknown,
@@ -55,27 +54,32 @@ async function bytes(
       redirect: 'error',
       headers: { 'Content-Type': 'application/json' },
     });
-    if (!response.ok) {
-      const input: unknown = await response.json();
-      const checked = responseEnvelope.safeParse(input);
-      if (!checked.success)
-        return failure('invalid-response', 'The service returned an unreadable response');
-      return checked.data.outcome.ok
-        ? failure('invalid-response', 'The service returned no artifact')
-        : { ok: false, error: checked.data.outcome.error };
-    }
-    return {
-      ok: true,
-      value: {
-        bytes: new Uint8Array(await response.arrayBuffer()),
-        mediaType: response.headers.get('Content-Type') ?? 'application/octet-stream',
-        filename: parseFilename(response.headers.get('Content-Disposition')),
-        revision: parseRevision(response.headers.get('X-Novakai-Export-Revision')),
-      },
-    };
+    return response.ok ? binarySuccess(response) : binaryFailure(response);
   } catch {
     return failure('connection-uncertain', 'The artifact response could not be confirmed');
   }
+}
+
+async function binaryFailure(response: Response): Promise<Result<BinaryResponse>> {
+  const input: unknown = await response.json();
+  const checked = responseEnvelope.safeParse(input);
+  if (!checked.success)
+    return failure('invalid-response', 'The service returned an unreadable response');
+  return checked.data.outcome.ok
+    ? failure('invalid-response', 'The service returned no artifact')
+    : { ok: false, error: checked.data.outcome.error };
+}
+
+async function binarySuccess(response: Response): Promise<Result<BinaryResponse>> {
+  return {
+    ok: true,
+    value: {
+      bytes: new Uint8Array(await response.arrayBuffer()),
+      mediaType: response.headers.get('Content-Type') ?? 'application/octet-stream',
+      filename: parseFilename(response.headers.get('Content-Disposition')),
+      revision: parseRevision(response.headers.get('X-Novakai-Export-Revision')),
+    },
+  };
 }
 
 function parseFilename(value: string | null): string | null {
@@ -83,11 +87,13 @@ function parseFilename(value: string | null): string | null {
   return match?.[1] ?? null;
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity -- malformed revision headers fail closed.
 function parseRevision(value: string | null): number | null {
   if (value === null) return null;
-  const revision = Number(value);
-  return Number.isInteger(revision) && revision >= 0 ? revision : null;
+  return validRevision(Number(value));
+}
+
+function validRevision(value: number): number | null {
+  return Number.isInteger(value) && value >= 0 ? value : null;
 }
 /** Bind browser effects once. Consumer owns cleanup and receipt reconciliation; there is no automatic mutation retry. */
 export function createServiceClient(): ServiceClient {

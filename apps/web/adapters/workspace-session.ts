@@ -85,12 +85,14 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     readonly base: NonNullable<WorkspaceView['snapshot']>;
     readonly collection: ActiveDiagram['document']['collection'];
     readonly generation: string;
+    request: Request | null;
   } | null = null;
   let objectCapture: {
     readonly id: DiagramObject['id'];
     readonly base: NonNullable<WorkspaceView['snapshot']>;
     readonly collection: ActiveDiagram['document']['collection'];
     readonly generation: string;
+    request: Request | null;
   } | null = null;
   let historySequence = 0;
   let historySnapshotReady = false;
@@ -1074,18 +1076,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Add keeps diagram and object creation on the existing Model → Authoring receipt path. */
   async function addDiagram(draft: AddDiagramDraft): Promise<Result<Receipt>> {
     const active = state.active;
-    if (active === null || state.snapshot === null)
-      return creationFailure('Open a collection first.');
+    const draftError = diagramDraftError(active, state.snapshot, draft);
+    if (draftError !== null) return retainCreationFailure(draftError);
     const title = draft.title.trim();
-    if (title.length === 0) return creationFailure('Give the diagram a name before adding it.');
-    const capture =
-      diagramCapture ??
-      (diagramCapture = {
-        id: `section-${bindings.nextId()}` as Section['id'],
-        base: active.base,
-        collection: active.document.collection,
-        generation: active.generation,
-      });
+    const captured = diagramTarget(active as ActiveDiagram);
+    if (!captured.ok) return retainCreationFailure(captured);
+    const capture = captured.value;
     update({ creation: { ...state.creation, diagram: draft, problem: null, busy: true } });
     const section = {
       id: capture.id,
@@ -1103,35 +1099,68 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       wires: [],
       sequence: [],
     };
-    const result = await applyChanges(
-      { base: capture.base, collection: capture.collection, generation: capture.generation },
-      [{ op: 'create', target: 'sections', value: section }],
-    );
+    const result = await submitCreation(capture, [
+      { op: 'create', target: 'sections', value: section },
+    ]);
     return finishCreation(result, 'diagram');
+  }
+  function diagramDraftError(
+    active: ActiveDiagram | null,
+    snapshot: WorkspaceView['snapshot'],
+    draft: AddDiagramDraft,
+  ): Extract<Result<never>, { ok: false }> | null {
+    if (active === null || snapshot === null) return creationFailure('Open a collection first.');
+    return draft.title.trim().length === 0
+      ? creationFailure('Give the diagram a name before adding it.')
+      : null;
+  }
+  function diagramTarget(active: ActiveDiagram): Result<NonNullable<typeof diagramCapture>> {
+    const capture =
+      diagramCapture ??
+      (diagramCapture = {
+        id: `section-${bindings.nextId()}` as Section['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+        request: null,
+      });
+    const error = captureCollectionError(capture.collection.id, active.document.collection.id);
+    return error === null ? { ok: true, value: capture } : error;
   }
   /** New objects are created once; reuse only adds a section-local appearance of the same ID. */
   async function addObject(draft: AddObjectDraft): Promise<Result<Receipt>> {
     const context = creationContext(draft);
-    if (!context.ok) return context;
+    if (!context.ok) return retainCreationFailure(context);
     objectCapture ??= {
       id: `object-${bindings.nextId()}` as DiagramObject['id'],
       base: context.value.active.base,
       collection: context.value.active.document.collection,
       generation: context.value.active.generation,
+      request: null,
     };
     update({ creation: { ...state.creation, object: draft, problem: null, busy: true } });
     const payload = creationPayload(context.value, draft);
     if (!payload.ok) return retainCreationFailure(payload);
     const changes = creationChanges(payload.value.object, draft.reuseObject, payload.value.section);
-    const result = await applyChanges(
-      {
-        base: objectCapture.base,
-        collection: objectCapture.collection,
-        generation: objectCapture.generation,
-      },
-      changes,
-    );
+    const result = await submitCreation(objectCapture, changes);
     return finishCreation(result, 'object');
+  }
+  async function submitCreation(
+    capture: {
+      readonly base: NonNullable<WorkspaceView['snapshot']>;
+      readonly collection: ActiveDiagram['document']['collection'];
+      readonly generation: string;
+      request: Request | null;
+    },
+    changes: readonly import('../contract/records/owners.js').Change[],
+  ): Promise<Result<Receipt>> {
+    const request =
+      capture.request === null
+        ? bindings.inputs.model(capture.base, capture.collection.id, changes, bindings.nextId())
+        : { ok: true as const, value: capture.request };
+    if (!request.ok) return retainCreationFailure(request);
+    capture.request ??= request.value;
+    return submit(capture.request, capture.generation, state.sourceEdit, null);
   }
   function finishCreation(result: Result<Receipt>, kind: 'diagram' | 'object'): Result<Receipt> {
     if (!result.ok) {
@@ -1156,12 +1185,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return result;
   }
   function setDiagramDraft(draft: AddDiagramDraft): void {
+    captureDiagramDraft();
     update({ creation: { ...state.creation, diagram: draft, problem: null } });
   }
   function setObjectDraft(draft: AddObjectDraft): void {
+    captureObjectDraft();
     update({ creation: { ...state.creation, object: draft, problem: null } });
   }
   function cancelCreation(kind: 'diagram' | 'object'): void {
+    if (state.creation.busy) return;
     clearCreationCapture(kind);
     update({
       creation: {
@@ -1172,6 +1204,28 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         busy: false,
       },
     });
+  }
+  function captureDiagramDraft(): void {
+    const active = state.active;
+    if (diagramCapture === null && active !== null)
+      diagramCapture = {
+        id: `section-${bindings.nextId()}` as Section['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+        request: null,
+      };
+  }
+  function captureObjectDraft(): void {
+    const active = state.active;
+    if (objectCapture === null && active !== null)
+      objectCapture = {
+        id: `object-${bindings.nextId()}` as DiagramObject['id'],
+        base: active.base,
+        collection: active.document.collection,
+        generation: active.generation,
+        request: null,
+      };
   }
   function clearCreationCapture(kind: 'diagram' | 'object'): void {
     if (kind === 'diagram') diagramCapture = null;
@@ -1215,10 +1269,40 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   ): Result<{ active: ActiveDiagram; section: Section }> {
     const active = state.active;
     if (active === null) return creationFailure('Open a collection first.');
-    const section = active.document.collection.sections.find((item) => item.id === draft.section);
-    return section === undefined
-      ? creationFailure('Choose an existing diagram.')
-      : { ok: true, value: { active, section } };
+    const captureError = captureCollectionError(
+      objectCapture?.collection.id,
+      active.document.collection.id,
+    );
+    if (captureError !== null) return captureError;
+    const collection = objectCapture?.collection ?? active.document.collection;
+    const section = collection.sections.find((item) => item.id === draft.section);
+    return sectionResult(section, active, objectCapture, collection);
+  }
+  function sectionResult(
+    section: Section | undefined,
+    active: ActiveDiagram,
+    capture: typeof objectCapture,
+    collection: ActiveDiagram['document']['collection'],
+  ): Result<{ active: ActiveDiagram; section: Section }> {
+    if (section === undefined) return creationFailure('Choose an existing diagram.');
+    const target =
+      capture === null
+        ? active
+        : {
+            ...active,
+            base: capture.base,
+            generation: capture.generation,
+            document: { ...active.document, collection },
+          };
+    return { ok: true, value: { active: target, section } };
+  }
+  function captureCollectionError(
+    captured: string | undefined,
+    current: string,
+  ): Extract<Result<never>, { ok: false }> | null {
+    return captured !== undefined && captured !== current
+      ? creationFailure('This draft belongs to another collection. Reopen it there or cancel it.')
+      : null;
   }
   function creationObject(
     objects: readonly DiagramObject[],
@@ -1269,7 +1353,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       ? [{ op: 'create' as const, target: 'objects' as const, value: object }, appearance]
       : [appearance];
   }
-  function creationFailure<T = never>(message: string): Result<T> {
+  function creationFailure<T = never>(message: string): Extract<Result<T>, { ok: false }> {
     return {
       ok: false,
       error: {

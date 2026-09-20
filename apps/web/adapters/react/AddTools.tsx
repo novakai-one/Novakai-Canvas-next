@@ -108,6 +108,7 @@ function DiagramForm({
           control={(field) => (
             <input
               {...field}
+              disabled={busy}
               value={draft.title}
               onChange={(event) => onDraft({ ...draft, title: event.target.value })}
             />
@@ -214,6 +215,7 @@ function ObjectReady({
           control={(field) => (
             <select
               {...field}
+              disabled={busy}
               value={targetSection}
               onChange={(event) => onDraft({ ...draft, section: event.target.value })}
             >
@@ -230,6 +232,7 @@ function ObjectReady({
           control={(field) => (
             <select
               {...field}
+              disabled={busy}
               value={draft.reuseObject ?? ''}
               onChange={(event) => onDraft({ ...draft, reuseObject: event.target.value || null })}
             >
@@ -242,7 +245,7 @@ function ObjectReady({
             </select>
           )}
         />
-        {moduleField(Field, draft, onDraft)}
+        {moduleField(Field, draft, busy, onDraft)}
         {problem !== null && <p role="alert">{problem}</p>}
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
@@ -260,6 +263,7 @@ function ObjectReady({
 function moduleField(
   Field: FormSlots['Field'],
   draft: AddObjectDraft,
+  busy: boolean,
   onDraft: (draft: AddObjectDraft) => void,
 ): ReactElement | null {
   if (draft.reuseObject !== null) return null;
@@ -270,6 +274,7 @@ function moduleField(
       control={(field) => (
         <input
           {...field}
+          disabled={busy}
           value={draft.label}
           onChange={(event) => onDraft({ ...draft, label: event.target.value })}
         />

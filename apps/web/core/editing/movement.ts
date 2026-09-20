@@ -89,9 +89,7 @@ function pinGroup(
 ): Section['groups'][number] {
   const node = nodes.find((candidate) => candidate.measured.groupId === group.id);
   if (node === undefined) throw new Error('captured group missing');
-  const parent = parentBox(node, indexed);
-  if (node.parent !== null && parent === undefined)
-    throw new Error('captured group parent missing');
+  const parent = requiredParent(node, indexed, 'captured group parent missing');
   return {
     ...group,
     placement: sourcePlacement(
@@ -113,9 +111,7 @@ function pinAppearance(
       candidate.measured.groupId === null && candidate.measured.objectId === appearance.object,
   );
   if (node === undefined) throw new Error('captured appearance missing');
-  const parent = parentBox(node, indexed);
-  if (node.parent !== null && parent === undefined)
-    throw new Error('captured appearance parent missing');
+  const parent = requiredParent(node, indexed, 'captured appearance parent missing');
   return {
     ...appearance,
     placement: sourcePlacement(
@@ -126,6 +122,15 @@ function pinAppearance(
       node.box.height,
     ),
   };
+}
+function requiredParent(
+  node: { readonly parent: string | null; readonly box: Box },
+  indexed: ReadonlyMap<string, { readonly box: Box }>,
+  message: string,
+): Box | undefined {
+  const parent = parentBox(node, indexed);
+  if (node.parent !== null && parent === undefined) throw new Error(message);
+  return parent;
 }
 
 function plannedSections(document: RenderDocument, intent: PlacementIntent): readonly Section[] {
@@ -146,11 +151,9 @@ function changes(document: RenderDocument, sections: readonly Section[]): readon
 }
 
 function sceneBox(document: RenderDocument, target: Target): Box | undefined {
-  return target.kind === 'section'
-    ? sectionBox(document, target.id)
-    : target.kind === 'node'
-      ? nodeWorldBox(document, target)
-      : undefined;
+  if (target.kind === 'section') return sectionBox(document, target.id);
+  if (target.kind === 'node') return nodeWorldBox(document, target);
+  return undefined;
 }
 function sectionBox(document: RenderDocument, id: string): Box | undefined {
   return document.scene.sections.find((section) => section.id === id)?.box;
@@ -172,12 +175,10 @@ function targetKey(target: Target): string {
 }
 
 function exactBox(before: Box, after: Box): boolean {
-  return (
-    before.x === after.x &&
-    before.y === after.y &&
-    before.width === after.width &&
-    before.height === after.height
-  );
+  return boxDimensions(before).every((value, index) => value === boxDimensions(after)[index]);
+}
+function boxDimensions(box: Box): readonly number[] {
+  return [box.x, box.y, box.width, box.height];
 }
 
 function completePreview(
@@ -194,36 +195,62 @@ function completePreview(
       ),
     ),
   ];
+  const actual = previewMap(preview, expected);
+  if (!actual.ok) return actual;
+  return actual;
+}
+function previewMap(
+  preview: GeometryPreview,
+  expected: readonly string[],
+): Result<ReadonlyMap<string, Box>> {
   const actual = new Map<string, Box>();
   for (const item of preview.boxes) {
-    const key = targetKey(item.target);
-    if (!expected.includes(key) || actual.has(key))
-      return failure(
-        'invalid-edit',
-        'Movement preview contains an unexpected or duplicate geometry target',
-      );
-    actual.set(key, item.box);
+    const result = addPreviewItem(actual, expected, item.target, item.box);
+    if (!result.ok) return result;
   }
-  if (actual.size !== expected.length || expected.some((key) => !actual.has(key)))
+  if (!completeMap(actual, expected))
     return failure(
       'invalid-edit',
       'Movement preview did not preserve the complete captured target set',
     );
   return { ok: true, value: actual };
 }
+function addPreviewItem(
+  actual: Map<string, Box>,
+  expected: readonly string[],
+  target: Target,
+  box: Box,
+): Result<void> {
+  const key = targetKey(target);
+  if (!expected.includes(key) || actual.has(key))
+    return failure(
+      'invalid-edit',
+      'Movement preview contains an unexpected or duplicate geometry target',
+    );
+  actual.set(key, box);
+  return { ok: true, value: undefined };
+}
+function completeMap(actual: ReadonlyMap<string, Box>, expected: readonly string[]): boolean {
+  return actual.size === expected.length && expected.every((key) => actual.has(key));
+}
 
 function closureKeys(
   document: RenderDocument,
   entry: PlacementIntent['entries'][number],
 ): ReadonlySet<string> {
+  if (entry.target.kind !== 'node') return new Set();
+  return nodeClosure(document, entry.target.section, entry.target.id);
+}
+function nodeClosure(
+  document: RenderDocument,
+  sectionId: string,
+  nodeId: string,
+): ReadonlySet<string> {
+  const section = document.scene.sections.find((item) => item.id === sectionId);
   const keys = new Set<string>();
-  if (entry.target.kind !== 'node') return keys;
-  const section = document.scene.sections.find(
-    (item) => item.id === ('section' in entry.target ? entry.target.section : ''),
-  );
-  if (!section) return keys;
+  if (section === undefined) return keys;
   section.nodes
-    .filter((node) => containsAncestor(section.nodes, node.id, entry.target.id))
+    .filter((node) => containsAncestor(section.nodes, node.id, nodeId))
     .forEach((node) => keys.add(targetKey({ kind: 'node', section: section.id, id: node.id })));
   return keys;
 }
@@ -242,19 +269,26 @@ function normalizedEntries(
   document: RenderDocument,
   intent: PlacementIntent,
 ): Result<readonly PlacementIntent['entries'][number][]> {
+  const byKey = indexEntries(intent.entries);
+  if (!byKey.ok) return byKey;
+  const entries = [...byKey.value.values()];
+  const conflict = entries
+    .map((entry) => validateEntry(document, entry, byKey.value))
+    .find((result) => !result.ok);
+  if (conflict !== undefined) return conflict;
+  return { ok: true, value: entries };
+}
+function indexEntries(
+  entries: readonly PlacementIntent['entries'][number][],
+): Result<ReadonlyMap<string, PlacementIntent['entries'][number]>> {
   const byKey = new Map<string, PlacementIntent['entries'][number]>();
-  for (const entry of intent.entries) {
+  for (const entry of entries) {
     const key = targetKey(entry.target);
     if (byKey.has(key))
       return failure('invalid-edit', 'Movement contains duplicate selected targets');
     byKey.set(key, entry);
   }
-  const entries = [...byKey.values()];
-  const conflict = entries
-    .map((entry) => validateEntry(document, entry, byKey))
-    .find((result) => !result.ok);
-  if (conflict !== undefined) return conflict;
-  return { ok: true, value: entries };
+  return { ok: true, value: byKey };
 }
 function validateEntry(
   document: RenderDocument,
@@ -270,11 +304,19 @@ function validateEntry(
   const node = section?.nodes.find((item) => item.id === entry.target.id);
   if (section === undefined || node === undefined)
     return failure('stale-target', 'The selected movement target is missing');
-  let parent = node.parent;
+  return validateParents(section.nodes, node.parent, section.id, byKey);
+}
+function validateParents(
+  nodes: readonly { readonly id: string; readonly parent: string | null }[],
+  initial: string | null,
+  section: string,
+  byKey: ReadonlyMap<string, unknown>,
+): Result<void> {
+  let parent = initial;
   while (parent !== null) {
-    if (byKey.has(targetKey({ kind: 'node', section: section.id, id: parent })))
+    if (byKey.has(targetKey({ kind: 'node', section, id: parent })))
       return failure('invalid-edit', 'Select either an ancestor or its descendant, not both');
-    const parentNode = section.nodes.find((item) => item.id === parent);
+    const parentNode = nodes.find((item) => item.id === parent);
     if (parentNode === undefined)
       return failure('stale-target', 'The selected movement parent is missing');
     parent = parentNode.parent;
@@ -292,77 +334,97 @@ function expectedBoxes(
 ): Result<ReadonlyMap<string, Box>> {
   const roots = new Map<string, { section: string; dx: number; dy: number }>();
   for (const entry of entries) {
-    if (entry.target.kind === 'section') {
-      const section = document.scene.sections.find((item) => item.id === entry.target.id);
-      if (section === undefined) return failure('stale-target', 'The selected section is missing');
-      roots.set(targetKey(entry.target), {
-        section: section.id,
-        dx: entry.placement.x - section.origin.x,
-        dy: entry.placement.y - section.origin.y,
-      });
-      continue;
-    }
-    if (entry.target.kind !== 'node')
-      return failure('unsupported-edit', 'Movement review supports module nodes and sections');
-    const section = document.scene.sections.find(
-      (item) => item.id === ('section' in entry.target ? entry.target.section : ''),
-    );
-    const node = section?.nodes.find((item) => item.id === entry.target.id);
-    if (section === undefined || node === undefined)
-      return failure('stale-target', 'The selected node is missing');
-    const parent =
-      node.parent === null ? undefined : section.nodes.find((item) => item.id === node.parent);
-    if (node.parent !== null && parent === undefined)
-      return failure('stale-target', 'The selected node parent is missing');
-    const parentX = section.origin.x + (parent?.box.x ?? 0);
-    const parentY = section.origin.y + (parent?.box.y ?? 0);
-    const before = worldBox(document, entry.target);
-    if (before === undefined)
-      return failure('stale-target', 'The selected node geometry is missing');
-    roots.set(targetKey(entry.target), {
-      section: section.id,
-      dx: parentX + entry.placement.x - before.x,
-      dy: parentY + entry.placement.y - before.y,
-    });
+    const root = expectedRoot(document, entry);
+    if (!root.ok) return root;
+    roots.set(targetKey(entry.target), root.value);
   }
   const expected = new Map<string, Box>();
   for (const section of document.scene.sections) {
-    const sectionTarget = { kind: 'section' as const, id: section.id };
-    const sectionRoot = roots.get(targetKey(sectionTarget));
-    const sectionBox = section.box;
-    expected.set(
-      targetKey(sectionTarget),
-      sectionRoot === undefined
-        ? sectionBox
-        : {
-            ...sectionBox,
-            x: sectionBox.x + sectionRoot.dx,
-            y: sectionBox.y + sectionRoot.dy,
-          },
-    );
-    for (const node of section.nodes) {
-      const target = { kind: 'node' as const, section: section.id, id: node.id };
-      let current: string | null = node.id;
-      let root: { section: string; dx: number; dy: number } | undefined;
-      while (current !== null) {
-        root = roots.get(targetKey({ kind: 'node', section: section.id, id: current }));
-        if (root !== undefined) break;
-        current = section.nodes.find((item) => item.id === current)?.parent ?? null;
-      }
-      root ??= sectionRoot;
-      expected.set(
-        targetKey(target),
-        root === undefined
-          ? { ...node.box, x: node.box.x + section.origin.x, y: node.box.y + section.origin.y }
-          : {
-              ...node.box,
-              x: node.box.x + section.origin.x + root.dx,
-              y: node.box.y + section.origin.y + root.dy,
-            },
-      );
-    }
+    addExpectedSection(expected, section, roots);
   }
   return { ok: true, value: expected };
+}
+function expectedRoot(
+  document: RenderDocument,
+  entry: PlacementIntent['entries'][number],
+): Result<{ section: string; dx: number; dy: number }> {
+  if (entry.target.kind === 'section') {
+    const section = document.scene.sections.find((item) => item.id === entry.target.id);
+    return section === undefined
+      ? failure('stale-target', 'The selected section is missing')
+      : {
+          ok: true,
+          value: {
+            section: section.id,
+            dx: entry.placement.x - section.origin.x,
+            dy: entry.placement.y - section.origin.y,
+          },
+        };
+  }
+  if (entry.target.kind !== 'node')
+    return failure('unsupported-edit', 'Movement review supports module nodes and sections');
+  const section = document.scene.sections.find(
+    (item) => item.id === ('section' in entry.target ? entry.target.section : ''),
+  );
+  const node = section?.nodes.find((item) => item.id === entry.target.id);
+  if (section === undefined || node === undefined)
+    return failure('stale-target', 'The selected node is missing');
+  const parent =
+    node.parent === null ? undefined : section.nodes.find((item) => item.id === node.parent);
+  if (node.parent !== null && parent === undefined)
+    return failure('stale-target', 'The selected node parent is missing');
+  const before = worldBox(document, entry.target);
+  if (before === undefined) return failure('stale-target', 'The selected node geometry is missing');
+  return {
+    ok: true,
+    value: {
+      section: section.id,
+      dx: section.origin.x + (parent?.box.x ?? 0) + entry.placement.x - before.x,
+      dy: section.origin.y + (parent?.box.y ?? 0) + entry.placement.y - before.y,
+    },
+  };
+}
+function addExpectedSection(
+  expected: Map<string, Box>,
+  section: RenderDocument['scene']['sections'][number],
+  roots: ReadonlyMap<string, { section: string; dx: number; dy: number }>,
+): void {
+  const sectionTarget = { kind: 'section' as const, id: section.id };
+  const sectionRoot = roots.get(targetKey(sectionTarget));
+  expected.set(
+    targetKey(sectionTarget),
+    translatedBox(section.box, sectionRoot, section.origin.x, section.origin.y),
+  );
+  section.nodes.forEach((node) => addExpectedNode(expected, section, node, roots, sectionRoot));
+}
+function addExpectedNode(
+  expected: Map<string, Box>,
+  section: RenderDocument['scene']['sections'][number],
+  node: RenderDocument['scene']['sections'][number]['nodes'][number],
+  roots: ReadonlyMap<string, { section: string; dx: number; dy: number }>,
+  sectionRoot: { section: string; dx: number; dy: number } | undefined,
+): void {
+  let current: string | null = node.id;
+  let root: { section: string; dx: number; dy: number } | undefined;
+  while (current !== null && root === undefined) {
+    root = roots.get(targetKey({ kind: 'node', section: section.id, id: current }));
+    current = section.nodes.find((item) => item.id === current)?.parent ?? null;
+  }
+  root ??= sectionRoot;
+  expected.set(
+    targetKey({ kind: 'node', section: section.id, id: node.id }),
+    translatedBox(node.box, root, section.origin.x, section.origin.y),
+  );
+}
+function translatedBox(
+  box: Box,
+  root: { dx: number; dy: number } | undefined,
+  originX: number,
+  originY: number,
+): Box {
+  return root === undefined
+    ? { ...box, x: box.x + originX, y: box.y + originY }
+    : { ...box, x: box.x + originX + root.dx, y: box.y + originY + root.dy };
 }
 
 function geometryChanges(
@@ -408,32 +470,8 @@ export function buildMoveReview(
   intent: PlacementIntent,
   context: MovementPreviewContext,
 ): Result<MoveReview> {
-  if (!sameStamp(intent, context.stamp))
-    return failure('stale-gesture', 'The diagram changed while this gesture was being edited');
-  if (
-    intent.entries.some(
-      (entry) =>
-        entry.target.kind === 'section' &&
-        context.document.projection.sections.every(
-          (section) => section.id !== entry.target.id || section.mode !== 'modules',
-        ),
-    )
-  )
-    return failure('unsupported-edit', 'Movement review supports module sections only');
-  if (
-    intent.entries.length === 0 ||
-    intent.entries.some((entry) => {
-      if (entry.placement.width !== undefined || entry.placement.height !== undefined) return true;
-      if (entry.target.kind === 'section') return false;
-      if (entry.target.kind !== 'node') return true;
-      return !context.document.projection.sections.some(
-        (section) =>
-          section.id === ('section' in entry.target ? entry.target.section : '') &&
-          section.mode === 'modules',
-      );
-    })
-  )
-    return failure('unsupported-edit', 'Movement review supports position-only module moves');
+  const validation = validateMoveIntent(intent, context);
+  if (!validation.ok) return validation;
   if (context.preview === undefined)
     return failure('invalid-edit', 'Movement preview is not available');
 
@@ -492,6 +530,45 @@ export function buildMoveReview(
       selectedOption: option.id,
     },
   };
+}
+function validateMoveIntent(
+  intent: PlacementIntent,
+  context: MovementPreviewContext,
+): Result<void> {
+  if (!sameStamp(intent, context.stamp))
+    return failure('stale-gesture', 'The diagram changed while this gesture was being edited');
+  if (intent.entries.some((entry) => !moduleTarget(context.document, entry)))
+    return failure('unsupported-edit', 'Movement review supports module sections only');
+  if (
+    intent.entries.length === 0 ||
+    intent.entries.some((entry) => !positionOnlyModule(context.document, entry))
+  )
+    return failure('unsupported-edit', 'Movement review supports position-only module moves');
+  return { ok: true, value: undefined };
+}
+function moduleTarget(
+  document: RenderDocument,
+  entry: PlacementIntent['entries'][number],
+): boolean {
+  if (entry.target.kind === 'section')
+    return document.projection.sections.some(
+      (section) => section.id === entry.target.id && section.mode === 'modules',
+    );
+  return (
+    entry.target.kind === 'node' &&
+    document.projection.sections.some(
+      (section) =>
+        section.id === ('section' in entry.target ? entry.target.section : '') &&
+        section.mode === 'modules',
+    )
+  );
+}
+function positionOnlyModule(
+  document: RenderDocument,
+  entry: PlacementIntent['entries'][number],
+): boolean {
+  const sized = entry.placement.width !== undefined || entry.placement.height !== undefined;
+  return !sized && (entry.target.kind === 'section' || moduleTarget(document, entry));
 }
 
 export function chooseMoveOption(

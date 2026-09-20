@@ -65,7 +65,7 @@ export function createEngineeringFields({
               value={typeChoice(item)}
               onChange={(event) => {
                 const value = event.target.value;
-                if (value === 'unlinked') {
+                if (value === 'mode:unlinked') {
                   edit({
                     kind: 'field-type',
                     id: item.id,
@@ -74,7 +74,7 @@ export function createEngineeringFields({
                   return;
                 }
                 const definition = collection.definitions.find(
-                  (candidate) => candidate.id === value,
+                  (candidate) => `definition:${candidate.id}` === value,
                 );
                 if (definition)
                   edit({
@@ -84,10 +84,15 @@ export function createEngineeringFields({
                   });
               }}
             >
-              <option value="unlinked">Unlinked (authored type)</option>
+              <option value="mode:unlinked">Unlinked (authored type)</option>
               {collection.definitions.map((definition) => (
-                <option key={definition.id} value={definition.id}>
-                  Shared: {definition.label} · @{definition.id}
+                <option key={definition.id} value={`definition:${definition.id}`}>
+                  Shared: {definition.label} ·{' '}
+                  {fieldTypeDisplay(collection, {
+                    ...item,
+                    type: { kind: 'definition', id: definition.id },
+                  })}{' '}
+                  · @{definition.id}
                 </option>
               ))}
             </select>
@@ -166,5 +171,5 @@ function referenceValue(field: Extract<ContentBlock, { kind: 'field' }>): string
   return JSON.stringify([field.references.object, field.references.member]);
 }
 function typeChoice(field: Extract<ContentBlock, { kind: 'field' }>): string {
-  return typeof field.type === 'string' ? 'unlinked' : field.type.id;
+  return typeof field.type === 'string' ? 'mode:unlinked' : `definition:${field.type.id}`;
 }

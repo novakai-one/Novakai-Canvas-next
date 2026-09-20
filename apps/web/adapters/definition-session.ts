@@ -1,6 +1,7 @@
 import type { Definition } from '@novakai/canvas-model';
 import { definitionId } from '@novakai/canvas-model';
 import type { Result, Diagnostic } from '../contract/errors.js';
+import type { Request } from '../contract/records/owners.js';
 import { failure } from '../contract/errors.js';
 import type {
   DefinitionBindings,
@@ -13,7 +14,7 @@ import { captureCollectionBase } from '../contract/api.js';
 
 /** Definitions share the retained-editor lifecycle while keeping one stable ID per draft. */
 export function createDefinitionSession(bindings: DefinitionBindings): DefinitionSession {
-  let state: DefinitionState = { drafts: [], problem: null };
+  let state: DefinitionState = { drafts: [], pending: [], problem: null };
   let workspace = '';
   const listeners = new Set<() => void>();
   const publish = (next: DefinitionState): void => {
@@ -28,12 +29,12 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
   const write = (drafts: readonly DefinitionDraft[]): Result<void> => {
     const result = bindings.retention.write(`definitions.${workspace}`, drafts.map(encodeDraft));
     if (!result.ok) return reject(result.error);
-    publish({ drafts, problem: null });
+    publish({ drafts, pending: state.pending, problem: null });
     return result;
   };
   const installWorkspace = (id: string, drafts: readonly DefinitionDraft[]): Result<void> => {
     workspace = id;
-    publish({ drafts, problem: null });
+    publish({ drafts, pending: draftsWithRequests(drafts), problem: null });
     return { ok: true, value: undefined };
   };
   const restoreStored = (id: string, value: unknown): Result<void> => {
@@ -56,30 +57,67 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
   ) => {
-    if (selection.base.workspace !== workspace)
-      return reject(
-        failure('wrong-workspace', 'Recover the original workspace before editing').error,
-      );
+    const scope = checkScope(selection, workspace);
+    if (!scope.ok) return reject(scope.error);
+    return retainInScope(selection, definition, operation);
+  };
+  const retainInScope = (
+    selection: DefinitionSelection,
+    definition: Definition,
+    operation: 'create' | 'replace' | 'remove',
+  ): Result<void> => {
     const key = `${selection.collection.id}:${definition.id}`;
     const current = state.drafts.find((draft) => draft.key === key);
-    const base = capturedBase(current?.base, selection);
-    if (!base.ok) return reject(base.error);
-    const draft: DefinitionDraft = {
-      key,
-      base: base.value,
-      generation: current?.generation ?? selection.generation,
-      collection: current?.collection ?? selection.collection,
-      definition,
-      operation: nextOperation(current?.operation, operation),
-    };
-    return write([...state.drafts.filter((item) => item.key !== key), draft]);
+    const locked = lockedDefinition(state, current, key);
+    if (locked !== null) return reject(locked);
+    return saveDefinition(current, key, selection, definition, operation);
+  };
+  const saveDefinition = (
+    current: DefinitionDraft | undefined,
+    key: string,
+    selection: DefinitionSelection,
+    definition: Definition,
+    operation: DefinitionDraft['operation'],
+  ): Result<void> => {
+    if (uncommittedDelete(current, operation))
+      return write(state.drafts.filter((item) => item.key !== key));
+    const draft = draftValue(key, current, selection, definition, operation);
+    return saveDraftResult(draft, key, state.drafts, write, reject);
   };
   const apply = async (key: string): Promise<Result<void>> => {
     const draft = state.drafts.find((item) => item.key === key);
     if (!draft) return { ok: true, value: undefined };
+    if (state.pending.includes(key))
+      return {
+        ok: false,
+        error: failure('pending-request', 'This definition is already being submitted').error,
+      };
+    publish({ ...state, pending: [...state.pending, key], problem: null });
+    return settleApply(key, draft);
+  };
+  async function settleApply(key: string, draft: DefinitionDraft): Promise<Result<void>> {
     const result = await bindings.apply(draft);
     if (!result.ok) return reject(result.error);
     return write(state.drafts.filter((item) => item.key !== key));
+  }
+  const bindRequest = (key: string, request: Request): Result<void> => {
+    const draft = state.drafts.find((item) => item.key === key);
+    if (draft === undefined) return { ok: true, value: undefined };
+    return write(state.drafts.map((item) => (item.key === key ? { ...item, request } : item)));
+  };
+  const confirmed = (requestId: string): void => {
+    const draft = state.drafts.find((item) => item.request?.request === requestId);
+    if (draft === undefined) return;
+    void write(state.drafts.filter((item) => item.key !== draft.key));
+    publish({ ...state, pending: state.pending.filter((item) => item !== draft.key) });
+  };
+  const released = (requestId: string): void => {
+    const draft = state.drafts.find((item) => item.request?.request === requestId);
+    if (draft === undefined) return;
+    void write(
+      state.drafts.map((item) => (item.key === draft.key ? { ...item, request: undefined } : item)),
+    );
+    publish({ ...state, pending: state.pending.filter((item) => item !== draft.key) });
   };
   return {
     getSnapshot: () => state,
@@ -91,8 +129,18 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     create: (selection, definition) => retain(selection, definition, 'create'),
     edit: (selection, definition) => retain(selection, definition, 'replace'),
     remove: (selection, definition) => retain(selection, definition, 'remove'),
-    discard: (key) => write(state.drafts.filter((draft) => draft.key !== key)),
+    discard: (key) =>
+      state.pending.includes(key) ||
+      state.drafts.some((draft) => draft.key === key && draft.request !== undefined)
+        ? reject(
+            failure('pending-request', 'This definition is being submitted; wait for confirmation')
+              .error,
+          )
+        : write(state.drafts.filter((draft) => draft.key !== key)),
     apply,
+    bindRequest,
+    confirmed,
+    released,
   };
 }
 
@@ -103,6 +151,64 @@ function capturedBase(
   return current === undefined
     ? captureCollectionBase(selection.base, selection.collection.id)
     : captureCollectionBase(current, selection.collection.id);
+}
+
+function checkScope(selection: DefinitionSelection, workspace: string): Result<void> {
+  return selection.base.workspace === workspace
+    ? { ok: true, value: undefined }
+    : failure('wrong-workspace', 'Recover the original workspace before editing');
+}
+
+function lockedDefinition(
+  state: DefinitionState,
+  current: DefinitionDraft | undefined,
+  key: string,
+): Diagnostic | null {
+  return state.pending.includes(key) || current?.request !== undefined
+    ? failure('pending-request', 'This definition is being submitted; wait for confirmation').error
+    : null;
+}
+
+function uncommittedDelete(
+  current: DefinitionDraft | undefined,
+  operation: DefinitionDraft['operation'],
+): boolean {
+  return current?.operation === 'create' && operation === 'remove';
+}
+
+function saveDraftResult(
+  draft: Result<DefinitionDraft>,
+  key: string,
+  drafts: readonly DefinitionDraft[],
+  write: (next: readonly DefinitionDraft[]) => Result<void>,
+  reject: (error: Diagnostic) => Result<void>,
+): Result<void> {
+  return draft.ok
+    ? write([...drafts.filter((item) => item.key !== key), draft.value])
+    : reject(draft.error);
+}
+
+function draftValue(
+  key: string,
+  current: DefinitionDraft | undefined,
+  selection: DefinitionSelection,
+  definition: Definition,
+  operation: DefinitionDraft['operation'],
+): Result<DefinitionDraft> {
+  const base = capturedBase(current?.base, selection);
+  if (!base.ok) return base;
+  return {
+    ok: true,
+    value: {
+      key,
+      base: base.value,
+      generation: current?.generation ?? selection.generation,
+      collection: current?.collection ?? selection.collection,
+      definition,
+      operation: nextOperation(current?.operation, operation),
+      request: current?.request,
+    },
+  };
 }
 
 function nextOperation(
@@ -124,7 +230,12 @@ function encodeDraft(draft: DefinitionDraft): unknown {
     collection: draft.collection.id,
     definition: draft.definition,
     operation: draft.operation,
+    request: draft.request,
   };
+}
+
+function draftsWithRequests(drafts: readonly DefinitionDraft[]): readonly string[] {
+  return drafts.filter((draft) => draft.request !== undefined).map((draft) => draft.key);
 }
 
 export function definitionDraftId(value: string): Definition['id'] {

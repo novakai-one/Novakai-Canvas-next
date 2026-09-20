@@ -1412,6 +1412,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function confirmed(submission: Submission, receipt: Receipt): void {
     source.confirmed(submission, receipt);
     update({ status: editStatus() });
+    definitions.confirmed(submission.request.request);
     confirmGesture(submission.gesture);
     clearConfirmedMovement(submission.gesture);
     settleConfirmedCreation(submission.request.request);
@@ -1545,12 +1546,20 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return applyChanges(draft, [{ op: 'replace', target: 'objects', value: object }]);
   }
   async function applyDefinition(draft: DefinitionDraft): Promise<Result<Receipt>> {
-    return applyChanges(
-      draft,
+    const changes =
       draft.operation === 'remove'
-        ? [{ op: 'remove', target: 'definitions', id: draft.definition.id }]
-        : [{ op: draft.operation, target: 'definitions', value: draft.definition }],
-    );
+        ? [{ op: 'remove' as const, target: 'definitions' as const, id: draft.definition.id }]
+        : [{ op: draft.operation, target: 'definitions' as const, value: draft.definition }];
+    const request =
+      draft.request === undefined
+        ? bindings.inputs.model(draft.base, draft.collection.id, changes, bindings.nextId())
+        : { ok: true as const, value: draft.request };
+    if (!request.ok) return request;
+    if (draft.request === undefined) {
+      const retained = definitions.bindRequest(draft.key, request.value);
+      if (!retained.ok) return retained;
+    }
+    return submit(request.value, draft.generation, state.sourceEdit, null);
   }
   /** Captured Model changes share request assembly; their feature decides the semantic change list. */
   async function applyChanges(
@@ -2568,7 +2577,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     dismissRequest: (id) => {
       const result = submissions.dismiss(id);
       if (!result.ok) report(result.error);
-      else releaseDismissedCreation(id);
+      else {
+        releaseDismissedCreation(id);
+        definitions.released(id);
+      }
     },
     retryRequest,
     create,

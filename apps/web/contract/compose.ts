@@ -278,11 +278,13 @@ function controller(
           previewModuleRoutes(previewDocument, previewIntent, changes),
       };
       const move = buildMoveReview(intent, context);
-      if (!move.ok || move.value.options.length > 0) return move;
+      if (move.ok && move.value.options.length > 0) return move;
       const expanded = buildExpandOption(intent, context);
-      if (!expanded.ok) return expanded;
-      if (expanded.value === null) return move;
-      return { ok: true as const, value: { ...move.value, options: [expanded.value], selectedOption: expanded.value.id } };
+      if (expanded.ok && expanded.value !== null) {
+        const base = move.ok ? move.value : { id: intent.id, intent, stamp, collectionId: document.collection.id, revision: document.collection.revision, options: [], selectedOption: null };
+        return { ok: true as const, value: { ...base, options: [expanded.value], selectedOption: expanded.value.id } };
+      }
+      return move;
     },
     previewRoutes: previewModuleRoutes,
     submissions: (callbacks) =>

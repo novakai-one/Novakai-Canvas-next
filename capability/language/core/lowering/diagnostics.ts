@@ -22,8 +22,16 @@ function nearestSpan(path: string, mappings: readonly SourceMapping[], fallback:
   return (
     mappings
       .filter((mapping) => path.includes(mapping.path))
-      .toSorted((a, b) => b.path.length - a.path.length)[0]?.span ?? fallback
+      .toSorted((a, b) => {
+        const pathOrder = b.path.length - a.path.length;
+        if (pathOrder !== 0) return pathOrder;
+        return spanWidth(a.span) - spanWidth(b.span);
+      })[0]?.span ?? fallback
   );
+}
+
+function spanWidth(span: Span): number {
+  return span.end.offset - span.start.offset;
 }
 /** Stable IDs produce diagnostic anchors without depending on formatting or declaration order. */
 export function sourceMappings(item: Declaration, prefix = ''): readonly SourceMapping[] {
@@ -43,14 +51,15 @@ function expressionMapping(
 ): readonly SourceMapping[] {
   if (expression === undefined) return [];
   return [
-    { path: `${name}.expression`, span: expression.span },
     ...expressionReferenceMappings(expression.tokens ?? [], `${name}.expression`),
+    { path: `${name}.expression`, span: expression.span },
   ];
 }
 
 interface MappingParse {
   readonly next: number;
   readonly mappings: readonly SourceMapping[];
+  readonly items: number;
 }
 
 function expressionReferenceMappings(
@@ -90,18 +99,42 @@ function mapUnion(tokens: readonly Token[], start: number, path: string): Mappin
     next += Number(continueUnion);
     item += Number(continueUnion);
   }
-  return { next, mappings };
+  return { next, mappings, items: item + 1 };
 }
 
 function mapAtom(tokens: readonly Token[], start: number, path: string): MappingParse {
   const token = tokens[start];
-  if (token?.text === '(') {
-    const nested = mapUnion(tokens, start + 1, path);
-    return { next: nested.next + 1, mappings: nested.mappings };
-  }
-  if (token?.text.startsWith('@') === true)
-    return { next: start + 1, mappings: [{ path, span: token.span }] };
-  return { next: start + 1, mappings: [] };
+  if (token?.text === '(') return mapParenthesized(tokens, start, path);
+  if (token?.text.startsWith('@') === true) return mapReference(token, start, path);
+  return { next: atomEnd(tokens, start), mappings: [], items: 1 };
+}
+
+function mapParenthesized(tokens: readonly Token[], start: number, path: string): MappingParse {
+  const nested = mapUnion(tokens, start + 1, path);
+  const mappings = nested.items === 1 ? collapseSingleItem(nested.mappings, path) : nested.mappings;
+  return { next: nested.next + 1, mappings, items: nested.items };
+}
+
+function mapReference(token: Token, start: number, path: string): MappingParse {
+  return { next: start + 1, mappings: [{ path, span: token.span }], items: 1 };
+}
+
+function collapseSingleItem(
+  mappings: readonly SourceMapping[],
+  path: string,
+): readonly SourceMapping[] {
+  const prefix = `${path}.items.0`;
+  return mappings.map((mapping) =>
+    mapping.path === prefix || mapping.path.startsWith(`${prefix}.`)
+      ? { ...mapping, path: `${path}${mapping.path.slice(prefix.length)}` }
+      : mapping,
+  );
+}
+
+function atomEnd(tokens: readonly Token[], start: number): number {
+  let next = start + 1;
+  while (next < tokens.length && !['|', ')'].includes(tokens[next]?.text ?? '')) next += 1;
+  return next;
 }
 /** Match canonical owner path namespaces, including nested content, rows and groups. */
 function mappingPath(item: Declaration, prefix: string): string {

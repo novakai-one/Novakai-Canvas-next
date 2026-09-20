@@ -80,15 +80,22 @@ describe('shared definition expressions', () => {
   });
 
   it('maps unknown reference diagnostics to the reference atom span', () => {
-    const spanSource = `canvas 1 collection @spans "Spans" {
-  type @a "A" = "Known" | @missing
+    const cases = [
+      ['"Known" | @missing', 'definitions.a.expression.items.1'],
+      ['1.5 | @missing', 'definitions.a.expression.items.1'],
+      ['1e+21 | @missing', 'definitions.a.expression.items.1'],
+      ['(@missing)', 'definitions.a.expression'],
+      ['"Known" | (1.5 | @missing)', 'definitions.a.expression.items.1.items.1'],
+      ['@missing', 'definitions.a.expression'],
+    ] as const;
+    for (const [expression, target] of cases) {
+      const spanSource = `canvas 1 collection @spans "Spans" {
+  type @a "A" = ${expression}
 }`;
-    const invalid = language.parse(spanSource);
-    const parsed = value(invalid);
-    const mapping = parsed.sourceMap.find(
-      (item) => item.path === 'definitions.a.expression.items.1',
-    );
-    expect(mapping?.span.start.offset).toBe(spanSource.indexOf('@missing'));
-    expect(mapping?.span.end.offset).toBe(spanSource.indexOf('@missing') + '@missing'.length);
+      const parsed = value(language.parse(spanSource));
+      const mapping = parsed.sourceMap.find((item) => item.path === target);
+      expect(mapping?.span.start.offset).toBe(spanSource.indexOf('@missing'));
+      expect(mapping?.span.end.offset).toBe(spanSource.indexOf('@missing') + '@missing'.length);
+    }
   });
 });

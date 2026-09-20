@@ -18,7 +18,7 @@
   .header p { margin: var(--nv-space-1) 0 0; color: var(--nv-color-subtle); font-size: var(--nv-font-caption); }
   .count { color: var(--nv-color-subtle); white-space: nowrap; font-size: var(--nv-font-caption); }
   .changes { max-height: min(52vh, 28rem); overflow: auto; display: grid; gap: var(--nv-space-3); margin: 0; padding: 0; list-style: none; }
-  .changes li { display: grid; gap: var(--nv-space-1); padding-bottom: var(--nv-space-3); border-bottom: var(--nv-stroke-base) solid var(--nv-border-subtle); }
+  .changes li { display: grid; gap: var(--nv-space-1); padding-bottom: var(--nv-space-3); border-bottom: var(--nv-stroke-base) solid var(--nv-border-default); }
   .changes span { color: var(--nv-color-subtle); font-size: var(--nv-font-caption); overflow-wrap: anywhere; }
   .actions { display: flex; justify-content: flex-end; gap: var(--nv-space-3); }
   @media (max-width: 42rem) { .review { inset: var(--nv-space-3) var(--nv-space-3) auto; width: auto; max-height: 60vh; } }

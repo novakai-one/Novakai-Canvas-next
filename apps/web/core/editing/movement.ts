@@ -640,7 +640,8 @@ export function buildRearrangeOption(
     const target = first.value.boxes.find((item) => targetKey(item.target) === key)?.target;
     if (target === undefined) return failure('invalid-edit', 'Movement preview target identity is missing');
     if (target.kind === 'section' && target.id === sectionId && (actual.x !== scene.box.x || actual.y !== scene.box.y)) return { ok: true, value: null };
-    if (target.kind === 'section' && target.id !== sectionId) {
+    const targetSection = target.kind === 'section' ? target.id : target.kind === 'node' ? target.section : null;
+    if (targetSection !== null && targetSection !== sectionId) {
       const captured = sceneBox(context.document, target);
       if (captured === undefined || !exactBox(captured, actual)) return { ok: true, value: null };
     }
@@ -696,7 +697,9 @@ export function buildRearrangeOption(
   }
   for (const [key, firstBox] of firstMap) {
     const target = first.value.boxes.find((item) => targetKey(item.target) === key)?.target;
-    if (target?.kind === 'section' && target.id !== sectionId) {
+    if (target === undefined) return { ok: true, value: null };
+    const targetSection = target.kind === 'section' ? target.id : target.kind === 'node' ? target.section : null;
+    if (targetSection !== null && targetSection !== sectionId) {
       const captured = sceneBox(context.document, target);
       if (captured === undefined || !exactBox(captured, firstBox)) return { ok: true, value: null };
     }

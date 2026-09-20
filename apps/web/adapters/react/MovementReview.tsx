@@ -4,7 +4,7 @@ import styles from './MovementReview.module.css';
 
 function labelFor(document: FeatureProps['view']['movementReview'] extends infer R ? R extends { document: infer D } ? D : never : never, target: { kind: string; id: string; section?: string }): string {
   if (document === undefined) return target.id;
-  if (target.kind === 'section') return target.id;
+  if (target.kind === 'section') return document.scene.sections.find((section) => section.id === target.id)?.id === target.id ? (document.collection.sections.find((section) => section.id === target.id)?.title ?? target.id) : target.id;
   const section = document.scene.sections.find((item) => item.id === target.section);
   return section?.nodes.find((node) => node.id === target.id)?.measured.label ?? target.id;
 }

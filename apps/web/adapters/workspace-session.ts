@@ -673,7 +673,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         update({ movementReview: state.movementReview ? { ...state.movementReview, phase: 'uncertain', requestId: intent.id } : null });
       } else {
         movementApplying = false;
-        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: retained?.state === 'rejected' ? 'rejected' : 'review' } : null });
+        const restored = preview.value !== null && publishPreview(active, intent, preview.value, start);
+        update({ movementReview: state.movementReview ? { ...state.movementReview, phase: retained?.state === 'rejected' || !restored ? 'rejected' : 'review' } : null });
         updateMutationAvailability();
       }
     }
@@ -685,19 +686,20 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     intent: EditIntent,
     geometry: GeometryPreview,
     start: number,
-  ): void {
+  ): boolean {
     const accepted = active.session.dispatch({
       kind: 'preview-routes',
       id: intent.id,
       ...geometry,
     });
-    if (!accepted.ok) return;
-    if (accepted.value.state.routePreview?.gesture !== intent.id) return;
+    if (!accepted.ok) return false;
+    if (accepted.value.state.routePreview?.gesture !== intent.id) return false;
     performance.measure('canvas:released-route-preview', {
       start,
       end: performance.now(),
       detail: { gesture: intent.id },
     });
+    return true;
   }
   /** Capture the snapshot shown with the gesture; changing versions later is never part of retry. */
   async function submitCanvas(
@@ -1128,6 +1130,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const selected = chosen.ok ? chosen.value : undefined;
     if (!chosen.ok || selected === undefined || capture.active !== state.active || capture.active.generation !== state.generation || !currentDiagram(capture.active) || state.snapshot?.workspace !== capture.workspace || currentStamp.revision !== capture.review.stamp.revision || currentStamp.inputKey !== capture.review.stamp.inputKey || currentStamp.generation !== capture.review.stamp.generation) {
       report(chosen.ok ? { code: 'stale-gesture', message: 'This movement review is stale; the draft was retained.', recovery: 'Reload the diagram before applying it.', owner: 'workspace' } : chosen.error);
+      return;
+    }
+    if (capture.active.session.getSnapshot().routePreview?.gesture !== capture.intent.id) {
+      report({ code: 'invalid-edit', message: 'The inspected movement preview is no longer displayed.', recovery: 'Restore the preview or cancel this retained draft.', owner: 'workspace' });
       return;
     }
     movementApplying = true;

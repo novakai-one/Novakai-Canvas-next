@@ -204,13 +204,16 @@ function compactTreeRow(
   const gutter = icon + context.style.gap;
   const width = label.width + gutter + padding * 2;
   const height = Math.max(label.height, icon) + padding * 2;
+  const taggedLabel = {
+    ...label,
+    primitives: label.primitives.map((primitive) => ({
+      ...primitive,
+      lodRole: 'heading' as const,
+    })),
+  };
   return {
     content: {
-      ...offset(label, padding + gutter, padding),
-      primitives: label.primitives.map((primitive) => ({
-        ...primitive,
-        lodRole: 'heading' as const,
-      })),
+      ...offset(taggedLabel, padding + gutter, padding),
       width,
       height,
     },

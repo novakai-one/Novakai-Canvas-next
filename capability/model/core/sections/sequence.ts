@@ -103,7 +103,7 @@ function validateEvent(
       !isVisibleParticipant(id, section, collection),
       'sequence',
       `${path}.${id}`,
-      'Event endpoint must be a visible participant',
+      'Event endpoint must be a visible participant or direct top-level module',
     ),
   );
 }

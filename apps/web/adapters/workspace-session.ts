@@ -413,6 +413,27 @@ function endpointValue(endpoint: ConnectionDraft['source']): Relationship['sourc
         member: endpoint.member as Relationship['source']['member'],
       };
 }
+
+function definitionChanges(
+  draft: DefinitionDraft,
+): readonly import('../contract/records/owners.js').Change[] {
+  if (draft.operation === 'remove')
+    return [{ op: 'remove', target: 'definitions', id: draft.definition.id }];
+  return [{ op: draft.operation, target: 'definitions', value: draft.definition }];
+}
+
+function definitionRequest(
+  draft: DefinitionDraft,
+  bindings: WorkspaceBindings,
+): Result<Request> {
+  if (draft.request !== undefined) return { ok: true, value: draft.request };
+  return bindings.inputs.model(
+    draft.base,
+    draft.collection.id,
+    definitionChanges(draft),
+    bindings.nextId(),
+  );
+}
 interface RenderRequest {
   readonly token: number;
   readonly id: string;
@@ -1545,27 +1566,24 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   async function applyObject(draft: ObjectDraft, object: DiagramObject): Promise<Result<Receipt>> {
     return applyChanges(draft, [{ op: 'replace', target: 'objects', value: object }]);
   }
+  function retainDefinitionRequest(draft: DefinitionDraft, request: Request): Result<Request> {
+    if (draft.request !== undefined) return { ok: true, value: request };
+    const retained = definitions.bindRequest(draft.key, request);
+    if (!retained.ok) return retained;
+    return { ok: true, value: request };
+  }
   async function applyDefinition(draft: DefinitionDraft): Promise<Result<Receipt>> {
-    const changes =
-      draft.operation === 'remove'
-        ? [{ op: 'remove' as const, target: 'definitions' as const, id: draft.definition.id }]
-        : [{ op: draft.operation, target: 'definitions' as const, value: draft.definition }];
-    const request =
-      draft.request === undefined
-        ? bindings.inputs.model(draft.base, draft.collection.id, changes, bindings.nextId())
-        : { ok: true as const, value: draft.request };
+    const request = definitionRequest(draft, bindings);
     if (!request.ok) {
       definitions.unlockWithoutRequest(draft.key);
       return request;
     }
-    if (draft.request === undefined) {
-      const retained = definitions.bindRequest(draft.key, request.value);
-      if (!retained.ok) {
-        definitions.unlockWithoutRequest(draft.key);
-        return retained;
-      }
+    const retained = retainDefinitionRequest(draft, request.value);
+    if (!retained.ok) {
+      definitions.unlockWithoutRequest(draft.key);
+      return retained;
     }
-    return submit(request.value, draft.generation, state.sourceEdit, null);
+    return submit(retained.value, draft.generation, state.sourceEdit, null);
   }
   /** Captured Model changes share request assembly; their feature decides the semantic change list. */
   async function applyChanges(

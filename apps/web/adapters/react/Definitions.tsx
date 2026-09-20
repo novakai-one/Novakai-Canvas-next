@@ -118,7 +118,7 @@ function DefinitionCard({
       />
       <p>Canonical: {display.ok ? display.value : 'Unavailable'}</p>
       <p>Used by {usageCount(usages)} field or definition reference(s)</p>
-      {usageList(usages)}
+      {usageList(usages, view)}
       <div className={styles.choices}>
         <Button
           label="Delete definition"
@@ -135,17 +135,39 @@ function usageCount(result: ReturnType<typeof definitionUsages>): number {
   return result.ok ? result.value.length : 0;
 }
 
-function usageList(result: ReturnType<typeof definitionUsages>): ReactElement | null {
+function usageList(
+  result: ReturnType<typeof definitionUsages>,
+  view: FeatureProps['view'],
+): ReactElement | null {
   if (!result.ok || result.value.length === 0) return null;
   return (
     <ul>
       {result.value.map((usage) => (
         <li key={`${usage.kind}:${usage.path}`}>
-          {usage.kind === 'field' ? `${usage.object}.${usage.field}` : usage.path}
+          {usage.kind === 'field' ? (
+            <button type="button" onClick={() => navigateUsage(view, usage.object)}>
+              {usage.object}.{usage.field}
+            </button>
+          ) : (
+            usage.path
+          )}
         </li>
       ))}
     </ul>
   );
+}
+
+function navigateUsage(view: FeatureProps['view'], objectId: string | undefined): void {
+  if (view.active === null || objectId === undefined) return;
+  const node = view.active.document.scene.sections
+    .flatMap((section) => section.nodes.map((item) => ({ section: section.id, node: item })))
+    .find((item) => item.node.measured.objectId === objectId);
+  if (node === undefined) return;
+  view.active.session.dispatch({
+    kind: 'select',
+    targets: [{ kind: 'node', section: node.section, id: node.node.id }],
+    mode: 'replace',
+  });
 }
 
 function draftActions(

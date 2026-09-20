@@ -140,6 +140,24 @@ export function createSceneEdge(
         {energized && !view.draft && (
           <path className={styles.pulse} d={path} pathLength={100} pointerEvents="none" />
         )}
+        {(view.emphasis === 'primary' || view.emphasis === 'secondary') && (
+          <>
+            <circle
+              className={styles.halo}
+              cx={first.x}
+              cy={first.y}
+              data-emphasis={view.emphasis}
+              pointerEvents="none"
+            />
+            <circle
+              className={styles.halo}
+              cx={last.x}
+              cy={last.y}
+              data-emphasis={view.emphasis}
+              pointerEvents="none"
+            />
+          </>
+        )}
         {wire.labelVisible !== false && (
           <g transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
             <Content embedFonts={false} content={wire.measuredLabel} />

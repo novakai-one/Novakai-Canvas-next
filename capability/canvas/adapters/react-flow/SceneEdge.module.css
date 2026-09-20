@@ -26,6 +26,24 @@
     filter: drop-shadow(0 0 4px var(--nv-canvas-wire-pulse));
     pointer-events: none;
   }
+  /* Endpoint halos: emphasized wires terminate in a soft glowing ring on each connected
+     row anchor, so relationships read as threads between rows rather than boxes. */
+  .halo {
+    fill: none;
+    r: var(--nv-space-3);
+    stroke: var(--nv-action-accent);
+    stroke-width: var(--nv-focus-width);
+    pointer-events: none;
+    transition-duration: var(--nv-canvas-transition);
+    transition-property: stroke, stroke-opacity, filter;
+  }
+  .halo[data-emphasis='primary'] {
+    filter: drop-shadow(0 0 10px var(--nv-canvas-primary-glow));
+  }
+  .halo[data-emphasis='secondary'] {
+    stroke-opacity: 0.65;
+    filter: drop-shadow(0 0 6px var(--nv-canvas-primary-glow));
+  }
   @media (prefers-reduced-motion: no-preference) {
     .pulse {
       animation: nv-trace var(--nv-motion-trace) linear infinite;

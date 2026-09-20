@@ -112,7 +112,14 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           nodeClickDistance={snapshot.state.profile.fineThreshold}
           onlyRenderVisibleElements
         >
-          {chrome.minimap && <MiniMap pannable zoomable ariaLabel="Collection minimap" />}
+          {chrome.minimap && (
+            <MiniMap
+              pannable
+              zoomable
+              ariaLabel="Collection minimap"
+              nodeColor={(node) => minimapColor(node as FlowNode)}
+            />
+          )}
           {props.showRoads && <Roads sections={snapshot.view.sections} />}
           <Sequence
             followsInterfaceRoles={props.followsInterfaceRoles === true}
@@ -148,6 +155,17 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
 function dispatchSize(actions: Pick<ViewActions, 'dispatch'>, width: number, height: number): void {
   if (width <= 0 || height <= 0) return;
   actions.dispatch({ kind: 'resize-viewport', viewport: { width, height } });
+}
+
+/** Minimap nodes carry their role color so the overview map encodes meaning, not just geometry. */
+function minimapColor(node: FlowNode): string {
+  if (node.type === 'section') return 'var(--nv-canvas-group-boundary)';
+  const measured = node.data?.view?.placed?.measured;
+  if (!measured) return 'var(--nv-canvas-group-boundary)';
+  if (measured.groupId !== null) return 'var(--nv-canvas-group-boundary)';
+  const role = measured.role;
+  if (role === 'neutral') return 'var(--nv-canvas-constellation-wire)';
+  return `var(--nv-role-${role}-fill, var(--nv-canvas-constellation-wire))`;
 }
 
 /** Touch input uses the coarse threshold; mouse and pen retain precise manipulation. */

@@ -103,5 +103,7 @@ export const query = z
   .strictObject({ search: z.string().max(256).default(''), kind: kind.optional() })
   .readonly();
 export type Query = z.infer<typeof query>;
+/** Checked theme selector projected from the full admission envelope. */
+export const themeInput = z.object({ kind: z.literal('theme'), id: presetId }).readonly();
 export const expansionRequest = z.strictObject({ pin, namespace: presetId }).readonly();
 export type ExpansionRequest = z.infer<typeof expansionRequest>;

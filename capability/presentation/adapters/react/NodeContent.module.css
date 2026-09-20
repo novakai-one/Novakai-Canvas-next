@@ -99,7 +99,9 @@
     stroke: var(--nv-interface-role-stroke);
   }
 
-  .root[data-follows-interface-roles='true']:is(
+  /* Frameless (infographic) nodes have no role-filled surface; forcing role ink there
+     paints on-accent dark text onto the bare canvas. Framed nodes only. */
+  .root[data-follows-interface-roles='true']:not([data-frame='none']):is(
       [data-node-role='primary'],
       [data-node-role='supporting'],
       [data-node-role='decision'],

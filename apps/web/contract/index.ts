@@ -18,3 +18,5 @@ export type {
   MovePolicy,
   MoveReview,
 } from './records/movement.js';
+
+export { groupCreationChanges, groupDraftProblem } from './api.js';

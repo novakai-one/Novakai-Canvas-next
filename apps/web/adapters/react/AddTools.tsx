@@ -44,13 +44,13 @@ export function createAddTools({
     const target = sections.find((section) => section.id === targetSection);
     return (
       <div className={styles.tools}>
+        <CreationProblem problem={view.problem === null ? view.creation.problem : null} />
         <DiagramForm
           Field={Field}
           Button={Button}
           draft={diagram}
           busy={busy}
           onDraft={setDiagram}
-          problem={view.creation.problem}
           onCancel={() => controller.cancelCreation('diagram')}
           onSubmit={async () => {
             setBusy(true);
@@ -67,7 +67,6 @@ export function createAddTools({
           draft={object}
           busy={busy}
           onDraft={setObject}
-          problem={view.creation.problem}
           onCancel={() => controller.cancelCreation('object')}
           onSubmit={async () => {
             setBusy(true);
@@ -81,7 +80,6 @@ export function createAddTools({
           draft={group}
           busy={busy}
           onDraft={setGroup}
-          problem={view.creation.problem}
           onCancel={() => controller.cancelCreation('group')}
           onSubmit={async () => {
             setBusy(true);
@@ -106,14 +104,12 @@ function DiagramForm({
   Button,
   draft,
   busy,
-  problem,
   onCancel,
   onDraft,
   onSubmit,
 }: FormSlots & {
   draft: AddDiagramDraft;
   busy: boolean;
-  problem: string | null;
   onCancel: () => void;
   onDraft: (draft: AddDiagramDraft) => void;
   onSubmit: () => Promise<void>;
@@ -144,7 +140,6 @@ function DiagramForm({
           )}
         />
         <div className={styles.actions}>
-          {problem !== null && <p role="alert">{problem}</p>}
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
             label={busy ? 'Adding…' : 'Add diagram'}
@@ -166,7 +161,6 @@ function ObjectForm({
   targetSection,
   draft,
   busy,
-  problem,
   onCancel,
   onDraft,
   onSubmit,
@@ -177,7 +171,6 @@ function ObjectForm({
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
-  problem: string | null;
   onCancel: () => void;
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
@@ -193,7 +186,6 @@ function ObjectForm({
       targetSection={targetSection}
       draft={draft}
       busy={busy}
-      problem={problem}
       onCancel={onCancel}
       onDraft={onDraft}
       onSubmit={onSubmit}
@@ -217,7 +209,6 @@ function ObjectReady({
   targetSection,
   draft,
   busy,
-  problem,
   onCancel,
   onDraft,
   onSubmit,
@@ -228,7 +219,6 @@ function ObjectReady({
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
-  problem: string | null;
   onCancel: () => void;
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
@@ -298,7 +288,6 @@ function ObjectReady({
             </select>
           )}
         />
-        {problem !== null && <p role="alert">{problem}</p>}
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
@@ -319,7 +308,6 @@ function GroupForm({
   sections,
   draft,
   busy,
-  problem,
   onCancel,
   onDraft,
   onSubmit,
@@ -327,7 +315,6 @@ function GroupForm({
   sections: readonly Section[];
   draft: AddGroupDraft;
   busy: boolean;
-  problem: string | null;
   onCancel: () => void;
   onDraft: (draft: AddGroupDraft) => void;
   onSubmit: () => Promise<void>;
@@ -373,8 +360,17 @@ function GroupForm({
             />
           )}
         />
+        <label>
+          <input
+            type="checkbox"
+            checked={draft.findRoom ?? false}
+            disabled={busy}
+            onChange={(event) => onDraft({ ...draft, findRoom: event.target.checked })}
+          />
+          Allow this diagram to move to make room
+        </label>
+        <p>May move and resize this diagram. Other diagrams keep their saved positions.</p>
         <div className={styles.actions}>
-          {problem !== null && <p role="alert">{problem}</p>}
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
             label={busy ? 'Adding…' : 'Add group'}
@@ -414,4 +410,9 @@ function objectActionLabel(draft: AddObjectDraft): string {
 }
 function objectDisabled(busy: boolean, draft: AddObjectDraft): boolean {
   return busy || (draft.reuseObject === null && draft.label.trim().length === 0);
+}
+
+function CreationProblem({ problem }: { problem: string | null }): ReactElement | null {
+  if (problem === null) return null;
+  return <p role="alert">{problem}</p>;
 }

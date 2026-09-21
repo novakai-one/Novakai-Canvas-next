@@ -7,9 +7,9 @@ export function createRequestRecovery({
 }: Pick<DesignSlots, 'Button'>): ComponentType<FeatureProps> {
   const labels = {
     sending: 'Saving',
-    uncertain: 'Confirmation needed',
-    retryable: 'No receipt found',
-    rejected: 'Edit was rejected',
+    uncertain: 'Save not confirmed — your draft is kept',
+    retryable: 'Edit not saved — safe to retry',
+    rejected: 'Edit not applied — your draft is kept',
   };
   /** Each retained request keeps its identity visible so humans and agents can discuss the same operation. */
   function RequestRecovery({ controller, view }: FeatureProps): ReactElement | null {
@@ -20,10 +20,13 @@ export function createRequestRecovery({
           <div className={styles.request} key={item.request.request}>
             <div>
               <strong>{labels[item.state]}</strong>
-              <span>{item.request.request}</span>
+              <details>
+                <summary>Request details</summary>
+                <span>{item.request.request}</span>
+              </details>
             </div>
             <Button
-              label="Check receipt"
+              label="Check save status"
               disabled={item.state === 'sending'}
               onClick={() => {
                 void controller.reconcileRequest(item.request.request);

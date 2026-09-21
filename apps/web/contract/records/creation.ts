@@ -16,6 +16,7 @@ export interface AddObjectDraft {
 }
 
 export interface AddGroupDraft {
+  readonly findRoom?: boolean;
   readonly section: string;
   readonly title: string;
 }

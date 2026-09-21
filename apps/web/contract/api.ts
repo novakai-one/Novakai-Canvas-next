@@ -35,9 +35,11 @@ export {
   encodeWireRecovery,
 } from '../core/recovery/editor-records.js';
 
-export { formatFailure } from '../core/output/diagnostics.js';
+export { formatFailure, failureSummary } from '../core/output/diagnostics.js';
 export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';
 
 export function definitionDraftId(value: string): import('@novakai/canvas-model').Definition['id'] {
   return definitionId.parse(value);
 }
+
+export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';

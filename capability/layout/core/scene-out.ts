@@ -12,6 +12,7 @@ import { sectionKey } from './arrangement/keys.js';
 import { pointBounds } from './geometry/bounds.js';
 import { reject } from './validation/outcomes.js';
 import { treeGeometry } from './tree.js';
+import { availableSections } from './arrangement/available-space.js';
 
 /** Preserve lane changes; redundant collinear checkpoints do not create extra SVG vertices. */
 function points(engine: EngineScene, id: string): readonly Point[] {
@@ -150,7 +151,7 @@ export function placeAppSections(
     sections.slice(i * columns, (i + 1) * columns),
   );
   let y = 0;
-  return rows.flatMap((row) => {
+  const preferred = rows.flatMap((row) => {
     let x = 0;
     const placed = row.map((section) => {
       const authored = projection.sections.find((s) => s.id === section.id)?.placement;
@@ -170,6 +171,7 @@ export function placeAppSections(
     y += Math.max(...placed.map((s) => s.box.height)) + gap;
     return placed;
   });
+  return availableSections(preferred, projection, gap);
 }
 
 function straight(before: Point | undefined, point: Point, after: Point | undefined): boolean {

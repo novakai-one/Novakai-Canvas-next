@@ -9,6 +9,15 @@ import type {
 export function formatFailure(error: Diagnostic): readonly string[] {
   return [`${error.code}: ${error.message}`, ...sourceLines(error.source), error.recovery];
 }
+/** Show the actionable owner cause; the full error chain remains available as technical details. */
+export function failureSummary(error: Diagnostic): string {
+  return sourceSummary(error.source) ?? error.message;
+}
+function sourceSummary(source: FailureSource | undefined): string | undefined {
+  if (source === undefined) return undefined;
+  if ('diagnostics' in source) return source.diagnostics[0].message;
+  return sourceSummary(source.source) ?? source.message;
+}
 /** Absence means a local failure; validation and operational sources remain distinct. */
 function sourceLines(source: FailureSource | undefined): readonly string[] {
   if (source === undefined) return [];

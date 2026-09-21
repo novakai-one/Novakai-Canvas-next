@@ -34,7 +34,11 @@ import type {
 import type { Diagnostic, Result } from '../contract/errors.js';
 import type { RelationshipKind } from '@novakai/canvas-model';
 import type { BinaryResponse } from '../contract/ports/client.js';
-import { chooseMoveOption as chooseReviewedMoveOption } from '../contract/api.js';
+import {
+  groupDraftProblem,
+  groupCreationChanges,
+  chooseMoveOption as chooseReviewedMoveOption,
+} from '../contract/api.js';
 
 const allRelationshipKinds: readonly RelationshipKind[] = [
   'flow',
@@ -1709,29 +1713,29 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       generation: context.value.active.generation,
       request: null,
     };
-    const title = draft.title.trim();
-    if (title.length === 0)
-      return retainCreationFailure(creationFailure('Give the group a name before adding it.'));
+    const problem = groupDraftProblem(draft, context.value.section);
+    if (problem !== null) return retainCreationFailure(creationFailure(problem));
     update({ creation: { ...state.creation, group: draft, problem: null, busy: true } });
     const group: Group = {
       id: groupCapture.id,
-      title,
+      title: draft.title.trim(),
       frame: 'panel' as const,
       role: 'neutral',
       layout: {
-        algorithm: 'flow' as const,
-        direction: 'right' as const,
-        gap: 'normal' as const,
+        algorithm: context.value.section.layout.algorithm,
+        direction: context.value.section.layout.direction,
+        gap: context.value.section.layout.gap,
         constraints: [],
       },
     };
-    const section: Section = {
+    const section = {
       ...context.value.section,
       groups: [...context.value.section.groups, group],
     };
-    const result = await submitCreation(groupCapture, [
-      { op: 'replace', target: 'sections', value: section },
-    ]);
+    const result = await submitCreation(
+      groupCapture,
+      groupCreationChanges(section, draft.findRoom === true),
+    );
     return finishCreation(result, 'group');
   }
   async function submitCreation(

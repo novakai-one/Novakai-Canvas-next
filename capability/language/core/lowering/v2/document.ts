@@ -13,6 +13,7 @@ import { lowerV2Wire } from './relationships.js';
 import { lowerV2Definitions } from './definitions.js';
 import { lowerV2Section } from './sections.js';
 import { lowerV2Changes } from './changes.js';
+import { checkModulesWireLabels } from './wire-policy.js';
 export function lowerDocumentDataV2(document: Document, request: LowerRequest): RawRecord {
   const declare = requireDeclare(document);
   const collection = document.declaration;
@@ -25,6 +26,7 @@ export function lowerDocumentDataV2(document: Document, request: LowerRequest): 
   const authoredWires = wireDeclarations.map((item) => lowerV2Wire(item, symbols));
   const fkWires = buildForeignKeyWires(declare);
   checkNoAssociationCollisions(wireDeclarations, authoredWires, fkWires);
+  checkModulesWireLabels(collection, wireDeclarations);
   const sectionResults = recordsOf(collection, 'section').map((item) =>
     lowerV2Section(item, symbols),
   );

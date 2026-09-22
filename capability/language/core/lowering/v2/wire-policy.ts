@@ -1,6 +1,6 @@
 /** A.5 wire endpoint predicates: legal object/member kinds per v2 relationship kind, table-driven. */
 import type { Declaration, Reference } from '../../../contract/records/syntax.js';
-import { field, reference, textOr } from '../fields.js';
+import { field, id, list, reference, textOr } from '../fields.js';
 import { reject } from '../../validation/outcomes.js';
 import { nodeKindsV2 } from '../../vocabulary/defaults.js';
 import type { MemberFact, NodeFacts, SymbolTable } from './symbols.js';
@@ -46,6 +46,38 @@ export function checkWireEndpoints(item: Declaration, symbols: SymbolTable): voi
   const ctx: WireCtx = { item, wireKind, symbols };
   checkEndpoint(ctx, 'source', reference(field(item.fields, 'source')), sourceRule);
   checkEndpoint(ctx, 'target', reference(field(item.fields, 'target')), targetRule);
+}
+/** E110: a wire connected in a modules section carries no authored label, whatever its endpoints. */
+export function checkModulesWireLabels(
+  collection: Declaration,
+  wires: readonly Declaration[],
+): void {
+  collection.children
+    .filter(isModulesSection)
+    .forEach((section) => checkConnectedLabels(section, wires));
+}
+function isModulesSection(child: Declaration): boolean {
+  return child.kind === 'section' && textOr(child.fields, 'mode', 'flow') === 'modules';
+}
+function connectedIds(section: Declaration): readonly string[] {
+  return section.children
+    .filter((child) => child.kind === 'connect')
+    .flatMap((child) => list(child.fields, 'ids').map((value) => (value as Reference).id));
+}
+function checkConnectedLabels(section: Declaration, wires: readonly Declaration[]): void {
+  const connected = connectedIds(section);
+  wires
+    .filter((wire) => connected.includes(id(wire.fields)))
+    .filter((wire) => wire.fields.label !== undefined)
+    .forEach((wire) => rejectModulesLabel(wire, section));
+}
+function rejectModulesLabel(wire: Declaration, section: Declaration): never {
+  reject(
+    'unrepresentable',
+    wire.span,
+    'No label on a modules wire',
+    `E110 label: @${id(wire.fields)} is connected in @${id(section.fields)} (modules) and takes no wire label. Drop it.`,
+  );
 }
 function requireRules(item: Declaration, wireKind: string): readonly [EndpointRule, EndpointRule] {
   const source = sourceRules[wireKind];

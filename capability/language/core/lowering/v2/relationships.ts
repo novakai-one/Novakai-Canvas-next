@@ -13,13 +13,13 @@ export function lowerV2Wire(item: Declaration, symbols: SymbolTable): RawRecord 
   return lowerRecord(item, constructsV2);
 }
 /** Code nodes never carry an authored wire label; the diagram names them by their members. */
-const codeKinds: readonly string[] = ['module', 'package', 'interface', 'function'];
+const codeKinds: readonly string[] = ['module', 'package', 'interface', 'function', 'folder'];
 function codeEndpoint(item: Declaration, symbols: SymbolTable): string | undefined {
   return (['target', 'source'] as const)
     .map((side) => reference(field(item.fields, side)).id)
     .find((id) => codeKinds.includes(symbols.nodes.get(id)?.kind ?? ''));
 }
-/** E110: an authored label on a wire touching a module, package, interface or function is rejected. */
+/** E110: an authored label on a wire touching a module, package, interface, function or folder is rejected. */
 function checkCodeLabel(item: Declaration, symbols: SymbolTable): void {
   if (!hasAuthoredLabel(item)) return;
   const node = codeEndpoint(item, symbols);

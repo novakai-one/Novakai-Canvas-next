@@ -5,6 +5,7 @@ import { lowerLayout, modeLayout } from '../layout.js';
 import { accepted } from '../../validation/outcomes.js';
 import { lowerV2Views } from './views.js';
 import { lowerScenarioSection } from './scenario.js';
+import { checkChangeTag } from './objects.js';
 import type { SymbolTable } from './symbols.js';
 export interface SectionResult {
   readonly section: RawRecord;
@@ -12,6 +13,7 @@ export interface SectionResult {
 }
 export function lowerV2Section(item: Declaration, symbols: SymbolTable): SectionResult {
   const mode = textOr(item.fields, 'mode', 'flow');
+  checkChangeTag(textOr(item.fields, 'title', ''), item.span);
   const base: RawRecord = {
     id: id(item.fields),
     title: text(item.fields, 'title'),

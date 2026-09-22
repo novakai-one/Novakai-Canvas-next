@@ -10,10 +10,15 @@ import type { SymbolTable } from './symbols.js';
 export function lowerV2Wire(item: Declaration, symbols: SymbolTable): RawRecord {
   checkWireEndpoints(item, symbols);
   checkWireProps(item);
-  checkChangeTag(textOr(item.fields, 'label', ''), item.span);
+  checkWireText(item);
   checkMemberLabel(item);
   checkCodeLabel(item, symbols);
   return lowerRecord(item, constructsV2);
+}
+/** E106 (A.7): label, guard and effect text carry no [NEW]-style change tag. */
+const taggedTextProps: readonly string[] = ['label', 'guard', 'effect'];
+function checkWireText(item: Declaration): void {
+  taggedTextProps.forEach((prop) => checkChangeTag(textOr(item.fields, prop, ''), item.span));
 }
 /** A.3: guard/effect belong to transition, from/to to association; every other kind takes none. */
 const propOwners: Readonly<Record<string, string>> = {

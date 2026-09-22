@@ -15,6 +15,7 @@ import { lowerDefinition } from './definitions.js';
 /** Build complete raw canonical data; Model validates identities; Language owns correction and Authoring owns commit recovery. Retries have no writes. */
 export function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
   return protect(() => {
+    requireVersion1(document);
     const item = document.declaration;
     const metadata = lowerRecord(item);
     const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;
@@ -34,6 +35,11 @@ export function lowerDocumentData(document: Document, request: LowerRequest): Re
       definitions: records(item, 'type').map(lowerDefinition),
     };
   });
+}
+/** Slice 4 removes this guard once v2 lowering ships; today only canvas 1 is representable. */
+function requireVersion1(document: Document): void {
+  if (document.version === 2)
+    reject('unrepresentable', document.span, 'canvas 1', 'canvas 2 lowering is not available yet');
 }
 /** Record namespaces are selected explicitly; view statements never become canonical objects. */
 function records(item: Declaration, kind: Declaration['kind']): readonly Declaration[] {

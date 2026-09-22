@@ -27,15 +27,20 @@ import { readIdentity } from './references.js';
 export function readDeclaration(
   cursor: Cursor,
   allowed: readonly Construct[],
+  table: readonly ConstructDefinition[] = constructs,
 ): Parsed<Declaration> {
   const compactType = compactTypeDeclaration(cursor, allowed);
   if (compactType !== undefined) return compactType;
-  const definition = declarationDefinition(cursor, allowed);
-  return readDefined(cursor, definition);
+  const definition = declarationDefinition(cursor, allowed, table);
+  return readDefined(cursor, definition, table);
 }
 
-function declarationDefinition(cursor: Cursor, allowed: readonly Construct[]): ConstructDefinition {
-  const definition = constructs.find((item) => item.kind === peek(cursor).text);
+function declarationDefinition(
+  cursor: Cursor,
+  allowed: readonly Construct[],
+  table: readonly ConstructDefinition[],
+): ConstructDefinition {
+  const definition = table.find((item) => item.kind === peek(cursor).text);
   if (definition === undefined)
     reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
   if (!allowed.includes(definition.kind))
@@ -176,13 +181,17 @@ function needsTypeSpace(source: string): boolean {
   return source.length > 0 && !source.endsWith('.');
 }
 /** Positions, attributes and children are separate grammar stages with named intermediate results. */
-function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<Declaration> {
+function readDefined(
+  cursor: Cursor,
+  definition: ConstructDefinition,
+  table: readonly ConstructDefinition[],
+): Parsed<Declaration> {
   const positional = definition.positions.reduce(readPosition, {
     value: {},
     next: advance(cursor),
   });
   const attributes = readAttributes(positional.next, definition.properties);
-  const children = readChildren(attributes.next, definition.children);
+  const children = readChildren(attributes.next, definition, table);
   const fields = { ...positional.value, ...attributes.value };
   checkRequired(fields, definition, cursor);
   return {
@@ -198,7 +207,7 @@ function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<De
 /** Optional branch identities are omitted only when the next token is its quoted label. */
 function readPosition(current: Parsed<Fields>, rule: PositionRule): Parsed<Fields> {
   if (rule.literal !== undefined) return { ...current, next: consume(current.next, rule.literal) };
-  if (optionalIdentityMissing(current.next, rule)) return current;
+  if (optionalPositionMissing(current.next, rule)) return current;
   return readRequiredPosition(current, rule);
 }
 /** Reference-list positions consume whitespace-delimited IDs; attribute lists use square brackets. */
@@ -229,21 +238,57 @@ function checkRequired(fields: Fields, definition: ConstructDefinition, cursor: 
 /** Nested braces carry allowed child vocabulary; flat declaration count uses iterative repetition. */
 function readChildren(
   cursor: Cursor,
-  allowed: readonly Construct[] | null,
+  definition: ConstructDefinition,
+  table: readonly ConstructDefinition[],
 ): Parsed<readonly Declaration[]> {
+  const allowed = definition.children;
   if (allowed === null) return { value: [], next: cursor };
+  if (skipsOptionalBody(cursor, definition)) return { value: [], next: cursor };
+  return readBracedChildren(cursor, definition, allowed, table);
+}
+
+/** An optional body is omitted entirely when no brace opens it. */
+function skipsOptionalBody(cursor: Cursor, definition: ConstructDefinition): boolean {
+  return definition.body === 'optional' && peek(cursor).text !== '{';
+}
+
+/** A declared body, required or optional, is never authored empty; omit the block instead. */
+function readBracedChildren(
+  cursor: Cursor,
+  definition: ConstructDefinition,
+  allowed: readonly Construct[],
+  table: readonly ConstructDefinition[],
+): Parsed<readonly Declaration[]> {
+  const braceSpan = peek(cursor).span;
   const body = enter(consume(cursor, '{'));
+  requireNonEmptyBody(body, definition, braceSpan);
   const children = accepted(
     repeat(
       body,
       (item) => peek(item).text !== '}',
-      (item) => readDeclaration(item, allowed),
+      (item) => readDeclaration(item, allowed, table),
     ),
   );
   return { value: children.value, next: leave(consume(children.next, '}')) };
 }
 
-/** Only branch IDs have optional positional syntax. */
-function optionalIdentityMissing(cursor: Cursor, rule: PositionRule): boolean {
-  return rule.optional === true && peek(cursor).kind !== 'id';
+function requireNonEmptyBody(
+  body: Cursor,
+  definition: ConstructDefinition,
+  braceSpan: Token['span'],
+): void {
+  if (definition.body === undefined) return;
+  if (peek(body).text === '}')
+    reject('syntax', braceSpan, 'Non-empty block', 'E005 empty: omit the block.');
+}
+
+/** Only branch IDs and v2 optional labels have optional positional syntax. */
+function optionalPositionMissing(cursor: Cursor, rule: PositionRule): boolean {
+  if (rule.optional !== true) return false;
+  return optionalTypeMissing(cursor, rule.type);
+}
+
+function optionalTypeMissing(cursor: Cursor, type: PositionRule['type']): boolean {
+  if (type === 'id') return peek(cursor).kind !== 'id';
+  return type === 'string' && peek(cursor).kind !== 'string';
 }

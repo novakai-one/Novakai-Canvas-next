@@ -157,3 +157,60 @@ describe('delta: change block', () => {
     expect(firstMessage(lowered(changedTwice))).toMatch(/^E112 /u);
   });
 });
+
+const catalogue: readonly (readonly [string, string])[] = [
+  [
+    'change-scenario',
+    'E101 resolve: @place is a scenario; change entries target nodes, members or wires.',
+  ],
+  [
+    'concept-label',
+    'E110 label: @c1 is connected in @s-mod (modules) and takes no wire label. Drop it.',
+  ],
+  ['duplicate-id', 'E204 duplicate: @x is declared twice (node, wire). Ids are unique.'],
+  [
+    'flow-effect',
+    'E001 format: effect is not a property of a flow wire. transition takes: guard, effect.',
+  ],
+  ['folder-label', 'E110 label: @lib (folder) takes no wire label. Drop it.'],
+  [
+    'guard-change-tag',
+    'E106 delta: "[NEW]" in label. Use a change block. Statuses: new, changed, deleted, locked.',
+  ],
+  ['implements-label', 'E110 label: @store (interface) takes no wire label. Drop it.'],
+  [
+    'label-change-tag',
+    'E106 delta: "[NEW]" in label. Use a change block. Statuses: new, changed, deleted, locked.',
+  ],
+  ['member-wire-label', 'E110 label: derived from @getOrder. Drop it.'],
+  [
+    'module-target',
+    'E103 kind: imports must target a signature or type member. @orders exposes: @getOrder.',
+  ],
+  ['package-label', 'E110 label: @zod (package) takes no wire label. Drop it.'],
+  [
+    'reference-guard',
+    'E001 format: guard is not a property of a reference wire. transition takes: guard, effect.',
+  ],
+  ['reference-label', 'E110 label: @orders (module) takes no wire label. Drop it.'],
+  [
+    'scenario-caller',
+    'E311 scenario: @Order (entity) cannot call. Callers: @user, @orders, @pricing.',
+  ],
+  ['scenario-count', 'E307 sequence: show exactly one scenario. Declared: @place, @cancel.'],
+  ['scenario-shown', 'E305 view: @place is a scenario; show takes nodes.'],
+  [
+    'scenario-target',
+    'E304 scenario: @place calls @pricing.@quote; @pricing declares: @priceOrder.',
+  ],
+  [
+    'transition-from',
+    'E001 format: from is not a property of a transition wire. association takes: from, to.',
+  ],
+];
+
+it.each(catalogue)('rejected/%s.canvas fails with its catalogue message', async (file, message) => {
+  const result = lowered(await source(`language/v2/rejected/${file}.canvas`));
+  expect(result.ok).toBe(false);
+  expect(firstMessage(result)).toBe(message);
+});

@@ -109,9 +109,18 @@ function sameFieldType(left: Field, right: Field | undefined): boolean {
   return typeUseKey(left.type) === typeUseKey(right.type);
 }
 
+/** Entity ids name the valid reference targets in the E010 message. */
+function entityList(collection: Collection): string {
+  return collection.objects
+    .filter((object) => object.kind === 'entity')
+    .map((object) => `@${object.id}`)
+    .join(', ');
+}
+
 /** A scalar foreign field must declare a reference; every other field forbids one. */
 function validateFieldKey(
   field: Field,
+  object: DiagramObject,
   collection: Collection,
   path: string,
 ): readonly Diagnostic[] {
@@ -123,7 +132,12 @@ function validateFieldKey(
       'Only foreign fields have references',
     );
   if (field.references === undefined)
-    return diagnoseWhen(true, 'key', path, 'Foreign field requires reference');
+    return diagnoseWhen(
+      true,
+      'key',
+      path,
+      `E010 key: @${object.id}.@${field.id} is foreign; add references=@e.@f. Entities: ${entityList(collection)}.`,
+    );
   return validateForeignKey([field], [field.references], collection, path);
 }
 
@@ -171,7 +185,7 @@ function validateBlockKey(
   collection: Collection,
 ): readonly Diagnostic[] {
   const path = `objects.${object.id}.content.${block.id}`;
-  if (block.kind === 'field') return validateFieldKey(block, collection, path);
+  if (block.kind === 'field') return validateFieldKey(block, object, collection, path);
   if (block.kind === 'keygroup') return validateKeyGroup(block, object, collection, path);
   return [];
 }

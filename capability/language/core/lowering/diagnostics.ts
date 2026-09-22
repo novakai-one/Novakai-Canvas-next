@@ -1,4 +1,10 @@
-import type { Span, Declaration, LocatedValue, Token } from '../../contract/records/syntax.js';
+import type {
+  Span,
+  Declaration,
+  Document,
+  LocatedValue,
+  Token,
+} from '../../contract/records/syntax.js';
 import type { SourceMapping } from '../../contract/records/requests.js';
 import { LanguageFault } from '../../contract/errors.js';
 import { id } from './fields.js';
@@ -44,6 +50,14 @@ export function sourceMappings(item: Declaration, prefix = ''): readonly SourceM
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
   return own;
+}
+/** v2 facts live under declare; their canonical paths are already top-level. */
+export function documentMappings(document: Document): readonly SourceMapping[] {
+  const declared = (document.declare?.children ?? []).flatMap((child) => sourceMappings(child));
+  return [
+    ...declared.filter((mapping) => mapping.path !== ''),
+    ...sourceMappings(document.declaration),
+  ];
 }
 
 function contentMappings(name: string, item: Declaration): readonly SourceMapping[] {

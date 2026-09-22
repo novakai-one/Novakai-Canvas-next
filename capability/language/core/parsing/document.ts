@@ -1,6 +1,6 @@
 import type { ParsedSource, Document, Patch, Declaration } from '../../contract/records/syntax.js';
 import { documentResources, patchResources } from '../lowering/resources.js';
-import { sourceMappings } from '../lowering/diagnostics.js';
+import { documentMappings } from '../lowering/diagnostics.js';
 import { id, field, reference } from '../lowering/fields.js';
 import { tokenize } from '../lexing/tokens.js';
 import { readSource } from '../validation/input.js';
@@ -147,7 +147,7 @@ function describeParsedSource(parsed: Document | Patch): ParsedSource {
     return {
       ...parsed,
       resources: documentResources(parsed.declaration),
-      sourceMap: sourceMappings(parsed.declaration),
+      sourceMap: documentMappings(parsed),
     };
   return {
     ...parsed,

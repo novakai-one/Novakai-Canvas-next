@@ -7,7 +7,7 @@ import { lowerRecord, lowerNode } from './content.js';
 import { lowerSection } from './views.js';
 import { lowerLayout } from './layout.js';
 import { lowerAsset, resolveTheme, documentResources } from './resources.js';
-import { ownerValue, sourceMappings } from './diagnostics.js';
+import { ownerValue, documentMappings } from './diagnostics.js';
 import { partitionLayout } from './layout-fields.js';
 import type { Result } from '../../contract/errors.js';
 import { accepted, protect, reject } from '../validation/outcomes.js';
@@ -86,7 +86,7 @@ export function lowerDocument(
 ): Result<LoweredIntent> {
   return protect(() => {
     checkMode(document, request);
-    const mappings = sourceMappings(document.declaration);
+    const mappings = documentMappings(document);
     const raw = accepted(lowerDocumentData(document, request));
     const candidate = ownerValue(deps.reader.validate(raw), mappings, document.span);
     const shell = {

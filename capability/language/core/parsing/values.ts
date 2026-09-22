@@ -89,6 +89,7 @@ export function readReferenceList(cursor: Cursor): Parsed<LocatedValue> {
     value: {
       value: parsed.value.map((item) => item.value),
       span: consumedSpan(cursor, parsed.next),
+      items: parsed.value,
     },
     next: parsed.next,
   };

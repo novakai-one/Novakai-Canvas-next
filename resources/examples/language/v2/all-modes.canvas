@@ -33,6 +33,7 @@ declare @ordering-model {
   node @problem concept "The problem"
   node @approach concept "The approach"
   node @outcome concept "The outcome"
+  node @shopper participant "Shopper"
   wire @i1 @orders -> @pricing.@priceOrder kind=imports
   wire @owns @Customer.@id -> @Order.@customerId kind=association from=1 to=0..many
   wire @t1 @draft -> @placed kind=transition guard="placed"
@@ -40,6 +41,11 @@ declare @ordering-model {
   wire @f1 @receive -> @check kind=flow
   wire @f2 @check -> @ship "yes" kind=flow
   wire @f3 @check -> @backorder "no" kind=flow
+  scenario @reprice "Reprice an order" {
+    call @shopper -> @orders.@getOrder returns
+    alt "priced" { call @orders -> @pricing.@priceOrder returns }
+    alt "no price" { call @orders -> @pricing.@priceOrder }
+  }
   change @cycle-1 "Pricing rework" {
     new @pricing
     changed @orders.@getOrder
@@ -67,4 +73,5 @@ collection @v2-all-modes "Ordering from every angle" uses=@ordering-model {
   }
   section @s-grid "Board" mode=grid { show @goals @risks @scope }
   section @s-story "Narrative" mode=story { show @problem @approach @outcome }
+  section @s-seq "Reprice" mode=sequence { show @reprice }
 }

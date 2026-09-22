@@ -9,7 +9,27 @@ import type { SymbolTable } from './symbols.js';
 export function lowerV2Wire(item: Declaration, symbols: SymbolTable): RawRecord {
   checkWireEndpoints(item, symbols);
   checkMemberLabel(item);
+  checkCodeLabel(item, symbols);
   return lowerRecord(item, constructsV2);
+}
+/** Code nodes never carry an authored wire label; the diagram names them by their members. */
+const codeKinds: readonly string[] = ['module', 'package', 'interface', 'function'];
+function codeEndpoint(item: Declaration, symbols: SymbolTable): string | undefined {
+  return (['target', 'source'] as const)
+    .map((side) => reference(field(item.fields, side)).id)
+    .find((id) => codeKinds.includes(symbols.nodes.get(id)?.kind ?? ''));
+}
+/** E110: an authored label on a wire touching a module, package, interface or function is rejected. */
+function checkCodeLabel(item: Declaration, symbols: SymbolTable): void {
+  if (!hasAuthoredLabel(item)) return;
+  const node = codeEndpoint(item, symbols);
+  if (node === undefined) return;
+  reject(
+    'unrepresentable',
+    item.span,
+    'No label on a code wire',
+    `E110 label: @${node} (${symbols.nodes.get(node)?.kind}) takes no wire label. Drop it.`,
+  );
 }
 function wireMember(item: Declaration, side: 'source' | 'target'): string | undefined {
   return reference(field(item.fields, side)).member;

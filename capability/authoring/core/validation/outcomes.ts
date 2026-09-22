@@ -12,6 +12,8 @@ export function accepted<T>(result: Result<T>): T {
 /** Deep freeze copied data. Infrastructure leases/services never enter this function. */
 export function freeze<T>(value: T): T {
   if (typeof value !== 'object' || value === null) return value;
+  // Frozen bottom-up, so a frozen object is already frozen all the way down.
+  if (Object.isFrozen(value)) return value;
   Object.values(value).forEach(freeze);
   return Object.freeze(value);
 }

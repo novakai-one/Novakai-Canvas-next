@@ -16,7 +16,15 @@ import { storedLimits } from '../validation/plain-data.js';
 import { reject } from '../validation/outcomes.js';
 export const navigationKey: RecordKey = { kind: 'history', id: recordId.parse('navigation') };
 /** Migration alone may create a baseline; ordinary reads never invent one. */
+const navigations = new WeakMap<Snapshot, HistoryNavigation>();
 export function readNavigation(snapshot: Snapshot): HistoryNavigation {
+  const known = Object.isFrozen(snapshot) ? navigations.get(snapshot) : undefined;
+  if (known !== undefined) return known;
+  const navigation = checkedNavigation(snapshot);
+  if (Object.isFrozen(snapshot)) navigations.set(snapshot, navigation);
+  return navigation;
+}
+function checkedNavigation(snapshot: Snapshot): HistoryNavigation {
   const record = findRecord(snapshot, navigationKey);
   if (!record || record.deleted)
     reject('corrupt-record', 'history', 'History navigation is missing');

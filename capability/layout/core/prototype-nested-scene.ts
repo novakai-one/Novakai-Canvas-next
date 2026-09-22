@@ -26,8 +26,10 @@ import {
 import {
   nestedMainRoads,
   nestedDriveways,
+  nestedBodies,
   nestedSectionPorts,
   nestedCrossings,
+  streetMeets,
 } from './prototype-nested-roads.js';
 import { readPrototypeNodePorts } from './prototype-road-nodes.js';
 import { roadNetwork } from './prototype-road-network.js';
@@ -98,7 +100,9 @@ export function createNestedRoadScene(
     const main = nestedMainRoads(placement, options.lanePitch, (road, keys) =>
         origins.set(road.id, keys),
       ),
-      drives = placement.flatMap((p) => nestedDriveways(p, main, options.lanePitch));
+      drives = placement.flatMap((p) =>
+        nestedDriveways(p, main, options.lanePitch, nestedBodies(placement)),
+      );
     drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
     const roads = [...main, ...drives].map((road) => ({
       ...road,
@@ -106,7 +110,7 @@ export function createNestedRoadScene(
     }));
     const contacts = constructedContacts(
       roadRegistry(roads),
-      [...frameEnds(main), ...nestedCrossings(placement)],
+      [...frameEnds(main), ...nestedCrossings(placement), ...streetMeets(main)],
       roads.filter((road) => road.kind === 'driveway'),
       options.lanePitch,
     );

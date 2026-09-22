@@ -131,26 +131,61 @@ function measure(
   const manualWidth = Math.max(
     0,
     ...pinned.map(
-      (node) => node.placement!.x + Math.max(node.width, node.placement!.width ?? 0) + gap / 2,
+      (node) => node.placement!.x + Math.max(node.width, node.placement!.width ?? 0) + gap,
     ),
   );
   const manualHeight = Math.max(
     0,
     ...pinned.map(
-      (node) => node.placement!.y + Math.max(node.height, node.placement!.height ?? 0) + gap / 2,
+      (node) => node.placement!.y + Math.max(node.height, node.placement!.height ?? 0) + gap,
     ),
   );
+  const column = (index: number) => index % childColumns;
+  const row = (index: number) => Math.floor(index / childColumns);
+  const childInsets = children.map((child, index) => ({
+    x: Math.min(gap / 2, ((childColumnWidths[column(index)] ?? 0) - child.width) / 2),
+    y: ((childRowHeights[row(index)] ?? 0) - child.height) / 2,
+  }));
+  const childX = edges(childColumnWidths);
+  const childY = edges(childRowHeights);
+  const rects = groups.map((node, index) => ({
+    node,
+    pinned: node.placement !== null,
+    x:
+      node.placement?.x ??
+      gap / 2 + ownWidth + (childX[column(index)] ?? 0) + (childInsets[index]?.x ?? 0),
+    y: node.placement?.y ?? header + (childY[row(index)] ?? 0) + (childInsets[index]?.y ?? 0),
+    width: children[index]?.width ?? 0,
+    height: children[index]?.height ?? 0,
+  }));
+  // The road between child columns (rows) runs on the grid line; a pinned group stays past it.
+  const reach = pushPinned(
+    rects.map((rect, index) => ({
+      ...rect,
+      minX: column(index) === 0 ? -Infinity : ownWidth + (childX[column(index)] ?? 0) + gap,
+      minY: row(index) === 0 ? -Infinity : header + (childY[row(index)] ?? 0) + gap / 2,
+    })),
+    measured,
+  );
   const authored = parent === null ? section.placement : parent.placement;
+  // An authored size still grows to hold a child moved past its right or bottom edge.
   return {
     width:
-      authored?.width ??
-      Math.max(
-        manualWidth,
-        Math.max(parent?.content.width ?? section.title.width, ownWidth + childWidth) + gap,
-      ),
+      authored?.width == null
+        ? Math.max(
+            manualWidth,
+            reach.right + gap / 2,
+            Math.max(parent?.content.width ?? section.title.width, ownWidth + childWidth) + gap,
+          )
+        : Math.max(authored.width, manualWidth, reach.right + gap / 2),
     height:
-      authored?.height ??
-      Math.max(manualHeight, Math.max(ownHeight, childHeight) + header + gap / 2),
+      authored?.height == null
+        ? Math.max(
+            manualHeight,
+            reach.bottom + gap / 2,
+            Math.max(ownHeight, childHeight) + header + gap / 2,
+          )
+        : Math.max(authored.height, manualHeight, reach.bottom + gap / 2),
     header,
     gap,
     lanePitch,
@@ -161,15 +196,47 @@ function measure(
     childColumnWidths,
     childRowHeights,
     // Start-align columns within the parent reserve while preserving shared row centres.
-    childInsets: children.map((child, index) => ({
-      x: Math.min(gap / 2, (childColumnWidths[index % childColumns]! - child.width) / 2),
-      y: (childRowHeights[Math.floor(index / childColumns)]! - child.height) / 2,
-    })),
+    childInsets,
     pitch,
     columnWidths,
     rowHeights,
     columnCenters: horizontal.centers,
     rowCenters: vertical.centers,
+  };
+}
+
+/** Running totals: where each grid column (row) starts. */
+function edges(sizes: readonly number[]): readonly number[] {
+  return sizes.reduce<readonly number[]>((all, size) => [...all, (all.at(-1) ?? 0) + size], [0]);
+}
+
+/** A pinned group left of (or above) the road beside its grid cell moves past it.
+ * Returns the far edges of pinned groups so the parent grows to hold them. */
+function pushPinned(
+  rects: readonly {
+    readonly node: VisualNode;
+    readonly pinned: boolean;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly minX: number;
+    readonly minY: number;
+  }[],
+  measured: Map<string, VisualNode>,
+): { readonly right: number; readonly bottom: number } {
+  const pinned = rects
+    .filter((rect) => rect.pinned)
+    .map((rect) => ({ ...rect, x: Math.max(rect.x, rect.minX), y: Math.max(rect.y, rect.minY) }));
+  pinned.forEach((rect) => {
+    const node = measured.get(rect.node.id) ?? rect.node;
+    const placement = node.placement;
+    if (placement === null || (rect.x === placement.x && rect.y === placement.y)) return;
+    measured.set(rect.node.id, { ...node, placement: { ...placement, x: rect.x, y: rect.y } });
+  });
+  return {
+    right: Math.max(0, ...pinned.map((rect) => rect.x + rect.width)),
+    bottom: Math.max(0, ...pinned.map((rect) => rect.y + rect.height)),
   };
 }
 

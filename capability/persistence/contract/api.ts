@@ -5,9 +5,9 @@ import type { Persistence } from './types.js';
 import type { Decision, StorePort } from './ports/store.js';
 import type { WorkspaceId } from './brands.js';
 import type { WorkspaceState, Receipt } from './records/storage.js';
-import { validateState } from '../core/validation/state.js';
+import { validateState, isAdmitted } from '../core/validation/state.js';
 import { validateRequest } from '../core/validation/request.js';
-import { parse, protect, protectAsync, success } from '../core/validation/outcomes.js';
+import { freeze, parse, protect, protectAsync, success } from '../core/validation/outcomes.js';
 import { planCommit } from '../core/transaction/commit.js';
 import { createBackup } from '../core/recovery/backup.js';
 import { restoreBackup } from '../core/recovery/restore.js';
@@ -19,13 +19,24 @@ function readValidated<T>(
 ): Result<T> {
   return store.transact((raw) => validateAndDecide(raw, workspace, decide));
 }
+/** The store hands back the same parsed object while the stored text is unchanged; validate it once. */
+const validated = new WeakMap<object, Result<WorkspaceState>>();
+function validatedOnce(raw: unknown): Result<WorkspaceState> {
+  if (raw === null || typeof raw !== 'object') return validateState(raw);
+  if (isAdmitted(raw)) return success(raw);
+  const known = validated.get(raw);
+  if (known !== undefined) return known;
+  const checked = freeze(validateState(raw));
+  if (checked.ok) validated.set(raw, checked);
+  return checked;
+}
 /** A database location cannot silently change logical workspace on reopen or malformed writes. */
 function validateAndDecide<T>(
   raw: unknown,
   workspace: WorkspaceId,
   decide: (state: WorkspaceState) => Result<Decision<T>>,
 ): Result<Decision<T>> {
-  const checked = validateState(raw);
+  const checked = validatedOnce(raw);
   if (!checked.ok) return checked;
   if (checked.value.workspace !== workspace)
     return fail('invalid-input', 'workspace', 'Database belongs to another workspace');

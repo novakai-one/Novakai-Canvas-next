@@ -10,7 +10,13 @@ import {
   sizeNestedSections,
   nestedLaneWidth,
 } from './prototype-nested-placement.js';
-import { nestedMainRoads, nestedDriveways, nestedCrossings } from './prototype-nested-roads.js';
+import {
+  nestedMainRoads,
+  nestedDriveways,
+  nestedBodies,
+  nestedCrossings,
+  streetMeets,
+} from './prototype-nested-roads.js';
 import { roadRegistry, frameEnds, constructedContacts } from './prototype-road-registry.js';
 import { wireRegistry } from './nested-wire-registry.js';
 import { routeNestedWires } from './nested-wire-routing.js';
@@ -28,12 +34,14 @@ export function retainSupportInput(request: NestedSupportRequest) {
   const pitches = { horizontal: pitch, vertical: pitch };
   const origins = new Map<string, readonly string[]>();
   const main = nestedMainRoads(placements, pitches, (road, keys) => origins.set(road.id, keys));
-  const drives = placements.flatMap((p) => nestedDriveways(p, main, pitches));
+  const drives = placements.flatMap((p) =>
+    nestedDriveways(p, main, pitches, nestedBodies(placements)),
+  );
   drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
   const roads = [...main, ...drives];
   const contacts = constructedContacts(
     roadRegistry(roads),
-    [...frameEnds(main), ...nestedCrossings(placements)],
+    [...frameEnds(main), ...nestedCrossings(placements), ...streetMeets(main)],
     drives,
     pitches,
   );

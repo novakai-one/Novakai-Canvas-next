@@ -603,7 +603,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Workspace hints are reconciled through a full checked Authoring snapshot. */
   async function refresh(): Promise<void> {
     const read = ++snapshotRead;
-    const response = await bindings.client.get('/api/v1/workspace');
+    const response = await bindings.client.get('/api/v1/workspace?history=versions');
     if (read !== snapshotRead) return;
     receiveSnapshot(response);
   }
@@ -1103,6 +1103,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     intent: Extract<EditIntent, { kind: 'placement' }>,
     review: import('../contract/records/movement.js').MoveReview,
   ): boolean {
+    // Nothing changed (e.g. dropped back in place): the node returns quietly.
+    if (review.options.length === 0 && review.reason !== undefined) {
+      active.session.dispatch({ kind: 'discard', id: intent.id });
+      return true;
+    }
     const option = movementOption(review);
     if (option !== undefined) return retainMovementReview(active, intent, review, option);
     const selected = review.options[0];

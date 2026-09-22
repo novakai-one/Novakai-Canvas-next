@@ -1,4 +1,5 @@
 import type {
+  PrototypeBounds,
   PrototypeLayoutMeasure,
   PrototypePoint,
   PrototypePortLocation,
@@ -19,6 +20,8 @@ export interface WireRegistry {
   readonly crossings: ReadonlyMap<string, readonly Crossing[]>;
   readonly accesses: ReadonlyMap<string, Access>;
   readonly terminals: ReadonlyMap<string, Terminal>;
+  /** Node bodies a route must never cross; a moved node can sit on top of a road. */
+  readonly bodies: readonly PrototypeBounds[];
 }
 const inverse = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' } as const;
 function contactAccess(
@@ -85,7 +88,13 @@ function compile(scene: RoadPrototypeScene, contacts: readonly RoadContact[]): W
       }),
     ),
   );
-  return { roads: new Map(scene.roads.map((r) => [r.id, r])), crossings, accesses, terminals };
+  return {
+    roads: new Map(scene.roads.map((r) => [r.id, r])),
+    crossings,
+    accesses,
+    terminals,
+    bodies: scene.nodes.map((node) => node.bounds),
+  };
 }
 function optional(value: Access | undefined): readonly Access[] {
   return value === undefined ? [] : [value];

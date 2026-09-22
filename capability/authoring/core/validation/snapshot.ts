@@ -1,10 +1,10 @@
-import { snapshotSchema, receiptSchema } from '../../contract/records/storage.js';
+import { snapshotSchema, receiptSchema, storedSchema } from '../../contract/records/storage.js';
 import type { Snapshot, Receipt, StoredRecord } from '../../contract/records/storage.js';
 import type { WorkspaceId, RequestId } from '../../contract/brands.js';
 import { uniqueKeys } from '../records/versions.js';
 import { readShape } from './input.js';
 import { storedLimits } from './plain-data.js';
-import { reject } from './outcomes.js';
+import { reject, freeze } from './outcomes.js';
 /** Stored tombstones never retain a live payload or resources; history carries retained references. */
 function checkTombstone(record: StoredRecord): void {
   if (!record.deleted) return;
@@ -13,17 +13,20 @@ function checkTombstone(record: StoredRecord): void {
 }
 /** Owner output cannot switch workspaces or smuggle duplicate record identities. */
 export function readSnapshot(input: unknown, workspace: WorkspaceId): Snapshot {
-  const snapshot = readShape(snapshotSchema, input, 'corrupt-record', storedLimits);
+  const snapshot = readEnvelope(input);
   if (snapshot.workspace !== workspace)
     reject('corrupt-record', 'workspace', 'Snapshot belongs to a different workspace');
+  if (checkedSnapshots.has(snapshot)) return snapshot;
   uniqueKeys(
     snapshot.records.map((record) => record.key),
     'records',
   );
   snapshot.records.forEach(checkTombstone);
   snapshot.records.forEach(checkPayloadRevision);
+  if (Object.isFrozen(snapshot)) checkedSnapshots.add(snapshot);
   return snapshot;
 }
+const checkedSnapshots = new WeakSet<object>();
 /** Successful receipts are validated before exposing a recovered outcome to any caller. */
 export function readReceipt(input: unknown, request: RequestId): Receipt {
   const receipt = readShape(receiptSchema, input, 'corrupt-record', storedLimits);
@@ -51,3 +54,26 @@ function checkDocumentHeader(record: StoredRecord): void {
   if (fields.id !== record.key.id || fields.revision !== record.version)
     reject('corrupt-record', 'records', 'Versioned payload header differs from its slot');
 }
+/** Frozen input: parse each record on its own, so records unchanged since the last commit are not re-parsed. */
+function readEnvelope(input: unknown): Snapshot {
+  if (input === null || typeof input !== 'object' || !Object.isFrozen(input))
+    return readShape(snapshotSchema, input, 'corrupt-record', storedLimits);
+  const known = envelopes.get(input);
+  if (known !== undefined) return known;
+  const fields = { ...(input as Record<string, unknown>) };
+  if (!Array.isArray(fields.records))
+    return readShape(snapshotSchema, input, 'corrupt-record', storedLimits);
+  const records = fields.records.map((record) =>
+    readShape(storedSchema, record, 'corrupt-record', storedLimits),
+  );
+  const head = readShape(
+    snapshotSchema,
+    { ...fields, records: [] },
+    'corrupt-record',
+    storedLimits,
+  );
+  const snapshot = freeze({ ...head, records });
+  envelopes.set(input, snapshot);
+  return snapshot;
+}
+const envelopes = new WeakMap<object, Snapshot>();

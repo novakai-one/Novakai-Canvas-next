@@ -25,6 +25,7 @@ import { produce } from '../core/rendering/produce.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import { createWorkspaceExporter } from '../adapters/export.js';
+import { cacheRenders } from '../adapters/render-cache.js';
 /** Explicit worker lifecycle keeps native measurement away from browser imports; the parent owns worker failure/retry. */
 export async function runRenderWorker(): Promise<Result<void>> {
   try {
@@ -143,8 +144,9 @@ async function wireWorkspace(
   native: NativeWorkspace,
   installation: BuiltinResources,
   options: WorkspaceOptions,
-  producer: DiagramProducer,
+  worker: DiagramProducer,
 ): Promise<WiredWorkspace> {
+  const producer = cacheRenders(worker);
   const [
     storeModule,
     codecModule,

@@ -138,6 +138,17 @@ function semanticResource(
   };
 }
 /** Fixed route registration keeps method/path dispatch separate from handler behavior; unsupported operations fail explicitly. */
+/** The browser needs history versions, not history contents (which grow with every edit). */
+function historyVersionsOnly(snapshot: Snapshot): Snapshot {
+  return {
+    ...snapshot,
+    records: snapshot.records.map((record) =>
+      record.key.kind === 'history' && record.key.id !== 'navigation'
+        ? { ...record, value: null }
+        : record,
+    ),
+  };
+}
 export function createHttpRouter(owners: RouterBindings): ApiRouter {
   const freeze = semanticResource(owners, (commands, input, snapshot) =>
     commands.freeze(input, snapshot),
@@ -158,7 +169,11 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
     'POST /api/v1/resources/freeze': (call) => resource(call, freeze),
     'POST /api/v1/resources/prepare': (call) => resource(call, prepare),
     'POST /api/v1/resources/instantiate': (call) => resource(call, instantiate),
-    'GET /api/v1/workspace': () => owners.session.read(),
+    'GET /api/v1/workspace': async (call) => {
+      const read = await owners.session.read();
+      if (!read.ok || call.query.history !== 'versions') return read;
+      return { ok: true, value: historyVersionsOnly(read.value) };
+    },
     'GET /api/v1/history': () => owners.session.history(),
     'GET /api/v1/installation': async () => ({
       ok: true,

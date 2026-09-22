@@ -12,7 +12,7 @@ export async function verifyRenderGeneration(
   const delayed = deferred<Result<TransportResponse>>();
   const current = deferred<void>();
   async function renderResponse(path: string) {
-    if (path === '/api/v1/workspace') return response(snapshot, generation);
+    if (path.split('?')[0] === '/api/v1/workspace') return response(snapshot, generation);
     renders += 1;
     if (renders === 2) return delayed.promise;
     return response(document, generation);

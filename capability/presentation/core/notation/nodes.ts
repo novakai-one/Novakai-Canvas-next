@@ -15,6 +15,8 @@ const shapes: Readonly<Record<ObjectKind, Shape>> = {
   state: 'state',
   participant: 'participant',
   concept: 'card',
+  folder: 'card',
+  package: 'module',
   system: 'container',
   note: 'note',
 };

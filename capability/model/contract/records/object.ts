@@ -18,6 +18,8 @@ export const objectKind = z.enum([
   'state',
   'participant',
   'concept',
+  'folder',
+  'package',
   'system',
   'note',
 ]);

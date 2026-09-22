@@ -128,6 +128,10 @@
     stroke: var(--nv-canvas-node-boundary);
   }
 
+  .root[data-follows-interface-roles='true'] :is(.heading, .body) line {
+    stroke: var(--nv-canvas-node-boundary);
+  }
+
   .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
     .heading
     text:not(rect[data-badge] + text) {

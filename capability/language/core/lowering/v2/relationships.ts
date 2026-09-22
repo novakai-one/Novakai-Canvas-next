@@ -1,16 +1,45 @@
 /** v2 wires check A.5 endpoint legality, then lower cleanly through the shared record mapper. */
 import type { Declaration } from '../../../contract/records/syntax.js';
 import { lowerRecord } from '../content.js';
-import { field, reference, type RawRecord } from '../fields.js';
+import { field, reference, textOr, type RawRecord } from '../fields.js';
 import { reject } from '../../validation/outcomes.js';
 import { constructsV2 } from '../../vocabulary/constructs-v2.js';
 import { checkWireEndpoints } from './wire-policy.js';
 import type { SymbolTable } from './symbols.js';
 export function lowerV2Wire(item: Declaration, symbols: SymbolTable): RawRecord {
   checkWireEndpoints(item, symbols);
+  checkWireProps(item);
   checkMemberLabel(item);
   checkCodeLabel(item, symbols);
   return lowerRecord(item, constructsV2);
+}
+/** A.3: guard/effect belong to transition, from/to to association; every other kind takes none. */
+const propOwners: Readonly<Record<string, string>> = {
+  guard: 'transition',
+  effect: 'transition',
+  from: 'association',
+  to: 'association',
+};
+function ownerProps(owner: string): string {
+  return Object.keys(propOwners)
+    .filter((prop) => propOwners[prop] === owner)
+    .join(', ');
+}
+function checkWireProps(item: Declaration): void {
+  const wireKind = textOr(item.fields, 'kind', 'flow');
+  Object.keys(propOwners)
+    .filter((prop) => item.fields[prop] !== undefined)
+    .filter((prop) => propOwners[prop] !== wireKind)
+    .forEach((prop) => rejectWireProp(item, prop, wireKind));
+}
+function rejectWireProp(item: Declaration, prop: string, wireKind: string): never {
+  const owner = propOwners[prop] as string;
+  reject(
+    'invalid-value',
+    item.span,
+    `${owner} takes: ${ownerProps(owner)}`,
+    `E001 format: ${prop} is not a property of a ${wireKind} wire. ${owner} takes: ${ownerProps(owner)}.`,
+  );
 }
 /** Code nodes never carry an authored wire label; the diagram names them by their members. */
 const codeKinds: readonly string[] = ['module', 'package', 'interface', 'function', 'folder'];

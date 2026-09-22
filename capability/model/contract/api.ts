@@ -18,6 +18,12 @@ export {
   fieldTypeDisplay,
   typeUseDisplay,
 } from '../core/definitions.js';
+export {
+  typeUseText,
+  typeUseKey,
+  typeUseDefinitions,
+  typeUseEntities,
+} from '../core/definitions/type-uses.js';
 export { resolveCallableEndpoint } from '../core/relationships/callable.js';
 export type { CallableEndpoint } from '../core/relationships/callable.js';
 export { relationshipLabel } from '../core/relationships/label.js';

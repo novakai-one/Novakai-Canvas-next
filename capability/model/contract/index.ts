@@ -24,6 +24,7 @@ export type { ContentBlock, Endpoint } from './records/content.js';
 export type { Definition, TypeExpression, FieldType, TypeUse } from './records/definition.js';
 export { definitionSchema } from './records/definition.js';
 export { definitionDisplay, definitionUsages, fieldTypeDisplay, typeUseDisplay } from './api.js';
+export { typeUseText, typeUseKey, typeUseDefinitions, typeUseEntities } from './api.js';
 export { resolveCallableEndpoint, relationshipLabel } from './api.js';
 export type { CallableEndpoint, DefinitionUsage } from './api.js';
 export type { Relationship, RelationshipKind } from './records/relationship.js';

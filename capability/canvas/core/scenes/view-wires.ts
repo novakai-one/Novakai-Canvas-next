@@ -110,6 +110,7 @@ export function viewWire(
     sourceId: sourceInfo.key,
     targetId: targetData.key,
     wire: projected,
+    drawn: admitted(projected, wire, section),
     origin: previewOrigin(state, section.id) ?? {
       x: section.origin.x + delta.x,
       y: section.origin.y + delta.y,
@@ -136,4 +137,53 @@ function isRouteTarget(state: SessionState, key: string): boolean {
 function routePoints(state: SessionState, fallback: readonly Point[]): readonly Point[] {
   if (state.draft?.kind !== 'route') return fallback;
   return state.draft.current.points;
+}
+
+/** Only an admitted route is redrawn to the outline; a moving preview keeps its stretched ends. */
+function admitted(projected: RoutedWire, wire: RoutedWire, section: PlacedSection): RoutedWire {
+  return projected === wire ? outlined(wire, section) : projected;
+}
+/** Wires meet a diamond's box edge; the drawn line continues in to its slanted outline. */
+function outlined(wire: RoutedWire, section: PlacedSection): RoutedWire {
+  const start = outlinePoint(wire.source, section);
+  const end = outlinePoint(wire.target, section);
+  return start === undefined && end === undefined
+    ? wire
+    : {
+        ...wire,
+        points: [...present(start), ...wire.points, ...present(end)],
+        path: `${pathStart(start, wire.path)}${pathEnd(end)}`,
+      };
+}
+function present(point: Point | undefined): readonly Point[] {
+  return point === undefined ? [] : [point];
+}
+function pathStart(start: Point | undefined, path: string): string {
+  return start === undefined ? path : `M${start.x} ${start.y} L${path.slice(1)}`;
+}
+function pathEnd(end: Point | undefined): string {
+  return end === undefined ? '' : ` L${end.x} ${end.y}`;
+}
+function outlinePoint(end: RoutedWire['source'], section: PlacedSection): Point | undefined {
+  const node = section.nodes.find((item) => item.id === end.node);
+  return node !== undefined && slanted(node, end.side) ? onOutline(node.box, end) : undefined;
+}
+function slanted(
+  node: PlacedSection['nodes'][number],
+  side: RoutedWire['source']['side'],
+): boolean {
+  return (
+    node.measured.shape === 'diamond' &&
+    node.measured.frame === 'auto' &&
+    (side === 'left' || side === 'right')
+  );
+}
+function onOutline(
+  box: PlacedSection['nodes'][number]['box'],
+  end: RoutedWire['source'],
+): Point | undefined {
+  const inset =
+    (box.width / 2) * (Math.abs(end.point.y - (box.y + box.height / 2)) / (box.height / 2));
+  const x = end.side === 'right' ? end.point.x - inset : end.point.x + inset;
+  return inset === 0 ? undefined : { x, y: end.point.y };
 }

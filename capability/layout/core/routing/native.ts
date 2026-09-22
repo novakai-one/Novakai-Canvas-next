@@ -26,8 +26,9 @@ export function plan(
   context: RoutingContext,
   parallel: number,
   ordinal: number,
+  siblings: readonly VisualWire[],
 ): RoutePlan {
-  const resolved = endpoints(wire, nodes);
+  const resolved = endpoints(wire, nodes, siblings);
   const clearance = context.options.routeClearance * 2;
   const departure = clearance * (parallel + 1);
   const sourceSpace = departureSpace(resolved.source, nodes);

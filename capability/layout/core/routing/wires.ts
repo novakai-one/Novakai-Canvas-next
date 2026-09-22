@@ -268,7 +268,15 @@ export async function routeWires(
   const branches = new Map(section.wires.map((item) => [item.id, treeBranch(item, nodes)]));
   const ordinary = section.wires.filter((item) => branches.get(item.id) === undefined);
   const plans = ordinary.map((item, index): RoutePlan =>
-    plan(item, nodes, metrics, placement, parallel(section, section.wires.indexOf(item)), index),
+    plan(
+      item,
+      nodes,
+      metrics,
+      placement,
+      parallel(section, section.wires.indexOf(item)),
+      index,
+      ordinary,
+    ),
   );
   const saved = plans.flatMap(
     (item): RouteValue | readonly RouteValue[] => manual(item, context.obstacles, metrics) ?? [],

@@ -1,7 +1,11 @@
 import { treeRows } from './tree.js';
 import { requireValue } from '../validation/outcomes.js';
 import type { VisualNode, VisualSection, LayoutIntent } from '../../contract/records/input.js';
-import type { PlacementValue, PlacementProblem } from '../../contract/records/problem.js';
+import type {
+  PlacementValue,
+  PlacementProblem,
+  PlacementNode,
+} from '../../contract/records/problem.js';
 import type { Point } from '../../contract/records/geometry.js';
 import type { SupplementalMeasurements, SeedContext } from '../../contract/types.js';
 import { routingGap, crossingGap, labelPadding } from './spacing.js';
@@ -99,6 +103,7 @@ export async function seedScope(
     width: item.root.box.width,
     height: item.root.box.height,
     header: 0,
+    ...layer(section.nodes.find((node) => node.id === item.root.id)?.kind),
   }));
   const tree = treeRows(
     section,
@@ -128,6 +133,11 @@ export async function seedScope(
   return placed.flatMap((item) => flatten(item, branches));
 }
 
+const layers: Readonly<Record<string, 'first' | 'last'>> = { start: 'first', end: 'last' };
+function layer(kind: string | undefined): Pick<PlacementNode, 'layer'> {
+  const value = layers[kind ?? ''];
+  return value === undefined ? {} : { layer: value };
+}
 /** Validated semantic parents alone determine tree ranks; references still reserve routing corridors. */
 function rankingEdges(
   localEdges: PlacementProblem['edges'],

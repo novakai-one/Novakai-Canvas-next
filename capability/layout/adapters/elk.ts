@@ -17,6 +17,7 @@ export interface NativePlacement {
 export type PlacementFactory = () => NativePlacement;
 const directions = { right: 'RIGHT', down: 'DOWN', left: 'LEFT', up: 'UP' };
 const algorithms = { layered: 'layered', tree: 'layered' };
+const layerConstraints = { first: 'FIRST', last: 'LAST' };
 /** Job-local mutable native graph is built from readonly capability data. */
 function node(item: PlacementNode, problem: PlacementProblem): ElkNode {
   return {
@@ -28,6 +29,9 @@ function node(item: PlacementNode, problem: PlacementProblem): ElkNode {
       .map((child) => node(child, problem)),
     layoutOptions: {
       'elk.padding': `[top=${item.header + problem.padding},left=${problem.padding},bottom=${problem.padding},right=${problem.padding}]`,
+      ...(item.layer === undefined
+        ? {}
+        : { 'elk.layered.layering.layerConstraint': layerConstraints[item.layer] }),
     },
   };
 }
@@ -45,6 +49,8 @@ function graph(problem: PlacementProblem): ElkNode {
       'elk.spacing.nodeNode': String(problem.spacing),
       'elk.layered.spacing.nodeNodeBetweenLayers': String(problem.layerSpacing),
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      // A wire back to an earlier authored node is the loop-back, not the forward path.
+      'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER',
       'elk.randomSeed': '1',
     },
     children: problem.nodes

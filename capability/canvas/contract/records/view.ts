@@ -23,6 +23,8 @@ export interface ViewWire {
   readonly sourceId: string;
   readonly targetId: string;
   readonly wire: RoutedWire;
+  /** What is painted: the wire, with ends on a diamond continued in to its outline. Edits use `wire`. */
+  readonly drawn: RoutedWire;
   readonly origin: Point;
   readonly selected: boolean;
   readonly hovered: boolean;

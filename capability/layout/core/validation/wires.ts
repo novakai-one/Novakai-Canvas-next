@@ -23,6 +23,8 @@ interface Context {
   readonly branches: ReadonlySet<string>;
   /** After a human move in a module diagram, a wire may pass behind a node; notices warn. */
   readonly behind: boolean;
+  /** Native-routed wires sharing a node side each own a point; module roads attach at the middle. */
+  readonly siblings: readonly VisualWire[] | undefined;
 }
 /** Reconstruct only authoritative wire data after exact attachment/route/label validation. */
 function rebind(wire: VisualWire, context: Context): RoutedWire {
@@ -33,7 +35,7 @@ function rebind(wire: VisualWire, context: Context): RoutedWire {
     same(branch, candidate, wire.id);
     return branch;
   }
-  const attachments = endpoints(wire, context.nodes);
+  const attachments = endpoints(wire, context.nodes, context.siblings);
   same(attachments, { source: candidate.source, target: candidate.target }, wire.id);
   same(wire.label, candidate.measuredLabel, wire.id);
   same(wire.labelVisible, candidate.labelVisible, wire.id);
@@ -153,6 +155,10 @@ export function inspectWires(
     metrics,
     options,
     behind: source.mode === 'modules' && source.nodes.some((node) => node.placement !== null),
+    siblings:
+      source.mode === 'modules'
+        ? undefined
+        : source.wires.filter((wire) => treeBranch(wire, nodes) === undefined),
     lanes: new Map(candidates.map((wire) => [wire.id, prepareLane(wire.points)])),
     pairs: new Map(candidates.map((wire) => [wire.id, new Map()])),
   };

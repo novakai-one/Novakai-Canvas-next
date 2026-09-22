@@ -64,13 +64,18 @@ function memberIssues(
 ): readonly Diagnostic[] {
   if (member === undefined) return [];
   const members = object.content.map((block) => block.id as string);
-  const exposes = members.map((item) => `@${item}`).join(', ');
   return diagnoseWhen(
     !members.includes(member),
     'reference',
     `${path}.member`,
-    `E102 resolve: @${object.id} exposes: ${exposes}.`,
+    missingMember(object.id, members),
   );
+}
+
+/** An object with no members says so instead of printing an empty list. */
+function missingMember(objectId: string, members: readonly string[]): string {
+  if (members.length === 0) return `E102 resolve: @${objectId} has no members.`;
+  return `E102 resolve: @${objectId} exposes: ${members.map((item) => `@${item}`).join(', ')}.`;
 }
 
 function undeclared(targetId: string): string {

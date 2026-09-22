@@ -55,11 +55,18 @@ function bodyWithoutFigure(request: CompositionRequest, figure: MediaBlock): Bod
 /** Heading and body reuse the same measurements for stacked and side-by-side arrangements. */
 function textColumn(request: CompositionRequest): ComposedNodeContent {
   const heading = tagged(nodeHeading(request.object, request.context), request.object, 'heading');
+  if (memberless(request.object)) return { content: heading, headerHeight: heading.height };
   const body = labelledBody(request);
   return {
     content: stack([heading, body], request.headingGap),
     headerHeight: heading.height,
   };
+}
+
+/** A compartment card with no content and no ports draws no body band under its heading. */
+function memberless(object: DiagramObject): boolean {
+  if (!['module', 'entity', 'function', 'interface'].includes(object.kind)) return false;
+  return object.content.length === 0 && object.ports.length === 0;
 }
 
 /** Prominent media uses token-owned figure bands rather than the inline icon size. */

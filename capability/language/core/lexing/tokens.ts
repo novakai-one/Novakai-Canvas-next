@@ -3,10 +3,12 @@ import type { Result } from '../../contract/errors.js';
 import { protect, reject, origin } from '../validation/outcomes.js';
 import { lineStarts, sourceSpan } from './locations.js';
 const lexeme =
-  /\s+|#[^\n]*|"(?:\\[\s\S]|[^"\\])*"|@[A-Za-z][A-Za-z0-9_-]*|(?:0|1)\.\.(?:1|many)|-?\d+|[A-Za-z][A-Za-z0-9_-]*|->|[{}\[\],=.:/]|[\s\S]/g;
+  /\s+|#[^\n]*|"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*'|@[A-Za-z][A-Za-z0-9_-]*|(?:0|1)\.\.(?:1|many)|-?\d+|[A-Za-z][A-Za-z0-9_-]*|->|[{}\[\],=.:/]|[\s\S]/g;
+const quoteKinds: Readonly<Record<string, Token['kind']>> = { '"': 'string', "'": 'literal' };
 /** Token kinds come from complete lexemes; invalid punctuation never becomes an implicit word. */
 function classify(text: string): Token['kind'] {
-  if (text.startsWith('"')) return 'string';
+  const quoted = quoteKinds[text.charAt(0)];
+  if (quoted !== undefined) return quoted;
   if (text.startsWith('@')) return 'id';
   return classifyBare(text);
 }
@@ -45,7 +47,7 @@ function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly n
   });
 }
 
-/** A fallback opening quote is not a string token; only the complete quoted production may be decoded. */
+/** A fallback opening quote is not a string or literal token; only the complete quoted production may be decoded. */
 function requireCompleteLexeme(match: RegExpExecArray, starts: readonly number[]): void {
   if (match[0] === '"')
     reject(
@@ -53,5 +55,12 @@ function requireCompleteLexeme(match: RegExpExecArray, starts: readonly number[]
       sourceSpan(starts, match.index, match.index + 1),
       'Closing unescaped quote',
       'Unterminated quoted string',
+    );
+  if (match[0] === "'")
+    reject(
+      'syntax',
+      sourceSpan(starts, match.index, match.index + 1),
+      'Closing unescaped quote',
+      'Unterminated literal',
     );
 }

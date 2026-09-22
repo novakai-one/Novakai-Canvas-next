@@ -137,7 +137,7 @@ export type ParsedSource = (Document | Patch) & {
   readonly sourceMap: readonly SourceMapping[];
 };
 export interface Token {
-  readonly kind: 'word' | 'string' | 'id' | 'integer' | 'symbol' | 'eof';
+  readonly kind: 'word' | 'string' | 'literal' | 'id' | 'integer' | 'symbol' | 'eof';
   readonly text: string;
   readonly span: Span;
 }

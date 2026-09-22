@@ -73,14 +73,8 @@ function validateEndpoint(
   return [...referenceIssues, ...memberIssues, ...kindIssues];
 }
 
-/** A derived fk- id never carries authored cardinalities; E203 reserves that prefix from authors. */
-function isDerivedForeignKey(relationship: Relationship): boolean {
-  return relationship.kind === 'association' && relationship.id.startsWith('fk-');
-}
-
 /** ER associations require both cardinalities; other relationship kinds forbid them. */
 function validateCardinalities(relationship: Relationship, path: string): readonly Diagnostic[] {
-  if (isDerivedForeignKey(relationship)) return [];
   if (relationship.kind === 'association') {
     const missingCardinality = relationship.from === undefined || relationship.to === undefined;
     return diagnoseWhen(

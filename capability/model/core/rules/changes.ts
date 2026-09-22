@@ -43,8 +43,12 @@ function relationshipIssues(
   collection: Collection,
   path: string,
 ): readonly Diagnostic[] {
-  const exists = collection.relationships.some((item) => item.id === target.relationship);
-  return diagnoseWhen(!exists, 'reference', path, undeclared(target.relationship));
+  return diagnoseWhen(
+    !isRelationship(collection, target.relationship),
+    'reference',
+    path,
+    undeclared(target.relationship),
+  );
 }
 
 function objectIssues(
@@ -53,8 +57,27 @@ function objectIssues(
   path: string,
 ): readonly Diagnostic[] {
   const object = collection.objects.find((item) => item.id === target.object);
-  if (object === undefined) return diagnoseWhen(true, 'reference', path, undeclared(target.object));
+  if (object === undefined) return missingObjectIssues(target, collection, path);
   return memberIssues(object, target.member, path);
+}
+
+/** `@wire.@x` is not an undeclared object: the id is a wire, and wires have no members. */
+function missingObjectIssues(
+  target: ObjectTarget,
+  collection: Collection,
+  path: string,
+): readonly Diagnostic[] {
+  if (target.member !== undefined && isRelationship(collection, target.object))
+    return diagnoseWhen(true, 'reference', `${path}.member`, wireMember(target.object));
+  return diagnoseWhen(true, 'reference', path, undeclared(target.object));
+}
+
+function isRelationship(collection: Collection, targetId: string): boolean {
+  return collection.relationships.some((item) => item.id === targetId);
+}
+
+function wireMember(wireId: string): string {
+  return `E102 resolve: @${wireId} is a wire; wires have no members.`;
 }
 
 function memberIssues(

@@ -9,6 +9,7 @@ import { measureSignature, measureMember } from './signature.js';
 import { measureMedia } from './media.js';
 import { measureFigure } from './figures.js';
 import { reject } from '../validation/outcomes.js';
+import { withMemberChange } from './member-change.js';
 /** Content processor chooses local presentation only; semantic validity remains in Model. */
 type Processor = (block: ContentBlock, context: ContentContext) => MeasuredContent;
 /** Prose and code select their pinned role metrics; structured addressable rows have dedicated processors. */
@@ -101,7 +102,7 @@ function figure(block: ContentBlock, context: ContentContext): MeasuredContent {
 /** Measure canonical content without mutation; createPresentation.project protects provider/structured failures.
  * Callers correct input/resources and retry; Authoring retains the committed scene. */
 export function measureBlock(block: ContentBlock, context: ContentContext): MeasuredContent {
-  return processors[block.kind](block, context);
+  return withMemberChange(block, processors[block.kind](block, context), context);
 }
 
 /** Resolve local canonical membership without renaming IDs; project protection owns a broken owner/field rejection. */

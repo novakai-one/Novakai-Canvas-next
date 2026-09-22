@@ -26,6 +26,7 @@ export interface LocatedValue {
 export type Fields = Readonly<Record<string, LocatedValue>>;
 export type Construct =
   | 'collection'
+  | 'declare'
   | 'type'
   | 'asset'
   | 'source'
@@ -98,9 +99,10 @@ export interface Operation {
 }
 export interface Document {
   readonly kind: 'canvas';
-  readonly version: 1;
+  readonly version: 1 | 2;
   readonly collection: string;
   readonly declaration: Declaration;
+  readonly declare?: Declaration;
   readonly span: Span;
 }
 export interface Patch {

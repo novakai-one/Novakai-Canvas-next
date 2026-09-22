@@ -47,3 +47,29 @@ export const relationshipKinds = [
   'reference',
   'transition',
 ];
+export const nodeKindsV2 = [
+  'folder',
+  'module',
+  'entity',
+  'concept',
+  'interface',
+  'function',
+  'participant',
+  'state',
+  'step',
+  'start',
+  'end',
+  'decision',
+  'fork',
+  'join',
+  'package',
+];
+export const relationshipKindsV2 = [
+  'imports',
+  'calls',
+  'implements',
+  'association',
+  'transition',
+  'reference',
+  'flow',
+];

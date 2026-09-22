@@ -35,6 +35,7 @@ export interface ConstructDefinition {
   readonly positions: readonly PositionRule[];
   readonly properties: Readonly<Record<string, Property>>;
   readonly children: readonly Construct[] | null;
+  readonly body?: 'required' | 'optional';
 }
 export interface Description {
   readonly patchTargets: Readonly<Record<TargetKind, Readonly<Record<string, Property>>>>;

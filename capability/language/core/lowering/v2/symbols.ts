@@ -1,19 +1,31 @@
 /** Declaration-order symbol table resolves v2 @refs to entity ids or definition ids before Model sees them. */
 import type { Declaration, Reference } from '../../../contract/records/syntax.js';
 import { id, list, text, textOr } from '../fields.js';
+export interface MemberFact {
+  readonly id: string;
+  readonly kind: 'field' | 'signature' | 'member' | 'keygroup';
+}
+export interface NodeFacts {
+  readonly kind: string;
+  readonly members: readonly MemberFact[];
+}
 export interface SymbolTable {
   readonly definitions: ReadonlyMap<string, string>;
   readonly entities: ReadonlySet<string>;
   readonly options: readonly string[];
   readonly labels: ReadonlyMap<string, string>;
+  readonly nodes: ReadonlyMap<string, NodeFacts>;
 }
 export function buildSymbols(declare: Declaration): SymbolTable {
   const definitions = new Map<string, string>();
   const entities = new Set<string>();
   const options: string[] = [];
   const labels = new Map<string, string>();
-  declare.children.forEach((child) => addSymbols(child, definitions, entities, options, labels));
-  return { definitions, entities, options, labels };
+  const nodes = new Map<string, NodeFacts>();
+  declare.children.forEach((child) =>
+    addSymbols(child, definitions, entities, options, labels, nodes),
+  );
+  return { definitions, entities, options, labels, nodes };
 }
 function addSymbols(
   child: Declaration,
@@ -21,9 +33,10 @@ function addSymbols(
   entities: Set<string>,
   options: string[],
   labels: Map<string, string>,
+  nodes: Map<string, NodeFacts>,
 ): void {
   if (child.kind === 'type') addTypeSymbols(child, definitions, options);
-  if (child.kind === 'node') addNodeSymbols(child, definitions, entities, options, labels);
+  if (child.kind === 'node') addNodeSymbols(child, definitions, entities, options, labels, nodes);
 }
 /** Bare type declarations map to themselves and feed the unknown-type suggestion list. */
 function addTypeSymbols(
@@ -47,6 +60,7 @@ function addNodeSymbols(
   entities: Set<string>,
   options: string[],
   labels: Map<string, string>,
+  nodes: Map<string, NodeFacts>,
 ): void {
   const nodeId = id(child.fields);
   if (text(child.fields, 'kind') === 'entity') entities.add(nodeId);
@@ -56,6 +70,28 @@ function addNodeSymbols(
     .forEach((grand) => {
       addMemberSymbols(grand, nodeId, definitions, options);
     });
+  nodes.set(nodeId, buildNodeFacts(child));
+}
+/** Wire endpoint predicates (A.5) key member legality off the owning node's authored kind. */
+function buildNodeFacts(child: Declaration): NodeFacts {
+  return { kind: text(child.fields, 'kind'), members: child.children.flatMap(memberFactsOf) };
+}
+const memberFactKinds: Readonly<Record<string, MemberFact['kind']>> = {
+  field: 'field',
+  signature: 'signature',
+  keygroup: 'keygroup',
+};
+function memberFactsOf(grand: Declaration): readonly MemberFact[] {
+  if (grand.kind === 'type') return typeMemberFacts(grand);
+  const kind = memberFactKinds[grand.kind];
+  if (kind === undefined) return [];
+  return [{ id: id(grand.fields), kind }];
+}
+function typeMemberFacts(grand: Declaration): readonly MemberFact[] {
+  return list(grand.fields, 'ids').map((value) => ({
+    id: (value as Reference).id,
+    kind: 'member' as const,
+  }));
 }
 /** Module/interface type members are keyed by the bare type id so file-wide bare refs resolve (A7). */
 function addMemberSymbols(

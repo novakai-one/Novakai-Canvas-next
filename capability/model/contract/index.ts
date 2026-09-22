@@ -40,6 +40,7 @@ export type { LayoutIntent, Placement } from './records/layout.js';
 
 /** Declared change batches and their planned or staged outcomes. */
 export type { Change } from './records/change.js';
+export type { ChangeBlock, ChangeEntry } from './records/change-block.js';
 export type { ChangePlan, ChangeStage } from './types.js';
 
 /** Endpoint and compatibility tables describing relationship wiring rules. */

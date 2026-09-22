@@ -1,11 +1,10 @@
-import type { DiagramObject, InputCollection } from '../../contract/records/input.js';
+import type { ChangeEntry, DiagramObject } from '../../contract/records/input.js';
 import type { DiagramTypography } from '../../contract/records/style.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
 import { moduleChrome } from './chrome.js';
 import { measureText, stack } from './text.js';
 import { changeBadge } from '../notation/annotations.js';
-type ChangeTarget = InputCollection['changes'][number]['entries'][number]['target'];
 /** Measure a semantic text role; public project owns provider failure and retains the prior scene. */
 export function labelContent(
   text: string,
@@ -52,7 +51,7 @@ function changeParts(object: DiagramObject, context: ContentContext): readonly M
   return [changeBadge(entry.status, context)];
 }
 
-function isWholeObject(target: ChangeTarget, objectId: DiagramObject['id']): boolean {
+function isWholeObject(target: ChangeEntry['target'], objectId: DiagramObject['id']): boolean {
   return target.kind === 'object' && target.object === objectId && target.member === undefined;
 }
 

@@ -37,7 +37,7 @@ function printRule(kind: Construct, rule: PositionRule): PositionRule {
 function position(record: RawRecord, rule: PositionRule): readonly string[] {
   if (rule.literal !== undefined) return [rule.literal];
   if (omittedPosition(record, rule)) return [];
-  return [printValue(record[rule.name], rule.type)];
+  return [printValue(record[rule.name], rule.type, rule.name)];
 }
 /** Omit a default only when the lowering table restores that exact semantic value. */
 export function printProperties(
@@ -53,7 +53,7 @@ function propertyText(record: RawRecord, name: string, property: Property): read
   const value = record[property.field];
   if (value === undefined) return [];
   if (value === property.fallback) return [];
-  return [`${name}=${printValue(value, property.type)}`];
+  return [`${name}=${printValue(value, property.type, name)}`];
 }
 /** An absent positional value is omitted only when its rule is optional (a wire's per the v2 wire rule). */
 function omittedPosition(record: RawRecord, rule: PositionRule): boolean {

@@ -12,6 +12,6 @@ declare @d {
     call @orders -> @pricing.@quote returns
   }
 }
-collection @v2-neg "Rejected scenario call" uses=@d {
+collection @v2-neg-scenario-target "Rejected scenario call" uses=@d {
   section @s "Place order" mode=sequence { show @place }
 }

@@ -12,6 +12,6 @@ declare @d {
     call @user -> @orders.@cancelOrder
   }
 }
-collection @v2-neg "Rejected sequence show" uses=@d {
+collection @v2-neg-scenario-count "Rejected sequence show" uses=@d {
   section @s "Orders" mode=sequence { show @place @cancel }
 }

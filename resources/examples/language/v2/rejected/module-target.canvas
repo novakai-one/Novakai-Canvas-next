@@ -7,7 +7,7 @@ declare @modules-model {
   }
   wire @i1 @routes -> @orders "fetchOrderFast" kind=imports
 }
-collection @v2-neg "Rejected module target" uses=@modules-model {
+collection @v2-neg-module-target "Rejected module target" uses=@modules-model {
   section @s-mod "Imports" mode=modules {
     show @routes @orders
     connect @i1

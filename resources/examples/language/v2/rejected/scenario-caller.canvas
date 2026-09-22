@@ -14,6 +14,6 @@ declare @d {
     call @Order -> @orders.@placeOrder
   }
 }
-collection @v2-neg "Rejected scenario caller" uses=@d {
+collection @v2-neg-scenario-caller "Rejected scenario caller" uses=@d {
   section @s "Place order" mode=sequence { show @place }
 }

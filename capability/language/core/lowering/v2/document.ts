@@ -89,6 +89,7 @@ function entityForeignKeyWires(node: Declaration): readonly RawRecord[] {
     .filter((child) => child.kind === 'field')
     .flatMap((child) => foreignKeyWire(entityId, child));
 }
+/** Many referring rows point at one referenced key: from = the referring field, to = the key. */
 function foreignKeyWire(entityId: string, child: Declaration): readonly RawRecord[] {
   if (!isForeignField(child)) return [];
   const fieldId = id(child.fields);
@@ -99,6 +100,8 @@ function foreignKeyWire(entityId: string, child: Declaration): readonly RawRecor
       kind: 'association',
       source: { object: entityId, member: fieldId },
       target: endpoint(target),
+      from: '0..many',
+      to: '1',
     },
   ];
 }

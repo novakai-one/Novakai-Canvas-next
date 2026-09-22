@@ -1,5 +1,10 @@
 /** v2 object members dispatch by construct kind; each producer builds its own RawRecord shape. */
-import type { Declaration, LocatedValue, Reference } from '../../../contract/records/syntax.js';
+import type {
+  Declaration,
+  LocatedValue,
+  Reference,
+  Span,
+} from '../../../contract/records/syntax.js';
 import { field, id, text, textOr, list, type RawRecord } from '../fields.js';
 import { lowerRecord } from '../content.js';
 import { reject } from '../../validation/outcomes.js';
@@ -13,15 +18,42 @@ export function lowerV2Node(item: Declaration, symbols: SymbolTable): RawRecord 
     content: lowerMembers(item, symbols),
   };
 }
-function lowerMembers(item: Declaration, symbols: SymbolTable): readonly RawRecord[] {
-  return item.children
-    .filter((child) => child.kind !== 'type')
-    .map((child) => lowerMember(child, symbols));
+function lowerMembers(node: Declaration, symbols: SymbolTable): readonly RawRecord[] {
+  return node.children.flatMap((child) => lowerMemberBlocks(node, child, symbols));
 }
-function lowerMember(child: Declaration, symbols: SymbolTable): RawRecord {
+/** A `type` grandchild becomes one addressable member block per id (A.5 module.type import target). */
+function lowerMemberBlocks(
+  node: Declaration,
+  child: Declaration,
+  symbols: SymbolTable,
+): readonly RawRecord[] {
+  if (child.kind === 'type') return lowerTypeMemberBlocks(node, child);
+  return [lowerMember(node, child, symbols)];
+}
+function lowerTypeMemberBlocks(node: Declaration, child: Declaration): readonly RawRecord[] {
+  const nodeId = id(node.fields);
+  return list(child.fields, 'ids').map((value) =>
+    typeMemberBlock(node, child, nodeId, (value as Reference).id),
+  );
+}
+function typeMemberBlock(
+  node: Declaration,
+  child: Declaration,
+  nodeId: string,
+  typeId: string,
+): RawRecord {
+  checkModuleMemberAllowed(node, child.span, 'type member', typeId);
+  return {
+    kind: 'member',
+    id: typeId,
+    label: typeId,
+    type: { kind: 'definition', id: `${nodeId}-${typeId}` },
+  };
+}
+function lowerMember(node: Declaration, child: Declaration, symbols: SymbolTable): RawRecord {
   const lowerers: Readonly<Record<string, () => RawRecord>> = {
-    field: () => lowerFieldMember(child, symbols),
-    signature: () => lowerSignatureMember(child, symbols),
+    field: () => lowerFieldMember(node, child, symbols),
+    signature: () => lowerSignatureMember(node, child, symbols),
     keygroup: () => lowerKeygroupMember(child),
   };
   const lower = lowerers[child.kind];
@@ -30,7 +62,8 @@ function lowerMember(child: Declaration, symbols: SymbolTable): RawRecord {
   return lower();
 }
 /** key and references come through lowerRecord; nullable is left to the Model default. */
-function lowerFieldMember(child: Declaration, symbols: SymbolTable): RawRecord {
+function lowerFieldMember(node: Declaration, child: Declaration, symbols: SymbolTable): RawRecord {
+  checkFieldAllowed(node, child);
   return {
     ...lowerRecord(child, constructsV2),
     kind: 'field',
@@ -38,7 +71,12 @@ function lowerFieldMember(child: Declaration, symbols: SymbolTable): RawRecord {
     type: lowerTypeUse(field(child.fields, 'type'), symbols),
   };
 }
-function lowerSignatureMember(child: Declaration, symbols: SymbolTable): RawRecord {
+function lowerSignatureMember(
+  node: Declaration,
+  child: Declaration,
+  symbols: SymbolTable,
+): RawRecord {
+  checkModuleMemberAllowed(node, child.span, 'signature', id(child.fields));
   return {
     kind: 'signature',
     id: id(child.fields),
@@ -46,6 +84,41 @@ function lowerSignatureMember(child: Declaration, symbols: SymbolTable): RawReco
     parameters: lowerParameters(child, symbols),
     returns: lowerTypeUse(field(child.fields, 'returns'), symbols),
   };
+}
+/** E109: field members are entity-only; signature/type members are module-or-interface-only. */
+function isModuleLike(nodeKind: string): boolean {
+  if (nodeKind === 'module') return true;
+  return nodeKind === 'interface';
+}
+function checkFieldAllowed(node: Declaration, child: Declaration): void {
+  const nodeKind = text(node.fields, 'kind');
+  if (nodeKind === 'entity') return;
+  rejectMemberKind(child.span, 'field', id(child.fields), id(node.fields), nodeKind, 'an entity');
+}
+function checkModuleMemberAllowed(
+  node: Declaration,
+  span: Span,
+  memberWord: string,
+  memberId: string,
+): void {
+  const nodeKind = text(node.fields, 'kind');
+  if (isModuleLike(nodeKind)) return;
+  rejectMemberKind(span, memberWord, memberId, id(node.fields), nodeKind, 'a module or interface');
+}
+function rejectMemberKind(
+  span: Span,
+  memberWord: string,
+  memberId: string,
+  nodeId: string,
+  nodeKind: string,
+  allowed: string,
+): never {
+  reject(
+    'unrepresentable',
+    span,
+    allowed,
+    `E109 member: ${memberWord} @${memberId} is only legal in ${allowed}. @${nodeId} is a ${nodeKind}.`,
+  );
 }
 function lowerParameters(child: Declaration, symbols: SymbolTable): readonly RawRecord[] {
   const parameters = child.fields.parameters;

@@ -8,9 +8,14 @@ import { duplicates } from '../invariants/duplicates.js';
 type Target = ChangeEntry['target'];
 type ObjectTarget = Extract<Target, { kind: 'object' }>;
 type RelationshipTarget = Extract<Target, { kind: 'relationship' }>;
+interface Occurrence {
+  readonly block: string;
+  readonly index: number;
+}
 interface TargetOwners {
   readonly label: string;
-  readonly blocks: string[];
+  readonly first: Occurrence;
+  readonly later: Occurrence[];
 }
 
 /** Change targets resolve, and each target has one status across all change blocks (E112). */
@@ -76,28 +81,32 @@ function undeclared(targetId: string): string {
 function repeatedTargetIssues(changes: readonly ChangeBlock[]): readonly Diagnostic[] {
   const owners = new Map<string, TargetOwners>();
   changes.forEach((block) => {
-    block.entries.forEach((entry) => {
-      addOwner(owners, entry.target, block.id);
+    block.entries.forEach((entry, index) => {
+      addOwner(owners, entry.target, { block: block.id, index });
     });
   });
   return [...owners.values()].flatMap(repeatIssue);
 }
 
-function addOwner(owners: Map<string, TargetOwners>, target: Target, blockId: string): void {
+function addOwner(owners: Map<string, TargetOwners>, target: Target, occurrence: Occurrence): void {
   const label = targetLabel(target);
-  const current = owners.get(`${target.kind}:${label}`) ?? { label, blocks: [] };
-  if (!current.blocks.includes(blockId)) current.blocks.push(blockId);
-  owners.set(`${target.kind}:${label}`, current);
+  const key = `${target.kind}:${label}`;
+  const current = owners.get(key);
+  if (current === undefined) owners.set(key, { label, first: occurrence, later: [] });
+  else current.later.push(occurrence);
 }
 
+/** The error lands on the repeating entry, so its span is that exact ref. */
 function repeatIssue(owner: TargetOwners): readonly Diagnostic[] {
-  const [first, second] = owner.blocks;
-  return diagnoseWhen(
-    second !== undefined,
-    'duplicate',
-    `changes.${second}`,
-    `E112 delta: ${owner.label} is in @${first} and @${second}. Keep one.`,
-  );
+  const second = owner.later.find((item) => item.block !== owner.first.block);
+  if (second === undefined) return [];
+  return [
+    {
+      code: 'duplicate',
+      path: `changes.${second.block}.entries.${second.index}`,
+      message: `E112 delta: ${owner.label} is in @${owner.first.block} and @${second.block}. Keep one.`,
+    },
+  ];
 }
 
 function targetLabel(target: Target): string {

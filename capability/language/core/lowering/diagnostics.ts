@@ -48,6 +48,7 @@ export function sourceMappings(item: Declaration, prefix = ''): readonly SourceM
   return [
     { path: name, span: item.span },
     ...contentMappings(name, item),
+    ...entryMappings(name, item),
     ...expressionMapping(name, expression),
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
@@ -71,6 +72,14 @@ function typeIdMapping(value: LocatedValue, prefix: string): SourceMapping {
 function typeDefinitionPath(prefix: string, typeId: string): string {
   if (prefix === '') return `definitions.${typeId}`;
   return `definitions.${prefix.slice(prefix.lastIndexOf('.') + 1)}-${typeId}`;
+}
+
+/** Change entries are numbered across all op children in source order, as lowerV2Changes flattens them. */
+function entryMappings(name: string, item: Declaration): readonly SourceMapping[] {
+  if (item.kind !== 'change') return [];
+  return item.children
+    .flatMap((op) => op.fields.refs?.items ?? [])
+    .map((ref, index) => ({ path: `${name}.entries.${index}`, span: ref.span }));
 }
 
 function contentMappings(name: string, item: Declaration): readonly SourceMapping[] {
@@ -236,6 +245,7 @@ function ownedPath(item: Declaration, prefix: string): string {
     asset: 'assets',
     source: 'sources',
     type: 'definitions',
+    change: 'changes',
   };
   const top = namespaces[item.kind];
   if (top !== undefined) return `${top}.${id(item.fields)}`;

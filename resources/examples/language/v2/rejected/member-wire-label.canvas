@@ -1,0 +1,15 @@
+canvas 2
+declare @modules-model {
+  type @Result
+  node @routes module "routes.ts"
+  node @orders module "orders.ts" {
+    signature @getOrder parameters=["id": string] returns=@Result
+  }
+  wire @i1 @routes -> @orders.@getOrder "fetchOrderFast" kind=imports
+}
+collection @v2-neg "Rejected label" uses=@modules-model {
+  section @s-mod "Imports" mode=modules {
+    show @routes @orders
+    connect @i1
+  }
+}

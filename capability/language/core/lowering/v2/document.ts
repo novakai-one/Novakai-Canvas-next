@@ -62,19 +62,21 @@ function declaredIdValues(node: Declaration): readonly LocatedValue[] {
   if (node.kind === 'type') return field(node.fields, 'ids').items ?? [];
   return [];
 }
-/** E203: the fk- prefix is reserved for derived association wires, never an authored id. */
+/** E203: fk- (derived associations) and parent- (derived containment) are never authored ids. */
+const reservedPrefixes: readonly string[] = ['fk-', 'parent-'];
 function checkReservedIds(node: Declaration): void {
   declaredIdValues(node).forEach(checkNotReservedPrefix);
   node.children.forEach(checkReservedIds);
 }
 function checkNotReservedPrefix(item: LocatedValue): void {
   const authoredId = reference(item).id;
-  if (!authoredId.startsWith('fk-')) return;
+  const prefix = reservedPrefixes.find((candidate) => authoredId.startsWith(candidate));
+  if (prefix === undefined) return;
   reject(
     'unrepresentable',
     item.span,
     'A non-derived id',
-    `E203 duplicate: @${authoredId} uses the reserved fk- prefix.`,
+    `E203 duplicate: @${authoredId} uses the reserved ${prefix} prefix.`,
   );
 }
 /** Keygroup-form foreign keys derive nothing; only scalar `field` members do. */

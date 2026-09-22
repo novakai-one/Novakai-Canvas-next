@@ -1,0 +1,11 @@
+canvas 2
+declare @tree-model {
+  node @repo folder "repo/"
+  node @src folder "src/"
+  node @main module "main.ts"
+}
+collection @v2-tree "Tree" uses=@tree-model {
+  section @s-tree "Repo tree" mode=tree {
+    show @repo { show @src { show @main } }
+  }
+}

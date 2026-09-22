@@ -1,0 +1,9 @@
+canvas 2
+declare @grid-model {
+  node @goals concept "Goals"
+  node @risks concept "Risks"
+  node @scope concept "Scope"
+}
+collection @v2-grid "Overview" uses=@grid-model {
+  section @s-grid "Board" mode=grid { show @goals @risks @scope }
+}

@@ -1,0 +1,9 @@
+canvas 2
+declare @story-model {
+  node @problem concept "The problem"
+  node @approach concept "The approach"
+  node @outcome concept "The outcome"
+}
+collection @v2-story "Story" uses=@story-model {
+  section @s-story "Narrative" mode=story { show @problem @approach @outcome }
+}

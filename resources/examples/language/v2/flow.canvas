@@ -1,0 +1,16 @@
+canvas 2
+declare @flow-model {
+  node @receive step "Receive order"
+  node @check decision "In stock?"
+  node @ship step "Ship"
+  node @backorder step "Backorder"
+  wire @f1 @receive -> @check kind=flow
+  wire @f2 @check -> @ship "yes" kind=flow
+  wire @f3 @check -> @backorder "no" kind=flow
+}
+collection @v2-flow "Fulfilment" uses=@flow-model {
+  section @s-flow "Flow" mode=flow {
+    show @receive @check @ship @backorder
+    connect @f1 @f2 @f3
+  }
+}

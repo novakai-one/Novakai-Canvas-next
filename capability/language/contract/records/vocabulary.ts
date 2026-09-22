@@ -15,7 +15,9 @@ export type ValueType =
   | 'references'
   | 'reference-value'
   | 'signature-parameters'
-  | 'type-expression';
+  | 'type-expression'
+  | 'type-use'
+  | 'typed-parameters';
 export interface Property {
   readonly type: ValueType;
   readonly field: string;

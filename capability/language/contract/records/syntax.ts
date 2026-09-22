@@ -15,7 +15,19 @@ export interface Reference {
   readonly namespace?: 'group' | 'section';
   readonly section?: string;
 }
-export type SyntaxValue = string | number | boolean | Reference | readonly SyntaxValue[];
+export interface TypeSyntax {
+  readonly kind: 'type';
+  readonly ref?: string;
+  readonly primitive?: 'string' | 'number' | 'boolean';
+  readonly arguments?: readonly TypeSyntax[];
+}
+export type SyntaxValue =
+  | string
+  | number
+  | boolean
+  | Reference
+  | TypeSyntax
+  | readonly SyntaxValue[];
 export interface LocatedValue {
   readonly value: SyntaxValue;
   readonly span: Span;

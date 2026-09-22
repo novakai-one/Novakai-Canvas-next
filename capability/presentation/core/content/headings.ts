@@ -1,9 +1,11 @@
-import type { DiagramObject } from '../../contract/records/input.js';
+import type { DiagramObject, InputCollection } from '../../contract/records/input.js';
 import type { DiagramTypography } from '../../contract/records/style.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
 import { moduleChrome } from './chrome.js';
 import { measureText, stack } from './text.js';
+import { changeBadge } from '../notation/annotations.js';
+type ChangeTarget = InputCollection['changes'][number]['entries'][number]['target'];
 /** Measure a semantic text role; public project owns provider failure and retains the prior scene. */
 export function labelContent(
   text: string,
@@ -30,10 +32,28 @@ const engineeringKinds: Readonly<Partial<Record<DiagramObject['kind'], string>>>
 /** Measure kind and title together so body separators and member anchors start below both. Public project owns failure; Authoring retains the prior scene. */
 export function nodeHeading(object: DiagramObject, context: ContentContext): MeasuredContent {
   const title = labelContent(displayHeading(object), context, 'nodeHeading');
+  const parts = [...changeParts(object, context), ...kindParts(object, context), title];
+  if (parts.length === 1) return title;
+  return stack(parts, context.style.gap / 2);
+}
+
+function kindParts(object: DiagramObject, context: ContentContext): readonly MeasuredContent[] {
   const kind = kindLabel(object, context);
-  if (kind === undefined) return title;
-  const category = labelContent(kind, context, 'annotation');
-  return stack([category, title], context.style.gap / 2);
+  if (kind === undefined) return [];
+  return [labelContent(kind, context, 'annotation')];
+}
+
+/** Only a whole-object change entry badges the heading; member entries render nothing yet. */
+function changeParts(object: DiagramObject, context: ContentContext): readonly MeasuredContent[] {
+  const entry = context.collection.changes
+    .flatMap((block) => block.entries)
+    .find((candidate) => isWholeObject(candidate.target, object.id));
+  if (entry === undefined) return [];
+  return [changeBadge(entry.status, context)];
+}
+
+function isWholeObject(target: ChangeTarget, objectId: DiagramObject['id']): boolean {
+  return target.kind === 'object' && target.object === objectId && target.member === undefined;
 }
 
 /** Module filenames keep their canonical identity while the display heading drops terminal TypeScript noise. */

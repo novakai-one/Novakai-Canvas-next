@@ -7,7 +7,7 @@ declare @modules-model {
   node @sqlStore module "sqlStore.ts"
   wire @m1 @sqlStore -> @store "persistsOrders" kind=implements
 }
-collection @v2-neg "Rejected label" uses=@modules-model {
+collection @v2-neg-implements-label "Rejected implements label" uses=@modules-model {
   section @s-mod "Imports" mode=modules {
     show @sqlStore @store
     connect @m1

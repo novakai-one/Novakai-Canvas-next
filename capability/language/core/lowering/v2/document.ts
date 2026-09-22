@@ -14,12 +14,13 @@ import { lowerV2Definitions } from './definitions.js';
 import { lowerV2Section } from './sections.js';
 import { lowerV2Changes } from './changes.js';
 import { checkModulesWireLabels } from './wire-policy.js';
-import { idValues } from './unique-ids.js';
+import { checkUniqueIds, idValues } from './unique-ids.js';
 export function lowerDocumentDataV2(document: Document, request: LowerRequest): RawRecord {
   const declare = requireDeclare(document);
   const collection = document.declaration;
   checkReservedIds(declare);
   checkReservedIds(collection);
+  checkUniqueIds(declare, collection);
   const symbols = buildSymbols(declare);
   const { uses, ...metadata } = lowerRecord(collection, constructsV2);
   void uses;

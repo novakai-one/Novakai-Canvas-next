@@ -1,4 +1,4 @@
-/** One id namespace (A.1): node, type, wire, change and scenario ids never repeat inside declare. */
+/** One id namespace (A.1): declare, section, node, type, wire, change and scenario ids never repeat. */
 import type { Declaration, LocatedValue } from '../../../contract/records/syntax.js';
 import { field, reference } from '../fields.js';
 import { reject } from '../../validation/outcomes.js';
@@ -7,10 +7,28 @@ interface DeclaredId {
   readonly kind: string;
   readonly value: LocatedValue;
 }
-const idKinds: ReadonlySet<string> = new Set(['node', 'type', 'wire', 'change', 'scenario']);
-export function checkUniqueIds(declare: Declaration): void {
+const idKinds: ReadonlySet<string> = new Set([
+  'declare',
+  'collection',
+  'section',
+  'node',
+  'type',
+  'wire',
+  'change',
+  'scenario',
+]);
+/**
+ * The collection id is compared with the declare id only: a collection may share its id with a
+ * node (after.canvas: collection @ordering, node @ordering), since collection ids name workspace
+ * documents, not diagram objects.
+ */
+export function checkUniqueIds(declare: Declaration, collection: Declaration): void {
+  claimAll([declare, ...declare.children, ...collection.children]);
+  claimAll([declare, collection]);
+}
+function claimAll(declarations: readonly Declaration[]): void {
   const seen = new Map<string, string>();
-  declare.children
+  declarations
     .filter((child) => idKinds.has(child.kind))
     .flatMap(declaredIds)
     .forEach((item) => {

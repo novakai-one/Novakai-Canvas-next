@@ -42,7 +42,7 @@ function typeMemberBlock(
   nodeId: string,
   typeId: string,
 ): RawRecord {
-  checkModuleMemberAllowed(node, child.span, 'type member', typeId);
+  checkModuleMemberAllowed(node, child.span, 'type member');
   return {
     kind: 'member',
     id: typeId,
@@ -54,7 +54,7 @@ function lowerMember(node: Declaration, child: Declaration, symbols: SymbolTable
   const lowerers: Readonly<Record<string, () => RawRecord>> = {
     field: () => lowerFieldMember(node, child, symbols),
     signature: () => lowerSignatureMember(node, child, symbols),
-    keygroup: () => lowerKeygroupMember(child),
+    keygroup: () => lowerKeygroupMember(node, child),
   };
   const lower = lowerers[child.kind];
   if (lower === undefined)
@@ -76,7 +76,7 @@ function lowerSignatureMember(
   child: Declaration,
   symbols: SymbolTable,
 ): RawRecord {
-  checkModuleMemberAllowed(node, child.span, 'signature', id(child.fields));
+  checkModuleMemberAllowed(node, child.span, 'signature');
   return {
     kind: 'signature',
     id: id(child.fields),
@@ -85,39 +85,49 @@ function lowerSignatureMember(
     returns: lowerTypeUse(field(child.fields, 'returns'), symbols),
   };
 }
-/** E109: field members are entity-only; signature/type members are module-or-interface-only. */
+/** E109: field/keygroup members are entity-only; signature/type members are module-or-interface-only. */
 function isModuleLike(nodeKind: string): boolean {
   if (nodeKind === 'module') return true;
   return nodeKind === 'interface';
 }
-function checkFieldAllowed(node: Declaration, child: Declaration): void {
+const membersByKind: Readonly<Record<string, readonly string[]>> = {
+  entity: ['field', 'keygroup'],
+  module: ['signature'],
+  interface: ['signature'],
+};
+function memberList(nodeKind: string): string {
+  const members = membersByKind[nodeKind];
+  if (members === undefined || members.length === 0) return 'none';
+  return members.join(', ');
+}
+function checkEntityMemberAllowed(node: Declaration, span: Span, memberWord: string): void {
   const nodeKind = text(node.fields, 'kind');
   if (nodeKind === 'entity') return;
-  rejectMemberKind(child.span, 'field', id(child.fields), id(node.fields), nodeKind, 'an entity');
+  rejectMemberKind(span, memberWord, id(node.fields), nodeKind, 'entity');
 }
-function checkModuleMemberAllowed(
-  node: Declaration,
-  span: Span,
-  memberWord: string,
-  memberId: string,
-): void {
+function checkFieldAllowed(node: Declaration, child: Declaration): void {
+  checkEntityMemberAllowed(node, child.span, 'field');
+}
+function checkKeygroupAllowed(node: Declaration, child: Declaration): void {
+  checkEntityMemberAllowed(node, child.span, 'keygroup');
+}
+function checkModuleMemberAllowed(node: Declaration, span: Span, memberWord: string): void {
   const nodeKind = text(node.fields, 'kind');
   if (isModuleLike(nodeKind)) return;
-  rejectMemberKind(span, memberWord, memberId, id(node.fields), nodeKind, 'a module or interface');
+  rejectMemberKind(span, memberWord, id(node.fields), nodeKind, 'module or interface');
 }
 function rejectMemberKind(
   span: Span,
   memberWord: string,
-  memberId: string,
   nodeId: string,
   nodeKind: string,
-  allowed: string,
+  allowedNoun: string,
 ): never {
   reject(
     'unrepresentable',
     span,
-    allowed,
-    `E109 member: ${memberWord} @${memberId} is only legal in ${allowed}. @${nodeId} is a ${nodeKind}.`,
+    allowedNoun,
+    `E109 member: ${memberWord} only in ${allowedNoun}. @${nodeId} is ${nodeKind}; ${nodeKind} members: ${memberList(nodeKind)}.`,
   );
 }
 function lowerParameters(child: Declaration, symbols: SymbolTable): readonly RawRecord[] {
@@ -130,7 +140,8 @@ function lowerParameter(item: LocatedValue, symbols: SymbolTable): RawRecord {
   return { name: tuple[0]?.value, type: lowerTypeUse(tuple[1] as LocatedValue, symbols) };
 }
 /** The v2 property is `kind=`; the Model field is `key`, so this rename cannot come from lowerRecord. */
-function lowerKeygroupMember(child: Declaration): RawRecord {
+function lowerKeygroupMember(node: Declaration, child: Declaration): RawRecord {
+  checkKeygroupAllowed(node, child);
   return {
     kind: 'keygroup',
     id: id(child.fields),

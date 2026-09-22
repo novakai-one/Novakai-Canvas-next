@@ -53,6 +53,7 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
   link: (value) => typeof value === 'string' || isIdentity(value),
   'type-use': isTypeUse,
   'typed-parameters': (value) => listOf(value, typedParameter),
+  'literal-union': (value) => listOf(value, (item) => typeof item === 'string'),
 };
 /** Each typed parameter is a two-item [name, type] tuple, never the legacy string-or-id shape. */
 function typedParameter(item: SyntaxValue): boolean {

@@ -74,7 +74,10 @@ export const constructsV2: readonly ConstructDefinition[] = [
   },
   {
     kind: 'type',
-    positions: [{ name: 'ids', type: 'references' }],
+    positions: [
+      { name: 'ids', type: 'references' },
+      { name: 'expression', type: 'literal-union', optional: true },
+    ],
     properties: {},
     children: null,
   },

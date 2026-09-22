@@ -19,7 +19,7 @@ import {
   type Parsed,
 } from './cursor.js';
 import { readAttributes } from './attributes.js';
-import { readValue, readReferenceList } from './values.js';
+import { readValue, readReferenceList, readLiteralUnion } from './values.js';
 import { readTypeUse } from './types.js';
 import { checkValue } from './value-types.js';
 import { repeat } from './repetition.js';
@@ -230,11 +230,19 @@ function requireQuotedPosition(cursor: Cursor, rule: PositionRule): void {
   if (peek(cursor).kind !== 'string')
     reject('syntax', peek(cursor).span, 'Quoted string', 'Positional text must be quoted');
 }
-/** Only the two positional list forms are unbracketed. */
+const positionalReaders: Readonly<
+  Record<string, (cursor: Cursor) => ReturnType<typeof readValue>>
+> = {
+  references: readReferenceList,
+  targets: readReferenceList,
+  'type-use': readTypeUse,
+  'literal-union': readLiteralUnion,
+};
+/** Most position types share the scalar/list reader; a few forms need their own grammar. */
 function positionalValue(cursor: Cursor, type: PositionRule['type']): ReturnType<typeof readValue> {
-  if (type === 'references' || type === 'targets') return readReferenceList(cursor);
-  if (type === 'type-use') return readTypeUse(cursor);
-  return readValue(cursor);
+  const reader = positionalReaders[type];
+  if (reader === undefined) return readValue(cursor);
+  return reader(cursor);
 }
 /** Required attributes have no hidden default; Model owns cross-record constraints afterward. */
 function checkRequired(fields: Fields, definition: ConstructDefinition, cursor: Cursor): void {
@@ -296,7 +304,13 @@ function optionalPositionMissing(cursor: Cursor, rule: PositionRule): boolean {
   return optionalTypeMissing(cursor, rule.type);
 }
 
+const optionalMissingChecks: Readonly<Record<string, (cursor: Cursor) => boolean>> = {
+  id: (cursor) => peek(cursor).kind !== 'id',
+  string: (cursor) => peek(cursor).kind !== 'string',
+  'literal-union': (cursor) => peek(cursor).text !== '=',
+};
 function optionalTypeMissing(cursor: Cursor, type: PositionRule['type']): boolean {
-  if (type === 'id') return peek(cursor).kind !== 'id';
-  return type === 'string' && peek(cursor).kind !== 'string';
+  const check = optionalMissingChecks[type];
+  if (check === undefined) return false;
+  return check(cursor);
 }

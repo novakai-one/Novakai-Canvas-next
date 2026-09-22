@@ -17,7 +17,8 @@ export type ValueType =
   | 'signature-parameters'
   | 'type-expression'
   | 'type-use'
-  | 'typed-parameters';
+  | 'typed-parameters'
+  | 'literal-union';
 export interface Property {
   readonly type: ValueType;
   readonly field: string;

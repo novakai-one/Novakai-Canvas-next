@@ -99,6 +99,36 @@ function startsReference(cursor: Cursor): boolean {
   if (peek(cursor).kind === 'id') return true;
   return peek(cursor, 1).text === ':';
 }
+/** `= 'a' | 'b'`: the leading `=` is part of this reader since the position is otherwise optional. */
+export function readLiteralUnion(cursor: Cursor): Parsed<LocatedValue> {
+  const start = cursor;
+  const first = readLiteralToken(consume(cursor, '='));
+  const rest = accepted(
+    repeat(first.next, (item) => peek(item).text === '|', readFollowingLiteral),
+  );
+  const locatedItems = [first.value, ...rest.value];
+  return {
+    value: {
+      value: locatedItems.map((item) => item.value),
+      span: consumedSpan(start, rest.next),
+      items: locatedItems,
+    },
+    next: rest.next,
+  };
+}
+/** Every `|` must be followed by another quoted literal. */
+function readFollowingLiteral(cursor: Cursor): Parsed<LocatedValue> {
+  return readLiteralToken(consume(cursor, '|'));
+}
+function readLiteralToken(cursor: Cursor): Parsed<LocatedValue> {
+  const token = peek(cursor);
+  if (token.kind !== 'literal')
+    reject('syntax', token.span, 'Quoted literal', "Expected a 'literal'");
+  return {
+    value: { value: decodeString(token.text, token.span), span: token.span, token },
+    next: advance(cursor),
+  };
+}
 
 /** Boolean keywords are reserved scalar values, not truthy strings. */
 function wordValue(text: string): string | boolean {

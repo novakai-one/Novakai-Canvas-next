@@ -1,0 +1,17 @@
+canvas 2
+declare @d {
+  node @user participant "User"
+  node @orders module "orders.ts" {
+    signature @placeOrder parameters=["lines": string] returns=string
+  }
+  node @pricing module "pricing.ts" {
+    signature @priceOrder parameters=["lines": string] returns=string
+  }
+  scenario @place "Place an order" {
+    call @user -> @orders.@placeOrder
+    call @orders -> @pricing.@quote returns
+  }
+}
+collection @v2-neg "Rejected scenario call" uses=@d {
+  section @s "Place order" mode=sequence { show @place }
+}

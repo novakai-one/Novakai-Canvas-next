@@ -1,6 +1,7 @@
 /** Declaration-order symbol table resolves v2 @refs to entity ids or definition ids before Model sees them. */
 import type { Declaration, Reference } from '../../../contract/records/syntax.js';
 import { id, list, text, textOr } from '../fields.js';
+import { checkUniqueIds } from './unique-ids.js';
 export interface MemberFact {
   readonly id: string;
   readonly kind: 'field' | 'signature' | 'member' | 'keygroup';
@@ -20,6 +21,7 @@ export interface SymbolTable {
   readonly scenarios: ReadonlyMap<string, Declaration>;
 }
 export function buildSymbols(declare: Declaration): SymbolTable {
+  checkUniqueIds(declare);
   const wires = new Set(
     declare.children.filter((child) => child.kind === 'wire').map((child) => id(child.fields)),
   );

@@ -2,6 +2,7 @@ import {
   definitionDisplay,
   fieldTypeDisplay,
   typeUseDisplay,
+  relationshipLabel,
   type Collection,
   type ContentBlock,
   type DiagramObject,
@@ -422,7 +423,7 @@ function appendWire(
   }
   const details = relationshipDetails(relationship);
   lines.push(
-    `- \`${relationship.id}\` **${inline(relationship.label)}** (${relationship.kind}) ${endpoint(relationship.source)} → ${endpoint(relationship.target)}${details}; ${wire.route} wire${wire.locked ? ', locked' : ''}`,
+    `- \`${relationship.id}\` **${inline(relationshipLabel(relationship))}** (${relationship.kind}) ${endpoint(relationship.source)} → ${endpoint(relationship.target)}${details}; ${wire.route} wire${wire.locked ? ', locked' : ''}`,
   );
 }
 

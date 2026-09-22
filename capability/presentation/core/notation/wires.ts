@@ -1,5 +1,6 @@
 import type { Relationship, RelationshipKind, SequenceItem } from '../../contract/records/input.js';
 import type { MarkerKind } from '../../contract/records/visual.js';
+import { relationshipLabel } from '../../contract/records/input.js';
 interface Notation {
   readonly source: MarkerKind;
   readonly target: MarkerKind;
@@ -35,7 +36,9 @@ export function wireNotation(wire: Relationship): Notation {
 }
 /** Guard and effect remain visible engineering semantics alongside the required label. */
 export function wireLabel(wire: Relationship): string {
-  return [wire.label, guard(wire.guard), effect(wire.effect)].filter(Boolean).join(' ');
+  return [relationshipLabel(wire), guard(wire.guard), effect(wire.effect)]
+    .filter(Boolean)
+    .join(' ');
 }
 /** Missing guard contributes no invented condition. */
 function guard(value: string | undefined): string {

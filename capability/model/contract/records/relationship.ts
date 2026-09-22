@@ -18,12 +18,12 @@ export const relationshipKind = z.enum([
 /** Endpoint multiplicities rendered by ER notation; the two sides are independently specified. */
 const cardinalitySchema = z.enum(['0..1', '1', '0..many', '1..many']);
 
-/** Labelled canonical relationship. Cardinalities belong only to ER associations. */
+/** Label is optional; a member wire derives its label from the target member id. */
 export const relationshipSchema = z
   .strictObject({
     id: relationshipId,
     kind: relationshipKind,
-    label,
+    label: label.optional(),
     step: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
     source: endpointSchema,
     target: endpointSchema,

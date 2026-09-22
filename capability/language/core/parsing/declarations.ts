@@ -299,7 +299,7 @@ function requireNonEmptyBody(
     reject('syntax', braceSpan, 'Non-empty block', 'E005 empty: omit the block.');
 }
 
-/** Branch IDs, v2 optional labels and the scenario `returns` word have optional positional syntax. */
+/** Branch IDs, declared optional labels and the scenario `returns` word have optional positional syntax. */
 function optionalPositionMissing(cursor: Cursor, rule: PositionRule): boolean {
   if (rule.optional !== true) return false;
   return optionalTypeMissing(cursor, rule);

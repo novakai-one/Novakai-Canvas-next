@@ -19,7 +19,7 @@ import { readDeclaration } from './declarations.js';
 import { readIdentity } from './references.js';
 import { readOperation } from './patch.js';
 import { repeat } from './repetition.js';
-import { constructsV2 } from '../vocabulary/constructs-v2.js';
+import { declaredConstructs } from '../vocabulary/constructs-declared.js';
 /** Parse one versioned authoring document; a scoped view is structurally forbidden input. */
 export function parseSource(source: string): ParsedSource {
   const tokens = accepted(tokenize(readSource(source)));
@@ -40,7 +40,7 @@ function readEnvelope(cursor: Cursor): Parsed<Document | Patch> {
     'unsupported-version',
     peek(cursor, 1).span,
     'canvas 2',
-    'E002 version: expected canvas 2.',
+    'E002 version: expected canvas 1 or canvas 2.',
   );
 }
 /** Dispatch the two supported authoring envelope forms after checking version. */
@@ -49,7 +49,7 @@ function readSupportedEnvelope(cursor: Cursor): Parsed<Document | Patch> {
   if (peek(cursor).text === 'patch') return readPatch(cursor);
   reject('syntax', peek(cursor).span, 'canvas or patch', 'Unknown document envelope');
 }
-/** Version 2 currently ships only the canvas envelope; patches stay a future slice. */
+/** Version 2 has only the canvas envelope; it has no patch envelope. */
 function readVersion2Envelope(cursor: Cursor): Parsed<Document> {
   if (peek(cursor).text === 'canvas') return readCanvas2(cursor);
   if (peek(cursor).text === 'patch')
@@ -57,7 +57,7 @@ function readVersion2Envelope(cursor: Cursor): Parsed<Document> {
       'unsupported-version',
       peek(cursor, 1).span,
       'canvas 2',
-      'Version 2 patches are not supported yet.',
+      'Version 2 has no patch envelope.',
     );
   reject('syntax', peek(cursor).span, 'canvas or patch', 'Unknown document envelope');
 }
@@ -76,13 +76,13 @@ function readCanvas(cursor: Cursor): Parsed<Document> {
     next: declaration.next,
   };
 }
-/** A v2 document declares shared shapes once, then a collection that stages views over them. */
+/** A declared document declares shared shapes once, then a collection that stages views over them. */
 function readCanvas2(cursor: Cursor): Parsed<Document> {
   const start = advance(cursor, 2);
   requireShape(start, 'declare');
-  const declared = readDeclaration(start, ['declare'], constructsV2);
+  const declared = readDeclaration(start, ['declare'], declaredConstructs);
   requireShape(declared.next, 'collection');
-  const collection = readDeclaration(declared.next, ['collection'], constructsV2);
+  const collection = readDeclaration(declared.next, ['collection'], declaredConstructs);
   requireNoExtraShape(collection.next);
   const declareId = id(declared.value.fields);
   checkUses(collection.value, declareId);
@@ -98,7 +98,7 @@ function readCanvas2(cursor: Cursor): Parsed<Document> {
     next: collection.next,
   };
 }
-/** A v2 document is exactly one declare, then exactly one collection. */
+/** A declared document is exactly one declare, then exactly one collection. */
 function requireShape(cursor: Cursor, expected: string): void {
   if (peek(cursor).text !== expected)
     reject('syntax', peek(cursor).span, expected, 'E003 shape: one declare, then one collection.');

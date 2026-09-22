@@ -53,12 +53,12 @@ export function sourceMappings(item: Declaration, prefix = ''): readonly SourceM
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
 }
-/** v2 facts live under declare; their canonical paths are already top-level. */
+/** Declared facts live under declare; their canonical paths are already top-level. */
 export function documentMappings(document: Document): readonly SourceMapping[] {
   const declared = (document.declare?.children ?? []).flatMap((child) => sourceMappings(child));
   return [...declared, ...sourceMappings(document.declaration)];
 }
-/** v2 `type @A @B` carries no own id field; each listed id anchors its own definition instead. */
+/** Declared `type @A @B` carries no own id field; each listed id anchors its own definition instead. */
 function isMultiIdType(item: Declaration): boolean {
   return item.kind === 'type' && item.fields.id === undefined;
 }
@@ -74,7 +74,7 @@ function typeDefinitionPath(prefix: string, typeId: string): string {
   return `definitions.${prefix.slice(prefix.lastIndexOf('.') + 1)}-${typeId}`;
 }
 
-/** Change entries are numbered across all op children in source order, as lowerV2Changes flattens them. */
+/** Change entries are numbered across all op children in source order, as lowerDeclaredChanges flattens them. */
 function entryMappings(name: string, item: Declaration): readonly SourceMapping[] {
   if (item.kind !== 'change') return [];
   return item.children

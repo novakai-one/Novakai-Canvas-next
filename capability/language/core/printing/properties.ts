@@ -6,7 +6,7 @@ import type {
 } from '../../contract/records/vocabulary.js';
 import type { RawRecord } from '../lowering/fields.js';
 import { constructs } from '../vocabulary/constructs.js';
-import { constructsV2 } from '../vocabulary/constructs-v2.js';
+import { declaredConstructs } from '../vocabulary/constructs-declared.js';
 import { reject, origin } from '../validation/outcomes.js';
 import { printValue } from './values.js';
 /** Retrieve the same grammar metadata used by parsing and lowering. */
@@ -22,16 +22,16 @@ export function header(kind: Construct, record: RawRecord): string {
   const positions = construct.positions.flatMap((rule) => position(record, printRule(kind, rule)));
   return [kind, ...positions, ...printProperties(record, construct.properties)].join(' ');
 }
-/** Positions the v2 wire rule marks optional (its label); the interim v1 printer honours them for wires. */
-const v2WireOptional = new Set(
-  constructsV2
+/** Positions the declared wire rule marks optional (its label); the printer honours them for wires. */
+const declaredWireOptional = new Set(
+  declaredConstructs
     .find((item) => item.kind === 'wire')
     ?.positions.filter((rule) => rule.optional === true)
     .map((rule) => rule.name),
 );
 function printRule(kind: Construct, rule: PositionRule): PositionRule {
   if (kind !== 'wire') return rule;
-  return { ...rule, optional: rule.optional === true || v2WireOptional.has(rule.name) };
+  return { ...rule, optional: rule.optional === true || declaredWireOptional.has(rule.name) };
 }
 /** Literal arrows and optional branch IDs retain their declared framing. */
 function position(record: RawRecord, rule: PositionRule): readonly string[] {
@@ -55,7 +55,7 @@ function propertyText(record: RawRecord, name: string, property: Property): read
   if (value === property.fallback) return [];
   return [`${name}=${printValue(value, property.type, name)}`];
 }
-/** An absent positional value is omitted only when its rule is optional (a wire's per the v2 wire rule). */
+/** An absent positional value is omitted only when its rule is optional (a wire's per the declared wire rule). */
 function omittedPosition(record: RawRecord, rule: PositionRule): boolean {
   return rule.optional === true && record[rule.name] === undefined;
 }

@@ -1,7 +1,7 @@
 import type { DefinitionId, ObjectId } from '../../contract/brands.js';
 import type { TypeUse } from '../../contract/records/definition.js';
 
-/** Canonical printed form: legacy strings pass through; structured uses render as `@id` or generics. */
+/** Canonical printed form: plain string types pass through; structured uses render as `@id` or generics. */
 export function typeUseText(type: TypeUse): string {
   if (typeof type === 'string') return type;
   switch (type.kind) {

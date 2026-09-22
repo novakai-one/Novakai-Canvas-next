@@ -12,17 +12,17 @@ import { partitionLayout } from './layout-fields.js';
 import type { Result } from '../../contract/errors.js';
 import { accepted, protect, reject } from '../validation/outcomes.js';
 import { lowerDefinition } from './definitions.js';
-import { lowerDocumentDataV2 } from './v2/document.js';
+import { lowerDeclaredDocument } from './declared/document.js';
 /** Build complete raw canonical data; Model validates identities; Language owns correction and Authoring owns commit recovery. Retries have no writes. */
 export function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
   return protect(() =>
     document.version === 2
-      ? lowerDocumentDataV2(document, request)
-      : lowerDocumentDataV1(document, request),
+      ? lowerDeclaredDocument(document, request)
+      : lowerClassicDocument(document, request),
   );
 }
 /** Canvas 1 lowering: the collection declaration is both metadata and content owner. */
-function lowerDocumentDataV1(document: Document, request: LowerRequest): RawRecord {
+function lowerClassicDocument(document: Document, request: LowerRequest): RawRecord {
   const item = document.declaration;
   const metadata = lowerRecord(item);
   const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;

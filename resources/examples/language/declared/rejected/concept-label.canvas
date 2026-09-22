@@ -1,0 +1,12 @@
+canvas 2
+declare @modules-model {
+  node @checkout concept "Checkout"
+  node @billing concept "Billing"
+  wire @c1 @checkout -> @billing "hands off" kind=reference
+}
+collection @reject-concept-label "Rejected concept label" uses=@modules-model {
+  section @s-mod "Imports" mode=modules {
+    show @checkout @billing
+    connect @c1
+  }
+}

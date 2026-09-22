@@ -1,9 +1,0 @@
-canvas 2
-declare @modules-model {
-  node @orders module "[NEW] orders.ts"
-}
-collection @v2-neg-label-change-tag "Rejected label change tag" uses=@modules-model {
-  section @s-mod "Imports" mode=modules {
-    show @orders
-  }
-}

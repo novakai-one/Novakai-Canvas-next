@@ -1,0 +1,12 @@
+canvas 2
+declare @modules-model {
+  node @routes module "routes.ts"
+  node @zod package "zod"
+  wire @e1 @routes -> @zod "fetchOrderFast" kind=imports
+}
+collection @reject-package-label "Rejected package label" uses=@modules-model {
+  section @s-mod "Imports" mode=modules {
+    show @routes @zod
+    connect @e1
+  }
+}

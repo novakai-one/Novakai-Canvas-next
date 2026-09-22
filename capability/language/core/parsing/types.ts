@@ -120,7 +120,7 @@ function collectTypedParameters(cursor: Cursor): Parsed<readonly LocatedValue[]>
 function readFollowingParameter(cursor: Cursor): Parsed<LocatedValue> {
   return readTypedParameter(consume(cursor, ','));
 }
-/** One `"name": T` pair, kept as a two-item located list matching the legacy tuple shape. */
+/** One `"name": T` pair, kept as a two-item located list matching the plain string type tuple shape. */
 function readTypedParameter(cursor: Cursor): Parsed<LocatedValue> {
   const name = readParameterName(cursor);
   const type = readTypeUse(consume(name.next, ':'));

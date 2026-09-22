@@ -47,7 +47,7 @@ function readAttribute(
   return { value: [name, checkValue(raw.value, property, name)], next: raw.next };
 }
 
-/** Typed v2 grammars read their own shapes; every other property keeps the shared reader. */
+/** Typed declared grammars read their own shapes; every other property keeps the shared reader. */
 function readAttributeValue(cursor: Cursor, property: Property): Parsed<LocatedValue> {
   if (property.type === 'type-use') return readTypeUse(cursor);
   if (property.type === 'typed-parameters') return readTypedParameters(cursor);

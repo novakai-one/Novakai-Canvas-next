@@ -73,7 +73,7 @@ function printTypeExpression(value: unknown): string {
     );
   return print(recordValue);
 }
-/** Interim v1 spelling for v2 type records; the phase 5 printer replaces it. */
+/** Printed spelling for declared type records. */
 const typePrinters = new Map<string, (value: RawRecord) => string>([
   ['definition', (value) => `@${string(value.id)}`],
   ['entity', (value) => `@${string(value.id)}`],

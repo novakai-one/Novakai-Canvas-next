@@ -47,7 +47,7 @@ export const relationshipKinds = [
   'reference',
   'transition',
 ];
-export const nodeKindsV2 = [
+export const declaredNodeKinds = [
   'folder',
   'module',
   'entity',
@@ -64,7 +64,7 @@ export const nodeKindsV2 = [
   'join',
   'package',
 ];
-export const relationshipKindsV2 = [
+export const declaredRelationshipKinds = [
   'imports',
   'calls',
   'implements',

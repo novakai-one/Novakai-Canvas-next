@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { definitionId, label, objectId } from '../brands.js';
 import type { DefinitionId, ObjectId } from '../brands.js';
 
-/** The deliberately small shared type vocabulary for the first definitions slice. */
+/** The deliberately small shared type vocabulary for definitions. */
 export const primitiveType = z.enum(['string', 'number', 'boolean', 'unknown', 'void']);
 const literalType = z.union([z.string(), z.number(), z.boolean()]);
 
@@ -35,7 +35,7 @@ export const definitionSchema = z
 
 export type Definition = z.infer<typeof definitionSchema>;
 
-/** Shared type use: a legacy string, a definition/entity ref, a primitive, or a generic instantiation. */
+/** Shared type use: a plain string type, a definition/entity ref, a primitive, or a generic instantiation. */
 export type TypeUse =
   | string
   | { readonly kind: 'definition'; readonly id: DefinitionId }

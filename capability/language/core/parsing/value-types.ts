@@ -15,7 +15,7 @@ export function isReference(value: SyntaxValue): value is Reference {
   if (typeof value !== 'object') return false;
   return !isList(value) && value.kind === 'reference';
 }
-/** Type-use records are the v2 counterpart to references, discriminated by their own kind tag. */
+/** Type-use records are the declared counterpart to references, discriminated by their own kind tag. */
 export function isTypeUse(value: SyntaxValue): value is TypeSyntax {
   if (typeof value !== 'object') return false;
   return !isList(value) && value.kind === 'type';
@@ -55,7 +55,7 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
   'typed-parameters': (value) => listOf(value, typedParameter),
   'literal-union': (value) => listOf(value, (item) => typeof item === 'string'),
 };
-/** Each typed parameter is a two-item [name, type] tuple, never the legacy string-or-id shape. */
+/** Each typed parameter is a two-item [name, type] tuple, never the plain string type or id shape. */
 function typedParameter(item: SyntaxValue): boolean {
   if (!isList(item) || item.length !== 2) return false;
   const name = item[0];

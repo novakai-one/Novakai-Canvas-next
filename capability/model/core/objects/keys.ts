@@ -103,7 +103,7 @@ function validateForeignKey(
   return [...arityIssues, ...entityIssues, ...referenceIssues, ...keyIssues, ...typeIssues];
 }
 
-/** Shared refs compare by canonical key and legacy types retain exact string equality. */
+/** Shared refs compare by canonical key and plain string types retain exact string equality. */
 function sameFieldType(left: Field, right: Field | undefined): boolean {
   if (right === undefined) return false;
   return typeUseKey(left.type) === typeUseKey(right.type);

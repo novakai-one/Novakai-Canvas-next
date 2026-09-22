@@ -3,9 +3,10 @@ import type { DraftRetention } from './ports/workspace.js';
 export type PanelId = 'left' | 'right';
 export type PanelTab = 'add' | 'browse' | 'inspect' | 'settings';
 export type PanelMode = 'docked' | 'overlay' | 'sheet';
-export type InterfaceControl = 'tools' | 'zoom' | 'minimap' | 'outline' | 'roads';
+export type InterfaceControl = 'tools' | 'zoom' | 'minimap' | 'outline' | 'roads' | 'labels';
 export interface InterfaceVisibility {
   readonly roads: boolean;
+  readonly labels: boolean;
   readonly hidden: boolean;
   readonly tools: boolean;
   readonly zoom: boolean;

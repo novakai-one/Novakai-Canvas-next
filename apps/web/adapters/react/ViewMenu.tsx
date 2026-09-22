@@ -53,6 +53,7 @@ function viewItems(
     controlItem('zoom', visibility.zoom, 'zoom controls', panels),
     controlItem('minimap', visibility.minimap, 'minimap', panels),
     controlItem('outline', visibility.outline, 'diagram outline', panels),
+    controlItem('labels', visibility.labels, 'wire labels', panels),
     {
       id: 'hide-all',
       label: 'Hide all interface',

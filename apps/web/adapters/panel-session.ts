@@ -132,6 +132,7 @@ export function createPanelController(bindings: PanelBindings): PanelController 
         minimap: state.interfaceVisibility.minimap,
         outline: state.interfaceVisibility.outline,
         roads: state.interfaceVisibility.roads,
+        labels: state.interfaceVisibility.labels,
       };
       publish({
         ...state,
@@ -142,6 +143,8 @@ export function createPanelController(bindings: PanelBindings): PanelController 
           minimap: false,
           outline: false,
           roads: false,
+          // Labels are diagram content, not interface chrome: hiding the interface keeps them.
+          labels: state.interfaceVisibility.labels,
         },
       });
     },
@@ -155,5 +158,5 @@ export function createPanelController(bindings: PanelBindings): PanelController 
 }
 
 function defaultInterfaceVisibility(): InterfaceVisibility {
-  return { hidden: false, tools: true, zoom: true, minimap: false, outline: true, roads: false };
+  return { hidden: false, tools: true, zoom: true, minimap: false, outline: true, roads: false, labels: false };
 }

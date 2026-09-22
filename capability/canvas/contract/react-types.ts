@@ -83,6 +83,8 @@ export interface RoutingRoadsProps {
 }
 export interface SurfaceProps {
   readonly showRoads?: boolean;
+  /** Show every wire label, not only the selected wire's. */
+  readonly showLabels?: boolean;
   readonly followsInterfaceRoles?: boolean;
   readonly session: SurfaceSession;
   readonly reader: ViewReader;

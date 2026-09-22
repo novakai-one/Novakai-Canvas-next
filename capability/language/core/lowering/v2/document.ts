@@ -7,7 +7,7 @@ import { lowerLayout } from '../layout.js';
 import { resolveTheme } from '../resources.js';
 import { reject, accepted } from '../../validation/outcomes.js';
 import { constructsV2 } from '../../vocabulary/constructs-v2.js';
-import { buildSymbols } from './symbols.js';
+import { buildSymbols, type SymbolTable } from './symbols.js';
 import { lowerV2Node } from './objects.js';
 import { lowerV2Wire } from './relationships.js';
 import { lowerV2Definitions } from './definitions.js';
@@ -48,8 +48,13 @@ export function lowerDocumentDataV2(document: Document, request: LowerRequest): 
     sections: sectionResults.map((result) => result.section),
     sources: [],
     assets: [],
-    ...changesField(lowerV2Changes(declare, symbols)),
+    ...changesField(lowerV2Changes(declare, withDerivedWires(symbols, fkWires))),
   };
+}
+/** Change blocks may target derived fk- wires; their ids come from the built records, not re-formatted. */
+function withDerivedWires(symbols: SymbolTable, derived: readonly RawRecord[]): SymbolTable {
+  const derivedIds = derived.map((wire) => wire.id as string);
+  return { ...symbols, wires: new Set([...symbols.wires, ...derivedIds]) };
 }
 /** Omitted when empty so documents without change blocks lower exactly as before. */
 function changesField(changes: readonly RawRecord[]): RawRecord {

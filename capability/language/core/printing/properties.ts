@@ -48,5 +48,5 @@ function omittedPosition(
   record: RawRecord,
   rule: ConstructDefinition['positions'][number],
 ): boolean {
-  return rule.optional === true && record[rule.name] === undefined;
+  return (rule.optional === true || rule.name === 'label') && record[rule.name] === undefined;
 }

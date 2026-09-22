@@ -112,7 +112,7 @@ export function createContentRenderer(
           heading={
             <g
               className={slots.classes?.heading}
-              transform={`translate(${headingSlack(node, content.heading)} 0)`}
+              transform={headingTransform(node, content.heading, detail)}
             >
               <Blocks primitives={content.heading} />
             </g>
@@ -236,6 +236,38 @@ function headingPrimitive(node: VisualNode, primitive: Primitive): boolean {
   return primitive.kind === 'text' && primitive.y <= node.headerHeight;
 }
 
+/** Overview enlarges the heading to fill its card, so a zoomed-out card still shows its name. */
+const OVERVIEW_FILL = 0.9;
+const OVERVIEW_MAX_SCALE = 3;
+function headingTransform(
+  node: VisualNode,
+  heading: readonly Primitive[],
+  detail: NonNullable<NodeContentProps['detail']>,
+): string {
+  const box = detail === 'overview' ? textBox(heading) : null;
+  if (box === null) return `translate(${headingSlack(node, heading)} 0)`;
+  const scale = Math.min(
+    OVERVIEW_MAX_SCALE,
+    (node.width * OVERVIEW_FILL) / box.width,
+    (node.height * OVERVIEW_FILL) / box.height,
+  );
+  const x = node.width / 2 - (box.x + box.width / 2) * scale;
+  const y = node.height / 2 - (box.y + box.height / 2) * scale;
+  return `translate(${x} ${y}) scale(${scale})`;
+}
+/** Text y is the baseline; the box spans the font's ascent and descent. */
+function textBox(
+  primitives: readonly Primitive[],
+): { x: number; y: number; width: number; height: number } | null {
+  const texts = primitives.filter((item) => item.kind === 'text');
+  if (texts.length === 0) return null;
+  const left = Math.min(...texts.map((item) => item.x));
+  const right = Math.max(...texts.map((item) => item.x + item.width));
+  const top = Math.min(...texts.map((item) => item.y - item.size * 0.8));
+  const bottom = Math.max(...texts.map((item) => item.y + item.size * 0.2));
+  return { x: left, y: top, width: right - left, height: bottom - top };
+}
+
 /** Canvas filters explicit semantics only; static output and unrelated notation retain admitted content. */
 function visibleAtDetail(
   node: VisualNode,
@@ -250,7 +282,7 @@ function visibleAtDetail(
 
 type DetailFilter = (node: VisualNode, primitive: Primitive) => boolean;
 const detailFilters: Readonly<Record<NonNullable<NodeContentProps['detail']>, DetailFilter>> = {
-  overview: (node, primitive) => node.groupId !== null && primitive.lodRole === 'heading',
+  overview: (_node, primitive) => primitive.lodRole === 'heading',
   names: (_node, primitive) => primitive.lodRole === 'heading',
   members: () => true,
   full: () => true,

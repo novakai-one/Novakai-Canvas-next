@@ -5,6 +5,7 @@ import type { ContentBlock, Endpoint, Field, KeyGroup } from '../../contract/rec
 import type { DiagramObject } from '../../contract/records/object.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
+import { typeUseKey } from '../definitions/type-uses.js';
 
 type OrderedKey = readonly DescendantId[];
 
@@ -102,12 +103,10 @@ function validateForeignKey(
   return [...arityIssues, ...entityIssues, ...referenceIssues, ...keyIssues, ...typeIssues];
 }
 
-/** Shared refs compare by canonical ID and legacy types retain exact string equality. */
+/** Shared refs compare by canonical key and legacy types retain exact string equality. */
 function sameFieldType(left: Field, right: Field | undefined): boolean {
   if (right === undefined) return false;
-  if (typeof left.type === 'string' || typeof right.type === 'string')
-    return left.type === right.type;
-  return left.type.id === right.type.id;
+  return typeUseKey(left.type) === typeUseKey(right.type);
 }
 
 /** A scalar foreign field must declare a reference; every other field forbids one. */

@@ -12,14 +12,37 @@ import { constructsV2 } from '../../vocabulary/constructs-v2.js';
 import { lowerTypeUse } from './types.js';
 import type { SymbolTable } from './symbols.js';
 export function lowerV2Node(item: Declaration, symbols: SymbolTable): RawRecord {
+  const label = textOr(item.fields, 'label', id(item.fields));
+  checkChangeTag(label, item.span);
   return {
     ...lowerRecord(item, constructsV2),
-    label: textOr(item.fields, 'label', id(item.fields)),
+    label,
     content: lowerMembers(item, symbols),
   };
 }
+/** E106 (A.7): change status lives in a change block, never as a [NEW]-style tag in label text. */
+const changeTagPattern = /\[\s*(?:new|changed|deleted|locked)\s*\]/i;
+export function checkChangeTag(label: string, span: Span): void {
+  const tag = changeTagPattern.exec(label);
+  if (tag === null) return;
+  rejectChangeTag(tag[0], span);
+}
+function rejectChangeTag(tag: string, span: Span): never {
+  reject(
+    'invalid-value',
+    span,
+    'A change block',
+    `E106 delta: "${tag}" in label. Use a change block. Statuses: new, changed, deleted, locked.`,
+  );
+}
 function lowerMembers(node: Declaration, symbols: SymbolTable): readonly RawRecord[] {
-  return node.children.flatMap((child) => lowerMemberBlocks(node, child, symbols));
+  return node.children.flatMap((child) =>
+    checkedBlocks(child, lowerMemberBlocks(node, child, symbols)),
+  );
+}
+function checkedBlocks(child: Declaration, blocks: readonly RawRecord[]): readonly RawRecord[] {
+  blocks.forEach((block) => checkChangeTag(block.label as string, child.span));
+  return blocks;
 }
 /** A `type` grandchild becomes one addressable member block per id (A.5 module.type import target). */
 function lowerMemberBlocks(

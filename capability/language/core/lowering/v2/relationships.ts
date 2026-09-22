@@ -5,10 +5,12 @@ import { field, reference, textOr, type RawRecord } from '../fields.js';
 import { reject } from '../../validation/outcomes.js';
 import { constructsV2 } from '../../vocabulary/constructs-v2.js';
 import { checkWireEndpoints } from './wire-policy.js';
+import { checkChangeTag } from './objects.js';
 import type { SymbolTable } from './symbols.js';
 export function lowerV2Wire(item: Declaration, symbols: SymbolTable): RawRecord {
   checkWireEndpoints(item, symbols);
   checkWireProps(item);
+  checkChangeTag(textOr(item.fields, 'label', ''), item.span);
   checkMemberLabel(item);
   checkCodeLabel(item, symbols);
   return lowerRecord(item, constructsV2);

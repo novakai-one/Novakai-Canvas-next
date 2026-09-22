@@ -103,9 +103,12 @@ function firstGate(
   owner: string | null,
 ): State | null {
   const choices = ports.flatMap((port) => gateChoice(port, registry, state, boundary, owner));
-  // Choose from registered contacts before routing; an infeasible chosen leg fails closed.
-  const selected = choices[0];
-  return selected === undefined ? null : gateLeg(registry, state, selected);
+  // Nearest gate first; a gate whose leg cannot be routed yields to the next one.
+  for (const choice of choices) {
+    const next = gateLeg(registry, state, choice);
+    if (next !== null) return next;
+  }
+  return null;
 }
 function gateLeg(registry: WireRegistry, state: State, choice: GateChoice): State | null {
   const leg = lawLeg(
@@ -182,20 +185,14 @@ export function routeNestedWires(
   measure: PrototypeLayoutMeasure,
   requests: NestedSceneSpec['requests'],
 ): NestedWireResult {
-  const wires = requests.map(([from, to, sourcePort, targetPort], i) =>
-    measure(`wire:w${String(i + 1).padStart(2, '0')}`, () =>
-      route(
-        scene,
-        registry,
-        `w${String(i + 1).padStart(2, '0')}`,
-        `node-${from}`,
-        `node-${to}`,
-        0,
-        sourcePort,
-        targetPort,
-      ),
-    ),
-  );
+  // Last resort: a route may pass behind a node rather than fail; notices report it.
+  const behind = { ...registry, bodies: [] };
+  const wires = requests.map(([from, to, sourcePort, targetPort], i) => {
+    const id = `w${String(i + 1).padStart(2, '0')}`;
+    const attempt = (r: WireRegistry) =>
+      route(scene, r, id, `node-${from}`, `node-${to}`, 0, sourcePort, targetPort);
+    return measure(`wire:${id}`, () => attempt(registry) ?? attempt(behind));
+  });
   const failed = wires.findIndex((w) => w === null);
   if (failed >= 0)
     return {

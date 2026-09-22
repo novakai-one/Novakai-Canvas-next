@@ -21,6 +21,8 @@ interface Context {
   readonly lanes: ReadonlyMap<string, ReturnType<typeof prepareLane>>;
   readonly pairs: Map<string, Map<string, boolean>>;
   readonly branches: ReadonlySet<string>;
+  /** After a human move in a module diagram, a wire may pass behind a node; notices warn. */
+  readonly behind: boolean;
 }
 /** Reconstruct only authoritative wire data after exact attachment/route/label validation. */
 function rebind(wire: VisualWire, context: Context): RoutedWire {
@@ -57,7 +59,7 @@ function checkGeometry(
       candidate.points,
       candidate.source,
       candidate.target,
-      obstacles,
+      context.behind ? [] : obstacles,
       wire,
       context.metrics,
     )
@@ -150,6 +152,7 @@ export function inspectWires(
     nodes,
     metrics,
     options,
+    behind: source.mode === 'modules' && source.nodes.some((node) => node.placement !== null),
     lanes: new Map(candidates.map((wire) => [wire.id, prepareLane(wire.points)])),
     pairs: new Map(candidates.map((wire) => [wire.id, new Map()])),
   };

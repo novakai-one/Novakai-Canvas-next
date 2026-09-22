@@ -32,6 +32,8 @@ export function boundedClone(input: unknown, limit = 64 * 1024 * 1024): Json {
 /** Only detached JSON results are frozen; ports and caller inputs are never traversed. */
 export function freeze<T>(value: T): T {
   if (value === null || typeof value !== 'object') return value;
+  // Frozen bottom-up, so a frozen object is already frozen all the way down.
+  if (Object.isFrozen(value)) return value;
   Object.values(value).forEach(freeze);
   return Object.freeze(value);
 }

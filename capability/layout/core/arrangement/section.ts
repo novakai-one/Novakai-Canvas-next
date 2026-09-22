@@ -14,6 +14,7 @@ import { inspectSection } from '../validation/sections.js';
 import { execute, requireValue, protect } from '../validation/outcomes.js';
 import { LayoutFault } from '../../contract/errors.js';
 import type { Diagnostic } from '../../contract/errors.js';
+import type { LayoutInputKey } from '../../contract/brands.js';
 import { treeGeometry } from '../tree.js';
 /** Cache geometry is accepted only after full current-source inspection; a bad hint falls back to derivation. */
 function cached(
@@ -51,6 +52,34 @@ export async function arrangeSection(
 ): Promise<PlacedSection> {
   const reuse = cached(source, previous, metrics, context);
   if (reuse !== null) return reuse;
+  if (previous !== null) return derived(source, previous, metrics, context);
+  // Without a prior scene the result depends only on the section key: reuse recent ones.
+  const key = sectionKey(source, metrics, context.options, versions(context.dependencies));
+  const recent = recentFor(context.dependencies);
+  const hit = recent.get(key);
+  if (hit !== undefined) return hit;
+  const section = await derived(source, null, metrics, context);
+  recent.set(key, section);
+  if (recent.size > RECENT) recent.delete(recent.keys().next().value as LayoutInputKey);
+  return section;
+}
+/** Enough for every section of a few open collections. */
+const RECENT = 64;
+/** Per layout instance: another instance may route differently under the same version. */
+const recentByDependencies = new WeakMap<object, Map<LayoutInputKey, PlacedSection>>();
+function recentFor(dependencies: object): Map<LayoutInputKey, PlacedSection> {
+  const found = recentByDependencies.get(dependencies);
+  if (found !== undefined) return found;
+  const created = new Map<LayoutInputKey, PlacedSection>();
+  recentByDependencies.set(dependencies, created);
+  return created;
+}
+async function derived(
+  source: VisualSection,
+  previous: SectionCandidate | null,
+  metrics: SupplementalMeasurements,
+  context: DerivationContext,
+): Promise<PlacedSection> {
   const nodes = requireValue(await placeSection(source, previous, context, metrics));
   return completeWithRetry(source, nodes, previous, metrics, context);
 }

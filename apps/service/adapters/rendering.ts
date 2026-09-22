@@ -76,7 +76,7 @@ function projectionReader(job: RenderingJob): ProjectionReader {
 }
 /** Cooperative yield lets abort delivery run between native phases; worker termination remains the hard cancellation boundary. */
 function yieldJob(): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, 0));
+  return new Promise((resolve) => setImmediate(resolve));
 }
 /** Compose real measurement and engines inside the worker, with no database handle or mutable service state. */
 async function derive(job: RenderingJob, signal: AbortSignal): Promise<RenderDocument> {

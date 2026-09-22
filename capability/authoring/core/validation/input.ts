@@ -12,9 +12,25 @@ export function readShape<T>(
   code: ErrorCode = 'invalid-input',
   limits?: JsonLimits,
 ): T {
+  // Frozen input cannot change, so one successful parse per shape and limits is reused.
+  const cacheable = typeof value === 'object' && value !== null && Object.isFrozen(value);
+  const cache = cacheable ? parsedCache(shape, limits) : undefined;
+  if (cache?.has(value as object)) return cache.get(value as object) as T;
   const parsed = shape.safeParse(copyJson(value, limits));
   if (!parsed.success) reject(code, '$', 'Data does not match the required authoring contract');
-  return freeze(parsed.data);
+  const result = freeze(parsed.data);
+  cache?.set(value as object, result);
+  return result;
+}
+const parsed = new WeakMap<object, WeakMap<object, WeakMap<object, unknown>>>();
+const noLimits = {};
+function parsedCache(shape: object, limits: object | undefined): WeakMap<object, unknown> {
+  const byShape = parsed.get(shape) ?? new WeakMap<object, WeakMap<object, unknown>>();
+  parsed.set(shape, byShape);
+  const key = limits ?? noLimits;
+  const byLimits = byShape.get(key) ?? new WeakMap<object, unknown>();
+  byShape.set(key, byLimits);
+  return byLimits;
 }
 /** Separate unsupported protocol versions from ordinary malformed data. */
 function checkVersion(value: unknown): void {

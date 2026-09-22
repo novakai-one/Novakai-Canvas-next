@@ -274,8 +274,9 @@ function createMovementReviewBinding(
   const base = movementReviewBase(move, document, intent, stamp);
   return { ok: true, value: { ...base, options, selectedOption: options[0]?.id ?? null } };
 }
+/** A node already at its group's edge stays there; that is an answer, not a review. */
 function hasMoveOnlyOption(move: Result<MoveReview>): boolean {
-  return move.ok && move.value.options.length > 0;
+  return move.ok && (move.value.options.length > 0 || move.value.reason !== undefined);
 }
 function movementReviewOptions(
   move: Result<MoveReview>,

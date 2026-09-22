@@ -2,8 +2,9 @@ import type { PrototypePoint, PrototypePortSide } from '../contract/records/road
 import type { NestedWireSegment } from '../contract/records/nested-wires.js';
 import type { Access, Terminal } from './nested-wire-access.js';
 import type { WireRegistry, Crossing } from './nested-wire-registry.js';
-import { coverPath } from './nested-wire-corridors.js';
+import { clear, coverPath } from './nested-wire-corridors.js';
 import type { OwnedLine } from './nested-wire-corridors.js';
+import { searchTrunk } from './nested-wire-search.js';
 type Pair = readonly [PrototypePortSide, PrototypePortSide];
 export interface Leg {
   readonly source: Access;
@@ -20,7 +21,7 @@ function sameRoad(
     b = t.accesses.find((p) => p.side === input);
   return a !== undefined && a.roadId === b?.roadId;
 }
-/** Band law, then shared-road law, then the quadrant corner. There is no path search. */
+/** Band law, then shared-road law, then the quadrant corner. Search runs only when this fails. */
 function pair(s: Terminal, t: Terminal): Pair {
   const bands: readonly { readonly matches: boolean; readonly value: Pair }[] = [
     { matches: s.point.y === t.point.y, value: ['right', 'left'] },
@@ -66,7 +67,7 @@ function trunk(
     q = shifted(b, offset);
   if (a.roadId === b.roadId)
     return [line(a.mouth, p, a.roadId), line(p, q, a.roadId), line(q, b.mouth, b.roadId)];
-  return turns(a, b, p, q, registry, offset);
+  return turns(a, b, p, q, registry, offset) ?? searchTrunk(a, b, p, q, registry, offset);
 }
 function turns(
   a: Access,
@@ -134,7 +135,7 @@ export function lawPreference(s: Terminal, t: Terminal): LegPreference {
 }
 /** Keep an admitted legacy pair, otherwise use the fixed terminal's admitted direction.
  * Mirrored corners depend on driveway axis, so left/top approaches obey the same rule.
- * Selection precedes geometry; a failed trunk is never retried or searched.
+ * If the law's pair cannot connect, the shortest other side pair is used instead.
  */
 export function lawLeg(
   s: Terminal,
@@ -144,8 +145,26 @@ export function lawLeg(
   preference = lawPreference(s, t),
 ): Leg | null {
   const { source, target } = preference;
-  if (source === undefined || target === undefined) return null;
-  return completeLeg(source, target, registry, offset);
+  const preferred =
+    source === undefined || target === undefined
+      ? null
+      : completeLeg(source, target, registry, offset);
+  return preferred ?? fallbackLeg(s, t, registry, offset);
+}
+function fallbackLeg(s: Terminal, t: Terminal, registry: WireRegistry, offset: number): Leg | null {
+  const legs = s.accesses.flatMap((a) =>
+    t.accesses.flatMap((b) => {
+      const leg = completeLeg(a, b, registry, offset);
+      return leg === null ? [] : [leg];
+    }),
+  );
+  return legs.toSorted((x, y) => length(x) - length(y))[0] ?? null;
+}
+function length(leg: Leg): number {
+  return leg.segments.reduce(
+    (sum, s) => sum + Math.abs(s.to.x - s.from.x) + Math.abs(s.to.y - s.from.y),
+    0,
+  );
 }
 function completeLeg(
   source: Access,
@@ -153,7 +172,18 @@ function completeLeg(
   registry: WireRegistry,
   offset: number,
 ): Leg | null {
-  const middle = trunk(source, target, registry, offset);
+  const law = trunk(source, target, registry, offset);
+  const middle =
+    law !== null && law.every((l) => clear(l, registry.bodies))
+      ? law
+      : searchTrunk(
+          source,
+          target,
+          shifted(source, offset),
+          shifted(target, offset),
+          registry,
+          offset,
+        );
   if (middle === null) return null;
   const segments = coverPath(
     [

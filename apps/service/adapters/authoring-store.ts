@@ -1,7 +1,6 @@
-import { snapshotSchema, receiptSchema, failure } from '@novakai/canvas-authoring';
+import { receiptSchema, failure } from '@novakai/canvas-authoring';
 import type {
   Result,
-  Snapshot,
   Receipt,
   WorkspaceId,
   RequestId,
@@ -42,33 +41,25 @@ function rawSnapshot(storage: ConditionalStorage, workspace: WorkspaceId): Resul
       'workspace',
       'Workspace does not belong to this service session',
     );
-  return {
-    ok: true,
-    value: {
-      workspace: current.value.workspace,
-      sequence: current.value.sequence,
-      records: current.value.slots,
-    },
-  };
+  return { ok: true, value: view(current.value) };
 }
-/** Receipt and commit bridges retain their existing checked Authoring identities before physical operations. */
-function snapshot(storage: ConditionalStorage, workspace: WorkspaceId): Result<Snapshot> {
-  const current = rawSnapshot(storage, workspace);
-  if (!current.ok) return current;
-  return checkedSnapshot(current.value, workspace);
-}
-/** Expected workspace identity is checked separately from schema validity to prevent accidental cross-workspace bridges. */
-function checkedSnapshot(input: unknown, workspace: WorkspaceId): Result<Snapshot> {
-  const parsed = snapshotSchema.safeParse(input);
-  if (!parsed.success)
-    return failure('corrupt-record', 'snapshot', 'Stored workspace cannot be decoded');
-  if (parsed.data.workspace !== workspace)
-    return failure(
-      'permission-denied',
-      'workspace',
-      'Workspace does not belong to this service session',
-    );
-  return { ok: true, value: parsed.data };
+/** Same stored state → same frozen view, so Authoring's parse caches hit. */
+const views = new WeakMap<object, { workspace: unknown; sequence: unknown; records: unknown }>();
+function view(state: { workspace: unknown; sequence: unknown; slots: object }) {
+  const known = views.get(state.slots);
+  if (
+    known !== undefined &&
+    known.workspace === state.workspace &&
+    known.sequence === state.sequence
+  )
+    return known;
+  const made = Object.freeze({
+    workspace: state.workspace,
+    sequence: state.sequence,
+    records: state.slots,
+  });
+  views.set(state.slots, made);
+  return made;
 }
 /** Successful physical receipts must also satisfy the Authoring outcome contract before reaching clients. */
 function checkedReceipt(input: unknown): Result<Receipt> {
@@ -83,7 +74,7 @@ function receipt(
   workspace: WorkspaceId,
   request: RequestId,
 ): Result<Receipt | null> {
-  const current = snapshot(storage, workspace);
+  const current = rawSnapshot(storage, workspace);
   if (!current.ok) return current;
   return foundReceipt(translate(storage.receipt(request)));
 }
@@ -95,7 +86,7 @@ function foundReceipt(result: Result<unknown>): Result<Receipt | null> {
 }
 /** Conditional expected versions and receipt fingerprint cross unchanged into one physical transaction. */
 function commit(storage: ConditionalStorage, request: CommitRequest): Result<Receipt> {
-  const current = snapshot(storage, request.workspace);
+  const current = rawSnapshot(storage, request.workspace);
   if (!current.ok) return current;
   const written = translate(storage.commit(request));
   if (!written.ok) return written;

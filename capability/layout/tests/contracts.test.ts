@@ -423,7 +423,11 @@ async function candidateBudget(): Promise<void> {
   await rankedCandidates(source, scene, attempts, native);
   const first = [...attempts];
   attempts.length = 0;
+  // The same instance reuses its result; a fresh instance proves the search is deterministic.
   expect(value(await layout.arrange(request(layout, source)))).toEqual(scene);
+  expect(attempts).toEqual([]);
+  const fresh = createLayout({ ...native, routing });
+  expect(value(await fresh.arrange(request(fresh, source)))).toEqual(scene);
   expect(attempts).toEqual(first);
   await terminalRouteFailure(source, 'candidate-infeasible', 10, 'constraint-conflict');
   await terminalRouteFailure(source, 'engine-failed', 1, 'engine-failed');

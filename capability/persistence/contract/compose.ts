@@ -10,25 +10,42 @@ import type { Persistence } from './types.js';
 interface NativeDatabase {
   exec(sql: string): void;
   prepare(sql: string): {
-    get(): Readonly<Record<string, unknown>> | undefined;
-    run(value: string): unknown;
+    get(...values: string[]): Readonly<Record<string, unknown>> | undefined;
+    run(...values: string[]): unknown;
   };
   close(): void;
 }
 /** Prepare bound statements once; SQLite owns WAL/FULL recovery, never handwritten filesystem journaling. */
 function createDriver(database: NativeDatabase): DatabasePort {
   database.exec(
-    'PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS canvas_state (singleton INTEGER PRIMARY KEY CHECK(singleton=1), payload TEXT NOT NULL)',
+    'PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS canvas_state (singleton INTEGER PRIMARY KEY CHECK(singleton=1), payload TEXT NOT NULL); CREATE TABLE IF NOT EXISTS canvas_part (id TEXT PRIMARY KEY, body TEXT NOT NULL)',
   );
   const read = database.prepare('SELECT payload FROM canvas_state WHERE singleton=1');
   const write = database.prepare(
     'INSERT INTO canvas_state(singleton,payload) VALUES(1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload',
   );
+  const dataVersion = database.prepare('PRAGMA data_version');
+  const getPart = database.prepare('SELECT body FROM canvas_part WHERE id=?');
+  const putPart = database.prepare('INSERT OR REPLACE INTO canvas_part(id,body) VALUES(?,?)');
+  const removePart = database.prepare('DELETE FROM canvas_part WHERE id=?');
   return {
     exec: (sql) => database.exec(sql),
     read: () => read.get()?.payload,
+    version: () => dataVersion.get()?.data_version,
     write: (serialized) => {
       write.run(serialized);
+    },
+    parts: {
+      get: (id) => {
+        const body = getPart.get(id)?.body;
+        return typeof body === 'string' ? body : undefined;
+      },
+      put: (id, body) => {
+        putPart.run(id, body);
+      },
+      remove: (id) => {
+        removePart.run(id);
+      },
     },
     close: () => database.close(),
   };

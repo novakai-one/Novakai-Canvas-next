@@ -192,7 +192,11 @@ export function toEngineScene(
   const wiring = required(scene.wiring, source.id);
   if (!wiring.ok) return reject('constraint-conflict', source.id, JSON.stringify(wiring.error));
   const inspection = inspectNestedWires(scene, wiring.value);
-  const failures = Object.values(inspection).flat();
+  // After a human move, a route behind a node or across a group edge lands with a warning.
+  const moved = source.nodes.some((node) => node.placement !== null);
+  const failures = moved
+    ? [...inspection.corridors, ...inspection.continuity]
+    : Object.values(inspection).flat();
   if (failures.length > 0)
     return reject(
       'constraint-conflict',

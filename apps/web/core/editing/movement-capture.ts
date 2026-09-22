@@ -136,7 +136,156 @@ export function plannedSections(
     ...document,
     collection: { ...document.collection, sections: frozen },
   };
-  return placeEntries(intent, pinnedDocument);
+  return placeEntries(intent, pinnedDocument).map((section) =>
+    section.mode === 'modules'
+      ? growToHold(stopShort(section, document, intent), document)
+      : section,
+  );
+}
+
+/** A node dropped onto a sibling stops short along its drag path, keeping a padding-wide gap. */
+function stopShort(section: Section, document: RenderDocument, intent: PlacementIntent): Section {
+  const scene = document.scene.sections.find((item) => item.id === section.id);
+  if (scene === undefined) return section;
+  const space = document.options.padding;
+  let appearances = section.appearances;
+  for (const entry of intent.entries) {
+    if (entry.target.kind !== 'node' || entry.target.section !== section.id) continue;
+    const id = entry.target.id;
+    const node = scene.nodes.find((item) => item.id === id);
+    if (node === undefined || node.measured.groupId !== null) continue;
+    const moved = appearances.find((a) => a.object === node.measured.objectId);
+    const after = moved?.placement;
+    if (moved === undefined || after == null) continue;
+    const parent = scene.nodes.find((item) => item.id === node.parent);
+    const before = { x: node.box.x - (parent?.box.x ?? 0), y: node.box.y - (parent?.box.y ?? 0) };
+    const size = { width: after.width ?? node.box.width, height: after.height ?? node.box.height };
+    const others = appearances.flatMap((a) => {
+      if (a === moved || a.group !== moved.group || a.placement == null) return [];
+      const other = scene.nodes.find((item) => item.measured.objectId === a.object);
+      return [
+        {
+          x: a.placement.x,
+          y: a.placement.y,
+          width: a.placement.width ?? other?.box.width ?? 0,
+          height: a.placement.height ?? other?.box.height ?? 0,
+        },
+      ];
+    });
+    const at = (t: number) => ({
+      x: before.x + (after.x - before.x) * t,
+      y: before.y + (after.y - before.y) * t,
+    });
+    const clear = (t: number) => {
+      const p = at(t);
+      return others.every(
+        (o) =>
+          p.x + size.width + space <= o.x ||
+          o.x + o.width + space <= p.x ||
+          p.y + size.height + space <= o.y ||
+          o.y + o.height + space <= p.y,
+      );
+    };
+    if (clear(1)) continue;
+    let t = 1;
+    while (t > 0 && !clear(t)) t = Math.max(0, t - 1 / 64);
+    const p = at(t);
+    appearances = appearances.map((a) =>
+      a === moved ? { ...a, placement: { ...after, x: p.x, y: p.y } } : a,
+    );
+  }
+  return appearances === section.appearances ? section : { ...section, appearances };
+}
+
+/** A child dragged past its group's top or left edge grows the group up or left; the child stays where dropped. */
+function growToHold(section: Section, document: RenderDocument): Section {
+  const scene = document.scene.sections.find((item) => item.id === section.id);
+  if (scene === undefined) return section;
+  const padding = document.options.padding;
+  let groups = section.groups,
+    appearances = section.appearances;
+  const depth = (id: string | undefined): number => {
+    const parent = groups.find((g) => g.id === id)?.parent;
+    return parent == null ? 0 : 1 + depth(parent);
+  };
+  for (const group of section.groups.toSorted((a, b) => depth(b.id) - depth(a.id))) {
+    const current = groups.find((g) => g.id === group.id);
+    const header = scene.nodes.find((n) => n.measured.groupId === group.id)?.measured.headerHeight;
+    if (current?.placement == null || header === undefined) continue;
+    const children = [
+      ...appearances.filter((a) => a.group === group.id).map((a) => a.placement),
+      ...groups.filter((g) => g.parent === group.id).map((g) => g.placement),
+    ].filter((p): p is Placement => p != null);
+    if (children.length === 0) continue;
+    // Keep the inset the layout already gave this group; its frame road runs inside it.
+    const frame = scene.nodes.find((n) => n.measured.groupId === group.id);
+    const inside = scene.nodes.filter((n) => frame !== undefined && n.parent === frame.id);
+    const insetX =
+      inside.length === 0 || frame === undefined
+        ? padding
+        : Math.max(padding, Math.min(...inside.map((n) => n.box.x - frame.box.x)));
+    const insetY =
+      inside.length === 0 || frame === undefined
+        ? header + padding
+        : Math.max(header + padding, Math.min(...inside.map((n) => n.box.y - frame.box.y)));
+    const needX = Math.max(0, insetX - Math.min(...children.map((p) => p.x)));
+    const needY = Math.max(0, insetY - Math.min(...children.map((p) => p.y)));
+    if (needX === 0 && needY === 0) continue;
+    // Grow only into free space; a child dropped past that stops at the inset.
+    const room = frame === undefined ? { x: 0, y: 0 } : freeRoom(scene.nodes, frame);
+    const top = current.parent == null;
+    const dx = Math.min(
+      needX,
+      Math.max(0, top ? Math.min(room.x, current.placement.x - padding) : room.x),
+    );
+    const dy = Math.min(
+      needY,
+      Math.max(0, top ? Math.min(room.y, current.placement.y - padding) : room.y),
+    );
+    const shift = (p: Placement | undefined): Placement | undefined =>
+      p == null ? p : { ...p, x: Math.max(insetX, p.x + dx), y: Math.max(insetY, p.y + dy) };
+    const grown = current.placement;
+    groups = groups.map((g) =>
+      g.id === group.id
+        ? {
+            ...g,
+            placement: {
+              ...grown,
+              x: grown.x - dx,
+              y: grown.y - dy,
+              ...(grown.width == null ? {} : { width: grown.width + dx }),
+              ...(grown.height == null ? {} : { height: grown.height + dy }),
+            },
+          }
+        : g.parent === group.id
+          ? { ...g, placement: shift(g.placement) }
+          : g,
+    );
+    appearances = appearances.map((a) =>
+      a.group === group.id ? { ...a, placement: shift(a.placement) } : a,
+    );
+  }
+  return groups === section.groups ? section : { ...section, groups, appearances };
+}
+
+/** Space left of and above a group it may grow into. */
+function freeRoom(
+  nodes: RenderDocument['scene']['sections'][number]['nodes'],
+  frame: RenderDocument['scene']['sections'][number]['nodes'][number],
+): { readonly x: number; readonly y: number } {
+  const b = frame.box;
+  const siblings = nodes.filter((n) => n.parent === frame.parent && n.id !== frame.id);
+  const left = siblings.filter(
+    (n) => n.box.x + n.box.width <= b.x && n.box.y < b.y + b.height && b.y < n.box.y + n.box.height,
+  );
+  const above = siblings.filter(
+    (n) => n.box.y + n.box.height <= b.y && n.box.x < b.x + b.width && b.x < n.box.x + n.box.width,
+  );
+  return {
+    // The road beside a sibling is already at its minimum width; never grow into it.
+    x: left.length > 0 ? 0 : Infinity,
+    y: above.length > 0 ? 0 : Infinity,
+  };
 }
 
 export function changes(document: RenderDocument, sections: readonly Section[]): readonly Change[] {

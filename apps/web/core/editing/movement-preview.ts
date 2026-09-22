@@ -163,8 +163,114 @@ function inspectGeometryItem(
   item: { target: Target; box: Box },
   preview: GeometryPreview,
 ): Result<GeometryChange | undefined> {
-  const expectedMatch = validateExpectedBox(expected, item.box);
+  const expectedMatch =
+    grewToHold(document, item.target, expected, item.box) ||
+    pushedAside(document, item.target, expected, item.box, preview) ||
+    stoppedShort(document, item.target, expected, item.box)
+      ? { ok: true as const, value: undefined }
+      : validateExpectedBox(expected, item.box);
   return expectedMatch.ok ? inspectMatchedGeometry(document, item, preview) : expectedMatch;
+}
+
+/** A group or section may grow to hold a moved child; it never shrinks or drifts away. */
+function grewToHold(document: RenderDocument, target: Target, expected: Box, actual: Box): boolean {
+  const container =
+    target.kind === 'section' ||
+    (target.kind === 'node' &&
+      document.scene.sections
+        .find((section) => section.id === target.section)
+        ?.nodes.find((node) => node.id === target.id)?.measured.groupId != null);
+  return (
+    container &&
+    actual.x <= expected.x &&
+    actual.y <= expected.y &&
+    actual.x + actual.width >= expected.x + expected.width &&
+    actual.y + actual.height >= expected.y + expected.height
+  );
+}
+
+/** A grown section or group pushes a later sibling right or down; the pushed container keeps its
+ * size and its contents travel with it. */
+function pushedAside(
+  document: RenderDocument,
+  target: Target,
+  expected: Box,
+  actual: Box,
+  preview: GeometryPreview,
+): boolean {
+  const sectionId =
+    target.kind === 'section' ? target.id : target.kind === 'node' ? target.section : null;
+  if (sectionId === null) return false;
+  const nodes = document.scene.sections.find((section) => section.id === sectionId)?.nodes ?? [];
+  const chain: Target[] = [];
+  for (let id: string | null = target.kind === 'node' ? target.id : null; id !== null;) {
+    const node = nodes.find((item) => item.id === id);
+    if (node === undefined) break;
+    if (node.measured.groupId != null)
+      chain.push({ kind: 'node', section: sectionId, id: node.id });
+    id = node.parent;
+  }
+  chain.push({ kind: 'section', id: sectionId });
+  const near = (a: number, b: number) => Math.abs(a - b) < 0.01;
+  return chain.some((container) => {
+    const before = sceneBox(document, container);
+    const after = preview.boxes.find(
+      (item) => targetKey(item.target) === targetKey(container),
+    )?.box;
+    if (before === undefined || after === undefined) return false;
+    const dx = after.x - before.x,
+      dy = after.y - before.y;
+    if (dx < -0.01 || dy < -0.01 || (near(dx, 0) && near(dy, 0))) return false;
+    if (!near(after.width, before.width) || !near(after.height, before.height)) return false;
+    if (!earlierSiblingGrew(document, preview, container, before, dx, dy)) return false;
+    return (
+      near(expected.x + dx, actual.x) &&
+      near(expected.y + dy, actual.y) &&
+      near(expected.width, actual.width) &&
+      near(expected.height, actual.height)
+    );
+  });
+}
+
+/** Something before the pushed container, beside or above it, got bigger. */
+function earlierSiblingGrew(
+  document: RenderDocument,
+  preview: GeometryPreview,
+  pushed: Target,
+  at: Box,
+  dx: number,
+  dy: number,
+): boolean {
+  return preview.boxes.some((item) => {
+    if (item.target.kind !== pushed.kind || targetKey(item.target) === targetKey(pushed))
+      return false;
+    const was = sceneBox(document, item.target);
+    if (was === undefined) return false;
+    const grew = item.box.width > was.width + 0.01 || item.box.height > was.height + 0.01;
+    const before =
+      (dx > 0.01 && was.x + was.width <= at.x + 0.01) ||
+      (dy > 0.01 && was.y + was.height <= at.y + 0.01);
+    return grew && before;
+  });
+}
+
+/** A dragged node may stop at its group's inset, between where it was and where it was dropped. */
+function stoppedShort(
+  document: RenderDocument,
+  target: Target,
+  expected: Box,
+  actual: Box,
+): boolean {
+  const before = sceneBox(document, target);
+  if (target.kind !== 'node' || before === undefined) return false;
+  const between = (a: number, b: number, v: number) =>
+    v >= Math.min(a, b) - 0.01 && v <= Math.max(a, b) + 0.01;
+  return (
+    Math.abs(actual.width - expected.width) < 0.01 &&
+    Math.abs(actual.height - expected.height) < 0.01 &&
+    between(before.x, expected.x, actual.x) &&
+    between(before.y, expected.y, actual.y)
+  );
 }
 
 function validateExpectedBox(expected: Box, actual: Box): Result<void> {

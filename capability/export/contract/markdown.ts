@@ -11,6 +11,7 @@ import {
   type Section,
   type SequenceItem,
   type TypeExpression,
+  type TypeUse,
 } from '@novakai/canvas-model';
 
 export type MarkdownScope =
@@ -352,13 +353,17 @@ function appendField(
   lines.push(`  - Field \`${object.id}.${block.id}\`: ${inline(block.label)} : ${type}${details}`);
 }
 
+function definitionSuffix(type: TypeUse): string {
+  return typeof type === 'string' || type.kind !== 'definition'
+    ? ''
+    : ` (definition ${codeSpan(type.id)})`;
+}
+
 function fieldType(
   collection: Collection,
   block: Extract<ContentBlock, { kind: 'field' }>,
 ): string {
-  const display = fieldTypeDisplay(collection, block);
-  if (typeof block.type === 'string') return inline(display);
-  return `${inline(display)} (definition ${codeSpan(block.type.id)})`;
+  return `${inline(fieldTypeDisplay(collection, block))}${definitionSuffix(block.type)}`;
 }
 
 function fieldDetails(block: Extract<ContentBlock, { kind: 'field' }>): string {
@@ -553,6 +558,8 @@ function typeExpression(expression: TypeExpression): string {
       return `@${expression.id}`;
     case 'union':
       return expression.items.map(typeExpression).join(' | ');
+    case 'opaque':
+      return 'opaque';
   }
 }
 

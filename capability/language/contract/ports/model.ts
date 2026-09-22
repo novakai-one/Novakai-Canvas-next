@@ -19,3 +19,5 @@ export type {
   TypeExpression,
   DefinitionId,
 } from '@novakai/canvas-model';
+/** Definition ids a type use touches are reused through Model's permitted public contract. */
+export { typeUseDefinitions } from '@novakai/canvas-model';

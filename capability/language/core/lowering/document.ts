@@ -12,34 +12,35 @@ import { partitionLayout } from './layout-fields.js';
 import type { Result } from '../../contract/errors.js';
 import { accepted, protect, reject } from '../validation/outcomes.js';
 import { lowerDefinition } from './definitions.js';
+import { lowerDocumentDataV2 } from './v2/document.js';
 /** Build complete raw canonical data; Model validates identities; Language owns correction and Authoring owns commit recovery. Retries have no writes. */
 export function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
-  return protect(() => {
-    rejectVersion2(document);
-    const item = document.declaration;
-    const metadata = lowerRecord(item);
-    const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;
-    void alias;
-    const theme = resolveTheme(textOr(item.fields, 'theme', 'paper'), request.resources, item.span);
-    return {
-      ...remaining,
-      schemaVersion: 1,
-      revision: request.snapshot?.revision ?? 0,
-      theme,
-      arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
-      objects: records(item, 'node').map(lowerNode),
-      relationships: records(item, 'wire').map(lowerRecord),
-      sections: records(item, 'section').map((section) => accepted(lowerSection(section))),
-      sources: records(item, 'source').map(lowerRecord),
-      assets: records(item, 'asset').map((asset) => lowerAsset(asset, request.resources)),
-      definitions: records(item, 'type').map(lowerDefinition),
-    };
-  });
+  return protect(() =>
+    document.version === 2
+      ? lowerDocumentDataV2(document, request)
+      : lowerDocumentDataV1(document, request),
+  );
 }
-/** Slice 4 removes this guard once v2 lowering ships; today only canvas 1 is representable. */
-function rejectVersion2(document: Document): void {
-  if (document.version === 2)
-    reject('unrepresentable', document.span, 'canvas 1', 'canvas 2 lowering is not available yet');
+/** Canvas 1 lowering: the collection declaration is both metadata and content owner. */
+function lowerDocumentDataV1(document: Document, request: LowerRequest): RawRecord {
+  const item = document.declaration;
+  const metadata = lowerRecord(item);
+  const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;
+  void alias;
+  const theme = resolveTheme(textOr(item.fields, 'theme', 'paper'), request.resources, item.span);
+  return {
+    ...remaining,
+    schemaVersion: 1,
+    revision: request.snapshot?.revision ?? 0,
+    theme,
+    arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
+    objects: records(item, 'node').map(lowerNode),
+    relationships: records(item, 'wire').map((wire) => lowerRecord(wire)),
+    sections: records(item, 'section').map((section) => accepted(lowerSection(section))),
+    sources: records(item, 'source').map((source) => lowerRecord(source)),
+    assets: records(item, 'asset').map((asset) => lowerAsset(asset, request.resources)),
+    definitions: records(item, 'type').map(lowerDefinition),
+  };
 }
 /** Record namespaces are selected explicitly; view statements never become canonical objects. */
 function records(item: Declaration, kind: Declaration['kind']): readonly Declaration[] {

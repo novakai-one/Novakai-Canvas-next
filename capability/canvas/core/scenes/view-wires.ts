@@ -166,24 +166,31 @@ function pathEnd(end: Point | undefined): string {
 }
 function outlinePoint(end: RoutedWire['source'], section: PlacedSection): Point | undefined {
   const node = section.nodes.find((item) => item.id === end.node);
-  return node !== undefined && slanted(node, end.side) ? onOutline(node.box, end) : undefined;
+  return node !== undefined && slanted(node) ? onOutline(node.box, end) : undefined;
 }
-function slanted(
-  node: PlacedSection['nodes'][number],
-  side: RoutedWire['source']['side'],
-): boolean {
-  return (
-    node.measured.shape === 'diamond' &&
-    node.measured.frame === 'auto' &&
-    (side === 'left' || side === 'right')
-  );
+function slanted(node: PlacedSection['nodes'][number]): boolean {
+  return node.measured.shape === 'diamond' && node.measured.frame === 'auto';
 }
 function onOutline(
   box: PlacedSection['nodes'][number]['box'],
   end: RoutedWire['source'],
 ): Point | undefined {
-  const inset =
-    (box.width / 2) * (Math.abs(end.point.y - (box.y + box.height / 2)) / (box.height / 2));
-  const x = end.side === 'right' ? end.point.x - inset : end.point.x + inset;
-  return inset === 0 ? undefined : { x, y: end.point.y };
+  const point = inward[end.side](box, end.point);
+  return point.x === end.point.x && point.y === end.point.y ? undefined : point;
+}
+type Inward = (box: PlacedSection['nodes'][number]['box'], point: Point) => Point;
+/** Move a box-edge point in to the diamond outline. */
+const inward: Readonly<Record<RoutedWire['source']['side'], Inward>> = {
+  left: (box, point) => ({ x: point.x + sideInset(box, point), y: point.y }),
+  right: (box, point) => ({ x: point.x - sideInset(box, point), y: point.y }),
+  top: (box, point) => ({ x: point.x, y: point.y + topInset(box, point) }),
+  bottom: (box, point) => ({ x: point.x, y: point.y - topInset(box, point) }),
+};
+/** Left/right: how far in the outline sits at this height. */
+function sideInset(box: PlacedSection['nodes'][number]['box'], point: Point): number {
+  return (box.width / 2) * (Math.abs(point.y - (box.y + box.height / 2)) / (box.height / 2));
+}
+/** Top/bottom: how far in the outline sits at this x. */
+function topInset(box: PlacedSection['nodes'][number]['box'], point: Point): number {
+  return (box.height / 2) * (Math.abs(point.x - (box.x + box.width / 2)) / (box.width / 2));
 }

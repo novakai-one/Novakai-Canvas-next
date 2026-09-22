@@ -107,6 +107,8 @@ interface SharedEnd {
   readonly id: string;
   readonly end: 'source' | 'target';
   readonly far: Point;
+  /** Same-direction wires to the same far node share a point; the parallel-wire offsets keep them apart. */
+  readonly bundle: string;
 }
 /** Order the ends on one side by where their other end sits, then space them evenly along the side. */
 function spread(
@@ -118,12 +120,9 @@ function spread(
 ): ResolvedEndpoint {
   if (endpoint.member !== null) return endpoint;
   const sharing = ordered(endpoint, wires, nodes);
-  return place(
-    endpoint,
-    sharing,
-    sharing.findIndex((item) => item.id === id && item.end === end),
-    nodes,
-  );
+  const bundles = [...new Set(sharing.map((item) => item.bundle))];
+  const own = sharing.find((item) => item.id === id && item.end === end);
+  return place(endpoint, bundles.length, bundles.indexOf(own?.bundle ?? ''), nodes);
 }
 function ordered(
   endpoint: ResolvedEndpoint,
@@ -145,16 +144,18 @@ function axis(side: Side): 'x' | 'y' {
 }
 function place(
   endpoint: ResolvedEndpoint,
-  sharing: readonly SharedEnd[],
+  count: number,
   index: number,
   nodes: readonly PlacedNode[],
 ): ResolvedEndpoint {
   const across = axis(endpoint.side);
   const side = span(visible(endpoint.node, nodes).box, across);
-  const step = side.length / (sharing.length + 1);
-  // Too many wires for this side: they keep the shared middle rather than crowd each other.
-  if (sharing.length < 2 || step < MIN_SPACING) return endpoint;
-  const offset = Math.round(side.start + step * (index + 1));
+  if (count < 2) return endpoint;
+  // Too many wires for this side: neighbours pair up on the points that fit, never all on one.
+  const slots = Math.min(count, Math.floor(side.length / MIN_SPACING) - 1);
+  if (slots < 2) return endpoint;
+  const slot = Math.round((index * (slots - 1)) / (count - 1));
+  const offset = Math.round(side.start + (side.length / (slots + 1)) * (slot + 1));
   return { ...endpoint, point: { ...endpoint.point, [across]: offset } };
 }
 function span(box: Box, across: 'x' | 'y'): { readonly start: number; readonly length: number } {
@@ -170,7 +171,12 @@ function sharedEnds(
   const ends = sided(wire, nodes);
   return (['source', 'target'] as const)
     .filter((end) => meets(ends[end], endpoint))
-    .map((end) => ({ id: wire.id, end, far: center(visible(farNode(wire, end), nodes).box) }));
+    .map((end) => ({
+      id: wire.id,
+      end,
+      far: center(visible(farNode(wire, end), nodes).box),
+      bundle: `${end}:${farNode(wire, end)}`,
+    }));
 }
 /** Whole-node ends on the same node side compete for that side. */
 function meets(candidate: ResolvedEndpoint, endpoint: ResolvedEndpoint): boolean {

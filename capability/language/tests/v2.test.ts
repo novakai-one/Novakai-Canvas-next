@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { assert, describe, expect, it } from 'vitest';
 import type { Collection } from '@novakai/canvas-model';
 import type { LoweredIntent, Result } from '../contract/index.js';
@@ -119,10 +119,10 @@ describe('scenario lowers to a sequence section', () => {
     ]);
     const separated = section(value(lowered(separatedAlts)).collection, 's');
     expect(separated.sequence).toMatchObject([
-      { id: 'place-fragment-1', kind: 'fragment', label: 'a' },
+      { id: 'place-fragment-1', kind: 'fragment', operator: 'opt', label: 'a' },
       { parent: 'place-fragment-1' },
       { kind: 'event', message: 'call' },
-      { id: 'place-fragment-2', kind: 'fragment', label: 'b' },
+      { id: 'place-fragment-2', kind: 'fragment', operator: 'opt', label: 'b' },
       { parent: 'place-fragment-2' },
     ]);
   });
@@ -154,7 +154,9 @@ describe('delta: change block', () => {
         ],
       },
     ]);
-    expect(firstMessage(lowered(changedTwice))).toMatch(/^E112 /u);
+    expect(firstMessage(lowered(changedTwice))).toBe(
+      'E112 delta: @a is in @one and @two. Keep one.',
+    );
   });
 });
 
@@ -209,8 +211,18 @@ const catalogue: readonly (readonly [string, string])[] = [
   ],
 ];
 
-it.each(catalogue)('rejected/%s.canvas fails with its catalogue message', async (file, message) => {
-  const result = lowered(await source(`language/v2/rejected/${file}.canvas`));
-  expect(result.ok).toBe(false);
-  expect(firstMessage(result)).toBe(message);
+describe('rejected v2 fixtures', () => {
+  it('has one catalogue row per file in the rejected folder', async () => {
+    const files = await readdir(new URL('language/v2/rejected/', examples));
+    expect(files.toSorted()).toEqual(catalogue.map(([file]) => `${file}.canvas`).toSorted());
+  });
+
+  it.each(catalogue)(
+    'rejected/%s.canvas fails with its catalogue message',
+    async (file, message) => {
+      const result = lowered(await source(`language/v2/rejected/${file}.canvas`));
+      expect(result.ok).toBe(false);
+      expect(firstMessage(result)).toBe(message);
+    },
+  );
 });

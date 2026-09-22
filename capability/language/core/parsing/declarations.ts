@@ -30,10 +30,16 @@ export function readDeclaration(
   allowed: readonly Construct[],
   table: readonly ConstructDefinition[] = constructs,
 ): Parsed<Declaration> {
-  const compactType = table === constructs ? compactTypeDeclaration(cursor, allowed) : undefined;
+  const compactType = hasCompactType(table) ? compactTypeDeclaration(cursor, allowed) : undefined;
   if (compactType !== undefined) return compactType;
   const definition = declarationDefinition(cursor, allowed, table);
   return readDefined(cursor, definition, table);
+}
+
+/** Only a grammar whose type form carries a label position has the compact `= expression` form. */
+function hasCompactType(table: readonly ConstructDefinition[]): boolean {
+  const type = table.find((item) => item.kind === 'type');
+  return type?.positions.some((position) => position.name === 'label') === true;
 }
 
 function declarationDefinition(

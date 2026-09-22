@@ -12,6 +12,7 @@ import {
 } from './cursor.js';
 import { decodeString } from '../lexing/strings.js';
 import { repeat } from './repetition.js';
+import { isTypeUse } from './value-types.js';
 const primitiveWords = ['string', 'number', 'boolean'] as const;
 type PrimitiveWord = (typeof primitiveWords)[number];
 /** A type-use is a type id (with optional generic arguments) or a bare primitive word. */
@@ -45,7 +46,10 @@ function rejectNonType(token: Token): never {
 function readPrimitiveType(cursor: Cursor): Parsed<LocatedValue> {
   const token = peek(cursor);
   const primitive = token.text as PrimitiveWord;
-  return { value: { value: { kind: 'type', primitive }, span: token.span, token }, next: advance(cursor) };
+  return {
+    value: { value: { kind: 'type', primitive }, span: token.span, token },
+    next: advance(cursor),
+  };
 }
 /** A type id optionally carries its own generic argument list, each argument typed the same way. */
 function readTypeReference(cursor: Cursor): Parsed<LocatedValue> {
@@ -82,13 +86,14 @@ function collectTypeArguments(cursor: Cursor): Parsed<readonly LocatedValue[]> {
 function readFollowingType(cursor: Cursor): Parsed<LocatedValue> {
   return readTypeUse(consume(cursor, ','));
 }
-/** Every collected argument was itself built by readTypeUse, so its value is always a TypeSyntax. */
+/** Every collected argument was built by readTypeUse; the guard keeps that a checked fact. */
 function asTypeSyntax(item: LocatedValue): TypeSyntax {
-  return item.value as TypeSyntax;
+  if (!isTypeUse(item.value)) reject('syntax', item.span, 'type', 'Expected a type');
+  return item.value;
 }
 /** `[ "name": T, ... ]`; an empty bracket pair is grammar noise the block form always forbids. */
 export function readTypedParameters(cursor: Cursor): Parsed<LocatedValue> {
-  const start = enter(advance(cursor));
+  const start = enter(consume(cursor, '['));
   requireNonEmptyParameters(cursor, start);
   const collected = collectTypedParameters(start);
   const end = leave(consume(collected.next, ']'));

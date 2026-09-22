@@ -22,12 +22,7 @@ export interface TypeSyntax {
   readonly arguments?: readonly TypeSyntax[];
 }
 export type SyntaxValue =
-  | string
-  | number
-  | boolean
-  | Reference
-  | TypeSyntax
-  | readonly SyntaxValue[];
+  string | number | boolean | Reference | TypeSyntax | readonly SyntaxValue[];
 export interface LocatedValue {
   readonly value: SyntaxValue;
   readonly span: Span;

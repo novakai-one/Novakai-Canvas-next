@@ -107,7 +107,6 @@ export const properties = {
   operation: { type: 'endpoint', field: 'operation' },
   uses: { type: 'id', field: 'uses', required: true },
   wireKindV2: { type: 'word', field: 'kind', values: relationshipKindsV2, fallback: 'flow' },
-  typeUse: { type: 'type-use', field: 'type', required: true },
   returnsV2: { type: 'type-use', field: 'returns', required: true },
   parametersV2: { type: 'typed-parameters', field: 'parameters' },
   keyKindV2: { type: 'word', field: 'kind', values: ['primary', 'unique'], required: true },

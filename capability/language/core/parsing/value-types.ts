@@ -16,7 +16,7 @@ export function isReference(value: SyntaxValue): value is Reference {
   return !isList(value) && value.kind === 'reference';
 }
 /** Type-use records are the v2 counterpart to references, discriminated by their own kind tag. */
-function isTypeUse(value: SyntaxValue): value is TypeSyntax {
+export function isTypeUse(value: SyntaxValue): value is TypeSyntax {
   if (typeof value !== 'object') return false;
   return !isList(value) && value.kind === 'type';
 }

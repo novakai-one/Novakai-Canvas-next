@@ -117,12 +117,7 @@ function requireNoExtraShape(cursor: Cursor): void {
 function checkUses(collection: Declaration, declareId: string): void {
   const uses = field(collection.fields, 'uses');
   if (reference(uses).id !== declareId)
-    reject(
-      'unknown-target',
-      uses.span,
-      `@${declareId}`,
-      `E004 uses: expected uses=@${declareId}.`,
-    );
+    reject('unknown-target', uses.span, `@${declareId}`, `E004 uses: expected uses=@${declareId}.`);
 }
 /** Bounded patch operations retain source order and defer domain references until final planning. */
 function readPatch(cursor: Cursor): Parsed<Patch> {

@@ -6,7 +6,6 @@ import { targetInfo, targetKey } from './address.js';
 import { previewBox, previewOrigin, hiddenByReading } from './preview.js';
 import type { DetailTier, FocusProjection } from '../../contract/records/focus.js';
 import { emphasisFor } from './focus.js';
-import { visibleDetail } from './detail.js';
 /** Selection membership is scoped to a visible appearance, not canonical content identity. */
 function selected(state: SessionState, key: string): boolean {
   return state.selection.some((target) => targetKey(target) === key);
@@ -50,7 +49,7 @@ export function viewNode(
     selected: selected(state, info.key),
     hovered: state.hover !== null && targetKey(state.hover) === info.key,
     emphasis,
-    detail: visibleDetail(detail, emphasis),
+    detail,
     hidden: hiddenByReading(state, info) || foldedTreeAncestor(state, section, node.id),
     draft: bounds !== info.box,
   };

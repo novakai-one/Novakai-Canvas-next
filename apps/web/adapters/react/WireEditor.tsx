@@ -7,6 +7,7 @@ import type { WireEdit } from '../../contract/records/wire-editor.js';
 import type { ConnectionDraft, Cardinality } from '../../contract/records/connection.js';
 import type { SessionState } from '@novakai/canvas-canvas';
 import { selectedWire, wireDraftKey, editedWire } from '../../contract/api.js';
+import { relationshipLabel } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
 /** Injected field groups stay mounted across ordinary edits and can be reorganized at composition. */
 export function createWireEditor({
@@ -86,7 +87,7 @@ function WireSelectionEditor({
   return (
     <div className={styles.editor}>
       <header>
-        <strong>{selection.relationship.label}</strong>
+        <strong>{relationshipLabel(selection.relationship)}</strong>
         <p>
           {selection.section.title} · {selection.relationship.id}
         </p>

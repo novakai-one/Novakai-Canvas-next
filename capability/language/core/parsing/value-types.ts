@@ -1,4 +1,9 @@
-import type { SyntaxValue, Reference, LocatedValue } from '../../contract/records/syntax.js';
+import type {
+  SyntaxValue,
+  Reference,
+  TypeSyntax,
+  LocatedValue,
+} from '../../contract/records/syntax.js';
 import type { ValueType, Property } from '../../contract/records/vocabulary.js';
 import { reject } from '../validation/outcomes.js';
 /** Readonly lists need an explicit guard because Array.isArray narrows only mutable arrays. */
@@ -8,7 +13,12 @@ export function isList(value: SyntaxValue): value is readonly SyntaxValue[] {
 /** References remain records, never strings with inferred namespace semantics. */
 export function isReference(value: SyntaxValue): value is Reference {
   if (typeof value !== 'object') return false;
-  return !isList(value);
+  return !isList(value) && value.kind === 'reference';
+}
+/** Type-use records are the declared counterpart to references, discriminated by their own kind tag. */
+export function isTypeUse(value: SyntaxValue): value is TypeSyntax {
+  if (typeof value !== 'object') return false;
+  return !isList(value) && value.kind === 'type';
 }
 /** Plain IDs exclude subtargets, scoped addresses and layout namespaces. */
 function isIdentity(value: SyntaxValue): boolean {
@@ -41,7 +51,17 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
   'type-expression': (value) => typeof value === 'string' || isIdentity(value),
   'signature-parameters': (value) => listOf(value, signatureParameter),
   link: (value) => typeof value === 'string' || isIdentity(value),
+  'type-use': isTypeUse,
+  'typed-parameters': (value) => listOf(value, typedParameter),
+  'literal-union': (value) => listOf(value, (item) => typeof item === 'string'),
 };
+/** Each typed parameter is a two-item [name, type] tuple, never the plain string type or id shape. */
+function typedParameter(item: SyntaxValue): boolean {
+  if (!isList(item) || item.length !== 2) return false;
+  const name = item[0];
+  const type = item[1];
+  return typeof name === 'string' && type !== undefined && isTypeUse(type);
+}
 function signatureParameter(item: SyntaxValue): boolean {
   if (typeof item === 'string') return true;
   return validSignatureTuple(item);

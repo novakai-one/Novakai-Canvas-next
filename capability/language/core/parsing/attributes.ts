@@ -3,6 +3,7 @@ import type { Property } from '../../contract/records/vocabulary.js';
 import { accepted, reject } from '../validation/outcomes.js';
 import { peek, advance, consume, type Cursor, type Parsed } from './cursor.js';
 import { readValue } from './values.js';
+import { readTypeUse, readTypedParameters } from './types.js';
 import { checkValue } from './value-types.js';
 import { repeat } from './repetition.js';
 type Attribute = readonly [string, LocatedValue];
@@ -38,12 +39,19 @@ function readAttribute(
       name,
     );
   const start = consume(advance(cursor), '=');
-  const raw = readValue(start);
+  const raw = readAttributeValue(start, property);
   requireIntegerValue(raw, property, name);
   requireQuotedValues(start, raw.next, property);
   requireSignatureParameters(raw.value, property);
   requireNonblankTypeExpression(raw.value, property);
   return { value: [name, checkValue(raw.value, property, name)], next: raw.next };
+}
+
+/** Typed declared grammars read their own shapes; every other property keeps the shared reader. */
+function readAttributeValue(cursor: Cursor, property: Property): Parsed<LocatedValue> {
+  if (property.type === 'type-use') return readTypeUse(cursor);
+  if (property.type === 'typed-parameters') return readTypedParameters(cursor);
+  return readValue(cursor);
 }
 
 function requireSignatureParameters(raw: LocatedValue, property: Property): void {

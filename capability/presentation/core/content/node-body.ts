@@ -1,10 +1,9 @@
 import type { DiagramObject, ContentBlock, Appearance } from '../../contract/records/input.js';
 import type { MeasuredContent, Anchor } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
-import { labelContent } from './headings.js';
 import { measureBlock } from './blocks.js';
 import { fieldColumns } from './fields.js';
-import { stack } from './text.js';
+import { labelContent, stack } from './text.js';
 /** A typed port is an addressable local row, independent of the eventual routed side. */
 function portContent(
   port: DiagramObject['ports'][number],

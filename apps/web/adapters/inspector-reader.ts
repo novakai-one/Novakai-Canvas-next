@@ -31,6 +31,8 @@ const command: z.ZodType<ObjectEdit> = z.discriminatedUnion('kind', [
       'state',
       'participant',
       'concept',
+      'folder',
+      'package',
       'system',
       'note',
     ]),

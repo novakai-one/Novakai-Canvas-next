@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { definitionId, label } from '../brands.js';
+import { definitionId, label, objectId } from '../brands.js';
+import type { DefinitionId, ObjectId } from '../brands.js';
 
-/** The deliberately small shared type vocabulary for the first definitions slice. */
+/** The deliberately small shared type vocabulary for definitions. */
 export const primitiveType = z.enum(['string', 'number', 'boolean', 'unknown', 'void']);
 const literalType = z.union([z.string(), z.number(), z.boolean()]);
 
@@ -9,7 +10,8 @@ export type TypeExpression =
   | { readonly kind: 'primitive'; readonly name: z.infer<typeof primitiveType> }
   | { readonly kind: 'literal'; readonly value: z.infer<typeof literalType> }
   | { readonly kind: 'reference'; readonly id: z.infer<typeof definitionId> }
-  | { readonly kind: 'union'; readonly items: readonly TypeExpression[] };
+  | { readonly kind: 'union'; readonly items: readonly TypeExpression[] }
+  | { readonly kind: 'opaque' };
 
 const typeExpressionSchema: z.ZodType<TypeExpression> = z.lazy(() =>
   z.discriminatedUnion('kind', [
@@ -22,6 +24,7 @@ const typeExpressionSchema: z.ZodType<TypeExpression> = z.lazy(() =>
         items: z.array(typeExpressionSchema).min(2).readonly(),
       })
       .readonly(),
+    z.strictObject({ kind: z.literal('opaque') }).readonly(),
   ]),
 );
 
@@ -32,14 +35,35 @@ export const definitionSchema = z
 
 export type Definition = z.infer<typeof definitionSchema>;
 
-/** A field's type has one physical source of truth: a legacy string or an explicit definition ref. */
-export const fieldTypeSchema = z.union([
-  label,
-  z.strictObject({ kind: z.literal('definition'), id: definitionId }).readonly(),
-]);
+/** Shared type use: a plain string type, a definition/entity ref, a primitive, or a generic instantiation. */
+export type TypeUse =
+  | string
+  | { readonly kind: 'definition'; readonly id: DefinitionId }
+  | { readonly kind: 'entity'; readonly id: ObjectId }
+  | { readonly kind: 'primitive'; readonly name: 'string' | 'number' | 'boolean' }
+  | {
+      readonly kind: 'generic';
+      readonly base: DefinitionId;
+      readonly arguments: readonly TypeUse[];
+    };
 
-export type FieldType = z.infer<typeof fieldTypeSchema>;
+export const typeUseSchema: z.ZodType<TypeUse> = z.lazy(() =>
+  z.union([
+    label,
+    z.strictObject({ kind: z.literal('definition'), id: definitionId }).readonly(),
+    z.strictObject({ kind: z.literal('entity'), id: objectId }).readonly(),
+    z
+      .strictObject({ kind: z.literal('primitive'), name: z.enum(['string', 'number', 'boolean']) })
+      .readonly(),
+    z
+      .strictObject({
+        kind: z.literal('generic'),
+        base: definitionId,
+        arguments: z.array(typeUseSchema).min(1).readonly(),
+      })
+      .readonly(),
+  ]),
+);
 
-/** Shared type use consumed by fields, members and callable signatures. */
-export const typeUseSchema = fieldTypeSchema;
-export type TypeUse = FieldType;
+export const fieldTypeSchema = typeUseSchema;
+export type FieldType = TypeUse;

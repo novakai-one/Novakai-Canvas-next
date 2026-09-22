@@ -1,10 +1,11 @@
 import type { DefinitionId } from '../contract/brands.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
 import type { Collection } from '../contract/records/collection.js';
-import type { TypeExpression, TypeUse } from '../contract/records/definition.js';
+import type { Definition, TypeExpression, TypeUse } from '../contract/records/definition.js';
 import type { ContentBlock, Field } from '../contract/records/content.js';
 import { failure, success } from './invariants/issues.js';
 import { diagnoseWhen, referenceIssue } from './invariants/issues.js';
+import { typeUseDefinitions, typeUseEntities } from './definitions/type-uses.js';
 
 const MAX_NODES = 256;
 const MAX_DEPTH = 32;
@@ -246,8 +247,11 @@ export function validateDefinitionGraph(collection: Collection): readonly Diagno
 
 function validateFieldTypes(collection: Collection): readonly Diagnostic[] {
   const ids = new Set(collection.definitions.map((definition) => definition.id));
+  const entities = new Set(
+    collection.objects.filter((object) => object.kind === 'entity').map((object) => object.id),
+  );
   return collection.objects.flatMap((object) =>
-    object.content.flatMap((block) => validateContentTypes(block, object.id, ids)),
+    object.content.flatMap((block) => validateContentTypes(block, object.id, ids, entities)),
   );
 }
 
@@ -255,9 +259,10 @@ function validateContentTypes(
   block: ContentBlock,
   object: string,
   ids: ReadonlySet<string>,
+  entities: ReadonlySet<string>,
 ): readonly Diagnostic[] {
-  if (block.kind === 'signature') return validateSignatureTypes(block, object, ids);
-  return 'type' in block ? validateDirectType(block.type, object, block.id, ids) : [];
+  if (block.kind === 'signature') return validateSignatureTypes(block, object, ids, entities);
+  return 'type' in block ? validateDirectType(block.type, object, block.id, ids, entities) : [];
 }
 
 function validateDirectType(
@@ -265,14 +270,16 @@ function validateDirectType(
   object: string,
   id: string,
   ids: ReadonlySet<string>,
+  entities: ReadonlySet<string>,
 ): readonly Diagnostic[] {
-  return typeUseIssue(type, `objects.${object}.content.${id}.type`, ids);
+  return typeUseIssue(type, `objects.${object}.content.${id}.type`, ids, entities);
 }
 
 function validateSignatureTypes(
   block: Extract<ContentBlock, { kind: 'signature' }>,
   object: string,
   ids: ReadonlySet<string>,
+  entities: ReadonlySet<string>,
 ): readonly Diagnostic[] {
   const parameters = block.parameters.flatMap((parameter, index) =>
     typeof parameter === 'string'
@@ -281,11 +288,12 @@ function validateSignatureTypes(
           parameter.type,
           `objects.${object}.content.${block.id}.parameters.${index}.type`,
           ids,
+          entities,
         ),
   );
   return [
     ...parameters,
-    ...typeUseIssue(block.returns, `objects.${object}.content.${block.id}.returns`, ids),
+    ...typeUseIssue(block.returns, `objects.${object}.content.${block.id}.returns`, ids, entities),
   ];
 }
 
@@ -293,9 +301,15 @@ function typeUseIssue(
   type: TypeUse,
   path: string,
   ids: ReadonlySet<string>,
+  entities: ReadonlySet<string>,
 ): readonly Diagnostic[] {
-  if (typeof type === 'string') return [];
-  return referenceIssue(!ids.has(type.id), path);
+  const definitionIssues = typeUseDefinitions(type).flatMap((id) =>
+    referenceIssue(!ids.has(id), path),
+  );
+  const entityIssues = typeUseEntities(type).flatMap((id) =>
+    diagnoseWhen(!entities.has(id), 'reference', path, 'Entity reference must name an entity'),
+  );
+  return [...definitionIssues, ...entityIssues];
 }
 
 function displayLiteral(value: string | number | boolean): string {
@@ -377,6 +391,8 @@ const nonUnionPrinters = {
       seen,
       budget,
     ),
+  /** An opaque expression nested in a union has no shape to print. */
+  opaque: (): string => '',
 };
 
 type NonUnionExpression = Exclude<TypeExpression, { readonly kind: 'union' }>;
@@ -401,6 +417,17 @@ function markTruncated(budget: DisplayBudget, index: number, length: number): vo
   if (index < length && budget.remaining <= 0) budget.truncated = true;
 }
 
+/** An opaque expression has no shape to print; it displays as the owning definition's label. */
+function definitionDisplayText(
+  definition: Definition,
+  collection: Collection,
+  seen: Set<DefinitionId>,
+  budget: DisplayBudget,
+): string {
+  if (definition.expression.kind === 'opaque') return definition.label;
+  return displayExpression(definition.expression, collection, seen, budget);
+}
+
 function displayReference(
   id: DefinitionId,
   collection: Collection,
@@ -412,7 +439,7 @@ function displayReference(
   if (target === undefined) return `@${id}`;
   const next = new Set(seen);
   next.add(id);
-  return displayExpression(target.expression, collection, next, budget);
+  return definitionDisplayText(target, collection, next, budget);
 }
 
 /** Resolve one definition ref to deterministic display text, expanding shared aliases with a bound. */
@@ -420,7 +447,7 @@ function resolvedDefinitionDisplay(collection: Collection, id: DefinitionId): st
   const definition = collection.definitions.find((item) => item.id === id);
   if (definition === undefined) return `@${id}`;
   const budget = { remaining: MAX_NODES, truncated: false };
-  const display = displayExpression(definition.expression, collection, new Set([id]), budget);
+  const display = definitionDisplayText(definition, collection, new Set([id]), budget);
   return budget.truncated ? `${display} …` : display;
 }
 
@@ -435,8 +462,26 @@ export function fieldTypeDisplay(collection: Collection, field: Field): string {
   return typeUseDisplay(collection, field.type);
 }
 
+/** A missing entity target falls back to its raw reference; a resolved one shows its authored label. */
+function entityDisplay(collection: Collection, id: string): string {
+  const object = collection.objects.find((candidate) => candidate.id === id);
+  return object === undefined ? `@${id}` : object.label;
+}
+
 export function typeUseDisplay(collection: Collection, type: TypeUse): string {
-  return typeof type === 'string' ? type : resolvedDefinitionDisplay(collection, type.id);
+  if (typeof type === 'string') return type;
+  switch (type.kind) {
+    case 'definition':
+      return resolvedDefinitionDisplay(collection, type.id);
+    case 'entity':
+      return entityDisplay(collection, type.id);
+    case 'primitive':
+      return type.name;
+    case 'generic':
+      return `${resolvedDefinitionDisplay(collection, type.base)}<${type.arguments
+        .map((argument) => typeUseDisplay(collection, argument))
+        .join(', ')}>`;
+  }
 }
 
 /** Direct usages are unique, stable and include definition-to-definition paths. */
@@ -522,7 +567,7 @@ function usageForType(
   id: DefinitionId,
   extra: Partial<DefinitionUsage>,
 ): readonly DefinitionUsage[] {
-  return typeof type !== 'string' && type.id === id
+  return typeUseDefinitions(type).includes(id)
     ? [{ kind, definition: id, path, object, ...extra }]
     : [];
 }

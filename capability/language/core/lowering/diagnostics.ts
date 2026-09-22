@@ -1,7 +1,14 @@
-import type { Span, Declaration, LocatedValue, Token } from '../../contract/records/syntax.js';
+import type {
+  Span,
+  Declaration,
+  Document,
+  LocatedValue,
+  Reference,
+  Token,
+} from '../../contract/records/syntax.js';
 import type { SourceMapping } from '../../contract/records/requests.js';
 import { LanguageFault } from '../../contract/errors.js';
-import { id } from './fields.js';
+import { field, id } from './fields.js';
 import type { OwnerDiagnostic, Result, Diagnostic } from '../../contract/errors.js';
 interface OwnerError {
   readonly code: 'validation-failed';
@@ -35,15 +42,44 @@ function spanWidth(span: Span): number {
 }
 /** Stable IDs produce diagnostic anchors without depending on formatting or declaration order. */
 export function sourceMappings(item: Declaration, prefix = ''): readonly SourceMapping[] {
+  if (isMultiIdType(item)) return typeIdMappings(item, prefix);
   const name = mappingPath(item, prefix);
   const expression = item.kind === 'type' ? item.fields.expression : undefined;
-  const own = [
+  return [
     { path: name, span: item.span },
     ...contentMappings(name, item),
+    ...entryMappings(name, item),
     ...expressionMapping(name, expression),
     ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
-  return own;
+}
+/** Declared facts live under declare; their canonical paths are already top-level. */
+export function documentMappings(document: Document): readonly SourceMapping[] {
+  const declared = (document.declare?.children ?? []).flatMap((child) => sourceMappings(child));
+  return [...declared, ...sourceMappings(document.declaration)];
+}
+/** Declared `type @A @B` carries no own id field; each listed id anchors its own definition instead. */
+function isMultiIdType(item: Declaration): boolean {
+  return item.kind === 'type' && item.fields.id === undefined;
+}
+function typeIdMappings(item: Declaration, prefix: string): readonly SourceMapping[] {
+  return (field(item.fields, 'ids').items ?? []).map((value) => typeIdMapping(value, prefix));
+}
+function typeIdMapping(value: LocatedValue, prefix: string): SourceMapping {
+  return { path: typeDefinitionPath(prefix, (value.value as Reference).id), span: value.span };
+}
+/** A node-nested member keeps the `${nodeId}-${typeId}` definition id; a top-level type uses the bare id. */
+function typeDefinitionPath(prefix: string, typeId: string): string {
+  if (prefix === '') return `definitions.${typeId}`;
+  return `definitions.${prefix.slice(prefix.lastIndexOf('.') + 1)}-${typeId}`;
+}
+
+/** Change entries are numbered across all op children in source order, as lowerDeclaredChanges flattens them. */
+function entryMappings(name: string, item: Declaration): readonly SourceMapping[] {
+  if (item.kind !== 'change') return [];
+  return item.children
+    .flatMap((op) => op.fields.refs?.items ?? [])
+    .map((ref, index) => ({ path: `${name}.entries.${index}`, span: ref.span }));
 }
 
 function contentMappings(name: string, item: Declaration): readonly SourceMapping[] {
@@ -209,6 +245,7 @@ function ownedPath(item: Declaration, prefix: string): string {
     asset: 'assets',
     source: 'sources',
     type: 'definitions',
+    change: 'changes',
   };
   const top = namespaces[item.kind];
   if (top !== undefined) return `${top}.${id(item.fields)}`;

@@ -1,0 +1,11 @@
+canvas 2
+declare @state-model {
+  node @draft start "Draft"
+  node @placed state
+  node @done end "Done"
+  wire @t1 @draft -> @placed kind=transition guard="valid"
+  wire @t2 @placed -> @done kind=transition guard="shipped"
+}
+collection @state "Lifecycle" uses=@state-model {
+  section @s-state "Order states" mode=state { show @draft @placed @done connect @t1 @t2 }
+}

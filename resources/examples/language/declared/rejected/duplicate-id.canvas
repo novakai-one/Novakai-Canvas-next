@@ -1,0 +1,12 @@
+canvas 2
+declare @flow-model {
+  node @x step "Receive"
+  node @ship step "Ship"
+  wire @x @x -> @ship kind=flow
+}
+collection @reject-duplicate-id "Rejected duplicate id" uses=@flow-model {
+  section @s-flow "Fulfil" mode=flow {
+    show @x @ship
+    connect @x
+  }
+}

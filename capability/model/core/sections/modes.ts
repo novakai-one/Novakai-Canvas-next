@@ -5,6 +5,7 @@ import type { Section, Mode } from '../../contract/records/section.js';
 import { compatibleLayouts, compatibleWires } from '../../contract/records/policies.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
+import { relationshipLabel } from '../relationships/label.js';
 import { visibleObjects } from './groups.js';
 
 /** Resolve visible wires to canonical relationships; missing identities are diagnosed by views. */
@@ -31,7 +32,7 @@ function validateDecisionLabels(section: Section, collection: Collection): reado
     );
     return duplicates(
       outgoing,
-      (wire) => wire.label,
+      (wire) => relationshipLabel(wire),
       `sections.${section.id}.decision.${decision.id}`,
     );
   });
@@ -99,7 +100,20 @@ export function validateModes(section: Section, collection: Collection): readonl
     `${path}.sequence`,
     'Sequence items are sequence-only',
   );
+  const scenarioIssues = diagnoseWhen(
+    section.mode !== 'sequence' && section.scenario !== undefined,
+    'mode',
+    `${path}.scenario`,
+    'Scenario is sequence-only',
+  );
   const treeFieldIssues = validateTreeOnlyFields(section);
   const decisionIssues = validateDecisionLabels(section, collection);
-  return [...layoutIssues, ...wireIssues, ...sequenceIssues, ...treeFieldIssues, ...decisionIssues];
+  return [
+    ...layoutIssues,
+    ...wireIssues,
+    ...sequenceIssues,
+    ...scenarioIssues,
+    ...treeFieldIssues,
+    ...decisionIssues,
+  ];
 }

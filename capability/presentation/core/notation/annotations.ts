@@ -1,8 +1,7 @@
-import type { Relationship } from '../../contract/records/input.js';
+import type { ChangeEntry, Relationship } from '../../contract/records/input.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
-import { labelContent } from '../content/headings.js';
-import { offset } from '../content/text.js';
+import { labelContent, offset } from '../content/text.js';
 import { wireLabel } from './wires.js';
 
 /** A numbered label is one measured obstacle; Layout does not have to guess badge size or text position. */
@@ -79,6 +78,14 @@ function pilledLabel(label: MeasuredContent, context: ContentContext): MeasuredC
       ...offset(label, padding, padding).primitives,
     ],
   };
+}
+
+/** Change status renders as an uppercase annotation pill, e.g. NEW or LOCKED. */
+export function changeBadge(
+  status: ChangeEntry['status'],
+  context: ContentContext,
+): MeasuredContent {
+  return pilledLabel(labelContent(status.toUpperCase(), context, 'annotation'), context);
 }
 
 /** Preserve the full relationship meaning; absence of a step retains the existing unnumbered annotation. */

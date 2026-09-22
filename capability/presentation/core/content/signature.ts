@@ -1,6 +1,7 @@
 import type { ContentBlock } from '../../contract/records/input.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
 import type { TypeUse } from '../../contract/records/input.js';
+import { typeUseText } from '../../contract/records/input.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import { measureText, offset } from './text.js';
 import { reject, requireValue } from '../validation/outcomes.js';
@@ -39,12 +40,8 @@ function suffix(index: number, block: Signature, context: ContentContext): strin
   return ',';
 }
 
-function typeText(type: TypeUse): string {
-  return typeof type === 'string' ? type : `@${type.id}`;
-}
-
 function resolvedTypeText(type: TypeUse, context: ContentContext): string {
-  return context.resolveTypeUse?.(type) ?? typeText(type);
+  return context.resolveTypeUse?.(type) ?? typeUseText(type);
 }
 
 function parameterText(

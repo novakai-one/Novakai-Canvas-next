@@ -33,7 +33,7 @@ describe('Language correction and safety boundaries', () => {
       value(language.lower({ source: emptyText, mode: 'create', snapshot: null, resources }))
         .collection.objects[0]?.content[0],
     ).toMatchObject({ kind: 'text', text: '' });
-    rejected(language.parse('canvas 2 collection @bad "Bad" {}'), 'unsupported-version');
+    rejected(language.parse('canvas 2 collection @bad "Bad" {}'), 'syntax');
     rejected(
       language.parse('canvas 1 collection @bad "Bad" { node @a mystery "A" {} }'),
       'invalid-value',

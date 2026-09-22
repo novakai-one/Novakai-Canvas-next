@@ -1,6 +1,7 @@
 import type { Collection } from '../../contract/ports/model.js';
 import type { DefinitionId, TypeExpression } from '../../contract/ports/model.js';
 import type { Scope } from '../../contract/records/requests.js';
+import { typeUseDefinitions } from '../../contract/ports/model.js';
 import { reject, origin } from '../validation/outcomes.js';
 /** Scoped data is a display projection and never asserted to be a valid standalone collection. */
 export function selectScope(collection: Collection, scope: Scope): Collection {
@@ -76,16 +77,13 @@ function resourceScope(collection: Collection): Collection {
 function typeUses(
   block: Collection['objects'][number]['content'][number],
 ): readonly DefinitionId[] {
-  const direct = (
-    type: string | { readonly kind: 'definition'; readonly id: DefinitionId },
-  ): readonly DefinitionId[] => (typeof type === 'string' ? [] : [type.id]);
-  if (block.kind === 'field' || block.kind === 'member') return direct(block.type);
+  if (block.kind === 'field' || block.kind === 'member') return typeUseDefinitions(block.type);
   if (block.kind !== 'signature') return [];
   return [
     ...block.parameters.flatMap((parameter) =>
-      typeof parameter === 'string' ? [] : direct(parameter.type),
+      typeof parameter === 'string' ? [] : typeUseDefinitions(parameter.type),
     ),
-    ...direct(block.returns),
+    ...typeUseDefinitions(block.returns),
   ];
 }
 

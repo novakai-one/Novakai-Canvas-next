@@ -13,5 +13,10 @@ export type {
   LayoutIntent,
   ObjectKind,
   RelationshipKind,
+  ChangeEntry,
 } from '@novakai/canvas-model';
 export type { TypeUse } from '@novakai/canvas-model';
+/** Relationship label derivation is reused through Model's permitted public contract. */
+export { relationshipLabel } from '@novakai/canvas-model';
+/** Canonical type-use text and definition refs are reused through Model's permitted public contract. */
+export { typeUseText, typeUseDefinitions } from '@novakai/canvas-model';

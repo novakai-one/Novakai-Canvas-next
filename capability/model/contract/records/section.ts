@@ -120,6 +120,8 @@ export const sectionSchema = z
     wires: z.array(wireSchema).readonly().default([]),
     root: objectId.optional(),
     sequence: z.array(sequenceSchema).readonly().default([]),
+    /** The declared scenario a sequence section shows; `sequence` holds its lowered events. */
+    scenario: z.strictObject({ id: descendantId, title: label }).readonly().optional(),
     placement: placementSchema.optional(),
   })
   .readonly();

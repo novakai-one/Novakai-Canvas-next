@@ -1,12 +1,16 @@
 import type { Declaration } from '../../contract/records/syntax.js';
+import type { ConstructDefinition } from '../../contract/records/vocabulary.js';
 import { constructs } from '../vocabulary/constructs.js';
 import { isReference } from '../parsing/value-types.js';
 import { reject } from '../validation/outcomes.js';
 import { field, id, text, optional, type RawRecord } from './fields.js';
 import { mapDeclaredProperties, lowerValue } from './properties.js';
 /** Common position/property projection is driven by the grammar's one mapping table. */
-export function lowerRecord(declaration: Declaration): RawRecord {
-  const definition = constructs.find((item) => item.kind === declaration.kind);
+export function lowerRecord(
+  declaration: Declaration,
+  table: readonly ConstructDefinition[] = constructs,
+): RawRecord {
+  const definition = table.find((item) => item.kind === declaration.kind);
   if (definition === undefined)
     reject('invalid-input', declaration.span, 'Shipped construct', 'Unknown parsed construct');
   const positions = definition.positions.filter((item) => item.name !== 'arrow');
@@ -48,7 +52,7 @@ function lowerTable(declaration: Declaration): RawRecord {
   return {
     kind: 'table',
     ...lowerRecord(declaration),
-    rows: declaration.children.map(lowerRecord),
+    rows: declaration.children.map((row) => lowerRecord(row)),
   };
 }
 /** Canonical content and port compartments each retain their declaration order. */
@@ -56,7 +60,9 @@ export function lowerNode(declaration: Declaration): RawRecord {
   return {
     ...lowerRecord(declaration),
     content: declaration.children.filter((item) => item.kind !== 'port').map(lowerContent),
-    ports: declaration.children.filter((item) => item.kind === 'port').map(lowerRecord),
+    ports: declaration.children
+      .filter((item) => item.kind === 'port')
+      .map((port) => lowerRecord(port)),
   };
 }
 

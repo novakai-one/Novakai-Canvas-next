@@ -1,0 +1,58 @@
+canvas 2
+declare @ordering-model {
+  type @Money @OrderId @CustomerId
+  node @Customer entity {
+    field @id: @CustomerId key=primary
+    field @name: string
+  }
+  type @OrderStatus = 'draft' | 'placed' | 'fulfilled'
+  node @Order entity {
+    field @id: @OrderId key=primary
+    field @customerId: @CustomerId
+    field @status: @OrderStatus
+    field @total: @Money
+  }
+  node @shop folder "shop/"
+  node @ordering folder "ordering/"
+  node @orders module "orders.ts" {
+    signature @getOrder parameters=["id": @OrderId] returns=@Order
+  }
+  node @pricing module "pricing.ts" {
+    signature @priceOrder parameters=["order": @Order] returns=@Money
+  }
+  node @draft start "Draft"
+  node @placed state
+  node @fulfilled end "Fulfilled"
+  wire @i1 @orders -> @pricing.@priceOrder kind=imports
+  wire @owns @Customer.@id -> @Order.@customerId kind=association from=1 to=0..many
+  wire @t1 @draft -> @placed kind=transition guard="placed"
+  wire @t2 @placed -> @fulfilled kind=transition guard="shipped"
+  scenario @price-check "Price an order" {
+    call @orders -> @pricing.@priceOrder returns
+  }
+  change @pricing-split "Move pricing out of orders" {
+    new @pricing @i1
+    changed @orders @Order.@total
+    locked @Customer
+  }
+}
+collection @ordering "Ordering from five angles" uses=@ordering-model {
+  section @s-tree "Repo tree" mode=tree {
+    show @shop { show @ordering { show @orders @pricing } }
+  }
+  section @s-mod "Imports" mode=modules {
+    show @ordering { show @orders @pricing }
+    connect @i1
+  }
+  section @s-er "Data" mode=er {
+    show @Customer @Order
+    connect @owns
+  }
+  section @s-state "Order lifecycle" mode=state {
+    show @draft @placed @fulfilled
+    connect @t1 @t2
+  }
+  section @s-seq "Pricing call" mode=sequence {
+    show @price-check
+  }
+}

@@ -1,0 +1,12 @@
+canvas 2
+declare @modules-model {
+  node @src folder "src"
+  node @lib folder "lib"
+  wire @f1 @src -> @lib "usesHelpers" kind=reference
+}
+collection @reject-folder-label "Rejected folder label" uses=@modules-model {
+  section @s-mod "Imports" mode=modules {
+    show @src @lib
+    connect @f1
+  }
+}

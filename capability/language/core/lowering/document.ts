@@ -7,33 +7,40 @@ import { lowerRecord, lowerNode } from './content.js';
 import { lowerSection } from './views.js';
 import { lowerLayout } from './layout.js';
 import { lowerAsset, resolveTheme, documentResources } from './resources.js';
-import { ownerValue, sourceMappings } from './diagnostics.js';
+import { ownerValue, documentMappings } from './diagnostics.js';
 import { partitionLayout } from './layout-fields.js';
 import type { Result } from '../../contract/errors.js';
 import { accepted, protect, reject } from '../validation/outcomes.js';
 import { lowerDefinition } from './definitions.js';
+import { lowerDeclaredDocument } from './declared/document.js';
 /** Build complete raw canonical data; Model validates identities; Language owns correction and Authoring owns commit recovery. Retries have no writes. */
 export function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
-  return protect(() => {
-    const item = document.declaration;
-    const metadata = lowerRecord(item);
-    const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;
-    void alias;
-    const theme = resolveTheme(textOr(item.fields, 'theme', 'paper'), request.resources, item.span);
-    return {
-      ...remaining,
-      schemaVersion: 1,
-      revision: request.snapshot?.revision ?? 0,
-      theme,
-      arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
-      objects: records(item, 'node').map(lowerNode),
-      relationships: records(item, 'wire').map(lowerRecord),
-      sections: records(item, 'section').map((section) => accepted(lowerSection(section))),
-      sources: records(item, 'source').map(lowerRecord),
-      assets: records(item, 'asset').map((asset) => lowerAsset(asset, request.resources)),
-      definitions: records(item, 'type').map(lowerDefinition),
-    };
-  });
+  return protect(() =>
+    document.version === 2
+      ? lowerDeclaredDocument(document, request)
+      : lowerClassicDocument(document, request),
+  );
+}
+/** Canvas 1 lowering: the collection declaration is both metadata and content owner. */
+function lowerClassicDocument(document: Document, request: LowerRequest): RawRecord {
+  const item = document.declaration;
+  const metadata = lowerRecord(item);
+  const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;
+  void alias;
+  const theme = resolveTheme(textOr(item.fields, 'theme', 'paper'), request.resources, item.span);
+  return {
+    ...remaining,
+    schemaVersion: 1,
+    revision: request.snapshot?.revision ?? 0,
+    theme,
+    arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
+    objects: records(item, 'node').map(lowerNode),
+    relationships: records(item, 'wire').map((wire) => lowerRecord(wire)),
+    sections: records(item, 'section').map((section) => accepted(lowerSection(section))),
+    sources: records(item, 'source').map((source) => lowerRecord(source)),
+    assets: records(item, 'asset').map((asset) => lowerAsset(asset, request.resources)),
+    definitions: records(item, 'type').map(lowerDefinition),
+  };
 }
 /** Record namespaces are selected explicitly; view statements never become canonical objects. */
 function records(item: Declaration, kind: Declaration['kind']): readonly Declaration[] {
@@ -79,7 +86,7 @@ export function lowerDocument(
 ): Result<LoweredIntent> {
   return protect(() => {
     checkMode(document, request);
-    const mappings = sourceMappings(document.declaration);
+    const mappings = documentMappings(document);
     const raw = accepted(lowerDocumentData(document, request));
     const candidate = ownerValue(deps.reader.validate(raw), mappings, document.span);
     const shell = {
@@ -90,6 +97,7 @@ export function lowerDocument(
       assets: [],
       sources: [],
       definitions: [],
+      changes: [],
       arrangement: { ...candidate.arrangement, constraints: [] },
     };
     const original =

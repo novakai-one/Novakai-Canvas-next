@@ -9,21 +9,21 @@ export function record(value: unknown): RawRecord {
   return Object.fromEntries(Object.entries(value));
 }
 /** Only actual strings become textual DSL; object coercion would hide data corruption. */
-export function string(value: unknown): string {
+export function string(value: unknown, name = 'value'): string {
   if (typeof value !== 'string')
-    reject('unrepresentable', origin, 'String', 'Cannot print a non-string');
+    reject('unrepresentable', origin, 'String', `Cannot print a non-string ${name}`, name);
   return value;
 }
 /** Format canonical properties using the same declared scalar/list type used by the parser. */
-export function printValue(value: unknown, type: ValueType): string {
+export function printValue(value: unknown, type: ValueType, name = 'value'): string {
   if (type === 'signature-parameters') return printSignatureParameters(value);
-  return printSimpleValue(value, type);
+  return printSimpleValue(value, type, name);
 }
 
-function printSimpleValue(value: unknown, type: ValueType): string {
+function printSimpleValue(value: unknown, type: ValueType, name: string): string {
   if (Array.isArray(value)) return printList(value, type);
   if (type === 'endpoint') return printEndpoint(value);
-  return printScalar(value, type);
+  return printScalar(value, type, name);
 }
 
 function printSignatureParameters(value: unknown): string {
@@ -38,11 +38,11 @@ function printSignatureParameters(value: unknown): string {
     .join(', ')}]`;
 }
 /** Scalars have explicit delimiters; theme pins are quoted when they are not bare vocabulary words. */
-function printScalar(value: unknown, type: ValueType): string {
+function printScalar(value: unknown, type: ValueType, name: string): string {
   const printers: Readonly<Record<string, () => string>> = {
-    string: () => quote(string(value)),
-    word: () => word(value),
-    id: () => `@${string(value)}`,
+    string: () => quote(string(value, name)),
+    word: () => word(value, name),
+    id: () => `@${string(value, name)}`,
     boolean: () => String(value),
     integer: () => String(value),
     'type-expression': () => printTypeExpression(value),
@@ -63,9 +63,31 @@ function printTypeExpression(value: unknown): string {
   if (typeof value === 'string') return quote(value);
   requireTypeRecord(value);
   const recordValue = record(value);
-  if (recordValue.kind !== 'definition')
+  const print = typePrinters.get(string(recordValue.kind));
+  if (print === undefined)
+    return reject(
+      'unrepresentable',
+      origin,
+      'Shared definition reference',
+      'Cannot print field type',
+    );
+  return print(recordValue);
+}
+/** Printed spelling for declared type records. */
+const typePrinters = new Map<string, (value: RawRecord) => string>([
+  ['definition', (value) => `@${string(value.id)}`],
+  ['entity', (value) => `@${string(value.id)}`],
+  ['primitive', (value) => string(value.name)],
+  [
+    'generic',
+    (value) =>
+      `@${string(value.base)}<${typeArguments(value.arguments).map(printTypeExpression).join(', ')}>`,
+  ],
+]);
+function typeArguments(value: unknown): readonly unknown[] {
+  if (!Array.isArray(value))
     reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
-  return `@${string(recordValue.id)}`;
+  return value;
 }
 
 function requireTypeRecord(value: unknown): asserts value is object {
@@ -73,8 +95,8 @@ function requireTypeRecord(value: unknown): asserts value is object {
     reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
 }
 /** Bare words remain readable; punctuation-bearing theme pins retain exact identity inside quotes. */
-function word(value: unknown): string {
-  const text = string(value);
+function word(value: unknown, name: string): string {
+  const text = string(value, name);
   return /^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(text) ? text : quote(text);
 }
 /** Bracketed list order is semantic, including fields and foreign composite references. */

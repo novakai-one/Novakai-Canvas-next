@@ -18,6 +18,10 @@ export function lowerDocumentDataV2(document: Document, request: LowerRequest): 
   const symbols = buildSymbols(declare);
   const { uses, ...metadata } = lowerRecord(collection, constructsV2);
   void uses;
+  const authoredWires = recordsOf(declare, 'wire').map(lowerV2Wire);
+  const sectionResults = recordsOf(collection, 'section').map((item) =>
+    lowerV2Section(item, symbols),
+  );
   return {
     ...metadata,
     schemaVersion: 1,
@@ -29,9 +33,9 @@ export function lowerDocumentDataV2(document: Document, request: LowerRequest): 
     ),
     arrangement: accepted(lowerLayout(collection.fields, [], 'grid')),
     objects: recordsOf(declare, 'node').map((item) => lowerV2Node(item, symbols)),
-    relationships: recordsOf(declare, 'wire').map(lowerV2Wire),
+    relationships: [...authoredWires, ...sectionResults.flatMap((result) => result.derived)],
     definitions: lowerV2Definitions(declare),
-    sections: recordsOf(collection, 'section').map(lowerV2Section),
+    sections: sectionResults.map((result) => result.section),
     sources: [],
     assets: [],
   };

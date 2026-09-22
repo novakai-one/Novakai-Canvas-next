@@ -100,7 +100,20 @@ export function validateModes(section: Section, collection: Collection): readonl
     `${path}.sequence`,
     'Sequence items are sequence-only',
   );
+  const scenarioIssues = diagnoseWhen(
+    section.mode !== 'sequence' && section.scenario !== undefined,
+    'mode',
+    `${path}.scenario`,
+    'Scenario is sequence-only',
+  );
   const treeFieldIssues = validateTreeOnlyFields(section);
   const decisionIssues = validateDecisionLabels(section, collection);
-  return [...layoutIssues, ...wireIssues, ...sequenceIssues, ...treeFieldIssues, ...decisionIssues];
+  return [
+    ...layoutIssues,
+    ...wireIssues,
+    ...sequenceIssues,
+    ...scenarioIssues,
+    ...treeFieldIssues,
+    ...decisionIssues,
+  ];
 }

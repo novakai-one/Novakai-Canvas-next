@@ -26,7 +26,7 @@ function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Col
     cascadeSection(section, removedId, removedRelationshipIds),
   );
   const cascaded = { ...collection, objects, relationships, sections };
-  return { ...cascaded, changes: cascadeChanges(cascaded) };
+  return { ...cascaded, changes: cascadeChanges(collection, cascaded) };
 }
 
 /** Any difference beyond removing the object itself constitutes a dependency cleanup. */

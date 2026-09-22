@@ -63,9 +63,31 @@ function printTypeExpression(value: unknown): string {
   if (typeof value === 'string') return quote(value);
   requireTypeRecord(value);
   const recordValue = record(value);
-  if (recordValue.kind !== 'definition')
+  const print = typePrinters.get(string(recordValue.kind));
+  if (print === undefined)
+    return reject(
+      'unrepresentable',
+      origin,
+      'Shared definition reference',
+      'Cannot print field type',
+    );
+  return print(recordValue);
+}
+/** Interim v1 spelling for v2 type records; the phase 5 printer replaces it. */
+const typePrinters = new Map<string, (value: RawRecord) => string>([
+  ['definition', (value) => `@${string(value.id)}`],
+  ['entity', (value) => `@${string(value.id)}`],
+  ['primitive', (value) => string(value.name)],
+  [
+    'generic',
+    (value) =>
+      `@${string(value.base)}<${typeArguments(value.arguments).map(printTypeExpression).join(', ')}>`,
+  ],
+]);
+function typeArguments(value: unknown): readonly unknown[] {
+  if (!Array.isArray(value))
     reject('unrepresentable', origin, 'Shared definition reference', 'Cannot print field type');
-  return `@${string(recordValue.id)}`;
+  return value;
 }
 
 function requireTypeRecord(value: unknown): asserts value is object {

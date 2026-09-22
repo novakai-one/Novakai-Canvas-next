@@ -45,8 +45,11 @@ function rejectWireProp(item: Declaration, prop: string, wireKind: string): neve
     'invalid-value',
     item.span,
     `${owner} takes: ${ownerProps(owner)}`,
-    `E001 format: ${prop} is not a property of a ${wireKind} wire. ${owner} takes: ${ownerProps(owner)}.`,
+    `E001 format: ${prop} is not a property of ${article(wireKind)} ${wireKind} wire. ${owner} takes: ${ownerProps(owner)}.`,
   );
+}
+function article(word: string): string {
+  return /^[aeiou]/i.test(word) ? 'an' : 'a';
 }
 /** Code nodes never carry an authored wire label; the diagram names them by their members. */
 const codeKinds: readonly string[] = ['module', 'package', 'interface', 'function', 'folder'];

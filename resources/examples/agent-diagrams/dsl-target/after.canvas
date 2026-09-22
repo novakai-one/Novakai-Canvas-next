@@ -27,13 +27,16 @@ declare @ordering-model {
   wire @owns @Customer.@id -> @Order.@customerId kind=association from=1 to=0..many
   wire @t1 @draft -> @placed kind=transition guard="placed"
   wire @t2 @placed -> @fulfilled kind=transition guard="shipped"
+  scenario @price-check "Price an order" {
+    call @orders -> @pricing.@priceOrder returns
+  }
   change @pricing-split "Move pricing out of orders" {
     new @pricing @i1
     changed @orders @Order.@total
     locked @Customer
   }
 }
-collection @ordering "Ordering from four angles" uses=@ordering-model {
+collection @ordering "Ordering from five angles" uses=@ordering-model {
   section @s-tree "Repo tree" mode=tree {
     show @shop { show @ordering { show @orders @pricing } }
   }
@@ -48,5 +51,8 @@ collection @ordering "Ordering from four angles" uses=@ordering-model {
   section @s-state "Order lifecycle" mode=state {
     show @draft @placed @fulfilled
     connect @t1 @t2
+  }
+  section @s-seq "Pricing call" mode=sequence {
+    show @price-check
   }
 }

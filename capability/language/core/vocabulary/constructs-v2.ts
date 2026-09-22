@@ -11,7 +11,7 @@ export const constructsV2: readonly ConstructDefinition[] = [
     kind: 'declare',
     positions: [{ name: 'id', type: 'id' }],
     properties: {},
-    children: ['type', 'node', 'wire', 'change'],
+    children: ['type', 'node', 'wire', 'scenario', 'change'],
     body: 'required',
   },
   {
@@ -114,6 +114,34 @@ export const constructsV2: readonly ConstructDefinition[] = [
     positions: [{ name: 'id', type: 'id' }],
     properties: { parameters: p.parametersV2, returns: p.returnsV2 },
     children: null,
+  },
+  {
+    kind: 'scenario',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'title', type: 'string' },
+    ],
+    properties: {},
+    children: ['call', 'alt'],
+    body: 'required',
+  },
+  {
+    kind: 'call',
+    positions: [
+      { name: 'source', type: 'id' },
+      { name: 'arrow', type: 'word', literal: '->' },
+      { name: 'target', type: 'endpoint' },
+      { name: 'returns', type: 'word', values: ['returns'], optional: true },
+    ],
+    properties: {},
+    children: null,
+  },
+  {
+    kind: 'alt',
+    positions: [{ name: 'label', type: 'string' }],
+    properties: {},
+    children: ['call', 'alt'],
+    body: 'required',
   },
   {
     kind: 'keygroup',

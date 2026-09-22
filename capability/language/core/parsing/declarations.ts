@@ -299,19 +299,21 @@ function requireNonEmptyBody(
     reject('syntax', braceSpan, 'Non-empty block', 'E005 empty: omit the block.');
 }
 
-/** Only branch IDs and v2 optional labels have optional positional syntax. */
+/** Branch IDs, v2 optional labels and the scenario `returns` word have optional positional syntax. */
 function optionalPositionMissing(cursor: Cursor, rule: PositionRule): boolean {
   if (rule.optional !== true) return false;
-  return optionalTypeMissing(cursor, rule.type);
+  return optionalTypeMissing(cursor, rule);
 }
 
-const optionalMissingChecks: Readonly<Record<string, (cursor: Cursor) => boolean>> = {
+type MissingCheck = (cursor: Cursor, rule: PositionRule) => boolean;
+const optionalMissingChecks: Readonly<Record<string, MissingCheck>> = {
   id: (cursor) => peek(cursor).kind !== 'id',
   string: (cursor) => peek(cursor).kind !== 'string',
   'literal-union': (cursor) => peek(cursor).text !== '=',
+  word: (cursor, rule) => !(rule.values ?? []).includes(peek(cursor).text),
 };
-function optionalTypeMissing(cursor: Cursor, type: PositionRule['type']): boolean {
-  const check = optionalMissingChecks[type];
+function optionalTypeMissing(cursor: Cursor, rule: PositionRule): boolean {
+  const check = optionalMissingChecks[rule.type];
   if (check === undefined) return false;
-  return check(cursor);
+  return check(cursor, rule);
 }

@@ -4,7 +4,7 @@ import { lowerRecord } from '../content.js';
 import { field, reference, textOr, type RawRecord } from '../fields.js';
 import { reject } from '../../validation/outcomes.js';
 import { constructsV2 } from '../../vocabulary/constructs-v2.js';
-import { checkWireEndpoints } from './wire-policy.js';
+import { checkWireEndpoints, wireKindOf } from './wire-policy.js';
 import { checkChangeTag } from './objects.js';
 import type { SymbolTable } from './symbols.js';
 export function lowerV2Wire(item: Declaration, symbols: SymbolTable): RawRecord {
@@ -33,7 +33,7 @@ function ownerProps(owner: string): string {
     .join(', ');
 }
 function checkWireProps(item: Declaration): void {
-  const wireKind = textOr(item.fields, 'kind', 'flow');
+  const wireKind = wireKindOf(item);
   Object.keys(propOwners)
     .filter((prop) => item.fields[prop] !== undefined)
     .filter((prop) => propOwners[prop] !== wireKind)

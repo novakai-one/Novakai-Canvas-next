@@ -40,8 +40,12 @@ export const targetRules: Readonly<Record<string, EndpointRule>> = {
   flow: { kinds: ['step', 'decision', 'fork', 'join', 'end'] },
   reference: { kinds: nodeKindsV2, members: anyMemberKind },
 };
+/** A wire with no authored kind is a flow wire. */
+export function wireKindOf(item: Declaration): string {
+  return textOr(item.fields, 'kind', 'flow');
+}
 export function checkWireEndpoints(item: Declaration, symbols: SymbolTable): void {
-  const wireKind = textOr(item.fields, 'kind', 'flow');
+  const wireKind = wireKindOf(item);
   const [sourceRule, targetRule] = requireRules(item, wireKind);
   const ctx: WireCtx = { item, wireKind, symbols };
   checkEndpoint(ctx, 'source', reference(field(item.fields, 'source')), sourceRule);

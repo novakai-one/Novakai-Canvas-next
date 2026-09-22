@@ -391,19 +391,8 @@ const nonUnionPrinters = {
       seen,
       budget,
     ),
-  /** Only reachable if an opaque expression is ever nested inside a union; a bare opaque short-circuits earlier. */
-  opaque: (
-    expression: NonUnionExpression,
-    collection: Collection,
-    seen: Set<DefinitionId>,
-    budget: DisplayBudget,
-  ): string => {
-    void expression;
-    void collection;
-    void seen;
-    void budget;
-    return '';
-  },
+  /** An opaque expression nested in a union has no shape to print. */
+  opaque: (): string => '',
 };
 
 type NonUnionExpression = Exclude<TypeExpression, { readonly kind: 'union' }>;

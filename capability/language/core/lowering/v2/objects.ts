@@ -92,8 +92,8 @@ function isModuleLike(nodeKind: string): boolean {
 }
 const membersByKind: Readonly<Record<string, readonly string[]>> = {
   entity: ['field', 'keygroup'],
-  module: ['signature'],
-  interface: ['signature'],
+  module: ['signature', 'type'],
+  interface: ['signature', 'type'],
 };
 function memberList(nodeKind: string): string {
   const members = membersByKind[nodeKind];

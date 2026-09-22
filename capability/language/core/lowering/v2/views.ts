@@ -20,6 +20,7 @@ interface ViewState {
 }
 export function lowerV2Views(item: Declaration, mode: string, symbols: SymbolTable): SectionViews {
   const shows = item.children.filter((child) => child.kind === 'show');
+  checkNodeShows(shows, symbols);
   return mode === 'tree' ? lowerTreeViews(shows, item.span) : lowerGroupViews(shows, mode, symbols);
 }
 function newState(): ViewState {
@@ -27,6 +28,20 @@ function newState(): ViewState {
 }
 function showIds(child: Declaration): readonly string[] {
   return list(child.fields, 'ids').map((value) => (value as Reference).id);
+}
+/** E305: a scenario is shown only by a sequence section. */
+function checkNodeShows(shows: readonly Declaration[], symbols: SymbolTable): void {
+  shows.forEach((child) => {
+    const scenario = showIds(child).find((shown) => symbols.scenarios.has(shown));
+    if (scenario !== undefined)
+      reject(
+        'unrepresentable',
+        child.span,
+        'A node',
+        `E305 view: @${scenario} is a scenario; show takes nodes.`,
+      );
+    checkNodeShows(child.children, symbols);
+  });
 }
 /** One object may be shown once per section, across appearances and represented groups alike. */
 function markShown(seen: Set<string>, shown: string, span: Span): void {

@@ -16,6 +16,8 @@ export interface SymbolTable {
   readonly labels: ReadonlyMap<string, string>;
   readonly nodes: ReadonlyMap<string, NodeFacts>;
   readonly wires: ReadonlySet<string>;
+  /** Scenarios in declare order; sequence sections show exactly one of them. */
+  readonly scenarios: ReadonlyMap<string, Declaration>;
 }
 export function buildSymbols(declare: Declaration): SymbolTable {
   const wires = new Set(
@@ -29,7 +31,12 @@ export function buildSymbols(declare: Declaration): SymbolTable {
   declare.children.forEach((child) =>
     addSymbols(child, definitions, entities, options, labels, nodes),
   );
-  return { definitions, entities, options, labels, nodes, wires };
+  const scenarios = new Map(
+    declare.children
+      .filter((child) => child.kind === 'scenario')
+      .map((child) => [id(child.fields), child] as const),
+  );
+  return { definitions, entities, options, labels, nodes, wires, scenarios };
 }
 function addSymbols(
   child: Declaration,

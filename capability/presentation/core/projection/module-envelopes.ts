@@ -92,37 +92,33 @@ function measure(
       height: child.height + clearance,
     };
   });
+  const own = section.groups.find((group) => group.id === parent?.groupId)?.layout;
+  // A group follows its section's direction unless it names another one ('right' is the default).
   const intent =
-    section.groups.find((group) => group.id === parent?.groupId)?.layout ?? section.layout;
-  const columns = Math.max(
-    1,
-    Math.min(leaves.length || 1, intent.columns ?? Math.ceil(Math.sqrt(leaves.length))),
-  );
-  const childColumns = Math.max(
-    1,
-    Math.min(children.length || 1, intent.columns ?? Math.ceil(Math.sqrt(children.length))),
-  );
-  const cells = leaves.map((node) =>
+    own === undefined
+      ? section.layout
+      : { ...own, direction: own.direction === 'right' ? section.layout.direction : own.direction };
+  const leafGrid = dependencyGrid(leaves, section, intent);
+  const nested = dependencyGrid(groups, section, intent);
+  const columns = leafGrid.columns;
+  const childColumns = nested.columns;
+  const footprints = leaves.map((node) =>
     nodeFootprint(node, section.wires, lanePitch, annotationGap, advance),
   );
-  const horizontal = tracks(leaves, cells, columns, 'x', cellGap, gap / 2);
+  const horizontal = tracks(leaves, footprints, leafGrid, 'x', cellGap, gap / 2);
   const header = Math.ceil((parent?.headerHeight ?? section.title.height + padding * 2) + gap / 2);
-  const vertical = tracks(leaves, cells, columns, 'y', cellGap, header);
+  const vertical = tracks(leaves, footprints, leafGrid, 'y', cellGap, header);
   const columnWidths = horizontal.sizes;
   const rowHeights = vertical.sizes;
   const pitch = { x: Math.max(gap, ...columnWidths), y: Math.max(gap, ...rowHeights) };
-  const childRows = Array.from(
-    { length: Math.ceil(childCells.length / childColumns) },
-    (_, index) => childCells.slice(index * childColumns, (index + 1) * childColumns),
+  const column = (index: number) => (nested.cells[index] ?? index) % childColumns;
+  const row = (index: number) => Math.floor((nested.cells[index] ?? index) / childColumns);
+  const childColumnWidths = Array.from({ length: gridSize(nested).columns }, (_, track) =>
+    Math.max(0, ...childCells.filter((_, index) => column(index) === track).map((c) => c.width)),
   );
-  const childColumnWidths = Array.from(
-    { length: Math.min(children.length, childColumns) },
-    (_, column) =>
-      Math.max(
-        ...childRows.flatMap((row) => (row[column] === undefined ? [] : [row[column].width])),
-      ),
+  const childRowHeights = Array.from({ length: gridSize(nested).rows }, (_, track) =>
+    Math.max(0, ...childCells.filter((_, index) => row(index) === track).map((c) => c.height)),
   );
-  const childRowHeights = childRows.map((row) => Math.max(...row.map((child) => child.height)));
   const childWidth = childColumnWidths.reduce((sum, width) => sum + width, 0);
   const childHeight = childRowHeights.reduce((sum, height) => sum + height, 0);
   const ownWidth = columnWidths.reduce((sum, width) => sum + width, 0);
@@ -140,8 +136,6 @@ function measure(
       (node) => node.placement!.y + Math.max(node.height, node.placement!.height ?? 0) + gap,
     ),
   );
-  const column = (index: number) => index % childColumns;
-  const row = (index: number) => Math.floor(index / childColumns);
   const childInsets = children.map((child, index) => ({
     x: Math.min(gap / 2, ((childColumnWidths[column(index)] ?? 0) - child.width) / 2),
     y: ((childRowHeights[row(index)] ?? 0) - child.height) / 2,
@@ -193,6 +187,8 @@ function measure(
     terminalPitch,
     columns,
     childColumns,
+    cells: leafGrid.cells,
+    childCells: nested.cells,
     childColumnWidths,
     childRowHeights,
     // Start-align columns within the parent reserve while preserving shared row centres.
@@ -203,6 +199,95 @@ function measure(
     columnCenters: horizontal.centers,
     rowCenters: vertical.centers,
   };
+}
+
+interface Grid {
+  readonly columns: number;
+  /** Row-major cell of each member, in member order. */
+  readonly cells: readonly number[];
+}
+function gridSize(grid: Grid): { readonly columns: number; readonly rows: number } {
+  const used = Math.max(0, ...grid.cells.map((cell) => cell + 1));
+  return { columns: Math.min(grid.columns, used), rows: Math.ceil(used / grid.columns) };
+}
+
+type Link = readonly [number, number];
+/** Members that depend on each other line up with the section direction: each wire's source sits
+ * before its target (left of it for right, above it for down). Otherwise members fill a
+ * near-square grid in their own order. */
+function dependencyGrid(
+  members: readonly VisualNode[],
+  section: VisualSection,
+  intent: VisualSection['layout'],
+): Grid {
+  const square = Math.ceil(Math.sqrt(members.length));
+  const plain = {
+    columns: Math.max(1, Math.min(members.length || 1, intent.columns ?? square)),
+    cells: members.map((_, index) => index),
+  };
+  if (keepsOrder(members, section, intent)) return plain;
+  const links = memberLinks(members, section);
+  return links.length === 0 ? plain : layeredGrid(layerOf(members.length, links), intent.direction);
+}
+/** Authored columns or a hand-placed member: keep the human's arrangement, don't reshuffle. */
+function keepsOrder(
+  members: readonly VisualNode[],
+  section: VisualSection,
+  intent: VisualSection['layout'],
+): boolean {
+  const placed = descendants(members, section.nodes).some((node) => node.placement !== null);
+  return placed || intent.columns !== undefined;
+}
+/** Wires between different members, as member indexes; a wire inside one member is ignored. */
+function memberLinks(members: readonly VisualNode[], section: VisualSection): readonly Link[] {
+  const owner = new Map<string, number>();
+  members.forEach((member, index) =>
+    descendants([member], section.nodes).forEach((node) => owner.set(node.id, index)),
+  );
+  return section.wires.flatMap((wire) =>
+    link(owner.get(wire.source.node), owner.get(wire.target.node)),
+  );
+}
+function link(from: number | undefined, to: number | undefined): readonly Link[] {
+  return from === undefined || to === undefined || from === to ? [] : [[from, to]];
+}
+const STACKED = new Set(['down', 'up']);
+const REVERSED = new Set(['left', 'up']);
+/** Layer runs along the direction; members of one layer sit side by side across it. */
+function layeredGrid(layers: readonly number[], direction: string): Grid {
+  const depth = Math.max(...layers) + 1;
+  const order = layers.map((_, index) => index);
+  const across = Array.from({ length: depth }, (_, layer) =>
+    order.filter((index) => layers[index] === layer),
+  );
+  const position = (index: number) => across[layers[index] ?? 0]?.indexOf(index) ?? 0;
+  const flip = REVERSED.has(direction) ? depth - 1 : 0;
+  const step = (index: number) => Math.abs(flip - (layers[index] ?? 0));
+  const width = Math.max(...across.map((layer) => layer.length));
+  return STACKED.has(direction)
+    ? { columns: width, cells: order.map((index) => step(index) * width + position(index)) }
+    : { columns: depth, cells: order.map((index) => position(index) * depth + step(index)) };
+}
+/** Longest path from members nothing points at. A cycle is broken at its first member. */
+function layerOf(count: number, links: readonly Link[]): readonly number[] {
+  const layers = Array.from({ length: count }, () => 0);
+  const placed = new Set<number>();
+  layers.forEach(() => placeNext(layers, placed, links));
+  return layers;
+}
+/** Place every member whose sources are all placed; with none ready, place the first open one. */
+function placeNext(layers: number[], placed: Set<number>, links: readonly Link[]): void {
+  const open = layers.map((_, index) => index).filter((index) => !placed.has(index));
+  const ready = open.filter((index) => links.every((l) => waitsOn(l, index, placed)));
+  const next = ready.length > 0 ? ready : open.slice(0, 1);
+  next.forEach((index) => {
+    const before = links.filter(([from, to]) => to === index && placed.has(from));
+    layers[index] = Math.max(0, ...before.map(([from]) => (layers[from] ?? 0) + 1));
+  });
+  next.forEach((index) => placed.add(index));
+}
+function waitsOn([from, to]: Link, index: number, placed: ReadonlySet<number>): boolean {
+  return to !== index || from === index || placed.has(from);
 }
 
 /** Running totals: where each grid column (row) starts. */
@@ -359,12 +444,13 @@ function anchorOffset(
 function tracks(
   nodes: readonly VisualNode[],
   cells: readonly Footprint[],
-  columns: number,
+  grid: Grid,
   axis: 'x' | 'y',
   gap: number,
   origin: number,
 ) {
-  const count = axis === 'x' ? Math.min(columns, nodes.length) : Math.ceil(nodes.length / columns);
+  const count = axis === 'x' ? gridSize(grid).columns : gridSize(grid).rows;
+  const columns = grid.columns;
   const before = axis === 'x' ? 'left' : 'top';
   const after = axis === 'x' ? 'right' : 'bottom';
   const dimension = axis === 'x' ? 'width' : 'height';
@@ -376,7 +462,10 @@ function tracks(
       .map((node, index) => ({
         node,
         cell: cells[index]!,
-        track: axis === 'x' ? index % columns : Math.floor(index / columns),
+        track:
+          axis === 'x'
+            ? (grid.cells[index] ?? index) % columns
+            : Math.floor((grid.cells[index] ?? index) / columns),
       }))
       .filter((item) => item.track === track);
     const lead = Math.max(...members.map((item) => item.cell[before]));

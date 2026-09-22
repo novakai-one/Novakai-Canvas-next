@@ -48,7 +48,7 @@ function sizeSection(spec: SectionSpec): SizedSection {
   measuredSection(measured, count);
   measuredChildren(measured, spec.children.length);
   const columns = measured.columns;
-  const rows = count === 0 ? 0 : Math.ceil(count / columns);
+  const rows = trackCounts(measured.cells, columns)[1];
   const children = spec.children.map(sizeSection);
   const pitch = measured.pitch;
   const ownWidth = measured.columnWidths.reduce((sum, width) => sum + width, 0);
@@ -99,7 +99,9 @@ function measuredSection(measured: NonNullable<SectionSpec['measured']>, count: 
     )
   )
     throw new Error('Measured section column counts are required');
-  const expected = [Math.min(count, measured.columns), Math.ceil(count / measured.columns)];
+  if (measured.cells.length !== count || measured.childCells.length !== measured.childInsets.length)
+    throw new Error('Measured cells must cover every node and child section');
+  const expected = trackCounts(measured.cells, measured.columns);
   const actual = [measured.columnWidths.length, measured.rowHeights.length];
   const centers = [measured.columnCenters.length, measured.rowCenters.length];
   if (!actual.every((value, index) => value === expected[index] && value === centers[index]))
@@ -114,12 +116,18 @@ function measuredChildren(measured: NonNullable<SectionSpec['measured']>, count:
   ];
   if (!sizes.every((value) => Number.isFinite(value) && value > 0))
     throw new Error('Child tracks must be finite and positive');
+  const [columns, rows] = trackCounts(measured.childCells, measured.childColumns);
   if (
-    measured.childColumnWidths.length !== Math.min(count, measured.childColumns) ||
-    measured.childRowHeights.length !== Math.ceil(count / measured.childColumns) ||
+    measured.childColumnWidths.length !== columns ||
+    measured.childRowHeights.length !== rows ||
     measured.childInsets.length !== count
   )
     throw new Error('Measured child tracks must cover every section');
+}
+/** Grid tracks used by row-major cells: [columns, rows]. */
+function trackCounts(cells: readonly number[], columns: number): readonly [number, number] {
+  const used = Math.max(0, ...cells.map((cell) => cell + 1));
+  return [Math.min(columns, used), Math.ceil(used / columns)];
 }
 /** The app supplies one measured root containing every nested group. */
 export function sizeNestedSections(specs: readonly SectionSpec[]): readonly SizedSection[] {
@@ -153,8 +161,9 @@ function gridNodes(size: SizedSection, interior: PrototypeBounds) {
   const yEdges = gridEdges(size.rowHeights);
   return size.nodes.map((node, i) => {
     const measured = measuredNode(node);
-    const column = i % size.columns,
-      row = Math.floor(i / size.columns);
+    const cell = size.measured.cells[i] ?? i;
+    const column = cell % size.columns,
+      row = Math.floor(cell / size.columns);
     return {
       ...placePrototypeNode(
         size.id,
@@ -211,8 +220,9 @@ function positionSection(
   const xEdges = gridEdges(size.measured.childColumnWidths);
   const yEdges = gridEdges(size.measured.childRowHeights);
   const children = size.children.flatMap((child, index) => {
-    const column = index % columns,
-      row = Math.floor(index / columns);
+    const at = size.measured.childCells[index] ?? index;
+    const column = at % columns,
+      row = Math.floor(at / columns);
     const cell = {
       x: interior.x + size.ownWidth + xEdges[column]!,
       y: interior.y + yEdges[row]!,

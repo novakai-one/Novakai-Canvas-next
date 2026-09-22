@@ -14,6 +14,7 @@ import { lowerV2Definitions } from './definitions.js';
 import { lowerV2Section } from './sections.js';
 import { lowerV2Changes } from './changes.js';
 import { checkModulesWireLabels } from './wire-policy.js';
+import { idValues } from './unique-ids.js';
 export function lowerDocumentDataV2(document: Document, request: LowerRequest): RawRecord {
   const declare = requireDeclare(document);
   const collection = document.declaration;
@@ -63,16 +64,10 @@ function changesField(changes: readonly RawRecord[]): RawRecord {
   if (changes.length === 0) return {};
   return { changes };
 }
-/** Only `type` declares ids via a list; every other declaring construct uses a single `id`. */
-function declaredIdValues(node: Declaration): readonly LocatedValue[] {
-  if (node.fields.id !== undefined) return [field(node.fields, 'id')];
-  if (node.kind === 'type') return field(node.fields, 'ids').items ?? [];
-  return [];
-}
 /** E203: fk- (derived associations) and parent- (derived containment) are never authored ids. */
 const reservedPrefixes: readonly string[] = ['fk-', 'parent-'];
 function checkReservedIds(node: Declaration): void {
-  declaredIdValues(node).forEach(checkNotReservedPrefix);
+  idValues(node).forEach(checkNotReservedPrefix);
   node.children.forEach(checkReservedIds);
 }
 function checkNotReservedPrefix(item: LocatedValue): void {

@@ -20,10 +20,11 @@ export function checkUniqueIds(declare: Declaration): void {
 function declaredIds(child: Declaration): readonly DeclaredId[] {
   return idValues(child).map((value) => ({ id: reference(value).id, kind: child.kind, value }));
 }
-/** Only `type` declares ids via a list; the other kinds declare one `id`. */
-function idValues(child: Declaration): readonly LocatedValue[] {
-  if (child.kind === 'type') return field(child.fields, 'ids').items ?? [];
-  return [field(child.fields, 'id')];
+/** Only `type` declares ids via a list; every other declaring construct uses a single `id`. */
+export function idValues(node: Declaration): readonly LocatedValue[] {
+  if (node.fields.id !== undefined) return [field(node.fields, 'id')];
+  if (node.kind === 'type') return field(node.fields, 'ids').items ?? [];
+  return [];
 }
 function claimId(seen: Map<string, string>, item: DeclaredId): void {
   const first = seen.get(item.id);

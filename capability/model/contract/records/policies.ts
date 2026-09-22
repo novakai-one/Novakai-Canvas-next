@@ -41,7 +41,7 @@ export const genericMemberEndpoints: readonly MemberEndpointKind[] = ['port', 'r
 export const sourceEndpoints: Readonly<Partial<Record<RelationshipKind, readonly ObjectKind[]>>> = {
   association: ['entity'],
   imports: ['module'],
-  calls: ['module', 'function'],
+  calls: ['module', 'function', 'participant'],
   implements: ['module', 'function'],
   contains: ['module', 'system'],
   transition: ['start', 'state'],
@@ -49,7 +49,7 @@ export const sourceEndpoints: Readonly<Partial<Record<RelationshipKind, readonly
 /** Relationship target policies; source and target policies may differ by design. */
 export const targetEndpoints: Readonly<Partial<Record<RelationshipKind, readonly ObjectKind[]>>> = {
   association: ['entity'],
-  imports: ['module', 'interface', 'function'],
+  imports: ['module', 'interface', 'function', 'package'],
   calls: ['module', 'interface', 'function'],
   implements: ['interface'],
   transition: ['state', 'end'],

@@ -18,7 +18,7 @@ export function lowerDocumentDataV2(document: Document, request: LowerRequest): 
   const symbols = buildSymbols(declare);
   const { uses, ...metadata } = lowerRecord(collection, constructsV2);
   void uses;
-  const authoredWires = recordsOf(declare, 'wire').map(lowerV2Wire);
+  const authoredWires = recordsOf(declare, 'wire').map((item) => lowerV2Wire(item, symbols));
   const sectionResults = recordsOf(collection, 'section').map((item) =>
     lowerV2Section(item, symbols),
   );

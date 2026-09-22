@@ -77,7 +77,7 @@ function undeclared(targetId: string): string {
   return `E101 resolve: @${targetId} is not declared.`;
 }
 
-/** E112 names the first two blocks, in declaration order, that address the same target. */
+/** E112 names the first two entries, in declaration order, that address the same target. */
 function repeatedTargetIssues(changes: readonly ChangeBlock[]): readonly Diagnostic[] {
   const owners = new Map<string, TargetOwners>();
   changes.forEach((block) => {
@@ -98,15 +98,21 @@ function addOwner(owners: Map<string, TargetOwners>, target: Target, occurrence:
 
 /** The error lands on the repeating entry, so its span is that exact ref. */
 function repeatIssue(owner: TargetOwners): readonly Diagnostic[] {
-  const second = owner.later.find((item) => item.block !== owner.first.block);
+  const [second] = owner.later;
   if (second === undefined) return [];
   return [
     {
       code: 'duplicate',
       path: `changes.${second.block}.entries.${second.index}`,
-      message: `E112 delta: ${owner.label} is in @${owner.first.block} and @${second.block}. Keep one.`,
+      message: repeatMessage(owner.label, owner.first.block, second.block),
     },
   ];
+}
+
+/** One entry per target: a repeat inside one block is named once, across blocks both are named. */
+function repeatMessage(label: string, first: string, second: string): string {
+  if (first === second) return `E112 delta: ${label} is listed twice in @${first}. Keep one.`;
+  return `E112 delta: ${label} is in @${first} and @${second}. Keep one.`;
 }
 
 function targetLabel(target: Target): string {

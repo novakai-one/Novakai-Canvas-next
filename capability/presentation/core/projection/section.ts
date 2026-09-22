@@ -8,7 +8,7 @@ import type {
 } from '../../contract/records/visual.js';
 import type { ContentContext } from '../content/blocks.js';
 import { identity, projectNode, projectGroup } from './node.js';
-import { labelContent } from '../content/headings.js';
+import { labelContent } from '../content/text.js';
 import { wireNotation, wireLabel, sequenceMarker, sequenceLabel } from '../notation/wires.js';
 import { measureWireAnnotation } from '../notation/annotations.js';
 import { reject } from '../validation/outcomes.js';

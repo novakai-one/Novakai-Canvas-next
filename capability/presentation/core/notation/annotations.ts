@@ -1,8 +1,7 @@
 import type { ChangeEntry, Relationship } from '../../contract/records/input.js';
 import type { MeasuredContent } from '../../contract/records/visual.js';
 import type { ContentContext } from '../../contract/records/content-context.js';
-import { labelContent } from '../content/headings.js';
-import { offset } from '../content/text.js';
+import { labelContent, offset } from '../content/text.js';
 import { wireLabel } from './wires.js';
 
 /** A numbered label is one measured obstacle; Layout does not have to guess badge size or text position. */

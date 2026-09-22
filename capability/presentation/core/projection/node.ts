@@ -5,8 +5,7 @@ import type { MeasuredContent, VisualNode } from '../../contract/records/visual.
 import { sceneId } from '../../contract/brands.js';
 import { visualNode } from '../../contract/records/visual.js';
 import type { ContentContext } from '../content/blocks.js';
-import { offset } from '../content/text.js';
-import { labelContent } from '../content/headings.js';
+import { labelContent, offset } from '../content/text.js';
 import { visibleBody } from '../content/node-body.js';
 import { composeNodeContent } from '../content/composition.js';
 import { moduleChrome } from '../content/chrome.js';

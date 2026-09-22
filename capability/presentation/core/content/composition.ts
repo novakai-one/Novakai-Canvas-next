@@ -4,11 +4,10 @@ import type { LodRole, MeasuredContent } from '../../contract/records/visual.js'
 import type { BodySelection } from './node-body.js';
 import { measureNodeBody } from './node-body.js';
 import { moduleChrome } from './chrome.js';
-import { labelContent } from './headings.js';
 import { nodeHeading } from './headings.js';
 import { measureMedia } from './media.js';
 import { measureFigure } from './figures.js';
-import { offset, stack } from './text.js';
+import { labelContent, offset, stack } from './text.js';
 import { reject } from '../validation/outcomes.js';
 
 /** Local composition returns measured geometry; Layout still owns every global position. */

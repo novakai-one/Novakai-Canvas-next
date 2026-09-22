@@ -20,6 +20,7 @@ import {
 } from './cursor.js';
 import { readAttributes } from './attributes.js';
 import { readValue, readReferenceList } from './values.js';
+import { readTypeUse } from './types.js';
 import { checkValue } from './value-types.js';
 import { repeat } from './repetition.js';
 import { readIdentity } from './references.js';
@@ -29,7 +30,7 @@ export function readDeclaration(
   allowed: readonly Construct[],
   table: readonly ConstructDefinition[] = constructs,
 ): Parsed<Declaration> {
-  const compactType = compactTypeDeclaration(cursor, allowed);
+  const compactType = table === constructs ? compactTypeDeclaration(cursor, allowed) : undefined;
   if (compactType !== undefined) return compactType;
   const definition = declarationDefinition(cursor, allowed, table);
   return readDefined(cursor, definition, table);
@@ -226,6 +227,7 @@ function requireQuotedPosition(cursor: Cursor, rule: PositionRule): void {
 /** Only the two positional list forms are unbracketed. */
 function positionalValue(cursor: Cursor, type: PositionRule['type']): ReturnType<typeof readValue> {
   if (type === 'references' || type === 'targets') return readReferenceList(cursor);
+  if (type === 'type-use') return readTypeUse(cursor);
   return readValue(cursor);
 }
 /** Required attributes have no hidden default; Model owns cross-record constraints afterward. */

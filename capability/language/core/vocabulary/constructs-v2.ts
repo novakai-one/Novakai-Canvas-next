@@ -51,7 +51,7 @@ export const constructsV2: readonly ConstructDefinition[] = [
       { name: 'label', type: 'string', optional: true },
     ],
     properties: {},
-    children: ['type'],
+    children: ['field', 'signature', 'type', 'keygroup'],
     body: 'optional',
   },
   {
@@ -76,6 +76,28 @@ export const constructsV2: readonly ConstructDefinition[] = [
     kind: 'type',
     positions: [{ name: 'ids', type: 'references' }],
     properties: {},
+    children: null,
+  },
+  {
+    kind: 'field',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'colon', type: 'word', literal: ':' },
+      { name: 'type', type: 'type-use' },
+    ],
+    properties: { key: p.key, references: p.references },
+    children: null,
+  },
+  {
+    kind: 'signature',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { parameters: p.parametersV2, returns: p.returnsV2 },
+    children: null,
+  },
+  {
+    kind: 'keygroup',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { kind: p.keyKindV2, fields: p.fields },
     children: null,
   },
 ];

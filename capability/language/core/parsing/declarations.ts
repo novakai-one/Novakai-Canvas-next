@@ -235,6 +235,7 @@ const positionalReaders: Readonly<
 > = {
   references: readReferenceList,
   targets: readReferenceList,
+  endpoints: readReferenceList,
   'type-use': readTypeUse,
   'literal-union': readLiteralUnion,
 };

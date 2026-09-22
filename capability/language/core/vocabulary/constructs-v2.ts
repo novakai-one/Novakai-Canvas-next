@@ -1,15 +1,33 @@
 import type { ConstructDefinition } from '../../contract/records/vocabulary.js';
 import { properties as p } from './properties.js';
 import { nodeKindsV2 } from './defaults.js';
+/** Change ops share one shape: a bare list of node, wire or @node.@member refs. */
+function changeOp(kind: 'new' | 'changed' | 'deleted' | 'locked'): ConstructDefinition {
+  return { kind, positions: [{ name: 'refs', type: 'endpoints' }], properties: {}, children: null };
+}
 /** Closed v2 grammar skeleton; parsed only, not yet lowered. */
 export const constructsV2: readonly ConstructDefinition[] = [
   {
     kind: 'declare',
     positions: [{ name: 'id', type: 'id' }],
     properties: {},
-    children: ['type', 'node', 'wire'],
+    children: ['type', 'node', 'wire', 'change'],
     body: 'required',
   },
+  {
+    kind: 'change',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'title', type: 'string' },
+    ],
+    properties: {},
+    children: ['new', 'changed', 'deleted', 'locked'],
+    body: 'required',
+  },
+  changeOp('new'),
+  changeOp('changed'),
+  changeOp('deleted'),
+  changeOp('locked'),
   {
     kind: 'collection',
     positions: [

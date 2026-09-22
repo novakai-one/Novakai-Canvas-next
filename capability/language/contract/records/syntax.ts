@@ -64,7 +64,12 @@ export type Construct =
   | 'root'
   | 'event'
   | 'fragment'
-  | 'branch';
+  | 'branch'
+  | 'change'
+  | 'new'
+  | 'changed'
+  | 'deleted'
+  | 'locked';
 export interface Declaration {
   readonly kind: Construct;
   readonly fields: Fields;

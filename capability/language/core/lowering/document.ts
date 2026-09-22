@@ -97,6 +97,7 @@ export function lowerDocument(
       assets: [],
       sources: [],
       definitions: [],
+      changes: [],
       arrangement: { ...candidate.arrangement, constraints: [] },
     };
     const original =

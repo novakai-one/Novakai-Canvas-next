@@ -12,6 +12,7 @@ import { lowerV2Node } from './objects.js';
 import { lowerV2Wire } from './relationships.js';
 import { lowerV2Definitions } from './definitions.js';
 import { lowerV2Section } from './sections.js';
+import { lowerV2Changes } from './changes.js';
 export function lowerDocumentDataV2(document: Document, request: LowerRequest): RawRecord {
   const declare = requireDeclare(document);
   const collection = document.declaration;
@@ -47,7 +48,13 @@ export function lowerDocumentDataV2(document: Document, request: LowerRequest): 
     sections: sectionResults.map((result) => result.section),
     sources: [],
     assets: [],
+    ...changesField(lowerV2Changes(declare, symbols)),
   };
+}
+/** Omitted when empty so documents without change blocks lower exactly as before. */
+function changesField(changes: readonly RawRecord[]): RawRecord {
+  if (changes.length === 0) return {};
+  return { changes };
 }
 /** Only `type` declares ids via a list; every other declaring construct uses a single `id`. */
 function declaredIdValues(node: Declaration): readonly LocatedValue[] {

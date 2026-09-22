@@ -15,8 +15,12 @@ export interface SymbolTable {
   readonly options: readonly string[];
   readonly labels: ReadonlyMap<string, string>;
   readonly nodes: ReadonlyMap<string, NodeFacts>;
+  readonly wires: ReadonlySet<string>;
 }
 export function buildSymbols(declare: Declaration): SymbolTable {
+  const wires = new Set(
+    declare.children.filter((child) => child.kind === 'wire').map((child) => id(child.fields)),
+  );
   const definitions = new Map<string, string>();
   const entities = new Set<string>();
   const options: string[] = [];
@@ -25,7 +29,7 @@ export function buildSymbols(declare: Declaration): SymbolTable {
   declare.children.forEach((child) =>
     addSymbols(child, definitions, entities, options, labels, nodes),
   );
-  return { definitions, entities, options, labels, nodes };
+  return { definitions, entities, options, labels, nodes, wires };
 }
 function addSymbols(
   child: Declaration,

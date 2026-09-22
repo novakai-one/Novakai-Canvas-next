@@ -130,13 +130,13 @@
 
   .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
     .heading
-    text {
+    text:not(rect[data-badge] + text) {
     fill: var(--nv-canvas-heading);
   }
 
   .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
     .heading
-    text {
+    text:not(rect[data-badge] + text) {
     fill: var(--nv-canvas-group-heading);
   }
 

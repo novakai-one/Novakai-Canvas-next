@@ -62,9 +62,8 @@ export type CanvasEffect =
   | { readonly kind: 'announce'; readonly message: string }
   | { readonly kind: 'recover-draft'; readonly id: string; readonly message: string };
 
-/** Where a new object dropped on the canvas belongs. `at` is local to the group, or to the section when `group` is null. */
+/** Where a new object dropped on the canvas belongs: a section, and the group inside it (null = no group). */
 export interface DropTarget {
   readonly section: string;
   readonly group: string | null;
-  readonly at: Point;
 }

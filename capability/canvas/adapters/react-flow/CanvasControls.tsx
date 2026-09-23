@@ -42,6 +42,7 @@ export function createCanvasControls(
       <>
         <div
           className={`nodrag nopan ${styles.controls} ${styles.tools}`}
+          data-canvas-controls
           role="toolbar"
           aria-label="Canvas tools"
         >
@@ -95,6 +96,7 @@ export function createCanvasControls(
         </div>
         <div
           className={`nodrag nopan ${styles.controls} ${styles.viewport}`}
+          data-canvas-controls
           role="toolbar"
           aria-label="Canvas view controls"
         >

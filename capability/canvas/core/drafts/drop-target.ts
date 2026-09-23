@@ -18,7 +18,7 @@ function groupId(state: SessionState, info: TargetInfo): string | null {
 function smallest(items: readonly TargetInfo[]): TargetInfo | undefined {
   return [...items].sort((a, b) => a.box.width * a.box.height - b.box.width * b.box.height)[0];
 }
-/** The group under the point; groups nest, so the smallest one wins. */
+/** The group frame under the point. When several frames contain it, the smallest wins. */
 function groupAt(state: SessionState, point: Point): TargetInfo | undefined {
   const infos = Object.values(state.index.targets);
   return smallest(
@@ -29,19 +29,17 @@ function sectionAt(state: SessionState, point: Point): TargetInfo | undefined {
   const infos = Object.values(state.index.targets);
   return infos.find((info) => info.target.kind === 'section' && contains(info.box, point));
 }
-function fromGroup(state: SessionState, info: TargetInfo, point: Point): DropTarget | null {
+function fromGroup(state: SessionState, info: TargetInfo): DropTarget | null {
   if (info.target.kind !== 'node') return null;
-  const at = { x: point.x - info.box.x, y: point.y - info.box.y };
-  return { section: info.target.section, group: groupId(state, info), at };
+  return { section: info.target.section, group: groupId(state, info) };
 }
-function fromSection(info: TargetInfo | undefined, point: Point): DropTarget | null {
+function fromSection(info: TargetInfo | undefined): DropTarget | null {
   if (info?.target.kind !== 'section') return null;
-  const at = { x: point.x - info.sectionOrigin.x, y: point.y - info.sectionOrigin.y };
-  return { section: info.target.id, group: null, at };
+  return { section: info.target.id, group: null };
 }
 /** Where a new object dropped at a world point belongs: the innermost group, else the section. */
 export function dropTarget(state: SessionState, point: Point): DropTarget | null {
   const group = groupAt(state, point);
-  if (group !== undefined) return fromGroup(state, group, point);
-  return fromSection(sectionAt(state, point), point);
+  if (group !== undefined) return fromGroup(state, group);
+  return fromSection(sectionAt(state, point));
 }

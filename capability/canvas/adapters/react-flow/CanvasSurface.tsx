@@ -199,10 +199,14 @@ function dropPalette(
 ): void {
   const kind = event.dataTransfer.getData(paletteType);
   const drop = props.onPaletteDrop;
-  if (kind === '' || drop === undefined) return;
+  if (kind === '' || drop === undefined || onControls(event)) return;
   event.preventDefault();
   const target = props.reader.dropTarget(snapshot.state, worldPoint(event, snapshot));
   deliver(target, (value) => drop(kind, value), props.onError);
+}
+/** A drop onto the tool rail or zoom controls is not a drop onto the canvas. */
+function onControls(event: DragEvent<HTMLDivElement>): boolean {
+  return event.target instanceof Element && event.target.closest('[data-canvas-controls]') !== null;
 }
 function worldPoint(event: DragEvent<HTMLDivElement>, snapshot: ViewSnapshot): Point {
   const frame = event.currentTarget.getBoundingClientRect();

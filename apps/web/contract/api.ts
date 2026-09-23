@@ -33,6 +33,8 @@ export {
   withNewFunction,
 } from '../core/inspector/wire-functions.js';
 export { wireApplyBlock } from '../core/inspector/wire-apply.js';
+export { createWireDryRun, dryRunFor } from '../core/inspector/wire-dry-run.js';
+export type { WireDryRun, WireDryRunState } from '../core/inspector/wire-dry-run.js';
 export type { ModuleFunction } from '../core/inspector/wire-functions.js';
 export { plainWireProblem } from '../core/inspector/wire-problems.js';
 export type { WireProblemContext } from '../core/inspector/wire-problems.js';

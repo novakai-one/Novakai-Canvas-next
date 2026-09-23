@@ -18,6 +18,8 @@ export {
   plainWireProblem,
   wireApplyBlock,
   withNewFunction,
+  createWireDryRun,
+  dryRunFor,
 } from './api.js';
 export type { WirePlanner, WirePlanOutcome } from './records/wire-editor.js';
 export type { InspectorBindings, ObjectSelection } from './records/inspector.js';

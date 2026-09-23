@@ -146,20 +146,29 @@ export function createNestedRoadScene(
     ports,
     annotations === undefined ? undefined : allocation.widths,
   );
+  /** Wires on the roads as they are, with no widening. Unchecked only as the last resort; scene checks still apply. */
+  const plainScene = (checked = true): RoadPrototypeScene => {
+    const network = measure('network', () => roadNetwork(final.roads, final.contacts));
+    const wires = measure('lane-projection', () =>
+      projectNestedWires(
+        plan.value,
+        allocation.byWire,
+        final.byId,
+        network.junctions,
+        ports,
+        checked,
+      ),
+    );
+    return {
+      ...reserved,
+      roads: final.roads,
+      ...network,
+      wireLanes: allocation.lanes,
+      wiring: { ok: true, value: wires },
+    };
+  };
   try {
-    if (options.fixedGeometry) {
-      const network = measure('network', () => roadNetwork(final.roads, final.contacts));
-      const wires = measure('lane-projection', () =>
-        projectNestedWires(plan.value, allocation.byWire, final.byId, network.junctions, ports),
-      );
-      return {
-        ...reserved,
-        roads: final.roads,
-        ...network,
-        wireLanes: allocation.lanes,
-        wiring: { ok: true, value: wires },
-      };
-    }
+    if (options.fixedGeometry) return plainScene();
     const supports = readNestedProjectionSupports(plan.value, allocation.byWire, final.byId);
     const supportScene: RoadPrototypeScene = {
       ...reserved,
@@ -183,20 +192,38 @@ export function createNestedRoadScene(
       final.byId,
       supports,
     );
-    return finish(input, supportScene, measure);
+    return finish(input, supportScene, measure, plainScene);
   } catch (error) {
-    return failedEmbedding({ ...reserved, roads: final.roads, wireLanes: allocation.lanes }, error);
+    return plainFallback(
+      { ...reserved, roads: final.roads, wireLanes: allocation.lanes },
+      error,
+      plainScene,
+    );
   }
 }
 function finish(
   input: Parameters<typeof prepareNestedEmbedding>[0],
   reserved: RoadPrototypeScene,
   measure: NonNullable<PrototypeLayoutOptions['measure']>,
+  plainScene: (checked: boolean) => RoadPrototypeScene,
 ): RoadPrototypeScene {
   try {
     return embeddedScene(input, reserved, measure);
   } catch (error) {
-    return failedEmbedding(reserved, error);
+    return plainFallback(reserved, error, plainScene);
+  }
+}
+/** When roads cannot be widened to fit their wires, keep the wires on the current roads rather than reject the edit. */
+function plainFallback(
+  reserved: RoadPrototypeScene,
+  error: unknown,
+  plainScene: (checked: boolean) => RoadPrototypeScene,
+): RoadPrototypeScene {
+  if (!(error instanceof SupportRejection)) throw error;
+  try {
+    return plainScene(false);
+  } catch {
+    return rejectedScene(reserved, error);
   }
 }
 function embeddedScene(
@@ -228,11 +255,6 @@ function rejectedScene(scene: RoadPrototypeScene, error: SupportRejection): Road
   const unwired = { ...scene };
   delete unwired.wiring;
   return { ...unwired, embeddingFailure: error.evidence };
-}
-
-function failedEmbedding(scene: RoadPrototypeScene, error: unknown): RoadPrototypeScene {
-  if (error instanceof SupportRejection) return rejectedScene(scene, error);
-  throw error;
 }
 
 /** Only authored attachments own driveways; unused app handles do not create duplicate roads. */

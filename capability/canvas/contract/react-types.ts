@@ -98,6 +98,8 @@ export interface RoutingRoadsProps {
 }
 export interface SurfaceProps {
   readonly showRoads?: boolean;
+  /** Show every wire label, not only the selected wire's. */
+  readonly showLabels?: boolean;
   readonly followsInterfaceRoles?: boolean;
   readonly session: SurfaceSession;
   readonly reader: ViewReader;
@@ -151,6 +153,8 @@ export interface EdgeData extends Record<string, unknown> {
   readonly paint: Paint;
   readonly nudge: number;
   readonly zoom: number;
+  /** Labels toggle on: where this hidden label sits, section-local. */
+  readonly hiddenLabel?: Box | undefined;
 }
 export type FlowNode = Node<NodeData, 'scene'> | Node<SectionData, 'section'>;
 export type FlowEdge = Edge<EdgeData, 'scene'>;
@@ -242,6 +246,7 @@ export type GraphSelector = (
   result: Result<ViewSnapshot>,
   actions: ViewActions,
   paint: Paint,
+  showLabels: boolean,
 ) => { nodes: FlowNode[]; edges: FlowEdge[] };
 export interface SurfaceSlots {
   readonly RoutingRoads: ComponentType<RoutingRoadsProps>;

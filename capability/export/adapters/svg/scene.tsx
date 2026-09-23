@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { ReactElement, ComponentType } from 'react';
+import { hiddenLabelBoxes } from '@novakai/canvas-layout';
 import type {
   DrawingSlots,
   SceneRenderer,
@@ -14,7 +15,17 @@ export function createSceneRenderer(
   slots: DrawingSlots,
   FontDefinitions: ComponentType,
   fontDigests: readonly string[],
+  allLabels = false,
 ): SceneRenderer {
+  /** All-labels mode shows each hidden label at its clear spot beside the wire. */
+  function wires(item: PlacedSection): PlacedSection['wires'] {
+    if (!allLabels) return item.wires;
+    const boxes = hiddenLabelBoxes(item.wires, item.nodes);
+    return item.wires.map((wire) => {
+      const box = boxes.get(wire.id);
+      return box === undefined ? wire : { ...wire, labelVisible: true, labelBox: box };
+    });
+  }
   /** Apply section origin once; grouped nodes already include their ancestor placement within the section. */
   function section(item: PlacedSection, paint: Paint): ReactElement {
     return (
@@ -23,7 +34,7 @@ export function createSceneRenderer(
         <g transform={`translate(${item.origin.x} ${item.origin.y})`}>
           {slots.label(item.title.content, item.title.box)}
           {item.nodes.map(slots.node)}
-          {item.wires.map((wire) => slots.wire(wire, paint))}
+          {wires(item).map((wire) => slots.wire(wire, paint))}
           {slots.sequence(item.sequence, paint)}
         </g>
       </g>

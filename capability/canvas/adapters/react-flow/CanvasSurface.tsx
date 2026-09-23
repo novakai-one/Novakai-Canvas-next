@@ -56,8 +56,8 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     );
     const selectGraph = useMemo(() => slots.createGraphSelector(), []);
     const graph = useMemo(
-      () => selectGraph(result, interactions.actions, props.paint),
-      [selectGraph, result, interactions.actions, props.paint],
+      () => selectGraph(result, interactions.actions, props.paint, props.showLabels === true),
+      [selectGraph, result, interactions.actions, props.paint, props.showLabels],
     );
     if (!result.ok) return <div role="alert">Canvas unavailable: {result.error.message}</div>;
     const snapshot = result.value;
@@ -75,6 +75,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
         aria-label={props.label}
         tabIndex={0}
         data-zoom-tier={snapshot.view.detail}
+        data-follows-interface-roles={props.followsInterfaceRoles === true}
         onKeyDown={interactions.keyboard}
         onPointerCancel={interactions.actions.cancelGeometry}
         onPointerDownCapture={(event) => setPointer(pointerThreshold(event.pointerType))}

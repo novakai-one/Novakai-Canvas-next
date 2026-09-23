@@ -244,6 +244,7 @@ function CanvasSlot({
           showRoads={panelState.interfaceVisibility.roads && !hidden}
           palette={palette}
           onPaletteDrop={(kind, target) => dropObject(controller, kind, target)}
+          showLabels={panelState.interfaceVisibility.labels}
         />
       )}
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}

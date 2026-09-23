@@ -92,6 +92,7 @@ function decoration(
     <rect
       key={key}
       data-badge="true"
+      data-role={item.role}
       x={item.x}
       y={item.y}
       width={item.width}

@@ -20,6 +20,7 @@ export const headlessOptions = z
     themeFile: filePath.optional(),
     out: filePath,
     format: z.enum(['svg', 'png']),
+    labels: z.boolean().optional(),
     root: filePath,
   })
   .readonly();

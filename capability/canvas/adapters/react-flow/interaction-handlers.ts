@@ -8,9 +8,10 @@ import type {
   ViewActions,
 } from '../../contract/react-types.js';
 import type { Target } from '../../contract/records/selection.js';
-import type { Box } from '../../contract/records/camera.js';
+import type { Box, Point } from '../../contract/records/camera.js';
 import type { CanvasEvent } from '../../contract/events.js';
 import type { PointerGesture } from '../../contract/ports/session.js';
+import type { SessionState } from '../../contract/records/state.js';
 /** Incoming selection change carries its scoped node/edge ID; no generated ID parsing is needed. */
 function selectedTargets(
   owners: InteractionOwners,
@@ -48,17 +49,51 @@ function stillActive(
   if (active === null) return false;
   return owners.session.getSnapshot().draft?.id === active.id;
 }
+/** Sequence and tree sections draw from node positions outside the node itself; they keep the full per-frame path. */
+function previewable(state: SessionState, targets: readonly Target[]): boolean {
+  return targets.every((target) => {
+    if (target.kind !== 'node') return false;
+    const section = state.scene.sections.find((item) => item.id === target.section);
+    return section?.tree === undefined && section?.sequence.lifelines.length === 0;
+  });
+}
+/** True when the key or any of its ancestors is dragged. */
+function under(state: SessionState, key: string | null, dragged: ReadonlySet<string>): boolean {
+  if (key === null) return false;
+  if (dragged.has(key)) return true;
+  return under(state, state.index.targets[key]?.parentKey ?? null, dragged);
+}
+/** Dragged targets plus every descendant; children are separate React Flow nodes and must move too. */
+function movedKeys(state: SessionState, dragged: readonly string[]): ReadonlySet<string> {
+  const roots = new Set(dragged);
+  return new Set(Object.keys(state.index.targets).filter((key) => under(state, key, roots)));
+}
 /** Translate React Flow events to public Canvas commands. Host drains effects, retains drafts and repairs reported callback failures; canceled pointer IDs never replay. */
 export function createInteractions(owners: InteractionOwners): Interactions {
   const hoverSuppression = new Set<'drag' | 'pan' | 'connect'>();
+  /** Keys that move with the current drag; null means the full per-frame path. */
+  let moved: { readonly id: string; readonly keys: ReadonlySet<string> } | null = null;
   /** Typed failures are reported to the host; they never trigger a fallback save or guessed state change. */
   function dispatch(event: CanvasEvent): void {
     const result = owners.session.dispatch(event);
+    dropStalePreview();
     if (!result.ok) {
       owners.onError(result.error);
       return;
     }
     result.value.diagnostics.forEach((diagnostic) => owners.onError(diagnostic));
+  }
+  /** Escape, a foreign update or drop ends the draft; the live offset goes with it. */
+  function dropStalePreview(): void {
+    const preview = owners.session.readPreview();
+    if (preview !== null && owners.session.getSnapshot().draft?.id !== preview.id)
+      owners.session.writePreview(null);
+  }
+  /** Release applies the last live offset once, then the usual finish. */
+  function flushPreview(active: PointerGesture): void {
+    const preview = owners.session.readPreview();
+    if (preview?.id !== active.id) return;
+    dispatch({ kind: 'move', id: active.id, delta: preview.delta });
   }
   /** Gesture suppression is adapter-local because React Flow owns pan/connect lifecycle boundaries. */
   function suppressHover(reason: 'drag' | 'pan' | 'connect'): void {
@@ -86,31 +121,42 @@ export function createInteractions(owners: InteractionOwners): Interactions {
       target: node.data.view.target,
       start: node.data.view.position,
     });
-    dispatch({
-      kind: 'begin',
-      id,
-      gesture: 'move',
-      targets: nodes.map((item) => item.data.view.target),
-    });
+    const targets = nodes.map((item) => item.data.view.target);
+    dispatch({ kind: 'begin', id, gesture: 'move', targets });
+    const state = owners.session.getSnapshot();
+    const live = previewable(state, targets);
+    moved = live
+      ? {
+          id,
+          keys: movedKeys(
+            state,
+            nodes.map((item) => item.id),
+          ),
+        }
+      : null;
   }
   /** Frame updates carry a total delta from drag start; reducers retain original geometry for recovery. */
   function moveDrag(_event: MouseEvent | TouchEvent, node: FlowNode): void {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) return;
-    dispatch({
-      kind: 'move',
-      id: active.id,
-      delta: { x: node.position.x - active.start.x, y: node.position.y - active.start.y },
-    });
+    const delta = { x: node.position.x - active.start.x, y: node.position.y - active.start.y };
+    livePreview(active.id, delta);
+  }
+  /** Previewable drags publish only the offset; others take the full per-frame path. */
+  function livePreview(id: string, delta: Point): void {
+    if (moved?.id === id) owners.session.writePreview({ id, delta, moved: moved.keys });
+    else dispatch({ kind: 'move', id, delta });
   }
   /** Release submits exactly one coalesced intent; late duplicate stops are harmless. */
   function finishGeometry(): void {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) {
       owners.session.writePointer(null);
+      owners.session.writePreview(null);
       resumeHover('drag');
       return;
     }
+    flushPreview(active);
     dispatch({ kind: 'finish', id: active.id });
     owners.session.writePointer(null);
     resumeHover('drag');
@@ -120,6 +166,7 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) {
       owners.session.writePointer(null);
+      owners.session.writePreview(null);
       resumeHover('drag');
       return;
     }
@@ -206,6 +253,8 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     finishGeometry,
     cancelGeometry,
     nextId: owners.nextGestureId,
+    readPreview: owners.session.readPreview,
+    subscribePreview: owners.session.subscribePreview,
   };
   return {
     actions,

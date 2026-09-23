@@ -9,6 +9,13 @@ export interface PointerGesture {
   readonly target: Target;
   readonly start: Point;
 }
+/** Live move offset, kept outside the snapshot so each pointer frame re-renders only moving items. */
+export interface DragPreview {
+  readonly id: string;
+  readonly delta: Point;
+  /** Index keys that move: the dragged targets and their descendants. */
+  readonly moved: ReadonlySet<string>;
+}
 export interface SessionReducer {
   transition(state: SessionState, event: unknown): Result<Transition>;
 }
@@ -17,6 +24,9 @@ export interface SessionStore {
   getSnapshot(): SessionState;
   readPointer(): PointerGesture | null;
   writePointer(pointer: PointerGesture | null): void;
+  readPreview(): DragPreview | null;
+  writePreview(preview: DragPreview | null): void;
+  subscribePreview(listener: () => void): () => void;
   subscribe(listener: () => void): () => void;
   dispatch(event: unknown): Result<Transition>;
   drainEffects(): readonly CanvasEffect[];

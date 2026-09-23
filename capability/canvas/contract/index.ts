@@ -30,7 +30,7 @@ export type {
   OutlineEntry,
 } from './records/view.js';
 export type { SceneAdmission } from './ports/scene-admission.js';
-export type { SessionStore, SessionReducer } from './ports/session.js';
+export type { SessionStore, SessionReducer, DragPreview } from './ports/session.js';
 
 export { composeCanvas, createSession } from './compose.js';
 

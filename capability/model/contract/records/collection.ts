@@ -14,6 +14,7 @@ export const assetSchema = z
     digest,
     mediaType: label,
     alt: label,
+    kind: z.enum(['image', 'icon', 'font']).optional(),
     license: z.string().optional(),
     attribution: z.string().optional(),
   })
@@ -27,7 +28,7 @@ export const sourceSchema = z
     revision: z.string().optional(),
     location: z.string().optional(),
     description: z.string().optional(),
-    status: z.enum(['asserted', 'source-backed', 'unverified']),
+    status: z.enum(['asserted', 'source-backed', 'unverified']).default('unverified'),
   })
   .readonly();
 

@@ -250,6 +250,7 @@ it('a save check that settles the request clears "could not be confirmed"', slow
     await human.reconcileRequest(id);
     expect(human.getSnapshot().pending).toMatchObject([{ state: 'retryable' }]);
     expect(human.getSnapshot().problem).toBeNull();
+    expect(human.getSnapshot().creation.problem).toBeNull();
     human.dispose();
   });
 });

@@ -2346,7 +2346,14 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** "Could not be confirmed" is stale once a check or retry has settled the request's state. */
   function clearSettledUncertainty(): void {
-    if (state.problem?.code === 'connection-uncertain') update({ problem: null });
+    const stale = state.problem?.code === 'connection-uncertain' ? state.problem : null;
+    if (stale === null) return;
+    update({ problem: null, creation: creationWithout(plainMessage(stale.message)) });
+  }
+  function creationWithout(message: string): WorkspaceView['creation'] {
+    return state.creation.problem === message
+      ? { ...state.creation, problem: null }
+      : state.creation;
   }
   /** Retry retains the exact request body while using the current authenticated transport session. */
   async function retryRequest(id: string): Promise<void> {

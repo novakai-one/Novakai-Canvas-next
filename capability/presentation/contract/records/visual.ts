@@ -135,6 +135,10 @@ export const moduleEnvelope = z
     terminalPitch: dimension,
     columns: z.number().int().positive(),
     childColumns: z.number().int().positive(),
+    /** Row-major grid cell of each own node, in node order; a cell may stay empty. */
+    cells: z.array(z.number().int().nonnegative()).readonly(),
+    /** Row-major grid cell of each child group, in group order. */
+    childCells: z.array(z.number().int().nonnegative()).readonly(),
     childColumnWidths: z.array(dimension).readonly(),
     childRowHeights: z.array(dimension).readonly(),
     childInsets: z.array(z.strictObject({ x: dimension, y: dimension }).readonly()).readonly(),

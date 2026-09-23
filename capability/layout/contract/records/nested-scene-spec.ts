@@ -21,6 +21,10 @@ export interface NestedSectionSpec {
     readonly lanePitch: number;
     readonly columns: number;
     readonly childColumns: number;
+    /** Row-major grid cell of each node, in node order. */
+    readonly cells: readonly number[];
+    /** Row-major grid cell of each child section, in child order. */
+    readonly childCells: readonly number[];
     readonly childColumnWidths: readonly number[];
     readonly childRowHeights: readonly number[];
     readonly childInsets: readonly { readonly x: number; readonly y: number }[];

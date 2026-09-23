@@ -314,7 +314,8 @@ it('an add refused after switching collection does not follow into the new one',
     expect(view.active?.document.collection.id).toBe('other');
     expect(view.problem).toBeNull();
     expect(view.status).toContain('"Sample" was not applied');
-    expect(view.creation).toMatchObject({ problem: null, busy: false, object: { label: '' } });
+    expect(view.creation).toMatchObject({ busy: false, object: { label: '' } });
+    expect(view.creation.problem).toContain('"Sample" was not applied');
     const section = view.active?.document.collection.sections[0]?.id ?? '';
     expect(await human.addObject({ ...module, section })).toMatchObject({ ok: true });
     human.dispose();

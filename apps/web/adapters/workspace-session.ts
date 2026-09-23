@@ -1878,8 +1878,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     origin: ActiveDiagram['document']['collection'],
     error: Diagnostic,
   ): void {
-    const reason = plainMessage(error.message);
-    update({ problem: null, status: `Add to "${origin.title}" was not applied: ${reason}` });
+    const note = `Add to "${origin.title}" was not applied: ${plainMessage(error.message)}`;
+    // Clearing the bar first dismisses the refused request; the note then stays on the Add form.
+    update({ problem: null });
+    update({ status: note, creation: { ...state.creation, problem: note } });
   }
   function captureOf(kind: 'diagram' | 'object' | 'group') {
     return { diagram: diagramCapture, object: objectCapture, group: groupCapture }[kind];

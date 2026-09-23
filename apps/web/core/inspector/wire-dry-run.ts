@@ -12,6 +12,11 @@ export type WireDryRunState =
       readonly problem: Diagnostic;
     };
 export type WirePreview = (draft: WireDraft, signal: AbortSignal) => Promise<Result<void>>;
+/**
+ * Runs a task after the debounce, giving it an abort signal. The returned function stops the
+ * timer and aborts the signal. Adapters own timers and abort controllers; core only asks.
+ */
+export type WireDryRunSchedule = (task: (signal: AbortSignal) => void) => () => void;
 export interface WireDryRun {
   /** A new draft restarts the debounce; null (no draft, or a local block) cancels. */
   check(draft: WireDraft | null): void;
@@ -21,20 +26,14 @@ export interface WireDryRun {
   dispose(): void;
 }
 /** Apply waits for this: debounced, one request at a time, late answers for older drafts dropped. */
-export function createWireDryRun(preview: WirePreview, delay = 300): WireDryRun {
+export function createWireDryRun(preview: WirePreview, schedule: WireDryRunSchedule): WireDryRun {
   let snapshot: WireDryRunState = { state: 'idle' };
   let current: WireDraft | null = null;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  let job: AbortController | null = null;
+  let cancel: () => void = () => undefined;
   const listeners = new Set<() => void>();
   function publish(next: WireDryRunState): void {
     snapshot = next;
     listeners.forEach((listener) => listener());
-  }
-  function cancel(): void {
-    clearTimeout(timer);
-    job?.abort();
-    job = null;
   }
   function check(draft: WireDraft | null): void {
     if (draft === current) return;
@@ -42,13 +41,11 @@ export function createWireDryRun(preview: WirePreview, delay = 300): WireDryRun 
     current = draft;
     if (draft === null) return publish({ state: 'idle' });
     publish({ state: 'checking', draft, revision: draft.collection.revision });
-    timer = setTimeout(() => void run(draft), delay);
+    cancel = schedule((signal) => void run(draft, signal));
   }
-  async function run(draft: WireDraft): Promise<void> {
-    const own = new AbortController();
-    job = own;
-    const result = await preview(draft, own.signal).catch(() => unreachable);
-    if (own.signal.aborted || draft !== current) return;
+  async function run(draft: WireDraft, signal: AbortSignal): Promise<void> {
+    const result = await preview(draft, signal).catch(() => unreachable);
+    if (signal.aborted || draft !== current) return;
     publish(verdict(draft, result));
   }
   function dispose(): void {

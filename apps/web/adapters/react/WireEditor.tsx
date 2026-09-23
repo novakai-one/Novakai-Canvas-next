@@ -172,10 +172,19 @@ function useDryRun(
   preview: WireEditorSession['preview'],
   draft: WireDraft | null,
 ): WireDryRunState {
-  const [runner] = useState(() => createWireDryRun(preview));
+  const [runner] = useState(() => createWireDryRun(preview, debounce));
   useEffect(() => () => runner.dispose(), [runner]);
   useEffect(() => runner.check(draft), [runner, draft]);
   return useSyncExternalStore(runner.subscribe, runner.getSnapshot);
+}
+/** The dry run waits 300 ms after the last edit; cancelling stops the timer and the request. */
+function debounce(task: (signal: AbortSignal) => void): () => void {
+  const job = new AbortController();
+  const timer = setTimeout(() => task(job.signal), 300);
+  return () => {
+    clearTimeout(timer);
+    job.abort();
+  };
 }
 /** The server's answer for this exact draft; until it arrives Apply stays off. */
 function serverBlock(state: WireDryRunState, context: WireProblemContext): string | null {

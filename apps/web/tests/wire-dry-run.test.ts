@@ -20,11 +20,22 @@ function manualPreview() {
   return { calls, preview };
 }
 const flush = () => vi.advanceTimersByTimeAsync(0);
+/** The adapter's scheduler shape, on fake timers: a timer plus an abort signal per task. */
+function after(delay: number) {
+  return (task: (signal: AbortSignal) => void) => {
+    const job = new AbortController();
+    const timer = setTimeout(() => task(job.signal), delay);
+    return () => {
+      clearTimeout(timer);
+      job.abort();
+    };
+  };
+}
 
 it('asks the server once per settled draft and keeps Apply off until it answers', async () => {
   vi.useFakeTimers();
   const { calls, preview } = manualPreview();
-  const run = createWireDryRun(preview, 300);
+  const run = createWireDryRun(preview, after(300));
   const first = draft('a');
   const second = draft('a');
   run.check(first);
@@ -42,7 +53,7 @@ it('asks the server once per settled draft and keeps Apply off until it answers'
 it('drops a late answer for an older draft and aborts its request', async () => {
   vi.useFakeTimers();
   const { calls, preview } = manualPreview();
-  const run = createWireDryRun(preview, 10);
+  const run = createWireDryRun(preview, after(10));
   const older = draft('a');
   const newer = draft('a');
   run.check(older);
@@ -61,7 +72,7 @@ it('drops a late answer for an older draft and aborts its request', async () => 
 it('a verdict for another revision of the same draft does not count', async () => {
   vi.useFakeTimers();
   const { calls, preview } = manualPreview();
-  const run = createWireDryRun(preview, 0);
+  const run = createWireDryRun(preview, after(0));
   const value = draft('a', 1);
   run.check(value);
   await vi.advanceTimersByTimeAsync(0);
@@ -74,7 +85,7 @@ it('a verdict for another revision of the same draft does not count', async () =
 it('a local block or unmount cancels the timer and the request in flight', async () => {
   vi.useFakeTimers();
   const { calls, preview } = manualPreview();
-  const run = createWireDryRun(preview, 50);
+  const run = createWireDryRun(preview, after(50));
   run.check(draft('a'));
   run.check(null);
   await vi.advanceTimersByTimeAsync(100);

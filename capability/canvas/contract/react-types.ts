@@ -13,7 +13,7 @@ import type {
   Paint,
 } from '@novakai/canvas-presentation';
 import type { Canvas } from './types.js';
-import type { SessionStore } from './ports/session.js';
+import type { SessionStore, DragPreview } from './ports/session.js';
 import type { SessionState } from './records/state.js';
 import type {
   CanvasView,
@@ -24,14 +24,29 @@ import type {
 } from './records/view.js';
 import type { CanvasEvent } from './events.js';
 import type { Target } from './records/selection.js';
+import type { DropTarget } from './records/intent.js';
 import type { Point, Box } from './records/camera.js';
 import type { Emphasis } from './records/focus.js';
 import type { Diagnostic, Result } from './errors.js';
 export type SurfaceSession = Pick<
   SessionStore,
-  'getSnapshot' | 'subscribe' | 'dispatch' | 'readPointer' | 'writePointer'
+  | 'getSnapshot'
+  | 'subscribe'
+  | 'dispatch'
+  | 'readPointer'
+  | 'writePointer'
+  | 'readPreview'
+  | 'writePreview'
+  | 'subscribePreview'
 >;
-export type ViewReader = Pick<Canvas, 'present' | 'describeAccessibility'>;
+export type ViewReader = Pick<Canvas, 'present' | 'describeAccessibility' | 'dropTarget'>;
+/** Palette chips carry their object kind under this drag type. */
+export const paletteType = 'application/x-novakai-kind';
+/** An object type the user can drag from the palette onto the canvas. */
+export interface PaletteItem {
+  readonly kind: string;
+  readonly label: string;
+}
 export interface ButtonProps {
   readonly label: string;
   readonly title?: string | undefined;
@@ -93,6 +108,9 @@ export interface SurfaceProps {
   readonly paint: Paint;
   readonly label: string;
   readonly chrome?: CanvasChromeVisibility;
+  /** Object types shown in the tool rail; dragging one onto the canvas calls `onPaletteDrop`. */
+  readonly palette?: readonly PaletteItem[];
+  readonly onPaletteDrop?: (kind: string, target: DropTarget) => void;
 }
 export interface ViewSnapshot {
   readonly state: SessionState;
@@ -108,10 +126,16 @@ export interface ViewActions {
   finishGeometry(): void;
   cancelGeometry(): void;
   nextId(): string;
+  /** Live drag offset; nodes and wires subscribe by id so a move re-renders only what moves. */
+  readPreview(): DragPreview | null;
+  subscribePreview(listener: () => void): () => void;
 }
 export interface NodeData extends Record<string, unknown> {
   readonly view: ViewNode;
-  readonly actions: Pick<ViewActions, 'beginResize' | 'resize' | 'finishGeometry' | 'dispatch'>;
+  readonly actions: Pick<
+    ViewActions,
+    'beginResize' | 'resize' | 'finishGeometry' | 'dispatch' | 'readPreview' | 'subscribePreview'
+  >;
   readonly editable: boolean;
   /** Containment depth (0 = top level); presentation tiers nested group floors by depth. */
   readonly depth?: number | undefined;
@@ -124,7 +148,7 @@ export interface SectionData extends Record<string, unknown> {
 }
 export interface EdgeData extends Record<string, unknown> {
   readonly view: ViewWire;
-  readonly actions: Pick<ViewActions, 'dispatch' | 'nextId'>;
+  readonly actions: Pick<ViewActions, 'dispatch' | 'nextId' | 'readPreview' | 'subscribePreview'>;
   readonly editable: boolean;
   readonly paint: Paint;
   readonly nudge: number;
@@ -146,10 +170,11 @@ export interface ControlsProps {
   readonly outlineOpen: boolean;
   readonly onOutline: () => void;
   readonly visibility: CanvasChromeVisibility;
+  readonly palette: readonly PaletteItem[];
 }
 export interface OutlineProps {
   readonly sections: readonly OutlineSection[];
-  readonly actions: Pick<ViewActions, 'dispatch' | 'nextId'>;
+  readonly actions: Pick<ViewActions, 'dispatch' | 'nextId' | 'readPreview' | 'subscribePreview'>;
   readonly editable: boolean;
 }
 export interface SequenceProps {
@@ -161,7 +186,7 @@ export interface SequenceProps {
 }
 export interface RouteHandlesProps {
   readonly edge: ViewWire;
-  readonly actions: Pick<ViewActions, 'dispatch' | 'nextId'>;
+  readonly actions: Pick<ViewActions, 'dispatch' | 'nextId' | 'readPreview' | 'subscribePreview'>;
   readonly editable: boolean;
   readonly nudge: number;
   readonly controlPosition: Point;
@@ -198,7 +223,16 @@ export interface Interactions {
   keyboard(event: KeyboardEvent<HTMLDivElement>): void;
 }
 export interface InteractionOwners {
-  readonly session: Pick<SessionStore, 'getSnapshot' | 'dispatch' | 'readPointer' | 'writePointer'>;
+  readonly session: Pick<
+    SessionStore,
+    | 'getSnapshot'
+    | 'dispatch'
+    | 'readPointer'
+    | 'writePointer'
+    | 'readPreview'
+    | 'writePreview'
+    | 'subscribePreview'
+  >;
   readonly input: BrowserInput;
   readonly nextGestureId: () => string;
   readonly onError: (diagnostic: Diagnostic) => void;

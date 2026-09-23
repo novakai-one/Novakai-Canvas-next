@@ -167,9 +167,10 @@ export function inspectWires(
 
 /** Inspect final routes independently; an interior shared run hides which relationship reaches which endpoint. */
 function checkSharedRuns(wire: SectionCandidate['wires'][number], context: Context): void {
-  const others = context.candidates.filter(
-    (item) => item.id !== wire.id && !context.branches.has(item.id),
-  );
+  // After a human move, two wires may share a run rather than the move being refused.
+  const others = context.behind
+    ? []
+    : context.candidates.filter((item) => item.id !== wire.id && !context.branches.has(item.id));
   const hidden = others.find((item) => !clearLanes(wire, item, context));
   if (hidden !== undefined)
     reject('constraint-conflict', wire.id, 'Wires share an obscuring interior route', [

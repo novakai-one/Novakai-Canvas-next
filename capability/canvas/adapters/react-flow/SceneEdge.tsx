@@ -1,7 +1,13 @@
-import { memo } from 'react';
+import { memo, useSyncExternalStore } from 'react';
 import { EdgeLabelRenderer } from '@xyflow/react';
 import type { ComponentType, ReactElement } from 'react';
-import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
+import type {
+  SceneEdgeProps,
+  RenderSlots,
+  WireLabelProps,
+  EdgeData,
+} from '../../contract/react-types.js';
+import type { DragPreview } from '../../contract/ports/session.js';
 import type { ViewWire } from '../../contract/records/view.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
 import type { Point, Box } from '../../contract/records/camera.js';
@@ -58,6 +64,36 @@ function traceStroke(view: ViewWire, id: string, first: Point, last: Point): str
     return directedStroke(`${id}-accent`, 'var(--nv-action-accent)', first, last);
   return directedStroke(id, view.wire.appearance.paint.stroke, first, last);
 }
+const idle = (): (() => void) => () => undefined;
+/** The live drag offset, only while it moves one of this wire's ends; other wires never re-render. */
+function useDragPreview(data: EdgeData | undefined): DragPreview | null {
+  return useSyncExternalStore(data?.actions.subscribePreview ?? idle, () => {
+    const preview = data?.actions.readPreview() ?? null;
+    if (preview === null || data === undefined) return null;
+    const touches = [data.view.sourceId, data.view.targetId].some((key) => preview.moved.has(key));
+    return touches ? preview : null;
+  });
+}
+function shift(point: Point, delta: Point, moves: boolean): Point {
+  return moves ? { x: point.x + delta.x, y: point.y + delta.y } : point;
+}
+/** Every point follows when both ends move; otherwise only the moving end's point. */
+function followsDrag(index: number, last: number, source: boolean, target: boolean): boolean {
+  if (source && target) return true;
+  return [source, target][[0, last].indexOf(index)] === true;
+}
+/** Same as the drop preview: both ends moving translates the route; one end moving stretches it. */
+function draggedView(view: ViewWire, preview: DragPreview): ViewWire {
+  const source = preview.moved.has(view.sourceId);
+  const target = preview.moved.has(view.targetId);
+  const wire = view.wire;
+  const last = wire.points.length - 1;
+  const points = wire.points.map((point, index) =>
+    shift(point, preview.delta, followsDrag(index, last, source, target)),
+  );
+  const labelBox = { ...wire.labelBox, ...shift(wire.labelBox, preview.delta, source && target) };
+  return { ...view, draft: true, wire: { ...wire, points, labelBox } };
+}
 /** Binding keeps measured labels/notation outside Canvas policy; host owns content admission and render recovery. */
 export function createSceneEdge(
   slots: Pick<RenderSlots, 'MeasuredContent' | 'Marker'> & {
@@ -87,8 +123,10 @@ export function createSceneEdge(
   }
   /** Render actual React Flow edge paths with independently positioned measured labels and complete crow's-foot notation. */
   function SceneEdge({ data }: SceneEdgeProps): ReactElement | null {
+    const preview = useDragPreview(data);
     if (!data) return null;
-    return renderEdge(data);
+    if (preview === null) return renderEdge(data);
+    return renderEdge({ ...data, view: draggedView(data.view, preview) });
   }
   /** Admitted routes always have two points; missing geometry stays visibly absent rather than inventing a wire. */
   function renderEdge(data: NonNullable<SceneEdgeProps['data']>): ReactElement | null {
@@ -176,7 +214,10 @@ export function createSceneEdge(
           </>
         )}
         {wire.labelVisible !== false && (
-          <g className={styles.label} transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
+          <g
+            className={styles.label}
+            transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}
+          >
             <Content embedFonts={false} content={wire.measuredLabel} />
           </g>
         )}

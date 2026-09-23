@@ -1,5 +1,5 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
-import type { ComponentType, ReactElement } from 'react';
+import type { ComponentType, DragEvent, ReactElement } from 'react';
 import { ReactFlow, MiniMap } from '@xyflow/react';
 import type { NodeTypes, EdgeTypes } from '@xyflow/react';
 import type {
@@ -12,6 +12,9 @@ import type {
   CanvasChromeVisibility,
 } from '../../contract/react-types.js';
 import type { Result } from '../../contract/errors.js';
+import type { DropTarget } from '../../contract/records/intent.js';
+import type { Point } from '../../contract/records/camera.js';
+import { paletteType } from '../../contract/react-types.js';
 import styles from './CanvasSurface.module.css';
 import themeStyles from './react-flow-theme.module.css';
 /** Report a rejected view from an effect, never as a render-time side effect; host retains its last committed data. */
@@ -76,6 +79,8 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
         onKeyDown={interactions.keyboard}
         onPointerCancel={interactions.actions.cancelGeometry}
         onPointerDownCapture={(event) => setPointer(pointerThreshold(event.pointerType))}
+        onDragOver={acceptPalette}
+        onDrop={(event) => dropPalette(event, snapshot, props)}
       >
         <Fonts />
         <ReactFlow<FlowNode, FlowEdge>
@@ -101,7 +106,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           zoomOnScroll={false}
           zoomOnPinch
           zoomOnDoubleClick={false}
-          panOnDrag={hand ? true : [0, 1]}
+          panOnDrag={panButtons(hand, snapshot.state.profile.blankDrag)}
           panActivationKeyCode="Space"
           selectionOnDrag={snapshot.state.profile.blankDrag === 'marquee'}
           selectionKeyCode="Shift"
@@ -138,6 +143,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
             outlineOpen={outlineOpen}
             onOutline={() => setOutlineOpen((value) => !value)}
             visibility={chrome}
+            palette={props.onPaletteDrop === undefined ? [] : (props.palette ?? [])}
           />
         )}
         {outlineOpen && chrome.outline && (
@@ -175,4 +181,47 @@ function minimapRoleColor(role: string): string {
 /** Touch input uses the coarse threshold; mouse and pen retain precise manipulation. */
 function pointerThreshold(type: string): 'coarseThreshold' | 'fineThreshold' {
   return type === 'touch' ? 'coarseThreshold' : 'fineThreshold';
+}
+/** Hand tool pans with any button. Otherwise the middle button pans, plus the left one when blank drag pans. Space+drag always pans. */
+function panButtons(hand: boolean, blankDrag: 'pan' | 'marquee'): boolean | number[] {
+  if (hand) return true;
+  return blankDrag === 'pan' ? [0, 1] : [1];
+}
+function acceptPalette(event: DragEvent<HTMLDivElement>): void {
+  if (!event.dataTransfer.types.includes(paletteType) || onControls(event)) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'copy';
+}
+/** Screen point → world point → the group or section there → host creates the object. */
+function dropPalette(
+  event: DragEvent<HTMLDivElement>,
+  snapshot: ViewSnapshot,
+  props: SurfaceProps,
+): void {
+  const kind = event.dataTransfer.getData(paletteType);
+  const drop = props.onPaletteDrop;
+  if (kind === '' || drop === undefined || onControls(event)) return;
+  event.preventDefault();
+  const target = props.reader.dropTarget(snapshot.state, worldPoint(event, snapshot));
+  deliver(target, (value) => drop(kind, value), props.onError);
+}
+/** A drop onto the tool rail, zoom controls or outline is not a drop onto the canvas. */
+function onControls(event: DragEvent<HTMLDivElement>): boolean {
+  return event.target instanceof Element && event.target.closest('[data-canvas-controls]') !== null;
+}
+function worldPoint(event: DragEvent<HTMLDivElement>, snapshot: ViewSnapshot): Point {
+  const frame = event.currentTarget.getBoundingClientRect();
+  const camera = snapshot.view.camera;
+  return {
+    x: (event.clientX - frame.left - camera.x) / camera.zoom,
+    y: (event.clientY - frame.top - camera.y) / camera.zoom,
+  };
+}
+function deliver(
+  result: Result<DropTarget | null>,
+  onTarget: (target: DropTarget) => void,
+  onError: SurfaceProps['onError'],
+): void {
+  if (!result.ok) return onError(result.error);
+  if (result.value !== null) onTarget(result.value);
 }

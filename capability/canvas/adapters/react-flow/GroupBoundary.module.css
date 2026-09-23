@@ -14,4 +14,10 @@
     rx: var(--nv-radius-panel);
     pointer-events: stroke;
   }
+  /* The title strip is a grab area too, so a group drags from its name. */
+  .hit rect.title {
+    fill: transparent;
+    stroke: none;
+    pointer-events: fill;
+  }
 }

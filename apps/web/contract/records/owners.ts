@@ -26,6 +26,7 @@ export type {
   SurfaceSession,
   EditIntent,
   PlacementIntent,
+  RegroupIntent,
   RouteIntent,
   Target,
   SceneStamp,

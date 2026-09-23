@@ -1,4 +1,9 @@
-import type { SessionReducer, SessionStore, PointerGesture } from '../../contract/ports/session.js';
+import type {
+  SessionReducer,
+  SessionStore,
+  PointerGesture,
+  DragPreview,
+} from '../../contract/ports/session.js';
 import type { SessionState, Transition } from '../../contract/records/state.js';
 import type { CanvasEffect } from '../../contract/records/intent.js';
 import type { Diagnostic, Result } from '../../contract/errors.js';
@@ -39,6 +44,8 @@ function disposed(): Result<never> {
 export function createStore(reducer: SessionReducer, initial: SessionState): SessionStore {
   let state = initial;
   let pointer: PointerGesture | null = null;
+  let preview: DragPreview | null = null;
+  const previewListeners = new Set<() => void>();
   let acceptedIntents: ReadonlyMap<string, string> = new Map();
   let closed = false;
   let effects: readonly CanvasEffect[] = [];
@@ -52,6 +59,12 @@ export function createStore(reducer: SessionReducer, initial: SessionState): Ses
     if (!transition.changed) return [];
     return publish();
   }
+  /** Escape, a foreign update or drop ends the draft; the live offset goes with it. */
+  function dropStalePreview(): void {
+    if (preview === null || state.draft?.id === preview.id) return;
+    preview = null;
+    [...previewListeners].forEach(notify);
+  }
   /** Successful dispatch commits local state and queues effects before notifications; diagnostics do not imply retry. */
   function commit(transition: Transition): Result<Transition> {
     const admission = admitEffects(transition.effects, acceptedIntents);
@@ -63,6 +76,7 @@ export function createStore(reducer: SessionReducer, initial: SessionState): Ses
       };
     acceptedIntents = admission.value.accepted;
     state = transition.state;
+    dropStalePreview();
     effects = [...effects, ...transition.effects];
     const notifications = notifyChange(transition);
     const diagnostics = [...transition.diagnostics, ...notifications];
@@ -77,6 +91,19 @@ export function createStore(reducer: SessionReducer, initial: SessionState): Ses
     writePointer(next): void {
       if (closed) return;
       pointer = copyPointer(next);
+    },
+    readPreview: () => preview,
+    /** Wakes only preview subscribers; the scene snapshot is untouched until drop. */
+    writePreview(next): void {
+      if (closed || next === preview) return;
+      preview = next;
+      [...previewListeners].forEach(notify);
+    },
+    subscribePreview(listener): () => void {
+      if (!closed) previewListeners.add(listener);
+      return () => {
+        previewListeners.delete(listener);
+      };
     },
     /** Each live listener has idempotent cleanup; closed sessions never subscribe. */
     subscribe(listener): () => void {
@@ -102,6 +129,8 @@ export function createStore(reducer: SessionReducer, initial: SessionState): Ses
     dispose(): void {
       closed = true;
       pointer = null;
+      preview = null;
+      previewListeners.clear();
       acceptedIntents = new Map();
       listeners.clear();
       effects = [];

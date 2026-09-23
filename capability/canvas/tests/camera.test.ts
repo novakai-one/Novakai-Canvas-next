@@ -79,7 +79,7 @@ describe('Canvas camera contract', () => {
       target: 'blank',
       distance: 0,
     };
-    expect(value(canvas.gesture(base))).toBe('pan');
+    expect(value(canvas.gesture(base))).toBe('marquee');
     expect(value(canvas.gesture({ ...base, shift: true }))).toBe('marquee');
     expect(value(canvas.gesture({ ...base, button: 'middle', target: 'node' }))).toBe('pan');
     expect(value(canvas.gesture({ ...base, space: true, target: 'node' }))).toBe('pan');
@@ -93,8 +93,6 @@ describe('Canvas camera contract', () => {
     expect(value(canvas.gesture({ ...base, target: 'node', pointer: 'coarse', distance: 8 }))).toBe(
       'move',
     );
-    expect(value(canvas.gesture(base, { ...defaultProfile, blankDrag: 'marquee' }))).toBe(
-      'marquee',
-    );
+    expect(value(canvas.gesture(base, { ...defaultProfile, blankDrag: 'pan' }))).toBe('pan');
   });
 });

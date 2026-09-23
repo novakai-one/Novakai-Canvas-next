@@ -409,6 +409,7 @@ export function projectNestedWires(
   roads: ReadonlyMap<string, PrototypeRoad>,
   junctions: readonly PrototypeJunction[],
   ports: readonly PrototypePortLocation[],
+  checked = true,
 ): readonly NestedWire[] {
   const byRoad = junctionIndex(junctions);
   const turns = new Set(
@@ -417,7 +418,7 @@ export function projectNestedWires(
   const projected = wires.map((wire) =>
     projectNestedWire(wire, byWire.get(wire.id) ?? [], roads, turns, byRoad),
   );
-  validateSupportedProjection(projected, byWire, roads, ports);
+  if (checked) validateSupportedProjection(projected, byWire, roads, ports);
   return projected;
 }
 

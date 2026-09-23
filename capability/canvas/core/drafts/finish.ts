@@ -7,6 +7,7 @@ import type {
 } from '../../contract/records/draft.js';
 import type { EditIntent, LocalPlacement } from '../../contract/records/intent.js';
 import { activeDraft } from './update.js';
+import { regroupIntent } from './regroup.js';
 import { targetInfo } from '../scenes/address.js';
 import { changed, canMutate } from '../interaction/changes.js';
 import { reject } from '../validation/outcomes.js';
@@ -32,6 +33,8 @@ export function draftIntent(state: SessionState, draft: GestureDraft): EditInten
       target: draft.target,
       route: draft.current,
     };
+  const regroup = regroupIntent(state, draft);
+  if (regroup !== null) return regroup;
   const entries = draft.current.map((entry) => ({
     target: entry.target,
     placement: localPlacement(state, draft, entry),

@@ -242,6 +242,8 @@ function CanvasSlot({
           label={active.document.collection.title}
           chrome={chrome}
           showRoads={panelState.interfaceVisibility.roads && !hidden}
+          palette={palette}
+          onPaletteDrop={(kind, target) => dropObject(controller, kind, target)}
           showLabels={panelState.interfaceVisibility.labels}
         />
       )}
@@ -315,4 +317,23 @@ function RevealSlot({
 }): ReactElement | null {
   if (!hidden) return null;
   return <Reveal onReveal={onReveal} />;
+}
+
+/** Object types the canvas palette offers. */
+const palette = [{ kind: 'module', label: 'Module' }] as const;
+/** A palette drop creates a new object of that type in the group (or section) under the pointer. */
+function dropObject(
+  controller: WorkspaceController,
+  kind: string,
+  target: { readonly section: string; readonly group: string | null },
+): void {
+  const item = palette.find((entry) => entry.kind === kind);
+  if (item === undefined) return;
+  void controller.addObject({
+    section: target.section,
+    group: target.group,
+    kind: item.kind,
+    label: `New ${item.label.toLowerCase()}`,
+    reuseObject: null,
+  });
 }

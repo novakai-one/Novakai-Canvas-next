@@ -8,6 +8,7 @@ import { createTransition } from '../core/interaction/transition.js';
 import { decideGesture } from '../core/interaction/gesture-policy.js';
 import { presentScene } from '../core/scenes/present.js';
 import { describeScene } from '../core/accessibility/outline.js';
+import { dropTarget } from '../core/drafts/drop-target.js';
 /** Create framework-free Canvas behavior; host retains prior state on rejection and owns effect delivery/recovery. */
 export function createCanvas(dependencies: Dependencies): Canvas {
   const transition = createTransition(dependencies.sceneAdmission);
@@ -19,5 +20,6 @@ export function createCanvas(dependencies: Dependencies): Canvas {
     describeAccessibility: (state) => protect(() => describeScene(state)),
     gesture: (input, settings = defaultProfile) =>
       protect(() => decideGesture(parse(gestureInput, input), parse(profile, settings))),
+    dropTarget: (state, point) => protect(() => dropTarget(state, point)),
   };
 }

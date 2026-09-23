@@ -20,7 +20,7 @@ export type {
   AttachmentSide,
 } from './records/draft.js';
 export type { EditIntent, CanvasEffect, Endpoint, LocalPlacement } from './records/intent.js';
-export type { PlacementIntent, RouteIntent } from './records/intent.js';
+export type { PlacementIntent, RegroupIntent, RouteIntent, DropTarget } from './records/intent.js';
 export type {
   CanvasView,
   ViewNode,
@@ -30,7 +30,7 @@ export type {
   OutlineEntry,
 } from './records/view.js';
 export type { SceneAdmission } from './ports/scene-admission.js';
-export type { SessionStore, SessionReducer } from './ports/session.js';
+export type { SessionStore, SessionReducer, DragPreview } from './ports/session.js';
 
 export { composeCanvas, createSession } from './compose.js';
 
@@ -41,6 +41,7 @@ export type {
   SurfaceProps,
   ViewActions,
   ViewReader,
+  PaletteItem,
   SurfaceSession,
   CanvasChromeVisibility,
 } from './react-types.js';

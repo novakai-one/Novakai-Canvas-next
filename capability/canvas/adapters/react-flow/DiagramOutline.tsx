@@ -55,7 +55,11 @@ export function createDiagramOutline(
   /** Native headings/lists/buttons expose contents without depending on pan/zoom or color recognition. */
   function DiagramOutline(props: OutlineProps): ReactElement {
     return (
-      <nav className={`nodrag nopan nowheel ${styles.outline}`} aria-label="Diagram contents">
+      <nav
+        className={`nodrag nopan nowheel ${styles.outline}`}
+        aria-label="Diagram contents"
+        data-canvas-controls
+      >
         {props.sections.map((section) => (
           <section key={JSON.stringify(section.target)}>
             <h2>{section.title}</h2>

@@ -22,6 +22,13 @@ export interface PlacementIntent extends IntentBase {
   readonly kind: 'placement';
   readonly entries: readonly { readonly target: Target; readonly placement: LocalPlacement }[];
 }
+/** One node dropped into a different group (or out of all groups); placement is local to `into`. */
+export interface RegroupIntent extends IntentBase {
+  readonly kind: 'regroup';
+  readonly target: Target;
+  readonly into: Target;
+  readonly placement: LocalPlacement;
+}
 export interface RouteIntent extends IntentBase {
   readonly kind: 'route';
   readonly target: WireTarget;
@@ -42,10 +49,21 @@ export interface AlignmentIntent extends IntentBase {
   readonly axis: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom';
 }
 export type EditIntent =
-  PlacementIntent | RouteIntent | ConnectionIntent | SelectionIntent | AlignmentIntent;
+  | PlacementIntent
+  | RegroupIntent
+  | RouteIntent
+  | ConnectionIntent
+  | SelectionIntent
+  | AlignmentIntent;
 export type CanvasEffect =
   | { readonly kind: 'edit-intent'; readonly intent: EditIntent }
   | { readonly kind: 'inspect-request'; readonly target: Target }
   | { readonly kind: 'navigation-request'; readonly target: Target }
   | { readonly kind: 'announce'; readonly message: string }
   | { readonly kind: 'recover-draft'; readonly id: string; readonly message: string };
+
+/** Where a new object dropped on the canvas belongs: a section, and the group inside it (null = no group). */
+export interface DropTarget {
+  readonly section: string;
+  readonly group: string | null;
+}

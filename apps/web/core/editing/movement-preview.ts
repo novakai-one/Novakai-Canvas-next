@@ -166,10 +166,17 @@ function inspectGeometryItem(
   const expectedMatch =
     grewToHold(document, item.target, expected, item.box) ||
     pushedAside(document, item.target, expected, item.box, preview) ||
-    stoppedShort(document, item.target, expected, item.box)
+    stoppedShort(document, item.target, expected, item.box) ||
+    refitted(item.target, expected, item.box)
       ? { ok: true as const, value: undefined }
       : validateExpectedBox(expected, item.box);
   return expectedMatch.ok ? inspectMatchedGeometry(document, item, preview) : expectedMatch;
+}
+
+/** A section fits its content, so it may shrink or grow when a child moves; it never drifts. */
+function refitted(target: Target, expected: Box, actual: Box): boolean {
+  if (target.kind !== 'section') return false;
+  return Math.abs(actual.x - expected.x) < 0.01 && Math.abs(actual.y - expected.y) < 0.01;
 }
 
 /** A group or section may grow to hold a moved child; it never shrinks or drifts away. */

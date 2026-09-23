@@ -24,6 +24,7 @@ import type {
 } from './records/view.js';
 import type { CanvasEvent } from './events.js';
 import type { Target } from './records/selection.js';
+import type { DropTarget } from './records/intent.js';
 import type { Point, Box } from './records/camera.js';
 import type { Emphasis } from './records/focus.js';
 import type { Diagnostic, Result } from './errors.js';
@@ -38,7 +39,14 @@ export type SurfaceSession = Pick<
   | 'writePreview'
   | 'subscribePreview'
 >;
-export type ViewReader = Pick<Canvas, 'present' | 'describeAccessibility'>;
+export type ViewReader = Pick<Canvas, 'present' | 'describeAccessibility' | 'dropTarget'>;
+/** Palette chips carry their object kind under this drag type. */
+export const paletteType = 'application/x-novakai-kind';
+/** An object type the user can drag from the palette onto the canvas. */
+export interface PaletteItem {
+  readonly kind: string;
+  readonly label: string;
+}
 export interface ButtonProps {
   readonly label: string;
   readonly title?: string | undefined;
@@ -98,6 +106,9 @@ export interface SurfaceProps {
   readonly paint: Paint;
   readonly label: string;
   readonly chrome?: CanvasChromeVisibility;
+  /** Object types shown in the tool rail; dragging one onto the canvas calls `onPaletteDrop`. */
+  readonly palette?: readonly PaletteItem[];
+  readonly onPaletteDrop?: (kind: string, target: DropTarget) => void;
 }
 export interface ViewSnapshot {
   readonly state: SessionState;
@@ -155,6 +166,7 @@ export interface ControlsProps {
   readonly outlineOpen: boolean;
   readonly onOutline: () => void;
   readonly visibility: CanvasChromeVisibility;
+  readonly palette: readonly PaletteItem[];
 }
 export interface OutlineProps {
   readonly sections: readonly OutlineSection[];

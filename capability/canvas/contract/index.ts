@@ -20,7 +20,7 @@ export type {
   AttachmentSide,
 } from './records/draft.js';
 export type { EditIntent, CanvasEffect, Endpoint, LocalPlacement } from './records/intent.js';
-export type { PlacementIntent, RegroupIntent, RouteIntent } from './records/intent.js';
+export type { PlacementIntent, RegroupIntent, RouteIntent, DropTarget } from './records/intent.js';
 export type {
   CanvasView,
   ViewNode,
@@ -41,6 +41,7 @@ export type {
   SurfaceProps,
   ViewActions,
   ViewReader,
+  PaletteItem,
   SurfaceSession,
   CanvasChromeVisibility,
 } from './react-types.js';

@@ -28,6 +28,24 @@
     right: var(--nv-space-3);
     bottom: var(--nv-space-6);
   }
+  .palette {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-1);
+    padding-top: var(--nv-space-2);
+    border-top: var(--nv-stroke-base) solid var(--nv-border-default);
+  }
+  .chip {
+    padding: var(--nv-space-1) var(--nv-space-2);
+    border: var(--nv-stroke-base) dashed var(--nv-border-default);
+    border-radius: var(--nv-radius-control);
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+  }
+  .chip:hover {
+    border-color: var(--nv-action-accent);
+  }
   .controls output {
     font: inherit;
     padding-inline: var(--nv-space-2);

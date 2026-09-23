@@ -1,5 +1,11 @@
 import type { ComponentType, ReactElement } from 'react';
-import type { ControlsProps, RenderSlots, ControlIconProps } from '../../contract/react-types.js';
+import type {
+  ControlsProps,
+  RenderSlots,
+  ControlIconProps,
+  PaletteItem,
+} from '../../contract/react-types.js';
+import { paletteType } from '../../contract/react-types.js';
 import styles from './CanvasControls.module.css';
 /** Labelled controls expose explicit navigation; no node click or inspect action performs a hidden Fit. */
 export function createCanvasControls(
@@ -14,6 +20,7 @@ export function createCanvasControls(
     outlineOpen,
     onOutline,
     visibility,
+    palette,
   }: ControlsProps): ReactElement {
     const { state, view } = snapshot;
     const center = { x: view.camera.viewport.width / 2, y: view.camera.viewport.height / 2 };
@@ -84,6 +91,7 @@ export function createCanvasControls(
               onClick={onOutline}
             />
           )}
+          {visibility.tools && view.editable && <Palette items={palette} />}
         </div>
         <div
           className={`nodrag nopan ${styles.controls} ${styles.viewport}`}
@@ -137,4 +145,26 @@ export function createCanvasControls(
     );
   }
   return CanvasControls;
+}
+/** Object types to drag onto the canvas. Dropping is handled by the surface. */
+function Palette({ items }: { readonly items: readonly PaletteItem[] }): ReactElement | null {
+  if (items.length === 0) return null;
+  return (
+    <div className={styles.palette} role="group" aria-label="Add by dragging">
+      {items.map((item) => (
+        <div
+          key={item.kind}
+          className={styles.chip}
+          draggable
+          title={`Drag onto the canvas to add a ${item.label.toLowerCase()}`}
+          onDragStart={(event) => {
+            event.dataTransfer.setData(paletteType, item.kind);
+            event.dataTransfer.effectAllowed = 'copy';
+          }}
+        >
+          {item.label}
+        </div>
+      ))}
+    </div>
+  );
 }

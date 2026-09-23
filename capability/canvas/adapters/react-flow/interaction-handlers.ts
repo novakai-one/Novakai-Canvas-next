@@ -76,18 +76,11 @@ export function createInteractions(owners: InteractionOwners): Interactions {
   /** Typed failures are reported to the host; they never trigger a fallback save or guessed state change. */
   function dispatch(event: CanvasEvent): void {
     const result = owners.session.dispatch(event);
-    dropStalePreview();
     if (!result.ok) {
       owners.onError(result.error);
       return;
     }
     result.value.diagnostics.forEach((diagnostic) => owners.onError(diagnostic));
-  }
-  /** Escape, a foreign update or drop ends the draft; the live offset goes with it. */
-  function dropStalePreview(): void {
-    const preview = owners.session.readPreview();
-    if (preview !== null && owners.session.getSnapshot().draft?.id !== preview.id)
-      owners.session.writePreview(null);
   }
   /** Release applies the last live offset once, then the usual finish. */
   function flushPreview(active: PointerGesture): void {

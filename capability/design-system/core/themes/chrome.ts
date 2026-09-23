@@ -28,12 +28,8 @@ export function chromeField(chrome: unknown): { readonly chrome?: ChromeName } {
   if (chrome === undefined) return {};
   return { chrome: parsed(chromeName, chrome, 'chrome') };
 }
-/** Hydrate optional extension namespaces; missing legacy tokens still fail completeness validation. */
-export function completeChromeTokens(
-  supplied: TokenValues,
-  source: SourceSet,
-  chrome: ChromeName | undefined,
-): TokenValues {
+/** Fill every token the saved theme lacks from defaults derived from its own roots. */
+export function completeChromeTokens(supplied: TokenValues, source: SourceSet): TokenValues {
   const roots = Object.fromEntries(
     source.definitions
       .filter((item) => item.expression.op === 'literal')
@@ -41,10 +37,12 @@ export function completeChromeTokens(
       .map((item) => [item.id, member(supplied, item.id)]),
   );
   const defaults = resolveDefinitions(changedDefinitions(source, roots)).values;
-  return {
-    ...Object.fromEntries(
-      Object.entries(defaults).filter(([id]) => omitted(tokenId.parse(id), chrome)),
-    ),
-    ...supplied,
-  };
+  // A theme saved before a token existed takes that token's current default instead of failing to load.
+  // A missing font takes the theme's body font: diagrams only accept the theme's own pinned fonts.
+  const body = supplied[tokenId.parse('font.body')];
+  const filled = Object.entries(defaults).map(([id, value]) => [
+    id,
+    value.type === 'fontFamily' && body ? body : value,
+  ]);
+  return { ...Object.fromEntries(filled), ...supplied };
 }

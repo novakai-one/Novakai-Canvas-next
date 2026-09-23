@@ -35,15 +35,8 @@ export function resolveDiagram(
   identity: Identity,
 ): ResolvedTokenSet {
   const portable = fromPortable(input, source, fonts);
+  // Derived values are always re-derived from the roots, so a theme saved under older recipes still loads.
   const base = rootsOnly(source, portable.values);
-  const canonicalValues = resolveDefinitions(changedDefinitions(source, base));
-  if (canonical(canonicalValues.values) !== canonical(portable.values))
-    return reject(
-      'invalid-input',
-      'theme.tokens',
-      'derived values matching roots',
-      'Portable derived values differ',
-    );
   const overrides = scope === 'export' ? { ...base, ...noMotion() } : base;
   const resolved = resolveDefinitions(changedDefinitions(source, overrides));
   validateBounds(source, resolved.values, scope);

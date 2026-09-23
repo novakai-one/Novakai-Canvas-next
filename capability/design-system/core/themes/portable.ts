@@ -68,7 +68,7 @@ export function fromPortable(
   const supplied = Object.fromEntries(
     Object.entries(theme.tokens).map(([id, value]) => [id, unpackValue(id, value, fonts)]),
   );
-  const values = completeChromeTokens(supplied, source, theme.chrome);
+  const values = completeChromeTokens(supplied, source);
   validateMembers(values, source, theme.roles);
   const actual = [
     ...new Set(

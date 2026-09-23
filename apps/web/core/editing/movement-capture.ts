@@ -244,7 +244,7 @@ function backTrack(
   return at(t);
 }
 
-/** Search outward from the drop point: down, right, up, left. */
+/** Search outward from the drop point, down then right. Never up or left: that would leave the group. */
 function nearestFree(
   from: { x: number; y: number },
   free: (p: { x: number; y: number }) => boolean,
@@ -252,8 +252,6 @@ function nearestFree(
   const ways = [
     [0, 1],
     [1, 0],
-    [0, -1],
-    [-1, 0],
   ] as const;
   const steps = Array.from({ length: 256 }, (_, i) => (i + 1) * 8);
   const spots = steps.flatMap((d) =>

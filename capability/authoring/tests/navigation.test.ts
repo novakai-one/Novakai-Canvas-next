@@ -47,6 +47,12 @@ async function navigate(api: Authoring, id: string, direction: 'undo' | 'redo') 
 async function title(api: Authoring) {
   return record(value(await api.read(workspace)), key('collection', 'demo')).value;
 }
+async function edits(api: Authoring, from: number, to: number) {
+  for (let index = from; index < to; index++) value(await edit(api, `E${index}`, `E${index}`));
+}
+function historyRecords(snapshot: { records: readonly { key: { kind: string } }[] }) {
+  return snapshot.records.filter((item) => item.key.kind === 'history');
+}
 describe('workspace chronological history', () => {
   it('adopts existing state without making old edits selectable and reopens idempotently', async () => {
     const h = harness();
@@ -57,17 +63,30 @@ describe('workspace chronological history', () => {
       redo: null,
     });
     const adopted = value(await h.api.read(workspace));
-    expect(adopted.sequence).toBe(original.sequence + 1);
+    expect(adopted.sequence).toBe(original.sequence + 2);
     expect(record(adopted, key('collection', 'demo'))).toEqual(
       record(original, key('collection', 'demo')),
     );
-    expect(record(adopted, key('history', 'tx:seed'))).toEqual(
-      record(original, key('history', 'tx:seed')),
-    );
+    expect(adopted.records.some((item) => item.key.id === 'tx:seed')).toBe(false);
     value(await h.api.initializeHistory(workspace));
     expect(value(await h.api.read(workspace))).toEqual(adopted);
     h.store.close();
   });
+  it('keeps the last 100 steps, trims old history on open, and undo still works', async () => {
+    const h = harness();
+    await seed(h);
+    await edits(h.api, 0, 30);
+    value(await h.api.initializeHistory(workspace));
+    expect(historyRecords(value(await h.api.read(workspace)))).toHaveLength(1);
+    await edits(h.api, 30, 135);
+    const bounded = value(await h.api.read(workspace));
+    expect(historyRecords(bounded)).toHaveLength(201);
+    expect(bounded.records.some((item) => item.key.id === 'tx:E34')).toBe(false);
+    for (const id of ['U1', 'U2', 'U3']) value(await navigate(h.api, id, 'undo'));
+    expect(await title(h.api)).toMatchObject({ title: 'E131' });
+    expect(value(await h.api.history(workspace)).redo?.transaction).toBe('E132');
+    h.store.close();
+  }, 60_000);
   it('A B undo B undo A redo A redo B restores contents with fresh versions', async () => {
     const h = harness();
     await seed(h);
@@ -107,7 +126,8 @@ describe('workspace chronological history', () => {
       undo: { transaction: 'C' },
       redo: null,
     });
-    expect(record(value(await h.api.read(workspace)), key('history', 'tx:A')).deleted).toBe(false);
+    const records = value(await h.api.read(workspace)).records;
+    expect(records.some((item) => item.key.id === 'tx:A')).toBe(false);
     h.store.close();
   });
   it('two inverse requests from the same status commit once; stale navigation never retargets', async () => {

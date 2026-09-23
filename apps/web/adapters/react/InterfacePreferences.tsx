@@ -74,9 +74,20 @@ export function createInterfacePreferences(
           </div>
         </fieldset>
         {view.problem && <p role="alert">{formatFailure(view.problem).join(' · ')}</p>}
-        <Button label="Reset interface preferences" onClick={preferences.reset} />
+        <Button
+          label="Reset interface preferences"
+          onClick={() => resetInterface(preferences, panels)}
+        />
       </div>
     );
   }
   return InterfacePreferences;
+}
+/** Reset restores personal browser preferences and the routing-roads toggle together; neither can stay overridden alone. */
+export function resetInterface(
+  preferences: Pick<PreferenceController, 'reset'>,
+  panels: Pick<PanelController, 'setInterfaceVisibility'>,
+): void {
+  preferences.reset();
+  panels.setInterfaceVisibility('roads', false);
 }

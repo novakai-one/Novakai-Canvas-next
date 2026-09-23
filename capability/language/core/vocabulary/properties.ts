@@ -115,6 +115,24 @@ export const properties = {
   declaredReturns: { type: 'type-use', field: 'returns', required: true },
   declaredParameters: { type: 'typed-parameters', field: 'parameters' },
   declaredKeyKind: { type: 'word', field: 'kind', values: ['primary', 'unique'], required: true },
+  declaredType: { type: 'type-use', field: 'type', required: true },
+  title: { type: 'string', field: 'title' },
+  returnActivate: { type: 'boolean', field: 'returnActivate' },
+  fkLabel: { type: 'string', field: 'fkLabel' },
+  fkFrom: {
+    type: 'word',
+    field: 'fkFrom',
+    values: ['0..1', '1', '0..many', '1..many'],
+  },
+  fkTo: {
+    type: 'word',
+    field: 'fkTo',
+    values: ['0..1', '1', '0..many', '1..many'],
+  },
+  parentLabel: { type: 'string', field: 'parentLabel' },
+  parentSources: { type: 'ids', field: 'parentSources' },
+  themeVersion: { type: 'string', field: 'themeVersion' },
+  themeDigest: { type: 'string', field: 'themeDigest' },
 } as const satisfies Readonly<Record<string, Property>>;
 /** Scope columns are integer tracks; table columns retain their distinct string-list vocabulary. */
 export const layoutProperties = {

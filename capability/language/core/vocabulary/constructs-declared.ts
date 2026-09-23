@@ -1,9 +1,18 @@
 import type { ConstructDefinition } from '../../contract/records/vocabulary.js';
-import { properties as p } from './properties.js';
+import { properties as p, layoutProperties } from './properties.js';
 import { declaredNodeKinds } from './defaults.js';
 /** Change ops share one shape: a bare list of node, wire or @node.@member refs. */
 function changeOp(kind: 'new' | 'changed' | 'deleted' | 'locked'): ConstructDefinition {
   return { kind, positions: [{ name: 'refs', type: 'endpoints' }], properties: {}, children: null };
+}
+/** rank / align / before / below share one shape: two or more scoped targets, no body. */
+function constraint(kind: 'rank' | 'align' | 'before' | 'below'): ConstructDefinition {
+  return {
+    kind,
+    positions: [{ name: 'targets', type: 'targets' }],
+    properties: {},
+    children: null,
+  };
 }
 /** Closed grammar for declared documents. */
 export const declaredConstructs: readonly ConstructDefinition[] = [
@@ -11,7 +20,18 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
     kind: 'declare',
     positions: [{ name: 'id', type: 'id' }],
     properties: {},
-    children: ['type', 'node', 'wire', 'scenario', 'change'],
+    children: [
+      'type',
+      'asset',
+      'source',
+      'node',
+      'wire',
+      'scenario',
+      'change',
+      'rule',
+      'examples',
+      'decision',
+    ],
     body: 'required',
   },
   {
@@ -29,13 +49,43 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
   changeOp('deleted'),
   changeOp('locked'),
   {
+    kind: 'asset',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'kind', type: 'word', values: ['image', 'icon', 'font'] },
+    ],
+    properties: { source: p.source, alt: p.alt, license: p.license, attribution: p.attribution },
+    children: null,
+  },
+  {
+    kind: 'source',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'uri', type: 'string' },
+    ],
+    properties: {
+      revision: p.revision,
+      location: p.location,
+      description: p.description,
+      status: p.status,
+    },
+    children: null,
+  },
+  {
     kind: 'collection',
     positions: [
       { name: 'id', type: 'id' },
       { name: 'title', type: 'string' },
     ],
-    properties: { uses: p.uses, description: p.description },
-    children: ['section'],
+    properties: {
+      uses: p.uses,
+      description: p.description,
+      theme: p.theme,
+      'theme-version': p.themeVersion,
+      'theme-digest': p.themeDigest,
+      ...layoutProperties,
+    },
+    children: ['section', 'rank', 'align', 'before', 'below'],
     body: 'required',
   },
   {
@@ -44,23 +94,48 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
       { name: 'id', type: 'id' },
       { name: 'title', type: 'string' },
     ],
-    properties: { mode: p.mode },
-    children: ['show', 'connect'],
+    properties: { mode: p.mode, ...layoutProperties },
+    children: ['show', 'connect', 'group', 'rank', 'align', 'before', 'below'],
     body: 'required',
   },
   {
     kind: 'show',
     positions: [{ name: 'ids', type: 'references' }],
-    properties: {},
+    properties: {
+      role: p.role,
+      size: p.size,
+      frame: p.frame,
+      composition: p.composition,
+      detail: p.detail,
+      participation: p.participation,
+      title: p.title,
+      'parent-label': p.parentLabel,
+      'parent-sources': p.parentSources,
+      ...layoutProperties,
+    },
     children: ['show'],
     body: 'optional',
   },
   {
     kind: 'connect',
     positions: [{ name: 'ids', type: 'references' }],
-    properties: {},
+    properties: { route: p.route, 'source-side': p.sourceSide, 'target-side': p.targetSide },
     children: null,
   },
+  {
+    kind: 'group',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'title', type: 'string' },
+    ],
+    properties: { frame: p.containerFrame, role: p.role, ...layoutProperties },
+    children: ['show', 'group', 'rank', 'align', 'before', 'below'],
+    body: 'required',
+  },
+  constraint('rank'),
+  constraint('align'),
+  constraint('before'),
+  constraint('below'),
   {
     kind: 'node',
     positions: [
@@ -68,9 +143,111 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
       { name: 'kind', type: 'word', values: declaredNodeKinds },
       { name: 'label', type: 'string', optional: true },
     ],
-    properties: {},
-    children: ['field', 'signature', 'type', 'keygroup'],
+    properties: {
+      role: p.role,
+      size: p.size,
+      frame: p.frame,
+      composition: p.composition,
+      step: p.step,
+      sources: p.sources,
+    },
+    children: [
+      'text',
+      'code',
+      'link',
+      'list',
+      'image',
+      'icon',
+      'figure',
+      'field',
+      'keygroup',
+      'signature',
+      'member',
+      'table',
+      'port',
+    ],
     body: 'optional',
+  },
+  {
+    kind: 'text',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'text', type: 'string' },
+    ],
+    properties: { role: p.textRole },
+    children: null,
+  },
+  {
+    kind: 'code',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'text', type: 'string' },
+    ],
+    properties: { language: p.language },
+    children: null,
+  },
+  {
+    kind: 'link',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'label', type: 'string' },
+    ],
+    properties: { target: p.target, section: p.section },
+    children: null,
+  },
+  {
+    kind: 'list',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'items', type: 'strings' },
+    ],
+    properties: { ordered: p.ordered },
+    children: null,
+  },
+  {
+    kind: 'image',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { asset: p.asset, size: p.size, fit: p.fit },
+    children: null,
+  },
+  {
+    kind: 'icon',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { asset: p.asset, size: p.size, fit: p.fit },
+    children: null,
+  },
+  {
+    kind: 'figure',
+    positions: [
+      { name: 'id', type: 'id' },
+      {
+        name: 'form',
+        type: 'word',
+        values: [
+          'vessel',
+          'layered-bed',
+          'screen',
+          'gauge',
+          'window',
+          'gate',
+          'stack',
+          'store',
+          'queue',
+          'cloud',
+        ],
+      },
+    ],
+    properties: {
+      level: p.figureLevel,
+      fill: p.figureFill,
+      pass: p.pass,
+      layers: p.layers,
+      agitator: p.agitator,
+      mark: p.mark,
+      debris: p.debris,
+      size: p.size,
+    },
+    children: null,
   },
   {
     kind: 'wire',
@@ -87,6 +264,9 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
       to: p.to,
       guard: p.guard,
       effect: p.effect,
+      step: p.step,
+      style: p.style,
+      sources: p.sources,
     },
     children: null,
   },
@@ -94,6 +274,7 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
     kind: 'type',
     positions: [
       { name: 'ids', type: 'references' },
+      { name: 'label', type: 'string', optional: true },
       { name: 'expression', type: 'literal-union', optional: true },
     ],
     properties: {},
@@ -103,16 +284,68 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
     kind: 'field',
     positions: [
       { name: 'id', type: 'id' },
+      { name: 'label', type: 'string', optional: true },
       { name: 'colon', type: 'word', literal: ':' },
       { name: 'type', type: 'type-use' },
     ],
-    properties: { key: p.key, references: p.references },
+    properties: {
+      key: p.key,
+      nullable: p.nullable,
+      references: p.references,
+      'fk-label': p.fkLabel,
+      'fk-from': p.fkFrom,
+      'fk-to': p.fkTo,
+    },
+    children: null,
+  },
+  {
+    kind: 'keygroup',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { kind: p.declaredKeyKind, fields: p.fields, references: p.referenceList },
     children: null,
   },
   {
     kind: 'signature',
-    positions: [{ name: 'id', type: 'id' }],
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'label', type: 'string', optional: true },
+    ],
     properties: { parameters: p.declaredParameters, returns: p.declaredReturns },
+    children: null,
+  },
+  {
+    kind: 'member',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'label', type: 'string', optional: true },
+      { name: 'colon', type: 'word', literal: ':' },
+      { name: 'type', type: 'type-use' },
+    ],
+    properties: { visibility: p.visibility },
+    children: null,
+  },
+  {
+    kind: 'table',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { columns: p.columns },
+    children: ['row'],
+  },
+  {
+    kind: 'row',
+    positions: [{ name: 'id', type: 'id' }],
+    properties: { cells: p.cells },
+    children: null,
+  },
+  {
+    kind: 'port',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'direction', type: 'word', values: ['in', 'out', 'inout'] },
+      { name: 'label', type: 'string', optional: true },
+      { name: 'colon', type: 'word', literal: ':' },
+      { name: 'type', type: 'type-use' },
+    ],
+    properties: {},
     children: null,
   },
   {
@@ -122,7 +355,7 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
       { name: 'title', type: 'string' },
     ],
     properties: {},
-    children: ['call', 'alt'],
+    children: ['call', 'alt', 'opt', 'loop', 'return'],
     body: 'required',
   },
   {
@@ -131,22 +364,76 @@ export const declaredConstructs: readonly ConstructDefinition[] = [
       { name: 'source', type: 'id' },
       { name: 'arrow', type: 'word', literal: '->' },
       { name: 'target', type: 'endpoint' },
+      { name: 'label', type: 'string', optional: true },
       { name: 'returns', type: 'word', values: ['returns'], optional: true },
+      { name: 'async', type: 'word', values: ['async'], optional: true },
     ],
-    properties: {},
+    properties: { activate: p.activate, 'return-activate': p.returnActivate },
+    children: null,
+  },
+  {
+    kind: 'return',
+    positions: [
+      { name: 'source', type: 'id' },
+      { name: 'arrow', type: 'word', literal: '->' },
+      { name: 'target', type: 'endpoint' },
+      { name: 'label', type: 'string', optional: true },
+    ],
+    properties: { activate: p.activate },
     children: null,
   },
   {
     kind: 'alt',
     positions: [{ name: 'label', type: 'string' }],
-    properties: {},
-    children: ['call', 'alt'],
+    properties: { title: p.title },
+    children: ['call', 'alt', 'opt', 'loop', 'return'],
     body: 'required',
   },
   {
-    kind: 'keygroup',
-    positions: [{ name: 'id', type: 'id' }],
-    properties: { kind: p.declaredKeyKind, fields: p.fields },
+    kind: 'opt',
+    positions: [{ name: 'label', type: 'string' }],
+    properties: {},
+    children: ['call', 'alt', 'opt', 'loop', 'return'],
+    body: 'required',
+  },
+  {
+    kind: 'loop',
+    positions: [{ name: 'label', type: 'string' }],
+    properties: {},
+    children: ['call', 'alt', 'opt', 'loop', 'return'],
+    body: 'required',
+  },
+  {
+    kind: 'rule',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'on', type: 'word', literal: 'on' },
+      { name: 'subjects', type: 'endpoints' },
+      { name: 'colon', type: 'word', literal: ':' },
+      { name: 'expression', type: 'string' },
+    ],
+    properties: {},
+    children: null,
+  },
+  {
+    kind: 'examples',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'on', type: 'word', literal: 'on' },
+      { name: 'signature', type: 'endpoint' },
+    ],
+    properties: {},
+    children: null,
+  },
+  {
+    kind: 'decision',
+    positions: [
+      { name: 'id', type: 'id' },
+      { name: 'on', type: 'word', literal: 'on' },
+      { name: 'subject', type: 'endpoint' },
+      { name: 'columns', type: 'strings' },
+    ],
+    properties: {},
     children: null,
   },
 ];

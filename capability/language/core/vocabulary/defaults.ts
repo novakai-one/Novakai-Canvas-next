@@ -63,6 +63,8 @@ export const declaredNodeKinds = [
   'fork',
   'join',
   'package',
+  'system',
+  'note',
 ];
 export const declaredRelationshipKinds = [
   'imports',
@@ -72,4 +74,5 @@ export const declaredRelationshipKinds = [
   'transition',
   'reference',
   'flow',
+  'contains',
 ];

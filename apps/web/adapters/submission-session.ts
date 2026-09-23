@@ -128,6 +128,18 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
       bindings.report(saved.error);
     }
   }
+  /** The same request body as Apply on the no-write route; the journal is never touched. */
+  async function preview(
+    request: Submission['request'],
+    generation: string,
+    signal: AbortSignal,
+  ): Promise<Result<void>> {
+    const body = { version: 1, generation, request };
+    const response = await bindings.client.post('/api/v1/authoring/preview', body, signal);
+    if (!response.ok) return response;
+    const { outcome } = response.value;
+    return outcome.ok ? { ok: true, value: undefined } : outcome;
+  }
   /** Lookup is scoped to a retained request; arbitrary receipt IDs cannot clear another draft. */
   async function reconcile(id: string): Promise<Result<Receipt | null>> {
     const item = pending.find((item) => item.request.request === id);
@@ -199,7 +211,7 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
       return failure('confirmation-required', 'Reconcile this edit before clearing it');
     return retain(pending.filter((entry) => entry.request.request !== id));
   }
-  return { restore, submit, reconcile, retry, dismiss };
+  return { restore, submit, reconcile, retry, dismiss, preview };
 }
 
 /** A proven pre-commit refusal remains a refusal across reload; all other interrupted states need a receipt lookup. */

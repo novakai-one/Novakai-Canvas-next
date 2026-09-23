@@ -98,13 +98,16 @@ export interface WireEditorSession {
   edit(selection: WireSelection, command: WireEdit): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
+  /** Dry run of the exact change list Apply would send; the server writes nothing. */
+  preview(draft: WireDraft, signal: AbortSignal): Promise<Result<void>>;
 }
 export interface WireEditorBindings {
   readonly retention: DraftRetention;
   read(input: unknown): Result<readonly WireDraft[]>;
   apply(draft: WireDraft, changes: readonly Change[]): Promise<Result<Receipt>>;
+  preview(draft: WireDraft, changes: readonly Change[], signal: AbortSignal): Promise<Result<void>>;
   report(error: Diagnostic): void;
 }
 export type WireEditorFactory = (
-  callbacks: Pick<WireEditorBindings, 'apply' | 'report'>,
+  callbacks: Pick<WireEditorBindings, 'apply' | 'preview' | 'report'>,
 ) => WireEditorSession;

@@ -22,6 +22,12 @@ export interface SubmissionSession {
   submit(input: Omit<Submission, 'state'>): Promise<Result<Receipt>>;
   reconcile(id: string): Promise<Result<Receipt | null>>;
   retry(id: string, generation: string): Promise<Result<Receipt>>;
+  /** No-write dry run: nothing is journalled, and a rejection is only a verdict. */
+  preview(
+    request: Submission['request'],
+    generation: string,
+    signal: AbortSignal,
+  ): Promise<Result<void>>;
 }
 export interface SubmissionBindings {
   readonly client: Pick<ServiceClient, 'get' | 'post'>;

@@ -556,7 +556,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let removeHistoryKeys = (): void => undefined;
   const inspector = bindings.inspector({ apply: applyObject, report });
   const definitions = bindings.definitions({ apply: applyDefinition, report });
-  const wires = bindings.wires({ apply: applyChanges, report });
+  const wires = bindings.wires({ apply: applyChanges, preview: previewChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
   function holdConfirmedHistory(pending: readonly Submission[]): void {
@@ -1635,6 +1635,21 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     );
     if (!request.ok) return request;
     return submit(request.value, draft.generation, state.sourceEdit, null);
+  }
+  /** Same request as Apply, sent to the no-write preview route; only the verdict is kept. */
+  async function previewChanges(
+    draft: Pick<ObjectDraft, 'base' | 'collection' | 'generation'>,
+    changes: readonly import('../contract/records/owners.js').Change[],
+    signal: AbortSignal,
+  ): Promise<Result<void>> {
+    const request = bindings.inputs.model(
+      draft.base,
+      draft.collection.id,
+      changes,
+      bindings.nextId(),
+    );
+    if (!request.ok) return request;
+    return submissions.preview(request.value, draft.generation, signal);
   }
   /** Add keeps diagram and object creation on the existing Model → Authoring receipt path. */
   async function addDiagram(draft: AddDiagramDraft): Promise<Result<Receipt>> {

@@ -92,6 +92,7 @@ function session() {
     read: readWireDrafts,
     report: () => undefined,
     apply: async () => failure('unused', 'not submitted in this test'),
+    preview: async () => failure('unused', 'not previewed in this test'),
   });
 }
 function draftAfter(selection: WireSelection, edits: readonly WireEdit[]) {
@@ -443,4 +444,27 @@ it('a layout rejection reads as a plain step, never as raw JSON', () => {
   expect(plainWireProblem(layout, context)).toMatch(/^The layout cannot route this wire\./);
   const unknown = failure('surprise', '{"code":"x"}').error;
   expect(plainWireProblem(unknown, context)).toBe('The wire was not saved (surprise).');
+});
+
+it('the dry run sends exactly the change list Apply would send, and writes nothing', async () => {
+  const selection = moduleWire();
+  const sent: unknown[] = [];
+  const editor = createWireSession({
+    retention: memoryRetention(),
+    read: readWireDrafts,
+    report: () => undefined,
+    apply: async () => failure('unused', 'not submitted in this test'),
+    preview: async (_draft, changes) => {
+      sent.push(changes);
+      return failure('constraint-conflict', 'Candidate route violates a port');
+    },
+  });
+  editor.restore(selection.base.workspace);
+  editor.edit(selection, { kind: 'relationship-kind', value: 'calls' });
+  const draft = editor.getSnapshot().drafts[0];
+  assert(draft);
+  const verdict = await editor.preview(draft, new AbortController().signal);
+  expect(sent).toEqual([wireChanges(draft)]);
+  expect(verdict.ok).toBe(false);
+  expect(editor.getSnapshot().drafts).toEqual([draft]);
 });

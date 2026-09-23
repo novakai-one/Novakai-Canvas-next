@@ -524,13 +524,17 @@ export function createInspectorSession(bindings: InspectorBindings): InspectorSe
 }
 /** Wire forms reuse the same retention/acknowledgement policy with section-scoped identities. */
 export function createWireSession(bindings: WireEditorBindings): WireEditorSession {
-  return createRetainedEditor({
+  const editor = createRetainedEditor({
     ...bindings,
     namespace: 'wire-inspector',
     encode: encodeWireRecovery,
     edit: retainWireCommand,
     apply: (draft) => bindings.apply(draft, wireChanges(draft)),
   });
+  return {
+    ...editor,
+    preview: (draft, signal) => bindings.preview(draft, wireChanges(draft), signal),
+  };
 }
 
 /** Owner failures keep their original code; locally detected setup faults use the host vocabulary. */

@@ -154,12 +154,9 @@ export function placeAppSections(
   const preferred = rows.flatMap((row) => {
     let x = 0;
     const placed = row.map((section) => {
-      const authored = projection.sections.find((s) => s.id === section.id)?.placement;
-      const box = {
-        ...section.box,
-        width: authored?.width ?? section.box.width,
-        height: authored?.height ?? section.box.height,
-      };
+      const source = projection.sections.find((s) => s.id === section.id);
+      const authored = source?.placement;
+      const box = { ...section.box, ...authoredSize(source, section.box) };
       const origin = authored ?? { x: x - section.box.x, y: y - section.box.y };
       x += box.width + gap;
       return {
@@ -172,6 +169,15 @@ export function placeAppSections(
     return placed;
   });
   return availableSections(preferred, projection, gap);
+}
+
+/** A measured envelope already holds any authored size as a minimum; other sections take it as is. */
+function authoredSize(
+  source: Projection['sections'][number] | undefined,
+  box: { readonly width: number; readonly height: number },
+): { readonly width: number; readonly height: number } {
+  const authored = source?.envelope === undefined ? source?.placement : null;
+  return { width: authored?.width ?? box.width, height: authored?.height ?? box.height };
 }
 
 function straight(before: Point | undefined, point: Point, after: Point | undefined): boolean {

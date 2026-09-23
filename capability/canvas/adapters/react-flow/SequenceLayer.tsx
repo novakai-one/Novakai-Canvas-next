@@ -26,7 +26,11 @@ function visibleParticipant(props: SequenceProps, section: string, id: string): 
 }
 /** Role stroke tints participant material; unresolved participants keep the shared neutral paint. */
 function participantTint(props: SequenceProps, section: string, id: string): string {
-  return participantNode(props, section, id)?.placed.measured.paint.stroke ?? props.paint.stroke;
+  const node = participantNode(props, section, id);
+  if (node === undefined) return props.paint.stroke;
+  if (props.followsInterfaceRoles === true)
+    return `var(--nv-role-${node.placed.measured.role}-stroke)`;
+  return node.placed.measured.paint.stroke;
 }
 /** Reading collapse hides annotations incident to hidden participants, while canonical sequence data remains intact. */
 function visibleEvent(props: SequenceProps, section: string, event: SequenceEvent): boolean {

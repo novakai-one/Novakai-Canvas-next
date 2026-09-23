@@ -85,9 +85,14 @@ function measure(
   const header = Math.ceil((parent?.headerHeight ?? section.title.height + padding * 2) + gap / 2);
   const footprintOf = (node: VisualNode) =>
     nodeFootprint(node, section.wires, lanePitch, annotationGap, advance);
-  // A node dropped on the title or past the left edge stops where its approaches still fit.
+  // A node dropped on the title or past the left edge is pulled back to the content area itself,
+  // never by its wire approaches, so an already-placed layout never shifts on a plain render.
   const origin = { x: gap / 2, y: header };
-  const leaves = raw.map((node) => keepInside(node, footprintOf(node), origin, measured));
+  const leaves = raw.map((node) => {
+    const kept = keepInside(node, origin);
+    if (kept !== node) measured.set(node.id, kept);
+    return kept;
+  });
   const footprints = leaves.map(footprintOf);
   const cellGap = trafficGap(traffic.local, lanePitch, padding);
   // Each child reserves its own boundary population. Shared-road feasibility is admitted by Layout.
@@ -340,23 +345,18 @@ function pushPinned(
   };
 }
 
-/** A hand-placed member keeps its approaches inside the content area. */
+/** A hand-placed member's own box keeps clear of the title band and the left edge of the content
+ * area. The caller writes the result back; this never mutates shared state itself. */
 function keepInside(
   node: VisualNode,
-  footprint: Footprint,
   origin: { readonly x: number; readonly y: number },
-  measured: Map<string, VisualNode>,
 ): VisualNode {
   const placement = node.placement;
   if (placement === null) return node;
-  const left = origin.x + footprint.left - Math.max(node.width, placement.width ?? 0) / 2;
-  const top = origin.y + footprint.top - Math.max(node.height, placement.height ?? 0) / 2;
-  const kept = {
-    ...node,
-    placement: { ...placement, x: Math.max(placement.x, left), y: Math.max(placement.y, top) },
-  };
-  measured.set(node.id, kept);
-  return kept;
+  const x = Math.max(placement.x, origin.x);
+  const y = Math.max(placement.y, origin.y);
+  if (x === placement.x && y === placement.y) return node;
+  return { ...node, placement: { ...placement, x, y } };
 }
 
 interface ChildGrid {
@@ -402,17 +402,24 @@ function farEdge(
   grid: ChildGrid,
   axis: 'x' | 'y',
 ): number {
-  // Layout starts the cell no earlier than the content area.
-  const { track, floor, start } = {
-    x: { track: grid.column, floor: 'minX' as const, start: grid.gap / 2 },
-    y: { track: grid.row, floor: 'minY' as const, start: grid.header },
+  // Layout starts the cell no earlier than the content area; x also reserves the leaf row
+  // before it, which the caller's own left gap already covers once, so strip it back out here.
+  const { track, floor, start, strip } = {
+    x: {
+      track: grid.column,
+      floor: 'minX' as const,
+      start: grid.gap / 2 + grid.ownWidth,
+      strip: grid.gap / 2,
+    },
+    y: { track: grid.row, floor: 'minY' as const, start: grid.header, strip: 0 },
   }[axis];
   return Math.max(
     0,
     ...rects.map(
       (rect, index) =>
         Math.max(Math.max(rect[axis], rect[floor]) - (grid.insets[index]?.[axis] ?? 0), start) +
-        (grid.sizes[axis][track(index)] ?? 0),
+        (grid.sizes[axis][track(index)] ?? 0) -
+        strip,
     ),
   );
 }

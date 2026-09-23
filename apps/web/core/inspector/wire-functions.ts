@@ -104,7 +104,7 @@ export function newFunctionProblem(
   pending: string | null,
 ): string | null {
   if (name.trim() === '') return 'Type a name for the new function.';
-  if (identityBase(name) === '') return 'Name needs a letter or digit.';
+  if (identityBase(name) === '') return 'Name needs at least one letter A–Z or digit 0–9.';
   return duplicateProblem(name, object, pending);
 }
 /** A function clash is resolved by picking it; any other labelled part needs a new name. */

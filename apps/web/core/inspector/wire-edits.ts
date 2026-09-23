@@ -1,5 +1,6 @@
 import type {
   Change,
+  Collection,
   Endpoint,
   Relationship,
   WireAppearance,
@@ -10,7 +11,12 @@ import type {
   EditedWire,
   NewFunction,
 } from '../../contract/records/wire-editor.js';
-import { newFunctionChange } from './wire-functions.js';
+import {
+  functionTarget,
+  moduleFunctions,
+  newFunctionChange,
+  withNewFunction,
+} from './wire-functions.js';
 /** Shared relationship plus local section identify a wire form without parsing generated scene IDs. */
 export function wireDraftKey(collection: string, section: string, relationship: string): string {
   return JSON.stringify([collection, section, relationship]);
@@ -19,12 +25,29 @@ export function wireDraftKey(collection: string, section: string, relationship: 
 export function editedWire(draft: WireDraft): EditedWire {
   const replay = (current: EditedWire, edit: WireEdit): EditedWire =>
     operations[edit.kind](current, edit, draft.relationship);
-  return draft.edits.reduce(replay, {
+  const replayed = draft.edits.reduce(replay, {
     relationship: draft.relationship,
     wire: draft.wire,
     created: null,
     naming: null,
   });
+  return labelFollowsTarget(replayed, draft.collection);
+}
+/**
+ * An imports/calls wire into a module or interface has no label of its own: it is the name of the
+ * target function. Any typed label is dropped; a target that is not a function leaves no label,
+ * so Apply stays off until a function is picked.
+ */
+function labelFollowsTarget(current: EditedWire, collection: Collection): EditedWire {
+  const owner = functionTarget(
+    withNewFunction(collection, current.created ?? null),
+    current.relationship,
+  );
+  if (owner === null) return current;
+  const member = current.relationship.target.member;
+  const name = moduleFunctions(owner).find((item) => item.id === member)?.label;
+  if (current.relationship.label === name) return current;
+  return { ...current, relationship: withLabel(current.relationship, name) };
 }
 /** A closed command registry separates semantic edits from local appearance edits. */
 const operations: Readonly<
@@ -94,10 +117,25 @@ function endpoint(current: EditedWire, edit: WireEdit, original: Relationship): 
  * the staged function is dropped and the draft's original label comes back.
  */
 function targetMoved(current: EditedWire, value: Endpoint, original: Relationship): EditedWire {
+  const moved = retargeted(current, value);
   if (isStaged(current.created ?? null, value))
-    return { ...current, relationship: { ...current.relationship, target: value } };
-  const dropped = droppedFunction(current, original);
+    return { ...moved, relationship: { ...moved.relationship, target: value } };
+  const dropped = droppedFunction(moved, original);
   return { ...dropped, relationship: { ...dropped.relationship, target: value }, naming: null };
+}
+/**
+ * Attachment sides and bends were chosen for the old target; kept, they can make the new route
+ * impossible for the layout. A changed target therefore starts from the automatic route.
+ */
+function retargeted(current: EditedWire, value: Endpoint): EditedWire {
+  const { object, member } = current.relationship.target;
+  const same = object === value.object && member === value.member;
+  return same || isAutomatic(current.wire) ? current : automatic(current);
+}
+/** An automatic wire is left as it is, so its section is not needlessly replaced. */
+function isAutomatic(wire: WireAppearance): boolean {
+  const sides = wire.sourceSide === 'auto' && wire.targetSide === 'auto';
+  return sides && wire.manual === undefined && !wire.locked;
 }
 function isStaged(created: NewFunction | null, value: Endpoint): boolean {
   return created?.object === value.object && created.id === value.member;
@@ -106,9 +144,10 @@ function isStaged(created: NewFunction | null, value: Endpoint): boolean {
 function chooseFunction(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'function') return current;
   const target = { object: edit.object, member: edit.member };
-  const relationship = { ...current.relationship, label: edit.label, target };
+  const moved = retargeted(current, target);
+  const relationship = { ...moved.relationship, label: edit.label, target };
   const created = edit.create ? { object: edit.object, id: edit.member, label: edit.label } : null;
-  return { ...current, relationship, created, naming: null };
+  return { ...moved, relationship, created, naming: null };
 }
 /** An unusable name keeps add mode open without staging anything; Apply stays blocked. */
 function functionName(current: EditedWire, edit: WireEdit, original: Relationship): EditedWire {
@@ -157,14 +196,19 @@ export function wireChanges(draft: WireDraft): readonly Change[] {
   return [
     ...newFunctionChange(draft.collection, edited.created ?? null),
     ...relationshipChanges(draft.relationship, edited.relationship),
-    ...explicitRouteReset(draft),
+    ...explicitRouteReset(draft, edited.wire),
     ...routeChanges(draft, edited.wire),
   ];
 }
 /** Model preserves omitted manual points on replace; its explicit reset operation must precede that replacement. */
-function explicitRouteReset(draft: WireDraft): readonly Change[] {
-  if (!draft.edits.some((edit) => edit.kind === 'automatic-route')) return [];
+function explicitRouteReset(draft: WireDraft, next: WireAppearance): readonly Change[] {
+  const reset = draft.edits.some((edit) => edit.kind === 'automatic-route');
+  if (!reset && !droppedBends(draft.wire, next)) return [];
   return [{ op: 'reset-route', section: draft.section.id, relationship: draft.relationship.id }];
+}
+/** A retarget clears bends without an explicit reset command; Model still needs the reset. */
+function droppedBends(before: WireAppearance, after: WireAppearance): boolean {
+  return before.manual !== undefined && after.manual === undefined;
 }
 /** Reference identity is retained until a semantic command actually changes the relationship. */
 function relationshipChanges(original: Relationship, next: Relationship): readonly Change[] {

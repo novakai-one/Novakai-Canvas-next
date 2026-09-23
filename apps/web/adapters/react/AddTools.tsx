@@ -1,4 +1,4 @@
-import { useEffect, useState, type ComponentType, type ReactElement } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type {
   AddDiagramDraft,
@@ -223,6 +223,8 @@ function ObjectReady({
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
 }): ReactElement {
+  const present = presentObjects(sections, targetSection);
+  const duplicate = draft.reuseObject !== null && present.has(draft.reuseObject);
   return (
     <section aria-labelledby="add-object-title">
       <h3 id="add-object-title">Object</h3>
@@ -262,8 +264,8 @@ function ObjectReady({
             >
               <option value="">Create a new module</option>
               {objects.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
+                <option key={item.id} value={item.id} disabled={present.has(item.id)}>
+                  {reuseLabel(item, present)}
                 </option>
               ))}
             </select>
@@ -288,13 +290,18 @@ function ObjectReady({
             </select>
           )}
         />
+        {duplicate && (
+          <p role="alert">
+            That object is already in this diagram. Pick another object or diagram.
+          </p>
+        )}
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
             label={objectActionLabel(draft)}
             type="submit"
             variant="primary"
-            disabled={objectDisabled(busy, draft)}
+            disabled={duplicate || objectDisabled(busy, draft)}
           />
         </div>
       </form>
@@ -412,7 +419,25 @@ function objectDisabled(busy: boolean, draft: AddObjectDraft): boolean {
   return busy || (draft.reuseObject === null && draft.label.trim().length === 0);
 }
 
+/** Objects that already appear in the target diagram cannot be reused there again. */
+function presentObjects(sections: readonly Section[], target: string): ReadonlySet<string> {
+  const section = sections.find((item) => item.id === target);
+  return new Set(section?.appearances.map((appearance) => appearance.object) ?? []);
+}
+function reuseLabel(item: DiagramObject, present: ReadonlySet<string>): string {
+  return present.has(item.id) ? `${item.label} · already in this diagram` : item.label;
+}
+
+/** The panel may be scrolled to the form below, so a new problem scrolls itself into view. */
 function CreationProblem({ problem }: { problem: string | null }): ReactElement | null {
+  const ref = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    ref.current?.scrollIntoView({ block: 'nearest' });
+  }, [problem]);
   if (problem === null) return null;
-  return <p role="alert">{problem}</p>;
+  return (
+    <p ref={ref} role="alert">
+      {problem}
+    </p>
+  );
 }

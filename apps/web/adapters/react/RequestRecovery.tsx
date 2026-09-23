@@ -12,9 +12,9 @@ export function createRequestRecovery({
     retryable: 'Edit not saved — safe to retry',
     rejected: 'Edit not applied. Nothing was changed.',
   };
-  /** One bar at a time: the newest request. Older ones show once it settles. */
+  /** One bar at a time: the newest request. A refusal already shown in the error bar gets no second bar. */
   function RequestRecovery({ controller, view }: FeatureProps): ReactElement | null {
-    const item = view.pending.at(-1);
+    const item = shownRequest(view);
     if (item === undefined) return null;
     return (
       <aside className={styles.recovery} aria-label="Edit recovery">
@@ -28,7 +28,7 @@ export function createRequestRecovery({
           </div>
           {item.state === 'rejected' ? (
             <Button
-              label="Dismiss"
+              label="Dismiss refused edit"
               icon="×"
               iconOnly
               onClick={() => controller.dismissRequest(item.request.request)}
@@ -68,4 +68,10 @@ export function createRequestRecovery({
     );
   }
   return RequestRecovery;
+}
+
+/** The newest request, unless it is a refusal the error bar already shows. */
+function shownRequest(view: FeatureProps['view']): Submission | undefined {
+  const item = view.pending.at(-1);
+  return item?.state === 'rejected' && view.problem !== null ? undefined : item;
 }

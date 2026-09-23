@@ -1,11 +1,13 @@
 import { assert, expect, it } from 'vitest';
+
+// Each test boots a real in-process workspace service; that can exceed the 5s default under load.
+const slow = { timeout: 30_000 };
 import type { ServiceClient } from '../contract/ports/client.js';
 import type { Request, TransportResponse } from '../contract/records/owners.js';
 import type { Result } from '../contract/index.js';
 import type { DraftRetention } from '../contract/ports/workspace.js';
 import type { WorkspaceSession } from '@novakai/canvas-service';
-import { definitionDraftId } from '../contract/api.js';
-import { dropObject } from '../adapters/react/palette-drop.js';
+import { definitionDraftId, planPaletteDrop } from '../contract/index.js';
 import { controller, memoryRetention, submitted } from './recovery-fixtures.js';
 import { workspaceFixture, request, source } from './host-workspace-fixture.js';
 
@@ -86,21 +88,25 @@ const module = {
   reuseObject: null,
 };
 
-it('a refused creation releases its request so the Add form is editable and the next add is a new request', async () => {
-  await withSample(async (service) => {
-    const sent: Request[] = [];
-    const human = await opened(serviceClient(service, sent, { count: 1 }));
-    expect(await human.addObject(module)).toMatchObject({ ok: false });
-    expect(human.getSnapshot().creation.busy).toBe(false);
-    expect(human.getSnapshot().status).not.toContain('{');
-    expect(await human.addObject(module)).toMatchObject({ ok: true });
-    expect(sent).toHaveLength(2);
-    expect(sent[1]?.request).not.toBe(sent[0]?.request);
-    human.dispose();
-  });
-});
+it(
+  'a refused creation releases its request so the Add form is editable and the next add is a new request',
+  slow,
+  async () => {
+    await withSample(async (service) => {
+      const sent: Request[] = [];
+      const human = await opened(serviceClient(service, sent, { count: 1 }));
+      expect(await human.addObject(module)).toMatchObject({ ok: false });
+      expect(human.getSnapshot().creation.busy).toBe(false);
+      expect(human.getSnapshot().status).not.toContain('{');
+      expect(await human.addObject(module)).toMatchObject({ ok: true });
+      expect(sent).toHaveLength(2);
+      expect(sent[1]?.request).not.toBe(sent[0]?.request);
+      human.dispose();
+    });
+  },
+);
 
-it('shows one refusal at a time and clears it when a later edit starts', async () => {
+it('shows one refusal at a time and clears it when a later edit starts', slow, async () => {
   await withSample(async (service) => {
     const sent: Request[] = [];
     const human = await opened(serviceClient(service, sent, { count: 2 }));
@@ -117,31 +123,44 @@ it('shows one refusal at a time and clears it when a later edit starts', async (
 });
 
 it('blocks palette drops on tree sections with a plain message and sends nothing', () => {
-  const reports: string[] = [];
-  let adds = 0;
   const sections = [
     { id: 'outline', mode: 'tree', title: 'Outline' },
     { id: 'process', mode: 'flow', title: 'Process' },
   ];
-  const target = {
-    report: (error: { message: string }) => {
-      reports.push(error.message);
-    },
-    addObject: async () => {
-      adds++;
-      return envelope(null) as never;
-    },
-  };
-  dropObject(target, sections, 'module', { section: 'outline', group: null });
-  expect(reports).toEqual([
+  const tree = planPaletteDrop(sections, 'module', { section: 'outline', group: null });
+  assert(tree.kind === 'refuse');
+  expect(tree.problem.message).toBe(
     "Modules can't be dropped into a tree. Drop it into a diagram section instead.",
-  ]);
-  expect(adds).toBe(0);
-  dropObject(target, sections, 'module', { section: 'process', group: null });
-  expect(adds).toBe(1);
+  );
+  expect(planPaletteDrop(sections, 'module', { section: 'process', group: null })).toMatchObject({
+    kind: 'add',
+    draft: { section: 'process', kind: 'module', label: 'New module', reuseObject: null },
+  });
+  expect(planPaletteDrop(sections, 'unknown', { section: 'process', group: null })).toEqual({
+    kind: 'ignore',
+  });
 });
 
-it('a refused definition stays editable after reload', async () => {
+it(
+  'closing the error bar clears the problem and the refused request, and resets the status',
+  slow,
+  async () => {
+    await withSample(async (service) => {
+      const human = await opened(serviceClient(service, [], { count: 1 }));
+      await human.addObject(module);
+      expect(human.getSnapshot().problem).not.toBeNull();
+      expect(human.getSnapshot().pending).toMatchObject([{ state: 'rejected' }]);
+      expect(human.getSnapshot().status).not.toBe('Saved');
+      human.dismissProblem();
+      expect(human.getSnapshot().problem).toBeNull();
+      expect(human.getSnapshot().pending).toEqual([]);
+      expect(human.getSnapshot().status).toBe('Saved');
+      human.dispose();
+    });
+  },
+);
+
+it('a refused definition stays editable after reload', slow, async () => {
   await withSample(async (service) => {
     const retention = memoryRetention();
     const sent: Request[] = [];

@@ -578,9 +578,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     // One refusal is visible: the latest, until another edit starts. Dismissing republishes the journal.
     refusalOrder = observeRefusals(refusalOrder, pending);
     const superseded = supersededRefusal(refusalOrder);
-    if (superseded !== undefined) return dismissRequest(superseded);
-    releaseRefusedDefinitions(pending);
-    publishPending(pending);
+    if (superseded !== undefined) dismissRequest(superseded);
+    // Publish even if that dismissal failed, so the journal view never stalls on a hidden refusal.
+    const shown = pending.filter((item) => item.request.request !== superseded);
+    releaseRefusedDefinitions(shown);
+    publishPending(shown);
   }
   /** A refused definition changed nothing; its draft becomes editable now, so a reload cannot leave it locked. */
   function releaseRefusedDefinitions(pending: readonly Submission[]): void {
@@ -612,12 +614,24 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Listeners receive a new immutable view; Canvas panning has its own narrower subscription. */
   function update(patch: Partial<WorkspaceView>): void {
+    const cleared = problemCleared(patch);
     state = { ...state, ...patch };
     listeners.forEach((listener) => listener());
+    if (cleared) dismissRefusals();
+  }
+  function problemCleared(patch: Partial<WorkspaceView>): boolean {
+    return state.problem !== null && patch.problem === null;
+  }
+  /** A refusal is shown only as the error bar, so once that bar is gone the refused request goes too. */
+  function dismissRefusals(): void {
+    state.pending
+      .filter((item) => item.state === 'rejected')
+      .forEach((item) => dismissRequest(item.request.request));
   }
   /** Keep the diagram and draft readable when an operation fails. */
   function report(error: Diagnostic): void {
-    update({ problem: error, status: plainMessage(error.message) });
+    // The error bar carries the reason; the status line only points to it.
+    update({ problem: error, status: 'Action failed. See the error above.' });
   }
   function dismissRequest(id: string): void {
     const result = submissions.dismiss(id);
@@ -2677,7 +2691,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     closeSource: source.close,
     reconcileRequest,
     dismissRequest,
-    dismissProblem: () => update({ problem: null, status: editStatus() }),
+    dismissProblem: () => {
+      dismissRefusals();
+      update({ problem: null, status: editStatus() });
+    },
     retryRequest,
     create,
     addDiagram,

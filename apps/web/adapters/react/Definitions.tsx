@@ -8,7 +8,7 @@ import {
 } from '@novakai/canvas-model';
 import type { DesignSlots, FeatureProps } from '../../contract/react-types.js';
 import type { DefinitionSelection, LiteralDraft } from '../../contract/records/definitions.js';
-import { definitionDraftId, formatFailure } from '../../contract/api.js';
+import { definitionDraftId, failureSummary, formatFailure } from '../../contract/api.js';
 import styles from './ObjectEditor.module.css';
 
 /** Collection owned definitions are edited through the same retained session as object forms. */
@@ -75,7 +75,15 @@ export function createDefinitionsEditor({
             Button={Button}
           />
         ))}
-        {state.problem && <p role="alert">{formatFailure(state.problem).join(' · ')}</p>}
+        {state.problem && (
+          <div role="alert">
+            <p>{failureSummary(state.problem)}</p>
+            <details>
+              <summary>Technical details</summary>
+              {formatFailure(state.problem).join(' · ')}
+            </details>
+          </div>
+        )}
       </div>
     );
   }

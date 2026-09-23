@@ -1,12 +1,12 @@
 import { formatFailure, failureSummary } from '../../contract/api.js';
-import { panelVisible } from '../../contract/api.js';
+import { panelVisible, palette, planPaletteDrop } from '../../contract/api.js';
+import type { PaletteDrop } from '../../contract/api.js';
 import { useState, useSyncExternalStore, useEffect } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js';
 import type { PanelState } from '../../contract/panel-types.js';
 import type { WorkspaceController, WorkspaceView } from '../../contract/records/workspace.js';
 import styles from './WorkspaceShell.module.css';
-import { dropObject, palette } from './palette-drop.js';
 /** The work surface is the primary content; chrome uses stable injected sections and shared design tokens. */
 export function createWorkspaceShell(slots: ChromeSlots): ComponentType<WorkspaceProps> {
   /** Mount owns subscription lifetime. Selection and panning remain entirely inside the Canvas session. */
@@ -243,7 +243,10 @@ function CanvasSlot({
           showRoads={panelState.interfaceVisibility.roads && !hidden}
           palette={palette}
           onPaletteDrop={(kind, target) =>
-            dropObject(controller, active.document.collection.sections, kind, target)
+            dropObject(
+              controller,
+              planPaletteDrop(active.document.collection.sections, kind, target),
+            )
           }
           showLabels={panelState.interfaceVisibility.labels}
         />
@@ -251,7 +254,7 @@ function CanvasSlot({
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}
       <slots.MovementReview controller={controller} view={view} />
       {/* Alerts overlay the bottom of the canvas and never shift layout. */}
-      <div className={styles.alerts}>
+      <div className={alertsClass(active, chrome.zoom)}>
         <ProblemSlot
           hidden={hidden || view.collectionSwitch.phase !== 'idle'}
           Button={slots.Button}
@@ -267,6 +270,17 @@ function CanvasSlot({
       </div>
     </main>
   );
+}
+
+/** Alerts clear the zoom controls only when a canvas shows them; the Library has none. */
+function alertsClass(active: WorkspaceView['active'], zoom: boolean): string | undefined {
+  return active !== null && zoom ? `${styles.alerts} ${styles.alertsAboveZoom}` : styles.alerts;
+}
+
+/** UI wiring for a palette drop; the decision itself is made in core. */
+function dropObject(controller: WorkspaceController, drop: PaletteDrop): void {
+  if (drop.kind === 'refuse') controller.report(drop.problem);
+  if (drop.kind === 'add') void controller.addObject(drop.draft);
 }
 
 function ProblemSlot({
@@ -293,7 +307,7 @@ function ProblemSlot({
           ))}
         </details>
       </div>
-      <Button label="Dismiss" icon="×" iconOnly onClick={controller.dismissProblem} />
+      <Button label="Dismiss error" icon="×" iconOnly onClick={controller.dismissProblem} />
     </div>
   );
 }

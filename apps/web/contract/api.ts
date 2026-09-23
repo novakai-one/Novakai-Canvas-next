@@ -44,6 +44,7 @@ export {
 
 export { formatFailure, failureSummary, plainMessage } from '../core/output/diagnostics.js';
 export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';
+export { palette, planPaletteDrop, type PaletteDrop } from '../core/editing/palette-drop.js';
 
 export function definitionDraftId(value: string): import('@novakai/canvas-model').Definition['id'] {
   return definitionId.parse(value);

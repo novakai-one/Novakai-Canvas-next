@@ -1,9 +1,10 @@
 import { memo } from 'react';
+import { EdgeLabelRenderer } from '@xyflow/react';
 import type { ComponentType, ReactElement } from 'react';
 import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
 import type { ViewWire } from '../../contract/records/view.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
-import type { Point } from '../../contract/records/camera.js';
+import type { Point, Box } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';
 /** Preview routes may be endpoint-stretched; admitted routes retain the native routing path exactly. */
 function wirePath(points: readonly Point[]): string {
@@ -66,6 +67,24 @@ export function createSceneEdge(
   const Marker = slots.Marker;
   const Content = slots.MeasuredContent;
   const Label = slots.WireLabel;
+  /** All-labels mode: same pill as an always-shown label, in a layer above every wire and node. */
+  function OverlayLabel({ view, box }: { readonly view: ViewWire; readonly box: Box }) {
+    const { width, height } = view.wire.measuredLabel;
+    const x = view.origin.x + box.x;
+    const y = view.origin.y + box.y;
+    return (
+      <EdgeLabelRenderer>
+        <svg
+          className={styles.overlayLabel}
+          width={width}
+          height={height}
+          style={{ transform: `translate(${x}px, ${y}px)` }}
+        >
+          <Content embedFonts={false} content={view.wire.measuredLabel} />
+        </svg>
+      </EdgeLabelRenderer>
+    );
+  }
   /** Render actual React Flow edge paths with independently positioned measured labels and complete crow's-foot notation. */
   function SceneEdge({ data }: SceneEdgeProps): ReactElement | null {
     if (!data) return null;
@@ -177,8 +196,11 @@ export function createSceneEdge(
             <Marker kind={wire.targetMarker} paint={paint} />
           </g>
         </g>
-        {wire.labelVisible === false && view.showLabel && (
+        {wire.labelVisible === false && view.showLabel && data.hiddenLabel === undefined && (
           <Label wire={wire} zoom={data.zoom} anchor={labelAnchor} />
+        )}
+        {wire.labelVisible === false && data.hiddenLabel !== undefined && (
+          <OverlayLabel view={view} box={data.hiddenLabel} />
         )}
       </g>
     );

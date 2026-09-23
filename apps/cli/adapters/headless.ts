@@ -345,6 +345,7 @@ async function output(
   const exporter = composeExport({
     presentation,
     readerCss: '',
+    allLabels: options.labels === true,
     snapshots: {
       acquire: async () => ({
         ok: true,

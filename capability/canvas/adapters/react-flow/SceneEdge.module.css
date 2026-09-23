@@ -150,6 +150,13 @@
   .edge[data-preview='true'] .wire {
     stroke-dasharray: var(--nv-space-1);
   }
+  .overlayLabel {
+    position: absolute;
+    /* Wires sit at 2, nodes at 1: labels read above both. A label with no clear spot stays readable. */
+    z-index: 3;
+    overflow: visible;
+    pointer-events: none;
+  }
   /* UI-derived diagram themes: labels and markers take the interface palette, not the baked light colours. */
   :global([data-follows-interface-roles='true']) .label :global(rect) {
     fill: var(--nv-surface-raised);

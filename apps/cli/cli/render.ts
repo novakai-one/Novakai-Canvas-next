@@ -11,6 +11,7 @@ function options(args: readonly string[]): HeadlessOptions {
       'theme-file': { type: 'string' },
       out: { type: 'string' },
       format: { type: 'string', default: 'png' },
+      labels: { type: 'boolean', default: false },
     },
   });
   return headlessOptions.parse({
@@ -19,6 +20,7 @@ function options(args: readonly string[]): HeadlessOptions {
     themeFile: values['theme-file'],
     out: resolve(required(values.out, '--out')),
     format: format(values.format),
+    labels: values.labels,
     root: new URL('../../../', import.meta.url).pathname,
   });
 }

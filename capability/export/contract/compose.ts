@@ -23,6 +23,8 @@ export interface ExportOwners extends Omit<TransferDependencies, 'encoding'> {
   readonly snapshots: SnapshotReader;
   readonly presentation: ReactBindings;
   readonly readerCss: string;
+  /** Draw every wire label, including ones the diagram hides by default. */
+  readonly allLabels?: boolean;
 }
 export interface ExportBindings {
   readonly service: Export;
@@ -50,6 +52,7 @@ export function composeExport(owners: ExportOwners): ExportBindings {
     },
     owners.presentation.FontDefinitions,
     owners.presentation.fonts.map((font) => font.digest),
+    owners.allLabels === true,
   );
   const encoding = createEncoding();
   const transfer = { documents: owners.documents, resources: owners.resources, encoding };

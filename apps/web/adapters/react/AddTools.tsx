@@ -95,8 +95,9 @@ export function createAddTools({
   return AddTools;
 }
 
+/** A section from another collection (or none) falls back to the first diagram, so the select and the submit agree. */
 function selectedSection(current: string, sections: readonly Section[]): string {
-  return current || sections[0]?.id || '';
+  return sections.some((section) => section.id === current) ? current : (sections[0]?.id ?? '');
 }
 type FormSlots = Pick<DesignSlots, 'Field' | 'Button'>;
 function DiagramForm({
@@ -344,7 +345,7 @@ function GroupForm({
             <select
               {...field}
               disabled={busy}
-              value={draft.section || sections[0]?.id || ''}
+              value={selectedSection(draft.section, sections)}
               onChange={(event) => onDraft({ ...draft, section: event.target.value })}
             >
               {sections.map((section) => (

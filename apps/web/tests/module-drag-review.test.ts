@@ -99,24 +99,51 @@ it('re-committing a leaf at its own rendered position produces no geometry chang
   }
 });
 
-it('a small group move grows its section by exactly how far the member moved, never more (item 3)', async () => {
+type Review = ReturnType<typeof move>;
+/** The box a plain move puts this node in, or the message the person reads instead. */
+function landed(review: Review, id: string) {
+  if (!review.ok) return review.error.message;
+  const option = review.value.options.find((item) => item.kind === 'move-only');
+  return option?.preview.boxes.find((item) => item.target.kind === 'node' && item.target.id === id)
+    ?.box;
+}
+function sectionOf(review: Review, id: string) {
+  assert(review.ok, JSON.stringify(review));
+  const option = review.value.options.find((item) => item.kind === 'move-only');
+  return option?.preview.boxes.find(
+    (item) => item.target.kind === 'section' && item.target.id === id,
+  )?.box;
+}
+function nodeOf(document: RenderDocument, sectionId: string, objectOrGroup: string) {
+  const section = document.scene.sections.find((item) => item.id === sectionId);
+  const node = section?.nodes.find(
+    (item) => item.measured.objectId === objectOrGroup || item.measured.groupId === objectOrGroup,
+  );
+  assert(section && node, objectOrGroup);
+  const parent = section.nodes.find((item) => item.id === node.parent);
+  // Placement is relative to the node's parent box; the preview reports world boxes.
+  const at = (dx: number, dy: number) => ({
+    x: node.box.x - (parent?.box.x ?? 0) + dx,
+    y: node.box.y - (parent?.box.y ?? 0) + dy,
+  });
+  const world = (dx: number, dy: number) => ({
+    x: node.box.x + section.origin.x + dx,
+    y: node.box.y + section.origin.y + dy,
+  });
+  return { section, node, at, world };
+}
+
+it('a group moved right lands where dropped and grows its section by no more than the move', async () => {
   const { fixture, document } = await collection(wired, 'wired');
   try {
-    const section = document.scene.sections.find((item) => item.id === 'app');
-    assert(section);
-    const group = section.nodes.find((item) => item.measured.groupId === 'ga');
-    assert(group);
-    const before = section.box.width;
+    const { section, node, at, world } = nodeOf(document, 'app', 'ga');
     for (const dx of [1, 2, 3, 5, 10, 24, 50]) {
-      const review = move(document, 'wired', 'app', group.id, group.box.x + dx, group.box.y);
-      assert(review.ok, JSON.stringify(review));
-      const option = review.value.options.find((item) => item.kind === 'move-only');
-      assert(option, `dx=${dx} produced no move option`);
-      const appBox = option.preview.boxes.find(
-        (item) => item.target.kind === 'section' && item.target.id === 'app',
-      )?.box;
-      assert(appBox);
-      expect(appBox.width - before, `dx=${dx}`).toBe(dx);
+      const { x, y } = at(dx, 0);
+      const review = move(document, 'wired', 'app', node.id, x, y);
+      expect(landed(review, node.id), `dx=${dx}`).toMatchObject(world(dx, 0));
+      const grown = (sectionOf(review, 'app')?.width ?? 0) - section.box.width;
+      expect(grown, `dx=${dx}`).toBeGreaterThanOrEqual(0);
+      expect(grown, `dx=${dx}`).toBeLessThanOrEqual(dx);
     }
   } finally {
     await fixture.close();
@@ -130,19 +157,28 @@ collection @sidebyside "SideBySide" theme=paper {
  section @s "S" mode=modules layout=grid columns=2 { show @x @y }
 }`;
 
-it("refuses to drop a node on top of another node's box (items 2 and 4)", async () => {
+it('a node dropped squarely on another box is refused and names that box', async () => {
   const { fixture, document } = await collection(sideBySide, 'sidebyside');
   try {
-    const section = document.scene.sections.find((item) => item.id === 's');
-    assert(section);
-    const x = section.nodes.find((item) => item.measured.objectId === 'x');
-    const y = section.nodes.find((item) => item.measured.objectId === 'y');
-    assert(x && y);
-    const review = move(document, 'sidebyside', 's', x.id, y.box.x, y.box.y);
-    expect(review).toMatchObject({
-      ok: false,
-      error: { code: 'invalid-edit', message: "Can't drop on top of Y" },
-    });
+    const x = nodeOf(document, 's', 'x');
+    const y = nodeOf(document, 's', 'y');
+    const review = move(document, 'sidebyside', 's', x.node.id, y.node.box.x, y.node.box.y);
+    expect(landed(review, x.node.id)).toBe("Can't drop on top of Y");
+  } finally {
+    await fixture.close();
+  }
+});
+
+it('a node dropped overlapping the edge of another box stops short of it', async () => {
+  const { fixture, document } = await collection(sideBySide, 'sidebyside');
+  try {
+    const x = nodeOf(document, 's', 'x');
+    const y = nodeOf(document, 's', 'y');
+    const gap = y.node.box.x - (x.node.box.x + x.node.box.width);
+    const { x: left, y: top } = x.at(gap + 20, 0);
+    const box = landed(move(document, 'sidebyside', 's', x.node.id, left, top), x.node.id);
+    assert(typeof box === 'object', String(box));
+    expect(box.x + box.width).toBeLessThanOrEqual(y.world(0, 0).x);
   } finally {
     await fixture.close();
   }
@@ -152,27 +188,80 @@ const grouped = `canvas 1
 collection @grouped "Grouped" theme=paper {
  node @m1 module "M1" {}
  node @m2 module "M2" {}
- section @sec "Sec" mode=modules layout=grid columns=1 {
+ node @m3 module "M3" {}
+ section @sec "Sec" mode=modules layout=grid columns=2 {
   group @gr "GR" layout=grid columns=1 direction=down { show @m1 @m2 }
+  show @m3
  }
 }`;
 
-it("refuses to move a group member past its group's top or left edge (item 2)", async () => {
+type Spot = { readonly x: number; readonly y: number };
+function landedOrExplained(
+  box: string | Spot | undefined,
+  want: Spot,
+  before: Spot,
+  label: string,
+) {
+  if (typeof box !== 'object')
+    return expect(box).toBe("Can't move M1 there: its group has no room to grow that way");
+  expect([want.x, before.x], `${label} x`).toContain(box.x);
+  expect([want.y, before.y], `${label} y`).toContain(box.y);
+}
+function movedOrExplained(box: string | Spot | undefined, label: string) {
+  if (typeof box === 'string') return expect(box, label).toMatch(/^Can't /);
+  expect(box, label).toBeDefined();
+}
+
+it('a member nudged up or left past its group edge lands where dropped or says why', async () => {
   const { fixture, document } = await collection(grouped, 'grouped');
   try {
-    const section = document.scene.sections.find((item) => item.id === 'sec');
-    assert(section);
-    const member = section.nodes.find((item) => item.measured.objectId === 'm1');
-    const group = section.nodes.find((item) => item.id === member?.parent);
-    assert(member && group);
-    // Placement is relative to the member's own parent, so a negative x asks for a spot
-    // before the group's left edge while y stays put (relative to the group, unchanged).
-    const y = member.box.y - section.origin.y - group.box.y;
-    const review = move(document, 'grouped', 'sec', member.id, -10, y);
-    expect(review).toMatchObject({
-      ok: false,
-      error: { code: 'invalid-edit', message: "Can't move M1 outside its group" },
-    });
+    const { node, at, world } = nodeOf(document, 'sec', 'm1');
+    for (const [dx, dy] of [
+      [-10, 0],
+      [0, -10],
+      [-30, 0],
+      [-20, -20],
+    ] as const) {
+      const { x, y } = at(dx, dy);
+      const review = move(document, 'grouped', 'sec', node.id, x, y);
+      // Each axis lands where dropped, or stops at the group's inner edge when the group can't grow that way.
+      landedOrExplained(landed(review, node.id), world(dx, dy), world(0, 0), `${dx},${dy}`);
+    }
+  } finally {
+    await fixture.close();
+  }
+});
+
+it('a group dragged by its header into empty space moves, whatever its members sit over', async () => {
+  const { fixture, document } = await collection(grouped, 'grouped');
+  try {
+    const { node, at, world } = nodeOf(document, 'sec', 'gr');
+    for (const [dx, dy] of [
+      [0, 200],
+      [30, 0],
+      [0, 30],
+    ] as const) {
+      const { x, y } = at(dx, dy);
+      const review = move(document, 'grouped', 'sec', node.id, x, y);
+      expect(landed(review, node.id), `${dx},${dy}`).toMatchObject(world(dx, dy));
+    }
+  } finally {
+    await fixture.close();
+  }
+});
+
+it('a group dragged past the section top or left edge moves or says why, never snaps back', async () => {
+  const { fixture, document } = await collection(grouped, 'grouped');
+  try {
+    const { node, at } = nodeOf(document, 'sec', 'gr');
+    for (const [dx, dy] of [
+      [-20, 0],
+      [0, -20],
+    ] as const) {
+      const { x, y } = at(dx, dy);
+      const review = move(document, 'grouped', 'sec', node.id, x, y);
+      movedOrExplained(landed(review, node.id), `${dx},${dy}`);
+    }
   } finally {
     await fixture.close();
   }

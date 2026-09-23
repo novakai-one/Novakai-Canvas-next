@@ -12,6 +12,8 @@ export const write = z.discriminatedUnion('kind', [
     resources: z.array(digest),
   }),
   z.strictObject({ kind: z.literal('delete'), key: recordKey }),
+  /** Removes the slot and its version token; only for identities that are never recreated. */
+  z.strictObject({ kind: z.literal('purge'), key: recordKey }),
 ]);
 export const commitRequest = z.strictObject({
   workspace: workspaceId,
@@ -28,7 +30,7 @@ export type Write =
       readonly value: Json;
       readonly resources: readonly Digest[];
     }
-  | { readonly kind: 'delete'; readonly key: RecordKey };
+  | { readonly kind: 'delete' | 'purge'; readonly key: RecordKey };
 export interface CommitRequest {
   readonly workspace: WorkspaceId;
   readonly request: RequestId;

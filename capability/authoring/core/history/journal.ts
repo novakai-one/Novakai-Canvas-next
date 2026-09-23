@@ -9,17 +9,19 @@ import type {
   RecordKey,
 } from '../../contract/records/storage.js';
 import type { Clock } from '../../contract/ports/runtime.js';
+import type { PurgeWrite } from '../../contract/ports/store.js';
 import { timestamp } from '../../contract/brands.js';
 import type { Digest } from '../../contract/brands.js';
 import { findRecord, versionOf } from '../records/keys.js';
 import { navigationKey, readNavigation, advance } from './navigation.js';
 import { transactionKey, headKey } from './read.js';
+import { boundNavigation, staleHistory } from './retention.js';
 import { checkDependencies } from '../admission/dependencies.js';
 import { readShape } from '../validation/input.js';
 import { copyJson, storedLimits } from '../validation/plain-data.js';
 import { accepted, reject } from '../validation/outcomes.js';
 export interface Journal {
-  readonly writes: readonly Write[];
+  readonly writes: readonly (Write | PurgeWrite)[];
   readonly expected: readonly ReadVersion[];
   readonly outcome: CommitOutcome;
 }
@@ -54,7 +56,7 @@ function historyWrites(
   request: Request,
   candidate: PreparedCandidate,
   clock: Clock,
-): readonly Write[] {
+): readonly (Write | PurgeWrite)[] {
   const target = request.intent.kind === 'change' ? null : request.intent.transaction;
   const original = target ?? request.request;
   const entry = readShape(
@@ -95,7 +97,7 @@ function historyWrites(
       resources,
     },
     { kind: 'put', key: headKey(original), value: copyJson(head), resources: [] },
-    ...navigationWrites(request, candidate),
+    ...navigationWrites(request, candidate, [transactionKey(request.request), headKey(original)]),
   ];
 }
 /** Deleted/previously absent data contributes no resource list; retained before-images do. */
@@ -139,19 +141,25 @@ function requireAbsent(candidate: PreparedCandidate, key: RecordKey): void {
 }
 
 /** Navigation participates in the same CAS/transaction as every eligible semantic change. */
-function navigationWrites(request: Request, candidate: PreparedCandidate): readonly Write[] {
+function navigationWrites(
+  request: Request,
+  candidate: PreparedCandidate,
+  written: readonly RecordKey[],
+): readonly (Write | PurgeWrite)[] {
   if (findRecord(candidate.before, navigationKey) === null) return [];
   const navigation = readNavigation(candidate.before);
   const versions = candidate.preparation.changes.map((write) =>
     versionOf(candidate.after, write.key),
   );
+  const next = boundNavigation(candidate.before, advance(navigation, request, versions));
   return [
     {
       kind: 'put',
       key: navigationKey,
-      value: copyJson(advance(navigation, request, versions), storedLimits),
+      value: copyJson(next, storedLimits),
       resources: [],
     },
+    ...staleHistory(candidate.before, next.actions, written),
   ];
 }
 function unchanged(

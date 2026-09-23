@@ -7,6 +7,7 @@ import { protect, success } from '../validation/outcomes.js';
 import { validateState } from '../validation/state.js';
 import { keyText } from './keys.js';
 import { reconcileReceipt } from './receipts.js';
+import { RECEIPT_LIMIT } from './limits.js';
 import { compareVersions, checkWrites, writeSlot } from './versions.js';
 /** Ordered transaction gates operate only on parsed data; new independent gates join this list. */
 const commitGates: readonly ((state: WorkspaceState, request: CommitRequest) => Result<void>)[] = [
@@ -19,21 +20,26 @@ const commitGates: readonly ((state: WorkspaceState, request: CommitRequest) => 
 ];
 /** Construct all writes and receipt together; failed final validation yields no installed candidate. */
 function createCommit(state: WorkspaceState, request: CommitRequest): Result<Decision<Receipt>> {
-  const replacements = request.writes.map((write) => writeSlot(state, write));
-  const replacedKeys = new Set(replacements.map((slot) => keyText(slot.key)));
-  const retained = state.slots.filter((slot) => !replacedKeys.has(keyText(slot.key)));
+  const kept = request.writes.filter((write) => write.kind !== 'purge');
+  const replacements = kept.map((write) => writeSlot(state, write));
+  const removed = new Set(request.writes.map((write) => keyText(write.key)));
+  const retained = state.slots.filter((slot) => !removed.has(keyText(slot.key)));
+  const purged = request.writes.filter((write) => write.kind === 'purge');
   const receipt: Receipt = {
     request: request.request,
     fingerprint: request.fingerprint,
     sequence: state.sequence + 1,
-    versions: replacements.map((slot) => ({ key: slot.key, version: slot.version })),
+    versions: [
+      ...replacements.map((slot) => ({ key: slot.key, version: slot.version })),
+      ...purged.map((write) => ({ key: write.key, version: 'absent' as const })),
+    ],
     outcome: request.outcome,
   };
   const candidate = {
     ...state,
     sequence: receipt.sequence,
     slots: [...retained, ...replacements],
-    receipts: [...state.receipts, receipt],
+    receipts: [...state.receipts, receipt].slice(-RECEIPT_LIMIT),
   };
   const validated = protect(() => validateState(candidate), 'invalid-input');
   if (!validated.ok) return validated;

@@ -3,6 +3,7 @@ import type { Result } from '../../contract/errors.js';
 import { versionHeader, admittedWorkspaceState } from '../../contract/records/storage.js';
 import type { WorkspaceState, Slot, Receipt, Json } from '../../contract/records/storage.js';
 import { hasDuplicates, keyText } from '../transaction/keys.js';
+import { RECEIPT_LIMIT } from '../transaction/limits.js';
 import { boundedClone, parse, success } from './outcomes.js';
 /** Tombstones cannot retain reachable bytes or semantic content. */
 function invalidTombstone(slot: Slot): boolean {
@@ -15,7 +16,8 @@ const stateRules: readonly ((state: WorkspaceState) => boolean)[] = [
   (state) => hasDuplicates(state.receipts.map((receipt) => receipt.request)),
   (state) => hasDuplicates(state.receipts.map((receipt) => String(receipt.sequence))),
   (state) => state.receipts.some((receipt) => receipt.sequence > state.sequence),
-  (state) => state.receipts.length !== state.sequence,
+  (state) => state.receipts.length > state.sequence,
+  (state) => state.receipts.length < Math.min(state.sequence, RECEIPT_LIMIT),
   (state) => state.slots.some(invalidTombstone),
   (state) => state.sequence === 0 && state.slots.length !== 0,
   (state) => state.slots.some((slot) => hasDuplicates(slot.resources)),

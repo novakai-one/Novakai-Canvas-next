@@ -87,7 +87,7 @@ export function nextAction(
   const index = direction === 'undo' ? history.cursor - 1 : history.cursor;
   return history.actions[index] ?? null;
 }
-/** Fresh edits truncate only the navigable branch, never the immutable journal. */
+/** Fresh edits truncate the redo branch; retention purges its records in the same commit. */
 export function advance(
   history: HistoryNavigation,
   request: Request,

@@ -12,32 +12,46 @@ export function createRequestRecovery({
     retryable: 'Edit not saved — safe to retry',
     rejected: 'Edit not applied. Nothing was changed.',
   };
-  /** One bar at a time: the newest request. A refusal already shown in the error bar gets no second bar. */
+  /** One row per unsettled request, so each keeps its Check/Retry actions. A refusal already shown
+   * in the error bar gets no second row. */
   function RequestRecovery({ controller, view }: FeatureProps): ReactElement | null {
-    const item = shownRequest(view);
-    if (item === undefined) return null;
+    const items = shownRequests(view);
+    if (items.length === 0) return null;
     return (
       <aside className={styles.recovery} aria-label="Edit recovery">
-        <div className={styles.request}>
-          <div>
-            <strong>{labels[item.state]}</strong>
-            <details>
-              <summary>Request details</summary>
-              <span className={styles.requestId}>{item.request.request}</span>
-            </details>
-          </div>
-          {item.state === 'rejected' ? (
-            <Button
-              label="Dismiss refused edit"
-              icon="×"
-              iconOnly
-              onClick={() => controller.dismissRequest(item.request.request)}
-            />
-          ) : (
-            <RecoveryActions controller={controller} item={item} />
-          )}
-        </div>
+        {items.map((item) => (
+          <RequestRow key={item.request.request} controller={controller} item={item} />
+        ))}
       </aside>
+    );
+  }
+  function RequestRow({
+    controller,
+    item,
+  }: {
+    readonly controller: FeatureProps['controller'];
+    readonly item: Submission;
+  }): ReactElement {
+    return (
+      <div className={styles.request}>
+        <div>
+          <strong>{labels[item.state]}</strong>
+          <details>
+            <summary>Request details</summary>
+            <span className={styles.requestId}>{item.request.request}</span>
+          </details>
+        </div>
+        {item.state === 'rejected' ? (
+          <Button
+            label="Dismiss refused edit"
+            icon="×"
+            iconOnly
+            onClick={() => controller.dismissRequest(item.request.request)}
+          />
+        ) : (
+          <RecoveryActions controller={controller} item={item} />
+        )}
+      </div>
     );
   }
   /** A proven refusal has nothing to look up or resend; only unsettled requests get these actions. */
@@ -70,8 +84,17 @@ export function createRequestRecovery({
   return RequestRecovery;
 }
 
-/** The newest request, unless it is a refusal the error bar already shows. */
-function shownRequest(view: FeatureProps['view']): Submission | undefined {
-  const item = view.pending.at(-1);
-  return item?.state === 'rejected' && view.problem !== null ? undefined : item;
+/** Every unsettled request, plus the newest refusal when the error bar is not already showing it. */
+function shownRequests(view: FeatureProps['view']): readonly Submission[] {
+  const newest = view.pending.at(-1);
+  return view.pending.filter(
+    (item) => item.state !== 'rejected' || refusalShown(item, newest, view),
+  );
+}
+function refusalShown(
+  item: Submission,
+  newest: Submission | undefined,
+  view: FeatureProps['view'],
+): boolean {
+  return item === newest && view.problem === null;
 }

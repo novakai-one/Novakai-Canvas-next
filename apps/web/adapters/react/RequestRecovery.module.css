@@ -14,6 +14,9 @@
     gap: var(--nv-space-3);
     padding: var(--nv-space-3) var(--nv-space-4);
   }
+  .request + .request {
+    border-top: var(--nv-stroke-base) solid var(--nv-border-default);
+  }
   .request > div {
     flex: 1;
     min-width: 0;

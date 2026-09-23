@@ -79,7 +79,7 @@ function labelField(item: ContentBlock): readonly TextField[] {
 }
 /** Matches the label shown in the list above; falls back to the block's kind when it has none. */
 export function contentName(item: ContentBlock): string {
-  return 'label' in item ? item.label : item.kind;
+  return 'label' in item && item.label ? item.label : item.kind;
 }
 /** Engineering types are explicit strings owned by the semantic record. */
 function typeField(item: ContentBlock): readonly TextField[] {

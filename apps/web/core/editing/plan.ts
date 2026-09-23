@@ -5,6 +5,7 @@ import { failure } from '../../contract/errors.js';
 import { EditRejected } from './targets.js';
 import { plannedSections } from './movement-capture.js';
 import { routeWire } from './routes.js';
+import { regroupSections } from './regroup.js';
 /** A gesture authored on another revision, layout input or display generation is kept as a draft instead of rebased silently. */
 function current(intent: EditIntent, context: EditContext): boolean {
   return (
@@ -25,11 +26,22 @@ function replacements(sections: readonly Section[], context: EditContext): reado
 }
 /** Each supported Canvas intent has an explicit semantic adapter; unsupported intents fail visibly rather than reporting success. */
 function planned(intent: EditIntent, context: EditContext): Result<readonly Change[]> {
-  if (intent.kind === 'placement')
-    return { ok: true, value: replacements(plannedSections(context.document, intent), context) };
-  if (intent.kind === 'route')
-    return { ok: true, value: replacements(routeWire(intent, context.document), context) };
-  return failure('unsupported-edit', 'Use the inspector to complete this diagram edit');
+  const sections = plannedIntent(intent, context);
+  if (sections === null)
+    return failure('unsupported-edit', 'Use the inspector to complete this diagram edit');
+  return { ok: true, value: replacements(sections, context) };
+}
+function plannedIntent(intent: EditIntent, context: EditContext): readonly Section[] | null {
+  switch (intent.kind) {
+    case 'placement':
+      return plannedSections(context.document, intent);
+    case 'regroup':
+      return regroupSections(intent, context.document);
+    case 'route':
+      return routeWire(intent, context.document);
+    default:
+      return null;
+  }
 }
 /** Plan a local human geometry edit atomically; Authoring owns persistence, feasibility and recovery after submission. */
 export function planCanvasEdit(

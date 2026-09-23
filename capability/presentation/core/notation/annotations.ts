@@ -93,7 +93,7 @@ export function measureWireAnnotation(
   wire: Relationship,
   context: ContentContext,
 ): MeasuredContent {
-  const label = labelContent(wireLabel(wire), context, 'annotation');
+  const label = labelContent(wireLabel(wire, context.collection.objects), context, 'annotation');
   if (wire.step === undefined) return pilledLabel(label, context);
   return numberedLabel(wire.step, label, context);
 }

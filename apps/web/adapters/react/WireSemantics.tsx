@@ -120,10 +120,11 @@ function WireLabel({
 }
 function WireLabelText({
   value: { relationship },
+  collection,
   edit,
   Field,
 }: WireFieldsProps & Pick<DesignSlots, 'Field'>): ReactElement {
-  const label = relationshipLabel(relationship);
+  const label = relationshipLabel(relationship, collection.objects);
   return (
     <Field
       label="Wire label"

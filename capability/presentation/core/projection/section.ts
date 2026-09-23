@@ -44,7 +44,9 @@ function wire(
     label: measureWireAnnotation(source, context),
     // Flow and state transitions carry their branch meaning in the wire label;
     // module roads stay quiet unless the user focuses a wire.
-    labelVisible: (section.mode === 'flow' || section.mode === 'state') && wireLabel(source) !== '',
+    labelVisible:
+      (section.mode === 'flow' || section.mode === 'state') &&
+      wireLabel(source, context.collection.objects) !== '',
     appearance: connectionPaint(context.style.connection, notation.style),
     sourceMarker: notation.source,
     targetMarker: notation.target,

@@ -74,7 +74,7 @@ export function createSceneEdge(
   /** Admitted routes always have two points; missing geometry stays visibly absent rather than inventing a wire. */
   function renderEdge(data: NonNullable<SceneEdgeProps['data']>): ReactElement | null {
     const { view } = data;
-    const wire = view.wire;
+    const wire = view.drawn;
     const paint = wire.appearance.paint;
     const first = wire.points[0];
     const second = wire.points[1];

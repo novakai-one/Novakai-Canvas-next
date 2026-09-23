@@ -31,6 +31,8 @@ export interface PlacementNode {
   readonly width: number;
   readonly height: number;
   readonly header: number;
+  /** Start nodes sit in the first layer and end nodes in the last. */
+  readonly layer?: 'first' | 'last';
 }
 export interface PlacementProblem {
   readonly nodes: readonly PlacementNode[];

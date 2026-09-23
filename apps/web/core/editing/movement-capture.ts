@@ -44,6 +44,14 @@ export function pinnedSections(
       })
       .filter((id) => id !== ''),
   );
+  return pinnedFor(document, affected);
+}
+
+/** Every section keeps its place; sections in `affected` also keep every group and node in place. */
+export function pinnedFor(
+  document: RenderDocument,
+  affected: ReadonlySet<string>,
+): readonly Section[] {
   return document.collection.sections.map((source) => pinSection(document, source, affected));
 }
 
@@ -136,28 +144,60 @@ export function plannedSections(
     ...document,
     collection: { ...document.collection, sections: frozen },
   };
-  return placeEntries(intent, pinnedDocument).map((section) =>
-    section.mode === 'modules'
-      ? growToHold(stopShort(section, document, intent), document)
-      : section,
+  const targets = intent.entries.map((entry) => entry.target);
+  return placeEntries(intent, pinnedDocument).map((section) => settled(section, document, targets));
+}
+
+/** A dropped node stops short of siblings, and its group grows to hold it. */
+export function settled(
+  section: Section,
+  document: RenderDocument,
+  targets: readonly Target[],
+): Section {
+  if (section.mode !== 'modules') return section;
+  return growToHold(stopShort(section, document, targets), document);
+}
+
+type SceneNode = RenderDocument['scene']['sections'][number]['nodes'][number];
+/** The frame the node's placement is measured from: its new group, or the nearest non-group ancestor. */
+function frameOf(
+  nodes: readonly SceneNode[],
+  node: SceneNode,
+  group: string | undefined,
+): SceneNode | undefined {
+  if (group !== undefined) return nodes.find((item) => item.measured.groupId === group);
+  return outside(
+    nodes,
+    nodes.find((item) => item.id === node.parent),
+  );
+}
+function outside(nodes: readonly SceneNode[], from: SceneNode | undefined): SceneNode | undefined {
+  if (from?.measured.groupId == null) return from;
+  return outside(
+    nodes,
+    nodes.find((item) => item.id === from.parent),
   );
 }
 
 /** A node dropped onto a sibling stops short along its drag path, keeping a padding-wide gap. */
-function stopShort(section: Section, document: RenderDocument, intent: PlacementIntent): Section {
+function stopShort(
+  section: Section,
+  document: RenderDocument,
+  targets: readonly Target[],
+): Section {
   const scene = document.scene.sections.find((item) => item.id === section.id);
   if (scene === undefined) return section;
   const space = document.options.padding;
   let appearances = section.appearances;
-  for (const entry of intent.entries) {
-    if (entry.target.kind !== 'node' || entry.target.section !== section.id) continue;
-    const id = entry.target.id;
+  for (const target of targets) {
+    if (target.kind !== 'node' || target.section !== section.id) continue;
+    const id = target.id;
     const node = scene.nodes.find((item) => item.id === id);
     if (node === undefined || node.measured.groupId !== null) continue;
     const moved = appearances.find((a) => a.object === node.measured.objectId);
     const after = moved?.placement;
     if (moved === undefined || after == null) continue;
-    const parent = scene.nodes.find((item) => item.id === node.parent);
+    const parent = frameOf(scene.nodes, node, moved.group);
     const before = { x: node.box.x - (parent?.box.x ?? 0), y: node.box.y - (parent?.box.y ?? 0) };
     const size = { width: after.width ?? node.box.width, height: after.height ?? node.box.height };
     const others = appearances.flatMap((a) => {

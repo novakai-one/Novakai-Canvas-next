@@ -15,10 +15,7 @@ export type ValueType =
   | 'references'
   | 'reference-value'
   | 'signature-parameters'
-  | 'type-expression'
-  | 'type-use'
-  | 'typed-parameters'
-  | 'literal-union';
+  | 'type-expression';
 export interface Property {
   readonly type: ValueType;
   readonly field: string;
@@ -38,7 +35,6 @@ export interface ConstructDefinition {
   readonly positions: readonly PositionRule[];
   readonly properties: Readonly<Record<string, Property>>;
   readonly children: readonly Construct[] | null;
-  readonly body?: 'required' | 'optional';
 }
 export interface Description {
   readonly patchTargets: Readonly<Record<TargetKind, Readonly<Record<string, Property>>>>;

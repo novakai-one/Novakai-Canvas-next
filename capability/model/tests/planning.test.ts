@@ -175,36 +175,3 @@ test('delete and hide with explicit impact', () => {
     'sections.missing',
   );
 });
-test('cascade drops change entries for removed targets', () => {
-  const entry = (status: string, target: Readonly<Record<string, unknown>>) => ({ status, target });
-  const changed = graph({
-    changes: [
-      {
-        id: 'c1',
-        title: 'C1',
-        entries: [
-          entry('new', { kind: 'object', object: 'a' }),
-          entry('changed', { kind: 'object', object: 'b' }),
-        ],
-      },
-      {
-        id: 'c2',
-        title: 'C2',
-        entries: [entry('locked', { kind: 'relationship', relationship: 'ab' })],
-      },
-    ],
-  });
-  const deleted = value(plan(changed, [{ op: 'delete-object', id: 'a', cascade: true }]));
-  expect(deleted.candidate.changes).toEqual([
-    { id: 'c1', title: 'C1', entries: [entry('changed', { kind: 'object', object: 'b' })] },
-  ]);
-  const lone = base({
-    objects: [node('a')],
-    changes: [{ id: 'c1', title: 'C1', entries: [entry('new', { kind: 'object', object: 'a' })] }],
-  });
-  rejectsPlan(lone, [{ op: 'delete-object', id: 'a' }], 'delete-referenced', 'objects.a');
-  rejectsPlan(lone, [{ op: 'remove', target: 'objects', id: 'a' }], 'reference', 'changes.c1');
-  expect(
-    value(plan(lone, [{ op: 'delete-object', id: 'a', cascade: true }])).candidate.changes,
-  ).toEqual([]);
-});

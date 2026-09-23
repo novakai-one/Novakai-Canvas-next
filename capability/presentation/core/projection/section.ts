@@ -8,8 +8,8 @@ import type {
 } from '../../contract/records/visual.js';
 import type { ContentContext } from '../content/blocks.js';
 import { identity, projectNode, projectGroup } from './node.js';
-import { labelContent } from '../content/text.js';
-import { wireNotation, wireLabel, sequenceMarker, sequenceLabel } from '../notation/wires.js';
+import { labelContent } from '../content/headings.js';
+import { wireNotation, sequenceMarker, sequenceLabel } from '../notation/wires.js';
 import { measureWireAnnotation } from '../notation/annotations.js';
 import { reject } from '../validation/outcomes.js';
 /** Canonical endpoints resolve through the visible representation, including represented groups. */
@@ -44,7 +44,7 @@ function wire(
     label: measureWireAnnotation(source, context),
     // Flow and state transitions carry their branch meaning in the wire label;
     // module roads stay quiet unless the user focuses a wire.
-    labelVisible: (section.mode === 'flow' || section.mode === 'state') && wireLabel(source) !== '',
+    labelVisible: section.mode === 'flow' || section.mode === 'state',
     appearance: connectionPaint(context.style.connection, notation.style),
     sourceMarker: notation.source,
     targetMarker: notation.target,

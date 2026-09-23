@@ -103,7 +103,6 @@ const definitionAtomPrinters = {
     typeof expression.value === 'string'
       ? JSON.stringify(expression.value)
       : String(expression.value),
-  opaque: (): string => 'opaque',
 };
 /** Media kind is an admission hint; exact bytes/type/metadata come from the pinned supplied record. */
 function printAsset(asset: Collection['assets'][number]): string {

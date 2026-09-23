@@ -1,7 +1,6 @@
 import type { ComponentType, ReactElement } from 'react';
 import type { WireFieldsProps } from '../../contract/wire-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
-import { relationshipLabel } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
 /** Shared wire meaning is explicit; no local routing control can change these fields. */
 export function createWireSemantics({
@@ -17,7 +16,7 @@ export function createWireSemantics({
           control={(props) => (
             <input
               {...props}
-              value={relationshipLabel(relationship)}
+              value={relationship.label}
               onChange={(event) => edit({ kind: 'label', value: event.target.value })}
             />
           )}

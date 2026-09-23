@@ -5,7 +5,6 @@ import type { ContentBlock, Endpoint, Field, KeyGroup } from '../../contract/rec
 import type { DiagramObject } from '../../contract/records/object.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
-import { typeUseKey } from '../definitions/type-uses.js';
 
 type OrderedKey = readonly DescendantId[];
 
@@ -103,24 +102,17 @@ function validateForeignKey(
   return [...arityIssues, ...entityIssues, ...referenceIssues, ...keyIssues, ...typeIssues];
 }
 
-/** Shared refs compare by canonical key and plain string types retain exact string equality. */
+/** Shared refs compare by canonical ID and legacy types retain exact string equality. */
 function sameFieldType(left: Field, right: Field | undefined): boolean {
   if (right === undefined) return false;
-  return typeUseKey(left.type) === typeUseKey(right.type);
-}
-
-/** Entity ids name the valid reference targets in the E010 message. */
-function entityList(collection: Collection): string {
-  return collection.objects
-    .filter((object) => object.kind === 'entity')
-    .map((object) => `@${object.id}`)
-    .join(', ');
+  if (typeof left.type === 'string' || typeof right.type === 'string')
+    return left.type === right.type;
+  return left.type.id === right.type.id;
 }
 
 /** A scalar foreign field must declare a reference; every other field forbids one. */
 function validateFieldKey(
   field: Field,
-  object: DiagramObject,
   collection: Collection,
   path: string,
 ): readonly Diagnostic[] {
@@ -132,12 +124,7 @@ function validateFieldKey(
       'Only foreign fields have references',
     );
   if (field.references === undefined)
-    return diagnoseWhen(
-      true,
-      'key',
-      path,
-      `E010 key: @${object.id}.@${field.id} is foreign; add references=@e.@f. Entities: ${entityList(collection)}.`,
-    );
+    return diagnoseWhen(true, 'key', path, 'Foreign field requires reference');
   return validateForeignKey([field], [field.references], collection, path);
 }
 
@@ -185,7 +172,7 @@ function validateBlockKey(
   collection: Collection,
 ): readonly Diagnostic[] {
   const path = `objects.${object.id}.content.${block.id}`;
-  if (block.kind === 'field') return validateFieldKey(block, object, collection, path);
+  if (block.kind === 'field') return validateFieldKey(block, collection, path);
   if (block.kind === 'keygroup') return validateKeyGroup(block, object, collection, path);
   return [];
 }

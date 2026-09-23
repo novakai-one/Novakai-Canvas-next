@@ -2,8 +2,7 @@ import type { ComponentType, ReactElement } from 'react';
 import type { ContentEditorProps } from '../../contract/inspector-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
 import type { Collection, ContentBlock } from '../../contract/records/owners.js';
-import type { TypeUse } from '@novakai/canvas-model';
-import { fieldTypeDisplay, typeUseText } from '@novakai/canvas-model';
+import { fieldTypeDisplay } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
 /** ER keys and callable signatures have dedicated controls; shared text inputs remain in the content row component. */
 export function createEngineeringFields({
@@ -150,10 +149,15 @@ export function createEngineeringFields({
 }
 
 function parameterValue(
-  parameter: string | { readonly name: string; readonly type: TypeUse },
+  parameter:
+    | string
+    | {
+        readonly name: string;
+        readonly type: string | { readonly kind: 'definition'; readonly id: string };
+      },
 ): string {
   if (typeof parameter === 'string') return parameter;
-  return `${parameter.name}: ${typeUseText(parameter.type)}`;
+  return `${parameter.name}: ${typeof parameter.type === 'string' ? parameter.type : `@${parameter.type.id}`}`;
 }
 const keys = ['none', 'primary', 'foreign', 'unique'] as const;
 const keyLabels = {
@@ -180,8 +184,5 @@ function referenceValue(field: Extract<ContentBlock, { kind: 'field' }>): string
   return JSON.stringify([field.references.object, field.references.member]);
 }
 function typeChoice(field: Extract<ContentBlock, { kind: 'field' }>): string {
-  const type = field.type;
-  return typeof type === 'string' || type.kind !== 'definition'
-    ? 'mode:unlinked'
-    : `definition:${type.id}`;
+  return typeof field.type === 'string' ? 'mode:unlinked' : `definition:${field.type.id}`;
 }

@@ -201,25 +201,25 @@
 
   .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
     .heading
-    text:not(rect[data-badge] + text) {
+    text {
     fill: var(--nv-canvas-heading);
   }
 
   .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
     .heading
-    text:not(rect[data-badge] + text) {
+    text {
     fill: var(--nv-canvas-group-heading);
   }
 
   .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
     .body
-    text:not(rect[data-badge] + text) {
+    text {
     fill: var(--nv-canvas-member);
   }
 
   .root[data-follows-interface-roles='true'][data-shape='container'][data-node-role='neutral']
     .body
-    text:not(rect[data-badge] + text) {
+    text {
     fill: var(--nv-canvas-group-heading);
   }
 

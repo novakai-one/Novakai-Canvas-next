@@ -3,7 +3,7 @@ import type { Section, SequenceItem } from '../../contract/records/input.js';
 import type { ContentContext } from '../content/blocks.js';
 import { resolvedStyle } from '../../contract/records/style.js';
 import { parse, clone, requireValue, reject } from '../validation/outcomes.js';
-import { labelContent } from '../content/text.js';
+import { labelContent } from '../content/headings.js';
 import { markerMeasurements } from '../notation/markers.js';
 /** Ordinary events have no branch headings; every declared fragment branch is measured exactly once. */
 function branchHeadings(

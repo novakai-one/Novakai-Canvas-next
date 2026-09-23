@@ -28,19 +28,28 @@ function invalidDelete(state: WorkspaceState, write: Write): boolean {
   const previous = findSlot(state, write.key);
   return previous?.deleted !== false;
 }
+/** A purge must name a stored slot, live or tombstoned. */
+function invalidPurge(state: WorkspaceState, write: Write): boolean {
+  return write.kind === 'purge' && findSlot(state, write.key) === undefined;
+}
+function exhausted(state: WorkspaceState, write: Write): boolean {
+  return currentVersion(state, write.key) === Number.MAX_SAFE_INTEGER;
+}
+const writeRules = [
+  [invalidDelete, 'Delete requires a live record'],
+  [invalidPurge, 'Purge requires a stored record'],
+  [exhausted, 'Record version exhausted'],
+] as const;
 /** Detect illegal deletion and exhausted versions before creating any candidate slots. */
 export function checkWrites(state: WorkspaceState, writes: readonly Write[]): Result<void> {
-  if (writes.some((write) => invalidDelete(state, write)))
-    return fail('invalid-input', 'writes', 'Delete requires a live record');
-  if (writes.some((write) => currentVersion(state, write.key) === Number.MAX_SAFE_INTEGER))
-    return fail('invalid-input', 'writes', 'Record version exhausted');
-  return success(undefined);
+  const broken = writeRules.find(([rule]) => writes.some((write) => rule(state, write)));
+  return broken ? fail('invalid-input', 'writes', broken[1]) : success(undefined);
 }
 /** A put or tombstone is a new immutable version; payload revision is Authoring's responsibility. */
 export function writeSlot(state: WorkspaceState, write: Write): Slot {
   const previousVersion = currentVersion(state, write.key);
   const version = previousVersion === 'absent' ? 0 : previousVersion + 1;
-  if (write.kind === 'delete')
+  if (write.kind !== 'put')
     return { key: write.key, version, value: null, deleted: true, resources: [] };
   return {
     key: write.key,

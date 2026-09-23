@@ -50,7 +50,7 @@ function measure(
   measured: Map<string, VisualNode>,
 ): ModuleEnvelope {
   const members = section.nodes.filter((node) => node.parent === (parent?.id ?? null));
-  const raw = members.filter((node) => node.groupId === null);
+  const leaves = members.filter((node) => node.groupId === null);
   const groups = members.filter((node) => node.groupId !== null);
   const children = groups.map((node) => {
     const envelope = measure(node, section, context, measured);
@@ -83,17 +83,9 @@ function measure(
   const traffic = density(members, section.nodes, section.wires);
   const gap = trafficGap(traffic.perimeter, lanePitch, padding);
   const header = Math.ceil((parent?.headerHeight ?? section.title.height + padding * 2) + gap / 2);
-  const footprintOf = (node: VisualNode) =>
-    nodeFootprint(node, section.wires, lanePitch, annotationGap, advance);
-  // A node dropped on the title or past the left edge is pulled back to the content area itself,
-  // never by its wire approaches, so an already-placed layout never shifts on a plain render.
-  const origin = { x: gap / 2, y: header };
-  const leaves = raw.map((node) => {
-    const kept = keepInside(node, origin);
-    if (kept !== node) measured.set(node.id, kept);
-    return kept;
-  });
-  const footprints = leaves.map(footprintOf);
+  const footprints = leaves.map((node) =>
+    nodeFootprint(node, section.wires, lanePitch, annotationGap, advance),
+  );
   const cellGap = trafficGap(traffic.local, lanePitch, padding);
   // Each child reserves its own boundary population. Shared-road feasibility is admitted by Layout.
   const childCells = children.map((child, index) => {
@@ -148,11 +140,6 @@ function measure(
     x: Math.min(gap / 2, ((childColumnWidths[column(index)] ?? 0) - child.width) / 2),
     y: ((childRowHeights[row(index)] ?? 0) - child.height) / 2,
   }));
-  // A settled group needs only its own clearance, so a grown row neighbour can't push it.
-  const margins = children.map((child, index) => ({
-    x: Math.min(gap / 2, ((childCells[index]?.width ?? 0) - child.width) / 2),
-    y: ((childCells[index]?.height ?? 0) - child.height) / 2,
-  }));
   const childX = edges(childColumnWidths);
   const childY = edges(childRowHeights);
   const rects = groups.map((node, index) => ({
@@ -171,35 +158,47 @@ function measure(
     starts: { x: childX, y: childY },
     sizes: { x: childColumnWidths, y: childRowHeights },
     insets: childInsets,
-    margins,
     ownWidth,
     header,
     gap,
   };
   const settled = allPlaced(members);
-  const bounded = rects.map((rect, index) => ({
-    ...rect,
-    ...groupFloor(settled, cells, index),
-  }));
+  const bounded = settled
+    ? settledFloors(rects, gap)
+    : rects.map((rect, index) => ({ ...rect, ...gridFloor(cells, index) }));
   const reach = pushPinned(bounded, measured);
   const authored = parent === null ? section.placement : parent.placement;
-  const grid = settled
-    ? { width: farEdge(bounded, cells, 'x'), height: farEdge(bounded, cells, 'y') + gap / 2 }
-    : { width: ownWidth + childWidth, height: Math.max(ownHeight, childHeight) + header + gap / 2 };
+  const need = settled
+    ? {
+        manual: settledReach(authored, placedReach(leaves, footprints, (cellGap + gap) / 2), {
+          width: manualWidth,
+          height: manualHeight,
+        }),
+        grid: {
+          width: farEdge(bounded, cells, 'x'),
+          height: farEdge(bounded, cells, 'y') + gap / 2,
+        },
+      }
+    : {
+        manual: { width: manualWidth, height: manualHeight },
+        grid: {
+          width: ownWidth + childWidth,
+          height: Math.max(ownHeight, childHeight) + header + gap / 2,
+        },
+      };
   // An authored size still grows to hold a child moved past its right or bottom edge.
   return {
-    width:
-      authored?.width == null
-        ? Math.max(
-            manualWidth,
-            reach.right + gap / 2,
-            Math.max(parent?.content.width ?? section.title.width, grid.width) + gap,
-          )
-        : Math.max(authored.width, manualWidth, reach.right + gap / 2),
-    height:
-      authored?.height == null
-        ? Math.max(manualHeight, reach.bottom + gap / 2, grid.height)
-        : Math.max(authored.height, manualHeight, reach.bottom + gap / 2),
+    width: Math.max(
+      need.manual.width,
+      reach.right + gap / 2,
+      authored?.width ??
+        Math.max(parent?.content.width ?? section.title.width, need.grid.width) + gap,
+    ),
+    height: Math.max(
+      need.manual.height,
+      reach.bottom + gap / 2,
+      authored?.height ?? need.grid.height,
+    ),
     header,
     gap,
     lanePitch,
@@ -245,9 +244,49 @@ function dependencyGrid(
     columns: Math.max(1, Math.min(members.length || 1, intent.columns ?? square)),
     cells: members.map((_, index) => index),
   };
+  if (allPlaced(members)) return placedGrid(members);
   if (keepsOrder(members, section, intent)) return plain;
   const links = memberLinks(members, section);
   return links.length === 0 ? plain : layeredGrid(layerOf(members.length, links), intent.direction);
+}
+/** Every member placed by hand: columns and rows follow where the members stand, so roads run between them. */
+function placedGrid(members: readonly VisualNode[]): Grid {
+  const column = bands(members, 'x');
+  const row = bands(members, 'y');
+  const columns = Math.max(0, ...column) + 1;
+  return {
+    columns,
+    cells: members.map((_, index) => (row[index] ?? 0) * columns + (column[index] ?? 0)),
+  };
+}
+/** Band of each member along an axis: members whose spans overlap share a band. */
+function bands(members: readonly VisualNode[], axis: 'x' | 'y'): readonly number[] {
+  const size = SPAN[axis].size;
+  const spans = members
+    .map((node, index) => {
+      const start = node.placement?.[axis] ?? 0;
+      return { index, start, end: start + Math.max(node[size], node.placement?.[size] ?? 0) };
+    })
+    .toSorted((a, b) => a.start - b.start);
+  const band = members.map(() => 0);
+  spans.reduce(
+    (open, span) => {
+      const next = joined(open, span);
+      band[span.index] = next.band;
+      return next;
+    },
+    { band: -1, end: -Infinity },
+  );
+  return band;
+}
+/** A span that starts past the open band's end opens the next band; otherwise it widens this one. */
+function joined(
+  open: { readonly band: number; readonly end: number },
+  span: { readonly start: number; readonly end: number },
+): { readonly band: number; readonly end: number } {
+  return span.start >= open.end
+    ? { band: open.band + 1, end: span.end }
+    : { band: open.band, end: Math.max(open.end, span.end) };
 }
 /** Authored columns or a hand-placed member: keep the human's arrangement, don't reshuffle. */
 function keepsOrder(
@@ -345,27 +384,12 @@ function pushPinned(
   };
 }
 
-/** A hand-placed member's own box keeps clear of the title band and the left edge of the content
- * area. The caller writes the result back; this never mutates shared state itself. */
-function keepInside(
-  node: VisualNode,
-  origin: { readonly x: number; readonly y: number },
-): VisualNode {
-  const placement = node.placement;
-  if (placement === null) return node;
-  const x = Math.max(placement.x, origin.x);
-  const y = Math.max(placement.y, origin.y);
-  if (x === placement.x && y === placement.y) return node;
-  return { ...node, placement: { ...placement, x, y } };
-}
-
 interface ChildGrid {
   readonly column: (index: number) => number;
   readonly row: (index: number) => number;
   readonly starts: Readonly<Record<'x' | 'y', readonly number[]>>;
   readonly sizes: Readonly<Record<'x' | 'y', readonly number[]>>;
   readonly insets: readonly { readonly x: number; readonly y: number }[];
-  readonly margins: readonly { readonly x: number; readonly y: number }[];
   readonly ownWidth: number;
   readonly header: number;
   readonly gap: number;
@@ -375,17 +399,108 @@ interface ChildGrid {
 function allPlaced(members: readonly VisualNode[]): boolean {
   return members.length > 0 && members.every((node) => node.placement !== null);
 }
-function groupFloor(
-  settled: boolean,
-  grid: ChildGrid,
-  index: number,
-): { readonly minX: number; readonly minY: number } {
-  return settled ? settledFloor(grid, index) : gridFloor(grid, index);
+interface GroupRect {
+  readonly node: VisualNode;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
 }
-/** A settled group only stays inside the content area, keeping its own margin to the frame. */
-function settledFloor(grid: ChildGrid, index: number): { minX: number; minY: number } {
-  const margin = grid.margins[index] ?? { x: 0, y: 0 };
-  return { minX: grid.gap / 2 + margin.x, minY: grid.header + margin.y };
+const SPAN = {
+  x: { size: 'width', cross: 'y', crossSize: 'height' },
+  y: { size: 'height', cross: 'x', crossSize: 'width' },
+} as const;
+/** A settled group sits where it was put. Only a group before it that grew into the road between
+ * them moves it on, by just enough to keep that road. */
+function settledFloors<T extends GroupRect>(
+  rects: readonly T[],
+  gap: number,
+): readonly (T & { readonly minX: number; readonly minY: number })[] {
+  const xs = pushedStarts(rects, 'x', gap);
+  const ys = pushedStarts(rects, 'y', gap);
+  return rects.map((rect) => ({
+    ...rect,
+    minX: xs.get(rect) ?? rect.x,
+    minY: ys.get(rect) ?? rect.y,
+  }));
+}
+function pushedStarts(
+  rects: readonly GroupRect[],
+  axis: 'x' | 'y',
+  gap: number,
+): ReadonlyMap<GroupRect, number> {
+  const pushed = new Map<GroupRect, number>();
+  rects
+    .toSorted((a, b) => a[axis] - b[axis])
+    .forEach((rect) => {
+      const pushes = [...pushed].map(([earlier, start]) =>
+        before(earlier, rect, axis, gap) ? pushFrom(earlier, start, rect, axis, gap) : 0,
+      );
+      pushed.set(rect, rect[axis] + Math.max(0, ...pushes));
+    });
+  return pushed;
+}
+function oldSize(rect: GroupRect, size: 'width' | 'height'): number {
+  return rect.node.placement?.[size] ?? rect[size];
+}
+/** Before, on this axis, and sharing a stretch of the other axis; or diagonally before, grown into
+ * it, with this the axis that needs the shorter push. */
+function before(earlier: GroupRect, rect: GroupRect, axis: 'x' | 'y', gap: number): boolean {
+  const { cross, crossSize } = SPAN[axis];
+  const across =
+    earlier[cross] < rect[cross] + oldSize(rect, crossSize) &&
+    rect[cross] < earlier[cross] + oldSize(earlier, crossSize);
+  return across ? ahead(earlier, rect, axis) : diagonalPush(earlier, rect, gap) === axis;
+}
+function ahead(earlier: GroupRect, rect: GroupRect, axis: 'x' | 'y'): boolean {
+  return earlier[axis] + oldSize(earlier, SPAN[axis].size) <= rect[axis] + 0.5;
+}
+function diagonalPush(earlier: GroupRect, rect: GroupRect, gap: number): 'x' | 'y' | undefined {
+  const reach = (axis: 'x' | 'y') =>
+    ahead(earlier, rect, axis) ? earlier[axis] + earlier[SPAN[axis].size] + gap - rect[axis] : 0;
+  const shorter = reach('y') < reach('x') ? 'y' : 'x';
+  return reach(shorter) > 0 ? shorter : undefined;
+}
+/** How far the earlier group's grown far edge reaches into the road the later group kept. */
+function pushFrom(
+  earlier: GroupRect,
+  start: number,
+  rect: GroupRect,
+  axis: 'x' | 'y',
+  gap: number,
+): number {
+  const { size } = SPAN[axis];
+  const road = Math.min(gap, rect[axis] - earlier[axis] - oldSize(earlier, size));
+  return start + earlier[size] + road - rect[axis];
+}
+/** A frame whose size was fixed where it stood keeps its leaves' grid margins, so a drag grows it
+ * only by what the move needs. An unsized frame keeps a full gap past its last leaf. */
+function settledReach<T>(
+  authored: { readonly width?: number | undefined } | null | undefined,
+  placed: T,
+  manual: T,
+): T {
+  return authored?.width == null ? manual : placed;
+}
+/** A settled leaf keeps the margin its grid cell gave it: its wire approaches, half the cell gap
+ * and half the frame gap, so pinning a node where it already sits never grows the frame. */
+function placedReach(
+  leaves: readonly VisualNode[],
+  footprints: readonly Footprint[],
+  margin: number,
+): { readonly width: number; readonly height: number } {
+  const far = (axis: 'x' | 'y', size: 'width' | 'height', side: 'right' | 'bottom') =>
+    Math.ceil(
+      Math.max(
+        0,
+        ...leaves.map((node, index) => {
+          const placement = node.placement ?? { x: 0, y: 0, [size]: undefined };
+          const extent = Math.max(node[size], placement[size] ?? 0);
+          return placement[axis] + extent / 2 + (footprints[index]?.[side] ?? 0) + margin;
+        }),
+      ),
+    );
+  return { width: far('x', 'width', 'right'), height: far('y', 'height', 'bottom') };
 }
 /** The road between child columns (rows) runs on the grid line; a pinned group stays past it. */
 function gridFloor(grid: ChildGrid, index: number): { minX: number; minY: number } {
@@ -402,15 +517,10 @@ function farEdge(
   grid: ChildGrid,
   axis: 'x' | 'y',
 ): number {
-  // Layout starts the cell no earlier than the content area; x also reserves the leaf row
-  // before it, which the caller's own left gap already covers once, so strip it back out here.
+  // Layout starts the cell no earlier than the content area; the caller's own left gap already
+  // covers that start once, so strip it back out here.
   const { track, floor, start, strip } = {
-    x: {
-      track: grid.column,
-      floor: 'minX' as const,
-      start: grid.gap / 2 + grid.ownWidth,
-      strip: grid.gap / 2,
-    },
+    x: { track: grid.column, floor: 'minX' as const, start: grid.gap / 2, strip: grid.gap / 2 },
     y: { track: grid.row, floor: 'minY' as const, start: grid.header, strip: 0 },
   }[axis];
   return Math.max(

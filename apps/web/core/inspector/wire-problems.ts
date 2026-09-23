@@ -30,10 +30,12 @@ function recordIssue(issue: ValidationSource['diagnostics'][number]): OwnerIssue
 }
 const stale: Rule = (issue) =>
   issue.code === 'revision-conflict'
-    ? 'Someone changed this collection. Discard the draft and redo it.'
+    ? 'This collection changed since the draft started. Discard the draft and redo it.'
     : null;
+/** Model reports a change-list issue by change index: `<n>.value.label`. */
+const changeLabel = /^\d+\.value\.label$/;
 const blank: Rule = (issue, context) => {
-  if (issue.code !== 'shape' || !issue.path.endsWith('.label')) return null;
+  if (issue.code !== 'shape' || !changeLabel.test(issue.path)) return null;
   return context.moduleWire
     ? 'The wire label is empty. Pick a function in Wire label.'
     : 'The wire label is empty. Type a label.';

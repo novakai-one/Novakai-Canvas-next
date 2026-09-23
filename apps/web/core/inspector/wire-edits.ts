@@ -12,7 +12,9 @@ export function wireDraftKey(collection: string, section: string, relationship: 
 }
 /** Replay against the captured version, even after an agent changes the displayed collection. */
 export function editedWire(draft: WireDraft): EditedWire {
-  return draft.edits.reduce(applyWireEdit, {
+  const replay = (current: EditedWire, edit: WireEdit): EditedWire =>
+    operations[edit.kind](current, edit, draft.relationship);
+  return draft.edits.reduce(replay, {
     relationship: draft.relationship,
     wire: draft.wire,
     created: null,
@@ -21,7 +23,10 @@ export function editedWire(draft: WireDraft): EditedWire {
 }
 /** A closed command registry separates semantic edits from local appearance edits. */
 const operations: Readonly<
-  Record<WireEdit['kind'], (current: EditedWire, edit: WireEdit) => EditedWire>
+  Record<
+    WireEdit['kind'],
+    (current: EditedWire, edit: WireEdit, original: Relationship) => EditedWire
+  >
 > = {
   label: text,
   guard: text,
@@ -37,21 +42,28 @@ const operations: Readonly<
   function: chooseFunction,
   'function-name': functionName,
 };
-/** Each operation preserves every field outside its declared scope. */
-function applyWireEdit(current: EditedWire, edit: WireEdit): EditedWire {
-  return operations[edit.kind](current, edit);
-}
 /** A blank label can be typed and recovered; Model rejects it at apply. */
 function text(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'label' && edit.kind !== 'guard' && edit.kind !== 'effect') return current;
   return { ...current, relationship: { ...current.relationship, [edit.kind]: edit.value } };
 }
 /** Changing notation does not silently discard cardinalities or other semantics. */
-function relationshipKind(current: EditedWire, edit: WireEdit): EditedWire {
+function relationshipKind(current: EditedWire, edit: WireEdit, original: Relationship): EditedWire {
   if (edit.kind !== 'relationship-kind') return current;
   const relationship = { ...current.relationship, kind: edit.value };
   if (functionKinds.includes(edit.value)) return { ...current, relationship };
-  return { ...current, relationship, created: null, naming: null };
+  return { ...droppedFunction({ ...current, relationship }, original), naming: null };
+}
+/**
+ * A dropped staged function no longer exists, so the wire goes back to the target and label it
+ * had when the draft started instead of pointing at a missing member.
+ */
+function droppedFunction(current: EditedWire, original: Relationship): EditedWire {
+  if ((current.created ?? null) === null) return current;
+  const { label: omitted, ...rest } = current.relationship;
+  void omitted;
+  const restored = original.label === undefined ? rest : { ...rest, label: original.label };
+  return { ...current, relationship: { ...restored, target: original.target }, created: null };
 }
 /** Only these kinds name a module function; switching away abandons a staged new function. */
 const functionKinds: readonly Relationship['kind'][] = ['imports', 'calls'];
@@ -86,9 +98,9 @@ function chooseFunction(current: EditedWire, edit: WireEdit): EditedWire {
   return { ...current, relationship, created, naming: null };
 }
 /** An unusable name keeps add mode open without staging anything; Apply stays blocked. */
-function functionName(current: EditedWire, edit: WireEdit): EditedWire {
+function functionName(current: EditedWire, edit: WireEdit, original: Relationship): EditedWire {
   if (edit.kind !== 'function-name') return current;
-  return { ...current, created: null, naming: edit.name };
+  return { ...droppedFunction(current, original), naming: edit.name };
 }
 /** Clearing multiplicity removes the optional property rather than storing an invalid sentinel. */
 function cardinality(current: EditedWire, edit: WireEdit): EditedWire {

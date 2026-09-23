@@ -81,7 +81,7 @@ function CurrentOption({
   if (functions.some((item) => item.id === member)) return null;
   return (
     <option value={CURRENT} disabled>
-      {label ? `“${label}” · not a function` : 'Choose a function'}
+      {label ? `Not a function: “${label}”` : 'Choose a function'}
     </option>
   );
 }
@@ -97,9 +97,12 @@ function ReplacedHint({
   if (saved.label === value.relationship.label) return null;
   return (
     <p className={styles.hint} role="status">
-      {`Wire will attach to ${picked.label}; the current label “${saved.label ?? ''}” is replaced.`}
+      {`Wire will attach to ${picked.label}.${replacedLabel(saved.label)}`}
     </p>
   );
+}
+function replacedLabel(label: string | undefined): string {
+  return label === undefined ? '' : ` The current label “${label}” is replaced.`;
 }
 function NewFunctionForm({ value, target, edit, Field }: PickerProps): ReactElement {
   const created = value.created ?? null;
@@ -112,10 +115,8 @@ function NewFunctionForm({ value, target, edit, Field }: PickerProps): ReactElem
   };
   return (
     <div className={styles.notice} role="status">
-      <strong>{`Adds a new function to module ${target.label}`}</strong>
-      <p>
-        {`This adds a new function '${name.trim() || '…'}' to module ${target.label}. The module's definition changes.`}
-      </p>
+      <strong>{`Adds function '${name.trim() || '…'}' to module ${target.label}`}</strong>
+      <p>The module&apos;s definition changes.</p>
       <Field
         label="New function name"
         required

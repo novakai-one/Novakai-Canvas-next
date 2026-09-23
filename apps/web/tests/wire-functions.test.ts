@@ -188,6 +188,10 @@ it('says why Apply is off: blank label, unusable new name, or a calls wire with 
     ]),
   );
   expect(wireApplyBlock(selection.collection, picked)).toBeNull();
+  const missing = editedWire(draftAfter(selection, [choice('gone', 'gone', false)]));
+  expect(wireApplyBlock(selection.collection, missing)).toBe(
+    "The wire points at 'gone' on Issue service, which does not exist. Choose another endpoint.",
+  );
 });
 
 it('an unusable name or a non-function kind drops the staged function', () => {
@@ -203,6 +207,20 @@ it('an unusable name or a non-function kind drops the staged function', () => {
     { kind: 'relationship-kind', value: 'flow' },
   ]);
   expect(editedWire(flow).created).toBeNull();
+  expect(editedWire(flow).relationship).toMatchObject({
+    label: 'creates issue',
+    target: { object: 'service' },
+  });
+  expect(editedWire(flow).relationship.target.member).toBeUndefined();
+  expect(editedWire(renamed).relationship.target.member).toBeUndefined();
+  const back = draftAfter(selection, [
+    choice('createIssue', 'createIssue', true),
+    { kind: 'relationship-kind', value: 'flow' },
+    { kind: 'relationship-kind', value: 'imports' },
+  ]);
+  expect(wireApplyBlock(selection.collection, editedWire(back))).toBeNull();
+  const result = plan(selection.collection, wireChanges(back));
+  assert(result.ok, JSON.stringify(result));
   expect(
     wireChanges(flow).some((change) => 'target' in change && change.target === 'objects'),
   ).toBe(false);
@@ -222,6 +240,9 @@ it('explains owner rejections by code and path, not by their wording', () => {
   expect(plainWireProblem(rejected('shape', '0.value.label'), calls)).toBe(
     'The wire label is empty. Pick a function in Wire label.',
   );
+  expect(plainWireProblem(rejected('shape', 'objects.service.label'), flow)).toMatch(
+    /^The wire was not saved/,
+  );
   expect(plainWireProblem(rejected('endpoint', 'relationships.x.target'), calls)).toBe(
     "A 'calls' wire must point at one function. Pick one in Wire label.",
   );
@@ -235,6 +256,6 @@ it('explains owner rejections by code and path, not by their wording', () => {
     recovery: 'Reload',
   }).error;
   expect(plainWireProblem(stale, flow)).toBe(
-    'Someone changed this collection. Discard the draft and redo it.',
+    'This collection changed since the draft started. Discard the draft and redo it.',
   );
 });

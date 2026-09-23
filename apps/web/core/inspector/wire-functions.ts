@@ -128,8 +128,11 @@ function duplicateProblem(
  */
 export function wireApplyBlock(collection: Collection, edited: EditedWire): string | null {
   const target = functionTarget(collection, edited.relationship);
-  const checks = [namingBlock, blankBlock, callsBlock];
-  return checks.reduce<string | null>((found, check) => found ?? check(edited, target), null);
+  const checks = [namingBlock, blankBlock, memberBlock, callsBlock];
+  return checks.reduce<string | null>(
+    (found, check) => found ?? check(edited, target, collection),
+    null,
+  );
 }
 function namingBlock(edited: EditedWire, target: DiagramObject | null): string | null {
   const naming = edited.naming ?? null;
@@ -141,6 +144,21 @@ function blankBlock(edited: EditedWire, target: DiagramObject | null): string | 
   return target === null
     ? 'The wire label is empty. Type a label.'
     : 'The wire label is empty. Pick a function in Wire label.';
+}
+/** Both endpoints must name a member that exists on their object (staged functions included). */
+function memberBlock(
+  edited: EditedWire,
+  _target: DiagramObject | null,
+  collection: Collection,
+): string | null {
+  const ends = [edited.relationship.source, edited.relationship.target];
+  return ends.map((end) => missingMember(collection, end)).find((text) => text !== null) ?? null;
+}
+function missingMember(collection: Collection, end: Relationship['target']): string | null {
+  const object = collection.objects.find((item) => item.id === end.object);
+  if (end.member === undefined || object === undefined) return null;
+  if (takenIds(object).includes(end.member)) return null;
+  return `The wire points at '${end.member}' on ${object.label}, which does not exist. Choose another endpoint.`;
 }
 /** Model only accepts a calls wire that points at one function of its module. */
 function callsBlock(edited: EditedWire, target: DiagramObject | null): string | null {

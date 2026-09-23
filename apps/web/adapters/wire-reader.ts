@@ -55,6 +55,7 @@ const command: z.ZodType<WireEdit> = z.discriminatedUnion('kind', [
     label: z.string(),
     create: z.boolean(),
   }),
+  z.strictObject({ kind: z.literal('function-name'), name: z.string() }),
 ]);
 const legacyRecord = z.object({
   key: z.string(),

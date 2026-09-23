@@ -1,9 +1,11 @@
 import {
   formatFailure,
-  hasBlankLabel,
+  functionTarget,
   plainWireProblem,
+  wireApplyBlock,
   withNewFunction,
 } from '../../contract/api.js';
+import type { Collection } from '../../contract/records/owners.js';
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
@@ -107,11 +109,12 @@ function WireSelectionEditor({
       {fields.map(({ id, Content }) => (
         <Content key={id} value={value} collection={collection} edit={edit} />
       ))}
-      <WireProblem problem={forms.problem} />
+      <WireProblem problem={forms.problem} value={value} collection={collection} />
       {draft && (
         <WireFooter
           draft={draft}
           value={value}
+          collection={collection}
           view={view}
           Button={Button}
           apply={() => void session.apply(key)}
@@ -122,11 +125,23 @@ function WireSelectionEditor({
   );
 }
 /** A failed Apply reads as one plain sentence; the owner's exact evidence stays one click away. */
-function WireProblem({ problem }: { readonly problem: Diagnostic | null }): ReactElement | null {
+function WireProblem({
+  problem,
+  value,
+  collection,
+}: {
+  readonly problem: Diagnostic | null;
+  readonly value: EditedWire;
+  readonly collection: Collection;
+}): ReactElement | null {
   if (problem === null) return null;
+  const context = {
+    kind: value.relationship.kind,
+    moduleWire: functionTarget(collection, value.relationship) !== null,
+  };
   return (
     <div role="alert">
-      <p>{plainWireProblem(problem)}</p>
+      <p>{plainWireProblem(problem, context)}</p>
       <details>
         <summary>Technical details</summary>
         {formatFailure(problem).map((line, index) => (
@@ -140,6 +155,7 @@ function WireProblem({ problem }: { readonly problem: Diagnostic | null }): Reac
 function WireFooter({
   draft,
   value,
+  collection,
   view,
   Button,
   apply,
@@ -147,29 +163,30 @@ function WireFooter({
 }: Pick<FeatureProps, 'view'> & {
   readonly draft: WireDraft;
   readonly value: EditedWire;
+  readonly collection: Collection;
   readonly Button: DesignSlots['Button'];
   readonly apply: () => void;
   readonly discard: () => void;
 }): ReactElement {
   const created = value.created ?? null;
-  const blank = hasBlankLabel(value);
+  const blocked = wireApplyBlock(collection, value);
   return (
     <footer>
       <p>
         Draft from revision {draft.collection.revision}. Shared meaning and local routing apply
         together.
       </p>
-      <CreatedHint created={created} collection={draft.collection} />
-      {blank && (
+      <CreatedHint created={created} collection={collection} />
+      {blocked !== null && (
         <p className={styles.hint} role="status">
-          Apply is off: the wire label is empty. Type a label or pick a function.
+          {`Apply is off. ${blocked}`}
         </p>
       )}
       <div className={styles.choices}>
         <Button
           label={created ? 'Add function and apply wire' : 'Apply wire'}
           variant="primary"
-          disabled={view.busy || !view.connected || blank}
+          disabled={view.busy || !view.connected || blocked !== null}
           pending={view.busy}
           onClick={apply}
         />
@@ -183,7 +200,7 @@ function CreatedHint({
   collection,
 }: {
   readonly created: NewFunction | null;
-  readonly collection: WireDraft['collection'];
+  readonly collection: Collection;
 }): ReactElement | null {
   if (created === null) return null;
   const owner = collection.objects.find((item) => item.id === created.object);

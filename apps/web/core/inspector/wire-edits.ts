@@ -16,6 +16,7 @@ export function editedWire(draft: WireDraft): EditedWire {
     relationship: draft.relationship,
     wire: draft.wire,
     created: null,
+    naming: null,
   });
 }
 /** A closed command registry separates semantic edits from local appearance edits. */
@@ -34,6 +35,7 @@ const operations: Readonly<
   locked,
   'automatic-route': automatic,
   function: chooseFunction,
+  'function-name': functionName,
 };
 /** Each operation preserves every field outside its declared scope. */
 function applyWireEdit(current: EditedWire, edit: WireEdit): EditedWire {
@@ -47,8 +49,12 @@ function text(current: EditedWire, edit: WireEdit): EditedWire {
 /** Changing notation does not silently discard cardinalities or other semantics. */
 function relationshipKind(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'relationship-kind') return current;
-  return { ...current, relationship: { ...current.relationship, kind: edit.value } };
+  const relationship = { ...current.relationship, kind: edit.value };
+  if (functionKinds.includes(edit.value)) return { ...current, relationship };
+  return { ...current, relationship, created: null, naming: null };
 }
+/** Only these kinds name a module function; switching away abandons a staged new function. */
+const functionKinds: readonly Relationship['kind'][] = ['imports', 'calls'];
 /** Line style belongs to the shared relationship and is visible in every appearance. */
 function style(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'style') return current;
@@ -58,7 +64,13 @@ function style(current: EditedWire, edit: WireEdit): EditedWire {
 function endpoint(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'endpoint') return current;
   const relationship = { ...current.relationship, [edit.side]: edit.value };
-  return { ...current, relationship, created: keptFunction(current, edit.side) };
+  const created = keptFunction(current, edit.side);
+  return {
+    ...current,
+    relationship,
+    created,
+    naming: edit.side === 'target' ? null : (current.naming ?? null),
+  };
 }
 /** Retargeting the wire abandons a staged new function; the module is then left unchanged. */
 function keptFunction(current: EditedWire, side: 'source' | 'target'): NewFunction | null {
@@ -71,7 +83,12 @@ function chooseFunction(current: EditedWire, edit: WireEdit): EditedWire {
   const target = { object: edit.object, member: edit.member };
   const relationship = { ...current.relationship, label: edit.label, target };
   const created = edit.create ? { object: edit.object, id: edit.member, label: edit.label } : null;
-  return { ...current, relationship, created };
+  return { ...current, relationship, created, naming: null };
+}
+/** An unusable name keeps add mode open without staging anything; Apply stays blocked. */
+function functionName(current: EditedWire, edit: WireEdit): EditedWire {
+  if (edit.kind !== 'function-name') return current;
+  return { ...current, created: null, naming: edit.name };
 }
 /** Clearing multiplicity removes the optional property rather than storing an invalid sentinel. */
 function cardinality(current: EditedWire, edit: WireEdit): EditedWire {

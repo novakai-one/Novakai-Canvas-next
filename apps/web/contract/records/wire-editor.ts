@@ -38,7 +38,9 @@ export type WireEdit =
       readonly value: WireAppearance['sourceSide'];
     }
   | { readonly kind: 'automatic-route' }
-  | FunctionChoice;
+  | FunctionChoice
+  /** A new function is being named but the name cannot be used yet (blank, duplicate, no letter). */
+  | { readonly kind: 'function-name'; readonly name: string };
 /**
  * Point an imports/calls wire at one function (signature) of its target module. `create` stages
  * that signature on the module too, so Apply submits both records as one undoable revision.
@@ -66,6 +68,8 @@ export interface EditedWire {
   readonly wire: WireAppearance;
   /** Present only while the draft adds a new function to the target module. */
   readonly created?: NewFunction | null;
+  /** The typed name while a new function is being named and cannot be used yet. */
+  readonly naming?: string | null;
 }
 export interface WireEditorState {
   readonly drafts: readonly WireDraft[];

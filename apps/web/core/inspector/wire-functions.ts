@@ -102,3 +102,50 @@ export function hasBlankLabel(edited: EditedWire): boolean {
   if (label === undefined) return false;
   return label.trim().length === 0;
 }
+/** Why a typed name cannot become a new function yet; null when it can. */
+export function newFunctionProblem(
+  name: string,
+  object: DiagramObject,
+  pending: string | null,
+): string | null {
+  if (name.trim() === '') return 'Type a name for the new function.';
+  if (identityBase(name) === '') return 'Name needs a letter or digit.';
+  return duplicateProblem(name, object, pending);
+}
+function duplicateProblem(
+  name: string,
+  object: DiagramObject,
+  pending: string | null,
+): string | null {
+  const functions = moduleFunctions(object).filter((item) => item.id !== pending);
+  const duplicate = existingFunction(functions, name);
+  if (duplicate === null) return null;
+  return `${object.label} already has '${duplicate.label}'. Pick it from the list instead.`;
+}
+/**
+ * Why Apply is off for this draft, as one sentence; null when the Model can be asked. The
+ * collection already includes any staged new function.
+ */
+export function wireApplyBlock(collection: Collection, edited: EditedWire): string | null {
+  const target = functionTarget(collection, edited.relationship);
+  const checks = [namingBlock, blankBlock, callsBlock];
+  return checks.reduce<string | null>((found, check) => found ?? check(edited, target), null);
+}
+function namingBlock(edited: EditedWire, target: DiagramObject | null): string | null {
+  const naming = edited.naming ?? null;
+  if (naming === null || target === null) return null;
+  return newFunctionProblem(naming, target, null);
+}
+function blankBlock(edited: EditedWire, target: DiagramObject | null): string | null {
+  if (!hasBlankLabel(edited)) return null;
+  return target === null
+    ? 'The wire label is empty. Type a label.'
+    : 'The wire label is empty. Pick a function in Wire label.';
+}
+/** Model only accepts a calls wire that points at one function of its module. */
+function callsBlock(edited: EditedWire, target: DiagramObject | null): string | null {
+  if (edited.relationship.kind !== 'calls' || target === null) return null;
+  const member = edited.relationship.target.member;
+  if (moduleFunctions(target).some((item) => item.id === member)) return null;
+  return "A 'calls' wire must point at one function. Pick one in Wire label.";
+}

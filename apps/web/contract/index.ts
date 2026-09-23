@@ -15,8 +15,9 @@ export {
   hasBlankLabel,
   moduleFunctions,
   newFunctionId,
-  plainRelationshipProblem,
+  newFunctionProblem,
   plainWireProblem,
+  wireApplyBlock,
   withNewFunction,
 } from './api.js';
 export type { InspectorBindings, ObjectSelection } from './records/inspector.js';

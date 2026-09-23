@@ -9,8 +9,9 @@ import {
   hasBlankLabel,
   moduleFunctions,
   newFunctionId,
-  plainRelationshipProblem,
+  newFunctionProblem,
   plainWireProblem,
+  wireApplyBlock,
   wireChanges,
 } from '../contract/index.js';
 import { readWireDrafts } from '../adapters/wire-reader.js';
@@ -157,29 +158,83 @@ it('derives a readable, unique function identity from the typed name', () => {
   expect(newFunctionId('   ', target, null)).toBe('');
 });
 
-it('blocks a blank label and explains owner rejections in plain words', () => {
-  const selection = moduleWire('flow');
-  const draft = draftAfter(selection, [{ kind: 'label', value: '  ' }]);
-  expect(hasBlankLabel(editedWire(draft))).toBe(true);
-  const rejected = failure('invariant-violation', 'The owning capability rejected this input', {
-    code: 'validation-failed',
-    diagnostics: [{ code: 'shape', path: '0.value.label', message: 'Must be nonblank' }],
-  });
-  expect(plainWireProblem(rejected.error)).toBe(
-    'The wire label is empty. Type a label or pick a function.',
+it('says why Apply is off: blank label, unusable new name, or a calls wire with no function', () => {
+  const plain = moduleWire('flow');
+  const blank = editedWire(draftAfter(plain, [{ kind: 'label', value: '  ' }]));
+  expect(hasBlankLabel(blank)).toBe(true);
+  expect(wireApplyBlock(plain.collection, blank)).toBe('The wire label is empty. Type a label.');
+  const selection = moduleWire();
+  const target = functionTarget(selection.collection, selection.relationship);
+  assert(target);
+  const naming = (name: string) =>
+    wireApplyBlock(
+      selection.collection,
+      editedWire(draftAfter(selection, [{ kind: 'function-name', name }])),
+    );
+  expect(naming('')).toBe('Type a name for the new function.');
+  expect(naming('!!!')).toBe('Name needs a letter or digit.');
+  expect(naming('Submit')).toBe(
+    "Issue service already has 'submit'. Pick it from the list instead.",
   );
-  const calls = failure('invariant-violation', 'The owning capability rejected this input', {
-    code: 'validation-failed',
-    diagnostics: [
-      {
-        code: 'endpoint',
-        path: 'relationships.x.target',
-        message: 'Calls target must address a signature or whole function',
-      },
-    ],
-  });
-  expect(plainRelationshipProblem(calls.error)).toBe(
-    "A 'calls' wire must point at one function. Pick a function in Wire label.",
+  expect(newFunctionProblem('createIssue', target, null)).toBeNull();
+  const calls = editedWire(draftAfter(selection, [{ kind: 'relationship-kind', value: 'calls' }]));
+  expect(wireApplyBlock(selection.collection, calls)).toBe(
+    "A 'calls' wire must point at one function. Pick one in Wire label.",
   );
-  expect(plainRelationshipProblem(rejected.error)).not.toContain('wire label');
+  const picked = editedWire(
+    draftAfter(selection, [
+      { kind: 'relationship-kind', value: 'calls' },
+      choice('submit', 'submit', false),
+    ]),
+  );
+  expect(wireApplyBlock(selection.collection, picked)).toBeNull();
+});
+
+it('an unusable name or a non-function kind drops the staged function', () => {
+  const selection = moduleWire();
+  const renamed = draftAfter(selection, [
+    choice('createIssue', 'createIssue', true),
+    { kind: 'function-name', name: 'submit' },
+  ]);
+  expect(editedWire(renamed).created).toBeNull();
+  expect(editedWire(renamed).naming).toBe('submit');
+  const flow = draftAfter(selection, [
+    choice('createIssue', 'createIssue', true),
+    { kind: 'relationship-kind', value: 'flow' },
+  ]);
+  expect(editedWire(flow).created).toBeNull();
+  expect(
+    wireChanges(flow).some((change) => 'target' in change && change.target === 'objects'),
+  ).toBe(false);
+});
+
+it('explains owner rejections by code and path, not by their wording', () => {
+  const rejected = (code: string, path: string) =>
+    failure('invariant-violation', 'The owning capability rejected this input', {
+      code: 'validation-failed',
+      diagnostics: [{ code, path, message: 'owner wording that is never parsed' }],
+    }).error;
+  const flow = { kind: 'flow', moduleWire: false } as const;
+  const calls = { kind: 'calls', moduleWire: true } as const;
+  expect(plainWireProblem(rejected('shape', '0.value.label'), flow)).toBe(
+    'The wire label is empty. Type a label.',
+  );
+  expect(plainWireProblem(rejected('shape', '0.value.label'), calls)).toBe(
+    'The wire label is empty. Pick a function in Wire label.',
+  );
+  expect(plainWireProblem(rejected('endpoint', 'relationships.x.target'), calls)).toBe(
+    "A 'calls' wire must point at one function. Pick one in Wire label.",
+  );
+  expect(plainWireProblem(rejected('endpoint', 'relationships.x'), flow)).toBe(
+    "Only association wires have cardinalities. Set both to 'Not specified'.",
+  );
+  const stale = failure('revision-conflict', 'The observed record version has changed', {
+    code: 'revision-conflict',
+    path: 'collection:demo',
+    message: 'The observed record version has changed',
+    recovery: 'Reload',
+  }).error;
+  expect(plainWireProblem(stale, flow)).toBe(
+    'Someone changed this collection. Discard the draft and redo it.',
+  );
 });

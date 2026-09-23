@@ -1,11 +1,13 @@
 import {
+  createWireDryRun,
+  dryRunFor,
   formatFailure,
   functionTarget,
   plainWireProblem,
   withNewFunction,
 } from '../../contract/api.js';
 import type { Collection } from '../../contract/records/owners.js';
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type { WireFieldsProps } from '../../contract/wire-react.js';
@@ -14,7 +16,9 @@ import type {
   NewFunction,
   WireDraft,
   WireEdit,
+  WireEditorSession,
 } from '../../contract/records/wire-editor.js';
+import type { WireDryRunState, WireProblemContext } from '../../contract/api.js';
 import type { Diagnostic } from '../../contract/errors.js';
 import type { ConnectionDraft, Cardinality } from '../../contract/records/connection.js';
 import type { SessionState } from '@novakai/canvas-canvas';
@@ -122,6 +126,7 @@ function WireSelectionEditor({
           value={value}
           collection={collection}
           blocked={check(draft, selection.collection)}
+          preview={session.preview}
           view={view}
           Button={Button}
           apply={() => void session.apply(key)}
@@ -142,13 +147,9 @@ function WireProblem({
   readonly collection: Collection;
 }): ReactElement | null {
   if (problem === null) return null;
-  const context = {
-    kind: value.relationship.kind,
-    picker: functionTarget(collection, value.relationship) !== null,
-  };
   return (
     <div role="alert">
-      <p>{plainWireProblem(problem, context)}</p>
+      <p>{plainWireProblem(problem, problemContext(value, collection))}</p>
       <details>
         <summary>Technical details</summary>
         {formatFailure(problem).map((line, index) => (
@@ -158,12 +159,64 @@ function WireProblem({
     </div>
   );
 }
-/** Apply is on only when the Model accepts the draft; otherwise the reason shows first. */
+function problemContext(value: EditedWire, collection: Collection): WireProblemContext {
+  return {
+    kind: value.relationship.kind,
+    picker: functionTarget(collection, value.relationship) !== null,
+  };
+}
+const checking = 'Checking…';
+/** One dry run per footer: debounced per draft, aborted on a newer draft and on unmount. */
+function useDryRun(
+  preview: WireEditorSession['preview'],
+  draft: WireDraft | null,
+): WireDryRunState {
+  const [runner] = useState(() => createWireDryRun(preview));
+  useEffect(() => () => runner.dispose(), [runner]);
+  useEffect(() => runner.check(draft), [runner, draft]);
+  return useSyncExternalStore(runner.subscribe, runner.getSnapshot);
+}
+/** The server's answer for this exact draft; until it arrives Apply stays off. */
+function serverBlock(state: WireDryRunState, context: WireProblemContext): string | null {
+  if (state.state === 'rejected') return plainWireProblem(state.problem, context);
+  return state.state === 'ok' ? null : checking;
+}
+function applyLabel(reason: string | null, created: NewFunction | null): string {
+  if (reason === checking) return checking;
+  return created ? 'Add function and apply wire' : 'Apply wire';
+}
+/** Local reason first; only a locally accepted, connected draft asks the server. */
+function useApplyBlock(
+  draft: WireDraft,
+  value: EditedWire,
+  collection: Collection,
+  blocked: string | null,
+  preview: WireEditorSession['preview'],
+  connected: boolean,
+): string | null {
+  const asked = [blocked === null, connected].every(Boolean);
+  const server = useDryRun(preview, asked ? draft : null);
+  if (!asked) return blocked;
+  return serverBlock(dryRunFor(server, draft), problemContext(value, collection));
+}
+function OffReason({ reason }: { readonly reason: string | null }): ReactElement | null {
+  if (reason === null || reason === checking) return null;
+  return (
+    <p className={styles.hint} role="status">
+      {`Apply is off. ${reason}`}
+    </p>
+  );
+}
+/**
+ * Apply is on only when the Model accepts the draft locally and then the server's dry run of
+ * the exact same change list accepts it. Otherwise the reason shows first.
+ */
 function WireFooter({
   draft,
   value,
   collection,
   blocked,
+  preview,
   view,
   Button,
   apply,
@@ -173,11 +226,13 @@ function WireFooter({
   readonly value: EditedWire;
   readonly collection: Collection;
   readonly blocked: string | null;
+  readonly preview: WireEditorSession['preview'];
   readonly Button: DesignSlots['Button'];
   readonly apply: () => void;
   readonly discard: () => void;
 }): ReactElement {
   const created = value.created ?? null;
+  const reason = useApplyBlock(draft, value, collection, blocked, preview, view.connected);
   return (
     <footer>
       <p>
@@ -185,16 +240,12 @@ function WireFooter({
         together.
       </p>
       <CreatedHint created={created} collection={collection} />
-      {blocked !== null && (
-        <p className={styles.hint} role="status">
-          {`Apply is off. ${blocked}`}
-        </p>
-      )}
+      <OffReason reason={reason} />
       <div className={styles.choices}>
         <Button
-          label={created ? 'Add function and apply wire' : 'Apply wire'}
+          label={applyLabel(reason, created)}
           variant="primary"
-          disabled={view.busy || !view.connected || blocked !== null}
+          disabled={view.busy || !view.connected || reason !== null}
           pending={view.busy}
           onClick={apply}
         />

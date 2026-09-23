@@ -47,7 +47,11 @@ function WireFunctionPicker(props: PickerProps): ReactElement {
             onChange={(event) => choose(event.target.value)}
           >
             {!adding && (
-              <CurrentOption functions={functions} member={member} label={savedLabel(props)} />
+              <CurrentOption
+                functions={functions}
+                member={member}
+                label={value.relationship.label}
+              />
             )}
             {functions.map((item) => (
               <option key={item.id} value={item.id}>
@@ -62,11 +66,6 @@ function WireFunctionPicker(props: PickerProps): ReactElement {
     </>
   );
 }
-/** A draft drops a label that names no function, so the saved one is what the user recognises. */
-function savedLabel({ value, collection }: WireFieldsProps): string | undefined {
-  const saved = collection.relationships.find((item) => item.id === value.relationship.id);
-  return value.relationship.label ?? saved?.label;
-}
 function selectedValue(
   adding: boolean,
   member: string | undefined,
@@ -75,7 +74,7 @@ function selectedValue(
   if (adding) return ADD;
   return functions.some((item) => item.id === member) ? (member ?? CURRENT) : CURRENT;
 }
-/** The wire's present label stays visible when it does not yet name one of the module's functions. */
+/** A saved label that names no function stays visible; a draft that dropped it asks for a pick. */
 function CurrentOption({
   functions,
   member,
@@ -88,7 +87,7 @@ function CurrentOption({
   if (functions.some((item) => item.id === member)) return null;
   return (
     <option value={CURRENT} disabled>
-      {label ? `Not a function: “${label}”` : 'Choose a function'}
+      {label ? `Not a function: “${label}”` : 'Pick a function…'}
     </option>
   );
 }

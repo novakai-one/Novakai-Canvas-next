@@ -1,4 +1,4 @@
-import { formatFailure } from '../../contract/api.js';
+import { failureSummary, formatFailure } from '../../contract/api.js';
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
@@ -95,7 +95,15 @@ function WireSelectionEditor({
       {fields.map(({ id, Content }) => (
         <Content key={id} value={value} collection={selection.collection} edit={edit} />
       ))}
-      {forms.problem && <p role="alert">{formatFailure(forms.problem).join(' · ')}</p>}
+      {forms.problem && (
+        <div role="alert">
+          <p>{failureSummary(forms.problem)}</p>
+          <details>
+            <summary>Technical details</summary>
+            {formatFailure(forms.problem).join(' · ')}
+          </details>
+        </div>
+      )}
       {draft && (
         <footer>
           <p>

@@ -35,11 +35,22 @@ import type { Diagnostic, Result } from '../contract/errors.js';
 import type { RelationshipKind } from '@novakai/canvas-model';
 import type { BinaryResponse } from '../contract/ports/client.js';
 import {
+  plainMessage,
+  emptyRefusalOrder,
+  observeRefusals,
+  supersededRefusal,
   groupDraftProblem,
   groupCreationChanges,
   chooseMoveOption as chooseReviewedMoveOption,
 } from '../contract/api.js';
 
+const creationKinds = ['diagram', 'object', 'group'] as const;
+const restingStatuses = new Set([
+  'Ready',
+  'Saved',
+  'Draft not applied',
+  'Edit awaiting confirmation',
+]);
 const allRelationshipKinds: readonly RelationshipKind[] = [
   'flow',
   'association',
@@ -506,6 +517,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: { section: '', title: '' },
       problem: null,
       busy: false,
+      adding: null,
     },
     history: { status: null, busy: false },
     ...source.getSnapshot(),
@@ -558,6 +570,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   const definitions = bindings.definitions({ apply: applyDefinition, report });
   const wires = bindings.wires({ apply: applyChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
+  const stopEditorStatus = [inspector, wires, definitions].map((editor) =>
+    editor.subscribe(refreshRestingStatus),
+  );
+  let refusalOrder = emptyRefusalOrder;
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
   function holdConfirmedHistory(pending: readonly Submission[]): void {
     const finished = state.pending.some(
@@ -570,6 +586,22 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
+    // One refusal is visible: the latest, until another edit starts. Dismissing republishes the journal.
+    refusalOrder = observeRefusals(refusalOrder, pending);
+    const superseded = supersededRefusal(refusalOrder);
+    if (superseded !== undefined) dismissRequest(superseded);
+    // Publish even if that dismissal failed, so the journal view never stalls on a hidden refusal.
+    const shown = pending.filter((item) => item.request.request !== superseded);
+    releaseRefusedDefinitions(shown);
+    publishPending(shown);
+  }
+  /** A refused definition changed nothing; its draft becomes editable now, so a reload cannot leave it locked. */
+  function releaseRefusedDefinitions(pending: readonly Submission[]): void {
+    pending
+      .filter((item) => item.state === 'rejected')
+      .forEach((item) => definitions.released(item.request.request));
+  }
+  function publishPending(pending: readonly Submission[]): void {
     holdConfirmedHistory(pending);
     const connection = pendingConnectionView(pending);
     update({
@@ -593,12 +625,30 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Listeners receive a new immutable view; Canvas panning has its own narrower subscription. */
   function update(patch: Partial<WorkspaceView>): void {
+    const cleared = problemCleared(patch);
     state = { ...state, ...patch };
     listeners.forEach((listener) => listener());
+    if (cleared) dismissRefusals();
+  }
+  function problemCleared(patch: Partial<WorkspaceView>): boolean {
+    return state.problem !== null && patch.problem === null;
+  }
+  /** A refusal is shown only as the error bar, so once that bar is gone the refused request goes too. */
+  function dismissRefusals(): void {
+    state.pending
+      .filter((item) => item.state === 'rejected')
+      .forEach((item) => dismissRequest(item.request.request));
   }
   /** Keep the diagram and draft readable when an operation fails. */
   function report(error: Diagnostic): void {
-    update({ problem: error, status: error.message });
+    // The error bar carries the reason; the status line only points to it.
+    update({ problem: error, status: 'Action failed. See the error above.' });
+  }
+  function dismissRequest(id: string): void {
+    const result = submissions.dismiss(id);
+    if (!result.ok) return report(result.error);
+    releaseDismissedCreation(id);
+    definitions.released(id);
   }
   /** Workspace hints are reconciled through a full checked Authoring snapshot. */
   async function refresh(): Promise<void> {
@@ -883,6 +933,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         session: session.value,
       },
       status: editStatus(),
+      creation: creationForOpenedCollection(active, document),
       ...renderProblemUpdate(),
     });
     active?.session.dispose();
@@ -1021,8 +1072,26 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     });
   }
   /** Rendering acknowledges geometry only, never an unconfirmed edit. */
+  /** An open, unapplied editor form in this collection means "Draft not applied", never "Saved". */
+  function openDraftCount(): number {
+    const open = state.active?.document.collection.id;
+    return [inspector, wires, definitions]
+      .flatMap(
+        (editor): readonly { readonly collection: { readonly id: string } }[] =>
+          editor.getSnapshot().drafts,
+      )
+      .filter((draft) => draft.collection.id === open).length;
+  }
+  function hasUnappliedDraft(): boolean {
+    return state.sourceDirty || openDraftCount() > 0;
+  }
+  /** Opening, editing or discarding a form moves a resting status; progress and failure messages stay. */
+  function refreshRestingStatus(): void {
+    const next = editStatus();
+    if (restingStatuses.has(state.status) && next !== state.status) update({ status: next });
+  }
   function editStatus(): string {
-    if (state.sourceDirty) return 'Draft not applied';
+    if (hasUnappliedDraft()) return 'Draft not applied';
     if (state.pending.some((item) => item.state !== 'rejected'))
       return 'Edit awaiting confirmation';
     return 'Saved';
@@ -1498,6 +1567,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: settledGroupDraft(groupCleared),
       problem: null,
       busy: creationLocked(),
+      adding: state.creation.adding,
     };
   }
   function settledDiagramDraft(cleared: boolean): AddDiagramDraft {
@@ -1645,7 +1715,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const captured = diagramTarget(active as ActiveDiagram);
     if (!captured.ok) return retainCreationFailure(captured);
     const capture = captured.value;
-    update({ creation: { ...state.creation, diagram: draft, problem: null, busy: true } });
+    update({
+      creation: { ...state.creation, diagram: draft, problem: null, busy: true, adding: 'diagram' },
+    });
     const section = {
       id: capture.id,
       title,
@@ -1701,7 +1773,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       generation: context.value.active.generation,
       request: null,
     };
-    update({ creation: { ...state.creation, object: draft, problem: null, busy: true } });
+    update({
+      creation: { ...state.creation, object: draft, problem: null, busy: true, adding: 'object' },
+    });
     const payload = creationPayload(context.value, draft);
     if (!payload.ok) return retainCreationFailure(payload);
     const changes = creationChanges(payload.value.object, draft.reuseObject, payload.value.section);
@@ -1720,7 +1794,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     };
     const problem = groupDraftProblem(draft, context.value.section);
     if (problem !== null) return retainCreationFailure(creationFailure(problem));
-    update({ creation: { ...state.creation, group: draft, problem: null, busy: true } });
+    update({
+      creation: { ...state.creation, group: draft, problem: null, busy: true, adding: 'group' },
+    });
     const group: Group = {
       id: groupCapture.id,
       title: draft.title.trim(),
@@ -1764,17 +1840,59 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     result: Result<Receipt>,
     kind: 'diagram' | 'object' | 'group',
   ): Result<Receipt> {
-    if (!result.ok) {
-      update({
-        creation: { ...state.creation, problem: result.error.message, busy: creationLocked() },
-      });
-      return result;
-    }
-    clearCreationCapture(kind);
-    update({
-      creation: creationAfterSuccess(kind),
-    });
+    const origin = captureOf(kind)?.collection;
+    settleCreation(result, kind);
+    settleCreationElsewhere(origin, result);
     return result;
+  }
+  function settleCreation(result: Result<Receipt>, kind: 'diagram' | 'object' | 'group'): void {
+    if (!result.ok) return settleRefusedCreation(result.error, kind);
+    clearCreationCapture(kind);
+    update({ creation: creationAfterSuccess(kind) });
+  }
+  function settleRefusedCreation(error: Diagnostic, kind: 'diagram' | 'object' | 'group'): void {
+    releaseRefusedCreation(kind);
+    update({
+      creation: { ...state.creation, problem: plainMessage(error.message), busy: creationLocked() },
+    });
+  }
+  /** Another collection opened while this add was in flight: its forms start empty and its refusal is not shown there. */
+  function settleCreationElsewhere(
+    origin: ActiveDiagram['document']['collection'] | undefined,
+    result: Result<Receipt>,
+  ): void {
+    if (!openedElsewhere(origin)) return;
+    update({ creation: freshCreation() });
+    if (!result.ok) reportRefusedElsewhere(origin, result.error);
+  }
+  function openedElsewhere(
+    origin: ActiveDiagram['document']['collection'] | undefined,
+  ): origin is ActiveDiagram['document']['collection'] {
+    return (
+      origin !== undefined &&
+      origin.id !== state.active?.document.collection.id &&
+      !creationLocked()
+    );
+  }
+  function reportRefusedElsewhere(
+    origin: ActiveDiagram['document']['collection'],
+    error: Diagnostic,
+  ): void {
+    const note = `Add to "${origin.title}" was not applied: ${plainMessage(error.message)}`;
+    // Clearing the bar first dismisses the refused request; the note then stays on the Add form.
+    update({ problem: null });
+    update({ status: note, creation: { ...state.creation, problem: note } });
+  }
+  function captureOf(kind: 'diagram' | 'object' | 'group') {
+    return { diagram: diagramCapture, object: objectCapture, group: groupCapture }[kind];
+  }
+  /** A refused or unsent creation changed nothing: the next submit builds a fresh request from the current draft.
+   * An uncertain request keeps its capture so a retry cannot create the item twice. */
+  function releaseRefusedCreation(kind: 'diagram' | 'object' | 'group'): void {
+    const id = captureOf(kind)?.request?.request;
+    const item = state.pending.find((entry) => entry.request.request === id);
+    if (item !== undefined && item.state !== 'rejected') return;
+    clearCreationCapture(kind);
   }
   function creationAfterSuccess(kind: 'diagram' | 'object' | 'group'): WorkspaceView['creation'] {
     return {
@@ -1783,6 +1901,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: successGroupDraft(kind),
       problem: null,
       busy: false,
+      adding: null,
     };
   }
   function successDiagramDraft(kind: 'diagram' | 'object' | 'group'): AddDiagramDraft {
@@ -1801,7 +1920,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function retainCreationFailure<T>(
     result: Extract<Result<T>, { ok: false }>,
   ): Extract<Result<T>, { ok: false }> {
-    update({ creation: { ...state.creation, problem: result.error.message, busy: false } });
+    update({
+      creation: { ...state.creation, problem: plainMessage(result.error.message), busy: false },
+    });
     return result;
   }
   function setDiagramDraft(draft: AddDiagramDraft): void {
@@ -1969,6 +2090,26 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       collection: active.document.collection,
       generation: active.generation,
       request: null,
+    };
+  }
+  /** Add forms belong to one collection: a newly opened one starts with empty forms and no error.
+   * A newer revision of the same collection keeps them; a creation in flight keeps its form until it settles. */
+  function creationForOpenedCollection(
+    active: ActiveDiagram | null,
+    document: RenderDocument,
+  ): WorkspaceView['creation'] {
+    if (active?.document.collection.id === document.collection.id) return state.creation;
+    return creationLocked() ? state.creation : freshCreation();
+  }
+  function freshCreation(): WorkspaceView['creation'] {
+    creationKinds.forEach(clearCreationCapture);
+    return {
+      diagram: resetDiagramDraft('diagram', state.creation.diagram),
+      object: resetObjectDraft('object', state.creation.object),
+      group: resetGroupDraft('group', state.creation.group),
+      problem: null,
+      busy: false,
+      adding: null,
     };
   }
   function clearCreationCapture(kind: 'diagram' | 'object' | 'group'): void {
@@ -2260,15 +2401,35 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     handleReconciliationResult(result.value, id);
   }
   function handleReconciliationResult(receipt: Receipt | null, id: string): void {
+    clearSettledUncertainty();
     if (receipt === null) update({ status: 'No receipt found — retry remains an explicit action' });
     else settleConfirmedCreation(id);
+  }
+  /** "Could not be confirmed" is stale once no request remains unconfirmed. */
+  function clearSettledUncertainty(): void {
+    const stale = staleUncertainty();
+    if (stale === null) return;
+    update({ problem: null, creation: creationWithout(plainMessage(stale.message)) });
+  }
+  function staleUncertainty(): Diagnostic | null {
+    if (state.problem?.code !== 'connection-uncertain') return null;
+    return state.pending.some((item) => item.state === 'uncertain') ? null : state.problem;
+  }
+  function creationWithout(message: string): WorkspaceView['creation'] {
+    return state.creation.problem === message
+      ? { ...state.creation, problem: null }
+      : state.creation;
   }
   /** Retry retains the exact request body while using the current authenticated transport session. */
   async function retryRequest(id: string): Promise<void> {
     const result = await submissions.retry(id, state.generation);
     if (!result.ok) report(result.error);
-    else settleConfirmedCreation(id);
+    else settleRetried(id);
     updateMovementRecovery(id);
+  }
+  function settleRetried(id: string): void {
+    clearSettledUncertainty();
+    settleConfirmedCreation(id);
   }
   function updateMovementRecovery(requestId: string): void {
     if (movementCapture?.intent.id !== requestId || state.movementReview === null) return;
@@ -2635,14 +2796,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     applySource: source.apply,
     closeSource: source.close,
     reconcileRequest,
-    dismissRequest: (id) => {
-      const result = submissions.dismiss(id);
-      if (!result.ok) report(result.error);
-      else {
-        releaseDismissedCreation(id);
-        definitions.released(id);
-      }
-    },
+    dismissRequest,
+    // Clearing the problem also dismisses the refused request (see update).
+    dismissProblem: () => update({ problem: null, status: editStatus() }),
     retryRequest,
     create,
     addDiagram,
@@ -2664,6 +2820,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       disposed = true;
       removeHistoryKeys();
       unsubscribe();
+      stopEditorStatus.forEach((stop) => stop());
       invalidateRender();
       snapshotRead += 1;
       state.active?.session.dispose();

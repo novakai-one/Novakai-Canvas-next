@@ -1,7 +1,8 @@
 import { formatFailure, failureSummary } from '../../contract/api.js';
-import { panelVisible } from '../../contract/api.js';
-import { useState, useSyncExternalStore, useEffect } from 'react';
-import type { ComponentType, ReactElement } from 'react';
+import { panelVisible, palette, planPaletteDrop } from '../../contract/api.js';
+import type { PaletteDrop } from '../../contract/api.js';
+import { useState, useSyncExternalStore, useEffect, useRef } from 'react';
+import type { ComponentType, ReactElement, RefObject } from 'react';
 import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js';
 import type { PanelState } from '../../contract/panel-types.js';
 import type { WorkspaceController, WorkspaceView } from '../../contract/records/workspace.js';
@@ -88,8 +89,6 @@ function WorkspaceFrame({
         hidden={hidden}
         setCreating={setCreating}
       />
-      <ProblemSlot hidden={hidden || view.collectionSwitch.phase !== 'idle'} view={view} />
-      <RecoverySlot hidden={hidden} Recovery={slots.Recovery} controller={controller} view={view} />
       <StatusSlot hidden={hidden} view={view} />
       <RevealSlot hidden={hidden} Reveal={slots.Reveal} onReveal={slots.panels.revealInterface} />
       <Chooser
@@ -215,6 +214,7 @@ function CanvasSlot({
 }): ReactElement {
   const { CanvasSurface, Library, Source } = slots;
   const active = view.active;
+  const clearance = useAlertClearance();
   const chrome = hidden
     ? hiddenChrome
     : {
@@ -224,7 +224,12 @@ function CanvasSlot({
         outline: panelState.interfaceVisibility.outline,
       };
   return (
-    <main className={styles.canvas} data-canvas-host aria-label="Diagram workspace">
+    <main
+      ref={clearance.host}
+      className={styles.canvas}
+      data-canvas-host
+      aria-label="Diagram workspace"
+    >
       {active === null ? (
         <Library controller={controller} view={view} onCreate={() => setCreating(true)} />
       ) : (
@@ -243,34 +248,93 @@ function CanvasSlot({
           chrome={chrome}
           showRoads={panelState.interfaceVisibility.roads && !hidden}
           palette={palette}
-          onPaletteDrop={(kind, target) => dropObject(controller, kind, target)}
+          onPaletteDrop={(kind, target) =>
+            dropObject(
+              controller,
+              planPaletteDrop(active.document.collection.sections, kind, target),
+            )
+          }
           showLabels={panelState.interfaceVisibility.labels}
         />
       )}
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}
       <slots.MovementReview controller={controller} view={view} />
+      {/* Alerts overlay the bottom of the canvas and never shift layout. */}
+      <div ref={clearance.alerts} className={alertsClass(active, chrome.zoom)}>
+        <ProblemSlot
+          hidden={hidden || view.collectionSwitch.phase !== 'idle'}
+          Button={slots.Button}
+          controller={controller}
+          view={view}
+        />
+        <RecoverySlot
+          hidden={hidden}
+          Recovery={slots.Recovery}
+          controller={controller}
+          view={view}
+        />
+      </div>
     </main>
   );
 }
 
+/** Publishes the alerts' height as --nv-alert-clearance so scrolling views (the Library) can pad
+ * their end and never hide their last item under an alert. */
+function useAlertClearance(): {
+  readonly host: RefObject<HTMLElement | null>;
+  readonly alerts: RefObject<HTMLDivElement | null>;
+} {
+  const host = useRef<HTMLElement>(null);
+  const alerts = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = alerts.current;
+    const main = host.current;
+    if (box === null || main === null) return undefined;
+    const observer = new ResizeObserver(() => {
+      main.style.setProperty('--nv-alert-clearance', `${box.offsetHeight}px`);
+    });
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+  return { host, alerts };
+}
+
+/** Alerts clear the zoom controls only when a canvas shows them; the Library has none. */
+function alertsClass(active: WorkspaceView['active'], zoom: boolean): string | undefined {
+  return active !== null && zoom ? `${styles.alerts} ${styles.alertsAboveZoom}` : styles.alerts;
+}
+
+/** UI wiring for a palette drop; the decision itself is made in core. */
+function dropObject(controller: WorkspaceController, drop: PaletteDrop): void {
+  if (drop.kind === 'refuse') controller.report(drop.problem);
+  if (drop.kind === 'add') void controller.addObject(drop.draft);
+}
+
 function ProblemSlot({
   hidden,
+  Button,
+  controller,
   view,
 }: {
   readonly hidden: boolean;
+  readonly Button: ChromeSlots['Button'];
+  readonly controller: WorkspaceController;
   readonly view: WorkspaceView;
 }): ReactElement | null {
   if (hidden) return null;
   if (view.problem === null) return null;
   return (
     <div className={styles.problem} role="alert">
-      <strong>{failureSummary(view.problem)}</strong>
-      <details>
-        <summary>Technical details</summary>
-        {formatFailure(view.problem).map((line, index) => (
-          <p key={index}>{line}</p>
-        ))}
-      </details>
+      <div className={styles.problemText}>
+        <strong>{failureSummary(view.problem)}</strong>
+        <details>
+          <summary>Technical details</summary>
+          {formatFailure(view.problem).map((line, index) => (
+            <p key={index}>{line}</p>
+          ))}
+        </details>
+      </div>
+      <Button label="Dismiss error" icon="×" iconOnly onClick={controller.dismissProblem} />
     </div>
   );
 }
@@ -317,23 +381,4 @@ function RevealSlot({
 }): ReactElement | null {
   if (!hidden) return null;
   return <Reveal onReveal={onReveal} />;
-}
-
-/** Object types the canvas palette offers. */
-const palette = [{ kind: 'module', label: 'Module' }] as const;
-/** A palette drop creates a new object of that type in the group (or section) under the pointer. */
-function dropObject(
-  controller: WorkspaceController,
-  kind: string,
-  target: { readonly section: string; readonly group: string | null },
-): void {
-  const item = palette.find((entry) => entry.kind === kind);
-  if (item === undefined) return;
-  void controller.addObject({
-    section: target.section,
-    group: target.group,
-    kind: item.kind,
-    label: `New ${item.label.toLowerCase()}`,
-    reuseObject: null,
-  });
 }

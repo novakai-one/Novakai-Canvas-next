@@ -1,9 +1,9 @@
 @layer components {
   .recovery {
+    pointer-events: auto;
     background: var(--nv-color-panel);
     border-top: var(--nv-stroke-base) solid var(--nv-border-default);
-    max-height: calc(var(--nv-space-8) * 5);
-    overflow: auto;
+    font-family: var(--nv-font-body);
   }
   .request {
     display: flex;
@@ -18,7 +18,7 @@
     display: grid;
     gap: var(--nv-space-1);
   }
-  .request span {
+  .requestId {
     font: var(--nv-font-caption) var(--nv-font-mono);
     color: var(--nv-color-subtle);
     overflow-wrap: anywhere;

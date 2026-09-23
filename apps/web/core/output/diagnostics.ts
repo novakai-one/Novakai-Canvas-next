@@ -11,7 +11,19 @@ export function formatFailure(error: Diagnostic): readonly string[] {
 }
 /** Show the actionable owner cause; the full error chain remains available as technical details. */
 export function failureSummary(error: Diagnostic): string {
-  return sourceSummary(error.source) ?? error.message;
+  return plainMessage(sourceSummary(error.source) ?? error.message);
+}
+/** Plain-English text for machine failure codes that owners serialize into a message. */
+const codeMessages: Readonly<Record<string, string>> = {
+  'unroutable-leg': "Couldn't route a wire for that position. Nothing was changed.",
+  'infeasible-embedding': "Couldn't fit the wires around that position. Nothing was changed.",
+};
+const unknownCodeMessage = "Couldn't lay out that change. Nothing was changed.";
+/** Raw JSON never reaches a person; readable messages pass through unchanged. */
+export function plainMessage(message: string): string {
+  const code = /\{\s*"code"\s*:\s*"([^"]+)"/.exec(message)?.[1];
+  if (code !== undefined) return codeMessages[code] ?? unknownCodeMessage;
+  return message.trim().startsWith('{') ? unknownCodeMessage : message;
 }
 function sourceSummary(source: FailureSource | undefined): string | undefined {
   if (source === undefined) return undefined;

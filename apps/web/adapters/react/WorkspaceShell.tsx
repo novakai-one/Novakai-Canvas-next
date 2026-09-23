@@ -88,8 +88,6 @@ function WorkspaceFrame({
         hidden={hidden}
         setCreating={setCreating}
       />
-      <ProblemSlot hidden={hidden || view.collectionSwitch.phase !== 'idle'} view={view} />
-      <RecoverySlot hidden={hidden} Recovery={slots.Recovery} controller={controller} view={view} />
       <StatusSlot hidden={hidden} view={view} />
       <RevealSlot hidden={hidden} Reveal={slots.Reveal} onReveal={slots.panels.revealInterface} />
       <Chooser
@@ -243,34 +241,58 @@ function CanvasSlot({
           chrome={chrome}
           showRoads={panelState.interfaceVisibility.roads && !hidden}
           palette={palette}
-          onPaletteDrop={(kind, target) => dropObject(controller, kind, target)}
+          onPaletteDrop={(kind, target) =>
+            dropObject(controller, active.document.collection.sections, kind, target)
+          }
           showLabels={panelState.interfaceVisibility.labels}
         />
       )}
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}
       <slots.MovementReview controller={controller} view={view} />
+      {/* Alerts overlay the bottom of the canvas and never shift layout. */}
+      <div className={styles.alerts}>
+        <ProblemSlot
+          hidden={hidden || view.collectionSwitch.phase !== 'idle'}
+          Button={slots.Button}
+          controller={controller}
+          view={view}
+        />
+        <RecoverySlot
+          hidden={hidden}
+          Recovery={slots.Recovery}
+          controller={controller}
+          view={view}
+        />
+      </div>
     </main>
   );
 }
 
 function ProblemSlot({
   hidden,
+  Button,
+  controller,
   view,
 }: {
   readonly hidden: boolean;
+  readonly Button: ChromeSlots['Button'];
+  readonly controller: WorkspaceController;
   readonly view: WorkspaceView;
 }): ReactElement | null {
   if (hidden) return null;
   if (view.problem === null) return null;
   return (
     <div className={styles.problem} role="alert">
-      <strong>{failureSummary(view.problem)}</strong>
-      <details>
-        <summary>Technical details</summary>
-        {formatFailure(view.problem).map((line, index) => (
-          <p key={index}>{line}</p>
-        ))}
-      </details>
+      <div className={styles.problemText}>
+        <strong>{failureSummary(view.problem)}</strong>
+        <details>
+          <summary>Technical details</summary>
+          {formatFailure(view.problem).map((line, index) => (
+            <p key={index}>{line}</p>
+          ))}
+        </details>
+      </div>
+      <Button label="Dismiss" icon="×" iconOnly onClick={controller.dismissProblem} />
     </div>
   );
 }
@@ -324,11 +346,22 @@ const palette = [{ kind: 'module', label: 'Module' }] as const;
 /** A palette drop creates a new object of that type in the group (or section) under the pointer. */
 function dropObject(
   controller: WorkspaceController,
+  sections: readonly { readonly id: string; readonly mode: string; readonly title: string }[],
   kind: string,
   target: { readonly section: string; readonly group: string | null },
 ): void {
   const item = palette.find((entry) => entry.kind === kind);
   if (item === undefined) return;
+  // Tree sections are outlines built from parent links; the Add forms exclude them too.
+  const section = sections.find((entry) => entry.id === target.section);
+  if (section?.mode === 'tree') {
+    controller.report({
+      code: 'tree-section-drop',
+      message: `${item.label}s can't be dropped into a tree. Drop it into a diagram section instead.`,
+      recovery: `"${section.title}" is a tree outline. Nothing was changed.`,
+    });
+    return;
+  }
   void controller.addObject({
     section: target.section,
     group: target.group,

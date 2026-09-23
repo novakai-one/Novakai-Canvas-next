@@ -35,6 +35,7 @@ import type { Diagnostic, Result } from '../contract/errors.js';
 import type { RelationshipKind } from '@novakai/canvas-model';
 import type { BinaryResponse } from '../contract/ports/client.js';
 import {
+  plainMessage,
   groupDraftProblem,
   groupCreationChanges,
   chooseMoveOption as chooseReviewedMoveOption,
@@ -570,6 +571,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
+    // Only the newest refusal stays visible; dismissing an older one republishes the journal.
+    const olderRefusal = pending.filter((item) => item.state === 'rejected').at(-2);
+    if (olderRefusal !== undefined) return dismissRequest(olderRefusal.request.request);
+    publishPending(pending);
+  }
+  function publishPending(pending: readonly Submission[]): void {
     holdConfirmedHistory(pending);
     const connection = pendingConnectionView(pending);
     update({
@@ -598,7 +605,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Keep the diagram and draft readable when an operation fails. */
   function report(error: Diagnostic): void {
-    update({ problem: error, status: error.message });
+    update({ problem: error, status: plainMessage(error.message) });
+  }
+  function dismissRequest(id: string): void {
+    const result = submissions.dismiss(id);
+    if (!result.ok) return report(result.error);
+    releaseDismissedCreation(id);
+    definitions.released(id);
   }
   /** Workspace hints are reconciled through a full checked Authoring snapshot. */
   async function refresh(): Promise<void> {
@@ -1765,8 +1778,13 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     kind: 'diagram' | 'object' | 'group',
   ): Result<Receipt> {
     if (!result.ok) {
+      releaseRefusedCreation(kind);
       update({
-        creation: { ...state.creation, problem: result.error.message, busy: creationLocked() },
+        creation: {
+          ...state.creation,
+          problem: plainMessage(result.error.message),
+          busy: creationLocked(),
+        },
       });
       return result;
     }
@@ -1775,6 +1793,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       creation: creationAfterSuccess(kind),
     });
     return result;
+  }
+  /** A refused or unsent creation changed nothing: the next submit builds a fresh request from the current draft.
+   * An uncertain request keeps its capture so a retry cannot create the item twice. */
+  function releaseRefusedCreation(kind: 'diagram' | 'object' | 'group'): void {
+    const capture = { diagram: diagramCapture, object: objectCapture, group: groupCapture }[kind];
+    const id = capture?.request?.request;
+    const item = state.pending.find((entry) => entry.request.request === id);
+    if (item !== undefined && item.state !== 'rejected') return;
+    clearCreationCapture(kind);
   }
   function creationAfterSuccess(kind: 'diagram' | 'object' | 'group'): WorkspaceView['creation'] {
     return {
@@ -1801,7 +1828,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function retainCreationFailure<T>(
     result: Extract<Result<T>, { ok: false }>,
   ): Extract<Result<T>, { ok: false }> {
-    update({ creation: { ...state.creation, problem: result.error.message, busy: false } });
+    update({
+      creation: { ...state.creation, problem: plainMessage(result.error.message), busy: false },
+    });
     return result;
   }
   function setDiagramDraft(draft: AddDiagramDraft): void {
@@ -2635,14 +2664,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     applySource: source.apply,
     closeSource: source.close,
     reconcileRequest,
-    dismissRequest: (id) => {
-      const result = submissions.dismiss(id);
-      if (!result.ok) report(result.error);
-      else {
-        releaseDismissedCreation(id);
-        definitions.released(id);
-      }
-    },
+    dismissRequest,
+    dismissProblem: () => update({ problem: null }),
     retryRequest,
     create,
     addDiagram,

@@ -11,33 +11,29 @@ export function createRequestRecovery({
     retryable: 'Edit not saved — safe to retry',
     rejected: 'Edit not applied — your draft is kept',
   };
-  /** Each retained request keeps its identity visible so humans and agents can discuss the same operation. */
+  /** One bar at a time: the newest request. Older ones show once it settles. */
   function RequestRecovery({ controller, view }: FeatureProps): ReactElement | null {
-    if (view.pending.length === 0) return null;
+    const item = view.pending.at(-1);
+    if (item === undefined) return null;
+    const rejected = item.state === 'rejected';
     return (
       <aside className={styles.recovery} aria-label="Edit recovery">
-        {view.pending.map((item) => (
-          <div className={styles.request} key={item.request.request}>
-            <div>
-              <strong>{labels[item.state]}</strong>
-              <details>
-                <summary>Request details</summary>
-                <span>{item.request.request}</span>
-              </details>
-            </div>
-            <Button
-              label="Check save status"
-              disabled={item.state === 'sending'}
-              onClick={() => {
-                void controller.reconcileRequest(item.request.request);
-              }}
-            />
-            {item.state === 'rejected' && (
-              <Button
-                label="Dismiss rejection"
-                onClick={() => controller.dismissRequest(item.request.request)}
-              />
-            )}
+        <div className={styles.request}>
+          <div>
+            <strong>{labels[item.state]}</strong>
+            <details>
+              <summary>Request details</summary>
+              <span className={styles.requestId}>{item.request.request}</span>
+            </details>
+          </div>
+          <Button
+            label="Check save status"
+            disabled={item.state === 'sending'}
+            onClick={() => {
+              void controller.reconcileRequest(item.request.request);
+            }}
+          />
+          {!rejected && (
             <Button
               label="Retry same edit"
               disabled={item.state !== 'retryable'}
@@ -45,8 +41,16 @@ export function createRequestRecovery({
                 void controller.retryRequest(item.request.request);
               }}
             />
-          </div>
-        ))}
+          )}
+          {rejected && (
+            <Button
+              label="Dismiss"
+              icon="×"
+              iconOnly
+              onClick={() => controller.dismissRequest(item.request.request)}
+            />
+          )}
+        </div>
       </aside>
     );
   }

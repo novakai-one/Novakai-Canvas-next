@@ -20,6 +20,7 @@ import { createRetainedEditor } from '../adapters/retained-editor.js';
 import { readWireDrafts } from '../adapters/wire-reader.js';
 import { createWireEditor } from '../adapters/react/WireEditor.js';
 import { createWireSemantics } from '../adapters/react/WireSemantics.js';
+import { createWireFunctionPicker } from '../adapters/react/WireLabelPicker.js';
 import { createWireEndpoints } from '../adapters/react/WireEndpoints.js';
 import { createWireRouting } from '../adapters/react/WireRouting.js';
 import type { InspectorBindings, InspectorSession } from './records/inspector.js';
@@ -90,7 +91,7 @@ import { createSectionNavigator } from '../adapters/react/SectionNavigator.js';
 import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
-import { planCanvasEdit } from './api.js';
+import { planCanvasEdit, wireApplyBlock } from './api.js';
 import {
   buildMoveReview,
   buildExpandOption,
@@ -187,8 +188,15 @@ function featureSections(
       title: 'Connection',
       Content: createWireEditor({
         ...design,
+        check: (draft, current) => wireApplyBlock(draft, current, plan),
         fields: [
-          { id: 'meaning', Content: createWireSemantics(design) },
+          {
+            id: 'meaning',
+            Content: createWireSemantics({
+              ...design,
+              FunctionPicker: createWireFunctionPicker(design),
+            }),
+          },
           { id: 'endpoints', Content: createWireEndpoints(design) },
           { id: 'routing', Content: createWireRouting(design) },
         ],

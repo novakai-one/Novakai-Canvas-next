@@ -1,14 +1,16 @@
 import type { ComponentType, ReactElement } from 'react';
-import type { WireFieldsProps } from '../../contract/wire-react.js';
+import type { WireFieldsProps, WireFunctionPickerProps } from '../../contract/wire-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
 import { relationshipLabel } from '@novakai/canvas-model';
 import { functionTarget } from '../../contract/api.js';
-import { WireFunctionPicker } from './WireLabelPicker.js';
 import styles from './ObjectEditor.module.css';
 /** Shared wire meaning is explicit; no local routing control can change these fields. */
 export function createWireSemantics({
   Field,
-}: Pick<DesignSlots, 'Field'>): ComponentType<WireFieldsProps> {
+  FunctionPicker,
+}: Pick<DesignSlots, 'Field'> & {
+  readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
+}): ComponentType<WireFieldsProps> {
   /** Controlled fields retain invalid intermediate labels for correction instead of dropping input. */
   function WireSemantics(props: WireFieldsProps): ReactElement {
     const {
@@ -18,7 +20,7 @@ export function createWireSemantics({
     return (
       <fieldset className={styles.block}>
         <legend>Shared relationship</legend>
-        <WireLabel {...props} Field={Field} />
+        <WireLabel {...props} Field={Field} FunctionPicker={FunctionPicker} />
         <Field
           label="Relationship kind"
           control={(props) => (
@@ -104,11 +106,16 @@ export function createWireSemantics({
   }
   return WireSemantics;
 }
-/** Module wires pick one of the target module's functions; other wires take free text. */
-function WireLabel(props: WireFieldsProps & Pick<DesignSlots, 'Field'>): ReactElement {
+/** Module and interface wires pick one of the target's functions; other wires take free text. */
+function WireLabel({
+  FunctionPicker,
+  ...props
+}: WireFieldsProps &
+  Pick<DesignSlots, 'Field'> & {
+    readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
+  }): ReactElement {
   const target = functionTarget(props.collection, props.value.relationship);
-  if (target !== null)
-    return <WireFunctionPicker key={props.value.relationship.id} {...props} target={target} />;
+  if (target !== null) return <FunctionPicker {...props} target={target} />;
   return <WireLabelText {...props} />;
 }
 function WireLabelText({

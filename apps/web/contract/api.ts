@@ -27,13 +27,12 @@ export { selectedWire } from '../core/inspector/wire-selection.js';
 export {
   existingFunction,
   functionTarget,
-  hasBlankLabel,
   moduleFunctions,
   newFunctionId,
   newFunctionProblem,
-  wireApplyBlock,
   withNewFunction,
 } from '../core/inspector/wire-functions.js';
+export { wireApplyBlock } from '../core/inspector/wire-apply.js';
 export type { ModuleFunction } from '../core/inspector/wire-functions.js';
 export { plainWireProblem } from '../core/inspector/wire-problems.js';
 export type { WireProblemContext } from '../core/inspector/wire-problems.js';

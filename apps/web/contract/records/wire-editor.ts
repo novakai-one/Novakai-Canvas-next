@@ -71,6 +71,21 @@ export interface EditedWire {
   /** The typed name while a new function is being named and cannot be used yet. */
   readonly naming?: string | null;
 }
+/** One owner issue as the Model reports it: a code and a record path. */
+export interface PlanIssue {
+  readonly code: string;
+  readonly path: string;
+  readonly message: string;
+}
+/** What the Model's planner says about a change list; only acceptance and issues are read. */
+export type WirePlanOutcome =
+  | { readonly ok: true }
+  | {
+      readonly ok: false;
+      readonly error: { readonly code: string; readonly diagnostics: readonly PlanIssue[] };
+    };
+/** The Model's own planner, injected at composition; Apply is offered only when it accepts. */
+export type WirePlanner = (collection: Collection, changes: readonly Change[]) => WirePlanOutcome;
 export interface WireEditorState {
   readonly drafts: readonly WireDraft[];
   readonly problem: Diagnostic | null;

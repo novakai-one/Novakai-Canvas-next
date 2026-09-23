@@ -2,7 +2,6 @@ import {
   formatFailure,
   functionTarget,
   plainWireProblem,
-  wireApplyBlock,
   withNewFunction,
 } from '../../contract/api.js';
 import type { Collection } from '../../contract/records/owners.js';
@@ -22,12 +21,16 @@ import type { SessionState } from '@novakai/canvas-canvas';
 import { selectedWire, wireDraftKey, editedWire } from '../../contract/api.js';
 import { relationshipLabel } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
+/** Why Apply is off for a draft against the current collection; null when the Model accepts it. */
+type WireCheck = (draft: WireDraft, current: Collection) => string | null;
 /** Injected field groups stay mounted across ordinary edits and can be reorganized at composition. */
 export function createWireEditor({
   Button,
   Field,
+  check,
   fields,
 }: Pick<DesignSlots, 'Button' | 'Field'> & {
+  readonly check: WireCheck;
   readonly fields: readonly {
     readonly id: string;
     readonly Content: ComponentType<WireFieldsProps>;
@@ -61,6 +64,7 @@ export function createWireEditor({
         session={session}
         forms={forms}
         fields={fields}
+        check={check}
         Button={Button}
       />
     );
@@ -74,8 +78,10 @@ function WireSelectionEditor({
   session,
   forms,
   fields,
+  check,
   Button,
 }: Pick<FeatureProps, 'view'> & {
+  readonly check: WireCheck;
   readonly canvas: SessionState | null;
   readonly session: FeatureProps['controller']['wires'];
   readonly forms: ReturnType<FeatureProps['controller']['wires']['getSnapshot']>;
@@ -107,7 +113,7 @@ function WireSelectionEditor({
         </p>
       </header>
       {fields.map(({ id, Content }) => (
-        <Content key={id} value={value} collection={collection} edit={edit} />
+        <Content key={`${key}:${id}`} value={value} collection={collection} edit={edit} />
       ))}
       <WireProblem problem={forms.problem} value={value} collection={collection} />
       {draft && (
@@ -115,6 +121,7 @@ function WireSelectionEditor({
           draft={draft}
           value={value}
           collection={collection}
+          blocked={check(draft, selection.collection)}
           view={view}
           Button={Button}
           apply={() => void session.apply(key)}
@@ -137,7 +144,7 @@ function WireProblem({
   if (problem === null) return null;
   const context = {
     kind: value.relationship.kind,
-    moduleWire: functionTarget(collection, value.relationship) !== null,
+    picker: functionTarget(collection, value.relationship) !== null,
   };
   return (
     <div role="alert">
@@ -151,11 +158,12 @@ function WireProblem({
     </div>
   );
 }
-/** Apply is blocked, with a reason, while the label is blank; a staged module change is restated. */
+/** Apply is on only when the Model accepts the draft; otherwise the reason shows first. */
 function WireFooter({
   draft,
   value,
   collection,
+  blocked,
   view,
   Button,
   apply,
@@ -164,12 +172,12 @@ function WireFooter({
   readonly draft: WireDraft;
   readonly value: EditedWire;
   readonly collection: Collection;
+  readonly blocked: string | null;
   readonly Button: DesignSlots['Button'];
   readonly apply: () => void;
   readonly discard: () => void;
 }): ReactElement {
   const created = value.created ?? null;
-  const blocked = wireApplyBlock(collection, value);
   return (
     <footer>
       <p>
@@ -206,7 +214,7 @@ function CreatedHint({
   const owner = collection.objects.find((item) => item.id === created.object);
   return (
     <p className={styles.hint}>
-      {`Apply also adds function '${created.label}' to module ${owner?.label ?? created.object}.`}
+      {`Apply also adds function '${created.label}' to ${owner ? `${owner.kind} ${owner.label}` : created.object}.`}
     </p>
   );
 }

@@ -12,7 +12,6 @@ export { buildMoveReview, chooseMoveOption } from './api.js';
 export { editedWire, wireDraftKey, wireChanges } from './api.js';
 export {
   functionTarget,
-  hasBlankLabel,
   moduleFunctions,
   newFunctionId,
   newFunctionProblem,
@@ -20,6 +19,7 @@ export {
   wireApplyBlock,
   withNewFunction,
 } from './api.js';
+export type { WirePlanner, WirePlanOutcome } from './records/wire-editor.js';
 export type { InspectorBindings, ObjectSelection } from './records/inspector.js';
 export type {
   GeometryChange,

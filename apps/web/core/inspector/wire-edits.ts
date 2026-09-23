@@ -1,4 +1,9 @@
-import type { Change, Relationship, WireAppearance } from '../../contract/records/owners.js';
+import type {
+  Change,
+  Endpoint,
+  Relationship,
+  WireAppearance,
+} from '../../contract/records/owners.js';
 import type {
   WireDraft,
   WireEdit,
@@ -60,10 +65,15 @@ function relationshipKind(current: EditedWire, edit: WireEdit, original: Relatio
  */
 function droppedFunction(current: EditedWire, original: Relationship): EditedWire {
   if ((current.created ?? null) === null) return current;
-  const { label: omitted, ...rest } = current.relationship;
-  void omitted;
-  const restored = original.label === undefined ? rest : { ...rest, label: original.label };
+  const restored = withLabel(current.relationship, original.label);
   return { ...current, relationship: { ...restored, target: original.target }, created: null };
+}
+/** An absent original label stays absent; the key is omitted rather than set to undefined. */
+function withLabel(relationship: Relationship, label: string | undefined): Relationship {
+  if (label !== undefined) return { ...relationship, label };
+  const { label: dropped, ...unlabelled } = relationship;
+  void dropped;
+  return unlabelled;
 }
 /** Only these kinds name a module function; switching away abandons a staged new function. */
 const functionKinds: readonly Relationship['kind'][] = ['imports', 'calls'];
@@ -73,21 +83,24 @@ function style(current: EditedWire, edit: WireEdit): EditedWire {
   return { ...current, relationship: { ...current.relationship, style: edit.value } };
 }
 /** Endpoints are stable object/member identities; layout chooses their pixel anchors. */
-function endpoint(current: EditedWire, edit: WireEdit): EditedWire {
+function endpoint(current: EditedWire, edit: WireEdit, original: Relationship): EditedWire {
   if (edit.kind !== 'endpoint') return current;
-  const relationship = { ...current.relationship, [edit.side]: edit.value };
-  const created = keptFunction(current, edit.side);
-  return {
-    ...current,
-    relationship,
-    created,
-    naming: edit.side === 'target' ? null : (current.naming ?? null),
-  };
+  if (edit.side === 'source')
+    return { ...current, relationship: { ...current.relationship, source: edit.value } };
+  return targetMoved(current, edit.value, original);
 }
-/** Retargeting the wire abandons a staged new function; the module is then left unchanged. */
-function keptFunction(current: EditedWire, side: 'source' | 'target'): NewFunction | null {
-  if (side === 'target') return null;
-  return current.created ?? null;
+/**
+ * Retargeting keeps a staged function only when the new target is that function. Anywhere else
+ * the staged function is dropped and the draft's original label comes back.
+ */
+function targetMoved(current: EditedWire, value: Endpoint, original: Relationship): EditedWire {
+  if (isStaged(current.created ?? null, value))
+    return { ...current, relationship: { ...current.relationship, target: value } };
+  const dropped = droppedFunction(current, original);
+  return { ...dropped, relationship: { ...dropped.relationship, target: value }, naming: null };
+}
+function isStaged(created: NewFunction | null, value: Endpoint): boolean {
+  return created?.object === value.object && created.id === value.member;
 }
 /** The wire names the chosen function and attaches to it; a staged function travels with the draft. */
 function chooseFunction(current: EditedWire, edit: WireEdit): EditedWire {

@@ -1,7 +1,7 @@
-import { useState, type ReactElement } from 'react';
+import { useState, type ComponentType, type ReactElement } from 'react';
 import { descendantId } from '@novakai/canvas-model';
 import type { DesignSlots } from '../../contract/react-types.js';
-import type { WireFieldsProps } from '../../contract/wire-react.js';
+import type { WireFieldsProps, WireFunctionPickerProps } from '../../contract/wire-react.js';
 import type { DiagramObject } from '../../contract/records/owners.js';
 import type { WireEdit } from '../../contract/records/wire-editor.js';
 import type { ModuleFunction } from '../../contract/api.js';
@@ -9,16 +9,22 @@ import { moduleFunctions, newFunctionId, newFunctionProblem } from '../../contra
 import styles from './ObjectEditor.module.css';
 const ADD = '__add__';
 const CURRENT = '__current__';
-type PickerProps = WireFieldsProps & {
-  readonly Field: DesignSlots['Field'];
-  readonly target: DiagramObject;
-};
+type PickerProps = WireFunctionPickerProps & { readonly Field: DesignSlots['Field'] };
+/** Composition injects the picker into the wire meaning fields; adapters never import each other. */
+export function createWireFunctionPicker({
+  Field,
+}: Pick<DesignSlots, 'Field'>): ComponentType<WireFunctionPickerProps> {
+  function FunctionPicker(props: WireFunctionPickerProps): ReactElement {
+    return <WireFunctionPicker {...props} Field={Field} />;
+  }
+  return FunctionPicker;
+}
 /**
- * A module wire names one of its target module's functions. Adding a new one changes the
- * module itself, so that path always shows a notice before anything is applied. Add mode is
+ * A module or interface wire names one of its target's functions. Adding a new one changes the
+ * target itself, so that path always shows a notice before anything is applied. Add mode is
  * draft state: Apply, Discard and Undo all end it.
  */
-export function WireFunctionPicker(props: PickerProps): ReactElement {
+function WireFunctionPicker(props: PickerProps): ReactElement {
   const { value, target, edit, Field } = props;
   const created = value.created ?? null;
   const adding = created !== null || (value.naming ?? null) !== null;
@@ -115,8 +121,8 @@ function NewFunctionForm({ value, target, edit, Field }: PickerProps): ReactElem
   };
   return (
     <div className={styles.notice} role="status">
-      <strong>{`Adds function '${name.trim() || '…'}' to module ${target.label}`}</strong>
-      <p>The module&apos;s definition changes.</p>
+      <strong>{noticeHeading(created?.label ?? null, target)}</strong>
+      <p>{`Apply changes the definition of ${target.kind} ${target.label}.`}</p>
       <Field
         label="New function name"
         required
@@ -133,6 +139,12 @@ function NewFunctionForm({ value, target, edit, Field }: PickerProps): ReactElem
       <p>Apply wire adds the function and points this wire at it. Undo reverts both.</p>
     </div>
   );
+}
+/** The heading names a function only once one is staged; an unusable name adds nothing. */
+function noticeHeading(staged: string | null, target: DiagramObject): string {
+  return staged === null
+    ? `New function for ${target.kind} ${target.label}`
+    : `Adds function '${staged}' to ${target.kind} ${target.label}`;
 }
 /** An unusable name stages nothing; the footer then explains why Apply is off. */
 function stagedEdit(target: DiagramObject, name: string, pending: string | null): WireEdit {

@@ -67,7 +67,7 @@ export function createSceneEdge(
   const Marker = slots.Marker;
   const Content = slots.MeasuredContent;
   const Label = slots.WireLabel;
-  /** All-labels mode: HTML layer above every wire, so later wires never paint over a label. */
+  /** All-labels mode: same pill as an always-shown label, in a layer above every wire and node. */
   function OverlayLabel({ view, box }: { readonly view: ViewWire; readonly box: Box }) {
     const { width, height } = view.wire.measuredLabel;
     const x = view.origin.x + box.x;
@@ -80,7 +80,7 @@ export function createSceneEdge(
           height={height}
           style={{ transform: `translate(${x}px, ${y}px)` }}
         >
-          <Label wire={view.wire} zoom={1} anchor={{ x: width / 2, y: height / 2 }} />
+          <Content embedFonts={false} content={view.wire.measuredLabel} />
         </svg>
       </EdgeLabelRenderer>
     );

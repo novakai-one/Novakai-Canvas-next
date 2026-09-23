@@ -106,7 +106,6 @@ function parentOrder(nodes: readonly FlowNode[]): FlowNode[] {
   }
   return result;
 }
-/** Edges preserve supplied labels/markers/routes and their scene scope; no routing algorithm runs here. */
 /** One placement pass per section, so shown labels never sit on each other. */
 function hiddenLabels(snapshot: ViewSnapshot): ReadonlyMap<string, Box> {
   return new Map(
@@ -125,6 +124,7 @@ function hiddenLabels(snapshot: ViewSnapshot): ReadonlyMap<string, Box> {
     }),
   );
 }
+/** Edges preserve supplied labels/markers/routes and their scene scope; no routing algorithm runs here. */
 function flowEdges(
   snapshot: ViewSnapshot,
   actions: ViewActions,

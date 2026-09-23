@@ -468,6 +468,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     }),
     Source: createSourceEditor(design, element),
     Recovery: createRequestRecovery(design),
+    Button: design.Button,
     MovementReview: createMovementReview(design),
     Reveal: RevealInterface,
     CreateDialog: createCollectionDialog(design),

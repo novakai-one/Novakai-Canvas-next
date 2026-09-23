@@ -1,4 +1,5 @@
-import { useEffect, useState, type ComponentType, type ReactElement } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type ReactElement } from 'react';
+import { failureSummary, plainMessage } from '../../contract/api.js';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type {
   AddDiagramDraft,
@@ -18,6 +19,11 @@ export function createAddTools({
     const [object, setObjectLocal] = useState<AddObjectDraft>(view.creation.object);
     const [group, setGroupLocal] = useState<AddGroupDraft>(view.creation.group);
     const [busy, setBusy] = useState(view.creation.busy);
+    const [adding, setAdding] = useState(view.creation.adding);
+    const send = (kind: NonNullable<typeof adding>): void => {
+      setBusy(true);
+      setAdding(kind);
+    };
     const setDiagram = (draft: AddDiagramDraft): void => {
       setDiagramLocal(draft);
       controller.setDiagramDraft(draft);
@@ -35,6 +41,7 @@ export function createAddTools({
       setObjectLocal(view.creation.object);
       setGroupLocal(view.creation.group);
       setBusy(view.creation.busy);
+      setAdding(view.creation.adding);
     }, [view.creation]);
     const sections = (view.active?.document.collection.sections ?? []).filter(
       (section) => section.mode !== 'tree',
@@ -44,16 +51,17 @@ export function createAddTools({
     const target = sections.find((section) => section.id === targetSection);
     return (
       <div className={styles.tools}>
-        <CreationProblem problem={view.problem === null ? view.creation.problem : null} />
+        <CreationProblem problem={barShowsSame(view) ? null : view.creation.problem} />
         <DiagramForm
           Field={Field}
           Button={Button}
           draft={diagram}
           busy={busy}
+          adding={busy && adding === 'diagram'}
           onDraft={setDiagram}
           onCancel={() => controller.cancelCreation('diagram')}
           onSubmit={async () => {
-            setBusy(true);
+            send('diagram');
             await controller.addDiagram(diagram);
           }}
         />
@@ -66,10 +74,11 @@ export function createAddTools({
           targetSection={targetSection}
           draft={object}
           busy={busy}
+          adding={busy && adding === 'object'}
           onDraft={setObject}
           onCancel={() => controller.cancelCreation('object')}
           onSubmit={async () => {
-            setBusy(true);
+            send('object');
             await controller.addObject({ ...object, section: targetSection });
           }}
         />
@@ -79,10 +88,11 @@ export function createAddTools({
           sections={sections}
           draft={group}
           busy={busy}
+          adding={busy && adding === 'group'}
           onDraft={setGroup}
           onCancel={() => controller.cancelCreation('group')}
           onSubmit={async () => {
-            setBusy(true);
+            send('group');
             await controller.addGroup({
               ...group,
               section: selectedSection(group.section, sections),
@@ -95,8 +105,15 @@ export function createAddTools({
   return AddTools;
 }
 
+/** The form keeps its own error unless the error bar already says the same thing. */
+function barShowsSame(view: FeatureProps['view']): boolean {
+  if (view.problem === null) return false;
+  const shown = [failureSummary(view.problem), plainMessage(view.problem.message)];
+  return shown.includes(view.creation.problem ?? '');
+}
+/** A section from another collection (or none) falls back to the first diagram, so the select and the submit agree. */
 function selectedSection(current: string, sections: readonly Section[]): string {
-  return current || sections[0]?.id || '';
+  return sections.some((section) => section.id === current) ? current : (sections[0]?.id ?? '');
 }
 type FormSlots = Pick<DesignSlots, 'Field' | 'Button'>;
 function DiagramForm({
@@ -104,12 +121,14 @@ function DiagramForm({
   Button,
   draft,
   busy,
+  adding,
   onCancel,
   onDraft,
   onSubmit,
 }: FormSlots & {
   draft: AddDiagramDraft;
   busy: boolean;
+  adding: boolean;
   onCancel: () => void;
   onDraft: (draft: AddDiagramDraft) => void;
   onSubmit: () => Promise<void>;
@@ -142,7 +161,7 @@ function DiagramForm({
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
-            label={busy ? 'Adding…' : 'Add diagram'}
+            label={adding ? 'Adding…' : 'Add diagram'}
             type="submit"
             variant="primary"
             disabled={busy || draft.title.trim().length === 0}
@@ -161,6 +180,7 @@ function ObjectForm({
   targetSection,
   draft,
   busy,
+  adding,
   onCancel,
   onDraft,
   onSubmit,
@@ -171,6 +191,7 @@ function ObjectForm({
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
+  adding: boolean;
   onCancel: () => void;
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
@@ -186,6 +207,7 @@ function ObjectForm({
       targetSection={targetSection}
       draft={draft}
       busy={busy}
+      adding={adding}
       onCancel={onCancel}
       onDraft={onDraft}
       onSubmit={onSubmit}
@@ -209,6 +231,7 @@ function ObjectReady({
   targetSection,
   draft,
   busy,
+  adding,
   onCancel,
   onDraft,
   onSubmit,
@@ -219,10 +242,13 @@ function ObjectReady({
   targetSection: string;
   draft: AddObjectDraft;
   busy: boolean;
+  adding: boolean;
   onCancel: () => void;
   onDraft: (draft: AddObjectDraft) => void;
   onSubmit: () => Promise<void>;
 }): ReactElement {
+  const present = presentObjects(sections, targetSection);
+  const duplicate = draft.reuseObject !== null && present.has(draft.reuseObject);
   return (
     <section aria-labelledby="add-object-title">
       <h3 id="add-object-title">Object</h3>
@@ -262,8 +288,8 @@ function ObjectReady({
             >
               <option value="">Create a new module</option>
               {objects.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
+                <option key={item.id} value={item.id} disabled={present.has(item.id)}>
+                  {reuseLabel(item, present)}
                 </option>
               ))}
             </select>
@@ -288,13 +314,18 @@ function ObjectReady({
             </select>
           )}
         />
+        {duplicate && (
+          <p role="alert">
+            That object is already in this diagram. Pick another object or diagram.
+          </p>
+        )}
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
-            label={objectActionLabel(draft)}
+            label={adding ? 'Adding…' : objectActionLabel(draft)}
             type="submit"
             variant="primary"
-            disabled={objectDisabled(busy, draft)}
+            disabled={duplicate || objectDisabled(busy, draft)}
           />
         </div>
       </form>
@@ -308,6 +339,7 @@ function GroupForm({
   sections,
   draft,
   busy,
+  adding,
   onCancel,
   onDraft,
   onSubmit,
@@ -315,6 +347,7 @@ function GroupForm({
   sections: readonly Section[];
   draft: AddGroupDraft;
   busy: boolean;
+  adding: boolean;
   onCancel: () => void;
   onDraft: (draft: AddGroupDraft) => void;
   onSubmit: () => Promise<void>;
@@ -337,7 +370,7 @@ function GroupForm({
             <select
               {...field}
               disabled={busy}
-              value={draft.section || sections[0]?.id || ''}
+              value={selectedSection(draft.section, sections)}
               onChange={(event) => onDraft({ ...draft, section: event.target.value })}
             >
               {sections.map((section) => (
@@ -373,7 +406,7 @@ function GroupForm({
         <div className={styles.actions}>
           <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
           <Button
-            label={busy ? 'Adding…' : 'Add group'}
+            label={adding ? 'Adding…' : 'Add group'}
             type="submit"
             variant="primary"
             disabled={busy || draft.title.trim().length === 0}
@@ -412,7 +445,25 @@ function objectDisabled(busy: boolean, draft: AddObjectDraft): boolean {
   return busy || (draft.reuseObject === null && draft.label.trim().length === 0);
 }
 
+/** Objects that already appear in the target diagram cannot be reused there again. */
+function presentObjects(sections: readonly Section[], target: string): ReadonlySet<string> {
+  const section = sections.find((item) => item.id === target);
+  return new Set(section?.appearances.map((appearance) => appearance.object) ?? []);
+}
+function reuseLabel(item: DiagramObject, present: ReadonlySet<string>): string {
+  return present.has(item.id) ? `${item.label} · already in this diagram` : item.label;
+}
+
+/** The panel may be scrolled to the form below, so a new problem scrolls itself into view. */
 function CreationProblem({ problem }: { problem: string | null }): ReactElement | null {
+  const ref = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    ref.current?.scrollIntoView({ block: 'nearest' });
+  }, [problem]);
   if (problem === null) return null;
-  return <p role="alert">{problem}</p>;
+  return (
+    <p ref={ref} role="alert">
+      {problem}
+    </p>
+  );
 }

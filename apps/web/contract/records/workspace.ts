@@ -84,6 +84,8 @@ export interface WorkspaceController {
   closeSource(decision: 'keep' | 'discard' | 'stay'): void;
   reconcileRequest(id: string): Promise<void>;
   dismissRequest(id: string): void;
+  /** Hide the problem bar; the underlying drafts and pending requests are unchanged. */
+  dismissProblem(): void;
   retryRequest(id: string): Promise<void>;
   create(title: string): Promise<void>;
   addDiagram(draft: AddDiagramDraft): Promise<Result<Receipt>>;

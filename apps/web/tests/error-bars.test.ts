@@ -16,9 +16,11 @@ it('maps serialized owner codes to plain English and keeps readable text', () =>
     "Couldn't fit the wires around that position. Nothing was changed.",
   );
   expect(plainMessage('{"code":"something-new"}')).toBe(
-    "Couldn't lay out that change. Nothing was changed.",
+    "That change couldn't be applied. Nothing was changed.",
   );
-  expect(plainMessage('{"detail":1}')).toBe("Couldn't lay out that change. Nothing was changed.");
+  expect(plainMessage('{"detail":1}')).toBe(
+    "That change couldn't be applied. Nothing was changed.",
+  );
   expect(plainMessage('Title is required')).toBe('Title is required');
 });
 

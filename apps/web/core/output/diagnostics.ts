@@ -18,7 +18,7 @@ const codeMessages: Readonly<Record<string, string>> = {
   'unroutable-leg': "Couldn't route a wire for that position. Nothing was changed.",
   'infeasible-embedding': "Couldn't fit the wires around that position. Nothing was changed.",
 };
-const unknownCodeMessage = "Couldn't lay out that change. Nothing was changed.";
+const unknownCodeMessage = "That change couldn't be applied. Nothing was changed.";
 /** Raw JSON never reaches a person; readable messages pass through unchanged. */
 export function plainMessage(message: string): string {
   const code = /\{\s*"code"\s*:\s*"([^"]+)"/.exec(message)?.[1];

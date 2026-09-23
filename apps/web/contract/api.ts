@@ -2,7 +2,14 @@ import { definitionId } from '@novakai/canvas-model';
 
 export { planCanvasEdit } from '../core/editing/plan.js';
 
-export { blocksSubmission, submissionStatus, refused } from '../core/editing/submissions.js';
+export {
+  blocksSubmission,
+  submissionStatus,
+  refused,
+  emptyRefusalOrder,
+  observeRefusals,
+  supersededRefusal,
+} from '../core/editing/submissions.js';
 
 export {
   defaultPanels,

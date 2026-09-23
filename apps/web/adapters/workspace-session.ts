@@ -36,6 +36,9 @@ import type { RelationshipKind } from '@novakai/canvas-model';
 import type { BinaryResponse } from '../contract/ports/client.js';
 import {
   plainMessage,
+  emptyRefusalOrder,
+  observeRefusals,
+  supersededRefusal,
   groupDraftProblem,
   groupCreationChanges,
   chooseMoveOption as chooseReviewedMoveOption,
@@ -559,6 +562,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   const definitions = bindings.definitions({ apply: applyDefinition, report });
   const wires = bindings.wires({ apply: applyChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
+  let refusalOrder = emptyRefusalOrder;
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
   function holdConfirmedHistory(pending: readonly Submission[]): void {
     const finished = state.pending.some(
@@ -571,10 +575,18 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
-    // Only the newest refusal stays visible; dismissing an older one republishes the journal.
-    const olderRefusal = pending.filter((item) => item.state === 'rejected').at(-2);
-    if (olderRefusal !== undefined) return dismissRequest(olderRefusal.request.request);
+    // One refusal is visible: the latest, until another edit starts. Dismissing republishes the journal.
+    refusalOrder = observeRefusals(refusalOrder, pending);
+    const superseded = supersededRefusal(refusalOrder);
+    if (superseded !== undefined) return dismissRequest(superseded);
+    releaseRefusedDefinitions(pending);
     publishPending(pending);
+  }
+  /** A refused definition changed nothing; its draft becomes editable now, so a reload cannot leave it locked. */
+  function releaseRefusedDefinitions(pending: readonly Submission[]): void {
+    pending
+      .filter((item) => item.state === 'rejected')
+      .forEach((item) => definitions.released(item.request.request));
   }
   function publishPending(pending: readonly Submission[]): void {
     holdConfirmedHistory(pending);
@@ -2665,7 +2677,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     closeSource: source.close,
     reconcileRequest,
     dismissRequest,
-    dismissProblem: () => update({ problem: null }),
+    dismissProblem: () => update({ problem: null, status: editStatus() }),
     retryRequest,
     create,
     addDiagram,

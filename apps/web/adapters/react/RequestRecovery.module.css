@@ -2,8 +2,10 @@
   .recovery {
     pointer-events: auto;
     background: var(--nv-color-panel);
-    border-top: var(--nv-stroke-base) solid var(--nv-border-default);
+    border: var(--nv-stroke-base) solid var(--nv-border-default);
     font-family: var(--nv-font-body);
+    max-height: calc(var(--nv-space-8) * 5);
+    overflow: auto;
   }
   .request {
     display: flex;

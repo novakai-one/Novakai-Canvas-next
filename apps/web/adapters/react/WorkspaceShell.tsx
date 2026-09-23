@@ -6,6 +6,7 @@ import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js'
 import type { PanelState } from '../../contract/panel-types.js';
 import type { WorkspaceController, WorkspaceView } from '../../contract/records/workspace.js';
 import styles from './WorkspaceShell.module.css';
+import { dropObject, palette } from './palette-drop.js';
 /** The work surface is the primary content; chrome uses stable injected sections and shared design tokens. */
 export function createWorkspaceShell(slots: ChromeSlots): ComponentType<WorkspaceProps> {
   /** Mount owns subscription lifetime. Selection and panning remain entirely inside the Canvas session. */
@@ -339,34 +340,4 @@ function RevealSlot({
 }): ReactElement | null {
   if (!hidden) return null;
   return <Reveal onReveal={onReveal} />;
-}
-
-/** Object types the canvas palette offers. */
-const palette = [{ kind: 'module', label: 'Module' }] as const;
-/** A palette drop creates a new object of that type in the group (or section) under the pointer. */
-function dropObject(
-  controller: WorkspaceController,
-  sections: readonly { readonly id: string; readonly mode: string; readonly title: string }[],
-  kind: string,
-  target: { readonly section: string; readonly group: string | null },
-): void {
-  const item = palette.find((entry) => entry.kind === kind);
-  if (item === undefined) return;
-  // Tree sections are outlines built from parent links; the Add forms exclude them too.
-  const section = sections.find((entry) => entry.id === target.section);
-  if (section?.mode === 'tree') {
-    controller.report({
-      code: 'tree-section-drop',
-      message: `${item.label}s can't be dropped into a tree. Drop it into a diagram section instead.`,
-      recovery: `"${section.title}" is a tree outline. Nothing was changed.`,
-    });
-    return;
-  }
-  void controller.addObject({
-    section: target.section,
-    group: target.group,
-    kind: item.kind,
-    label: `New ${item.label.toLowerCase()}`,
-    reuseObject: null,
-  });
 }

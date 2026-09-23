@@ -36,13 +36,20 @@
     font-size: var(--nv-font-caption);
     color: var(--nv-color-subtle);
   }
-  /* Pinned to the bottom of the canvas: alerts overlay it and never shift layout. */
+  /* Alerts float over the canvas (no layout shift), above the bottom-right zoom controls
+     (their bottom offset plus one control row), and scroll when details are open. */
   .alerts {
     position: absolute;
-    inset: auto 0 0 0;
-    z-index: 10;
+    inset: auto var(--nv-space-3) calc(var(--nv-space-6) + 3.5rem + var(--nv-space-2));
+    z-index: var(--nv-layer-tools);
     display: grid;
+    gap: var(--nv-space-2);
+    max-height: 40%;
+    overflow-y: auto;
     pointer-events: none;
+  }
+  .alerts > * {
+    border-radius: var(--nv-radius-panel);
   }
   .problem {
     pointer-events: auto;
@@ -52,7 +59,7 @@
     padding: var(--nv-space-3) var(--nv-space-4);
     color: var(--nv-status-error);
     background: var(--nv-color-panel);
-    border-top: var(--nv-stroke-base) solid var(--nv-status-error);
+    border: var(--nv-stroke-base) solid var(--nv-status-error);
   }
   .problemText {
     flex: 1;

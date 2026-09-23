@@ -1062,6 +1062,16 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     });
   }
   /** Rendering acknowledges geometry only, never an unconfirmed edit. */
+  /** A refused edit leaves its form open with the unsaved changes; the status must not claim "Saved". */
+  function statusAfterDismiss(): string {
+    return openDraftCount() > 0 ? 'Draft not applied' : editStatus();
+  }
+  function openDraftCount(): number {
+    return [inspector, wires, definitions].reduce(
+      (count, editor) => count + editor.getSnapshot().drafts.length,
+      0,
+    );
+  }
   function editStatus(): string {
     if (state.sourceDirty) return 'Draft not applied';
     if (state.pending.some((item) => item.state !== 'rejected'))
@@ -2330,15 +2340,24 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     handleReconciliationResult(result.value, id);
   }
   function handleReconciliationResult(receipt: Receipt | null, id: string): void {
+    clearSettledUncertainty();
     if (receipt === null) update({ status: 'No receipt found — retry remains an explicit action' });
     else settleConfirmedCreation(id);
+  }
+  /** "Could not be confirmed" is stale once a check or retry has settled the request's state. */
+  function clearSettledUncertainty(): void {
+    if (state.problem?.code === 'connection-uncertain') update({ problem: null });
   }
   /** Retry retains the exact request body while using the current authenticated transport session. */
   async function retryRequest(id: string): Promise<void> {
     const result = await submissions.retry(id, state.generation);
     if (!result.ok) report(result.error);
-    else settleConfirmedCreation(id);
+    else settleRetried(id);
     updateMovementRecovery(id);
+  }
+  function settleRetried(id: string): void {
+    clearSettledUncertainty();
+    settleConfirmedCreation(id);
   }
   function updateMovementRecovery(requestId: string): void {
     if (movementCapture?.intent.id !== requestId || state.movementReview === null) return;
@@ -2706,10 +2725,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     closeSource: source.close,
     reconcileRequest,
     dismissRequest,
-    dismissProblem: () => {
-      dismissRefusals();
-      update({ problem: null, status: editStatus() });
-    },
+    // Clearing the problem also dismisses the refused request (see update).
+    dismissProblem: () => update({ problem: null, status: statusAfterDismiss() }),
     retryRequest,
     create,
     addDiagram,

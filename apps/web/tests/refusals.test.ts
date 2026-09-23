@@ -7,7 +7,7 @@ import type { Request, TransportResponse } from '../contract/records/owners.js';
 import type { Result } from '../contract/index.js';
 import type { DraftRetention } from '../contract/ports/workspace.js';
 import type { WorkspaceSession } from '@novakai/canvas-service';
-import { definitionDraftId, planPaletteDrop } from '../contract/index.js';
+import { definitionDraftId, failure, planPaletteDrop } from '../contract/index.js';
 import { controller, memoryRetention, submitted } from './recovery-fixtures.js';
 import { workspaceFixture, request, source } from './host-workspace-fixture.js';
 
@@ -210,5 +210,46 @@ it('a refused definition stays editable after reload', slow, async () => {
     expect(drafts.drafts[0]?.request).toBeUndefined();
     expect(await reloaded.definitions.apply(key)).toMatchObject({ ok: true });
     reloaded.dispose();
+  });
+});
+
+it('closing the error bar while the refused form is open does not say "Saved"', slow, async () => {
+  await withSample(async (service) => {
+    const human = await opened(serviceClient(service, [], { count: 1 }));
+    const active = human.getSnapshot().active;
+    assert(active !== null);
+    const collection = active.document.collection;
+    const object = collection.objects[0];
+    assert(object !== undefined);
+    const selection = { base: active.base, generation: active.generation, collection, object };
+    assert(human.inspector.edit(selection, { kind: 'label', value: 'Renamed' }).ok);
+    const key = human.inspector.getSnapshot().drafts[0]?.key;
+    assert(key !== undefined);
+    await human.inspector.apply(key);
+    expect(human.getSnapshot().problem).not.toBeNull();
+    human.dismissProblem();
+    expect(human.getSnapshot().problem).toBeNull();
+    expect(human.getSnapshot().status).toBe('Draft not applied');
+    human.dispose();
+  });
+});
+
+it('a save check that settles the request clears "could not be confirmed"', slow, async () => {
+  await withSample(async (service) => {
+    const real = serviceClient(service, [], { count: 0 });
+    const lost: ServiceClient = {
+      ...real,
+      post: async () =>
+        failure('connection-uncertain', 'The service response could not be confirmed'),
+    };
+    const human = await opened(lost);
+    await human.addObject(module);
+    expect(human.getSnapshot().problem).toMatchObject({ code: 'connection-uncertain' });
+    const id = human.getSnapshot().pending[0]?.request.request;
+    assert(id !== undefined);
+    await human.reconcileRequest(id);
+    expect(human.getSnapshot().pending).toMatchObject([{ state: 'retryable' }]);
+    expect(human.getSnapshot().problem).toBeNull();
+    human.dispose();
   });
 });

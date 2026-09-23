@@ -54,7 +54,7 @@ export function createContentEditor({
         )}
         <Engineering item={item} collection={collection} edit={edit} />
         <Button
-          label={`Remove ${item.kind} ${item.id}`}
+          label={`Remove ${contentName(item)}`}
           onClick={() => edit({ kind: 'remove-content', id: item.id })}
         />
       </fieldset>
@@ -76,6 +76,10 @@ function textFields(item: ContentBlock): readonly TextField[] {
 function labelField(item: ContentBlock): readonly TextField[] {
   if (!('label' in item)) return [];
   return [{ name: 'label', label: 'Name', value: item.label }];
+}
+/** Matches the label shown in the list above; falls back to the block's kind when it has none. */
+export function contentName(item: ContentBlock): string {
+  return 'label' in item ? item.label : item.kind;
 }
 /** Engineering types are explicit strings owned by the semantic record. */
 function typeField(item: ContentBlock): readonly TextField[] {

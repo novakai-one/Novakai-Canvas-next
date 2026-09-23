@@ -1,6 +1,6 @@
 import type { WorkspaceId, RequestId, Digest } from '../brands.js';
 import type { Result } from '../errors.js';
-import type { Receipt, Write, ReadVersion, CommitOutcome } from '../records/storage.js';
+import type { Receipt, Write, ReadVersion, CommitOutcome, RecordKey } from '../records/storage.js';
 /** One consistent raw snapshot; Authoring alone admits its shape, identities and invariants. */
 export interface SnapshotReader {
   read(workspace: WorkspaceId): Promise<Result<unknown>>;
@@ -9,12 +9,17 @@ export interface SnapshotReader {
 export interface ReceiptReader {
   find(workspace: WorkspaceId, request: RequestId): Promise<Result<Receipt | null>>;
 }
+/** Engine-only removal of a history record whose identity is never recreated. */
+export interface PurgeWrite {
+  readonly kind: 'purge';
+  readonly key: RecordKey;
+}
 export interface CommitRequest {
   readonly workspace: WorkspaceId;
   readonly request: RequestId;
   readonly fingerprint: Digest;
   readonly expected: readonly ReadVersion[];
-  readonly writes: readonly Write[];
+  readonly writes: readonly (Write | PurgeWrite)[];
   readonly outcome: CommitOutcome;
 }
 /**

@@ -57,6 +57,8 @@ export const badgeRun = z
   .strictObject({
     kind: z.literal('badge'),
     lodRole: lodRole.optional(),
+    /** Style role whose paint filled this badge; themed hosts repaint it by role. */
+    role: z.string().min(1).max(64).optional(),
     x: coordinate,
     y: coordinate,
     width: dimension,

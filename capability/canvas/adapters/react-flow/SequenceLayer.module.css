@@ -90,4 +90,10 @@
       opacity: 0;
     }
   }
+  .layer[data-follows-interface-roles='true'] .activation {
+    stroke: var(--nv-text-secondary);
+  }
+  .layer[data-follows-interface-roles='true'] .activationGlow {
+    fill: var(--nv-text-secondary);
+  }
 }

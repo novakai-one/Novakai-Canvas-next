@@ -153,6 +153,7 @@ function keyChip(key: Key, x: number, context: ContentContext): KeyChip {
   const height = text.height + padding.y * 2;
   const badge: Primitive = {
     kind: 'badge',
+    role: keyRoles[key],
     x,
     y: context.style.gap - padding.y,
     width,

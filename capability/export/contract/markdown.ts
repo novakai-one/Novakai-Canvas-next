@@ -113,7 +113,7 @@ function appendSection(
   appendGroups(lines, section);
   const sectionObjects = sectionObjectsInOrder(section, objects);
   appendObjects(lines, sectionObjects, collection);
-  appendRelationships(lines, section, relationships);
+  appendRelationships(lines, section, relationships, collection.objects);
   if (section.sequence.length > 0) appendSequence(lines, section, objects);
 }
 
@@ -406,13 +406,14 @@ function appendRelationships(
   lines: string[],
   section: Section,
   relationships: ReadonlyMap<string, Relationship>,
+  objects: readonly DiagramObject[],
 ): void {
   lines.push('### Relationships', '');
   if (section.wires.length === 0) {
     lines.push('_No relationships are wired in this section._', '');
     return;
   }
-  section.wires.forEach((wire) => appendWire(lines, wire, relationships));
+  section.wires.forEach((wire) => appendWire(lines, wire, relationships, objects));
   lines.push('');
 }
 
@@ -420,6 +421,7 @@ function appendWire(
   lines: string[],
   wire: Section['wires'][number],
   relationships: ReadonlyMap<string, Relationship>,
+  objects: readonly DiagramObject[],
 ): void {
   const relationship = relationships.get(wire.relationship);
   if (relationship === undefined) {
@@ -428,7 +430,7 @@ function appendWire(
   }
   const details = relationshipDetails(relationship);
   lines.push(
-    `- \`${relationship.id}\` **${inline(relationshipLabel(relationship))}** (${relationship.kind}) ${endpoint(relationship.source)} → ${endpoint(relationship.target)}${details}; ${wire.route} wire${wire.locked ? ', locked' : ''}`,
+    `- \`${relationship.id}\` **${inline(relationshipLabel(relationship, objects))}** (${relationship.kind}) ${endpoint(relationship.source)} → ${endpoint(relationship.target)}${details}; ${wire.route} wire${wire.locked ? ', locked' : ''}`,
   );
 }
 

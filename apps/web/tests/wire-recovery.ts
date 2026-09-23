@@ -72,6 +72,7 @@ export async function verifyWireRecovery(): Promise<void> {
     retention,
     read: readWireDrafts,
     report: () => undefined,
+    preview: async () => failure('unused', 'not previewed in this test'),
     apply: async (draft, changes) => {
       calls++;
       const checked = plan(draft.collection, changes);

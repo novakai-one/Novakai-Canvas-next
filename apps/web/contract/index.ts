@@ -10,6 +10,24 @@ export { failure } from './errors.js';
 export { editedObject, objectDraftKey } from './api.js';
 export { buildMoveReview, chooseMoveOption } from './api.js';
 export { editedWire, wireDraftKey, wireChanges } from './api.js';
+export {
+  functionTarget,
+  moduleFunctions,
+  newFunctionId,
+  newFunctionProblem,
+  plainWireProblem,
+  wireApplyBlock,
+  withNewFunction,
+  createWireDryRun,
+  dryRunFor,
+  chosenConnectionFunction,
+  connectionKindChanged,
+  connectionLabel,
+  connectionProblem,
+  namedConnectionFunction,
+  rebasedWireDraft,
+} from './api.js';
+export type { WirePlanner, WirePlanOutcome } from './records/wire-editor.js';
 export type { InspectorBindings, ObjectSelection } from './records/inspector.js';
 export type {
   GeometryChange,

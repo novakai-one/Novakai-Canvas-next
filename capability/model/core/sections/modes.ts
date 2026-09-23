@@ -32,7 +32,7 @@ function validateDecisionLabels(section: Section, collection: Collection): reado
     );
     return duplicates(
       outgoing,
-      (wire) => relationshipLabel(wire),
+      (wire) => relationshipLabel(wire, collection.objects),
       `sections.${section.id}.decision.${decision.id}`,
     );
   });

@@ -20,6 +20,7 @@ import { createRetainedEditor } from '../adapters/retained-editor.js';
 import { readWireDrafts } from '../adapters/wire-reader.js';
 import { createWireEditor } from '../adapters/react/WireEditor.js';
 import { createWireSemantics } from '../adapters/react/WireSemantics.js';
+import { createWireFunctionPicker } from '../adapters/react/WireLabelPicker.js';
 import { createWireEndpoints } from '../adapters/react/WireEndpoints.js';
 import { createWireRouting } from '../adapters/react/WireRouting.js';
 import type { InspectorBindings, InspectorSession } from './records/inspector.js';
@@ -28,7 +29,9 @@ import {
   retainObjectCommand,
   retainWireCommand,
   editedObject,
+  rebasedWireDraft,
   wireChanges,
+  wireDraftKey,
   encodeObjectRecovery,
   encodeWireRecovery,
 } from './api.js';
@@ -90,7 +93,7 @@ import { createSectionNavigator } from '../adapters/react/SectionNavigator.js';
 import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
 import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
-import { planCanvasEdit } from './api.js';
+import { planCanvasEdit, wireApplyBlock } from './api.js';
 import {
   buildMoveReview,
   buildExpandOption,
@@ -169,6 +172,7 @@ function featureSections(
   function LibrarySection(props: FeatureProps): ReactElement {
     return createElement(Browser, { controller: props.controller, view: props.view });
   }
+  const functionPicker = createWireFunctionPicker(design);
   return [
     { tab: 'add', id: 'creation', title: 'Create', Content: createAddTools(design) },
     { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
@@ -187,8 +191,13 @@ function featureSections(
       title: 'Connection',
       Content: createWireEditor({
         ...design,
+        check: (draft, current) => wireApplyBlock(draft, current, plan),
+        FunctionPicker: functionPicker,
         fields: [
-          { id: 'meaning', Content: createWireSemantics(design) },
+          {
+            id: 'meaning',
+            Content: createWireSemantics({ ...design, FunctionPicker: functionPicker }),
+          },
           { id: 'endpoints', Content: createWireEndpoints(design) },
           { id: 'routing', Content: createWireRouting(design) },
         ],
@@ -517,13 +526,29 @@ export function createInspectorSession(bindings: InspectorBindings): InspectorSe
 }
 /** Wire forms reuse the same retention/acknowledgement policy with section-scoped identities. */
 export function createWireSession(bindings: WireEditorBindings): WireEditorSession {
-  return createRetainedEditor({
+  const editor = createRetainedEditor({
     ...bindings,
     namespace: 'wire-inspector',
     encode: encodeWireRecovery,
     edit: retainWireCommand,
     apply: (draft) => bindings.apply(draft, wireChanges(draft)),
   });
+  return {
+    ...editor,
+    preview: (draft, signal) => bindings.preview(draft, wireChanges(draft), signal),
+    rebase: (selection) => {
+      const key = wireDraftKey(
+        selection.collection.id,
+        selection.section.id,
+        selection.relationship.id,
+      );
+      const draft = editor.getSnapshot().drafts.find((item) => item.key === key);
+      const next = draft && rebasedWireDraft(draft, selection);
+      return next === draft || next === undefined
+        ? { ok: true, value: undefined }
+        : editor.replace(next);
+    },
+  };
 }
 
 /** Owner failures keep their original code; locally detected setup faults use the host vocabulary. */

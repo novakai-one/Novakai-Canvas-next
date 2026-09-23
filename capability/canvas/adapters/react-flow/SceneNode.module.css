@@ -27,6 +27,11 @@
   .node[data-emphasis='muted'] :global(.react-flow__handle) {
     opacity: 0;
   }
+  /* Connect tool: handles take the pointer so a drag can start a wire. */
+  .node :global(.react-flow__handle.connectable) {
+    opacity: 1;
+    pointer-events: auto;
+  }
   /* Material mount: cards rise and fade in, staggered by column via --nv-mount-delay.
      TODO(tokens): promote 360ms to a motion.mount token when the token files are free. */
   @media (prefers-reduced-motion: no-preference) {

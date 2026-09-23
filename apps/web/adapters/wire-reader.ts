@@ -48,6 +48,14 @@ const command: z.ZodType<WireEdit> = z.discriminatedUnion('kind', [
     value: z.enum(['auto', 'top', 'right', 'bottom', 'left']),
   }),
   z.strictObject({ kind: z.literal('automatic-route') }),
+  z.strictObject({
+    kind: z.literal('function'),
+    object: objectId,
+    member: descendantId,
+    label: z.string(),
+    create: z.boolean(),
+  }),
+  z.strictObject({ kind: z.literal('function-name'), name: z.string() }),
 ]);
 const legacyRecord = z.object({
   key: z.string(),

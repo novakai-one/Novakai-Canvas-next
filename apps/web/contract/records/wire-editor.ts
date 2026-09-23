@@ -37,7 +37,27 @@ export type WireEdit =
       readonly side: 'sourceSide' | 'targetSide';
       readonly value: WireAppearance['sourceSide'];
     }
-  | { readonly kind: 'automatic-route' };
+  | { readonly kind: 'automatic-route' }
+  | FunctionChoice
+  /** A new function is being named but the name cannot be used yet (blank, duplicate, no letter). */
+  | { readonly kind: 'function-name'; readonly name: string };
+/**
+ * Point an imports/calls wire at one function (signature) of its target module. `create` stages
+ * that signature on the module too, so Apply submits both records as one undoable revision.
+ */
+export interface FunctionChoice {
+  readonly kind: 'function';
+  readonly object: Endpoint['object'];
+  readonly member: NonNullable<Endpoint['member']>;
+  readonly label: string;
+  readonly create: boolean;
+}
+/** A function the draft will add to its module when applied. */
+export interface NewFunction {
+  readonly object: Endpoint['object'];
+  readonly id: NonNullable<Endpoint['member']>;
+  readonly label: string;
+}
 export interface WireDraft extends Omit<WireSelection, 'base'> {
   readonly base: EditingBase;
   readonly key: string;
@@ -46,7 +66,26 @@ export interface WireDraft extends Omit<WireSelection, 'base'> {
 export interface EditedWire {
   readonly relationship: Relationship;
   readonly wire: WireAppearance;
+  /** Present only while the draft adds a new function to the target module. */
+  readonly created?: NewFunction | null;
+  /** The typed name while a new function is being named and cannot be used yet. */
+  readonly naming?: string | null;
 }
+/** One owner issue as the Model reports it: a code and a record path. */
+export interface PlanIssue {
+  readonly code: string;
+  readonly path: string;
+  readonly message: string;
+}
+/** What the Model's planner says about a change list; only acceptance and issues are read. */
+export type WirePlanOutcome =
+  | { readonly ok: true }
+  | {
+      readonly ok: false;
+      readonly error: { readonly code: string; readonly diagnostics: readonly PlanIssue[] };
+    };
+/** The Model's own planner, injected at composition; Apply is offered only when it accepts. */
+export type WirePlanner = (collection: Collection, changes: readonly Change[]) => WirePlanOutcome;
 export interface WireEditorState {
   readonly drafts: readonly WireDraft[];
   readonly problem: Diagnostic | null;
@@ -59,13 +98,18 @@ export interface WireEditorSession {
   edit(selection: WireSelection, command: WireEdit): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
+  /** Moves this wire's draft onto the selection's newer revision when nothing it touches changed. */
+  rebase(selection: WireSelection): Result<void>;
+  /** Dry run of the exact change list Apply would send; the server writes nothing. */
+  preview(draft: WireDraft, signal: AbortSignal): Promise<Result<void>>;
 }
 export interface WireEditorBindings {
   readonly retention: DraftRetention;
   read(input: unknown): Result<readonly WireDraft[]>;
   apply(draft: WireDraft, changes: readonly Change[]): Promise<Result<Receipt>>;
+  preview(draft: WireDraft, changes: readonly Change[], signal: AbortSignal): Promise<Result<void>>;
   report(error: Diagnostic): void;
 }
 export type WireEditorFactory = (
-  callbacks: Pick<WireEditorBindings, 'apply' | 'report'>,
+  callbacks: Pick<WireEditorBindings, 'apply' | 'preview' | 'report'>,
 ) => WireEditorSession;

@@ -1,27 +1,26 @@
 import type { ComponentType, ReactElement } from 'react';
-import type { WireFieldsProps } from '../../contract/wire-react.js';
+import type { WireFieldsProps, WireFunctionPickerProps } from '../../contract/wire-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
 import { relationshipLabel } from '@novakai/canvas-model';
+import { functionTarget } from '../../contract/api.js';
 import styles from './ObjectEditor.module.css';
 /** Shared wire meaning is explicit; no local routing control can change these fields. */
 export function createWireSemantics({
   Field,
-}: Pick<DesignSlots, 'Field'>): ComponentType<WireFieldsProps> {
+  FunctionPicker,
+}: Pick<DesignSlots, 'Field'> & {
+  readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
+}): ComponentType<WireFieldsProps> {
   /** Controlled fields retain invalid intermediate labels for correction instead of dropping input. */
-  function WireSemantics({ value: { relationship }, edit }: WireFieldsProps): ReactElement {
+  function WireSemantics(props: WireFieldsProps): ReactElement {
+    const {
+      value: { relationship },
+      edit,
+    } = props;
     return (
       <fieldset className={styles.block}>
         <legend>Shared relationship</legend>
-        <Field
-          label="Wire label"
-          control={(props) => (
-            <input
-              {...props}
-              value={relationshipLabel(relationship)}
-              onChange={(event) => edit({ kind: 'label', value: event.target.value })}
-            />
-          )}
-        />
+        <WireLabel {...props} Field={Field} FunctionPicker={FunctionPicker} />
         <Field
           label="Relationship kind"
           control={(props) => (
@@ -106,6 +105,40 @@ export function createWireSemantics({
     );
   }
   return WireSemantics;
+}
+/** Module and interface wires pick one of the target's functions; other wires take free text. */
+function WireLabel({
+  FunctionPicker,
+  ...props
+}: WireFieldsProps &
+  Pick<DesignSlots, 'Field'> & {
+    readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
+  }): ReactElement {
+  const target = functionTarget(props.collection, props.value.relationship);
+  if (target !== null) return <FunctionPicker {...props} target={target} />;
+  return <WireLabelText {...props} />;
+}
+function WireLabelText({
+  value: { relationship },
+  collection,
+  edit,
+  Field,
+}: WireFieldsProps & Pick<DesignSlots, 'Field'>): ReactElement {
+  const label = relationshipLabel(relationship, collection.objects);
+  return (
+    <Field
+      label="Wire label"
+      required
+      error={relationship.label?.trim() === '' ? 'The wire label cannot be empty.' : ''}
+      control={(controlProps) => (
+        <input
+          {...controlProps}
+          value={label}
+          onChange={(event) => edit({ kind: 'label', value: event.target.value })}
+        />
+      )}
+    />
+  );
 }
 const kinds = [
   'flow',

@@ -29,8 +29,39 @@ export {
 export { editedObject, objectDraftKey } from '../core/inspector/object-edits.js';
 export { selectedObject } from '../core/inspector/selection.js';
 export { defaultPreferences } from '../core/preferences/defaults.js';
-export { editedWire, wireChanges, wireDraftKey } from '../core/inspector/wire-edits.js';
+export {
+  editedWire,
+  rebasedWireDraft,
+  wireChanges,
+  wireDraftKey,
+} from '../core/inspector/wire-edits.js';
 export { selectedWire } from '../core/inspector/wire-selection.js';
+export {
+  chosenConnectionFunction,
+  connectionAsWire,
+  connectionFunctionOwner,
+  connectionKindChanged,
+  connectionLabel,
+  connectionProblem,
+  namedConnectionFunction,
+  existingFunction,
+  functionTarget,
+  newFunctionChange,
+  moduleFunctions,
+  newFunctionId,
+  newFunctionProblem,
+  withNewFunction,
+} from '../core/inspector/wire-functions.js';
+export { wireApplyBlock } from '../core/inspector/wire-apply.js';
+export { createWireDryRun, dryRunFor } from '../core/inspector/wire-dry-run.js';
+export type {
+  WireDryRun,
+  WireDryRunSchedule,
+  WireDryRunState,
+} from '../core/inspector/wire-dry-run.js';
+export type { ModuleFunction } from '../core/inspector/wire-functions.js';
+export { plainWireProblem } from '../core/inspector/wire-problems.js';
+export type { WireProblemContext } from '../core/inspector/wire-problems.js';
 export { retainObjectCommand, retainWireCommand } from '../core/inspector/draft-commands.js';
 export { endpointKey, endpointChoices } from '../core/inspector/endpoints.js';
 export {

@@ -45,6 +45,12 @@ import {
 } from '../contract/api.js';
 
 const creationKinds = ['diagram', 'object', 'group'] as const;
+const restingStatuses = new Set([
+  'Ready',
+  'Saved',
+  'Draft not applied',
+  'Edit awaiting confirmation',
+]);
 const allRelationshipKinds: readonly RelationshipKind[] = [
   'flow',
   'association',
@@ -563,6 +569,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   const definitions = bindings.definitions({ apply: applyDefinition, report });
   const wires = bindings.wires({ apply: applyChanges, report });
   const library = bindings.library({ apply: applyLibrary, report });
+  const stopEditorStatus = [inspector, wires, definitions].map((editor) =>
+    editor.subscribe(refreshRestingStatus),
+  );
   let refusalOrder = emptyRefusalOrder;
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
   function holdConfirmedHistory(pending: readonly Submission[]): void {
@@ -1062,18 +1071,26 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     });
   }
   /** Rendering acknowledges geometry only, never an unconfirmed edit. */
-  /** A refused edit leaves its form open with the unsaved changes; the status must not claim "Saved". */
-  function statusAfterDismiss(): string {
-    return openDraftCount() > 0 ? 'Draft not applied' : editStatus();
-  }
+  /** An open, unapplied editor form in this collection means "Draft not applied", never "Saved". */
   function openDraftCount(): number {
-    return [inspector, wires, definitions].reduce(
-      (count, editor) => count + editor.getSnapshot().drafts.length,
-      0,
-    );
+    const open = state.active?.document.collection.id;
+    return [inspector, wires, definitions]
+      .flatMap(
+        (editor): readonly { readonly collection: { readonly id: string } }[] =>
+          editor.getSnapshot().drafts,
+      )
+      .filter((draft) => draft.collection.id === open).length;
+  }
+  function hasUnappliedDraft(): boolean {
+    return state.sourceDirty || openDraftCount() > 0;
+  }
+  /** Opening, editing or discarding a form moves a resting status; progress and failure messages stay. */
+  function refreshRestingStatus(): void {
+    const next = editStatus();
+    if (restingStatuses.has(state.status) && next !== state.status) update({ status: next });
   }
   function editStatus(): string {
-    if (state.sourceDirty) return 'Draft not applied';
+    if (hasUnappliedDraft()) return 'Draft not applied';
     if (state.pending.some((item) => item.state !== 'rejected'))
       return 'Edit awaiting confirmation';
     return 'Saved';
@@ -2765,7 +2782,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     reconcileRequest,
     dismissRequest,
     // Clearing the problem also dismisses the refused request (see update).
-    dismissProblem: () => update({ problem: null, status: statusAfterDismiss() }),
+    dismissProblem: () => update({ problem: null, status: editStatus() }),
     retryRequest,
     create,
     addDiagram,
@@ -2787,6 +2804,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       disposed = true;
       removeHistoryKeys();
       unsubscribe();
+      stopEditorStatus.forEach((stop) => stop());
       invalidateRender();
       snapshotRead += 1;
       state.active?.session.dispose();

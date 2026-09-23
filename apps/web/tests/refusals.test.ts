@@ -213,8 +213,9 @@ it('a refused definition stays editable after reload', slow, async () => {
   });
 });
 
-it('closing the error bar while the refused form is open does not say "Saved"', slow, async () => {
+it('"Draft not applied" follows the unapplied forms of the open collection', slow, async () => {
   await withSample(async (service) => {
+    await addOtherCollection(service);
     const human = await opened(serviceClient(service, [], { count: 1 }));
     const active = human.getSnapshot().active;
     assert(active !== null);
@@ -230,6 +231,12 @@ it('closing the error bar while the refused form is open does not say "Saved"', 
     human.dismissProblem();
     expect(human.getSnapshot().problem).toBeNull();
     expect(human.getSnapshot().status).toBe('Draft not applied');
+    await human.open('other');
+    expect(human.getSnapshot().status).toBe('Saved');
+    await human.open('sample');
+    expect(human.getSnapshot().status).toBe('Draft not applied');
+    assert(human.inspector.discard(key).ok);
+    expect(human.getSnapshot().status).toBe('Saved');
     human.dispose();
   });
 });

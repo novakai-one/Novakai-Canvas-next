@@ -165,6 +165,22 @@ it('points the wire at an existing function without changing the module', () => 
   });
 });
 
+it('picking the function the wire already names changes nothing and keeps Apply off', () => {
+  const start = moduleWire();
+  const relationship = {
+    ...start.relationship,
+    label: 'submit',
+    target: { object: objectId.parse('service'), member: descendantId.parse('submit') },
+  };
+  const selection = { ...start, relationship };
+  const draft = draftAfter(selection, [
+    choice('close', 'close', false),
+    choice('submit', 'submit', false),
+  ]);
+  expect(wireChanges(draft)).toEqual([]);
+  expect(block(selection, draft)).toBe('Nothing changed. The wire already looks like this.');
+});
+
 it('adds a new function to the module and names the wire after it in one change list', () => {
   const selection = moduleWire();
   const draft = draftAfter(selection, [choice('createIssue', 'createIssue', true)]);

@@ -30,6 +30,7 @@ function recordIssue(issue: ValidationSource['diagnostics'][number]): OwnerIssue
   return issue.source ?? { code: issue.code, path: issue.target, message: issue.message };
 }
 export const pickFunction = 'Pick a function in Wire label.';
+export const nothingChanged = 'Nothing changed. The wire already looks like this.';
 export const staleDraft =
   'This collection changed since the draft started. Discard the draft and redo it.';
 const stale: Rule = (issue) => (issue.code === 'revision-conflict' ? staleDraft : null);

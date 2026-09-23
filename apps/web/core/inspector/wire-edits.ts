@@ -194,7 +194,10 @@ function automatic(current: EditedWire): EditedWire {
 }
 /** Submit one atomic Model change list. Unchanged shared or local records are not needlessly replaced. */
 export function wireChanges(draft: WireDraft): readonly Change[] {
-  const edited = editedWire(draft);
+  return editedChanges(draft, editedWire(draft));
+}
+/** The change list for an already replayed draft, so callers replay the edits only once. */
+export function editedChanges(draft: WireDraft, edited: EditedWire): readonly Change[] {
   return [
     ...newFunctionChange(draft.collection, edited.created ?? null),
     ...relationshipChanges(draft.relationship, edited.relationship),
@@ -214,12 +217,12 @@ function droppedBends(before: WireAppearance, after: WireAppearance): boolean {
 }
 /** Reference identity is retained until a semantic command actually changes the relationship. */
 function relationshipChanges(original: Relationship, next: Relationship): readonly Change[] {
-  if (original === next) return [];
+  if (sameValue(original, next)) return [];
   return [{ op: 'replace', target: 'relationships', value: next }];
 }
 /** Only one wire appearance is replaced inside its captured section. */
 function routeChanges(draft: WireDraft, next: WireAppearance): readonly Change[] {
-  if (draft.wire === next) return [];
+  if (sameValue(draft.wire, next)) return [];
   const section = {
     ...draft.section,
     wires: draft.section.wires.map((wire) =>
@@ -227,4 +230,15 @@ function routeChanges(draft: WireDraft, next: WireAppearance): readonly Change[]
     ),
   };
   return [{ op: 'replace', target: 'sections', value: section }];
+}
+/** Edits that end where they started (re-picking the current function) change nothing. */
+export function sameValue(left: unknown, right: unknown): boolean {
+  return left === right || canonical(left) === canonical(right);
+}
+function canonical(value: unknown): string {
+  return JSON.stringify(value, (_key, item: unknown) =>
+    item !== null && typeof item === 'object' && !Array.isArray(item)
+      ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
+      : item,
+  );
 }

@@ -7,7 +7,7 @@ import {
   withNewFunction,
 } from '../../contract/api.js';
 import type { Collection } from '../../contract/records/owners.js';
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type { WireFieldsProps } from '../../contract/wire-react.js';
@@ -125,7 +125,8 @@ function WireSelectionEditor({
           draft={draft}
           value={value}
           collection={collection}
-          blocked={check(draft, selection.collection)}
+          check={check}
+          current={selection.collection}
           preview={session.preview}
           view={view}
           Button={Button}
@@ -215,7 +216,8 @@ function WireFooter({
   draft,
   value,
   collection,
-  blocked,
+  check,
+  current,
   preview,
   view,
   Button,
@@ -225,13 +227,16 @@ function WireFooter({
   readonly draft: WireDraft;
   readonly value: EditedWire;
   readonly collection: Collection;
-  readonly blocked: string | null;
+  readonly check: WireCheck;
+  readonly current: Collection;
   readonly preview: WireEditorSession['preview'];
   readonly Button: DesignSlots['Button'];
   readonly apply: () => void;
   readonly discard: () => void;
 }): ReactElement {
   const created = value.created ?? null;
+  /** The Model plan runs once per draft, not on every render the footer receives. */
+  const blocked = useMemo(() => check(draft, current), [check, draft, current]);
   const reason = useApplyBlock(draft, value, collection, blocked, preview, view.connected);
   return (
     <footer>

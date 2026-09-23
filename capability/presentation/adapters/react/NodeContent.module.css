@@ -128,6 +128,77 @@
     stroke: var(--nv-canvas-node-boundary);
   }
 
+  .root[data-follows-interface-roles='true'] :is(.heading, .body) line {
+    stroke: var(--nv-canvas-node-boundary);
+  }
+
+  /* Key badges repaint from their style role, like role-filled nodes. */
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='primary'] {
+    fill: var(--nv-role-primary-fill);
+    stroke: var(--nv-role-primary-stroke);
+  }
+
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='primary']
+    + text {
+    fill: var(--nv-role-primary-text);
+  }
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='supporting'] {
+    fill: var(--nv-role-supporting-fill);
+    stroke: var(--nv-role-supporting-stroke);
+  }
+
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='supporting']
+    + text {
+    fill: var(--nv-role-supporting-text);
+  }
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='decision'] {
+    fill: var(--nv-role-decision-fill);
+    stroke: var(--nv-role-decision-stroke);
+  }
+
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='decision']
+    + text {
+    fill: var(--nv-role-decision-text);
+  }
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='success'] {
+    fill: var(--nv-role-success-fill);
+    stroke: var(--nv-role-success-stroke);
+  }
+
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='success']
+    + text {
+    fill: var(--nv-role-success-text);
+  }
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='warning'] {
+    fill: var(--nv-role-warning-fill);
+    stroke: var(--nv-role-warning-stroke);
+  }
+
+  .root[data-follows-interface-roles='true']
+    :is(.heading, .body)
+    rect[data-badge][data-role='warning']
+    + text {
+    fill: var(--nv-role-warning-text);
+  }
+
   .root[data-follows-interface-roles='true'][data-node-role='neutral']:not([data-shape='container'])
     .heading
     text:not(rect[data-badge] + text) {

@@ -157,4 +157,24 @@
     overflow: visible;
     pointer-events: none;
   }
+  /* UI-derived diagram themes: labels and markers take the interface palette, not the baked light colours. */
+  :global([data-follows-interface-roles='true']) .label :global(rect) {
+    fill: var(--nv-surface-raised);
+    stroke: var(--nv-border-default);
+  }
+  :global([data-follows-interface-roles='true']) .label :global(text) {
+    fill: var(--nv-text-primary);
+  }
+  :global([data-follows-interface-roles='true']) .marker :global(path) {
+    stroke: var(--nv-canvas-wire-flow-to);
+  }
+  :global([data-follows-interface-roles='true']) .marker :global(path:not([fill='none'])) {
+    fill: var(--nv-canvas-wire-flow-to);
+  }
+  :global([data-follows-interface-roles='true']) .marker :global(circle) {
+    stroke: var(--nv-canvas-wire-flow-to);
+  }
+  :global([data-follows-interface-roles='true']) :is(.marker, .markerContrast) :global(circle) {
+    fill: var(--nv-canvas-surface);
+  }
 }

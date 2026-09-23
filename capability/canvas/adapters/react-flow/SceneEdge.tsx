@@ -176,7 +176,7 @@ export function createSceneEdge(
           </>
         )}
         {wire.labelVisible !== false && (
-          <g transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
+          <g className={styles.label} transform={`translate(${wire.labelBox.x} ${wire.labelBox.y})`}>
             <Content embedFonts={false} content={wire.measuredLabel} />
           </g>
         )}

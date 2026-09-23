@@ -72,6 +72,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
         aria-label={props.label}
         tabIndex={0}
         data-zoom-tier={snapshot.view.detail}
+        data-follows-interface-roles={props.followsInterfaceRoles === true}
         onKeyDown={interactions.keyboard}
         onPointerCancel={interactions.actions.cancelGeometry}
         onPointerDownCapture={(event) => setPointer(pointerThreshold(event.pointerType))}

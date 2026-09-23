@@ -2,7 +2,14 @@ import { definitionId } from '@novakai/canvas-model';
 
 export { planCanvasEdit } from '../core/editing/plan.js';
 
-export { blocksSubmission, submissionStatus, refused } from '../core/editing/submissions.js';
+export {
+  blocksSubmission,
+  submissionStatus,
+  refused,
+  emptyRefusalOrder,
+  observeRefusals,
+  supersededRefusal,
+} from '../core/editing/submissions.js';
 
 export {
   defaultPanels,
@@ -49,8 +56,9 @@ export {
   encodeWireRecovery,
 } from '../core/recovery/editor-records.js';
 
-export { formatFailure, failureSummary } from '../core/output/diagnostics.js';
+export { formatFailure, failureSummary, plainMessage } from '../core/output/diagnostics.js';
 export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';
+export { palette, planPaletteDrop, type PaletteDrop } from '../core/editing/palette-drop.js';
 
 export function definitionDraftId(value: string): import('@novakai/canvas-model').Definition['id'] {
   return definitionId.parse(value);

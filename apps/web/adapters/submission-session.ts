@@ -15,9 +15,12 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
   let workspace = '';
   let pending: readonly Submission[] = [];
   const recovering = new Set<string>();
-  /** Save the entire recovery journal before publishing its immutable view. */
+  /** Save the recovery journal before publishing its immutable view. A proven refusal changed nothing, so it is not kept across reload. */
   function retain(next: readonly Submission[]): Result<void> {
-    const stored = bindings.retention.write(`pending.${workspace}`, next);
+    const stored = bindings.retention.write(
+      `pending.${workspace}`,
+      next.filter((item) => item.state !== 'rejected'),
+    );
     if (!stored.ok) return stored;
     publish(next);
     return { ok: true, value: undefined };
@@ -45,7 +48,9 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
       bindings.report(result.error);
       return;
     }
-    const own = result.value.filter((item) => item.request.workspace === workspace);
+    const own = result.value.filter(
+      (item) => item.request.workspace === workspace && item.state !== 'rejected',
+    );
     publish(own.map(recovered));
   }
   /** Reject overlapping work before writing or sending; creating another collection may proceed independently. */
@@ -214,8 +219,7 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
   return { restore, submit, reconcile, retry, dismiss, preview };
 }
 
-/** A proven pre-commit refusal remains a refusal across reload; all other interrupted states need a receipt lookup. */
+/** Interrupted states need a receipt lookup; proven refusals were already dropped from the journal. */
 function recovered(item: Submission): Submission {
-  if (item.state === 'rejected') return item;
   return { ...item, state: 'uncertain' };
 }

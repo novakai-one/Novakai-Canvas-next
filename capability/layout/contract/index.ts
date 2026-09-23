@@ -62,7 +62,7 @@ export type {
   Connection,
   Obstacle,
 } from './records/problem.js';
-export { toCollection, toSection, toParent } from './api.js';
+export { toCollection, toSection, toParent, hiddenLabelBoxes } from './api.js';
 
 export { readScene } from './api.js';
 export type { SceneReaderOwners } from './types.js';

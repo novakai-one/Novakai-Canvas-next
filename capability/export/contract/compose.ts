@@ -47,11 +47,12 @@ export function composeExport(owners: ExportOwners): ExportBindings {
   const renderer = createSceneRenderer(
     {
       ...drawings,
-      wire: createWireDrawing(drawings.label, Marker, owners.allLabels === true),
+      wire: createWireDrawing(drawings.label, Marker),
       sequence: createSequenceDrawing(drawings.label, Marker),
     },
     owners.presentation.FontDefinitions,
     owners.presentation.fonts.map((font) => font.digest),
+    owners.allLabels === true,
   );
   const encoding = createEncoding();
   const transfer = { documents: owners.documents, resources: owners.resources, encoding };

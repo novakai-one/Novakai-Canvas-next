@@ -152,8 +152,8 @@
   }
   .overlayLabel {
     position: absolute;
-    /* Wire SVGs sit at z-index 2; same level + later in the page puts labels above wires, below nodes. */
-    z-index: 2;
+    /* Wires sit at 2, nodes at 1: labels read above both. A label with no clear spot stays readable. */
+    z-index: 3;
     overflow: visible;
     pointer-events: none;
   }

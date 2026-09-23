@@ -6,8 +6,10 @@ import type {
   FlowNode,
   FlowEdge,
 } from '../../contract/react-types.js';
+import { hiddenLabelBoxes } from '@novakai/canvas-layout';
 import type { Result } from '../../contract/errors.js';
 import type { ViewNode } from '../../contract/records/view.js';
+import type { Box } from '../../contract/records/camera.js';
 /** Group interiors belong to the camera; only their explicit boundary hit surface receives input. */
 function nodeSurfaceStyle(view: ViewNode): NonNullable<FlowNode['style']> {
   return {
@@ -105,11 +107,31 @@ function parentOrder(nodes: readonly FlowNode[]): FlowNode[] {
   return result;
 }
 /** Edges preserve supplied labels/markers/routes and their scene scope; no routing algorithm runs here. */
+/** One placement pass per section, so shown labels never sit on each other. */
+function hiddenLabels(snapshot: ViewSnapshot): ReadonlyMap<string, Box> {
+  return new Map(
+    snapshot.view.sections.flatMap((item) => {
+      const wires = snapshot.view.wires.filter(
+        (view) => view.target.kind === 'wire' && view.target.section === item.section.id,
+      );
+      const boxes = hiddenLabelBoxes(
+        wires.map((view) => view.wire),
+        item.section.nodes,
+      );
+      return wires.flatMap((view) => {
+        const box = boxes.get(view.wire.id);
+        return box === undefined ? [] : [[view.id, box] as const];
+      });
+    }),
+  );
+}
 function flowEdges(
   snapshot: ViewSnapshot,
   actions: ViewActions,
   paint: SurfaceProps['paint'],
+  showLabels: boolean,
 ): FlowEdge[] {
+  const labels = showLabels ? hiddenLabels(snapshot) : new Map<string, Box>();
   return snapshot.view.wires.map((view) => ({
     id: view.id,
     type: 'scene',
@@ -122,6 +144,7 @@ function flowEdges(
       paint,
       nudge: snapshot.state.profile.nudge,
       zoom: view.showLabel ? snapshot.view.camera.zoom : 1,
+      hiddenLabel: labels.get(view.id),
     },
     selected: view.selected,
     hidden: view.hidden,
@@ -134,19 +157,20 @@ function graphRecords(
   result: Result<ViewSnapshot>,
   actions: ViewActions,
   paint: SurfaceProps['paint'],
+  showLabels: boolean,
 ): { nodes: FlowNode[]; edges: FlowEdge[] } {
   if (!result.ok) return { nodes: [], edges: [] };
   return {
     nodes: flowNodes(result.value, actions, paint),
-    edges: flowEdges(result.value, actions, paint),
+    edges: flowEdges(result.value, actions, paint, showLabels),
   };
 }
 /** Cache actual React Flow records, not just inner data. Repeated projections are semantically safe; host remounts the surface after a reported rendering failure, rebuilding this disposable cache. */
 export function createGraphSelector(): GraphSelector {
   let previousNodes = new Map<string, FlowNode>();
   let previousEdges = new Map<string, FlowEdge>();
-  return (result, actions, paint): ReturnType<typeof graphRecords> => {
-    const next = graphRecords(result, actions, paint);
+  return (result, actions, paint, showLabels): ReturnType<typeof graphRecords> => {
+    const next = graphRecords(result, actions, paint, showLabels);
     const nodes = next.nodes.map((node) => stableFlowNode(node, previousNodes.get(node.id)));
     const edges = next.edges.map((edge) => stableFlowEdge(edge, previousEdges.get(edge.id)));
     previousNodes = new Map(nodes.map((node) => [node.id, node]));
@@ -177,6 +201,11 @@ function stableFlowEdge(next: FlowEdge, previous: FlowEdge | undefined): FlowEdg
     next.data?.paint === previous.data?.paint,
     next.data?.nudge === previous.data?.nudge,
     next.data?.zoom === previous.data?.zoom,
+    sameBox(next.data?.hiddenLabel, previous.data?.hiddenLabel),
   ].every(Boolean);
   return equal ? previous : next;
+}
+function sameBox(a: Box | undefined, b: Box | undefined): boolean {
+  if (a === undefined || b === undefined) return a === b;
+  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 }

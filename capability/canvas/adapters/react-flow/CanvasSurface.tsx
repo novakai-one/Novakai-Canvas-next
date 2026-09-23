@@ -14,7 +14,6 @@ import type {
 import type { Result } from '../../contract/errors.js';
 import styles from './CanvasSurface.module.css';
 import themeStyles from './react-flow-theme.module.css';
-import { AllLabels } from './labels-context.js';
 /** Report a rejected view from an effect, never as a render-time side effect; host retains its last committed data. */
 function reportView(result: Result<ViewSnapshot>, onError: SurfaceProps['onError']): void {
   if (!result.ok) onError(result.error);
@@ -54,8 +53,8 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
     );
     const selectGraph = useMemo(() => slots.createGraphSelector(), []);
     const graph = useMemo(
-      () => selectGraph(result, interactions.actions, props.paint),
-      [selectGraph, result, interactions.actions, props.paint],
+      () => selectGraph(result, interactions.actions, props.paint, props.showLabels === true),
+      [selectGraph, result, interactions.actions, props.paint, props.showLabels],
     );
     if (!result.ok) return <div role="alert">Canvas unavailable: {result.error.message}</div>;
     const snapshot = result.value;
@@ -78,60 +77,58 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
         onPointerDownCapture={(event) => setPointer(pointerThreshold(event.pointerType))}
       >
         <Fonts />
-        <AllLabels.Provider value={props.showLabels === true}>
-          <ReactFlow<FlowNode, FlowEdge>
-            nodes={graph.nodes}
-            edges={graph.edges}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            viewport={snapshot.view.camera}
-            {...interactions.flow}
-            onError={(code, message) =>
-              props.onError({
-                code: 'provider-failure',
-                path: `react-flow.${code}`,
-                targets: [],
-                message,
-                recovery: 'Host retains committed data and repairs the Canvas binding.',
-              })
-            }
-            fitView={false}
-            minZoom={snapshot.state.profile.zoomMin}
-            maxZoom={snapshot.state.profile.zoomMax}
-            panOnScroll
-            zoomOnScroll={false}
-            zoomOnPinch
-            zoomOnDoubleClick={false}
-            panOnDrag={hand ? true : [0, 1]}
-            panActivationKeyCode="Space"
-            selectionOnDrag={snapshot.state.profile.blankDrag === 'marquee'}
-            selectionKeyCode="Shift"
-            multiSelectionKeyCode="Shift"
-            deleteKeyCode={null}
-            disableKeyboardA11y
-            elevateEdgesOnSelect
-            nodeDragThreshold={snapshot.state.profile[pointer]}
-            nodeClickDistance={snapshot.state.profile.fineThreshold}
-            onlyRenderVisibleElements
-          >
-            {chrome.minimap && (
-              <MiniMap
-                pannable
-                zoomable
-                ariaLabel="Collection minimap"
-                nodeColor={(node) => minimapColor(node as FlowNode)}
-              />
-            )}
-            {props.showRoads && <Roads sections={snapshot.view.sections} />}
-            <Sequence
-              followsInterfaceRoles={props.followsInterfaceRoles === true}
-              sections={snapshot.view.sections}
-              nodes={snapshot.view.nodes}
-              actions={interactions.actions}
-              paint={props.paint}
+        <ReactFlow<FlowNode, FlowEdge>
+          nodes={graph.nodes}
+          edges={graph.edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          viewport={snapshot.view.camera}
+          {...interactions.flow}
+          onError={(code, message) =>
+            props.onError({
+              code: 'provider-failure',
+              path: `react-flow.${code}`,
+              targets: [],
+              message,
+              recovery: 'Host retains committed data and repairs the Canvas binding.',
+            })
+          }
+          fitView={false}
+          minZoom={snapshot.state.profile.zoomMin}
+          maxZoom={snapshot.state.profile.zoomMax}
+          panOnScroll
+          zoomOnScroll={false}
+          zoomOnPinch
+          zoomOnDoubleClick={false}
+          panOnDrag={hand ? true : [0, 1]}
+          panActivationKeyCode="Space"
+          selectionOnDrag={snapshot.state.profile.blankDrag === 'marquee'}
+          selectionKeyCode="Shift"
+          multiSelectionKeyCode="Shift"
+          deleteKeyCode={null}
+          disableKeyboardA11y
+          elevateEdgesOnSelect
+          nodeDragThreshold={snapshot.state.profile[pointer]}
+          nodeClickDistance={snapshot.state.profile.fineThreshold}
+          onlyRenderVisibleElements
+        >
+          {chrome.minimap && (
+            <MiniMap
+              pannable
+              zoomable
+              ariaLabel="Collection minimap"
+              nodeColor={(node) => minimapColor(node as FlowNode)}
             />
-          </ReactFlow>
-        </AllLabels.Provider>
+          )}
+          {props.showRoads && <Roads sections={snapshot.view.sections} />}
+          <Sequence
+            followsInterfaceRoles={props.followsInterfaceRoles === true}
+            sections={snapshot.view.sections}
+            nodes={snapshot.view.nodes}
+            actions={interactions.actions}
+            paint={props.paint}
+          />
+        </ReactFlow>
         <div aria-hidden="true" className={styles.vignette} data-active={energized} />
         {controlsVisible && (
           <Controls

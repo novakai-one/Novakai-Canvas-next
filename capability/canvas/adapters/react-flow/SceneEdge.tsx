@@ -1,12 +1,11 @@
-import { memo, useContext } from 'react';
+import { memo } from 'react';
 import { EdgeLabelRenderer } from '@xyflow/react';
 import type { ComponentType, ReactElement } from 'react';
 import type { SceneEdgeProps, RenderSlots, WireLabelProps } from '../../contract/react-types.js';
 import type { ViewWire } from '../../contract/records/view.js';
 import type { RoutedWire } from '../../contract/records/scene.js';
-import type { Point } from '../../contract/records/camera.js';
+import type { Point, Box } from '../../contract/records/camera.js';
 import styles from './SceneEdge.module.css';
-import { AllLabels } from './labels-context.js';
 /** Preview routes may be endpoint-stretched; admitted routes retain the native routing path exactly. */
 function wirePath(points: readonly Point[]): string {
   return points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x} ${point.y}`).join(' ');
@@ -69,10 +68,10 @@ export function createSceneEdge(
   const Content = slots.MeasuredContent;
   const Label = slots.WireLabel;
   /** All-labels mode: HTML layer above every wire, so later wires never paint over a label. */
-  function OverlayLabel({ view, anchor }: { readonly view: ViewWire; readonly anchor: Point }) {
+  function OverlayLabel({ view, box }: { readonly view: ViewWire; readonly box: Box }) {
     const { width, height } = view.wire.measuredLabel;
-    const x = view.origin.x + anchor.x - width / 2;
-    const y = view.origin.y + anchor.y - height / 2;
+    const x = view.origin.x + box.x;
+    const y = view.origin.y + box.y;
     return (
       <EdgeLabelRenderer>
         <svg
@@ -88,15 +87,11 @@ export function createSceneEdge(
   }
   /** Render actual React Flow edge paths with independently positioned measured labels and complete crow's-foot notation. */
   function SceneEdge({ data }: SceneEdgeProps): ReactElement | null {
-    const all = useContext(AllLabels);
     if (!data) return null;
-    return renderEdge(data, all);
+    return renderEdge(data);
   }
   /** Admitted routes always have two points; missing geometry stays visibly absent rather than inventing a wire. */
-  function renderEdge(
-    data: NonNullable<SceneEdgeProps['data']>,
-    all: boolean,
-  ): ReactElement | null {
+  function renderEdge(data: NonNullable<SceneEdgeProps['data']>): ReactElement | null {
     const { view } = data;
     const wire = view.wire;
     const paint = wire.appearance.paint;
@@ -201,11 +196,11 @@ export function createSceneEdge(
             <Marker kind={wire.targetMarker} paint={paint} />
           </g>
         </g>
-        {wire.labelVisible === false && view.showLabel && (
+        {wire.labelVisible === false && view.showLabel && data.hiddenLabel === undefined && (
           <Label wire={wire} zoom={data.zoom} anchor={labelAnchor} />
         )}
-        {wire.labelVisible === false && all && !view.showLabel && (
-          <OverlayLabel view={view} anchor={labelAnchor} />
+        {wire.labelVisible === false && data.hiddenLabel !== undefined && (
+          <OverlayLabel view={view} box={data.hiddenLabel} />
         )}
       </g>
     );

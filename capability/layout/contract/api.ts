@@ -46,6 +46,8 @@ export function createLayout(dependencies: Dependencies): Layout {
 }
 
 export { toCollection, toSection, toParent } from '../core/geometry/coordinates.js';
+/** Where each hidden wire label would sit if shown. Shared by the canvas labels toggle and exports. */
+export { hiddenLabelBoxes } from '../core/routing/hidden-labels.js';
 
 /** Independently validate and reconstruct a worker/HTTP scene; Canvas retains its accepted scene when rejected. */
 export function readScene(input: unknown, owners: SceneReaderOwners): Result<Scene> {

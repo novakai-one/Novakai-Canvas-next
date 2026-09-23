@@ -262,6 +262,28 @@ it('a save check that settles the request clears "could not be confirmed"', slow
   });
 });
 
+it('"could not be confirmed" stays while another request is still unconfirmed', slow, async () => {
+  await withSample(async (service) => {
+    await addOtherCollection(service);
+    const real = serviceClient(service, [], { count: 0 });
+    const human = await opened({
+      ...real,
+      post: async () =>
+        failure('connection-uncertain', 'The service response could not be confirmed'),
+    });
+    await human.addObject(module);
+    await human.open('other');
+    await human.addGroup({ section: 'process', title: 'Stage' });
+    const ids = human.getSnapshot().pending.map((item) => item.request.request);
+    expect(ids).toHaveLength(2);
+    await human.reconcileRequest(ids[0] ?? '');
+    expect(human.getSnapshot().problem).toMatchObject({ code: 'connection-uncertain' });
+    await human.reconcileRequest(ids[1] ?? '');
+    expect(human.getSnapshot().problem).toBeNull();
+    human.dispose();
+  });
+});
+
 async function addOtherCollection(service: WorkspaceSession): Promise<void> {
   const before = await service.read();
   assert(before.ok);

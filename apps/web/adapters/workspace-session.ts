@@ -2393,11 +2393,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (receipt === null) update({ status: 'No receipt found — retry remains an explicit action' });
     else settleConfirmedCreation(id);
   }
-  /** "Could not be confirmed" is stale once a check or retry has settled the request's state. */
+  /** "Could not be confirmed" is stale once no request remains unconfirmed. */
   function clearSettledUncertainty(): void {
-    const stale = state.problem?.code === 'connection-uncertain' ? state.problem : null;
+    const stale = staleUncertainty();
     if (stale === null) return;
     update({ problem: null, creation: creationWithout(plainMessage(stale.message)) });
+  }
+  function staleUncertainty(): Diagnostic | null {
+    if (state.problem?.code !== 'connection-uncertain') return null;
+    return state.pending.some((item) => item.state === 'uncertain') ? null : state.problem;
   }
   function creationWithout(message: string): WorkspaceView['creation'] {
     return state.creation.problem === message

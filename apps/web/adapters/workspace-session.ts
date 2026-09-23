@@ -1,7 +1,13 @@
 import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
 import type { ObjectDraft } from '../contract/records/inspector.js';
-import type { DiagramObject, Group, Relationship, Section } from '../contract/records/owners.js';
+import type {
+  Change,
+  DiagramObject,
+  Group,
+  Relationship,
+  Section,
+} from '../contract/records/owners.js';
 import type {
   AddDiagramDraft,
   AddGroupDraft,
@@ -1709,7 +1715,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Same request as Apply, sent to the no-write preview route; only the verdict is kept. */
   async function previewChanges(
     draft: Pick<ObjectDraft, 'base' | 'collection' | 'generation'>,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly Change[],
     signal: AbortSignal,
   ): Promise<Result<void>> {
     const request = bindings.inputs.model(

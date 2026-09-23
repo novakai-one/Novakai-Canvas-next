@@ -140,6 +140,7 @@ it('offers the target functions only for imports and calls wires into a module o
   assert(target);
   expect(moduleFunctions(target)).toEqual([
     { id: 'submit', label: 'submit' },
+    { id: 'store', label: 'store' },
     { id: 'close', label: 'close' },
   ]);
   const port = editedWire(draftAfter(selection, [retarget('port')])).relationship;
@@ -226,12 +227,16 @@ it('says why Apply is off: blank label, unusable new name, calls without a funct
   const naming = (name: string) =>
     block(selection, draftAfter(selection, [{ kind: 'function-name', name }]));
   expect(naming('')).toBe('Type a name for the new function.');
-  expect(naming('!!!')).toBe('Name needs at least one letter A–Z or digit 0–9.');
-  expect(naming('日本語')).toBe('Name needs at least one letter A–Z or digit 0–9.');
+  const identifier =
+    'Use letters, digits and _ only, starting with a letter. No spaces. Example: submitIssue';
+  for (const name of ['!!!', '日本語', 'submit issue', '2fast'])
+    expect(naming(name)).toBe(identifier);
   expect(naming('Submit')).toBe(
     "Issue service already has function 'submit'. Pick it from the list instead.",
   );
-  expect(naming('store')).toBe("Issue service already has 'store'. Choose another name.");
+  expect(naming('store')).toBe(
+    "Issue service already has function 'store'. Pick it from the list instead.",
+  );
   expect(newFunctionProblem('createIssue', target, null)).toBeNull();
   const calls = draftAfter(selection, [{ kind: 'relationship-kind', value: 'calls' }]);
   expect(block(selection, calls)).toBe('Pick a function in Wire label.');

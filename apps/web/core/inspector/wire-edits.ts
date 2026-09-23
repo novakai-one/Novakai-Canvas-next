@@ -13,6 +13,7 @@ import type {
 } from '../../contract/records/wire-editor.js';
 import {
   functionTarget,
+  functionWires,
   moduleFunctions,
   newFunctionChange,
   withNewFunction,
@@ -75,11 +76,14 @@ function text(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'label' && edit.kind !== 'guard' && edit.kind !== 'effect') return current;
   return { ...current, relationship: { ...current.relationship, [edit.kind]: edit.value } };
 }
-/** Changing notation does not silently discard cardinalities or other semantics. */
+/**
+ * Changing notation does not silently discard cardinalities or other semantics. Leaving imports or
+ * calls abandons a staged new function.
+ */
 function relationshipKind(current: EditedWire, edit: WireEdit, original: Relationship): EditedWire {
   if (edit.kind !== 'relationship-kind') return current;
   const relationship = { ...current.relationship, kind: edit.value };
-  if (functionKinds.includes(edit.value)) return { ...current, relationship };
+  if (functionWires.includes(edit.value)) return { ...current, relationship };
   return { ...droppedFunction({ ...current, relationship }, original), naming: null };
 }
 /**
@@ -98,8 +102,6 @@ function withLabel(relationship: Relationship, label: string | undefined): Relat
   void dropped;
   return unlabelled;
 }
-/** Only these kinds name a module function; switching away abandons a staged new function. */
-const functionKinds: readonly Relationship['kind'][] = ['imports', 'calls'];
 /** Line style belongs to the shared relationship and is visible in every appearance. */
 function style(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'style') return current;

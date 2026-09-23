@@ -7,12 +7,14 @@ import type {
 } from '../../contract/records/owners.js';
 import type { NewFunction } from '../../contract/records/wire-editor.js';
 type Signature = Extract<ContentBlock, { kind: 'signature' }>;
-/** One function a module wire can name: the module's signature identity and its display name. */
+type Member = Extract<ContentBlock, { kind: 'member' }>;
+/** One function a module wire can name: a signature or member identity and its display name. */
 export interface ModuleFunction {
   readonly id: string;
   readonly label: string;
 }
-const functionWires: readonly Relationship['kind'][] = ['imports', 'calls'];
+/** Only these kinds name a module function. */
+export const functionWires: readonly Relationship['kind'][] = ['imports', 'calls'];
 const functionOwners: readonly DiagramObject['kind'][] = ['module', 'interface'];
 /** Imports and calls wires into a module or interface name one of its functions. */
 export function functionTarget(
@@ -26,12 +28,12 @@ function functionOwner(collection: Collection, id: string): DiagramObject | null
   const object = collection.objects.find((item) => item.id === id);
   return object !== undefined && functionOwners.includes(object.kind) ? object : null;
 }
-/** Signatures are the module's functions, in authored order. */
+/** Signatures and members are the module's functions, in authored order. */
 export function moduleFunctions(object: DiagramObject): readonly ModuleFunction[] {
-  return object.content.filter(isSignature).map((item) => ({ id: item.id, label: item.label }));
+  return object.content.filter(isFunction).map((item) => ({ id: item.id, label: item.label }));
 }
-function isSignature(block: ContentBlock): block is Signature {
-  return block.kind === 'signature';
+function isFunction(block: ContentBlock): block is Signature | Member {
+  return block.kind === 'signature' || block.kind === 'member';
 }
 /** The collection as it will be after Apply: the staged function is appended to its module. */
 export function withNewFunction(collection: Collection, created: NewFunction | null): Collection {
@@ -104,25 +106,19 @@ export function newFunctionProblem(
   pending: string | null,
 ): string | null {
   if (name.trim() === '') return 'Type a name for the new function.';
-  if (identityBase(name) === '') return 'Name needs at least one letter A–Z or digit 0–9.';
+  if (!identifier.test(name.trim()))
+    return 'Use letters, digits and _ only, starting with a letter. No spaces. Example: submitIssue';
   return duplicateProblem(name, object, pending);
 }
-/** A function clash is resolved by picking it; any other labelled part needs a new name. */
+const identifier = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+/** A clash with an existing function is resolved by picking it from the list. */
 function duplicateProblem(
   name: string,
   object: DiagramObject,
   pending: string | null,
 ): string | null {
-  const labelled = object.content.flatMap(labelledPart).filter((item) => item.id !== pending);
-  const duplicate = existingFunction(labelled, name);
+  const functions = moduleFunctions(object).filter((item) => item.id !== pending);
+  const duplicate = existingFunction(functions, name);
   if (duplicate === null) return null;
-  const signature = moduleFunctions(object).some((item) => item.id === duplicate.id);
-  return signature
-    ? `${object.label} already has function '${duplicate.label}'. Pick it from the list instead.`
-    : `${object.label} already has '${duplicate.label}'. Choose another name.`;
-}
-function labelledPart(block: ContentBlock): readonly ModuleFunction[] {
-  return 'label' in block && typeof block.label === 'string'
-    ? [{ id: block.id, label: block.label }]
-    : [];
+  return `${object.label} already has function '${duplicate.label}'. Pick it from the list instead.`;
 }

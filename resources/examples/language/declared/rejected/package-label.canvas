@@ -1,7 +1,7 @@
 canvas 2
 declare @modules-model {
   node @routes module "routes.ts"
-  node @zod package "zod"
+  node @zod package "Zod"
   wire @e1 @routes -> @zod "fetchOrderFast" kind=imports
 }
 collection @reject-package-label "Rejected package label" uses=@modules-model {

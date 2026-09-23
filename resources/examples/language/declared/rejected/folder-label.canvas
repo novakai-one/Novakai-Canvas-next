@@ -1,7 +1,7 @@
 canvas 2
 declare @modules-model {
-  node @src folder "src"
-  node @lib folder "lib"
+  node @src folder "Source"
+  node @lib folder "Library"
   wire @f1 @src -> @lib "usesHelpers" kind=reference
 }
 collection @reject-folder-label "Rejected folder label" uses=@modules-model {

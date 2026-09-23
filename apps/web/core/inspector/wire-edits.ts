@@ -1,12 +1,22 @@
 import type { Change, Relationship, WireAppearance } from '../../contract/records/owners.js';
-import type { WireDraft, WireEdit, EditedWire } from '../../contract/records/wire-editor.js';
+import type {
+  WireDraft,
+  WireEdit,
+  EditedWire,
+  NewFunction,
+} from '../../contract/records/wire-editor.js';
+import { newFunctionChange } from './wire-functions.js';
 /** Shared relationship plus local section identify a wire form without parsing generated scene IDs. */
 export function wireDraftKey(collection: string, section: string, relationship: string): string {
   return JSON.stringify([collection, section, relationship]);
 }
 /** Replay against the captured version, even after an agent changes the displayed collection. */
 export function editedWire(draft: WireDraft): EditedWire {
-  return draft.edits.reduce(applyWireEdit, { relationship: draft.relationship, wire: draft.wire });
+  return draft.edits.reduce(applyWireEdit, {
+    relationship: draft.relationship,
+    wire: draft.wire,
+    created: null,
+  });
 }
 /** A closed command registry separates semantic edits from local appearance edits. */
 const operations: Readonly<
@@ -23,6 +33,7 @@ const operations: Readonly<
   side,
   locked,
   'automatic-route': automatic,
+  function: chooseFunction,
 };
 /** Each operation preserves every field outside its declared scope. */
 function applyWireEdit(current: EditedWire, edit: WireEdit): EditedWire {
@@ -46,7 +57,21 @@ function style(current: EditedWire, edit: WireEdit): EditedWire {
 /** Endpoints are stable object/member identities; layout chooses their pixel anchors. */
 function endpoint(current: EditedWire, edit: WireEdit): EditedWire {
   if (edit.kind !== 'endpoint') return current;
-  return { ...current, relationship: { ...current.relationship, [edit.side]: edit.value } };
+  const relationship = { ...current.relationship, [edit.side]: edit.value };
+  return { ...current, relationship, created: keptFunction(current, edit.side) };
+}
+/** Retargeting the wire abandons a staged new function; the module is then left unchanged. */
+function keptFunction(current: EditedWire, side: 'source' | 'target'): NewFunction | null {
+  if (side === 'target') return null;
+  return current.created ?? null;
+}
+/** The wire names the chosen function and attaches to it; a staged function travels with the draft. */
+function chooseFunction(current: EditedWire, edit: WireEdit): EditedWire {
+  if (edit.kind !== 'function') return current;
+  const target = { object: edit.object, member: edit.member };
+  const relationship = { ...current.relationship, label: edit.label, target };
+  const created = edit.create ? { object: edit.object, id: edit.member, label: edit.label } : null;
+  return { ...current, relationship, created };
 }
 /** Clearing multiplicity removes the optional property rather than storing an invalid sentinel. */
 function cardinality(current: EditedWire, edit: WireEdit): EditedWire {
@@ -88,6 +113,7 @@ function automatic(current: EditedWire): EditedWire {
 export function wireChanges(draft: WireDraft): readonly Change[] {
   const edited = editedWire(draft);
   return [
+    ...newFunctionChange(draft.collection, edited.created ?? null),
     ...relationshipChanges(draft.relationship, edited.relationship),
     ...explicitRouteReset(draft),
     ...routeChanges(draft, edited.wire),

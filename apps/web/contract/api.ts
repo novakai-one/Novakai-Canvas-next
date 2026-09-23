@@ -24,6 +24,16 @@ export { selectedObject } from '../core/inspector/selection.js';
 export { defaultPreferences } from '../core/preferences/defaults.js';
 export { editedWire, wireChanges, wireDraftKey } from '../core/inspector/wire-edits.js';
 export { selectedWire } from '../core/inspector/wire-selection.js';
+export {
+  existingFunction,
+  functionTarget,
+  hasBlankLabel,
+  moduleFunctions,
+  newFunctionId,
+  withNewFunction,
+} from '../core/inspector/wire-functions.js';
+export type { ModuleFunction } from '../core/inspector/wire-functions.js';
+export { plainRelationshipProblem, plainWireProblem } from '../core/inspector/wire-problems.js';
 export { retainObjectCommand, retainWireCommand } from '../core/inspector/draft-commands.js';
 export { endpointKey, endpointChoices } from '../core/inspector/endpoints.js';
 export {

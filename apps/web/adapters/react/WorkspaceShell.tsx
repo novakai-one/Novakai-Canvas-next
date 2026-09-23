@@ -1,4 +1,4 @@
-import { formatFailure, failureSummary } from '../../contract/api.js';
+import { formatFailure, plainRelationshipProblem } from '../../contract/api.js';
 import { panelVisible } from '../../contract/api.js';
 import { useState, useSyncExternalStore, useEffect } from 'react';
 import type { ComponentType, ReactElement } from 'react';
@@ -264,7 +264,7 @@ function ProblemSlot({
   if (view.problem === null) return null;
   return (
     <div className={styles.problem} role="alert">
-      <strong>{failureSummary(view.problem)}</strong>
+      <strong>{plainRelationshipProblem(view.problem)}</strong>
       <details>
         <summary>Technical details</summary>
         {formatFailure(view.problem).map((line, index) => (

@@ -1,9 +1,20 @@
-import { formatFailure } from '../../contract/api.js';
+import {
+  formatFailure,
+  hasBlankLabel,
+  plainWireProblem,
+  withNewFunction,
+} from '../../contract/api.js';
 import { useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type { WireFieldsProps } from '../../contract/wire-react.js';
-import type { WireEdit } from '../../contract/records/wire-editor.js';
+import type {
+  EditedWire,
+  NewFunction,
+  WireDraft,
+  WireEdit,
+} from '../../contract/records/wire-editor.js';
+import type { Diagnostic } from '../../contract/errors.js';
 import type { ConnectionDraft, Cardinality } from '../../contract/records/connection.js';
 import type { SessionState } from '@novakai/canvas-canvas';
 import { selectedWire, wireDraftKey, editedWire } from '../../contract/api.js';
@@ -80,7 +91,8 @@ function WireSelectionEditor({
     selection.relationship.id,
   );
   const draft = forms.drafts.find((item) => item.key === key);
-  const value = draft ? editedWire(draft) : selection;
+  const value: EditedWire = draft ? editedWire(draft) : selection;
+  const collection = withNewFunction(selection.collection, value.created ?? null);
   const edit = (command: WireEdit): void => {
     session.edit(selection, command);
   };
@@ -93,30 +105,92 @@ function WireSelectionEditor({
         </p>
       </header>
       {fields.map(({ id, Content }) => (
-        <Content key={id} value={value} collection={selection.collection} edit={edit} />
+        <Content key={id} value={value} collection={collection} edit={edit} />
       ))}
-      {forms.problem && <p role="alert">{formatFailure(forms.problem).join(' · ')}</p>}
+      <WireProblem problem={forms.problem} />
       {draft && (
-        <footer>
-          <p>
-            Draft from revision {draft.collection.revision}. Shared meaning and local routing apply
-            together.
-          </p>
-          <div className={styles.choices}>
-            <Button
-              label="Apply wire"
-              variant="primary"
-              disabled={view.busy || !view.connected}
-              pending={view.busy}
-              onClick={() => {
-                void session.apply(key);
-              }}
-            />
-            <Button label="Discard wire draft" onClick={() => session.discard(key)} />
-          </div>
-        </footer>
+        <WireFooter
+          draft={draft}
+          value={value}
+          view={view}
+          Button={Button}
+          apply={() => void session.apply(key)}
+          discard={() => session.discard(key)}
+        />
       )}
     </div>
+  );
+}
+/** A failed Apply reads as one plain sentence; the owner's exact evidence stays one click away. */
+function WireProblem({ problem }: { readonly problem: Diagnostic | null }): ReactElement | null {
+  if (problem === null) return null;
+  return (
+    <div role="alert">
+      <p>{plainWireProblem(problem)}</p>
+      <details>
+        <summary>Technical details</summary>
+        {formatFailure(problem).map((line, index) => (
+          <p key={index}>{line}</p>
+        ))}
+      </details>
+    </div>
+  );
+}
+/** Apply is blocked, with a reason, while the label is blank; a staged module change is restated. */
+function WireFooter({
+  draft,
+  value,
+  view,
+  Button,
+  apply,
+  discard,
+}: Pick<FeatureProps, 'view'> & {
+  readonly draft: WireDraft;
+  readonly value: EditedWire;
+  readonly Button: DesignSlots['Button'];
+  readonly apply: () => void;
+  readonly discard: () => void;
+}): ReactElement {
+  const created = value.created ?? null;
+  const blank = hasBlankLabel(value);
+  return (
+    <footer>
+      <p>
+        Draft from revision {draft.collection.revision}. Shared meaning and local routing apply
+        together.
+      </p>
+      <CreatedHint created={created} collection={draft.collection} />
+      {blank && (
+        <p className={styles.hint} role="status">
+          Apply is off: the wire label is empty. Type a label or pick a function.
+        </p>
+      )}
+      <div className={styles.choices}>
+        <Button
+          label={created ? 'Add function and apply wire' : 'Apply wire'}
+          variant="primary"
+          disabled={view.busy || !view.connected || blank}
+          pending={view.busy}
+          onClick={apply}
+        />
+        <Button label="Discard wire draft" onClick={discard} />
+      </div>
+    </footer>
+  );
+}
+function CreatedHint({
+  created,
+  collection,
+}: {
+  readonly created: NewFunction | null;
+  readonly collection: WireDraft['collection'];
+}): ReactElement | null {
+  if (created === null) return null;
+  const owner = collection.objects.find((item) => item.id === created.object);
+  return (
+    <p className={styles.hint}>
+      {`Apply also adds function '${created.label}' to module ${owner?.label ?? created.object}.`}
+    </p>
   );
 }
 

@@ -50,4 +50,23 @@
     align-items: center;
     gap: var(--nv-space-2);
   }
+  /* A change that reaches beyond the selected wire (for example, into a module) is announced here. */
+  .notice {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-2);
+    padding: var(--nv-space-3);
+    border: var(--nv-stroke-base) solid var(--nv-status-warning);
+    border-inline-start-width: var(--nv-space-1);
+    border-radius: var(--nv-radius-control);
+    background: var(--nv-color-panel);
+  }
+  .notice strong {
+    color: var(--nv-status-warning);
+  }
+  .notice p,
+  .hint {
+    color: var(--nv-color-content);
+    font-size: var(--nv-font-caption);
+  }
 }

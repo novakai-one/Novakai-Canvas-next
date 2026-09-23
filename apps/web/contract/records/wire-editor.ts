@@ -37,7 +37,25 @@ export type WireEdit =
       readonly side: 'sourceSide' | 'targetSide';
       readonly value: WireAppearance['sourceSide'];
     }
-  | { readonly kind: 'automatic-route' };
+  | { readonly kind: 'automatic-route' }
+  | FunctionChoice;
+/**
+ * Point an imports/calls wire at one function (signature) of its target module. `create` stages
+ * that signature on the module too, so Apply submits both records as one undoable revision.
+ */
+export interface FunctionChoice {
+  readonly kind: 'function';
+  readonly object: Endpoint['object'];
+  readonly member: NonNullable<Endpoint['member']>;
+  readonly label: string;
+  readonly create: boolean;
+}
+/** A function the draft will add to its module when applied. */
+export interface NewFunction {
+  readonly object: Endpoint['object'];
+  readonly id: NonNullable<Endpoint['member']>;
+  readonly label: string;
+}
 export interface WireDraft extends Omit<WireSelection, 'base'> {
   readonly base: EditingBase;
   readonly key: string;
@@ -46,6 +64,8 @@ export interface WireDraft extends Omit<WireSelection, 'base'> {
 export interface EditedWire {
   readonly relationship: Relationship;
   readonly wire: WireAppearance;
+  /** Present only while the draft adds a new function to the target module. */
+  readonly created?: NewFunction | null;
 }
 export interface WireEditorState {
   readonly drafts: readonly WireDraft[];

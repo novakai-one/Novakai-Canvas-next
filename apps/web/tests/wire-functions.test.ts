@@ -33,6 +33,7 @@ function moduleWire(kind: 'imports' | 'flow' = 'imports'): WireSelection {
         content: [
           { kind: 'signature', id: 'submit', label: 'submit', parameters: [], returns: 'void' },
           { kind: 'member', id: 'store', label: 'store', type: 'Store' },
+          { kind: 'signature', id: 'close', label: 'close', parameters: [], returns: 'void' },
         ],
       },
       {
@@ -105,6 +106,16 @@ function draftAfter(selection: WireSelection, edits: readonly WireEdit[]) {
 function block(selection: WireSelection, draft: WireDraft): string | null {
   return wireApplyBlock(draft, selection.collection, plan);
 }
+/** The Model accepts the change list and, for a module wire, the target is one of its functions. */
+function acceptedAndNamed(
+  selection: WireSelection,
+  draft: WireDraft,
+  member: string | undefined,
+): boolean {
+  const owner = functionTarget(selection.collection, editedWire(draft).relationship);
+  const named = owner === null || moduleFunctions(owner).some((item) => item.id === member);
+  return named && plan(selection.collection, wireChanges(draft)).ok;
+}
 function retarget(object: string, member?: string): WireEdit {
   const value =
     member === undefined
@@ -126,7 +137,10 @@ it('offers the target functions only for imports and calls wires into a module o
   const selection = moduleWire();
   const target = functionTarget(selection.collection, selection.relationship);
   assert(target);
-  expect(moduleFunctions(target)).toEqual([{ id: 'submit', label: 'submit' }]);
+  expect(moduleFunctions(target)).toEqual([
+    { id: 'submit', label: 'submit' },
+    { id: 'close', label: 'close' },
+  ]);
   const port = editedWire(draftAfter(selection, [retarget('port')])).relationship;
   expect(functionTarget(selection.collection, port)?.id).toBe('port');
   const fn = editedWire(draftAfter(selection, [retarget('fn')])).relationship;
@@ -160,7 +174,12 @@ it('adds a new function to the module and names the wire after it in one change 
   const result = plan(selection.collection, wireChanges(draft));
   assert(result.ok, JSON.stringify(result));
   const service = result.value.candidate.objects.find((object) => object.id === 'service');
-  expect(service?.content.map((block) => block.id)).toEqual(['submit', 'store', 'createIssue']);
+  expect(service?.content.map((block) => block.id)).toEqual([
+    'submit',
+    'store',
+    'close',
+    'createIssue',
+  ]);
   expect(result.value.candidate.relationships[0]?.target).toEqual({
     object: 'service',
     member: 'createIssue',
@@ -179,7 +198,7 @@ it('retargeting keeps a staged function only when the target is that function', 
   expect(block(selection, kept)).toBeNull();
   const moved = draftAfter(selection, [staged, retarget('service', 'submit')]);
   expect(editedWire(moved).created).toBeNull();
-  expect(editedWire(moved).relationship.label).toBe('creates issue');
+  expect(editedWire(moved).relationship.label).toBe('submit');
   const picked = draftAfter(selection, [staged, choice('submit', 'submit', false)]);
   expect(
     wireChanges(picked).some((change) => 'target' in change && change.target === 'objects'),
@@ -206,25 +225,22 @@ it('says why Apply is off: blank label, unusable new name, calls without a funct
   const naming = (name: string) =>
     block(selection, draftAfter(selection, [{ kind: 'function-name', name }]));
   expect(naming('')).toBe('Type a name for the new function.');
-  expect(naming('!!!')).toBe('Name needs a letter or digit.');
+  expect(naming('!!!')).toBe('Name needs at least one letter A–Z or digit 0–9.');
+  expect(naming('日本語')).toBe('Name needs at least one letter A–Z or digit 0–9.');
   expect(naming('Submit')).toBe(
     "Issue service already has function 'submit'. Pick it from the list instead.",
   );
   expect(naming('store')).toBe("Issue service already has 'store'. Choose another name.");
   expect(newFunctionProblem('createIssue', target, null)).toBeNull();
   const calls = draftAfter(selection, [{ kind: 'relationship-kind', value: 'calls' }]);
-  expect(block(selection, calls)).toBe(
-    "A 'calls' wire must point at one function. Pick one in Wire label.",
-  );
+  expect(block(selection, calls)).toBe('Pick a function in Wire label.');
   const picked = draftAfter(selection, [
     { kind: 'relationship-kind', value: 'calls' },
     choice('submit', 'submit', false),
   ]);
   expect(block(selection, picked)).toBeNull();
   const missing = draftAfter(selection, [choice('gone', 'gone', false)]);
-  expect(block(selection, missing)).toBe(
-    'A wire cannot attach to that part of the object. Choose another endpoint.',
-  );
+  expect(block(selection, missing)).toBe('Pick a function in Wire label.');
 });
 
 it('turns Apply off before sending when the collection moved on since the draft', () => {
@@ -236,7 +252,7 @@ it('turns Apply off before sending when the collection moved on since the draft'
   );
 });
 
-it('Apply is on exactly when the Model accepts the draft, for every kind and target', () => {
+it('Apply is on only when the Model accepts the draft and a module wire names a function', () => {
   const selection = moduleWire();
   const kinds = ['flow', 'association', 'imports', 'calls', 'implements', 'reference'] as const;
   const targets = [
@@ -252,9 +268,9 @@ it('Apply is on exactly when the Model accepts the draft, for every kind and tar
     targets.forEach((target) => {
       const draft = draftAfter(selection, [target, { kind: 'relationship-kind', value }]);
       const reason = block(selection, draft);
-      expect(reason === null, `${value} ${JSON.stringify(target)}`).toBe(
-        plan(selection.collection, wireChanges(draft)).ok,
-      );
+      const member = target.kind === 'endpoint' ? target.value.member : undefined;
+      const expected = acceptedAndNamed(selection, draft, member);
+      expect(reason === null, `${value} ${JSON.stringify(target)}`).toBe(expected);
       expect(reason ?? 'accepted').not.toMatch(/^The wire cannot be saved/);
     }),
   );
@@ -284,9 +300,7 @@ it('an unusable name or a non-function kind drops the staged function', () => {
     { kind: 'relationship-kind', value: 'flow' },
     { kind: 'relationship-kind', value: 'imports' },
   ]);
-  expect(block(selection, back)).toBeNull();
-  const result = plan(selection.collection, wireChanges(back));
-  assert(result.ok, JSON.stringify(result));
+  expect(block(selection, back)).toBe('Pick a function in Wire label.');
   expect(
     wireChanges(flow).some((change) => 'target' in change && change.target === 'objects'),
   ).toBe(false);
@@ -330,4 +344,103 @@ it('explains owner rejections by code and path, not by their wording', () => {
   expect(plainWireProblem(stale, flow)).toBe(
     'This collection changed since the draft started. Discard the draft and redo it.',
   );
+});
+
+it('the label of a module wire is the name of its target function', () => {
+  const selection = moduleWire();
+  const moved = draftAfter(selection, [
+    choice('submit', 'submit', false),
+    retarget('service', 'close'),
+  ]);
+  expect(editedWire(moved).relationship).toMatchObject({
+    label: 'close',
+    target: { object: 'service', member: 'close' },
+  });
+  expect(block(selection, moved)).toBeNull();
+  const only = draftAfter(selection, [retarget('service', 'submit')]);
+  expect(editedWire(only).relationship.label).toBe('submit');
+  const other = draftAfter(selection, [retarget('port', 'open')]);
+  expect(editedWire(other).relationship.label).toBe('open');
+  const saved = plan(selection.collection, wireChanges(moved));
+  assert(saved.ok, JSON.stringify(saved));
+  expect(saved.value.candidate.relationships[0]).toMatchObject({
+    label: 'close',
+    target: { member: 'close' },
+  });
+});
+
+it('a module wire never keeps a hand-typed label', () => {
+  const plain = moduleWire('flow');
+  const typed = draftAfter(plain, [
+    { kind: 'label', value: 'hand typed label' },
+    { kind: 'relationship-kind', value: 'imports' },
+  ]);
+  expect(editedWire(typed).relationship.label).toBeUndefined();
+  expect(block(plain, typed)).toBe('Pick a function in Wire label.');
+  const selection = moduleWire();
+  const relabelled = draftAfter(selection, [
+    choice('submit', 'submit', false),
+    { kind: 'label', value: 'hand typed label' },
+  ]);
+  expect(editedWire(relabelled).relationship.label).toBe('submit');
+  const legacy = draftAfter(selection, [{ kind: 'style', value: 'dashed' }]);
+  expect(block(selection, legacy)).toBe('Pick a function in Wire label.');
+  const back = draftAfter(plain, [
+    { kind: 'label', value: 'hand typed label' },
+    { kind: 'relationship-kind', value: 'imports' },
+    { kind: 'relationship-kind', value: 'flow' },
+  ]);
+  expect(editedWire(back).relationship.label).toBe('hand typed label');
+});
+
+it('a new target starts from the automatic route; an unchanged target keeps its route', () => {
+  const plain = moduleWire();
+  const wire = {
+    ...plain.wire,
+    sourceSide: 'bottom',
+    targetSide: 'top',
+    manual: [
+      { x: 0, y: 0 },
+      { x: 40, y: 0 },
+    ],
+    locked: true,
+  } as const;
+  const selection = { ...plain, wire, section: { ...plain.section, wires: [wire] } };
+  const picked = draftAfter(selection, [choice('submit', 'submit', false)]);
+  expect(editedWire(picked).wire).toMatchObject({ sourceSide: 'auto', targetSide: 'auto' });
+  expect(editedWire(picked).wire.manual).toBeUndefined();
+  expect(editedWire(picked).wire.locked).toBe(false);
+  expect(wireChanges(picked).map((change) => change.op)).toEqual([
+    'replace',
+    'reset-route',
+    'replace',
+  ]);
+  const moved = draftAfter(selection, [retarget('port', 'open')]);
+  expect(editedWire(moved).wire.targetSide).toBe('auto');
+  const same = draftAfter(selection, [retarget('service'), { kind: 'style', value: 'dashed' }]);
+  expect(editedWire(same).wire).toBe(wire);
+  const sided = draftAfter(selection, [
+    choice('submit', 'submit', false),
+    { kind: 'side', side: 'targetSide', value: 'left' },
+  ]);
+  expect(editedWire(sided).wire.targetSide).toBe('left');
+});
+
+it('a layout rejection reads as a plain step, never as raw JSON', () => {
+  const layout = failure('constraint-conflict', 'A rendering owner rejected the input', {
+    code: 'invalid-input',
+    path: 'render',
+    message: 'A rendering owner rejected the input',
+    recovery: 'Retry',
+    source: {
+      code: 'constraint-conflict',
+      path: 'modules',
+      message: '{"code":"unroutable-leg","wireId":"w01","ownerId":"frozen-scene"}',
+      recovery: 'Retry',
+    },
+  }).error;
+  const context = { kind: 'imports', picker: true } as const;
+  expect(plainWireProblem(layout, context)).toMatch(/^The layout cannot route this wire\./);
+  const unknown = failure('surprise', '{"code":"x"}').error;
+  expect(plainWireProblem(unknown, context)).toBe('The wire was not saved (surprise).');
 });

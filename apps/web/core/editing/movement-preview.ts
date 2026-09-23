@@ -254,9 +254,11 @@ function earlierSiblingGrew(
     const was = sceneBox(document, item.target);
     if (was === undefined) return false;
     const grew = item.box.width > was.width + 0.01 || item.box.height > was.height + 0.01;
+    // A sibling that grows sideways into the pushed container's row may push it down, and one
+    // that grows downward may push it right; either way the grown sibling started before it.
     const before =
-      (dx > 0.01 && was.x + was.width <= at.x + 0.01) ||
-      (dy > 0.01 && was.y + was.height <= at.y + 0.01);
+      (dx > 0.01 || dy > 0.01) &&
+      (was.x + was.width <= at.x + 0.01 || was.y + was.height <= at.y + 0.01);
     return grew && before;
   });
 }

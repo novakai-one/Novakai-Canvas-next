@@ -89,6 +89,9 @@ export function createNestedRoadScene(
     spec.requests,
   );
   const placement = activePorts(initial, requests);
+  const named = new Set(
+    requests.flatMap((request) => request.slice(2).filter((id): id is string => id !== undefined)),
+  );
   const sections = placement.map((p) => p.section),
     nodes = placement.flatMap((p) => p.nodes);
   const ports = measure('ports', () => [
@@ -101,7 +104,7 @@ export function createNestedRoadScene(
         origins.set(road.id, keys),
       ),
       drives = placement.flatMap((p) =>
-        nestedDriveways(p, main, options.lanePitch, nestedBodies(placement)),
+        nestedDriveways(p, main, options.lanePitch, nestedBodies(placement), named),
       );
     drives.forEach((road) => origins.set(road.id, [driveOrigin(road)]));
     const roads = [...main, ...drives].map((road) => ({

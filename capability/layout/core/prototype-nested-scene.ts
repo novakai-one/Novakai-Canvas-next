@@ -90,7 +90,9 @@ export function createNestedRoadScene(
   );
   const placement = activePorts(initial, requests);
   const named = new Set(
-    requests.flatMap((request) => request.slice(2).filter((id): id is string => id !== undefined)),
+    requests.flatMap(([, , source, target]) =>
+      [source, target].filter((id): id is string => id !== undefined),
+    ),
   );
   const sections = placement.map((p) => p.section),
     nodes = placement.flatMap((p) => p.nodes);

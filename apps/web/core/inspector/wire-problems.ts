@@ -1,7 +1,6 @@
 import type { Diagnostic } from '../../contract/errors.js';
 import type { FailureSource, ValidationSource } from '../../contract/records/failure-source.js';
 import type { Relationship } from '../../contract/records/owners.js';
-import { failureSummary } from '../output/diagnostics.js';
 /** What the inspector knows about the wire whose Apply failed. */
 export interface WireProblemContext {
   readonly kind: Relationship['kind'];
@@ -12,22 +11,25 @@ export interface WireProblemContext {
 export interface OwnerIssue {
   readonly code: string;
   readonly path: string;
+  readonly message?: string;
 }
 type Rule = (issue: OwnerIssue, context: WireProblemContext) => string | null;
 /** Every code in the failure chain, outermost first, with the deepest record path. */
 function ownerIssues(error: Diagnostic): readonly OwnerIssue[] {
-  return [{ code: error.code, path: '' }, ...sourceIssues(error.source)];
+  return [{ code: error.code, path: '', message: error.message }, ...sourceIssues(error.source)];
 }
 function sourceIssues(source: FailureSource | undefined): readonly OwnerIssue[] {
   if (source === undefined) return [];
   if ('diagnostics' in source) return source.diagnostics.map(recordIssue);
-  return [{ code: source.code, path: source.path }, ...sourceIssues(source.source)];
+  const own = { code: source.code, path: source.path, message: source.message };
+  return [own, ...sourceIssues(source.source)];
 }
 /** A compiler issue carries the record-owner issue it came from, when there is one. */
 function recordIssue(issue: ValidationSource['diagnostics'][number]): OwnerIssue {
-  if ('path' in issue) return { code: issue.code, path: issue.path };
-  return issue.source ?? { code: issue.code, path: issue.target };
+  if ('path' in issue) return { code: issue.code, path: issue.path, message: issue.message };
+  return issue.source ?? { code: issue.code, path: issue.target, message: issue.message };
 }
+export const pickFunction = 'Pick a function in Wire label.';
 export const staleDraft =
   'This collection changed since the draft started. Discard the draft and redo it.';
 const stale: Rule = (issue) => (issue.code === 'revision-conflict' ? staleDraft : null);
@@ -70,6 +72,11 @@ const kindInMode: Rule = (issue, context) =>
   issue.code === 'mode' && /^sections\.[^.]+\.wires\.[^.]+$/.test(issue.path)
     ? `This section does not allow '${context.kind}' wires. Choose another relationship kind.`
     : null;
+/** The layout could not route the wire; fixed attachment sides are the usual cause. */
+const layout: Rule = (issue) =>
+  issue.code === 'constraint-conflict'
+    ? "The layout cannot route this wire. In Routing, press 'Reset to automatic route', then Apply. If both attachments are already Auto, choose another endpoint."
+    : null;
 function endpointAt(issue: OwnerIssue, path: RegExp): boolean {
   return issue.code === 'endpoint' && path.test(issue.path);
 }
@@ -83,6 +90,7 @@ const rules: readonly Rule[] = [
   cardinality,
   kindInMode,
   hidden,
+  layout,
 ];
 /** The first plain sentence any rule gives for these issues; null when no rule knows them. */
 export function plainIssues(
@@ -97,7 +105,17 @@ export function plainIssues(
 }
 /** One plain sentence for a failed wire Apply; unknown causes fall back to the owner's own message. */
 export function plainWireProblem(error: Diagnostic, context: WireProblemContext): string {
+  const issues = ownerIssues(error);
+  const prose = issues.map((issue) => issue.message).filter(isProse);
   return (
-    plainIssues(ownerIssues(error), context) ?? `The wire was not saved: ${failureSummary(error)}`
+    plainIssues(issues, context) ?? ownerMessage('The wire was not saved', prose.at(-1), error.code)
   );
+}
+/** The owner's prose after a lead sentence; a machine record (JSON) is never shown as the reason. */
+export function ownerMessage(lead: string, message: string | undefined, code: string): string {
+  return isProse(message) ? `${lead}: ${message.trim()}` : `${lead} (${code}).`;
+}
+function isProse(message: string | undefined): message is string {
+  const text = message?.trim() ?? '';
+  return text !== '' && !/^[[{]/.test(text);
 }

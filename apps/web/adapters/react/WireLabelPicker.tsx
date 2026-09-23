@@ -47,11 +47,7 @@ function WireFunctionPicker(props: PickerProps): ReactElement {
             onChange={(event) => choose(event.target.value)}
           >
             {!adding && (
-              <CurrentOption
-                functions={functions}
-                member={member}
-                label={value.relationship.label}
-              />
+              <CurrentOption functions={functions} member={member} label={savedLabel(props)} />
             )}
             {functions.map((item) => (
               <option key={item.id} value={item.id}>
@@ -65,6 +61,11 @@ function WireFunctionPicker(props: PickerProps): ReactElement {
       {adding ? <NewFunctionForm {...props} /> : <ReplacedHint {...props} functions={functions} />}
     </>
   );
+}
+/** A draft drops a label that names no function, so the saved one is what the user recognises. */
+function savedLabel({ value, collection }: WireFieldsProps): string | undefined {
+  const saved = collection.relationships.find((item) => item.id === value.relationship.id);
+  return value.relationship.label ?? saved?.label;
 }
 function selectedValue(
   adding: boolean,
@@ -136,7 +137,10 @@ function NewFunctionForm({ value, target, edit, Field }: PickerProps): ReactElem
           />
         )}
       />
-      <p>Apply wire adds the function and points this wire at it. Undo reverts both.</p>
+      <p>
+        ‘Add function and apply wire’ adds the function and points this wire at it. Undo reverts
+        both.
+      </p>
     </div>
   );
 }

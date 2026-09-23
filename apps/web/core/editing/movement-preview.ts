@@ -163,6 +163,10 @@ function inspectGeometryItem(
   item: { target: Target; box: Box },
   preview: GeometryPreview,
 ): Result<GeometryChange | undefined> {
+  const onto = droppedOntoBox(document, item.target, expected);
+  if (onto !== undefined) return onto;
+  const outside = movedPastGroupEdge(document, item.target, expected);
+  if (outside !== undefined) return outside;
   const expectedMatch =
     grewToHold(document, item.target, expected, item.box) ||
     pushedAside(document, item.target, expected, item.box, preview) ||
@@ -171,6 +175,84 @@ function inspectGeometryItem(
       ? { ok: true as const, value: undefined }
       : validateExpectedBox(expected, item.box);
   return expectedMatch.ok ? inspectMatchedGeometry(document, item, preview) : expectedMatch;
+}
+
+/** Two node boxes overlap by more than a touching edge. */
+function overlaps(a: Box, b: Box): boolean {
+  const margin = 0.5;
+  return (
+    a.x < b.x + b.width - margin &&
+    a.x + a.width > b.x + margin &&
+    a.y < b.y + b.height - margin &&
+    a.y + a.height > b.y + margin
+  );
+}
+
+/** A node's own ancestors and descendants, by id — never "on top of" it, since one contains the
+ * other rather than overlapping it. */
+function relatedNodes(
+  nodes: readonly { id: string; parent: string | null }[],
+  id: string,
+): ReadonlySet<string> {
+  const related = new Set<string>();
+  for (let parent = nodes.find((node) => node.id === id)?.parent ?? null; parent !== null;) {
+    related.add(parent);
+    parent = nodes.find((node) => node.id === parent)?.parent ?? null;
+  }
+  const stack = [id];
+  for (let current = stack.pop(); current !== undefined; current = stack.pop()) {
+    for (const node of nodes) {
+      if (node.parent === current && !related.has(node.id)) {
+        related.add(node.id);
+        stack.push(node.id);
+      }
+    }
+  }
+  return related;
+}
+
+/** A node dropped where its own box lands inside an unrelated node's box refuses outright, rather
+ * than guessing a nearby spot for it. */
+function droppedOntoBox(
+  document: RenderDocument,
+  target: Target,
+  expected: Box,
+): Result<never> | undefined {
+  if (target.kind !== 'node') return undefined;
+  const nodes =
+    document.scene.sections.find((section) => section.id === target.section)?.nodes ?? [];
+  const related = relatedNodes(nodes, target.id);
+  const onto = nodes.find((node) => {
+    if (node.id === target.id || related.has(node.id)) return false;
+    const box = sceneBox(document, { kind: 'node', section: target.section, id: node.id });
+    return box !== undefined && overlaps(expected, box);
+  });
+  return onto === undefined
+    ? undefined
+    : failure('invalid-edit', `Can't drop on top of ${onto.measured.label}`);
+}
+
+/** A member dragged past its own group's top or left edge refuses outright, rather than stopping
+ * it somewhere the request never asked for. */
+function movedPastGroupEdge(
+  document: RenderDocument,
+  target: Target,
+  expected: Box,
+): Result<never> | undefined {
+  if (target.kind !== 'node') return undefined;
+  const nodes =
+    document.scene.sections.find((section) => section.id === target.section)?.nodes ?? [];
+  const node = nodes.find((item) => item.id === target.id);
+  const parent = node?.parent == null ? undefined : nodes.find((item) => item.id === node.parent);
+  if (node === undefined || parent === undefined || parent.measured.groupId == null)
+    return undefined;
+  const parentBox = sceneBox(document, { kind: 'node', section: target.section, id: parent.id });
+  if (
+    parentBox === undefined ||
+    (expected.x + 0.01 >= parentBox.x && expected.y + 0.01 >= parentBox.y)
+  )
+    return undefined;
+  return failure('invalid-edit', `Can't move ${node.measured.label} outside its group`);
 }
 
 /** A section fits its content, so it may shrink or grow when a child moves; it never drifts. */
@@ -229,7 +311,7 @@ function pushedAside(
       dy = after.y - before.y;
     if (dx < -0.01 || dy < -0.01 || (near(dx, 0) && near(dy, 0))) return false;
     if (!near(after.width, before.width) || !near(after.height, before.height)) return false;
-    if (!earlierSiblingGrew(document, preview, container, before, dx, dy)) return false;
+    if (!earlierSiblingGrew(document, preview, container, before)) return false;
     return (
       near(expected.x + dx, actual.x) &&
       near(expected.y + dy, actual.y) &&
@@ -239,28 +321,36 @@ function pushedAside(
   });
 }
 
-/** Something before the pushed container, beside or above it, got bigger. */
+/** Something before the pushed container, beside or above it, in the same container, got bigger. */
 function earlierSiblingGrew(
   document: RenderDocument,
   preview: GeometryPreview,
   pushed: Target,
   at: Box,
-  dx: number,
-  dy: number,
 ): boolean {
   return preview.boxes.some((item) => {
-    if (item.target.kind !== pushed.kind || targetKey(item.target) === targetKey(pushed))
+    if (
+      targetKey(item.target) === targetKey(pushed) ||
+      !sameContainer(document, item.target, pushed)
+    )
       return false;
     const was = sceneBox(document, item.target);
     if (was === undefined) return false;
     const grew = item.box.width > was.width + 0.01 || item.box.height > was.height + 0.01;
     // A sibling that grows sideways into the pushed container's row may push it down, and one
     // that grows downward may push it right; either way the grown sibling started before it.
-    const before =
-      (dx > 0.01 || dy > 0.01) &&
-      (was.x + was.width <= at.x + 0.01 || was.y + was.height <= at.y + 0.01);
+    const before = was.x + was.width <= at.x + 0.01 || was.y + was.height <= at.y + 0.01;
     return grew && before;
   });
+}
+
+/** Two section targets, or two node targets sharing the same parent (or none). */
+function sameContainer(document: RenderDocument, a: Target, b: Target): boolean {
+  if (a.kind === 'section' || b.kind === 'section') return a.kind === b.kind;
+  if (a.section !== b.section) return false;
+  const nodes = document.scene.sections.find((section) => section.id === a.section)?.nodes ?? [];
+  const parentOf = (id: string) => nodes.find((node) => node.id === id)?.parent ?? null;
+  return parentOf(a.id) === parentOf(b.id);
 }
 
 /** A dragged node may stop at its group's inset, between where it was and where it was dropped. */

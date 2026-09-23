@@ -1,4 +1,7 @@
 import {
+  connectionAsWire,
+  connectionFunctionOwner,
+  connectionProblem,
   createWireDryRun,
   dryRunFor,
   formatFailure,
@@ -10,7 +13,7 @@ import type { Collection } from '../../contract/records/owners.js';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import type { ComponentType, ReactElement } from 'react';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
-import type { WireFieldsProps } from '../../contract/wire-react.js';
+import type { WireFieldsProps, WireFunctionPickerProps } from '../../contract/wire-react.js';
 import type {
   EditedWire,
   NewFunction,
@@ -20,7 +23,11 @@ import type {
 } from '../../contract/records/wire-editor.js';
 import type { WireDryRunState, WireProblemContext } from '../../contract/api.js';
 import type { Diagnostic } from '../../contract/errors.js';
-import type { ConnectionDraft, Cardinality } from '../../contract/records/connection.js';
+import type {
+  ConnectionDraft,
+  ConnectionEdit,
+  Cardinality,
+} from '../../contract/records/connection.js';
 import type { SessionState } from '@novakai/canvas-canvas';
 import { selectedWire, wireDraftKey, editedWire } from '../../contract/api.js';
 import { relationshipLabel } from '@novakai/canvas-model';
@@ -33,8 +40,11 @@ export function createWireEditor({
   Field,
   check,
   fields,
+  FunctionPicker,
 }: Pick<DesignSlots, 'Button' | 'Field'> & {
   readonly check: WireCheck;
+  /** The same Wire label picker the wire form uses, for a new connection into a module. */
+  readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
   readonly fields: readonly {
     readonly id: string;
     readonly Content: ComponentType<WireFieldsProps>;
@@ -56,6 +66,7 @@ export function createWireEditor({
           connected={view.connected}
           Field={Field}
           Button={Button}
+          FunctionPicker={FunctionPicker}
           edit={controller.editConnection}
           apply={controller.applyConnection}
           cancel={controller.cancelConnection}
@@ -111,7 +122,7 @@ function WireSelectionEditor({
   return (
     <div className={styles.editor}>
       <header>
-        <strong>{relationshipLabel(selection.relationship)}</strong>
+        <strong>{relationshipLabel(value.relationship, collection.objects)}</strong>
         <p>
           {selection.section.title} · {selection.relationship.id}
         </p>
@@ -130,6 +141,7 @@ function WireSelectionEditor({
           preview={session.preview}
           view={view}
           Button={Button}
+          rebase={() => session.rebase(selection)}
           apply={() => void session.apply(key)}
           discard={() => session.discard(key)}
         />
@@ -230,6 +242,7 @@ function WireFooter({
   preview,
   view,
   Button,
+  rebase,
   apply,
   discard,
 }: Pick<FeatureProps, 'view'> & {
@@ -240,10 +253,15 @@ function WireFooter({
   readonly current: Collection;
   readonly preview: WireEditorSession['preview'];
   readonly Button: DesignSlots['Button'];
+  readonly rebase: () => void;
   readonly apply: () => void;
   readonly discard: () => void;
 }): ReactElement {
   const created = value.created ?? null;
+  /** An unrelated change elsewhere in the collection moves the draft forward instead of blocking it. */
+  useEffect(() => {
+    if (draft.collection.revision < current.revision) rebase();
+  }, [draft, current, rebase]);
   /** The Model plan runs once per draft, not on every render the footer receives. */
   const blocked = useMemo(() => check(draft, current), [check, draft, current]);
   const reason = useApplyBlock(draft, value, collection, blocked, preview, view.connected);
@@ -290,6 +308,7 @@ function ConnectionForm({
   connected,
   Field,
   Button,
+  FunctionPicker,
   edit,
   apply,
   cancel,
@@ -299,13 +318,16 @@ function ConnectionForm({
   readonly connected: boolean;
   readonly Field: DesignSlots['Field'];
   readonly Button: DesignSlots['Button'];
-  readonly edit: (edit: import('../../contract/records/connection.js').ConnectionEdit) => void;
+  readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
+  readonly edit: (edit: ConnectionEdit) => void;
   readonly apply: () => Promise<unknown>;
   readonly cancel: () => void;
 }): ReactElement {
   const endpoint = (side: 'Source' | 'Target', value: ConnectionDraft['source']): string =>
     `${side}: ${value.label}${value.memberLabel ? ` · ${value.memberLabel}` : ''}`;
   const locked = busy || draft.requestState !== 'draft';
+  const blocked = connectionProblem(draft);
+  const created = draft.created ?? null;
   return (
     <div className={styles.editor}>
       <header>
@@ -314,17 +336,12 @@ function ConnectionForm({
       </header>
       <p>{endpoint('Source', draft.source)}</p>
       <p>{endpoint('Target', draft.target)}</p>
-      <Field
-        label="Connection label"
-        required
-        control={(props) => (
-          <input
-            {...props}
-            value={draft.label}
-            disabled={locked}
-            onChange={(event) => edit({ kind: 'label', value: event.target.value })}
-          />
-        )}
+      <ConnectionLabel
+        draft={draft}
+        locked={locked}
+        Field={Field}
+        FunctionPicker={FunctionPicker}
+        edit={edit}
       />
       <Field
         label="Relationship kind"
@@ -366,12 +383,14 @@ function ConnectionForm({
         <p role="status">This request is unresolved. Reconcile or retry it from pending edits.</p>
       )}
       {draft.problem !== null && <p role="alert">{draft.problem}</p>}
+      <CreatedHint created={created} collection={withNewFunction(draft.collection, created)} />
+      <OffReason reason={blocked} />
       <div className={styles.choices}>
         <Button label="Cancel connection" disabled={locked} onClick={cancel} />
         <Button
-          label="Apply connection"
+          label={created === null ? 'Apply connection' : 'Add function and apply connection'}
           variant="primary"
-          disabled={locked || !connected || draft.label.trim().length === 0}
+          disabled={locked || !connected || blocked !== null}
           pending={busy}
           onClick={() => {
             void apply();
@@ -380,6 +399,52 @@ function ConnectionForm({
       </div>
     </div>
   );
+}
+/** A plain connection gets a typed label; a module connection picks one of its functions. */
+function ConnectionLabel({
+  draft,
+  locked,
+  Field,
+  FunctionPicker,
+  edit,
+}: {
+  readonly draft: ConnectionDraft;
+  readonly locked: boolean;
+  readonly Field: DesignSlots['Field'];
+  readonly FunctionPicker: ComponentType<WireFunctionPickerProps>;
+  readonly edit: (edit: ConnectionEdit) => void;
+}): ReactElement {
+  const owner = connectionFunctionOwner(draft);
+  if (owner !== null)
+    return (
+      <FunctionPicker
+        value={connectionAsWire(draft)}
+        collection={withNewFunction(draft.collection, draft.created ?? null)}
+        target={owner}
+        edit={(command) => forwardFunctionEdit(command, edit)}
+      />
+    );
+  return (
+    <Field
+      label="Connection label"
+      required
+      control={(props) => (
+        <input
+          {...props}
+          value={draft.label}
+          disabled={locked}
+          onChange={(event) => edit({ kind: 'label', value: event.target.value })}
+        />
+      )}
+    />
+  );
+}
+/** The shared picker speaks wire edits; a new connection keeps only the function ones. */
+function forwardFunctionEdit(command: WireEdit, edit: (edit: ConnectionEdit) => void): void {
+  if (command.kind === 'function-name') edit(command);
+  if (command.kind !== 'function') return;
+  const { member, label, create } = command;
+  edit({ kind: 'function', member, label, create });
 }
 
 function CardinalityField({

@@ -63,6 +63,7 @@ function WireFunctionPicker(props: PickerProps): ReactElement {
         )}
       />
       {adding ? <NewFunctionForm {...props} /> : <ReplacedHint {...props} functions={functions} />}
+      {!adding && <MismatchHint {...props} functions={functions} />}
     </>
   );
 }
@@ -107,6 +108,29 @@ function ReplacedHint({
     </p>
   );
 }
+/** A label that names no function of the target says so in words, not only in the list. */
+function MismatchHint({
+  value,
+  target,
+  functions,
+}: WireFieldsProps & {
+  readonly target: DiagramObject;
+  readonly functions: readonly ModuleFunction[];
+}): ReactElement | null {
+  const label = value.relationship.label ?? '';
+  const named = functions.some((item) => item.id === value.relationship.target.member);
+  if (named || label === '') return null;
+  return (
+    <p className={styles.hint} role="status">
+      {`“${label}” is not a function of ${target.label}. ${mismatchFix(functions)}`}
+    </p>
+  );
+}
+function mismatchFix(functions: readonly ModuleFunction[]): string {
+  return functions.length > 0
+    ? 'Pick one from Wire label, or add a new one.'
+    : 'It has no functions yet. Add a new one from Wire label.';
+}
 function replacedLabel(label: string | undefined): string {
   return label === undefined ? '' : ` The current label “${label}” is replaced.`;
 }
@@ -136,10 +160,7 @@ function NewFunctionForm({ value, target, edit, Field }: PickerProps): ReactElem
           />
         )}
       />
-      <p>
-        ‘Add function and apply wire’ adds the function and points this wire at it. Undo reverts
-        both.
-      </p>
+      <p>Apply adds the function and points this wire at it. Undo reverts both.</p>
     </div>
   );
 }

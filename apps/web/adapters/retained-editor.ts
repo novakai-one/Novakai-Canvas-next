@@ -81,6 +81,11 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
   function discard(key: string): Result<void> {
     return save(state.drafts.filter((draft) => draft.key !== key));
   }
+  function replace(next: Draft): Result<void> {
+    if (!state.drafts.some((draft) => draft.key === next.key))
+      return { ok: true, value: undefined };
+    return save(state.drafts.map((draft) => (draft.key === next.key ? next : draft)));
+  }
   /** Missing or already discarded forms make no request; cross-workspace forms fail explicitly. */
   async function apply(key: string): Promise<Result<void>> {
     const draft = state.drafts.find((item) => item.key === key);
@@ -122,5 +127,6 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
     edit,
     discard,
     apply,
+    replace,
   };
 }

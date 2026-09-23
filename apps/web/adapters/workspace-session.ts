@@ -48,6 +48,12 @@ import {
   groupDraftProblem,
   groupCreationChanges,
   chooseMoveOption as chooseReviewedMoveOption,
+  chosenConnectionFunction,
+  connectionKindChanged,
+  connectionLabel,
+  connectionProblem,
+  namedConnectionFunction,
+  newFunctionChange,
 } from '../contract/api.js';
 
 const creationKinds = ['diagram', 'object', 'group'] as const;
@@ -150,10 +156,28 @@ function canonicalMemberAllowed(object: DiagramObject, member: string): boolean 
   return kind !== undefined && (allowed as readonly string[]).includes(kind);
 }
 
+/** Each connection edit changes its own field; function edits also move the target member. */
+const connectionEdits: {
+  readonly [Kind in ConnectionEdit['kind']]: (
+    draft: ConnectionDraft,
+    edit: Extract<ConnectionEdit, { kind: Kind }>,
+  ) => ConnectionDraft;
+} = {
+  label: (draft, edit) => ({ ...draft, label: edit.value }),
+  'relationship-kind': (draft, edit) => ({
+    ...connectionKindChanged(draft, edit.value),
+    kind: edit.value,
+  }),
+  cardinality: (draft, edit) => ({ ...draft, [edit.side]: edit.value }),
+  function: chosenConnectionFunction,
+  'function-name': (draft, edit) => namedConnectionFunction(draft, edit.name),
+};
 function editedConnection(draft: ConnectionDraft, edit: ConnectionEdit): ConnectionDraft {
-  if (edit.kind === 'label') return { ...draft, label: edit.value, problem: null };
-  if (edit.kind === 'relationship-kind') return { ...draft, kind: edit.value, problem: null };
-  return { ...draft, [edit.side]: edit.value, problem: null };
+  const apply = connectionEdits[edit.kind] as (
+    draft: ConnectionDraft,
+    edit: ConnectionEdit,
+  ) => ConnectionDraft;
+  return { ...apply(draft, edit), problem: null };
 }
 
 function connectionRequest(
@@ -185,6 +209,7 @@ function connectionRequest(
     draft.base,
     draft.collection.id,
     [
+      ...newFunctionChange(draft.collection, draft.created ?? null),
       { op: 'create', target: 'relationships', value: relationship },
       { op: 'replace', target: 'sections', value: section },
     ],
@@ -436,17 +461,10 @@ function connectionActiveCheck(
 
 function connectionLabelCheck(draft: Result<ConnectionDraft>): Result<string> {
   if (!draft.ok) return draft;
-  const label = draft.value.label.trim();
-  return label.length === 0
-    ? {
-        ok: false,
-        error: connectionDiagnostic(
-          'invalid-edit',
-          'Give the connection a label before applying it.',
-          'Enter a short relationship label.',
-        ),
-      }
-    : { ok: true, value: label };
+  const problem = connectionProblem(draft.value);
+  return problem === null
+    ? { ok: true, value: connectionLabel(draft.value) }
+    : { ok: false, error: connectionDiagnostic('invalid-edit', problem, problem) };
 }
 
 function connectionChecks(

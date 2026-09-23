@@ -22,6 +22,10 @@ function classifyBare(text: string): Token['kind'] {
 function isTrivia(text: string): boolean {
   return /^\s|^#/.test(text);
 }
+/** Only the canvas 2 parse path rejects comments; v1 keeps dropping `#` until lane D deletes it. */
+function isCanvas2(source: string): boolean {
+  return /^\s*canvas\s+2\b/.test(source);
+}
 /** Bounded iterative lexing; local allocation only. Language owns correction and typed failure recovery. */
 export function tokenize(source: string): Result<readonly Token[]> {
   return protect(() => collectTokens(source));
@@ -29,14 +33,23 @@ export function tokenize(source: string): Result<readonly Token[]> {
 /** Consume all source with an invalid-character fallback; never skip malformed source gaps. */
 function collectTokens(source: string): readonly Token[] {
   const starts = lineStarts(source);
+  const strictComments = isCanvas2(source);
   const tokens: Token[] = [];
-  for (const match of source.matchAll(lexeme)) appendToken(tokens, match, starts);
+  for (const match of source.matchAll(lexeme)) appendToken(tokens, match, starts, strictComments);
   tokens.push({ kind: 'eof', text: '', span: sourceSpan(starts, source.length, source.length) });
   return tokens;
 }
 /** Token allocation stops at the public bound, before constructing an oversized token array. */
-function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly number[]): void {
-  if (isTrivia(match[0])) return;
+function appendToken(
+  tokens: Token[],
+  match: RegExpExecArray,
+  starts: readonly number[],
+  strictComments: boolean,
+): void {
+  if (isTrivia(match[0])) {
+    rejectComment(match, starts, strictComments);
+    return;
+  }
   requireCompleteLexeme(match, starts);
   if (tokens.length >= 250000)
     reject('limit', origin, 'At most 250000 tokens', 'Token limit exceeded');
@@ -47,6 +60,20 @@ function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly n
   });
 }
 
+/** `#` outside a string is rejected only on the canvas 2 parse path (E011); v1 keeps silently dropping it. */
+function rejectComment(
+  match: RegExpExecArray,
+  starts: readonly number[],
+  strictComments: boolean,
+): void {
+  if (!strictComments || !match[0].startsWith('#')) return;
+  reject(
+    'syntax',
+    sourceSpan(starts, match.index, match.index + match[0].length),
+    'No comment',
+    'E011 comment: comments are not stored. Use a note node.',
+  );
+}
 /** A fallback opening quote is not a string or literal token; only the complete quoted production may be decoded. */
 function requireCompleteLexeme(match: RegExpExecArray, starts: readonly number[]): void {
   if (match[0] === '"')

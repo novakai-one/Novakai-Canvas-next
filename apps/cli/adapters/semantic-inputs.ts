@@ -165,10 +165,12 @@ function sourceReadout(input: unknown): Result<string> {
   const parsed = readout.safeParse(input);
   if (!parsed.success)
     return failure('invalid-response', 'Service returned an invalid source readout');
-  return {
-    ok: true,
-    value: `${scopeNotice(parsed.data.scope)}# ${parsed.data.collection} revision=${parsed.data.revision}${manualNote(parsed.data.manual)}\n${parsed.data.source}`,
-  };
+  const notice = `${scopeNotice(parsed.data.scope)}# ${parsed.data.collection} revision=${parsed.data.revision}${manualNote(parsed.data.manual)}`;
+  if (parsed.data.source.startsWith('canvas 2')) {
+    process.stderr.write(`${notice}\n`);
+    return { ok: true, value: parsed.data.source };
+  }
+  return { ok: true, value: `${notice}\n${parsed.data.source}` };
 }
 
 function scopeNotice(scope: { readonly kind: string }): string {

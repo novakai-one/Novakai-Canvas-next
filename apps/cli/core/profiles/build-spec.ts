@@ -59,9 +59,7 @@ export const buildSpecProfile: ProfileDescriptor = {
 };
 
 /** Small native current-DSL starter; profile commands never depend on a service or workspace. */
-export const buildSpecStarter = String.raw`# Editable build-spec@1 starter using current native DSL.
-# Sequence lifelines reuse canonical modules; the interface uses a linked participant proxy.
-canvas 1
+export const buildSpecStarter = String.raw`canvas 1
 collection @build-spec-starter "Edit a title safely — build spec starter" theme=paper {
   node @root concept "example-app/" {}
   node @web concept "apps/web/" {}
@@ -160,13 +158,8 @@ collection @build-spec-starter "Edit a title safely — build spec starter" them
 
 export function scaffoldBuildSpec(id: string, title: string): string {
   const escapedTitle = title.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
-  return buildSpecStarter
-    .replace(
-      'collection @build-spec-starter "Edit a title safely — build spec starter"',
-      `collection @${id} "${escapedTitle}"`,
-    )
-    .replace(
-      '# Editable build-spec@1 starter using current native DSL.',
-      `# Editable build-spec@1 starter for ${id}.`,
-    );
+  return buildSpecStarter.replace(
+    'collection @build-spec-starter "Edit a title safely — build spec starter"',
+    `collection @${id} "${escapedTitle}"`,
+  );
 }

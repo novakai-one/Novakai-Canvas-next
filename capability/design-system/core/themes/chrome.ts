@@ -29,10 +29,7 @@ export function chromeField(chrome: unknown): { readonly chrome?: ChromeName } {
   return { chrome: parsed(chromeName, chrome, 'chrome') };
 }
 /** Fill every token the saved theme lacks from defaults derived from its own roots. */
-export function completeChromeTokens(
-  supplied: TokenValues,
-  source: SourceSet,
-): TokenValues {
+export function completeChromeTokens(supplied: TokenValues, source: SourceSet): TokenValues {
   const roots = Object.fromEntries(
     source.definitions
       .filter((item) => item.expression.op === 'literal')

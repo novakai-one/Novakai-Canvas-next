@@ -1,7 +1,6 @@
 import type { ContentBlock } from '../../contract/records/input.js';
 import type { ContentContext, FieldColumns } from '../../contract/records/content-context.js';
 import type { MeasuredContent, Primitive } from '../../contract/records/visual.js';
-import { typeUseText } from '../../contract/records/input.js';
 import { requireValue } from '../validation/outcomes.js';
 import { measureText, offset } from './text.js';
 type Field = Extract<ContentBlock, { kind: 'field' }>;
@@ -41,7 +40,9 @@ function fieldBadge(field: Field, context: ContentContext): string {
 }
 /** Optionality is visible without repeating the word required in every row; the full meaning remains in its accessible outline. */
 function typeLabel(field: Field, context: ContentContext): string {
-  const type = context.resolveFieldType?.(field) ?? typeUseText(field.type);
+  const type =
+    context.resolveFieldType?.(field) ??
+    (typeof field.type === 'string' ? field.type : `@${field.type.id}`);
   return field.nullable ? `${type}?` : type;
 }
 /** Pinned glyph metrics are the only width source; chips and plain cells share one measurement path. */

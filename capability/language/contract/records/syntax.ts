@@ -15,14 +15,7 @@ export interface Reference {
   readonly namespace?: 'group' | 'section';
   readonly section?: string;
 }
-export interface TypeSyntax {
-  readonly kind: 'type';
-  readonly ref?: string;
-  readonly primitive?: 'string' | 'number' | 'boolean';
-  readonly arguments?: readonly TypeSyntax[];
-}
-export type SyntaxValue =
-  string | number | boolean | Reference | TypeSyntax | readonly SyntaxValue[];
+export type SyntaxValue = string | number | boolean | Reference | readonly SyntaxValue[];
 export interface LocatedValue {
   readonly value: SyntaxValue;
   readonly span: Span;
@@ -33,7 +26,6 @@ export interface LocatedValue {
 export type Fields = Readonly<Record<string, LocatedValue>>;
 export type Construct =
   | 'collection'
-  | 'declare'
   | 'type'
   | 'asset'
   | 'source'
@@ -64,15 +56,7 @@ export type Construct =
   | 'root'
   | 'event'
   | 'fragment'
-  | 'branch'
-  | 'scenario'
-  | 'call'
-  | 'alt'
-  | 'change'
-  | 'new'
-  | 'changed'
-  | 'deleted'
-  | 'locked';
+  | 'branch';
 export interface Declaration {
   readonly kind: Construct;
   readonly fields: Fields;
@@ -114,10 +98,9 @@ export interface Operation {
 }
 export interface Document {
   readonly kind: 'canvas';
-  readonly version: 1 | 2;
+  readonly version: 1;
   readonly collection: string;
   readonly declaration: Declaration;
-  readonly declare?: Declaration;
   readonly span: Span;
 }
 export interface Patch {
@@ -145,7 +128,7 @@ export type ParsedSource = (Document | Patch) & {
   readonly sourceMap: readonly SourceMapping[];
 };
 export interface Token {
-  readonly kind: 'word' | 'string' | 'literal' | 'id' | 'integer' | 'symbol' | 'eof';
+  readonly kind: 'word' | 'string' | 'id' | 'integer' | 'symbol' | 'eof';
   readonly text: string;
   readonly span: Span;
 }

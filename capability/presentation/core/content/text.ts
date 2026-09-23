@@ -1,7 +1,6 @@
 import type { MeasurementPort, TextMetrics } from '../../contract/ports/measurement.js';
 import type { MeasuredContent, TextRun } from '../../contract/records/visual.js';
-import type { DiagramTypography, FontRef } from '../../contract/records/style.js';
-import type { ContentContext } from '../../contract/records/content-context.js';
+import type { FontRef } from '../../contract/records/style.js';
 import type { TextRequest } from '../../contract/types.js';
 import { content as contentSchema } from '../../contract/records/visual.js';
 import { requireValue, reject, parse } from '../validation/outcomes.js';
@@ -391,21 +390,5 @@ function stackHeight(contents: readonly MeasuredContent[], gap: number): number 
   return (
     contents.reduce((height, item) => height + item.height, 0) +
     Math.max(0, contents.length - 1) * gap
-  );
-}
-/** Measure a semantic text role; public project owns provider failure and retains the prior scene. */
-export function labelContent(
-  text: string,
-  context: ContentContext,
-  role: keyof DiagramTypography = 'body',
-): MeasuredContent {
-  return measureText(
-    {
-      text,
-      width: context.width,
-      ...context.style.typography[role],
-      fill: context.style.text,
-    },
-    context.metrics,
   );
 }

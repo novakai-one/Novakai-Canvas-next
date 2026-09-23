@@ -5,7 +5,6 @@ import { objectSchema } from './object.js';
 import { relationshipSchema } from './relationship.js';
 import { sectionSchema } from './section.js';
 import { layoutSchema } from './layout.js';
-import { changeBlockSchema } from './change-block.js';
 
 /** Asset metadata and content identity. Byte storage and license interpretation are outside Model. */
 export const assetSchema = z
@@ -52,8 +51,6 @@ export const collectionSchema = z
     /** Shared definitions were added after schema version 1; old records default to empty. */
     definitions: z.array(definitionSchema).readonly().default([]),
     assets: z.array(assetSchema).readonly().default([]),
-    /** Declared change blocks; nodes never carry change status themselves. */
-    changes: z.array(changeBlockSchema).readonly().default([]),
     arrangement: layoutSchema,
   })
   .readonly();

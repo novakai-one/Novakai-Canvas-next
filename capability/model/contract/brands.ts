@@ -24,9 +24,6 @@ export const sourceId = identifier.brand<'SourceId'>();
 /** Checked identity of a shared type definition within its collection. */
 export const definitionId = identifier.brand<'DefinitionId'>();
 
-/** Checked identity of a declared change block within its collection. */
-export const changeId = identifier.brand<'ChangeId'>();
-
 /** Checked identity of a container within one section. */
 export const groupId = identifier.brand<'GroupId'>();
 
@@ -67,9 +64,6 @@ export type SourceId = z.infer<typeof sourceId>;
 
 /** Shared definition identity produced by the checked definitionId schema. */
 export type DefinitionId = z.infer<typeof definitionId>;
-
-/** Change block identity produced by the checked changeId schema. */
-export type ChangeId = z.infer<typeof changeId>;
 
 /** Section-local container identity produced by the checked groupId schema. */
 export type GroupId = z.infer<typeof groupId>;

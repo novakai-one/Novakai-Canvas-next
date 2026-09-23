@@ -2,7 +2,6 @@ import type { ComponentType, ReactElement } from 'react';
 import type { ContentEditorProps } from '../../contract/inspector-react.js';
 import type { DesignSlots } from '../../contract/react-types.js';
 import type { ContentBlock } from '../../contract/records/owners.js';
-import { typeUseText } from '@novakai/canvas-model';
 import styles from './ObjectEditor.module.css';
 /** Shared row frame delegates every field to typed draft commands; stable IDs retain React input identity. */
 export function createContentEditor({
@@ -92,7 +91,8 @@ function typeField(item: ContentBlock): readonly TextField[] {
 }
 
 function typeValue(type: Extract<ContentBlock, { readonly type: unknown }>['type']): string {
-  return typeUseText(type);
+  if (typeof type === 'string') return type;
+  return `@${type.id}`;
 }
 
 function linkedType(item: ContentBlock & { readonly type?: unknown }): boolean {

@@ -5,7 +5,6 @@ import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../invariants/issues.js';
 import { cascadeContent } from './cascade-content.js';
 import { cascadeSection } from './cascade-views.js';
-import { cascadeChanges } from './cascade-changes.js';
 
 type ObjectDeletion = Extract<Change, { op: 'delete-object' }>;
 type RecordRemoval = Extract<Change, { op: 'remove' }>;
@@ -25,8 +24,7 @@ function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Col
   const sections = collection.sections.map((section) =>
     cascadeSection(section, removedId, removedRelationshipIds),
   );
-  const cascaded = { ...collection, objects, relationships, sections };
-  return { ...cascaded, changes: cascadeChanges(collection, cascaded) };
+  return { ...collection, objects, relationships, sections };
 }
 
 /** Any difference beyond removing the object itself constitutes a dependency cleanup. */

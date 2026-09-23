@@ -24,8 +24,7 @@ export type { ContentBlock, Endpoint } from './records/content.js';
 export type { Definition, TypeExpression, FieldType, TypeUse } from './records/definition.js';
 export { definitionSchema } from './records/definition.js';
 export { definitionDisplay, definitionUsages, fieldTypeDisplay, typeUseDisplay } from './api.js';
-export { typeUseText, typeUseKey, typeUseDefinitions, typeUseEntities } from './api.js';
-export { resolveCallableEndpoint, relationshipLabel } from './api.js';
+export { resolveCallableEndpoint } from './api.js';
 export type { CallableEndpoint, DefinitionUsage } from './api.js';
 export type { Relationship, RelationshipKind } from './records/relationship.js';
 export type {
@@ -40,7 +39,6 @@ export type { LayoutIntent, Placement } from './records/layout.js';
 
 /** Declared change batches and their planned or staged outcomes. */
 export type { Change } from './records/change.js';
-export type { ChangeEntry } from './records/change-block.js';
 export type { ChangePlan, ChangeStage } from './types.js';
 
 /** Endpoint and compatibility tables describing relationship wiring rules. */

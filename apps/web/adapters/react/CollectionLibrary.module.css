@@ -1,6 +1,8 @@
 @layer components {
   .library {
     padding: var(--nv-space-8);
+    /* Room for any alert floating over the bottom (set by the workspace shell). */
+    padding-bottom: calc(var(--nv-space-8) + var(--nv-alert-clearance, 0px));
     overflow: auto;
     height: 100%;
   }

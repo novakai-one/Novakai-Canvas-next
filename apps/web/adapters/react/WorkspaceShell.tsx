@@ -1,8 +1,8 @@
 import { formatFailure, failureSummary } from '../../contract/api.js';
 import { panelVisible, palette, planPaletteDrop } from '../../contract/api.js';
 import type { PaletteDrop } from '../../contract/api.js';
-import { useState, useSyncExternalStore, useEffect } from 'react';
-import type { ComponentType, ReactElement } from 'react';
+import { useState, useSyncExternalStore, useEffect, useRef } from 'react';
+import type { ComponentType, ReactElement, RefObject } from 'react';
 import type { ChromeSlots, WorkspaceProps } from '../../contract/react-types.js';
 import type { PanelState } from '../../contract/panel-types.js';
 import type { WorkspaceController, WorkspaceView } from '../../contract/records/workspace.js';
@@ -214,6 +214,7 @@ function CanvasSlot({
 }): ReactElement {
   const { CanvasSurface, Library, Source } = slots;
   const active = view.active;
+  const clearance = useAlertClearance();
   const chrome = hidden
     ? hiddenChrome
     : {
@@ -223,7 +224,12 @@ function CanvasSlot({
         outline: panelState.interfaceVisibility.outline,
       };
   return (
-    <main className={styles.canvas} data-canvas-host aria-label="Diagram workspace">
+    <main
+      ref={clearance.host}
+      className={styles.canvas}
+      data-canvas-host
+      aria-label="Diagram workspace"
+    >
       {active === null ? (
         <Library controller={controller} view={view} onCreate={() => setCreating(true)} />
       ) : (
@@ -254,7 +260,7 @@ function CanvasSlot({
       {!hidden && view.sourceOpen && <Source controller={controller} view={view} />}
       <slots.MovementReview controller={controller} view={view} />
       {/* Alerts overlay the bottom of the canvas and never shift layout. */}
-      <div className={alertsClass(active, chrome.zoom)}>
+      <div ref={clearance.alerts} className={alertsClass(active, chrome.zoom)}>
         <ProblemSlot
           hidden={hidden || view.collectionSwitch.phase !== 'idle'}
           Button={slots.Button}
@@ -270,6 +276,27 @@ function CanvasSlot({
       </div>
     </main>
   );
+}
+
+/** Publishes the alerts' height as --nv-alert-clearance so scrolling views (the Library) can pad
+ * their end and never hide their last item under an alert. */
+function useAlertClearance(): {
+  readonly host: RefObject<HTMLElement | null>;
+  readonly alerts: RefObject<HTMLDivElement | null>;
+} {
+  const host = useRef<HTMLElement>(null);
+  const alerts = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = alerts.current;
+    const main = host.current;
+    if (box === null || main === null) return undefined;
+    const observer = new ResizeObserver(() => {
+      main.style.setProperty('--nv-alert-clearance', `${box.offsetHeight}px`);
+    });
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+  return { host, alerts };
 }
 
 /** Alerts clear the zoom controls only when a canvas shows them; the Library has none. */

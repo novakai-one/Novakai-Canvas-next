@@ -216,25 +216,50 @@ function stopShort(
       x: before.x + (after.x - before.x) * t,
       y: before.y + (after.y - before.y) * t,
     });
-    const clear = (t: number) => {
-      const p = at(t);
-      return others.every(
+    const free = (p: { x: number; y: number }) =>
+      others.every(
         (o) =>
           p.x + size.width + space <= o.x ||
           o.x + o.width + space <= p.x ||
           p.y + size.height + space <= o.y ||
           o.y + o.height + space <= p.y,
       );
-    };
+    const clear = (t: number) => free(at(t));
     if (clear(1)) continue;
-    let t = 1;
-    while (t > 0 && !clear(t)) t = Math.max(0, t - 1 / 64);
-    const p = at(t);
+    // A node entering another group has no path inside it; take the nearest free spot there instead.
+    const p = parent?.id === node.parent ? backTrack(at, clear) : nearestFree(after, free);
     appearances = appearances.map((a) =>
       a === moved ? { ...a, placement: { ...after, x: p.x, y: p.y } } : a,
     );
   }
   return appearances === section.appearances ? section : { ...section, appearances };
+}
+
+function backTrack(
+  at: (t: number) => { x: number; y: number },
+  clear: (t: number) => boolean,
+): { x: number; y: number } {
+  let t = 1;
+  while (t > 0 && !clear(t)) t = Math.max(0, t - 1 / 64);
+  return at(t);
+}
+
+/** Search outward from the drop point: down, right, up, left. */
+function nearestFree(
+  from: { x: number; y: number },
+  free: (p: { x: number; y: number }) => boolean,
+): { x: number; y: number } {
+  const ways = [
+    [0, 1],
+    [1, 0],
+    [0, -1],
+    [-1, 0],
+  ] as const;
+  const steps = Array.from({ length: 256 }, (_, i) => (i + 1) * 8);
+  const spots = steps.flatMap((d) =>
+    ways.map(([x, y]) => ({ x: from.x + x * d, y: from.y + y * d })),
+  );
+  return spots.find(free) ?? from;
 }
 
 /** A child dragged past its group's top or left edge grows the group up or left; the child stays where dropped. */

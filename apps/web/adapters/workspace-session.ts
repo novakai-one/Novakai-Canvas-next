@@ -44,6 +44,7 @@ import {
   chooseMoveOption as chooseReviewedMoveOption,
 } from '../contract/api.js';
 
+const creationKinds = ['diagram', 'object', 'group'] as const;
 const allRelationshipKinds: readonly RelationshipKind[] = [
   'flow',
   'association',
@@ -922,6 +923,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         session: session.value,
       },
       status: editStatus(),
+      creation: creationForOpenedCollection(),
       ...renderProblemUpdate(),
     });
     active?.session.dispose();
@@ -2024,6 +2026,19 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       collection: active.document.collection,
       generation: active.generation,
       request: null,
+    };
+  }
+  /** Add forms belong to one collection: a newly opened one starts with empty forms and no error.
+   * A creation still in flight keeps its form so its outcome can settle there. */
+  function creationForOpenedCollection(): WorkspaceView['creation'] {
+    if (creationLocked()) return state.creation;
+    creationKinds.forEach(clearCreationCapture);
+    return {
+      diagram: resetDiagramDraft('diagram', state.creation.diagram),
+      object: resetObjectDraft('object', state.creation.object),
+      group: resetGroupDraft('group', state.creation.group),
+      problem: null,
+      busy: false,
     };
   }
   function clearCreationCapture(kind: 'diagram' | 'object' | 'group'): void {

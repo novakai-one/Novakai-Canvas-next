@@ -160,6 +160,25 @@ it(
   },
 );
 
+it('opening another collection empties the Add forms and clears their error', slow, async () => {
+  await withSample(async (service) => {
+    const before = await service.read();
+    assert(before.ok);
+    const other = source.replace('@sample "Sample"', '@other "Other"');
+    const payload = { source: other, mode: 'create' };
+    const signal = new AbortController().signal;
+    await service.apply(request(before.value, 'other', 'other', 'dsl', payload, true), signal);
+    const human = await opened(serviceClient(service, [], { count: 1 }));
+    await human.addObject(module);
+    expect(human.getSnapshot().creation).toMatchObject({ problem: expect.any(String) });
+    expect(human.getSnapshot().creation.object.label).toBe('Parser');
+    await human.open('other');
+    expect(human.getSnapshot().active?.document.collection.id).toBe('other');
+    expect(human.getSnapshot().creation).toMatchObject({ problem: null, object: { label: '' } });
+    human.dispose();
+  });
+});
+
 it('a refused definition stays editable after reload', slow, async () => {
   await withSample(async (service) => {
     const retention = memoryRetention();

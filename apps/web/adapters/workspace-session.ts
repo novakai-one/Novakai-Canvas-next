@@ -517,6 +517,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: { section: '', title: '' },
       problem: null,
       busy: false,
+      adding: null,
     },
     history: { status: null, busy: false },
     ...source.getSnapshot(),
@@ -1566,6 +1567,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: settledGroupDraft(groupCleared),
       problem: null,
       busy: creationLocked(),
+      adding: state.creation.adding,
     };
   }
   function settledDiagramDraft(cleared: boolean): AddDiagramDraft {
@@ -1713,7 +1715,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const captured = diagramTarget(active as ActiveDiagram);
     if (!captured.ok) return retainCreationFailure(captured);
     const capture = captured.value;
-    update({ creation: { ...state.creation, diagram: draft, problem: null, busy: true } });
+    update({
+      creation: { ...state.creation, diagram: draft, problem: null, busy: true, adding: 'diagram' },
+    });
     const section = {
       id: capture.id,
       title,
@@ -1769,7 +1773,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       generation: context.value.active.generation,
       request: null,
     };
-    update({ creation: { ...state.creation, object: draft, problem: null, busy: true } });
+    update({
+      creation: { ...state.creation, object: draft, problem: null, busy: true, adding: 'object' },
+    });
     const payload = creationPayload(context.value, draft);
     if (!payload.ok) return retainCreationFailure(payload);
     const changes = creationChanges(payload.value.object, draft.reuseObject, payload.value.section);
@@ -1788,7 +1794,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     };
     const problem = groupDraftProblem(draft, context.value.section);
     if (problem !== null) return retainCreationFailure(creationFailure(problem));
-    update({ creation: { ...state.creation, group: draft, problem: null, busy: true } });
+    update({
+      creation: { ...state.creation, group: draft, problem: null, busy: true, adding: 'group' },
+    });
     const group: Group = {
       id: groupCapture.id,
       title: draft.title.trim(),
@@ -1891,6 +1899,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: successGroupDraft(kind),
       problem: null,
       busy: false,
+      adding: null,
     };
   }
   function successDiagramDraft(kind: 'diagram' | 'object' | 'group'): AddDiagramDraft {
@@ -2098,6 +2107,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       group: resetGroupDraft('group', state.creation.group),
       problem: null,
       busy: false,
+      adding: null,
     };
   }
   function clearCreationCapture(kind: 'diagram' | 'object' | 'group'): void {

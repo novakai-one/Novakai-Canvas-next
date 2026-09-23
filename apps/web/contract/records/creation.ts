@@ -26,5 +26,7 @@ export interface CreationView {
   readonly object: AddObjectDraft;
   readonly group: AddGroupDraft;
   readonly problem: string | null;
+  /** Every form is locked while any add is unsettled; only the form that sent it says "Adding…". */
   readonly busy: boolean;
+  readonly adding: 'diagram' | 'object' | 'group' | null;
 }

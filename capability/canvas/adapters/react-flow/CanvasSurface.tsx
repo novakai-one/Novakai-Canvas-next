@@ -100,7 +100,7 @@ export function createCanvasSurface(slots: SurfaceSlots): ComponentType<SurfaceP
           zoomOnScroll={false}
           zoomOnPinch
           zoomOnDoubleClick={false}
-          panOnDrag={hand ? true : [0, 1]}
+          panOnDrag={panButtons(hand, snapshot.state.profile.blankDrag)}
           panActivationKeyCode="Space"
           selectionOnDrag={snapshot.state.profile.blankDrag === 'marquee'}
           selectionKeyCode="Shift"
@@ -174,4 +174,9 @@ function minimapRoleColor(role: string): string {
 /** Touch input uses the coarse threshold; mouse and pen retain precise manipulation. */
 function pointerThreshold(type: string): 'coarseThreshold' | 'fineThreshold' {
   return type === 'touch' ? 'coarseThreshold' : 'fineThreshold';
+}
+/** Hand tool pans with any button. Otherwise the middle button pans, plus the left one when blank drag pans. Space+drag always pans. */
+function panButtons(hand: boolean, blankDrag: 'pan' | 'marquee'): boolean | number[] {
+  if (hand) return true;
+  return blankDrag === 'pan' ? [0, 1] : [1];
 }

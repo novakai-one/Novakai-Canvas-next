@@ -17,7 +17,7 @@ export const profile = z
 export type InteractionProfile = z.infer<typeof profile>;
 export const defaultProfile: InteractionProfile = Object.freeze({
   version: 1,
-  blankDrag: 'pan',
+  blankDrag: 'marquee',
   fineThreshold: 4,
   coarseThreshold: 8,
   zoomMin: 0.01,

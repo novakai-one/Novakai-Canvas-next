@@ -78,6 +78,7 @@ export function createSceneNode(
         {node.groupId !== null && (
           <svg className={boundary.hit} aria-hidden="true">
             <rect width="100%" height="100%" vectorEffect="non-scaling-stroke" />
+            <rect className={boundary.title} width="100%" height={node.headerHeight} />
           </svg>
         )}
         <Handle

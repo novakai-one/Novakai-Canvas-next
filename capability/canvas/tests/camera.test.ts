@@ -13,7 +13,8 @@ describe('Canvas camera contract', () => {
         viewport: { width: 800, height: 600 },
       }),
     );
-    expect(state.camera.zoom).toBeCloseTo(736 / 560);
+    // Width less padding and the tool rail.
+    expect(state.camera.zoom).toBeCloseTo(664 / 560);
     const selected = step(canvas, state, {
       kind: 'select',
       targets: [alpha],

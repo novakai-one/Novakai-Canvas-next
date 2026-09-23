@@ -923,7 +923,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         session: session.value,
       },
       status: editStatus(),
-      creation: creationForOpenedCollection(),
+      creation: creationForOpenedCollection(active, document),
       ...renderProblemUpdate(),
     });
     active?.session.dispose();
@@ -1815,28 +1815,54 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     result: Result<Receipt>,
     kind: 'diagram' | 'object' | 'group',
   ): Result<Receipt> {
-    if (!result.ok) {
-      releaseRefusedCreation(kind);
-      update({
-        creation: {
-          ...state.creation,
-          problem: plainMessage(result.error.message),
-          busy: creationLocked(),
-        },
-      });
-      return result;
-    }
-    clearCreationCapture(kind);
-    update({
-      creation: creationAfterSuccess(kind),
-    });
+    const origin = captureOf(kind)?.collection;
+    settleCreation(result, kind);
+    settleCreationElsewhere(origin, result);
     return result;
+  }
+  function settleCreation(result: Result<Receipt>, kind: 'diagram' | 'object' | 'group'): void {
+    if (!result.ok) return settleRefusedCreation(result.error, kind);
+    clearCreationCapture(kind);
+    update({ creation: creationAfterSuccess(kind) });
+  }
+  function settleRefusedCreation(error: Diagnostic, kind: 'diagram' | 'object' | 'group'): void {
+    releaseRefusedCreation(kind);
+    update({
+      creation: { ...state.creation, problem: plainMessage(error.message), busy: creationLocked() },
+    });
+  }
+  /** Another collection opened while this add was in flight: its forms start empty and its refusal is not shown there. */
+  function settleCreationElsewhere(
+    origin: ActiveDiagram['document']['collection'] | undefined,
+    result: Result<Receipt>,
+  ): void {
+    if (!openedElsewhere(origin)) return;
+    update({ creation: freshCreation() });
+    if (!result.ok) reportRefusedElsewhere(origin, result.error);
+  }
+  function openedElsewhere(
+    origin: ActiveDiagram['document']['collection'] | undefined,
+  ): origin is ActiveDiagram['document']['collection'] {
+    return (
+      origin !== undefined &&
+      origin.id !== state.active?.document.collection.id &&
+      !creationLocked()
+    );
+  }
+  function reportRefusedElsewhere(
+    origin: ActiveDiagram['document']['collection'],
+    error: Diagnostic,
+  ): void {
+    const reason = plainMessage(error.message);
+    update({ problem: null, status: `Add to "${origin.title}" was not applied: ${reason}` });
+  }
+  function captureOf(kind: 'diagram' | 'object' | 'group') {
+    return { diagram: diagramCapture, object: objectCapture, group: groupCapture }[kind];
   }
   /** A refused or unsent creation changed nothing: the next submit builds a fresh request from the current draft.
    * An uncertain request keeps its capture so a retry cannot create the item twice. */
   function releaseRefusedCreation(kind: 'diagram' | 'object' | 'group'): void {
-    const capture = { diagram: diagramCapture, object: objectCapture, group: groupCapture }[kind];
-    const id = capture?.request?.request;
+    const id = captureOf(kind)?.request?.request;
     const item = state.pending.find((entry) => entry.request.request === id);
     if (item !== undefined && item.state !== 'rejected') return;
     clearCreationCapture(kind);
@@ -2039,9 +2065,15 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     };
   }
   /** Add forms belong to one collection: a newly opened one starts with empty forms and no error.
-   * A creation still in flight keeps its form so its outcome can settle there. */
-  function creationForOpenedCollection(): WorkspaceView['creation'] {
-    if (creationLocked()) return state.creation;
+   * A newer revision of the same collection keeps them; a creation in flight keeps its form until it settles. */
+  function creationForOpenedCollection(
+    active: ActiveDiagram | null,
+    document: RenderDocument,
+  ): WorkspaceView['creation'] {
+    if (active?.document.collection.id === document.collection.id) return state.creation;
+    return creationLocked() ? state.creation : freshCreation();
+  }
+  function freshCreation(): WorkspaceView['creation'] {
     creationKinds.forEach(clearCreationCapture);
     return {
       diagram: resetDiagramDraft('diagram', state.creation.diagram),

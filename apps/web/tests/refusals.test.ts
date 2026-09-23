@@ -1,4 +1,4 @@
-import { assert, expect, it } from 'vitest';
+import { assert, expect, it, vi } from 'vitest';
 
 // Each test boots a real in-process workspace service; that can exceed the 5s default under load.
 const slow = { timeout: 30_000 };
@@ -251,6 +251,57 @@ it('a save check that settles the request clears "could not be confirmed"', slow
     expect(human.getSnapshot().pending).toMatchObject([{ state: 'retryable' }]);
     expect(human.getSnapshot().problem).toBeNull();
     expect(human.getSnapshot().creation.problem).toBeNull();
+    human.dispose();
+  });
+});
+
+async function addOtherCollection(service: WorkspaceSession): Promise<void> {
+  const before = await service.read();
+  assert(before.ok);
+  const other = source.replace('@sample "Sample"', '@other "Other"');
+  const payload = { source: other, mode: 'create' };
+  const signal = new AbortController().signal;
+  await service.apply(request(before.value, 'other', 'other', 'dsl', payload, true), signal);
+}
+
+it('an add refused after switching collection does not follow into the new one', slow, async () => {
+  await withSample(async (service) => {
+    await addOtherCollection(service);
+    let release = (): void => undefined;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    const real = serviceClient(service, [], { count: 1 });
+    const human = await opened({
+      ...real,
+      post: async (path, input) => {
+        await gate;
+        return real.post(path, input);
+      },
+    });
+    const adding = human.addObject(module);
+    await human.open('other');
+    release();
+    await adding;
+    const view = human.getSnapshot();
+    expect(view.active?.document.collection.id).toBe('other');
+    expect(view.problem).toBeNull();
+    expect(view.status).toContain('"Sample" was not applied');
+    expect(view.creation).toMatchObject({ problem: null, busy: false, object: { label: '' } });
+    const section = view.active?.document.collection.sections[0]?.id ?? '';
+    expect(await human.addObject({ ...module, section })).toMatchObject({ ok: true });
+    human.dispose();
+  });
+});
+
+it('a new revision of the same collection keeps the Add forms', slow, async () => {
+  await withSample(async (service) => {
+    const human = await opened(serviceClient(service, [], { count: 0 }));
+    expect(await human.addObject(module)).toMatchObject({ ok: true });
+    human.setObjectDraft({ ...module, label: 'Keep me' });
+    const revision = () => human.getSnapshot().active?.document.collection.revision;
+    await vi.waitFor(() => expect(revision()).toBe(1));
+    await human.navigateHistory('undo');
+    await vi.waitFor(() => expect(revision()).toBe(2));
+    expect(human.getSnapshot().creation.object.label).toBe('Keep me');
     human.dispose();
   });
 });

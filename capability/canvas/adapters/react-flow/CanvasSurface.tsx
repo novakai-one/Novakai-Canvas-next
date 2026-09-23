@@ -187,7 +187,7 @@ function panButtons(hand: boolean, blankDrag: 'pan' | 'marquee'): boolean | numb
   return blankDrag === 'pan' ? [0, 1] : [1];
 }
 function acceptPalette(event: DragEvent<HTMLDivElement>): void {
-  if (!event.dataTransfer.types.includes(paletteType)) return;
+  if (!event.dataTransfer.types.includes(paletteType) || onControls(event)) return;
   event.preventDefault();
   event.dataTransfer.dropEffect = 'copy';
 }
@@ -204,7 +204,7 @@ function dropPalette(
   const target = props.reader.dropTarget(snapshot.state, worldPoint(event, snapshot));
   deliver(target, (value) => drop(kind, value), props.onError);
 }
-/** A drop onto the tool rail or zoom controls is not a drop onto the canvas. */
+/** A drop onto the tool rail, zoom controls or outline is not a drop onto the canvas. */
 function onControls(event: DragEvent<HTMLDivElement>): boolean {
   return event.target instanceof Element && event.target.closest('[data-canvas-controls]') !== null;
 }

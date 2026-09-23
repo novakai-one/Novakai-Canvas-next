@@ -29,7 +29,9 @@ import {
   retainObjectCommand,
   retainWireCommand,
   editedObject,
+  rebasedWireDraft,
   wireChanges,
+  wireDraftKey,
   encodeObjectRecovery,
   encodeWireRecovery,
 } from './api.js';
@@ -170,6 +172,7 @@ function featureSections(
   function LibrarySection(props: FeatureProps): ReactElement {
     return createElement(Browser, { controller: props.controller, view: props.view });
   }
+  const functionPicker = createWireFunctionPicker(design);
   return [
     { tab: 'add', id: 'creation', title: 'Create', Content: createAddTools(design) },
     { tab: 'browse', id: 'collections', title: 'Collections', Content: LibrarySection },
@@ -189,13 +192,11 @@ function featureSections(
       Content: createWireEditor({
         ...design,
         check: (draft, current) => wireApplyBlock(draft, current, plan),
+        FunctionPicker: functionPicker,
         fields: [
           {
             id: 'meaning',
-            Content: createWireSemantics({
-              ...design,
-              FunctionPicker: createWireFunctionPicker(design),
-            }),
+            Content: createWireSemantics({ ...design, FunctionPicker: functionPicker }),
           },
           { id: 'endpoints', Content: createWireEndpoints(design) },
           { id: 'routing', Content: createWireRouting(design) },
@@ -535,6 +536,18 @@ export function createWireSession(bindings: WireEditorBindings): WireEditorSessi
   return {
     ...editor,
     preview: (draft, signal) => bindings.preview(draft, wireChanges(draft), signal),
+    rebase: (selection) => {
+      const key = wireDraftKey(
+        selection.collection.id,
+        selection.section.id,
+        selection.relationship.id,
+      );
+      const draft = editor.getSnapshot().drafts.find((item) => item.key === key);
+      const next = draft && rebasedWireDraft(draft, selection);
+      return next === draft || next === undefined
+        ? { ok: true, value: undefined }
+        : editor.replace(next);
+    },
   };
 }
 

@@ -5,7 +5,9 @@ import type {
   DiagramObject,
   Relationship,
 } from '../../contract/records/owners.js';
-import type { NewFunction } from '../../contract/records/wire-editor.js';
+import type { EditedWire, NewFunction } from '../../contract/records/wire-editor.js';
+import type { ConnectionDraft, ConnectionEdit } from '../../contract/records/connection.js';
+import { pickFunction } from './wire-problems.js';
 type Signature = Extract<ContentBlock, { kind: 'signature' }>;
 type Member = Extract<ContentBlock, { kind: 'member' }>;
 /** One function a module wire can name: a signature or member identity and its display name. */
@@ -19,7 +21,7 @@ const functionOwners: readonly DiagramObject['kind'][] = ['module', 'interface']
 /** Imports and calls wires into a module or interface name one of its functions. */
 export function functionTarget(
   collection: Collection,
-  relationship: Relationship,
+  relationship: Pick<Relationship, 'kind' | 'target'>,
 ): DiagramObject | null {
   if (!functionWires.includes(relationship.kind)) return null;
   return functionOwner(collection, relationship.target.object);
@@ -121,4 +123,86 @@ function duplicateProblem(
   const duplicate = existingFunction(functions, name);
   if (duplicate === null) return null;
   return `${object.label} already has function '${duplicate.label}'. Pick it from the list instead.`;
+}
+/** A new connection shown as a wire, so it can use the same function picker. */
+export function connectionAsWire(draft: ConnectionDraft): EditedWire {
+  const end = (value: ConnectionDraft['source']) =>
+    value.member === undefined
+      ? { object: value.object }
+      : { object: value.object, member: value.member };
+  const relationship = {
+    id: `relationship-${draft.id}`,
+    kind: draft.kind,
+    label: connectionLabel(draft),
+    source: end(draft.source),
+    target: end(draft.target),
+    style: 'solid',
+    sources: [],
+  } as unknown as Relationship;
+  const wire = {
+    relationship: relationship.id,
+    route: 'orthogonal',
+    sourceSide: 'auto',
+    targetSide: 'auto',
+    locked: false,
+  } as const;
+  return { relationship, wire, created: draft.created ?? null, naming: draft.naming ?? null };
+}
+/** The module a new imports/calls connection must name a function of, with any staged one added. */
+export function connectionFunctionOwner(draft: ConnectionDraft): DiagramObject | null {
+  const collection = withNewFunction(draft.collection, draft.created ?? null);
+  return functionTarget(collection, {
+    kind: draft.kind,
+    target: { object: draft.target.object },
+  } as Pick<Relationship, 'kind' | 'target'>);
+}
+/** A module connection is labelled with its function's name; anything else keeps the typed label. */
+export function connectionLabel(draft: ConnectionDraft): string {
+  const owner = connectionFunctionOwner(draft);
+  if (owner === null) return draft.label.trim();
+  return moduleFunctions(owner).find((item) => item.id === draft.target.member)?.label ?? '';
+}
+/** Why Apply connection is off; null when a plain wire has a label or a module wire a function. */
+export function connectionProblem(draft: ConnectionDraft): string | null {
+  const owner = connectionFunctionOwner(draft);
+  return owner === null ? typedLabelProblem(draft) : functionProblem(draft, owner);
+}
+function typedLabelProblem(draft: ConnectionDraft): string | null {
+  return draft.label.trim() === '' ? 'Type a connection label.' : null;
+}
+function functionProblem(draft: ConnectionDraft, owner: DiagramObject): string | null {
+  if (typeof draft.naming === 'string') return namingProblem(draft.naming, owner);
+  return connectionLabel(draft) === '' ? pickFunction : null;
+}
+function namingProblem(name: string, owner: DiagramObject): string {
+  return newFunctionProblem(name, owner, null) ?? pickFunction;
+}
+/** Picking a function attaches the new wire to it; `create` also stages it on the module. */
+export function chosenConnectionFunction(
+  draft: ConnectionDraft,
+  edit: Extract<ConnectionEdit, { kind: 'function' }>,
+): ConnectionDraft {
+  const target = { ...draft.target, member: edit.member, memberLabel: edit.label };
+  const staged = { object: draft.target.object, id: edit.member, label: edit.label };
+  const created = edit.create ? (staged as NewFunction) : null;
+  return { ...draft, target, label: edit.label, created, naming: null };
+}
+/** An unusable name stages nothing; the typed text stays so the form can explain why. */
+export function namedConnectionFunction(draft: ConnectionDraft, name: string): ConnectionDraft {
+  return { ...unstaged(draft), naming: name };
+}
+/** Leaving imports/calls drops a staged function and any name being typed. */
+export function connectionKindChanged(
+  draft: ConnectionDraft,
+  kind: Relationship['kind'],
+): ConnectionDraft {
+  return functionWires.includes(kind) ? draft : { ...unstaged(draft), naming: null };
+}
+/** A staged function that is dropped takes the wire's attachment to it along. */
+function unstaged(draft: ConnectionDraft): ConnectionDraft {
+  const created = draft.created ?? null;
+  if (created === null) return draft;
+  const { member, memberLabel, ...target } = draft.target;
+  void memberLabel;
+  return { ...draft, created: null, target: member === created.id ? target : draft.target };
 }

@@ -12,7 +12,14 @@ import {
   plainWireProblem,
   wireApplyBlock,
   wireChanges,
+  chosenConnectionFunction,
+  connectionKindChanged,
+  connectionLabel,
+  connectionProblem,
+  namedConnectionFunction,
+  rebasedWireDraft,
 } from '../contract/index.js';
+import type { ConnectionDraft } from '../contract/records/connection.js';
 import { readWireDrafts } from '../adapters/wire-reader.js';
 import type { WireDraft, WireEdit, WireSelection } from '../contract/records/wire-editor.js';
 import { memoryRetention, snapshot } from './recovery-fixtures.js';
@@ -488,4 +495,52 @@ it('the dry run sends exactly the change list Apply would send, and writes nothi
   expect(sent).toEqual([wireChanges(draft)]);
   expect(verdict.ok).toBe(false);
   expect(editor.getSnapshot().drafts).toEqual([draft]);
+});
+
+it('a new connection to a module is labelled by picking a function, never by typing', () => {
+  const selection = moduleWire();
+  const end = (object: string, label: string) =>
+    ({ object, kind: 'module', label }) as ConnectionDraft['source'];
+  const draft = {
+    collection: selection.collection,
+    target: end('service', 'Issue service'),
+    source: end('cli', 'CLI'),
+    kind: 'imports',
+    label: 'typed by hand',
+  } as ConnectionDraft;
+  expect(connectionProblem(draft)).toBe('Pick a function in Wire label.');
+  const picked = chosenConnectionFunction(draft, {
+    kind: 'function',
+    member: descendantId.parse('store'),
+    label: 'store',
+    create: false,
+  } as never);
+  expect([connectionLabel(picked), connectionProblem(picked)]).toEqual(['store', null]);
+  const spaced = namedConnectionFunction(picked, 'save it');
+  expect(connectionProblem(spaced)).toMatch(/No spaces/);
+  const flow = connectionKindChanged({ ...draft, kind: 'flow' }, 'flow');
+  expect([connectionLabel(flow), connectionProblem(flow)]).toEqual(['typed by hand', null]);
+});
+
+it('a draft survives an unrelated change but not a change to its own wire or ends', () => {
+  const selection = moduleWire();
+  const draft = draftAfter(selection, [choice('submit', 'submit', false)]);
+  const moved = (objects: typeof selection.collection.objects) => {
+    const collection = {
+      ...selection.collection,
+      objects,
+      revision: draft.collection.revision + 1,
+    };
+    return { ...selection, collection } as WireSelection;
+  };
+  const renamed = selection.collection.objects.map((item) =>
+    item.id === 'port' ? { ...item, label: 'Renamed port' } : item,
+  );
+  const unrelated = rebasedWireDraft(draft, moved(renamed));
+  expect(unrelated.collection.revision).toBe(draft.collection.revision + 1);
+  expect(wireApplyBlock(unrelated, moved(renamed).collection, plan)).toBeNull();
+  const ends = selection.collection.objects.map((item) =>
+    item.id === 'service' ? { ...item, label: 'Other service' } : item,
+  );
+  expect(rebasedWireDraft(draft, moved(ends))).toBe(draft);
 });

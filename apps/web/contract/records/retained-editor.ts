@@ -17,6 +17,8 @@ export interface RetainedEditor<Selection, Command, Draft> {
   edit(selection: Selection, command: Command): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
+  /** Swaps a retained form for an equivalent one on a newer base; unknown keys are ignored. */
+  replace(draft: Draft): Result<void>;
 }
 export interface RetainedEditorBindings<Selection, Command, Draft extends RetainedDraft> {
   readonly namespace: string;

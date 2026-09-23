@@ -20,6 +20,12 @@ export {
   withNewFunction,
   createWireDryRun,
   dryRunFor,
+  chosenConnectionFunction,
+  connectionKindChanged,
+  connectionLabel,
+  connectionProblem,
+  namedConnectionFunction,
+  rebasedWireDraft,
 } from './api.js';
 export type { WirePlanner, WirePlanOutcome } from './records/wire-editor.js';
 export type { InspectorBindings, ObjectSelection } from './records/inspector.js';

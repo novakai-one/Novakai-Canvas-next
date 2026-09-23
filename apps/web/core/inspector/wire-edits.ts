@@ -7,6 +7,7 @@ import type {
 } from '../../contract/records/owners.js';
 import type {
   WireDraft,
+  WireSelection,
   WireEdit,
   EditedWire,
   NewFunction,
@@ -241,4 +242,29 @@ function canonical(value: unknown): string {
       ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
       : item,
   );
+}
+/**
+ * A draft from an older revision moves onto the newer one when nothing it touches changed: this
+ * wire, its appearance and the objects at both ends, before and after the edits. Otherwise it
+ * stays behind and Apply says the collection changed.
+ */
+export function rebasedWireDraft(draft: WireDraft, selection: WireSelection): WireDraft {
+  if (draft.collection.revision >= selection.collection.revision) return draft;
+  if (!untouched(draft, selection)) return draft;
+  const { base, generation, collection, section, relationship, wire } = selection;
+  return { ...draft, base, generation, collection, section, relationship, wire };
+}
+function untouched(draft: WireDraft, selection: WireSelection): boolean {
+  const same = [
+    sameValue(draft.relationship, selection.relationship),
+    sameValue(draft.wire, selection.wire),
+  ];
+  const edited = editedWire(draft).relationship;
+  const ends = [draft.relationship, edited].flatMap((item) => [item.source, item.target]);
+  const object = (collection: Collection, id: string) =>
+    collection.objects.find((item) => item.id === id);
+  const endsSame = ends.every((end) =>
+    sameValue(object(draft.collection, end.object), object(selection.collection, end.object)),
+  );
+  return same.every(Boolean) && endsSame;
 }

@@ -98,6 +98,8 @@ export interface WireEditorSession {
   edit(selection: WireSelection, command: WireEdit): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
+  /** Moves this wire's draft onto the selection's newer revision when nothing it touches changed. */
+  rebase(selection: WireSelection): Result<void>;
   /** Dry run of the exact change list Apply would send; the server writes nothing. */
   preview(draft: WireDraft, signal: AbortSignal): Promise<Result<void>>;
 }

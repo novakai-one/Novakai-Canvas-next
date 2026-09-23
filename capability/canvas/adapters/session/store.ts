@@ -59,6 +59,12 @@ export function createStore(reducer: SessionReducer, initial: SessionState): Ses
     if (!transition.changed) return [];
     return publish();
   }
+  /** Escape, a foreign update or drop ends the draft; the live offset goes with it. */
+  function dropStalePreview(): void {
+    if (preview === null || state.draft?.id === preview.id) return;
+    preview = null;
+    [...previewListeners].forEach(notify);
+  }
   /** Successful dispatch commits local state and queues effects before notifications; diagnostics do not imply retry. */
   function commit(transition: Transition): Result<Transition> {
     const admission = admitEffects(transition.effects, acceptedIntents);
@@ -70,6 +76,7 @@ export function createStore(reducer: SessionReducer, initial: SessionState): Ses
       };
     acceptedIntents = admission.value.accepted;
     state = transition.state;
+    dropStalePreview();
     effects = [...effects, ...transition.effects];
     const notifications = notifyChange(transition);
     const diagnostics = [...transition.diagnostics, ...notifications];

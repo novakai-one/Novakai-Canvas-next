@@ -18,10 +18,20 @@ export interface SymbolTable {
   readonly wires: ReadonlySet<string>;
   /** Scenarios in declare order; sequence sections show exactly one of them. */
   readonly scenarios: ReadonlyMap<string, Declaration>;
+  readonly assets: ReadonlySet<string>;
+  readonly sources: ReadonlySet<string>;
+  /** Group ids declared under each section, keyed by section id (grammar §2: unique per section). */
+  readonly groups: ReadonlyMap<string, ReadonlySet<string>>;
 }
-export function buildSymbols(declare: Declaration): SymbolTable {
+export function buildSymbols(declare: Declaration, collection: Declaration): SymbolTable {
   const wires = new Set(
     declare.children.filter((child) => child.kind === 'wire').map((child) => id(child.fields)),
+  );
+  const assets = new Set(
+    declare.children.filter((child) => child.kind === 'asset').map((child) => id(child.fields)),
+  );
+  const sources = new Set(
+    declare.children.filter((child) => child.kind === 'source').map((child) => id(child.fields)),
   );
   const definitions = new Map<string, string>();
   const entities = new Set<string>();
@@ -36,7 +46,32 @@ export function buildSymbols(declare: Declaration): SymbolTable {
       .filter((child) => child.kind === 'scenario')
       .map((child) => [id(child.fields), child] as const),
   );
-  return { definitions, entities, options, labels, nodes, wires, scenarios };
+  const groups = new Map(
+    collection.children
+      .filter((child) => child.kind === 'section')
+      .map((section) => [id(section.fields), groupIdsOf(section)] as const),
+  );
+  return {
+    definitions,
+    entities,
+    options,
+    labels,
+    nodes,
+    wires,
+    scenarios,
+    assets,
+    sources,
+    groups,
+  };
+}
+/** Groups nest inside other groups; every depth under the section shares one namespace. */
+function groupIdsOf(section: Declaration): ReadonlySet<string> {
+  return new Set(collectGroups(section).map((group) => id(group.fields)));
+}
+function collectGroups(node: Declaration): readonly Declaration[] {
+  return node.children.flatMap((child) =>
+    child.kind === 'group' ? [child, ...collectGroups(child)] : collectGroups(child),
+  );
 }
 function addSymbols(
   child: Declaration,

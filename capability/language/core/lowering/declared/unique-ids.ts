@@ -16,15 +16,31 @@ const idKinds: ReadonlySet<string> = new Set([
   'wire',
   'change',
   'scenario',
+  'asset',
+  'source',
+  'rule',
+  'examples',
+  'decision',
+  'group',
 ]);
 /**
  * The collection id is compared with the declare id only: a collection may share its id with a
  * node (ordering.canvas: collection @ordering, node @ordering), since collection ids name workspace
- * documents, not diagram objects.
+ * documents, not diagram objects. The declare id itself names the workspace file, not an object,
+ * so it never joins the objects namespace (grammar §2: "declare | the declare id | alone").
  */
 export function checkUniqueIds(declare: Declaration, collection: Declaration): void {
-  claimAll([declare, ...declare.children, ...collection.children]);
+  claimAll([...declare.children, ...collection.children]);
   claimAll([declare, collection]);
+  collection.children
+    .filter((child) => child.kind === 'section')
+    .forEach((section) => claimAll(collectGroups(section)));
+}
+/** Group ids are unique per section (grammar §2), including groups nested inside other groups. */
+function collectGroups(node: Declaration): readonly Declaration[] {
+  return node.children.flatMap((child) =>
+    child.kind === 'group' ? [child, ...collectGroups(child)] : collectGroups(child),
+  );
 }
 function claimAll(declarations: readonly Declaration[]): void {
   const seen = new Map<string, string>();

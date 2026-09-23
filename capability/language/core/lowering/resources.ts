@@ -55,7 +55,7 @@ export function lowerAsset(item: Declaration, resources: ResolvedResources): Raw
       alias,
     );
   checkAssetRequest(item, record);
-  return structuredClone({ ...record, id: alias });
+  return structuredClone({ ...record, id: alias, kind: 'image' });
 }
 /** Image/icon alt text is required; exact digest and authored metadata cannot disagree with admission. */
 function checkAssetRequest(item: Declaration, record: ResolvedResources['assets'][string]): void {

@@ -3,9 +3,8 @@ import type { Declaration, Document, LocatedValue } from '../../../contract/reco
 import type { LowerRequest } from '../../../contract/records/requests.js';
 import { field, id, text, textOr, reference, endpoint, type RawRecord } from '../fields.js';
 import { lowerRecord } from '../content.js';
-import { lowerLayout } from '../layout.js';
 import { resolveTheme } from '../resources.js';
-import { reject, accepted } from '../../validation/outcomes.js';
+import { reject } from '../../validation/outcomes.js';
 import { declaredConstructs } from '../../vocabulary/constructs-declared.js';
 import { buildSymbols, type SymbolTable } from './symbols.js';
 import { lowerDeclaredNode } from './objects.js';
@@ -13,6 +12,9 @@ import { lowerDeclaredWire } from './relationships.js';
 import { lowerDeclaredDefinitions } from './definitions.js';
 import { lowerDeclaredSection } from './sections.js';
 import { lowerDeclaredChanges } from './changes.js';
+import { lowerCollectionLayout } from './constraints.js';
+import { lowerDeclaredResources } from './resources.js';
+import { lowerDeclaredKnowledge } from './knowledge.js';
 import { checkModulesWireLabels } from './wire-policy.js';
 import { checkUniqueIds, idValues } from './unique-ids.js';
 export function lowerDeclaredDocument(document: Document, request: LowerRequest): RawRecord {
@@ -21,9 +23,16 @@ export function lowerDeclaredDocument(document: Document, request: LowerRequest)
   checkReservedIds(declare);
   checkReservedIds(collection);
   checkUniqueIds(declare, collection);
-  const symbols = buildSymbols(declare);
-  const { uses, ...metadata } = lowerRecord(collection, declaredConstructs);
+  const symbols = buildSymbols(declare, collection);
+  const { uses, algorithm, direction, gap, columns, ...metadata } = lowerRecord(
+    collection,
+    declaredConstructs,
+  );
   void uses;
+  void algorithm;
+  void direction;
+  void gap;
+  void columns;
   const wireDeclarations = recordsOf(declare, 'wire');
   const authoredWires = wireDeclarations.map((item) => lowerDeclaredWire(item, symbols));
   const fkWires = buildForeignKeyWires(declare);
@@ -32,6 +41,8 @@ export function lowerDeclaredDocument(document: Document, request: LowerRequest)
   const sectionResults = recordsOf(collection, 'section').map((item) =>
     lowerDeclaredSection(item, symbols),
   );
+  const resources = lowerDeclaredResources(declare, symbols);
+  lowerDeclaredKnowledge(declare, symbols);
   return {
     ...metadata,
     schemaVersion: 1,
@@ -41,7 +52,7 @@ export function lowerDeclaredDocument(document: Document, request: LowerRequest)
       request.resources,
       collection.span,
     ),
-    arrangement: accepted(lowerLayout(collection.fields, [], 'grid')),
+    arrangement: lowerCollectionLayout(collection),
     objects: recordsOf(declare, 'node').map((item) => lowerDeclaredNode(item, symbols)),
     relationships: [
       ...authoredWires,
@@ -50,8 +61,8 @@ export function lowerDeclaredDocument(document: Document, request: LowerRequest)
     ],
     definitions: lowerDeclaredDefinitions(declare),
     sections: sectionResults.map((result) => result.section),
-    sources: [],
-    assets: [],
+    sources: resources.sources,
+    assets: resources.assets,
     ...changesField(lowerDeclaredChanges(declare, withDerivedWires(symbols, fkWires))),
   };
 }

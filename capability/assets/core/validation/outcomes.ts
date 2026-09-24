@@ -12,8 +12,8 @@ interface Parser<T> {
 }
 
 /**
- * Wraps a value as a success. The value is not copied or frozen here; parsing already detached
- * it, and the public boundary (`protect` / `protectAsync`) freezes it.
+ * Wraps a value as a success. The value is not copied or frozen here; callers pass parsed or
+ * newly built values, and the public boundary (`protect` / `protectAsync`) freezes them.
  *
  * @param value - The success value.
  * @returns `{ ok: true, value }`.
@@ -24,15 +24,17 @@ export function success<T>(value: T): Result<T> {
 }
 
 /**
- * Checks input with a schema and returns a typed result, without throwing or casting.
+ * Checks input with a schema and returns a typed result, without casting.
  *
  * @param schema - The schema to check with (its `safeParse` is read and called once).
  * @param input - The value to check.
  * @param code - The failure code. Defaults to `invalid-input`; stored data uses `corrupt-asset`
  * and processor output uses `unsafe-media`.
  * @returns The parsed data, or a failure built from the first issue: its path joined with `.`
- * (`$` when there is no issue) and its message ("Invalid data" when there is no issue).
- * @throws Whatever the schema throws; a zod schema does not throw from `safeParse`.
+ * (an issue at the root gives the empty path `""`; `$` when there is no issue) and its message
+ * ("Invalid data" when there is no issue).
+ * @throws Whatever the schema throws. Zod's `safeParse` rethrows an error raised while reading the
+ * input (for example a throwing getter); `protect` / `protectAsync` turn it into a failure.
  */
 export function parse<T>(
   schema: Parser<T>,
@@ -49,22 +51,18 @@ export function parse<T>(
 
 /**
  * The public boundary of synchronous Assets operations. Runs `action` and deep-freezes its
- * result. A throw becomes a frozen failure with `code` at `$`: "Asset operation failed; re-read
- * before retry". Assets owns cleanup; Authoring or the maintenance caller owns retry.
+ * result. A throw becomes a frozen `storage-unavailable` failure at `$`: "Asset operation failed;
+ * re-read before retry". Assets owns cleanup; Authoring or the maintenance caller owns retry.
  *
  * @param action - The operation to run.
- * @param code - The failure code for a throw. Defaults to `storage-unavailable`.
  * @returns The frozen result, or the frozen failure for a throw.
  * @throws Never.
  */
-export function protect<T>(
-  action: () => Result<T>,
-  code: ErrorCode = 'storage-unavailable',
-): Result<T> {
+export function protect<T>(action: () => Result<T>): Result<T> {
   try {
     return freeze(action());
   } catch {
-    return freeze(fail(code, '$', 'Asset operation failed; re-read before retry'));
+    return freeze(fail('storage-unavailable', '$', 'Asset operation failed; re-read before retry'));
   }
 }
 
@@ -91,13 +89,14 @@ export async function protectAsync<T>(
 
 /**
  * Deep-freezes a value in place and returns it. Public bytes are base64 strings, so results hold
- * no typed arrays (which cannot be frozen).
+ * no typed arrays (which cannot be frozen). Functions are left unfrozen, for example a lease's
+ * `read` and `release`; the objects holding them are frozen.
  *
- * @param value - The value to freeze. Primitives are returned unchanged.
- * @returns The same value, frozen at every level.
+ * @param value - The value to freeze. Primitives and functions are returned unchanged.
+ * @returns The same value, frozen at every object level.
  * @throws Never for plain data.
  */
-export function freeze<T>(value: T): T {
+function freeze<T>(value: T): T {
   if (value === null || typeof value !== 'object') {
     return value;
   }

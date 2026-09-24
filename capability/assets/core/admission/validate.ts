@@ -6,8 +6,9 @@ import { parse, success } from '../validation/outcomes.js';
 
 /**
  * Computes the decoded byte length of base64 text from its length and trailing `=` padding,
- * without decoding it. The alphabet and canonical form are checked elsewhere (the `base64` schema
- * and the identity adapter).
+ * without decoding it. The result is correct only for text that passed the `base64` schema (every
+ * caller passes checked text); for other text it can be a fraction. The alphabet and canonical
+ * form are checked elsewhere (the `base64` schema and the identity adapter).
  *
  * @param base64 - The base64 text.
  * @returns The number of bytes it decodes to.
@@ -26,7 +27,8 @@ export function byteLength(base64: string): number {
  *
  * @param input - The submitted request.
  * @returns The checked request, or the first failure.
- * @throws Never for plain data.
+ * @throws Whatever reading the input throws (for example a getter); `stageMedia`'s boundary
+ * (`protectAsync`) turns it into `unsafe-media`.
  */
 export function validateInput(input: unknown): Result<StageInput> {
   const parsed = parse(stageInput, input);
@@ -48,7 +50,8 @@ export function validateInput(input: unknown): Result<StageInput> {
  *
  * @param input - The processor's output.
  * @returns The checked media, or the first failure.
- * @throws Never for plain data.
+ * @throws Whatever reading the processor output throws; `stageMedia`'s and `prepareRestored`'s
+ * boundaries (`protectAsync`) turn it into `unsafe-media`.
  */
 export function validateNormalized(input: unknown): Result<NormalizedMedia> {
   const parsed = parse(normalizedMedia, input, 'unsafe-media');

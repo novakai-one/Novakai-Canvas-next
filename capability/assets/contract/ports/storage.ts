@@ -31,6 +31,7 @@ export interface AssetTransaction {
  * Transactional storage for blobs and leases. Metadata and lease changes commit only when the
  * transaction's action succeeds. Blob files are immutable and are not rolled back: a failed
  * transaction can leave an unreferenced file, and a file deleted inside it stays deleted.
+ * Collection (`collectUnreferenced`) removes such leftover files.
  */
 export interface AssetStorage {
   /**
@@ -40,12 +41,14 @@ export interface AssetStorage {
    * @returns The action's result. A throw becomes a failure (a `StorageFault` keeps its code,
    * path and message; anything else is `storage-unavailable`). A failed rollback is
    * `storage-unavailable`.
+   * @throws Never; the real adapter returns failures instead.
    */
   transact<T>(action: (transaction: AssetTransaction) => Result<T>): Result<T>;
   /**
    * Closes storage. Later transactions fail with `storage-unavailable`.
    *
    * @returns Success, or the close failure.
+   * @throws Never; the real adapter returns failures instead.
    */
   close(): Result<void>;
 }

@@ -40,14 +40,18 @@ export type SupportedMedia = z.infer<typeof mediaType>;
 
 /**
  * Checks base64 text: at least 4 characters, at most the encoded length of {@link limits}.bytes,
- * a multiple of 4 long, only the base64 alphabet, and at most two `=` at the very end. Failure
- * message: "Invalid base64 encoding". Canonical form is checked later, when the bytes are hashed.
+ * a multiple of 4 long, only the base64 alphabet, and at most two `=` at the very end. A length,
+ * alphabet or padding failure has the message "Invalid base64 encoding"; the length bounds have
+ * zod's own messages. Canonical form is checked later, when the bytes are hashed.
  */
 export const base64 = z
   .string()
   .min(4)
   .max(Math.ceil(limits.bytes / 3) * 4)
   .refine(validBase64, 'Invalid base64 encoding');
+
+/** The longest alt, license or attribution text. */
+const MAX_TEXT = 4096;
 
 /**
  * Checks where media came from: a `source` (1–2048 characters) and an optional `license` and
@@ -56,8 +60,8 @@ export const base64 = z
 export const provenance = z
   .strictObject({
     source: z.string().min(1).max(2048),
-    license: z.string().max(4096).optional(),
-    attribution: z.string().max(4096).optional(),
+    license: z.string().max(MAX_TEXT).optional(),
+    attribution: z.string().max(MAX_TEXT).optional(),
   })
   .readonly();
 
@@ -68,12 +72,12 @@ export const provenance = z
 export const stageInput = z.strictObject({
   base64,
   mediaType,
-  alt: z.string().max(4096),
+  alt: z.string().max(MAX_TEXT),
   provenance,
 });
 
 /** A staging request that passed {@link stageInput}. */
-export type StageInput = z.infer<typeof stageInput>;
+export type StageInput = Readonly<z.infer<typeof stageInput>>;
 
 /**
  * Checks a media processor's output: the normalized `base64` bytes and `mediaType`; the `kind`
@@ -114,8 +118,8 @@ export const storedBlob = z.strictObject({ descriptor, base64 }).readonly();
 export type StoredBlob = z.infer<typeof storedBlob>;
 
 /**
- * The result of staging one media file. Only the descriptor is stored; the other fields belong to
- * this submission, and Authoring uses them when it commits a binding.
+ * The result of staging one media file, returned to the caller (the service and the CLI). Only
+ * the descriptor is stored; the other fields belong to this submission.
  */
 export interface Admission {
   /** The stored blob's descriptor. */

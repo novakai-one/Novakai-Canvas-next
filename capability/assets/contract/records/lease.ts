@@ -9,7 +9,7 @@ import { digest, leaseId } from '../brands.js';
 export const leaseRecord = z
   .strictObject({
     id: leaseId,
-    ownerPid: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+    ownerPid: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).brand<'ProcessId'>(),
     digests: z.array(digest).readonly(),
   })
   .readonly();

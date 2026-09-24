@@ -32,7 +32,7 @@ export function findSlot(state: WorkspaceState, key: RecordKey): Slot | undefine
  * Shared by the request checks and the stored-state checks. Nothing is indexed or stored; the
  * check is recomputed each time.
  *
- * @param values - The values to check, usually from {@link keyText}.
+ * @param values - The values to check, for example `kind/id` texts, request IDs or resource digests.
  * @returns `true` when at least one value repeats.
  */
 export function hasDuplicates(values: readonly string[]): boolean {

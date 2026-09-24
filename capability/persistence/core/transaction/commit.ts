@@ -2,13 +2,14 @@ import { fail } from '../../contract/errors.js';
 import type { Result } from '../../contract/errors.js';
 import type { Decision } from '../../contract/ports/store.js';
 import type { Receipt, WorkspaceState } from '../../contract/records/storage.js';
-import type { CommitRequest } from '../../contract/records/transaction.js';
+import type { CommitRequest, Write } from '../../contract/records/transaction.js';
 import { protect, success } from '../validation/outcomes.js';
 import { validateState } from '../validation/state.js';
 import { keyText } from './keys.js';
 import { reconcileReceipt } from './receipts.js';
 import { RECEIPT_LIMIT } from './limits.js';
 import { compareVersions, checkWrites, writeSlot } from './versions.js';
+import type { SlotWrite } from './versions.js';
 
 /**
  * Decides what one commit request does to the workspace state, without touching storage.
@@ -58,8 +59,8 @@ const commitGates: readonly ((state: WorkspaceState, request: CommitRequest) => 
 /** Runs every gate, returns the first failure, and otherwise builds the commit. */
 function admitCommit(state: WorkspaceState, request: CommitRequest): Result<Decision<Receipt>> {
   const results = commitGates.map((gate) => gate(state, request));
-  const failure = results.find((result) => !result.ok);
-  if (failure !== undefined && !failure.ok) {
+  const failure = results.find(isFailure);
+  if (failure !== undefined) {
     return failure;
   }
   return createCommit(state, request);
@@ -84,7 +85,7 @@ function checkSequence(state: WorkspaceState): Result<void> {
  * - Only the newest {@link RECEIPT_LIMIT} receipts are kept.
  */
 function createCommit(state: WorkspaceState, request: CommitRequest): Result<Decision<Receipt>> {
-  const kept = request.writes.filter((write) => write.kind !== 'purge');
+  const kept = request.writes.filter(createsSlot);
   const replacements = kept.map((write) => writeSlot(state, write));
   const removed = new Set(request.writes.map((write) => keyText(write.key)));
   const retained = state.slots.filter((slot) => !removed.has(keyText(slot.key)));
@@ -110,4 +111,14 @@ function createCommit(state: WorkspaceState, request: CommitRequest): Result<Dec
     return validated;
   }
   return success({ state: validated.value, value: receipt });
+}
+
+/** True for a put or a delete: the writes that get a new slot. */
+function createsSlot(write: Write): write is SlotWrite {
+  return write.kind !== 'purge';
+}
+
+/** True for a failed result. */
+function isFailure(result: Result<void>): result is Extract<Result<void>, { ok: false }> {
+  return !result.ok;
 }

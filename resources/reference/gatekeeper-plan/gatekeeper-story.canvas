@@ -1,0 +1,513 @@
+canvas 1
+collection @gatekeeper-story "The gatekeeper — today and proposed" {
+
+  node @t-drop start "You drop a node" role=primary size=small {}
+  node @t-g0 step "0 · Edit lock" size=medium { text @t-g0-d "Refuses if any earlier edit, review or undo is still in flight." }
+  node @t-g1 step "1 · Movement review" size=medium { text @t-g1-d "Module diagrams only: may demand a 'Rearrange section' decision instead of moving." }
+  node @t-g2 step "2 · Edit planner" size=medium { text @t-g2-d "Dies on folded or missing nodes: 'captured group missing'." }
+  node @t-g3 step "3 · Wire preview" size=medium { text @t-g3-d "Module diagrams only: every wire must re-route inside the browser." }
+  node @t-g4 step "4 · Request journal" size=medium { text @t-g4-d "One earlier failed edit blocks every later edit to this diagram." }
+  node @t-controller step "Server controller" role=primary size=medium { text @t-controller-d "The real judge: revisions, rules, feasibility. Asked last." }
+  node @t-legal decision "Legal?" role=decision size=medium {}
+  node @t-refused-browser end "Refused before the server" role=warning size=medium { text @t-rb-d "Technical message. The controller was never asked." }
+  node @t-refused-server end "Refused by the controller" role=warning size=medium {}
+  node @t-committed end "Committed" role=success size=small {}
+
+  wire @t-w0 @t-drop -> @t-g0 "pass" kind=flow
+  wire @t-w1 @t-g0 -> @t-g1 "pass" kind=flow
+  wire @t-w2 @t-g1 -> @t-g2 "pass" kind=flow
+  wire @t-w3 @t-g2 -> @t-g3 "pass" kind=flow
+  wire @t-w4 @t-g3 -> @t-g4 "pass" kind=flow
+  wire @t-w5 @t-g4 -> @t-controller "submitted at last" kind=flow
+  wire @t-w6 @t-controller -> @t-legal "judged" kind=flow
+  wire @t-yes @t-legal -> @t-committed "yes" kind=flow
+  wire @t-no @t-legal -> @t-refused-server "no" kind=flow
+  wire @t-f0 @t-g0 -> @t-refused-browser "no" kind=flow style=dashed
+  wire @t-f1 @t-g1 -> @t-refused-browser "no" kind=flow style=dashed
+  wire @t-f2 @t-g2 -> @t-refused-browser "no" kind=flow style=dashed
+  wire @t-f3 @t-g3 -> @t-refused-browser "no" kind=flow style=dashed
+  wire @t-f4 @t-g4 -> @t-refused-browser "no" kind=flow style=dashed
+
+  node @v-edit step "The same edit: move a node out of its group" role=primary size=medium {}
+  node @v-browser step "As your drag — a browser gate answers" size=medium {}
+  node @v-brefused end "REFUSED" role=warning size=medium { text @v-br-d "'The diagram edit could not be planned'. Nothing was sent." }
+  node @v-agent step "As agent text — straight to the controller" size=medium {}
+  node @v-committed end "COMMITTED" role=success size=medium { text @v-c-d "Proven today: the controller said yes to the exact edit the browser refused." }
+  node @v-note note "For a human, the browser's verdict is final — the real judge never sees the edit." size=medium {}
+
+  wire @v-w1 @v-edit -> @v-browser "human path" kind=flow
+  wire @v-w2 @v-browser -> @v-brefused "its own verdict" kind=flow
+  wire @v-w3 @v-edit -> @v-agent "agent path" kind=flow
+  wire @v-w4 @v-agent -> @v-committed "the controller's verdict" kind=flow
+
+  node @p-drop start "You drop a node" role=primary size=small {}
+  node @p-adviser step "Browser adviser" role=supporting size=medium { text @p-adviser-d "Asks the judge's preview — same pipeline, no commit. Presents the verdict and options. Owns no rules itself." }
+  node @p-controller step "One judge — owns the process" role=primary size=medium { text @p-controller-d "Consults each law in turn. Same door for human and agent. Nobody auto-accepted." }
+  node @p-legal decision "Legal?" role=decision size=medium {}
+  node @p-commit end "Committed" role=success size=small {}
+  node @p-refuse end "Refused — in human words, with options" role=warning size=medium { text @p-refuse-d "Retry · adjust · cancel — plain words, never codes." }
+  node @p-agent step "Agent edit (CLI)" size=medium {}
+
+  wire @p-w1 @p-drop -> @p-adviser "advised" kind=flow
+  wire @p-w2 @p-adviser -> @p-controller "submitted" kind=flow
+  wire @p-w3 @p-agent -> @p-controller "same judge" kind=flow
+  wire @p-w4 @p-controller -> @p-legal "judged" kind=flow
+  wire @p-yes @p-legal -> @p-commit "yes" kind=flow
+  wire @p-no @p-legal -> @p-refuse "no" kind=flow
+
+  node @d-drag start "You drag a node toward a group's edge" role=primary size=small {}
+  node @d-release step "Release — the drop lands" size=medium { text @d-release-d "No hold, no guessing. The drop simply lands where you left it." }
+  node @d-choice decision "What did you mean?" role=decision size=medium { text @d-choice-d "A small popup on the spot — not a refusal." }
+  node @d-grow end "Group grows to keep it" role=success size=medium {}
+  node @d-out end "Node leaves the group" role=success size=medium {}
+  node @d-cancel end "Back where it was" size=medium {}
+  node @d-note note "Ambiguity becomes your choice — never the app's veto." size=medium {}
+
+  wire @d-w1 @d-drag -> @d-release "let go" kind=flow
+  wire @d-w3 @d-release -> @d-choice "ask" kind=flow
+  wire @d-grow-w @d-choice -> @d-grow "keep it in" kind=flow
+  wire @d-out-w @d-choice -> @d-out "move it out" kind=flow
+  wire @d-cancel-w @d-choice -> @d-cancel "cancel" kind=flow style=dashed
+
+  node @j-human participant "You (browser)" role=primary {}
+  node @j-agent participant "Agent (CLI)" {}
+  node @j-third participant "Future author" role=supporting {}
+  node @j-judge participant "The judge (Authoring)" role=primary {}
+  node @j-rulebook participant "Law: Rulebook (Model)" {}
+  node @j-geometry participant "Law: Geometry (Layout + roads)" {}
+  node @j-store participant "Law: Store (Persistence)" {}
+
+  node @o-human system "You (browser)" role=primary {}
+  node @o-agent system "Agent (CLI)" {}
+  node @o-third system "Future author" role=supporting {}
+  node @o-judge module "The judge — Authoring" role=primary {
+    text @o-judge-d "Owns the process: admit the author, consult each law, commit or refuse. Knows no condition itself — every law is behind it, replaceable."
+  }
+  node @o-rulebook module "Law: Rulebook — Model" {
+    text @o-rulebook-d "Meaning, references, invariants. Answers: legal / illegal."
+  }
+  node @o-geometry module "Law: Geometry — Layout & roads" {
+    text @o-geometry-d "Measurement, module roads, wire routing, overlaps. Answers: drawable / not drawable."
+  }
+  node @o-store module "Law: Store — Persistence" {
+    text @o-store-d "Atomic commits, receipts, undo history."
+  }
+  node @o-turns module "Turn-taking & conflicts" role=supporting {
+    text @o-turns-d "Two authors, one diagram: whose edit lands, who must rebase. Home chosen — the judge. Rules — tomorrow's design."
+  }
+  node @o-laws-note note "Not one identical rulebook — each law answers knowing who asked. Humans and agents may be allowed different moves (already true today: agents may not use every planner humans may)." size=medium {}
+
+  wire @o-w1 @o-human -> @o-judge "submits" kind=reference
+  wire @o-w2 @o-agent -> @o-judge "submits" kind=reference
+  wire @o-w3 @o-third -> @o-judge "same door" kind=reference
+  wire @o-w4 @o-judge -> @o-rulebook "consults" kind=reference
+  wire @o-w5 @o-judge -> @o-geometry "consults" kind=reference
+  wire @o-w6 @o-judge -> @o-store "commits · receipts" kind=reference
+
+  section @s-today-gates "1 · Today — one drop faces six judges" mode=flow layout=layered direction=down order=0 {
+    show @t-drop
+    group @g-browser "IN YOUR BROWSER — five private gates" {
+      show @t-g0 @t-g1 @t-g2 @t-g3 @t-g4
+    }
+    group @g-server "ON THE SERVER — asked last" {
+      show @t-controller @t-legal
+    }
+    show @t-refused-browser @t-refused-server @t-committed
+    connect @t-w0 @t-w1 @t-w2 @t-w3 @t-w4 @t-w5 @t-w6 @t-yes @t-no
+    connect @t-f0 @t-f1 @t-f2 @t-f3 @t-f4
+  }
+
+  section @s-today-verdicts "2 · Today — the same edit gets two verdicts" mode=flow layout=layered direction=right order=1 {
+    show @v-edit @v-browser @v-brefused @v-agent @v-committed @v-note
+    connect @v-w1 @v-w2 @v-w3 @v-w4
+  }
+
+  section @s-proposal-judge "3 · Proposal — one judge, one adviser" mode=flow layout=layered direction=right order=2 {
+    show @p-drop
+    before @p-agent @p-adviser
+    below @p-drop @p-agent
+    group @g-adviser "IN YOUR BROWSER — advice only" {
+      show @p-adviser
+    }
+    group @g-judge "ON THE SERVER — the decision" {
+      show @p-controller @p-legal
+    }
+    show @p-commit @p-refuse @p-agent
+    connect @p-w1 @p-w2 @p-w3 @p-w4 @p-yes @p-no
+  }
+
+  section @s-proposal-edge "4 · Proposal — a group-edge drop becomes a choice" mode=flow layout=layered direction=right order=3 {
+    show @d-drag @d-release @d-choice @d-grow @d-out @d-cancel @d-note
+    connect @d-w1 @d-w3 @d-grow-w @d-out-w @d-cancel-w
+  }
+
+  section @s-tomorrow-door "5 · Tomorrow — every author knocks on the same door" mode=sequence direction=down gap=compact order=4 {
+    show @j-human @j-agent @j-third @j-judge @j-rulebook @j-geometry @j-store
+    event @j-submit @j-human -> @j-judge "Submit edit (drop, form, source text)" kind=call activate=true
+    event @j-admit @j-judge -> @j-judge "Admit: who are you, what may you ask, which revision · whose turn (conflict home — rules TBD)" kind=call
+    event @j-ask-rules @j-judge -> @j-rulebook "Is it legal? meaning + rules" kind=call
+    event @j-rules-verdict @j-rulebook -> @j-judge "Verdict — legal, or illegal + reasons (which rule, why)" kind=return activate=false
+    event @j-ask-geometry @j-judge -> @j-geometry "Can it be drawn? measure, roads, wires" kind=call
+    event @j-geometry-verdict @j-geometry -> @j-judge "Verdict + preview — or not drawable + reasons" kind=return activate=false
+    fragment @j-outcome alt "The judge's verdict" {
+      branch @j-all-yes "Every law says yes" {
+        event @j-commit @j-judge -> @j-store "Commit atomically (edit + history + receipt)" kind=call
+        event @j-receipt @j-store -> @j-judge "Receipt: new revision" kind=return activate=false
+        event @j-yes-back @j-judge -> @j-human "Committed — store updates, every open canvas re-renders" kind=return activate=false
+      }
+      branch @j-one-no "Any law says no" {
+        event @j-no-back @j-judge -> @j-human "Refusal in human words (rendered from the failed law's reasons) + options: retry · adjust · cancel" kind=return activate=false
+      }
+    }
+    event @j-agent-submit @j-agent -> @j-judge "Submit edit (DSL text)" kind=call activate=true
+    event @j-agent-same @j-judge -> @j-judge "Same judge, same process — but the laws answer knowing who asked (not identical per author)" kind=call
+    event @j-agent-back @j-judge -> @j-agent "Receipt or refusal" kind=return activate=false
+    event @j-third-note @j-third -> @j-judge "One day: same door — nothing else to learn" kind=async activate=false
+  }
+
+  section @s-tomorrow-ownership "6 · Tomorrow — the judge owns the process, the laws own the conditions" mode=modules layout=layered direction=right order=5 {
+    group @j-actors "AUTHORS — human, agent, and any future author" {
+      show @o-human @o-agent @o-third
+    }
+    group @j-door "THE JUDGE — one door, one process" {
+      show @o-judge @o-turns
+    }
+    group @j-laws "THE LAWS — each owns one kind of condition" {
+      show @o-rulebook @o-geometry @o-store @o-laws-note
+    }
+    connect @o-w1 @o-w2 @o-w3 @o-w4 @o-w5 @o-w6
+  }
+
+  node @tr-root concept "novakai-canvas/" size=small role=primary {}
+  node @tr-apps concept "apps/" size=small {}
+  node @tr-cap concept "capability/" size=small {}
+  node @tr-webad concept "web/adapters/" size=small {}
+  node @tr-webed concept "web/core/editing/" size=small {}
+  node @tr-transport concept "service/core/transport/" size=small {}
+  node @tr-canvasrf concept "canvas/adapters/react-flow/" size=small {}
+  node @tr-interaction concept "canvas/core/interaction/" size=small {}
+  node @tr-layout concept "layout/core/" size=small {}
+  node @tr-patching concept "language/core/patching/" size=small {}
+  node @tr-validation concept "authoring/core/validation/" size=small {}
+  node @tr-transactions concept "authoring/core/transactions/" size=small {}
+  node @tr-f-ws concept "workspace-session.ts" size=small {}
+  node @tr-f-rp concept "route-preview.ts" size=small {}
+  node @tr-f-ss concept "submission-session.ts" size=small {}
+  node @tr-f-plan concept "plan.ts" size=small {}
+  node @tr-f-regroup concept "regroup.ts" size=small {}
+  node @tr-f-mc concept "movement-capture.ts" size=small {}
+  node @tr-f-adm concept "admission.ts" size=small {}
+  node @tr-f-surface concept "CanvasSurface.tsx" size=small {}
+  node @tr-f-drop concept "drop-choice.ts (new)" size=small role=primary {}
+  node @tr-f-exp concept "nested-support-expansion.ts" size=small {}
+  node @tr-f-struct concept "structural.ts" size=small {}
+  node @tr-f-out concept "outcomes.ts" size=small {}
+  node @tr-f-apply concept "apply.ts" size=small {}
+  node @tr-note note "Thirteen files, only one of them new. Eight of the thirteen lose lines to de-gating — the handcuffs were code too." size=medium {}
+
+  wire @tr-e1 @tr-root -> @tr-apps "contains" kind=parent
+  wire @tr-e2 @tr-root -> @tr-cap "contains" kind=parent
+  wire @tr-e3 @tr-apps -> @tr-webad "contains" kind=parent
+  wire @tr-e4 @tr-apps -> @tr-webed "contains" kind=parent
+  wire @tr-e5 @tr-apps -> @tr-transport "contains" kind=parent
+  wire @tr-e6 @tr-cap -> @tr-canvasrf "contains" kind=parent
+  wire @tr-e7 @tr-cap -> @tr-interaction "contains" kind=parent
+  wire @tr-e8 @tr-cap -> @tr-layout "contains" kind=parent
+  wire @tr-e9 @tr-cap -> @tr-patching "contains" kind=parent
+  wire @tr-e10 @tr-cap -> @tr-validation "contains" kind=parent
+  wire @tr-e11 @tr-webad -> @tr-f-ws "contains" kind=parent
+  wire @tr-e12 @tr-webad -> @tr-f-rp "contains" kind=parent
+  wire @tr-e13 @tr-webad -> @tr-f-ss "contains" kind=parent
+  wire @tr-e14 @tr-webed -> @tr-f-plan "contains" kind=parent
+  wire @tr-e15 @tr-webed -> @tr-f-regroup "contains" kind=parent
+  wire @tr-e16 @tr-webed -> @tr-f-mc "contains" kind=parent
+  wire @tr-e17 @tr-transport -> @tr-f-adm "contains" kind=parent
+  wire @tr-e18 @tr-canvasrf -> @tr-f-surface "contains" kind=parent
+  wire @tr-e19 @tr-interaction -> @tr-f-drop "contains" kind=parent
+  wire @tr-e20 @tr-layout -> @tr-f-exp "contains" kind=parent
+  wire @tr-e21 @tr-patching -> @tr-f-struct "contains" kind=parent
+  wire @tr-e22 @tr-validation -> @tr-f-out "contains" kind=parent
+  wire @tr-e23 @tr-cap -> @tr-transactions "contains" kind=parent
+  wire @tr-e24 @tr-transactions -> @tr-f-apply "contains" kind=parent
+
+  node @mg-session module "Workspace session" size=medium {
+    signature @mg-session-sig "submit" parameters=["move: NodeMove", "meaning: DropMeaning"] returns="void"
+    text @mg-session-d "change — loses gates G0+G1 (edit lock, movement review); the gatekeeper becomes a messenger." role=caption
+  }
+  node @mg-capture module "Movement capture" size=medium {
+    signature @mg-capture-sig "captureMove" parameters=["move: NodeMove", "meaning: DropMeaning"] returns="MoveCapture"
+    text @mg-capture-d "change — the 'captured group missing' throw dies; a group-edge drop is captured as a question." role=caption
+  }
+  node @mg-planner module "Edit planner" size=medium {
+    signature @mg-planner-sig "planRegroup" parameters=["capture: MoveCapture"] returns="EditRequest"
+    text @mg-planner-d "change — plan.ts + regroup.ts: plans both meanings of an ambiguous drop; stops deciding legality itself." role=caption
+  }
+  node @mg-routes module "Route preview — demoted" size=medium {
+    signature @mg-routes-sig "adviseRoutes" parameters=["request: EditRequest"] returns="RouteAdvice"
+    text @mg-routes-d "change — asks the judge's preview instead of re-running the roads engine in-browser." role=caption
+  }
+  node @mg-journal module "Submission session" size=medium {
+    signature @mg-journal-sig "releaseOnRejection" parameters=["receipt: Receipt"] returns="void"
+    text @mg-journal-d "change — a typed rejection frees the next edit; one 'no' stops wedging the diagram." role=caption
+  }
+  node @mg-surface module "Canvas surface" size=medium {
+    code @mg-surface-x "landDrop()"
+    text @mg-surface-d "change — hosts the keep-in / move-out / cancel popup at the drop spot." role=caption
+  }
+  node @mg-drop module "Drop choice (new)" role=primary size=medium {
+    signature @mg-drop-sig "askMeaning" parameters=["drop: LandedDrop"] returns="DropMeaning"
+    text @mg-drop-d "new — the only new file; turns a landed drop into the three-way question." role=caption
+  }
+  node @mg-judge module "The judge" role=primary size=medium {
+    signature @mg-preview-sig "previewEdit" parameters=["request: EditRequest"] returns="Verdict + Preview"
+    signature @mg-apply-sig "applyEdit" parameters=["request: EditRequest"] returns="Receipt"
+    text @mg-judge-d "change — transactions/apply.ts: one pipeline for every author; humans get the same receipts and a preview to advise with." role=caption
+  }
+  node @mg-rulebook module "Law: Rulebook (Model)" size=small {
+    signature @mg-rulebook-sig "validate" parameters=["request: EditRequest"] returns="Verdict — legal | illegal + reasons"
+    text @mg-rulebook-d "existing — logic unchanged; the change is contractual: the verdict carries reasons (which rule broke, why) so the judge can explain a 'no'. Surfacing work lands in outcomes.ts, not here." role=caption
+  }
+  node @mg-geometry module "Law: Geometry (Layout & roads)" size=small {
+    signature @mg-geometry-sig "arrange" parameters=["scene: Scene"] returns="Verdict — layout | not drawable + reasons"
+    text @mg-geometry-d "existing — logic unchanged; the change is contractual: a 'not drawable' verdict carries the reason (what collides, what won't route). Surfacing work lands in outcomes.ts, not here." role=caption
+  }
+  node @mg-store module "Law: Store (Persistence)" size=small {
+    signature @mg-store-sig "commit" parameters=["tx: Transaction"] returns="Receipt"
+    text @mg-store-d "existing — unchanged." role=caption
+  }
+  node @mg-expand module "Group expansion" size=small {
+    signature @mg-expand-sig "growGroup" parameters=["group: GroupId", "node: NodeId"] returns="GroupBounds"
+    text @mg-expand-d "change — grows group bounds when the answer is keep-in." role=caption
+  }
+  node @mg-patch module "Structural patches" size=small {
+    signature @mg-patch-sig "buildRegroupPatch" parameters=["meaning: DropMeaning"] returns="StructuralPatch"
+    text @mg-patch-d "change — the regroup/ungroup patch the judge applies." role=caption
+  }
+  node @mg-door module "Admission — the door" size=small {
+    signature @mg-door-sig "admit" parameters=["actor: Actor", "request: EditRequest"] returns="Admitted | Refused"
+    text @mg-door-d "change — admission.ts: humans gain preview access; the per-author laws stay here." role=caption
+  }
+  node @mg-outcomes module "Outcomes — human words" size=small {
+    signature @mg-outcomes-sig "renderRefusal" parameters=["rejection: TypedRejection"] returns="HumanWords"
+    text @mg-outcomes-d "change — outcomes.ts: typed rejections become retry · adjust · cancel, never codes." role=caption
+  }
+  node @mg-note note "Every wire names the function it calls, and the target card carries that function's signature with its return type — so no return wires. Each card says new / change / existing against today. Every request crosses one door (admit) before the judge." size=medium {}
+
+  wire @mg-w1 @mg-surface -> @mg-drop.@mg-drop-sig "calls askMeaning(): DropMeaning" kind=calls
+  wire @mg-w2 @mg-surface -> @mg-session.@mg-session-sig "calls submit(move, meaning): void" kind=calls
+  wire @mg-w3 @mg-session -> @mg-capture.@mg-capture-sig "calls captureMove(): MoveCapture" kind=calls
+  wire @mg-w4 @mg-session -> @mg-planner.@mg-planner-sig "calls planRegroup(): EditRequest" kind=calls
+  wire @mg-w5 @mg-session -> @mg-routes.@mg-routes-sig "calls adviseRoutes(): RouteAdvice" kind=calls
+  wire @mg-w6 @mg-session -> @mg-journal.@mg-journal-sig "calls releaseOnRejection(): void" kind=calls
+  wire @mg-w7 @mg-session -> @mg-door.@mg-door-sig "calls admit(): Admitted | Refused" kind=calls
+  wire @mg-w8 @mg-planner -> @mg-door.@mg-door-sig "calls admit(): Admitted | Refused" kind=calls
+  wire @mg-w9 @mg-judge -> @mg-rulebook.@mg-rulebook-sig "calls validate(): Verdict — legal | illegal + reasons" kind=calls
+  wire @mg-w10 @mg-judge -> @mg-geometry.@mg-geometry-sig "calls arrange(): Verdict — layout | not drawable + reasons" kind=calls
+  wire @mg-w11 @mg-judge -> @mg-store.@mg-store-sig "calls commit(): Receipt" kind=calls
+  wire @mg-w12 @mg-planner -> @mg-expand.@mg-expand-sig "imports growGroup(): GroupBounds" kind=imports
+  wire @mg-w13 @mg-planner -> @mg-patch.@mg-patch-sig "imports buildRegroupPatch(): StructuralPatch" kind=imports
+  wire @mg-w14 @mg-door -> @mg-judge.@mg-apply-sig "calls applyEdit(): Receipt" kind=calls
+  wire @mg-w15 @mg-door -> @mg-judge.@mg-preview-sig "calls previewEdit(): Verdict + Preview" kind=calls
+  wire @mg-w16 @mg-judge -> @mg-outcomes.@mg-outcomes-sig "calls renderRefusal(): HumanWords" kind=calls
+
+  node @cs-table-node concept "Change summary — the tomorrow build, file by file" role=primary size=large {
+    table @cs-table columns=["new/change/remove", "File", "Role — what the builder should know", "Current lines", "Lines added (est)", "Lines removed (est)", "Final lines (est)"] {
+      row @cs-r1 cells=["change", "apps/web/adapters/workspace-session.ts", "loses gates G0+G1 (edit lock, movement review); the gatekeeper becomes a messenger — see refactor flag below", "2905", "+40", "-380", "2565"]
+      row @cs-r2 cells=["change", "apps/web/core/editing/movement-capture.ts", "the 'captured group missing' throw dies; a group-edge drop is captured as a question", "427", "+90", "-60", "457"]
+      row @cs-r3 cells=["change", "apps/web/core/editing/plan.ts", "plans both meanings of an ambiguous drop; stops deciding legality itself", "67", "+30", "-15", "82"]
+      row @cs-r4 cells=["change", "apps/web/core/editing/regroup.ts", "builds the regroup and ungroup patches behind the two meanings", "43", "+55", "0", "98"]
+      row @cs-r5 cells=["change", "apps/web/adapters/route-preview.ts", "demoted to asking the judge's preview; no roads engine in the browser", "108", "+30", "-70", "68"]
+      row @cs-r6 cells=["change", "apps/web/adapters/submission-session.ts", "the journal releases on a typed rejection; one 'no' stops wedging later edits", "213", "+20", "-25", "208"]
+      row @cs-r7 cells=["change", "apps/service/core/transport/admission.ts", "humans gain preview access; the per-author laws stay here", "110", "+25", "-5", "130"]
+      row @cs-r8 cells=["change", "capability/canvas/adapters/react-flow/CanvasSurface.tsx", "hosts the keep-in / move-out / cancel popup at the drop spot", "227", "+65", "-10", "282"]
+      row @cs-r9 cells=["new", "capability/canvas/core/interaction/drop-choice.ts", "the only new file; turns a landed drop into the three-way question", "0", "+140", "0", "140"]
+      row @cs-r10 cells=["change", "capability/layout/core/nested-support-expansion.ts", "grows group bounds when the answer is keep-in", "144", "+60", "0", "204"]
+      row @cs-r11 cells=["change", "capability/language/core/patching/structural.ts", "the regroup/ungroup structural patch the judge applies", "85", "+45", "0", "130"]
+      row @cs-r12 cells=["change", "capability/authoring/core/validation/outcomes.ts", "typed rejections become human words with options: retry · adjust · cancel", "52", "+70", "-10", "112"]
+      row @cs-r13 cells=["change", "capability/authoring/core/transactions/apply.ts", "the judge's apply + preview: one pipeline for every author; refusals rendered via outcomes", "43", "+60", "0", "103"]
+      row @cs-total cells=["TOTAL", "13 files — 12 changed, 1 new, 0 removed", "", "4424", "+730", "-575", "4579"]
+    }
+    text @cs-note "Estimates, not gates. The shape is the message: 575 lines of refusal machinery removed, 730 added to ask instead of refuse — and 140 of the added is the one new file." role=caption
+    text @cs-refactor "!! REFACTOR FLAG — workspace-session.ts is 2,905 lines: far past single responsibility, and this build leaves it at ~2,565. De-gating is its first cut, not its fix. Splitting it (session / advice / coordination) is a scope decision for this build — called out as its own task in the build-plan collection, not buried here." role=caption
+  }
+
+  node @bo-1 step "Un-wedge the journal" size=medium {
+    text @bo-1-d "A typed rejection releases the journal. Smallest change; ends every 'stuck forever' edit on its own."
+  }
+  node @bo-2 step "Demote the browser gates" size=medium {
+    text @bo-2-d "G0–G3 stop refusing and start asking the judge's preview. The browser owns no rules."
+  }
+  node @bo-3 step "The group-edge popup" size=medium {
+    text @bo-3-d "The drop lands, then keep-in / move-out / cancel. The interaction you asked for first."
+  }
+  node @bo-4 step "Refusals in human words" size=medium {
+    text @bo-4-d "Typed rejections become retry · adjust · cancel, in plain language, never codes."
+  }
+  node @bo-5 step "Modules loses its special cases" size=medium {
+    text @bo-5-d "No modules-only popups or side engines; one law set for every diagram mode."
+  }
+  node @bo-note note "Each step ships working software alone. Do step 1 even if you do nothing else." size=medium {}
+
+  wire @bo-w1 @bo-1 -> @bo-2 "then" kind=flow step=1
+  wire @bo-w2 @bo-2 -> @bo-3 "then" kind=flow step=2
+  wire @bo-w3 @bo-3 -> @bo-4 "then" kind=flow step=3
+  wire @bo-w4 @bo-4 -> @bo-5 "then" kind=flow step=4
+
+  node @be-request entity "EditRequest" {
+    field @be-request-id "id" type="RequestId" key=primary
+    field @be-request-actor "actor" type="human | agent"
+    field @be-request-rev "base_revision" type="integer"
+    field @be-request-payload "payload" type="EditPayload"
+    text @be-request-d "existing — unchanged; already persisted by authoring today." role=caption
+  }
+  node @be-receipt entity "Receipt" {
+    field @be-receipt-id "id" type="ReceiptId" key=primary
+    field @be-receipt-request "request_id" type="RequestId" key=foreign references=@be-request.@be-request-id
+    field @be-receipt-rev "new_revision" type="integer"
+    field @be-receipt-outcome "outcome" type="committed | refused"
+    text @be-receipt-d "change — a refusal now carries human words and options, not codes." role=caption
+  }
+  node @be-journal entity "JournalEntry" {
+    field @be-journal-id "id" type="EntryId" key=primary
+    field @be-journal-request "request_id" type="RequestId" key=foreign references=@be-request.@be-request-id
+    field @be-journal-state "state" type="in-flight | released"
+    text @be-journal-d "change — released on a typed rejection; today one failure can wedge every later edit." role=caption
+  }
+  node @be-note note "Transient objects — LandedDrop, DropMeaning, previews — are never persisted, so they are not entities. No entity is deleted." size=medium {}
+
+  wire @be-w1 @be-receipt -> @be-request "answers" kind=association from="1" to="1"
+  wire @be-w2 @be-journal -> @be-request "tracks" kind=association from="0..many" to="1"
+
+  node @ow-table-node concept "Capability ownership — who may do what to each object" size=large {
+    table @ow-table columns=["Object", "Create", "Read", "Update", "Delete"] {
+      row @ow-r1 cells=["EditRequest", "apps/web/core/editing/plan.ts — planRegroup()", "capability/authoring/core/transactions/apply.ts — previewEdit(), applyEdit()", "never", "never"]
+      row @ow-r2 cells=["Receipt", "capability/authoring/core/transactions/apply.ts — applyEdit() (commit or typed refusal)", "apps/web/adapters/submission-session.ts — releaseOnRejection(); every open canvas", "never", "never"]
+      row @ow-r3 cells=["JournalEntry", "apps/web/adapters/submission-session.ts — on submit (existing path, no new function)", "apps/web/adapters/submission-session.ts — same file", "apps/web/adapters/submission-session.ts — releaseOnRejection() on typed rejection", "never"]
+      row @ow-r4 cells=["Group membership", "capability/layout/core/nested-support-expansion.ts — growGroup() on keep-in", "capability/layout/core (measure + arrange)", "capability/language/core/patching/structural.ts — buildRegroupPatch()", "capability/language/core/patching/structural.ts — buildRegroupPatch() on move-out"]
+    }
+    text @ow-note "File + function, not commentary: where a function is named it exists on a B.3 card; 'on submit' is the one place today's path acts without a new function." role=caption
+  }
+
+  node @bq-you participant "You" role=primary {}
+  node @bq-surface participant "Canvas surface" {}
+  node @bq-session participant "Workspace session" {}
+  node @bq-capture participant "Movement capture" {}
+  node @bq-planner participant "Edit planner" {}
+  node @bq-door participant "Admission — the door" {}
+  node @bq-judge participant "The judge" role=primary {}
+  node @bq-rulebook participant "Law: Rulebook" {}
+  node @bq-geometry participant "Law: Geometry" {}
+  node @bq-store participant "Store" {}
+  node @bq-outcomes participant "Outcomes — human words" {}
+  node @bq-note note "Same function names as B.3 — if a name here is not on a card there, this spec is wrong. A law's 'no' returns a rejection carrying reasons (which rule, why); the judge hands that rejection to outcomes, which renders the human words." size=medium {}
+
+  section @s-spec-tree "B.1 · Build spec — target repo tree (files in scope)" mode=tree direction=down gap=compact order=6 {
+    show @tr-root @tr-apps @tr-cap @tr-webad @tr-webed @tr-transport @tr-canvasrf @tr-interaction @tr-layout @tr-patching @tr-validation @tr-transactions @tr-f-ws @tr-f-rp @tr-f-ss @tr-f-plan @tr-f-regroup @tr-f-mc @tr-f-adm @tr-f-surface @tr-f-drop @tr-f-exp @tr-f-struct @tr-f-out @tr-f-apply @tr-note
+    connect @tr-e1 @tr-e2 @tr-e3 @tr-e4 @tr-e5 @tr-e6 @tr-e7 @tr-e8 @tr-e9 @tr-e10 @tr-e11 @tr-e12 @tr-e13 @tr-e14 @tr-e15 @tr-e16 @tr-e17 @tr-e18 @tr-e19 @tr-e20 @tr-e21 @tr-e22 @tr-e23 @tr-e24
+    root @tr-root
+  }
+
+  section @s-spec-entities "B.2 · Build spec — entity diagram (delta vs today)" mode=er direction=right order=7 {
+    show @be-request @be-receipt @be-journal @be-note
+    connect @be-w1 @be-w2
+  }
+
+  section @s-spec-modules "B.3 · Build spec — module import graph (groups are folders)" mode=modules direction=right order=8 {
+    group @mg-g-apps "apps/" {
+      group @mg-g-web "web/" {
+        group @mg-g-adapters "adapters/" {
+          show @mg-session @mg-routes @mg-journal
+        }
+        group @mg-g-editing "core/editing/" {
+          show @mg-capture @mg-planner
+        }
+      }
+      group @mg-g-service "service/core/transport/" {
+        show @mg-door
+      }
+    }
+    group @mg-g-cap "capability/" {
+      group @mg-g-canvas "canvas/" {
+        group @mg-g-rf "adapters/react-flow/" {
+          show @mg-surface
+        }
+        group @mg-g-interaction "core/interaction/" {
+          show @mg-drop
+        }
+      }
+      group @mg-g-authoring "authoring/core/" {
+        group @mg-g-transactions "transactions/" {
+          show @mg-judge
+        }
+        group @mg-g-validation "validation/" {
+          show @mg-outcomes
+        }
+      }
+      group @mg-g-model "model/core/" {
+        show @mg-rulebook
+      }
+      group @mg-g-layout "layout/core/" {
+        show @mg-geometry @mg-expand
+      }
+      group @mg-g-language "language/core/patching/" {
+        show @mg-patch
+      }
+      group @mg-g-persistence "persistence/core/" {
+        show @mg-store
+      }
+    }
+    show @mg-note
+    connect @mg-w1 @mg-w2 @mg-w3 @mg-w4 @mg-w5 @mg-w6 @mg-w7 @mg-w8 @mg-w9 @mg-w10 @mg-w11 @mg-w12 @mg-w13 @mg-w14 @mg-w15 @mg-w16
+  }
+
+  section @s-spec-summary "B.4 · Build spec — change summary (estimates, not gates)" mode=flow direction=right order=9 {
+    show @cs-table-node
+  }
+
+  section @s-spec-ownership "B.5 · Build spec — capability ownership (CRUD by file + function)" mode=flow direction=right order=10 {
+    show @ow-table-node
+  }
+
+  section @s-spec-sequence "B.6 · Build spec — sequence: a group-edge drop travels the new path" mode=sequence direction=down gap=compact order=11 {
+    show @bq-you @bq-surface @bq-session @bq-capture @bq-planner @bq-door @bq-judge @bq-rulebook @bq-geometry @bq-store @bq-outcomes
+    event @bq-e1 @bq-you -> @bq-surface "drop a node on a group's edge" kind=call activate=true
+    event @bq-e2 @bq-surface -> @bq-you "popup: keep-in / move-out / cancel" kind=async activate=false
+    event @bq-e3 @bq-you -> @bq-surface "move-out" kind=call activate=true
+    event @bq-e4 @bq-surface -> @bq-session "submit(move, meaning): void" kind=call
+    event @bq-e5 @bq-session -> @bq-capture "captureMove(move, meaning): MoveCapture" kind=call
+    event @bq-e6 @bq-capture -> @bq-session "MoveCapture" kind=return activate=false
+    event @bq-e7 @bq-session -> @bq-planner "planRegroup(capture): EditRequest" kind=call
+    event @bq-e8 @bq-planner -> @bq-door "admit(actor, request): Admitted | Refused" kind=call
+    event @bq-e9 @bq-door -> @bq-judge "previewEdit(request): Verdict + Preview" kind=call
+    event @bq-e10 @bq-judge -> @bq-rulebook "validate(request): Verdict — legal | illegal + reasons" kind=call
+    event @bq-e11 @bq-rulebook -> @bq-judge "Legal — or Illegal + reasons (which rule broke, why)" kind=return activate=false
+    event @bq-e12 @bq-judge -> @bq-geometry "arrange(scene): Verdict — layout | not drawable + reasons" kind=call
+    event @bq-e13 @bq-geometry -> @bq-judge "Layout — or NotDrawable + reasons (what collides, what won't route)" kind=return activate=false
+    fragment @bq-outcome alt "The judge's verdict" {
+      branch @bq-yes "Every law says yes" {
+        event @bq-e14 @bq-judge -> @bq-planner "verdict + preview" kind=return activate=false
+        event @bq-e15 @bq-session -> @bq-door "admit(actor, request): Admitted | Refused" kind=call
+        event @bq-e16 @bq-door -> @bq-judge "applyEdit(request): Receipt" kind=call
+        event @bq-e17 @bq-judge -> @bq-store "commit(tx): Receipt" kind=call
+        event @bq-e18 @bq-store -> @bq-judge "receipt" kind=return activate=false
+        event @bq-e19 @bq-judge -> @bq-session "committed — every open canvas re-renders" kind=return activate=false
+      }
+      branch @bq-no "Any law says no — its return already carries the reasons" {
+        event @bq-e20 @bq-judge -> @bq-outcomes "renderRefusal(rejection carrying the failed law's reasons): HumanWords" kind=call
+        event @bq-e21 @bq-judge -> @bq-session "refusal in human words + options (retry · adjust · cancel)" kind=return activate=false
+      }
+    }
+    show @bq-note
+  }
+
+  section @s-build-order "B.7 · Build spec — the order I would build it (appendix)" mode=flow layout=layered direction=right order=12 {
+    group @bo-g-foundation "FOUNDATION — nothing new to see, everything starts working" {
+      show @bo-1 @bo-2
+    }
+    group @bo-g-surface "SURFACE — what you will actually feel" {
+      show @bo-3 @bo-4 @bo-5
+    }
+    show @bo-note
+    connect @bo-w1 @bo-w2 @bo-w3 @bo-w4
+  }
+}

@@ -3,6 +3,16 @@ import { requestId, actorId, timestamp, workspaceId } from '../brands.js';
 import { keySchema, storedSchema, versionSchema } from './storage.js';
 
 /**
+ * Makes a parsed record read-only at every depth: every field and every array. This changes types
+ * only; parsed objects are not frozen by it.
+ */
+type ReadonlyDeep<T> = T extends string | number | boolean | null | undefined
+  ? T
+  : T extends readonly (infer Item)[]
+    ? readonly ReadonlyDeep<Item>[]
+    : { readonly [Key in keyof T]: ReadonlyDeep<T[Key]> };
+
+/**
  * One record's change inside a transaction: its image before and after.
  * Images keep their resources even when the current record has been deleted.
  * `before` is `null` when the record did not exist.
@@ -16,6 +26,9 @@ export const transitionSchema = z.strictObject({
 /**
  * A stored transaction: who changed what, when, and how.
  * `mode` is `change` for an original change; `target` names the original change for an undo or redo.
+ *
+ * This checks structure only. The schema does not tie `target` to `mode`; history reading checks
+ * that the records it points to exist and agree.
  */
 export const transactionSchema = z.strictObject({
   kind: z.literal('transaction'),
@@ -41,13 +54,16 @@ export const headSchema = z.strictObject({
 });
 
 /** A stored transaction. */
-export type Transaction = z.infer<typeof transactionSchema>;
+export type Transaction = ReadonlyDeep<z.infer<typeof transactionSchema>>;
 
 /** The current state of one original change. */
-export type HistoryHead = z.infer<typeof headSchema>;
+export type HistoryHead = ReadonlyDeep<z.infer<typeof headSchema>>;
 
 /**
  * Undo/redo navigation, stored separately from the transactions it points to.
+ *
+ * This checks structure only. `readNavigation` checks the meaning: the cursor is within `actions`,
+ * every action's history exists, and the frontier matches the snapshot.
  *
  * - `actions`: the original changes in order.
  * - `cursor`: how many of them are active; steps before it can be undone, the step at it can be redone.
@@ -84,10 +100,10 @@ export const historyStatusSchema = z.strictObject({
 });
 
 /** Undo/redo navigation. */
-export type HistoryNavigation = z.infer<typeof navigationSchema>;
+export type HistoryNavigation = ReadonlyDeep<z.infer<typeof navigationSchema>>;
 
 /** The next undo or redo a client can submit. */
-export type HistoryAction = z.infer<typeof historyActionSchema>;
+export type HistoryAction = ReadonlyDeep<z.infer<typeof historyActionSchema>>;
 
 /** A workspace's undo/redo status. */
-export type HistoryStatus = z.infer<typeof historyStatusSchema>;
+export type HistoryStatus = ReadonlyDeep<z.infer<typeof historyStatusSchema>>;

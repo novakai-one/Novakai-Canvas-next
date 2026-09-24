@@ -5,6 +5,11 @@ import type { Receipt, Write, ReadVersion, CommitOutcome, RecordKey } from '../r
 /** Reads raw workspace snapshots. Authoring alone checks their shape, identities and invariants. */
 export interface SnapshotReader {
   /**
+   * Reads the current snapshot of a workspace.
+   *
+   * Report expected problems as a failed `Result`. A thrown error or rejected promise is an
+   * unexpected fault: the Authoring facade reports it as `storage-unavailable`.
+   *
    * @param workspace - The workspace to read.
    * @returns One consistent, unchecked snapshot, or a failure.
    */
@@ -14,6 +19,11 @@ export interface SnapshotReader {
 /** Looks up stored receipts. A receipt stays valid after its source files are deleted or its aliases change. */
 export interface ReceiptReader {
   /**
+   * Looks up the receipt stored for a request.
+   *
+   * Report expected problems as a failed `Result`. A thrown error or rejected promise is an
+   * unexpected fault: the Authoring facade reports it as `storage-unavailable`.
+   *
    * @param workspace - The workspace the request belongs to.
    * @param request - The request ID.
    * @returns The stored receipt, `null` when the request has not committed, or a failure.
@@ -56,6 +66,13 @@ export interface CommitRequest {
  */
 export interface Committer {
   /**
+   * Commits one storage transaction.
+   *
+   * After any failure (a failed `Result`, a thrown error or a rejected promise), Authoring looks up
+   * the request's receipt. A stored receipt means the commit happened, and it is returned.
+   * Otherwise the original failure is reported; the facade reports a thrown error as
+   * `storage-unavailable`.
+   *
    * @param request - The transaction to commit.
    * @returns The stored receipt, or a failure.
    */

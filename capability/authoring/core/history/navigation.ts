@@ -259,7 +259,7 @@ function mergedFrontier(
 }
 
 /** A change drops the redo steps and appends itself. Undo and redo keep the steps unchanged. */
-function actionsAfter(history: HistoryNavigation, request: Request): RequestId[] {
+function actionsAfter(history: HistoryNavigation, request: Request): readonly RequestId[] {
   if (request.intent.kind !== 'change') return history.actions;
   const stepsUpToCursor = history.actions.slice(0, history.cursor);
   return [...stepsUpToCursor, request.request];

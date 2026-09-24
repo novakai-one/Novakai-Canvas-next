@@ -31,13 +31,13 @@ const languageDiagnostic = z.strictObject({
   source: recordDiagnostic.optional(),
 });
 
-/** A validation failure with one or more diagnostics, each about a record field or a source range. */
+/** One diagnostic inside a validation failure: about a record field or about a source range. */
+const fieldOrSourceDiagnostic = z.union([recordDiagnostic, languageDiagnostic]);
+
+/** A validation failure with one or more diagnostics. */
 const validation = z.strictObject({
   code: z.literal('validation-failed'),
-  diagnostics: z
-    .tuple([z.union([recordDiagnostic, languageDiagnostic])])
-    .rest(z.union([recordDiagnostic, languageDiagnostic]))
-    .readonly(),
+  diagnostics: z.tuple([fieldOrSourceDiagnostic]).rest(fieldOrSourceDiagnostic).readonly(),
 });
 
 /**
@@ -57,7 +57,7 @@ export type OperationSource = {
 };
 
 /** A collaborator failure kept as evidence under an Authoring failure. It is never a second result. */
-export type FailureSource = z.infer<typeof validation> | OperationSource;
+export type FailureSource = Readonly<z.infer<typeof validation>> | OperationSource;
 
 /** Checks an operational failure, including nested sources and cleanup failures. */
 const operation: z.ZodType<OperationSource> = z.strictObject({
@@ -68,6 +68,7 @@ const operation: z.ZodType<OperationSource> = z.strictObject({
   targets: z.array(z.string()).readonly().optional(),
   expected: z.string().optional(),
   traceId: z.string().nullable().optional(),
+  // Both are lazy because the schemas refer to themselves; each callback returns the schema to use.
   source: z.lazy(() => failureSource).optional(),
   cleanup: z.lazy(() => operation).optional(),
 });

@@ -15,20 +15,21 @@ const MAXIMUM_LISTED_READS = 10000;
 /**
  * Checks a planner's proposal. Planners return bounded data only, never callbacks that could
  * skip final validation. Resource pins come from admission, not from the planner.
+ * `satisfies` makes the compiler check that a parsed proposal is a `Proposal`, so the two cannot drift.
  */
 export const proposalSchema = z.strictObject({
   writes: z.array(writeSchema).max(MAXIMUM_PROPOSED_WRITES),
   reads: z.array(versionSchema).max(MAXIMUM_LISTED_READS),
   diff: jsonSchema,
   warnings: z.array(diagnosticSchema),
-});
+}) satisfies z.ZodType<Proposal>;
 
 /** Checks a feasibility report. */
 export const feasibilitySchema = z.strictObject({
   warnings: z.array(diagnosticSchema),
   diff: jsonSchema,
   preview: jsonSchema,
-});
+}) satisfies z.ZodType<FeasibilityReport>;
 
 /** Checks the data of a resource lease. */
 export const leaseDataSchema = z.strictObject({
@@ -55,7 +56,7 @@ export interface FeasibilityReport {
   readonly warnings: readonly Diagnostic[];
   /** A description of the geometry change. */
   readonly diff: Json;
-  /** A preview image, or `null` when none was asked for. */
+  /** A preview, as JSON the feasibility owner defines (for example a render document), or `null`. */
   readonly preview: Json;
 }
 
@@ -63,7 +64,10 @@ export interface FeasibilityReport {
 export interface Preparation {
   /** The fingerprint of the submitted request. */
   readonly fingerprint: Digest;
-  /** The hash of everything below except `preview`. `apply` can pass it to reject a changed candidate. */
+  /**
+   * The hash of `fingerprint`, `reads`, `changes`, `diff`, `warnings` and `pins`; not of
+   * `candidateHash` itself or `preview`. `apply` can pass it to reject a changed candidate.
+   */
   readonly candidateHash: Digest;
   /** Every record version the change depends on. */
   readonly reads: readonly ReadVersion[];
@@ -75,7 +79,10 @@ export interface Preparation {
   readonly warnings: readonly Diagnostic[];
   /** The resource pins resolved for the request. */
   readonly pins: Json;
-  /** The preview image, or `null`. */
+  /**
+   * The preview, as JSON the feasibility owner defines, or `null`. A request with no changes gets
+   * `null` even when a preview was asked for.
+   */
   readonly preview: Json;
 }
 

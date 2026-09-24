@@ -1,4 +1,4 @@
-import type { DefinitionId } from '../contract/brands.js';
+import type { DefinitionId, DescendantId, ObjectId } from '../contract/brands.js';
 import type { Diagnostic, Result } from '../contract/errors.js';
 import type { Collection } from '../contract/records/collection.js';
 import type { TypeExpression, TypeUse } from '../contract/records/definition.js';
@@ -6,20 +6,59 @@ import type { ContentBlock, Field } from '../contract/records/content.js';
 import { failure, success } from './invariants/issues.js';
 import { diagnoseWhen, referenceIssue } from './invariants/issues.js';
 
-/** One direct use of a definition, addressed by its collection path. */
-export interface DefinitionUsage {
-  /** Where the definition is used: a field or member type, a signature, or another definition. */
-  readonly kind: 'field' | 'signature-parameter' | 'signature-return' | 'member' | 'definition';
+/**
+ * One direct use of a definition, addressed by its collection path. `kind` tells which fields are
+ * present: uses in object content carry `object` and `field` (a signature parameter also its
+ * `parameter` position); a use inside another definition carries only the path.
+ */
+export type DefinitionUsage = ContentTypeUsage | ParameterTypeUsage | DefinitionReferenceUsage;
+
+/** A use as a field or member `type`, or as a signature's `returns`. */
+export interface ContentTypeUsage {
+  /** `field` or `member` for a block's `type`; `signature-return` for a signature's `returns`. */
+  readonly kind: 'field' | 'member' | 'signature-return';
   /** The definition that is used. */
   readonly definition: DefinitionId;
   /** The collection path of the use, for example `objects.a.content.b.type`. */
   readonly path: string;
-  /** The object holding the use (absent for a use inside another definition). */
-  readonly object?: string;
+  /** The object holding the use. */
+  readonly object: ObjectId;
   /** The field, member or signature block holding the use. */
-  readonly field?: string;
-  /** For a signature parameter, its position. */
-  readonly parameter?: number;
+  readonly field: DescendantId;
+  /** Never present on this kind of use. */
+  readonly parameter?: undefined;
+}
+
+/** A use as a signature parameter's type. */
+export interface ParameterTypeUsage {
+  /** Always `signature-parameter`. */
+  readonly kind: 'signature-parameter';
+  /** The definition that is used. */
+  readonly definition: DefinitionId;
+  /** The collection path of the use, for example `objects.a.content.b.parameters.0.type`. */
+  readonly path: string;
+  /** The object holding the use. */
+  readonly object: ObjectId;
+  /** The signature block holding the parameter. */
+  readonly field: DescendantId;
+  /** The parameter's position in the signature. */
+  readonly parameter: number;
+}
+
+/** A reference inside another definition's expression. */
+export interface DefinitionReferenceUsage {
+  /** Always `definition`. */
+  readonly kind: 'definition';
+  /** The definition that is used. */
+  readonly definition: DefinitionId;
+  /** The collection path of the reference, for example `definitions.b.expression.items.0`. */
+  readonly path: string;
+  /** Never present on this kind of use. */
+  readonly object?: undefined;
+  /** Never present on this kind of use. */
+  readonly field?: undefined;
+  /** Never present on this kind of use. */
+  readonly parameter?: undefined;
 }
 
 /**
@@ -63,6 +102,9 @@ export function validateDefinitionGraph(collection: Collection): readonly Diagno
  * a missing one, shows as `@id`; each nested reference gets its own copy of the IDs being
  * expanded. At most 256 expression nodes are shown; a longer display ends with ` …`.
  *
+ * Pure: reads only, so calling again gives the same text. Authoring owns correcting the
+ * collection.
+ *
  * @param collection - A validated collection.
  * @param id - The definition to show.
  * @returns The display text, or `validation-failed` with `not-found` at `definitions.<id>`,
@@ -83,10 +125,11 @@ export function definitionDisplay(collection: Collection, id: DefinitionId): Res
 /**
  * Shows a field's type: a plain string type as written, or a definition reference displayed as
  * {@link definitionDisplay} does (a missing definition shows as `@id`). Published as Model's
- * `fieldTypeDisplay`.
+ * `fieldTypeDisplay`. Pure: reads only.
  *
- * @param collection - A validated collection.
- * @param field - A field from that collection.
+ * @param collection - A validated collection; references are resolved against it.
+ * @param field - A parsed field. It need not belong to `collection` (the web app passes a field
+ * with a substituted type).
  * @returns The display text.
  * @throws Only if given data that is not a validated collection.
  */
@@ -97,10 +140,10 @@ export function fieldTypeDisplay(collection: Collection, field: Field): string {
 /**
  * Shows a type use: a plain string type as written, or a definition reference displayed as
  * {@link definitionDisplay} does (a missing definition shows as `@id`). Published as Model's
- * `typeUseDisplay`.
+ * `typeUseDisplay`. Pure: reads only.
  *
- * @param collection - A validated collection.
- * @param type - A type use from that collection.
+ * @param collection - A validated collection; references are resolved against it.
+ * @param type - A parsed type use. It need not come from `collection`.
  * @returns The display text.
  * @throws Only if given data that is not a validated collection.
  */
@@ -119,6 +162,9 @@ export function typeUseDisplay(collection: Collection, type: TypeUse): string {
  * (`signature-parameter`, with the parameter's index) and returns (`signature-return`), all with
  * the object and block; and references inside other definitions' expressions (`definition`,
  * path only). Plain string types and uses of other definitions are not listed.
+ *
+ * Pure: reads only, so calling again gives the same list. Authoring owns correcting the
+ * collection.
  *
  * @param collection - A validated collection.
  * @param id - The definition whose uses to list.
@@ -256,9 +302,9 @@ function pushLimitChildren(frame: LimitFrame, pending: LimitFrame[]): void {
 /** One definition reference found in an expression. */
 interface ExpressionReference {
   /** The referenced definition. */
-  id: DefinitionId;
+  readonly id: DefinitionId;
   /** The reference's collection path. */
-  path: string;
+  readonly path: string;
 }
 
 /** An expression waiting to be searched for references. */
@@ -344,14 +390,17 @@ type VisitState = 0 | 1 | 2;
 /** A definition on the current search path, and how many of its references were followed. */
 interface GraphFrame {
   /** The definition. */
-  id: DefinitionId;
+  readonly id: DefinitionId;
   /** The index of its next reference to follow. */
   index: number;
 }
 
 /**
- * Returns every definition on a reference cycle. A depth-first search starts from each
- * definition in list order; references to missing definitions are ignored.
+ * Returns the definitions the cycle search marks: a depth-first search starts from each unvisited
+ * definition in list order and, whenever a reference leads back to a definition on the current
+ * path, marks every definition on that loop. Every cycle gets at least one marked definition, but
+ * a definition on a cycle reached only through an already finished definition is not marked.
+ * References to missing definitions are ignored.
  */
 function cycleDefinitions(collection: Collection): ReadonlySet<DefinitionId> {
   const edges = collection.definitions.map(
@@ -494,7 +543,7 @@ function descendGraph(
   stack.push({ id: target, index: 0 });
 }
 
-/** Reports every definition on a reference cycle, in definition order. */
+/** Reports each definition the cycle search marked (see `cycleDefinitions`), in definition order. */
 function validateCycles(collection: Collection): readonly Diagnostic[] {
   const cycles = cycleDefinitions(collection);
   return collection.definitions.flatMap(
@@ -529,8 +578,8 @@ function validateFieldTypes(collection: Collection): readonly Diagnostic[] {
 /** Checks a block's type uses: a signature's parameters and return, or a `type` field. */
 function validateContentTypes(
   block: ContentBlock,
-  object: string,
-  ids: ReadonlySet<string>,
+  object: ObjectId,
+  ids: ReadonlySet<DefinitionId>,
 ): readonly Diagnostic[] {
   if (block.kind === 'signature') {
     return validateSignatureTypes(block, object, ids);
@@ -544,28 +593,24 @@ function validateContentTypes(
 /** Checks a field's or member's `type`. */
 function validateDirectType(
   type: TypeUse,
-  object: string,
-  id: string,
-  ids: ReadonlySet<string>,
+  object: ObjectId,
+  id: DescendantId,
+  ids: ReadonlySet<DefinitionId>,
 ): readonly Diagnostic[] {
-  return typeUseIssue(type, `objects.${object}.content.${id}.type`, ids);
+  return typeUseIssue(type, `${contentPath(object, id)}.type`, ids);
 }
 
 /** Checks each typed parameter of a signature, then its return type. */
 function validateSignatureTypes(
   block: Extract<ContentBlock, { kind: 'signature' }>,
-  object: string,
-  ids: ReadonlySet<string>,
+  object: ObjectId,
+  ids: ReadonlySet<DefinitionId>,
 ): readonly Diagnostic[] {
   const parameters = block.parameters.flatMap(
     /** Checks one parameter. */
     (parameter, index) => validateParameterType(parameter, index, block, object, ids),
   );
-  const returnIssues = typeUseIssue(
-    block.returns,
-    `objects.${object}.content.${block.id}.returns`,
-    ids,
-  );
+  const returnIssues = typeUseIssue(block.returns, `${contentPath(object, block.id)}.returns`, ids);
   return [...parameters, ...returnIssues];
 }
 
@@ -577,15 +622,15 @@ function validateParameterType(
   parameter: SignatureParameter,
   index: number,
   block: Extract<ContentBlock, { kind: 'signature' }>,
-  object: string,
-  ids: ReadonlySet<string>,
+  object: ObjectId,
+  ids: ReadonlySet<DefinitionId>,
 ): readonly Diagnostic[] {
   if (typeof parameter === 'string') {
     return [];
   }
   return typeUseIssue(
     parameter.type,
-    `objects.${object}.content.${block.id}.parameters.${index}.type`,
+    `${contentPath(object, block.id)}.parameters.${index}.type`,
     ids,
   );
 }
@@ -594,7 +639,7 @@ function validateParameterType(
 function typeUseIssue(
   type: TypeUse,
   path: string,
-  ids: ReadonlySet<string>,
+  ids: ReadonlySet<DefinitionId>,
 ): readonly Diagnostic[] {
   if (typeof type === 'string') {
     return [];
@@ -787,14 +832,18 @@ function definitionReferenceUsages(
   );
   return matching.map(
     /** Describes one use. */
-    (reference): DefinitionUsage => ({ kind: 'definition', definition: id, path: reference.path }),
+    (reference): DefinitionReferenceUsage => ({
+      kind: 'definition',
+      definition: id,
+      path: reference.path,
+    }),
   );
 }
 
 /** Lists a block's uses of `id`: a signature's parameters and return, or a `type` field. */
 function usageForContent(
   block: ContentBlock,
-  object: string,
+  object: ObjectId,
   id: DefinitionId,
 ): readonly DefinitionUsage[] {
   if (block.kind === 'signature') {
@@ -809,34 +858,37 @@ function usageForContent(
 /** Lists a field's or member's use of `id` in its `type`. */
 function directUsage(
   block: Extract<ContentBlock, { kind: 'field' | 'member' }>,
-  object: string,
+  object: ObjectId,
   id: DefinitionId,
   kind: 'field' | 'member',
 ): readonly DefinitionUsage[] {
-  return usageForType(block.type, `objects.${object}.content.${block.id}.type`, kind, object, id, {
-    field: block.id,
-  });
+  return contentTypeUsage(
+    block.type,
+    `${contentPath(object, block.id)}.type`,
+    kind,
+    object,
+    id,
+    block.id,
+  );
 }
 
 /** Lists a signature's uses of `id`: each typed parameter, then the return type. */
 function signatureUsages(
   block: Extract<ContentBlock, { kind: 'signature' }>,
-  object: string,
+  object: ObjectId,
   id: DefinitionId,
 ): readonly DefinitionUsage[] {
   const parameters = block.parameters.flatMap(
     /** Lists one parameter's use. */
     (parameter, index) => parameterUsage(parameter, index, block, object, id),
   );
-  const returnUses = usageForType(
+  const returnUses = contentTypeUsage(
     block.returns,
-    `objects.${object}.content.${block.id}.returns`,
+    `${contentPath(object, block.id)}.returns`,
     'signature-return',
     object,
     id,
-    {
-      field: block.id,
-    },
+    block.id,
   );
   return [...parameters, ...returnUses];
 }
@@ -846,39 +898,64 @@ function parameterUsage(
   parameter: SignatureParameter,
   index: number,
   block: Extract<ContentBlock, { kind: 'signature' }>,
-  object: string,
+  object: ObjectId,
   id: DefinitionId,
 ): readonly DefinitionUsage[] {
   if (typeof parameter === 'string') {
     return [];
   }
-  return usageForType(
+  return parameterTypeUsage(
     parameter.type,
-    `objects.${object}.content.${block.id}.parameters.${index}.type`,
-    'signature-parameter',
+    `${contentPath(object, block.id)}.parameters.${index}.type`,
     object,
     id,
-    {
-      field: block.id,
-      parameter: index,
-    },
+    block.id,
+    index,
   );
 }
 
+/** Returns a content block's collection path, `objects.<object>.content.<block>`. */
+function contentPath(object: ObjectId, block: DescendantId): string {
+  return `objects.${object}.content.${block}`;
+}
+
+/** Tells whether a type use is a reference to the definition (a plain string type never is). */
+function referencesDefinition(type: TypeUse, id: DefinitionId): boolean {
+  return typeof type !== 'string' && type.id === id;
+}
+
 /**
- * Returns one use when the type references `id`, else none. The use's fields are, in order:
- * `kind`, `definition`, `path`, `object`, then `extra`'s.
+ * Returns one content use when the type references `id`, else none. Fields in this order:
+ * `kind`, `definition`, `path`, `object`, `field`.
  */
-function usageForType(
+function contentTypeUsage(
   type: TypeUse,
   path: string,
-  kind: DefinitionUsage['kind'],
-  object: string,
+  kind: ContentTypeUsage['kind'],
+  object: ObjectId,
   id: DefinitionId,
-  extra: Partial<DefinitionUsage>,
+  field: DescendantId,
 ): readonly DefinitionUsage[] {
-  if (typeof type === 'string' || type.id !== id) {
+  if (!referencesDefinition(type, id)) {
     return [];
   }
-  return [{ kind, definition: id, path, object, ...extra }];
+  return [{ kind, definition: id, path, object, field }];
+}
+
+/**
+ * Returns one parameter use when the type references `id`, else none. Fields in this order:
+ * `kind`, `definition`, `path`, `object`, `field`, `parameter`.
+ */
+function parameterTypeUsage(
+  type: TypeUse,
+  path: string,
+  object: ObjectId,
+  id: DefinitionId,
+  field: DescendantId,
+  parameter: number,
+): readonly DefinitionUsage[] {
+  if (!referencesDefinition(type, id)) {
+    return [];
+  }
+  return [{ kind: 'signature-parameter', definition: id, path, object, field, parameter }];
 }

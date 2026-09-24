@@ -11,8 +11,8 @@ import { describeImpact } from './impact.js';
  * Plans an ordered change batch against a snapshot. Published as Model's `plan`. Steps, stopping
  * at the first failure and returning its diagnostics:
  * 1. validate the snapshot as a collection (see `validateCollection`);
- * 2. stage the changes on it (see `stageChanges`: inspect and parse the changes, at most 1,000,
- *    then apply them in order);
+ * 2. stage the changes on the validated snapshot (see `stageChanges`: it validates that snapshot
+ *    again, then inspects and parses the changes, at most 1,000, then applies them in order);
  * 3. validate the staged candidate as a whole collection.
  *
  * Changes may break references for a while, as long as the final candidate is valid. The

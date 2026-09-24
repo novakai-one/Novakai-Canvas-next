@@ -86,19 +86,22 @@ function describeRecordImpact(
       return previous !== undefined && hasChanged(previous, record);
     },
   );
-  const additions = added.map(
-    /** Reports one addition. */
-    (record): Impact => ({ target, id: record.id, action: 'added' }),
-  );
-  const removals = removed.map(
-    /** Reports one removal. */
-    (record): Impact => ({ target, id: record.id, action: 'removed' }),
-  );
-  const updates = updated.map(
-    /** Reports one update. */
-    (record): Impact => ({ target, id: record.id, action: 'updated' }),
-  );
+  const additions = impactsFor(added, target, 'added');
+  const removals = impactsFor(removed, target, 'removed');
+  const updates = impactsFor(updated, target, 'updated');
   return [...additions, ...removals, ...updates];
+}
+
+/** Reports each record as one change of the given kind, in list order. */
+function impactsFor(
+  records: readonly { readonly id: string }[],
+  target: Target,
+  action: Impact['action'],
+): readonly Impact[] {
+  return records.map(
+    /** Reports one record. */
+    (record): Impact => ({ target, id: record.id, action }),
+  );
 }
 
 /**

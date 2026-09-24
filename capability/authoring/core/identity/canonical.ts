@@ -9,6 +9,9 @@ import { accepted } from '../validation/outcomes.js';
 /** A JSON array or a JSON object. */
 type JsonContainer = Exclude<Json, null | boolean | number | string>;
 
+/** A JSON object. */
+type JsonObject = Exclude<JsonContainer, readonly Json[]>;
+
 /** One `[key, value]` pair of a JSON object. */
 type JsonEntry = [string, Json];
 
@@ -36,7 +39,7 @@ export function canonical(value: Json): string {
  *
  * @param request - The checked submitted request.
  * @param hash - The hashing role.
- * @returns The SHA-256 digest of the canonical request text.
+ * @returns The hasher's digest of the canonical request text.
  * @throws AuthoringFault with the hasher's own diagnostic when hashing fails.
  * @throws AuthoringFault `corrupt-record` when the hasher returns a malformed digest.
  */
@@ -53,8 +56,13 @@ function isJsonScalar(value: Json): value is Exclude<Json, JsonContainer> {
 
 /** Writes an array or object in canonical form. */
 function canonicalContainer(value: JsonContainer): string {
-  if (Array.isArray(value)) return canonicalArray(value);
+  if (isJsonArray(value)) return canonicalArray(value);
   return canonicalObject(value);
+}
+
+/** Tells whether a JSON container is an array. */
+function isJsonArray(value: JsonContainer): value is readonly Json[] {
+  return Array.isArray(value);
 }
 
 /** Writes an array with its items in their original order. */
@@ -64,7 +72,7 @@ function canonicalArray(items: readonly Json[]): string {
 }
 
 /** Writes an object with its keys in sorted order. */
-function canonicalObject(value: JsonContainer): string {
+function canonicalObject(value: JsonObject): string {
   const sortedEntries = Object.entries(value).toSorted(compareEntryKeys);
   const entryTexts = sortedEntries.map(
     ([key, item]) => `${JSON.stringify(key)}:${canonical(item)}`,

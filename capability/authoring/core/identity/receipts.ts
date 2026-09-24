@@ -8,9 +8,10 @@ import { accepted, reject } from '../validation/outcomes.js';
 /**
  * Looks up the stored receipt for a request, so a retried request returns its original result.
  *
- * This runs before anything else in admission. It reads only the receipt store: no snapshot,
- * assets or aliases. That way a request that already committed still returns its receipt
- * even after its source files or aliases have changed.
+ * Authoring calls this before admission, and again to recover after a rejected attempt or a
+ * failed commit acknowledgement. It reads only the receipt store: no snapshot, assets or aliases.
+ * That way a request that already committed still returns its receipt even after its source
+ * files or aliases have changed.
  *
  * @param request - The checked submitted request.
  * @param fingerprint - The fingerprint of the submitted request.
@@ -18,6 +19,7 @@ import { accepted, reject } from '../validation/outcomes.js';
  * @returns The stored receipt when this request already committed, or `null` when it has not.
  * @throws AuthoringFault with the store's own diagnostic when the lookup fails.
  * @throws AuthoringFault `corrupt-record` when the stored receipt is malformed or belongs to another request.
+ * @throws AuthoringFault `invalid-input` at `receipt.versions` when the stored receipt repeats a record key.
  * @throws AuthoringFault `request-reused` when the request ID was already used for different intent.
  */
 export async function reconcile(

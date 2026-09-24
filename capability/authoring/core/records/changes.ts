@@ -75,7 +75,8 @@ export function nextRecord(snapshot: Snapshot, write: Write): StoredRecord {
  * The snapshot's `sequence` number is not changed.
  *
  * @param snapshot - The workspace snapshot before the writes.
- * @param writes - The writes to apply. Each key must appear at most once.
+ * @param writes - The writes to apply. Callers check beforehand that each key appears at most once;
+ *   this function does not.
  * @returns A new snapshot. The input snapshot is not modified.
  * @throws AuthoringFault `invalid-input` when a written record's revision is already at the largest safe integer.
  */

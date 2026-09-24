@@ -6,10 +6,10 @@ import { reject } from '../validation/outcomes.js';
 /**
  * Checks that every version the client expected still matches the snapshot.
  *
- * One mismatch rejects the whole request. Authoring never refreshes the client's expectations for it.
+ * One mismatch rejects the whole request. Authoring never refreshes the expected versions for the caller.
  *
  * @param snapshot - The current workspace snapshot.
- * @param expected - The record versions the client saw when it built the request.
+ * @param expected - The record versions to check against the snapshot.
  * @throws AuthoringFault `revision-conflict` at the first record whose version has changed.
  */
 export function compareVersions(snapshot: Snapshot, expected: readonly ReadVersion[]): void {

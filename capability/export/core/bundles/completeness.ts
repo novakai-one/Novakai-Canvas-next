@@ -18,6 +18,8 @@ type Primitive = Snapshot['scene']['sections'][number]['title']['content']['prim
  * @param collection - The collection whose pins must be present.
  * @param resources - The resources that travel with it.
  * @returns Success, or `resource-rejected` if any pin is missing.
+ * @throws Never for plain parsed data; a throwing getter or proxy propagates to the enclosing
+ * `protect`.
  */
 export function checkCollectionResources(
   collection: Collection,
@@ -36,13 +38,17 @@ export function checkCollectionResources(
     );
   return success(undefined);
 }
+
 /**
  * Checks that every font and image the measured scene draws is among the snapshot's resources,
  * then that the collection's pins are too. Rendered text needs exact pinned fonts, which the
- * collection itself does not list.
+ * collection itself does not list. Generated figures (media with a `figure:` digest) are drawn
+ * inline and need no resource.
  *
  * @param snapshot - The leased snapshot.
  * @returns Success, or `resource-rejected` if anything is missing.
+ * @throws Never for plain snapshot data; a throwing getter or proxy propagates (`produce` runs
+ * this inside `protect`, which turns it into `encoding-failed`).
  */
 export function checkSceneResources(snapshot: Snapshot): Result<void> {
   const contents = snapshot.scene.sections.flatMap((section) => [
@@ -65,12 +71,14 @@ export function checkSceneResources(snapshot: Snapshot): Result<void> {
     );
   return checkCollectionResources(snapshot.collection, snapshot.resources);
 }
+
 /** The resource a primitive needs: its font for text, its asset for media, nothing otherwise. */
 function resourceKey(primitive: Primitive): readonly string[] {
   if (primitive.kind === 'text') return [`font:${primitive.font.digest}`];
   if (primitive.kind !== 'media') return [];
   return mediaKey(primitive.digest);
 }
+
 /** The asset key for a media digest; generated figures (`figure:` digests) are inline: none. */
 function mediaKey(digest: string): readonly string[] {
   return digest.startsWith('figure:') ? [] : [`asset:${digest}`];

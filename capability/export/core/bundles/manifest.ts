@@ -13,6 +13,7 @@ import { canonical } from '../validation/canonical.js';
 import { captureManual, overlayManual } from './manual.js';
 import { inspectResources } from './resources.js';
 import { bundleSchema } from '../../contract/records/bundle.js';
+
 /**
  * Builds the bundle bytes for a snapshot: check resources, check cancellation, print the DSL,
  * prove the round trip, then serialize.
@@ -24,6 +25,10 @@ import { bundleSchema } from '../../contract/records/bundle.js';
  * `cancelled`, a documents failure (passed through), `invalid-bundle` (not complete `canvas 1`
  * DSL, a failed round trip, or a bundle that fails its own schema) or `invalid-import` (the
  * manual snapshot does not fit the parsed collection).
+ * @throws Whatever a provider (documents, resources, encoding) throws or rejects with, reading
+ * `signal.aborted` throws, or {@link canonical} throws. It runs inside `produce`, so the public
+ * `exportArtifact` returns `encoding-failed` instead. Building only reads and writes nothing;
+ * the host repairs its providers and retries.
  */
 export async function buildBundle(
   snapshot: Snapshot,
@@ -34,6 +39,7 @@ export async function buildBundle(
   if (!resources.ok) return resources;
   return afterResources(snapshot, deps, signal);
 }
+
 /** Stops if cancelled, otherwise prints the collection as DSL and continues. */
 function afterResources(
   snapshot: Snapshot,
@@ -46,6 +52,7 @@ function afterResources(
   if (!source.ok) return source;
   return encodeBundle(snapshot, source.value, deps);
 }
+
 /**
  * Requires complete `canvas 1` DSL (after leading whitespace), proves the round trip, then
  * serializes.
@@ -61,6 +68,7 @@ function encodeBundle(
   if (!roundtrip.ok) return roundtrip;
   return serializeBundle(snapshot, source, deps);
 }
+
 /**
  * Parses the DSL, applies the manual snapshot captured from the original, and compares the result
  * with the original collection (not just with the printer's own view).
@@ -77,6 +85,7 @@ function checkRoundtrip(
   if (!overlaid.ok) return overlaid;
   return compareCollection(original, overlaid.value, deps);
 }
+
 /**
  * Reads the rebuilt collection and compares it with the original as canonical JSON, ignoring
  * only the revision.
@@ -96,6 +105,7 @@ function compareCollection(
     );
   return success(undefined);
 }
+
 /**
  * Serializes the bundle: resources sorted by kind and digest, digests of the source and the
  * canonical manual snapshot, checked against the bundle schema, written as canonical JSON.

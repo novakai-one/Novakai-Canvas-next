@@ -14,8 +14,8 @@ import type { StoredBlob } from '../contract/records/media.js';
  * Opening, in one `BEGIN IMMEDIATE` transaction (after WAL mode, full sync and a 5 s busy
  * timeout are set): create the table with `schema` = 1 only if the table does not exist, prepare
  * the statements, and require `schema` to be exactly 1 (`corrupt-asset` at `schema`, "Unsupported
- * asset metadata schema"). An existing damaged store is never repaired. On failure the database
- * is closed.
+ * asset metadata schema"). An existing damaged store is never repaired. On failure it tries to
+ * close the database; if that close fails, the failure is ignored and the database may stay open.
  *
  * Each `transact` runs in `BEGIN IMMEDIATE`, which serializes acquire, reserved staging and
  * collection across connections. A successful result commits; a failed result rolls back. A
@@ -25,8 +25,10 @@ import type { StoredBlob } from '../contract/records/media.js';
  * unconfirmed; re-read files and leases". Blob files are not rolled back. Exception: if checking
  * the thrown value itself throws (for example a thrown Proxy whose traps throw), that throw
  * escapes `transact` with no ROLLBACK; the transaction stays open until the next `transact`,
- * whose `BEGIN IMMEDIATE` fails with `storage-unavailable` and clears it. When opening fails, the
- * same check can throw too; the database is already closed by then.
+ * whose `BEGIN IMMEDIATE` fails with `storage-unavailable` and clears it. The same applies to
+ * `close`: if `database.close` throws such a value, `close` throws. When opening fails, the check
+ * can throw from the opening error or from the attempted close; the database may then be open or
+ * closed.
  *
  * Inside a transaction:
  * - blobs are keyed `blob:<digest>` (the descriptor) plus the file; a blob whose descriptor or file
@@ -34,13 +36,15 @@ import type { StoredBlob } from '../contract/records/media.js';
  * - `listBlobs` returns the sorted union of recorded digests and file digests, so orphan files
  *   are collected too; a malformed key throws;
  * - leases are keyed `lease:<id>`; writing replaces;
- * - stored values that are not strings or not JSON throw `corrupt-asset` at `metadata`.
+ * - stored values that are not strings or not JSON throw `corrupt-asset` at `metadata`;
+ * - every `transact` receives the same view object. It is not frozen, so an action that replaces
+ *   one of its members changes it for every later transaction.
  *
  * @param database - The opened database.
  * @param files - The blob file store.
  * @returns The storage, or the opening failure.
- * @throws Only when checking a thrown value itself throws (see above), from opening or from
- * `transact`. Otherwise never.
+ * @throws Only when checking a thrown value itself throws (see above), from opening, `transact`
+ * or `close`. Otherwise never.
  */
 export function createSqliteFiles(database: AssetDatabase, files: BlobFiles): Result<AssetStorage> {
   try {
@@ -146,7 +150,10 @@ function readDigestKey(key: unknown): Digest {
   return digest.parse(key.slice(5));
 }
 
-/** Builds the transaction view over the prepared statements and the blob files. */
+/**
+ * Builds the transaction view over the prepared statements and the blob files. One view object is
+ * built per storage and shared by every transaction; it is not frozen.
+ */
 function createView(prepared: Statements, files: BlobFiles): AssetTransaction {
   return {
     readBlob: (id) => readBlob(id, prepared.read, files),
@@ -212,7 +219,10 @@ function transact<T>(
   }
 }
 
-/** Closes the database; a throw becomes a failure. Later operations then fail as storage failures. */
+/**
+ * Closes the database; a throw becomes a failure (unless checking the thrown value itself throws,
+ * which escapes). Later operations then fail as storage failures.
+ */
 function close(database: AssetDatabase): Result<void> {
   try {
     database.close();

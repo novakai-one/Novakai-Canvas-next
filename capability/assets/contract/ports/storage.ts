@@ -41,14 +41,17 @@ export interface AssetStorage {
    * @returns The action's result. A throw becomes a failure (a `StorageFault` keeps its code,
    * path and message; anything else is `storage-unavailable`). A failed rollback is
    * `storage-unavailable`.
-   * @throws Never; the real adapter returns failures instead.
+   * @throws Only when checking a thrown value itself throws (for example a thrown Proxy whose traps
+   * throw); then no rollback runs. Otherwise the real adapter returns failures. The Assets facade's
+   * `protect` turns such a throw into `storage-unavailable`.
    */
   transact<T>(action: (transaction: AssetTransaction) => Result<T>): Result<T>;
   /**
    * Closes storage. Later transactions fail with `storage-unavailable`.
    *
    * @returns Success, or the close failure.
-   * @throws Never; the real adapter returns failures instead.
+   * @throws Only when checking a thrown value itself throws, as for `transact`. The Assets facade's
+   * `protect` turns such a throw into `storage-unavailable`.
    */
   close(): Result<void>;
 }

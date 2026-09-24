@@ -62,13 +62,18 @@ export const token = z.discriminatedUnion('type', [
 ]);
 
 /**
- * Recipe source text: 1 to 1,048,576 UTF-16 code units. (`checkPayload` separately limits stored
- * source to 1 MiB of UTF-8 bytes.)
+ * A new schema for recipe source text: 1 to 1,048,576 UTF-16 code units. (`checkPayload`
+ * separately limits stored source to 1 MiB of UTF-8 bytes.) Each call builds a separate schema
+ * object, so the stored and the submitted source keep their own schemas.
+ *
+ * @returns The schema.
  */
-const recipeSource = z
-  .string()
-  .min(1)
-  .max(1024 * 1024);
+function recipeSource(): z.ZodString {
+  return z
+    .string()
+    .min(1)
+    .max(1024 * 1024);
+}
 
 /**
  * A recipe's content as the recipe codec returns it: language version 1, the canonical source
@@ -78,7 +83,7 @@ const recipeSource = z
 export const recipePayload = z
   .strictObject({
     languageVersion: z.literal(1),
-    source: recipeSource,
+    source: recipeSource(),
     family,
     assets: z.array(digest).max(1000).readonly(),
     themes: z.array(themePin).max(100).readonly(),
@@ -151,7 +156,7 @@ export const admission = z.discriminatedUnion('kind', [
     .strictObject({
       ...header,
       kind: z.literal('recipe'),
-      source: recipeSource,
+      source: recipeSource(),
       family,
     })
     .readonly(),

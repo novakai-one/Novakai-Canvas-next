@@ -31,13 +31,21 @@ const languageDiagnostic = z.strictObject({
   source: recordDiagnostic.optional(),
 });
 
-/** One diagnostic inside a validation failure: about a record field or about a source range. */
-const fieldOrSourceDiagnostic = z.union([recordDiagnostic, languageDiagnostic]);
+/**
+ * A new schema for one diagnostic inside a validation failure: about a record field or about a
+ * source range. Each call builds a separate schema object (the first item and the rest of the
+ * list each get their own).
+ */
+function fieldOrSourceDiagnostic(): z.ZodUnion<
+  [typeof recordDiagnostic, typeof languageDiagnostic]
+> {
+  return z.union([recordDiagnostic, languageDiagnostic]);
+}
 
 /** A validation failure with one or more diagnostics. */
 const validation = z.strictObject({
   code: z.literal('validation-failed'),
-  diagnostics: z.tuple([fieldOrSourceDiagnostic]).rest(fieldOrSourceDiagnostic).readonly(),
+  diagnostics: z.tuple([fieldOrSourceDiagnostic()]).rest(fieldOrSourceDiagnostic()).readonly(),
 });
 
 /**

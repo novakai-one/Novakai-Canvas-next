@@ -40,14 +40,19 @@ import { failure } from '../../contract/errors.js';
  * @param fonts - The pinned-font decoder.
  * @param media - The image converter.
  * @returns The handler.
- * @throws Never; `encode` never rejects.
+ * @throws Never. `encode` never rejects, but it can stay unsettled: an exception thrown inside
+ * a PDFKit stream event callback (for example a throwing `input.pages` getter, read when the
+ * stream ends) is outside every `try` here (see `writePdf`).
  */
 export function createPdfEncoder(
   deps: Pick<RenderDependencies, 'renderer'>,
   fonts: FontDecoder,
   media: MediaConverter,
 ): FormatHandler {
-  /** Runs the whole encoding and turns any throw into `encoding-failed`. */
+  /**
+   * Runs the whole encoding and turns any throw or rejection that reaches it into
+   * `encoding-failed`. Exceptions inside PDFKit stream event callbacks never reach it.
+   */
   async function encode(input: RenderInput): Promise<Result<Encoded>> {
     try {
       return await encodeChecked(input);
@@ -105,6 +110,14 @@ async function renderPdf(
  * each page in order. When a page throws, the document is still ended and its stream drained
  * before the promise rejects with that error. Resolves with the bytes once the stream ends;
  * rejects if PDFKit reports a stream error.
+ *
+ * Limits of that cleanup:
+ * - Font registration comes before it: a registration throw leaves the document un-ended and
+ *   escapes synchronously.
+ * - If `document.end()` throws, or the stream reports an error, that failure replaces the page
+ *   error.
+ * - An exception inside a stream event callback (for example a throwing `input.pages` getter,
+ *   read on `end`) escapes into PDFKit, and the returned promise never settles.
  */
 function writePdf(
   input: RenderInput,
@@ -124,23 +137,42 @@ function writePdf(
     },
   });
   const chunks: Buffer[] = [];
-  const completed = new Promise<Result<Encoded>>((resolve, reject) => {
-    document.on('data', (chunk: Buffer) => chunks.push(chunk));
-    document.on('error', reject);
-    document.on('end', () =>
-      resolve({
-        ok: true,
-        value: { bytes: Uint8Array.from(Buffer.concat(chunks)), pages: input.pages, warnings: [] },
-      }),
-    );
-  });
-  fonts.forEach((font) => document.registerFont(font.alias, Buffer.from(font.bytes)));
+  const completed = new Promise<Result<Encoded>>(
+    /** Listens to the document stream: collects its chunks, settles on `end` or `error`. */
+    (resolve, reject) => {
+      document.on('data', /** Keeps one chunk of output. */ (chunk: Buffer) => chunks.push(chunk));
+      document.on('error', reject);
+      document.on(
+        'end',
+        /** Resolves with all the output bytes and the input's page list. */
+        () =>
+          resolve({
+            ok: true,
+            value: {
+              bytes: Uint8Array.from(Buffer.concat(chunks)),
+              pages: input.pages,
+              warnings: [],
+            },
+          }),
+      );
+    },
+  );
+  fonts.forEach(
+    /** Registers one pinned font under its alias. */
+    (font) => document.registerFont(font.alias, Buffer.from(font.bytes)),
+  );
   try {
-    input.pages.forEach((page) => writePage(document, page, input, deps, fonts, images));
+    input.pages.forEach(
+      /** Draws one planned page. */
+      (page) => writePage(document, page, input, deps, fonts, images),
+    );
     document.end();
   } catch (error) {
     document.end();
-    return completed.then(() => Promise.reject(error));
+    return completed.then(
+      /** After the stream drains, rejects with the page's error. */
+      () => Promise.reject(error),
+    );
   }
   return completed;
 }
@@ -159,7 +191,10 @@ function writePage(
   fonts: readonly NativeFont[],
   images: ReadonlyMap<string, string>,
 ): void {
-  const section = input.selection.sections.find((item) => item.id === page.section);
+  const section = input.selection.sections.find(
+    /** Whether this is the page's section. */
+    (item) => item.id === page.section,
+  );
   if (!section) throw new Error('Missing planned section');
   const rendered = deps.renderer.render({
     ...input,
@@ -175,8 +210,11 @@ function writePage(
     width: page.crop.width * page.scale,
     height: page.crop.height * page.scale,
     assumePt: true,
+    /** The registered alias for the family; throws when it is not pinned. */
     fontCallback: (family) => fontAlias(family, fonts),
+    /** The embeddable image for the link; throws when it is not retained. */
     imageCallback: (link) => imageData(link, images),
+    /** Turns any svg-to-pdfkit warning into a throw, which fails the whole PDF. */
     warningCallback: (message) => {
       throw new Error(message);
     },
@@ -190,7 +228,9 @@ function writePage(
  * font's alias, so PDFKit never falls back to its built-in Helvetica.
  */
 function fontAlias(family: string, fonts: readonly NativeFont[]): string {
-  const font = fonts.find((item) => item.alias === family);
+  const font = fonts.find(
+    /** Whether the font's alias is exactly the family. */ (item) => item.alias === family,
+  );
   if (!font) throw new Error('Missing exact font');
   return font.alias;
 }

@@ -33,8 +33,9 @@ const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
  * @param deps - The shared SVG renderer.
  * @param fonts - The pinned-font decoder.
  * @returns The handler; `encode` does not keep state between calls.
- * @throws Never. `encode` rejects only if the renderer, `fonts.decode` or a getter on the input
- * (such as `signal.aborted`) throws; Export's `produce` turns that into `encoding-failed`.
+ * @throws Never. `encode` rejects only if the renderer or `fonts.decode` throws, or a getter
+ * throws: on the input (such as `signal.aborted`, the bounds or the scale) or on a result they
+ * return. Export's `produce` turns that into `encoding-failed`.
  */
 export function createPngEncoder(
   deps: Pick<RenderDependencies, 'renderer'>,
@@ -65,7 +66,10 @@ function afterFonts(
   return rasterize(svg, input, fonts);
 }
 
-/** Sizes the raster, checks the native limits, then draws; any throw becomes `encoding-failed`. */
+/**
+ * Sizes the raster, checks the native limits, then draws. Only drawing is inside the `try`: a
+ * throw while drawing becomes `encoding-failed`, but a throwing bounds or scale read escapes.
+ */
 function rasterize(svg: string, input: RenderInput, fonts: readonly NativeFont[]): Result<Encoded> {
   const width = Math.ceil(input.selection.bounds.width * input.request.scale);
   const height = Math.ceil(input.selection.bounds.height * input.request.scale);
@@ -88,6 +92,7 @@ function rasterize(svg: string, input: RenderInput, fonts: readonly NativeFont[]
  */
 function bindFamilies(svg: string, fonts: readonly NativeFont[]): string {
   return fonts.reduce(
+    /** Replaces one font's alias with its escaped family name. */
     (text, font) =>
       text.replaceAll(
         `font-family="${font.alias}"`,
@@ -112,7 +117,7 @@ function renderNative(
 ): Result<Encoded> {
   const viewport = rasterViewport(svg, width, height, input.request.scale);
   const renderer = new Resvg(viewport, {
-    font: { fontBuffers: fonts.map((font) => font.bytes) },
+    font: { fontBuffers: fonts.map(/** The font's sfnt bytes. */ (font) => font.bytes) },
   });
   try {
     return readImage(renderer, width, height);

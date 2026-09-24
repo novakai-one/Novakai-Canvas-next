@@ -15,6 +15,9 @@ import type { ReactBindings, MarkerPlacement, Point } from '../../contract/rende
  * with fewer than two points draws nothing.
  *
  * @param bindings - Presentation's `Marker` component.
+ * Recovery: when reading `Marker` throws, the caller repairs the bindings and calls this
+ * factory again. Failures while drawing later are handled by `createSceneRenderer`.
+ *
  * @returns The marker component.
  * @throws Never for plain bindings; a throwing `Marker` getter propagates.
  */

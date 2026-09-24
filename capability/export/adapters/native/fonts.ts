@@ -15,9 +15,10 @@ import { failure } from '../../contract/errors.js';
  *
  * `decode` turns each font's base64 into bytes (Node's `Buffer` decoding; Presentation supplies
  * these fonts), decompresses `font/woff2` fonts with `decompress`, and reads the real family
- * name from the bytes with fontkit. All fonts are decoded at the same time; the result keeps
- * the input order. Each font gets the alias `canvas-<digest>`, the family name the SVG uses. A
- * non-WOFF2 font's `bytes` is the decoded `Buffer` itself.
+ * name from the bytes with fontkit. All fonts start decoding at once (production WOFF2
+ * decompression still runs one call at a time); the result keeps the input order. Each font
+ * gets the alias `canvas-<digest>`, the family name the SVG uses. A non-WOFF2 font's `bytes` is
+ * the decoded `Buffer` itself.
  *
  * @param fonts - Presentation's pinned fonts.
  * @param decompress - The WOFF2 decompressor (`decompressFont` in production).
@@ -56,7 +57,7 @@ export function createFontDecoder(
     return { alias: `canvas-${font.digest}`, family: parsed.familyName, bytes };
   }
 
-  /** Decompresses WOFF2; any other font is already sfnt and is returned as it is. */
+  /** Decompresses WOFF2; bytes of any other media type pass through unchanged. */
   async function nativeBytes(bytes: Uint8Array, mediaType: string): Promise<Uint8Array> {
     if (mediaType === 'font/woff2') return decompress(bytes);
     return bytes;
@@ -70,7 +71,8 @@ export function createFontDecoder(
  * shared name would let one font silently replace another.
  */
 function distinctFamilies(fonts: readonly NativeFont[]): Result<readonly NativeFont[]> {
-  if (new Set(fonts.map((font) => font.family)).size !== fonts.length)
+  const families = new Set(fonts.map(/** The font's family name. */ (font) => font.family));
+  if (families.size !== fonts.length)
     return failure(
       'encoding-failed',
       'fonts',

@@ -22,6 +22,9 @@ import type {
  * - `label` draws measured text content at a section-local point.
  *
  * @param bindings - Presentation's `NodeContent` and `MeasuredContent` components.
+ * Recovery: when reading a binding throws, the caller repairs the bindings and calls this
+ * factory again. Failures while drawing later are handled by `createSceneRenderer`.
+ *
  * @returns The `node` and `label` slots.
  * @throws Never for plain bindings; a throwing getter on `bindings` propagates.
  */

@@ -1,7 +1,17 @@
 import { z } from 'zod';
 import { collectionId, sectionId, objectId, label, text, nonnegativeInteger } from '../brands.js';
 import { catalogSchema } from './catalog.js';
+
+// The section, object and visit schemas are private. Each is declared before the exported schema
+// built from it.
+
+/** Checks one section: its ID and nonblank title. */
 const sectionSchema = z.strictObject({ id: sectionId, title: label }).readonly();
+
+/**
+ * Checks one object: its ID, nonblank label, description (default empty) and the sections it is
+ * visible in (default none; an object may be unplaced).
+ */
 const objectSchema = z
   .strictObject({
     id: objectId,
@@ -10,7 +20,12 @@ const objectSchema = z
     visibleIn: z.array(sectionId).max(10_000).readonly().default([]),
   })
   .readonly();
-/** Rebuildable projection from one committed/proposed collection revision; not a competing document. */
+
+/**
+ * Checks one collection projection: the searchable view of one collection revision (ID, revision,
+ * title, description, sections and objects). It can always be rebuilt from the collection and is
+ * never stored as a document of its own.
+ */
 export const collectionProjectionSchema = z
   .strictObject({
     id: collectionId,
@@ -21,13 +36,25 @@ export const collectionProjectionSchema = z
     objects: z.array(objectSchema).max(10_000).readonly().default([]),
   })
   .readonly();
-/** Complete authoritative inventory supplied by the host; core checks membership bijection. */
+
+/**
+ * Checks the host's complete collection inventory: at most 10,000 projections. Validation checks
+ * that every collection has exactly one catalog entry and every entry has a collection.
+ */
 export const inventorySchema = z.array(collectionProjectionSchema).max(10_000).readonly();
-/** Local visit preference, supplied by the host without reading a clock inside Library. */
+
+/**
+ * Checks one recent visit: a collection and when it was opened (an epoch supplied by the host;
+ * Library reads no clock).
+ */
 const recentSchema = z
   .strictObject({ collection: collectionId, openedAt: nonnegativeInteger })
   .readonly();
-/** Consistent catalog/content projection and current visit preferences for one pure operation. */
+
+/**
+ * Checks a Library snapshot: the catalog, the complete collection inventory and the recent visits
+ * (default none), all read at one consistent point. Every Library operation runs on one snapshot.
+ */
 export const snapshotSchema = z
   .strictObject({
     catalog: catalogSchema,
@@ -35,9 +62,12 @@ export const snapshotSchema = z
     recent: z.array(recentSchema).max(10_000).readonly().default([]),
   })
   .readonly();
-/** Validated discovery snapshot. */
+
+/** A snapshot that passed {@link snapshotSchema}, with defaults filled in. */
 export type LibrarySnapshot = z.infer<typeof snapshotSchema>;
-/** Collection title/content read projection with its authoritative revision. */
+
+/** A collection projection with its authoritative revision. */
 export type CollectionProjection = z.infer<typeof collectionProjectionSchema>;
-/** Visit preference used only for ranking and cursor identity. */
+
+/** A recent visit. Used only for `recent` sorting and in the cursor's query key. */
 export type RecentVisit = z.infer<typeof recentSchema>;

@@ -37,18 +37,20 @@ function nativeHash(text: string): string {
   return createHash('sha256').update(text).digest('hex');
 }
 
-/** Hashes text and checks the output. A failing hasher or a malformed digest becomes a failed result. */
+/**
+ * Hashes text and checks the output. A failing hasher or a malformed digest becomes a failed result.
+ * `digest.safeParse` is read before the hasher runs.
+ */
 function hashText(hash: (text: string) => string, text: string): Result<Digest> {
   try {
-    return checkedDigest(hash(text));
+    return checkedDigest(digest.safeParse(hash(text)));
   } catch {
     return failure('storage-unavailable', 'digest', 'Hash provider failed');
   }
 }
 
-/** Checks that hasher output is a valid digest. */
-function checkedDigest(output: string): Result<Digest> {
-  const parsed = digest.safeParse(output);
+/** Turns the digest check of the hasher output into a result. */
+function checkedDigest(parsed: ReturnType<typeof digest.safeParse>): Result<Digest> {
   if (!parsed.success)
     return failure('storage-unavailable', 'digest', 'Hash provider returned an invalid digest');
   return { ok: true, value: parsed.data };
@@ -57,18 +59,18 @@ function checkedDigest(output: string): Result<Digest> {
 /**
  * Reads the clock and checks the output. A failing clock or an invalid timestamp becomes a failed result.
  * This happens before commit, so no history is partly allocated when it fails.
+ * `timestamp.safeParse` is read before the clock runs.
  */
 function currentTime(now: () => number): Result<Timestamp> {
   try {
-    return checkedTimestamp(now());
+    return checkedTimestamp(timestamp.safeParse(now()));
   } catch {
     return failure('storage-unavailable', 'timestamp', 'Clock provider failed');
   }
 }
 
-/** Checks that clock output is a valid timestamp. */
-function checkedTimestamp(output: number): Result<Timestamp> {
-  const parsed = timestamp.safeParse(output);
+/** Turns the timestamp check of the clock output into a result. */
+function checkedTimestamp(parsed: ReturnType<typeof timestamp.safeParse>): Result<Timestamp> {
   if (!parsed.success)
     return failure('storage-unavailable', 'timestamp', 'Clock returned an invalid timestamp');
   return { ok: true, value: parsed.data };

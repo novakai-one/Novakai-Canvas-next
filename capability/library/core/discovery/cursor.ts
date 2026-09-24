@@ -94,8 +94,8 @@ function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): Curso
 /** Parses the cursor. Text that is not JSON is `stale-cursor` too, not a generic read failure. */
 function decodeCursor(cursor: string): Result<CursorEnvelope> {
   try {
-    const json: unknown = JSON.parse(cursor);
-    const parsed = cursorSchema.safeParse(json);
+    // `cursorSchema.safeParse` is read before the JSON is parsed.
+    const parsed = cursorSchema.safeParse(JSON.parse(cursor));
     if (!parsed.success) {
       return staleCursor('Cursor is malformed');
     }

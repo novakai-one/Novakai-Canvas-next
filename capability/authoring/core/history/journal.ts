@@ -183,7 +183,11 @@ function historyWrites(
   const transactionValue = copyJson(entry, storedLimits);
   const headRecordKey = headKey(original);
   const headValue = copyJson(head);
-  const navigation = navigationWrites(request, candidate, [transactionRecordKey, headRecordKey]);
+  // Navigation gets its own key objects, built after the two records above.
+  const navigation = navigationWrites(request, candidate, [
+    transactionKey(request.request),
+    headKey(original),
+  ]);
   return [
     {
       kind: 'put',

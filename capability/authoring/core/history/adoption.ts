@@ -11,7 +11,7 @@ import type { HistoryStatus } from '../../contract/records/history.js';
 import type { CommitRequest } from '../../contract/ports/store.js';
 import { navigationKey, historyStatus, readNavigation } from './navigation.js';
 import { boundNavigation, staleHistory } from './retention.js';
-import { findRecord, keyText, versionOf } from '../records/keys.js';
+import { findRecord, versionOf } from '../records/keys.js';
 import { readSnapshot, readReceipt } from '../validation/snapshot.js';
 import { copyJson, storedLimits } from '../validation/plain-data.js';
 import { accepted, reject } from '../validation/outcomes.js';
@@ -84,10 +84,13 @@ function reopened(snapshot: Snapshot, receipt: Receipt | null, deps: Dependencie
   return status;
 }
 
-/** Rejects an adoption receipt that does not list the navigation record among its versions. */
+/**
+ * Rejects an adoption receipt that does not list the navigation record among its versions.
+ * Each key's `kind` is read first; its `id` is read only when the kind is `history`.
+ */
 function checkAdoptionReceipt(receipt: Receipt): void {
   const listsNavigation = receipt.versions.some(
-    (read) => keyText(read.key) === keyText(navigationKey),
+    (read) => read.key.kind === 'history' && read.key.id === 'navigation',
   );
   if (!listsNavigation)
     reject('corrupt-record', 'history', 'Adoption receipt does not identify navigation');

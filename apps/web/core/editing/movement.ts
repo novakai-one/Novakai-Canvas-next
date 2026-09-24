@@ -1,5 +1,5 @@
 import type { Change, PlacementIntent, SceneStamp } from '../../contract/records/owners.js';
-import type { Result } from '../../contract/errors.js';
+import type { Diagnostic, Result } from '../../contract/errors.js';
 import type {
   GeometryChange,
   MoveOption,
@@ -8,6 +8,7 @@ import type {
 } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
 import { changes, plannedSections } from './movement-capture.js';
+import { droppedAway, droppedOnto } from './movement-drop.js';
 import { normalizedEntries, validateMoveIntent } from './movement-intent.js';
 import { geometryChanges } from './movement-preview.js';
 
@@ -22,10 +23,16 @@ export function buildMoveReview(
   context: MovementPreviewContext,
 ): Result<MoveReview> {
   const prepared = prepareMove(intent, context);
-  if (!prepared.ok) return prepared;
-  const previewed = previewMove(prepared.value, context);
-  if (!previewed.ok) return previewed;
-  return inspectMove(prepared.value, context, previewed.value);
+  return prepared.ok ? reviewPrepared(prepared.value, context) : prepared;
+}
+
+function reviewPrepared(
+  prepared: PreparedMove,
+  context: MovementPreviewContext,
+): Result<MoveReview> {
+  const previewed = previewMove(prepared, context);
+  const reviewed = previewed.ok ? inspectMove(prepared, context, previewed.value) : previewed;
+  return reviewed.ok ? reviewed : plainFailure(reviewed.error, prepared.intent, context);
 }
 
 function prepareMove(
@@ -70,15 +77,59 @@ function previewMove(
   return context.preview(context.document, prepared.intent, prepared.changes);
 }
 
+const REASONS: readonly (readonly [RegExp, string])[] = [
+  [/overlap/i, 'it would overlap another box'],
+  [/no route|no room/i, 'its wires would have no room to route'],
+  [/exceeds measured section envelope/i, "it wouldn't fit inside its section"],
+  [/group cannot grow/i, 'its group has no room to grow that way'],
+];
+/** Layout speaks in its own terms; the person moving a box reads what went wrong and where. */
+function plainFailure(
+  error: Diagnostic,
+  intent: PlacementIntent,
+  context: MovementPreviewContext,
+): Result<never> {
+  const onto = droppedOnto(context.document, intent.entries);
+  const reason = REASONS.find(([pattern]) => pattern.test(error.message))?.[1];
+  const message =
+    onto === undefined
+      ? `Can't move ${movedLabel(intent, context)} there: ${reason ?? "the layout can't fit it"}`
+      : `Can't drop on top of ${onto}`;
+  return { ok: false, error: { ...error, message } };
+}
+function movedLabel(intent: PlacementIntent, context: MovementPreviewContext): string {
+  const target = intent.entries[0]?.target;
+  const section = context.document.scene.sections.find(
+    (item) => target?.kind === 'node' && item.id === target.section,
+  );
+  const node = section?.nodes.find((item) => target?.kind === 'node' && item.id === target.id);
+  return node?.measured.label ?? 'this';
+}
+
 function inspectMove(
   prepared: PreparedMove,
   context: MovementPreviewContext,
   preview: GeometryPreview | null,
 ): Result<MoveReview> {
   if (preview === null) return failure('invalid-edit', 'Movement preview produced no geometry');
+  const inspected = checkedChanges(prepared, context, preview);
+  return inspected.ok
+    ? createMoveReview(prepared.intent, context, prepared.changes, inspected.value, preview)
+    : inspected;
+}
+
+/** Nothing moved although the person dropped the node elsewhere: its group could not follow. */
+function checkedChanges(
+  prepared: PreparedMove,
+  context: MovementPreviewContext,
+  preview: GeometryPreview,
+): Result<readonly GeometryChange[]> {
   const inspected = geometryChanges(context.document, prepared.intent.entries, preview);
-  if (!inspected.ok) return inspected;
-  return createMoveReview(prepared.intent, context, prepared.changes, inspected.value, preview);
+  const stuck =
+    inspected.ok &&
+    inspected.value.length === 0 &&
+    droppedAway(context.document, prepared.intent.entries);
+  return stuck ? failure('invalid-edit', 'The group cannot grow to hold this position') : inspected;
 }
 
 function createMoveReview(

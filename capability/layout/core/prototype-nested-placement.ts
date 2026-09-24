@@ -188,6 +188,7 @@ function positionSection(
   parentSectionId: string | null,
   parentOrigin = { x: 0, y: 0 },
   inset = { x: 0, y: 0 },
+  content?: PrototypeBounds,
 ): readonly SectionPlacement[] {
   const bounds = {
     x: size.position === undefined ? surrounding.x + inset.x : parentOrigin.x + size.position.x,
@@ -215,7 +216,13 @@ function positionSection(
       ? node
       : { ...node, bounds: { ...node.bounds, x: bounds.x + position.x, y: bounds.y + position.y } };
   });
-  const own = { section, size, surrounding, interior, nodes };
+  const own = {
+    section,
+    size,
+    surrounding: around(size, surrounding, bounds, inset, content),
+    interior,
+    nodes,
+  };
   const columns = size.measured.childColumns;
   const xEdges = gridEdges(size.measured.childColumnWidths);
   const yEdges = gridEdges(size.measured.childRowHeights);
@@ -229,9 +236,44 @@ function positionSection(
       width: size.measured.childColumnWidths[column]!,
       height: size.measured.childRowHeights[row]!,
     };
-    return positionSection(child, cell, size.id, bounds, size.measured.childInsets[index]!);
+    return positionSection(
+      child,
+      cell,
+      size.id,
+      bounds,
+      size.measured.childInsets[index]!,
+      interior,
+    );
   });
   return [own, ...children];
+}
+/** A hand-placed group keeps its grid cell's margin around it where it now sits, inside its
+ * parent's content area. */
+function around(
+  size: SizedSection,
+  cell: PrototypeBounds,
+  bounds: PrototypeBounds,
+  inset: { readonly x: number; readonly y: number },
+  content?: PrototypeBounds,
+): PrototypeBounds {
+  if (size.position === undefined) return cell;
+  const x = span(bounds.x - inset.x, cell.width, content?.x, content?.width);
+  const y = span(bounds.y - inset.y, cell.height, content?.y, content?.height);
+  const moved = { x: x.start, y: y.start, width: x.size, height: y.size };
+  return sameBounds(moved, cell) ? cell : moved;
+}
+/** A group left where its cell put it keeps the cell exactly, free of float drift. */
+function sameBounds(a: PrototypeBounds, b: PrototypeBounds): boolean {
+  return (['x', 'y', 'width', 'height'] as const).every((key) => Math.abs(a[key] - b[key]) < 1e-6);
+}
+function span(
+  start: number,
+  size: number,
+  from = -Infinity,
+  room = Infinity,
+): { readonly start: number; readonly size: number } {
+  const first = Math.max(start, from);
+  return { start: first, size: Math.min(start + size, from + room) - first };
 }
 function sectionDescription(size: SizedSection): string {
   if (size.children.length === 0)

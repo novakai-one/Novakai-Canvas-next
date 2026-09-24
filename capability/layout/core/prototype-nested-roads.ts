@@ -325,6 +325,7 @@ export function nestedDriveways(
   roads: readonly PrototypeRoad[],
   pitches: RoadPitches,
   bodies: readonly PrototypeBounds[] = [],
+  required: ReadonlySet<string> = new Set(),
 ): readonly PrototypeRoad[] {
   return [
     ...p.nodes.flatMap((node) => {
@@ -333,7 +334,10 @@ export function nestedDriveways(
       return ports.flatMap((port, i) => {
         const drive = clear[i];
         if (drive !== null && drive !== undefined) return [drive];
-        const kept = ports.some((other, j) => other.role === port.role && clear[j] != null);
+        // A port a wire names keeps its driveway even when blocked; dropping it leaves the wire no road.
+        const kept =
+          !required.has(port.portId) &&
+          ports.some((other, j) => other.role === port.role && clear[j] != null);
         if (kept) return [];
         const blocked = nodeDrive(port, roads, pitches);
         return blocked === null ? [] : [blocked];

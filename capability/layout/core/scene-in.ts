@@ -188,9 +188,14 @@ export function toEngineScene(
     ...(measure === undefined ? {} : { measure }),
   });
   if (scene.embeddingFailure !== undefined)
-    return reject('constraint-conflict', source.id, JSON.stringify(scene.embeddingFailure));
+    return reject(
+      'constraint-conflict',
+      source.id,
+      'There is no room for the roads between these boxes',
+    );
   const wiring = required(scene.wiring, source.id);
-  if (!wiring.ok) return reject('constraint-conflict', source.id, JSON.stringify(wiring.error));
+  if (!wiring.ok)
+    return reject('constraint-conflict', source.id, `Wire ${wiring.error.wireId} has no route`);
   const inspection = inspectNestedWires(scene, wiring.value);
   // After a human move, a route behind a node or across a group edge lands with a warning.
   const moved = source.nodes.some((node) => node.placement !== null);

@@ -8,6 +8,7 @@ import type {
 } from '../../contract/records/owners.js';
 import type { GeometryChange } from '../../contract/records/movement.js';
 import { placeEntries } from './placements.js';
+import { stopShort } from './movement-stop.js';
 
 export type Box = GeometryChange['before'];
 
@@ -65,9 +66,11 @@ function pinSection(
   const placement = originPlacement(source.placement, scene.origin.x, scene.origin.y);
   if (!affected.has(source.id) || source.mode !== 'modules') return { ...source, placement };
   const nodes = new Map(scene.nodes.map((node) => [node.id, node]));
+  // The frame keeps its size too, so it grows only by what the move itself needs.
+  const { width, height } = scene.box;
   return {
     ...source,
-    placement,
+    placement: sourcePlacement(source.placement, scene.origin.x, scene.origin.y, width, height),
     groups: source.groups.map((group) => pinGroup(group, scene.nodes, nodes)),
     appearances: source.appearances.map((appearance) =>
       pinAppearance(appearance, scene.nodes, nodes),
@@ -156,108 +159,6 @@ export function settled(
 ): Section {
   if (section.mode !== 'modules') return section;
   return growToHold(stopShort(section, document, targets), document);
-}
-
-type SceneNode = RenderDocument['scene']['sections'][number]['nodes'][number];
-/** The frame the node's placement is measured from: its new group, or the nearest non-group ancestor. */
-function frameOf(
-  nodes: readonly SceneNode[],
-  node: SceneNode,
-  group: string | undefined,
-): SceneNode | undefined {
-  if (group !== undefined) return nodes.find((item) => item.measured.groupId === group);
-  return outside(
-    nodes,
-    nodes.find((item) => item.id === node.parent),
-  );
-}
-function outside(nodes: readonly SceneNode[], from: SceneNode | undefined): SceneNode | undefined {
-  if (from?.measured.groupId == null) return from;
-  return outside(
-    nodes,
-    nodes.find((item) => item.id === from.parent),
-  );
-}
-
-/** A node dropped onto a sibling stops short along its drag path, keeping a padding-wide gap. */
-function stopShort(
-  section: Section,
-  document: RenderDocument,
-  targets: readonly Target[],
-): Section {
-  const scene = document.scene.sections.find((item) => item.id === section.id);
-  if (scene === undefined) return section;
-  const space = document.options.padding;
-  let appearances = section.appearances;
-  for (const target of targets) {
-    if (target.kind !== 'node' || target.section !== section.id) continue;
-    const id = target.id;
-    const node = scene.nodes.find((item) => item.id === id);
-    if (node === undefined || node.measured.groupId !== null) continue;
-    const moved = appearances.find((a) => a.object === node.measured.objectId);
-    const after = moved?.placement;
-    if (moved === undefined || after == null) continue;
-    const parent = frameOf(scene.nodes, node, moved.group);
-    const before = { x: node.box.x - (parent?.box.x ?? 0), y: node.box.y - (parent?.box.y ?? 0) };
-    const size = { width: after.width ?? node.box.width, height: after.height ?? node.box.height };
-    const others = appearances.flatMap((a) => {
-      if (a === moved || a.group !== moved.group || a.placement == null) return [];
-      const other = scene.nodes.find((item) => item.measured.objectId === a.object);
-      return [
-        {
-          x: a.placement.x,
-          y: a.placement.y,
-          width: a.placement.width ?? other?.box.width ?? 0,
-          height: a.placement.height ?? other?.box.height ?? 0,
-        },
-      ];
-    });
-    const at = (t: number) => ({
-      x: before.x + (after.x - before.x) * t,
-      y: before.y + (after.y - before.y) * t,
-    });
-    const free = (p: { x: number; y: number }) =>
-      others.every(
-        (o) =>
-          p.x + size.width + space <= o.x ||
-          o.x + o.width + space <= p.x ||
-          p.y + size.height + space <= o.y ||
-          o.y + o.height + space <= p.y,
-      );
-    const clear = (t: number) => free(at(t));
-    if (clear(1)) continue;
-    // A node entering another group has no path inside it; take the nearest free spot there instead.
-    const p = parent?.id === node.parent ? backTrack(at, clear) : nearestFree(after, free);
-    appearances = appearances.map((a) =>
-      a === moved ? { ...a, placement: { ...after, x: p.x, y: p.y } } : a,
-    );
-  }
-  return appearances === section.appearances ? section : { ...section, appearances };
-}
-
-function backTrack(
-  at: (t: number) => { x: number; y: number },
-  clear: (t: number) => boolean,
-): { x: number; y: number } {
-  let t = 1;
-  while (t > 0 && !clear(t)) t = Math.max(0, t - 1 / 64);
-  return at(t);
-}
-
-/** Search outward from the drop point, down then right. Never up or left: that would leave the group. */
-function nearestFree(
-  from: { x: number; y: number },
-  free: (p: { x: number; y: number }) => boolean,
-): { x: number; y: number } {
-  const ways = [
-    [0, 1],
-    [1, 0],
-  ] as const;
-  const steps = Array.from({ length: 256 }, (_, i) => (i + 1) * 8);
-  const spots = steps.flatMap((d) =>
-    ways.map(([x, y]) => ({ x: from.x + x * d, y: from.y + y * d })),
-  );
-  return spots.find(free) ?? from;
 }
 
 /** A child dragged past its group's top or left edge grows the group up or left; the child stays where dropped. */

@@ -229,7 +229,7 @@ function pushedAside(
       dy = after.y - before.y;
     if (dx < -0.01 || dy < -0.01 || (near(dx, 0) && near(dy, 0))) return false;
     if (!near(after.width, before.width) || !near(after.height, before.height)) return false;
-    if (!earlierSiblingGrew(document, preview, container, before, dx, dy)) return false;
+    if (!earlierSiblingGrew(document, preview, container, before)) return false;
     return (
       near(expected.x + dx, actual.x) &&
       near(expected.y + dy, actual.y) &&
@@ -239,26 +239,36 @@ function pushedAside(
   });
 }
 
-/** Something before the pushed container, beside or above it, got bigger. */
+/** Something before the pushed container, beside or above it, in the same container, got bigger. */
 function earlierSiblingGrew(
   document: RenderDocument,
   preview: GeometryPreview,
   pushed: Target,
   at: Box,
-  dx: number,
-  dy: number,
 ): boolean {
   return preview.boxes.some((item) => {
-    if (item.target.kind !== pushed.kind || targetKey(item.target) === targetKey(pushed))
+    if (
+      targetKey(item.target) === targetKey(pushed) ||
+      !sameContainer(document, item.target, pushed)
+    )
       return false;
     const was = sceneBox(document, item.target);
     if (was === undefined) return false;
     const grew = item.box.width > was.width + 0.01 || item.box.height > was.height + 0.01;
-    const before =
-      (dx > 0.01 && was.x + was.width <= at.x + 0.01) ||
-      (dy > 0.01 && was.y + was.height <= at.y + 0.01);
+    // A sibling that grows sideways into the pushed container's row may push it down, and one
+    // that grows downward may push it right; either way the grown sibling started before it.
+    const before = was.x + was.width <= at.x + 0.01 || was.y + was.height <= at.y + 0.01;
     return grew && before;
   });
+}
+
+/** Two section targets, or two node targets sharing the same parent (or none). */
+function sameContainer(document: RenderDocument, a: Target, b: Target): boolean {
+  if (a.kind === 'section' || b.kind === 'section') return a.kind === b.kind;
+  if (a.section !== b.section) return false;
+  const nodes = document.scene.sections.find((section) => section.id === a.section)?.nodes ?? [];
+  const parentOf = (id: string) => nodes.find((node) => node.id === id)?.parent ?? null;
+  return parentOf(a.id) === parentOf(b.id);
 }
 
 /** A dragged node may stop at its group's inset, between where it was and where it was dropped. */

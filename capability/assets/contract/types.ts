@@ -41,15 +41,17 @@ export interface WriteLease {
   /**
    * Installs backup bytes for one reserved digest. The bytes must hash to the digest, and
    * normalizing them (as the media type detected from the bytes) must give the same bytes. The
-   * lease is checked again in the same storage transaction that writes the bytes, so bytes are
-   * never installed after the lease is released.
+   * lease is checked after that, in the same storage transaction that writes the bytes, so bytes
+   * are never installed after the lease is released.
    *
    * @param digest - The reserved digest. It is checked as a {@link Digest}.
    * @param base64 - The backup bytes, base64 encoded.
    * @returns Success once the bytes are stored. Fails `invalid-input` for a bad digest or bad
-   * base64, `corrupt-asset` when the bytes do not match the digest, `unsupported-media` or
-   * `unsafe-media` when the media is rejected, `lease-expired` when the lease no longer covers
-   * the digest, and `storage-unavailable` when storage fails.
+   * base64; `corrupt-asset` when the bytes do not match the digest, the stored lease is
+   * malformed, or different bytes are already stored at the digest; `unsupported-media` or
+   * `unsafe-media` when the media is rejected; `lease-expired` when the lease no longer covers
+   * the digest; `missing-asset` when stored bytes vanish between two reads; and
+   * `storage-unavailable` when storage fails.
    */
   stage(digest: unknown, base64: unknown): Promise<Result<void>>;
   /**
@@ -80,10 +82,17 @@ export interface AssetDependencies {
 
 /**
  * The Assets facade: stores content-addressed media and protects it with leases. Callers see only
- * this contract. The object is frozen, and every successful value is deeply frozen.
+ * this contract. The object is frozen, and every result is deeply frozen.
  *
- * Its methods never throw. `stage` reports anything thrown as `unsafe-media`; the others report it
- * as `storage-unavailable`.
+ * Its methods never throw. A throw is reported where it is caught:
+ * - inside a transaction of the real storage adapter: a `StorageFault` keeps its code (for
+ *   example `corrupt-asset`); anything else is `storage-unavailable`;
+ * - while staging, or while checking backup bytes (`verify`, `WriteLease.stage`): `unsafe-media`;
+ * - anywhere else: `storage-unavailable`.
+ *
+ * Recovery: Authoring owns retrying a submission and committing bindings; Assets owns lease
+ * recovery and cleaning up orphan bytes (`collectUnreferenced`). After `storage-unavailable`,
+ * re-read before retrying.
  */
 export interface Assets {
   /**
@@ -143,11 +152,12 @@ export interface Assets {
    * presets. It runs inside the transaction.
    * @returns What was removed and retained. Fails `corrupt-asset` for a malformed lease record or
    * reference list (nothing is deleted then), the reader's own failure unchanged, or
-   * `storage-unavailable`.
+   * `storage-unavailable` (also when rolling back after a failure fails).
    */
   collectUnreferenced(readReachability: ReachabilityReader): Result<CollectionReport>;
   /**
-   * Closes storage. Later calls fail with `storage-unavailable`.
+   * Closes storage. Later calls that use storage fail with `storage-unavailable`; `verify` uses
+   * no storage and still works.
    *
    * @returns Success, or the storage failure.
    */

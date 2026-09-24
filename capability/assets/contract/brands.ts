@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 /**
- * Checks a SHA-256 content digest: 64 lowercase hex characters. It names the exact normalized
- * bytes of one asset. Metadata such as a file name or alt text never locates bytes.
+ * Checks a SHA-256 content digest: 64 lowercase hex characters. It names exact bytes: a stored
+ * asset's normalized bytes, or the submitted bytes (`Admission.originalDigest`). Metadata such as
+ * a file name or alt text never locates bytes.
  */
 export const digest = z
   .string()

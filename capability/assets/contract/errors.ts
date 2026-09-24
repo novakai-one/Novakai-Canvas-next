@@ -5,8 +5,8 @@
  *   has no alt text or the submitted bytes are over the limit (core/admission/validate.ts); or
  *   bytes could not be decoded or hashed (adapters/detect.ts, adapters/identity.ts).
  * - `unsupported-media`: no processor handles the media type (core/admission/stage.ts); the bytes
- *   match no supported signature (adapters/detect.ts); or the bytes differ from the declared
- *   format (adapters/raster.ts, adapters/font.ts).
+ *   match no supported signature (adapters/detect.ts); the bytes differ from the declared format
+ *   (adapters/raster.ts, adapters/font.ts); or a font file is a collection (adapters/font.ts).
  * - `unsafe-media`: a processor's output breaks a limit or lacks dimensions or a font family
  *   (core/admission/validate.ts); a codec refused the content (adapters/raster.ts, svg.ts,
  *   font.ts); or anything was thrown while staging or checking restored bytes (`protectAsync` in
@@ -14,8 +14,9 @@
  * - `missing-asset`: no bytes are stored for the digest (core/resolution/resolve.ts).
  * - `corrupt-asset`: stored bytes, metadata or a lease record are malformed or do not match their
  *   digest (core/resolution/resolve.ts, core/reachability/collect.ts, leases.ts,
- *   adapters/sqlite-files.ts, adapters/files.ts); existing bytes differ from newly normalized
- *   bytes (core/admission/stage.ts); or backup bytes do not match their digest
+ *   adapters/sqlite-files.ts, adapters/files.ts); the reachability reader returns a malformed
+ *   digest list (core/reachability/collect.ts); existing bytes differ from newly normalized bytes
+ *   (core/admission/stage.ts); or backup bytes do not match their digest
  *   (core/reachability/leases.ts).
  * - `lease-expired`: the lease was released or recovered, or does not cover the digest
  *   (core/reachability/leases.ts).
@@ -71,22 +72,11 @@ export function fail<T>(code: ErrorCode, path: string, message: string): Result<
   return { ok: false, error: { code, path, message, recovery: recovery[code] } };
 }
 
-/** The recovery text for each failure code. */
-const recovery: Readonly<Record<ErrorCode, string>> = {
-  'invalid-input': 'Correct the submitted metadata or identity.',
-  'unsupported-media': 'Use a supported local image, SVG or font format.',
-  'unsafe-media': 'Correct the original media; no unsafe content was admitted.',
-  'missing-asset': 'Restage the original bytes and acquire them before committing a binding.',
-  'corrupt-asset':
-    'Retain evidence and restore verified original bytes; do not substitute content.',
-  'lease-expired': 'Acquire or reserve again, then repeat verification before commit.',
-  'storage-unavailable': 'Re-read blob and lease state before retry; Assets owns orphan cleanup.',
-};
-
 /**
  * Thrown by the native storage adapters (adapters/files.ts, adapters/sqlite-files.ts) to carry a
  * typed failure. The storage transaction catches it and reports its code, path and message as a
- * failed {@link Result}; the message is never parsed.
+ * failed {@link Result}; the message is never parsed. If rolling back then fails, the transaction
+ * reports `storage-unavailable` instead.
  */
 export class StorageFault extends Error {
   /**
@@ -104,3 +94,15 @@ export class StorageFault extends Error {
     super(message);
   }
 }
+
+/** The recovery text for each failure code. */
+const recovery: Readonly<Record<ErrorCode, string>> = {
+  'invalid-input': 'Correct the submitted metadata or identity.',
+  'unsupported-media': 'Use a supported local image, SVG or font format.',
+  'unsafe-media': 'Correct the original media; no unsafe content was admitted.',
+  'missing-asset': 'Restage the original bytes and acquire them before committing a binding.',
+  'corrupt-asset':
+    'Retain evidence and restore verified original bytes; do not substitute content.',
+  'lease-expired': 'Acquire or reserve again, then repeat verification before commit.',
+  'storage-unavailable': 'Re-read blob and lease state before retry; Assets owns orphan cleanup.',
+};

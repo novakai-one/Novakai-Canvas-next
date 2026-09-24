@@ -1,6 +1,7 @@
 /**
  * Public entry point of Assets. It exports the two factories, the digest and lease ID schemas, and
- * the contract types. Diagram bindings to assets belong to Authoring, not to Assets.
+ * the contract types. Diagram bindings to assets, and retrying submissions, belong to Authoring;
+ * lease recovery and orphan cleanup belong to Assets.
  */
 export { openAssets } from './compose.js';
 export { createAssets } from './api.js';

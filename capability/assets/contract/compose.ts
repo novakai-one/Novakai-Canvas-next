@@ -8,6 +8,7 @@ import { createSvg } from '../adapters/svg.js';
 import { createFont } from '../adapters/font.js';
 import { detectMedia } from '../adapters/detect.js';
 import { createAssets } from './api.js';
+import { success } from '../core/validation/outcomes.js';
 import { fail } from './errors.js';
 import type { Result } from './errors.js';
 import type { Assets } from './types.js';
@@ -16,9 +17,9 @@ import type { AssetDatabase, BlobFiles } from './ports/native.js';
 /** Opens the native file store and database. Tests replace them to simulate open failures. */
 interface NativeFactories {
   /** Opens the blob file store rooted at a directory. */
-  files(root: string): BlobFiles;
+  readonly files: (root: string) => BlobFiles;
   /** Opens the SQLite database at a file path. */
-  database(location: string): AssetDatabase;
+  readonly database: (location: string) => AssetDatabase;
 }
 
 /**
@@ -34,6 +35,7 @@ interface NativeFactories {
  * @returns The frozen {@link Assets} facade. Fails with the storage's own failure when preparing
  * the storage fails (for example `corrupt-asset` for an unsupported schema), or
  * `storage-unavailable` when anything throws, such as a factory that cannot open its location.
+ * On `storage-unavailable`, keep the original files and retry opening.
  * @throws Never.
  */
 export function openAssets(root: string, factories: NativeFactories = native): Result<Assets> {
@@ -43,14 +45,13 @@ export function openAssets(root: string, factories: NativeFactories = native): R
     if (!store.ok) {
       return store;
     }
-    return {
-      ok: true,
-      value: createAssets({
+    return success(
+      createAssets({
         storage: store.value,
         identity: createIdentity(),
         media: { handlers: [createRaster(), createSvg(), createFont()], detect: detectMedia },
       }),
-    };
+    );
   } catch {
     return fail(
       'storage-unavailable',

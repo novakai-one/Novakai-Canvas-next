@@ -134,7 +134,7 @@ function reserve(input: unknown, deps: AssetDependencies): Result<WriteLease> {
 
 /**
  * Checks the digest, then validates the backup bytes and installs them under the lease. The
- * validation is asynchronous; the lease is checked again in the transaction that writes them.
+ * validation is asynchronous; the lease is checked afterwards, in the transaction that writes them.
  */
 async function stageLeased(
   id: LeaseId,

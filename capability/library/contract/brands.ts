@@ -1,32 +1,56 @@
 import { z } from 'zod';
 
-/** Shared identifier grammar; each record namespace mints an incompatible checked brand. */
+/**
+ * The shared grammar for Library IDs: a letter, then letters, digits, `_` or `-`. There is no
+ * length limit. Declared first because the branded schemas below are built from it; each brand
+ * is distinct, so one kind of ID cannot be passed where another is expected.
+ */
 const identifier = z.string().regex(/^[A-Za-z][A-Za-z0-9_-]*$/);
-/** Catalog identity; distinct from its folders and referenced collections. */
+
+/** Checks a catalog ID. A catalog is separate from its folders and the collections it lists. */
 export const catalogId = identifier.brand<'CatalogId'>();
-/** Folder identity within one catalog; root is represented by absence, never a sentinel ID. */
+
+/**
+ * Checks a folder ID, unique within one catalog. The catalog root has no ID: an entry or folder
+ * at the root simply has no folder or parent.
+ */
 export const folderId = identifier.brand<'FolderId'>();
-/** Canonical collection reference supplied by the host's authoritative projection. */
+
+/** Checks a collection ID, as given by the host's authoritative collection projection. */
 export const collectionId = identifier.brand<'CollectionId'>();
-/** Object identity scoped to its containing collection. */
+
+/** Checks an object ID, unique within its collection. */
 export const objectId = identifier.brand<'ObjectId'>();
-/** Section identity scoped to its containing collection. */
+
+/** Checks a section ID, unique within its collection. */
 export const sectionId = identifier.brand<'SectionId'>();
-/** Bounded display/search text; original content is not normalized by the schema. */
+
+/** Checks display or search text: at most 10,000 characters. The text is kept exactly as given. */
 export const text = z.string().max(10_000);
-/** Display names cannot be whitespace-only. */
+
+/** Checks a display name: {@link text} that is not empty or only whitespace ("Must be nonblank"). */
 export const label = text.refine((value): boolean => value.trim().length > 0, 'Must be nonblank');
-/** Revision and epoch values must survive lossless JSON round-tripping. */
+
+/**
+ * Checks a revision or epoch: a whole number from 0 to `Number.MAX_SAFE_INTEGER`, so it survives
+ * a JSON round trip exactly.
+ */
 export const nonnegativeInteger = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
-/** Ordering allows negative values but requires lossless integer representation. */
+
+/** Checks a sort position: any safe whole number, negative allowed. */
 export const order = z.number().int().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER);
-/** Checked catalog ID. */
+
+/** A catalog ID that passed {@link catalogId}. */
 export type CatalogId = z.infer<typeof catalogId>;
-/** Checked folder ID. */
+
+/** A folder ID that passed {@link folderId}. */
 export type FolderId = z.infer<typeof folderId>;
-/** Checked collection reference. */
+
+/** A collection ID that passed {@link collectionId}. */
 export type CollectionId = z.infer<typeof collectionId>;
-/** Checked object reference. */
+
+/** An object ID that passed {@link objectId}. */
 export type ObjectId = z.infer<typeof objectId>;
-/** Checked section reference. */
+
+/** A section ID that passed {@link sectionId}. */
 export type SectionId = z.infer<typeof sectionId>;

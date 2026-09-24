@@ -65,15 +65,19 @@ export function planPages(
   identity: Identity,
 ): Result<readonly Page[]> {
   const paper = orient(papers[request.paper], request.orientation);
-  const pages = selection.sections.flatMap((section) => tileSection(section, paper));
+  const pages = selection.sections.flatMap(
+    /** The section's pages on the chosen paper. */ (section) => tileSection(section, paper),
+  );
   if (pages.length > PDF_PAGE_LIMIT)
     return failure('limit-exceeded', 'pages', 'Print requires more than 512 pages');
   return success(
-    pages.map((page, index) => ({
-      ...page,
-      ordinal: index + 1,
-      footer: `${identity.title} · revision ${identity.revision} · ${index + 1}/${pages.length}`,
-    })),
+    pages.map(
+      /** The page with its 1-based number and its footer text. */ (page, index) => ({
+        ...page,
+        ordinal: index + 1,
+        footer: `${identity.title} · revision ${identity.revision} · ${index + 1}/${pages.length}`,
+      }),
+    ),
   );
 }
 
@@ -95,11 +99,15 @@ function tileSection(section: PlacedSection, paper: Paper): readonly Page[] {
   const columns = Math.max(1, Math.ceil((section.box.width - OVERLAP) / (width - OVERLAP)));
   const rows = Math.max(1, Math.ceil((section.box.height - OVERLAP) / (height - OVERLAP)));
   if (columns * rows > PDF_PAGE_LIMIT)
-    return Array.from({ length: PDF_PAGE_LIMIT + 1 }, () =>
-      pageAt(section, paper, 0, 0, width, height),
+    return Array.from(
+      { length: PDF_PAGE_LIMIT + 1 },
+      /** The first tile again; only the count matters, which is over the page limit. */ () =>
+        pageAt(section, paper, 0, 0, width, height),
     );
-  return Array.from({ length: columns * rows }, (_, index) =>
-    pageAt(section, paper, index % columns, Math.floor(index / columns), width, height),
+  return Array.from(
+    { length: columns * rows },
+    /** The page at this column and row. */ (_, index) =>
+      pageAt(section, paper, index % columns, Math.floor(index / columns), width, height),
   );
 }
 

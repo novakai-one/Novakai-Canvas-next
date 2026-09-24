@@ -27,10 +27,19 @@ export function checkCollectionResources(
 ): Result<void> {
   const expected = [
     `preset:${collection.theme.digest.slice(7)}`,
-    ...collection.assets.map((asset) => `asset:${asset.digest.slice(7)}`),
+    ...collection.assets.map(
+      /** The asset's key: `asset:` and its digest without the `sha256:` prefix. */ (asset) =>
+        `asset:${asset.digest.slice(7)}`,
+    ),
   ];
-  const available = resources.map((resource) => `${resource.kind}:${resource.digest}`);
-  if (!expected.every((key) => available.includes(key)))
+  const available = resources.map(
+    /** The resource's `kind:digest` key. */ (resource) => `${resource.kind}:${resource.digest}`,
+  );
+  if (
+    !expected.every(
+      /** Whether a resource with this key is present. */ (key) => available.includes(key),
+    )
+  )
     return failure(
       'resource-rejected',
       'resources',
@@ -51,19 +60,36 @@ export function checkCollectionResources(
  * this inside `protect`, which turns it into `encoding-failed`).
  */
 export function checkSceneResources(snapshot: Snapshot): Result<void> {
-  const contents = snapshot.scene.sections.flatMap((section) => [
-    section.title.content,
-    ...section.nodes.map((node) => node.measured.content),
-    ...section.wires.map((wire) => wire.measuredLabel),
-    ...section.sequence.events.map((event) => event.content),
-    ...section.sequence.fragments.flatMap((fragment) => [
-      fragment.content,
-      ...fragment.branches.map((branch) => branch.content),
-    ]),
-  ]);
-  const required = contents.flatMap((content) => content.primitives).flatMap(resourceKey);
-  const available = snapshot.resources.map((resource) => `${resource.kind}:${resource.digest}`);
-  if (!required.every((key) => available.includes(key)))
+  const contents = snapshot.scene.sections.flatMap(
+    /** Every measured content of the section: title, nodes, wire labels, messages, fragments. */
+    (section) => [
+      section.title.content,
+      ...section.nodes.map(/** The node's measured content. */ (node) => node.measured.content),
+      ...section.wires.map(/** The wire's measured label. */ (wire) => wire.measuredLabel),
+      ...section.sequence.events.map(
+        /** The message's measured content. */ (event) => event.content,
+      ),
+      ...section.sequence.fragments.flatMap(
+        /** The fragment's content, then each branch's content. */ (fragment) => [
+          fragment.content,
+          ...fragment.branches.map(
+            /** The branch's measured content. */ (branch) => branch.content,
+          ),
+        ],
+      ),
+    ],
+  );
+  const required = contents
+    .flatMap(/** The content's primitives. */ (content) => content.primitives)
+    .flatMap(resourceKey);
+  const available = snapshot.resources.map(
+    /** The resource's `kind:digest` key. */ (resource) => `${resource.kind}:${resource.digest}`,
+  );
+  if (
+    !required.every(
+      /** Whether a resource with this key is present. */ (key) => available.includes(key),
+    )
+  )
     return failure(
       'resource-rejected',
       'resources',

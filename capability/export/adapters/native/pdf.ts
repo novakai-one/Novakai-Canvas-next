@@ -210,14 +210,17 @@ function writePage(
     width: page.crop.width * page.scale,
     height: page.crop.height * page.scale,
     assumePt: true,
-    /** The registered alias for the family; throws when it is not pinned. */
-    fontCallback: (family) => fontAlias(family, fonts),
-    /** The embeddable image for the link; throws when it is not retained. */
-    imageCallback: (link) => imageData(link, images),
-    /** Turns any svg-to-pdfkit warning into a throw, which fails the whole PDF. */
-    warningCallback: (message) => {
-      throw new Error(message);
-    },
+    fontCallback:
+      /** The registered alias for the family; throws when it is not pinned. */
+      (family) => fontAlias(family, fonts),
+    imageCallback:
+      /** The embeddable image for the link; throws when it is not retained. */
+      (link) => imageData(link, images),
+    warningCallback:
+      /** Turns any svg-to-pdfkit warning into a throw, which fails the whole PDF. */
+      (message) => {
+        throw new Error(message);
+      },
   });
   document.restore();
   writeFooter(document, page, fonts);

@@ -43,7 +43,10 @@ export async function prepareImport(
   request: ImportRequest,
   deps: ImportDependencies,
 ): Promise<Result<PreparedImport>> {
-  return protect(() => prepareChecked(request, deps), 'invalid-import');
+  return protect(
+    /** Runs the checked preparation. */ () => prepareChecked(request, deps),
+    'invalid-import',
+  );
 }
 
 /** Inspects the bundle and rejects a target ID equal to the bundle's own collection ID. */

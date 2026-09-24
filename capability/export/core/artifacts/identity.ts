@@ -23,8 +23,14 @@ export function matchesIdentity(snapshot: Snapshot, request: ExportRequest): boo
     snapshot.scene.revision,
   ];
   return (
-    ids.every((id) => id === request.identity.collectionId) &&
-    revisions.every((revision) => revision === request.identity.revision) &&
+    ids.every(
+      /** Whether the collection ID matches the request. */ (id) =>
+        id === request.identity.collectionId,
+    ) &&
+    revisions.every(
+      /** Whether the revision matches the request. */ (revision) =>
+        revision === request.identity.revision,
+    ) &&
     snapshot.identity.inputKey === snapshot.scene.inputKey
   );
 }

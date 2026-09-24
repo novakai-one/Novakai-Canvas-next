@@ -117,14 +117,19 @@ function serializeBundle(
 ): Result<Encoded> {
   const manual = captureManual(snapshot.collection);
   const resources = snapshot.resources
-    .map((item) => ({
-      kind: item.kind,
-      digest: item.digest,
-      mediaType: item.mediaType,
-      metadata: item.metadata,
-      base64: deps.encoding.base64(item.bytes),
-    }))
-    .sort((a, b) => `${a.kind}:${a.digest}`.localeCompare(`${b.kind}:${b.digest}`));
+    .map(
+      /** The resource as a manifest record, with its bytes as base64. */ (item) => ({
+        kind: item.kind,
+        digest: item.digest,
+        mediaType: item.mediaType,
+        metadata: item.metadata,
+        base64: deps.encoding.base64(item.bytes),
+      }),
+    )
+    .sort(
+      /** Orders records by their `kind:digest` key. */ (a, b) =>
+        `${a.kind}:${a.digest}`.localeCompare(`${b.kind}:${b.digest}`),
+    );
   const value = {
     format: 'novakai.canvas.bundle',
     schemaVersion: 1,

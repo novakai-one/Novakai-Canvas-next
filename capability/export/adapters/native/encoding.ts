@@ -22,17 +22,17 @@ import { failure } from '../../contract/errors.js';
  */
 export function createEncoding(): Encoding {
   return Object.freeze({
-    utf8: (value) => {
+    utf8: /** The text as UTF-8 bytes, from a new `TextEncoder`. */ (value) => {
       const encoder = new TextEncoder();
       return encoder.encode(value);
     },
     text,
-    base64: (bytes) => {
+    base64: /** The bytes as standard base64. */ (bytes) => {
       const buffer = Buffer.from(bytes);
       return buffer.toString('base64');
     },
     decode,
-    hash: (bytes) => {
+    hash: /** The SHA-256 digest of the bytes as 64 lowercase hex characters. */ (bytes) => {
       const hasher = createHash('sha256');
       const updated = hasher.update(bytes);
       return updated.digest('hex');

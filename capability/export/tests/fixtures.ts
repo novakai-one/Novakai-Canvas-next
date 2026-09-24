@@ -168,7 +168,8 @@ export async function fixture(
     presentation: presentation.react,
     snapshots: {
       acquire:
-        /** Leases the fixture snapshot; its release counts itself and succeeds. */ async () => ({
+        /** Leases the fixture snapshot; its release counts itself and succeeds. */
+        async () => ({
           ok: true,
           value: {
             snapshot,
@@ -439,21 +440,21 @@ function fixturePresentation(
   return composePresentation(
     {
       domain: {
-        read: /** Validates through Model, keeping the whole rejection in the message. */ (
-          input,
-        ) => {
-          const result = validate(input);
-          if (result.ok) return result;
-          return {
-            ok: false,
-            error: {
-              code: 'invalid-input',
-              path: '$',
-              message: JSON.stringify(result),
-              recovery: 'Repair fixture',
-            },
-          };
-        },
+        read:
+          /** Validates through Model, keeping the whole rejection in the message. */
+          (input) => {
+            const result = validate(input);
+            if (result.ok) return result;
+            return {
+              ok: false,
+              error: {
+                code: 'invalid-input',
+                path: '$',
+                message: JSON.stringify(result),
+                recovery: 'Repair fixture',
+              },
+            };
+          },
       },
       themes: {
         resolve: /** Always the fixture style. */ () => ({ ok: true, value: style }),

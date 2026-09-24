@@ -96,7 +96,7 @@ export function composeExport(owners: ExportOwners): ExportBindings {
       sequence: createSequenceDrawing(drawings.label, Marker),
     },
     owners.presentation.FontDefinitions,
-    owners.presentation.fonts.map((font) => font.digest),
+    owners.presentation.fonts.map(/** The pinned font's digest. */ (font) => font.digest),
     owners.allLabels === true,
   );
   const encoding = createEncoding();
@@ -120,7 +120,7 @@ function createFormats(
   const fonts = createFontDecoder(owners.presentation.fonts, decompressFont);
   return {
     svg: {
-      encode: async (input) => {
+      encode: /** Renders the selection as SVG and encodes it as UTF-8. */ async (input) => {
         const result = renderer.render(input);
         if (!result.ok) return result;
         return success({
@@ -133,6 +133,9 @@ function createFormats(
     png: createPngEncoder(render, fonts),
     pdf: createPdfEncoder({ renderer }, fonts, createMediaConverter()),
     html: createHtmlEncoder(render, owners.readerCss),
-    bundle: { encode: (input) => buildBundle(input.snapshot, transfer, input.signal) },
+    bundle: {
+      encode: /** Builds the portable bundle for the snapshot. */ (input) =>
+        buildBundle(input.snapshot, transfer, input.signal),
+    },
   };
 }

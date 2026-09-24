@@ -60,10 +60,14 @@ export function captureManual(collection: Collection): ManualSnapshot {
 export function overlayManual(collection: Collection, manual: ManualSnapshot): Result<unknown> {
   const invalid = validateTargets(collection, manual);
   if (!invalid.ok) return invalid;
-  const sections = collection.sections.map((section) => {
-    const override = manual.sections.find((item) => item.id === section.id);
-    return overlaySection(section, override);
-  });
+  const sections = collection.sections.map(
+    /** The section with its manual override, if any, laid over it. */ (section) => {
+      const override = manual.sections.find(
+        /** Whether the override is for this section. */ (item) => item.id === section.id,
+      );
+      return overlaySection(section, override);
+    },
+  );
   return success({ ...collection, sections });
 }
 
@@ -71,11 +75,21 @@ export function overlayManual(collection: Collection, manual: ManualSnapshot): R
 function captureSection(section: Section): ManualSection {
   const record: ManualSection = {
     id: section.id,
-    appearanceOrder: section.appearances.map((item) => item.object),
-    groupOrder: section.groups.map((item) => item.id),
-    sequenceOrder: section.sequence.map((item) => ({ id: item.id, order: item.order })),
-    appearances: section.appearances.flatMap((item) => placedAppearance(item)),
-    groups: section.groups.flatMap((item) => placedGroup(item)),
+    appearanceOrder: section.appearances.map(
+      /** The appearance's object ID. */ (item) => item.object,
+    ),
+    groupOrder: section.groups.map(/** The group's ID. */ (item) => item.id),
+    sequenceOrder: section.sequence.map(
+      /** The sequence item's ID and order. */ (item) => ({ id: item.id, order: item.order }),
+    ),
+    appearances: section.appearances.flatMap(
+      /** The object and its stored placement; nothing when it has none. */ (item) =>
+        placedAppearance(item),
+    ),
+    groups: section.groups.flatMap(
+      /** The group and its stored placement; nothing when it has none. */ (item) =>
+        placedGroup(item),
+    ),
     wires: section.wires.map(captureWire),
   };
   if (section.placement) return { ...record, placement: section.placement };
@@ -114,18 +128,26 @@ function captureWire(item: Section['wires'][number]): ManualSection['wires'][num
  * ignore unknown or duplicate targets, so they are rejected here.
  */
 function validateTargets(collection: Collection, manual: ManualSnapshot): Result<void> {
-  const overriddenIds = manual.sections.map((section) => section.id);
-  const sectionIds = collection.sections.map((section) => section.id);
+  const overriddenIds = manual.sections.map(
+    /** The overridden section's ID. */ (section) => section.id,
+  );
+  const sectionIds = collection.sections.map(/** The section's ID. */ (section) => section.id);
   if (!validIds(overriddenIds, sectionIds))
     return failure('invalid-import', 'manual.sections', 'Unknown or duplicate section override');
-  const valid = manual.sections.every((section) => validSection(collection, section));
+  const valid = manual.sections.every(
+    /** Whether the section override names only this collection's targets, once each. */
+    (section) => validSection(collection, section),
+  );
   if (!valid) return failure('invalid-import', 'manual', 'Unknown or duplicate manual target');
   return success(undefined);
 }
 
 /** Whether `actual` has no repeated IDs and every ID is in `allowed`. An empty list is valid. */
 function validIds(actual: readonly string[], allowed: readonly string[]): boolean {
-  return new Set(actual).size === actual.length && actual.every((id) => allowed.includes(id));
+  return (
+    new Set(actual).size === actual.length &&
+    actual.every(/** Whether the ID is allowed. */ (id) => allowed.includes(id))
+  );
 }
 
 /**
@@ -135,21 +157,23 @@ function validIds(actual: readonly string[], allowed: readonly string[]): boolea
  * from the collection.
  */
 function validSection(collection: Collection, manual: ManualSection): boolean {
-  const section = collection.sections.find((item) => item.id === manual.id);
+  const section = collection.sections.find(
+    /** Whether this is the overridden section. */ (item) => item.id === manual.id,
+  );
   if (!section) return false;
   const checks = [
     validOrder(section, manual),
     validIds(
-      manual.appearances.map((item) => item.object),
-      section.appearances.map((item) => item.object),
+      manual.appearances.map(/** The override's object ID. */ (item) => item.object),
+      section.appearances.map(/** The appearance's object ID. */ (item) => item.object),
     ),
     validIds(
-      manual.groups.map((item) => item.id),
-      section.groups.map((item) => item.id),
+      manual.groups.map(/** The override's group ID. */ (item) => item.id),
+      section.groups.map(/** The group's ID. */ (item) => item.id),
     ),
     validIds(
-      manual.wires.map((item) => item.relationship),
-      section.wires.map((item) => item.relationship),
+      manual.wires.map(/** The override's relationship ID. */ (item) => item.relationship),
+      section.wires.map(/** The wire's relationship ID. */ (item) => item.relationship),
     ),
   ];
   return checks.every(Boolean);
@@ -166,21 +190,35 @@ function overlaySection(section: Section, manual: ManualSection | undefined): un
   const ordered = restoreOrder(section, manual);
   const next = {
     ...ordered,
-    appearances: ordered.appearances.map((item) => {
-      const copy = { ...item };
-      const override = manual.appearances.find((entry) => entry.object === item.object);
-      return { ...copy, ...override };
-    }),
-    groups: ordered.groups.map((item) => {
-      const copy = { ...item };
-      const override = manual.groups.find((entry) => entry.id === item.id);
-      return { ...copy, ...override };
-    }),
-    wires: section.wires.map((item) => {
-      const copy = { ...item };
-      const override = manual.wires.find((entry) => entry.relationship === item.relationship);
-      return { ...copy, ...override };
-    }),
+    appearances: ordered.appearances.map(
+      /** The appearance with its override, if any, laid over a copy. */ (item) => {
+        const copy = { ...item };
+        const override = manual.appearances.find(
+          /** Whether the override is for this appearance's object. */ (entry) =>
+            entry.object === item.object,
+        );
+        return { ...copy, ...override };
+      },
+    ),
+    groups: ordered.groups.map(
+      /** The group with its override, if any, laid over a copy. */ (item) => {
+        const copy = { ...item };
+        const override = manual.groups.find(
+          /** Whether the override is for this group. */ (entry) => entry.id === item.id,
+        );
+        return { ...copy, ...override };
+      },
+    ),
+    wires: section.wires.map(
+      /** The wire with its override, if any, laid over a copy. */ (item) => {
+        const copy = { ...item };
+        const override = manual.wires.find(
+          /** Whether the override is for this wire's relationship. */ (entry) =>
+            entry.relationship === item.relationship,
+        );
+        return { ...copy, ...override };
+      },
+    ),
   };
   if (manual.placement) return { ...next, placement: manual.placement };
   return next;

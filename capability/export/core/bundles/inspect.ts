@@ -109,10 +109,17 @@ function decodeResources(
   bundle: Bundle,
   deps: InspectionDependencies,
 ): Result<readonly Resource[]> {
-  const decoded = bundle.resources.map((resource) => decodeResource(resource, deps));
-  const failed = decoded.find((result) => !result.ok);
+  const decoded = bundle.resources.map(
+    /** Decodes one bundle resource. */ (resource) => decodeResource(resource, deps),
+  );
+  const failed = decoded.find(/** Whether the resource failed to decode. */ (result) => !result.ok);
   if (failed && !failed.ok) return failed;
-  return success(decoded.flatMap((result) => (result.ok ? [result.value] : [])));
+  return success(
+    decoded.flatMap(
+      /** The decoded resource; nothing for a failure. */ (result) =>
+        result.ok ? [result.value] : [],
+    ),
+  );
 }
 
 /** Decodes one resource's base64 and keeps its owner metadata as it is. */

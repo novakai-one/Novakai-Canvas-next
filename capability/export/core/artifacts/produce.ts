@@ -57,11 +57,20 @@ export async function produce(
   signal?: Cancellation,
 ): Promise<Result<Artifact>> {
   if (signal?.aborted) return cancelled('before acquiring a revision');
-  const acquired = await protect(() => deps.snapshots.acquire(request.identity));
+  const acquired = await protect(
+    /** Acquires the lease for the requested revision. */ () =>
+      deps.snapshots.acquire(request.identity),
+  );
   if (!acquired.ok) return acquired;
   const lease = acquired.value;
-  const encoded = await protect(() => renderSnapshot(lease.snapshot, request, deps, signal));
-  const released = await protect(() => lease.release(), 'cleanup-failed');
+  const encoded = await protect(
+    /** Renders and encodes the leased snapshot. */ () =>
+      renderSnapshot(lease.snapshot, request, deps, signal),
+  );
+  const released = await protect(
+    /** Releases the lease. */ () => lease.release(),
+    'cleanup-failed',
+  );
   return settle(encoded, released);
 }
 
@@ -161,12 +170,12 @@ function isSectionBundle(request: ExportRequest): boolean {
 function checkCounts(snapshot: Snapshot, request: ExportRequest, box: Box): Result<void> {
   const counts = [
     snapshot.scene.sections.length / PROJECTION_CAPACITY.maxSections,
-    snapshot.scene.sections.flatMap((section) => section.nodes).length /
+    snapshot.scene.sections.flatMap(/** The section's nodes. */ (section) => section.nodes).length /
       PROJECTION_CAPACITY.maxNodes,
-    snapshot.scene.sections.flatMap((section) => section.wires).length /
+    snapshot.scene.sections.flatMap(/** The section's wires. */ (section) => section.wires).length /
       PROJECTION_CAPACITY.maxWires,
   ];
-  if (counts.some((ratio) => ratio > 1))
+  if (counts.some(/** Whether this count is over its limit. */ (ratio) => ratio > 1))
     return failure('limit-exceeded', 'scene', 'Scene exceeds the owning capability limits');
   if (request.format !== 'png') return success(undefined);
   const width = Math.ceil(box.width * request.scale);

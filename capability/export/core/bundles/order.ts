@@ -23,15 +23,15 @@ export function validOrder(section: Section, manual: ManualSection): boolean {
   const checks = [
     completeOrder(
       manual.appearanceOrder,
-      section.appearances.map((item) => item.object),
+      section.appearances.map(/** The appearance's object ID. */ (item) => item.object),
     ),
     completeOrder(
       manual.groupOrder,
-      section.groups.map((item) => item.id),
+      section.groups.map(/** The group's ID. */ (item) => item.id),
     ),
     completeOrder(
-      manual.sequenceOrder.map((item) => item.id),
-      section.sequence.map((item) => item.id),
+      manual.sequenceOrder.map(/** The ordered sequence item's ID. */ (item) => item.id),
+      section.sequence.map(/** The sequence item's ID. */ (item) => item.id),
     ),
   ];
   return checks.every(Boolean);
@@ -62,27 +62,32 @@ function completeOrder(actual: readonly string[], expected: readonly string[]): 
   return (
     actual.length === expected.length &&
     new Set(actual).size === actual.length &&
-    actual.every((id) => expected.includes(id))
+    actual.every(/** Whether the ID is expected. */ (id) => expected.includes(id))
   );
 }
 
 /** A sorted copy of the section's appearances, in the manual appearance order. */
 function sortedAppearances(section: Section, manual: ManualSection): Section['appearances'] {
   return [...section.appearances].sort(
-    (a, b) => manual.appearanceOrder.indexOf(a.object) - manual.appearanceOrder.indexOf(b.object),
+    /** Orders appearances by their position in the manual order. */ (a, b) =>
+      manual.appearanceOrder.indexOf(a.object) - manual.appearanceOrder.indexOf(b.object),
   );
 }
 
 /** A sorted copy of the section's groups, in the manual group order. */
 function sortedGroups(section: Section, manual: ManualSection): Section['groups'] {
   return [...section.groups].sort(
-    (a, b) => manual.groupOrder.indexOf(a.id) - manual.groupOrder.indexOf(b.id),
+    /** Orders groups by their position in the manual order. */ (a, b) =>
+      manual.groupOrder.indexOf(a.id) - manual.groupOrder.indexOf(b.id),
   );
 }
 
 /** The section's sequence items listed in the manual order, each with its stored order number. */
 function orderedSequence(section: Section, manual: ManualSection): Section['sequence'] {
-  return manual.sequenceOrder.flatMap((order) => sequenceEntry(section, order));
+  return manual.sequenceOrder.flatMap(
+    /** The sequence item for this order entry, with its stored order number. */ (order) =>
+      sequenceEntry(section, order),
+  );
 }
 
 /** The section's sequence item for `order.id` with its order number replaced; empty if absent. */
@@ -90,7 +95,9 @@ function sequenceEntry(
   section: Section,
   order: ManualSection['sequenceOrder'][number],
 ): Section['sequence'] {
-  const entry = section.sequence.find((item) => item.id === order.id);
+  const entry = section.sequence.find(
+    /** Whether this is the ordered sequence item. */ (item) => item.id === order.id,
+  );
   if (!entry) return [];
   return [{ ...entry, order: order.order }];
 }

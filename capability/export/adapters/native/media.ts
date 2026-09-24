@@ -31,7 +31,10 @@ export function createMediaConverter(): MediaConverter {
     resources: readonly Resource[],
   ): Promise<Result<ReadonlyMap<string, string>>> {
     try {
-      const images = resources.filter((item) => item.mediaType.startsWith('image/'));
+      const images = resources.filter(
+        /** Whether the resource is an image (`image/…` media type). */ (item) =>
+          item.mediaType.startsWith('image/'),
+      );
       const entries = await Promise.all(images.map(convertImage));
       return { ok: true, value: new Map(entries) };
     } catch {

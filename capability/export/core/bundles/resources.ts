@@ -50,7 +50,9 @@ function checkResources(
 ): Result<void> {
   if (resources.length > 2000)
     return failure('limit-exceeded', 'resources', 'Transfer exceeds 2000 resources');
-  const keys = resources.map((item) => `${item.kind}:${item.digest}`);
+  const keys = resources.map(
+    /** The resource's `kind:digest` key. */ (item) => `${item.kind}:${item.digest}`,
+  );
   if (new Set(keys).size !== keys.length)
     return failure('invalid-bundle', 'resources', 'Duplicate resource kind and digest');
   return checkBytes(resources, deps);
@@ -61,9 +63,19 @@ function checkResources(
  * mismatch. No owner has decoded a font or image yet.
  */
 function checkBytes(resources: readonly Resource[], deps: InspectionDependencies): Result<void> {
-  if (resources.some((item) => item.bytes.byteLength > 20 * 1024 * 1024))
+  if (
+    resources.some(
+      /** Whether the resource is over 20 MiB. */ (item) =>
+        item.bytes.byteLength > 20 * 1024 * 1024,
+    )
+  )
     return failure('limit-exceeded', 'resources.bytes', 'Resource exceeds 20 MiB');
-  if (resources.some((item) => deps.encoding.hash(item.bytes) !== item.digest))
+  if (
+    resources.some(
+      /** Whether the resource's bytes do not match its digest. */ (item) =>
+        deps.encoding.hash(item.bytes) !== item.digest,
+    )
+  )
     return failure(
       'invalid-bundle',
       'resources.digest',
@@ -81,17 +93,32 @@ function compareAdmission(
   admitted: readonly Resource[],
   deps: InspectionDependencies,
 ): Result<readonly Resource[]> {
-  /**
-   * The list as canonical JSON with each record's bytes replaced by base64. Key order inside a
-   * record does not matter; list order does.
-   */
-  const fingerprint = (items: readonly Resource[]): string =>
-    canonical(items.map((item) => ({ ...item, bytes: deps.encoding.base64(item.bytes) })));
+  const fingerprint =
+    /**
+     * The list as canonical JSON with each record's bytes replaced by base64. Key order inside a
+     * record does not matter; list order does.
+     */
+    (items: readonly Resource[]): string =>
+      canonical(
+        items.map(
+          /** The resource with its bytes as base64. */ (item) => ({
+            ...item,
+            bytes: deps.encoding.base64(item.bytes),
+          }),
+        ),
+      );
   if (fingerprint(original) !== fingerprint(admitted))
     return failure(
       'resource-rejected',
       'resources',
       'Owner inspector changed the transfer content',
     );
-  return success(admitted.map((item) => ({ ...item, bytes: item.bytes.slice() })));
+  return success(
+    admitted.map(
+      /** The resource with its bytes copied by their own `slice()`. */ (item) => ({
+        ...item,
+        bytes: item.bytes.slice(),
+      }),
+    ),
+  );
 }

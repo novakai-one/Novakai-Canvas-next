@@ -21,7 +21,9 @@ import { success } from '../validation/outcomes.js';
 export function selectScope(snapshot: Snapshot, scope: Scope): Result<Selection> {
   if (scope.kind === 'all')
     return success({ sections: snapshot.scene.sections, bounds: snapshot.scene.bounds });
-  const section = snapshot.scene.sections.find((item) => item.id === scope.id);
+  const section = snapshot.scene.sections.find(
+    /** Whether this is the requested section. */ (item) => item.id === scope.id,
+  );
   if (!section)
     return failure(
       'missing-section',

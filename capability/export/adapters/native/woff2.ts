@@ -24,10 +24,13 @@ let pending: Promise<void> = Promise.resolve();
  * @throws Never synchronously; failures are rejections.
  */
 export function decompressFont(bytes: Uint8Array): Promise<Uint8Array> {
-  const decoded = pending.then(async () => Uint8Array.from(await decompress(bytes)));
+  const decoded = pending.then(
+    /** Decompresses the font once the previous call has settled, as a detached copy. */ async () =>
+      Uint8Array.from(await decompress(bytes)),
+  );
   pending = decoded.then(
-    () => undefined,
-    () => undefined,
+    /** Lets the next call start after a success. */ () => undefined,
+    /** Lets the next call start after a failure too. */ () => undefined,
   );
   return decoded;
 }

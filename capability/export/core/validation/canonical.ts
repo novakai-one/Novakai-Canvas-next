@@ -32,7 +32,7 @@ function order(value: unknown): unknown {
     return Object.fromEntries(
       Object.keys(value)
         .sort()
-        .map((key) => [key, order(value[key])]),
+        .map(/** The key with its value in canonical order. */ (key) => [key, order(value[key])]),
     );
   return value;
 }

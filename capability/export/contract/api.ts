@@ -25,9 +25,20 @@ import { prepareImport } from '../core/bundles/prepare.js';
  */
 export function createExport(deps: Dependencies): Export {
   return Object.freeze({
-    exportArtifact: (input, signal) => protect(() => exportInput(input, deps, signal)),
-    inspectBundle: (bytes) => protect(() => inspectBundle(bytes, deps), 'invalid-bundle'),
-    prepareImport: (input) => protect(() => importInput(input, deps), 'invalid-import'),
+    exportArtifact:
+      /** Exports one artifact; an unexpected throw becomes `encoding-failed`. */
+      (input, signal) => protect(/** Runs the export. */ () => exportInput(input, deps, signal)),
+    inspectBundle:
+      /** Inspects bundle bytes; an unexpected throw becomes `invalid-bundle`. */
+      (bytes) =>
+        protect(/** Runs the inspection. */ () => inspectBundle(bytes, deps), 'invalid-bundle'),
+    prepareImport:
+      /** Prepares an import; an unexpected throw becomes `invalid-import`. */
+      (input) =>
+        protect(
+          /** Runs the import preparation. */ () => importInput(input, deps),
+          'invalid-import',
+        ),
   } satisfies Export);
 }
 

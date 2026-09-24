@@ -1,7 +1,8 @@
 /*
  * The parser's position in the token list. A cursor is never changed: every step returns a new
  * one, so a reader can look ahead and give up without undoing anything. The cursor also counts
- * nesting depth, which is limited to 64.
+ * nesting depth, which is limited to 64. Language owns correcting the source; Authoring owns
+ * commit recovery.
  */
 import type { Token, Span } from '../../contract/records/syntax.js';
 import { reject, origin } from '../validation/outcomes.js';
@@ -37,7 +38,7 @@ export interface Parsed<T> {
  * @param ahead - How many tokens further to look; defaults to 0.
  * @returns The token.
  * @throws A `LanguageFault` with a `syntax` diagnostic ("Unexpected end of source") past the
- * last token.
+ * last token. The diagnostic is at the start of the source (`origin`), not at the cursor.
  */
 export function peek(cursor: Cursor, ahead = 0): Token {
   const token = cursor.tokens[cursor.index + ahead];
@@ -83,7 +84,7 @@ export function consume(cursor: Cursor, expected: string): Cursor {
  */
 export function enter(cursor: Cursor): Cursor {
   if (cursor.depth >= maxNesting)
-    reject('limit', peek(cursor).span, 'Nesting at most 64', 'Nesting limit exceeded');
+    reject('limit', peek(cursor).span, `Nesting at most ${maxNesting}`, 'Nesting limit exceeded');
   return { ...cursor, depth: cursor.depth + 1 };
 }
 

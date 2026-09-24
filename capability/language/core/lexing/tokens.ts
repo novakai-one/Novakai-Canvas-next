@@ -1,14 +1,15 @@
 /*
  * The lexer: turns source text into tokens. Every character belongs to some lexeme, so nothing
- * is skipped silently; whitespace and `#` comments are dropped, anything else becomes a token.
- * A final `eof` token marks the end.
+ * is skipped silently; whitespace and `#` comments are dropped, and anything else becomes a
+ * token, except a lone `"`, which is rejected. A final `eof` token marks the end. Language owns
+ * correcting the source; Authoring owns commit recovery.
  */
 import type { Token } from '../../contract/records/syntax.js';
 import type { Result } from '../../contract/errors.js';
 import { protect, reject, origin } from '../validation/outcomes.js';
 import { lineStarts, sourceSpan } from './locations.js';
 
-/** The most tokens one source may have. */
+/** The most tokens one source may have, not counting the final `eof`. */
 const maxTokens = 250000;
 
 /**
@@ -34,7 +35,9 @@ const lexemePatterns: readonly string[] = [
   String.raw`->`,
   // One punctuation character.
   String.raw`[{}\[\],=.:/]`,
-  // Any other single character (such as a lone `"`).
+  // Any other single character. `(`, `)` and `|` in type expressions end up here as `symbol`
+  // tokens, since the punctuation class above does not include them; a lone `"` also ends up
+  // here and is then rejected.
   String.raw`[\s\S]`,
 ];
 
@@ -73,7 +76,7 @@ function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly n
   if (isTrivia(match[0])) return;
   requireCompleteLexeme(match, starts);
   if (tokens.length >= maxTokens)
-    reject('limit', origin, 'At most 250000 tokens', 'Token limit exceeded');
+    reject('limit', origin, `At most ${maxTokens} tokens`, 'Token limit exceeded');
   tokens.push({
     kind: classify(match[0]),
     text: match[0],
@@ -105,8 +108,8 @@ function classify(text: string): Token['kind'] {
 }
 
 /**
- * The kind of any other lexeme: `integer` for digits, `word` for anything starting with a
- * letter or digit (cardinalities are words), otherwise `symbol`.
+ * The kind of any other lexeme: `integer` for an optionally negative run of digits, `word` for
+ * anything starting with a letter or digit (cardinalities are words), otherwise `symbol`.
  */
 function classifyBare(text: string): Token['kind'] {
   if (/^-?\d+$/.test(text)) return 'integer';

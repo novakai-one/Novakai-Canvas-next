@@ -1,10 +1,14 @@
 /*
- * Reading a run of items (declarations, operations, list entries) with a loop rather than
- * recursion, so a long source cannot exhaust the JavaScript stack. Only nesting recurses.
+ * Reading a run of items, such as declarations, operations, list entries, reference lists and
+ * `unset` property names, with a loop rather than recursion, so a long source cannot exhaust the
+ * JavaScript stack. Only nesting recurses.
  */
 import type { Result } from '../../contract/errors.js';
 import { protect, reject } from '../validation/outcomes.js';
 import { peek, type Cursor, type Parsed } from './cursor.js';
+
+/** The most items one run may have when the caller gives no smaller limit. */
+const maxItems = 250000;
 
 /**
  * Reads items while `continues` says so.
@@ -22,7 +26,7 @@ export function repeat<T>(
   cursor: Cursor,
   continues: (cursor: Cursor) => boolean,
   read: (cursor: Cursor) => Parsed<T>,
-  maximum = 250000,
+  maximum = maxItems,
 ): Result<Parsed<readonly T[]>> {
   return protect(
     /** Collects the items. */

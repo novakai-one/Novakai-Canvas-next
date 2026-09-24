@@ -1,6 +1,6 @@
 /*
  * Decoding a quoted string token. Only four escapes exist: `\"`, `\\`, `\n` and `\t`. The text
- * is never evaluated.
+ * is never evaluated. Language owns correcting the source; Authoring owns commit recovery.
  */
 import type { Span } from '../../contract/records/syntax.js';
 import { reject } from '../validation/outcomes.js';

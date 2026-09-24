@@ -1,12 +1,12 @@
 /*
  * Source coordinates. The lexer finds where each line starts once, then turns character offsets
  * into positions (line and column, from 1) and spans. Offsets and columns count UTF-16 code
- * units.
+ * units. No side effects. Language owns correcting the source; Authoring owns commit recovery.
  */
 import type { Position, Span } from '../../contract/records/syntax.js';
 
 /**
- * Finds where every line starts.
+ * Finds where every line starts. Only `\n` ends a line; a lone `\r` or U+2028 does not.
  *
  * @param source - The source text.
  * @returns The offset of each line's first character, in order; the first is always 0.
@@ -23,7 +23,8 @@ export function lineStarts(source: string): readonly number[] {
 }
 
 /**
- * Turns an offset into a position.
+ * Turns an offset into a position. The offset is not range-checked: a negative offset gives a
+ * column below 1 on line 1, and an offset past the end lands on the last line.
  *
  * @param starts - The line starts from {@link lineStarts}.
  * @param offset - UTF-16 code units from the start of the source.

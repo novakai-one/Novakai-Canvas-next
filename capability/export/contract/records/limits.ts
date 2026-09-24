@@ -13,4 +13,4 @@ export { PROJECTION_CAPACITY } from '@novakai/canvas-presentation';
  * The most pages one PDF export may produce. Page planning checks it before a PDF document
  * exists, and the PDF encoder checks it again for pages supplied directly.
  */
-export const PDF_PAGE_LIMIT = 512;
+export const PDF_PAGE_LIMIT: 512 = 512;

@@ -75,8 +75,9 @@ export interface Encoded {
 }
 
 /**
- * A finished export. Export copies the handler's bytes, and the identity and scope, into new
- * objects, so later changes to the snapshot or request do not reach the artifact.
+ * A finished export. Export copies the handler's bytes and makes shallow copies of the identity
+ * and scope. Every other field the handler returned (including `pages` and `warnings`) is kept
+ * as the handler returned it.
  */
 export interface Artifact extends Encoded {
   /** Artifact record version; always 1. */
@@ -98,4 +99,5 @@ export interface Artifact extends Encoded {
   readonly scope: Scope;
 }
 
+/** Owner record types re-exported for Export's own modules. */
 export type { Collection, Scene, PlacedSection, Box, Paint };

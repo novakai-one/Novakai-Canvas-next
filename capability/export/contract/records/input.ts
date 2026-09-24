@@ -12,7 +12,11 @@ import { identity } from '../brands.js';
  */
 export const scopeSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('all') }),
-  z.strictObject({ kind: z.literal('section'), id: identity }),
+  z.strictObject({
+    kind: z.literal('section'),
+    /** ID of the section to export. */
+    id: identity,
+  }),
 ]);
 
 /**
@@ -23,11 +27,17 @@ export const scopeSchema = z.discriminatedUnion('kind', [
  */
 export const requestSchema = z
   .strictObject({
+    /** The collection ID and revision to export. */
     identity: z.strictObject({ collectionId: identity, revision: z.number().int().nonnegative() }),
+    /** The output format. */
     format: z.enum(['svg', 'png', 'pdf', 'html', 'bundle']),
+    /** The whole collection or one section; defaults to the whole collection. */
     scope: scopeSchema.default({ kind: 'all' }),
+    /** PNG pixels per collection unit, 1–4; defaults to 1. */
     scale: z.number().min(1).max(4).default(1),
+    /** PDF paper size; defaults to `A4`. */
     paper: z.enum(['A4', 'Letter']).default('A4'),
+    /** PDF page orientation; defaults to `portrait`. */
     orientation: z.enum(['portrait', 'landscape']).default('portrait'),
   })
   .readonly();

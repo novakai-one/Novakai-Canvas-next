@@ -1,14 +1,37 @@
+/*
+ * Font decoding for the native PNG and PDF encoders. They need real font files (sfnt:
+ * TrueType/OpenType), not the browser `@font-face` aliases the SVG uses, and they must never
+ * substitute a system font.
+ */
 import { create } from 'fontkit';
 import type { FontSet } from '@novakai/canvas-presentation';
 import type { FontDecoder, NativeFont } from '../../contract/render-types.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
-/** WOFF2 decoder is injected because native raster accepts sfnt buffers, not browser font-face aliases. */
+
+/**
+ * Creates the font decoder for Presentation's pinned fonts. Nothing is cached: every `decode`
+ * call decodes all fonts again, and a failed call can simply be repeated.
+ *
+ * `decode` turns each font's base64 into bytes (Node's `Buffer` decoding; Presentation supplies
+ * these fonts), decompresses `font/woff2` fonts with `decompress`, and reads the real family
+ * name from the bytes with fontkit. All fonts are decoded at the same time; the result keeps
+ * the input order. Each font gets the alias `canvas-<digest>`, the family name the SVG uses. A
+ * non-WOFF2 font's `bytes` is the decoded `Buffer` itself.
+ *
+ * @param fonts - Presentation's pinned fonts.
+ * @param decompress - The WOFF2 decompressor (`decompressFont` in production).
+ * @returns The decoder. `decode` never throws; it returns `encoding-failed` at `fonts` when
+ * there are no fonts, when any font cannot be decoded (including a font collection file, or a
+ * `decompress` rejection), or when two fonts report the same family name, which would let the
+ * native renderer substitute one for the other.
+ * @throws Never.
+ */
 export function createFontDecoder(
   fonts: FontSet,
   decompress: (bytes: Uint8Array) => Promise<Uint8Array>,
 ): FontDecoder {
-  /** Every exact digest must map to a unique internal family; ambiguous substitutions are rejected. */
+  /** Decodes every pinned font; see {@link createFontDecoder}. */
   async function decode(): Promise<Result<readonly NativeFont[]>> {
     try {
       if (fonts.length === 0)
@@ -19,7 +42,11 @@ export function createFontDecoder(
       return failure('encoding-failed', 'fonts', 'Exact pinned font bytes could not be decoded');
     }
   }
-  /** Font metadata comes from actual bytes, never a caller's friendly family alias. */
+
+  /**
+   * Decodes one font. The family name comes from the font bytes, never from a name the caller
+   * supplied. Throws for a font collection file (several fonts in one file).
+   */
   async function decodeFont(font: FontSet[number]): Promise<NativeFont> {
     const original = Buffer.from(font.base64, 'base64');
     const bytes = await nativeBytes(original, font.mediaType);
@@ -28,15 +55,20 @@ export function createFontDecoder(
       throw new Error('Font collections are not an admitted font source');
     return { alias: `canvas-${font.digest}`, family: parsed.familyName, bytes };
   }
-  /** Existing sfnt bytes pass through; only WOFF2 requires decompression for resvg. */
+
+  /** Decompresses WOFF2; any other font is already sfnt and is returned as it is. */
   async function nativeBytes(bytes: Uint8Array, mediaType: string): Promise<Uint8Array> {
     if (mediaType === 'font/woff2') return decompress(bytes);
     return bytes;
   }
+
   return { decode };
 }
 
-/** Ambiguous internal names would permit native font substitution; fail explicitly instead. */
+/**
+ * Rejects fonts that share a family name: the native renderers look fonts up by family, so a
+ * shared name would let one font silently replace another.
+ */
 function distinctFamilies(fonts: readonly NativeFont[]): Result<readonly NativeFont[]> {
   if (new Set(fonts.map((font) => font.family)).size !== fonts.length)
     return failure(

@@ -1,15 +1,46 @@
+/*
+ * PNG export through resvg (WASM). The SVG from the shared renderer is wrapped in a viewport of
+ * whole pixels, its font aliases are replaced by the real family names, and resvg draws it with
+ * only the pinned font files. The resvg runtime must already be initialized
+ * (`initializeRaster`).
+ */
 import { Resvg } from '@resvg/resvg-wasm';
 import type { FontDecoder, RenderDependencies, NativeFont } from '../../contract/render-types.js';
 import type { FormatHandler, RenderInput } from '../../contract/ports/formats.js';
 import type { Result } from '../../contract/errors.js';
 import type { Encoded } from '../../contract/records/artifact.js';
 import { failure } from '../../contract/errors.js';
-/** WASM is initialized once by composition; each bounded render owns and frees its native allocations. */
+
+/** The SVG namespace for the outer viewport element. */
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+
+/**
+ * Creates the PNG format handler.
+ *
+ * `encode` renders the SVG, decodes the fonts, checks cancellation, checks the raster size,
+ * then draws. Each step's failure is returned as it is and no partial PNG is produced:
+ * - a renderer or font failure, unchanged;
+ * - `cancelled` when the signal is aborted after font decoding;
+ * - `limit-exceeded` at `raster` when a side is over 8,192 pixels or the area is over 64
+ *   million pixels (Export checks this before encoding too; the check is repeated here for
+ *   hosts that call the handler directly);
+ * - `encoding-failed` at `png` when resvg throws or its image size differs from the plan.
+ *
+ * The raster is the selection's bounds times the request scale, each rounded up to whole
+ * pixels. Every native object is freed, even when drawing throws. The caller releases the
+ * snapshot lease.
+ *
+ * @param deps - The shared SVG renderer.
+ * @param fonts - The pinned-font decoder.
+ * @returns The handler; `encode` does not keep state between calls.
+ * @throws Never. `encode` rejects only if the renderer, `fonts.decode` or a getter on the input
+ * (such as `signal.aborted`) throws; Export's `produce` turns that into `encoding-failed`.
+ */
 export function createPngEncoder(
   deps: Pick<RenderDependencies, 'renderer'>,
   fonts: FontDecoder,
 ): FormatHandler {
-  /** Missing fonts or renderer failures return no partial PNG; the outer job releases its revision. */
+  /** Renders, decodes fonts, then rasterizes; see {@link createPngEncoder}. */
   async function encode(input: RenderInput): Promise<Result<Encoded>> {
     const rendered = deps.renderer.render(input);
     if (!rendered.ok) return rendered;
@@ -19,22 +50,22 @@ export function createPngEncoder(
   }
   return { encode };
 }
-/** Only generated digest family attributes are normalized; SVG output keeps original embedded font rules. */
-function bindFamilies(svg: string, fonts: readonly NativeFont[]): string {
-  return fonts.reduce(
-    (text, font) =>
-      text.replaceAll(
-        `font-family="${font.alias}"`,
-        `font-family="${escapeAttribute(font.family)}"`,
-      ),
-    svg,
-  );
+
+/**
+ * Checks cancellation right after the asynchronous font work, then rasterizes. Rasterizing is
+ * synchronous, so there is no later point to check.
+ */
+function afterFonts(
+  svg: string,
+  input: RenderInput,
+  fonts: readonly NativeFont[],
+): Result<Encoded> {
+  if (input.signal.aborted)
+    return failure('cancelled', '$', 'Export cancelled after font decoding');
+  return rasterize(svg, input, fonts);
 }
-/** Family names originate in font bytes but still require XML attribute escaping. */
-function escapeAttribute(value: string): string {
-  return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
-}
-/** Fixed allocation limits are rechecked at the concrete seam for direct adapter consumers. */
+
+/** Sizes the raster, checks the native limits, then draws; any throw becomes `encoding-failed`. */
 function rasterize(svg: string, input: RenderInput, fonts: readonly NativeFont[]): Result<Encoded> {
   const width = Math.ceil(input.selection.bounds.width * input.request.scale);
   const height = Math.ceil(input.selection.bounds.height * input.request.scale);
@@ -50,7 +81,28 @@ function rasterize(svg: string, input: RenderInput, fonts: readonly NativeFont[]
     return failure('encoding-failed', 'png', 'Native raster encoding failed');
   }
 }
-/** Both rasterizer and image are disposed even when encoding throws. */
+
+/**
+ * Replaces each `font-family="canvas-<digest>"` attribute with the font's real family name, so
+ * resvg finds the pinned font. Other font rules in the SVG are left as they are.
+ */
+function bindFamilies(svg: string, fonts: readonly NativeFont[]): string {
+  return fonts.reduce(
+    (text, font) =>
+      text.replaceAll(
+        `font-family="${font.alias}"`,
+        `font-family="${escapeAttribute(font.family)}"`,
+      ),
+    svg,
+  );
+}
+
+/** Escapes `&`, `"` and `<` for an XML attribute; family names come from font files. */
+function escapeAttribute(value: string): string {
+  return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
+}
+
+/** Draws the SVG with resvg using only the pinned fonts, and frees the renderer afterwards. */
 function renderNative(
   svg: string,
   input: RenderInput,
@@ -68,11 +120,21 @@ function renderNative(
     renderer.free();
   }
 }
-/** Integral outer pixels preserve the requested scale, adding only the fractional remainder as edge padding. */
+
+/**
+ * Wraps the SVG in an outer element of whole pixels whose view box keeps the requested scale.
+ * Rounding the size up only adds the fractional remainder as empty space at the edges.
+ */
 function rasterViewport(svg: string, width: number, height: number, scale: number): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width / scale} ${height / scale}">${svg}</svg>`;
+  const size = `width="${width}" height="${height}"`;
+  const viewBox = `viewBox="0 0 ${width / scale} ${height / scale}"`;
+  return `<svg xmlns="${SVG_NAMESPACE}" ${size} ${viewBox}>${svg}</svg>`;
 }
-/** Dimensions and signature are independent output checks, not assumptions about the native binding. */
+
+/**
+ * Draws the image, copies its PNG bytes, then checks resvg produced the planned size. The image
+ * is freed afterwards, even when a step throws.
+ */
 function readImage(
   renderer: InstanceType<typeof Resvg>,
   width: number,
@@ -87,15 +149,4 @@ function readImage(
   } finally {
     image.free();
   }
-}
-
-/** Native raster is bounded but synchronous; cancellation is checked immediately after async font work. */
-function afterFonts(
-  svg: string,
-  input: RenderInput,
-  fonts: readonly NativeFont[],
-): Result<Encoded> {
-  if (input.signal.aborted)
-    return failure('cancelled', '$', 'Export cancelled after font decoding');
-  return rasterize(svg, input, fonts);
 }

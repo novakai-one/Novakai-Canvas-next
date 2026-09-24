@@ -34,8 +34,16 @@ export const diagnosticSchema = z.strictObject({
   source: failureSource.optional(),
 });
 
-/** One Authoring failure. */
-export type Diagnostic = z.infer<typeof diagnosticSchema>;
+/** The fields of a checked diagnostic, exactly as the schema produces them. */
+type DiagnosticFields = z.infer<typeof diagnosticSchema>;
+
+/**
+ * One Authoring failure. Every field is read-only, including the `targets` list; the type only
+ * stops code from changing a diagnostic, and objects at run time are unchanged.
+ */
+export type Diagnostic = Readonly<Omit<DiagnosticFields, 'targets'>> & {
+  readonly targets: readonly string[];
+};
 
 /** The closed list of Authoring failure codes. */
 export type ErrorCode = Diagnostic['code'];
@@ -53,6 +61,9 @@ const STANDARD_RECOVERY =
 
 /**
  * Builds a failed `Result` with Authoring's standard recovery advice.
+ *
+ * The inputs are trusted and typed; nothing is validated. `targets` is copied, and `source` is
+ * kept as the same object. It does not throw.
  *
  * @param code - The failure code.
  * @param path - The input field that caused the failure.
@@ -91,6 +102,8 @@ export function failure<T>(
  */
 export class AuthoringFault extends Error {
   /**
+   * Creates a fault that carries a diagnostic.
+   *
    * @param diagnostic - The failure to carry. Its message becomes the error message.
    */
   constructor(readonly diagnostic: Diagnostic) {

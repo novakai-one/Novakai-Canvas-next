@@ -29,12 +29,16 @@ type RequiredKind = Request['intent']['kind'] | null;
  *
  * @param deps - Authoring's collaborators.
  * @returns The frozen facade.
+ * @throws Any error thrown while reading `deps.planners` or a planner's `id` during creation (for
+ *   example from a getter), unchanged. This is the only error creation can throw: malformed or
+ *   repeated planner IDs do not throw, and every operation returns that failure instead.
  */
 export function createAuthoring(deps: Dependencies): Authoring {
   const registration = validateRegistry(deps.planners);
 
   /** Reads one checked, consistent workspace snapshot. Changes nothing. */
   function read(workspace: unknown): Promise<Result<Snapshot>> {
+    // Check the registration and ID, then read and check the snapshot.
     return protect(async () => {
       accepted(registration);
       const id = readShape(workspaceId, workspace);
@@ -45,6 +49,7 @@ export function createAuthoring(deps: Dependencies): Authoring {
 
   /** Looks up a request's checked receipt, or `null`. Needs no source files, aliases or draft. */
   function receipt(workspace: unknown, request: unknown): Promise<Result<Receipt | null>> {
+    // Check the registration and both IDs, then look up and check the receipt.
     return protect(async () => {
       accepted(registration);
       const id = readShape(workspaceId, workspace);
@@ -60,11 +65,13 @@ export function createAuthoring(deps: Dependencies): Authoring {
    * Uses no revision. When the request already committed, returns its original receipt instead.
    */
   function prepare(input: unknown, preview = false): Promise<Result<Preparation | Receipt>> {
+    // Check the registration, request and flag, then build the candidate and return its preparation.
     return protect(async () => {
       accepted(registration);
       const request = readRequest(input);
       if (typeof preview !== 'boolean')
         reject('invalid-input', 'preview', 'Preview flag must be boolean');
+      // Preparing commits nothing: the candidate's preparation is the answer.
       return withCandidate(request, preview, deps, async (candidate) => candidate.preparation);
     }, 'authoring-prepare');
   }
@@ -86,6 +93,7 @@ export function createAuthoring(deps: Dependencies): Authoring {
 
   /** Returns the workspace's undo/redo status. */
   function history(workspace: unknown): Promise<Result<HistoryStatus>> {
+    // Read through the facade's own `read`, then summarise the history in the snapshot.
     return protect(async () => {
       const snapshot = accepted(await read(workspace));
       return historyStatus(snapshot);
@@ -94,6 +102,7 @@ export function createAuthoring(deps: Dependencies): Authoring {
 
   /** Adds history to a workspace that has none, or checks and trims existing history. */
   function initializeHistory(workspace: unknown): Promise<Result<HistoryStatus>> {
+    // Check the registration and ID, then adopt or check the history.
     return protect(async () => {
       accepted(registration);
       const id = readShape(workspaceId, workspace);
@@ -106,11 +115,13 @@ export function createAuthoring(deps: Dependencies): Authoring {
    * kind, then admit and commit in one continuation.
    */
   function submit(input: unknown, options: unknown, kind: RequiredKind): Promise<Result<Receipt>> {
+    // Check the registration, request, options and intent kind, then admit and commit.
     return protect(async () => {
       accepted(registration);
       const request = readRequest(input);
       const checkedOptions = readOptions(options);
       requireKind(request, kind);
+      // Commit the admitted candidate while its resources are still held.
       return withCandidate(request, false, deps, (candidate) =>
         applyCandidate(request, candidate, checkedOptions, deps),
       );

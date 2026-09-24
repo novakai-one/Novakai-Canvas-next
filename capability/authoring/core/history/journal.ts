@@ -46,17 +46,26 @@ export interface Journal {
  *   no timestamp and no history. Only a change can be a no-op; an undo or redo must change something.
  * - Otherwise the commit also stores a transaction record (before and after images of every changed
  *   record), the original change's head, and, when the workspace has navigation, the advanced
- *   navigation plus purges of history it no longer reaches. All of it commits in one transaction.
+ *   navigation plus purges of history it no longer reaches.
+ *
+ * This only builds the writes; it commits nothing. The caller commits all of them in one storage
+ * transaction. Failures are thrown as `AuthoringFault`; the Authoring facade turns every failure into
+ * a failed `Result`. Retrying after a lost acknowledgement is not handled here: the commit step
+ * reconciles the request's receipt first.
  *
  * @param request - The checked submitted request.
  * @param candidate - The admitted candidate.
  * @param clock - The clock used to timestamp the transaction.
  * @returns The writes, expected versions and outcome to commit.
  * @throws AuthoringFault `invariant-violation` when an undo or redo would change nothing.
- * @throws AuthoringFault `corrupt-record` when a generated history key already exists, or a changed record
- *   is missing from the candidate.
+ * @throws AuthoringFault `corrupt-record` when a generated history key already exists, a changed record
+ *   is missing from the candidate, the transaction fails its schema, or the stored navigation
+ *   is malformed (see `readNavigation` for every navigation failure).
  * @throws AuthoringFault with the clock's own diagnostic when reading the time fails.
+ * @throws AuthoringFault `invalid-input` when the clock's time is not a valid timestamp, the head
+ *   fails its schema, or a history record breaks its JSON size limits.
  * @throws AuthoringFault `revision-conflict` when the history writes' versions disagree with the candidate's reads.
+ * @throws Any error the clock throws, unchanged. The facade reports it as `storage-unavailable`.
  */
 export function createJournal(
   request: Request,
@@ -69,6 +78,7 @@ export function createJournal(
 
   checkJournalIdentity(request, candidate);
   const history = historyWrites(request, candidate, clock);
+  // The version each history record had before this commit, so the commit fails if it changed.
   const historyReads = history.map((write) => versionOf(candidate.before, write.key));
   return {
     writes: [...prepared.changes, ...history],
@@ -142,6 +152,7 @@ function historyWrites(
 
   const transactionTime = readShape(timestamp, accepted(clock.now()));
   const label = actionLabel(candidate);
+  // One transition per changed record.
   const transitions = candidate.preparation.changes.map((write) => transition(candidate, write));
   const entry = readShape(
     transactionSchema,
@@ -163,6 +174,7 @@ function historyWrites(
     kind: 'head',
     original,
     state: headState(request),
+    // Each changed record's version after this commit.
     participants: entry.transitions.map((item) => versionOf(candidate.after, item.key)),
     last: request.request,
   });
@@ -222,6 +234,7 @@ function navigationWrites(
   if (findRecord(candidate.before, navigationKey) === null) return [];
 
   const navigation = readNavigation(candidate.before);
+  // Each changed record's version after this commit.
   const newVersions = candidate.preparation.changes.map((write) =>
     versionOf(candidate.after, write.key),
   );
@@ -240,6 +253,7 @@ function navigationWrites(
 
 /** Describes the change for people, for example `Edit Sales; Delete Notes`, instead of a request ID. */
 function actionLabel(candidate: PreparedCandidate): string {
+  // One label per changed record, in write order.
   const labels = candidate.preparation.changes.map((write) => changedLabel(candidate, write));
   return labels.join('; ');
 }

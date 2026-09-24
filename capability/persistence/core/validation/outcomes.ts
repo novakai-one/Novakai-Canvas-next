@@ -25,6 +25,9 @@ export function success<T>(value: T): Result<T> {
 /**
  * Checks unknown input against a schema and turns a schema failure into a typed failure.
  *
+ * The schema's own reads of `input` (for example getters) happen inside `safeParse`; a throw from
+ * them propagates to the caller's {@link protect} boundary.
+ *
  * The caller chooses the error code: `invalid-input` for submitted requests, `corrupt-record` for
  * stored or restored data. Only the first schema issue is reported. Its path is joined with dots
  * (an empty path gives an empty string); with no issue at all the path is `$` and the message is
@@ -72,11 +75,13 @@ export function boundedClone(input: unknown, limit = JSON_LIMIT): Json {
 }
 
 /**
- * Deep-freezes a value this capability built, and returns it.
+ * Deep-freezes a value and returns it.
  *
- * Only for detached JSON results. Ports and caller inputs are never passed here, so their objects
- * are never walked or frozen. Freezing works bottom-up, so an object that is already frozen is
- * already frozen all the way down and is not walked again.
+ * Meant for detached JSON results this capability built; caller inputs are never passed here.
+ * The walk assumes an object that is already frozen is frozen all the way down (true for values
+ * this function froze, since it works bottom-up), so a frozen object's children are not visited.
+ * An object frozen only at the top by someone else keeps mutable children.
+ * {@link protectAsync} also passes provider-returned results here.
  *
  * @param value - The value to freeze.
  * @returns The same value, frozen.
@@ -139,9 +144,14 @@ export async function protectAsync<T>(action: () => Promise<Result<T>>): Promise
 /** The part of a zod schema that {@link parse} uses. */
 interface Parser<T> {
   safeParse(input: unknown):
-    | { success: true; data: T }
+    | { readonly success: true; readonly data: T }
     | {
-        success: false;
-        error: { issues: readonly { path: readonly PropertyKey[]; message: string }[] };
+        readonly success: false;
+        readonly error: {
+          readonly issues: readonly {
+            readonly path: readonly PropertyKey[];
+            readonly message: string;
+          }[];
+        };
       };
 }

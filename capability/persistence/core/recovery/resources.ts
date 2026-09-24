@@ -71,8 +71,9 @@ export function checkCoverage(state: WorkspaceState, blobs: readonly BlobRecord[
  *
  * @param lease - The lease to release.
  * @param action - The work to do under the lease.
- * @returns The release failure when the release fails; otherwise the action's result. A throw or
- * rejection from either becomes `storage-unavailable` ({@link protectAsync}).
+ * @returns The release failure when the release fails (the action's own result, success or
+ * failure, is then not returned); otherwise the action's result. A throw or rejection from either
+ * becomes `storage-unavailable` ({@link protectAsync}).
  */
 export async function withLease<T>(
   lease: { release(): Promise<Result<void>> },

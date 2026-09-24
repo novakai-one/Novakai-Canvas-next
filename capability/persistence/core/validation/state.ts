@@ -17,16 +17,21 @@ import { JSON_LIMIT, boundedClone, parse, success } from './outcomes.js';
  * 1. Slots and receipts this module already admitted (and that are frozen) are set aside, so only
  *    new parts are copied and parsed.
  * 2. The rest is copied as bounded JSON ({@link boundedClone}).
- * 3. A `schemaVersion` other than 1 fails with `unsupported-version`, path `schemaVersion`.
+ * 3. A numeric `schemaVersion` other than 1 fails with `unsupported-version`, path
+ *    `schemaVersion`. A non-numeric one (for example `"2"`) is left to step 4 and fails there as
+ *    `corrupt-record`.
  * 4. The copy is parsed against the workspace state schema: `corrupt-record` at the first issue's
  *    path.
  * 5. The parts set aside are put back in their places.
  * 6. The state rules run: a broken rule fails with `corrupt-record`, path `$`.
- * 7. The total JSON size of slots and receipts is checked against {@link JSON_LIMIT}.
+ * 7. The total JSON size of slots and receipts is checked against {@link JSON_LIMIT}. Each part's
+ *    size is remembered as it is measured, before the total is known, so a part of a rejected
+ *    oversized state can still be remembered.
  * 8. The state is remembered as admitted (see {@link isAdmitted}).
  *
  * @param input - The raw state.
- * @returns The checked state.
+ * @returns The checked state, or the first failure: `unsupported-version` (step 3) or
+ * `corrupt-record` (steps 4 and 6).
  * @throws TypeError or RangeError from {@link boundedClone} for non-JSON or oversized input, and
  * RangeError (`JSON limit`) when the whole state is over the limit. Callers run this inside
  * `protect`, which turns the throw into a typed failure.
@@ -60,7 +65,11 @@ export function isAdmitted(value: unknown): value is WorkspaceState {
 /** States this module admitted. */
 const admitted = new WeakSet<object>();
 
-/** Slots and receipts this module admitted, with their JSON size in bytes. */
+/**
+ * Slots and receipts whose JSON size this module measured, with that size in bytes. A part is
+ * added when it is measured, before its state's total size check, so membership alone does not
+ * prove the part belonged to an admitted state or say whether it is a slot or a receipt.
+ */
 const admittedParts = new WeakMap<object, number>();
 
 const encoder = new TextEncoder();
@@ -70,25 +79,25 @@ const encoder = new TextEncoder();
  * order, and checking stops at the first broken rule.
  */
 const stateRules: readonly ((state: WorkspaceState) => boolean)[] = [
-  // Two slots for the same record.
+  /** Two slots for the same record. */
   (state) => hasDuplicates(state.slots.map((slot) => keyText(slot.key))),
-  // Two receipts for the same request.
+  /** Two receipts for the same request. */
   (state) => hasDuplicates(state.receipts.map((receipt) => receipt.request)),
-  // Two receipts with the same sequence number.
+  /** Two receipts with the same sequence number. */
   (state) => hasDuplicates(state.receipts.map((receipt) => String(receipt.sequence))),
-  // A receipt from after the workspace's current sequence.
+  /** A receipt from after the workspace's current sequence. */
   (state) => state.receipts.some((receipt) => receipt.sequence > state.sequence),
-  // More receipts than commits.
+  /** More receipts than commits. */
   (state) => state.receipts.length > state.sequence,
-  // Fewer receipts than kept commits: every commit keeps a receipt, up to RECEIPT_LIMIT.
+  /** Fewer receipts than kept commits: every commit keeps a receipt, up to RECEIPT_LIMIT. */
   (state) => state.receipts.length < Math.min(state.sequence, RECEIPT_LIMIT),
-  // A tombstone with content.
+  /** A tombstone with content. */
   (state) => state.slots.some(invalidTombstone),
-  // Slots before the first commit.
+  /** Slots before the first commit. */
   (state) => state.sequence === 0 && state.slots.length !== 0,
-  // A slot that lists the same asset twice.
+  /** A slot that lists the same asset twice. */
   (state) => state.slots.some((slot) => hasDuplicates(slot.resources)),
-  // A receipt that lists the same record twice.
+  /** A receipt that lists the same record twice. */
   (state) =>
     state.receipts.some((receipt) =>
       hasDuplicates(receipt.versions.map((version) => keyText(version.key))),
@@ -142,7 +151,7 @@ function bytes(state: WorkspaceState): number {
   return [...state.slots, ...state.receipts].reduce((sum, part) => sum + partBytes(part), 0);
 }
 
-/** JSON size in bytes of one slot or receipt. The size is remembered, which marks the part as admitted. */
+/** JSON size in bytes of one slot or receipt. The size is remembered for reuse on later checks. */
 function partBytes(part: object): number {
   const known = admittedParts.get(part);
   if (known !== undefined) {
@@ -153,7 +162,7 @@ function partBytes(part: object): number {
   return size;
 }
 
-/** True for a frozen slot or receipt this module already admitted. */
+/** True for a frozen slot or receipt whose size this module already measured. */
 function isAdmittedPart(part: unknown): boolean {
   return (
     typeof part === 'object' && part !== null && Object.isFrozen(part) && admittedParts.has(part)
@@ -168,22 +177,20 @@ function isAdmittedPart(part: unknown): boolean {
  * `receipts` arrays is passed through unchanged.
  */
 function reuseParts(input: unknown): {
-  probe: unknown;
-  restore: (state: WorkspaceState) => WorkspaceState;
+  readonly probe: unknown;
+  readonly restore: (state: WorkspaceState) => WorkspaceState;
 } {
   const plain = { probe: input, restore: (state: WorkspaceState) => state };
   if (input === null || typeof input !== 'object' || Array.isArray(input)) {
     return plain;
   }
-  const fields = { ...(input as Record<string, unknown>) };
+  const fields: Record<string, unknown> = { ...input };
   const { slots, receipts } = fields;
   if (!Array.isArray(slots) || !Array.isArray(receipts)) {
     return plain;
   }
-  // `admittedParts` only holds slots and receipts from states this module admitted, so a part
-  // found there is a checked Slot or Receipt.
-  const keptSlots = slots.map((part) => (isAdmittedPart(part) ? (part as Slot) : null));
-  const keptReceipts = receipts.map((part) => (isAdmittedPart(part) ? (part as Receipt) : null));
+  const keptSlots = slots.map(keptSlot);
+  const keptReceipts = receipts.map(keptReceipt);
   const probe = {
     ...fields,
     slots: slots.filter((_, index) => keptSlots[index] === null),
@@ -191,6 +198,7 @@ function reuseParts(input: unknown): {
   };
   return {
     probe,
+    /** Puts the parts set aside back into the parsed state, in their original places. */
     restore: (state) => ({
       ...state,
       slots: merge(keptSlots, state.slots),
@@ -200,9 +208,32 @@ function reuseParts(input: unknown): {
 }
 
 /**
+ * A slot set aside for reuse, or `null` when the part must be parsed again.
+ *
+ * Membership in the admitted-part cache does not itself prove the part is a slot rather than a
+ * receipt: the cache holds both. The assertion relies on how parts are stored (a slot is only ever
+ * cached from a state's `slots`), not on a check. Replacing it with a real check could change
+ * which inputs are accepted, so it is recorded as open debt.
+ */
+function keptSlot(part: unknown): Slot | null {
+  if (!isAdmittedPart(part)) {
+    return null;
+  }
+  return part as Slot;
+}
+
+/** A receipt set aside for reuse, or `null` when the part must be parsed again. See {@link keptSlot}. */
+function keptReceipt(part: unknown): Receipt | null {
+  if (!isAdmittedPart(part)) {
+    return null;
+  }
+  return part as Receipt;
+}
+
+/**
  * Puts the parts set aside back in their places; the freshly parsed parts fill the gaps in order.
  */
-function merge<T>(kept: readonly (T | null)[], fresh: readonly T[]): T[] {
+function merge<T>(kept: readonly (T | null)[], fresh: readonly T[]): readonly T[] {
   let next = 0;
   // `fresh` has one parsed part for each gap, so the index never runs past its end.
   return kept.map((part) => part ?? (fresh[next++] as T));
@@ -219,7 +250,10 @@ function presentPayload(record: { readonly [key: string]: Json }, key: string): 
     return [];
   }
   const value = record[key];
-  return value === undefined ? [] : [value];
+  if (value === undefined) {
+    return [];
+  }
+  return [value];
 }
 
 /** The payloads under `key` of every object in the `records` array of the copy. */

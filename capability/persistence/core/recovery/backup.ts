@@ -29,11 +29,14 @@ import { reachableResources, verifyResources, withLease } from './resources.js';
  *    Nothing is ever truncated; a bundle that fails is `corrupt-record`.
  * 5. Release the lease, whatever happened. A failed release replaces the result.
  *
- * A successful result is never an incomplete backup.
+ * A successful result is never an incomplete backup. A throw or rejection from `acquire` is
+ * not caught here; the public `backup` method's `protectAsync` turns it into
+ * `storage-unavailable`. After any failure the maintenance host owns recovery: retry the backup.
  *
  * @param state - The workspace state, read in its own transaction.
  * @param resources - The Assets lease provider and verifier.
- * @returns The bundle, or the first failure.
+ * @returns The bundle; or the first failure of steps 1–4; or, when the release fails, the release
+ * failure (it replaces a successful bundle or an earlier failure).
  */
 export async function createBackup(
   state: WorkspaceState,
@@ -74,7 +77,7 @@ async function collectBlobs(
   if (failed && !failed.ok) {
     return failed;
   }
-  return success(results.flatMap((result) => (result.ok ? [result.value] : [])));
+  return success(results.flatMap(blobOf));
 }
 
 /**
@@ -116,4 +119,12 @@ function packBackup(state: WorkspaceState, blobs: readonly BlobRecord[]): Result
       ),
     'corrupt-record',
   );
+}
+
+/** The blob of a successful read as a one-item list; a failed read gives an empty list. */
+function blobOf(result: Result<BlobRecord>): readonly BlobRecord[] {
+  if (result.ok) {
+    return [result.value];
+  }
+  return [];
 }

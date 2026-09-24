@@ -19,7 +19,7 @@ import { boundedClone, parse, success } from './outcomes.js';
  * Authoring corrects a rejected request before submitting a new one.
  *
  * @param input - The request as received.
- * @returns The parsed request.
+ * @returns The parsed request, or `invalid-input` from the schema (step 2) or the rules (step 3).
  * @throws TypeError or RangeError from {@link boundedClone} for a non-JSON or oversized input.
  * The public API calls this inside `protect`, which turns the throw into `invalid-input`.
  */
@@ -42,16 +42,16 @@ export function validateRequest(input: unknown): Result<CommitRequest> {
  * dependencies), but every write needs exactly one observed version.
  */
 const requestRules: readonly ((request: CommitRequest) => boolean)[] = [
-  // The same record is listed twice among the observed versions.
+  /** The same record is listed twice among the observed versions. */
   (request) => hasDuplicates(request.expected.map((read) => keyText(read.key))),
-  // The same record is written twice.
+  /** The same record is written twice. */
   (request) => hasDuplicates(request.writes.map((write) => keyText(write.key))),
-  // A write has no observed version for its record.
+  /** A write has no observed version for its record. */
   (request) =>
     request.writes.some(
       (write) => !request.expected.some((read) => keyText(read.key) === keyText(write.key)),
     ),
-  // A put lists the same asset twice.
+  /** A put lists the same asset twice. */
   (request) =>
     request.writes.some((write) => write.kind === 'put' && hasDuplicates(write.resources)),
 ];

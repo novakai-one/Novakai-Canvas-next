@@ -14,10 +14,13 @@ let pending: Promise<void> = Promise.resolve();
 /**
  * Decompresses a WOFF2 font into sfnt (TrueType/OpenType) bytes. Calls run one after another
  * in call order, across all Export compositions; one call's failure does not affect the next.
+ * A call that never settles blocks every later call; there is no timeout (the library waits for
+ * its WebAssembly runtime to load).
  *
  * @param bytes - WOFF2 font bytes.
  * @returns A promise of a detached copy of the decompressed bytes. It rejects with the
  * library's plain `Error` ("ConvertWOFF2ToTTF failed") when the bytes cannot be converted.
+ * Export's font decoder turns a rejection into `encoding-failed` at `fonts`.
  * @throws Never synchronously; failures are rejections.
  */
 export function decompressFont(bytes: Uint8Array): Promise<Uint8Array> {

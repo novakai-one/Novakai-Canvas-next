@@ -22,11 +22,21 @@ import { failure } from '../../contract/errors.js';
  */
 export function createEncoding(): Encoding {
   return Object.freeze({
-    utf8: (value) => new TextEncoder().encode(value),
+    utf8: (value) => {
+      const encoder = new TextEncoder();
+      return encoder.encode(value);
+    },
     text,
-    base64: (bytes) => Buffer.from(bytes).toString('base64'),
+    base64: (bytes) => {
+      const buffer = Buffer.from(bytes);
+      return buffer.toString('base64');
+    },
     decode,
-    hash: (bytes) => createHash('sha256').update(bytes).digest('hex'),
+    hash: (bytes) => {
+      const hasher = createHash('sha256');
+      const updated = hasher.update(bytes);
+      return updated.digest('hex');
+    },
   } satisfies Encoding);
 }
 

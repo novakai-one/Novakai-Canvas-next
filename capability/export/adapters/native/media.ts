@@ -46,17 +46,22 @@ export function createMediaConverter(): MediaConverter {
  * data URL for any other image type. Rejects when `sharp` cannot decode or convert the image.
  */
 async function convertImage(resource: Resource): Promise<readonly [string, string]> {
-  const original = dataUrl(resource.mediaType, resource.bytes);
+  const original = dataUrl(resource);
   const embeddable = ['image/png', 'image/jpeg'].includes(resource.mediaType);
   if (embeddable) return [original, original];
-  const bytes = await sharp(Buffer.from(resource.bytes), { limitInputPixels: 64000000 })
-    .png()
-    .toBuffer();
-  return [original, `data:image/png;base64,${bytes.toString('base64')}`];
+  const image = sharp(Buffer.from(resource.bytes), { limitInputPixels: 64000000 });
+  const png = await image.png().toBuffer();
+  const pngBase64 = png.toString('base64');
+  return [original, `data:image/png;base64,${pngBase64}`];
 }
 
-/** The data URL `data:<mediaType>;base64,<bytes>`, used as the map key the PDF encoder looks up. */
-function dataUrl(mediaType: string, bytes: Uint8Array): string {
-  const base64 = Buffer.from(bytes).toString('base64');
-  return `data:${mediaType};base64,${base64}`;
+/**
+ * The data URL `data:<mediaType>;base64,<bytes>`, used as the map key the PDF encoder looks up.
+ * The media type is read and turned into text before the bytes are read.
+ */
+function dataUrl(resource: Resource): string {
+  const prefix = `data:${resource.mediaType};base64,`;
+  const bytes = Buffer.from(resource.bytes);
+  const base64 = bytes.toString('base64');
+  return prefix + base64;
 }

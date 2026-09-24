@@ -46,9 +46,10 @@ export function captureManual(collection: Collection): ManualSnapshot {
  *    first one that fails.
  *
  * Then, for each section that has an override: appearances, groups and sequence items are put
- * back in the stored order, each overridden appearance, group and wire takes the override's
- * fields, and the section's placement is replaced when the override has one. Sections without
- * an override are returned as the same objects. Semantic structure always comes from the DSL.
+ * back in the stored order (sequence items also take their stored order numbers), each
+ * overridden appearance, group and wire takes the override's fields, and the section's
+ * placement is replaced when the override has one. Sections without an override are returned
+ * as the same objects. Semantic structure always comes from the DSL.
  * Pure and safe to repeat; the caller re-validates the result through Model.
  *
  * @param collection - The collection parsed from the bundle's DSL.
@@ -129,8 +130,9 @@ function validIds(actual: readonly string[], allowed: readonly string[]): boolea
 
 /**
  * Whether one section override fits its section: complete orders, and appearance, group and
- * wire overrides that each name a real item once. All four checks run. Coordinate shapes were
- * already checked by the bundle schema.
+ * wire overrides that each name a real item once. All four checks run. Coordinate shapes are
+ * not checked here: on import the bundle schema checked them; when building a bundle they come
+ * from the collection.
  */
 function validSection(collection: Collection, manual: ManualSection): boolean {
   const section = collection.sections.find((item) => item.id === manual.id);
@@ -155,26 +157,30 @@ function validSection(collection: Collection, manual: ManualSection): boolean {
 
 /**
  * Applies one section's override: restores the stored order, then lets each override's fields
- * replace the matching appearance, group or wire fields. Wires keep the DSL's order. Returns
- * the section itself when there is no override.
+ * replace the matching appearance, group or wire fields (each item is copied first, then its
+ * override, if any, is looked up and applied). Wires keep the DSL's order. Returns the section
+ * itself when there is no override.
  */
 function overlaySection(section: Section, manual: ManualSection | undefined): unknown {
   if (!manual) return section;
   const ordered = restoreOrder(section, manual);
   const next = {
     ...ordered,
-    appearances: ordered.appearances.map((item) => ({
-      ...item,
-      ...manual.appearances.find((override) => override.object === item.object),
-    })),
-    groups: ordered.groups.map((item) => ({
-      ...item,
-      ...manual.groups.find((override) => override.id === item.id),
-    })),
-    wires: section.wires.map((item) => ({
-      ...item,
-      ...manual.wires.find((override) => override.relationship === item.relationship),
-    })),
+    appearances: ordered.appearances.map((item) => {
+      const copy = { ...item };
+      const override = manual.appearances.find((entry) => entry.object === item.object);
+      return { ...copy, ...override };
+    }),
+    groups: ordered.groups.map((item) => {
+      const copy = { ...item };
+      const override = manual.groups.find((entry) => entry.id === item.id);
+      return { ...copy, ...override };
+    }),
+    wires: section.wires.map((item) => {
+      const copy = { ...item };
+      const override = manual.wires.find((entry) => entry.relationship === item.relationship);
+      return { ...copy, ...override };
+    }),
   };
   if (manual.placement) return { ...next, placement: manual.placement };
   return next;

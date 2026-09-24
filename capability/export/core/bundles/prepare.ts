@@ -26,13 +26,16 @@ import { checkCollectionResources } from './completeness.js';
  *
  * @param request - The parsed request: bundle bytes and the new collection ID.
  * @param deps - Encoding, the resource owners' check and the documents provider.
- * @returns The prepared import, or the first failure:
- * - an inspection failure, unchanged (see `inspectBundle`);
- * - `invalid-import` at `targetCollectionId` when the new ID equals the bundle's collection ID;
- * - a failure returned by `documents.parse` or `documents.read`, unchanged;
- * - `invalid-import` at `source` when the parsed DSL has a different collection ID;
- * - `invalid-import` when the manual snapshot does not fit the collection;
- * - `resource-rejected` when a pinned theme or asset is not among the bundle's resources.
+ * @returns The prepared import, or the first failure, in the order the checks run:
+ * 1. an inspection failure, unchanged (see `inspectBundle`);
+ * 2. `invalid-import` at `targetCollectionId` when the new ID equals the bundle's collection ID;
+ * 3. a failure returned by `documents.parse`, unchanged;
+ * 4. `invalid-import` at `source` when the parsed DSL has a different collection ID;
+ * 5. `invalid-import` when the manual snapshot does not fit the collection;
+ * 6. a failure returned by `documents.read` for the overlaid collection, unchanged;
+ * 7. `resource-rejected` when a pinned theme or asset is not among the bundle's resources;
+ * 8. a failure returned by `documents.read` for the collection under the new ID at revision 0,
+ *    unchanged.
  * @throws Never. Any throw or rejection inside, including a provider's, becomes
  * `invalid-import` at `$`.
  */

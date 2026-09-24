@@ -32,7 +32,7 @@ interface NativeFactories {
  *
  * @param root - The asset directory.
  * @param factories - How to open the file store and database. Defaults to the real ones.
- * @returns The frozen {@link Assets} facade. Fails with the storage's own failure when preparing
+ * @returns A new, unfrozen success holding the frozen {@link Assets} facade. Fails with the storage's own failure when preparing
  * the storage fails (for example `corrupt-asset` for an unsupported schema), or
  * `storage-unavailable` when anything throws, such as a factory that cannot open its location.
  * On `storage-unavailable`, keep the original files and retry opening.

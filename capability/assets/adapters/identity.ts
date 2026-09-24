@@ -38,7 +38,8 @@ interface NativeIdentity {
  * @param identity - The native calls. Defaults to `node:crypto` SHA-256, `randomUUID`,
  * `process.pid` and `process.kill(pid, 0)`.
  * @returns The identity port.
- * @throws Never.
+ * @throws Only when reading `identity.pid` throws (it is read here, once). The default reads
+ * `process.pid`, which does not throw.
  */
 export function createIdentity(identity: NativeIdentity = native): IdentityPort {
   return {

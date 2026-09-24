@@ -118,7 +118,9 @@ export interface Assets {
   resolve(digest: unknown): Result<StoredBlob>;
   /**
    * Leases existing assets. Every digest is verified before the lease is recorded. Duplicate
-   * digests are recorded once, sorted.
+   * digests are recorded once, sorted. Each call records a new lease, even for the same digests:
+   * retrying after a lost result leaves an extra lease, removed by releasing it or, once its owner
+   * process is gone, by collection.
    *
    * @param digests - The digests to protect.
    * @returns The {@link ReadLease}. Fails `invalid-input`, `missing-asset`, `corrupt-asset` or
@@ -127,7 +129,9 @@ export interface Assets {
   acquire(digests: unknown): Result<ReadLease>;
   /**
    * Leases digests whose bytes may be absent, so backup bytes can be installed for them.
-   * Duplicate digests are recorded once, sorted.
+   * Duplicate digests are recorded once, sorted. Each call records a new lease, even for the same digests:
+   * retrying after a lost result leaves an extra lease, removed by releasing it or, once its owner
+   * process is gone, by collection.
    *
    * @param digests - The digests to protect.
    * @returns The {@link WriteLease}. Fails `invalid-input` or `storage-unavailable`.

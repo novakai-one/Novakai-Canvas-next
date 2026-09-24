@@ -1,7 +1,8 @@
 /*
  * Reading IDs and references. An ID is one `@name` token. A reference is an ID, optionally
  * followed by `.@member` (an endpoint) or `/@item` (an item inside a section), or a layout
- * reference written `group:@id` or `section:@id`.
+ * reference written `group:@id` or `section:@id`. Language owns correcting the source; Authoring
+ * owns commit recovery.
  */
 import type { Reference, LocatedValue } from '../../contract/records/syntax.js';
 import { reject } from '../validation/outcomes.js';
@@ -29,7 +30,8 @@ export function readIdentity(cursor: Cursor): Parsed<string> {
  * @param cursor - Where the reference starts.
  * @returns The reference with its span (and, unless it is a layout reference, its first token),
  * and the cursor after it.
- * @throws A `LanguageFault` with a `syntax` diagnostic for an unknown namespace or a missing ID.
+ * @throws A `LanguageFault` with a `syntax` diagnostic for an unknown namespace, a missing `:`
+ * after the namespace word (`Expected :`), or a missing ID.
  */
 export function readReference(cursor: Cursor): Parsed<LocatedValue> {
   if (peek(cursor).kind === 'word') return readNamespaced(cursor);

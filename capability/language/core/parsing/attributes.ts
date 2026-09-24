@@ -2,7 +2,8 @@
  * Reading `name=value` attributes. A run of attributes ends at the first token that is not a
  * word followed by `=` (line breaks do not matter). Each attribute is checked against the
  * construct's property table: unknown names, duplicates, unquoted text, fractional integers,
- * malformed signature parameters and blank types are rejected.
+ * malformed signature parameters and blank types are rejected. Language owns correcting the
+ * source; Authoring owns commit recovery.
  */
 import type { Fields, LocatedValue, Span } from '../../contract/records/syntax.js';
 import type { Property } from '../../contract/records/vocabulary.js';
@@ -55,7 +56,7 @@ function readAttribute(
   properties: Readonly<Record<string, Property>>,
 ): Parsed<Attribute> {
   const name = peek(cursor).text;
-  const property = Object.hasOwn(properties, name) ? properties[name] : undefined;
+  const property = ownProperty(properties, name);
   if (property === undefined)
     reject(
       'unknown-property',
@@ -71,6 +72,15 @@ function readAttribute(
   requireSignatureParameters(raw.value, property);
   requireNonblankTypeExpression(raw.value, property);
   return { value: [name, checkValue(raw.value, property, name)], next: raw.next };
+}
+
+/** The property named `name`, only if it is the table's own entry (not an inherited key). */
+function ownProperty(
+  properties: Readonly<Record<string, Property>>,
+  name: string,
+): Property | undefined {
+  if (!Object.hasOwn(properties, name)) return undefined;
+  return properties[name];
 }
 
 /** For an integer property, rejects `1.5`, which would otherwise read as `1` then `.5`. */
@@ -109,9 +119,10 @@ function requireStringToken(cursor: Cursor): void {
 
 /** Rejects the first token between the list's brackets that is neither a comma nor a string. */
 function requireQuotedList(start: Cursor, end: Cursor): void {
-  const values = start.tokens
-    .slice(start.index + 1, end.index - 1)
-    .filter(/** Whether the token is not a comma. */ (token) => token.text !== ',');
+  const between = start.tokens.slice(start.index + 1, end.index - 1);
+  const values = between.filter(
+    /** Whether the token is not a comma. */ (token) => token.text !== ',',
+  );
   const invalid = values.find(
     /** Whether the token is not a string. */ (token) => token.kind !== 'string',
   );
@@ -139,7 +150,7 @@ function validateSignatureParameter(item: LocatedValue): void {
 function validateLegacyParameter(item: LocatedValue): void {
   if (item.token?.kind !== 'string')
     reject('syntax', item.span, 'Quoted string', 'Legacy parameter must be quoted');
-  if (String(item.value).trim().length === 0)
+  if (isBlank(String(item.value)))
     reject('invalid-value', item.span, 'Nonblank parameter', 'Parameter text must be nonblank');
 }
 
@@ -147,13 +158,19 @@ function validateLegacyParameter(item: LocatedValue): void {
 function validateParameterName(name: LocatedValue | undefined, fallback: Span): void {
   if (name?.token?.kind !== 'string')
     reject('syntax', name?.span ?? fallback, 'Quoted string', 'Parameter name must be quoted');
-  if ((name?.value as string | undefined)?.trim().length === 0)
-    reject(
-      'invalid-value',
-      name?.span ?? fallback,
-      'Nonblank parameter name',
-      'Parameter name must be nonblank',
-    );
+  rejectBlankParameterName(name, fallback);
+}
+
+/** Rejects a pair's name that is blank text; `fallback` locates a missing name. */
+function rejectBlankParameterName(name: LocatedValue | undefined, fallback: Span): void {
+  const nameText = name?.value as string | undefined;
+  if (nameText === undefined || !isBlank(nameText)) return;
+  reject(
+    'invalid-value',
+    name?.span ?? fallback,
+    'Nonblank parameter name',
+    'Parameter name must be nonblank',
+  );
 }
 
 /** A pair's type is quoted text, or a plain reference to a definition. */
@@ -166,7 +183,7 @@ function validateParameterType(type: LocatedValue | undefined, fallback: Span): 
 function validateStringParameterType(type: LocatedValue): void {
   if (type.token?.kind !== 'string')
     reject('syntax', type.span, 'Quoted string', 'Unlinked parameter type must be quoted');
-  if (String(type.value).trim().length === 0)
+  if (isBlank(String(type.value)))
     reject(
       'invalid-value',
       type.span,
@@ -201,8 +218,13 @@ function isIdentityReference(value: LocatedValue['value'] | undefined): boolean 
 /** For a `type-expression` property written as text, rejects blank text. */
 function requireNonblankTypeExpression(raw: LocatedValue, property: Property): void {
   if (property.type !== 'type-expression' || typeof raw.value !== 'string') return;
-  if (raw.value.trim().length === 0)
+  if (isBlank(raw.value))
     reject('invalid-value', raw.span, 'Nonblank type', 'Type must be nonblank');
+}
+
+/** Whether the text is empty or only whitespace. */
+function isBlank(text: string): boolean {
+  return text.trim().length === 0;
 }
 
 /** Adds one attribute to the fields; the same name twice is a `syntax` error. */

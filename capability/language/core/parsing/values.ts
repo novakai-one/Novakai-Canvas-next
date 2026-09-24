@@ -1,7 +1,8 @@
 /*
  * Reading one value: quoted text, an integer, a bare word (`true` and `false` become booleans),
  * a reference, or a bracketed list of values. The owning property checks the value's form
- * afterwards (see value-types.ts).
+ * afterwards (see value-types.ts). Language owns correcting the source; Authoring owns commit
+ * recovery.
  */
 import type { LocatedValue, SyntaxValue } from '../../contract/records/syntax.js';
 import { reject, accepted } from '../validation/outcomes.js';
@@ -27,7 +28,8 @@ import { repeat } from './repetition.js';
  * @returns The value with its location, and the cursor after it.
  * @throws A `LanguageFault`: `syntax` for a token that is not a value, a bad escape or an
  * unclosed list; `invalid-value` for an integer that is not a safe integer; `limit` for nesting
- * deeper than 64.
+ * deeper than 64; and, for a list, any diagnostic its item loop (`repeat`) reports, such as
+ * `limit` for too many items.
  */
 export function readValue(cursor: Cursor): Parsed<LocatedValue> {
   const token = peek(cursor);
@@ -42,8 +44,9 @@ export function readValue(cursor: Cursor): Parsed<LocatedValue> {
  *
  * @param cursor - Where the first reference starts.
  * @returns The list of references with its span (no `items`), and the cursor after it.
- * @throws A `LanguageFault` with a `syntax` diagnostic when there is no reference at all, or
- * from reading a reference.
+ * @throws A `LanguageFault` with a `syntax` diagnostic when there is no reference at all; any
+ * fault from reading a reference; and any diagnostic the item loop (`repeat`) reports, such as
+ * `limit` for too many references.
  */
 export function readReferenceList(cursor: Cursor): Parsed<LocatedValue> {
   const parsed = accepted(repeat(cursor, startsReference, readReference));

@@ -1,7 +1,8 @@
 /*
  * Parsing a whole source: `canvas 1 collection @id … { … }` or `patch 1 @id { … }`. A scoped
  * `view` readout is refused. The result also lists the themes and assets the source asks for
- * and where each record was written; nothing is read from files or the network.
+ * and where each record was written; nothing is read from files or the network. Language owns
+ * correcting the source; Authoring owns commit recovery.
  */
 import type { ParsedSource, Document, Patch } from '../../contract/records/syntax.js';
 import { documentResources, patchResources } from '../lowering/resources.js';
@@ -36,8 +37,8 @@ const maxPatchOperations = 1000;
  * @returns The parsed document or patch with its resource requests and source mappings.
  * @throws A `LanguageFault`: `display-only` for a `view`; `unsupported-version` for a version
  * other than 1; `syntax` for an unknown envelope, bad grammar or trailing source; `limit` for
- * too many tokens, too much nesting or more than 1000 patch operations; and the diagnostics of
- * `readSource`.
+ * too many tokens, too much nesting or more than 1000 patch operations; `unknown-property` and
+ * `invalid-value` from reading attributes; and the diagnostics of `readSource`.
  */
 export function parseSource(source: string): ParsedSource {
   const tokens = accepted(tokenize(readSource(source)));

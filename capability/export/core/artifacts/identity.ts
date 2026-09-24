@@ -1,6 +1,18 @@
+/*
+ * Checks that a leased snapshot is the revision the caller asked for.
+ */
 import type { Snapshot } from '../../contract/records/artifact.js';
 import type { ExportRequest } from '../../contract/records/input.js';
-/** A lease is useful only when all projected and canonical identities describe the requested revision. */
+
+/**
+ * Whether the snapshot is the requested revision: its `identity`, `collection` and `scene` all
+ * carry the requested collection ID and revision, and `scene.inputKey` equals
+ * `identity.inputKey`. All six IDs and revisions are read before any is compared.
+ *
+ * @param snapshot - The leased snapshot.
+ * @param request - The parsed request.
+ * @returns `true` when everything matches.
+ */
 export function matchesIdentity(snapshot: Snapshot, request: ExportRequest): boolean {
   const ids = [snapshot.identity.collectionId, snapshot.collection.id, snapshot.scene.collectionId];
   const revisions = [

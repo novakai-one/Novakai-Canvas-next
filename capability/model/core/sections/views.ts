@@ -7,6 +7,7 @@ import { validateGroups, visibleObjects } from './groups.js';
 import { validateModes } from './modes.js';
 import { validateTree } from './tree.js';
 import { validateSequence } from './sequence.js';
+import { sectionPath } from './paths.js';
 
 /**
  * Checks every section (diagram view) against the collection's shared records, in section order.
@@ -53,7 +54,7 @@ function validateWireAppearance(
     /** Tells whether this is the wire's relationship. */
     (candidate) => candidate.id === wire.relationship,
   );
-  const path = `sections.${section.id}.wires.${wire.relationship}`;
+  const path = `${sectionPath(section)}.wires.${wire.relationship}`;
   if (relationship === undefined) {
     return referenceIssue(true, path);
   }
@@ -93,7 +94,7 @@ function validateRoleOverride(
  * the theme, one wire per relationship, then each wire.
  */
 function validateViewReferences(section: Section, collection: Collection): readonly Diagnostic[] {
-  const path = `sections.${section.id}`;
+  const path = sectionPath(section);
   const objectIssues = visibleObjects(section).flatMap(
     /** Reports a shown object that does not exist. */
     (id) => {

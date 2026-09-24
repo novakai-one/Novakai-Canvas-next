@@ -10,6 +10,7 @@ import type { Section } from '../../contract/records/section.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { nestedIn, visibleObjects } from './groups.js';
+import { sectionPath } from './paths.js';
 
 /**
  * Checks every layout request: the collection's `arrangement`, then each section's layout
@@ -197,7 +198,7 @@ function validateArrangement(collection: Collection): readonly Diagnostic[] {
 
 /** Checks a section's layout, then each group's layout with that group as the owner. */
 function validateSectionLayouts(section: Section): readonly Diagnostic[] {
-  const path = `sections.${section.id}`;
+  const path = sectionPath(section);
   const sectionIssues = validateLocalLayout(section.layout, section, `${path}.layout`);
   const groupIssues = section.groups.flatMap(
     /** Checks one group's layout. */

@@ -6,6 +6,7 @@ import { compatibleLayouts, compatibleWires } from '../../contract/records/polic
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { visibleObjects } from './groups.js';
+import { sectionPath } from './paths.js';
 
 /**
  * Returns the relationships a section draws as wires, in the collection's relationship order.
@@ -56,7 +57,7 @@ export function visibleRelationships(
  * @throws Never for parsed data.
  */
 export function validateModes(section: Section, collection: Collection): readonly Diagnostic[] {
-  const path = `sections.${section.id}`;
+  const path = sectionPath(section);
   const layoutIssues = validateLayoutCompatibility(section);
   const wireIssues = visibleRelationships(section, collection).flatMap(
     /** Checks that the mode allows this relationship's kind. */
@@ -105,7 +106,7 @@ function validateDecisionLabels(section: Section, collection: Collection): reado
         outgoing,
         /** A flow's key is its label. */
         (wire) => wire.label,
-        `sections.${section.id}.decision.${decision.id}`,
+        `${sectionPath(section)}.decision.${decision.id}`,
       );
     },
   );
@@ -119,7 +120,7 @@ function validateTreeOnlyFields(section: Section): readonly Diagnostic[] {
   const rootIssues = diagnoseWhen(
     section.root !== undefined,
     'mode',
-    `sections.${section.id}.root`,
+    `${sectionPath(section)}.root`,
     'Root is tree-only',
   );
   const participationIssues = section.appearances.flatMap(
@@ -128,7 +129,7 @@ function validateTreeOnlyFields(section: Section): readonly Diagnostic[] {
       diagnoseWhen(
         appearance.participation !== undefined,
         'mode',
-        `sections.${section.id}.appearances.${appearance.object}`,
+        `${sectionPath(section)}.appearances.${appearance.object}`,
         'Participation is tree-only',
       ),
   );
@@ -158,7 +159,7 @@ function validateLayoutCompatibility(section: Section): readonly Diagnostic[] {
       diagnoseWhen(
         !compatibleLayouts[section.mode].includes(layout.algorithm),
         'mode',
-        `sections.${section.id}.layout`,
+        `${sectionPath(section)}.layout`,
         'Mode and layout must be compatible',
       ),
   );

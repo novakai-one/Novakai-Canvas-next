@@ -5,6 +5,7 @@ import type { Section, WireAppearance } from '../../contract/records/section.js'
 import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../invariants/issues.js';
 import { clearRoute, clearSection } from './preservation.js';
+import { sectionPath } from '../sections/paths.js';
 
 /**
  * Edits one section's view for a `hide`, `reset-layout` or `reset-route` change. The section
@@ -126,11 +127,6 @@ function applySectionEdit(
     return resetVisibleRoute(section, change.relationship);
   }
   return success(clearSection(section));
-}
-
-/** Returns a section's collection path, `sections.<id>`. */
-function sectionPath(section: Section): string {
-  return `sections.${section.id}`;
 }
 
 /** Returns the edited section in place of the section with its ID; any other section as it is. */

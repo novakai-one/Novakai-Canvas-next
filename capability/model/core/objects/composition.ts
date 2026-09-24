@@ -4,6 +4,7 @@ import type { Appearance, Section } from '../../contract/records/section.js';
 import type { ContentBlock } from '../../contract/records/content.js';
 import type { Diagnostic } from '../../contract/errors.js';
 import { diagnoseWhen } from '../invariants/issues.js';
+import { sectionPath } from '../sections/paths.js';
 
 /**
  * Checks presentation intent: media-led compositions and group roles. Every failure is
@@ -106,7 +107,7 @@ function validateAppearance(
   return requireMedia(
     appearance.composition ?? object.composition,
     visibleBlocks(object, appearance.detail),
-    `sections.${section.id}.appearances.${object.id}.composition`,
+    `${sectionPath(section)}.appearances.${object.id}.composition`,
   );
 }
 
@@ -118,7 +119,7 @@ function validateGroupRoles(section: Section, collection: Collection): readonly 
       diagnoseWhen(
         !collection.theme.roles.includes(group.role),
         'content',
-        `sections.${section.id}.groups.${group.id}.role`,
+        `${sectionPath(section)}.groups.${group.id}.role`,
         'Group role must be declared by the collection theme',
       ),
   );

@@ -6,6 +6,7 @@ import type { Section } from '../../contract/records/section.js';
 import { diagnoseWhen } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
 import { visibleRelationships } from './modes.js';
+import { sectionPath } from './paths.js';
 
 /**
  * Checks a `tree` section's parent graph; other modes give nothing. Layout and annotation
@@ -83,7 +84,7 @@ function participatesInTree(id: ObjectId, section: Section, collection: Collecti
 
 /** Checks the root: none for an empty tree, otherwise one of the participants. */
 function validateRoot(participants: readonly ObjectId[], section: Section): readonly Diagnostic[] {
-  const path = `sections.${section.id}.root`;
+  const path = `${sectionPath(section)}.root`;
   if (participants.length === 0) {
     return diagnoseWhen(section.root !== undefined, 'tree', path, 'Empty tree has no root');
   }
@@ -110,7 +111,7 @@ function validateParentEdge(
   return diagnoseWhen(
     !sourceParticipates || !targetParticipates,
     'tree',
-    `sections.${section.id}.wires.${wire.id}`,
+    `${sectionPath(section)}.wires.${wire.id}`,
     'Parent edge must connect tree participants',
   );
 }
@@ -151,7 +152,7 @@ function validateParentCount(
   return diagnoseWhen(
     actualCount !== expectedParentCount(id, section),
     'tree',
-    `sections.${section.id}.appearances.${id}`,
+    `${sectionPath(section)}.appearances.${id}`,
     'Root has zero parents; every other participant exactly one',
   );
 }
@@ -173,7 +174,7 @@ function validateAncestry(
   return diagnoseWhen(
     cycleExists,
     'tree',
-    `sections.${section.id}.appearances.${id}`,
+    `${sectionPath(section)}.appearances.${id}`,
     'Parent graph must be acyclic and rooted',
   );
 }

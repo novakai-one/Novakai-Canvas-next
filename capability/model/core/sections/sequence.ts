@@ -7,6 +7,7 @@ import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
 import { hasCycle, visibleObjects } from './groups.js';
 import { resolveCallableEndpoint } from '../relationships/callable.js';
+import { sectionPath } from './paths.js';
 
 /**
  * Checks a `sequence` section's items; other modes give nothing. Events stay ordered records;
@@ -49,7 +50,7 @@ export function validateSequence(section: Section, collection: Collection): read
   if (section.mode !== 'sequence') {
     return [];
   }
-  const path = `sections.${section.id}.sequence`;
+  const path = `${sectionPath(section)}.sequence`;
   const wireIssues = diagnoseWhen(
     section.wires.length > 0,
     'sequence',

@@ -84,10 +84,7 @@ function detachAppearance(appearance: Appearance, removedGroups: readonly GroupI
   if (!removedGroups.includes(appearance.group)) {
     return appearance;
   }
-  const { group: removedGroup, ...ungrouped } = appearance;
-  // `void` marks the removed field as deliberately unused; only the rest copy is kept.
-  void removedGroup;
-  return ungrouped;
+  return withoutField(appearance, 'group');
 }
 
 /**
@@ -101,10 +98,7 @@ function detachGroup(group: Group, removedGroups: readonly GroupId[]): Group {
   if (!removedGroups.includes(group.parent)) {
     return group;
   }
-  const { parent: removedParent, ...unparented } = group;
-  // `void` marks the removed field as deliberately unused; only the rest copy is kept.
-  void removedParent;
-  return unparented;
+  return withoutField(group, 'parent');
 }
 
 /** Tells whether a layout target is the deleted object or a removed group. */
@@ -146,10 +140,7 @@ function clearDeletedRoot(section: Section, removedId: ObjectId): Section {
   if (section.root !== removedId) {
     return section;
   }
-  const { root: removedRoot, ...withoutRoot } = section;
-  // `void` marks the removed field as deliberately unused; only the rest copy is kept.
-  void removedRoot;
-  return withoutRoot;
+  return withoutField(section, 'root');
 }
 
 /** Tells whether a sequence item stays: fragments always; events not from or to the object. */
@@ -158,4 +149,15 @@ function sequenceItemSurvives(item: SequenceItem, removedId: ObjectId): boolean 
     return true;
   }
   return item.source !== removedId && item.target !== removedId;
+}
+
+/**
+ * Returns a copy of the record without one optional field; the other own fields keep their order.
+ * Reads the field first, then copies the rest (the same reads as a rest destructuring).
+ */
+function withoutField<T extends object, K extends keyof T>(record: T, key: K): Omit<T, K> {
+  const { [key]: removedValue, ...rest } = record;
+  // `void` marks the removed value as deliberately unused; only the rest copy is kept.
+  void removedValue;
+  return rest;
 }

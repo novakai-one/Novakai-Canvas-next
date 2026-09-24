@@ -3,6 +3,7 @@ import type { Diagnostic } from '../../contract/errors.js';
 import type { Section, Group } from '../../contract/records/section.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
 import { duplicates } from '../invariants/duplicates.js';
+import { sectionPath } from './paths.js';
 
 /**
  * Lists the object IDs a section shows: each ordinary appearance's object, in order, then each
@@ -89,7 +90,7 @@ export function nestedIn(
  * @throws Never for a parsed section.
  */
 export function validateGroups(section: Section): readonly Diagnostic[] {
-  const path = `sections.${section.id}`;
+  const path = sectionPath(section);
   const groupIdentities = duplicates(
     section.groups,
     /** A group's key is its ID. */

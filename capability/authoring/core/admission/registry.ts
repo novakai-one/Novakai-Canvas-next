@@ -63,8 +63,8 @@ export async function planIntent(
 }
 
 /**
- * Plans an undo or redo inside an async function, so the returned promise settles on the same
- * microtask schedule as the change path.
+ * Plans an undo or redo inside an async function. This keeps the scheduling of the original async
+ * undo/redo handler; it does not make it settle on the same schedule as a change planner.
  */
 async function planInverseAsync(request: Request, snapshot: Snapshot): Promise<Proposal> {
   return planInverse(request, snapshot);

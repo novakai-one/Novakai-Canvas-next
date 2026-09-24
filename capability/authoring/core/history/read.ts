@@ -46,7 +46,8 @@ export function headKey(request: RequestId): RecordKey {
  * @returns The checked transaction.
  * @throws AuthoringFault `unknown-reference` when no transaction is stored for the request.
  * @throws AuthoringFault `corrupt-record` when the record is deleted, does not match the transaction shape, or has a different ID.
- * @throws AuthoringFault `invalid-input` at `$` when the stored value is not plain JSON or is over the stored size limits.
+ * @throws AuthoringFault `invalid-input` when the stored value is not plain JSON or is over the stored size limits
+ *   (at `$`, or at the property name for an accessor property).
  * @throws AuthoringFault `invalid-input` at `history` when the transaction is itself an undo or redo.
  */
 export function readTransaction(snapshot: Snapshot, request: RequestId): Transaction {
@@ -67,7 +68,8 @@ export function readTransaction(snapshot: Snapshot, request: RequestId): Transac
  * @returns The checked history head.
  * @throws AuthoringFault `unknown-reference` when no head is stored for the request.
  * @throws AuthoringFault `corrupt-record` when the record is deleted, does not match the head shape, or belongs to another change.
- * @throws AuthoringFault `invalid-input` at `$` when the stored value is not plain JSON or is over the stored size limits.
+ * @throws AuthoringFault `invalid-input` when the stored value is not plain JSON or is over the stored size limits
+ *   (at `$`, or at the property name for an accessor property).
  */
 export function readHead(snapshot: Snapshot, request: RequestId): HistoryHead {
   const record = retainedRecord(snapshot, headKey(request));

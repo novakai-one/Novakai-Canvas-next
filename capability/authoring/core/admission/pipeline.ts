@@ -41,6 +41,8 @@ type HashedPreparation = Omit<Preparation, 'candidateHash' | 'preview'>;
  * @param cancellation - The cancellation role.
  * @returns Nothing when the request is not cancelled.
  * @throws AuthoringFault `cancelled` when the request was cancelled.
+ * @throws The cancellation role's own error, unchanged, when it throws. The public boundary
+ *   (`protect` in `contract/api.ts`) turns it into a failed `Result`.
  */
 export function checkCancellation(
   request: Request,
@@ -74,7 +76,8 @@ export function checkCancellation(
  * @param deps - The planning collaborators.
  * @returns The deeply frozen candidate: snapshots before and after, and the preparation to return or commit.
  * @throws AuthoringFault from any step above.
- * @throws A collaborator's own error, unchanged, when a planner, validator, feasibility check or hasher
+ * @throws A collaborator's own error, unchanged, when the cancellation role, a planner, validator,
+ *   feasibility check or hasher
  *   throws. The public boundary (`protect` in `contract/api.ts`) turns it into a failed `Result`.
  */
 export async function buildCandidate(

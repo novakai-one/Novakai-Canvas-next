@@ -20,7 +20,9 @@ import { accepted, reject } from '../validation/outcomes.js';
  * @param receipts - The receipt store used for recovery.
  * @returns The committed receipt.
  * @throws The original commit failure (an AuthoringFault or the store's own error) when no receipt is stored.
- * @throws AuthoringFault from the recovery lookup when it fails, or finds a malformed or foreign receipt.
+ * @throws AuthoringFault from the recovery lookup when it returns a failure, or finds a malformed or foreign receipt.
+ * @throws The receipt store's own error, unchanged, when the recovery lookup throws. The public boundary
+ *   (`protect` in `contract/api.ts`) turns it into a failed `Result`.
  */
 export async function commitAndReconcile(
   request: Request,

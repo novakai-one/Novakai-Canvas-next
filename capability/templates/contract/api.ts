@@ -19,8 +19,9 @@ import { instantiate } from '../core/expansion/instantiate.js';
  *    effect.
  *
  * Input that is not plain JSON data, is nested deeper than 48 levels, or is larger than 8 MiB is
- * `invalid-input` at `$`. The result is a frozen copy. A throw becomes a failure: an
- * `InputFault` keeps its code, path and message; anything else becomes `provider-failed` at `$`.
+ * `invalid-input` at `$`. A returned result is a frozen copy. A throw becomes a failure that is
+ * not copied or frozen: an `InputFault` keeps its code, path and message; anything else becomes
+ * `provider-failed` at `$`.
  * Limit: `protect` inspects a thrown value to turn it into a failure: it checks
  * `instanceof InputFault`, then reads an `InputFault`'s `code`, `path` and `message`. If any of
  * these steps throws, that error escapes the method instead of a failure. Examples: a thrown proxy

@@ -73,9 +73,10 @@ export function clone<T>(value: T): T {
 
 /**
  * The public boundary of every Templates operation. Runs `action`, then copies (with
- * {@link clone}) and deep-freezes its result, success or failure. No partial output escapes.
+ * {@link clone}) and deep-freezes the result it returns, success or failure. No partial output
+ * escapes.
  *
- * A throw becomes a failure: an {@link InputFault} keeps its code, path and message; anything
+ * A throw becomes a failure, which is neither copied nor frozen: an {@link InputFault} keeps its code, path and message; anything
  * else becomes `provider-failed` at `$`, "Preset provider failed; no plan was produced".
  * Known limit: to build the failure, the thrown value is checked with `instanceof InputFault`,
  * and an `InputFault`'s `code`, `path` and `message` are read. If any of these steps throws, that
@@ -84,7 +85,7 @@ export function clone<T>(value: T): T {
  * Authoring owns correction and retry.
  *
  * @param action - The operation to run.
- * @returns A frozen copy of the action's result, or the failure for a throw.
+ * @returns A frozen copy of the action's result, or the (unfrozen) failure for a throw.
  * @throws Only an error raised while inspecting a thrown value, as described above.
  */
 export function protect<T>(action: () => Result<T>): Result<T> {

@@ -3,15 +3,15 @@ import type { Catalog, Folder, CatalogEntry } from '../../contract/records/catal
 import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
 
-interface Ancestry {
-  readonly visited: ReadonlySet<FolderId>;
-  readonly cycle: boolean;
-}
-/** Stop before revisiting a parent or reading beyond the implicit root. */
-function canVisit(id: FolderId | undefined, visited: ReadonlySet<FolderId>): id is FolderId {
-  return id !== undefined && !visited.has(id);
-}
-/** Bounded local traversal; even malformed cyclic graphs terminate without recursion. */
+/**
+ * Walks up from `start` through parent links until it reaches the root, a missing folder, or a
+ * folder already visited. A loop instead of recursion, so even a malformed cyclic graph ends.
+ *
+ * @param start - The folder to start from (included in `visited`).
+ * @param folders - The catalog's folders.
+ * @returns The folders visited, and `cycle: true` when the walk stopped at a folder it had
+ * already visited.
+ */
 export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry {
   const visited = new Set<FolderId>();
   let current: FolderId | undefined = start;
@@ -21,47 +21,63 @@ export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry 
   }
   return { visited, cycle: current !== undefined };
 }
-/** Direct folder membership includes the owner itself when descendant discovery is enabled. */
+
+/**
+ * True when `folder` is `owner` itself or one of its descendants. Used for searches that include
+ * subfolders. An entry at the root (`folder` undefined) is never within a folder.
+ *
+ * @param folder - The entry's folder, or `undefined` for the root.
+ * @param owner - The folder searched.
+ * @param folders - The catalog's folders.
+ */
 export function isWithin(
   folder: FolderId | undefined,
   owner: FolderId,
   folders: readonly Folder[],
 ): boolean {
-  if (folder === undefined) return false;
+  if (folder === undefined) {
+    return false;
+  }
   return ancestry(folder, folders).visited.has(owner);
 }
-/** Moving to root omits parent rather than storing undefined. */
-function moveFolder(folder: Folder, parent: FolderId | undefined): Folder {
-  const { parent: previousParent, ...record } = folder;
-  void previousParent;
-  if (parent === undefined) return record;
-  return { ...record, parent };
+
+/**
+ * Removes one folder from a catalog.
+ *
+ * A missing folder is `not-found`. A folder with child folders or entries is `folder-not-empty`
+ * under the `reject` policy. Under `rehome`, its direct child folders and its entries move to its
+ * parent (the root when it has none); deeper descendants stay where they are. Planning validates
+ * the resulting catalog afterwards; Authoring owns the commit and recovery.
+ *
+ * @param catalog - The catalog.
+ * @param id - The folder to remove.
+ * @param policy - `reject` or `rehome`.
+ * @returns The new catalog, or a failure with no partial value.
+ */
+export function removeFolder(
+  catalog: Catalog,
+  id: FolderId,
+  policy: 'reject' | 'rehome',
+): Result<Catalog> {
+  const folder = catalog.folders.find((candidate) => candidate.id === id);
+  if (folder === undefined) {
+    return failure('not-found', `catalog.folders.${id}`, 'Folder must exist');
+  }
+  return removeExisting(catalog, folder, policy);
 }
-/** Moving a collection to root omits folder while retaining order/archive flags. */
-function moveEntry(entry: CatalogEntry, folder: FolderId | undefined): CatalogEntry {
-  const { folder: previousFolder, ...record } = entry;
-  void previousFolder;
-  if (folder === undefined) return record;
-  return { ...record, folder };
+
+/** The result of {@link ancestry}. */
+export interface Ancestry {
+  readonly visited: ReadonlySet<FolderId>;
+  readonly cycle: boolean;
 }
-/** Only direct children change parent; their own nested descendants stay attached. */
-function rehomeFolder(folder: Folder, removed: Folder): Folder {
-  if (folder.parent !== removed.id) return folder;
-  return moveFolder(folder, removed.parent);
+
+/** Whether the walk may continue: not past the root, and not to a folder already visited. */
+function canVisit(id: FolderId | undefined, visited: ReadonlySet<FolderId>): id is FolderId {
+  return id !== undefined && !visited.has(id);
 }
-/** Entries in surviving descendant folders keep their existing membership. */
-function rehomeEntry(entry: CatalogEntry, removed: Folder): CatalogEntry {
-  if (entry.folder !== removed.id) return entry;
-  return moveEntry(entry, removed.parent);
-}
-/** Remove the container while preserving all collections and surviving folder identities. */
-function rehomeContents(catalog: Catalog, removed: Folder): Catalog {
-  const surviving = catalog.folders.filter((folder) => folder.id !== removed.id);
-  const folders = surviving.map((folder) => rehomeFolder(folder, removed));
-  const entries = catalog.entries.map((entry) => rehomeEntry(entry, removed));
-  return { ...catalog, folders, entries };
-}
-/** Reject a nonempty folder unless rehome was explicitly requested. */
+
+/** Rejects a folder with contents under `reject`; otherwise removes it and rehomes its contents. */
 function removeExisting(
   catalog: Catalog,
   folder: Folder,
@@ -70,25 +86,56 @@ function removeExisting(
   const hasChildren =
     catalog.folders.some((child) => child.parent === folder.id) ||
     catalog.entries.some((entry) => entry.folder === folder.id);
-  if (policy === 'reject' && hasChildren)
+  if (policy === 'reject' && hasChildren) {
     return failure(
       'folder-not-empty',
       `catalog.folders.${folder.id}`,
       'Choose rehome before removing a nonempty folder',
     );
+  }
   return success(rehomeContents(catalog, folder));
 }
-/**
- * Plan one folder removal. Missing/nonempty targets are typed failures with no partial value.
- * Pure snapshot replay; catalog planning validates the result and Authoring owns commit/recovery.
- */
-export function removeFolder(
-  catalog: Catalog,
-  id: FolderId,
-  policy: 'reject' | 'rehome',
-): Result<Catalog> {
-  const folder = catalog.folders.find((candidate) => candidate.id === id);
-  if (folder === undefined)
-    return failure('not-found', `catalog.folders.${id}`, 'Folder must exist');
-  return removeExisting(catalog, folder, policy);
+
+/** Removes the folder and moves its direct contents to its parent; every collection is kept. */
+function rehomeContents(catalog: Catalog, removed: Folder): Catalog {
+  const surviving = catalog.folders.filter((folder) => folder.id !== removed.id);
+  const folders = surviving.map((folder) => rehomeFolder(folder, removed));
+  const entries = catalog.entries.map((entry) => rehomeEntry(entry, removed));
+  return { ...catalog, folders, entries };
+}
+
+/** Moves a direct child of the removed folder to its parent; other folders are unchanged. */
+function rehomeFolder(folder: Folder, removed: Folder): Folder {
+  if (folder.parent !== removed.id) {
+    return folder;
+  }
+  return moveFolder(folder, removed.parent);
+}
+
+/** Moves an entry in the removed folder to its parent; other entries are unchanged. */
+function rehomeEntry(entry: CatalogEntry, removed: Folder): CatalogEntry {
+  if (entry.folder !== removed.id) {
+    return entry;
+  }
+  return moveEntry(entry, removed.parent);
+}
+
+/** A copy of the folder under `parent`. At the root the `parent` key is left out, not undefined. */
+function moveFolder(folder: Folder, parent: FolderId | undefined): Folder {
+  const { parent: previousParent, ...record } = folder;
+  void previousParent;
+  if (parent === undefined) {
+    return record;
+  }
+  return { ...record, parent };
+}
+
+/** A copy of the entry in `folder`, keeping order and archive state. At the root the key is left out. */
+function moveEntry(entry: CatalogEntry, folder: FolderId | undefined): CatalogEntry {
+  const { folder: previousFolder, ...record } = entry;
+  void previousFolder;
+  if (folder === undefined) {
+    return record;
+  }
+  return { ...record, folder };
 }

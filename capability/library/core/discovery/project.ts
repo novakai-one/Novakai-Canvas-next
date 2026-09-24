@@ -2,20 +2,48 @@ import type { LibrarySnapshot, CollectionProjection } from '../../contract/recor
 import type { ReadVersions } from '../../contract/types.js';
 import type { SearchHit } from '../../contract/records/query.js';
 
-/** Code-unit order is deterministic across machines and independent of the user's locale. */
+/**
+ * Compares two strings by UTF-16 code unit, so the order is the same on every machine and in every
+ * locale.
+ *
+ * @returns -1, 0 or 1.
+ */
 export function compareText(left: string, right: string): number {
-  if (left < right) return -1;
-  if (left > right) return 1;
+  if (left < right) {
+    return -1;
+  }
+  if (left > right) {
+    return 1;
+  }
   return 0;
 }
-/** Return original revision provenance in canonical collection-ID order. */
+
+/**
+ * The source revisions of a snapshot: the catalog's, and each collection's sorted by collection ID.
+ *
+ * @param snapshot - The validated snapshot.
+ * @returns A new `ReadVersions` record.
+ */
 export function readVersions(snapshot: LibrarySnapshot): ReadVersions {
   const collections = snapshot.collections
     .map((collection) => ({ id: collection.id, revision: collection.revision }))
     .toSorted((left, right) => compareText(left.id, right.id));
   return { catalog: { id: snapshot.catalog.id, revision: snapshot.catalog.revision }, collections };
 }
-/** All semantic objects produce hits, including those with no visible appearance. */
+
+/**
+ * Builds every search hit of a snapshot, in inventory order: for each collection, the collection
+ * itself, then its sections, then its objects (including objects in no section). Rebuilt on every
+ * call; nothing is cached and the catalog is not touched.
+ *
+ * @param snapshot - The validated snapshot.
+ * @returns The hits, before filtering and sorting.
+ */
+export function projectHits(snapshot: LibrarySnapshot): readonly SearchHit[] {
+  return snapshot.collections.flatMap(projectCollection);
+}
+
+/** The hits of one collection: the collection, its sections, then its objects. */
 function projectCollection(collection: CollectionProjection): readonly SearchHit[] {
   const collectionHit: SearchHit = {
     kind: 'collection',
@@ -42,8 +70,4 @@ function projectCollection(collection: CollectionProjection): readonly SearchHit
     visibleIn: object.visibleIn,
   }));
   return [collectionHit, ...sections, ...objects];
-}
-/** Rebuild a discovery projection from one validated snapshot; no cache or catalog mutation. */
-export function projectHits(snapshot: LibrarySnapshot): readonly SearchHit[] {
-  return snapshot.collections.flatMap(projectCollection);
 }

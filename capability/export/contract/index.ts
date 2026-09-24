@@ -1,4 +1,8 @@
-/** Export public boundary: revision-pinned artifacts and uncommitted portable import candidates. */
+/*
+ * Export's public boundary: revision-pinned artifacts (SVG, PNG, PDF, HTML and portable
+ * bundles), bundle inspection, uncommitted import preparation and Markdown text. Only the
+ * functions and types below are public; schemas and core helpers stay internal.
+ */
 export { createExport } from './api.js';
 export { composeExport, initializeRaster } from './compose.js';
 export { formatMarkdown } from './markdown.js';

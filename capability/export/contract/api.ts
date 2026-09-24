@@ -1,3 +1,7 @@
+/*
+ * The Export service factory. Each operation parses its unknown input first, then runs inside
+ * `protect`, so nothing it calls can make it throw or reject.
+ */
 import type { Export, Dependencies } from './types.js';
 import type { Result } from './errors.js';
 import type { Artifact } from './records/artifact.js';
@@ -9,7 +13,27 @@ import { parse, protect } from '../core/validation/outcomes.js';
 import { produce } from '../core/artifacts/produce.js';
 import { inspectBundle } from '../core/bundles/inspect.js';
 import { prepareImport } from '../core/bundles/prepare.js';
-/** Unknown request rejection occurs before revision retention or native encoding. */
+
+/**
+ * Builds the Export service from its dependencies, which are bound once. Every operation only
+ * reads, so a failed call is safe to retry; the host repairs providers and performs any writes.
+ *
+ * @param deps - Snapshots, format handlers, documents, resources and encoding.
+ * @returns A frozen service. A throw inside `exportArtifact` becomes `encoding-failed`, inside
+ * `inspectBundle` `invalid-bundle`, and inside `prepareImport` `invalid-import`.
+ */
+export function createExport(deps: Dependencies): Export {
+  return Object.freeze({
+    exportArtifact: (input, signal) => protect(() => exportInput(input, deps, signal)),
+    inspectBundle: (bytes) => protect(() => inspectBundle(bytes, deps), 'invalid-bundle'),
+    prepareImport: (input) => protect(() => importInput(input, deps), 'invalid-import'),
+  } satisfies Export);
+}
+
+/**
+ * Parses the export request. A malformed one fails (`invalid-input`) before any revision is
+ * acquired or encoded.
+ */
 async function exportInput(
   input: unknown,
   deps: Dependencies,
@@ -19,17 +43,13 @@ async function exportInput(
   if (!request.ok) return request;
   return produce(request.value, deps, signal);
 }
-/** Import preparation never commits resources or canonical data. Caller submits through Authoring. */
+
+/**
+ * Parses the import request (`invalid-input` if malformed), then prepares it. Nothing is
+ * committed; the caller submits through Authoring.
+ */
 async function importInput(input: unknown, deps: Dependencies): Promise<Result<PreparedImport>> {
   const request = parse(importSchema, input);
   if (!request.ok) return request;
   return prepareImport(request.value, deps);
-}
-/** Bind required owner roles once. Failed reads are safe to retry; hosts own provider repair and writes. */
-export function createExport(deps: Dependencies): Export {
-  return Object.freeze({
-    exportArtifact: (input, signal) => protect(() => exportInput(input, deps, signal)),
-    inspectBundle: (bytes) => protect(() => inspectBundle(bytes, deps), 'invalid-bundle'),
-    prepareImport: (input) => protect(() => importInput(input, deps), 'invalid-import'),
-  } satisfies Export);
 }

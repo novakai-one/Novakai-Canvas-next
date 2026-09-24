@@ -95,8 +95,10 @@ function isVisibleTarget(target: LayoutTarget, section: Section): boolean {
 }
 
 /**
- * Returns the group a target sits in. A group's is its parent. An object's is its appearance's
- * group; without one, the parent of the group that represents it.
+ * Returns the group a target sits in. A group target: its parent. Any other target (an object,
+ * or an invalid section target): the group of the first appearance whose object has the
+ * target's ID; when there is no such appearance or its `group` is undefined, the parent of the
+ * first group that represents that ID.
  */
 function targetParent(target: LayoutTarget, section: Section): GroupId | undefined {
   if (target.kind === 'group') {

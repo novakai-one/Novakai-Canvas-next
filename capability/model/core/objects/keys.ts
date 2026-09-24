@@ -24,13 +24,16 @@ import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
  * A foreign key reports, in this order, all at the block path `objects.<id>.content.<block>`
  * unless noted:
  * 1. "Foreign key arity must match" when local and referenced field counts differ;
- * 2. "Composite foreign key targets one entity" when references name different objects;
+ * 2. "Composite foreign key targets one entity" when a reference's object differs from the ID of
+ *    the object the first reference resolves to (so when that object is missing, any reference
+ *    reports it, even a single one);
  * 3. `reference` at `<block path>.<member>` (or `.member` when absent) for each reference that is
  *    not a field of an entity;
  * 4. "Foreign references must match an ordered primary or unique key" unless the referenced
  *    fields, in order, equal a primary or unique key of the first reference's object;
- * 5. "Foreign field types must match target types" when a local field's type differs from its
- *    target's (definition references compare by ID; plain string types compare as text).
+ * 5. "Foreign field types must match target types" when a local field's target field is missing
+ *    or its type differs (definition references compare by ID; plain string types compare as
+ *    text).
  * All except item 3 are `key` diagnostics.
  *
  * Pure: Authoring owns correction, admission, commit and crash recovery.

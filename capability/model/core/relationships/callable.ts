@@ -1,3 +1,4 @@
+import type { DescendantId } from '../../contract/brands.js';
 import type { Collection } from '../../contract/records/collection.js';
 import type { Endpoint } from '../../contract/records/content.js';
 import type { DiagramObject } from '../../contract/records/object.js';
@@ -24,7 +25,8 @@ export interface CallableEndpoint {
  * the endpoint is not callable or its owner or member does not exist. The result is not frozen.
  * `owner` is the collection's own object record (frozen if the collection came from `validate`);
  * `member` is a new `{ id, kind }` description, not frozen.
- * @throws Only if given data that is not a validated collection.
+ * @throws Only if given data that is not a validated collection, or an endpoint that is not plain
+ * parsed data (for example one whose getter throws); the endpoint is not checked here.
  */
 export function resolveCallableEndpoint(
   collection: Collection,
@@ -57,7 +59,7 @@ function resolveWholeCallable(owner: DiagramObject): CallableEndpoint | undefine
  */
 function resolveMemberCallable(
   owner: DiagramObject,
-  memberId: string,
+  memberId: DescendantId,
 ): CallableEndpoint | undefined {
   if (!['module', 'interface', 'function'].includes(owner.kind)) {
     return undefined;

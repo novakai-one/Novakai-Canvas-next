@@ -53,7 +53,8 @@ function isAllowedMember(member: ObjectDescendant | undefined, ownerKind: Object
   if (member === undefined) {
     return false;
   }
-  const allowed: readonly string[] = memberEndpoints[ownerKind] ?? genericMemberEndpoints;
+  const allowed: readonly ObjectDescendant['kind'][] =
+    memberEndpoints[ownerKind] ?? genericMemberEndpoints;
   return allowed.includes(member.kind);
 }
 

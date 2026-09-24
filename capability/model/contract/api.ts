@@ -109,7 +109,8 @@ export { typeUseDisplay } from '../core/definitions.js';
  * @param collection - A validated collection.
  * @param endpoint - The relationship endpoint to resolve.
  * @returns The owner (and member), or `undefined` when the endpoint is not callable. Not frozen.
- * @throws Only if given data that is not a validated collection.
+ * @throws Only if given data that is not a validated collection, or an endpoint that is not plain
+ * parsed data.
  */
 export { resolveCallableEndpoint } from '../core/relationships/callable.js';
 

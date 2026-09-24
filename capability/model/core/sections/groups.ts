@@ -38,7 +38,8 @@ export function visibleObjects(section: Section): readonly ObjectId[] {
  * @param start - The ID to start from.
  * @param parentOf - Returns an ID's parent, or `undefined` at the top. Called once per visited ID.
  * @returns `true` when the chain repeats an ID.
- * @throws Whatever `parentOf` throws.
+ * @throws Whatever `parentOf` throws; it is not caught here. The validators that call it run
+ * inside `validate`'s `safelyValidateShape`, which turns a throw into `shape` at `$`.
  */
 export function hasCycle<Id extends string>(
   start: Id,

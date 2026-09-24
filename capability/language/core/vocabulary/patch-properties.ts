@@ -1,9 +1,24 @@
+/*
+ * The patch vocabulary: which properties `set` and `unset` may change on each target, and the
+ * words that start an operation. A patch edits only these plain values; changing a kind, an ID,
+ * a group or a section membership needs a `replace` or a membership operation instead. Plain
+ * data: nothing here runs. Language owns correcting the source; Authoring owns commit recovery.
+ */
 import type { TargetKind } from '../../contract/records/syntax.js';
 import type { Property } from '../../contract/records/vocabulary.js';
 import { properties as p, layoutProperties } from './properties.js';
+
+/** A node, wire or block label. `required` is not checked in a patch. */
 const label: Property = { type: 'string', field: 'label', required: true };
+
+/** A collection or section title. `required` is not checked in a patch. */
 const title: Property = { type: 'string', field: 'title', required: true };
-/** Patch properties are owning scalar edits only; kinds, IDs, groups and memberships require replacement. */
+
+/**
+ * The properties `set` and `unset` accept, by target. The attribute name is the key; `asset`,
+ * `source` and `layout` have none. Patching also uses these tables to lower values, and printing
+ * uses the `appearance` and `route` tables for a section's `show` and `connect` entries.
+ */
 export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string, Property>>>> = {
   collection: { title, description: p.description, theme: p.theme, ...layoutProperties },
   node: {
@@ -68,6 +83,11 @@ export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string
   source: {},
   layout: {},
 };
+
+/**
+ * The words that start a patch operation. Reading `unset` property names stops at the first of
+ * these, and an unknown operation's diagnostic lists them.
+ */
 export const operationWords = [
   'add',
   'set',

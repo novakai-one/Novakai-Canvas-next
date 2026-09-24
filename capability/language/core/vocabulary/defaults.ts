@@ -1,4 +1,12 @@
-/** Layout defaults are mode semantics, shared by lowering and describe; Language owns correction. */
+/*
+ * Default values and closed word lists shared by the grammar, lowering and `describe`. Plain
+ * data: nothing here runs. Language owns correcting the source; Authoring owns commit recovery.
+ */
+
+/**
+ * The layout algorithm each section `mode` uses when the section names none. Lowering reads it
+ * (unknown modes fall back to `flow` there), and `describe` publishes it.
+ */
 export const layouts: Readonly<Record<string, string>> = {
   flow: 'flow',
   er: 'layered',
@@ -9,6 +17,11 @@ export const layouts: Readonly<Record<string, string>> = {
   story: 'grid',
   grid: 'grid',
 };
+
+/**
+ * The values used when the source leaves a setting out. `describe` publishes the whole record;
+ * layout lowering uses `direction` and `gap`.
+ */
 export const defaults = {
   theme: 'paper',
   role: 'neutral',
@@ -19,6 +32,8 @@ export const defaults = {
   collectionLayout: 'grid',
   sourceStatus: 'unverified',
 };
+
+/** Every node kind, the word after a node's ID (as in `node @a step "Label"`). */
 export const nodeKinds = [
   'step',
   'start',
@@ -36,6 +51,8 @@ export const nodeKinds = [
   'system',
   'note',
 ];
+
+/** Every wire kind, written as a wire's `kind=` attribute. */
 export const relationshipKinds = [
   'flow',
   'association',

@@ -1,3 +1,10 @@
+/*
+ * Reading declarations such as `node @a step "Label" size=small { … }`. Each construct in the
+ * vocabulary lists its positional values, its attributes and the constructs allowed in its
+ * braces. A shared type also has a compact form, `type @id "Label" = "A" | "B"`, whose
+ * expression is kept as text. Language owns correcting the source; Authoring owns commit
+ * recovery.
+ */
 import type {
   Declaration,
   Construct,
@@ -23,7 +30,45 @@ import { readValue, readReferenceList } from './values.js';
 import { checkValue } from './value-types.js';
 import { repeat } from './repetition.js';
 import { readIdentity } from './references.js';
-/** Dispatch only a shipped construct accepted by the current owning body. */
+
+/** The words that end a compact type expression when they are not inside parentheses. */
+const typeExpressionEnders = [
+  'type',
+  'asset',
+  'source',
+  'node',
+  'wire',
+  'section',
+  'rank',
+  'align',
+  'before',
+  'below',
+];
+
+/** The token texts of a compact type expression, and the tokens themselves. */
+interface TypeTokens {
+  /** The expression as one string, rebuilt from the token texts. */
+  readonly text: string;
+
+  /** The expression's tokens, in order. */
+  readonly tokens: readonly Token[];
+}
+
+/**
+ * Reads one declaration whose construct must be in `allowed`.
+ *
+ * - `type @id "Label" = …` is read as a compact type.
+ * - Otherwise the first word names a construct; its positional values, its attributes and, when
+ *   the construct has a body, its braces are read in that order. Required properties are
+ *   checked last.
+ *
+ * @param cursor - Where the declaration starts (its construct word).
+ * @param allowed - The constructs allowed here.
+ * @returns The declaration and the cursor after it.
+ * @throws A `LanguageFault`: `syntax` for an unknown or disallowed construct, unquoted
+ * positional text, a missing required property or an incomplete type expression; and every
+ * fault from reading values, attributes and nested declarations.
+ */
 export function readDeclaration(
   cursor: Cursor,
   allowed: readonly Construct[],
@@ -34,20 +79,25 @@ export function readDeclaration(
   return readDefined(cursor, definition);
 }
 
-function declarationDefinition(cursor: Cursor, allowed: readonly Construct[]): ConstructDefinition {
-  const definition = constructs.find((item) => item.kind === peek(cursor).text);
-  if (definition === undefined)
-    reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
-  if (!allowed.includes(definition.kind))
-    reject(
-      'syntax',
-      peek(cursor).span,
-      allowed.join(' / '),
-      'Declaration is not allowed in this body',
-    );
-  return definition;
-}
+/**
+ * The cases where a type expression's tokens are joined with no space, so that a number such
+ * as `1e-5` or `2E+3` stays one piece. Each takes the text so far and the next token.
+ */
+const exponentMatchers: readonly ((source: string, token: string) => boolean)[] = [
+  /** `e` or `E` right after a digit. */
+  (source, token) => (token === 'e' || token === 'E') && /\d$/u.test(source),
+  /** A word such as `e5` or `e-5` right after a digit. */
+  (source, token) => /^e[+-]?\d+$/u.test(token) && /\d$/u.test(source),
+  /** A sign right after `e` or `E`. */
+  (source, token) => (token === '+' || token === '-') && /[eE]$/u.test(source),
+  /** Digits (optionally signed) right after `e`, `E`, or one of them followed by a sign. */
+  (source, token) => /^[+-]?\d+$/u.test(token) && /[eE][+-]?$/u.test(source),
+];
 
+/**
+ * Reads the compact type form when the cursor is at `type` and the fourth token is `=`;
+ * otherwise `undefined`. The form must be allowed here.
+ */
 function compactTypeDeclaration(
   cursor: Cursor,
   allowed: readonly Construct[],
@@ -57,6 +107,7 @@ function compactTypeDeclaration(
   return readType(cursor);
 }
 
+/** Rejects a compact type where `type` is not allowed. */
 function requireAllowedType(cursor: Cursor, allowed: readonly Construct[]): void {
   if (!allowed.includes('type'))
     reject(
@@ -67,7 +118,10 @@ function requireAllowedType(cursor: Cursor, allowed: readonly Construct[]): void
     );
 }
 
-/** Read the compact shared-definition form: type @id "Label" = "A" | "B". */
+/**
+ * Reads `type @id "Label" = expression`. The label must be text. The expression runs to the next
+ * declaration word or `}` outside parentheses, and is kept as text with its tokens.
+ */
 function readType(cursor: Cursor): Parsed<Declaration> {
   const start = cursor;
   const identity = readIdentity(advance(cursor, 1));
@@ -100,11 +154,10 @@ function readType(cursor: Cursor): Parsed<Declaration> {
   };
 }
 
-interface TypeTokens {
-  readonly text: string;
-  readonly tokens: readonly Token[];
-}
-
+/**
+ * Collects the expression's tokens up to its end, tracking parenthesis depth. The expression must
+ * not be empty and its parentheses must balance.
+ */
 function readTypeTokens(cursor: Cursor): Parsed<TypeTokens> {
   const tokens: string[] = [];
   const sourceTokens: Token[] = [];
@@ -121,61 +174,79 @@ function readTypeTokens(cursor: Cursor): Parsed<TypeTokens> {
   return { value: { text: joinTypeTokens(tokens), tokens: sourceTokens }, next: current };
 }
 
+/** Whether the expression ends here: outside parentheses, at `}` or a declaration word. */
+function endsTypeDeclaration(token: Token, depth: number): boolean {
+  if (depth > 0) return false;
+  return token.text === '}' || isTypeExpressionEnder(token);
+}
+
+/** Whether the token is a word that starts the next declaration. */
+function isTypeExpressionEnder(token: Token): boolean {
+  return token.kind === 'word' && typeExpressionEnders.includes(token.text);
+}
+
+/** The parenthesis depth after this token: `(` opens one level, `)` closes one. */
 function nextTypeDepth(token: string, depth: number): number {
   if (token === '(') return depth + 1;
   if (token === ')') return depth - 1;
   return depth;
 }
 
+/** Rejects an empty expression or unbalanced parentheses, at the token after the expression. */
 function requireCompleteType(tokens: readonly string[], depth: number, span: Token['span']): void {
   if (tokens.length === 0 || depth !== 0)
     reject('syntax', span, 'Type expression', 'Expected a complete type expression');
 }
 
-function endsTypeDeclaration(token: Token, depth: number): boolean {
-  if (depth > 0) return false;
-  return (
-    token.text === '}' ||
-    (token.kind === 'word' &&
-      [
-        'type',
-        'asset',
-        'source',
-        'node',
-        'wire',
-        'section',
-        'rank',
-        'align',
-        'before',
-        'below',
-      ].includes(token.text))
-  );
-}
-
+/** Rebuilds the expression text from its token texts. */
 function joinTypeTokens(tokens: readonly string[]): string {
   return tokens.reduce(joinTypeToken, '');
 }
 
+/**
+ * Appends one token. `.` and the pieces of an exponent join with no space; any other token
+ * follows one space, except at the start or right after a `.`.
+ */
 function joinTypeToken(source: string, token: string): string {
   if (token === '.' || exponentContinuation(source, token)) return `${source}${token}`;
-  return needsTypeSpace(source) ? `${source} ${token}` : `${source}${token}`;
+  if (needsTypeSpace(source)) return `${source} ${token}`;
+  return `${source}${token}`;
 }
 
+/** Whether the token continues a number's exponent (see {@link exponentMatchers}). */
 function exponentContinuation(source: string, token: string): boolean {
-  return exponentMatchers.some((matcher) => matcher(source, token));
+  return exponentMatchers.some(
+    /** Whether this case matches. */ (matcher) => matcher(source, token),
+  );
 }
 
-const exponentMatchers: readonly ((source: string, token: string) => boolean)[] = [
-  (source, token) => (token === 'e' || token === 'E') && /\d$/u.test(source),
-  (source, token) => /^e[+-]?\d+$/u.test(token) && /\d$/u.test(source),
-  (source, token) => (token === '+' || token === '-') && /[eE]$/u.test(source),
-  (source, token) => /^[+-]?\d+$/u.test(token) && /[eE][+-]?$/u.test(source),
-];
-
+/** Whether a space goes before the next token: not at the start, and not right after `.`. */
 function needsTypeSpace(source: string): boolean {
   return source.length > 0 && !source.endsWith('.');
 }
-/** Positions, attributes and children are separate grammar stages with named intermediate results. */
+
+/** The construct named by the word at the cursor; it must exist and be allowed here. */
+function declarationDefinition(cursor: Cursor, allowed: readonly Construct[]): ConstructDefinition {
+  const definition = constructs.find(
+    /** Whether this construct is named by the word. */ (item) => item.kind === peek(cursor).text,
+  );
+  if (definition === undefined)
+    reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
+  if (!allowed.includes(definition.kind))
+    reject(
+      'syntax',
+      peek(cursor).span,
+      allowed.join(' / '),
+      'Declaration is not allowed in this body',
+    );
+  return definition;
+}
+
+/**
+ * Reads a construct's declaration in stages: positional values, attributes, then the body. An
+ * attribute with the same name as a positional value replaces it. Required properties are
+ * checked after the body is read.
+ */
 function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<Declaration> {
   const positional = definition.positions.reduce(readPosition, {
     value: {},
@@ -195,38 +266,63 @@ function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<De
     next: children.next,
   };
 }
-/** Optional branch identities are omitted only when the next token is its quoted label. */
+
+/**
+ * Reads one positional value. A literal (such as a wire's `->`) is consumed and not stored. An
+ * optional ID is skipped when the next token is not an ID.
+ */
 function readPosition(current: Parsed<Fields>, rule: PositionRule): Parsed<Fields> {
   if (rule.literal !== undefined) return { ...current, next: consume(current.next, rule.literal) };
   if (optionalIdentityMissing(current.next, rule)) return current;
   return readRequiredPosition(current, rule);
 }
-/** Reference-list positions consume whitespace-delimited IDs; attribute lists use square brackets. */
+
+/** Whether an optional ID position is left out: the next token is not an ID. */
+function optionalIdentityMissing(cursor: Cursor, rule: PositionRule): boolean {
+  return rule.optional === true && peek(cursor).kind !== 'id';
+}
+
+/**
+ * Reads a positional value, checks its form, then (for text) checks that it was quoted, and
+ * stores it under the rule's name.
+ */
 function readRequiredPosition(current: Parsed<Fields>, rule: PositionRule): Parsed<Fields> {
   const raw = positionalValue(current.next, rule.type);
   const checked = checkValue(raw.value, { ...rule, field: rule.name }, rule.name);
   requireQuotedPosition(current.next, rule);
   return { value: { ...current.value, [rule.name]: checked }, next: raw.next };
 }
-/** Required quoted text cannot be confused with a following declaration keyword. */
+
+/** Reads the value; `references` and `targets` positions are unbracketed lists (`show @a @b`). */
+function positionalValue(cursor: Cursor, type: PositionRule['type']): Parsed<LocatedValue> {
+  if (type === 'references' || type === 'targets') return readReferenceList(cursor);
+  return readValue(cursor);
+}
+
+/** Text positions must be quoted, so a bare word (such as a keyword) is not taken as text. */
 function requireQuotedPosition(cursor: Cursor, rule: PositionRule): void {
   if (rule.type !== 'string') return;
   if (peek(cursor).kind !== 'string')
     reject('syntax', peek(cursor).span, 'Quoted string', 'Positional text must be quoted');
 }
-/** Only the two positional list forms are unbracketed. */
-function positionalValue(cursor: Cursor, type: PositionRule['type']): ReturnType<typeof readValue> {
-  if (type === 'references' || type === 'targets') return readReferenceList(cursor);
-  return readValue(cursor);
-}
-/** Required attributes have no hidden default; Model owns cross-record constraints afterward. */
+
+/**
+ * Rejects the first required property (in the construct's order) that is missing, at the
+ * declaration's first token. There are no hidden defaults; Model checks relations afterwards.
+ */
 function checkRequired(fields: Fields, definition: ConstructDefinition, cursor: Cursor): void {
-  Object.entries(definition.properties).forEach(([name, property]) => {
-    if (property.required && !Object.hasOwn(fields, name))
-      reject('syntax', peek(cursor).span, name, 'Required property is missing');
-  });
+  Object.entries(definition.properties).forEach(
+    /** Rejects this property when it is required and missing. */ ([name, property]) => {
+      if (property.required && !Object.hasOwn(fields, name))
+        reject('syntax', peek(cursor).span, name, 'Required property is missing');
+    },
+  );
 }
-/** Nested braces carry allowed child vocabulary; flat declaration count uses iterative repetition. */
+
+/**
+ * Reads `{ declarations }` when the construct has a body (`allowed` is not `null`); nested
+ * declarations must be in `allowed`. A construct without a body reads nothing.
+ */
 function readChildren(
   cursor: Cursor,
   allowed: readonly Construct[] | null,
@@ -236,14 +332,10 @@ function readChildren(
   const children = accepted(
     repeat(
       body,
-      (item) => peek(item).text !== '}',
-      (item) => readDeclaration(item, allowed),
+      /** Whether another declaration follows (not the closing brace). */ (item) =>
+        peek(item).text !== '}',
+      /** Reads one nested declaration. */ (item) => readDeclaration(item, allowed),
     ),
   );
   return { value: children.value, next: leave(consume(children.next, '}')) };
-}
-
-/** Only branch IDs have optional positional syntax. */
-function optionalIdentityMissing(cursor: Cursor, rule: PositionRule): boolean {
-  return rule.optional === true && peek(cursor).kind !== 'id';
 }

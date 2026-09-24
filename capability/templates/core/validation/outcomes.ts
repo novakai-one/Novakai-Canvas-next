@@ -77,14 +77,15 @@ export function clone<T>(value: T): T {
  *
  * A throw becomes a failure: an {@link InputFault} keeps its code, path and message; anything
  * else becomes `provider-failed` at `$`, "Preset provider failed; no plan was produced".
- * Known limit: the thrown value is checked with `instanceof InputFault`. If that check itself
- * throws, that error escapes. Examples: a proxy whose `getPrototypeOf` trap throws (its own error
- * escapes), or a revoked proxy (a `TypeError` escapes).
+ * Known limit: to build the failure, the thrown value is checked with `instanceof InputFault`,
+ * and an `InputFault`'s `code`, `path` and `message` are read. If any of these steps throws, that
+ * error escapes. Examples: a proxy whose `getPrototypeOf` trap throws (its own error escapes), a
+ * revoked proxy (a `TypeError` escapes), or an `InputFault` whose `code` is a throwing getter.
  * Authoring owns correction and retry.
  *
  * @param action - The operation to run.
  * @returns A frozen copy of the action's result, or the failure for a throw.
- * @throws Only an error raised while checking a thrown value, as described above.
+ * @throws Only an error raised while inspecting a thrown value, as described above.
  */
 export function protect<T>(action: () => Result<T>): Result<T> {
   try {

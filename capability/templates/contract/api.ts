@@ -21,9 +21,11 @@ import { instantiate } from '../core/expansion/instantiate.js';
  * Input that is not plain JSON data, is nested deeper than 48 levels, or is larger than 8 MiB is
  * `invalid-input` at `$`. The result is a frozen copy. A throw becomes a failure: an
  * `InputFault` keeps its code, path and message; anything else becomes `provider-failed` at `$`.
- * Limit: `protect` checks a thrown value with `instanceof`. If that check itself throws, that
- * error escapes the method instead of a failure. Example: a provider throws a proxy whose
- * `getPrototypeOf` trap throws, or a revoked proxy.
+ * Limit: `protect` inspects a thrown value to turn it into a failure: it checks
+ * `instanceof InputFault`, then reads an `InputFault`'s `code`, `path` and `message`. If any of
+ * these steps throws, that error escapes the method instead of a failure. Examples: a thrown proxy
+ * whose `getPrototypeOf` trap throws, a revoked proxy, or an `InputFault` whose `code` is a
+ * throwing getter.
  *
  * @param deps - The recipe codec, theme codec and hashing provider.
  * @returns A frozen {@link Templates} object.

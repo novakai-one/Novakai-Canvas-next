@@ -59,8 +59,9 @@ export interface Expansion<T> {
 /**
  * The Templates facade. Every method takes the catalog as plain input, checks it in full, and
  * never saves anything; Authoring owns admission commits and retries. Every method returns a
- * frozen copy on success and a `Diagnostic` on failure. A method throws only when checking a
- * thrown value itself throws (see `createTemplates`).
+ * frozen copy on success and a `Diagnostic` on failure. A method throws only when inspecting a
+ * thrown value itself throws (`instanceof`, or reading its `code`, `path` or `message`; see
+ * `createTemplates`).
  */
 export interface Templates<T> {
   /**

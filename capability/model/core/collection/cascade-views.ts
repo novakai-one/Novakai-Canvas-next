@@ -3,8 +3,9 @@ import type { Section, Appearance, Group, SequenceItem } from '../../contract/re
 import type { LayoutIntent, LayoutTarget } from '../../contract/records/layout.js';
 
 /**
- * Removes a deleted object from one section, for `delete-object` with `cascade`. Unrelated content
- * and child groups are kept:
+ * Removes a deleted object from one section, for `delete-object`. The cascade is computed for
+ * every deletion; without `cascade`, any difference it makes fails the deletion as
+ * `delete-referenced`. Unrelated content and child groups are kept:
  * - the object's appearances are removed;
  * - groups that represent the object are removed; appearances in those groups become ungrouped,
  *   and groups nested in them lose their `parent` (moving to the top level);
@@ -84,6 +85,7 @@ function detachAppearance(appearance: Appearance, removedGroups: readonly GroupI
     return appearance;
   }
   const { group: removedGroup, ...ungrouped } = appearance;
+  // `void` marks the removed field as deliberately unused; only the rest copy is kept.
   void removedGroup;
   return ungrouped;
 }
@@ -100,6 +102,7 @@ function detachGroup(group: Group, removedGroups: readonly GroupId[]): Group {
     return group;
   }
   const { parent: removedParent, ...unparented } = group;
+  // `void` marks the removed field as deliberately unused; only the rest copy is kept.
   void removedParent;
   return unparented;
 }
@@ -144,6 +147,7 @@ function clearDeletedRoot(section: Section, removedId: ObjectId): Section {
     return section;
   }
   const { root: removedRoot, ...withoutRoot } = section;
+  // `void` marks the removed field as deliberately unused; only the rest copy is kept.
   void removedRoot;
   return withoutRoot;
 }

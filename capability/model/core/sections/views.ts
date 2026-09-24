@@ -126,20 +126,19 @@ function validateViewReferences(section: Section, collection: Collection): reado
   return [...objectIssues, ...roleIssues, ...duplicateWires, ...wireIssues];
 }
 
-/** The rules run on every section after its groups, in this order. */
-const sectionRules: readonly SectionRule[] = [
+/** The rules run on every section, in this order. Frozen: nothing may add or reorder rules. */
+const sectionRules: readonly SectionRule[] = Object.freeze([
+  validateGroups,
   validateViewReferences,
   validateModes,
   validateTree,
   validateSequence,
-];
+]);
 
-/** Checks one section: its groups first, then every section rule. */
+/** Checks one section with every section rule, groups first. */
 function validateSection(section: Section, collection: Collection): readonly Diagnostic[] {
-  const groupIssues = validateGroups(section);
-  const viewIssues = sectionRules.flatMap(
+  return sectionRules.flatMap(
     /** Runs one rule on the section. */
     (rule) => rule(section, collection),
   );
-  return [...groupIssues, ...viewIssues];
 }

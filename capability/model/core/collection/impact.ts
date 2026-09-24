@@ -108,6 +108,7 @@ function describeRecordImpact(
 function collectionMetadata(collection: Collection): CollectionMetadata {
   const { objects, relationships, sections, assets, sources, definitions, ...metadata } =
     collection;
+  // `void` marks the record lists as deliberately unused; only the rest copy is kept.
   void objects;
   void relationships;
   void sections;

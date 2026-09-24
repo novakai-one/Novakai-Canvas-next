@@ -1,6 +1,7 @@
 import type { DescendantId, ObjectId } from '../../contract/brands.js';
 import type { Diagnostic } from '../../contract/errors.js';
 import type { Collection } from '../../contract/records/collection.js';
+import type { DiagramObject } from '../../contract/records/object.js';
 import type { Section, SequenceItem } from '../../contract/records/section.js';
 import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
@@ -20,8 +21,8 @@ import { resolveCallableEndpoint } from '../relationships/callable.js';
  *    - a fragment: `alt` needs at least two branches and `opt`/`loop` none ("alt needs at least
  *      two branches; opt/loop forbid branches"); branch labels unique (`duplicate` at
  *      `<item path>.branches.<label>`);
- *    - its parent: a root item has no `branch` ("Root item has no branch"); a named parent must be
- *      a fragment ("Parent must resolve to a fragment"); a child of `alt` must name one of its
+ *    - its parent: a root item has no `branch` ("Root item has no branch"); a named parent must
+ *      exist and be a fragment ("Parent must resolve to a fragment"); a child of `alt` must name one of its
  *      branches ("Child must name an owning alt branch"), a child of any other fragment none
  *      ("Only alt children identify a branch");
  *    - an event: its source and target must each be a visible `participant`, or a visible
@@ -30,7 +31,8 @@ import { resolveCallableEndpoint } from '../relationships/callable.js';
  *      (see below);
  *    - the parent chain must not repeat an item ("Fragment containment must be acyclic").
  *
- * An event's `operation`, at `<item path>.operation`: not allowed on a `return` event ("Return
+ * An event's `operation`, at `<item path>.operation`, stops at its first failure: not allowed on
+ * a `return` event ("Return
  * events cannot reference an operation"); its object must be the event's target ("Operation owner
  * must equal the event target"); that object must exist (`reference`); and it must resolve with
  * `resolveCallableEndpoint`, else "Operation must address a canonical function or signature"
@@ -82,11 +84,12 @@ function itemIdentities(item: SequenceItem): readonly DescendantId[] {
   if (item.kind === 'event') {
     return [item.id];
   }
+  const ownId = item.id;
   const branchIds = item.branches.map(
     /** The branch's ID. */
     (branch) => branch.id,
   );
-  return [item.id, ...branchIds];
+  return [ownId, ...branchIds];
 }
 
 /** Tells whether a fragment's branch count fits its operator: `alt` two or more, others none. */
@@ -154,7 +157,7 @@ function validateParent(item: SequenceItem, section: Section, path: string): rea
     (candidate) => candidate.id === item.parent,
   );
   if (owner?.kind !== 'fragment') {
-    return diagnoseWhen(true, 'sequence', path, 'Parent must resolve to a fragment');
+    return sequenceDiagnostic(path, 'Parent must resolve to a fragment');
   }
   return validateBranchMembership(item, owner, path);
 }
@@ -179,7 +182,7 @@ function isVisibleParticipant(id: ObjectId, section: Section, collection: Collec
  * it appears directly at the section's top level; anything else (or a missing object) never.
  */
 function canParticipate(
-  object: Collection['objects'][number] | undefined,
+  object: DiagramObject | undefined,
   id: ObjectId,
   section: Section,
 ): boolean {
@@ -240,7 +243,7 @@ function validateOperation(
   const operation = item.operation;
   const operationPath = `${path}.operation`;
   if (item.message === 'return') {
-    return operationDiagnostic(operationPath, 'Return events cannot reference an operation');
+    return sequenceDiagnostic(operationPath, 'Return events cannot reference an operation');
   }
   return validateOperationTarget(item, operation, collection, operationPath);
 }
@@ -256,7 +259,7 @@ function validateOperationTarget(
   operationPath: string,
 ): readonly Diagnostic[] {
   if (operation.object !== item.target) {
-    return operationDiagnostic(operationPath, 'Operation owner must equal the event target');
+    return sequenceDiagnostic(operationPath, 'Operation owner must equal the event target');
   }
   const owner = collection.objects.find(
     /** Tells whether this is the operation's object. */
@@ -281,7 +284,7 @@ function validateCallableOperation(
 }
 
 /** Builds one `sequence` diagnostic. */
-function operationDiagnostic(path: string, message: string): readonly Diagnostic[] {
+function sequenceDiagnostic(path: string, message: string): readonly Diagnostic[] {
   return [{ code: 'sequence', path, message }];
 }
 
@@ -291,12 +294,12 @@ function operationDiagnostic(path: string, message: string): readonly Diagnostic
  */
 function invalidOperation(operation: Operation, operationPath: string): readonly Diagnostic[] {
   if (operation.member === undefined) {
-    return operationDiagnostic(
+    return sequenceDiagnostic(
       operationPath,
       'Operation must address a canonical function or signature',
     );
   }
-  return operationDiagnostic(`${operationPath}.member`, 'Operation must resolve to a signature');
+  return sequenceDiagnostic(`${operationPath}.member`, 'Operation must resolve to a signature');
 }
 
 /** Returns an item's parent ID; a missing item, or a root item, has none. */

@@ -12,7 +12,8 @@ import { visibleRelationships } from './modes.js';
  * placement are not checked here.
  *
  * Participants are the visible objects (in `visibleObjects` order) whose appearance says
- * `participation: 'tree'`, or, without a participation, every object that is not a `note`.
+ * `participation: 'tree'`, or, without a participation, every one that is not a `note` object
+ * (including a visible ID with no object in the collection).
  * Parent edges are the drawn `parent` relationships. Every failure is a `tree` diagnostic,
  * collected in this order:
  * 1. the root, at `sections.<id>.root`: with no participants there must be no root ("Empty tree
@@ -122,11 +123,16 @@ function expectedParentCount(id: ObjectId, section: Section): number {
   return 1;
 }
 
+/** Tells whether a parent edge points at the object (the child end). */
+function pointsAt(wire: Relationship, id: ObjectId): boolean {
+  return wire.target.object === id;
+}
+
 /** Returns the source of the first parent edge into an object, if any. */
 function firstParent(id: ObjectId, parents: readonly Relationship[]): ObjectId | undefined {
   const edge = parents.find(
     /** Tells whether the edge points at the object. */
-    (wire) => wire.target.object === id,
+    (wire) => pointsAt(wire, id),
   );
   return edge?.source.object;
 }
@@ -139,7 +145,7 @@ function validateParentCount(
 ): readonly Diagnostic[] {
   const incoming = parents.filter(
     /** Tells whether the edge points at the object. */
-    (wire) => wire.target.object === id,
+    (wire) => pointsAt(wire, id),
   );
   const actualCount = incoming.length;
   return diagnoseWhen(

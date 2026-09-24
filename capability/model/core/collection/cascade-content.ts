@@ -3,8 +3,9 @@ import type { ContentBlock } from '../../contract/records/content.js';
 import type { DiagramObject } from '../../contract/records/object.js';
 
 /**
- * Removes one object's content that depends on a deleted object, for `delete-object` with
- * `cascade`. In block order:
+ * Removes one object's content that depends on a deleted object, for `delete-object`. The
+ * cascade is computed for every deletion; without `cascade`, any difference it makes fails the
+ * deletion as `delete-referenced`. In block order:
  * - a keygroup with a reference to the deleted object is removed;
  * - a link to the deleted object is removed (URI links stay);
  * - a field whose `references` names the deleted object keeps its place but loses both `key` and
@@ -65,6 +66,7 @@ function clearDeletedFieldReference(block: ContentBlock, removedId: ObjectId): C
     return block;
   }
   const { key: removedKey, references: removedReference, ...ordinaryField } = block;
+  // `void` marks the removed fields as deliberately unused; only the rest copy is kept.
   void removedKey;
   void removedReference;
   return ordinaryField;

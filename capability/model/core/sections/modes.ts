@@ -31,8 +31,8 @@ export function visibleRelationships(
 }
 
 /**
- * Checks that a section's contents fit its mode. Every failure is a `mode` diagnostic, collected
- * in this order:
+ * Checks that a section's contents fit its mode. Every failure except (5) is a `mode` diagnostic,
+ * collected in this order:
  * 1. the section's layout, then each group's layout, must use an algorithm the mode allows
  *    (`compatibleLayouts`), at `sections.<id>.layout` (also for a group's layout), "Mode and
  *    layout must be compatible";
@@ -44,7 +44,7 @@ export function visibleRelationships(
  * 4. outside `tree` mode: no `root` (at `sections.<id>.root`, "Root is tree-only"), and no
  *    appearance `participation` (at `sections.<id>.appearances.<object>`, "Participation is
  *    tree-only");
- * 5. in `flow` mode, the `flow` relationships leaving each visible decision must have distinct
+ * 5. in `flow` mode, the drawn `flow` relationships leaving each visible decision must have distinct
  *    labels: `duplicate` (not `mode`) at `sections.<id>.decision.<decision>.<label>`.
  *
  * Pure: Authoring owns correction, commit and crash recovery.
@@ -145,11 +145,12 @@ function isAllowedWire(kind: RelationshipKind, mode: Mode): boolean {
 
 /** Reports the section's layout and each group's layout whose algorithm the mode does not allow. */
 function validateLayoutCompatibility(section: Section): readonly Diagnostic[] {
+  const sectionLayout = section.layout;
   const groupLayouts = section.groups.map(
     /** The group's layout. */
     (group) => group.layout,
   );
-  const layouts = [section.layout, ...groupLayouts];
+  const layouts = [sectionLayout, ...groupLayouts];
   return layouts.flatMap(
     /** Checks one layout's algorithm against the mode. */
     (layout) =>

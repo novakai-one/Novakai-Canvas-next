@@ -1,4 +1,7 @@
-/** Public Assets boundary; caller-specific bindings remain behind Authoring, never inside byte storage. */
+/**
+ * Public entry point of Assets. It exports the two factories, the digest and lease ID schemas, and
+ * the contract types. Diagram bindings to assets belong to Authoring, not to Assets.
+ */
 export { openAssets } from './compose.js';
 export { createAssets } from './api.js';
 export { digest, leaseId } from './brands.js';

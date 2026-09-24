@@ -11,6 +11,7 @@ import { failure, success } from '../validation/outcomes.js';
  * @param folders - The catalog's folders.
  * @returns The folders visited, and `cycle: true` when the walk stopped at a folder it had
  * already visited.
+ * @throws Never.
  */
 export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry {
   const visited = new Set<FolderId>();
@@ -29,6 +30,8 @@ export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry 
  * @param folder - The entry's folder, or `undefined` for the root.
  * @param owner - The folder searched.
  * @param folders - The catalog's folders.
+ * @returns True when `owner` is `folder` or one of its ancestors.
+ * @throws Never.
  */
 export function isWithin(
   folder: FolderId | undefined,
@@ -53,6 +56,7 @@ export function isWithin(
  * @param id - The folder to remove.
  * @param policy - `reject` or `rehome`.
  * @returns The new catalog, or a failure with no partial value.
+ * @throws Never.
  */
 export function removeFolder(
   catalog: Catalog,

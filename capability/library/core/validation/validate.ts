@@ -16,6 +16,7 @@ import { validateRecords } from './rules.js';
  *
  * @param input - The untrusted snapshot.
  * @returns The parsed snapshot, a detached frozen copy; or a failure with every diagnostic.
+ * @throws Never.
  */
 export function validateSnapshot(input: unknown): Result<LibrarySnapshot> {
   return protect(() => validateInput(input));

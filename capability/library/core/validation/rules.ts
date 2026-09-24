@@ -16,10 +16,13 @@ import { diagnoseWhen } from './outcomes.js';
  *    or missing visible sections.
  * 4. Recent visits: duplicates, then visits to missing collections.
  *
- * Works on parsed projections only, never on raw Model documents.
+ * Works on parsed projections only, never on raw Model documents. Runs inside the protected
+ * boundary of `validateSnapshot`; the caller corrects the input, and Authoring owns commit and
+ * recovery.
  *
  * @param snapshot - The parsed snapshot.
  * @returns The diagnostics; empty when the snapshot is consistent.
+ * @throws Never (the snapshot is already parsed plain data).
  */
 export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   const folders = folderIssues(snapshot.catalog);

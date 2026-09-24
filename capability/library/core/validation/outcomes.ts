@@ -8,6 +8,7 @@ import type { Diagnostic, DiagnosticCode, Result } from '../../contract/errors.j
  * @param path - Where the problem is.
  * @param message - What went wrong.
  * @returns `{ ok: false, error: { code: 'validation-failed', diagnostics: [{ code, path, message }] } }`.
+ * @throws Never.
  */
 export function failure<T>(code: DiagnosticCode, path: string, message: string): Result<T> {
   return {
@@ -21,6 +22,7 @@ export function failure<T>(code: DiagnosticCode, path: string, message: string):
  *
  * @param value - The value.
  * @returns `{ ok: true, value }`.
+ * @throws Never.
  */
 export function success<T>(value: T): Result<T> {
   return { ok: true, value };
@@ -35,6 +37,7 @@ export function success<T>(value: T): Result<T> {
  * @param path - Where the problem is.
  * @param message - What went wrong.
  * @returns `[{ code, path, message }]` when violated; otherwise `[]`.
+ * @throws Never.
  */
 export function diagnoseWhen(
   violated: boolean,
@@ -56,6 +59,7 @@ export function diagnoseWhen(
  * @param parser - The schema. Only `safeParse` is used, so core does not import the schema library.
  * @param input - The untrusted input.
  * @returns The parsed value, or every issue as a diagnostic.
+ * @throws Whatever reading the input throws (for example a getter); {@link protect} catches it.
  */
 export function parse<T>(parser: Parser<T>, input: unknown): Result<T> {
   const parsed = parser.safeParse(input);
@@ -81,6 +85,7 @@ export function parse<T>(parser: Parser<T>, input: unknown): Result<T> {
  *
  * @param action - The operation to run.
  * @returns The frozen result.
+ * @throws Never.
  */
 export function protect<T>(action: () => Result<T>): Result<T> {
   try {
@@ -97,6 +102,7 @@ export function protect<T>(action: () => Result<T>): Result<T> {
  *
  * @param diagnostics - The diagnostics, in order.
  * @returns A failure carrying all of them.
+ * @throws Never.
  */
 export function rejected<T>(diagnostics: readonly Diagnostic[]): Result<T> {
   const [first, ...remaining] = diagnostics;
@@ -116,11 +122,14 @@ interface ShapeIssue {
 interface Parser<T> {
   safeParse(
     input: unknown,
-  ): { success: true; data: T } | { success: false; error: { issues: readonly ShapeIssue[] } };
+  ):
+    | { readonly success: true; readonly data: T }
+    | { readonly success: false; readonly error: { readonly issues: readonly ShapeIssue[] } };
 }
 
 /**
- * Deep-freezes a value: its enumerable own values first, then the value itself. Only for freshly
+ * Deep-freezes a value: its enumerable own string-keyed values first (symbol keys are skipped),
+ * then the value itself. Only for freshly
  * built, acyclic results; never for the caller's input.
  */
 function freeze<T>(value: T): T {

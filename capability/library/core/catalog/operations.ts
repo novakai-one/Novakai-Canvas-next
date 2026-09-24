@@ -19,6 +19,7 @@ import { removeFolder } from './folders.js';
  * @param catalog - The catalog so far.
  * @param change - The change to apply.
  * @returns The new catalog, or a failure with no partial value.
+ * @throws Never.
  */
 export function applyOperation(catalog: Catalog, change: CatalogChange): Result<Catalog> {
   return handlers[change.op](catalog, change);
@@ -130,10 +131,10 @@ function requireAbsent(exists: boolean, path: string): Result<true> {
 }
 
 /** A new list: `value` appended (create), or put in place of the item with its key (replace). */
-function writeList<T>(
+function writeList<T, K extends string>(
   items: readonly T[],
   value: T,
-  keyOf: (record: T) => string,
+  keyOf: (record: T) => K,
   mode: WriteMode,
 ): readonly T[] {
   if (mode === 'create') {
@@ -143,7 +144,7 @@ function writeList<T>(
 }
 
 /** `value` when it has the item's key, so a replacement keeps its position; otherwise the item. */
-function replaceMatching<T>(item: T, value: T, keyOf: (record: T) => string): T {
+function replaceMatching<T, K extends string>(item: T, value: T, keyOf: (record: T) => K): T {
   if (keyOf(item) !== keyOf(value)) {
     return item;
   }

@@ -1,7 +1,8 @@
 /*
  * Produces one artifact from a parsed export request: lease the revision, check it, select the
- * scope, check sizes, plan PDF pages, run the format handler, then release the lease. Every step
- * returns a Result; the lease is released exactly once on every path after it was acquired.
+ * scope, check resources, plan PDF pages, check sizes, run the format handler, then release the
+ * lease. Every step returns a Result; the lease is released exactly once on every path after it
+ * was acquired.
  */
 import { failure } from '../../contract/errors.js';
 import type { Result } from '../../contract/errors.js';
@@ -34,8 +35,8 @@ const descriptors = {
 
 /**
  * Produces the artifact for one parsed request. Leases the revision once, encodes, then
- * releases the lease once, whether encoding succeeded or not. Only reads; a failed call is safe
- * to retry after the host repairs its providers.
+ * releases the lease once, whether the export succeeded or failed. Only reads; a failed call is
+ * safe to retry after the host repairs its providers.
  *
  * @param request - The parsed export request.
  * @param deps - Snapshot reader, format handlers and hashing.
@@ -43,17 +44,18 @@ const descriptors = {
  * encoding.
  * @returns The artifact, or a failure. A throw while acquiring or encoding becomes
  * `encoding-failed`; a throw while releasing becomes `cleanup-failed` (a failure returned by
- * `release` keeps its own code). When encoding failed and releasing also failed, the release
- * failure is attached to the encoding failure as `cleanup`; when encoding succeeded, a release
+ * `release` keeps its own code). When the export failed and releasing also failed, the release
+ * failure is attached to the export failure as `cleanup`; when the export succeeded, a release
  * failure replaces the artifact.
+ * @throws Rejects only if reading `signal.aborted`, or a field of a provider's returned result,
+ * throws. `createExport` turns that rejection into `encoding-failed`.
  */
 export async function produce(
   request: ExportRequest,
   deps: ProductionDependencies,
   signal?: Cancellation,
 ): Promise<Result<Artifact>> {
-  if (signal?.aborted)
-    return failure('cancelled', '$', 'Export was cancelled before acquiring a revision');
+  if (signal?.aborted) return cancelled('before acquiring a revision');
   const acquired = await protect(() => deps.snapshots.acquire(request.identity));
   if (!acquired.ok) return acquired;
   const lease = acquired.value;
@@ -63,27 +65,9 @@ export async function produce(
 }
 
 /**
- * Checks a raster size against the native limits, using the same rounded sizes the PNG encoder
- * allocates.
- *
- * @param width - Raster width in pixels.
- * @param height - Raster height in pixels.
- * @returns Success, or `limit-exceeded` when a side is over 8,192 pixels or the area is over 64
- * million pixels.
- */
-export function checkRaster(width: number, height: number): Result<void> {
-  if (Math.max(width, height) > 8192 || width * height > 64000000)
-    return failure(
-      'limit-exceeded',
-      'raster',
-      'Raster exceeds 8192 pixels per side or 64 million pixels',
-    );
-  return success(undefined);
-}
-
-/**
- * Combines the encoding result with the release result. The encoding failure stays the primary
- * failure; a release failure is attached to it as `cleanup`.
+ * Combines the export result with the release result. When the export failed, its failure stays
+ * the primary failure and a release failure is attached to it as `cleanup`. When the export
+ * succeeded, a release failure is returned instead of the artifact.
  */
 function settle(result: Result<Artifact>, cleanup: Result<void>): Result<Artifact> {
   if (cleanup.ok) return result;
@@ -190,6 +174,26 @@ function checkCounts(snapshot: Snapshot, request: ExportRequest, box: Box): Resu
 }
 
 /**
+ * Checks a raster size against the native limits. Callers pass sizes already rounded the way
+ * the PNG encoder rounds them.
+ *
+ * @param width - Raster width in pixels.
+ * @param height - Raster height in pixels.
+ * @returns Success, or `limit-exceeded` when a side is over 8,192 pixels or the area is over 64
+ * million pixels.
+ * @throws Never.
+ */
+function checkRaster(width: number, height: number): Result<void> {
+  if (Math.max(width, height) > 8192 || width * height > 64000000)
+    return failure(
+      'limit-exceeded',
+      'raster',
+      'Raster exceeds 8192 pixels per side or 64 million pixels',
+    );
+  return success(undefined);
+}
+
+/**
  * Runs the format handler, checking cancellation before it starts. The handler gets
  * `{ aborted: false }` when the caller gave no signal.
  */
@@ -201,7 +205,7 @@ async function runEncoder(
   pages: readonly Page[],
   signal?: Cancellation,
 ): Promise<Result<Artifact>> {
-  if (signal?.aborted) return failure('cancelled', '$', 'Export was cancelled before encoding');
+  if (signal?.aborted) return cancelled('before encoding');
   const result = await deps.formats[request.format].encode({
     snapshot,
     selection,
@@ -225,7 +229,7 @@ function finish(
   deps: ProductionDependencies,
   signal?: Cancellation,
 ): Result<Artifact> {
-  if (signal?.aborted) return failure('cancelled', '$', 'Export was cancelled after encoding');
+  if (signal?.aborted) return cancelled('after encoding');
   if (encoded.bytes.byteLength > 128 * 1024 * 1024)
     return failure('limit-exceeded', 'bytes', 'Artifact exceeds 128 MiB');
   const [mediaType, extension] = descriptors[request.format];
@@ -239,4 +243,9 @@ function finish(
     identity: { ...snapshot.identity },
     scope: { ...request.scope },
   });
+}
+
+/** The `cancelled` failure; `when` completes the message "Export was cancelled …". */
+function cancelled(when: string): Result<never> {
+  return failure('cancelled', '$', `Export was cancelled ${when}`);
 }

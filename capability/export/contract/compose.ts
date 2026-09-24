@@ -24,6 +24,8 @@ import { createFontDecoder } from '../adapters/native/fonts.js';
 import { createMediaConverter } from '../adapters/native/media.js';
 import { createHtmlEncoder } from '../adapters/html/document.js';
 import { buildBundle } from '../core/bundles/manifest.js';
+import { success } from '../core/validation/outcomes.js';
+
 /**
  * What the host supplies to compose Export: the document and resource providers, the snapshot
  * reader, Presentation's React bindings and the HTML reader stylesheet. Export supplies its own
@@ -61,17 +63,19 @@ export interface ExportBindings {
  *
  * @param module - The compiled resvg WASM module.
  * @returns Success, or `encoding-failed` if initialization fails. A second call after a
- * successful one also fails, because resvg allows only one initialization per process.
+ * successful one also fails, because resvg allows only one initialization per process. After a
+ * failed call the host may call it again.
  * @throws Never.
  */
 export async function initializeRaster(module: WebAssembly.Module): Promise<Result<void>> {
   try {
     await initWasm(module);
-    return { ok: true, value: undefined };
+    return success(undefined);
   } catch {
     return failure('encoding-failed', 'composition.wasm', 'Raster runtime initialization failed');
   }
 }
+
 /**
  * Builds the real Export service. Presentation's drawing slots, the scene renderer, native
  * encoding and the five format handlers are created once here, not per export. Export has no
@@ -79,6 +83,8 @@ export async function initializeRaster(module: WebAssembly.Module): Promise<Resu
  *
  * @param owners - The host's providers and Presentation bindings.
  * @returns The service, its dependencies and the shared renderer.
+ * @throws Only if reading a host binding throws (for example a throwing getter, or a
+ * `presentation.fonts` that is not an array). With plain bindings it never throws.
  */
 export function composeExport(owners: ExportOwners): ExportBindings {
   const drawings = createNodeDrawing(owners.presentation);
@@ -99,6 +105,7 @@ export function composeExport(owners: ExportOwners): ExportBindings {
   const dependencies = { ...transfer, snapshots: owners.snapshots, formats };
   return { service: createExport(dependencies), dependencies, renderer };
 }
+
 /**
  * Creates one handler per format: SVG from the renderer, PNG through resvg, PDF through PDFKit
  * with decoded fonts and converted images, HTML with the reader CSS, and bundles built by
@@ -116,10 +123,11 @@ function createFormats(
       encode: async (input) => {
         const result = renderer.render(input);
         if (!result.ok) return result;
-        return {
-          ok: true,
-          value: { bytes: transfer.encoding.utf8(result.value), pages: [], warnings: [] },
-        };
+        return success({
+          bytes: transfer.encoding.utf8(result.value),
+          pages: [],
+          warnings: [],
+        });
       },
     },
     png: createPngEncoder(render, fonts),

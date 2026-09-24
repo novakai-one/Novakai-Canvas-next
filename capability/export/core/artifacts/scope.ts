@@ -15,6 +15,8 @@ import { success } from '../validation/outcomes.js';
  * @param snapshot - The leased snapshot.
  * @param scope - The requested scope.
  * @returns The selection, or `missing-section` if the section is not in this revision.
+ * @throws Never for plain snapshot data. A throwing getter or proxy in the snapshot propagates;
+ * `produce` runs this inside `protect`, which turns it into `encoding-failed`.
  */
 export function selectScope(snapshot: Snapshot, scope: Scope): Result<Selection> {
   if (scope.kind === 'all')
@@ -35,10 +37,12 @@ export function selectScope(snapshot: Snapshot, scope: Scope): Result<Selection>
  *
  * @param box - The bounds to check.
  * @returns `true` when the box is usable.
+ * @throws Never for plain snapshot data. A throwing getter or proxy in the snapshot propagates;
+ * `produce` runs this inside `protect`, which turns it into `encoding-failed`.
  */
 export function validBounds(box: Box): boolean {
-  return (
-    [box.x, box.y, box.width, box.height].every(Number.isFinite) &&
-    Math.min(box.width, box.height) > 0
-  );
+  const finite = [box.x, box.y, box.width, box.height].every(Number.isFinite);
+  if (!finite) return false;
+  const bothSidesPositive = Math.min(box.width, box.height) > 0;
+  return bothSidesPositive;
 }

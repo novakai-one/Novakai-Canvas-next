@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import { digest, leaseId } from '../brands.js';
-/** Conservative process ownership: no time-based expiry may delete an active lease. */
+
+/**
+ * Checks a stored lease: its `id`, the `ownerPid` of the process that holds it (a positive safe
+ * integer) and the `digests` it protects. No other fields. A lease has no expiry time; it ends
+ * only when released, or when collection finds its owner process is gone.
+ */
 export const leaseRecord = z
   .strictObject({
     id: leaseId,
@@ -8,5 +13,9 @@ export const leaseRecord = z
     digests: z.array(digest).readonly(),
   })
   .readonly();
+
+/** Checks a list of digests, for example the digests to lease or the reachable digests. */
 export const digestList = z.array(digest).readonly();
+
+/** A lease that passed {@link leaseRecord}. */
 export type LeaseRecord = z.infer<typeof leaseRecord>;

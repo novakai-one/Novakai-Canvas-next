@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * The shared grammar for Library IDs: a letter, then letters, digits, `_` or `-`. There is no
- * length limit. Declared first because the branded schemas below are built from it; each brand
+ * length limit. Input that fails these schemas is a `shape` diagnostic; the caller corrects it. Declared first because the branded schemas below are built from it; each brand
  * is distinct, so one kind of ID cannot be passed where another is expected.
  */
 const identifier = z.string().regex(/^[A-Za-z][A-Za-z0-9_-]*$/);

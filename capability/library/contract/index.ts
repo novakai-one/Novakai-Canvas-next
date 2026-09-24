@@ -2,7 +2,8 @@
  * Library's public surface: catalog validation, catalog change planning and collection search.
  *
  * Start with `validate`, `plan` and `query`. The ID schemas check and brand IDs; everything else
- * is a type. Catalog rules and search mechanics stay private.
+ * is a type. Catalog rules and search mechanics stay private. Library writes nothing: Authoring
+ * owns durable writes and crash recovery.
  */
 export { validate, plan, query } from './api.js';
 export { catalogId, folderId, collectionId, objectId, sectionId } from './brands.js';

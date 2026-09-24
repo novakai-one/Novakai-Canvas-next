@@ -1,6 +1,10 @@
 Last Updated: 24th September 2026
 
-These are Chris' preferences for authoring specs and engineering documents:
+## Authoring: 
+
+These are Chris' preferences for authoring specs and engineering documents.
+
+Reference .canvas DSL (/resources/reference/example-spec-format) which has most of the below references.
 
 When authoring a collection of specs/plans, an agent must follow the following at a MINIMUM. This is a spec interface.
 
@@ -14,6 +18,17 @@ The allowed exceptions:
 - Refactors that reduce a file size and split into smaller files (with ZERO change in behaviour).
 
 **100% of all exceptions must be declared loudly in writing. Chris must write "I approve the skipping of spec". **
+
+Novakai-Canvas is deterministic in its layout. Agents are expected to be able to read from the DSL source code when evaluating and / or auditing the build spec.
+
+Inspect diagrams before sending to human to ensure they are human readable.
+
+**Warnings**
+
+- DSL source code > 300 lines = warning.
+- DSL source code >= 500 lines = hard stop. Report honestly. Indication of diagram growing in scope / spec too broad / agent drifting.
+
+Source code lines - omit blank lines and lines that have only brackets e.g. {} 
 
 ## Important: 
 
@@ -45,6 +60,22 @@ node @ws module "workspace-session"
 ### MANDATORY DIAGRAMS TO BE INCLUDED IN COLLECTION
 
 Diagram titles to include the number.
+
+0. Situation Today (if brownfield)
+
+![flowchart-demonstrating-problem](./docs/Images/Flowchart-demonstrating-problem-today.png)
+
+The problem today must be obvious from the diagram.
+
+- The agent used groups to cluster information. Human eye can then see that there is a cluster of processses in "browser" and others "in server".
+- Clear demonstration of 5 steps before server is reached.
+- Plain launguage is used at this stage "Refused before the server" communicates in plain-language the activity.
+
+0.1 Proposal 
+
+![Proposed-outcome-flowchart](./docs/Images/Flowchart-Proposal.png)
+
+- Still using plain-language so reader can understand at high level of abstraction what the proposal is.
 
 1. Target Repo Tree.
 
@@ -104,7 +135,7 @@ Source module imports from Target Module.
 4. ONE wire is created from source, to target with arrow pointing at target module. Returns are 
 5. Groups are folder directory names. Nested groups = nested folders.
 
-![ExampleModuleImportDiagram](image.png)
+![ExampleModuleImportDiagram](./docs/Images/image.png)
 
 ```
 section @s-spec-modules "B.3 · Build spec — module import graph (groups are folders, real functions)" mode=modules order=8 layout=layered {
@@ -196,7 +227,7 @@ Summary Table
 ---
 
 
-6. DELETES / REMOVED FUNCTIONALITTY
+6. REMOVED FUNCTIONALITTY / FEATURES / MAJOR ENGINEERING SIDE EFFECTS   
 
 Any load-bearing decision or proposed functionality removed MUST be included.
 
@@ -206,6 +237,12 @@ No functionality is allowed to be silently removed.
 
 Format = Table. One row per removal.
 
+Columns = Removed, Affects, What it does today, Plain words - what changes for you, Risk to weigh.
+
+![Removed-capabilities-Example](./docs/Images/Removed-capabilities.png)
+
+
+
 ### 7 onwards... Additional Diagrams
 
 Additional diagrams include things such as 
@@ -213,6 +250,20 @@ Additional diagrams include things such as
 - Flowcharts
 
 Some examples:
-Images/gatekeeper-story-16-section.png
+![Sequence-diagram](./docs/Images/gatekeeper-story-16-section.png)
 
-- Diagrams are to be included 
+Flowcharts in plain language clearly explaining concepts
+
+
+
+### Execution Diagrams - Mandatory before actual execution and building begins.
+
+E1. Definition of Done
+
+![Definition-Of-Done-Reference](./docs/Images/Definition-Done.png)
+
+E2. Task List
+
+![Task-List](./docs/Images/Task-List.png)
+
+

@@ -1,0 +1,162 @@
+canvas 1
+collection @opus-gatekeeper-build "Gatekeeper — build list (Opus)" {
+
+  node @summary-table concept "Modules — line churn (estimates, not gates)" size=large {
+    table @summary-t columns=["Module", "Current lines", "Churn (+ / −)", "Final (estimate)"] {
+      row @sm1 cells=["workspace-session.ts", "2905", "+10 / −465", "2450"]
+      row @sm2 cells=["submission-session.ts", "213", "+15 / −5", "223"]
+      row @sm3 cells=["route-preview.ts", "108", "0 / 0", "108"]
+      row @sm4 cells=["RequestRecovery.tsx", "100", "+25 / 0", "125"]
+      row @sm5 cells=["compose.ts", "533", "0 / −50", "483"]
+      row @sm6 cells=["api.ts", "53", "0 / −1", "52"]
+      row @sm7 cells=["movement.ts (contract/records/)", "57", "0 / −30", "27"]
+      row @sm8 cells=["workspace.ts (contract/records/)", "107", "0 / −23", "84"]
+      row @sm9 cells=["workspace.ts (contract/ports/)", "101", "0 / −11", "90"]
+      row @sm10 cells=["plan.ts", "67", "+10 / −2", "75"]
+      row @sm11 cells=["movement-capture.ts", "427", "+8 / −90", "345"]
+      row @sm12 cells=["diagnostics.ts", "63", "+25 / 0", "88"]
+      row @sm13 cells=["refusals.test.ts", "337", "+70 / 0", "407"]
+      row @sm14 cells=["error-bars.test.ts", "85", "+30 / 0", "115"]
+      row @sm15 cells=["regroup.test.ts (new)", "0", "+120 / −40", "80"]
+      row @sm16 cells=["module-drag-save.test.ts (new)", "0", "+80 / 0", "80"]
+      row @sm17 cells=["CanvasSurface.tsx", "227", "+30 / 0", "257"]
+      row @sm18 cells=["EdgeChoicePopup.tsx (new)", "0", "+80 / 0", "80"]
+      row @sm19 cells=["EdgeChoicePopup.module.css (new)", "0", "+30 / 0", "30"]
+      row @sm20 cells=["events.ts", "130", "+10 / 0", "140"]
+      row @sm21 cells=["state.ts", "41", "+1 / 0", "42"]
+      row @sm22 cells=["draft.ts", "58", "+8 / 0", "66"]
+      row @sm23 cells=["finish.ts", "59", "+25 / −2", "82"]
+      row @sm24 cells=["regroup.ts", "75", "+35 / −3", "107"]
+      row @sm25 cells=["draft-events.ts", "105", "+10 / 0", "115"]
+      row @sm26 cells=["drafts.test.ts", "183", "+50 / 0", "233"]
+      row @sm30 cells=["submissions.ts", "66", "0 / 0", "66"]
+      row @sm31 cells=["interaction-handlers.ts", "331", "0 / 0", "331"]
+      row @sm32 cells=["WorkspaceShell.tsx", "384", "0 / −1", "383"]
+      row @sm33 cells=["index.ts (contract/, not in the tree)", "23", "0 / −5", "18"]
+      row @sm34 cells=["react-types.ts (contract/, not in the tree)", "102", "0 / −1", "101"]
+      row @sm35 cells=["movement.ts (core/editing/, deleted)", "146", "0 / −146", "0"]
+      row @sm36 cells=["movement-intent.ts (deleted)", "367", "0 / −367", "0"]
+      row @sm37 cells=["movement-preview.ts (deleted)", "313", "0 / −313", "0"]
+      row @sm38 cells=["movement-expand.ts (deleted)", "556", "0 / −556", "0"]
+      row @sm39 cells=["movement-rearrange.ts (deleted)", "795", "0 / −795", "0"]
+      row @sm40 cells=["MovementReview.tsx (deleted)", "146", "0 / −146", "0"]
+      row @sm41 cells=["MovementReview.module.css (deleted)", "25", "0 / −25", "0"]
+      row @sm42 cells=["movement.test.ts (deleted)", "286", "0 / −286", "0"]
+      row @sm29 cells=["TOTAL", "9574", "+672 / −3363", "6883"]
+    }
+  }
+
+  node @ownership-table concept "Who creates, reads, updates and deletes each object" size=large {
+    table @ownership-t columns=["Object", "Create", "Read", "Update", "Delete"] {
+      row @ow1 cells=["Submission", "submit() — submission-session.ts", "blocksSubmission() — submissions.ts; RequestRecovery.tsx", "reconcile(), retry() — submission-session.ts", "dismiss() — submission-session.ts"]
+      row @ow2 cells=["EdgeChoice (new, browser memory only)", "finishDraft() — finish.ts", "EdgeChoicePopup.tsx", "none", "pickEdge() — finish.ts"]
+      row @ow3 cells=["RegroupIntent", "regroupIntent(), regroupOutIntent() — regroup.ts", "planCanvasEdit() — plan.ts", "none", "none"]
+      row @ow4 cells=["Node's group (saved diagram)", "Server", "edgeGroup() — regroup.ts", "Server, from the planned edit", "Server"]
+      row @ow5 cells=["Refusal sentence", "plainMessage() — diagnostics.ts", "failureSummary() — diagnostics.ts, shown by WorkspaceShell.tsx", "none", "none"]
+    }
+  }
+
+  node @removed-table concept "What the app stops doing" role=warning size=large {
+    table @removed-t columns=["Removed", "Affects", "What it does today", "Plain words — what changes for you", "Risk to weigh"] {
+      row @rm1 cells=["Movement review", "Module diagrams", "The browser redraws a module drag. It refuses the drag, or opens a panel: Move only · Expand container · Rearrange section. Check 1: 2 of 3 drags refused.", "Module drags go to the server. Check 1 with the review off: 3 of 3 saved. The panel is gone.", "Expand container and Rearrange section are gone. Keep in (stage 5) grows a group on drop only. Rearrange section has no replacement."]
+      row @rm2 cells=["Refusing when the wire preview fails (rejectPreview, workspace-session.ts:1312)", "Module diagrams", "If the browser cannot route the wires, the edit is refused and nothing is sent.", "The edit is sent. The server decides.", "Not seen in check 1. One server round trip when it happens."]
+      row @rm3 cells=["The sentence 'The diagram edit could not be planned' (plan.ts:66)", "All diagrams", "Any unexpected planner error shows this one sentence.", "The sentence names what changed, e.g. 'That group is no longer on screen. Nothing was changed.'", "The drop is still refused. Only the words change."]
+      row @rm4 cells=["Group rule for a node near its own group's edge (regroup.ts, destination())", "All diagrams with groups", "A node dropped on its own group's edge stays or leaves depending on where its centre lands. You are not asked.", "You pick: Keep in · Move out · Cancel. A node from outside a group still joins by its centre, as today.", "One extra click on edge drops. Edge distance not chosen yet (open item 5)."]
+      row @rm5 cells=["dismiss() refusing an unsaved edit ('Reconcile this edit before clearing it', submission-session.ts:204)", "All diagrams", "'Edit not saved — safe to retry' can only be retried.", "You can also dismiss it. The edit is dropped.", "A dismissed edit is gone; you redo it by hand. Only the retryable state is opened; 'uncertain' stays guarded."]
+    }
+  }
+  node @kept-table concept "Kept on purpose" size=large {
+    table @kept-t columns=["Kept", "Where", "Why"] {
+      row @kp1 cells=["Edit lock", "blocksSubmission() — submissions.ts, called by submission-session.ts", "Only lets one edit per collection travel at a time. The server has no rebase code."]
+      row @kp2 cells=["Undo / redo check", "rejectBlocked — workspace-session.ts:1479", "Stops an edit during undo or redo."]
+      row @kp3 cells=["'The diagram changed while this gesture was being edited'", "plan.ts:52", "The drop was made on an old copy of the diagram."]
+    }
+  }
+
+  node @checks-table concept "What was checked before writing this plan" size=large {
+    table @checks-t columns=["#", "Check", "How", "Result"] {
+      row @ck1 cells=["1", "3 module drags, movement review on vs off", "Headless browser, copy of walkthrough 02-modules, throwaway copy of the repo. Off = moveReview line removed in compose.ts.", "Review on: 2 of 3 refused ('Movement preview does not match the requested geometry'), 1 saved. Review off: 3 of 3 saved, positions kept after reload."]
+      row @ck2 cells=["2", "Drag a node out of its group — flow", "Headless browser, copy of walkthrough 06-flowchart, then pnpm canvas read", "Saved. The node is outside the group in the source."]
+      row @ck3 cells=["3", "Drag a node out of its group — modules", "Same, copy of walkthrough 02-modules", "Saved."]
+      row @ck4 cells=["4", "Drop a node half over its group's edge — flow", "Same, dragged 70px right", "Saved. The group grew to hold it."]
+      row @ck5 cells=["5", "'Edit not saved — safe to retry'", "Code: dismiss in submission-session.ts :200-206", "dismiss only accepts state rejected. A retryable edit offers Retry (RequestRecovery.tsx:75) but no Dismiss. Until it is retried, the next edit on that collection is refused."]
+      row @ck6 cells=["6", "Where the browser refuses a drop", "Code: workspace-session.ts", "Movement review: rejectMovement :1194. Movement active: rejectWhileMovementActive :1231. Wire preview fails: rejectPreview :1312. Undo or redo running: rejectBlocked :1479. Edit lock: blocksSubmission (submissions.ts:5), called in submission-session.ts :60. Editing unavailable: canMutate in finish.ts."]
+      row @ck7 cells=["7", "What only the movement review uses", "Import search in apps/web", "movement.ts, movement-intent.ts, movement-preview.ts, movement-expand.ts, movement-rearrange.ts (core/editing/): 2177 lines."]
+      row @ck8 cells=["8", "Tests for group moves", "Search 'regroup' in every tests folder", "0 test files."]
+      row @ck9 cells=["9", "PR #106: which files make its test pass", "Throwaway worktree of main; ran module-render.test.ts with different sets of the PR's files", "module-render.test.ts + module-envelopes: 2 of 2 pass. Without module-envelopes: 1 of 2 fails. The PR's 5 files in capability/layout/core are not needed by this test."]
+    }
+  }
+  node @diff-table concept "Differences from Kimi's plan" size=large {
+    table @diff-t columns=["Topic", "Kimi's plan", "This plan", "Why"] {
+      row @df1 cells=["Movement review", "Remove the review and Rearrange section. Keep Expand container as 'keep in'.", "Remove all of it.", "Check 1. Keep in already works on flow (check 4). The group-edge popup gives Keep in."]
+      row @df2 cells=["Edit lock", "Remove 2 of its 3 places. Add server rebase rules first.", "Keep it.", "It only lets one edit per collection travel at a time. The server has no rebase code."]
+      row @df3 cells=["Wire preview (route-preview.ts)", "Keep the file. It asks the server instead.", "Keep it. Remove its power to refuse.", "It is instant. The server still decides."]
+      row @df4 cells=["Drag out of a group", "Says the browser refuses it today.", "Works today.", "Checks 2 and 3. Needs tests only."]
+      row @df5 cells=["workspace-session.ts split", "Stage 10.", "Not in this plan.", "Separate job."]
+      row @df6 cells=["Unsaved edit", "Stage 1.", "Stage 2. Same fix.", "Check 5."]
+      row @df7 cells=["PR #106 (module drag fix)", "Fixed, or deferred in writing.", "Deferred. Not part of this plan.", "Check 9: it needs only module-envelopes.ts and module-render.test.ts. Separate job."]
+    }
+  }
+  node @done-table concept "Definition of done" role=primary size=large {
+    table @done-t columns=["#", "The exact check", "Execute — command / function", "Pass condition (math)"] {
+      row @dn1 cells=["D1", "Dragging a node out of its group saves — flow and modules", "T1, T2", "after reload: parent(node) != group"]
+      row @dn2 cells=["D2", "The 3 module drags from check 1 save", "T4; headless drag", "saved = 3 of 3"]
+      row @dn3 cells=["D3", "The browser never refuses because its wire preview or movement review failed", "grep apps/web for rejectMovement, rejectWhileMovementActive, rejectPreview; T5", "hits = 0 and edit sent when previewModuleRoutes fails"]
+      row @dn4 cells=["D4", "An unsaved edit can be dismissed and the next edit saves", "T8", "dismiss(retryable) ok and next edit saved and applied(edit) <= 1"]
+      row @dn5 cells=["D5", "The group-edge popup works — flow and modules", "T6; headless drop on a group's edge", "popup only when parent(node) = group before the drop; options = {Keep in, Move out, Cancel}; Keep in => parent(node) = group; Move out => parent(node) = parent(group); Cancel => no change"]
+      row @dn6 cells=["D6", "Every refusal code has its own sentence", "T7", "refusals showing the catch-all sentence = 0"]
+      row @dn7 cells=["D7", "Browser and agent get the same answer", "Same edit: headless drag, and pnpm canvas preview", "result(browser) = result(agent)"]
+      row @dn8 cells=["D8", "No new check failures", "pnpm check on main and on the branch", "failures(branch) subset of failures(main)"]
+    }
+  }
+  node @task-table concept "Task list" role=primary size=large {
+    table @task-t columns=["Stage", "Task", "What the builder is doing", "Task done when…", "Est. lines (+/-)", "What you will observe", "Achieves"] {
+      row @tk1 cells=["1", "Tests for today's moves", "Write T1–T3 in regroup.test.ts.", "T1–T3 pass on main", "+120 / 0", "Nothing.", "D1"]
+      row @tk2 cells=["2", "Dismiss an unsaved edit", "submission-session.ts: dismiss also accepts state retryable. RequestRecovery.tsx: Dismiss button on 'Edit not saved — safe to retry'. T8 in refusals.test.ts.", "T8 passes", "+75 / −5", "'Edit not saved — safe to retry' gets a Dismiss button.", "D4"]
+      row @tk3 cells=["3", "Remove the movement review", "Delete movement.ts, movement-intent.ts, movement-preview.ts, movement-expand.ts, movement-rearrange.ts, MovementReview.tsx, MovementReview.module.css, movement.test.ts. Remove the review from workspace-session.ts, movement-capture.ts, compose.ts, api.ts, index.ts, react-types.ts, movement.ts (records), workspace.ts (records), workspace.ts (ports), WorkspaceShell.tsx. Write T4 in module-drag-save.test.ts.", "T4 passes", "+80 / −3296", "Module drags that snap back today now save.", "D2"]
+      row @tk4 cells=["4", "Browser stops refusing", "workspace-session.ts: send the edit when previewModuleRoutes fails (today rejectPreview). plan.ts and movement-capture.ts: a sentence per error in place of the catch-all. T5 in refusals.test.ts.", "T5 passes", "+63 / −17", "A drop that snapped back with a technical message now saves, or shows the server's answer.", "D3"]
+      row @tk5 cells=["5", "Group-edge popup", "New EdgeChoicePopup.tsx + .module.css. regroup.ts: edgeGroup (returns the node's own group when the node lands near that group's edge; else null), regroupOutIntent. finish.ts: finishDraft holds the choice, pickEdge. events.ts: edge-pick event. draft-events.ts: edge-pick handler. state.ts: edgeChoice. draft.ts: EdgeChoice type. CanvasSurface.tsx shows the popup. T6 in drafts.test.ts. Delete T3.", "T6 passes; headless drop shows the popup", "+279 / −45", "Drop near a group's edge: Keep in · Move out · Cancel.", "D5"]
+      row @tk6 cells=["6", "Plain words", "diagnostics.ts: plainMessage gets a sentence for each refusal code that reaches the screen. T7 in error-bars.test.ts.", "T7 passes", "+55 / 0", "Every refusal reads as a sentence.", "D6"]
+      row @tk7 cells=["All", "Final check", "Run D7 and D8.", "D7, D8 pass", "0", "Nothing.", "D7, D8"]
+    }
+  }
+  node @tests-table concept "Test budget (frozen at build start)" size=large {
+    table @tests-t columns=["#", "Test name", "Tier", "Type", "Loop cost (s), slow = not in dev loop", "Nightly cost (s)", "Maintenance", "Reason for + conf %", "Reason against + conf %", "Already covered by", "Retires when"] {
+      row @tb1 cells=["T1", "Drag out of group saves — flow (regroup.test.ts, new)", "slow", "integration", "0", "3", "low", "Drag-out stops saving (85%)", "Starts a workspace (30%)", "nothing", "never"]
+      row @tb2 cells=["T2", "Drag out of group saves — modules (regroup.test.ts, new)", "slow", "integration", "0", "3", "med", "Drag-out on modules stops saving (80%)", "Test diagram needs upkeep (40%)", "nothing", "never"]
+      row @tb3 cells=["T3", "Drop half over the edge keeps the node, group grows — flow (regroup.test.ts, new)", "slow", "integration", "0", "3", "low", "Keep in breaks before stage 5 (75%)", "Stage 5 deletes it (60%)", "nothing", "stage 5 (T6 replaces it)"]
+      row @tb4 cells=["T4", "The 3 module drags from check 1 save (module-drag-save.test.ts, new)", "slow", "integration", "0", "3", "med", "A browser refusal comes back (85%)", "D3 grep catches most of it (30%)", "nothing", "never"]
+      row @tb5 cells=["T5", "A failing wire preview still sends the edit (refusals.test.ts)", "slow", "integration", "0", "3", "low", "rejectPreview comes back (80%)", "T4 catches some of it (35%)", "nothing", "never"]
+      row @tb6 cells=["T6", "edgeChoice null away from an edge; Keep in, Move out, Cancel near one (drafts.test.ts)", "fast", "unit", "0.1", "0.1", "low", "Popup shows everywhere or nowhere (90%)", "Small function (20%)", "nothing", "never"]
+      row @tb7 cells=["T7", "Every refusal code shows its own sentence (error-bars.test.ts)", "fast", "unit", "0.1", "0.1", "low", "A refusal shows only the catch-all sentence (60%)", "Partly covered (40%)", "error-bars.test.ts checks 2 codes and the catch-all", "never"]
+      row @tb8 cells=["T8", "An unsaved edit can be dismissed; the next edit saves (refusals.test.ts)", "slow", "integration", "0", "3", "low", "One unsaved edit blocks all edits (80%)", "Rare (35%)", "nothing", "never"]
+      row @tb-fast cells=["", "Subtotal — fast", "2 tests", "", "0.2", "0.2", "", "", "", "", ""]
+      row @tb-slow cells=["", "Subtotal — slow", "6 tests", "", "0", "18", "", "", "", "", ""]
+      row @tb-total cells=["", "TOTAL", "8 tests", "", "0.2", "18.2", "", "", "", "", ""]
+    }
+  }
+  node @open-table concept "Not checked yet" role=warning size=large {
+    table @open-t columns=["#", "Item", "Checked so far", "When it gets checked"] {
+      row @op1 cells=["1", "Module drags with the movement review removed", "3 drags, one diagram", "Stage 3: T4, plus drags on 2 more module diagrams"]
+      row @op2 cells=["2", "When the wire preview fails", "Not seen in check 1", "Stage 4: T5 forces it"]
+      row @op3 cells=["3", "What triggers 'captured group missing' (movement-capture.ts)", "Not reproduced", "Stage 4"]
+      row @op4 cells=["4", "Keep in on module diagrams", "Flow only (check 4)", "Stage 5"]
+      row @op5 cells=["5", "How near the edge the popup appears", "Not tried", "Stage 5: try 16–32 screen px"]
+      row @op6 cells=["6", "Dismiss button on screen", "Code only", "Stage 2"]
+      row @op7 cells=["7", "Line estimates", "wc -l today", "Recount before stage 1 and after each stage"]
+      row @op8 cells=["8", "PR #106's 13 drags with the movement review removed", "Not run", "Stage 3, headless"]
+      row @op9 cells=["9", "Where the node ends up after a plan error", "Code shows report() only", "Stage 4, headless"]
+      row @op10 cells=["10", "PR #106 (deferred)", "Check 9 only", "Separate job after this plan"]
+    }
+  }
+
+  section @s-summary "4 · Module summary — line churn" mode=flow direction=right order=0 { show @summary-table }
+  section @s-ownership "5 · Capability ownership" mode=flow direction=right order=1 { show @ownership-table }
+  section @s-removed "6 · Removed functionality" mode=flow direction=down order=2 { show @removed-table @kept-table }
+  section @s-checks "9 · What was checked" mode=flow direction=right order=3 { show @checks-table }
+  section @s-diff "10 · Differences from Kimi's plan" mode=flow direction=right order=4 { show @diff-table }
+  section @s-done "E1 · Definition of done" mode=flow direction=right order=5 { show @done-table }
+  section @s-tasks "E2 · Task list" mode=flow direction=right order=6 { show @task-table }
+  section @s-tests "E3 · Test budget" mode=flow direction=right order=7 { show @tests-table }
+  section @s-open "E4 · Not checked yet" mode=flow direction=right order=8 { show @open-table }
+}

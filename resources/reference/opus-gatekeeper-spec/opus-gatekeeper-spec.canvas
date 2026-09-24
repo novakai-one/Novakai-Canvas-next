@@ -1,0 +1,331 @@
+canvas 1
+collection @opus-gatekeeper-spec "Gatekeeper — proposal (Opus)" {
+
+  node @drop start "You drop a node" size=small {}
+  node @server participant "Server" size=medium { text @server-d "Checks the rules, draws the diagram, saves." }
+  node @saved end "Saved" role=success size=small {}
+  node @refused-browser end "Refused before the server" role=warning size=medium { text @refused-browser-d "Technical message. The server never saw the edit." }
+  node @refused-server end "Refused by the server" role=warning size=medium {}
+  node @retry-only end "Waits for Retry" role=warning size=medium { text @retry-only-d "'Edit not saved — safe to retry' offers Retry and Check save status, no Dismiss. Until then, later edits on that collection are refused." }
+  node @cancelled end "Nothing changes" size=small {}
+  node @dismissed end "Refused: earlier edit not saved" role=warning size=medium { text @dismissed-d "This drop is refused. The earlier edit now also offers Dismiss, so the next edit can save." }
+  node @review-panel end "Review panel opens" size=medium { text @review-panel-d "Nothing sent until you Apply or Cancel. Other edits are refused meanwhile." }
+  node @plain-refusal end "Refused in plain words" role=warning size=medium { text @plain-refusal-d "Names what went wrong. Nothing saved." }
+
+  node @you participant "You" size=small {}
+  node @compose module "compose.ts" size=medium { signature @compose-s1 "startWeb" parameters=["element: HTMLElement"] returns="Promise<Result<{ dispose(): void }>>" }
+  node @api module "api.ts" size=small {}
+  node @ws module "workspace-session.ts" size=medium { signature @ws-s1 "createWorkspaceController" parameters=["bindings: WorkspaceBindings"] returns="WorkspaceController" }
+  node @sub module "submission-session.ts" size=medium { signature @sub-s1 "createSubmissionSession" parameters=["bindings: SubmissionBindings"] returns="SubmissionSession" }
+  node @rp module "route-preview.ts" size=medium { signature @rp-s1 "previewModuleRoutes" parameters=["document: RenderDocument", "intent: EditIntent", "changes: readonly Change[]"] returns="Result<GeometryPreview | null>" }
+  node @recovery module "RequestRecovery.tsx" size=medium { signature @recovery-s1 "createRequestRecovery" parameters=["slots: Pick<DesignSlots, 'Button'>"] returns="ComponentType<FeatureProps>" }
+  node @shell module "WorkspaceShell.tsx" size=medium { signature @shell-s1 "createWorkspaceShell" parameters=["slots: ChromeSlots"] returns="ComponentType<WorkspaceProps>" }
+  node @plan module "plan.ts" size=medium { signature @plan-s1 "planCanvasEdit" parameters=["intent: EditIntent", "context: EditContext"] returns="Result<readonly Change[]>" }
+  node @submissions module "submissions.ts" size=medium { signature @submissions-s1 "blocksSubmission" parameters=["pending: readonly Submission[]", "request: Request"] returns="boolean" }
+  node @capture module "movement-capture.ts" size=medium { signature @capture-s1 "plannedSections" parameters=["document: RenderDocument", "intent: PlacementIntent"] returns="readonly Section[]" }
+  node @review module "movement.ts" size=medium { signature @review-s1 "buildMoveReview" parameters=["intent: PlacementIntent", "context: MovementPreviewContext"] returns="Result<MoveReview>" }
+  node @diag module "diagnostics.ts" size=medium {
+    signature @diag-s1 "plainMessage" parameters=["message: string"] returns="string"
+    signature @diag-s2 "failureSummary" parameters=["error: Diagnostic"] returns="string"
+  }
+  node @handlers module "interaction-handlers.ts" size=medium { signature @handlers-s1 "createInteractions" parameters=["owners: InteractionOwners"] returns="Interactions" }
+  node @surface module "CanvasSurface.tsx" size=medium { signature @surface-s1 "createCanvasSurface" parameters=["slots: SurfaceSlots"] returns="ComponentType<SurfaceProps>" }
+  node @popup module "EdgeChoicePopup.tsx" role=primary size=medium { signature @popup-s1 "EdgeChoicePopup" parameters=["props: EdgeChoicePopupProps"] returns="ReactElement" }
+  node @draft-events module "draft-events.ts" size=medium { signature @draft-events-s1 "draftHandlers" parameters=[] returns="readonly Handler[]" }
+  node @finish module "finish.ts" size=medium {
+    signature @finish-s1 "finishDraft" parameters=["state: SessionState", "id: string"] returns="Transition"
+    signature @finish-s2 "pickEdge" parameters=["state: SessionState", "id: string", "pick: EdgePick"] returns="Transition"
+  }
+  node @regroup module "regroup.ts" size=medium {
+    signature @regroup-s1 "regroupIntent" parameters=["state: SessionState", "draft: PlacementDraft"] returns="RegroupIntent | null"
+    signature @regroup-s2 "edgeGroup" parameters=["state: SessionState", "draft: PlacementDraft"] returns="TargetInfo | null"
+    signature @regroup-s3 "regroupOutIntent" parameters=["state: SessionState", "draft: PlacementDraft", "group: TargetInfo"] returns="RegroupIntent"
+  }
+  node @plan-regroup module "regroup.ts" size=medium { signature @plan-regroup-s1 "regroupSections" parameters=["intent: RegroupIntent", "document: RenderDocument"] returns="readonly Section[]" }
+  node @popup-css module "EdgeChoicePopup.module.css" role=primary size=small {}
+  node @events module "events.ts" size=small {}
+  node @state-file module "state.ts" size=small {}
+  node @draft-file module "draft.ts" size=small {}
+  node @rec-movement module "movement.ts" size=small {}
+  node @rec-workspace module "workspace.ts" size=small {}
+  node @port-workspace module "workspace.ts" size=small {}
+  node @t-refusals module "refusals.test.ts" size=small {}
+  node @t-error-bars module "error-bars.test.ts" size=small {}
+  node @t-regroup module "regroup.test.ts" role=primary size=small {}
+  node @t-drag-save module "module-drag-save.test.ts" role=primary size=small {}
+  node @t-drafts module "drafts.test.ts" size=small {}
+  node @barrel-note note "Barrel left out" size=medium { text @barrel-note-d "apps/web files import these functions through contract/api.ts, which only re-exports them." }
+
+  wire @w-let-go @drop -> @regroup "you let go" kind=flow
+  wire @w-same-group @regroup -> @review "same group, module diagram" kind=flow
+  wire @w-other-group @regroup -> @plan "otherwise" kind=flow
+  wire @w-review @review -> @submissions "one plain move: sent as is" kind=flow
+  wire @w-panel @review -> @review-panel "expand or rearrange" kind=flow
+  wire @w-no-review @review -> @refused-browser "refused" kind=flow style=dashed
+  wire @w-plan @plan -> @rp "module diagram: check wires first" kind=flow
+  wire @w-no-plan @plan -> @refused-browser "error" kind=flow style=dashed
+  wire @w-wires @rp -> @submissions "wires routed" kind=flow
+  wire @w-no-wires @rp -> @refused-browser "cannot route" kind=flow style=dashed
+  wire @w-sent @submissions -> @server "no earlier edit unsaved: sent" kind=flow
+  wire @w-ok @server -> @saved "rules pass" kind=flow
+  wire @w-no-server @server -> @refused-server "rule broken" kind=flow
+  wire @w-no-lock @submissions -> @retry-only "earlier edit not saved" kind=flow style=dashed
+
+  wire @w-edge @regroup -> @popup "near its own group's edge" kind=flow
+  wire @w-picked @popup -> @plan "Keep in or Move out" kind=flow
+  wire @w-cancel @popup -> @cancelled "Cancel" kind=flow
+  wire @w-planned @plan -> @submissions "planned" kind=flow
+  wire @w-plain-plan @plan -> @plain-refusal "error" kind=flow style=dashed
+  wire @w-dismiss @submissions -> @dismissed "earlier edit not saved" kind=flow style=dashed
+  wire @w-plain-server @server -> @plain-refusal "rule broken" kind=flow
+
+  wire @i1 @compose -> @ws.@ws-s1 "createWorkspaceController" kind=imports
+  wire @i2 @compose -> @sub.@sub-s1 "createSubmissionSession" kind=imports
+  wire @i3 @compose -> @rp.@rp-s1 "previewModuleRoutes" kind=imports
+  wire @i4 @compose -> @plan.@plan-s1 "planCanvasEdit" kind=imports
+  wire @i5 @compose -> @recovery.@recovery-s1 "createRequestRecovery" kind=imports
+  wire @i6 @compose -> @shell.@shell-s1 "createWorkspaceShell" kind=imports
+  wire @i7 @ws -> @diag.@diag-s1 "plainMessage" kind=imports
+  wire @i8 @shell -> @diag.@diag-s2 "failureSummary" kind=imports
+  wire @i9 @sub -> @submissions.@submissions-s1 "blocksSubmission" kind=imports
+  wire @i10 @plan -> @capture.@capture-s1 "plannedSections" kind=imports
+  wire @i11 @draft-events -> @finish.@finish-s1 "finishDraft" kind=imports
+  wire @i12 @draft-events -> @finish.@finish-s2 "pickEdge" kind=imports
+  wire @i13 @finish -> @regroup.@regroup-s1 "regroupIntent" kind=imports
+  wire @i14 @finish -> @regroup.@regroup-s2 "edgeGroup" kind=imports
+  wire @i15 @finish -> @regroup.@regroup-s3 "regroupOutIntent" kind=imports
+  wire @i17 @plan -> @plan-regroup.@plan-regroup-s1 "regroupSections" kind=imports
+  wire @i16 @surface -> @popup.@popup-s1 "EdgeChoicePopup" kind=imports
+
+  node @f-root concept "novakai-canvas/" size=small {}
+  node @f-web concept "apps/web/" size=small {}
+  node @f-web-adapters concept "adapters/" size=small {}
+  node @f-web-react concept "react/" size=small {}
+  node @f-web-contract concept "contract/" size=small {}
+  node @f-web-records concept "records/" size=small {}
+  node @f-web-ports concept "ports/" size=small {}
+  node @f-web-editing concept "core/editing/" size=small {}
+  node @f-web-output concept "core/output/" size=small {}
+  node @f-web-tests concept "tests/" size=small {}
+  node @f-canvas concept "capability/canvas/" size=small {}
+  node @f-canvas-rf concept "adapters/react-flow/" size=small {}
+  node @f-canvas-contract concept "contract/" size=small {}
+  node @f-canvas-records concept "records/" size=small {}
+  node @f-canvas-drafts concept "core/drafts/" size=small {}
+  node @f-canvas-interaction concept "core/interaction/" size=small {}
+  node @f-canvas-tests concept "tests/" size=small {}
+
+  wire @p1 @f-root -> @f-web "contains" kind=parent
+  wire @p2 @f-root -> @f-canvas "contains" kind=parent
+  wire @p3 @f-web -> @f-web-adapters "contains" kind=parent
+  wire @p4 @f-web -> @f-web-contract "contains" kind=parent
+  wire @p5 @f-web -> @f-web-editing "contains" kind=parent
+  wire @p6 @f-web -> @f-web-output "contains" kind=parent
+  wire @p7 @f-web -> @f-web-tests "contains" kind=parent
+  wire @p8 @f-web-adapters -> @ws "contains" kind=parent
+  wire @p9 @f-web-adapters -> @sub "contains" kind=parent
+  wire @p10 @f-web-adapters -> @rp "contains" kind=parent
+  wire @p11 @f-web-adapters -> @f-web-react "contains" kind=parent
+  wire @p12 @f-web-react -> @recovery "contains" kind=parent
+  wire @p43 @f-web-react -> @shell "contains" kind=parent
+  wire @p13 @f-web-contract -> @compose "contains" kind=parent
+  wire @p14 @f-web-contract -> @api "contains" kind=parent
+  wire @p15 @f-web-contract -> @f-web-records "contains" kind=parent
+  wire @p16 @f-web-contract -> @f-web-ports "contains" kind=parent
+  wire @p17 @f-web-records -> @rec-movement "contains" kind=parent
+  wire @p18 @f-web-records -> @rec-workspace "contains" kind=parent
+  wire @p19 @f-web-ports -> @port-workspace "contains" kind=parent
+  wire @p20 @f-web-editing -> @plan "contains" kind=parent
+  wire @p44 @f-web-editing -> @submissions "contains" kind=parent
+  wire @p21 @f-web-editing -> @capture "contains" kind=parent
+  wire @p22 @f-web-output -> @diag "contains" kind=parent
+  wire @p23 @f-web-tests -> @t-refusals "contains" kind=parent
+  wire @p24 @f-web-tests -> @t-error-bars "contains" kind=parent
+  wire @p25 @f-web-tests -> @t-regroup "contains" kind=parent
+  wire @p26 @f-web-tests -> @t-drag-save "contains" kind=parent
+  wire @p27 @f-canvas -> @f-canvas-rf "contains" kind=parent
+  wire @p28 @f-canvas -> @f-canvas-contract "contains" kind=parent
+  wire @p29 @f-canvas -> @f-canvas-drafts "contains" kind=parent
+  wire @p30 @f-canvas -> @f-canvas-interaction "contains" kind=parent
+  wire @p31 @f-canvas -> @f-canvas-tests "contains" kind=parent
+  wire @p46 @f-web-editing -> @plan-regroup "contains" kind=parent
+  wire @p45 @f-canvas-rf -> @handlers "contains" kind=parent
+  wire @p32 @f-canvas-rf -> @surface "contains" kind=parent
+  wire @p33 @f-canvas-rf -> @popup "contains" kind=parent
+  wire @p34 @f-canvas-rf -> @popup-css "contains" kind=parent
+  wire @p35 @f-canvas-contract -> @events "contains" kind=parent
+  wire @p36 @f-canvas-contract -> @f-canvas-records "contains" kind=parent
+  wire @p37 @f-canvas-records -> @state-file "contains" kind=parent
+  wire @p38 @f-canvas-records -> @draft-file "contains" kind=parent
+  wire @p39 @f-canvas-drafts -> @finish "contains" kind=parent
+  wire @p40 @f-canvas-drafts -> @regroup "contains" kind=parent
+  wire @p41 @f-canvas-interaction -> @draft-events "contains" kind=parent
+  wire @p42 @f-canvas-tests -> @t-drafts "contains" kind=parent
+
+  node @e-request entity "Request" size=medium {
+    field @e-request-id "request" type="RequestId" key=primary
+    field @e-request-ws "workspace" type="WorkspaceId"
+    field @e-request-scope "scope" type="readonly RecordKey[]"
+  }
+  node @e-submission entity "Submission" size=medium {
+    field @e-submission-request "request" type="Request"
+    field @e-submission-state "state" type="'sending' | 'uncertain' | 'retryable' | 'rejected'"
+    field @e-submission-gesture "gesture" type="string | null"
+  }
+  node @e-session entity "SessionState" size=medium {
+    field @e-session-draft "draft" type="GestureDraft | null"
+    field @e-session-choice "edgeChoice" type="EdgeChoice | null"
+  }
+  node @e-draft entity "PlacementDraft" size=medium {
+    field @e-draft-id "id" type="string" key=primary
+    field @e-draft-kind "kind" type="'move' | 'resize'"
+  }
+  node @e-choice entity "EdgeChoice" role=primary size=medium {
+    field @e-choice-gesture "gesture" type="string"
+    field @e-choice-group "group" type="TargetInfo"
+    field @e-choice-keep "keepIn" type="PlacementIntent"
+    field @e-choice-out "moveOut" type="RegroupIntent"
+  }
+  node @e-placement entity "PlacementIntent" size=medium {
+    field @e-placement-id "id" type="string"
+    field @e-placement-kind "kind" type="'placement'"
+    field @e-placement-entries "entries" type="readonly { target, placement }[]"
+  }
+  node @e-regroup entity "RegroupIntent" size=medium {
+    field @e-regroup-id "id" type="string"
+    field @e-regroup-kind "kind" type="'regroup'"
+    field @e-regroup-target "target" type="Target"
+    field @e-regroup-into "into" type="Target"
+  }
+  node @invariants note "Invariants" size=large {
+    text @inv-1 "EdgePick = 'keep-in' | 'move-out' | 'cancel'"
+    text @inv-2 "today: dismiss(s) ok <=> s.state = rejected"
+    text @inv-3 "after stage 2: dismiss(s) ok <=> s.state in {rejected, retryable}"
+    text @inv-4 "s.state = retryable => the edit was not applied"
+    text @inv-5 "blocksSubmission(r) <=> exists s: s.state != rejected and sameCollection(s.request, r)"
+    text @inv-6 "edgeChoice != null => parent(node) = edgeChoice.group before the drop"
+    text @inv-7 "edgeChoice != null => draft != null and edgeChoice.gesture = draft.id"
+    text @inv-8 "edgeChoice.keepIn.id = edgeChoice.moveOut.id = edgeChoice.gesture"
+    text @inv-9 "edgeChoice.moveOut.into = parent(edgeChoice.group)"
+    text @inv-10 "edgeChoice != null => count(edit-intent effects) = 0"
+    text @inv-11 "pickEdge(cancel) => effects = [] and draft = null and edgeChoice = null"
+  }
+  wire @r1 @e-request -> @e-submission "journal entry" kind=association from=1 to=0..1
+  wire @r2 @e-session -> @e-draft "draft (a move)" kind=association from=1 to=0..1
+  wire @r3 @e-session -> @e-choice "edgeChoice" kind=association from=1 to=0..1
+  wire @r4 @e-choice -> @e-draft "gesture" kind=association from=0..1 to=1
+  wire @r5 @e-choice -> @e-placement "keepIn" kind=association from=1 to=1
+  wire @r6 @e-choice -> @e-regroup "moveOut" kind=association from=1 to=1
+
+  section @s-today "0 · Situation today — a drop can be refused before the server sees it" mode=flow layout=layered direction=down order=0 {
+    show @drop
+    group @g-today-browser "IN YOUR BROWSER" { show @regroup @review @plan @rp @submissions }
+    show @review-panel
+    group @g-today-server "ON THE SERVER" { show @server }
+    show @saved @refused-server @refused-browser @retry-only
+    connect @w-let-go @w-same-group @w-other-group @w-review @w-panel @w-no-review @w-plan @w-planned @w-no-plan
+    connect @w-wires @w-no-wires @w-sent @w-ok @w-no-server @w-no-lock
+  }
+  section @s-proposal "0.1 · Proposal — a node near its own group's edge asks you; the browser stops refusing" mode=flow layout=layered direction=down order=1 {
+    show @drop
+    group @g-prop-browser "IN YOUR BROWSER" { show @regroup @popup @plan @submissions }
+    group @g-prop-server "ON THE SERVER" { show @server }
+    show @cancelled @dismissed @saved @plain-refusal
+    connect @w-let-go @w-edge @w-other-group @w-picked @w-cancel @w-planned @w-plain-plan @w-sent @w-dismiss @w-ok @w-plain-server
+  }
+  section @s-tree "1 · Target repo tree — orange = new file" mode=tree direction=down gap=compact order=2 {
+    show @f-root @f-web @f-web-adapters @f-web-react @f-web-contract @f-web-records @f-web-ports @f-web-editing @f-web-output @f-web-tests
+    show @f-canvas @f-canvas-rf @f-canvas-contract @f-canvas-records @f-canvas-drafts @f-canvas-interaction @f-canvas-tests
+    show @ws @sub @rp @recovery @shell @compose @api @rec-movement @rec-workspace @port-workspace @plan @plan-regroup @submissions @capture @diag
+    show @t-refusals @t-error-bars @t-regroup @t-drag-save @handlers @surface @popup @popup-css @events @state-file @draft-file @finish @regroup @draft-events @t-drafts
+    connect @p1 @p2 @p3 @p4 @p5 @p6 @p7 @p8 @p9 @p10 @p11 @p12 @p13 @p14 @p15 @p16 @p17 @p18 @p19 @p20 @p21 @p22
+    connect @p23 @p24 @p25 @p26 @p27 @p28 @p29 @p30 @p31 @p32 @p33 @p34 @p35 @p36 @p37 @p38 @p39 @p40 @p41 @p42 @p43 @p44 @p45 @p46
+    root @f-root
+  }
+  section @s-entities "2 · Entities and invariants" mode=er direction=right order=3 {
+    show @e-request @e-submission @e-session @e-draft @e-choice @e-placement @e-regroup @invariants
+    connect @r1 @r2 @r3 @r4 @r5 @r6
+  }
+  section @s-modules "3 · Module imports after the build — orange = new file" mode=modules layout=layered direction=right order=4 {
+    group @m-web "apps/web/" {
+      group @m-web-contract "contract/" { show @compose }
+      group @m-web-adapters "adapters/" {
+        show @ws @sub @rp
+        group @m-web-react "react/" { show @recovery @shell }
+      }
+      group @m-web-editing "core/editing/" { show @plan @plan-regroup @submissions @capture }
+      group @m-web-output "core/output/" { show @diag }
+    }
+    group @m-canvas "capability/canvas/" {
+      group @m-canvas-rf "adapters/react-flow/" { show @surface @popup }
+      group @m-canvas-interaction "core/interaction/" { show @draft-events }
+      group @m-canvas-drafts "core/drafts/" { show @finish @regroup }
+    }
+    show @barrel-note
+    connect @i1 @i2 @i3 @i4 @i5 @i6 @i7 @i8 @i9 @i10 @i11 @i12 @i13 @i14 @i15 @i16 @i17
+  }
+
+  section @s-seq-edge "7 · Sequence — you drop a node near its own group's edge (stage 5)" mode=sequence direction=down gap=compact order=8 {
+    show @you @handlers @draft-events @finish @regroup @surface @popup @ws
+    event @q1 @you -> @handlers "let go near the group's edge" kind=call activate=true
+    event @q2 @handlers -> @draft-events "dispatch({ kind: 'finish', id })" kind=call
+    event @q3 @draft-events -> @finish "finishDraft(state, id)" kind=call activate=true
+    event @q4 @finish -> @regroup "edgeGroup(state, draft) — new" kind=call
+    event @q5 @regroup -> @finish "the node's own group" kind=return
+    event @q6 @finish -> @regroup "regroupOutIntent(state, draft, group) — new" kind=call
+    event @q7 @finish -> @draft-events "state.edgeChoice set · no edit sent" kind=return activate=false
+    event @q8 @surface -> @popup "EdgeChoicePopup(props) — reads state.edgeChoice" kind=call
+    event @q9 @popup -> @you "Keep in · Move out · Cancel" kind=return
+    fragment @q-pick alt "Your pick" {
+      branch @q-keep "Keep in" {
+        event @q10 @popup -> @draft-events "dispatch({ kind: 'edge-pick', id, pick: 'keep-in' })" kind=call
+        event @q11 @draft-events -> @finish "pickEdge(state, id, 'keep-in') — new" kind=call
+        event @q12 @finish -> @ws "edit-intent effect; host calls editCanvas(keepIn)" kind=async
+      }
+      branch @q-out "Move out" {
+        event @q13 @popup -> @draft-events "dispatch({ kind: 'edge-pick', id, pick: 'move-out' })" kind=call
+        event @q14 @draft-events -> @finish "pickEdge(state, id, 'move-out') — new" kind=call
+        event @q15 @finish -> @ws "edit-intent effect; host calls editCanvas(moveOut)" kind=async
+      }
+      branch @q-cancel "Cancel" {
+        event @q16 @popup -> @draft-events "dispatch({ kind: 'edge-pick', id, pick: 'cancel' })" kind=call
+        event @q17 @draft-events -> @finish "pickEdge(state, id, 'cancel') — nothing sent" kind=call
+      }
+    }
+    event @q18 @handlers -> @you "next: diagram 8" kind=return activate=false
+  }
+  section @s-seq-save "8 · Sequence — after the build: the edit is planned and sent (stages 2, 4, 6)" mode=sequence direction=down gap=compact order=9 {
+    show @you @ws @plan @rp @sub @submissions @server @recovery @shell @diag
+    event @v1 @ws -> @plan "planCanvasEdit(intent, context)" kind=call activate=true
+    fragment @v-plan alt "Plan result" {
+      branch @v-plan-fail "error" {
+        event @v2 @plan -> @ws "error" kind=return activate=false
+        event @v3 @ws -> @shell "report(error) · view.problem" kind=async
+        event @v4 @shell -> @diag "failureSummary(problem)" kind=call
+        event @v5 @shell -> @you "Refused in plain words" kind=return
+      }
+      branch @v-plan-ok "changes" {
+        event @v6 @plan -> @ws "changes" kind=return activate=false
+        event @v7 @ws -> @rp "previewModuleRoutes(document, intent, changes) — module diagrams" kind=call
+        event @v8 @rp -> @ws "preview, or failure — the edit is sent either way" kind=return
+        event @v9 @ws -> @sub "submit(input)" kind=call activate=true
+        event @v10 @sub -> @submissions "blocksSubmission(pending, request)" kind=call
+        fragment @v-lock alt "Earlier edit on this collection" {
+          branch @v-lock-busy "not saved yet" {
+            event @v11 @submissions -> @sub "true" kind=return
+            event @v12 @sub -> @ws "refused: pending-request" kind=return
+            event @v13 @recovery -> @you "earlier edit: Edit not saved — safe to retry · Retry · Dismiss (new)" kind=async
+            event @v14 @you -> @recovery "Dismiss" kind=call
+            event @v15 @recovery -> @ws "dismissRequest(request)" kind=call
+            event @v16 @ws -> @sub "dismiss(id) — now accepts retryable" kind=call
+          }
+          branch @v-lock-free "none" {
+            event @v17 @submissions -> @sub "false" kind=return
+            event @v18 @sub -> @server "send edit" kind=call
+            event @v19 @server -> @sub "receipt: saved · refusal: rejected" kind=return activate=false
+          }
+        }
+      }
+    }
+  }
+}

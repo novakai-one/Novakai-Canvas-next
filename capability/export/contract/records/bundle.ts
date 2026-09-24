@@ -34,39 +34,60 @@ export interface Resource {
   readonly metadata: Readonly<Record<string, unknown>>;
 }
 
-/** A resource as stored in the bundle file: bytes as base64 (at most 28 MiB of text). */
+/**
+ * A resource as stored in the bundle file. `base64` is limited to 28 Mi characters (string
+ * length); the schema does not check that it is valid base64, which decoding does later.
+ */
 const resource = z.strictObject({
+  /** Which owner checks it. */
   kind: resourceKind,
+  /** SHA-256 of the decoded bytes, 64 lowercase hex characters. */
   digest,
+  /** The blob's media type, 1–120 characters. */
   mediaType: z.string().min(1).max(120),
+  /** The blob's bytes as base64 text. */
   base64: z.string().max(28 * 1024 * 1024),
+  /** The owner's metadata, any JSON record. */
   metadata: z.record(z.string(), z.json()),
 });
 
 /** The source revision's identity as stored in the bundle file. */
 const sourceIdentity = z.strictObject({
+  /** The source collection's ID. */
   collectionId: identity,
+  /** The source revision. */
   revision: z.number().int().nonnegative(),
+  /** The source projection's input key. */
   inputKey: z.string().min(1),
+  /** The collection title. */
   title: z.string(),
 });
 
 /**
  * A whole bundle file: format `novakai.canvas.bundle`, `schemaVersion` 1, the source identity,
- * the DSL `source` (at most 16 MiB of text) with its `sourceDigest`, the `manual` snapshot with
- * its `manualDigest`, and at most 2,000 resources. Extra fields are rejected. The schema checks
- * shape only; inspection then checks both digests and every resource. The parsed top-level
- * record is frozen; nested records are not.
+ * the DSL `source` with its `sourceDigest`, the `manual` snapshot with its `manualDigest`, and
+ * at most 2,000 resources. Extra fields are rejected. The schema limits `source` to 16 Mi
+ * characters (string length); inspection later limits its UTF-8 bytes to 16 MiB. The schema
+ * checks shape only; inspection then checks both digests and every resource. The parsed bundle
+ * and its nested `manual` record are frozen at their top level; other nested values are not.
  */
 export const bundleSchema = z
   .strictObject({
+    /** Always `novakai.canvas.bundle`. */
     format: z.literal('novakai.canvas.bundle'),
+    /** Bundle file version; always 1. */
     schemaVersion: z.literal(1),
+    /** The source revision's identity. */
     identity: sourceIdentity,
+    /** The DSL source text. */
     source: z.string().max(16 * 1024 * 1024),
+    /** SHA-256 of the source's UTF-8 bytes. */
     sourceDigest: digest,
+    /** The manual snapshot (stored human layout decisions). */
     manual: manualSchema,
+    /** SHA-256 of the manual snapshot's canonical JSON, as UTF-8 bytes. */
     manualDigest: digest,
+    /** Every resource the revision needs, with bytes as base64. */
     resources: z.array(resource).max(2000),
   })
   .readonly();
@@ -79,7 +100,10 @@ export interface BundleInspection {
   /** The source revision's identity, as stored in the bundle. */
   readonly identity: Identity;
 
-  /** The complete DSL source. */
+  /**
+   * The DSL source text as carried by the bundle. Inspection checks its digest, not that it is
+   * valid DSL; import preparation parses it.
+   */
   readonly source: string;
 
   /** SHA-256 of the source's UTF-8 bytes (64 lowercase hex characters). */
@@ -92,7 +116,12 @@ export interface BundleInspection {
   readonly resources: readonly Resource[];
 
   /** How many resources and manual-snapshot sections the bundle holds. */
-  readonly counts: { readonly resources: number; readonly sections: number };
+  readonly counts: {
+    /** Number of admitted resources. */
+    readonly resources: number;
+    /** Number of sections in the manual snapshot. */
+    readonly sections: number;
+  };
 }
 
 /**
@@ -100,7 +129,9 @@ export interface BundleInspection {
  * into. Extra fields are rejected. A malformed request fails with `invalid-input`.
  */
 export const importSchema = z.strictObject({
+  /** The bundle file's bytes. */
   bytes: z.instanceof(Uint8Array),
+  /** The new collection ID; must differ from the bundle's own collection ID. */
   targetCollectionId: identity,
 });
 

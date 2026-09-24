@@ -7,6 +7,7 @@ import type { Result, ErrorCode } from '../../contract/errors.js';
 
 /** The part of a zod schema `parse` needs: `safeParse` with its success/issues result. */
 interface Parser<T> {
+  /** Checks `input` without throwing for invalid data; returns the data or the issues. */
   safeParse(input: unknown):
     | { success: true; data: T }
     | {
@@ -26,7 +27,9 @@ export function success<T>(value: T): Result<T> {
 }
 
 /**
- * Checks unknown input against a schema and reports the first issue as a typed failure.
+ * Checks unknown input against a schema and reports the first issue as a typed failure. Invalid
+ * input never throws, but an exception from `safeParse` itself, or from reading the input's
+ * properties during the check, propagates; callers run it inside {@link protect}.
  *
  * @param schema - The schema; its `safeParse` is read once, then called once.
  * @param input - The unknown input.
@@ -43,7 +46,9 @@ export function parse<T>(
   const result = schema.safeParse(input);
   if (result.success) return success(result.data);
   const first = result.error.issues.at(0);
-  return failure(code, first?.path.map(String).join('.') ?? '$', first?.message ?? 'Invalid input');
+  const path = first?.path.map(String).join('.') ?? '$';
+  const message = first?.message ?? 'Invalid input';
+  return failure(code, path, message);
 }
 
 /**

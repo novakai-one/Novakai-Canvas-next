@@ -34,7 +34,10 @@ export type {
   SequenceGeometry,
   RoutedWire,
 };
-/** Draws the selected part of a scene as one SVG document; the SVG, PNG, PDF and HTML outputs use it. */
+/**
+ * Draws the selected part of a scene as one SVG document; the SVG, PNG, PDF and HTML outputs
+ * use it.
+ */
 export interface SceneRenderer {
   /**
    * Renders the selection.
@@ -46,18 +49,45 @@ export interface SceneRenderer {
   render(input: RenderInput): Result<string>;
 }
 
-/** The React drawing functions the scene renderer composes, one per kind of placed item. */
+/**
+ * The React drawing functions the scene renderer composes, one per kind of placed item. Each
+ * returns an element for static SVG markup. They may throw; the scene renderer's `render` turns
+ * any throw into `encoding-failed`.
+ */
 export interface DrawingSlots {
-  /** Draws one placed node at its box. */
+  /**
+   * Draws one placed node.
+   *
+   * @param node - The node with its box and measured content.
+   * @returns The node, moved to its box position.
+   */
   readonly node: (node: PlacedNode) => ReactElement;
 
-  /** Draws one routed wire with its markers. */
+  /**
+   * Draws one routed wire with its end markers.
+   *
+   * @param wire - The routed wire.
+   * @param paint - The colours to draw with.
+   * @returns The wire element.
+   */
   readonly wire: (wire: RoutedWire, paint: Paint) => ReactElement;
 
-  /** Draws a section's sequence-diagram geometry. */
+  /**
+   * Draws a section's sequence-diagram geometry.
+   *
+   * @param geometry - The section's sequence geometry.
+   * @param paint - The colours to draw with.
+   * @returns The sequence element.
+   */
   readonly sequence: (geometry: SequenceGeometry, paint: Paint) => ReactElement;
 
-  /** Draws measured text content, moved to `point` (section-local). */
+  /**
+   * Draws measured text content.
+   *
+   * @param content - Presentation's measured content.
+   * @param point - Where to place it (section-local).
+   * @returns The label, moved to `point`.
+   */
   readonly label: (content: MeasuredContent, point: Point) => ReactElement;
 }
 
@@ -81,10 +111,13 @@ export type MarkerDrawing = ComponentType<MarkerPlacement>;
 
 /** One decoded font, ready for native rasterizing and PDF embedding. */
 export interface NativeFont {
-  /** Internal family name, `canvas-<digest>`, used to refer to this exact font. */
+  /**
+   * A synthetic name Export gives the font, `canvas-<digest>`, used to refer to this exact
+   * font in SVG and PDF.
+   */
   readonly alias: string;
 
-  /** The family name read from the font bytes. */
+  /** The font's real family name, read from its bytes. */
   readonly family: string;
 
   /** The font bytes to embed; WOFF2 fonts are decompressed first. */
@@ -115,11 +148,13 @@ export interface MediaConverter {
   convert(resources: readonly Resource[]): Promise<Result<ReadonlyMap<string, string>>>;
 }
 
-/** What the PNG and HTML encoders need. */
+/**
+ * What the HTML encoder needs; the PNG and PDF encoders take only `renderer` from it.
+ */
 export interface RenderDependencies {
   /** Draws the scene as SVG. */
   readonly renderer: SceneRenderer;
 
-  /** Byte and text codecs, and hashing. */
+  /** Byte and text codecs, and hashing; the HTML encoder uses only `utf8`. */
   readonly encoding: Encoding;
 }

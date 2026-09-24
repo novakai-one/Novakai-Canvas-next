@@ -15,7 +15,11 @@ export type ErrorCode =
 /** A typed storage failure: its code, where it happened, what went wrong and how to recover. */
 export interface StorageError {
   readonly code: ErrorCode;
-  /** Dotted path into the checked value, `$` for the whole operation, or `''` for the root value. */
+  /**
+   * Dotted path into the checked value, `$` for the whole operation, or `''` for the root value.
+   * A `revision-conflict` uses the record's `kind/id`. Failures from injected providers and domain
+   * validation keep their own path.
+   */
   readonly path: string;
   readonly message: string;
   /** The fixed recovery instruction for `code`. */
@@ -33,16 +37,7 @@ export type Result<T, E = StorageError> =
  * Builds a typed failure, adding the fixed recovery instruction for its code.
  *
  * Used by adapters and core alike. The caller that receives the failure owns the recovery it
- * names:
- * - `invalid-input`: correct the submitted input.
- * - `unsupported-version`: use a compatible reader; do not reset the database.
- * - `revision-conflict`: re-read and prepare a new request.
- * - `request-reused`: use a new request ID for different intent.
- * - `storage-unavailable`: reopen and reconcile the request receipt; for restore, inspect the
- *   destination before retrying or activating it.
- * - `corrupt-record`: keep the original location and restore a verified backup.
- * - `missing-resource`: stage the original bytes again and retry.
- * - `destination-not-empty`: choose a new empty restore location.
+ * names; the instruction for each code is in `recoveryByCode` below.
  *
  * @param code - The failure code.
  * @param path - Where the failure happened.

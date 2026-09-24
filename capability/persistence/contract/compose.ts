@@ -47,7 +47,7 @@ export function openSqlite(
 }
 
 /** The part of a native SQLite database this module uses; a fake can stand in for tests. */
-interface NativeDatabase {
+export interface NativeDatabase {
   exec(sql: string): void;
   prepare(sql: string): {
     get(...values: string[]): Readonly<Record<string, unknown>> | undefined;

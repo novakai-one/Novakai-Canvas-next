@@ -32,9 +32,10 @@ import { checkCoverage, reachableResources, verifyResources, withLease } from '.
  *    valid, so this step is mandatory.
  * 5. Reserve the referenced assets at the destination, so garbage collection cannot remove newly
  *    staged bytes before the documents referencing them are installed.
- * 6. Stage every blob (all stages settle), then, in one store transaction, check the destination
- *    is empty and belongs to the same workspace, and install the state. A used destination is
- *    `destination-not-empty`; another workspace is `invalid-input`.
+ * 6. Stage every blob (all stages settle), then, in one store transaction, validate the
+ *    destination's state, check it belongs to the same workspace, then check it is empty, and
+ *    install the state. Another workspace is `invalid-input`; a used destination of the same
+ *    workspace is `destination-not-empty`.
  * 7. Release the reservation, whatever happened. A failed release replaces the result.
  *
  * A known failure before the install leaves the destination's documents unchanged. The host never

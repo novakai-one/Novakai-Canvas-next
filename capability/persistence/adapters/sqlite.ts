@@ -14,11 +14,14 @@ import type { StorePort, Decision } from '../contract/ports/store.js';
  * 2. Read the stored envelope. When the database's data version shows nothing changed since this
  *    store's last read or write, the text already held is reused.
  * 3. Decode it (a missing row decodes as an empty workspace) and pass it to `decide`. A decode
- *    failure is `corrupt-record`; malformed content is never reset.
+ *    failure, or a throw from `decide`, is `corrupt-record`; malformed content is never reset.
  * 4. A failed decision is rolled back. A decision that returns the state it read commits without
  *    writing. Otherwise the new envelope is written, then committed.
- * 5. Any throw during the transaction is rolled back and reported as `storage-unavailable`: the
- *    outcome is uncertain, so Authoring must reopen and reconcile the request receipt.
+ * 5. Any other throw (BEGIN, reading the version or row, encoding, writing, COMMIT) is rolled back
+ *    and reported as `storage-unavailable`: the outcome is uncertain, so Authoring must reopen and
+ *    reconcile the request receipt.
+ * 6. A ROLLBACK that itself throws returns `storage-unavailable`, "Rollback could not be
+ *    confirmed", in place of the result being rolled back.
  *
  * When the port has `parts`, top-level arrays of objects (slots, receipts) are stored one row per
  * item, and a commit writes only items not stored before. The adapter holds no document policy.
@@ -165,9 +168,9 @@ function closeDatabase(database: DatabasePort): Result<void> {
 }
 
 /**
- * Decodes the stored value. Only a missing row (`undefined`) becomes an empty workspace;
- * malformed content is passed on for validation and never reset. A non-string value is passed on
- * as is.
+ * Decodes the stored value. Only a missing row (`undefined`) becomes an empty workspace. Text is
+ * parsed (text that is not JSON throws); the parsed value, valid or not, is passed on for
+ * validation and never reset. A non-string value is passed on as is.
  */
 function decodeStored(
   serialized: unknown,
@@ -216,7 +219,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * Items whose id was loaded last time are reused; the rest are loaded from their rows.
  *
  * @throws Error when there is no parts port, or the head's item lists or ids are malformed, or a
- * row is missing.
+ * row is missing; SyntaxError when a loaded row is not JSON.
  */
 function assemble(
   head: Record<string, unknown>,
@@ -228,7 +231,7 @@ function assemble(
   const out: Record<string, unknown> = { ...head };
   delete out[PARTS];
   for (const key of listed.keys) {
-    const [name, ids] = listedIds(head, key);
+    const { name, ids } = listedIds(head, key);
     out[name] = ids.map((id) => assembleItem(id, last, listed.parts, items));
   }
   last.items = items;
@@ -248,7 +251,10 @@ function listedParts(
 }
 
 /** The field name and its array of item ids. Throws when the name or the ids are malformed. */
-function listedIds(head: Record<string, unknown>, key: unknown): readonly [string, unknown[]] {
+function listedIds(
+  head: Record<string, unknown>,
+  key: unknown,
+): { readonly name: string; readonly ids: unknown[] } {
   if (typeof key !== 'string') {
     throw new Error('item ids malformed');
   }
@@ -256,7 +262,7 @@ function listedIds(head: Record<string, unknown>, key: unknown): readonly [strin
   if (!Array.isArray(ids)) {
     throw new Error('item ids malformed');
   }
-  return [key, ids];
+  return { name: key, ids };
 }
 
 /**
@@ -389,7 +395,10 @@ function storedBefore(last: Decoded, item: object): { id: string; stored: Item }
     return undefined;
   }
   const stored = last.items.get(id);
-  return stored === undefined ? undefined : { id, stored };
+  if (stored === undefined) {
+    return undefined;
+  }
+  return { id, stored };
 }
 
 /** Gives an item the id of an existing row with the same text, or writes it under a new id. */

@@ -149,7 +149,11 @@ function validatedObject(raw: object): Result<WorkspaceState> {
   if (isAdmitted(raw)) {
     return success(raw);
   }
-  return validated.get(raw) ?? validateAndRemember(raw);
+  const known = validated.get(raw);
+  if (known !== undefined) {
+    return known;
+  }
+  return validateAndRemember(raw);
 }
 
 /** Validates and freezes the result; remembers it only when it succeeded. */

@@ -99,7 +99,11 @@ function closeFixture(database: TestDatabase): Result<void> {
   }
 }
 /** Fault policy preserves the actual driver effect ordering, including acknowledgement loss after COMMIT. */
-function executeFault(driver: DatabasePort, fault: Fault, sql: string): void {
+function executeFault(
+  driver: DatabasePort,
+  fault: Fault,
+  sql: Parameters<DatabasePort['exec']>[0],
+): void {
   if (sql !== 'COMMIT') {
     driver.exec(sql);
     return;

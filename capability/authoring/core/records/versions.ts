@@ -4,7 +4,7 @@ import { keyText, versionOf } from './keys.js';
 import { reject } from '../validation/outcomes.js';
 
 /**
- * Checks that every version the client expected still matches the snapshot.
+ * Checks that every given record version still matches the snapshot.
  *
  * One mismatch rejects the whole request. Authoring never refreshes the expected versions for the caller.
  *

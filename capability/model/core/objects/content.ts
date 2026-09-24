@@ -7,8 +7,9 @@ import { duplicates } from '../invariants/duplicates.js';
 import { diagnoseWhen, referenceIssue } from '../invariants/issues.js';
 
 /**
- * One thing inside an object that an endpoint can address: a port, a content block or a table
- * row. Only its ID and kind, not the block's payload.
+ * One thing inside an object that an endpoint's `member` is matched against: a port, a content
+ * block or a table row. Only its ID and kind, not the block's payload. Which kinds an endpoint
+ * accepts is set by `memberEndpoints` and `genericMemberEndpoints`.
  */
 export interface ObjectDescendant {
   /** The port, block or row ID. */
@@ -21,9 +22,8 @@ export interface ObjectDescendant {
  * Checks every object's content, in object order. For each object, in this order:
  * 1. descendant IDs (ports, blocks and table rows share one namespace) must be unique:
  *    `duplicate` at `objects.<id>.descendants.<descendant>`;
- * 2. for each block: its kind must be allowed on the object's kind (`field` and `keygroup` only
- *    on `entity`; `member` and `signature` only on `module`, `interface` or `function`; any other
- *    kind anywhere): `content` at `objects.<id>.content.<block>`, "Content kind is not legal on
+ * 2. for each block: its kind must be allowed on the object's kind ({@link contentOwners}; a kind
+ *    without an entry is allowed anywhere): `content` at `objects.<id>.content.<block>`, "Content kind is not legal on
  *    this object kind"; then, for a table, every row must have one cell per column: `content` at
  *    `objects.<id>.content.<block>.<row>`, "Row width must equal column count";
  * 3. the object's role must be in `theme.roles`: `reference` at `objects.<id>.role`.

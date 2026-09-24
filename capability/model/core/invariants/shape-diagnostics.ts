@@ -5,7 +5,8 @@ import type { Diagnostic } from '../../contract/errors.js';
  * schema library's error objects never leave Model.
  *
  * Each diagnostic's path is the issue's path segments joined by `.` (for example
- * `objects.0.content`; `''` for the root); its message is the issue's message.
+ * `objects.0.content`; `''` for the root); its message is the issue's message. Pure: Authoring
+ * owns correction, commit and crash recovery.
  *
  * @param issues - The schema issues; normally at least one.
  * @returns A new list of diagnostics.

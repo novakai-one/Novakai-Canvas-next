@@ -13,7 +13,8 @@ import { diagnoseWhen } from '../invariants/issues.js';
  * 2. each section appearance whose effective composition (its own, else the object's) is not
  *    `stack` but shows no media, at `sections.<section>.appearances.<object>.composition`. Only
  *    visible blocks count: none at `label` detail, the first block at `summary`, all at `full`.
- *    Appearances of missing objects are skipped (the reference rules report those);
+ *    Appearances of missing objects are skipped (the section rules report those, as `reference`
+ *    at `sections.<section>.appearances.<object>`);
  * 3. each section group whose role is not in `theme.roles`, at
  *    `sections.<section>.groups.<group>.role`, "Group role must be declared by the collection
  *    theme".

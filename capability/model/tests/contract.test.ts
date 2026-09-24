@@ -3,7 +3,8 @@ import { plan, validate, objectId, type ObjectId, type SectionId } from '../cont
 import { base, graph, node, objectAt, value } from './fixtures.js';
 
 /**
- * Results are detached from the input, deeply frozen and repeatable: validating and planning
+ * Results are detached from the input, frozen (checked: the collection, its objects list and first
+ * object, and the plan) and repeatable: validating and planning
  * never change the input, planning twice gives equal plans, changing the change batch afterwards
  * does not reach the plan, and branded IDs are not interchangeable at compile time.
  */
@@ -42,13 +43,13 @@ test('return detached immutable replayable results', () => {
     /** Accepts only an ObjectId. */
     (id: ObjectId) => id;
   expect(acceptsObject(identity)).toBe('same');
-  // @ts-expect-error SectionId must not be assignable to ObjectId.
+  // @ts-expect-error An ObjectId must not be assignable to a SectionId.
   const wrong: SectionId = identity;
   void wrong;
 });
 
 /**
- * The editor (every field spelled out) and the language compiler (defaults omitted) create the
+ * The editor (optional fields written out) and the language compiler (defaults omitted) create the
  * same object, so they get equal plans with one `added` impact.
  */
 test('serve UI and language consumers equally', () => {

@@ -4,9 +4,23 @@ import {
   validate,
   type Collection,
   type DiagnosticCode,
+  type DiagramObject,
   type Mode,
   type Result,
+  type Section,
 } from '../contract/index.js';
+
+/**
+ * Raw, unvalidated record data. Builders spread overrides last and an override may replace any
+ * field with any value (even `null`), so no field type is promised.
+ */
+export type RawRecord = Readonly<Record<string, unknown>>;
+
+/** Layout intent as {@link layout} builds it (unvalidated). */
+export interface RawLayout {
+  readonly algorithm: string;
+  readonly constraints: readonly unknown[];
+}
 
 /** A well-formed content digest (`sha256:` then `a` × 64), for themes and assets. */
 export const digest = `sha256:${'a'.repeat(64)}`;
@@ -30,9 +44,12 @@ export const manual = [
  *
  * @param algorithm - The layout algorithm (default `flow`).
  * @param constraints - The layout constraints (default none).
- * @returns `{ algorithm, constraints }`.
+ * @returns `{ algorithm, constraints }`, unvalidated.
  */
-export function layout(algorithm = 'flow', constraints: readonly unknown[] = []) {
+export function layout(
+  algorithm: string = 'flow',
+  constraints: readonly unknown[] = [],
+): RawLayout {
   return { algorithm, constraints };
 }
 
@@ -42,9 +59,9 @@ export function layout(algorithm = 'flow', constraints: readonly unknown[] = [])
  * @param id - The object ID.
  * @param kind - The object kind (default `step`).
  * @param extra - Fields to add or override, spread last.
- * @returns `{ id, kind, label: id, ...extra }`.
+ * @returns `{ id, kind, label: id, ...extra }`, unvalidated; `extra` may replace any field.
  */
-export function node(id: string, kind = 'step', extra: Readonly<Record<string, unknown>> = {}) {
+export function node(id: string, kind: string = 'step', extra: RawRecord = {}): RawRecord {
   return { id, kind, label: id, ...extra };
 }
 
@@ -53,9 +70,10 @@ export function node(id: string, kind = 'step', extra: Readonly<Record<string, u
  *
  * @param id - The block ID.
  * @param extra - Fields to add or override, spread last.
- * @returns `{ id, kind: 'field', label: id, type: 'Id', ...extra }`.
+ * @returns `{ id, kind: 'field', label: id, type: 'Id', ...extra }`, unvalidated; `extra` may
+ * replace any field.
  */
-export function field(id: string, extra: Readonly<Record<string, unknown>> = {}) {
+export function field(id: string, extra: RawRecord = {}): RawRecord {
   return { id, kind: 'field', label: id, type: 'Id', ...extra };
 }
 
@@ -66,14 +84,15 @@ export function field(id: string, extra: Readonly<Record<string, unknown>> = {})
  * @param source - The source object (default `a`).
  * @param target - The target object (default `b`).
  * @param extra - Fields to add or override, spread last.
- * @returns The relationship record.
+ * @returns `{ id, kind: 'flow', label: 'continues', source: { object: source }, target: { object:
+ * target }, ...extra }`, unvalidated; `extra` may replace any field.
  */
 export function relation(
-  id = 'ab',
-  source = 'a',
-  target = 'b',
-  extra: Readonly<Record<string, unknown>> = {},
-) {
+  id: string = 'ab',
+  source: string = 'a',
+  target: string = 'b',
+  extra: RawRecord = {},
+): RawRecord {
   return {
     id,
     kind: 'flow',
@@ -90,13 +109,14 @@ export function relation(
  * @param id - The section ID (default `view`).
  * @param mode - The section mode (default `flow`).
  * @param extra - Fields to add or override, spread last.
- * @returns The section record.
+ * @returns `{ id, title: id, mode, layout, ...extra }`, unvalidated; `extra` may replace any
+ * field.
  */
 export function section(
-  id = 'view',
+  id: string = 'view',
   mode: Mode = 'flow',
-  extra: Readonly<Record<string, unknown>> = {},
-) {
+  extra: RawRecord = {},
+): RawRecord {
   return { id, title: id, mode, layout: layout(algorithms[mode]), ...extra };
 }
 
@@ -104,9 +124,9 @@ export function section(
  * Builds an empty collection `demo` at revision 0 with the paper theme and a grid arrangement.
  *
  * @param extra - Fields to add or override, spread last (for example `objects`).
- * @returns The collection data (unvalidated).
+ * @returns The collection data, unvalidated; `extra` may replace any field.
  */
-export function base(extra: Readonly<Record<string, unknown>> = {}) {
+export function base(extra: RawRecord = {}): RawRecord {
   return {
     schemaVersion: 1,
     id: 'demo',
@@ -123,9 +143,9 @@ export function base(extra: Readonly<Record<string, unknown>> = {}) {
  * section showing both with the wire.
  *
  * @param extra - Collection fields to add or override, spread last.
- * @returns The collection data (unvalidated).
+ * @returns The collection data, unvalidated; `extra` may replace any field.
  */
-export function graph(extra: Readonly<Record<string, unknown>> = {}) {
+export function graph(extra: RawRecord = {}): RawRecord {
   return base({
     objects: [node('a'), node('b')],
     relationships: [relation()],
@@ -144,6 +164,7 @@ export function graph(extra: Readonly<Record<string, unknown>> = {}) {
  *
  * @param result - A public Model result.
  * @returns Its value.
+ * @throws AssertionError when the result is a failure; the message is the result as JSON.
  */
 export function value<T>(result: Result<T>): T {
   assert(result.ok, JSON.stringify(result));
@@ -157,8 +178,10 @@ export function value<T>(result: Result<T>): T {
  * @param result - A public Model result.
  * @param code - The expected diagnostic code.
  * @param path - Text the diagnostic's path must contain.
+ * @returns Nothing; the checks are the point.
+ * @throws AssertionError when the result succeeded, has a value, or has no matching diagnostic.
  */
-export function invalid(result: Result<unknown>, code: DiagnosticCode, path: string) {
+export function invalid(result: Result<unknown>, code: DiagnosticCode, path: string): void {
   assert(!result.ok, 'Expected rejected public result');
   expect(result).not.toHaveProperty('value');
   const expectedDiagnostic = expect.objectContaining({ code, path: expect.stringContaining(path) });
@@ -171,8 +194,10 @@ export function invalid(result: Result<unknown>, code: DiagnosticCode, path: str
  * @param input - Collection data.
  * @param code - The expected diagnostic code.
  * @param path - Text the diagnostic's path must contain.
+ * @returns Nothing; the checks are the point.
+ * @throws AssertionError as {@link invalid} does.
  */
-export function rejects(input: unknown, code: DiagnosticCode, path: string) {
+export function rejects(input: unknown, code: DiagnosticCode, path: string): void {
   invalid(validate(input), code, path);
 }
 
@@ -183,8 +208,15 @@ export function rejects(input: unknown, code: DiagnosticCode, path: string) {
  * @param changes - The change batch.
  * @param code - The expected diagnostic code.
  * @param path - Text the diagnostic's path must contain.
+ * @returns Nothing; the checks are the point.
+ * @throws AssertionError as {@link invalid} does.
  */
-export function rejectsPlan(input: unknown, changes: unknown, code: DiagnosticCode, path: string) {
+export function rejectsPlan(
+  input: unknown,
+  changes: unknown,
+  code: DiagnosticCode,
+  path: string,
+): void {
   invalid(plan(input, changes), code, path);
 }
 
@@ -194,8 +226,9 @@ export function rejectsPlan(input: unknown, changes: unknown, code: DiagnosticCo
  * @param collection - A validated collection.
  * @param id - The object ID.
  * @returns The object.
+ * @throws AssertionError when no object has this ID.
  */
-export function objectAt(collection: Collection, id: string) {
+export function objectAt(collection: Collection, id: string): DiagramObject {
   const result = collection.objects.find(
     /** Tells whether this is the object. */
     (object) => object.id === id,
@@ -210,8 +243,9 @@ export function objectAt(collection: Collection, id: string) {
  * @param collection - A validated collection.
  * @param id - The section ID (default `view`).
  * @returns The section.
+ * @throws AssertionError when no section has this ID.
  */
-export function sectionAt(collection: Collection, id = 'view') {
+export function sectionAt(collection: Collection, id: string = 'view'): Section {
   const result = collection.sections.find(
     /** Tells whether this is the section. */
     (section) => section.id === id,
@@ -226,7 +260,7 @@ export function sectionAt(collection: Collection, id = 'view') {
  *
  * @returns The collection data (unvalidated).
  */
-export function er() {
+export function er(): RawRecord {
   const customerKey = field('id', { key: 'primary' });
   const orderKey = field('customer', {
     key: 'foreign',
@@ -261,7 +295,7 @@ export function er() {
  *
  * @returns The collection data (unvalidated).
  */
-export function placed() {
+export function placed(): RawRecord {
   return graph({
     sections: [
       section('view', 'flow', {

@@ -3,7 +3,7 @@ import { definitionDisplay, definitionId, definitionUsages, validate } from '../
 import { base, field, node, rejects, value } from './fixtures.js';
 
 /**
- * A missing reference nested two unions deep is reported at its exact path, and a two-definition
+ * A missing reference nested two unions deep is reported at a path containing its location, and a two-definition
  * cycle through a union is reported at the first definition's expression.
  */
 test('validates nested unknown refs and cycles without path explosion', () => {
@@ -84,22 +84,8 @@ test('stops display expansion at the shared budget with one truncation marker', 
   // Arrange: d0 → d1 → … → d39, each with 100 literals.
   const definitions = Array.from(
     { length: 40 },
-    /** Definition `d<index>`: a reference to the next one (except the last) and 100 literals. */
-    (_, index) => ({
-      id: `d${index}`,
-      label: `Definition ${index}`,
-      expression: {
-        kind: 'union' as const,
-        items: [
-          ...(index < 39 ? [{ kind: 'reference' as const, id: `d${index + 1}` }] : []),
-          ...Array.from(
-            { length: 100 },
-            /** Literal number `literal`. */
-            (__, literal) => ({ kind: 'literal' as const, value: literal }),
-          ),
-        ],
-      },
-    }),
+    /** Definition `d<index>`. */
+    (_, index) => chainDefinition(index),
   );
   const collection = value(validate(base({ definitions })));
 
@@ -119,13 +105,45 @@ const actor = {
   expression: union(literal('Human'), literal('Agent')),
 };
 
+/** A fixture type expression. Reference IDs need not exist, so negative cases stay expressible. */
+type FixtureExpression =
+  | { readonly kind: 'union'; readonly items: readonly FixtureExpression[] }
+  | { readonly kind: 'literal'; readonly value: string | number }
+  | { readonly kind: 'reference'; readonly id: string };
+
+/**
+ * Builds definition `d<index>` of the budget chain: a union of a reference to `d<index + 1>`
+ * (except for the last, `d39`) followed by the literals 0 to 99.
+ *
+ * @param index - The definition's position in the chain, 0 to 39.
+ * @returns `{ id, label, expression }`.
+ */
+function chainDefinition(index: number) {
+  const items: FixtureExpression[] = [];
+  const isLast = index === 39;
+  if (!isLast) {
+    items.push(reference(`d${index + 1}`));
+  }
+  const literals = Array.from(
+    { length: 100 },
+    /** Literal number `literal`. */
+    (__, literal) => ({ kind: 'literal' as const, value: literal }),
+  );
+  items.push(...literals);
+  return {
+    id: `d${index}`,
+    label: `Definition ${index}`,
+    expression: { kind: 'union' as const, items },
+  };
+}
+
 /**
  * Builds a union expression.
  *
  * @param items - The union's items.
  * @returns `{ kind: 'union', items }`.
  */
-function union(...items: readonly object[]) {
+function union(...items: readonly FixtureExpression[]) {
   return { kind: 'union' as const, items };
 }
 

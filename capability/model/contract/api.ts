@@ -8,27 +8,12 @@
  */
 
 /**
- * Validates unknown collection data.
- *
- * In order:
- * 1. inspects the input as plain JSON without running accessors: no getters, hidden or symbol
- *    fields, cycles, sparse arrays or arrays with extra fields, non-plain prototypes, and no
- *    `undefined`, functions, bigints, symbols or non-finite numbers (`shape`), and at most 100,000
- *    values and 64 levels (`limit`). The first problem found is returned; its path starts with `$`
- *    (for example `$.objects.0`). A throw while inspecting (for example a revoked proxy) is
- *    `shape` at `$`, "Input cannot be inspected as plain data";
- * 2. parses it with the strict collection schema, which builds a detached copy (`shape`
- *    diagnostics, one per schema issue, at the issue's path joined by `.`);
- * 3. runs every domain rule on the copy and collects all their diagnostics, in rule order:
- *    identity, content, composition, references, keys, relationships, sections, layouts,
- *    definitions.
- *
- * A throw during steps 2–3 (for example from a proxy trap) is `shape` at `$`, "Input could not
- * be read as plain data". The input is never changed or frozen.
+ * Validates unknown collection data: plain-data inspection, then the strict schema, then every
+ * domain rule. The full contract is on `validateCollection` (`core/invariants/validate.ts`),
+ * which editors show when hovering `validate`.
  *
  * @param input - Proposed collection data.
- * @returns The detached collection, or `validation-failed` with at least one diagnostic and no
- * partial value. Either outcome is deeply frozen.
+ * @returns The detached collection, or `validation-failed`. Either outcome is deeply frozen.
  * @throws Never.
  */
 export { validateCollection as validate } from '../core/invariants/validate.js';

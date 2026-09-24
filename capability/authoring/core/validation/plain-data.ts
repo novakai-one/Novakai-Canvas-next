@@ -60,7 +60,8 @@ export function copyJson(value: unknown, limits: JsonLimits = requestLimits): Js
 /**
  * Tells whether a value is a non-null object that is frozen.
  *
- * A frozen object cannot change, so Authoring can safely reuse the result of checking it.
+ * Authoring reuses the result of checking a frozen object. `Object.isFrozen` only checks the top
+ * level, so this relies on Authoring's inputs being frozen all the way down, as `freeze` does.
  *
  * @param value - The value to test.
  * @returns `true` when the value is a frozen object or array.

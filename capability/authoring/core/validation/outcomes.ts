@@ -42,6 +42,8 @@ export function accepted<T>(result: Result<T>): T {
  *
  * @param value - The value to freeze. It is frozen in place.
  * @returns The same value, now deeply frozen. Values that are not objects are returned as they are.
+ *   An object that is already frozen is returned without looking inside it. This assumes it was
+ *   frozen by this function, which freezes everything inside first.
  */
 export function freeze<T>(value: T): T {
   if (!isObject(value)) return value;

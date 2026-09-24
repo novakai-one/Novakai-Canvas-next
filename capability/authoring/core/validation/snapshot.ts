@@ -24,7 +24,8 @@ const envelopes = new WeakMap<object, Snapshot>();
  * @param input - The untrusted snapshot from storage.
  * @param workspace - The workspace the snapshot must belong to.
  * @returns The checked, deeply frozen snapshot.
- * @throws AuthoringFault `corrupt-record` when the snapshot is malformed, belongs to another
+ * @throws AuthoringFault `invalid-input` at `$` when the snapshot is not plain JSON or is over the stored size limits.
+ * @throws AuthoringFault `corrupt-record` when the snapshot does not match the snapshot shape, belongs to another
  *   workspace, has a malformed tombstone, or has a versioned document header that differs from its record.
  * @throws AuthoringFault `invalid-input` at `records` when a record key appears twice.
  */
@@ -44,7 +45,8 @@ export function readSnapshot(input: unknown, workspace: WorkspaceId): Snapshot {
  * @param input - The untrusted receipt from storage.
  * @param request - The request ID the receipt must belong to.
  * @returns The checked, deeply frozen receipt.
- * @throws AuthoringFault `corrupt-record` when the receipt is malformed or belongs to another request.
+ * @throws AuthoringFault `invalid-input` at `$` when the receipt is not plain JSON or is over the stored size limits.
+ * @throws AuthoringFault `corrupt-record` when the receipt does not match the receipt shape or belongs to another request.
  * @throws AuthoringFault `invalid-input` at `receipt.versions` when a record key appears twice.
  */
 export function readReceipt(input: unknown, request: RequestId): Receipt {

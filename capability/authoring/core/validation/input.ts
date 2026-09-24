@@ -14,7 +14,8 @@ type ParsedByLimits = WeakMap<object, ParsedByInput>;
 
 /**
  * Cache of parsed frozen input, looked up by shape, then limits, then the input object.
- * Frozen input cannot change, so one successful parse can be reused.
+ * One successful parse is reused. This assumes frozen input is frozen all the way down
+ * (as `freeze` does), because `Object.isFrozen` only checks the top level.
  */
 const parsedByShape = new WeakMap<object, ParsedByLimits>();
 

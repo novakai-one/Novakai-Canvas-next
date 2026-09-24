@@ -160,11 +160,14 @@ export function graph(extra: RawRecord = {}): RawRecord {
 }
 
 /**
- * Returns a successful result's value; fails the test (showing the result) otherwise.
+ * Returns a successful result's value; fails the test (showing the result) otherwise. The result
+ * is serialized with `JSON.stringify` BEFORE the check, on every call, even when it succeeded.
  *
  * @param result - A public Model result.
  * @returns Its value.
  * @throws AssertionError when the result is a failure; the message is the result as JSON.
+ * @throws Whatever `JSON.stringify` throws for the result, before the check: a `TypeError` for a
+ * cyclic or BigInt value, or any error thrown by a `toJSON` method.
  */
 export function value<T>(result: Result<T>): T {
   assert(result.ok, JSON.stringify(result));

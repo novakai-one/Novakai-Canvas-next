@@ -8,6 +8,8 @@ import { duplicates } from './duplicates.js';
  * sections, assets, sources, definitions, then `theme.roles`. IDs inside objects and sections
  * (descendants, groups) are checked by their own validators.
  *
+ * Pure: Authoring owns commit and crash recovery.
+ *
  * @param collection - A parsed collection.
  * @returns Every `duplicate` diagnostic, in that order, or an empty list.
  * @throws Never for a parsed collection.

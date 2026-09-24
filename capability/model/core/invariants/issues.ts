@@ -43,7 +43,7 @@ export function referenceIssue(missing: boolean, path: string): readonly Diagnos
 
 /**
  * Builds a `validation-failed` result with one diagnostic and no value. Not frozen: the public
- * Model operation that returns it freezes it.
+ * Model operation that returns it freezes it. Authoring owns commit and crash recovery.
  *
  * @param code - The failure category.
  * @param path - Where the failure is.
@@ -72,7 +72,7 @@ export function success<T>(value: T): Result<T> {
 
 /**
  * Builds a `validation-failed` result from a list of diagnostics, in the same order (the list is
- * copied). An empty list means a rule reported failure without evidence; that becomes `shape` at
+ * copied). Not frozen; Authoring owns commit and crash recovery. An empty list means a rule reported failure without evidence; that becomes `shape` at
  * `$`, "Validation provider rejected input without diagnostic evidence".
  *
  * @param diagnostics - The diagnostics; normally at least one.

@@ -9,14 +9,17 @@ const MAX_DEPTH = 64;
 
 /**
  * Checks that unknown input is plain JSON data before any schema parsing, without running user
- * accessors (property descriptors are read, never property values through getters).
+ * accessors (property descriptors are read, never property values through getters). One
+ * exception: checking that an array is dense reads its `length` directly, which runs a proxy's
+ * `get` trap.
  *
  * Accepted: `null`, booleans, strings, finite numbers, dense arrays with `Array.prototype`, and
  * objects whose prototype is `Object.prototype` or `null`, with only enumerable data properties
  * and no symbol keys. Values are visited depth-first from `$` (an object's last field first); the
  * first problem found stops the scan and is returned:
- * - `limit` at the value's path: more than 100,000 values visited, a value deeper than 64 levels,
- *   or one object with more than 100,000 fields ("Input exceeds value budget");
+ * - `limit` at the value's path: more than 100,000 values visited or a value deeper than 64 levels
+ *   ("Input exceeds 100000 values or nesting depth 64"), or one object with more than 100,000
+ *   fields ("Input exceeds value budget");
  * - `shape` at the value's path: an accessor or non-enumerable field, a sparse array or one with
  *   extra fields, a non-plain prototype or symbol key, a cycle on the current path, or an
  *   unsupported value (`undefined`, a function, a bigint, a symbol or a non-finite number).
@@ -24,10 +27,11 @@ const MAX_DEPTH = 64;
  * The same object may appear twice in different branches (only a cycle on one path is rejected).
  * Reflection can still run proxy traps; a throw while inspecting (for example a revoked proxy) is
  * `shape` at `$`, "Input cannot be inspected as plain data". Pure data can be retried safely;
- * Authoring owns correcting rejected input.
+ * Authoring owns correcting rejected input, commit and crash recovery.
  *
  * @param input - The value to inspect.
- * @returns `true` when the input is plain JSON data, otherwise the first failure (not frozen).
+ * @returns `{ ok: true, value: true }` when the input is plain JSON data, otherwise the first
+ * failure. Neither is frozen.
  * @throws Never.
  */
 export function inspectInput(input: unknown): Result<true> {
@@ -176,8 +180,17 @@ function inspectArrayShape(frame: InputFrame, value: object): Result<readonly In
 
 /** Tells whether an array's own fields are exactly `0` to `length - 1`, in order, plus `length`. */
 function isDenseArray(value: readonly unknown[]): boolean {
-  const keys = Object.getOwnPropertyNames(value).filter((key) => key !== 'length');
-  return keys.length === value.length && keys.every((key, index) => key === String(index));
+  const keys = Object.getOwnPropertyNames(value).filter(
+    /** Skips the array's own `length`. */
+    (key) => key !== 'length',
+  );
+  return (
+    keys.length === value.length &&
+    keys.every(
+      /** Tells whether the field at this position is named after its index. */
+      (key, index) => key === String(index),
+    )
+  );
 }
 
 /**
@@ -187,8 +200,15 @@ function isDenseArray(value: readonly unknown[]): boolean {
  */
 function childFrames(frame: InputFrame, value: object): Result<readonly InputFrame[]> {
   const descriptors = Object.entries(Object.getOwnPropertyDescriptors(value));
-  const fields = descriptors.filter(([key]) => key !== 'length' || !Array.isArray(value));
-  if (fields.some(([, descriptor]) => !isEnumerableData(descriptor))) {
+  const fields = descriptors.filter(
+    /** Keeps every field except an array's `length`. */
+    ([key]) => key !== 'length' || !Array.isArray(value),
+  );
+  const hasHiddenOrAccessor = fields.some(
+    /** Tells whether the field is an accessor or not enumerable. */
+    ([, descriptor]) => !isEnumerableData(descriptor),
+  );
+  if (hasHiddenOrAccessor) {
     return failure(
       'shape',
       frame.path,
@@ -198,12 +218,15 @@ function childFrames(frame: InputFrame, value: object): Result<readonly InputFra
   if (fields.length > MAX_VALUES) {
     return failure('limit', frame.path, 'Input exceeds value budget');
   }
-  const children = fields.map(([key, descriptor]): InputFrame => ({
-    value: descriptor.value,
-    path: `${frame.path}.${key}`,
-    depth: frame.depth + 1,
-    ancestors: [...frame.ancestors, value],
-  }));
+  const children = fields.map(
+    /** Builds the frame for one field's value. */
+    ([key, descriptor]): InputFrame => ({
+      value: descriptor.value,
+      path: `${frame.path}.${key}`,
+      depth: frame.depth + 1,
+      ancestors: [...frame.ancestors, value],
+    }),
+  );
   return success(children);
 }
 

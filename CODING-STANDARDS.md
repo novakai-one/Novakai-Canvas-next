@@ -1,3 +1,7 @@
+### Additional References:
+
+Typescript coding standards: /Users/christopherdasca/Programming/Novakai-canvas/AGENTS-TYPESCRIPT-CODING-STANDARDS.md
+
 # Canvas builder coding standards
 
 Authority: [16-principle scoring SOP](docs/standards/CODING-STANDARDS.md) and [import matrix](docs/standards/REPO-FOLDER-STRUCTURE.md). Examples below illustrate boundaries; ellipses/comments are explanatory snippets, not production implementations. Every source file requires an evidence-based score >144/160. Sonar complexity ≤2 per function.

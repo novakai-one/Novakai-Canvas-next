@@ -103,15 +103,12 @@ export { typeUseDisplay } from '../core/definitions.js';
 
 /**
  * Resolves a relationship endpoint to a callable target in a validated collection: a whole
- * object of kind `function`, or a `signature` member of a `module`, `interface` or `function`
- * object.
+ * `function` object, or a `signature` member of a `module`, `interface` or `function` object.
+ * The full contract is on `resolveCallableEndpoint` (`core/relationships/callable.ts`).
  *
  * @param collection - A validated collection.
  * @param endpoint - The relationship endpoint to resolve.
- * @returns A new result holding the owner (and, for a signature, the member), or `undefined` when
- * the endpoint is not callable or its owner or member does not exist. The result is not frozen.
- * `owner` is the collection's own object record (frozen if the collection came from
- * {@link validate}); `member` is a new `{ id, kind }` description, not frozen.
+ * @returns The owner (and member), or `undefined` when the endpoint is not callable. Not frozen.
  * @throws Only if given data that is not a validated collection.
  */
 export { resolveCallableEndpoint } from '../core/relationships/callable.js';

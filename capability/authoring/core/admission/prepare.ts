@@ -16,19 +16,22 @@ import { releaseProtection } from './resources.js';
  * Admits a request and passes the prepared candidate to `continueWith`, unless the request already committed.
  *
  * Steps:
- * 1. Look up a stored receipt. If the request already committed, return that receipt.
- * 2. Otherwise read the snapshot, check the request, take a resource lease and build the candidate.
+ * 1. Compute the request fingerprint and look up a stored receipt. If the request already
+ *    committed, return that receipt.
+ * 2. Otherwise check for cancellation, read the snapshot, check the request, take a resource
+ *    lease and build the candidate.
  * 3. Run `continueWith` (preview or commit) while the lease is held, then release it.
  *
  * If step 2 or 3 fails, the receipt store is checked once more: an identical request may have
- * committed in the meantime, and its receipt wins over the failure.
+ * committed in the meantime, and its receipt wins over the failure. Step 1 failures are not reconciled.
  *
  * @param request - The checked submitted request.
- * @param preview - `true` to also build a preview image of the candidate.
+ * @param preview - `true` to ask the feasibility check for a preview.
  * @param deps - The admission collaborators.
  * @param continueWith - What to do with the prepared candidate, for example commit it.
  * @returns The result of `continueWith`, or the stored receipt when the request already committed.
- * @throws AuthoringFault from any admission step, when no receipt exists for the request afterwards.
+ * @throws AuthoringFault from fingerprinting or the first receipt lookup.
+ * @throws The admission or `continueWith` failure, rethrown unchanged, when no receipt exists afterwards.
  */
 export async function withCandidate<T>(
   request: Request,

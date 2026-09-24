@@ -57,6 +57,8 @@ export async function planIntent(
     case 'undo':
     case 'redo':
       return planInverse(request, snapshot);
+    default:
+      return unsupportedIntent(request.intent);
   }
 }
 
@@ -76,4 +78,13 @@ async function planChange(
     return reject('invalid-input', 'planner', 'Intent planner is not registered');
 
   return accepted(await planner.plan(request, snapshot, pins));
+}
+
+/**
+ * Rejects an intent kind that the request schema does not allow.
+ * Typed `never`, so adding a new intent kind fails to compile until `planIntent` handles it.
+ */
+function unsupportedIntent(intent: never): never {
+  void intent;
+  return reject('invalid-input', 'intent', 'Unsupported intent kind');
 }

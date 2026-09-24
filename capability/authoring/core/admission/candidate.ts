@@ -23,8 +23,8 @@ export interface Candidate {
  *
  * Steps, in order:
  * 1. Check the proposal's writes are allowed for this request.
- * 2. Normalize each write and drop writes that change nothing.
- * 3. Apply the writes to a copy of the snapshot, stamping document revisions.
+ * 2. Normalize each write (stamping document revisions) and drop writes that change nothing.
+ * 3. Apply the writes to a copy of the snapshot.
  * 4. Validate the whole resulting snapshot, so validation sees exactly what would be stored.
  *
  * @param request - The checked submitted request.

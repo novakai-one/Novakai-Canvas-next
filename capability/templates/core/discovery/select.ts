@@ -1,5 +1,6 @@
 import type { Catalog, Selection, Preset, Query } from '../../contract/records/preset.js';
 import type { Summary } from '../../contract/types.js';
+import type { Version } from '../../contract/brands.js';
 import { fail } from '../../contract/errors.js';
 import type { Result } from '../../contract/errors.js';
 import { success } from '../validation/outcomes.js';
@@ -14,7 +15,7 @@ import { pinOf } from '../validation/catalog.js';
  * @returns Negative when `left` is earlier, positive when later, 0 when equal.
  * @throws Never.
  */
-export function compareVersions(left: string, right: string): number {
+export function compareVersions(left: Version, right: Version): number {
   const a = left.split('.').map(Number);
   const b = right.split('.').map(Number);
   return (

@@ -24,8 +24,7 @@ export function success<T>(value: T): Result<T> {
 }
 
 /**
- * Parses input with a schema and reports only the first issue, so no parser exception or
- * internal detail reaches the caller.
+ * Parses input with a schema and reports only the first issue as a failure, not as an exception.
  *
  * @param schema - The schema to parse with.
  * @param input - The untrusted input.
@@ -78,11 +77,13 @@ export function clone<T>(value: T): T {
  *
  * Any throw becomes a failure: an {@link InputFault} keeps its code, path and message; anything
  * else becomes `provider-failed` at `$`, "Preset provider failed; no plan was produced".
+ * Known limit: a thrown value that makes `instanceof` itself throw (a revoked proxy) escapes as a
+ * `TypeError`.
  * Authoring owns correction and retry.
  *
  * @param action - The operation to run.
  * @returns A frozen copy of the action's result, or the failure for a throw.
- * @throws Never.
+ * @throws Only the `TypeError` described above.
  */
 export function protect<T>(action: () => Result<T>): Result<T> {
   try {
@@ -94,11 +95,14 @@ export function protect<T>(action: () => Result<T>): Result<T> {
 
 /**
  * The canonical JSON text of a value, used as hash input: the value is checked and copied with
- * {@link clone}, object keys are sorted by code unit, and array order is kept.
+ * {@link clone}, object keys are sorted by code unit, and array order is kept. Exception: JSON text
+ * always lists integer-like keys (`"2"`, `"10"`) first in numeric order, before the sorted string
+ * keys, because JavaScript objects enumerate them that way.
  *
  * @param value - The value to encode.
  * @returns The canonical JSON text.
- * @throws {@link InputFault} from {@link clone}; callers run inside `protect`.
+ * @throws {@link InputFault} from {@link clone}, and the other errors `clone` lets through (a
+ * throwing getter, a proxy `structuredClone` cannot copy); callers run inside `protect`.
  */
 export function canonical(value: unknown): string {
   return JSON.stringify(ordered(clone(value)));

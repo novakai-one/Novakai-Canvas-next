@@ -3,6 +3,7 @@ import type { Admission, Catalog, Preset, ThemePreset } from '../../contract/rec
 import type { PresetPlan } from '../../contract/types.js';
 import type { RecipePort, ThemePort } from '../../contract/ports/codecs.js';
 import type { IdentityPort } from '../../contract/ports/identity.js';
+import type { Digest } from '../../contract/brands.js';
 import type { Result } from '../../contract/errors.js';
 import { fail } from '../../contract/errors.js';
 import { parse, clone, success } from '../validation/outcomes.js';
@@ -135,7 +136,7 @@ function finish(
 }
 
 /** Parses the record with its digest (the schema gives the final type), then checks payload rules. */
-function finishRecord(content: Omit<Preset, 'digest'>, digest: string): Result<Preset> {
+function finishRecord(content: Omit<Preset, 'digest'>, digest: Digest): Result<Preset> {
   const parsed = parse(preset, { ...content, digest });
   if (!parsed.ok) {
     return parsed;

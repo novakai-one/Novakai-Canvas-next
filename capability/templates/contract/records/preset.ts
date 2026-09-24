@@ -41,8 +41,8 @@ export const themePin = pin.refine((value) => value.kind === 'theme', 'Expected 
  * One resolved theme token:
  * - `color`: `#RRGGBB` or `#RRGGBBAA` hex;
  * - `dimension`: a finite number with a unit (`px`, `world`, `ms` or `scalar`);
- * - `font`: a family name and the digest of the exact font bytes (no system font name survives
- *   admission).
+ * - `font`: a family name and the digest of the exact font bytes. The family name is kept, but
+ *   the font is always identified by its digest, never by a system font name.
  */
 export const token = z.discriminatedUnion('type', [
   z
@@ -62,6 +62,15 @@ export const token = z.discriminatedUnion('type', [
 ]);
 
 /**
+ * Recipe source text: 1 to 1,048,576 UTF-16 code units. (`checkPayload` separately limits stored
+ * source to 1 MiB of UTF-8 bytes.)
+ */
+const recipeSource = z
+  .string()
+  .min(1)
+  .max(1024 * 1024);
+
+/**
  * A recipe's content as the recipe codec returns it: language version 1, the canonical source
  * (at most 1,048,576 UTF-16 code units here; `checkPayload` also limits it to 1 MiB of UTF-8), its family,
  * and the exact asset digests (up to 1000) and theme pins (up to 100) it uses.
@@ -69,10 +78,7 @@ export const token = z.discriminatedUnion('type', [
 export const recipePayload = z
   .strictObject({
     languageVersion: z.literal(1),
-    source: z
-      .string()
-      .min(1)
-      .max(1024 * 1024),
+    source: recipeSource,
     family,
     assets: z.array(digest).max(1000).readonly(),
     themes: z.array(themePin).max(100).readonly(),
@@ -136,18 +142,16 @@ export type Catalog = z.infer<typeof catalog>;
 
 /**
  * What a caller submits to add a preset: the header plus either recipe `source` and `family`, or
- * theme `raw` input (any value, resolved by the theme codec). The payload is always built by the
- * codec, never taken from the caller.
+ * theme `raw` input. This schema accepts any `raw` value; the public admission flow first copies
+ * the whole input with `clone`, so `raw` must still be bounded plain JSON data. The payload is
+ * always built by the codec, never taken from the caller.
  */
 export const admission = z.discriminatedUnion('kind', [
   z
     .strictObject({
       ...header,
       kind: z.literal('recipe'),
-      source: z
-        .string()
-        .min(1)
-        .max(1024 * 1024),
+      source: recipeSource,
       family,
     })
     .readonly(),
@@ -180,7 +184,7 @@ export type Query = z.infer<typeof query>;
 
 /**
  * A loose check of a theme admission's `kind` and `id` only; other fields are allowed and dropped.
- * Exported publicly; nothing in the repo uses it yet.
+ * The CLI uses it to pick out theme admissions (apps/cli/adapters/headless.ts).
  */
 export const themeInput = z.object({ kind: z.literal('theme'), id: presetId }).readonly();
 

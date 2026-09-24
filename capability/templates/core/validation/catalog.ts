@@ -44,7 +44,8 @@ export function pinOf(value: Preset): Pin {
  * @param identity - The hashing provider.
  * @returns The digest; the provider's own failure; or `invalid-input` when its answer is not a
  * digest.
- * @throws `InputFault` from `canonical` for non-JSON content; callers run inside `protect`.
+ * @throws `InputFault` from `canonical` for non-JSON content, and whatever the provider throws;
+ * callers run inside `protect`.
  */
 export function hashContent(value: unknown, identity: IdentityPort): Result<Digest> {
   const result = identity.hash(canonical(value));
@@ -65,13 +66,7 @@ export function hashContent(value: unknown, identity: IdentityPort): Result<Dige
  */
 export function exact(records: Catalog, pin: Pin): Result<Preset> {
   const found = records.find((item) => key(item) === key(pin));
-  if (!found) {
-    return fail('missing-preset', key(pin), 'Pinned preset is absent');
-  }
-  if (found.digest !== pin.digest) {
-    return fail('digest-mismatch', key(pin), 'Pinned digest differs');
-  }
-  return success(found);
+  return checkPinned(found, pin);
 }
 
 /**
@@ -109,12 +104,13 @@ export function checkPayload(value: Preset): Result<void> {
 }
 
 /**
- * Parses a theme payload and checks its font manifest and roles (see {@link checkPayload}). Only
- * pin structure is checked here; token meaning and contrast belong to Design System.
+ * Parses a theme payload (token shapes, limits, base pin shape) and checks its font manifest and
+ * duplicate roles (see {@link checkPayload}). Token meaning and contrast belong to Design System.
  *
  * @param input - The theme payload.
  * @returns Success, or the first `invalid-input` failure.
- * @throws `InputFault` from `canonical`; callers run inside `protect`.
+ * @throws `InputFault` from `canonical`, and whatever the schema throws while reading `input`
+ * (for example a throwing getter); callers run inside `protect`.
  */
 export function checkTheme(input: unknown): Result<void> {
   const parsed = parse(themePayload, input);
@@ -127,8 +123,9 @@ export function checkTheme(input: unknown): Result<void> {
 /**
  * Checks a whole catalog before any use.
  * 1. Copies it (see `clone`) and parses it with the catalog schema; a parse failure stops here.
- * 2. Runs every check, all of them, in this order: duplicate keys, every record's digest
- *    (hashing each record), every record's payload rules, every dependency pin, cycles.
+ * 2. Runs every check, in this order, even after one returns a failure: duplicate keys, every
+ *    record's digest (hashing each record), every record's payload rules, every dependency pin,
+ *    cycles. A thrown exception stops the remaining checks.
  * 3. Returns the first failure in that order, or the parsed catalog.
  *
  * Authoring owns re-admission and commit recovery.
@@ -251,6 +248,14 @@ function validateReferences(records: Catalog): Result<void> {
 /** Like {@link exact}, against the index: `missing-preset` or `digest-mismatch`. */
 function indexedReference(index: ReadonlyMap<string, Preset>, pin: Pin): Result<Preset> {
   const found = index.get(key(pin));
+  return checkPinned(found, pin);
+}
+
+/**
+ * The preset a pin was looked up to: `missing-preset` when none was found, `digest-mismatch` when
+ * its digest differs (path: the pin's key), otherwise the preset itself.
+ */
+function checkPinned(found: Preset | undefined, pin: Pin): Result<Preset> {
   if (!found) {
     return fail('missing-preset', key(pin), 'Pinned preset is absent');
   }
@@ -312,7 +317,10 @@ function uniqueManifest(value: RecipePayload): Result<void> {
   return success(undefined);
 }
 
-/** Runs every check (so each record is hashed), then returns the first failure or the catalog. */
+/**
+ * Runs every check even after a returned failure (so each record is hashed), then returns the
+ * first failure or the catalog. A throw stops the remaining checks.
+ */
 function validateRecords(records: Catalog, identity: IdentityPort): Result<Catalog> {
   const checks = [
     uniqueRecords(records),

@@ -20,6 +20,8 @@ import { createSvg } from '../adapters/svg.js';
 import { createFont } from '../adapters/font.js';
 import { detectMedia } from '../adapters/detect.js';
 import { value } from './fixtures.js';
+
+/** The native pieces a harness is built from and the file operations tests use to damage it. */
 interface NativeFixture {
   files(root: string): BlobFiles;
   storage(database: AssetDatabase, files: BlobFiles): Result<AssetStorage>;
@@ -32,28 +34,35 @@ interface NativeFixture {
   corrupt(path: string): void;
   unlink(path: string): void;
 }
-const native: NativeFixture = {
-  files: createBlobFiles,
-  storage: createSqliteFiles,
-  identity: createIdentity,
-  media: () => ({ handlers: [createRaster(), createSvg(), createFont()], detect: detectMedia }),
-  directory: () => mkdtempSync(join(tmpdir(), 'canvas-assets-')),
-  remove: (root) => rmSync(root, { recursive: true, force: true }),
-  database: (path) => new DatabaseSync(path),
-  read: (path) => readFileSync(path).toString('base64'),
-  corrupt: (path) => writeFileSync(path, 'corrupt bytes'),
-  unlink: unlinkSync,
-};
-/** Isolated native fixture with injected setup/corruption factories; Vitest owns setup/assertion failure and final cleanup. */
-export function harness(io: NativeFixture = native): {
+
+/** A real Assets instance in its own temporary directory, plus ways to damage its storage. */
+interface AssetHarness {
+  /** The facade over real SQLite storage, blob files, hasher and media processors. */
   readonly assets: Assets;
+  /** The dependencies `assets` was built from, for building variants. */
   readonly deps: AssetDependencies;
+  /** The temporary directory. */
   readonly root: string;
+  /** Reads the bundled Inter WOFF2 font as base64. */
   font(): string;
+  /** Overwrites a blob's file with other bytes. */
   corrupt(id: Digest): void;
+  /** Deletes a blob's file. */
   unlink(id: Digest): void;
+  /** Deletes the metadata schema row, through a separate connection. */
   removeSchema(): void;
-} {
+}
+
+/**
+ * Builds a real Assets instance in a new temporary directory: blob files at `root/blobs` and the
+ * database at `root/assets.sqlite`. When the test finishes, storage is closed and the directory
+ * removed.
+ *
+ * @param io - The native pieces. Defaults to the real adapters and `node:fs`.
+ * @returns The harness.
+ * @throws When opening storage fails (the `value` assertion fails first).
+ */
+export function harness(io: NativeFixture = native): AssetHarness {
   const root = io.directory();
   onTestFinished(() => io.remove(root));
   const files = io.files(join(root, 'blobs'));
@@ -78,7 +87,21 @@ export function harness(io: NativeFixture = native): {
   };
 }
 
-/** Corrupt the owned header explicitly; the native database is closed even if the fixture mutation fails. */
+/** The real adapters and `node:fs` operations. */
+const native: NativeFixture = {
+  files: createBlobFiles,
+  storage: createSqliteFiles,
+  identity: createIdentity,
+  media: () => ({ handlers: [createRaster(), createSvg(), createFont()], detect: detectMedia }),
+  directory: () => mkdtempSync(join(tmpdir(), 'canvas-assets-')),
+  remove: (root) => rmSync(root, { recursive: true, force: true }),
+  database: (path) => new DatabaseSync(path),
+  read: (path) => readFileSync(path).toString('base64'),
+  corrupt: (path) => writeFileSync(path, 'corrupt bytes'),
+  unlink: unlinkSync,
+};
+
+/** Deletes the schema row; the connection is closed even when that fails. */
 function removeSchema(database: AssetDatabase): void {
   try {
     database.exec("DELETE FROM asset_metadata WHERE key='schema'");

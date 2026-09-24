@@ -67,7 +67,8 @@ export interface DrawingSlots {
    * Draws one routed wire with its end markers.
    *
    * @param wire - The routed wire.
-   * @param paint - The colours to draw with.
+   * @param paint - The section colours; the built-in slot draws each wire in its own
+   * `appearance.paint` instead.
    * @returns The wire element.
    */
   readonly wire: (wire: RoutedWire, paint: Paint) => ReactElement;

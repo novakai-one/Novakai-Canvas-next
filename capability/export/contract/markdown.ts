@@ -2,8 +2,10 @@
  * Markdown review output: a read-only, human-readable summary of a collection's meaning, for
  * reviewers. It deliberately does not mirror the authoring DSL and cannot be read back.
  *
- * All authored text goes through `inline` (Markdown escaping) or `codeSpan`, so authored
- * content cannot start headings, lists, links or other Markdown structure.
+ * Authored free text goes through `inline` (Markdown escaping) or `codeSpan`, so it cannot form
+ * headings, list items, emphasis, code spans, HTML or link syntax. This is not a full sanitizer:
+ * bare URLs can still autolink in GFM, and multi-line text can still form an indented code block
+ * or a table. IDs (letters, digits, `_`, `-`) and enum values are written as they are.
  */
 import {
   definitionDisplay,
@@ -82,9 +84,13 @@ type ContentHandlers = {
 export function formatMarkdown(collection: Collection, scope: MarkdownScope): string | undefined {
   const sections = selectedSections(collection, scope);
   if (sections === undefined) return undefined;
-  const objects = new Map(collection.objects.map((object) => [object.id, object]));
+  const objects = new Map(
+    collection.objects.map(/** The object under its ID. */ (object) => [object.id, object]),
+  );
   const relationships = new Map(
-    collection.relationships.map((relationship) => [relationship.id, relationship]),
+    collection.relationships.map(
+      /** The relationship under its ID. */ (relationship) => [relationship.id, relationship],
+    ),
   );
   const lines = [
     `# ${inline(collection.title)}`,
@@ -98,7 +104,10 @@ export function formatMarkdown(collection: Collection, scope: MarkdownScope): st
   }
   appendDefinitions(lines, collection);
   appendSources(lines, collection);
-  sections.forEach((section) => appendSection(lines, section, collection, objects, relationships));
+  sections.forEach(
+    /** Appends one section. */ (section) =>
+      appendSection(lines, section, collection, objects, relationships),
+  );
   return `${lines.join('\n').trimEnd()}\n`;
 }
 
@@ -111,21 +120,21 @@ function selectedSections(
   scope: MarkdownScope,
 ): readonly Section[] | undefined {
   if (scope.kind === 'section') return selectedSection(collection, scope.id);
-  return [...collection.sections].sort(
-    (left, right) => left.order - right.order || left.id.localeCompare(right.id),
-  );
+  return [...collection.sections].sort(byOrderThenId);
 }
 
 /** The section with this ID as a one-item list, or `undefined` when there is none. */
 function selectedSection(collection: Collection, id: string): readonly Section[] | undefined {
-  const section = collection.sections.find((candidate) => candidate.id === id);
+  const section = collection.sections.find(
+    /** Whether this is the section with the ID. */ (candidate) => candidate.id === id,
+  );
   return section === undefined ? undefined : [section];
 }
 
 /**
  * Appends the "Shared definitions" part: each definition's ID, label and type expression, plus
- * its resolved form when Model resolves it. Model is asked first, before anything else about the
- * definition is read.
+ * its resolved form when Model resolves it. Model is asked first, with the definition's ID,
+ * before its label and expression are read.
  */
 function appendDefinitions(lines: string[], collection: Collection): void {
   lines.push('## Shared definitions', '');
@@ -133,13 +142,16 @@ function appendDefinitions(lines: string[], collection: Collection): void {
     lines.push('_No shared definitions are declared in this revision._', '');
     return;
   }
-  collection.definitions.forEach((definition) => {
-    const resolved = definitionDisplay(collection, definition.id);
-    const resolvedText = resolved.ok ? `; resolved: ${inline(resolved.value)}` : '';
-    const name = `- \`${definition.id}\` **${inline(definition.label)}**`;
-    const type = codeSpan(typeExpression(definition.expression));
-    lines.push(`${name} = ${type}${resolvedText}`);
-  });
+  collection.definitions.forEach(
+    /** Appends one definition: resolves it through Model, then reads its label and expression. */
+    (definition) => {
+      const resolved = definitionDisplay(collection, definition.id);
+      const resolvedText = resolved.ok ? `; resolved: ${inline(resolved.value)}` : '';
+      const name = `- \`${definition.id}\` **${inline(definition.label)}**`;
+      const type = codeSpan(typeExpression(definition.expression));
+      lines.push(`${name} = ${type}${resolvedText}`);
+    },
+  );
   lines.push('');
 }
 
@@ -150,7 +162,7 @@ function appendSources(lines: string[], collection: Collection): void {
     lines.push('_No source records are attached to this revision._', '');
     return;
   }
-  collection.sources.forEach((source) => appendSource(lines, source));
+  collection.sources.forEach(/** Appends one source. */ (source) => appendSource(lines, source));
   lines.push('');
 }
 
@@ -198,59 +210,73 @@ function appendSection(
 function appendGroups(lines: string[], section: Section): void {
   if (section.groups.length === 0) return;
   lines.push('### Groups', '');
-  section.groups.forEach((group) => {
-    const parent = group.parent === undefined ? '' : `; parent \`${group.parent}\``;
-    const represents = group.represents === undefined ? '' : `; represents \`${group.represents}\``;
-    lines.push(`- \`${group.id}\` **${inline(group.title)}**${parent}${represents}`);
-  });
+  section.groups.forEach(
+    /** Appends one group line: ID, title, parent and the object it represents. */ (group) => {
+      const parent = group.parent === undefined ? '' : `; parent \`${group.parent}\``;
+      const represents =
+        group.represents === undefined ? '' : `; represents \`${group.represents}\``;
+      lines.push(`- \`${group.id}\` **${inline(group.title)}**${parent}${represents}`);
+    },
+  );
   lines.push('');
 }
 
 /**
  * The objects a section shows, in this order: objects with appearances (in appearance order),
  * then objects only represented by a group (in group order), then participants of sequence
- * events not shown any other way (in sequence order). Each object records the groups it
- * appears in and the groups representing it. IDs the collection has no object for are dropped.
+ * events not shown any other way (in the order the sequence items are listed). Each object
+ * records the groups it appears in and the groups representing it. IDs the collection has no
+ * object for are dropped.
  */
 function sectionObjectsInOrder(
   section: Section,
   objects: ReadonlyMap<string, DiagramObject>,
 ): readonly SectionObject[] {
   const entries = new Map<string, SectionObject>();
-  section.appearances.forEach((appearance) => {
-    const existing = entries.get(appearance.object);
-    const groups =
-      appearance.group === undefined
-        ? (existing?.groups ?? [])
-        : [...(existing?.groups ?? []), appearance.group];
-    entries.set(appearance.object, {
-      object: objects.get(appearance.object),
-      groups: unique(groups),
-      representedBy: existing?.representedBy ?? [],
-    });
-  });
-  section.groups.forEach((group) => {
-    if (group.represents === undefined) return;
-    const existing = entries.get(group.represents);
-    entries.set(group.represents, {
-      object: objects.get(group.represents),
-      groups: existing?.groups ?? [],
-      representedBy: unique([...(existing?.representedBy ?? []), group.id]),
-    });
-  });
+  section.appearances.forEach(
+    /** Records the appearance's object with its group added. */ (appearance) => {
+      const existing = entries.get(appearance.object);
+      const groups =
+        appearance.group === undefined
+          ? (existing?.groups ?? [])
+          : [...(existing?.groups ?? []), appearance.group];
+      entries.set(appearance.object, {
+        object: objects.get(appearance.object),
+        groups: unique(groups),
+        representedBy: existing?.representedBy ?? [],
+      });
+    },
+  );
+  section.groups.forEach(
+    /** Records the group under the object it represents. */ (group) => {
+      if (group.represents === undefined) return;
+      const existing = entries.get(group.represents);
+      entries.set(group.represents, {
+        object: objects.get(group.represents),
+        groups: existing?.groups ?? [],
+        representedBy: unique([...(existing?.representedBy ?? []), group.id]),
+      });
+    },
+  );
   const ids = [...entries.keys()];
-  section.sequence.forEach((item) => {
-    if (item.kind !== 'event') return;
-    [item.source, item.target].forEach((id) => {
-      if (entries.has(id)) return;
-      entries.set(id, { object: objects.get(id), groups: [], representedBy: [] });
-      ids.push(id);
-    });
-  });
-  return ids.flatMap((id) => {
-    const entry = entries.get(id);
-    return entry?.object === undefined ? [] : [entry];
-  });
+  section.sequence.forEach(
+    /** Adds the event's participants that are not already listed. */ (item) => {
+      if (item.kind !== 'event') return;
+      [item.source, item.target].forEach(
+        /** Adds one participant when it is not listed yet. */ (id) => {
+          if (entries.has(id)) return;
+          entries.set(id, { object: objects.get(id), groups: [], representedBy: [] });
+          ids.push(id);
+        },
+      );
+    },
+  );
+  return ids.flatMap(
+    /** The entry for the ID, or nothing when the collection has no such object. */ (id) => {
+      const entry = entries.get(id);
+      return entry?.object === undefined ? [] : [entry];
+    },
+  );
 }
 
 /** The values without repeats, in first-seen order. */
@@ -269,7 +295,7 @@ function appendObjects(
     lines.push('_No canonical objects are shown in this section._', '');
     return;
   }
-  objects.forEach((entry) => appendObject(lines, entry, collection));
+  objects.forEach(/** Appends one object. */ (entry) => appendObject(lines, entry, collection));
   lines.push('');
 }
 
@@ -282,12 +308,15 @@ function appendObject(lines: string[], entry: SectionObject, collection: Collect
   if (object === undefined) return;
   lines.push(objectHeading(object, entry));
   appendOptionalObjectFields(lines, object);
-  object.ports.forEach((port) =>
-    lines.push(
-      `  - Port \`${port.id}\`: ${port.direction} ${inline(port.label)} : ${inline(port.type)}`,
-    ),
+  object.ports.forEach(
+    /** Appends one port line: ID, direction, label and type. */ (port) =>
+      lines.push(
+        `  - Port \`${port.id}\`: ${port.direction} ${inline(port.label)} : ${inline(port.type)}`,
+      ),
   );
-  object.content.forEach((block) => appendContent(lines, block.kind, block, object, collection));
+  object.content.forEach(
+    /** Appends one content block. */ (block) => appendContent(lines, block, object, collection),
+  );
 }
 
 /** The object's heading line: ID, label, kind, role, its groups and the groups representing it. */
@@ -305,48 +334,49 @@ function objectRole(object: DiagramObject): string {
 
 /** The object's group IDs as code spans, or `ungrouped`. */
 function groupList(entry: SectionObject): string {
-  return entry.groups.length === 0 ? 'ungrouped' : entry.groups.map((id) => `\`${id}\``).join(', ');
+  return entry.groups.length === 0 ? 'ungrouped' : codeList(entry.groups);
 }
 
 /** `; represented by <group IDs>`, or nothing when no group represents the object. */
 function representedGroups(entry: SectionObject): string {
   return entry.representedBy.length === 0
     ? ''
-    : `; represented by ${entry.representedBy.map((id) => `\`${id}\``).join(', ')}`;
+    : `; represented by ${codeList(entry.representedBy)}`;
 }
 
 /** Appends the object's step and its source IDs, when it has them. */
 function appendOptionalObjectFields(lines: string[], object: DiagramObject): void {
   if (object.step !== undefined) lines.push(`  - Step: ${object.step}`);
-  if (object.sources.length > 0)
-    lines.push(`  - Sources: ${object.sources.map((source) => `\`${source}\``).join(', ')}`);
+  if (object.sources.length > 0) lines.push(`  - Sources: ${codeList(object.sources)}`);
 }
 
 /** The append function for each content-block kind. */
 const contentHandlers: ContentHandlers = {
-  text: (lines, block) => appendText(lines, block),
-  code: (lines, block) => appendCode(lines, block),
-  list: (lines, block) => appendList(lines, block),
-  image: (lines, block) => appendAsset(lines, block),
-  icon: (lines, block) => appendAsset(lines, block),
-  figure: (lines, block) => appendFigure(lines, block),
-  link: (lines, block) => appendLink(lines, block),
-  field: (lines, block, object, collection) => appendField(lines, block, object, collection),
-  keygroup: (lines, block) => appendKeyGroup(lines, block),
-  signature: (lines, block, _object, collection) => appendSignature(lines, block, collection),
-  member: (lines, block, _object, collection) => appendMember(lines, block, collection),
-  table: (lines, block) => appendTable(lines, block),
+  text: /** Appends a text block. */ (lines, block) => appendText(lines, block),
+  code: /** Appends a code block. */ (lines, block) => appendCode(lines, block),
+  list: /** Appends a list block. */ (lines, block) => appendList(lines, block),
+  image: /** Appends an image block. */ (lines, block) => appendAsset(lines, block),
+  icon: /** Appends an icon block. */ (lines, block) => appendAsset(lines, block),
+  figure: /** Appends a figure block. */ (lines, block) => appendFigure(lines, block),
+  link: /** Appends a link block. */ (lines, block) => appendLink(lines, block),
+  field: /** Appends a field block. */ (lines, block, object, collection) =>
+    appendField(lines, block, object, collection),
+  keygroup: /** Appends a key-group block. */ (lines, block) => appendKeyGroup(lines, block),
+  signature: /** Appends a signature block. */ (lines, block, _object, collection) =>
+    appendSignature(lines, block, collection),
+  member: /** Appends a member block. */ (lines, block, _object, collection) =>
+    appendMember(lines, block, collection),
+  table: /** Appends a table block. */ (lines, block) => appendTable(lines, block),
 };
 
-/** Appends one content block with the handler for its kind (`kind` is the block's own kind). */
+/** Appends one content block with the handler for its kind. */
 function appendContent<K extends BlockKind>(
   lines: string[],
-  kind: K,
-  block: BlocksByKind[K],
+  block: BlocksByKind[K] & { readonly kind: K },
   object: DiagramObject,
   collection: Collection,
 ): void {
-  contentHandlers[kind](lines, block, object, collection);
+  contentHandlers[block.kind](lines, block, object, collection);
 }
 
 /** Appends a text block: ID, escaped text and role. */
@@ -363,7 +393,11 @@ function appendCode(lines: string[], block: BlocksByKind['code']): void {
   lines.push(`  - Code \`${block.id}\`:`);
   if (block.language !== undefined) {
     lines.push('    Language metadata:');
-    lines.push(...multiline(block.language).map((line) => `      ${line}`));
+    lines.push(
+      ...multiline(block.language).map(
+        /** Indents one language line under its heading. */ (line) => `      ${line}`,
+      ),
+    );
   }
   lines.push(`    ${fence}`);
   lines.push(
@@ -371,7 +405,7 @@ function appendCode(lines: string[], block: BlocksByKind['code']): void {
       .replaceAll('\r\n', '\n')
       .replaceAll('\r', '\n')
       .split('\n')
-      .map((line) => `    ${line}`),
+      .map(/** Indents one code line inside the fence. */ (line) => `    ${line}`),
   );
   lines.push(`    ${fence}`);
 }
@@ -402,10 +436,11 @@ function appendSignature(
   block: BlocksByKind['signature'],
   collection: Collection,
 ): void {
-  const parameterText = block.parameters.map((parameter) =>
-    typeof parameter === 'string'
-      ? inline(parameter)
-      : `${inline(parameter.name)}: ${inline(typeUseDisplay(collection, parameter.type))}`,
+  const parameterText = block.parameters.map(
+    /** One parameter: its escaped name, with its type when it has one. */ (parameter) =>
+      typeof parameter === 'string'
+        ? inline(parameter)
+        : `${inline(parameter.name)}: ${inline(typeUseDisplay(collection, parameter.type))}`,
   );
   const returns = inline(typeUseDisplay(collection, block.returns));
   const name = `  - Signature \`${block.id}\`: ${inline(block.label)}`;
@@ -426,7 +461,10 @@ function appendMember(
 /** Appends a list block's heading, then each item (numbered from 1 when the list is ordered). */
 function appendList(lines: string[], block: BlocksByKind['list']): void {
   lines.push(`  - ${block.ordered ? 'Ordered' : 'Unordered'} list \`${block.id}\`:`);
-  block.items.forEach((item, index) => appendListItem(lines, item, index, block.ordered));
+  block.items.forEach(
+    /** Appends one list item. */ (item, index) =>
+      appendListItem(lines, item, index, block.ordered),
+  );
 }
 
 /** Appends one list item, with `<n>. ` in front for an ordered list. */
@@ -457,7 +495,7 @@ function fieldType(collection: Collection, block: BlocksByKind['field']): string
 /** `, <key>, nullable, references <endpoint>` with only the parts the field has; or nothing. */
 function fieldDetails(block: BlocksByKind['field']): string {
   const details = [fieldKey(block), fieldNullable(block), fieldReference(block)].filter(
-    (value): value is string => value !== undefined,
+    /** Whether the part is present. */ (value): value is string => value !== undefined,
   );
   return details.length === 0 ? '' : `, ${details.join(', ')}`;
 }
@@ -484,15 +522,16 @@ function appendKeyGroup(lines: string[], block: BlocksByKind['keygroup']): void 
       ? ''
       : `; references ${block.references.map(endpoint).join(', ')}`;
   const name = `  - Key group \`${block.id}\`: ${block.key}`;
-  const fields = block.fields.map((field) => `\`${field}\``).join(', ');
+  const fields = codeList(block.fields);
   lines.push(`${name} [${fields}]${references}`);
 }
 
 /** Appends a table block: ID and column names, then each row's ID and cells. */
 function appendTable(lines: string[], block: BlocksByKind['table']): void {
   lines.push(`  - Table \`${block.id}\`: ${block.columns.map(inline).join(' | ')}`);
-  block.rows.forEach((row) =>
-    lines.push(`    - \`${row.id}\`: ${row.cells.map(inline).join(' | ')}`),
+  block.rows.forEach(
+    /** Appends one table row: its ID and escaped cells. */ (row) =>
+      lines.push(`    - \`${row.id}\`: ${row.cells.map(inline).join(' | ')}`),
   );
 }
 
@@ -507,7 +546,7 @@ function appendRelationships(
     lines.push('_No relationships are wired in this section._', '');
     return;
   }
-  section.wires.forEach((wire) => appendWire(lines, wire, relationships));
+  section.wires.forEach(/** Appends one wire. */ (wire) => appendWire(lines, wire, relationships));
   lines.push('');
 }
 
@@ -565,10 +604,12 @@ function appendSequence(
   lines.push('### Sequence', '');
   const rendered = new Set<string>();
   appendSequenceItems(lines, section.sequence, undefined, undefined, 0, rendered, objects);
-  section.sequence.forEach((item) => {
-    if (!rendered.has(item.id))
-      lines.push(`- Unplaced sequence item \`${item.id}\` (${item.kind})`);
-  });
+  section.sequence.forEach(
+    /** Appends a line for an item no parent or branch placed. */ (item) => {
+      if (!rendered.has(item.id))
+        lines.push(`- Unplaced sequence item \`${item.id}\` (${item.kind})`);
+    },
+  );
   lines.push('');
 }
 
@@ -586,9 +627,15 @@ function appendSequenceItems(
   objects: ReadonlyMap<string, DiagramObject>,
 ): void {
   const children = items
-    .filter((item) => item.parent === parent && item.branch === branch)
-    .sort((left, right) => left.order - right.order || left.id.localeCompare(right.id));
-  children.forEach((item) => appendSequenceItem(lines, items, item, depth, rendered, objects));
+    .filter(
+      /** Whether the item belongs directly under this parent and branch. */ (item) =>
+        item.parent === parent && item.branch === branch,
+    )
+    .sort(byOrderThenId);
+  children.forEach(
+    /** Appends one item and its children. */ (item) =>
+      appendSequenceItem(lines, items, item, depth, rendered, objects),
+  );
 }
 
 /**
@@ -611,11 +658,14 @@ function appendSequenceItem(
   }
   lines.push(`${prefix}\`${item.id}\` **${item.operator}** ${inline(item.label)}`);
   if (item.branches.length > 0) {
-    item.branches.forEach((sequenceBranch) => {
-      const indent = '  '.repeat(depth + 1);
-      lines.push(`${indent}- Branch \`${sequenceBranch.id}\`: ${inline(sequenceBranch.label)}`);
-      appendSequenceItems(lines, items, item.id, sequenceBranch.id, depth + 2, rendered, objects);
-    });
+    item.branches.forEach(
+      /** Appends one branch line, then the branch's items two levels deeper. */
+      (sequenceBranch) => {
+        const indent = '  '.repeat(depth + 1);
+        lines.push(`${indent}- Branch \`${sequenceBranch.id}\`: ${inline(sequenceBranch.label)}`);
+        appendSequenceItems(lines, items, item.id, sequenceBranch.id, depth + 2, rendered, objects);
+      },
+    );
     return;
   }
   appendSequenceItems(lines, items, item.id, undefined, depth + 1, rendered, objects);
@@ -666,8 +716,11 @@ function linkTarget(target: BlocksByKind['link']['target']): string {
 /** Every figure field except `kind`, `id` and `form`, as `key=value`, in the record's key order. */
 function figureDetails(block: BlocksByKind['figure']): string {
   return Object.entries(block)
-    .filter(([key]) => key !== 'kind' && key !== 'id' && key !== 'form')
-    .map(([key, value]) => `${key}=${String(value)}`)
+    .filter(
+      /** Whether the field is a figure detail (not kind, ID or form). */ ([key]) =>
+        key !== 'kind' && key !== 'id' && key !== 'form',
+    )
+    .map(/** The field as `key=value`. */ ([key, value]) => `${key}=${String(value)}`)
     .join(', ');
 }
 
@@ -716,7 +769,8 @@ function inline(value: string): string {
     .replace(/^([ \t]*)(#{1,6}|>|[-+*]|\d+[.)])(?=\s)/gm, '$1\\$2')
     .replace(
       /^([ \t]*)([-=*_~])\2*\s*$/gm,
-      (line, indent) => `${indent}\\${line.slice(indent.length)}`,
+      /** The rule line with a backslash before its first marker character. */ (line, indent) =>
+        `${indent}\\${line.slice(indent.length)}`,
     );
 }
 
@@ -737,14 +791,36 @@ function codeSpan(value: string): string {
 
 /** Backticks one longer than the value's longest backtick run (at least one). */
 function inlineCodeFence(value: string): string {
-  const runs = value.match(/`+/g) ?? [];
-  const longest = runs.reduce((length, run) => Math.max(length, run.length), 0);
-  return '`'.repeat(Math.max(1, longest + 1));
+  return '`'.repeat(Math.max(1, longestBacktickRun(value) + 1));
 }
 
 /** Backticks one longer than the value's longest backtick run (at least three), for a block. */
 function codeFence(value: string): string {
+  return '`'.repeat(Math.max(3, longestBacktickRun(value) + 1));
+}
+
+/** The length of the value's longest run of backticks; 0 when it has none. */
+function longestBacktickRun(value: string): number {
   const runs = value.match(/`+/g) ?? [];
-  const longest = runs.reduce((length, run) => Math.max(length, run.length), 0);
-  return '`'.repeat(Math.max(3, longest + 1));
+  return runs.reduce(
+    /** The longer of the longest run so far and this run. */ (length, run) =>
+      Math.max(length, run.length),
+    0,
+  );
+}
+
+/** The IDs as code spans, separated by commas. */
+function codeList(ids: readonly string[]): string {
+  return ids.map(/** The ID as a code span. */ (id) => `\`${id}\``).join(', ');
+}
+
+/**
+ * Sorts by `order`, then by ID. Kept as one expression: an `if` version would treat `NaN`
+ * orders differently and read the fields in a different order.
+ */
+function byOrderThenId(
+  left: { readonly order: number; readonly id: string },
+  right: { readonly order: number; readonly id: string },
+): number {
+  return left.order - right.order || left.id.localeCompare(right.id);
 }

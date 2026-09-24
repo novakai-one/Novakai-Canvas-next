@@ -34,8 +34,9 @@ import { failure } from '../../contract/errors.js';
  * @param slots - The node, wire, sequence and label drawing slots.
  * @param FontDefinitions - Presentation's font-definition component, drawn once per document.
  * @param fontDigests - Digests of the pinned fonts.
- * @param allLabels - When `true`, wire labels the diagram hides are drawn too, each at the clear
- * spot Layout finds beside its wire.
+ * @param allLabels - When `true`, wire labels the diagram hides are drawn too: each at the spot
+ * Layout picks beside its wire (clear of other labels when possible). A label Layout finds no
+ * spot for stays hidden.
  * @returns The renderer. `render` never throws: a throw while drawing becomes
  * `encoding-failed` at `svg`, and an unpinned font becomes `encoding-failed` at `fonts`. It
  * keeps no state; the caller owns the snapshot lease.
@@ -74,7 +75,9 @@ export function createSceneRenderer(
         <metadata>{JSON.stringify(identity)}</metadata>
         <FontDefinitions />
         <rect {...box} fill={input.snapshot.paint.fill} />
-        {input.selection.sections.map((item) => section(item, input.snapshot.paint))}
+        {input.selection.sections.map(
+          /** Draws one section. */ (item) => section(item, input.snapshot.paint),
+        )}
       </svg>,
     );
   }
@@ -90,7 +93,9 @@ export function createSceneRenderer(
         <g transform={`translate(${item.origin.x} ${item.origin.y})`}>
           {slots.label(item.title.content, item.title.box)}
           {item.nodes.map(slots.node)}
-          {wires(item).map((wire) => slots.wire(wire, paint))}
+          {wires(item).map(
+            /** Draws one wire in the section's colours. */ (wire) => slots.wire(wire, paint),
+          )}
           {slots.sequence(item.sequence, paint)}
         </g>
       </g>
@@ -98,16 +103,20 @@ export function createSceneRenderer(
   }
 
   /**
-   * The section's wires. In all-labels mode, each wire whose label Layout hid gets
-   * `labelVisible: true` and the clear box Layout found for it; other wires are unchanged.
+   * The section's wires. In all-labels mode, each hidden label is drawn at the spot Layout picks
+   * beside its wire (clear of other labels when possible): the wire gets `labelVisible: true` and
+   * that box. A label Layout finds no spot for stays hidden; other wires are unchanged.
    */
   function wires(item: PlacedSection): PlacedSection['wires'] {
     if (!allLabels) return item.wires;
     const boxes = hiddenLabelBoxes(item.wires, item.nodes);
-    return item.wires.map((wire) => {
-      const box = boxes.get(wire.id);
-      return box === undefined ? wire : { ...wire, labelVisible: true, labelBox: box };
-    });
+    return item.wires.map(
+      /** The wire, with its hidden label shown at Layout's spot when Layout found one. */
+      (wire) => {
+        const box = boxes.get(wire.id);
+        return box === undefined ? wire : { ...wire, labelVisible: true, labelBox: box };
+      },
+    );
   }
 
   return { render };
@@ -120,9 +129,14 @@ export function createSceneRenderer(
 function checkFonts(svg: string, fontDigests: readonly string[]): Result<string> {
   const aliases = Array.from(
     svg.matchAll(/font-family="canvas-([a-f0-9]{64})"/g),
-    (match) => match[1],
+    /** The digest part of one font alias. */ (match) => match[1],
   );
-  if (!aliases.every((digest) => fontDigests.includes(digest ?? '')))
+  if (
+    !aliases.every(
+      /** Whether the digest is one of the pinned fonts. */ (digest) =>
+        fontDigests.includes(digest ?? ''),
+    )
+  )
     return failure(
       'encoding-failed',
       'fonts',

@@ -27,23 +27,60 @@ export interface Dependencies {
 }
 
 /**
- * The Language service. Every operation is pure: it writes nothing, keeps no state between calls
- * and gives the same result when retried with the same input. Every operation returns a
- * `validation-failed` result instead of throwing.
+ * The Language service. No operation writes anything or keeps state between calls, so an
+ * operation retried with the same input gives the same result, as long as Model's policy tables
+ * and the injected Model roles also behave the same. Every operation returns a
+ * `validation-failed` result instead of throwing. Language owns correcting the source; Authoring
+ * owns every commit, revision, retry and recovery.
  */
 export interface Language {
-  /** The grammar, defaults, patch forms and examples for `version` (default 1). */
+  /**
+   * Describes the language: its constructs, operations, patch targets and forms, defaults,
+   * examples, diagnostic codes and Model's acceptance policies.
+   *
+   * @param version - The language version; defaults to 1, the only version.
+   * @returns The description, or `unsupported-version` for any other version.
+   * @throws Never.
+   */
   describe(version?: number): Result<Description>;
 
-  /** The parsed source, its resource requests and source mappings; nothing is read or fetched. */
+  /**
+   * Parses `canvas 1` or `patch 1` source. Nothing is read from files or the network.
+   *
+   * @param source - The source text.
+   * @returns The parsed document or patch with its resource requests and source mappings, or
+   * the diagnostics (for example `syntax`, `limit`, or `display-only` for a scoped view).
+   * @throws Never.
+   */
   parse(source: string): Result<ParsedSource>;
 
-  /** The source compiled against the request's snapshot into a checked collection and changes. */
+  /**
+   * Compiles source against the request's snapshot into a checked collection and changes.
+   *
+   * @param request - The source, mode, snapshot and resolved resources.
+   * @returns The checked intent, or the diagnostics. A throw from a Model role becomes a
+   * `provider-failure` diagnostic.
+   * @throws Never.
+   */
   lower(request: LowerRequest): Result<LoweredIntent>;
 
-  /** A recipe source compiled as a new collection under the request's namespace. */
+  /**
+   * Compiles recipe source as a new collection whose ID is the request's namespace.
+   *
+   * @param request - The recipe source, namespace and resolved resources.
+   * @returns The checked intent, or the diagnostics. A throw from a Model role becomes a
+   * `provider-failure` diagnostic.
+   * @throws Never.
+   */
   expand(request: ExpansionRequest): Result<LoweredIntent>;
 
-  /** The collection printed as full source, or as a scoped view that cannot be applied. */
+  /**
+   * Prints a collection as full source, or as a scoped view that cannot be applied.
+   *
+   * @param request - The collection (validated by Model first), scope and optional heading.
+   * @returns The readout, or the diagnostics. A throw from the Model reader becomes a
+   * `provider-failure` diagnostic.
+   * @throws Never.
+   */
   print(request: PrintRequest): Result<Readout>;
 }

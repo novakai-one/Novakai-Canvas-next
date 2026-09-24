@@ -1,7 +1,7 @@
 /*
  * Language's public entry: `createLanguage` and the types its callers use. Nothing else in the
- * capability is imported from outside. Language only reads and compiles; Authoring owns every
- * write.
+ * capability is imported from outside. Language only reads and compiles, and owns correcting
+ * the source; Authoring owns every write, retry and recovery.
  */
 export { createLanguage } from './api.js';
 export type { Language, Dependencies } from './types.js';

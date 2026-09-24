@@ -48,8 +48,10 @@ const policies: Description['policies'] = {
 };
 
 /**
- * Creates the Language service. It does no I/O and keeps no state; every operation can be retried
- * with the same input for the same result.
+ * Creates the Language service. It does no I/O and keeps no state, so an operation retried with
+ * the same input gives the same result, as long as Model's policy tables and `deps` also behave
+ * the same. Language owns correcting the source; Authoring owns every commit, revision, retry
+ * and recovery.
  *
  * - `describe(version = 1)`: the grammar description (constructs, operations, patch targets and
  *   forms, defaults, examples, Model's policies). A version other than 1 fails with

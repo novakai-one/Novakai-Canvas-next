@@ -15,13 +15,20 @@ export type DiagnosticCode =
   | 'invalid-input'
   /** A property name is not part of the vocabulary for that target. */
   | 'unknown-property'
-  /** A property value has the wrong form or is not allowed. */
+  /**
+   * A value or combination is not allowed: a property value of the wrong form, a missing
+   * required value such as image alt text, or an operation mix such as deleting and re-adding
+   * the same section in one patch.
+   */
   | 'invalid-value'
   /** A reference names a section, object or other target that does not exist. */
   | 'unknown-target'
   /** A theme or asset the source needs was not supplied. */
   | 'missing-resource'
-  /** A supplied theme or asset does not match the pin the source requests. */
+  /**
+   * A supplied theme or asset does not match what the source asks for: a theme's name or pin,
+   * an asset's digest, or its alt, licence or attribution text.
+   */
   | 'resource-mismatch'
   /** Model rejected the compiled collection or change; `source` keeps Model's own issue. */
   | 'domain'
@@ -55,7 +62,10 @@ export interface Diagnostic {
   /** What kind of problem it is. */
   readonly code: DiagnosticCode;
 
-  /** Where in the source it is (the start of the source when there is no better place). */
+  /**
+   * Where in the source it is. When there is no narrower place, this is the enclosing
+   * document or operation, or the start of the source.
+   */
   readonly span: Span;
 
   /** The ID or path the problem is about; empty when there is none. */

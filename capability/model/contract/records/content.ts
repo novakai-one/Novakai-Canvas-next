@@ -253,7 +253,7 @@ const tableBlockSchema = z
 /**
  * One content block, chosen by `kind`: text, code, list, image or icon, figure, link, field,
  * keygroup, signature, member or table. Core checks which kinds each object allows and every
- * reference. Also imported by Presentation.
+ * reference. Presentation uses the `ContentBlock` type, not this schema.
  */
 export const contentSchema = z.union([
   textBlockSchema,

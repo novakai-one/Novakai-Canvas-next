@@ -26,7 +26,11 @@ const relationshipChangeSchema = z
   })
   .readonly();
 
-/** Creates or replaces a whole section. */
+/**
+ * Creates or replaces a whole section. Replacing an existing section keeps the old geometry the
+ * new value omits: section, appearance and group placements, and manual wire routes with their
+ * locks.
+ */
 const sectionChangeSchema = z
   .strictObject({ op: recordOperationSchema, target: z.literal('sections'), value: sectionSchema })
   .readonly();
@@ -53,7 +57,8 @@ const definitionChangeSchema = z
 /**
  * Creates or replaces one complete record: `{ op, target, value }`. The target (`objects`,
  * `relationships`, `sections`, `assets`, `sources`, `definitions`) selects the value's schema;
- * omitted fields get their defaults. Exported, shared and unfrozen.
+ * omitted fields get their defaults. Exception: replacing an existing section keeps the old
+ * geometry the new value omits (see the section change). Exported, shared and unfrozen.
  */
 export const recordChangeSchema = z.union([
   objectChangeSchema,
@@ -93,7 +98,8 @@ const removeChangeSchema = z.union([
 
 /**
  * Replaces the whole collection: `{ op: 'replace-document', value }`. The ID and revision must
- * stay the same (`identity` otherwise); placements the new value omits are kept from the old one.
+ * stay the same (`identity` otherwise). For each section whose ID matches an old section, the
+ * old geometry the new value omits is kept: placements, and manual wire routes with their locks.
  */
 const replaceDocumentSchema = z
   .strictObject({ op: z.literal('replace-document'), value: collectionSchema })
@@ -112,8 +118,10 @@ const deleteObjectSchema = z
   .readonly();
 
 /**
- * Hides an object in one section: `{ op: 'hide', section, object }`. Removes its appearance and
- * the section's wires touching it; the object and relationships themselves remain.
+ * Hides an object in one section: `{ op: 'hide', section, object }`. The object needs an
+ * ordinary appearance in that section (a group representing it is not enough; otherwise
+ * `not-found`). Removes the appearance and the section's wires touching it; the object and
+ * relationships themselves remain.
  */
 const hideAppearanceSchema = z
   .strictObject({ op: z.literal('hide'), section: sectionId, object: objectId })
@@ -153,7 +161,8 @@ export const changeSchema = z.union([
 
 /**
  * An ordered batch of at most 1,000 changes. Validity of the result is checked after all of them
- * are applied (by `plan`). Exported, shared and unfrozen; imported by Library.
+ * are applied (by `plan`). Exported, shared and unfrozen; used by Model's staging (Library has
+ * its own change schema).
  */
 export const changesSchema = z.array(changeSchema).max(1000).readonly();
 

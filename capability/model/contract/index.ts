@@ -1,9 +1,10 @@
 /**
  * The Model capability's public entry point.
  *
- * It exports only the names that code outside Model (or Model's own contract tests) imports,
- * checked against the workspace. Everything else in `contract/` stays inside the capability.
- * Add a name only when a real consumer needs it.
+ * It exports the names that code outside Model (or Model's own contract tests) imports, checked
+ * against the workspace, plus the types that name an exported helper's result
+ * (`CallableEndpoint`, `DefinitionUsage`). Everything else in `contract/` stays inside the
+ * capability. Add a name only when a real consumer needs it.
  *
  * The export statements keep their original order, so modules load in the same order.
  */

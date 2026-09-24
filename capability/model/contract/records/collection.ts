@@ -85,11 +85,15 @@ export type Collection = z.infer<typeof collectionSchema>;
  * collection; dropping it lets those saves still open. A non-empty list is kept, so it stays
  * invalid.
  *
- * Reads `value.changes` once (for any value except `null` and `undefined`). When the list is empty,
- * returns a new object with every other own enumerable field; otherwise returns `value` itself.
+ * Reads `value.changes` first (for any value except `null` and `undefined`). When the list is
+ * empty, `Object.entries` then reads every own enumerable string-keyed field, `changes`
+ * included (so a `changes` getter runs twice), and a new object with every field except `changes`
+ * is returned; symbol-keyed fields are not copied. Otherwise returns `value` itself.
  */
 function dropEmptyChanges(value: unknown): unknown {
   const changes = (value as { changes?: unknown } | null)?.changes;
-  if (!Array.isArray(changes) || changes.length > 0) return value;
+  if (!Array.isArray(changes) || changes.length > 0) {
+    return value;
+  }
   return Object.fromEntries(Object.entries(value as object).filter(([key]) => key !== 'changes'));
 }

@@ -20,11 +20,12 @@ export type TypeExpression =
   | { readonly kind: 'union'; readonly items: readonly TypeExpression[] };
 
 /**
- * The recursive type-expression schema. `z.lazy` lets a union refer back to this schema; zod
- * builds the inner schema once, on first use.
+ * The recursive type-expression schema. `z.lazy` lets a union refer back to this schema. zod
+ * calls the builder on first parse and reuses that inner schema for later parses; `unwrap()`
+ * calls the builder again each time, so it returns a new inner schema.
  */
 const typeExpressionSchema: z.ZodType<TypeExpression> = z.lazy(
-  /** Builds the discriminated union (called once, by zod). */
+  /** Builds the discriminated union (called by zod when it resolves the lazy schema). */
   () =>
     z.discriminatedUnion('kind', [
       z.strictObject({ kind: z.literal('primitive'), name: primitiveType }).readonly(),

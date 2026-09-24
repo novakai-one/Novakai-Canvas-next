@@ -3,11 +3,13 @@
  * text.
  *
  * - `shape`: input is not plain JSON, fails the strict schema, could not be read (a throw), or is
- *   an unsupported change operation.
+ *   an unsupported change operation; also a rule that rejected input without any diagnostic (at
+ *   `$`).
  * - `limit`: input over 100,000 values or 64 levels deep; a definition expression too large or
  *   too deeply nested.
  * - `duplicate`: an ID or value repeated where it must be unique.
- * - `reference`: an ID that does not resolve in this collection and scope.
+ * - `reference`: an ID that does not resolve in this collection and scope, or definitions that
+ *   reference each other in a cycle.
  * - `content`: a content block is not allowed on its object or is malformed (for example a table
  *   row of the wrong width), or a composition or group-role rule is broken.
  * - `endpoint`: a relationship endpoint does not fit its relationship kind (object kind, member,
@@ -45,7 +47,12 @@ export type DiagnosticCode =
 export interface Diagnostic {
   /** The failure category. */
   readonly code: DiagnosticCode;
-  /** Where it happened, as a dotted path (for example `objects.a.content.b`). */
+  /**
+   * Where it happened, as a dotted path:
+   * - plain-data inspection paths start with `$` (for example `$.objects.0`);
+   * - schema paths have no `$` and are `''` at the root (for example `objects.a.content.b`);
+   * - change paths can also be `changes` or `collection`.
+   */
   readonly path: string;
   /** What is wrong, in plain words. */
   readonly message: string;

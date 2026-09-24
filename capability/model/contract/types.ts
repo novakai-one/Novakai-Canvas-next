@@ -24,7 +24,7 @@ export interface Impact {
 
 /**
  * A planned transition: a detached valid candidate and its net impact. The revision is unchanged;
- * Authoring owns admission and commit.
+ * Authoring owns admission, commit and crash recovery.
  */
 export interface ChangePlan {
   /** The collection after every change, validated as a whole. */

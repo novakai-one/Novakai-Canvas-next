@@ -13,12 +13,21 @@ import { resolveBlob } from '../resolution/resolve.js';
 import { prepareBlob, storeBlob } from '../admission/stage.js';
 
 /**
- * Records a new lease on `digests` in the caller's transaction. A read lease (`existing`) first
- * verifies every digest's bytes; a reservation may name absent bytes. Only a verified acquire or a
+ * Whether a new lease is for bytes that must already be stored (`acquire`) or for bytes that may
+ * be restored later (`reserve`).
+ */
+export type LeaseMode = 'acquire' | 'reserve';
+
+/**
+ * Records a new lease on `digests` in the caller's transaction. An `acquire` lease first verifies
+ * every digest's bytes; a `reserve` lease may name absent bytes. Only a verified acquire or a
  * staged restore lets Authoring commit a binding later.
  *
+ * Each call records a new lease, even for the same digests: a retry after a lost result leaves an
+ * extra lease. It is removed by releasing it or, once its owner process is gone, by collection.
+ *
  * Steps, in order:
- * 1. when `existing`, verify each digest in order ({@link resolveBlob}); every digest is checked
+ * 1. for `acquire`, verify each digest in order ({@link resolveBlob}); every digest is checked
  *    and the first failure is returned;
  * 2. build the lease from a new ID, the owner process ID and the digests, and check it with the
  *    `leaseRecord` schema (`invalid-input` at the issue's path);
@@ -28,50 +37,24 @@ import { prepareBlob, storeBlob } from '../admission/stage.js';
  *
  * @param view - The transaction.
  * @param digests - The digests to protect (already deduplicated and sorted by the caller).
- * @param existing - Whether the bytes must already be stored and valid.
+ * @param mode - `acquire` when the bytes must already be stored and valid, else `reserve`.
  * @param identity - Hasher, lease ID source and owner process ID.
  * @returns The stored lease, or the first failure.
- * @throws Whatever the storage calls, the hasher or the ID source throw.
+ * @throws Whatever the storage calls, the hasher or the ID source throw. It runs inside a storage
+ * transaction: the real storage adapter turns the throw into a failure; with other storage the
+ * facade's `protect` does.
  */
 export function createLease(
   view: Pick<AssetTransaction, 'readBlob' | 'readLease' | 'writeLease'>,
   digests: readonly Digest[],
-  existing: boolean,
+  mode: LeaseMode,
   identity: Pick<IdentityPort, 'digest' | 'newLease' | 'ownerPid'>,
 ): Result<LeaseRecord> {
-  const checked = existing ? verifyMembers(view, digests, identity) : success(undefined);
+  const checked = mode === 'acquire' ? verifyMembers(view, digests, identity) : success(undefined);
   if (!checked.ok) {
     return checked;
   }
   return recordLease(view, digests, identity);
-}
-
-/**
- * Checks, against the stored lease rather than a remembered copy, that lease `id` still covers
- * `digest`.
- *
- * @param view - The transaction.
- * @param id - The lease ID.
- * @param digest - The digest to check.
- * @returns Success, or `lease-expired` at `lease` when the lease is gone ("Lease has been
- * released or recovered"), `corrupt-asset` when the stored lease is malformed, or `lease-expired`
- * at `digest` when its ID differs or it does not list the digest.
- * @throws Whatever the storage read throws.
- */
-export function requireMember(
-  view: Pick<AssetTransaction, 'readLease'>,
-  id: LeaseId,
-  digest: Digest,
-): Result<void> {
-  const raw = view.readLease(id);
-  if (raw === null) {
-    return fail('lease-expired', 'lease', 'Lease has been released or recovered');
-  }
-  const parsed = parse(leaseRecord, raw, 'corrupt-asset');
-  if (!parsed.ok) {
-    return parsed;
-  }
-  return checkMembership(parsed.value, id, digest);
 }
 
 /**
@@ -83,7 +66,9 @@ export function requireMember(
  * @param digest - The digest to read.
  * @param identity - The hasher.
  * @returns The verified blob, or the first failure.
- * @throws Whatever the storage reads or the hasher throw.
+ * @throws Whatever the storage reads or the hasher throw. It runs inside a storage transaction:
+ * the real storage adapter turns the throw into a failure; with other storage the lease's
+ * `protect` does.
  */
 export function readLeased(
   view: Pick<AssetTransaction, 'readLease' | 'readBlob'>,
@@ -139,7 +124,8 @@ export function prepareRestored(
  * Installs backup bytes under a reservation. The bytes are checked first ({@link prepareRestored},
  * asynchronous, outside storage). Then one transaction re-checks the lease ({@link requireMember})
  * and stores the bytes ({@link storeBlob}), so bytes are never installed after the lease is
- * released. The stored bytes stay protected until Authoring commits the binding.
+ * released. The stored bytes stay protected while the reservation is held: until it is released,
+ * or collected after its owner process is gone.
  *
  * @param storage - The storage to install into.
  * @param id - The reservation's lease ID.
@@ -148,7 +134,8 @@ export function prepareRestored(
  * @param media - The media processors and detector.
  * @param identity - The hasher.
  * @returns Success once stored, or the first failure.
- * @throws Whatever the storage throws (the real storage adapter returns failures instead).
+ * @throws Whatever the storage throws (the real storage adapter returns failures instead). The
+ * lease's `protectAsync` turns it into `storage-unavailable`.
  */
 export async function stageReserved(
   storage: Pick<AssetStorage, 'transact'>,
@@ -199,6 +186,27 @@ function recordLease(
   }
   view.writeLease(parsed.value);
   return success(parsed.value);
+}
+
+/**
+ * Checks, against the stored lease rather than a remembered copy, that lease `id` still covers
+ * `digest`: `lease-expired` at `lease` when the lease is gone, `corrupt-asset` when it is
+ * malformed, `lease-expired` at `digest` when its ID differs or it does not list the digest.
+ */
+function requireMember(
+  view: Pick<AssetTransaction, 'readLease'>,
+  id: LeaseId,
+  digest: Digest,
+): Result<void> {
+  const raw = view.readLease(id);
+  if (raw === null) {
+    return fail('lease-expired', 'lease', 'Lease has been released or recovered');
+  }
+  const parsed = parse(leaseRecord, raw, 'corrupt-asset');
+  if (!parsed.ok) {
+    return parsed;
+  }
+  return checkMembership(parsed.value, id, digest);
 }
 
 /** Requires the stored lease to have the expected ID and to list the digest. */

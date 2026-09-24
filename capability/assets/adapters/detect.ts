@@ -36,28 +36,28 @@ export function detectMedia(encoded: string): Result<SupportedMedia> {
 
 /** The byte signatures, in the order they are tried. SVG is last because its test is the loosest. */
 const signatures: readonly Signature[] = [
-  {
-    mediaType: 'image/png',
-    matches: (bytes) => bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a',
-  },
-  {
-    mediaType: 'image/jpeg',
-    matches: (bytes) => bytes.subarray(0, 3).toString('hex') === 'ffd8ff',
-  },
+  { mediaType: 'image/png', matches: (bytes) => hexAt(bytes, 0, 8) === '89504e470d0a1a0a' },
+  { mediaType: 'image/jpeg', matches: (bytes) => hexAt(bytes, 0, 3) === 'ffd8ff' },
   {
     mediaType: 'image/webp',
-    matches: (bytes) =>
-      bytes.subarray(0, 4).toString() === 'RIFF' && bytes.subarray(8, 12).toString() === 'WEBP',
+    matches: (bytes) => textAt(bytes, 0, 4) === 'RIFF' && textAt(bytes, 8, 12) === 'WEBP',
   },
-  {
-    mediaType: 'font/ttf',
-    matches: (bytes) => bytes.subarray(0, 4).toString('hex') === '00010000',
-  },
-  { mediaType: 'font/otf', matches: (bytes) => bytes.subarray(0, 4).toString() === 'OTTO' },
-  { mediaType: 'font/woff', matches: (bytes) => bytes.subarray(0, 4).toString() === 'wOFF' },
-  { mediaType: 'font/woff2', matches: (bytes) => bytes.subarray(0, 4).toString() === 'wOF2' },
+  { mediaType: 'font/ttf', matches: (bytes) => hexAt(bytes, 0, 4) === '00010000' },
+  { mediaType: 'font/otf', matches: (bytes) => textAt(bytes, 0, 4) === 'OTTO' },
+  { mediaType: 'font/woff', matches: (bytes) => textAt(bytes, 0, 4) === 'wOFF' },
+  { mediaType: 'font/woff2', matches: (bytes) => textAt(bytes, 0, 4) === 'wOF2' },
   {
     mediaType: 'image/svg+xml',
     matches: (bytes) => bytes.toString('utf8', 0, 256).trimStart().startsWith('<'),
   },
 ];
+
+/** The bytes from `start` up to `end`, as lowercase hex. */
+function hexAt(bytes: Buffer, start: number, end: number): string {
+  return bytes.subarray(start, end).toString('hex');
+}
+
+/** The bytes from `start` up to `end`, decoded as UTF-8. */
+function textAt(bytes: Buffer, start: number, end: number): string {
+  return bytes.subarray(start, end).toString();
+}

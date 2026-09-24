@@ -25,7 +25,10 @@ import { parse, success } from '../validation/outcomes.js';
  * @param identity - Tells whether a lease owner's process may still be running.
  * @param readReachability - Reads the referenced digests.
  * @returns The removed and retained digests, or the first failure.
- * @throws Whatever the storage calls, the reader or the liveness check throw.
+ * @throws Whatever the storage calls, the reader or the liveness check throw. It runs inside a
+ * storage transaction: the real storage adapter turns the throw into a failure and rolls metadata
+ * back; with other storage the facade's `protect` does. Blob files already deleted are not
+ * restored by the rollback.
  */
 export function collectBlobs(
   view: Pick<AssetTransaction, 'listLeases' | 'deleteLease' | 'listBlobs' | 'deleteBlob'>,
@@ -46,7 +49,15 @@ function readLeases(view: Pick<AssetTransaction, 'listLeases'>): Result<readonly
   if (failed && !failed.ok) {
     return failed;
   }
-  return success(checked.flatMap((result) => (result.ok ? [result.value] : [])));
+  return success(checked.flatMap(parsedValue));
+}
+
+/** The parsed value of a successful result as a one-item list, or an empty list for a failure. */
+function parsedValue(result: Result<LeaseRecord>): readonly LeaseRecord[] {
+  if (result.ok) {
+    return [result.value];
+  }
+  return [];
 }
 
 /** Reads and checks the references, recovers dead owners' leases, then removes unreferenced blobs. */

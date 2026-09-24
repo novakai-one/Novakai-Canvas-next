@@ -35,8 +35,9 @@ interface StageDependencies {
  *
  * @param input - The staging request.
  * @param deps - Storage, hasher and media processors.
- * @returns The frozen admission, or the first failure. The failure should be corrected before
- * retrying.
+ * @returns The frozen admission, or the first failure. After `invalid-input`,
+ * `unsupported-media` or `unsafe-media`, correct the input before retrying. After a storage
+ * failure, re-read and retry; Authoring owns retrying, and collection removes any orphan bytes.
  * @throws Never. Anything thrown becomes `unsafe-media` at `$`.
  */
 export function stageMedia(input: unknown, deps: StageDependencies): Promise<Result<Admission>> {
@@ -57,7 +58,8 @@ export function stageMedia(input: unknown, deps: StageDependencies): Promise<Res
  * @param identity - The hasher.
  * @returns The blob, or `unsupported-media` when no processor handles the type, the processor's
  * own failure, a `validateNormalized` failure, or the hasher's failure.
- * @throws Whatever a processor or the hasher throws.
+ * @throws Whatever a processor or the hasher throws. The callers' boundaries (`protectAsync` in
+ * `stageMedia` and `prepareRestored`) turn it into `unsafe-media`.
  */
 export async function prepareBlob(
   input: StageInput,
@@ -72,31 +74,6 @@ export async function prepareBlob(
 }
 
 /**
- * Builds a stored blob from normalized media: hashes the bytes and moves every other field into
- * the descriptor with the digest and decoded byte length. Per-submission metadata (alt text,
- * provenance) is not part of it.
- *
- * @param media - The checked normalized media.
- * @param identity - The hasher.
- * @returns `{ base64, descriptor }`, or the hasher's failure.
- * @throws Whatever the hasher throws.
- */
-export function identifyBlob(
-  media: NormalizedMedia,
-  identity: Pick<IdentityPort, 'digest'>,
-): Result<StoredBlob> {
-  const hashed = identity.digest(media.base64);
-  if (!hashed.ok) {
-    return hashed;
-  }
-  const { base64, ...facts } = media;
-  return success({
-    base64,
-    descriptor: { ...facts, digest: hashed.value, byteLength: byteLength(base64) },
-  });
-}
-
-/**
  * Stores a blob, or reuses the one already stored at its digest. Existing bytes are verified
  * ({@link resolveBlob}) and must equal the new bytes exactly (`corrupt-asset` at `digest`
  * otherwise). The file adapter also refuses different bytes at a digest.
@@ -105,7 +82,9 @@ export function identifyBlob(
  * @param blob - The blob to store.
  * @param identity - The hasher, for verifying existing bytes.
  * @returns Success, or the verification failure.
- * @throws Whatever the storage calls or the hasher throw.
+ * @throws Whatever the storage calls or the hasher throw. It runs inside a storage transaction:
+ * the real storage adapter turns the throw into a failure; with other storage the facade's
+ * boundary does.
  */
 export function storeBlob(
   transaction: Pick<AssetTransaction, 'readBlob' | 'writeBlob'>,
@@ -118,6 +97,22 @@ export function storeBlob(
   }
   transaction.writeBlob(blob);
   return success(undefined);
+}
+
+/** Hashes normalized media and moves every other field into the descriptor with the digest and byte length. */
+function identifyBlob(
+  media: NormalizedMedia,
+  identity: Pick<IdentityPort, 'digest'>,
+): Result<StoredBlob> {
+  const hashed = identity.digest(media.base64);
+  if (!hashed.ok) {
+    return hashed;
+  }
+  const { base64, ...facts } = media;
+  return success({
+    base64,
+    descriptor: { ...facts, digest: hashed.value, byteLength: byteLength(base64) },
+  });
 }
 
 /** Runs the first processor that handles the media type, then checks its output. */

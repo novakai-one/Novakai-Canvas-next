@@ -25,7 +25,10 @@ import { byteLength } from '../admission/validate.js';
  * @param digest - The digest to read.
  * @param identity - The hasher.
  * @returns The verified blob, or the first failure.
- * @throws Whatever the storage read or the hasher throws.
+ * @throws Whatever the storage read or the hasher throws. It runs inside a storage transaction:
+ * the real storage adapter turns the throw into a failure; with other storage the facade's
+ * `protect` does. A `missing-asset` or `corrupt-asset` failure is recovered by restaging or
+ * restoring verified original bytes.
  */
 export function resolveBlob(
   storage: Pick<AssetTransaction, 'readBlob'>,

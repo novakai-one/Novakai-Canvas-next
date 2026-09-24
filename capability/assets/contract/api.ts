@@ -7,6 +7,7 @@ import type { StoredBlob } from './records/media.js';
 import { parse, protect, protectAsync, success } from '../core/validation/outcomes.js';
 import { stageMedia } from '../core/admission/stage.js';
 import { resolveBlob } from '../core/resolution/resolve.js';
+import type { LeaseMode } from '../core/reachability/leases.js';
 import {
   createLease,
   readLeased,
@@ -72,18 +73,16 @@ function readLeaseInput(id: LeaseId, input: unknown, deps: AssetDependencies): R
 }
 
 /**
- * Checks the digest list, removes duplicates, sorts it and records a new lease. When `existing`
- * is true, every digest's bytes are verified before the lease is recorded.
+ * Checks the digest list, removes duplicates, sorts it and records a new lease. In `acquire`
+ * mode, every digest's bytes are verified before the lease is recorded.
  */
-function openLease(input: unknown, existing: boolean, deps: AssetDependencies): Result<LeaseId> {
+function openLease(input: unknown, mode: LeaseMode, deps: AssetDependencies): Result<LeaseId> {
   const parsed = parse(digestList, input);
   if (!parsed.ok) {
     return parsed;
   }
   const digests = [...new Set(parsed.value)].sort();
-  const created = deps.storage.transact((view) =>
-    createLease(view, digests, existing, deps.identity),
-  );
+  const created = deps.storage.transact((view) => createLease(view, digests, mode, deps.identity));
   if (!created.ok) {
     return created;
   }
@@ -102,7 +101,7 @@ function releaseLease(id: LeaseId, deps: AssetDependencies): Result<void> {
 
 /** Leases existing, verified digests and returns a lease that reads and releases them. */
 function acquire(input: unknown, deps: AssetDependencies): Result<ReadLease> {
-  const opened = openLease(input, true, deps);
+  const opened = openLease(input, 'acquire', deps);
   if (!opened.ok) {
     return opened;
   }
@@ -118,7 +117,7 @@ function acquire(input: unknown, deps: AssetDependencies): Result<ReadLease> {
 
 /** Leases digests whose bytes may be absent and returns a lease that installs and releases them. */
 function reserve(input: unknown, deps: AssetDependencies): Result<WriteLease> {
-  const opened = openLease(input, false, deps);
+  const opened = openLease(input, 'reserve', deps);
   if (!opened.ok) {
     return opened;
   }

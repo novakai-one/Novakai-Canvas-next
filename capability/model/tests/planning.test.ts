@@ -1,3 +1,4 @@
+/** Public Model scenarios are replayable; Vitest owns assertion reporting and the developer corrects regressions before rerunning. */
 import { expect, test } from 'vitest';
 import { plan, validate, type Section } from '../contract/index.js';
 import {
@@ -50,6 +51,7 @@ test('plan ordered atomic changes', () => {
     { op: 'replace', target: 'objects', value: node('a', 'step', { label: 'Changed' }) },
     { op: 'remove', target: 'objects', id: 'b' },
   ];
+  // An empty path text matches any path.
   rejectsPlan(before, danglingBatch, 'reference', '');
   expect(before).toEqual(copy);
 
@@ -75,7 +77,7 @@ test('enforce operation identity', () => {
   const otherRevision = [{ op: 'replace-document', value: graph({ revision: 1 }) }];
   rejectsPlan(graph(), otherRevision, 'identity', 'collection');
 
-  // Check: an unknown operation, then 1,001 changes.
+  // Check: an unknown operation, then 1,001 changes (an empty path text matches any path).
   rejectsPlan(graph(), [{ op: 'whatever' }], 'shape', '');
   const tooMany = Array.from(
     { length: 1001 },
@@ -104,7 +106,7 @@ test('enforce operation identity', () => {
 test('preserve and reset manual overrides', () => {
   // Check: a replace without geometry keeps the old geometry.
   const replacement = { op: 'replace', target: 'sections', value: semanticSection() };
-  const retained = sectionAt(value(plan(placed(), [replacement])).candidate);
+  const retained = plannedPlacedView([replacement]);
   expect(retained.placement).toEqual({ x: 5, y: 7, locked: true });
   expect(retained.appearances[0]?.placement).toEqual({ x: 10, y: 20, locked: false });
   expect(retained.groups[0]?.placement).toEqual({ x: 0, y: 0, locked: false });
@@ -112,13 +114,13 @@ test('preserve and reset manual overrides', () => {
 
   // Check: reset then replace — nothing comes back.
   const reset = { op: 'reset-layout', section: 'view' };
-  const resetThenReplace = sectionAt(value(plan(placed(), [reset, replacement])).candidate);
+  const resetThenReplace = plannedPlacedView([reset, replacement]);
   expect(resetThenReplace.placement).toBeUndefined();
   expectNestedOverridesCleared(resetThenReplace);
 
   // Check: reset then an explicit placement — the explicit one wins.
   const explicit = { ...replacement, value: { ...semanticSection(), placement: { x: 70, y: 80 } } };
-  const resetThenExplicit = sectionAt(value(plan(placed(), [reset, explicit])).candidate);
+  const resetThenExplicit = plannedPlacedView([reset, explicit]);
   expect(resetThenExplicit.placement).toMatchObject({
     x: 70,
     y: 80,
@@ -126,13 +128,13 @@ test('preserve and reset manual overrides', () => {
   expectNestedOverridesCleared(resetThenExplicit);
 
   // Check: an explicit placement then reset — the reset wins.
-  const explicitThenReset = sectionAt(value(plan(placed(), [explicit, reset])).candidate);
+  const explicitThenReset = plannedPlacedView([explicit, reset]);
   expect(explicitThenReset.placement).toBeUndefined();
   expectNestedOverridesCleared(explicitThenReset);
 
   // Check: reset-route clears only the route.
   const resetRoute = [{ op: 'reset-route', section: 'view', relationship: 'ab' }];
-  const route = sectionAt(value(plan(placed(), resetRoute)).candidate);
+  const route = plannedPlacedView(resetRoute);
   expect(route.wires[0]).not.toHaveProperty('manual');
   expect(route.wires[0]?.locked).toBe(false);
   expect(route.placement).toMatchObject({ x: 5, y: 7 });
@@ -238,4 +240,15 @@ function expectNestedOverridesCleared(view: Section) {
       expect(wire.locked).toBe(false);
     },
   );
+}
+
+/**
+ * Plans the changes against {@link placed} and returns the candidate's `view` section.
+ *
+ * @param changes - The change batch.
+ * @returns The planned `view` section.
+ * @throws AssertionError when the plan fails or has no `view` section.
+ */
+function plannedPlacedView(changes: readonly unknown[]): Section {
+  return sectionAt(value(plan(placed(), changes)).candidate);
 }

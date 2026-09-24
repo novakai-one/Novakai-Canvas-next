@@ -1,3 +1,4 @@
+/** Public Model scenarios are replayable; Vitest owns assertion reporting and the developer corrects regressions before rerunning. */
 import { expect, test, vi } from 'vitest';
 import { validate } from '../contract/index.js';
 import {
@@ -12,11 +13,13 @@ import {
   section,
   theme,
   value,
+  type RawRecord,
 } from './fixtures.js';
 
 /**
- * An empty collection gets empty record lists; a mixed collection with every content kind, a
- * port, an asset and two sections validates in object order; the ER fixture keeps its
+ * An empty collection gets empty record lists; a mixed collection (a module with signature and
+ * member blocks and a port; a note with text, code, list, image, icon, link and table blocks; an
+ * asset and two sections) validates in object order; the ER fixture keeps its
  * cardinalities and member endpoints.
  */
 test('accept empty and mixed collection', () => {
@@ -29,7 +32,8 @@ test('accept empty and mixed collection', () => {
     sources: [],
   });
 
-  // Check: a module with a signature, member and port, and a note with every content kind.
+  // Check: a module with a signature, member and port, and a note with text, code, list, image,
+  // icon, link and table blocks.
   const mixed = base({
     objects: [
       node('m', 'module', {
@@ -93,11 +97,12 @@ test('accept empty and mixed collection', () => {
  * Malformed input is a `shape` error (wrong version, extra field, bad revision, blank title, bad
  * ID, unsafe integer, non-plain objects, a cycle, an array-like object, a hidden field, an
  * `undefined` field, an unknown object kind). A getter is rejected without being called. Nesting
- * deeper than 64 levels and more than 100,000 values are `limit` errors. An unknown arrangement
- * field and an infinite coordinate are `shape` errors.
+ * deeper than 64 levels and more than 100,000 values are `limit` errors. An invalid arrangement
+ * direction and an infinite coordinate are `shape` errors.
  */
 test('reject malformed and excessive inputs', () => {
   // Check: each malformed input.
+  const arrayLike: unknown = Object.assign(Object.create(Array.prototype), base());
   const malformedInputs = [
     base({ schemaVersion: 2 }),
     base({ unexpected: 1 }),
@@ -107,13 +112,13 @@ test('reject malformed and excessive inputs', () => {
     base({ revision: Number.MAX_SAFE_INTEGER + 1 }),
     new Date(),
     cyclic(),
-    Object.assign(Object.create(Array.prototype), base()),
+    arrayLike,
     Object.defineProperty(base(), 'unsupported', { value: 'must not disappear' }),
     base({ title: undefined }),
     base({ objects: [node('a', 'alien')] }),
   ];
   malformedInputs.forEach(
-    /** Checks one input. */
+    /** Checks one input. An empty path text matches any path. */
     (input) => rejects(input, 'shape', ''),
   );
 
@@ -134,7 +139,7 @@ test('reject malformed and excessive inputs', () => {
   );
   rejects(tooManyValues, 'limit', '$');
 
-  // Check: an unknown arrangement direction, and an infinite coordinate.
+  // Check: an invalid arrangement direction, and an infinite coordinate.
   rejects(base({ arrangement: { ...layout(), direction: 'sideways' } }), 'shape', 'arrangement');
   const infinitePlacement = section('view', 'flow', { placement: { x: Infinity, y: 0 } });
   rejects(graph({ sections: [infinitePlacement] }), 'shape', 'sections');
@@ -175,19 +180,11 @@ test('enforce scoped identities', () => {
  */
 test('resolve references and roles', () => {
   // Check: roles.
-  rejects(
-    base({ objects: [node('a', 'note', { role: 'unknown' })] }),
-    'reference',
-    'objects.a.role',
-  );
+  rejects(noteCollection({ role: 'unknown' }), 'reference', 'objects.a.role');
   rejects(base({ theme: { ...theme, roles: ['neutral', 'neutral'] } }), 'duplicate', 'theme.roles');
 
   // Check: a missing source, a missing asset, a link to a missing section.
-  rejects(
-    base({ objects: [node('a', 'note', { sources: ['missing'] })] }),
-    'reference',
-    'objects.a.sources',
-  );
+  rejects(noteCollection({ sources: ['missing'] }), 'reference', 'objects.a.sources');
   const missingAsset = node('a', 'note', {
     content: [{ kind: 'image', id: 'pic', asset: 'missing' }],
   });
@@ -206,14 +203,9 @@ test('resolve references and roles', () => {
 
   // Check: a repeated source, then a valid one.
   const sources = [{ id: 'spec', uri: 'spec.md', status: 'source-backed', revision: 'v1' }];
-  rejects(
-    base({ sources, objects: [node('a', 'note', { sources: ['spec', 'spec'] })] }),
-    'duplicate',
-    'objects.a.sources',
-  );
-  const sourced = value(
-    validate(base({ sources, objects: [node('a', 'note', { sources: ['spec'] })] })),
-  );
+  const repeatedSource = noteCollection({ sources: ['spec', 'spec'] }, { sources });
+  rejects(repeatedSource, 'duplicate', 'objects.a.sources');
+  const sourced = value(validate(noteCollection({ sources: ['spec'] }, { sources })));
   expect(sourced.sources[0]?.revision).toBe('v1');
 });
 
@@ -239,4 +231,15 @@ function cyclic() {
   const object: { self?: unknown } = {};
   object.self = object;
   return object;
+}
+
+/**
+ * Builds a collection whose only object is note `a`.
+ *
+ * @param noteFields - Fields to add to or override on the note.
+ * @param collectionFields - Collection fields placed before `objects` (for example `sources`).
+ * @returns The collection data (unvalidated).
+ */
+function noteCollection(noteFields: RawRecord, collectionFields: RawRecord = {}): RawRecord {
+  return base({ ...collectionFields, objects: [node('a', 'note', noteFields)] });
 }

@@ -1,7 +1,17 @@
 /** Public Model scenarios are replayable; Vitest owns assertion reporting and the developer corrects regressions before rerunning. */
 import { expect, test } from 'vitest';
 import { validate } from '../contract/index.js';
-import { base, graph, layout, node, rejects, relation, section, value } from './fixtures.js';
+import {
+  base,
+  graph,
+  layout,
+  node,
+  rejects,
+  relation,
+  section,
+  value,
+  type RawRecord,
+} from './fixtures.js';
 
 /**
  * A wire needs both endpoints shown in its section; a group may represent a hidden object but
@@ -40,7 +50,8 @@ test('validate groups and visible wires', () => {
   });
   rejects(representedAndShown, 'duplicate', 'appearances.a');
 
-  // Check: `represents: undefined` is not a JSON value.
+  // Check: `represents: undefined` is not a JSON value. The shape check fails first, so the
+  // self-parent `parent: 'g'` is never reached.
   const explicitUndefined = base({
     sections: [
       section('view', 'flow', { groups: [{ ...group, represents: undefined, parent: 'g' }] }),
@@ -158,10 +169,10 @@ test('validate layout intent', () => {
  * rejects a transition leaving an end state; a plain graph keeps wires in both directions.
  */
 test('validate flow and state', () => {
-  // Check: decision `a` has two unlabelled outgoing wires (duplicate `continues`).
+  // Check: decision `a` has two outgoing wires with the same default label `continues`.
   const objects = [node('a', 'decision'), node('b'), node('c')];
   const relationships = [relation('ab'), relation('ac', 'a', 'c')];
-  const unlabelledDecision = base({
+  const repeatedLabelDecision = base({
     objects,
     relationships,
     sections: [
@@ -177,7 +188,7 @@ test('validate flow and state', () => {
       }),
     ],
   });
-  rejects(unlabelledDecision, 'duplicate', 'decision.a');
+  rejects(repeatedLabelDecision, 'duplicate', 'decision.a');
 
   // Check: a state machine keeps the guard of its second transition.
   const states = [node('start', 'start'), node('state', 'state'), node('end', 'end')];
@@ -230,19 +241,10 @@ test('validate canonical modules as direct sequence endpoints', () => {
   const input = base({
     objects: [node('api', 'module'), node('worker', 'module'), node('human', 'participant')],
     sections: [
-      section('sequence', 'sequence', {
-        layout: layout('sequence'),
+      moduleSequence({
         appearances: [{ object: 'api' }, { object: 'worker' }, { object: 'human' }],
         sequence: [
-          {
-            id: 'request',
-            kind: 'event',
-            source: 'api',
-            target: 'worker',
-            label: 'Request',
-            message: 'call',
-            order: 0,
-          },
+          apiRequest(),
           {
             id: 'reply',
             kind: 'event',
@@ -268,20 +270,9 @@ test('validate canonical modules as direct sequence endpoints', () => {
   const hidden = {
     ...input,
     sections: [
-      section('sequence', 'sequence', {
-        layout: layout('sequence'),
+      moduleSequence({
         appearances: [{ object: 'api' }, { object: 'human' }],
-        sequence: [
-          {
-            id: 'request',
-            kind: 'event',
-            source: 'api',
-            target: 'worker',
-            label: 'Request',
-            message: 'call',
-            order: 0,
-          },
-        ],
+        sequence: [apiRequest()],
       }),
     ],
   };
@@ -291,21 +282,10 @@ test('validate canonical modules as direct sequence endpoints', () => {
   const grouped = {
     ...input,
     sections: [
-      section('sequence', 'sequence', {
-        layout: layout('sequence'),
+      moduleSequence({
         groups: [{ id: 'g', title: 'Group', layout: layout() }],
         appearances: [{ object: 'api', group: 'g' }, { object: 'worker' }, { object: 'human' }],
-        sequence: [
-          {
-            id: 'request',
-            kind: 'event',
-            source: 'api',
-            target: 'worker',
-            label: 'Request',
-            message: 'call',
-            order: 0,
-          },
-        ],
+        sequence: [apiRequest()],
       }),
     ],
   };
@@ -375,32 +355,47 @@ test('validate tree topology', () => {
  */
 test('validate sequence topology', () => {
   // Check: the event sits in branch `yes` of fragment `choice`.
-  const branched = sequence([fragment, { ...event, parent: 'choice', branch: 'yes' }]);
+  const branched = sequence([
+    choiceFragment(),
+    { ...requestEvent(), parent: 'choice', branch: 'yes' },
+  ]);
   expect(value(validate(branched)).sections[0]?.sequence).toHaveLength(2);
 
   // Check: a fragment parent without a branch.
-  rejects(sequence([fragment, { ...event, parent: 'choice' }]), 'sequence', 'request');
+  rejects(
+    sequence([choiceFragment(), { ...requestEvent(), parent: 'choice' }]),
+    'sequence',
+    'request',
+  );
 
   // Check: a parent that does not exist.
-  rejects(sequence([{ ...event, parent: 'missing' }]), 'sequence', 'request');
+  rejects(sequence([{ ...requestEvent(), parent: 'missing' }]), 'sequence', 'request');
 
   // Check: a target that does not exist.
-  rejects(sequence([{ ...event, target: 'missing' }]), 'sequence', 'request.missing');
+  rejects(sequence([{ ...requestEvent(), target: 'missing' }]), 'sequence', 'request.missing');
 
   // Check: two events at order 0.
-  rejects(sequence([event, { ...event, id: 'second' }]), 'duplicate', 'sequence.order');
+  rejects(
+    sequence([requestEvent(), { ...requestEvent(), id: 'second' }]),
+    'duplicate',
+    'sequence.order',
+  );
 
   // Check: a fragment with one branch.
-  const oneBranch = sequence([{ ...fragment, branches: [{ id: 'yes', label: 'Yes' }] }]);
+  const oneBranch = sequence([{ ...choiceFragment(), branches: [{ id: 'yes', label: 'Yes' }] }]);
   rejects(oneBranch, 'sequence', 'choice');
 
   // Check: a fragment inside its own branch.
-  rejects(sequence([{ ...fragment, parent: 'choice', branch: 'yes' }]), 'sequence', 'choice');
+  rejects(
+    sequence([{ ...choiceFragment(), parent: 'choice', branch: 'yes' }]),
+    'sequence',
+    'choice',
+  );
 
   // Check: two branches labelled `Same`.
   const sameLabels = sequence([
     {
-      ...fragment,
+      ...choiceFragment(),
       branches: [
         { id: 'yes', label: 'Same' },
         { id: 'no', label: 'Same' },
@@ -411,12 +406,12 @@ test('validate sequence topology', () => {
 });
 
 /** Public validation rejects malformed intent without mutation; callers correct and retry. */
-test('grid columns validate independently in collection, section and nested group scopes', (): void => {
+test('grid columns validate independently in collection, section and nested group scopes', () => {
   // Check: each invalid column count, in the arrangement and in a section.
   const invalidColumns: readonly unknown[] = [0, 13, -1, 1.5, '2', null, NaN, Infinity];
   invalidColumns.forEach(
     /** Rejects the column count in both scopes. */
-    (columns): void => {
+    (columns) => {
       rejects(base({ arrangement: { algorithm: 'grid', columns } }), 'shape', 'columns');
       const gridSection = section('grid', 'grid', { layout: { algorithm: 'grid', columns } });
       rejects(base({ sections: [gridSection] }), 'shape', 'columns');
@@ -426,7 +421,7 @@ test('grid columns validate independently in collection, section and nested grou
   // Check: only the grid layout takes columns.
   ['flow', 'layered', 'tree', 'sequence'].forEach(
     /** Rejects columns on this layout. */
-    (algorithm): void => {
+    (algorithm) => {
       rejects(base({ arrangement: { algorithm, columns: 2 } }), 'layout', 'columns');
     },
   );
@@ -434,7 +429,7 @@ test('grid columns validate independently in collection, section and nested grou
   // Check: valid counts are kept in every scope, and the input is not changed.
   [1, 2, 12].forEach(
     /** Validates the column count in the arrangement, a section and a nested group. */
-    (columns): void => {
+    (columns) => {
       const input = base({
         arrangement: { algorithm: 'grid', columns },
         sections: [
@@ -509,27 +504,67 @@ function sequence(items: readonly unknown[]): ReturnType<typeof base> {
   });
 }
 
-/** An activating `request` event from `user` to `agent` at order 0. */
-const event = {
-  kind: 'event',
-  id: 'request',
-  order: 0,
-  source: 'user',
-  target: 'agent',
-  label: 'Request',
-  message: 'call',
-  activate: true,
-};
+/**
+ * Builds an activating `request` event from `user` to `agent` at order 0 (a new object each call).
+ *
+ * @returns The sequence item (unvalidated).
+ */
+function requestEvent() {
+  return {
+    kind: 'event',
+    id: 'request',
+    order: 0,
+    source: 'user',
+    target: 'agent',
+    label: 'Request',
+    message: 'call',
+    activate: true,
+  };
+}
 
-/** An `alt` fragment `choice` at order 0 with branches `yes` and `no`. */
-const fragment = {
-  kind: 'fragment',
-  id: 'choice',
-  order: 0,
-  operator: 'alt',
-  label: 'Outcome',
-  branches: [
-    { id: 'yes', label: 'Yes' },
-    { id: 'no', label: 'No' },
-  ],
-};
+/**
+ * Builds an `alt` fragment `choice` at order 0 with branches `yes` and `no` (a new object each
+ * call).
+ *
+ * @returns The sequence item (unvalidated).
+ */
+function choiceFragment() {
+  return {
+    kind: 'fragment',
+    id: 'choice',
+    order: 0,
+    operator: 'alt',
+    label: 'Outcome',
+    branches: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  };
+}
+
+/**
+ * Builds the `request` event from module `api` to module `worker` at order 0.
+ *
+ * @returns The sequence item (unvalidated).
+ */
+function apiRequest() {
+  return {
+    id: 'request',
+    kind: 'event',
+    source: 'api',
+    target: 'worker',
+    label: 'Request',
+    message: 'call',
+    order: 0,
+  };
+}
+
+/**
+ * Builds section `sequence` in sequence mode with the sequence layout.
+ *
+ * @param fields - Section fields spread after the layout (appearances, groups, sequence).
+ * @returns The section record (unvalidated).
+ */
+function moduleSequence(fields: RawRecord): RawRecord {
+  return section('sequence', 'sequence', { layout: layout('sequence'), ...fields });
+}

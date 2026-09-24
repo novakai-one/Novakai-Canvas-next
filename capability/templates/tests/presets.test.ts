@@ -10,23 +10,24 @@ import {
   value,
   rejects,
   dependencies,
-  theme,
+  themeCodec,
+  themePayload,
   failed,
   font,
 } from './fixtures.js';
 
 describe('presets', () => {
   /**
-   * The pin's digest is an independently computed SHA-256 of the canonical record. The plan is
-   * frozen and the caller's input is not. Source whitespace that the codec trims gives the same
-   * pin.
+   * The pin's digest is an independently computed SHA-256 of the canonical record. The admitted
+   * record is frozen; the caller's input is not frozen. Source whitespace that the codec trims
+   * gives the same pin.
    */
-  it('pins canonical content with a known SHA-256 and returns a frozen plan', () => {
+  it('pins canonical content with a known SHA-256 and freezes the admitted record', () => {
     // Act: plan the first admission.
     const templates = service();
     const submitted = input();
     const result = value(templates.planAdmission([], submitted));
-    // Check: known digest, one new frozen record, caller input untouched.
+    // Check: known digest, one new frozen record, caller input not frozen.
     expect(result.pin.digest).toBe(
       '7ded66daaa94db5699077cbdc91639c129df7e687e3ba4d846f7f61a0ea2a2ae',
     );
@@ -67,8 +68,7 @@ describe('presets', () => {
   it('rejects duplicate, altered, missing and cyclic records and accepts a 1000-theme chain', () => {
     const templates = service();
     const first = value(templates.planAdmission([], input()));
-    const record = first.candidate[0];
-    expect(record).toBeDefined();
+    expect(first.candidate[0]).toBeDefined();
     // Duplicate and altered records.
     rejects(templates.list([...first.candidate, ...first.candidate], {}), 'duplicate-preset');
     rejects(
@@ -87,7 +87,7 @@ describe('presets', () => {
     } as const;
     const missingService = createTemplates(
       dependencies({
-        theme: { resolve: () => ({ ok: true, value: { ...theme, base: missing } }) },
+        theme: themeCodec({ ...themePayload(), base: missing }),
       }),
     );
     rejects(missingService.planAdmission([], themeInput()), 'missing-preset');
@@ -105,7 +105,7 @@ describe('presets', () => {
       description: '',
       digest: constant,
       payload: {
-        ...theme,
+        ...themePayload(),
         base: {
           kind: 'theme',
           id: presetId.parse('b'),
@@ -118,7 +118,7 @@ describe('presets', () => {
       ...a,
       id: presetId.parse('b'),
       payload: {
-        ...theme,
+        ...themePayload(),
         base: { kind: 'theme', id: a.id, version: a.version, digest: constant },
       },
     };
@@ -131,8 +131,8 @@ describe('presets', () => {
 
   /**
    * `read` without a version returns the numerically latest (2.10.0 after 2.9.0). `list` search
-   * ignores case and orders versions numerically. A wrong digest is `digest-mismatch`; a digest
-   * without a version is `invalid-input`.
+   * ignores case and orders versions numerically; listing only themes gives an empty list. A wrong
+   * digest is `digest-mismatch`; a digest without a version is `invalid-input`.
    */
   it('reads the numerically latest version and lists matches in version order', () => {
     const templates = service();
@@ -175,10 +175,8 @@ describe('presets', () => {
       payload: { fonts: [font], tokens: { 'font.body': { digest: font } } },
     });
     // Font manifest that does not match.
-    const bad: ThemePayload = { ...theme, fonts: [] };
-    const invalid = createTemplates(
-      dependencies({ theme: { resolve: () => ({ ok: true, value: bad }) } }),
-    );
+    const bad: ThemePayload = { ...themePayload(), fonts: [] };
+    const invalid = createTemplates(dependencies({ theme: themeCodec(bad) }));
     rejects(invalid.planAdmission([], themeInput()), 'invalid-input');
     // Bad version and unknown field.
     rejects(templates.planAdmission([], { ...themeInput(), version: '01.0.0' }), 'invalid-input');
@@ -186,12 +184,10 @@ describe('presets', () => {
     // Color token that is not hex.
     const unsafe = createTemplates(
       dependencies({
-        theme: {
-          resolve: () => ({
-            ok: true,
-            value: { ...theme, tokens: { bad: { type: 'color', value: 'url(secret)' } } },
-          }),
-        },
+        theme: themeCodec({
+          ...themePayload(),
+          tokens: { bad: { type: 'color', value: 'url(secret)' } },
+        }),
       }),
     );
     rejects(unsafe.planAdmission([], themeInput()), 'invalid-input');
@@ -201,7 +197,7 @@ describe('presets', () => {
    * A throwing codec and a failing hasher are `provider-failed`. Source over 1 MiB, schema
    * version 2 and a function in the input are `invalid-input`.
    */
-  it('reports provider faults and rejects oversized or non-JSON input', () => {
+  it('reports provider faults and rejects oversized, unsupported or non-JSON input', () => {
     // Throwing codec.
     const templates = createTemplates(
       dependencies({
@@ -225,7 +221,9 @@ describe('presets', () => {
     rejects(service().planAdmission([], { ...input(), schemaVersion: 2 }), 'invalid-input');
     rejects(service().planAdmission([], { ...input(), extra: () => 0 }), 'invalid-input');
   });
+});
 
+describe('identity adapter', () => {
   /**
    * The identity adapter's injected `compute`: a throw, or output that is not a lowercase 64-char
    * hex digest, is `provider-failed` at path `digest`; valid output is returned as the digest.

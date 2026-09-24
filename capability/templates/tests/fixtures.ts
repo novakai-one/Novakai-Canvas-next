@@ -4,8 +4,11 @@ import { composeTemplates, digest, presetId, version } from '../contract/index.j
 import type {
   Result,
   Dependencies,
+  Digest,
+  ErrorCode,
   RecipePort,
   ThemePayload,
+  ThemePort,
   Pin,
   Admission,
   Templates,
@@ -23,16 +26,33 @@ export const font = digest.parse('a'.repeat(64));
 /** A media digest (`b` × 64). */
 export const media = digest.parse('b'.repeat(64));
 
-/** A complete resolved theme: one font token, one color, two roles, no base. */
-export const theme: ThemePayload = {
-  tokens: {
-    'font.body': { type: 'font', family: 'Inter', digest: font },
-    'color.text': { type: 'color', value: '#111111' },
-  },
-  roles: ['neutral', 'primary'],
-  fonts: [font],
-  base: null,
-};
+/**
+ * A complete resolved theme: one font token, one color, two roles, no base. Each call returns a
+ * new object, so no test can change another test's theme.
+ *
+ * @returns The theme payload.
+ */
+export function themePayload(): ThemePayload {
+  return {
+    tokens: {
+      'font.body': { type: 'font', family: 'Inter', digest: font },
+      'color.text': { type: 'color', value: '#111111' },
+    },
+    roles: ['neutral', 'primary'],
+    fonts: [font],
+    base: null,
+  };
+}
+
+/**
+ * A test theme codec whose `resolve` always succeeds with `payload`, whatever it is given.
+ *
+ * @param payload - The resolved theme to return. Defaults to a new {@link themePayload}.
+ * @returns The codec.
+ */
+export function themeCodec(payload: ThemePayload = themePayload()): ThemePort {
+  return { resolve: () => ({ ok: true, value: payload }) };
+}
 
 /**
  * A test recipe codec, not a real DSL parser. `inspect` trims the source and reports the given
@@ -44,7 +64,7 @@ export const theme: ThemePayload = {
  */
 export function recipe(
   themes: readonly Pin[] = [],
-  assets: readonly (typeof font)[] = [],
+  assets: readonly Digest[] = [],
 ): RecipePort<Intent> {
   return {
     inspect: (source, family) => ({
@@ -59,8 +79,9 @@ export function recipe(
 }
 
 /**
- * Test providers: the test recipe codec, a theme codec that always returns {@link theme}, and the
- * real SHA-256 identity adapter. Every provider is given explicitly; there are no hidden defaults.
+ * Test providers: the test recipe codec, a theme codec that always returns {@link themePayload},
+ * and the real SHA-256 identity adapter. Templates has no default providers; this helper supplies
+ * test ones, each replaceable through `overrides`.
  *
  * @param overrides - Providers to replace.
  * @returns The providers.
@@ -68,7 +89,7 @@ export function recipe(
 export function dependencies(overrides: Partial<Dependencies<Intent>> = {}): Dependencies<Intent> {
   return {
     recipe: recipe(),
-    theme: { resolve: () => ({ ok: true, value: theme }) },
+    theme: themeCodec(),
     identity: createIdentity(),
     ...overrides,
   };
@@ -107,7 +128,7 @@ export function input(release = '1.0.0', source = 'fixture:hello'): Admission {
 
 /**
  * A theme admission. Its `raw` input is opaque to Templates; the test theme codec returns
- * {@link theme} whatever it is given.
+ * {@link themePayload} whatever it is given.
  *
  * @param id - The theme ID. Defaults to `paper`.
  * @param release - The version. Defaults to `1.0.0`.
@@ -148,7 +169,7 @@ export function value<T>(result: Result<T>): T {
  * @param code - The expected failure code.
  * @throws Vitest's assertion error otherwise.
  */
-export function rejects(result: Result<unknown>, code: string): void {
+export function rejects(result: Result<unknown>, code: ErrorCode): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
 }
 

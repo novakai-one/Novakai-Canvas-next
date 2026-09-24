@@ -6,6 +6,7 @@ import type {
 } from '../../contract/records/preset.js';
 import type { RecipePort } from '../../contract/ports/codecs.js';
 import type { Expansion } from '../../contract/types.js';
+import type { Digest } from '../../contract/brands.js';
 import type { Result } from '../../contract/errors.js';
 import { fail } from '../../contract/errors.js';
 import { success, canonical, clone } from '../validation/outcomes.js';
@@ -22,7 +23,8 @@ import { exact, pinOf, reachableThemes } from '../validation/catalog.js';
  * 4. Expands the source into `request.namespace` (a codec failure is returned as it is) and
  *    copies the intent.
  * 5. Returns the pin, namespace and intent, the media digests (the recipe's assets plus the fonts
- *    of every reachable theme, sorted, without duplicates) and the pins of every reachable theme.
+ *    of every reachable theme, sorted, without duplicates) and the pins of every reachable theme,
+ *    sorted by kind, id and version.
  *
  * @param records - The validated catalog.
  * @param request - The parsed request.
@@ -57,14 +59,24 @@ function expandRecipe<T>(
   if (!inspected.ok) {
     return inspected;
   }
-  return expandChecked(records, value.payload, inspected.value, request, recipe);
+  return expandChecked(
+    records,
+    { stored: value.payload, inspected: inspected.value },
+    request,
+    recipe,
+  );
+}
+
+/** The recipe payload as stored in the catalog, and as the codec reads it again now. */
+interface CheckedPayloads {
+  readonly stored: RecipePayload;
+  readonly inspected: RecipePayload;
 }
 
 /** Requires the re-inspected payload to equal the stored one, then expands the source. */
 function expandChecked<T>(
   records: Catalog,
-  payload: RecipePayload,
-  inspected: RecipePayload,
+  { stored: payload, inspected }: CheckedPayloads,
   request: ExpansionRequest,
   recipe: RecipePort<T>,
 ): Result<Expansion<T>> {
@@ -90,12 +102,26 @@ function assemble<T>(
   intent: T,
 ): Expansion<T> {
   const themes = reachableThemes(records, payload.themes);
-  const fonts = themes.flatMap((value) => (value.kind === 'theme' ? value.payload.fonts : []));
+  const fonts = themes.flatMap(themeFonts);
   return {
     pin: request.pin,
     namespace: request.namespace,
     intent,
-    assets: [...new Set([...payload.assets, ...fonts])].sort(),
+    assets: sortedUnique([...payload.assets, ...fonts]),
     themes: themes.map(pinOf),
   };
+}
+
+/** A theme's font digests; a recipe has none. */
+function themeFonts(value: Preset): readonly Digest[] {
+  if (value.kind !== 'theme') {
+    return [];
+  }
+  return value.payload.fonts;
+}
+
+/** The digests without duplicates, sorted. */
+function sortedUnique(digests: readonly Digest[]): Digest[] {
+  const unique = new Set(digests);
+  return [...unique].toSorted();
 }

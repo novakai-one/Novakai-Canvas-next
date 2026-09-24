@@ -7,7 +7,8 @@ import {
   themeInput,
   value,
   rejects,
-  theme,
+  themeCodec,
+  themePayload,
   font,
   media,
 } from './fixtures.js';
@@ -15,8 +16,8 @@ import {
 describe('instantiate', () => {
   /**
    * Instances in different namespaces get their own node IDs, the same namespace gives an equal
-   * result, media include the reachable theme's fonts, and a newer theme version does not change
-   * an expansion pinned to the old one.
+   * result, media include the reachable theme's fonts, `themes` lists the reachable theme's pin,
+   * and a newer theme version does not change an expansion pinned to the old one.
    */
   it('expands per namespace, repeats exactly, collects theme fonts and keeps old pins', () => {
     // Arrange: a theme, then a recipe that pins it and one media asset.
@@ -44,12 +45,7 @@ describe('instantiate', () => {
     // Act: admit theme 2.0.0 with different roles, then expand the old pin again.
     const altered = createTemplates(
       dependencies({
-        theme: {
-          resolve: () => ({
-            ok: true,
-            value: { ...theme, roles: ['neutral', 'primary', 'warning'] },
-          }),
-        },
+        theme: themeCodec({ ...themePayload(), roles: ['neutral', 'primary', 'warning'] }),
       }),
     );
     const upgraded = value(altered.planAdmission(catalog.candidate, themeInput('paper', '2.0.0')));

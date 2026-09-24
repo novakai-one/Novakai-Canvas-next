@@ -7,8 +7,10 @@ import {
   objectId,
   type LibrarySnapshot,
   type Result,
+  type DiagnosticCode,
 } from '../contract/index.js';
-/** Independently minted fixture identities; no private implementation is used. */
+
+/** Fixture IDs, checked with the public ID schemas (no private code is used). */
 export const ids = {
   catalog: catalogId.parse('catalog'),
   folder: folderId.parse('engineering'),
@@ -18,7 +20,16 @@ export const ids = {
   section: sectionId.parse('er'),
   object: objectId.parse('invoice'),
 };
-/** Explicit fixture values prevent schema defaults from manufacturing expected results. */
+
+/**
+ * A valid snapshot: catalog `catalog` (revision 7) with folder `engineering` and its child
+ * `backend`; collection `alpha` ("Billing", revision 3) in `backend` with section `er` and the
+ * unplaced object `invoice`; archived collection `beta` ("Architecture", revision 4) at the root;
+ * `alpha` opened at 100 and `beta` at 200.
+ *
+ * Every field is given explicitly, so schema defaults never produce an expected value. A fresh
+ * object is returned on every call.
+ */
 export function snapshot(): LibrarySnapshot {
   return {
     catalog: {
@@ -65,14 +76,25 @@ export function snapshot(): LibrarySnapshot {
     ],
   };
 }
-/** Assert success before exposing the public value; a failed fixture result stops its test. */
+
+/**
+ * Asserts a result succeeded and returns its value.
+ *
+ * @throws Vitest's assertion error, carrying the result as JSON, when the result failed.
+ */
 export function valueOf<T>(result: Result<T>): T {
   assert(result.ok, JSON.stringify(result));
   return result.value;
 }
-/** Check both failure category and its independently specified affected path. */
-export function hasFailure<T>(result: Result<T>, code: string, path: string): boolean {
-  if (result.ok) return false;
+
+/**
+ * True when the result failed with a diagnostic of `code` at exactly `path`. Other diagnostics in
+ * the same failure are allowed.
+ */
+export function hasFailure<T>(result: Result<T>, code: DiagnosticCode, path: string): boolean {
+  if (result.ok) {
+    return false;
+  }
   return result.error.diagnostics.some(
     (diagnostic) => diagnostic.code === code && diagnostic.path === path,
   );

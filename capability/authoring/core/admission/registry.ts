@@ -56,10 +56,18 @@ export async function planIntent(
       return planChange(request, snapshot, pins, planners);
     case 'undo':
     case 'redo':
-      return planInverse(request, snapshot);
+      return planInverseAsync(request, snapshot);
     default:
       return unsupportedIntent(request.intent);
   }
+}
+
+/**
+ * Plans an undo or redo inside an async function, so the returned promise settles on the same
+ * microtask schedule as the change path.
+ */
+async function planInverseAsync(request: Request, snapshot: Snapshot): Promise<Proposal> {
+  return planInverse(request, snapshot);
 }
 
 /** Sends a change intent to the registered planner it names. */

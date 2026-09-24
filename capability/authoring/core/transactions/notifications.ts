@@ -11,6 +11,7 @@ import type { Notifications } from '../../contract/ports/runtime.js';
  * @param request - The committed request.
  * @param receipt - The committed receipt.
  * @param notifications - The notification role.
+ * @returns Nothing. It settles once publishing has finished or failed.
  */
 export async function notifyCommitted(
   request: Request,

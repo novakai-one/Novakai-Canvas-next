@@ -10,14 +10,17 @@ import { accepted, reject } from '../validation/outcomes.js';
  *
  * When the store settles, the storage transaction is final even if the acknowledgement is lost.
  * So after any failure (a failed result, a thrown error, or a receipt that fails its checks),
- * the receipt store is read. A stored receipt wins; otherwise the original failure is rethrown.
+ * the receipt store is read. A stored receipt wins, but only once it passes its checks and has this
+ * request's fingerprint. When no receipt is stored, the original failure is rethrown. When the
+ * lookup itself fails, or finds a malformed or foreign receipt, that failure replaces the original one.
  *
  * @param request - The checked submitted request.
  * @param commit - The storage transaction to commit.
  * @param commits - The committing store.
  * @param receipts - The receipt store used for recovery.
  * @returns The committed receipt.
- * @throws AuthoringFault or the store's own error when the commit failed and no receipt was stored.
+ * @throws The original commit failure (an AuthoringFault or the store's own error) when no receipt is stored.
+ * @throws AuthoringFault from the recovery lookup when it fails, or finds a malformed or foreign receipt.
  */
 export async function commitAndReconcile(
   request: Request,

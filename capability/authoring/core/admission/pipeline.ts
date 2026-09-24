@@ -1,10 +1,9 @@
 import { jsonSchema } from '../../contract/records/storage.js';
 import type { Request } from '../../contract/records/request.js';
-import type { Snapshot } from '../../contract/records/storage.js';
+import type { RecordKey, Snapshot } from '../../contract/records/storage.js';
 import type { Digest } from '../../contract/brands.js';
 import { digest } from '../../contract/brands.js';
 import type { PlanningDependencies } from '../../contract/types.js';
-import type { Hasher } from '../../contract/ports/runtime.js';
 import type { ResourceLease } from '../../contract/ports/resources.js';
 import {
   proposalSchema,
@@ -15,7 +14,6 @@ import type {
   PreparedCandidate,
   FeasibilityReport,
   Preparation,
-  Proposal,
 } from '../../contract/records/proposal.js';
 import { navigationDependencies } from '../history/navigation.js';
 import { planIntent } from './registry.js';
@@ -41,6 +39,7 @@ type HashedPreparation = Omit<Preparation, 'candidateHash' | 'preview'>;
  *
  * @param request - The checked submitted request.
  * @param cancellation - The cancellation role.
+ * @returns Nothing when the request is not cancelled.
  * @throws AuthoringFault `cancelled` when the request was cancelled.
  */
 export function checkCancellation(
@@ -71,10 +70,12 @@ export function checkCancellation(
  * @param fingerprint - The fingerprint of the submitted request.
  * @param before - The current, checked workspace snapshot.
  * @param lease - The held resource lease.
- * @param preview - `true` to also build a preview image of the candidate.
+ * @param preview - `true` to ask the feasibility check for a preview.
  * @param deps - The planning collaborators.
  * @returns The deeply frozen candidate: snapshots before and after, and the preparation to return or commit.
  * @throws AuthoringFault from any step above.
+ * @throws A collaborator's own error, unchanged, when a planner, validator, feasibility check or hasher
+ *   throws. The public boundary (`protect` in `contract/api.ts`) turns it into a failed `Result`.
  */
 export async function buildCandidate(
   request: Request,
@@ -86,7 +87,8 @@ export async function buildCandidate(
 ): Promise<PreparedCandidate> {
   checkCancellation(request, deps.cancellation);
   const leaseData = readLeaseData(lease);
-  const proposal = await planProposal(request, before, leaseData.pins, deps);
+  const planned = await planIntent(request, before, leaseData.pins, deps.planners);
+  const proposal = readShape(proposalSchema, planned, 'corrupt-record');
   const candidate = await createCandidate(request, before, proposal, deps.validation);
 
   const reads = checkDependencies(before, [
@@ -109,7 +111,7 @@ export async function buildCandidate(
     diff: { semantic: proposal.diff, geometry: geometry.diff },
     warnings: [...proposal.warnings, ...geometry.warnings],
   };
-  const candidateHash = hashPreparation(hashed, deps.hash);
+  const candidateHash = hashPreparation(hashed, deps);
   const preparation: Preparation = { ...hashed, candidateHash, preview: geometry.preview };
   return freeze({ before, after: candidate.after, preparation });
 }
@@ -118,17 +120,6 @@ export async function buildCandidate(
 function readLeaseData(lease: LeaseData): LeaseData {
   const leaseFields = { pins: lease.pins, reads: lease.reads, covered: lease.covered };
   return readShape(leaseDataSchema, leaseFields, 'corrupt-record');
-}
-
-/** Plans the request's intent and checks the proposal's shape. */
-async function planProposal(
-  request: Request,
-  before: Snapshot,
-  pins: LeaseData['pins'],
-  deps: PlanningDependencies,
-): Promise<Proposal> {
-  const planned = await planIntent(request, before, pins, deps.planners);
-  return readShape(proposalSchema, planned, 'corrupt-record');
 }
 
 /**
@@ -142,14 +133,24 @@ async function checkFeasibility(
 ): Promise<FeasibilityReport> {
   if (candidate.changes.length === 0) return { warnings: [], diff: [], preview: null };
 
-  const changedKeys = candidate.changes.map((write) => write.key);
-  const report = accepted(await feasibility.check(candidate.after, changedKeys, preview));
+  const report = accepted(
+    await feasibility.check(candidate.after, changedKeysOf(candidate), preview),
+  );
   return readShape(feasibilitySchema, report, 'corrupt-record');
 }
 
-/** Hashes the canonical text of the preparation's hashed parts. */
-function hashPreparation(hashed: HashedPreparation, hash: Hasher): Digest {
+/**
+ * Hashes the canonical text of the preparation's hashed parts.
+ * The hashed parts are checked and written as text before the hasher is looked up on `deps`.
+ */
+function hashPreparation(hashed: HashedPreparation, deps: PlanningDependencies): Digest {
   const hashInput = readShape(jsonSchema, hashed, 'corrupt-record');
-  const hashedText = accepted(hash.digest(canonical(hashInput)));
+  const canonicalText = canonical(hashInput);
+  const hashedText = accepted(deps.hash.digest(canonicalText));
   return readShape(digest, hashedText, 'corrupt-record');
+}
+
+/** Lists the keys of the records a candidate changes. */
+function changedKeysOf(candidate: Candidate): RecordKey[] {
+  return candidate.changes.map((write) => write.key);
 }

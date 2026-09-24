@@ -37,7 +37,9 @@ export interface CommitDependencies {
  * @returns The committed receipt.
  * @throws AuthoringFault `revision-conflict` when the given `candidateHash` differs from the fresh one.
  * @throws AuthoringFault `cancelled` when the request was cancelled before commit.
- * @throws AuthoringFault from journal building, or from the commit when no receipt was stored.
+ * @throws AuthoringFault from journal building.
+ * @throws The commit or recovery failure from `commitAndReconcile`, unchanged. A collaborator's own
+ *   error can escape here; the public boundary (`protect` in `contract/api.ts`) turns it into a failed `Result`.
  */
 export async function applyCandidate(
   request: Request,

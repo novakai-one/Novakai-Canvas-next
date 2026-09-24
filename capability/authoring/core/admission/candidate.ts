@@ -47,8 +47,13 @@ export async function createCandidate(
   const changes = proposal.writes.flatMap((write) => netWrite(before, write));
   const after = freeze(installWrites(before, changes));
 
-  const changedKeys = changes.map((write) => write.key);
-  const validatorReads = accepted(await validation.validate(before, after, changedKeys));
+  const validatorReads = accepted(
+    await validation.validate(
+      before,
+      after,
+      changes.map((write) => write.key),
+    ),
+  );
   const reads = validatorReads.map((read) => readShape(versionSchema, read, 'corrupt-record'));
   return { after, changes, reads };
 }

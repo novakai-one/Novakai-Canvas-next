@@ -6,7 +6,10 @@ import type { SearchHit } from '../../contract/records/query.js';
  * Compares two strings by UTF-16 code unit, so the order is the same on every machine and in every
  * locale.
  *
- * @returns -1, 0 or 1.
+ * @param left - The first string.
+ * @param right - The second string.
+ * @returns -1 when `left` sorts first, 1 when it sorts after, 0 when equal.
+ * @throws Never.
  */
 export function compareText(left: string, right: string): number {
   if (left < right) {
@@ -23,6 +26,7 @@ export function compareText(left: string, right: string): number {
  *
  * @param snapshot - The validated snapshot.
  * @returns A new `ReadVersions` record.
+ * @throws Never for a validated snapshot; any throw reaches the caller's `protect`.
  */
 export function readVersions(snapshot: LibrarySnapshot): ReadVersions {
   const collections = snapshot.collections
@@ -34,10 +38,12 @@ export function readVersions(snapshot: LibrarySnapshot): ReadVersions {
 /**
  * Builds every search hit of a snapshot, in inventory order: for each collection, the collection
  * itself, then its sections, then its objects (including objects in no section). Rebuilt on every
- * call; nothing is cached and the catalog is not touched.
+ * call; nothing is cached and the catalog is not touched. Pure; nothing is written, and Authoring
+ * owns recovery.
  *
  * @param snapshot - The validated snapshot.
  * @returns The hits, before filtering and sorting.
+ * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function projectHits(snapshot: LibrarySnapshot): readonly SearchHit[] {
   return snapshot.collections.flatMap(projectCollection);

@@ -13,14 +13,19 @@ import { compareText, readVersions } from './project.js';
  * The offset a request starts at: 0 without a cursor, otherwise the cursor's offset.
  *
  * A cursor may be replayed, but only with the same query and the same snapshot. It is
- * `stale-cursor` (path `query.cursor`) when it is not valid cursor JSON ("Cursor is malformed"),
- * when the query, the recent visits or any source revision changed, or when its offset is past
- * the end of the results.
+ * `stale-cursor` (path `query.cursor`) when:
+ * - it is not valid cursor JSON ("Cursor is malformed");
+ * - the query, the recent visits or the source versions changed (catalog ID or revision, or the
+ *   collection IDs and revisions, so an added or removed collection counts);
+ * - its offset is past the end of the results.
+ *
+ * Recover by searching again without a cursor.
  *
  * @param snapshot - The validated snapshot.
  * @param request - The normalized request.
  * @param total - The number of matching hits.
  * @returns The offset, or a `stale-cursor` failure.
+ * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function cursorOffset(
   snapshot: LibrarySnapshot,
@@ -46,6 +51,7 @@ export function cursorOffset(
  * @param request - The normalized request.
  * @param offset - The offset of the next page's first hit.
  * @returns The cursor, or a `limit` failure.
+ * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function nextCursor(
   snapshot: LibrarySnapshot,
@@ -74,6 +80,7 @@ interface CursorIdentity {
 /** Builds the keys; recent visits are sorted by collection ID so their input order does not matter. */
 function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): CursorIdentity {
   const { cursor: previousCursor, ...criteria } = request;
+  // The cursor itself is not part of the identity; `void` marks the variable as deliberately unused.
   void previousCursor;
   const recent = snapshot.recent.toSorted((left, right) =>
     compareText(left.collection, right.collection),
@@ -87,13 +94,14 @@ function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): Curso
 /** Parses the cursor. Text that is not JSON is `stale-cursor` too, not a generic read failure. */
 function decodeCursor(cursor: string): Result<CursorEnvelope> {
   try {
-    const parsed = cursorSchema.safeParse(JSON.parse(cursor));
+    const json: unknown = JSON.parse(cursor);
+    const parsed = cursorSchema.safeParse(json);
     if (!parsed.success) {
-      return failure('stale-cursor', 'query.cursor', 'Cursor is malformed');
+      return staleCursor('Cursor is malformed');
     }
     return success(parsed.data);
   } catch {
-    return failure('stale-cursor', 'query.cursor', 'Cursor is malformed');
+    return staleCursor('Cursor is malformed');
   }
 }
 
@@ -106,14 +114,15 @@ function validateCursor(
   const changed =
     cursor.queryKey !== identity.queryKey || cursor.versionKey !== identity.versionKey;
   if (changed) {
-    return failure(
-      'stale-cursor',
-      'query.cursor',
-      'Query or source snapshot changed; start a new search',
-    );
+    return staleCursor('Query or source snapshot changed; start a new search');
   }
   if (cursor.offset > total) {
-    return failure('stale-cursor', 'query.cursor', 'Cursor offset exceeds the result set');
+    return staleCursor('Cursor offset exceeds the result set');
   }
   return success(cursor.offset);
+}
+
+/** A new `stale-cursor` failure at `query.cursor` with the given message. */
+function staleCursor<T>(message: string): Result<T> {
+  return failure('stale-cursor', 'query.cursor', message);
 }

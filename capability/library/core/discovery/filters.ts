@@ -9,12 +9,14 @@ import { isWithin } from '../catalog/folders.js';
  * - its kind is in `kinds`, and
  * - every word of `text` appears in its label or description (lowercased).
  *
- * Objects in no section are kept like any other hit.
+ * Objects in no section are kept like any other hit. Pure; nothing is written, and Authoring owns
+ * recovery.
  *
  * @param hits - All hits of the snapshot.
  * @param snapshot - The validated snapshot.
  * @param request - The normalized request (text already lowercased).
  * @returns The kept hits, in their original order.
+ * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function filterHits(
   hits: readonly SearchHit[],
@@ -34,7 +36,7 @@ export function filterHits(
   );
 }
 
-/** `include`: every entry; `only`: archived entries; `exclude`: live entries. */
+/** `include`: every entry; `only`: archived entries; `exclude`: entries that are not archived. */
 function archiveMatches(entry: CatalogEntry, mode: QueryRequest['archived']): boolean {
   if (mode === 'include') {
     return true;

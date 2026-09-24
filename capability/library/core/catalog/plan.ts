@@ -34,6 +34,7 @@ import { applyOperation } from './operations.js';
  * @param proposedCollections - The collection inventory Authoring is about to commit (from its
  * Model plans), when the batch registers or removes collections.
  * @returns The frozen plan, or a failure.
+ * @throws Never; a throw while reading the input becomes a `shape` failure.
  */
 export function planCatalog(
   snapshot: unknown,
@@ -82,6 +83,7 @@ function applyBatch(
   if (!inventory.ok) {
     return inventory;
   }
+  // `applyNext` passes the first failure along unchanged, so later changes are skipped.
   const applied = changes.reduce(applyNext, success(before.catalog));
   if (!applied.ok) {
     return applied;

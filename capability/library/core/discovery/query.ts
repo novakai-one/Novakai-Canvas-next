@@ -21,9 +21,10 @@ import { cursorOffset, nextCursor } from './cursor.js';
  * 2. Normalize the criteria: text trimmed, lowercased and single-spaced; kinds de-duplicated and
  *    sorted. Display labels are never changed.
  * 3. Check the requested folder exists (`not-found`, path `query.folder`).
- * 4. Build every hit, filter, sort (see `sortHits`), then apply the cursor's offset.
+ * 4. Build every hit, filter, sort (see `sortHits`), then apply the cursor's offset. A bad or
+ *    stale cursor is `stale-cursor` (path `query.cursor`).
  * 5. Return up to `limit` hits, the total, the source revisions and, when more hits follow, the
- *    next cursor.
+ *    next cursor. A next cursor longer than `MAX_CURSOR_LENGTH` is a `limit` failure instead.
  *
  * Reads no clock or locale and writes no storage or index. A throw while reading the input
  * becomes a `shape` failure. Authoring owns source changes, commit and recovery.
@@ -31,6 +32,7 @@ import { cursorOffset, nextCursor } from './cursor.js';
  * @param snapshot - The untrusted snapshot.
  * @param request - The untrusted search request.
  * @returns The frozen page, or a failure.
+ * @throws Never; a throw while reading the input becomes a `shape` failure.
  */
 export function queryLibrary(snapshot: unknown, request: unknown): Result<QueryPage> {
   return protect(() => prepareQuery(snapshot, request));
@@ -52,6 +54,7 @@ function prepareQuery(input: unknown, request: unknown): Result<QueryPage> {
 /** Normalizes the search criteria only; labels and descriptions are left as they are. */
 function normalizeRequest(request: QueryRequest): QueryRequest {
   const text = request.text.trim().toLowerCase().split(/\s+/).join(' ');
+  // A Set drops repeated kinds; sorting makes the order independent of the request.
   const kinds = [...new Set(request.kinds)].toSorted(compareText);
   return { ...request, text, kinds };
 }
@@ -84,7 +87,10 @@ function validateFolder(snapshot: LibrarySnapshot, request: QueryRequest): Resul
   return success(true);
 }
 
-/** Builds the page. On the last page the `nextCursor` key is left out, not set to undefined. */
+/**
+ * Builds the page. On the last page the `nextCursor` key is left out, not set to undefined. A
+ * next cursor longer than `MAX_CURSOR_LENGTH` is a `limit` failure.
+ */
 function completePage(
   snapshot: LibrarySnapshot,
   request: QueryRequest,

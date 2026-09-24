@@ -6,7 +6,7 @@ import { limits } from '../contract/records/media.js';
 import type { NormalizedMedia, SupportedMedia } from '../contract/records/media.js';
 import type { MediaHandler } from '../contract/ports/media.js';
 
-/** Parses font bytes. Tests replace it to simulate parser failures. */
+/** Parses font bytes, injectable so tests can simulate parser failures. */
 type FontFactory = (bytes: Buffer) => Font | FontCollection;
 
 /**

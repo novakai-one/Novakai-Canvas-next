@@ -6,7 +6,7 @@ import { limits } from '../contract/records/media.js';
 import type { NormalizedMedia, SupportedMedia } from '../contract/records/media.js';
 import type { MediaHandler } from '../contract/ports/media.js';
 
-/** Creates the image pipeline for some bytes. Tests replace it to simulate codec failures. */
+/** Creates the image pipeline for some bytes, injectable so tests can simulate codec failures. */
 type RasterFactory = (bytes: Uint8Array) => Pick<Sharp, 'metadata' | 'rotate' | 'png' | 'toBuffer'>;
 
 /**
@@ -22,7 +22,8 @@ type RasterFactory = (bytes: Uint8Array) => Pick<Sharp, 'metadata' | 'rotate' | 
  *    filtering).
  *
  * A throw from the codec (for example a decode error or its pixel limit) becomes `unsafe-media`
- * at `base64`: "Raster decoding failed within admission limits".
+ * at `base64`: "Raster decoding failed within admission limits". Recovery: the caller corrects
+ * the bytes before retrying; Assets owns cleanup of orphan files.
  *
  * @param create - Creates the pipeline. Defaults to `sharp` with a {@link limits}.pixels input
  * limit that fails on warnings.

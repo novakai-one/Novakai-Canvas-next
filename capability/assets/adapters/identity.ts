@@ -6,16 +6,16 @@ import type { Result } from '../contract/errors.js';
 import type { IdentityPort } from '../contract/ports/identity.js';
 import { base64 as base64Schema } from '../contract/records/media.js';
 
-/** The native hashing, UUID and process calls. Tests replace them to simulate failures. */
+/** The native hashing, UUID and process calls, injectable so tests can simulate failures. */
 interface NativeIdentity {
   /** Returns the SHA-256 of the bytes as lowercase hex. */
-  hash(bytes: Uint8Array): string;
+  readonly hash: (bytes: Uint8Array) => string;
   /** Returns a new UUID. */
-  uuid(): string;
+  readonly uuid: () => string;
   /** This process's ID. */
-  pid: number;
+  readonly pid: number;
   /** Sends signal 0 to a process: throws when it does not exist or cannot be signalled. */
-  signal(pid: number): void;
+  readonly signal: (pid: number) => void;
 }
 
 /**
@@ -25,11 +25,15 @@ interface NativeIdentity {
  *   canonical form (decoding then re-encoding gives the same text, "Noncanonical base64
  *   encoding"), then hashes the decoded bytes. Every failure, including a throw from hashing or a
  *   hash that is not a valid digest, is `invalid-input` at `base64`.
- * - `newLease`: a new UUID checked as a lease ID. It throws when the UUID is invalid; the calling
- *   facade method reports that.
+ * - `newLease`: a new UUID checked as a lease ID. It throws when the UUID is invalid. With the real
+ *   storage, the storage transaction that called it turns the throw into a failure
+ *   (`createSqliteFiles`).
  * - `ownerPid`: the process ID, read once here.
  * - `ownerAlive`: `false` only when signalling the process fails with `ESRCH` (no such process).
  *   Success, a permission error or any other failure answers `true`, so the lease is kept.
+ *
+ * Recovery: Assets owns lease recovery (collection deletes leases of dead owners); Authoring owns
+ * retrying a request.
  *
  * @param identity - The native calls. Defaults to `node:crypto` SHA-256, `randomUUID`,
  * `process.pid` and `process.kill(pid, 0)`.

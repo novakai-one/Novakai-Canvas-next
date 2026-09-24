@@ -10,7 +10,9 @@ import type { MediaHandler } from '../contract/ports/media.js';
  * Creates the SVG processor. It keeps SVG as vector content and emits a canonical, safe subset;
  * anything outside the subset is rejected, never repaired.
  *
- * Normalizing, in order:
+ * Normalizing, in order (except that the root's size, step 6, is checked when the root element
+ * opens, before later elements and step 5; every rejection is the same failure, so this is not
+ * observable):
  * 1. the decoded bytes are at most {@link limits}.svgBytes and valid UTF-8;
  * 2. strict XML parsing: no DOCTYPE, no processing instructions, no parse errors;
  * 3. each element: an allowed SVG element, the first one is `svg`, at most
@@ -27,7 +29,7 @@ import type { MediaHandler } from '../contract/ports/media.js';
  * The output markup escapes all text and attribute values, sorts attributes by name, and gives
  * the root `xmlns`, `width` and `height`, so an admitted SVG normalizes to the same bytes again on
  * restore. Every rejection is `unsafe-media` at `svg`: "SVG violates the supported safe vector
- * subset".
+ * subset". Recovery: the caller corrects the source; a rejected SVG is never staged.
  *
  * @returns The processor. Its `normalize` returns `image/svg+xml` media of kind `icon` with the
  * root's width and height, and never rejects.
@@ -41,21 +43,87 @@ export function createSvg(): MediaHandler {
 const namespace = 'http://www.w3.org/2000/svg';
 
 /** The allowed element names. */
-const elements = new Set(
-  'svg g defs path rect circle ellipse line polyline polygon text tspan title desc marker clipPath linearGradient radialGradient stop'.split(
-    ' ',
-  ),
-);
+const elements: ReadonlySet<string> = new Set([
+  'svg',
+  'g',
+  'defs',
+  'path',
+  'rect',
+  'circle',
+  'ellipse',
+  'line',
+  'polyline',
+  'polygon',
+  'text',
+  'tspan',
+  'title',
+  'desc',
+  'marker',
+  'clipPath',
+  'linearGradient',
+  'radialGradient',
+  'stop',
+]);
 
 /** The allowed attribute names. No event handlers, styles, links or base URIs. */
-const attributes = new Set(
-  'id xmlns viewBox width height x y x1 y1 x2 y2 cx cy r rx ry d points transform fill fill-rule stroke stroke-width stroke-linecap stroke-linejoin stroke-dasharray stroke-dashoffset stroke-miterlimit opacity fill-opacity stroke-opacity clip-path clip-rule marker-start marker-mid marker-end markerWidth markerHeight markerUnits refX refY orient font-family font-size font-weight text-anchor dominant-baseline letter-spacing gradientUnits gradientTransform offset stop-color stop-opacity'.split(
-    ' ',
-  ),
-);
+const attributes: ReadonlySet<string> = new Set([
+  'id',
+  'xmlns',
+  'viewBox',
+  'width',
+  'height',
+  'x',
+  'y',
+  'x1',
+  'y1',
+  'x2',
+  'y2',
+  'cx',
+  'cy',
+  'r',
+  'rx',
+  'ry',
+  'd',
+  'points',
+  'transform',
+  'fill',
+  'fill-rule',
+  'stroke',
+  'stroke-width',
+  'stroke-linecap',
+  'stroke-linejoin',
+  'stroke-dasharray',
+  'stroke-dashoffset',
+  'stroke-miterlimit',
+  'opacity',
+  'fill-opacity',
+  'stroke-opacity',
+  'clip-path',
+  'clip-rule',
+  'marker-start',
+  'marker-mid',
+  'marker-end',
+  'markerWidth',
+  'markerHeight',
+  'markerUnits',
+  'refX',
+  'refY',
+  'orient',
+  'font-family',
+  'font-size',
+  'font-weight',
+  'text-anchor',
+  'dominant-baseline',
+  'letter-spacing',
+  'gradientUnits',
+  'gradientTransform',
+  'offset',
+  'stop-color',
+  'stop-opacity',
+]);
 
 /** Elements inside which a `url(#id)` reference is not allowed, so definitions cannot nest. */
-const definitionElements = new Set([
+const definitionElements: ReadonlySet<string> = new Set([
   'defs',
   'marker',
   'clipPath',
@@ -111,7 +179,9 @@ function parseSvg(source: string, state: SvgState): void {
   parser.on('closetag', () => closeTag(state));
   parser.on('text', (text) => state.parts.push(escapeXml(text)));
   parser.on('cdata', (text) => state.parts.push(escapeXml(text)));
-  parser.write(source).close();
+  // `write` returns the parser itself.
+  parser.write(source);
+  parser.close();
 }
 
 /** Once the whole document is read: checks every reference exists and builds the output. */

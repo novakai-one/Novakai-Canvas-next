@@ -22,7 +22,11 @@ import type { StoredBlob } from '../contract/records/media.js';
  * throw rolls back and becomes a failure: a `StorageFault` keeps its code, path and message;
  * anything else is `storage-unavailable` at `$`, "Asset storage operation could not be
  * confirmed". A rollback that itself fails is `storage-unavailable`, "Metadata rollback
- * unconfirmed; re-read files and leases". Blob files are not rolled back.
+ * unconfirmed; re-read files and leases". Blob files are not rolled back. Exception: if checking
+ * the thrown value itself throws (for example a thrown Proxy whose traps throw), that throw
+ * escapes `transact` with no ROLLBACK; the transaction stays open until the next `transact`,
+ * whose `BEGIN IMMEDIATE` fails with `storage-unavailable` and clears it. When opening fails, the
+ * same check can throw too; the database is already closed by then.
  *
  * Inside a transaction:
  * - blobs are keyed `blob:<digest>` (the descriptor) plus the file; a blob whose descriptor or file
@@ -35,7 +39,8 @@ import type { StoredBlob } from '../contract/records/media.js';
  * @param database - The opened database.
  * @param files - The blob file store.
  * @returns The storage, or the opening failure.
- * @throws Never.
+ * @throws Only when checking a thrown value itself throws (see above), from opening or from
+ * `transact`. Otherwise never.
  */
 export function createSqliteFiles(database: AssetDatabase, files: BlobFiles): Result<AssetStorage> {
   try {
@@ -129,7 +134,8 @@ function blobIds(
 ): readonly Digest[] {
   const rows = list.all('blob:%');
   const recorded = rows.map((row) => readDigestKey(row.key));
-  return [...new Set([...recorded, ...files.list()])].sort();
+  const union = new Set([...recorded, ...files.list()]);
+  return [...union].sort();
 }
 
 /** Reads the digest from a `blob:` key. A malformed key throws, so it never becomes a file path. */

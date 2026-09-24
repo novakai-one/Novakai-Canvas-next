@@ -16,28 +16,28 @@ import type { Digest } from '../contract/brands.js';
 import { StorageFault } from '../contract/errors.js';
 import type { BlobFiles } from '../contract/ports/native.js';
 
-/** The file system calls the blob store uses. Tests replace them to simulate I/O failures. */
+/** The file system calls the blob store uses, injectable so tests can simulate I/O failures. */
 interface FileSystem {
   /** Reads a file as base64. */
-  read(path: string): string;
+  readonly read: (path: string) => string;
   /** Creates a new file for writing (fails if it exists) and returns its handle. */
-  open(path: string): number;
+  readonly open: (path: string) => number;
   /** Writes base64-decoded bytes to an open file. */
-  write(handle: number, encoded: string): void;
+  readonly write: (handle: number, encoded: string) => void;
   /** Flushes an open file to disk. */
-  flush(handle: number): void;
+  readonly flush: (handle: number) => void;
   /** Closes an open file. */
-  close(handle: number): void;
+  readonly close: (handle: number) => void;
   /** Links `source` at `target`; fails if `target` exists. */
-  publish(source: string, target: string): void;
+  readonly publish: (source: string, target: string) => void;
   /** Deletes a file. */
-  remove(path: string): void;
+  readonly remove: (path: string) => void;
   /** Lists a directory's entry names. */
-  list(path: string): readonly string[];
+  readonly list: (path: string) => readonly string[];
   /** Creates a directory and its parents. */
-  directory(path: string): void;
+  readonly directory: (path: string) => void;
   /** Flushes a directory's entries to disk. */
-  flushDirectory(path: string): void;
+  readonly flushDirectory: (path: string) => void;
 }
 
 /**
@@ -55,7 +55,9 @@ interface FileSystem {
  *   file.
  * - `remove`: deletes the file; a missing file is not an error.
  * - `list`: removes leftover temporary files matching `<digest>.blob.<uuid>.tmp`, then returns
- *   the digests of `<digest>.blob` files. Other names are never touched.
+ *   the digests of `<digest>.blob` files. Other names are never touched. Removing temporary files
+ *   is safe only while writers are serialized: the storage adapter calls `list` inside its
+ *   `BEGIN IMMEDIATE` transaction.
  *
  * @param root - The blob directory.
  * @param io - The file system calls. Defaults to `node:fs` (new files are created with mode 0600).
@@ -207,7 +209,10 @@ function writeFile(
   persistFile(root, destination, encoded, io, nonce);
 }
 
-/** Removes leftover temporary files; only names in the exact temporary-file pattern are touched. */
+/**
+ * Removes leftover temporary files; only names in the exact temporary-file pattern are touched.
+ * The caller must hold the storage write lock, so no writer's temporary file is in use.
+ */
 function cleanupTemporary(
   root: string,
   names: readonly string[],

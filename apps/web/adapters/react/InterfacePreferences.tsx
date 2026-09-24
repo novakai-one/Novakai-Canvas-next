@@ -4,13 +4,20 @@ import type { ComponentType, ReactElement } from 'react';
 import type { PreferenceController } from '../../contract/records/preferences.js';
 import type { FeatureProps, DesignSlots, ThemeSelectorProps } from '../../contract/react-types.js';
 import styles from './InterfacePreferences.module.css';
-import type { PanelController } from '../../contract/panel-types.js';
+import type { InterfaceVisibility, PanelController } from '../../contract/panel-types.js';
+/** The default is read from the panel session, not duplicated here, so the two can never drift. */
+export type RoadVisibility = Pick<
+  PanelController,
+  'subscribe' | 'getSnapshot' | 'setInterfaceVisibility'
+> & {
+  readonly defaultInterfaceVisibility: () => InterfaceVisibility;
+};
 /** Personal controls consume one preference session, so panel movement or collapse never resets them. */
 export function createInterfacePreferences(
   { Button, Field }: Pick<DesignSlots, 'Button' | 'Field'>,
   preferences: PreferenceController,
   ThemeSelector: ComponentType<ThemeSelectorProps>,
-  panels: Pick<PanelController, 'subscribe' | 'getSnapshot' | 'setInterfaceVisibility'>,
+  panels: RoadVisibility,
 ): ComponentType<FeatureProps> {
   /** Diagram themes are separate authored data; these controls affect this browser's interface only. */
   function InterfacePreferences(): ReactElement {
@@ -74,9 +81,20 @@ export function createInterfacePreferences(
           </div>
         </fieldset>
         {view.problem && <p role="alert">{formatFailure(view.problem).join(' · ')}</p>}
-        <Button label="Reset interface preferences" onClick={preferences.reset} />
+        <Button
+          label="Reset interface preferences"
+          onClick={() => resetInterface(preferences, panels)}
+        />
       </div>
     );
   }
   return InterfacePreferences;
+}
+/** Reset restores personal browser preferences and the routing-roads toggle together; neither can stay overridden alone. */
+export function resetInterface(
+  preferences: Pick<PreferenceController, 'reset'>,
+  panels: Pick<RoadVisibility, 'setInterfaceVisibility' | 'defaultInterfaceVisibility'>,
+): void {
+  preferences.reset();
+  panels.setInterfaceVisibility('roads', panels.defaultInterfaceVisibility().roads);
 }

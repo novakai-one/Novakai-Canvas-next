@@ -157,7 +157,7 @@ export function createPanelController(bindings: PanelBindings): PanelController 
   };
 }
 
-function defaultInterfaceVisibility(): InterfaceVisibility {
+export function defaultInterfaceVisibility(): InterfaceVisibility {
   return {
     hidden: false,
     tools: true,

@@ -12,7 +12,10 @@ import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
 import type { LibraryBrowserProps } from './library-react.js';
 import { createPreferenceController } from '../adapters/preference-session.js';
 import { readEnvironment, observeEnvironment } from '../adapters/browser-preferences.js';
-import { createInterfacePreferences } from '../adapters/react/InterfacePreferences.js';
+import {
+  createInterfacePreferences,
+  type RoadVisibility,
+} from '../adapters/react/InterfacePreferences.js';
 import { createThemeSelector } from '../adapters/react/ThemeSelector.js';
 import type { PreferenceController, ThemeChoice } from './records/preferences.js';
 import { createEngineeringFields } from '../adapters/react/EngineeringFields.js';
@@ -39,7 +42,7 @@ import { createSourceController } from '../adapters/source-session.js';
 import { createWorkspaceNavigation } from '../adapters/browser-navigation.js';
 import panelDefaults from '../../../resources/ui/panels.default.json' with { type: 'json' };
 import type { PanelController, PanelSectionDefinition, PanelSizing } from './panel-types.js';
-import { createPanelController } from '../adapters/panel-session.js';
+import { createPanelController, defaultInterfaceVisibility } from '../adapters/panel-session.js';
 import { readPanelPreferences } from '../adapters/panel-preferences.js';
 import type { RegisteredSection } from '../adapters/react/WorkspaceSidePanel.js';
 import { z } from 'zod';
@@ -164,7 +167,7 @@ function featureSections(
   preferences: PreferenceController,
   ThemeSelector: ComponentType<ThemeSelectorProps>,
   Browser: ComponentType<LibraryBrowserProps>,
-  roadVisibility: Pick<PanelController, 'subscribe' | 'getSnapshot' | 'setInterfaceVisibility'>,
+  roadVisibility: RoadVisibility,
 ): readonly RegisteredSection[] {
   function LibrarySection(props: FeatureProps): ReactElement {
     return createElement(Browser, { controller: props.controller, view: props.view });
@@ -401,6 +404,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
     subscribe: (listener) => panels.subscribe(listener),
     getSnapshot: () => panels.getSnapshot(),
     setInterfaceVisibility: (control, visible) => panels.setInterfaceVisibility(control, visible),
+    defaultInterfaceVisibility,
   });
   const sizing = panelSizing(element);
   const panels: PanelController = createPanelController({

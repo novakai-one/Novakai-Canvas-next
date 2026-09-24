@@ -12,6 +12,7 @@ import type {
   PanelMode,
   PanelId,
   PanelTab,
+  PanelPreferences,
 } from '../../contract/panel-types.js';
 import { panelGeometry } from '../../contract/api.js';
 import styles from './WorkspaceSidePanel.module.css';
@@ -141,20 +142,22 @@ export function createWorkspaceSidePanel(slots: PanelSlots): ComponentType<Panel
                             />
                           </div>
                         )}
-                        <PanelSection
-                          id={section.id}
-                          expanded={expanded}
-                          header={
-                            <PanelSectionHeader
-                              id={section.id}
-                              title={section.title}
-                              expanded={expanded}
-                              onExpandedChange={(open) => slots.panels.expand(section.id, open)}
-                            />
-                          }
-                        >
-                          <Content {...props} />
-                        </PanelSection>
+                        {sectionVisible(preferences, section.id) && (
+                          <PanelSection
+                            id={section.id}
+                            expanded={expanded}
+                            header={
+                              <PanelSectionHeader
+                                id={section.id}
+                                title={section.title}
+                                expanded={expanded}
+                                onExpandedChange={(open) => slots.panels.expand(section.id, open)}
+                              />
+                            }
+                          >
+                            <Content {...props} />
+                          </PanelSection>
+                        )}
                       </div>
                     );
                   })}
@@ -198,4 +201,9 @@ export function createWorkspaceSidePanel(slots: PanelSlots): ComponentType<Panel
 function placement(mode: PanelMode, side: PanelId): 'left' | 'right' | 'bottom' {
   if (mode === 'sheet') return 'bottom';
   return side;
+}
+
+/** Hidden sections lose their content even in customize mode; only their Move/Hide controls stay reachable there. */
+export function sectionVisible(preferences: PanelPreferences, id: string): boolean {
+  return !preferences.hidden.includes(id);
 }

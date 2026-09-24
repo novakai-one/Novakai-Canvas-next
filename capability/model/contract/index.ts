@@ -1,23 +1,34 @@
 /**
- * Host doorway for the Model capability.
+ * The Model capability's public entry point.
  *
- * Carries ONLY the names an outside consumer or own contract test actually
- * imports or re-exports, measured against the workspace. Everything else
- * contract/ declares stays inside the capability and is reached structurally
- * through these names. Add a name only when a real consumer appears.
+ * It exports only the names that code outside Model (or Model's own contract tests) imports,
+ * checked against the workspace. Everything else in `contract/` stays inside the capability.
+ * Add a name only when a real consumer needs it.
+ *
+ * The export statements keep their original order, so modules load in the same order.
  */
 
-/** Validate unknown data, plan a valid transition, or project it unchecked; every outcome frozen. */
+/**
+ * Validate unknown data, plan a valid transition, or stage one unchecked. Every outcome is
+ * deeply frozen. Documented in `api.ts`.
+ */
 export { validate, plan, stage } from './api.js';
 
-/** Checked ID schemas mint identities without casts. */
+/**
+ * Checked ID and digest schemas: `safeParse` builds a typed ID without a cast. They are shared,
+ * unfrozen schema objects. Documented in `brands.ts`.
+ */
 export { digest, objectId, collectionId, descendantId, assetId, definitionId } from './brands.js';
 export type { ObjectId, SectionId, DescendantId, DefinitionId } from './brands.js';
 
-/** Typed result and machine-readable failure codes returned by every operation. */
+/** The result type and the machine-readable failure codes. Documented in `errors.ts`. */
 export type { Result, DiagnosticCode } from './errors.js';
 
-/** Canonical collection record and the object/section vocabulary consumers traverse and re-export. */
+/**
+ * The collection record and the object, content, definition, relationship, section and layout
+ * types consumers read. `definitionSchema` is the strict definition schema (shared, unfrozen).
+ * The definition and callable helpers are documented in `api.ts`.
+ */
 export type { Collection } from './records/collection.js';
 export type { DiagramObject, ObjectKind } from './records/object.js';
 export type { ContentBlock, Endpoint } from './records/content.js';
@@ -37,11 +48,16 @@ export type {
 } from './records/section.js';
 export type { LayoutIntent, Placement } from './records/layout.js';
 
-/** Declared change batches and their planned or staged outcomes. */
+/** One change, and the planned or staged outcome of a batch. */
 export type { Change } from './records/change.js';
 export type { ChangePlan, ChangeStage } from './types.js';
 
-/** Endpoint and compatibility tables describing relationship wiring rules. */
+/**
+ * Policy tables: which layouts and relationship kinds each section mode allows, which members
+ * each object kind exposes as endpoints, and which object kinds each relationship kind accepts
+ * as source and target. Typed read-only; not frozen at runtime. Documented in
+ * `records/policies.ts`.
+ */
 export {
   compatibleLayouts,
   compatibleWires,

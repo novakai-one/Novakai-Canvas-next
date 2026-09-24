@@ -4,7 +4,7 @@
  * vocabulary drives the mapping. No side effects. Language owns correcting the source; Authoring
  * owns commit recovery.
  */
-import type { Declaration, SyntaxValue } from '../../contract/records/syntax.js';
+import type { Declaration, Reference, SyntaxValue } from '../../contract/records/syntax.js';
 import type { PositionRule } from '../../contract/records/vocabulary.js';
 import { constructs } from '../vocabulary/constructs.js';
 import { isReference } from '../parsing/value-types.js';
@@ -13,9 +13,9 @@ import { field, id, text, optional, type RawRecord } from './fields.js';
 import { mapDeclaredProperties, lowerValue } from './properties.js';
 
 /**
- * Lowers a declaration's positional values (except a wire's `->`) and then its attributes, with
- * defaults for attributes not written. An attribute with the same field name as a positional
- * value replaces it.
+ * Lowers a declaration's positional values (except a wire's or event's `->`) and then its
+ * attributes, with defaults for attributes not written. An attribute with the same field name as
+ * a positional value replaces it.
  *
  * @param declaration - A parsed declaration.
  * @returns The record.
@@ -47,7 +47,8 @@ export function lowerRecord(declaration: Declaration): RawRecord {
  * @param declaration - A parsed content declaration.
  * @returns The content record.
  * @throws A `LanguageFault` with an `invalid-input` diagnostic for an unknown construct, or an
- * `invalid-value` diagnostic for a link whose ID or label is missing or malformed.
+ * `invalid-value` diagnostic for a link whose target, ID or label is missing or malformed, or
+ * whose object target has a malformed `section`.
  */
 export function lowerContent(declaration: Declaration): RawRecord {
   if (declaration.kind === 'link') return lowerLink(declaration);
@@ -84,24 +85,34 @@ function positionEntry(
   return [[item.name, lowerValue(value.value, item.type)]];
 }
 
-/** A link: its ID, its label, and a target (see {@link linkTarget}). */
+/**
+ * A link: its ID, its label, and its target. The target is classified before the ID and label
+ * are read, so a target that cannot be read fails first.
+ */
 function lowerLink(declaration: Declaration): RawRecord {
   const value = field(declaration.fields, 'target').value;
+  if (isReference(value)) return objectLink(declaration, value);
+  return uriLink(declaration, value);
+}
+
+/** A link to an object: target `{ kind: 'object', id, section? }`. */
+function objectLink(declaration: Declaration, value: Reference): RawRecord {
   return {
     kind: 'link',
     id: id(declaration.fields),
     label: text(declaration.fields, 'label'),
-    target: linkTarget(declaration, value),
+    target: { kind: 'object', id: value.id, ...optionalSection(declaration) },
   };
 }
 
-/**
- * A link's target: `{ kind: 'object', id, section? }` for a reference, or
- * `{ kind: 'uri', uri }` for quoted text, which is kept as written and never opened here.
- */
-function linkTarget(declaration: Declaration, value: SyntaxValue): RawRecord {
-  if (isReference(value)) return { kind: 'object', id: value.id, ...optionalSection(declaration) };
-  return { kind: 'uri', uri: value };
+/** A link to quoted text: target `{ kind: 'uri', uri }`, kept as written and never opened here. */
+function uriLink(declaration: Declaration, value: SyntaxValue): RawRecord {
+  return {
+    kind: 'link',
+    id: id(declaration.fields),
+    label: text(declaration.fields, 'label'),
+    target: { kind: 'uri', uri: value },
+  };
 }
 
 /** A link's `section=`, when written, as `{ section }`. */

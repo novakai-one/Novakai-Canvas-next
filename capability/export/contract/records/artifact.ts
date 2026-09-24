@@ -19,13 +19,19 @@ export interface Identity {
   /** The collection ID; must equal the requested ID, `collection.id` and `scene.collectionId`. */
   readonly collectionId: string;
 
-  /** The revision; must equal the requested revision, `collection.revision` and `scene.revision`. */
+  /**
+   * The revision; must equal the requested revision, `collection.revision` and
+   * `scene.revision`.
+   */
   readonly revision: number;
 
   /** The projection input key; must equal `scene.inputKey`. */
   readonly inputKey: string;
 
-  /** The collection title: the SVG and HTML title, the PDF document title and each PDF page footer. */
+  /**
+   * The collection title: the SVG and HTML title, the PDF document title and each PDF page
+   * footer.
+   */
   readonly title: string;
 }
 
@@ -75,9 +81,11 @@ export interface Encoded {
 }
 
 /**
- * A finished export. Export copies the handler's bytes and makes shallow copies of the identity
- * and scope. Every other field the handler returned (including `pages` and `warnings`) is kept
- * as the handler returned it.
+ * A finished export. Export takes the handler's bytes through their own `slice()` and makes
+ * shallow copies of the identity and scope. Every other field the handler returned (including
+ * `pages` and `warnings`) is kept as the handler returned it. `slice()` copies a plain
+ * `Uint8Array`, but a `Buffer`'s `slice()` shares memory with the handler's buffer: changing
+ * that buffer later changes the artifact's bytes, which then no longer match `digest`.
  */
 export interface Artifact extends Encoded {
   /** Artifact record version; always 1. */
@@ -89,7 +97,10 @@ export interface Artifact extends Encoded {
   /** The file extension without a dot, for example `svg` or `nvcanvas` (bundles). */
   readonly extension: string;
 
-  /** The bytes' hash from the host's `Encoding.hash` (SHA-256, 64 lowercase hex characters). */
+  /**
+   * The hash of the handler's bytes when the artifact was built, from the host's `Encoding.hash`
+   * (SHA-256, 64 lowercase hex characters).
+   */
   readonly digest: string;
 
   /** The exported revision. */

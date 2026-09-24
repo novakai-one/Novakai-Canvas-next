@@ -1,8 +1,8 @@
 /*
  * Produces one artifact from a parsed export request: lease the revision, check it, select the
  * scope, check resources, plan PDF pages, check sizes, run the format handler, then release the
- * lease. Every step returns a Result; the lease is released exactly once on every path after it
- * was acquired.
+ * lease. Every step returns a Result; the lease is released exactly once on every path after
+ * Export has read it from the acquire result (see `SnapshotLease`).
  */
 import { failure } from '../../contract/errors.js';
 import type { Result } from '../../contract/errors.js';
@@ -35,8 +35,9 @@ const descriptors = {
 
 /**
  * Produces the artifact for one parsed request. Leases the revision once, encodes, then
- * releases the lease once, whether the export succeeded or failed. Only reads; a failed call is
- * safe to retry after the host repairs its providers.
+ * releases the lease once, whether the export succeeded or failed. If reading `ok` or `value` of
+ * the acquire result throws, there is no lease to release and the host reclaims it. Only reads;
+ * a failed call is safe to retry after the host repairs its providers.
  *
  * @param request - The parsed export request.
  * @param deps - Snapshot reader, format handlers and hashing.
@@ -219,8 +220,10 @@ async function runEncoder(
 
 /**
  * Turns handler output into the artifact: checks cancellation again, limits the bytes to 128
- * MiB, copies the bytes, adds media type, extension and digest, and shallow-copies the identity
- * and scope. No time or random value is added, so repeated exports can be byte-identical.
+ * MiB, takes the bytes through their own `slice()` (a copy for a plain `Uint8Array`; a `Buffer`
+ * shares memory with the handler's buffer), adds media type, extension and the digest of the
+ * handler's bytes, and shallow-copies the identity and scope. No time or random value is added,
+ * so repeated exports can be byte-identical.
  */
 function finish(
   encoded: Encoded,

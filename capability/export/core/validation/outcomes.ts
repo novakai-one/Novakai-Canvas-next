@@ -17,7 +17,9 @@ interface Parser<T> {
 }
 
 /**
- * Wraps a value as a success. The value is not copied; boundary code copies bytes it hands out.
+ * Wraps a value as a success. The value is not copied. Boundary code takes the bytes it hands
+ * out through their own `slice()`, which copies a plain `Uint8Array` but shares memory for a
+ * `Buffer`.
  *
  * @param value - The successful value.
  * @returns `{ ok: true, value }`.

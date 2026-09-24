@@ -4,9 +4,11 @@ import type { ExportRequest } from '../records/input.js';
 
 /**
  * One retained revision: the snapshot stays consistent, and its blobs stay available, until
- * `release` is called. Export calls `release` exactly once for every lease it acquires, including
- * when the export fails (mismatch, scope, limits, cancellation or encoding). The host reclaims a
- * lease that is never released, for example after a crash.
+ * `release` is called. Export calls `release` exactly once for every lease it obtains, including
+ * when the export fails (mismatch, scope, limits, cancellation or encoding). Export obtains the
+ * lease by reading `ok` and then `value` of the result `acquire` resolved with; if either read
+ * throws, Export never has the lease and does not call `release`. The host reclaims any lease
+ * that is never released: after such a failed read, or after a crash.
  */
 export interface SnapshotLease {
   /** The retained revision's identity, collection, scene, resources and paint. */

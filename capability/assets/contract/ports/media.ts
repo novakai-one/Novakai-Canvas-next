@@ -16,6 +16,8 @@ export interface MediaHandler {
    * @param declared - The media type the bytes should have.
    * @returns The normalized media (Assets checks it again), or `unsupported-media` /
    * `unsafe-media` when the bytes are refused.
+   * @throws The built-in processors never throw or reject. A throw or rejection from another one
+   * becomes `unsafe-media` at `$`.
    */
   normalize(base64: string, declared: SupportedMedia): Promise<Result<NormalizedMedia>>;
 }
@@ -31,6 +33,8 @@ export interface MediaRegistry {
    * @param base64 - The bytes, base64 encoded.
    * @returns The detected type, or a failure (the built-in detector returns `unsupported-media`
    * for an unknown signature and `invalid-input` for bytes it cannot decode).
+   * @throws The built-in detector never throws. A throw from another one becomes `unsafe-media`
+   * at `$`.
    */
   detect(base64: string): Result<SupportedMedia>;
 }

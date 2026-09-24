@@ -21,9 +21,13 @@ import { collectBlobs } from '../core/reachability/collect.js';
  * to Authoring; recovering media and leases belongs to Assets. No I/O happens here.
  *
  * Every method checks its own input, so direct JavaScript callers get the same checks. Every
- * method returns a deeply frozen result and never throws: `stage` reports anything thrown as
- * `unsafe-media`, the others as `storage-unavailable`. See {@link Assets} for each method's
- * failure codes.
+ * method returns a deeply frozen result and never throws. A throw is reported where it is caught:
+ * - inside a transaction of the real storage adapter: a `StorageFault` keeps its code (for
+ *   example `corrupt-asset`); anything else is `storage-unavailable`;
+ * - while staging, or while checking backup bytes (`verify`, `WriteLease.stage`): `unsafe-media`;
+ * - anywhere else: `storage-unavailable`.
+ *
+ * See {@link Assets} for each method's failure codes.
  *
  * @param deps - The storage, identity (hashing, lease IDs, process ownership) and media registry.
  * @returns The frozen facade.
@@ -31,13 +35,20 @@ import { collectBlobs } from '../core/reachability/collect.js';
  */
 export function createAssets(deps: AssetDependencies): Assets {
   return Object.freeze({
+    /** Stages media; its own boundary reports throws as `unsafe-media`. */
     stage: (input) => stageMedia(input, deps),
+    /** Reads and verifies one blob. */
     resolve: (input) => protect(() => resolveInput(input, deps)),
+    /** Leases existing, verified blobs. */
     acquire: (input) => protect(() => acquire(input, deps)),
+    /** Leases digests whose bytes may be absent. */
     reserve: (input) => protect(() => reserve(input, deps)),
+    /** Checks backup bytes without storing them. */
     verify: (input, base64) => protectAsync(() => verify(input, base64, deps)),
+    /** Collects unreferenced blobs in one storage transaction. */
     collectUnreferenced: (reader) =>
       protect(() => deps.storage.transact((view) => collectBlobs(view, deps.identity, reader))),
+    /** Closes storage. */
     close: () => protect(() => deps.storage.close()),
   } satisfies Assets);
 }
@@ -98,7 +109,9 @@ function acquire(input: unknown, deps: AssetDependencies): Result<ReadLease> {
   const id = opened.value;
   return success({
     id,
+    /** Reads one leased blob, re-checking the lease each time. */
     read: (requested) => protect(() => readLeaseInput(id, requested, deps)),
+    /** Deletes the lease. */
     release: () => releaseLease(id, deps),
   });
 }
@@ -112,7 +125,9 @@ function reserve(input: unknown, deps: AssetDependencies): Result<WriteLease> {
   const id = opened.value;
   return success({
     id,
+    /** Installs checked backup bytes for one reserved digest. */
     stage: (requested, base64) => protectAsync(() => stageLeased(id, requested, base64, deps)),
+    /** Deletes the lease. */
     release: () => releaseLease(id, deps),
   });
 }

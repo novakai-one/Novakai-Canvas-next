@@ -50,7 +50,7 @@ export function boundNavigation(snapshot: Snapshot, history: HistoryNavigation):
  * Lists the history records that navigation no longer reaches, as purge writes.
  *
  * Kept: the navigation record, every record this commit writes, and each reachable step's
- * transaction and head. At most 2,000 records are purged per commit.
+ * transaction and head. At most `PURGE_BATCH` records are purged per commit.
  *
  * @param snapshot - The current workspace snapshot.
  * @param actions - The steps navigation still reaches.

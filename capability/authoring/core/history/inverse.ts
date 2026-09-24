@@ -17,13 +17,11 @@ import {
   navigationKey,
   checkParticipantCoverage,
 } from './navigation.js';
+import type { Direction } from './navigation.js';
 import { reject } from '../validation/outcomes.js';
 
 /** One record's change inside a stored transaction. */
 type Transition = Transaction['transitions'][number];
-
-/** The direction of an inverse intent. */
-type InverseDirection = 'undo' | 'redo';
 
 /**
  * Plans the writes for an undo or redo from Authoring's own history.
@@ -42,9 +40,11 @@ type InverseDirection = 'undo' | 'redo';
  * @param request - The checked undo or redo request.
  * @param snapshot - The current workspace snapshot.
  * @returns Writes that restore each record's before image (undo) or after image (redo).
- * @throws AuthoringFault `invalid-input` when the intent is a change, or the request lacks the navigation version.
+ * @throws AuthoringFault `invalid-input` when the intent is a change, the request lacks the navigation version,
+ *   the transaction or head repeats a record key, or the original transaction is itself an undo or redo.
  * @throws AuthoringFault `unknown-reference` when the original change's history is missing.
- * @throws AuthoringFault `corrupt-record` when stored history is malformed or inconsistent.
+ * @throws AuthoringFault `corrupt-record` when stored history is malformed, has a foreign image, or its
+ *   head and transaction name different records.
  * @throws AuthoringFault `revision-conflict` when the change is in the wrong state, is not the next step,
  *   or a record it touched has changed.
  */
@@ -63,7 +63,7 @@ export function planInverse(request: Request, snapshot: Snapshot): Proposal {
   const writes = transaction.transitions.map((transition) =>
     restoreRecord(transition, imageToRestore(transition, direction)),
   );
-  const reads: ReadVersion[] = [
+  const reads: readonly ReadVersion[] = [
     ...head.participants.map((participant) => versionOf(snapshot, participant.key)),
     versionOf(snapshot, transactionKey(original)),
     versionOf(snapshot, headKey(original)),
@@ -77,9 +77,13 @@ export function planInverse(request: Request, snapshot: Snapshot): Proposal {
 }
 
 /** Picks the image to restore: the before image for undo, the after image for redo. */
-function imageToRestore(transition: Transition, direction: InverseDirection): StoredRecord | null {
-  if (direction === 'undo') return transition.before;
-  return transition.after;
+function imageToRestore(transition: Transition, direction: Direction): StoredRecord | null {
+  switch (direction) {
+    case 'undo':
+      return transition.before;
+    case 'redo':
+      return transition.after;
+  }
 }
 
 /**

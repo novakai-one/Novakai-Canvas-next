@@ -11,10 +11,13 @@ import type { HistoryStatus } from '../../contract/records/history.js';
 import type { CommitRequest } from '../../contract/ports/store.js';
 import { navigationKey, historyStatus, readNavigation } from './navigation.js';
 import { boundNavigation, staleHistory } from './retention.js';
-import { findRecord, versionOf } from '../records/keys.js';
+import { findRecord, keyText, versionOf } from '../records/keys.js';
 import { readSnapshot, readReceipt } from '../validation/snapshot.js';
 import { copyJson, storedLimits } from '../validation/plain-data.js';
 import { accepted, reject } from '../validation/outcomes.js';
+
+/** The kinds of history-only commit that opening a workspace can make. */
+type HistoryCommitKind = 'history-adoption' | 'history-compaction';
 
 /** The fixed request ID of the one-time commit that adds history to a workspace. */
 const migrationId = requestId.parse('history-adoption-v1');
@@ -84,7 +87,7 @@ function reopened(snapshot: Snapshot, receipt: Receipt | null, deps: Dependencie
 /** Rejects an adoption receipt that does not list the navigation record among its versions. */
 function checkAdoptionReceipt(receipt: Receipt): void {
   const listsNavigation = receipt.versions.some(
-    (read) => read.key.kind === 'history' && read.key.id === 'navigation',
+    (read) => keyText(read.key) === keyText(navigationKey),
   );
   if (!listsNavigation)
     reject('corrupt-record', 'history', 'Adoption receipt does not identify navigation');
@@ -127,7 +130,7 @@ async function adopt(snapshot: Snapshot, deps: Dependencies): Promise<HistorySta
     ],
     outcome,
   };
-  await commitBaseline(commit, deps);
+  await commitHistoryChange(commit, deps);
   return initializeHistory(snapshot.workspace, deps);
 }
 
@@ -158,11 +161,11 @@ function compaction(snapshot: Snapshot, deps: Dependencies): CommitRequest | nul
 }
 
 /** Commits a history-only change, treating a lost acknowledgement as success when its receipt is stored. */
-async function commitBaseline(commit: CommitRequest, deps: Dependencies): Promise<void> {
+async function commitHistoryChange(commit: CommitRequest, deps: Dependencies): Promise<void> {
   try {
     accepted(await deps.commits.commit(commit));
   } catch (error) {
-    await reconcileBaseline(commit, deps, error);
+    await reconcileHistoryCommit(commit, deps, error);
   }
 }
 
@@ -170,7 +173,7 @@ async function commitBaseline(commit: CommitRequest, deps: Dependencies): Promis
  * After a failed history commit, succeeds when the commit's receipt is stored, otherwise rethrows.
  * A stored receipt with a different fingerprint means another request used the same ID.
  */
-async function reconcileBaseline(
+async function reconcileHistoryCommit(
   commit: CommitRequest,
   deps: Dependencies,
   error: unknown,
@@ -184,7 +187,7 @@ async function reconcileBaseline(
 /** Tries a trimming commit. Returns `false` instead of failing, so opening never fails over trimming. */
 async function settled(commit: CommitRequest, deps: Dependencies): Promise<boolean> {
   try {
-    await commitBaseline(commit, deps);
+    await commitHistoryChange(commit, deps);
     return true;
   } catch {
     return false;
@@ -197,7 +200,7 @@ function adoptionFingerprint(snapshot: Snapshot, deps: Dependencies): Digest {
 }
 
 /** The outcome stored with a history-only commit. It has no transaction and no pins. */
-function committedOutcome(kind: string): CommitOutcome {
+function committedOutcome(kind: HistoryCommitKind): CommitOutcome {
   return {
     status: 'committed',
     transaction: null,

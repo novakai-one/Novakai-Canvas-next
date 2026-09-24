@@ -23,7 +23,7 @@ import { storedLimits } from '../validation/plain-data.js';
 import { reject } from '../validation/outcomes.js';
 
 /** The direction of a step through history. */
-type Direction = 'undo' | 'redo';
+export type Direction = 'undo' | 'redo';
 
 /** The key of the single history record that stores undo/redo navigation. */
 export const navigationKey: RecordKey = { kind: 'history', id: recordId.parse('navigation') };
@@ -46,7 +46,8 @@ const navigations = new WeakMap<Snapshot, HistoryNavigation>();
  * @returns The checked navigation.
  * @throws AuthoringFault `corrupt-record` when navigation or any step's history is missing, malformed or inconsistent.
  * @throws AuthoringFault `unknown-reference` when a step's transaction or head is missing.
- * @throws AuthoringFault `invalid-input` when a step's history repeats a record key.
+ * @throws AuthoringFault `invalid-input` when the frontier or a step's history repeats a record key,
+ *   or a step's transaction is itself an undo or redo.
  * @throws AuthoringFault `revision-conflict` when a frontier version differs from the snapshot.
  */
 export function readNavigation(snapshot: Snapshot): HistoryNavigation {
@@ -82,7 +83,7 @@ export function checkParticipantCoverage(transaction: Transaction, head: History
  * @returns The step's request ID, or `null` when there is nothing to undo or redo.
  */
 export function nextAction(history: HistoryNavigation, direction: Direction): RequestId | null {
-  const index = direction === 'undo' ? history.cursor - 1 : history.cursor;
+  const index = actionIndex(history, direction);
   const action = history.actions[index];
   if (action === undefined) return null;
   return action;
@@ -178,16 +179,19 @@ function validateNavigation(navigation: HistoryNavigation, snapshot: Snapshot): 
 
   validateFrontier(navigation, snapshot);
   navigation.actions.forEach((id, index) => {
-    const isBeforeCursor = index < navigation.cursor;
-    validateAction(snapshot, id, isBeforeCursor);
+    validateAction(snapshot, id, stateAtIndex(index, navigation.cursor));
   });
 }
 
 /** Checks one step's transaction and head agree with each other and with the cursor. */
-function validateAction(snapshot: Snapshot, id: RequestId, isBeforeCursor: boolean): void {
+function validateAction(
+  snapshot: Snapshot,
+  id: RequestId,
+  expectedState: HistoryHead['state'],
+): void {
   const transaction = readTransaction(snapshot, id);
   const head = readHead(snapshot, id);
-  if (head.state !== stateForPosition(isBeforeCursor))
+  if (head.state !== expectedState)
     reject('corrupt-record', 'history', 'History state disagrees with its cursor');
 
   checkParticipantCoverage(transaction, head);
@@ -196,10 +200,20 @@ function validateAction(snapshot: Snapshot, id: RequestId, isBeforeCursor: boole
   );
 }
 
-/** Steps before the cursor must be `active`; steps after it must be `undone`. */
-function stateForPosition(isBeforeCursor: boolean): HistoryHead['state'] {
-  if (isBeforeCursor) return 'active';
+/** Steps before the cursor must be `active`; steps at or after it must be `undone`. */
+function stateAtIndex(index: number, cursor: number): HistoryHead['state'] {
+  if (index < cursor) return 'active';
   return 'undone';
+}
+
+/** The step an undo acts on is just before the cursor; the step a redo acts on is at the cursor. */
+function actionIndex(history: HistoryNavigation, direction: Direction): number {
+  switch (direction) {
+    case 'undo':
+      return history.cursor - 1;
+    case 'redo':
+      return history.cursor;
+  }
 }
 
 /** Checks the frontier lists every content record once, at its current version. */
@@ -253,8 +267,13 @@ function actionsAfter(history: HistoryNavigation, request: Request): RequestId[]
 
 /** An undo moves the cursor back one step. A change or redo moves it forward one step. */
 function cursorAfter(history: HistoryNavigation, request: Request): number {
-  if (request.intent.kind === 'undo') return history.cursor - 1;
-  return history.cursor + 1;
+  switch (request.intent.kind) {
+    case 'undo':
+      return history.cursor - 1;
+    case 'change':
+    case 'redo':
+      return history.cursor + 1;
+  }
 }
 
 /** Describes the step an undo or redo would act on, with the versions to submit for it. */

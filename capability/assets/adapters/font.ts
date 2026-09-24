@@ -18,21 +18,23 @@ type FontFactory = (bytes: Buffer) => Font | FontCollection;
  *    `mediaType`);
  * 2. for WOFF and WOFF2, the expanded size in the header must be at most {@link limits}.bytes
  *    (`unsafe-media` at `font`), checked before any decompression;
- * 3. parse the font: a collection is `unsupported-media` at `font`; the glyph count must be 1 to
- *    {@link limits}.glyphs (`unsafe-media` at `glyphs`); `unitsPerEm` must be positive and finite
- *    (`unsafe-media` at `unitsPerEm`); a family name is required (`unsafe-media` at
- *    `fontFamily`). Reading these forces lazily parsed tables, so corrupt tables fail here.
+ * 3. parse the font: a collection is `unsupported-media` at `font`; a glyph count below 1 or above
+ *    {@link limits}.glyphs is `unsafe-media` at `glyphs` (a count that is not a number, such as
+ *    `NaN`, passes this check); `unitsPerEm` must be positive and finite (`unsafe-media` at
+ *    `unitsPerEm`); a family name is required (`unsafe-media` at `fontFamily`). Reading these
+ *    forces lazily parsed tables, so corrupt tables fail here.
  *
  * A throw from parsing becomes `unsafe-media` at `font`: "Font tables could not be parsed safely".
  *
  * @param parseFont - Parses the bytes. Defaults to fontkit's `create`.
- * @returns The processor. Its `normalize` returns the original bytes as media of kind `font` with
- * no width or height, and never rejects.
+ * @returns The processor. On success its `normalize` returns the original bytes as media of kind
+ * `font` with no width or height. It never rejects.
  * @throws Never.
  */
 export function createFont(parseFont: FontFactory = create): MediaHandler {
   return {
     mediaTypes: ['font/ttf', 'font/otf', 'font/woff', 'font/woff2'],
+    /** Normalizes one font; see the steps above. */
     normalize: (encoded, declared) => protectFont(encoded, declared, parseFont),
   };
 }

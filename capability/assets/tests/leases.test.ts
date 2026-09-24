@@ -3,6 +3,7 @@ import { createAssets } from '../contract/index.js';
 import { harness } from './harness.js';
 import { submission, value, rejects, missing, delayedMedia, noReferences } from './fixtures.js';
 
+/** Leases: acquiring, reserving, releasing and collection around them. */
 describe('leases', () => {
   /**
    * Acquiring a stored digest with a missing one fails as a whole (`missing-asset`) and records
@@ -68,6 +69,7 @@ describe('leases', () => {
     const id = value(await assets.stage(submission())).descriptor.digest;
     const bytes = value(assets.resolve(id)).base64;
     // Referenced, then unreferenced.
+    // The reader reports `id` as referenced.
     expect(value(assets.collectUnreferenced(() => ({ ok: true, value: [id] }))).retained).toEqual([
       id,
     ]);
@@ -82,6 +84,7 @@ describe('leases', () => {
     // Dead owners' leases are recovered.
     const deadOwners = createAssets({
       ...fixture.deps,
+      // Every lease owner is reported dead.
       identity: { ...fixture.deps.identity, ownerAlive: () => false },
     });
     expect(value(deadOwners.collectUnreferenced(noReferences)).removed).toEqual([id]);

@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { harness } from './harness.js';
 import { submission, png, svg, encoded, value, rejects, noReferences } from './fixtures.js';
 
+/** Staging: accepted and rejected media, digests and reuse of stored bytes. */
 describe('admission', () => {
   /**
    * A PNG is normalized with its measured size (2 × 3). Its digest is an independently computed
@@ -88,6 +89,7 @@ describe('admission', () => {
       '<svg width="1" height="1">' + ' '.repeat(1024 * 1024) + '</svg>',
     ];
     await Promise.all(
+      // Stages each rejected SVG and checks it is `unsafe-media`.
       rejected.map(async (text) =>
         rejects(await assets.stage(submission(encoded(text), 'image/svg+xml')), 'unsafe-media'),
       ),
@@ -128,8 +130,8 @@ describe('admission', () => {
 
   /**
    * Staging the same bytes twice gives the same digest, while each admission keeps its own alt
-   * text and provenance. Admissions are frozen. With no references and no leases, collection
-   * removes the blob.
+   * text and provenance. The descriptor is frozen (only the descriptor is checked). With no
+   * references and no leases, collection removes the blob.
    */
   it('reuses immutable bytes without overwriting caller-specific alt or provenance', async () => {
     const { assets } = harness();

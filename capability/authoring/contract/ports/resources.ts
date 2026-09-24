@@ -4,7 +4,8 @@ import type { Request } from '../records/request.js';
 import type { Snapshot, Json, ReadVersion } from '../records/storage.js';
 
 /**
- * Protection on the exact resource bytes and pins a request uses, held until it commits or fails.
+ * Protection on the exact resource bytes and pins a request uses. Authoring holds it while it prepares
+ * the request and, for apply, undo and redo, commits it; it is released afterwards, whatever the outcome.
  *
  * A failed release leaves the protection in place, which asset maintenance recovers later.
  * Committed bytes are never lost.

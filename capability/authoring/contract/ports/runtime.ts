@@ -5,6 +5,8 @@ import type { Receipt } from '../records/storage.js';
 /** Hashes text deterministically. Each host chooses its own implementation. */
 export interface Hasher {
   /**
+   * Hashes canonical text.
+   *
    * @param canonical - The canonical text to hash.
    * @returns The digest, or a failure.
    */
@@ -14,6 +16,8 @@ export interface Hasher {
 /** Reads the current time. Each host chooses its own implementation. */
 export interface Clock {
   /**
+   * Reads the current time.
+   *
    * @returns The current time in milliseconds, or a failure.
    */
   now(): Result<Timestamp>;
@@ -26,6 +30,8 @@ export interface Clock {
  */
 export interface Cancellation {
   /**
+   * Tells whether a request was cancelled.
+   *
    * @param request - The request to ask about.
    * @returns `true` when the request was cancelled.
    */
@@ -39,6 +45,8 @@ export interface Cancellation {
  */
 export interface Notifications {
   /**
+   * Publishes that a workspace changed.
+   *
    * @param workspace - The workspace that changed.
    * @param receipt - The committed receipt.
    * @returns Success, or a failure that Authoring ignores.

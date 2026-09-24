@@ -26,7 +26,8 @@ export const abcDigest = digest.parse(
  * Asserts a result succeeded and returns its value. A failure fails the test (never a silent
  * default).
  *
- * @throws Error with the failure's message, after the failed assertion, so TypeScript narrows.
+ * @throws Vitest's `AssertionError` for a failed result. The `Error` after it is never reached;
+ * it only narrows the type.
  */
 export function value<T>(result: Result<T>): T {
   expect(result.ok).toBe(true);

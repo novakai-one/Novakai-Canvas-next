@@ -24,7 +24,7 @@ export const write = z.discriminatedUnion('kind', [
 
 /**
  * Checks the shape of a commit request. The rules across fields (no duplicate keys, one observed
- * version per write) are checked by request validation.
+ * version per write, no repeated asset digest within one put) are checked by request validation.
  */
 export const commitRequest = z.strictObject({
   workspace: workspaceId,

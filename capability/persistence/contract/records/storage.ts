@@ -74,13 +74,14 @@ export const versionHeader = z.object({ schemaVersion: z.number() });
  * Builds the workspace state schema used when reading stored state.
  *
  * It is {@link workspaceState}, except that each slot `value` and receipt `outcome` must be one of
- * the exact `payloads` objects: the values already checked and copied by this read's bounded
- * JSON copy. A payload from anywhere else is rejected.
+ * the exact `payloads` values: the values already checked and copied by this read's bounded
+ * JSON copy. Object and array payloads must be the same object; primitive payloads match by
+ * value. A payload from anywhere else is rejected.
  *
  * @param payloads - The payload values found in this read's copy.
  * @returns The schema for this read.
  */
-export function admittedWorkspaceState(payloads: readonly Json[]) {
+export function admittedWorkspaceState(payloads: readonly Json[]): z.ZodType<WorkspaceState> {
   const admitted = new Set<unknown>(payloads);
   const payload = z.custom<Json>((value) => admitted.has(value));
   return workspaceState.extend({
@@ -103,7 +104,8 @@ export interface ReadVersion {
 
 /**
  * One stored version of a record. A tombstone (`deleted: true`) has a `null` value and no
- * resources, and keeps its version so a deleted record cannot be recreated from a stale read.
+ * resources, and has its own version, one more than the deleted version, so a deleted record
+ * cannot be recreated from a stale read.
  */
 export interface Slot {
   readonly key: RecordKey;
@@ -134,6 +136,9 @@ export interface WorkspaceState {
   /** Number of commits so far; 0 means never committed. */
   readonly sequence: number;
   readonly slots: readonly Slot[];
-  /** The kept receipts, oldest first, at most `RECEIPT_LIMIT`. */
+  /**
+   * The kept receipts. Commit keeps them oldest first, at most `RECEIPT_LIMIT`; reading only checks
+   * the count is between `min(sequence, RECEIPT_LIMIT)` and `sequence`.
+   */
   readonly receipts: readonly Receipt[];
 }

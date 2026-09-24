@@ -10,7 +10,8 @@ export type VerifyBlob = (digest: Digest, base64: string) => Promise<Result<void
 
 /**
  * A lease on existing asset bytes. Every requested asset stays protected from garbage collection
- * until `release`, including after a failed backup.
+ * until `release`, including after a failed backup. Assets owns recovery of a lease that is never
+ * released.
  */
 export interface ResourceLease {
   /** Reads one leased asset's bytes as base64. */
@@ -23,7 +24,7 @@ export interface ResourceLease {
 export interface BackupResources {
   /** Leases the given assets, or fails when one is already gone (retry the backup). */
   acquire(digests: readonly Digest[]): Promise<Result<ResourceLease>>;
-  verify: VerifyBlob;
+  readonly verify: VerifyBlob;
 }
 
 /**
@@ -39,7 +40,7 @@ export interface RestoreLease {
 
 /** What `restore` needs from Assets. */
 export interface RestoreResources {
-  verify: VerifyBlob;
+  readonly verify: VerifyBlob;
   /** Reserves the given assets at the destination. */
   reserve(digests: readonly Digest[]): Promise<Result<RestoreLease>>;
 }

@@ -4,13 +4,20 @@ import { workspaceState } from './storage.js';
 import type { WorkspaceState } from './storage.js';
 import type { Digest } from '../brands.js';
 
-/** Largest base64 text for one asset's bytes (32 MiB of text). */
+/**
+ * Largest base64 text for one asset's bytes (32 MiB of text). In practice the base64 regex in
+ * {@link blob} throws first; see there.
+ */
 const MAXIMUM_BLOB_BASE64_LENGTH = 32 * 1024 * 1024;
 
 /**
- * Checks one asset in a bundle: its digest, and its bytes as canonical padded base64. Only the
- * encoding is checked here; the injected Assets verifier proves the bytes match the digest and
- * the media policy.
+ * Checks one asset in a bundle: its digest, and its bytes as padded base64 (alphabet, groups of
+ * four, `=` padding). Only the encoding is checked here; the injected Assets verifier proves the
+ * bytes match the digest and the media policy.
+ *
+ * Known limit (existing behaviour): the regex overflows the stack and throws `RangeError` for
+ * base64 text above roughly 4–8 MiB (Node 24), below the 32 MiB maximum. Callers turn the throw
+ * into `corrupt-record` (restore) or `storage-unavailable` (backup).
  */
 export const blob = z.strictObject({
   digest,

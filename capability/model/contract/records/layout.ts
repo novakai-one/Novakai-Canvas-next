@@ -1,6 +1,7 @@
 /*
- * Layout records: semantic layout requests, ordering constraints and stored placements. They
- * parse to read-only values. `validate` reports problems as diagnostics; Authoring owns
+ * Layout records: semantic layout requests, ordering constraints and stored placements. Parsed
+ * objects and supplied lists are frozen; a defaulted empty list is a new, unfrozen array.
+ * `validate` deep-freezes its results. `validate` reports problems as diagnostics; Authoring owns
  * correction, commit and recovery. The exported schemas are shared, unfrozen objects; `parse`
  * throws a `ZodError`.
  */
@@ -37,7 +38,10 @@ export const layoutTargetSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('section'), id: sectionId }).readonly(),
 ]);
 
-/** A relative rule (`rank`, `before`, `below` or `align`) over at least two targets. */
+/**
+ * A relative rule (`rank`, `before`, `below` or `align`) over at least two targets. Core requires
+ * exactly two targets for `before` and `below` ("before/below need exactly two targets").
+ */
 const constraintSchema = z
   .strictObject({
     kind: z.enum(['rank', 'before', 'below', 'align']),
@@ -47,8 +51,9 @@ const constraintSchema = z
 
 /**
  * A layout request: `algorithm` (`flow`, `layered`, `tree`, `sequence` or `grid`), `direction`
- * (default `right`), `gap` (default `normal`), optional `columns` (1–12) and ordering
- * `constraints` (default none). Model checks the request; it never places nodes.
+ * (default `right`), `gap` (default `normal`), optional `columns` (1–12; core requires the `grid`
+ * algorithm, "Columns require grid layout") and ordering `constraints` (default none). Model
+ * checks the request; it never places nodes.
  */
 export const layoutSchema = z
   .strictObject({

@@ -24,10 +24,11 @@ const cardinalitySchema = z.enum(['0..1', '1', '0..many', '1..many']);
 
 /**
  * A labelled relationship: `id`, `kind`, `label`, optional positive whole `step` (at most
- * `Number.MAX_SAFE_INTEGER`), `source` and `target` addresses, optional `from`/`to`
- * cardinalities (only for associations, checked by core), optional state `guard` and `effect`,
- * `style` (default `solid`) and provenance `sources` (default empty). Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * `Number.MAX_SAFE_INTEGER`), `source` and `target` addresses, `from`/`to` cardinalities,
+ * optional state `guard` and `effect`, `style` (default `solid`) and provenance `sources`
+ * (default empty). The schema makes `from`/`to` optional; core requires both on an association
+ * and forbids them on every other kind (`endpoint`). Exported, shared and unfrozen; `parse`
+ * throws a `ZodError`. Authoring owns correction, commit and recovery.
  */
 export const relationshipSchema = z
   .strictObject({

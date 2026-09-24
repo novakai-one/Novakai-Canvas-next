@@ -13,10 +13,10 @@ import { frameSchema, compositionSchema, containerFrameSchema } from './composit
 import { endpointSchema } from './content.js';
 
 /**
- * How one object appears in one section: optional `group`, `role`, `size`, `frame`,
- * `composition` and `placement` overrides (omitted ones inherit the object's values or automatic
- * layout), `detail` (default `full`) and optional tree `participation`. Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * How one object appears in one section: optional `group` (omitted means the section's top
+ * level), optional `role`, `size`, `frame`, `composition` and `placement` overrides (omitted ones
+ * inherit the object's values or automatic layout), `detail` (default `full`) and optional tree
+ * `participation`. Exported, shared and unfrozen; `parse` throws a `ZodError`.
  */
 export const appearanceSchema = z
   .strictObject({
@@ -35,8 +35,8 @@ export const appearanceSchema = z
 /**
  * A container in one section: `id`, `title`, optional `parent` group, optional `represents`
  * (the object the group stands for, instead of an ordinary appearance), `frame` (default
- * `auto`), `role` (default `neutral`), its own `layout` and optional `placement`. Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * `auto`), `role` (default `neutral`), its own `layout` and optional `placement`. Exported,
+ * shared and unfrozen; `parse` throws a `ZodError`.
  */
 export const groupSchema = z
   .strictObject({
@@ -56,9 +56,10 @@ const attachmentSideSchema = z.enum(['auto', 'top', 'right', 'bottom', 'left']);
 
 /**
  * How one relationship is drawn in one section: `route` (default `orthogonal`), attachment sides
- * (default `auto`), optional `manual` points (at least 2) and `locked` (default `false`). Manual
- * points and their lock are kept together. Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * (default `auto`), optional `manual` points (at least 2) and `locked` (default `false`). Core
+ * requires `manual` points when `locked` is true (`layout`, "Locked route requires manual
+ * points"). Replacing a section keeps an old manual route and its lock together when the new wire
+ * omits `manual`. Exported, shared and unfrozen; `parse` throws a `ZodError`.
  */
 export const wireSchema = z
   .strictObject({
@@ -84,8 +85,9 @@ const sequenceScopeFields = {
 };
 
 /**
- * A labelled message from one participant object to another: `call`, `return` or `async`,
- * optionally naming the called `operation` and changing activation.
+ * A labelled message between two endpoints, each a visible participant or a module shown directly
+ * at the section's top level: `call`, `return` or `async`, optionally naming the called
+ * `operation` and changing activation.
  */
 const sequenceEventSchema = z
   .strictObject({
@@ -119,8 +121,7 @@ const sequenceFragmentSchema = z
 
 /**
  * One sequence item: a message event or a control fragment. Core checks IDs and parent/branch
- * scope. Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * scope. Exported, shared and unfrozen; `parse` throws a `ZodError`.
  */
 export const sequenceSchema = z.union([sequenceEventSchema, sequenceFragmentSchema]);
 
@@ -140,10 +141,10 @@ export const modeSchema = z.enum([
 ]);
 
 /**
- * One diagram view (section): `id`, `title`, `mode`, `order` (whole number, default 0), `layout`,
- * lists of `appearances`, `groups`, `wires` and `sequence` items (each default empty), an optional
- * tree `root` and optional `placement`. Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * One diagram view (section): `id`, `title`, `mode`, `order` (any integer, negatives included;
+ * default 0), `layout`, lists of `appearances`, `groups`, `wires` and `sequence` items (each
+ * default empty), an optional tree `root` and optional `placement`. Exported, shared and
+ * unfrozen; `parse` throws a `ZodError`. Authoring owns correction, commit and recovery.
  */
 export const sectionSchema = z
   .strictObject({

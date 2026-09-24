@@ -29,8 +29,8 @@ export const objectKind = z.enum([
  * An object (diagram node): `id`, `kind`, `label`, `role` (default `neutral`), `size` (default
  * `medium`), `frame` (default `auto`), `composition` (default `stack`), optional positive whole
  * `step`, and lists of `content`, `ports` and provenance `sources` (each default empty).
- * Section-specific geometry lives in sections, not here. Exported, shared and
- * unfrozen; `parse` throws a `ZodError`.
+ * Section-specific geometry lives in sections, not here. Exported, shared and unfrozen; `parse`
+ * throws a `ZodError`. Authoring owns correction, commit and recovery.
  */
 export const objectSchema = z
   .strictObject({

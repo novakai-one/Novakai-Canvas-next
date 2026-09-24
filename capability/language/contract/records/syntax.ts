@@ -1,7 +1,8 @@
 /*
  * The parsed form of canvas source. `parse` returns these records; lowering, patching and
  * diagnostics read them. They describe only what the source says: nothing here has been checked
- * against Model yet.
+ * against Model yet. Language owns correcting the source; Authoring owns every commit and
+ * recovery.
  */
 
 /**
@@ -63,13 +64,19 @@ export interface LocatedValue {
   /** Where the value was written. */
   readonly span: Span;
 
-  /** For a type expression: the tokens it was read from, used to map references back to source. */
+  /**
+   * For the expression of a `type` definition: the tokens it was read from, used to map
+   * references back to source.
+   */
   readonly tokens?: readonly Token[];
 
-  /** For a scalar, or a reference without a namespace: the first token it was read from. */
+  /**
+   * For a scalar, or a reference without a namespace: the first token it was read from. Absent
+   * on a `type` definition's `id`.
+   */
   readonly token?: Token;
 
-  /** For a list: each item with its own location. */
+  /** Set only for a bracketed `[...]` list: each item with its own location. */
   readonly items?: readonly LocatedValue[];
 }
 
@@ -192,7 +199,10 @@ export interface Document {
   /** The `collection` declaration and everything inside it. */
   readonly declaration: Declaration;
 
-  /** Where the whole source was written. */
+  /**
+   * From `canvas` to the closing brace. Comments before it, such as a printed heading, are
+   * outside.
+   */
   readonly span: Span;
 }
 
@@ -210,7 +220,10 @@ export interface Patch {
   /** The operations, in source order. */
   readonly operations: readonly Operation[];
 
-  /** Where the whole source was written. */
+  /**
+   * From `patch` to the closing brace. Comments before it, such as a printed heading, are
+   * outside.
+   */
   readonly span: Span;
 }
 
@@ -222,7 +235,10 @@ export interface ResourceRequest {
   /** What is asked for. */
   readonly kind: 'theme' | 'image' | 'icon' | 'font';
 
-  /** The name the source uses for it: the asset ID, or the theme name or pin. */
+  /**
+   * The name the source uses for it: the asset ID, or the theme name or pin (`paper` when a
+   * document writes no theme or a patch unsets it).
+   */
   readonly alias: string;
 
   /** Where the source says it comes from; for a theme, the same text as `alias`. */
@@ -243,7 +259,11 @@ export interface ResourceRequest {
 
 /** Links a record path to where it was written, so Model's issues can be shown in the source. */
 export interface SourceMapping {
-  /** The record path: a declaration ID, a field under it, or a patch operation's target ID. */
+  /**
+   * For a `canvas` document, Model's record path: `''` for the collection, then paths such as
+   * `objects.<id>`, `sections.<id>.content.<id>` or `objects.<id>.parameters.0.name`. For a
+   * patch, the operation's target ID.
+   */
   readonly path: string;
 
   /** Where that record, field or operation was written. */

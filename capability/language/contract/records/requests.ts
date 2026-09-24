@@ -1,6 +1,7 @@
 /*
  * The requests Language's operations take and the records they return: lowering, expanding a
  * recipe and printing. Also re-exports the parsed resource request and source mapping records.
+ * Language owns correcting the source; Authoring owns every commit and recovery.
  */
 import type { Collection, Change } from '@novakai/canvas-model';
 import type { ResourceRequest, SourceMapping } from './syntax.js';
@@ -12,7 +13,10 @@ export type { ResourceRequest, SourceMapping } from './syntax.js';
  * resource up or opens its source.
  */
 export interface ResolvedResources {
-  /** Themes by the name or pin the source uses. A pin can also match a theme's own pin. */
+  /**
+   * Themes by the name or pin the source uses. If no key matches a requested pin, the theme
+   * whose own pin equals it is used.
+   */
   readonly themes: Readonly<Record<string, Collection['theme']>>;
 
   /** Admitted assets by asset ID. */

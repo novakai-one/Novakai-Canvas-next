@@ -1,7 +1,8 @@
 /*
  * The language vocabulary as data: the value types, properties and positional rules of each
  * construct, and the `Description` that `describe` returns. The parser, printer and patch
- * compiler all read the same tables, so the description matches what they accept.
+ * compiler all read the same tables, so the description matches what they accept. Language owns
+ * correcting the source; Authoring owns every commit and recovery.
  */
 import type { Construct, SyntaxValue, TargetKind } from './syntax.js';
 
@@ -19,7 +20,7 @@ export type ValueType =
   | 'address'
   /** A list of text values. */
   | 'strings'
-  /** A list of plain IDs. */
+  /** A bracketed list of plain IDs, such as `[@a, @b]`. */
   | 'ids'
   /** A list of endpoints. */
   | 'endpoints'
@@ -29,9 +30,15 @@ export type ValueType =
   | 'integer'
   /** Text (such as a URL) or a plain ID. */
   | 'link'
-  /** A list of any references. */
+  /**
+   * A list of any references; as a positional value, written one after another without
+   * brackets, as in `before group:@a group:@b`.
+   */
   | 'targets'
-  /** A list of plain IDs. */
+  /**
+   * A list of plain IDs; as a positional value, written one after another without brackets, as
+   * in `show @a @b`.
+   */
   | 'references'
   /** One endpoint or a list of endpoints. */
   | 'reference-value'
@@ -48,13 +55,16 @@ export interface Property {
   /** The record field the value is stored in. */
   readonly field: string;
 
-  /** Whether the property must be written; a required property cannot be unset. */
+  /** Whether a declaration must write it; a required property also cannot be unset. */
   readonly required?: boolean;
 
   /** The only words allowed, when the value is limited to a fixed set. */
   readonly values?: readonly string[];
 
-  /** The value used when the property is omitted or unset. */
+  /**
+   * Used when a new declaration omits it or a patch unsets it. In a patch, an omitted property
+   * keeps its value.
+   */
   readonly fallback?: SyntaxValue;
 }
 

@@ -1,9 +1,10 @@
 /*
  * How the compiler stops and how the public operations report it. Core code calls `reject` to
  * throw a private `LanguageFault` with one diagnostic, or `accepted` to rethrow a failed result's
- * diagnostics. `protect` wraps each public operation: it returns the deep-frozen value on
- * success, the fault's diagnostics as `validation-failed`, or one `provider-failure` diagnostic
- * for any other throw. Language owns correcting the source; Authoring owns commit recovery.
+ * diagnostics. `protect` wraps each public operation and several internal steps (tokenize,
+ * repeat, lowering and patch steps). It returns the deep-frozen value on success, the fault's
+ * diagnostics as `validation-failed`, or one `provider-failure` diagnostic for any other throw.
+ * Language owns correcting the source; Authoring owns commit recovery.
  */
 import { LanguageFault, type DiagnosticCode, type Result } from '../../contract/errors.js';
 import type { Span } from '../../contract/records/syntax.js';

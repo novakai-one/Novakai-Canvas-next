@@ -94,6 +94,17 @@ export function failed(
 }
 
 /**
+ * A typed success for injecting provider and codec results.
+ *
+ * @param value - The successful value; it is not copied.
+ * @returns A new `{ ok: true, value }` result.
+ * @throws Never.
+ */
+export function succeeded<T>(value: T): Result<T> {
+  return { ok: true, value };
+}
+
+/**
  * Initializes the resvg runtime, as a host does at startup. It does not guard against repeat
  * or concurrent calls: every call resolves, reads and compiles the runtime file and initializes
  * again, so callers invoke it once per test run.
@@ -120,7 +131,9 @@ export interface Fixture {
   readonly releases: () => number;
 
   /** An export request for the fixture collection at revision 7, in `format` (default `svg`). */
-  readonly request: (format?: ExportRequest['format']) => unknown;
+  readonly request: (
+    format?: ExportRequest['format'],
+  ) => Pick<ExportRequest, 'identity' | 'format'>;
 }
 
 /**

@@ -6,7 +6,7 @@
 import { describe, it, expect, assert } from 'vitest';
 import { createExport, type Dependencies } from '../contract/index.js';
 import { createPdfEncoder } from '../adapters/native/pdf.js';
-import { fixture, value, failed } from './fixtures.js';
+import { fixture, value, failed, succeeded } from './fixtures.js';
 
 describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds tests. */ () => {
   /**
@@ -48,16 +48,11 @@ describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds
     const dependencies: Dependencies = {
       ...f.bindings.dependencies,
       snapshots: {
-        acquire: /** Leases the oversized snapshot; its release always succeeds. */ async () => ({
-          ok: true,
-          value: {
+        acquire: /** Leases the oversized snapshot; its release always succeeds. */ async () =>
+          succeeded({
             snapshot: oversized,
-            release: /** Succeeds without doing anything. */ async () => ({
-              ok: true,
-              value: undefined,
-            }),
-          },
-        }),
+            release: /** Succeeds without doing anything. */ async () => succeeded(undefined),
+          }),
       },
     };
 
@@ -113,13 +108,13 @@ describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds
       {
         decode: /** Cancels the export, then returns no fonts. */ async () => {
           duringFonts.aborted = true;
-          return { ok: true, value: [] };
+          return succeeded([]);
         },
       },
       {
         convert: /** Counts the call and converts nothing. */ async () => {
           mediaCalls += 1;
-          return { ok: true, value: new Map() };
+          return succeeded(new Map());
         },
       },
     );
@@ -140,16 +135,14 @@ describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds
       ...f.bindings.dependencies,
       snapshots: {
         acquire:
-          /** Leases the fixture snapshot; its release counts itself and fails. */ async () => ({
-            ok: true,
-            value: {
+          /** Leases the fixture snapshot; its release counts itself and fails. */ async () =>
+            succeeded({
               snapshot,
               release: /** Counts the call and fails with `cleanup-failed`. */ async () => {
                 count += 1;
                 return failed('cleanup-failed');
               },
-            },
-          }),
+            }),
       },
     };
     expect(await createExport(deps).exportArtifact(f.request())).toMatchObject({
@@ -165,10 +158,7 @@ describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds
       svg: {
         encode: /** Cancels the export, then returns one byte. */ async () => {
           signal.aborted = true;
-          return {
-            ok: true as const,
-            value: { bytes: new Uint8Array([1]), pages: [], warnings: [] },
-          };
+          return succeeded({ bytes: new Uint8Array([1]), pages: [], warnings: [] });
         },
       },
     };
@@ -196,7 +186,7 @@ describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds
     const f = await fixture();
     const artifact = value(
       await f.bindings.service.exportArtifact({
-        ...Object(f.request()),
+        ...f.request(),
         scope: { kind: 'section', id: 'flow' },
       }),
     );
@@ -209,7 +199,7 @@ describe('Export revision lifecycle', /** The lifecycle, cancellation and bounds
 
     // Check: a missing section, then the whole-collection export.
     const missing = await f.bindings.service.exportArtifact({
-      ...Object(f.request()),
+      ...f.request(),
       scope: { kind: 'section', id: 'missing' },
     });
     expect(missing).toMatchObject({ ok: false, error: { code: 'missing-section' } });

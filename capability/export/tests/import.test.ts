@@ -37,13 +37,15 @@ describe('Prepared import isolation', /** The import namespace and rejection tes
 
     // Arrange: add an ER section and a sequence section to the bundle, with fresh digests.
     const semantic = bundle(artifact.bytes);
-    const extra = `node @customer entity "Customer" {field @id "id" type="Id" key=primary}
-node @order entity "Order" {field @customer "customer" type="Id" key=foreign references=@customer.@id}
-wire @owns @customer.@id -> @order.@customer "owns" kind=association from=1 to=0..many
-section @data "ER tables" mode=er {show @customer @order connect @owns}
-node @human participant "Human" {} node @agent participant "Agent" {}
-section @exchange "Sequence" mode=sequence {show @human @agent event @request @human -> @agent "Request" kind=call activate=true}
-`;
+    const extra =
+      'node @customer entity "Customer" {field @id "id" type="Id" key=primary}\n' +
+      'node @order entity "Order" {field @customer "customer" type="Id" key=foreign ' +
+      'references=@customer.@id}\n' +
+      'wire @owns @customer.@id -> @order.@customer "owns" kind=association from=1 to=0..many\n' +
+      'section @data "ER tables" mode=er {show @customer @order connect @owns}\n' +
+      'node @human participant "Human" {} node @agent participant "Agent" {}\n' +
+      'section @exchange "Sequence" mode=sequence {show @human @agent ' +
+      'event @request @human -> @agent "Request" kind=call activate=true}\n';
     const source = semantic.source.slice(0, semantic.source.lastIndexOf('}')) + extra + '}';
     const manual = {
       ...semantic.manual,
@@ -74,14 +76,7 @@ section @exchange "Sequence" mode=sequence {show @human @agent event @request @h
       source,
       sourceDigest: encoding.hash(encoding.utf8(source)),
       manual,
-      manualDigest: encoding.hash(
-        encoding.utf8(
-          JSON.stringify(
-            manual,
-            /** Each object with its keys sorted. */ (_, item) => sortObject(item),
-          ),
-        ),
-      ),
+      manualDigest: canonicalDigest(manual),
     };
 
     // Act and check: the extended bundle keeps its references and sequence event.
@@ -135,21 +130,15 @@ section @exchange "Sequence" mode=sequence {show @human @agent event @request @h
     if (!section) return;
 
     // Check: duplicate manual sections.
+    const duplicatedManual = {
+      ...manifest.manual,
+      sections: [...manifest.manual.sections, ...manifest.manual.sections],
+    };
     const altered = {
       ...manifest,
-      manual: {
-        ...manifest.manual,
-        sections: [...manifest.manual.sections, ...manifest.manual.sections],
-      },
+      manual: duplicatedManual,
+      manualDigest: canonicalDigest(duplicatedManual),
     };
-    const canonical =
-      /** The value as JSON with each object's keys sorted. */
-      (value: unknown): string =>
-        JSON.stringify(
-          value,
-          /** Each object with its keys sorted. */ (_, item) => sortObject(item),
-        );
-    altered.manualDigest = encoding.hash(encoding.utf8(canonical(altered.manual)));
     expect(
       await f.bindings.service.prepareImport({
         bytes: encoding.utf8(JSON.stringify(altered)),
@@ -158,21 +147,22 @@ section @exchange "Sequence" mode=sequence {show @human @agent event @request @h
     ).toMatchObject({ ok: false, error: { code: 'invalid-import' } });
 
     // Check: 33 manual sections.
+    const oversizedManual = {
+      ...manifest.manual,
+      sections: Array.from(
+        { length: 33 },
+        /** A copy of the section with a numbered ID. */
+        (_, index) => ({
+          ...section,
+          id: `section-${index}`,
+        }),
+      ),
+    };
     const oversized = {
       ...manifest,
-      manual: {
-        ...manifest.manual,
-        sections: Array.from(
-          { length: 33 },
-          /** A copy of the section with a numbered ID. */
-          (_, index) => ({
-            ...section,
-            id: `section-${index}`,
-          }),
-        ),
-      },
+      manual: oversizedManual,
+      manualDigest: canonicalDigest(oversizedManual),
     };
-    oversized.manualDigest = encoding.hash(encoding.utf8(canonical(oversized.manual)));
     expect(
       await f.bindings.service.prepareImport({
         bytes: encoding.utf8(JSON.stringify(oversized)),
@@ -228,14 +218,26 @@ section @exchange "Sequence" mode=sequence {show @human @agent event @request @h
 });
 
 /**
+ * The digest the bundle format declares for a manual record: the SHA-256 of its canonical JSON
+ * (each object's keys sorted), computed independently of Export's code.
+ */
+function canonicalDigest(manual: unknown): string {
+  const canonical = JSON.stringify(
+    manual,
+    /** Each object with its keys sorted. */ (_, item) => sortObject(item),
+  );
+  return encoding.hash(encoding.utf8(canonical));
+}
+
+/**
  * An object with its own keys sorted, for building canonical JSON the way the bundle format
  * declares it, independently of Export's code. Arrays and other values are returned unchanged;
  * nested objects are sorted when `JSON.stringify` reaches them.
  */
-function sortObject(value: unknown): unknown {
-  if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value;
+function sortObject(input: unknown): unknown {
+  if (input === null || typeof input !== 'object') return input;
+  if (Array.isArray(input)) return input;
   return Object.fromEntries(
-    Object.entries(value).sort(/** Orders entries by key. */ ([a], [b]) => a.localeCompare(b)),
+    Object.entries(input).sort(/** Orders entries by key. */ ([a], [b]) => a.localeCompare(b)),
   );
 }

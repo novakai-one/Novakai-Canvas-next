@@ -13,7 +13,7 @@ import type { Fixture } from './fixtures.js';
 import { createExport } from '../contract/index.js';
 import { createFontDecoder } from '../adapters/native/fonts.js';
 import { createPdfEncoder } from '../adapters/native/pdf.js';
-import { fixture, value, startRaster, failed } from './fixtures.js';
+import { fixture, value, startRaster, failed, succeeded } from './fixtures.js';
 
 beforeAll(startRaster);
 
@@ -94,11 +94,11 @@ describe('Concrete portable rendering', /** The native SVG, PNG, PDF and HTML te
     expect(exportedHeader).toEqual(await interHeader(f));
 
     // Check: scale 4 succeeds; a 9000-wide scene is over the allocation limit.
-    const invalid = await f.bindings.service.exportArtifact({
-      ...Object(f.request('png')),
+    const scaled = await f.bindings.service.exportArtifact({
+      ...f.request('png'),
       scale: 4,
     });
-    expect(invalid.ok).toBe(true);
+    expect(scaled.ok).toBe(true);
     const snapshot = {
       ...f.snapshot,
       scene: { ...f.snapshot.scene, bounds: { x: 0, y: 0, width: 9000, height: 100 } },
@@ -106,16 +106,11 @@ describe('Concrete portable rendering', /** The native SVG, PNG, PDF and HTML te
     const deps = {
       ...f.bindings.dependencies,
       snapshots: {
-        acquire: /** Leases the wide snapshot; its release always succeeds. */ async () => ({
-          ok: true as const,
-          value: {
+        acquire: /** Leases the wide snapshot; its release always succeeds. */ async () =>
+          succeeded({
             snapshot,
-            release: /** Succeeds without doing anything. */ async () => ({
-              ok: true as const,
-              value: undefined,
-            }),
-          },
-        }),
+            release: /** Succeeds without doing anything. */ async () => succeeded(undefined),
+          }),
       },
     };
     expect(await createExport(deps).exportArtifact(f.request('png'))).toMatchObject({
@@ -183,16 +178,11 @@ describe('Concrete portable rendering', /** The native SVG, PNG, PDF and HTML te
     const tooMany = createExport({
       ...f.bindings.dependencies,
       snapshots: {
-        acquire: /** Leases the huge snapshot; its release always succeeds. */ async () => ({
-          ok: true as const,
-          value: {
+        acquire: /** Leases the huge snapshot; its release always succeeds. */ async () =>
+          succeeded({
             snapshot,
-            release: /** Succeeds without doing anything. */ async () => ({
-              ok: true as const,
-              value: undefined,
-            }),
-          },
-        }),
+            release: /** Succeeds without doing anything. */ async () => succeeded(undefined),
+          }),
       },
     });
     expect(await tooMany.exportArtifact(f.request('pdf'))).toMatchObject({
@@ -208,7 +198,7 @@ describe('Concrete portable rendering', /** The native SVG, PNG, PDF and HTML te
 
   /**
    * The HTML page links to `#section-0`, lists the wire label in its contents, has no script,
-   * stylesheet link or iframe, inlines the WebP image as a data URL, and uses the collection
+   * link or iframe element, inlines the WebP image as a data URL, and uses the collection
    * title as its heading.
    */
   async function htmlIsOffline(): Promise<void> {
@@ -266,8 +256,8 @@ describe('Concrete portable rendering', /** The native SVG, PNG, PDF and HTML te
     });
     const actualPdf = createPdfEncoder(
       { renderer: f.bindings.renderer },
-      { decode: /** Returns no fonts. */ async () => ({ ok: true, value: [] }) },
-      { convert: /** Converts nothing. */ async () => ({ ok: true, value: new Map() }) },
+      { decode: /** Returns no fonts. */ async () => succeeded([]) },
+      { convert: /** Converts nothing. */ async () => succeeded(new Map()) },
     );
     const nativeFault = createExport({
       ...f.bindings.dependencies,

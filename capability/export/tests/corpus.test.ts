@@ -28,8 +28,8 @@ const markerElements: Readonly<Record<MarkerKind, readonly [number, number]>> = 
 
 /**
  * Exports each of the 24 showcase collections as SVG, one after another, and checks it (see
- * {@link collectionMatches}). It uses the recorded scenes only: no browser, no service and no
- * hand-written geometry.
+ * {@link collectionMatches}). It uses the recorded scenes only: no browser, no running server
+ * and no hand-written geometry.
  */
 async function encodesAllCorpusFamilies(): Promise<void> {
   expect(index.examples).toHaveLength(24);
@@ -134,9 +134,7 @@ function rulesMatch(element: Element, content: MeasuredContent): void {
   const rendered = lines.map(
     /** The line's end points, stroke colour and stroke width. */
     (line) => [
-      ...['x1', 'y1', 'x2', 'y2'].map(
-        /** The attribute as a number. */ (attribute) => Number(line.getAttribute(attribute)),
-      ),
+      ...numericAttributes(line, ['x1', 'y1', 'x2', 'y2']),
       line.getAttribute('stroke'),
       Number(line.getAttribute('stroke-width')),
     ],
@@ -235,11 +233,12 @@ function headingDividerMatches(element: Element, node: VisualNode): void {
     /** Whether the child is a line. */ (child) => child.tagName === 'line',
   );
   assert(divider);
-  expect(
-    ['x1', 'y1', 'x2', 'y2'].map(
-      /** The attribute as a number. */ (key) => Number(divider.getAttribute(key)),
-    ),
-  ).toEqual([0, node.headerHeight, node.width, node.headerHeight]);
+  expect(numericAttributes(divider, ['x1', 'y1', 'x2', 'y2'])).toEqual([
+    0,
+    node.headerHeight,
+    node.width,
+    node.headerHeight,
+  ]);
   expect(divider.getAttribute('stroke')).toBe(node.paint.stroke);
 }
 
@@ -305,11 +304,13 @@ function sequenceFramesMatch(element: Element, section: PlacedSection): void {
     const bounds = [frame.box.x, frame.box.y, frame.box.width, frame.box.height];
     const rectangles = [...layer.querySelectorAll('rect')].map(
       /** The rectangle's x, y, width and height as numbers. */
-      (rect) =>
-        ['x', 'y', 'width', 'height'].map(
-          /** The attribute as a number. */ (key) => Number(rect.getAttribute(key)),
-        ),
+      (rect) => numericAttributes(rect, ['x', 'y', 'width', 'height']),
     );
     expect(rectangles).toContainEqual(bounds);
   }
+}
+
+/** The element's `keys` attributes, read in order and converted with `Number`. */
+function numericAttributes(element: Element, keys: readonly string[]): readonly number[] {
+  return keys.map(/** The attribute as a number. */ (key) => Number(element.getAttribute(key)));
 }

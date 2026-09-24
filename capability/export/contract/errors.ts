@@ -1,8 +1,9 @@
 /*
- * Export's own failure codes, diagnostic record and Result type. Export returns failures as
- * values: `exportArtifact`, `inspectBundle` and `prepareImport` never throw or reject. Export
- * only reads and encodes, so a caller can retry after fixing the input or repairing the host
- * provider. Hosts own storage repair and import admission.
+ * Export's own failure codes, diagnostic record, Result type, and the `success` and `failure`
+ * builders. Export returns failures as values: `exportArtifact`, `inspectBundle` and
+ * `prepareImport` never throw or reject. Export only reads and encodes, so a caller can retry
+ * after fixing the input or repairing the host provider. Hosts own storage repair and import
+ * admission.
  */
 
 /**
@@ -80,8 +81,8 @@ export type Result<T, E = Diagnostic> =
 /**
  * Wraps a value as a success. Adapters and core both build successes with it.
  *
- * The value is not copied. Boundary code takes the bytes it hands out through their own
- * `slice()`, which copies a plain `Uint8Array` but shares memory for a `Buffer`.
+ * The value is not copied. Code that returns bytes copies them itself with `slice()`;
+ * that copies a plain `Uint8Array` but shares memory with a `Buffer`.
  *
  * @param value - The successful value.
  * @returns A new `{ ok: true, value }` result.

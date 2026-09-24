@@ -8,8 +8,8 @@ import type { IdentityPort } from '../contract/ports/identity.js';
 /**
  * Creates the hashing provider. Pure computation: no storage, network or lifecycle.
  *
- * @param compute - Turns UTF-8 text into a hex digest; defaults to Node's SHA-256. Injectable for
- * tests.
+ * @param compute - Hashes a string to lowercase hex. The default is Node's SHA-256 over the
+ * string's UTF-8 bytes.
  * @returns An {@link IdentityPort} whose `hash` checks the computed value is a lowercase 64-char
  * hex digest and returns `provider-failed` (path `digest`) when it is not or when `compute` throws.
  * @throws Never.
@@ -20,9 +20,9 @@ export function createIdentity(compute: (value: string) => string = nativeHash):
 
 /** SHA-256 of the UTF-8 text as lowercase hex. No salt and no I/O. */
 function nativeHash(value: string): string {
-  const hash = createHash('sha256');
-  hash.update(value, 'utf8');
-  return hash.digest('hex');
+  const hasher = createHash('sha256');
+  hasher.update(value, 'utf8');
+  return hasher.digest('hex');
 }
 
 /** Computes and checks one digest; any throw or bad output becomes `provider-failed`. */

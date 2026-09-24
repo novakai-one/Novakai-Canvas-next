@@ -10,13 +10,17 @@ import { instantiate } from '../core/expansion/instantiate.js';
 
 /**
  * Creates the Templates facade over the given providers. It keeps no state and saves nothing;
- * Authoring owns commits and recovery.
+ * Authoring owns commits and recovery. `deps` is read on every call, inside `protect`, so a
+ * provider getter that throws becomes `provider-failed`.
  *
- * Every method:
- * 1. Checks the whole `catalog` input first (schemas, digests, pins, duplicates, cycles).
- * 2. Parses its own input from a copy, so later changes by the caller have no effect.
- * 3. Runs inside `protect`: the result is a frozen copy, and any throw becomes a failure
- *    (`InputFault` keeps its code and path; anything else becomes `provider-failed` at `$`).
+ * Every method runs entirely inside `protect`, and there:
+ * 1. checks the whole `catalog` input (schemas, digests, pins, duplicates, cycles);
+ * 2. parses its own input, if it has one, from a copy, so later changes by the caller have no
+ *    effect.
+ *
+ * Input that is not plain JSON data, is nested deeper than 48 levels, or is larger than 8 MiB is
+ * `invalid-input` at `$`. The result is a frozen copy. Any throw becomes a failure: an
+ * `InputFault` keeps its code, path and message; anything else becomes `provider-failed` at `$`.
  *
  * @param deps - The recipe codec, theme codec and hashing provider.
  * @returns A frozen {@link Templates} object.
@@ -24,14 +28,19 @@ import { instantiate } from '../core/expansion/instantiate.js';
  */
 export function createTemplates<T>(deps: Dependencies<T>): Templates<T> {
   return Object.freeze({
-    /** Read a complete immutable catalog once; callers retain the prior snapshot on malformed hashes/dependencies. */
+    /** Checks the catalog and returns it. */
     readCatalog: (input) => withCatalog(input, deps, (records) => success(records)),
+    /** Admits and plans the input, then returns the admitted preset. */
     validatePreset: (catalog, input) =>
       withCatalog(catalog, deps, (records) => validate(records, input, deps)),
+    /** Admits the input and returns the plan for adding it. */
     planAdmission: (catalog, input) =>
       withCatalog(catalog, deps, (records) => planInput(records, input, deps)),
+    /** Returns the selected preset. */
     read: (catalog, input) => withCatalog(catalog, deps, (records) => readInput(records, input)),
+    /** Returns the summaries matching the query. */
     list: (catalog, input) => withCatalog(catalog, deps, (records) => listInput(records, input)),
+    /** Expands the pinned recipe. */
     instantiate: (catalog, input) =>
       withCatalog(catalog, deps, (records) => expandInput(records, input, deps)),
   } satisfies Templates<T>);
@@ -52,7 +61,10 @@ function withCatalog<T, U>(
   });
 }
 
-/** Admits the input and plans it (so pins and cycles are checked too), then returns the admitted preset. Saves nothing. */
+/**
+ * Admits the input and plans it, so pins and cycles are checked and a changed preset under an
+ * existing version is `version-exists`; then returns the admitted preset. Saves nothing.
+ */
 function validate<T>(records: Catalog, input: unknown, deps: Dependencies<T>): Result<Preset> {
   const result = admit(records, input, deps);
   if (!result.ok) {

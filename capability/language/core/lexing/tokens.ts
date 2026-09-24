@@ -1,30 +1,62 @@
+/*
+ * The lexer: turns source text into tokens. Every character belongs to some lexeme, so nothing
+ * is skipped silently; whitespace and `#` comments are dropped, anything else becomes a token.
+ * A final `eof` token marks the end.
+ */
 import type { Token } from '../../contract/records/syntax.js';
 import type { Result } from '../../contract/errors.js';
 import { protect, reject, origin } from '../validation/outcomes.js';
 import { lineStarts, sourceSpan } from './locations.js';
-const lexeme =
-  /\s+|#[^\n]*|"(?:\\[\s\S]|[^"\\])*"|@[A-Za-z][A-Za-z0-9_-]*|(?:0|1)\.\.(?:1|many)|-?\d+|[A-Za-z][A-Za-z0-9_-]*|->|[{}\[\],=.:/]|[\s\S]/g;
-/** Token kinds come from complete lexemes; invalid punctuation never becomes an implicit word. */
-function classify(text: string): Token['kind'] {
-  if (text.startsWith('"')) return 'string';
-  if (text.startsWith('@')) return 'id';
-  return classifyBare(text);
-}
-/** Cardinalities are words; integer properties are checked by their owning property definition. */
-function classifyBare(text: string): Token['kind'] {
-  if (/^-?\d+$/.test(text)) return 'integer';
-  if (/^[A-Za-z0-9]/.test(text)) return 'word';
-  return 'symbol';
-}
-/** Comments and whitespace are trivia only outside strings. */
-function isTrivia(text: string): boolean {
-  return /^\s|^#/.test(text);
-}
-/** Bounded iterative lexing; local allocation only. Language owns correction and typed failure recovery. */
+
+/** The most tokens one source may have. */
+const maxTokens = 250000;
+
+/**
+ * The lexeme alternatives, tried in this order at each position. The last one matches any
+ * single character, so every character is covered.
+ */
+const lexemePatterns: readonly string[] = [
+  // Whitespace.
+  String.raw`\s+`,
+  // A comment, to the end of the line.
+  String.raw`#[^\n]*`,
+  // A complete quoted string, with backslash escapes.
+  String.raw`"(?:\\[\s\S]|[^"\\])*"`,
+  // An ID such as `@start`.
+  String.raw`@[A-Za-z][A-Za-z0-9_-]*`,
+  // A cardinality: `0..1`, `0..many`, `1..1` or `1..many`.
+  String.raw`(?:0|1)\.\.(?:1|many)`,
+  // An integer, optionally negative.
+  String.raw`-?\d+`,
+  // A bare word.
+  String.raw`[A-Za-z][A-Za-z0-9_-]*`,
+  // The arrow.
+  String.raw`->`,
+  // One punctuation character.
+  String.raw`[{}\[\],=.:/]`,
+  // Any other single character (such as a lone `"`).
+  String.raw`[\s\S]`,
+];
+
+/** One global expression matching any of {@link lexemePatterns}. */
+const lexeme = new RegExp(lexemePatterns.join('|'), 'g');
+
+/**
+ * Splits source text into tokens. Nothing outside this call is changed.
+ *
+ * @param source - The source text.
+ * @returns The tokens in order, ending with `eof`; or `syntax` for an unterminated string, or
+ * `limit` for more than 250,000 tokens.
+ * @throws Never.
+ */
 export function tokenize(source: string): Result<readonly Token[]> {
-  return protect(() => collectTokens(source));
+  return protect(
+    /** Collects every token. */
+    () => collectTokens(source),
+  );
 }
-/** Consume all source with an invalid-character fallback; never skip malformed source gaps. */
+
+/** Every token in the source, then `eof`. */
 function collectTokens(source: string): readonly Token[] {
   const starts = lineStarts(source);
   const tokens: Token[] = [];
@@ -32,11 +64,15 @@ function collectTokens(source: string): readonly Token[] {
   tokens.push({ kind: 'eof', text: '', span: sourceSpan(starts, source.length, source.length) });
   return tokens;
 }
-/** Token allocation stops at the public bound, before constructing an oversized token array. */
+
+/**
+ * Adds one lexeme as a token, unless it is whitespace or a comment. A lone `"` is rejected, and
+ * the token limit is checked before the array grows.
+ */
 function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly number[]): void {
   if (isTrivia(match[0])) return;
   requireCompleteLexeme(match, starts);
-  if (tokens.length >= 250000)
+  if (tokens.length >= maxTokens)
     reject('limit', origin, 'At most 250000 tokens', 'Token limit exceeded');
   tokens.push({
     kind: classify(match[0]),
@@ -45,7 +81,12 @@ function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly n
   });
 }
 
-/** A fallback opening quote is not a string token; only the complete quoted production may be decoded. */
+/** Whether the lexeme is whitespace or a comment. */
+function isTrivia(text: string): boolean {
+  return /^\s|^#/.test(text);
+}
+
+/** Rejects a lone `"`: a string that never closes matched only the any-character fallback. */
 function requireCompleteLexeme(match: RegExpExecArray, starts: readonly number[]): void {
   if (match[0] === '"')
     reject(
@@ -54,4 +95,21 @@ function requireCompleteLexeme(match: RegExpExecArray, starts: readonly number[]
       'Closing unescaped quote',
       'Unterminated quoted string',
     );
+}
+
+/** The token kind of a lexeme: `string`, `id`, or a bare kind from {@link classifyBare}. */
+function classify(text: string): Token['kind'] {
+  if (text.startsWith('"')) return 'string';
+  if (text.startsWith('@')) return 'id';
+  return classifyBare(text);
+}
+
+/**
+ * The kind of any other lexeme: `integer` for digits, `word` for anything starting with a
+ * letter or digit (cardinalities are words), otherwise `symbol`.
+ */
+function classifyBare(text: string): Token['kind'] {
+  if (/^-?\d+$/.test(text)) return 'integer';
+  if (/^[A-Za-z0-9]/.test(text)) return 'word';
+  return 'symbol';
 }

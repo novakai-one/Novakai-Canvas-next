@@ -1,42 +1,112 @@
+/*
+ * The parser's position in the token list. A cursor is never changed: every step returns a new
+ * one, so a reader can look ahead and give up without undoing anything. The cursor also counts
+ * nesting depth, which is limited to 64.
+ */
 import type { Token, Span } from '../../contract/records/syntax.js';
 import { reject, origin } from '../validation/outcomes.js';
+
+/** The deepest nesting of braces and lists allowed. */
+const maxNesting = 64;
+
+/** A position in the token list. */
 export interface Cursor {
+  /** All tokens of the source, ending with `eof`. */
   readonly tokens: readonly Token[];
+
+  /** The index of the current token. */
   readonly index: number;
+
+  /** How many braces or lists are open here. */
   readonly depth: number;
 }
+
+/** What a reader returns: the value it read and the cursor after it. */
 export interface Parsed<T> {
+  /** The value read. */
   readonly value: T;
+
+  /** The cursor just after what was read. */
   readonly next: Cursor;
 }
-/** Read without advancing; unexpected exhaustion is always a structured syntax failure. */
+
+/**
+ * The token at the cursor, or `ahead` tokens after it, without moving.
+ *
+ * @param cursor - Where to look.
+ * @param ahead - How many tokens further to look; defaults to 0.
+ * @returns The token.
+ * @throws A `LanguageFault` with a `syntax` diagnostic ("Unexpected end of source") past the
+ * last token.
+ */
 export function peek(cursor: Cursor, ahead = 0): Token {
   const token = cursor.tokens[cursor.index + ahead];
   if (token === undefined)
     reject('syntax', origin, 'Complete statement', 'Unexpected end of source');
   return token;
 }
-/** Advance an immutable parser position, retaining nesting protection across readers. */
+
+/**
+ * Moves forward, keeping the nesting depth.
+ *
+ * @param cursor - The current position.
+ * @param count - How many tokens to move; defaults to 1.
+ * @returns A new cursor.
+ * @throws Never.
+ */
 export function advance(cursor: Cursor, count = 1): Cursor {
   return { ...cursor, index: cursor.index + count };
 }
-/** Require literal punctuation or keyword before advancing; Language owns source correction. */
+
+/**
+ * Moves past a token that must have exactly the text `expected`.
+ *
+ * @param cursor - The current position.
+ * @param expected - The required token text, such as `{` or `in`.
+ * @returns The cursor after that token.
+ * @throws A `LanguageFault` with a `syntax` diagnostic ("Expected …") when the token differs,
+ * or from {@link peek} at the end of the tokens.
+ */
 export function consume(cursor: Cursor, expected: string): Cursor {
   const token = peek(cursor);
   if (token.text !== expected) reject('syntax', token.span, expected, `Expected ${expected}`);
   return advance(cursor);
 }
-/** Enter a bounded syntactic body without letting declaration count grow the JavaScript stack. */
+
+/**
+ * Opens one more level of nesting. The limit keeps deeply nested source from exhausting the
+ * JavaScript stack.
+ *
+ * @param cursor - The current position.
+ * @returns The same position one level deeper.
+ * @throws A `LanguageFault` with a `limit` diagnostic when 64 levels are already open.
+ */
 export function enter(cursor: Cursor): Cursor {
-  if (cursor.depth >= 64)
+  if (cursor.depth >= maxNesting)
     reject('limit', peek(cursor).span, 'Nesting at most 64', 'Nesting limit exceeded');
   return { ...cursor, depth: cursor.depth + 1 };
 }
-/** Restore caller nesting after a complete brace/list body. */
+
+/**
+ * Closes one level of nesting after a complete brace or list body.
+ *
+ * @param cursor - The current position.
+ * @returns The same position one level shallower.
+ * @throws Never.
+ */
 export function leave(cursor: Cursor): Cursor {
   return { ...cursor, depth: cursor.depth - 1 };
 }
-/** Span includes only consumed tokens; unconsumed next declaration is excluded. */
+
+/**
+ * The span of the tokens read between two cursors: from the first token at `start` to the last
+ * token before `end`. The token at `end` is not included.
+ *
+ * @param start - The cursor before reading.
+ * @param end - The cursor after reading.
+ * @returns The span; when nothing was read, the span of the token at `start`.
+ * @throws From {@link peek} when `start` is past the last token.
+ */
 export function consumedSpan(start: Cursor, end: Cursor): Span {
   const final = start.tokens[Math.max(start.index, end.index - 1)];
   return { start: peek(start).span.start, end: final?.span.end ?? peek(start).span.end };

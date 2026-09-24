@@ -8,10 +8,31 @@ import {
   type LibrarySnapshot,
   type Result,
   type DiagnosticCode,
+  type CatalogId,
+  type FolderId,
+  type CollectionId,
+  type SectionId,
+  type ObjectId,
 } from '../contract/index.js';
 
+/**
+ * The fixture IDs. `readonly` is checked by the compiler only; the object is not frozen, so a
+ * test must never assign to it.
+ */
+export interface FixtureIds {
+  readonly catalog: CatalogId;
+  /** Folder `engineering`. */
+  readonly folder: FolderId;
+  /** Folder `backend`, a child of `engineering`. */
+  readonly child: FolderId;
+  readonly alpha: CollectionId;
+  readonly beta: CollectionId;
+  readonly section: SectionId;
+  readonly object: ObjectId;
+}
+
 /** Fixture IDs, checked with the public ID schemas (no private code is used). */
-export const ids = {
+export const ids: FixtureIds = {
   catalog: catalogId.parse('catalog'),
   folder: folderId.parse('engineering'),
   child: folderId.parse('backend'),
@@ -29,6 +50,9 @@ export const ids = {
  *
  * Every field is given explicitly, so schema defaults never produce an expected value. A fresh
  * object is returned on every call.
+ *
+ * @returns The snapshot, built from {@link ids}.
+ * @throws Never.
  */
 export function snapshot(): LibrarySnapshot {
   return {
@@ -80,7 +104,13 @@ export function snapshot(): LibrarySnapshot {
 /**
  * Asserts a result succeeded and returns its value.
  *
+ * The result is turned into JSON before the assertion runs, even on success, so it throws for a
+ * value JSON cannot hold (a bigint, a cycle, or a `toJSON` that throws).
+ *
+ * @param result - The result to check.
+ * @returns The success value.
  * @throws Vitest's assertion error, carrying the result as JSON, when the result failed.
+ * @throws `TypeError` (or the `toJSON` error) when the result cannot be turned into JSON.
  */
 export function valueOf<T>(result: Result<T>): T {
   assert(result.ok, JSON.stringify(result));
@@ -90,6 +120,12 @@ export function valueOf<T>(result: Result<T>): T {
 /**
  * True when the result failed with a diagnostic of `code` at exactly `path`. Other diagnostics in
  * the same failure are allowed.
+ *
+ * @param result - The result to check.
+ * @param code - The expected diagnostic code.
+ * @param path - The expected diagnostic path, compared exactly.
+ * @returns Whether a matching diagnostic exists; `false` for a success.
+ * @throws Never.
  */
 export function hasFailure<T>(result: Result<T>, code: DiagnosticCode, path: string): boolean {
   if (result.ok) {

@@ -17,6 +17,8 @@ import { compareText } from './project.js';
  * @param snapshot - The validated snapshot (for entry order and recent visits).
  * @param request - The normalized request.
  * @returns The hits in order.
+ * @throws Never for validated input. It runs inside `queryLibrary`'s `protect` boundary, which
+ * turns any unexpected throw into a failed result.
  */
 export function sortHits(
   hits: readonly SearchHit[],

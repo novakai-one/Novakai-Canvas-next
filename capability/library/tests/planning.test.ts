@@ -120,7 +120,8 @@ describe('Library catalog planning', () => {
 
   /**
    * A folder with contents is removed only under `rehome`, which moves its direct child folders
-   * and entries to its parent. No collection is dropped and deeper folders stay attached.
+   * and entries to its parent. No collection is dropped. (Deeper folders staying attached is the
+   * product rule, but this fixture has no grandchild folder, so this test does not show it.)
    */
   test('removes a folder with contents only under rehome, moving them to its parent', () => {
     const base = snapshot();

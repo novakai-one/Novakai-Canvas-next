@@ -43,9 +43,10 @@ describe('Library search', () => {
   /**
    * Pages follow a stable order (collection, section, object); the last page has no cursor. A
    * cursor fails with `stale-cursor` after a source revision changes, with another page size, or
-   * when it is not JSON. A next cursor over the size budget is a `limit` failure.
+   * when it is not JSON. When the next cursor would exceed the size budget, the query fails with
+   * `limit` instead of returning it.
    */
-  test('pages in a stable order and rejects stale or oversized cursors', () => {
+  test('pages in a stable order, rejects stale cursors and refuses an oversized next cursor', () => {
     const base = snapshot();
     const first = valueOf(query(base, { limit: 1 }));
     expect(first.hits.map((hit) => hit.kind)).toEqual(['collection']);

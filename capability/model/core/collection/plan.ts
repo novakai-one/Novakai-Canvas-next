@@ -17,8 +17,8 @@ import { describeImpact } from './impact.js';
  *
  * Changes may break references for a while, as long as the final candidate is valid. The
  * revision is never incremented, the inputs are not changed and nothing is written. A throw that
- * escapes these steps (for example from a getter or proxy trap) becomes `shape` at `changes`,
- * "Input could not be read as plain data".
+ * escapes these steps (for example from a proxy trap) becomes `shape` at `changes`, "Input could
+ * not be read as plain data".
  *
  * Pure: the same inputs give the same plan. Authoring owns admission, the revision increment,
  * commit and crash recovery.

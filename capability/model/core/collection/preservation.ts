@@ -13,8 +13,10 @@ import type { Placement } from '../../contract/records/layout.js';
  *   such group, from the previous appearance of the object it represents;
  * - each wire's `manual` route (with its `locked` flag), from the previous wire of the same
  *   relationship.
- * A matching record without geometry is never replaced by the fallback. `reset-layout` and
- * `reset-route` do not come through here, so a later replacement keeps the reset state.
+ * A matching record without geometry is never replaced by the fallback. An inherited field the
+ * new record lacks is added last (`placement`, or `manual` then `locked` on a wire); a `locked`
+ * field already there keeps its position. `reset-layout` and `reset-route` do not come through
+ * here, so a later replacement keeps the reset state.
  *
  * Pure copy: neither section is changed. `plan` validates the result; Authoring owns commit and
  * crash recovery.
@@ -57,7 +59,8 @@ export function preserveSection(next: Section, previous: Section): Section {
  *
  * @param next - The replacement collection.
  * @param previous - The current collection.
- * @returns A new collection with `next`'s fields in their order and a new `sections` list.
+ * @returns A new collection with `next`'s fields in their order and a new `sections` list
+ * (inherited fields are added as {@link preserveSection} describes).
  * @throws Never for parsed collections.
  */
 export function preserveOverrides(next: Collection, previous: Collection): Collection {
@@ -70,7 +73,8 @@ export function preserveOverrides(next: Collection, previous: Collection): Colle
 
 /**
  * Clears a wire's manual route: removes `manual` and sets `locked` to `false`. Its routing style
- * and attachment preferences stay. Used by `reset-route` and `reset-layout`.
+ * and attachment preferences stay. Used by `reset-route` and `reset-layout`. Pure copy; Authoring
+ * owns commit and crash recovery.
  *
  * @param wire - The wire to reset.
  * @returns A new wire with the other fields in their order; `locked` keeps its position, or is
@@ -87,7 +91,8 @@ export function clearRoute(wire: WireAppearance): WireAppearance {
 /**
  * Clears all of a section's geometry, for `reset-layout`: the section's, every appearance's and
  * every group's `placement`, and every wire's manual route (see {@link clearRoute}). Layout
- * constraints and other content stay. Resetting twice gives the same result.
+ * constraints and other content stay. Resetting twice gives the same result. Pure copy; Authoring
+ * owns commit and crash recovery.
  *
  * @param section - The section to reset.
  * @returns A new section with the other fields in their order and new `appearances`, `groups`

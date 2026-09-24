@@ -11,7 +11,8 @@ import { clearRoute, clearSection } from './preservation.js';
  * must exist (else `not-found` at `sections.<section>`, "Section must exist"). Then:
  * - `hide`: the object needs an ordinary appearance in the section (a group representing it is
  *   not enough; else `not-found` at `sections.<id>.appearances.<object>`, "Hide requires
- *   ordinary appearance"). Removes that appearance and the section's wires for relationships
+ *   ordinary appearance"). Removes every ordinary appearance of the object and the section's
+ *   wires for relationships
  *   from or to the object; the object and relationships themselves stay;
  * - `reset-route`: the relationship needs a wire in the section (else `not-found` at
  *   `sections.<id>.wires.<relationship>`, "Route must be visible"), even one without a manual
@@ -60,7 +61,7 @@ function hideAppearance(
   if (!hasOrdinaryAppearance) {
     return failure(
       'not-found',
-      `sections.${section.id}.appearances.${objectId}`,
+      `${sectionPath(section)}.appearances.${objectId}`,
       'Hide requires ordinary appearance',
     );
   }
@@ -101,7 +102,7 @@ function resetVisibleRoute(section: Section, relationshipId: RelationshipId): Re
   if (!routeExists) {
     return failure(
       'not-found',
-      `sections.${section.id}.wires.${relationshipId}`,
+      `${sectionPath(section)}.wires.${relationshipId}`,
       'Route must be visible',
     );
   }
@@ -125,6 +126,11 @@ function applySectionEdit(
     return resetVisibleRoute(section, change.relationship);
   }
   return success(clearSection(section));
+}
+
+/** Returns a section's collection path, `sections.<id>`. */
+function sectionPath(section: Section): string {
+  return `sections.${section.id}`;
 }
 
 /** Returns the edited section in place of the section with its ID; any other section as it is. */

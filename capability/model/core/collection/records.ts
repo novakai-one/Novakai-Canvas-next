@@ -1,4 +1,5 @@
 import type { Collection } from '../../contract/records/collection.js';
+import type { Section } from '../../contract/records/section.js';
 import type { RecordChange } from '../../contract/records/change.js';
 import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../invariants/issues.js';
@@ -91,7 +92,7 @@ function writeRelationships(collection: Collection, change: RecordChange): Colle
 function sectionReplacement(
   collection: Collection,
   change: Extract<RecordChange, { target: 'sections' }>,
-): Collection['sections'][number] {
+): Section {
   const previous = collection.sections.find(
     /** Tells whether this is the section being replaced. */
     (section) => section.id === change.value.id,
@@ -143,14 +144,14 @@ function writeDefinitions(collection: Collection, change: RecordChange): Collect
  * One writer per record list. Each checks the change's target again, so TypeScript narrows its
  * payload; the table always picks the writer for the change's own target.
  */
-const recordWriters: Readonly<Record<RecordChange['target'], RecordWriter>> = {
+const recordWriters: Readonly<Record<RecordChange['target'], RecordWriter>> = Object.freeze({
   objects: writeObjects,
   relationships: writeRelationships,
   sections: writeSections,
   assets: writeAssets,
   sources: writeSources,
   definitions: writeDefinitions,
-};
+});
 
 /**
  * Rejects a `replace` whose ID is missing, then writes the record. (A `create` with an existing

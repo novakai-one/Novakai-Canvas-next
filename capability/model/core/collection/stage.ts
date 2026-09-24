@@ -20,9 +20,10 @@ import { applyOperation } from './operations.js';
  * 4. apply them in order (see `applyOperation`), stopping at the first failing change; later
  *    changes are not applied to a failed prefix.
  *
- * The candidate's references may be unresolved; only `plan` proves validity. A throw that
- * escapes these steps (for example from a getter or proxy trap) becomes `shape` at `changes`,
- * "Input could not be read as plain data".
+ * The candidate's references may be unresolved; only `plan` proves validity. Steps 1 and 2 turn
+ * their own throws into failures and reject accessors before they run; a throw that still
+ * escapes (for example from a proxy trap during parsing or applying) becomes `shape` at
+ * `changes`, "Input could not be read as plain data".
  *
  * Pure: no revision is allocated and nothing is written. Language owns correcting syntax;
  * Authoring owns final admission, commit and crash recovery.

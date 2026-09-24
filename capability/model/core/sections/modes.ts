@@ -9,7 +9,8 @@ import { visibleObjects } from './groups.js';
 
 /**
  * Returns the relationships a section draws as wires, in the collection's relationship order.
- * Wires naming a missing relationship are skipped (the view rules report them).
+ * Wires naming a missing relationship are skipped (the view rules report them). Pure: reads
+ * only; Authoring owns correction, commit and crash recovery.
  *
  * @param section - A parsed section.
  * @param collection - The collection the section belongs to.

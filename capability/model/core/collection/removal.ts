@@ -12,7 +12,8 @@ import { cascadeSection } from './cascade-views.js';
  * 2. the full cascade is computed: relationships from or to the object are removed, other
  *    objects' dependent content is cleaned (`cascadeContent`) and every section is cleaned
  *    (`cascadeSection`);
- * 3. when that cascade changes anything besides removing the object itself and the change lacks
+ * 3. when that cascade changes anything besides removing the object itself (compared as JSON)
+ *    and the change lacks
  *    `cascade: true`: `delete-referenced` at `objects.<id>`, "Explicit cascade required for
  *    referenced object".
  * Otherwise the cascaded collection is returned (with nothing to clean, that is the collection
@@ -72,8 +73,9 @@ type ObjectDeletion = Extract<Change, { op: 'delete-object' }>;
 type RecordRemoval = Extract<Change, { op: 'remove' }>;
 
 /**
- * Builds the collection after a full cascade: incident relationships removed, then the object
- * removed and other objects' content cleaned, then every section cleaned.
+ * Builds the collection after a full cascade. In this order: finds the relationships from or to
+ * the object; removes the object and cleans the other objects' content; removes those
+ * relationships; cleans every section.
  */
 function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Collection {
   const incidentRelationships = collection.relationships.filter(
@@ -85,10 +87,7 @@ function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Col
     /** The relationship's ID. */
     (relationship) => relationship.id,
   );
-  const survivingObjects = collection.objects.filter(
-    /** Keeps every other object. */
-    (object) => object.id !== removedId,
-  );
+  const survivingObjects = withoutRecord(collection.objects, removedId);
   const objects = survivingObjects.map(
     /** Cleans content that depends on the deleted object. */
     (object) => cascadeContent(object, removedId),

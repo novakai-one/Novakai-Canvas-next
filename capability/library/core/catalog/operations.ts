@@ -19,7 +19,8 @@ import { removeFolder } from './folders.js';
  * @param catalog - The catalog so far.
  * @param change - The change to apply.
  * @returns The new catalog, or a failure with no partial value.
- * @throws Never.
+ * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
+ * reaches the `protect` in `planCatalog`.
  */
 export function applyOperation(catalog: Catalog, change: CatalogChange): Result<Catalog> {
   return handlers[change.op](catalog, change);

@@ -11,7 +11,9 @@ import { failure, success } from '../validation/outcomes.js';
  * @param folders - The catalog's folders.
  * @returns The folders visited, and `cycle: true` when the walk stopped at a folder it had
  * already visited.
- * @throws Never.
+ * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
+ * reaches the `protect` of the public operation that called it (`validateSnapshot`,
+ * `planCatalog` or `queryLibrary`).
  */
 export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry {
   const visited = new Set<FolderId>();
@@ -31,7 +33,8 @@ export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry 
  * @param owner - The folder searched.
  * @param folders - The catalog's folders.
  * @returns True when `owner` is `folder` or one of its ancestors.
- * @throws Never.
+ * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
+ * reaches the `protect` in `queryLibrary`.
  */
 export function isWithin(
   folder: FolderId | undefined,
@@ -56,7 +59,8 @@ export function isWithin(
  * @param id - The folder to remove.
  * @param policy - `reject` or `rehome`.
  * @returns The new catalog, or a failure with no partial value.
- * @throws Never.
+ * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
+ * reaches the `protect` in `planCatalog`.
  */
 export function removeFolder(
   catalog: Catalog,

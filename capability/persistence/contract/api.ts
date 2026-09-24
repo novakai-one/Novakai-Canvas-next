@@ -17,7 +17,10 @@ import { restoreBackup } from '../core/recovery/restore.js';
  *
  * Every operation that reads state validates the stored state and checks it belongs to
  * `workspace` before any storage policy runs. The store itself never escapes the returned object.
- * Returned data is detached and frozen, and failures stay typed:
+ * Data Persistence produces is detached and frozen. A result returned by an injected provider
+ * (Assets leases, domain validation) is passed on as the same object and frozen in place, not
+ * copied; one the provider had already frozen at its top level is returned as is, so its nested
+ * objects stay as the provider left them. Failures stay typed:
  * - `readSnapshot` and `close`: a throw becomes `storage-unavailable`.
  * - `commit` and `receipt`: a throw (for example non-JSON or oversized input) becomes
  *   `invalid-input`.

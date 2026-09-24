@@ -20,7 +20,11 @@ export interface RenderInput {
   readonly signal: Cancellation;
 }
 
-/** Encodes one format. Handlers never write to the workspace. */
+/**
+ * Encodes one format. Handlers never write to the workspace. Export calls `encode` once per
+ * export, and a retry calls it again. The built-in handlers keep no state between calls, so there
+ * is nothing to recover.
+ */
 export interface FormatHandler {
   /**
    * Encodes the input.

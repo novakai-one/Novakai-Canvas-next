@@ -1,8 +1,9 @@
 import type { Result } from '../errors.js';
 
 /**
- * Strict byte and text codecs. Malformed UTF-8 or base64 is a typed failure, never replacement
- * data. The native implementation is `createEncoding`.
+ * Strict byte and text codecs, and SHA-256 hashing. Malformed UTF-8 or base64 is a typed failure,
+ * never replacement data. Every method is side-effect free, so Export may call them any number
+ * of times and there is nothing to recover. The native implementation is `createEncoding`.
  */
 export interface Encoding {
   /**

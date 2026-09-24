@@ -1,14 +1,37 @@
+/*
+ * Splitting a lowered collection or section record into its layout fields and everything else.
+ * No side effects: the input is not changed. Language owns correcting the source; Authoring owns
+ * commit recovery.
+ */
 import { layoutProperties } from '../vocabulary/properties.js';
 import type { RawRecord } from './fields.js';
-const fields: readonly string[] = Object.values(layoutProperties).map((property) => property.field);
-/** Partition canonical scope fields without writes; callers retain their input and Language owns correction. */
+
+/**
+ * Splits a record into the layout fields (`columns`, `algorithm`, `direction`, `gap`) and the
+ * rest. Both parts keep the record's key order.
+ *
+ * @param record - A lowered collection or section record.
+ * @returns `layout` with the layout fields, and `remaining` with every other field.
+ * @throws Never.
+ */
 export function partitionLayout(record: RawRecord): {
   readonly layout: RawRecord;
   readonly remaining: RawRecord;
 } {
   const entries = Object.entries(record);
   return {
-    layout: Object.fromEntries(entries.filter(([field]) => fields.includes(field))),
-    remaining: Object.fromEntries(entries.filter(([field]) => !fields.includes(field))),
+    layout: Object.fromEntries(
+      entries.filter(/** Whether this is a layout field. */ ([field]) => fields.includes(field)),
+    ),
+    remaining: Object.fromEntries(
+      entries.filter(
+        /** Whether this is not a layout field. */ ([field]) => !fields.includes(field),
+      ),
+    ),
   };
 }
+
+/** The Model field names of the layout properties. */
+const fields: readonly string[] = Object.values(layoutProperties).map(
+  /** The property's Model field name. */ (property) => property.field,
+);

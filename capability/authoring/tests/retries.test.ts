@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, assert } from 'vitest';
 import {
   createAuthoring,
   failure,
@@ -58,7 +58,8 @@ describe('Authoring retry identity', () => {
   /**
    * Two copies of one request racing commit once and both get the same receipt. Two different
    * requests with the same ID: one commits, the other is rejected. Edits to different collections
-   * both commit. A retry that started before the original committed still gets its receipt.
+   * both commit. A copy of a request held at its snapshot read while the same request commits gets
+   * that commit's receipt.
    */
   it('commits simultaneous retries once, rejects a racing reused ID, commits unrelated edits, and answers a late retry with the receipt', async () => {
     const h = harness();
@@ -70,9 +71,9 @@ describe('Authoring retry identity', () => {
 
     // The same request twice: one effect, identical receipts.
     const identical = await race(h.deps, edit, edit);
-    expect(value(identical[0] ?? failure('invalid-input', '$', 'Missing race result'))).toEqual(
-      value(identical[1] ?? failure('invalid-input', '$', 'Missing race result')),
-    );
+    const [firstResult, secondResult] = identical;
+    assert(firstResult && secondResult, 'race returns two results');
+    expect(value(firstResult)).toEqual(value(secondResult));
     expect(record(value(await h.api.read(workspace)), key('collection', 'demo')).version).toBe(1);
 
     // Two different requests under one ID: exactly one wins.
@@ -99,7 +100,7 @@ describe('Authoring retry identity', () => {
     expect(independent.every((result) => result.ok)).toBe(true);
     expect(record(value(await h.api.read(workspace)), key('catalog', 'catalog')).version).toBe(0);
 
-    // A retry held at its snapshot read while the original commits returns the same receipt.
+    // Hold one copy at its snapshot read, commit another copy, then release: same receipt.
     const lateSnapshot = value(await h.api.read(workspace));
     const lateRequest = request(lateSnapshot, 'late-retry', [
       put('collection', 'demo', diagram('demo', 'Late retry'), [media]),

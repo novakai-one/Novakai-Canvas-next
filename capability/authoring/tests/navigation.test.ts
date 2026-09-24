@@ -34,7 +34,7 @@ type Direction = 'undo' | 'redo';
  * The history list each corrupted record holds: a transaction's `transitions` and a head's
  * `participants`.
  */
-const REPEATED_HISTORY_FIELDS = new Map([
+const REPEATED_HISTORY_FIELDS: ReadonlyMap<string, string> = new Map([
   ['tx:A', 'transitions'],
   ['head:A', 'participants'],
 ]);
@@ -54,7 +54,7 @@ async function edit(
 }
 
 /** Builds the undo or redo request a client submits from a history status. */
-function inverse(status: HistoryStatus, id: string, direction: Direction): Request {
+function inverseFromStatus(status: HistoryStatus, id: string, direction: Direction): Request {
   const action = status[direction];
   assert(action);
   return requestSchema.parse({
@@ -75,7 +75,7 @@ async function navigate(
   id: string,
   direction: Direction,
 ): Promise<Result<Receipt>> {
-  return api.apply(inverse(value(await api.history(workspace)), id, direction));
+  return api.apply(inverseFromStatus(value(await api.history(workspace)), id, direction));
 }
 
 /** Reads the `demo` collection's current value. */
@@ -85,7 +85,9 @@ async function title(api: Authoring): Promise<Json> {
 
 /** Applies edits `E<from>` up to, but not including, `E<to>`, one after another. */
 async function edits(api: Authoring, from: number, to: number): Promise<void> {
-  for (let index = from; index < to; index++) value(await edit(api, `E${index}`, `E${index}`));
+  for (let index = from; index < to; index++) {
+    value(await edit(api, `E${index}`, `E${index}`));
+  }
 }
 
 /** Lists a snapshot's history records. */
@@ -93,7 +95,10 @@ function historyRecords(snapshot: Snapshot): readonly StoredRecord[] {
   return snapshot.records.filter((item) => item.key.kind === 'history');
 }
 
-/** Returns the record with its history list repeated (for example `[a, b]` → `[a, b, a, b]`), when it has one. */
+/**
+ * Returns the record with its history list repeated (for example `[a, b]` → `[a, b, a, b]`)
+ * when it is `tx:A` or `head:A`. Every other record is returned unchanged.
+ */
 function withRepeatedHistory(item: StoredRecord): StoredRecord {
   const field = REPEATED_HISTORY_FIELDS.get(item.key.id);
   if (!field) return item;
@@ -220,13 +225,13 @@ describe('workspace chronological history', () => {
     value(await edit(h.api, 'A', 'A'));
     const status = value(await h.api.history(workspace));
     const results = await Promise.all([
-      h.api.apply(inverse(status, 'U1', 'undo')),
-      h.api.apply(inverse(status, 'U2', 'undo')),
+      h.api.apply(inverseFromStatus(status, 'U1', 'undo')),
+      h.api.apply(inverseFromStatus(status, 'U2', 'undo')),
     ]);
     expect(results.filter((item) => item.ok)).toHaveLength(1);
     expect(results.filter((item) => !item.ok)).toHaveLength(1);
     expect(await title(h.api)).toMatchObject({ title: 'Original', revision: 2 });
-    rejects(await h.api.apply(inverse(status, 'U3', 'undo')), 'revision-conflict');
+    rejects(await h.api.apply(inverseFromStatus(status, 'U3', 'undo')), 'revision-conflict');
     h.store.close();
   });
 
@@ -237,7 +242,7 @@ describe('workspace chronological history', () => {
     value(await h.api.initializeHistory(workspace));
     value(await edit(h.api, 'A', 'A'));
     const before = value(await h.api.read(workspace));
-    const command = inverse(value(await h.api.history(workspace)), 'undo-A', 'undo');
+    const command = inverseFromStatus(value(await h.api.history(workspace)), 'undo-A', 'undo');
     const invalid = createAuthoring({
       ...h.deps,
       feasibility: { check: async () => failure('constraint-conflict', 'test', 'Cannot render') },
@@ -261,7 +266,7 @@ describe('workspace chronological history', () => {
     await seed(h);
     value(await h.api.initializeHistory(workspace));
     value(await edit(h.api, 'A', 'A'));
-    const command = inverse(value(await h.api.history(workspace)), 'undo-A', 'undo');
+    const command = inverseFromStatus(value(await h.api.history(workspace)), 'undo-A', 'undo');
     const lost = createAuthoring({
       ...h.deps,
       commits: {
@@ -303,13 +308,14 @@ describe('workspace chronological history', () => {
   });
 
   /**
-   * Two facades adopt history at once. The second adopts between the first's receipt lookup and
-   * its commit; the first still ends with the same history, adopted once.
+   * Two facades adopt history at once: the second adopts right after the first's first receipt
+   * lookup. The first still succeeds and reports the same history status as the second.
    */
   it('concurrent startup adopts once even when the first receipt read predates adoption', async () => {
     const h = harness();
     await seed(h);
-    // Only the first receipt lookup triggers the competing adoption.
+    // Only the first receipt lookup triggers the competing adoption. The flag is flipped when
+    // that lookup reaches the check, so exactly one adoption is triggered.
     let first = true;
     const racing = createAuthoring({
       ...h.deps,

@@ -31,7 +31,7 @@ export const querySchema = z
     descendants: z.boolean().default(false),
     archived: z.enum(['exclude', 'include', 'only']).default('exclude'),
     sort: z.enum(['order', 'title', 'recent']).default('order'),
-    kinds: z.array(hitKind).max(3).readonly().default(['collection', 'section', 'object']),
+    kinds: z.array(hitKind).max(3).readonly().default(hitKind.options),
     limit: z.number().int().min(1).max(200).default(50),
     cursor: z.string().max(MAX_CURSOR_LENGTH).optional(),
   })

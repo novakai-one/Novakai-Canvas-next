@@ -27,8 +27,10 @@ export const changeSchema = z.discriminatedUnion('op', [
 ]);
 
 /**
- * Checks an ordered batch of at most 1,000 changes. Planning applies them in order and checks the
- * rules across records only on the final catalog, so a later change may repair an earlier one.
+ * Checks an ordered batch of at most 1,000 changes. Planning applies them in order. Each change's
+ * own checks fail at once: a missing ID is `not-found`, an ID already present is
+ * `already-exists`, and `reject` on a non-empty folder is `folder-not-empty`. Only the rules
+ * across records wait for the final catalog, so a later change may repair an earlier one there.
  */
 export const changesSchema = z.array(changeSchema).max(1000).readonly();
 

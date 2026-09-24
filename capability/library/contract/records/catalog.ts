@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { catalogId, folderId, collectionId, label, nonnegativeInteger, order } from '../brands.js';
+import {
+  catalogId,
+  folderId,
+  collectionId,
+  label,
+  nonnegativeInteger,
+  order,
+  recordList,
+} from '../brands.js';
 
 /**
  * Checks one folder: its ID, nonblank title, optional parent folder and sort position (default 0).
@@ -31,15 +39,16 @@ export const entrySchema = z
 /**
  * Checks the shape of a catalog (schema version 1): its ID, revision, and up to 10,000 folders
  * and 10,000 entries (each defaults to empty). Unknown keys are rejected. The rules across records
- * (unique IDs, existing parents and collections, no parent cycles) are checked by validation.
+ * (unique IDs, existing parents and collections, entry folders exist, one entry per collection,
+ * no parent cycles) are checked by validation.
  */
 export const catalogSchema = z
   .strictObject({
     schemaVersion: z.literal(1),
     id: catalogId,
     revision: nonnegativeInteger,
-    folders: z.array(folderSchema).max(10_000).readonly().default([]),
-    entries: z.array(entrySchema).max(10_000).readonly().default([]),
+    folders: recordList(folderSchema),
+    entries: recordList(entrySchema),
   })
   .readonly();
 

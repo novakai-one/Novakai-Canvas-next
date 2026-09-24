@@ -40,6 +40,23 @@ export const nonnegativeInteger = z.number().int().min(0).max(Number.MAX_SAFE_IN
 /** Checks a sort position: any safe whole number, negative allowed. */
 export const order = z.number().int().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER);
 
+/** The most items any one record list (folders, entries, collections, sections, objects, visits) may hold. */
+export const MAX_RECORDS = 10_000;
+
+/**
+ * Builds the schema of a record list: a readonly array of at most {@link MAX_RECORDS} items,
+ * empty when omitted. Each call builds a new schema.
+ *
+ * @param item - The schema of one item.
+ * @returns The list schema.
+ * @throws Never.
+ */
+export function recordList<T extends z.ZodType>(
+  item: T,
+): z.ZodDefault<z.ZodReadonly<z.ZodArray<T>>> {
+  return z.array(item).max(MAX_RECORDS).readonly().default([]);
+}
+
 /** A catalog ID that passed {@link catalogId}. */
 export type CatalogId = z.infer<typeof catalogId>;
 

@@ -1,5 +1,14 @@
 import { z } from 'zod';
-import { collectionId, sectionId, objectId, label, text, nonnegativeInteger } from '../brands.js';
+import {
+  collectionId,
+  sectionId,
+  objectId,
+  label,
+  text,
+  nonnegativeInteger,
+  MAX_RECORDS,
+  recordList,
+} from '../brands.js';
 import { catalogSchema } from './catalog.js';
 
 // The section, object and visit schemas are private. Each is declared before the exported schema
@@ -17,7 +26,7 @@ const objectSchema = z
     id: objectId,
     label,
     description: text.default(''),
-    visibleIn: z.array(sectionId).max(10_000).readonly().default([]),
+    visibleIn: recordList(sectionId),
   })
   .readonly();
 
@@ -26,14 +35,14 @@ const objectSchema = z
  * title, description, sections and objects). It can always be rebuilt from the collection and is
  * never stored as a document of its own.
  */
-export const collectionProjectionSchema = z
+const collectionProjectionSchema = z
   .strictObject({
     id: collectionId,
     revision: nonnegativeInteger,
     title: label,
     description: text.default(''),
-    sections: z.array(sectionSchema).max(10_000).readonly().default([]),
-    objects: z.array(objectSchema).max(10_000).readonly().default([]),
+    sections: recordList(sectionSchema),
+    objects: recordList(objectSchema),
   })
   .readonly();
 
@@ -41,11 +50,12 @@ export const collectionProjectionSchema = z
  * Checks the host's complete collection inventory: at most 10,000 projections. Validation checks
  * that every collection has exactly one catalog entry and every entry has a collection.
  */
-export const inventorySchema = z.array(collectionProjectionSchema).max(10_000).readonly();
+export const inventorySchema = z.array(collectionProjectionSchema).max(MAX_RECORDS).readonly();
 
 /**
- * Checks one recent visit: a collection and when it was opened (an epoch supplied by the host;
- * Library reads no clock).
+ * Checks one recent visit: a collection and when it was opened (a number supplied by the host;
+ * larger means more recent; Library reads no clock). Validation also requires the collection to
+ * exist and allows at most one visit per collection.
  */
 const recentSchema = z
   .strictObject({ collection: collectionId, openedAt: nonnegativeInteger })
@@ -59,7 +69,7 @@ export const snapshotSchema = z
   .strictObject({
     catalog: catalogSchema,
     collections: inventorySchema,
-    recent: z.array(recentSchema).max(10_000).readonly().default([]),
+    recent: recordList(recentSchema),
   })
   .readonly();
 
@@ -69,5 +79,8 @@ export type LibrarySnapshot = z.infer<typeof snapshotSchema>;
 /** A collection projection with its authoritative revision. */
 export type CollectionProjection = z.infer<typeof collectionProjectionSchema>;
 
-/** A recent visit. Used only for `recent` sorting and in the cursor's query key. */
+/**
+ * A recent visit (at most one per collection, and the collection must exist). Used only for
+ * `recent` sorting and in the cursor's query key.
+ */
 export type RecentVisit = z.infer<typeof recentSchema>;

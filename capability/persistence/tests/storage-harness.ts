@@ -11,19 +11,22 @@ import { workspace, pristine, value } from './fixtures.js';
 /**
  * Opens a real SQLite Persistence service in its own temporary directory.
  *
- * The directory and the service are cleaned up when the test finishes, even after a failed
- * assertion.
+ * Cleanup is registered with Vitest and runs when the test finishes, even after a failed
+ * assertion: the service is closed (its result ignored) and the directory removed. Cleanup is
+ * attempted, not guaranteed. Vitest owns setup, assertion and teardown failures.
  *
  * @param mode - `memory` for `:memory:`, or `file` for a database file in the directory.
  * @param environment - Creates and removes the directory. Defaults to the real file system.
  * @param open - Opens the service. Defaults to `openSqlite`.
  * @returns The service, its location, and `remove` to delete the directory early.
+ * @throws Vitest's `AssertionError` when the service does not open; any error from creating the
+ * directory.
  */
 export function harness(
   mode: 'memory' | 'file',
   environment: FileEnvironment = files,
   open: typeof openSqlite = openSqlite,
-): { persistence: Persistence; location: string; remove(): void } {
+): { readonly persistence: Persistence; readonly location: string; remove(): void } {
   const directory = environment.createDirectory();
   onTestFinished(() => environment.removeDirectory(directory));
   const location = mode === 'memory' ? ':memory:' : join(directory, 'workspace.sqlite');
@@ -44,13 +47,16 @@ export function harness(
  * (after COMMIT succeeded, as if the acknowledgement were lost), or `none`.
  * @param raw - The initial stored envelope. Defaults to an empty workspace.
  * @param open - Opens the native database. Defaults to an in-memory `DatabaseSync`.
- * @returns The service, `inspect` to read the stored envelope directly, and `close`.
+ * @returns The service, `inspect` to read the stored envelope directly, and `close`. The database
+ * is also closed at test end; a failed close there is ignored.
+ * @throws Any error from opening or initializing the native database. `inspect` throws when the
+ * stored text is not JSON.
  */
 export function faultStore(
   fault: Fault,
   raw: unknown = pristine(),
   open: () => TestDatabase = () => new DatabaseSync(':memory:'),
-): { persistence: Persistence; inspect(): unknown; close(): void } {
+): { readonly persistence: Persistence; inspect(): unknown; close(): void } {
   const database = open();
   onTestFinished(() => {
     closeFixture(database);
@@ -135,8 +141,9 @@ function closeFixture(database: TestDatabase): Result<void> {
 }
 
 /**
- * Runs a transaction command with the fault applied. COMMIT either throws instead of running
- * (`commit`), or runs and then throws (`after-commit`); other commands always run.
+ * Runs a transaction command with the fault applied. With `commit`, COMMIT throws instead of
+ * running; with `after-commit`, it runs and then throws; with any other fault it runs normally.
+ * Other commands always run.
  */
 function executeFault(
   driver: DatabasePort,

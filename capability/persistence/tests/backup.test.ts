@@ -93,11 +93,12 @@ describe('Persistence backup and restore', () => {
   });
 
   /**
-   * A staging failure or a commit racing the restore leaves the destination's documents unchanged.
+   * A staging failure leaves the destination's documents unchanged, and a restore does not overwrite
+   * a commit that races it.
    * A provider that throws during backup is `storage-unavailable`. A lost COMMIT acknowledgement is
    * `storage-unavailable` although the state was installed. Every acquired lease is released.
    */
-  it('leaves the destination unchanged on staging or race failures and always releases leases', async () => {
+  it('keeps the destination on a staging failure, never overwrites a racing commit, and releases leases', async () => {
     const source = harness('memory');
     const destination = harness('memory');
     value(

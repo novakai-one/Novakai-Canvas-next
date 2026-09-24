@@ -10,30 +10,57 @@ import type { Result } from '../../contract/errors.js';
 import { fail } from '../../contract/errors.js';
 import { success, canonical, clone } from '../validation/outcomes.js';
 import { exact, pinOf, reachableThemes } from '../validation/catalog.js';
-/** Exact pin and syntax owner are both checked before expansion; Authoring owns merge validity and commit recovery. */
+
+/**
+ * Expands a pinned recipe into diagram intent. Nothing is placed or saved; Authoring merges the
+ * intent and owns commit recovery.
+ * 1. Resolves the exact pin (`missing-preset` or `digest-mismatch`, path: the pin's key).
+ * 2. A theme pin is `invalid-input` at `pin.kind`, "Select a recipe to instantiate".
+ * 3. Re-inspects the stored source with the recipe codec. A codec failure is returned as it is;
+ *    a canonical payload that differs from the stored one is `digest-mismatch` at `payload`. So
+ *    an imported record cannot skip the codec's checks.
+ * 4. Expands the source into `request.namespace` (a codec failure is returned as it is) and
+ *    copies the intent.
+ * 5. Returns the pin, namespace and intent, the media digests (the recipe's assets plus the fonts
+ *    of every reachable theme, sorted, without duplicates) and the pins of every reachable theme.
+ *
+ * @param records - The validated catalog.
+ * @param request - The parsed request.
+ * @param recipe - The recipe codec.
+ * @returns The expansion, or the first failure.
+ * @throws `InputFault` from `canonical`/`clone`, and whatever the codec throws; callers run inside
+ * `protect`.
+ */
 export function instantiate<T>(
   records: Catalog,
   request: ExpansionRequest,
   recipe: RecipePort<T>,
 ): Result<Expansion<T>> {
   const selected = exact(records, request.pin);
-  if (!selected.ok) return selected;
+  if (!selected.ok) {
+    return selected;
+  }
   return expandRecipe(records, selected.value, request, recipe);
 }
-/** A theme cannot be instantiated as a diagram; source must still match its canonical semantic manifest. */
+
+/** Rejects a theme, then re-inspects the recipe's stored source. */
 function expandRecipe<T>(
   records: Catalog,
   value: Preset,
   request: ExpansionRequest,
   recipe: RecipePort<T>,
 ): Result<Expansion<T>> {
-  if (value.kind !== 'recipe')
+  if (value.kind !== 'recipe') {
     return fail('invalid-input', 'pin.kind', 'Select a recipe to instantiate');
+  }
   const inspected = recipe.inspect(value.payload.source, value.payload.family);
-  if (!inspected.ok) return inspected;
+  if (!inspected.ok) {
+    return inspected;
+  }
   return expandChecked(records, value.payload, inspected.value, request, recipe);
 }
-/** Re-inspection prevents imported structural records from bypassing the syntax owner's semantic admission. */
+
+/** Requires the re-inspected payload to equal the stored one, then expands the source. */
 function expandChecked<T>(
   records: Catalog,
   payload: RecipePayload,
@@ -41,17 +68,21 @@ function expandChecked<T>(
   request: ExpansionRequest,
   recipe: RecipePort<T>,
 ): Result<Expansion<T>> {
-  if (canonical(payload) !== canonical(inspected))
+  if (canonical(payload) !== canonical(inspected)) {
     return fail(
       'digest-mismatch',
       'payload',
       'Recipe inspection differs from admitted canonical payload',
     );
+  }
   const expanded = recipe.expand(payload.source, request.namespace);
-  if (!expanded.ok) return expanded;
+  if (!expanded.ok) {
+    return expanded;
+  }
   return success(assemble(records, payload, request, clone(expanded.value)));
 }
-/** Closure includes inherited-theme fonts; deduplication is deterministic and never depends on object identity. */
+
+/** Builds the expansion; media digests are de-duplicated by value and sorted. */
 function assemble<T>(
   records: Catalog,
   payload: RecipePayload,

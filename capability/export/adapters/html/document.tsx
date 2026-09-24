@@ -1,12 +1,37 @@
+/*
+ * HTML export: one self-contained offline reader page. It has no script and loads nothing
+ * remote; navigation uses plain links and each section's text is in a native `<details>` list.
+ */
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { ReactElement } from 'react';
 import type { FormatHandler, RenderInput } from '../../contract/ports/formats.js';
 import type { RenderDependencies, PlacedSection } from '../../contract/render-types.js';
 import type { Result } from '../../contract/errors.js';
 import type { Encoded } from '../../contract/records/artifact.js';
-/** Offline readers contain native navigation and details; no runtime script or remote dependency exists. */
+
+/**
+ * Creates the HTML format handler.
+ *
+ * `encode` renders every selected section as its own SVG first, then returns the first failure,
+ * if any, unchanged. Otherwise it builds the page: the collection title, the reader CSS inline,
+ * a header with the title, "Revision <n>" and a link to each section (`#section-<index>`, the
+ * section's position in the selection, so authored IDs never become link syntax), then one
+ * `<section>` per selected section with its title, its SVG inserted as markup, and a "Read
+ * diagram contents" list: node text, each wire's label text and "<source marker> → <target
+ * marker>", and message text. The page starts with `<!doctype html>` and is encoded as UTF-8.
+ *
+ * The SVG is inserted without escaping. That is safe only because it comes from the shared
+ * renderer, which has already escaped all authored content.
+ *
+ * @param deps - The shared SVG renderer and `encoding.utf8`.
+ * @param css - The reader stylesheet.
+ * @returns The handler. `encode` rejects only if the renderer, React serialization,
+ * `encoding.utf8` or a getter on the input throws; Export's `produce` turns that into
+ * `encoding-failed`.
+ * @throws Never.
+ */
 export function createHtmlEncoder(deps: RenderDependencies, css: string): FormatHandler {
-  /** SVG strings come only from the trusted shared renderer; authored content was already escaped there. */
+  /** Renders every section, then builds and encodes the page; see {@link createHtmlEncoder}. */
   async function encode(input: RenderInput): Promise<Result<Encoded>> {
     const rendered = input.selection.sections.map((section) => renderSection(section, input));
     const failed = rendered.find((item) => !item.ok);
@@ -41,7 +66,12 @@ export function createHtmlEncoder(deps: RenderDependencies, css: string): Format
       value: { bytes: deps.encoding.utf8(`<!doctype html>${markup}`), pages: [], warnings: [] },
     };
   }
-  /** Stable numeric anchors avoid turning authored IDs into browser navigation syntax. */
+
+  /**
+   * Renders one section's SVG (the selection narrowed to that section and its box), and builds
+   * its `<section>` element with the heading, the SVG and the text list. Its anchor is
+   * `section-<index>`, where `<index>` is the section's first position in the selection.
+   */
   function renderSection(section: PlacedSection, input: RenderInput): Result<ReactElement> {
     const result = deps.renderer.render({
       ...input,
@@ -75,5 +105,6 @@ export function createHtmlEncoder(deps: RenderDependencies, css: string): Format
       ),
     };
   }
+
   return { encode };
 }

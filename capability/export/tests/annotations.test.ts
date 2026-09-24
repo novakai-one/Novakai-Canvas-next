@@ -13,9 +13,10 @@ import { fixture, value } from './fixtures.js';
  * - the text reads "12validated changes", and the badge number is white;
  * - the label group is moved to the wire's label box.
  */
-it('retains numbered annotations and connection styling in the exported SVG', async () => {
+async function retainsNumberedAnnotations(): Promise<void> {
   // Arrange: export the numbered fixture as SVG and parse the markup.
-  const setup = await fixture('stack', true);
+  const numbered = true;
+  const setup = await fixture('stack', numbered);
   const artifact = value(await setup.bindings.service.exportArtifact(setup.request('svg')));
   const svg = value(setup.bindings.dependencies.encoding.text(artifact.bytes));
   const document = new JSDOM(svg, { contentType: 'image/svg+xml' }).window.document;
@@ -56,4 +57,9 @@ it('retains numbered annotations and connection styling in the exported SVG', as
   expect(viewport.getAttribute('transform')).toBe(
     `translate(${wire.labelBox.x} ${wire.labelBox.y})`,
   );
-});
+}
+
+it(
+  'retains numbered annotations and connection styling in the exported SVG',
+  retainsNumberedAnnotations,
+);

@@ -59,9 +59,12 @@ type Recording = z.infer<typeof recorded>;
  *
  * @param id - The corpus input name: lowercase letters and hyphens only.
  * @returns The composed Export and the snapshot it serves.
- * @throws Rejects with an `AssertionError` for a bad `id` or any rejection by a real reader
- * (its message is the whole result as JSON); with a file-system error when the input or the
- * reader stylesheet cannot be read; or with a `ZodError` when the recording has the wrong shape.
+ * @throws Rejects with:
+ * - an `AssertionError` with no message when `id` is not lowercase letters and hyphens;
+ * - an `AssertionError` whose message is the whole result as JSON when a real reader rejects;
+ * - a file-system error when the input or the reader stylesheet cannot be read;
+ * - a zlib error when the input is not valid gzip, or a `SyntaxError` when it is not JSON;
+ * - a `ZodError` when the recording has the wrong shape.
  */
 export async function corpusFixture(
   id: string,
@@ -75,8 +78,10 @@ export async function corpusFixture(
   const { payload, resources } = recorded.parse(raw);
   const collection = accepted(validate(payload.collection));
   const domain = {
-    /** Validates through Model; a rejection fails the setup. */
-    read: (input: unknown) => ({ ok: true as const, value: accepted(validate(input)) }),
+    read: /** Validates through Model; a rejection fails the setup. */ (input: unknown) => ({
+      ok: true as const,
+      value: accepted(validate(input)),
+    }),
   };
   const projection = accepted(readMeasuredProjection(payload.projection, collection, domain));
   const measurements = accepted(readSupplementalMeasurements(payload.measurements));
@@ -86,13 +91,14 @@ export async function corpusFixture(
       {
         engineVersions: defaultEngineVersions,
         projection: {
-          /** Rereads a measured projection for this collection; a rejection fails the setup. */
-          read: (input) => ({
+          read: /** Rereads a measured projection; a rejection fails the setup. */ (input) => ({
             ok: true,
             value: accepted(readMeasuredProjection(input, collection, domain)),
           }),
-          /** Rereads measured content; a rejection fails the setup. */
-          content: (input) => ({ ok: true, value: accepted(readMeasuredContent(input)) }),
+          content: /** Rereads measured content; a rejection fails the setup. */ (input) => ({
+            ok: true,
+            value: accepted(readMeasuredContent(input)),
+          }),
         },
       },
     ),
@@ -102,19 +108,24 @@ export async function corpusFixture(
   const bindings = composeExport({
     presentation: accepted(await createReactBindings(payload.fonts)),
     snapshots: {
-      /** Leases the recorded snapshot; its release always succeeds. */
-      acquire: async () => ({
+      acquire: /** Leases the recorded snapshot; its release always succeeds. */ async () => ({
         ok: true,
         value: {
           snapshot,
-          /** Succeeds without doing anything. */
-          release: async () => ({ ok: true, value: undefined }),
+          release: /** Succeeds without doing anything. */ async () => ({
+            ok: true,
+            value: undefined,
+          }),
         },
       }),
     },
     documents,
-    /** Accepts every resource unchanged. */
-    resources: { inspect: async (items) => ({ ok: true, value: items }) },
+    resources: {
+      inspect: /** Accepts every resource unchanged. */ async (items) => ({
+        ok: true,
+        value: items,
+      }),
+    },
     readerCss: await readFile(new URL('../adapters/html/reader.css', import.meta.url), 'utf8'),
   });
   return { bindings, snapshot };
@@ -123,7 +134,9 @@ export async function corpusFixture(
 /**
  * The value of a successful outcome. An unexpected rejection fails the setup with the whole
  * result as JSON, and never becomes an invented success. The outcome is turned into JSON even
- * when it succeeds, so a value JSON cannot hold throws a `TypeError`.
+ * when it succeeds: a cycle or a `BigInt` throws a `TypeError`, other values JSON cannot hold
+ * (such as functions or `undefined`) are silently left out, and a getter or `toJSON` that
+ * throws throws its own error.
  */
 function accepted<T>(
   outcome: { readonly ok: true; readonly value: T } | { readonly ok: false },
@@ -176,15 +189,15 @@ function corpusDocuments(collection: Collection): Documents {
     ),
   };
   return {
-    /** Validates the input through Model. */
-    read: (input) => ({ ok: true, value: accepted(validate(input)) }),
-    /** Prints the whole collection as DSL source. */
-    print: (input) => ({
+    read: /** Validates the input through Model. */ (input) => ({
+      ok: true,
+      value: accepted(validate(input)),
+    }),
+    print: /** Prints the whole collection as DSL source. */ (input) => ({
       ok: true,
       value: accepted(language.print({ collection: input, scope: { kind: 'all' } })).source,
     }),
-    /** Lowers DSL source into a new collection. */
-    parse: (source) => ({
+    parse: /** Lowers DSL source into a new collection. */ (source) => ({
       ok: true,
       value: accepted(language.lower({ source, mode: 'create', snapshot: null, resources: pins }))
         .collection,

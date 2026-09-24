@@ -117,7 +117,7 @@ function renderNative(
 ): Result<Encoded> {
   const viewport = rasterViewport(svg, width, height, input.request.scale);
   const renderer = new Resvg(viewport, {
-    font: { fontBuffers: fonts.map(/** The font's sfnt bytes. */ (font) => font.bytes) },
+    font: { fontBuffers: fonts.map(/** The font's decoded font bytes. */ (font) => font.bytes) },
   });
   try {
     return readImage(renderer, width, height);

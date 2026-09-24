@@ -1,18 +1,20 @@
 /*
- * Portable bundle export and inspection: a bundle is deterministic, keeps resource bytes and
- * hashes, and inspection rejects every kind of corruption instead of repairing it.
+ * Portable bundle export and inspection: a bundle is deterministic and keeps resource bytes and
+ * hashes, and inspection rejects the corruption cases listed in the tests (schema version,
+ * source digest, duplicates, base64, resource digests, size limit, UTF-8, owner rejection)
+ * instead of repairing them.
  */
 import { describe, it, expect } from 'vitest';
 import { createExport } from '../contract/index.js';
 import { fixture, value, bundle, manifestBytes, encoding, failed } from './fixtures.js';
 
-describe('Portable bundle integrity', () => {
+describe('Portable bundle integrity', /** The bundle determinism and corruption tests. */ () => {
   /**
    * Two bundle exports of the same snapshot are byte-identical; the manifest holds `canvas 1`
    * DSL with its own digest; inspection returns all 5 resources with the same digests as the
    * snapshot, and the stored placement of `alpha` (31, 42, locked).
    */
-  it('8 deterministic bundle preserves resource bytes and independent source/manual hashes', async () => {
+  async function preservesBundleBytesAndHashes(): Promise<void> {
     // Act: export the bundle twice.
     const f = await fixture();
     const first = value(await f.bindings.service.exportArtifact(f.request('bundle')));
@@ -37,7 +39,12 @@ describe('Portable bundle integrity', () => {
     ).toEqual(
       f.snapshot.resources.map(/** The resource's digest. */ (resource) => resource.digest).sort(),
     );
-  });
+  }
+
+  it(
+    '8 deterministic bundle preserves resource bytes and independent source/manual hashes',
+    preservesBundleBytesAndHashes,
+  );
 
   /**
    * Inspection rejects: an unknown schema version, source that no longer matches its digest,
@@ -45,7 +52,7 @@ describe('Portable bundle integrity', () => {
    * (`limit-exceeded`), malformed UTF-8 (`invalid-bundle`), and a resource owner that rejects the
    * resources (`resource-rejected`).
    */
-  it('9 corrupt versions, text, base64, hashes, duplicates and rejected owner validation fail closed', async () => {
+  async function rejectsCorruptBundles(): Promise<void> {
     // Arrange: a valid bundle and five corrupted copies of its manifest.
     const f = await fixture();
     const original = value(await f.bindings.service.exportArtifact(f.request('bundle')));
@@ -93,12 +100,18 @@ describe('Portable bundle integrity', () => {
     // Check: a resource owner that rejects the resources.
     const rejecting = createExport({
       ...f.bindings.dependencies,
-      /** Always rejects. */
-      resources: { inspect: async () => failed('resource-rejected') },
+      resources: {
+        inspect: /** Always rejects. */ async () => failed('resource-rejected'),
+      },
     });
     expect(await rejecting.inspectBundle(manifestBytes(manifest))).toMatchObject({
       ok: false,
       error: { code: 'resource-rejected' },
     });
-  });
+  }
+
+  it(
+    '9 corrupt versions, text, base64, hashes, duplicates and rejected owner validation fail closed',
+    rejectsCorruptBundles,
+  );
 });

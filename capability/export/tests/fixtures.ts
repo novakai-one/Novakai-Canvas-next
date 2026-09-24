@@ -1,8 +1,8 @@
 /*
  * Shared test fixture for Export: one small real collection (two objects, one wire, a WebP
  * image, three pinned WOFF2 fonts) composed with the real Model, Language, Presentation and
- * native encoders. Only the snapshot lease, the resource owner and the scene geometry are
- * supplied by the fixture.
+ * native encoders. The fixture itself supplies the snapshot lease, the resource owner, the
+ * scene geometry, and Presentation's theme resolver and asset reader.
  */
 import { layoutInputKey } from '../../layout/contract/index.js';
 import { readFileSync } from 'node:fs';
@@ -30,11 +30,12 @@ import {
   type ExportBindings,
   type ExportRequest,
   type Bundle,
+  type Encoding,
 } from '../contract/index.js';
 import { createEncoding } from '../adapters/native/encoding.js';
 
 /** The native encoding, shared by the fixture and the tests. */
-export const encoding = createEncoding();
+export const encoding: Encoding = createEncoding();
 
 /** The real Language, built on Model's reader, planner and stage. */
 const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
@@ -93,8 +94,9 @@ export function failed(
 }
 
 /**
- * Initializes the resvg runtime once, as a host does at startup, so tests never race to
- * re-initialize it.
+ * Initializes the resvg runtime, as a host does at startup. It does not guard against repeat
+ * or concurrent calls: every call resolves, reads and compiles the runtime file and initializes
+ * again, so callers invoke it once per test run.
  *
  * @returns A promise that settles once the runtime is ready.
  * @throws Rejects with an `AssertionError` when initialization fails, or with the file-system or
@@ -133,7 +135,10 @@ export interface Fixture {
  * @param composition - The image object's composition; `stack` also gives it a frame.
  * @param numbered - Whether the wire carries step number 12.
  * @returns The fixture.
- * @throws Rejects with an `AssertionError` when any real collaborator rejects fixture data.
+ * @throws Rejects with an `AssertionError` when any real collaborator rejects fixture data,
+ * with a file-system error when a font or the reader stylesheet cannot be read, with sharp's
+ * error when the WebP image cannot be made, and with a schema error when Presentation's
+ * `fontSet` or `resolvedStyle` parse rejects the fixture data.
  */
 export async function fixture(
   composition: 'stack' | 'media-top' | 'media-left' = 'stack',
@@ -162,31 +167,35 @@ export async function fixture(
   const bindings = composeExport({
     presentation: presentation.react,
     snapshots: {
-      /** Leases the fixture snapshot; its release counts itself and succeeds. */
-      acquire: async () => ({
-        ok: true,
-        value: {
-          snapshot,
-          /** Counts one release. */
-          release: async () => {
-            releaseCount += 1;
-            return { ok: true, value: undefined };
+      acquire:
+        /** Leases the fixture snapshot; its release counts itself and succeeds. */ async () => ({
+          ok: true,
+          value: {
+            snapshot,
+            release: /** Counts one release. */ async () => {
+              releaseCount += 1;
+              return { ok: true, value: undefined };
+            },
           },
-        },
-      }),
+        }),
     },
     documents: documents(original),
-    /** Accepts every resource unchanged. */
-    resources: { inspect: async (items) => ({ ok: true, value: items }) },
+    resources: {
+      inspect: /** Accepts every resource unchanged. */ async (items) => ({
+        ok: true,
+        value: items,
+      }),
+    },
     readerCss: readFileSync(new URL('../adapters/html/reader.css', import.meta.url), 'utf8'),
   });
   return {
     bindings,
     snapshot,
-    /** The release count so far. */
-    releases: () => releaseCount,
-    /** An export request for the fixture collection. */
-    request: (format = 'svg') => ({ identity: { collectionId: original.id, revision: 7 }, format }),
+    releases: /** The release count so far. */ () => releaseCount,
+    request: /** An export request for the fixture collection. */ (format = 'svg') => ({
+      identity: { collectionId: original.id, revision: 7 },
+      format,
+    }),
   };
 }
 
@@ -299,7 +308,7 @@ function collection(
           id: 'apply',
           kind: 'flow',
           label: 'validated changes',
-          ...(numbered ? { step: 12 } : {}),
+          ...numberedStep(numbered),
           source: { object: 'alpha' },
           target: { object: 'beta' },
         },
@@ -341,6 +350,11 @@ function collection(
   );
 }
 
+/** The wire's step number field: `{ step: 12 }` when `numbered`, otherwise no field at all. */
+function numberedStep(numbered: boolean): { readonly step?: number } {
+  return numbered ? { step: 12 } : {};
+}
+
 /**
  * The resolved theme style: the three pinned fonts, fixed type sizes, spacing, the dashed
  * connection appearance and the content sizing Presentation measures with.
@@ -353,29 +367,29 @@ function fixtureStyle(
 ): ReturnType<typeof resolvedStyle.parse> {
   return resolvedStyle.parse({
     digest: encoding.hash(themeBytes),
-    bodyFont: { family: first.family, digest: first.digest },
-    monoFont: { family: mono.family, digest: mono.digest },
-    strongFont: { family: strong.family, digest: strong.digest },
+    bodyFont: fontReference(first),
+    monoFont: fontReference(mono),
+    strongFont: fontReference(strong),
     typography: {
       sectionHeading: {
-        font: { family: strong.family, digest: strong.digest },
+        font: fontReference(strong),
         size: 24.0,
         lineHeight: 36.0,
       },
       nodeHeading: {
-        font: { family: strong.family, digest: strong.digest },
+        font: fontReference(strong),
         size: 20.0,
         lineHeight: 30.0,
       },
-      body: { font: { family: first.family, digest: first.digest }, size: 16, lineHeight: 24 },
-      mono: { font: { family: mono.family, digest: mono.digest }, size: 16, lineHeight: 24 },
+      body: { font: fontReference(first), size: 16, lineHeight: 24 },
+      mono: { font: fontReference(mono), size: 16, lineHeight: 24 },
       caption: {
-        font: { family: first.family, digest: first.digest },
+        font: fontReference(first),
         size: 14.0,
         lineHeight: 21.0,
       },
       annotation: {
-        font: { family: first.family, digest: first.digest },
+        font: fontReference(first),
         size: 14.0,
         lineHeight: 21.0,
       },
@@ -407,6 +421,11 @@ function fixtureStyle(
   });
 }
 
+/** A new font reference: the pinned font's family, then its digest. */
+function fontReference(font: PinnedFont): Pick<PinnedFont, 'family' | 'digest'> {
+  return { family: font.family, digest: font.digest };
+}
+
 /**
  * Composes the real Presentation. Its domain reader is Model's `validate` (a rejection becomes
  * `invalid-input` carrying the whole result as JSON), its theme resolver always returns `style`,
@@ -420,8 +439,9 @@ function fixturePresentation(
   return composePresentation(
     {
       domain: {
-        /** Validates through Model, keeping the whole rejection in the message. */
-        read: (input) => {
+        read: /** Validates through Model, keeping the whole rejection in the message. */ (
+          input,
+        ) => {
           const result = validate(input);
           if (result.ok) return result;
           return {
@@ -435,11 +455,11 @@ function fixturePresentation(
           };
         },
       },
-      /** Always the fixture style. */
-      themes: { resolve: () => ({ ok: true, value: style }) },
+      themes: {
+        resolve: /** Always the fixture style. */ () => ({ ok: true, value: style }),
+      },
       assets: {
-        /** Always the fixture WebP image, 20 × 20. */
-        read: () => ({
+        read: /** Always the fixture WebP image, 20 × 20. */ () => ({
           ok: true,
           value: {
             digest: image.digest,
@@ -468,16 +488,13 @@ function documents(original: Collection): Documents {
     ),
   };
   return {
-    /** Validates the input through Model. */
-    read: (input) => translate(validate(input)),
-    /** Prints the whole collection as DSL source. */
-    print: (collection) => {
+    read: /** Validates the input through Model. */ (input) => translate(validate(input)),
+    print: /** Prints the whole collection as DSL source. */ (collection) => {
       const printed = language.print({ collection, scope: { kind: 'all' } });
       if (!printed.ok) return failed();
       return { ok: true, value: printed.value.source };
     },
-    /** Lowers DSL source into a new collection. */
-    parse: (source) => {
+    parse: /** Lowers DSL source into a new collection. */ (source) => {
       const parsed = language.lower({ source, mode: 'create', snapshot: null, resources });
       if (!parsed.ok) return failed();
       return { ok: true, value: parsed.value.collection };
@@ -489,9 +506,9 @@ function documents(original: Collection): Documents {
  * Passes a success through as it is; replaces any other capability's failure with the fixture's
  * `encoding-failed` failure, without importing that capability's error types.
  */
-function translate<T>(
-  result: { readonly ok: true; readonly value: T } | { readonly ok: false },
-): Result<T> {
+function translate(
+  result: { readonly ok: true; readonly value: Collection } | { readonly ok: false },
+): Result<Collection> {
   if (result.ok) return result;
   return failed();
 }

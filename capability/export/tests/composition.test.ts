@@ -19,7 +19,7 @@ beforeAll(startRaster);
  *   reading "Agent & human".
  * Then checks the fractional-bounds PNG size (see {@link checkFractionalRaster}).
  */
-it('exports frame-free measured figures with the same text and media coordinates', async () => {
+async function exportsFrameFreeFigure(): Promise<void> {
   // Arrange: export the frame-free fixture as SVG and find node `alpha`.
   const setup = await fixture('media-top');
   const artifact = value(await setup.bindings.service.exportArtifact(setup.request('svg')));
@@ -72,14 +72,19 @@ it('exports frame-free measured figures with the same text and media coordinates
 
   // Check: fractional bounds round up to whole pixels.
   await checkFractionalRaster(setup);
-});
+}
+
+it(
+  'exports frame-free measured figures with the same text and media coordinates',
+  exportsFrameFreeFigure,
+);
 
 /**
  * Exports a PNG at scale 1.3 of a snapshot whose scene bounds are fractional (1000.4 × 800.2)
  * and checks the image is 1301 × 1041: Export's PNG encoder rounds each side up itself, rather
  * than relying on the native renderer's rounding.
  */
-async function checkFractionalRaster(setup: Fixture): Promise<void> {
+async function checkFractionalRaster(setup: Pick<Fixture, 'bindings' | 'snapshot'>): Promise<void> {
   const snapshot = {
     ...setup.snapshot,
     scene: { ...setup.snapshot.scene, bounds: { x: 0, y: 0, width: 1000.4, height: 800.2 } },
@@ -87,13 +92,14 @@ async function checkFractionalRaster(setup: Fixture): Promise<void> {
   const exporter = createExport({
     ...setup.bindings.dependencies,
     snapshots: {
-      /** Leases the fractional snapshot; its release always succeeds. */
-      acquire: async () => ({
+      acquire: /** Leases the fractional snapshot; its release always succeeds. */ async () => ({
         ok: true,
         value: {
           snapshot,
-          /** Succeeds without doing anything. */
-          release: async () => ({ ok: true, value: undefined }),
+          release: /** Succeeds without doing anything. */ async () => ({
+            ok: true,
+            value: undefined,
+          }),
         },
       }),
     },

@@ -1,6 +1,6 @@
 /*
- * The Export service factory. Each operation parses its unknown input first, then runs inside
- * `protect`, so nothing it calls can make it throw or reject.
+ * The Export service factory. Each operation runs entirely inside `protect`, input checks
+ * included, so nothing it calls can make it throw or reject.
  */
 import type { Export, Dependencies } from './types.js';
 import type { Result } from './errors.js';
@@ -21,6 +21,7 @@ import { prepareImport } from '../core/bundles/prepare.js';
  * @param deps - Snapshots, format handlers, documents, resources and encoding.
  * @returns A frozen service. A throw inside `exportArtifact` becomes `encoding-failed`, inside
  * `inspectBundle` `invalid-bundle`, and inside `prepareImport` `invalid-import`.
+ * @throws Never; building the service only freezes an object.
  */
 export function createExport(deps: Dependencies): Export {
   return Object.freeze({

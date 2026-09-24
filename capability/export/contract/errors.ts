@@ -1,12 +1,14 @@
 /*
  * Export's own failure codes, diagnostic record and Result type. Export returns failures as
- * values: `exportArtifact`, `inspectBundle` and `prepareImport` never throw or reject. Export only reads and encodes, so a caller can
- * retry after fixing the input or repairing the host provider. Hosts own storage repair and
- * import admission.
+ * values: `exportArtifact`, `inspectBundle` and `prepareImport` never throw or reject. Export
+ * only reads and encodes, so a caller can retry after fixing the input or repairing the host
+ * provider. Hosts own storage repair and import admission.
  */
 
 /**
- * Why an export, bundle inspection or import preparation failed:
+ * Why an export, bundle inspection or import preparation failed. These are the failures Export
+ * creates; a host provider's failure keeps its own code.
+ *
  * - `invalid-input`: the export or import request, or the bundle bytes, have the wrong shape;
  *   the scene bounds are not finite and positive; or a bundle was requested for one section.
  * - `snapshot-mismatch`: the leased snapshot is not the requested collection, revision and
@@ -15,16 +17,21 @@
  * - `limit-exceeded`: a size limit was hit (for example 512 PDF pages, 128 MiB of bytes, the
  *   raster size, or 2,000 bundle resources).
  * - `cancelled`: the caller's cancellation flag was set between stages.
- * - `encoding-failed`: an encoder failed, or a provider threw, during an export.
+ * - `encoding-failed`: an encoder failed, or a provider threw, during an export; or the raster
+ *   runtime failed to start (`initializeRaster`).
  * - `cleanup-failed`: releasing the lease threw. (A release that returns its own failure is
  *   passed through with that failure's code.)
- * - `invalid-bundle`: bundle bytes are not valid UTF-8, JSON or bundle shape, a hash does not
- *   match, or something threw during `inspectBundle`.
+ * - `invalid-bundle`: bundle bytes are not valid UTF-8, JSON or bundle shape; base64 is
+ *   malformed or not canonical; a hash does not match; a resource kind and digest repeat; or
+ *   something threw during `inspectBundle`. A bundle export also returns it when the printed
+ *   DSL is not complete `canvas 1` source, when it does not round-trip to the same collection,
+ *   or when the built bundle fails its own schema.
  * - `resource-rejected`: a needed resource is missing, or the resource owner changed a resource
  *   while inspecting it.
  * - `invalid-import`: the import targets the bundle's own collection ID, the bundle's source or
  *   manual snapshot does not fit its collection, or something threw during `prepareImport`
- *   (including invalid JSON in the bundle).
+ *   (including invalid JSON in the bundle). A bundle export also returns it when the manual
+ *   snapshot names a section or target the printed DSL lost.
  */
 export type ErrorCode =
   | 'invalid-input'
@@ -40,8 +47,8 @@ export type ErrorCode =
 
 /**
  * One failure. Failures created by Export always use the recovery text of {@link failure}.
- * Failures returned by a host provider are passed through unchanged, with the provider's own
- * fields.
+ * Failures returned by a host provider are passed through with the provider's own fields;
+ * Export only adds `cleanup` when the lease release also fails.
  */
 export interface Diagnostic {
   /** Why it failed; see {@link ErrorCode}. */
@@ -79,6 +86,7 @@ export type Result<T, E = Diagnostic> =
  * @param message - A human-readable explanation.
  * @returns A new `{ ok: false }` result whose recovery text says to correct the input or repair
  * the provider, then retry.
+ * @throws Never.
  */
 export function failure(code: ErrorCode, path: string, message: string): Result<never> {
   return {

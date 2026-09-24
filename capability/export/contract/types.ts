@@ -15,14 +15,16 @@ import type { FormatRegistry } from './ports/formats.js';
 
 /**
  * The Export service, built by `createExport`. HTTP downloads and headless agents use the same
- * three operations. None of them throws or rejects; every failure is a `Result`. Import is only
- * prepared here; the host admits it through Authoring.
+ * three operations. None of them throws or rejects; every failure is a `Result`. Every operation
+ * only reads, so a failed call is safe to retry; the host repairs providers and performs any
+ * writes. Import is only prepared here; the host admits it through Authoring.
  */
 export interface Export {
   /**
    * Exports one revision as SVG, PNG, PDF, HTML or a portable bundle.
    *
-   * @param input - An unknown export request, parsed with `requestSchema`.
+   * @param input - An unknown export request: `identity` (`collectionId`, `revision`) and
+   * `format`, with optional `scope`, `scale`, `paper` and `orientation`.
    * @param signal - Optional cancellation, checked between stages.
    * @returns The finished artifact, or a failure. A malformed request fails before any revision
    * is acquired; a throw becomes `encoding-failed`.

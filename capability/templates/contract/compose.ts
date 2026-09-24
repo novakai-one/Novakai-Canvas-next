@@ -8,7 +8,8 @@ import type { Templates } from './types.js';
  *
  * @param codecs - The recipe codec (Language) and theme codec (Design System).
  * @returns A frozen {@link Templates} facade.
- * @throws Never.
+ * @throws Whatever a getter on `codecs` throws while its `recipe` and `theme` fields are copied;
+ * nothing is caught here. Plain objects never throw.
  */
 export function composeTemplates<T>(codecs: {
   readonly recipe: RecipePort<T>;

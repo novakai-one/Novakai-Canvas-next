@@ -32,8 +32,11 @@ export interface PresetPlan {
 
 /** One catalog entry as `list` returns it: its pin and readable metadata, without the payload. */
 export interface Summary {
+  /** The exact pin of this version. */
   readonly pin: Pin;
+  /** The preset's title. */
   readonly title: string;
+  /** The preset's description (may be empty). */
   readonly description: string;
   /** The recipe's diagram family; `null` for themes. */
   readonly family: string | null;
@@ -59,16 +62,60 @@ export interface Expansion<T> {
  * frozen copy on success and a `Diagnostic` on failure; none throws.
  */
 export interface Templates<T> {
-  /** Checks a whole catalog (schemas, digests, pins, duplicates, cycles) and returns it frozen. */
+  /**
+   * Checks a whole catalog: schemas, duplicate keys, every digest, payload rules, pins and cycles.
+   *
+   * @param input - The untrusted catalog.
+   * @returns The frozen catalog, or the first failure (`invalid-input`, `duplicate-preset`,
+   * `digest-mismatch`, `missing-preset`, `dependency-cycle`, `provider-failed`, or the hashing
+   * provider's own failure).
+   */
   readCatalog(input: unknown): Result<Catalog>;
-  /** Checks that `input` could be admitted into `catalog` and returns the admitted preset. */
+  /**
+   * Checks that `input` could be admitted: it admits it through the codecs, then also plans the
+   * admission, so a version conflict (`version-exists`) and the new catalog's pins and cycles are
+   * checked. Nothing is saved.
+   *
+   * @param catalog - The untrusted catalog (checked as in `readCatalog`).
+   * @param input - The untrusted admission.
+   * @returns The frozen admitted preset, or the first failure (including a codec's own failure).
+   */
   validatePreset(catalog: unknown, input: unknown): Result<Preset>;
-  /** Admits `input` into `catalog` and returns the resulting catalog as a plan. */
+  /**
+   * Admits `input` and plans adding it. An existing version with the same content is a no-op plan
+   * (`changed: false`); with different content it is `version-exists`.
+   *
+   * @param catalog - The untrusted catalog (checked as in `readCatalog`).
+   * @param input - The untrusted admission.
+   * @returns The frozen plan, or the first failure (including a codec's own failure).
+   */
   planAdmission(catalog: unknown, input: unknown): Result<PresetPlan>;
-  /** Returns summaries of presets that match `query`, ordered by kind/id then version. */
+  /**
+   * Lists presets matching the query: `kind` if given, and `search` found in the id, title,
+   * description or recipe family. Ordered by kind/id, then by version numerically ascending.
+   *
+   * @param catalog - The untrusted catalog (checked as in `readCatalog`).
+   * @param query - The untrusted query (`search` defaults to empty).
+   * @returns The frozen summaries, or the first failure (`invalid-input` for a bad query).
+   */
   list(catalog: unknown, query: unknown): Result<readonly Summary[]>;
-  /** Returns one preset: the named version, or the latest when none is given; a given digest must match. */
+  /**
+   * Returns one preset: the named version, or the latest when none is given. A digest may be
+   * given only with an exact version, and must then match.
+   *
+   * @param catalog - The untrusted catalog (checked as in `readCatalog`).
+   * @param selection - The untrusted selection.
+   * @returns The frozen preset, or `invalid-input`, `missing-preset` or `digest-mismatch`.
+   */
   read(catalog: unknown, selection: unknown): Result<Preset>;
-  /** Expands a pinned recipe into diagram intent under a namespace. */
+  /**
+   * Expands a pinned recipe into diagram intent under a namespace. The recipe is re-inspected by
+   * the codec first and must match its admitted payload.
+   *
+   * @param catalog - The untrusted catalog (checked as in `readCatalog`).
+   * @param request - The untrusted request: the recipe pin and the namespace.
+   * @returns The frozen expansion, or the first failure (`invalid-input` for a theme pin,
+   * `missing-preset`, `digest-mismatch`, or a codec's own failure).
+   */
   instantiate(catalog: unknown, request: unknown): Result<Expansion<T>>;
 }

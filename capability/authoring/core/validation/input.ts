@@ -6,8 +6,14 @@ import { copyJson, isFrozenObject } from './plain-data.js';
 import type { JsonLimits } from './plain-data.js';
 import { reject, freeze } from './outcomes.js';
 
-/** Maps an input object to the frozen result of parsing it. */
-type ParsedByInput = WeakMap<object, unknown>;
+/** One cached parse: the shape used and the frozen result it produced. */
+interface ParsedEntry<T> {
+  readonly shape: CheckedShape<T>;
+  readonly value: T;
+}
+
+/** Maps an input object to its cached parse. */
+type ParsedByInput = WeakMap<object, ParsedEntry<unknown>>;
 
 /** Maps limits to parsed results. */
 type ParsedByLimits = WeakMap<object, ParsedByInput>;
@@ -90,12 +96,23 @@ function parseFrozenShape<T>(
   limits: JsonLimits | undefined,
 ): T {
   const cache = parsedCache(shape, limits);
-  // The cache only ever stores results parsed with this same shape, so the cast is safe.
-  if (cache.has(value)) return cache.get(value) as T;
+  const entry = cache.get(value);
+  if (entry !== undefined && isEntryFor(entry, shape)) return entry.value;
 
   const result = parseShape(shape, value, code, limits);
-  cache.set(value, result);
+  cache.set(value, { shape, value: result });
   return result;
+}
+
+/**
+ * Tells whether a cached parse was made with this shape, so its value has the shape's type.
+ * The cache is already split by shape, so this is always true; it lets the compiler prove the type.
+ */
+function isEntryFor<T>(
+  entry: ParsedEntry<unknown>,
+  shape: CheckedShape<T>,
+): entry is ParsedEntry<T> {
+  return entry.shape === shape;
 }
 
 /** Copies the data, parses it against the shape and deeply freezes the result. */

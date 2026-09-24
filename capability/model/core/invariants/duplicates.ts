@@ -2,9 +2,15 @@ import type { Diagnostic } from '../../contract/errors.js';
 import { diagnoseWhen } from './issues.js';
 
 /**
- * Reports every occurrence after the first with the same key, preserving input order.
- * The caller chooses the identity scope and supplies its diagnostic path. Pure and
- * repeatable; validate/plan return these failures and Authoring owns correction/commit.
+ * Reports every item whose key already appeared earlier in the list. The first occurrence is not
+ * reported; each later one gives a `duplicate` diagnostic at `<path>.<key>`, "Identity must be
+ * unique in this scope", in list order. The caller chooses the scope (which list) and its path.
+ *
+ * @param items - The items to check.
+ * @param keyOf - Returns an item's key; called once per item, in order.
+ * @param path - The diagnostic path prefix for this scope.
+ * @returns The diagnostics, or an empty list.
+ * @throws Whatever `keyOf` throws.
  */
 export function duplicates<T>(
   items: readonly T[],

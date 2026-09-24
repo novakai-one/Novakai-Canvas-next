@@ -1,4 +1,4 @@
-import { expect, assert } from 'vitest';
+import { expect, assert, onTestFinished } from 'vitest';
 import {
   createAuthoring,
   recordId,
@@ -19,6 +19,7 @@ import {
   type Write,
   type Result,
   type Receipt,
+  type ErrorCode,
 } from '../contract/index.js';
 import { createNodeIdentity } from '../adapters/node-identity.js';
 import { openStore, storageRoles } from './storage-fixture.js';
@@ -38,7 +39,8 @@ export const alternate = digest.parse('b'.repeat(64));
 export interface Harness {
   readonly api: Authoring;
   readonly deps: Dependencies;
-  readonly store: Persistence;
+  /** The store behind `deps`. Tests only close it; everything else goes through `api`. */
+  readonly store: Pick<Persistence, 'close'>;
 }
 
 /**
@@ -60,8 +62,9 @@ export function value<T>(result: Result<T>): T {
  *
  * @param result - The result to check.
  * @param code - The expected failure code.
+ * @throws AssertionError when the result succeeded, has another code, or carries a value.
  */
-export function rejects(result: Result<unknown>, code: string): void {
+export function rejects(result: Result<unknown>, code: ErrorCode): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
   expect(result).not.toHaveProperty('value');
 }
@@ -133,6 +136,7 @@ export function catalog(ids: readonly string[]): Json {
     id: 'catalog',
     revision: 0,
     folders: [],
+    // One unarchived entry per collection, all at order 0.
     entries: ids.map((collection) => ({ collection, order: 0, archived: false })),
   };
 }
@@ -175,6 +179,7 @@ export function request(
   writes: readonly Write[],
   extra: Readonly<Record<string, Json>> = {},
 ): Request {
+  // The written records are both the scope and the expected versions.
   const targets = writes.map((write) => write.key);
   return requestSchema.parse({
     workspace,
@@ -231,11 +236,20 @@ export function record(snapshot: Snapshot, target: RecordKey): StoredRecord {
  * resource, feasibility, cancellation and notification roles are scripted to succeed, so a test
  * replaces one of them to make it fail.
  *
+ * The store is closed when the test finishes, even when it fails. A test may also close it
+ * itself; closing it again then returns a failed result, which is ignored.
+ *
+ * Call it only inside a test, because it registers that cleanup with Vitest.
+ *
  * @param overrides - Collaborators to replace, applied last.
  * @returns The facade, its collaborators and the store.
+ * @throws AssertionError when the store cannot be opened.
  */
 export function harness(overrides: Partial<Dependencies> = {}): Harness {
   const store = openStore();
+  onTestFinished(() => {
+    store.close();
+  });
   const deps: Dependencies = {
     ...storageRoles(store),
     ...createNodeIdentity(undefined, () => 1000),
@@ -257,6 +271,7 @@ export function harness(overrides: Partial<Dependencies> = {}): Harness {
       // Every candidate is feasible, with no warnings and no preview.
       check: async () => ({ ok: true, value: { warnings: [], diff: [], preview: null } }),
     },
+    // Never cancelled, and every notification is delivered.
     cancellation: { cancelled: () => false },
     notifications: { publish: async () => ({ ok: true, value: undefined }) },
     ...overrides,
@@ -271,6 +286,7 @@ export function harness(overrides: Partial<Dependencies> = {}): Harness {
  * @param ids - The collection IDs. Defaults to `['demo']`.
  * @returns The seed's receipt.
  * @throws AssertionError when reading or applying fails.
+ * @throws ZodError when a collection ID is not a valid record ID.
  */
 export async function seed(h: Harness, ids: readonly string[] = ['demo']): Promise<Receipt> {
   const before = value(await h.api.read(workspace));
@@ -296,6 +312,7 @@ export function liveCollections(snapshot: Snapshot): readonly StoredRecord[] {
 
 /** Finds the record stored under a key, or `undefined`. */
 function findStored(snapshot: Snapshot, target: RecordKey): StoredRecord | undefined {
+  // Kind is compared first, then ID.
   return snapshot.records.find(
     (item) => item.key.kind === target.kind && item.key.id === target.id,
   );

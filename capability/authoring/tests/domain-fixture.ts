@@ -22,6 +22,9 @@ import {
  * The test planner, registered as `fixture`. It proposes exactly the writes in the request's
  * payload, so tests can aim at one Authoring check at a time. Every successful candidate still
  * passes the real Model and Library validation in `domainValidator`.
+ *
+ * `plan(request)` returns the payload as a checked proposal, or `invalid-input` at `intent` for an
+ * undo or redo, or at `payload` when the payload is not a proposal. It does not throw.
  */
 export const fixturePlanner: IntentPlanner = {
   id: plannerId.parse('fixture'),
@@ -31,6 +34,10 @@ export const fixturePlanner: IntentPlanner = {
 /**
  * Validates a candidate with the real domain owners, the way a host does after planning and
  * revision stamping.
+ *
+ * `validate(before, after)` checks the `after` snapshot and returns the versions the candidate
+ * depends on, read from `before`. Failures are `invariant-violation` results; the Model or Library
+ * failure behind them is not kept. It does not throw for well-formed snapshots.
  *
  * - Every live collection must pass Model validation and an empty Model plan.
  * - The live catalog must pass Library validation with every live collection. A workspace with
@@ -117,7 +124,12 @@ function validateCollections(snapshot: Snapshot): Result<readonly Collection[]> 
     .map(checkedCollection);
   const rejected = results.find((result) => !result.ok);
   if (rejected !== undefined && !rejected.ok) return rejected;
-  return { ok: true, value: results.flatMap((result) => (result.ok ? [result.value] : [])) };
+  return { ok: true, value: acceptedValues(results) };
+}
+
+/** Lists the values of the successful results, in order. */
+function acceptedValues<T>(results: readonly Result<T>[]): T[] {
+  return results.flatMap((result) => (result.ok ? [result.value] : []));
 }
 
 /**

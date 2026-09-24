@@ -17,10 +17,11 @@ import {
   liveCollections,
 } from './fixtures.js';
 
+// Admission: what a change needs before it commits, and what a commit stores.
 describe('Authoring admission', () => {
   /**
    * Seeding one collection writes the collection and the catalog in one commit, both at version
-   * 0, and the snapshot read back is deeply frozen.
+   * 0. The snapshot read back has a frozen records list and a frozen collection value.
    */
   it('creates a collection and its catalog together, and reads back a frozen snapshot', async () => {
     const h = harness();
@@ -40,16 +41,18 @@ describe('Authoring admission', () => {
       value: { entries: [{ collection: 'demo' }] },
     });
 
-    // The snapshot is detached from storage: frozen all the way down.
+    // The records list and one collection value are frozen.
     expect(Object.isFrozen(read.records)).toBe(true);
     expect(Object.isFrozen(record(read, key('collection', 'demo')).value)).toBe(true);
     expect(h.store.close().ok).toBe(true);
   });
 
   /**
-   * An agent's valid edit commits. An edit Model rejects changes nothing and gets no receipt.
+   * A valid edit from an agent commits. A later edit (from the default human actor) with an
+   * invalid collection is rejected as `invariant-violation`, gets no receipt and leaves the
+   * collection's version unchanged.
    */
-  it('commits a valid agent edit, and rejects an invalid one without a receipt or change', async () => {
+  it('commits a valid agent edit, and rejects an invalid edit without a receipt or change', async () => {
     const h = harness();
     await seed(h);
     const before = value(await h.api.read(workspace));
@@ -67,7 +70,7 @@ describe('Authoring admission', () => {
       value: { title: 'Agent update', revision: 1 },
     });
 
-    // A collection without its required shape fails Model validation.
+    // A collection without its required shape fails domain validation.
     const invalid = request(value(await h.api.read(workspace)), 'bad-edit', [
       put('collection', 'demo', { id: 'demo', title: 'Missing required shape' }, [media]),
     ]);
@@ -120,8 +123,9 @@ describe('Authoring admission', () => {
   });
 
   /**
-   * Writing an unchanged value gives a `no-op` receipt and changes nothing. Deleting a collection
-   * leaves a tombstone, and recreating it continues from the tombstone's version.
+   * Writing an unchanged value gives a `no-op` receipt and leaves every stored record unchanged
+   * (the receipt itself still advances the workspace sequence). Deleting a collection leaves a
+   * tombstone, and recreating it continues from the tombstone's version.
    */
   it('gives a no-op receipt for an unchanged write, and keeps versions increasing through delete and restore', async () => {
     const h = harness();
@@ -129,7 +133,7 @@ describe('Authoring admission', () => {
     const before = value(await h.api.read(workspace));
     const original = record(before, key('collection', 'demo'));
 
-    // Writing the same value: no-op, no versions, snapshot unchanged.
+    // Writing the same value: no-op, no versions, stored records unchanged.
     const noOp = value(
       await h.api.apply(
         request(before, 'same', [put('collection', 'demo', original.value, [media])]),
@@ -201,6 +205,7 @@ describe('Authoring admission', () => {
     const reader = createAuthoring({
       ...h.deps,
       validation: {
+        // Always passes, and depends on catalog version 99.
         validate: async () => ({
           ok: true,
           value: [{ key: key('catalog', 'catalog'), version: 99 }],
@@ -221,6 +226,7 @@ describe('Authoring admission', () => {
     const api = createAuthoring({
       ...h.deps,
       feasibility: {
+        // Signals that the check was reached, then waits until the test lets it finish.
         check: async () => {
           entered.open();
           await finish.promise;

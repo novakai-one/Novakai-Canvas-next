@@ -16,17 +16,20 @@ import {
 } from './fixtures.js';
 import { inverse, replaceHistoryBefore } from './history-fixtures.js';
 
+// Undo and redo: new requests that restore earlier images, never a rewind of storage.
 describe('Authoring reversible transactions', () => {
   /**
-   * Undo restores every record the change touched, with its assets, under a new version. Redo
-   * applies the change again under a newer version. The transaction record keeps the assets of
-   * both images.
+   * Undo restores both records the change touched, with their assets, under a new version. Redo
+   * moves both to a newer version; the first record's content and asset are checked. The
+   * transaction record keeps the assets of both images.
    */
   it('undoes every record a change touched, with its assets, and redoes it under newer versions', async () => {
     const h = harness();
     await seed(h, ['demo', 'other']);
     const before = value(await h.api.read(workspace));
-    const keys = [key('collection', 'demo'), key('collection', 'other')];
+    const demoKey = key('collection', 'demo');
+    const otherKey = key('collection', 'other');
+    const keys = [demoKey, otherKey];
 
     // One change edits both collections and switches them to the alternate asset.
     value(
@@ -62,7 +65,7 @@ describe('Authoring reversible transactions', () => {
     value(await h.api.redo(inverse(undone, 'redo-pair', 'pair', 'redo', keys)));
     const redone = value(await h.api.read(workspace));
     expect(keys.map((key) => record(redone, key).version)).toEqual([3, 3]);
-    expect(record(redone, keys[0] ?? key('collection', 'demo'))).toMatchObject({
+    expect(record(redone, demoKey)).toMatchObject({
       value: { title: 'First' },
       resources: [alternate],
     });
@@ -74,11 +77,11 @@ describe('Authoring reversible transactions', () => {
   });
 
   /**
-   * An undo or redo that cannot apply is rejected and changes nothing: an infeasible or invalid
-   * inverse, a second undo, a redo after an edit in between, an unknown change, and a corrupt
-   * before-image.
+   * An undo or redo that cannot apply is rejected: an infeasible or invalid inverse (the sequence
+   * is checked unchanged afterwards), a second undo, a redo after an edit in between, an unknown
+   * change, and a corrupt before-image (the record is checked unchanged afterwards).
    */
-  it('rejects an infeasible, invalid, repeated, diverged, unknown or corrupt undo or redo without changing anything', async () => {
+  it('rejects an infeasible, invalid, repeated, diverged, unknown or corrupt undo or redo', async () => {
     const h = harness();
     await seed(h);
     const keys = [key('collection', 'demo')];
@@ -91,7 +94,7 @@ describe('Authoring reversible transactions', () => {
     const current = value(await h.api.read(workspace));
     const undo = inverse(current, 'undo', 'edit', 'undo', keys);
 
-    // The old geometry is no longer feasible.
+    // The old geometry is no longer feasible: the check always fails.
     const check = vi.fn(async () =>
       failure<never>('constraint-conflict', 'locked-route', 'Old geometry infeasible'),
     );
@@ -101,7 +104,7 @@ describe('Authoring reversible transactions', () => {
     );
     expect(check).toHaveBeenCalledTimes(1);
 
-    // The restored content fails validation.
+    // The restored content fails validation: the validator always fails.
     const validation = vi.fn(async () =>
       failure<never>('invariant-violation', 'admission', 'Retained source unavailable'),
     );
@@ -157,6 +160,7 @@ describe('Authoring reversible transactions', () => {
     const malformed = replaceHistoryBefore(metadata, 'metadata-edit', key('workspace', 'b'));
     const corrupt = createAuthoring({
       ...h.deps,
+      // Every read returns the corrupted copy.
       snapshots: { read: async () => ({ ok: true, value: malformed }) },
     });
     rejects(

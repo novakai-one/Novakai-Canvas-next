@@ -21,6 +21,7 @@ import {
   rejects,
   request,
   diagram,
+  catalog,
   put,
   key,
   record,
@@ -29,6 +30,7 @@ import {
 } from './fixtures.js';
 import { gate } from './gates.js';
 
+// Failures from collaborators and from bad input, and how each one reaches the caller.
 describe('Authoring resource and failure boundaries', () => {
   /**
    * A hard feasibility failure rejects the request, and apply asks for no preview. Soft
@@ -42,7 +44,7 @@ describe('Authoring resource and failure boundaries', () => {
       put('collection', 'demo', diagram('demo', 'Changed'), [media]),
     ]);
 
-    // Hard failure: rejected, called with preview `false`, no receipt.
+    // Hard failure: rejected, called with preview `false`, no receipt. The check always fails.
     const check = vi.fn(
       async (
         _candidate: Snapshot,
@@ -95,8 +97,9 @@ describe('Authoring resource and failure boundaries', () => {
 
   /**
    * Missing asset bytes, and assets the lease does not cover (including assets history still
-   * needs), reject. An acquired lease is released once after both failure and success, and only
-   * after the commit finishes.
+   * needs), reject. An acquired lease is released once when the attempt finishes, whether it
+   * failed or succeeded; when the attempt reaches commit, the lease is held until the commit
+   * finishes.
    */
   it('rejects missing or uncovered assets, and releases each lease once after the commit finishes', async () => {
     const h = harness();
@@ -139,13 +142,7 @@ describe('Authoring resource and failure boundaries', () => {
     const current = value(await h.api.read(workspace));
     const deletion = request(current, 'retention', [
       { kind: 'delete', key: key('collection', 'demo') },
-      put('catalog', 'catalog', {
-        schemaVersion: 1,
-        id: 'catalog',
-        revision: 0,
-        folders: [],
-        entries: [],
-      }),
+      put('catalog', 'catalog', catalog([])),
     ]);
     acquire.mockResolvedValue({ ok: true, value: { pins: {}, reads: [], covered: [], release } });
     rejects(
@@ -172,6 +169,7 @@ describe('Authoring resource and failure boundaries', () => {
         }),
       },
       commits: {
+        // Signals that commit was reached, waits for the test, then commits for real.
         commit: async (commit) => {
           entered.open();
           await terminal.promise;
@@ -284,6 +282,7 @@ describe('Authoring resource and failure boundaries', () => {
       planners: [
         {
           id: plannerId.parse('fixture'),
+          // Fails with a message that must never reach the caller.
           plan: async () => {
             throw new Error('private provider details');
           },
@@ -297,6 +296,7 @@ describe('Authoring resource and failure boundaries', () => {
     // Change the caller's request while Authoring waits on storage: the stored actor is unchanged.
     const waiting = gate();
     const entered = gate();
+    // Signals that the snapshot read started, then waits for the test before reading.
     const read = vi.fn(async (workspace: WorkspaceId) => {
       entered.open();
       await waiting.promise;

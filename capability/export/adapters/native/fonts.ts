@@ -7,7 +7,7 @@ import { create } from 'fontkit';
 import type { FontSet } from '@novakai/canvas-presentation';
 import type { FontDecoder, NativeFont } from '../../contract/render-types.js';
 import type { Result } from '../../contract/errors.js';
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 
 /**
  * Creates the font decoder for Presentation's pinned fonts. Nothing is cached: every `decode`
@@ -78,5 +78,5 @@ function distinctFamilies(fonts: readonly NativeFont[]): Result<readonly NativeF
       'fonts',
       'Distinct pinned fonts share an ambiguous internal family',
     );
-  return { ok: true, value: fonts };
+  return success(fonts);
 }

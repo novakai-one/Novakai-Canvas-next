@@ -9,7 +9,7 @@ import type { FontDecoder, RenderDependencies, NativeFont } from '../../contract
 import type { FormatHandler, RenderInput } from '../../contract/ports/formats.js';
 import type { Result } from '../../contract/errors.js';
 import type { Encoded } from '../../contract/records/artifact.js';
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 
 /** The SVG namespace for the outer viewport element. */
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
@@ -150,7 +150,7 @@ function readImage(
     const bytes = image.asPng().slice();
     if (image.width !== width || image.height !== height)
       return failure('encoding-failed', 'png', 'Native dimensions differ from the planned raster');
-    return { ok: true, value: { bytes, pages: [], warnings: [] } };
+    return success({ bytes, pages: [], warnings: [] });
   } finally {
     image.free();
   }

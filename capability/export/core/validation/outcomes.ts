@@ -1,9 +1,11 @@
 /*
- * Result helpers for Export's core: build a success, turn a schema check into a Result, and
- * turn any throw into a typed failure.
+ * Result helpers for Export's core: build a success (the contract's `success`, re-exported), turn
+ * a schema check into a Result, and turn any throw into a typed failure.
  */
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 import type { Result, ErrorCode } from '../../contract/errors.js';
+
+export { success };
 
 /** The part of a zod schema `parse` needs: `safeParse` with its success/issues result. */
 interface Parser<T> {
@@ -14,18 +16,6 @@ interface Parser<T> {
         success: false;
         error: { issues: readonly { path: readonly PropertyKey[]; message: string }[] };
       };
-}
-
-/**
- * Wraps a value as a success. The value is not copied. Boundary code takes the bytes it hands
- * out through their own `slice()`, which copies a plain `Uint8Array` but shares memory for a
- * `Buffer`.
- *
- * @param value - The successful value.
- * @returns `{ ok: true, value }`.
- */
-export function success<T>(value: T): Result<T> {
-  return { ok: true, value };
 }
 
 /**

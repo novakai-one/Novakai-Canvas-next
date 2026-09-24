@@ -5,7 +5,7 @@
 import { createHash } from 'node:crypto';
 import type { Encoding } from '../../contract/ports/encoding.js';
 import type { Result } from '../../contract/errors.js';
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 
 /**
  * Creates the native encoding. Every method is pure, so callers may repeat any call; retrying
@@ -50,7 +50,7 @@ export function createEncoding(): Encoding {
 function text(bytes: Uint8Array): Result<string> {
   try {
     const decoder = new TextDecoder('utf-8', { fatal: true });
-    return { ok: true, value: decoder.decode(bytes) };
+    return success(decoder.decode(bytes));
   } catch {
     return failure('invalid-bundle', 'bytes', 'Malformed UTF-8');
   }
@@ -70,5 +70,5 @@ function decode(value: string): Result<Uint8Array> {
   const bytes = Buffer.from(value, 'base64');
   if (bytes.toString('base64') !== value)
     return failure('invalid-bundle', 'base64', 'Noncanonical base64');
-  return { ok: true, value: Uint8Array.from(bytes) };
+  return success(Uint8Array.from(bytes));
 }

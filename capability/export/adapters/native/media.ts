@@ -6,7 +6,7 @@ import sharp from 'sharp';
 import type { MediaConverter } from '../../contract/render-types.js';
 import type { Resource } from '../../contract/records/bundle.js';
 import type { Result } from '../../contract/errors.js';
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 
 /**
  * Creates the native media converter used by the PDF encoder.
@@ -36,7 +36,7 @@ export function createMediaConverter(): MediaConverter {
           item.mediaType.startsWith('image/'),
       );
       const entries = await Promise.all(images.map(convertImage));
-      return { ok: true, value: new Map(entries) };
+      return success(new Map(entries));
     } catch {
       return failure('encoding-failed', 'images', 'An admitted image could not be encoded for PDF');
     }

@@ -17,7 +17,7 @@ import type {
 import type { Encoded } from '../../contract/records/artifact.js';
 import type { Page } from '../../contract/records/pages.js';
 import type { Result } from '../../contract/errors.js';
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 
 /**
  * Creates the PDF format handler.
@@ -146,14 +146,13 @@ function writePdf(
         'end',
         /** Resolves with all the output bytes and the input's page list. */
         () =>
-          resolve({
-            ok: true,
-            value: {
+          resolve(
+            success({
               bytes: Uint8Array.from(Buffer.concat(chunks)),
               pages: input.pages,
               warnings: [],
-            },
-          }),
+            }),
+          ),
       );
     },
   );

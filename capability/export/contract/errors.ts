@@ -78,6 +78,20 @@ export type Result<T, E = Diagnostic> =
   { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 
 /**
+ * Wraps a value as a success. Adapters and core both build successes with it.
+ *
+ * The value is not copied. Boundary code takes the bytes it hands out through their own
+ * `slice()`, which copies a plain `Uint8Array` but shares memory for a `Buffer`.
+ *
+ * @param value - The successful value.
+ * @returns A new `{ ok: true, value }` result.
+ * @throws Never.
+ */
+export function success<T>(value: T): Result<T> {
+  return { ok: true, value };
+}
+
+/**
  * Builds a failure with Export's standard recovery text. A failed read produces no partial
  * artifact; the caller still has its original input.
  *

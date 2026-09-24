@@ -8,6 +8,7 @@ import type { FormatHandler, RenderInput } from '../../contract/ports/formats.js
 import type { RenderDependencies, PlacedSection } from '../../contract/render-types.js';
 import type { Encoding } from '../../contract/ports/encoding.js';
 import type { Result } from '../../contract/errors.js';
+import { success } from '../../contract/errors.js';
 import type { Encoded } from '../../contract/records/artifact.js';
 
 /** What the HTML encoder uses: the shared SVG renderer and UTF-8 encoding. */
@@ -74,10 +75,11 @@ export function createHtmlEncoder(deps: HtmlDependencies, css: string): FormatHa
         </body>
       </html>,
     );
-    return {
-      ok: true,
-      value: { bytes: deps.encoding.utf8(`<!doctype html>${markup}`), pages: [], warnings: [] },
-    };
+    return success({
+      bytes: deps.encoding.utf8(`<!doctype html>${markup}`),
+      pages: [],
+      warnings: [],
+    });
   }
 
   /**
@@ -104,25 +106,22 @@ export function createHtmlEncoder(deps: HtmlDependencies, css: string): FormatHa
         /** The message's text lines. */ (event) => event.content.outline,
       ),
     ];
-    return {
-      ok: true,
-      value: (
-        <section key={section.id} id={sectionAnchor(index)}>
-          <h2>{sectionTitle(section)}</h2>
-          <div className="diagram" dangerouslySetInnerHTML={{ __html: result.value }} />
-          <details>
-            <summary>Read diagram contents</summary>
-            <ul>
-              {lines.map(
-                /** One text line as a list item. */ (line, lineIndex) => (
-                  <li key={lineIndex}>{line}</li>
-                ),
-              )}
-            </ul>
-          </details>
-        </section>
-      ),
-    };
+    return success(
+      <section key={section.id} id={sectionAnchor(index)}>
+        <h2>{sectionTitle(section)}</h2>
+        <div className="diagram" dangerouslySetInnerHTML={{ __html: result.value }} />
+        <details>
+          <summary>Read diagram contents</summary>
+          <ul>
+            {lines.map(
+              /** One text line as a list item. */ (line, lineIndex) => (
+                <li key={lineIndex}>{line}</li>
+              ),
+            )}
+          </ul>
+        </details>
+      </section>,
+    );
   }
 
   return { encode };

@@ -14,7 +14,7 @@ import type {
 } from '../../contract/render-types.js';
 import type { RenderInput } from '../../contract/ports/formats.js';
 import type { Result } from '../../contract/errors.js';
-import { failure } from '../../contract/errors.js';
+import { failure, success } from '../../contract/errors.js';
 
 /**
  * Creates the scene renderer.
@@ -142,5 +142,5 @@ function checkFonts(svg: string, fontDigests: readonly string[]): Result<string>
       'fonts',
       'Scene text has no matching embedded font definition',
     );
-  return { ok: true, value: svg };
+  return success(svg);
 }

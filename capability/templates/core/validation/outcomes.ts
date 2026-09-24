@@ -75,15 +75,16 @@ export function clone<T>(value: T): T {
  * The public boundary of every Templates operation. Runs `action`, then copies (with
  * {@link clone}) and deep-freezes its result, success or failure. No partial output escapes.
  *
- * Any throw becomes a failure: an {@link InputFault} keeps its code, path and message; anything
+ * A throw becomes a failure: an {@link InputFault} keeps its code, path and message; anything
  * else becomes `provider-failed` at `$`, "Preset provider failed; no plan was produced".
- * Known limit: a thrown value that makes `instanceof` itself throw (a revoked proxy) escapes as a
- * `TypeError`.
+ * Known limit: the thrown value is checked with `instanceof InputFault`. If that check itself
+ * throws, that error escapes. Examples: a proxy whose `getPrototypeOf` trap throws (its own error
+ * escapes), or a revoked proxy (a `TypeError` escapes).
  * Authoring owns correction and retry.
  *
  * @param action - The operation to run.
  * @returns A frozen copy of the action's result, or the failure for a throw.
- * @throws Only the `TypeError` described above.
+ * @throws Only an error raised while checking a thrown value, as described above.
  */
 export function protect<T>(action: () => Result<T>): Result<T> {
   try {

@@ -11,7 +11,7 @@ import { instantiate } from '../core/expansion/instantiate.js';
 /**
  * Creates the Templates facade over the given providers. It keeps no state and saves nothing;
  * Authoring owns commits and recovery. `deps` is read on every call, inside `protect`, so a
- * provider getter that throws becomes `provider-failed`.
+ * provider getter that throws becomes `provider-failed` (with the limit below).
  *
  * Every method runs entirely inside `protect`, and there:
  * 1. checks the whole `catalog` input (schemas, digests, pins, duplicates, cycles);
@@ -19,12 +19,15 @@ import { instantiate } from '../core/expansion/instantiate.js';
  *    effect.
  *
  * Input that is not plain JSON data, is nested deeper than 48 levels, or is larger than 8 MiB is
- * `invalid-input` at `$`. The result is a frozen copy. Any throw becomes a failure: an
+ * `invalid-input` at `$`. The result is a frozen copy. A throw becomes a failure: an
  * `InputFault` keeps its code, path and message; anything else becomes `provider-failed` at `$`.
+ * Limit: `protect` checks a thrown value with `instanceof`. If that check itself throws, that
+ * error escapes the method instead of a failure. Example: a provider throws a proxy whose
+ * `getPrototypeOf` trap throws, or a revoked proxy.
  *
  * @param deps - The recipe codec, theme codec and hashing provider.
  * @returns A frozen {@link Templates} object.
- * @throws Never.
+ * @throws Never while building the object. Its methods throw only in the limit above.
  */
 export function createTemplates<T>(deps: Dependencies<T>): Templates<T> {
   return Object.freeze({

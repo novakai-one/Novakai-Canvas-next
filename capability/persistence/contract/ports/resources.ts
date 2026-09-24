@@ -34,7 +34,11 @@ export interface BackupResources {
 export interface RestoreLease {
   /** Stores one asset's bytes at the destination. */
   stage(digest: Digest, base64: string): Promise<Result<void>>;
-  /** Ends the reservation. Always called once the restore attempt finishes. */
+  /**
+   * Ends the reservation. Always called once the restore attempt finishes. If it is never called
+   * (for example the process stops first), Persistence does nothing further: ending such a
+   * reservation is up to the host that supplies {@link RestoreResources}.
+   */
   release(): Promise<Result<void>>;
 }
 

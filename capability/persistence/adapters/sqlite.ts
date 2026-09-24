@@ -15,6 +15,8 @@ import type { StorePort, Decision } from '../contract/ports/store.js';
  *    store's last read or write, the text already held is reused.
  * 3. Decode it (a missing row decodes as an empty workspace) and pass it to `decide`. A decode
  *    failure, or a throw from `decide`, is `corrupt-record`; malformed content is never reset.
+ *    A driver throw while reading item rows (`parts.get`) happens during decoding, so it is
+ *    `corrupt-record` too, not `storage-unavailable`.
  * 4. A failed decision is rolled back. A decision that returns the state it read commits without
  *    writing. Otherwise the new envelope is written, then committed.
  * 5. Any other throw (BEGIN, reading the version or row, encoding, writing, COMMIT) is rolled back

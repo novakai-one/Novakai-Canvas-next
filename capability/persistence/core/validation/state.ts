@@ -33,8 +33,10 @@ import { JSON_LIMIT, boundedClone, parse, success } from './outcomes.js';
  * @returns The checked state, or the first failure: `unsupported-version` (step 3) or
  * `corrupt-record` (steps 4 and 6).
  * @throws TypeError or RangeError from {@link boundedClone} for non-JSON or oversized input, and
- * RangeError (`JSON limit`) when the whole state is over the limit. Callers run this inside
- * `protect`, which turns the throw into a typed failure.
+ * RangeError (`JSON limit`) when the whole state is over the limit. Also TypeError when an
+ * admitted part is placed in the other array (a cached receipt in `slots`, or a cached slot in
+ * `receipts`; see {@link keptSlot}). Callers run this inside `protect`, which turns the throw into
+ * a typed failure.
  */
 export function validateState(input: unknown): Result<WorkspaceState> {
   const reused = reuseParts(input);

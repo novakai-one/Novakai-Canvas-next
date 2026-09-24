@@ -71,6 +71,8 @@ export function boundedClone(input: unknown, limit = JSON_LIMIT): Json {
   if (new TextEncoder().encode(serialized).length > limit) {
     throw new RangeError('JSON limit');
   }
+  // `JSON.parse` is typed `any`; the text was just made from checked JSON, so the result is `Json`.
+  // Recorded as open debt (no cast-free way without copying again).
   return JSON.parse(serialized);
 }
 

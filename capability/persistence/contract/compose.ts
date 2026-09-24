@@ -26,8 +26,9 @@ import type { Persistence } from './types.js';
  *
  * @param location - The database file path, or `':memory:'`.
  * @param workspace - The workspace ID the database belongs to; checked here.
- * @param openDatabase - Opens the native database. Defaults to `node:sqlite`'s `DatabaseSync`;
- * tests pass a fake to exercise failures without touching the file system.
+ * @param openDatabase - Opens the native database. Defaults to `node:sqlite`'s `DatabaseSync`.
+ * A fake can be passed to exercise the failure paths without the file system; no repo test does
+ * this yet.
  * @returns The Persistence service, or the first failure.
  */
 export function openSqlite(
@@ -48,11 +49,16 @@ export function openSqlite(
 
 /** The part of a native SQLite database this module uses; a fake can stand in for tests. */
 export interface NativeDatabase {
+  /** Runs SQL that returns no rows (pragmas, table setup, transaction commands). */
   exec(sql: string): void;
+  /** Compiles one SQL statement for repeated use. */
   prepare(sql: string): {
+    /** Runs the statement with the given parameters and returns its first row, if any. */
     get(...values: string[]): Readonly<Record<string, unknown>> | undefined;
+    /** Runs the statement with the given parameters for its effect only. */
     run(...values: string[]): unknown;
   };
+  /** Closes the connection. */
   close(): void;
 }
 

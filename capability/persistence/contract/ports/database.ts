@@ -3,7 +3,8 @@
  * transaction commands.
  *
  * Every method may throw. The SQLite adapter catches every throw: `transact` turns it into
- * `storage-unavailable` after attempting a rollback (a decode throw is `corrupt-record`), and
+ * `storage-unavailable` after attempting a rollback (a decode throw, including a `parts.get`
+ * throw while decoding, is `corrupt-record`), and
  * `close` turns it into `storage-unavailable`. A throw at or after COMMIT leaves the outcome
  * uncertain; Authoring reopens and reconciles the request's receipt.
  */

@@ -37,7 +37,13 @@ export function value<T>(result: Result<T>): T {
   return result.value;
 }
 
-/** Asserts a result failed with `code`. The message wording is not checked. */
+/**
+ * Asserts a result failed with `code`. The message wording is not checked.
+ *
+ * @param result - The result to check.
+ * @param code - The expected failure code.
+ * @throws Vitest's assertion error when the result succeeded or has another code.
+ */
 export function rejects(result: Result<unknown>, code: ErrorCode): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
 }
@@ -45,6 +51,8 @@ export function rejects(result: Result<unknown>, code: ErrorCode): void {
 /**
  * A new empty workspace state (never committed). Also used as raw stored state in driver-level
  * tests.
+ *
+ * @returns A fresh state at sequence 0 with no slots or receipts.
  */
 export function pristine(): WorkspaceState {
   return { schemaVersion: 1, workspace, sequence: 0, slots: [], receipts: [] };

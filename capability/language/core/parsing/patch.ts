@@ -38,22 +38,6 @@ type Reader = (cursor: Cursor) => Parsed<Operation>;
 /** A record that `add` or `replace` writes as a whole declaration. */
 type DeclarationTarget = 'node' | 'wire' | 'asset' | 'source' | 'section';
 
-/** The reader for each action word. */
-const readers: Readonly<Record<string, Reader>> = {
-  add: readAdd,
-  replace: readReplace,
-  set: readSet,
-  unset: readUnset,
-  show: readMembership,
-  hide: readMembership,
-  connect: readMembership,
-  disconnect: readMembership,
-  delete: readDelete,
-  reset: readReset,
-  remove: readBlockMove,
-  move: readBlockMove,
-};
-
 /** What `add` may add as a whole declaration. */
 const addTargets: readonly DeclarationTarget[] = ['node', 'wire', 'asset', 'source', 'section'];
 
@@ -72,7 +56,7 @@ const propertyTargets: readonly TargetKind[] = [
 ];
 
 /** The membership action words. */
-const membershipActions = ['show', 'hide', 'connect', 'disconnect'];
+const membershipActions: readonly string[] = ['show', 'hide', 'connect', 'disconnect'];
 
 /** What `delete` may delete. */
 const deleteTargets: readonly TargetKind[] = ['node', 'wire', 'section', 'asset', 'source'];
@@ -131,6 +115,22 @@ export function readOperation(cursor: Cursor): Parsed<Operation> {
     reject('syntax', peek(cursor).span, operationWords.join(' / '), 'Unknown patch operation');
   return reader(cursor);
 }
+
+/** The reader for each action word. */
+const readers: Readonly<Record<string, Reader>> = {
+  add: readAdd,
+  replace: readReplace,
+  set: readSet,
+  unset: readUnset,
+  show: readMembership,
+  hide: readMembership,
+  connect: readMembership,
+  disconnect: readMembership,
+  delete: readDelete,
+  reset: readReset,
+  remove: readBlockMove,
+  move: readBlockMove,
+};
 
 /** `add block @object { … }`, or `add` of a whole node, wire, asset, source or section. */
 function readAdd(cursor: Cursor): Parsed<Operation> {
@@ -311,8 +311,8 @@ function readReset(cursor: Cursor): Parsed<Operation> {
 }
 
 /**
- * `move block @object.@block before=@other` (the `before` is required) or
- * `remove block @object.@block`.
+ * `move block @object.@block before=@other` or `remove block @object.@block`. A `move` without
+ * `before` is read here; patching rejects it.
  */
 function readBlockMove(cursor: Cursor): Parsed<Operation> {
   const action = blockAction(cursor);
@@ -334,9 +334,12 @@ function blockAction(cursor: Cursor): 'move' | 'remove' {
   return 'remove';
 }
 
-/** The attributes a block action accepts: a required `before` for `move`, none for `remove`. */
+/**
+ * The attributes a block action accepts: `before` for `move`, none for `remove`. Patching, not
+ * the parser, requires `before`.
+ */
 function blockMoveProperties(action: 'move' | 'remove'): Readonly<Record<string, Property>> {
-  if (action === 'move') return { before: { type: 'id', field: 'before', required: true } };
+  if (action === 'move') return { before: { type: 'id', field: 'before' } };
   return {};
 }
 

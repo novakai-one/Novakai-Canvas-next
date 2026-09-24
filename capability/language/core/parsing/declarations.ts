@@ -32,7 +32,7 @@ import { repeat } from './repetition.js';
 import { readIdentity } from './references.js';
 
 /** The words that end a compact type expression when they are not inside parentheses. */
-const typeExpressionEnders = [
+const typeExpressionEnders: readonly string[] = [
   'type',
   'asset',
   'source',
@@ -66,8 +66,9 @@ interface TypeTokens {
  * @param allowed - The constructs allowed here.
  * @returns The declaration and the cursor after it.
  * @throws A `LanguageFault`: `syntax` for an unknown or disallowed construct, unquoted
- * positional text, a missing required property or an incomplete type expression; and every
- * fault from reading values, attributes and nested declarations.
+ * positional text, a missing required property or an incomplete type expression; `limit` when
+ * nesting is too deep; `invalid-value` for a value of the wrong type; and every other fault from
+ * reading values, attributes and nested declarations.
  */
 export function readDeclaration(
   cursor: Cursor,
@@ -308,7 +309,8 @@ function requireQuotedPosition(cursor: Cursor, rule: PositionRule): void {
 
 /**
  * Rejects the first required property (in the construct's order) that is missing, at the
- * declaration's first token. There are no hidden defaults; Model checks relations afterwards.
+ * declaration's first token. A required property has no default; Model checks relations
+ * afterwards.
  */
 function checkRequired(fields: Fields, definition: ConstructDefinition, cursor: Cursor): void {
   Object.entries(definition.properties).forEach(

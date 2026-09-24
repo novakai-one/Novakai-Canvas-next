@@ -8,10 +8,10 @@ import type { TargetKind } from '../../contract/records/syntax.js';
 import type { Property } from '../../contract/records/vocabulary.js';
 import { properties as p, layoutProperties } from './properties.js';
 
-/** A node, wire or block label. `required` is not checked in a patch. */
+/** A node, wire or block label. `required`: a patch cannot `unset` it. */
 const label: Property = { type: 'string', field: 'label', required: true };
 
-/** A collection or section title. `required` is not checked in a patch. */
+/** A collection or section title. `required`: a patch cannot `unset` it. */
 const title: Property = { type: 'string', field: 'title', required: true };
 
 /**
@@ -86,7 +86,7 @@ export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string
 
 /**
  * The words that start a patch operation. Reading `unset` property names stops at the first of
- * these, and an unknown operation's diagnostic lists them.
+ * these, an unknown operation's diagnostic lists them, and `describe` publishes them.
  */
 export const operationWords = [
   'add',

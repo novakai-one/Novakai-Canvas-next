@@ -5,7 +5,8 @@
 
 /**
  * The layout algorithm each section `mode` uses when the section names none. Lowering reads it
- * (unknown modes fall back to `flow` there), and `describe` publishes it.
+ * (unknown modes fall back to `flow` there), patching reads it through lowering when a layout is
+ * reset, and `describe` publishes it.
  */
 export const layouts: Readonly<Record<string, string>> = {
   flow: 'flow',

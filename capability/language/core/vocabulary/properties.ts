@@ -1,7 +1,8 @@
 /*
  * The attribute vocabulary: for each property, its value form (`type`), the Model field it
  * lowers to (`field`), its allowed words (`values`), whether a declaration must write it
- * (`required`; patches do not check it), and the value used when it is left out (`fallback`).
+ * (`required`: a patch cannot `unset` it, but a `set` need not write it), and the value used
+ * when it is left out (`fallback`).
  * Parsing, lowering, patching, printing and `describe` all read these tables. Plain data:
  * nothing here runs. Language owns correcting the source; Authoring owns commit recovery.
  */
@@ -9,7 +10,7 @@ import type { Property } from '../../contract/records/vocabulary.js';
 import { nodeKinds, relationshipKinds } from './defaults.js';
 
 /**
- * Every property, by name. Constructs pick from this table and may give an entry another
+ * The shared properties, by name. Constructs pick from this table and may give an entry another
  * attribute name (for example `wireKind` is written `kind=` on a wire).
  */
 export const properties = {
@@ -23,11 +24,11 @@ export const properties = {
   size: { type: 'word', field: 'size', values: ['small', 'medium', 'large'] },
   /** A step number (node, wire). */
   step: { type: 'integer', field: 'step' },
-  /** A node's frame. */
+  /** A frame (node, a section's `show` entry). */
   frame: { type: 'word', field: 'frame', values: ['auto', 'none', 'card', 'panel'] },
   /** A group's frame; the same field without `card`. */
   containerFrame: { type: 'word', field: 'frame', values: ['auto', 'none', 'panel'] },
-  /** How a node arranges its media and text. */
+  /** How media and text are arranged (node, a section's `show` entry). */
   composition: { type: 'word', field: 'composition', values: ['stack', 'media-top', 'media-left'] },
   /** A text block's role. */
   textRole: { type: 'word', field: 'role', values: ['body', 'caption', 'annotation'] },
@@ -133,7 +134,10 @@ export const properties = {
   cells: { type: 'strings', field: 'cells', required: true },
   /** A wire's kind, written `kind=`. */
   wireKind: { type: 'word', field: 'kind', values: relationshipKinds, fallback: 'flow' },
-  /** A node's kind (required). */
+  /**
+   * A node's kind (required). No construct uses this entry: a node's kind is its positional
+   * value (see `constructs`).
+   */
   nodeKind: { type: 'word', field: 'kind', values: nodeKinds, required: true },
   /** The cardinality at a wire's start. */
   from: { type: 'word', field: 'from', values: ['0..1', '1', '0..many', '1..many'] },

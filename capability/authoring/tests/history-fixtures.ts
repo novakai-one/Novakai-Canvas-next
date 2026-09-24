@@ -51,6 +51,7 @@ export function inverse(
  * @param transaction - The ID of the history transaction to corrupt.
  * @param other - The key of the record whose stored form becomes every before-image.
  * @returns The altered copy. The input snapshot is not changed.
+ * @throws AssertionError when `other` is not in the snapshot.
  * @throws ZodError when the transaction record is not in the expected shape.
  */
 export function replaceHistoryBefore(

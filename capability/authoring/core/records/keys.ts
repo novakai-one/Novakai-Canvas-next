@@ -40,11 +40,12 @@ export function findRecord(snapshot: Snapshot, key: RecordKey): StoredRecord | n
 /**
  * Reads the current version of one record key.
  *
- * `'absent'` means the key was never stored. It does not mean "deleted", and it is not revision `0`.
+ * `'absent'` means no record is stored under the key: it was never stored, or it was a purged history
+ * record. It does not mean "deleted", and it is not revision `0`.
  *
  * @param snapshot - The workspace snapshot to read.
  * @param key - The record key to read.
- * @returns The key with its stored version, or with `'absent'` when the key was never stored.
+ * @returns The key with its stored version, or with `'absent'` when no record is stored under it.
  */
 export function versionOf(snapshot: Snapshot, key: RecordKey): ReadVersion {
   const record = findRecord(snapshot, key);

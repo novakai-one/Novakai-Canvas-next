@@ -14,7 +14,7 @@ export type Json =
 /** Checks a JSON value. */
 export const jsonSchema = z.json();
 
-/** Checks a storage version: a whole number from 0 up to the largest safe integer. */
+/** Checks a storage version or a workspace `sequence`: a whole number from 0 up to the largest safe integer. */
 export const revisionSchema = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
 
 /** Checks a record key: a record kind and an ID. */
@@ -23,13 +23,19 @@ export const keySchema = z.strictObject({
   id: recordId,
 });
 
-/** Checks an observed record version. `absent` means the key was never stored. */
+/**
+ * Checks an observed record version. `absent` means no record is stored under the key: it was
+ * never stored, or it was a purged history record.
+ */
 export const versionSchema = z.strictObject({
   key: keySchema,
   version: z.union([z.literal('absent'), revisionSchema]),
 });
 
-/** Checks a stored record. A deleted record (tombstone) keeps its key and version. */
+/**
+ * Checks a stored record. A deleted record (tombstone) stays stored under a new version, with
+ * `deleted: true`, a `null` value and no resources.
+ */
 export const storedSchema = z.strictObject({
   key: keySchema,
   version: revisionSchema,
@@ -80,7 +86,10 @@ export type RecordKey = {
   readonly id: z.infer<typeof keySchema>['id'];
 };
 
-/** A record key with the version it was observed at, or `absent` when it was never stored. */
+/**
+ * A record key with the version it was observed at, or `absent` when no record is stored under
+ * the key (never stored, or a purged history record).
+ */
 export type ReadVersion = { readonly key: RecordKey; readonly version: number | 'absent' };
 
 /** One stored record. A deleted record has `deleted: true`, a `null` value and no resources. */
@@ -131,7 +140,7 @@ export interface Receipt {
   readonly fingerprint: Digest;
   /** The workspace sequence after the commit. */
   readonly sequence: number;
-  /** The versions of the records the commit wrote. */
+  /** The versions of the records the commit wrote. Purged records are listed as `absent`. */
   readonly versions: readonly ReadVersion[];
   readonly outcome: CommitOutcome;
 }

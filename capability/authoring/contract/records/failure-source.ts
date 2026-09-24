@@ -1,14 +1,26 @@
 import { z } from 'zod';
-/** Source coordinates retain the compiler's exact character and line addresses. */
+
+/**
+ * Records of a collaborator's own failure, kept unchanged under an Authoring failure's `source`.
+ *
+ * Codes here belong to the collaborator that raised them. Authoring keeps them as they are and never
+ * interprets message text.
+ */
+
+/** A position in source text, exactly as the language compiler reported it. */
 const position = z.strictObject({ offset: z.number(), line: z.number(), column: z.number() });
+
+/** A range of source text. */
 const span = z.strictObject({ start: position, end: position });
-/** Foreign codes remain owner-defined. Consumers retain them; they do not reinterpret message text. */
+
+/** A failure about one record field. */
 const recordDiagnostic = z.strictObject({
   code: z.string(),
   path: z.string(),
   message: z.string(),
 });
-/** A source-language diagnostic retains correction guidance and the original domain issue when present. */
+
+/** A failure in source-language text, with how to correct it and the domain failure behind it, when any. */
 const languageDiagnostic = z.strictObject({
   code: z.string(),
   span,
@@ -18,7 +30,8 @@ const languageDiagnostic = z.strictObject({
   recovery: z.string(),
   source: recordDiagnostic.optional(),
 });
-/** Consumer-owned validation evidence supports both record addresses and source spans without flattening either. */
+
+/** A validation failure with one or more diagnostics, each about a record field or a source range. */
 const validation = z.strictObject({
   code: z.literal('validation-failed'),
   diagnostics: z
@@ -26,7 +39,11 @@ const validation = z.strictObject({
     .rest(z.union([recordDiagnostic, languageDiagnostic]))
     .readonly(),
 });
-/** A wrapped operational failure retains all supported owner metadata, including nested validation evidence. */
+
+/**
+ * A collaborator's operational failure, with all its fields, its own source failure, and any
+ * failure while cleaning up.
+ */
 export type OperationSource = {
   readonly code: string;
   readonly path: string;
@@ -38,8 +55,11 @@ export type OperationSource = {
   readonly source?: FailureSource | undefined;
   readonly cleanup?: OperationSource | undefined;
 };
-/** Source data is evidence under the primary error, never a second top-level Result channel. */
+
+/** A collaborator failure kept as evidence under an Authoring failure. It is never a second result. */
 export type FailureSource = z.infer<typeof validation> | OperationSource;
+
+/** Checks an operational failure, including nested sources and cleanup failures. */
 const operation: z.ZodType<OperationSource> = z.strictObject({
   code: z.string(),
   path: z.string(),
@@ -51,5 +71,6 @@ const operation: z.ZodType<OperationSource> = z.strictObject({
   source: z.lazy(() => failureSource).optional(),
   cleanup: z.lazy(() => operation).optional(),
 });
-/** Runtime decoding rejects malformed evidence rather than silently stripping codes, paths or spans. */
+
+/** Checks a collaborator failure. Malformed evidence is rejected, never silently stripped of fields. */
 export const failureSource: z.ZodType<FailureSource> = z.union([validation, operation]);

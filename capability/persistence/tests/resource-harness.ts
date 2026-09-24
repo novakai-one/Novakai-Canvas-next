@@ -2,13 +2,23 @@ import { createHash } from 'node:crypto';
 import { vi } from 'vitest';
 import type { Mock } from 'vitest';
 import type { Result, Digest } from '../contract/index.js';
-/** Independent SHA256 verification of fixture bytes; mismatched blob returns typed corruption. */
+
+/**
+ * Verifies fixture bytes with an independent SHA-256, standing in for the Assets verifier.
+ *
+ * @returns Success when the bytes hash to `identity`; otherwise a `corrupt-record` failure.
+ */
 export async function verifyBytes(identity: Digest, base64: string): Promise<Result<void>> {
   const actual = createHash('sha256').update(Buffer.from(base64, 'base64')).digest('hex');
-  if (actual !== identity) return failure('corrupt-record');
+  if (actual !== identity) {
+    return failure('corrupt-record');
+  }
   return { ok: true, value: undefined };
 }
-/** Provider-failure fixture; assertions check code, not this test-only explanatory string. */
+
+/**
+ * A provider failure with `code`. Tests assert the code only, never this fixed message.
+ */
 export function failure<T>(
   code: 'corrupt-record' | 'missing-resource' | 'storage-unavailable',
 ): Result<T> {
@@ -17,7 +27,11 @@ export function failure<T>(
     error: { code, path: 'fixture', message: 'Injected failure', recovery: 'Retry fixture' },
   };
 }
-/** Fixture providers expose their calls so lease lifetime and exact byte inputs can be asserted. */
+
+/**
+ * Mock Assets providers for backup and restore. Every call is recorded, so tests can check lease
+ * lifetimes and the exact bytes passed.
+ */
 export interface ResourceFixture {
   readonly read: Mock<() => Promise<Result<string>>>;
   readonly release: Mock<() => Promise<Result<void>>>;
@@ -30,7 +44,12 @@ export interface ResourceFixture {
   >;
   readonly verify: typeof verifyBytes;
 }
-/** Test lease providers expose typed calls; Vitest owns assertion and mock recovery. */
+
+/**
+ * Creates the mock providers. By default every call succeeds: `read` returns the bytes `abc`
+ * (base64 `YWJj`), and `acquire`/`reserve` hand out leases built from the same `read`, `stage`
+ * and `release` mocks, so one `release` mock counts releases of both kinds of lease.
+ */
 export function resources(): ResourceFixture {
   const read = vi.fn(async (): Promise<Result<string>> => ({ ok: true, value: 'YWJj' }));
   const release = vi.fn(async (): Promise<Result<void>> => ({ ok: true, value: undefined }));

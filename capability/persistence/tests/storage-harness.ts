@@ -8,24 +8,17 @@ import type { Result, Persistence, DatabasePort } from '../contract/index.js';
 import { createSqliteStore } from '../adapters/sqlite.js';
 import { workspace, pristine, value } from './fixtures.js';
 
-interface FileEnvironment {
-  createDirectory(): string;
-  removeDirectory(directory: string): void;
-}
-interface TestDatabase {
-  exec(sql: string): void;
-  prepare(sql: string): {
-    get(): Readonly<Record<string, unknown>> | undefined;
-    run(value: string): unknown;
-  };
-  close(): void;
-}
-type Fault = 'read' | 'write' | 'commit' | 'after-commit' | 'none';
-const files: FileEnvironment = {
-  createDirectory: () => mkdtempSync(join(tmpdir(), 'canvas-persistence-')),
-  removeDirectory: (directory) => rmSync(directory, { recursive: true, force: true }),
-};
-/** Isolated storage lifetime. File/service factories are injectable; Vitest owns setup/assertion failures and final cleanup. */
+/**
+ * Opens a real SQLite Persistence service in its own temporary directory.
+ *
+ * The directory and the service are cleaned up when the test finishes, even after a failed
+ * assertion.
+ *
+ * @param mode - `memory` for `:memory:`, or `file` for a database file in the directory.
+ * @param environment - Creates and removes the directory. Defaults to the real file system.
+ * @param open - Opens the service. Defaults to `openSqlite`.
+ * @returns The service, its location, and `remove` to delete the directory early.
+ */
 export function harness(
   mode: 'memory' | 'file',
   environment: FileEnvironment = files,
@@ -40,7 +33,19 @@ export function harness(
   });
   return { persistence, location, remove: () => environment.removeDirectory(directory) };
 }
-/** Real SQL fixture with injected creation and fault policy; adapter consumes deliberate driver throws. Vitest owns setup and cleanup. */
+
+/**
+ * A Persistence service over a simple one-table SQL store that throws at one chosen point.
+ *
+ * The store has no item rows and no data version, so every transaction reads the whole envelope.
+ * The adapter must turn the injected throw into a typed failure.
+ *
+ * @param fault - Where to throw: `read`, `write`, `commit` (instead of COMMIT), `after-commit`
+ * (after COMMIT succeeded, as if the acknowledgement were lost), or `none`.
+ * @param raw - The initial stored envelope. Defaults to an empty workspace.
+ * @param open - Opens the native database. Defaults to an in-memory `DatabaseSync`.
+ * @returns The service, `inspect` to read the stored envelope directly, and `close`.
+ */
 export function faultStore(
   fault: Fault,
   raw: unknown = pristine(),
@@ -65,7 +70,33 @@ export function faultStore(
     close: driver.close,
   };
 }
-/** Prepared statements are named direct collaborators, avoiding chained statement navigation. Vitest handles setup errors. */
+
+/** Creates and removes a temporary directory. */
+interface FileEnvironment {
+  createDirectory(): string;
+  removeDirectory(directory: string): void;
+}
+
+/** The part of a native SQLite database the fault store uses. */
+interface TestDatabase {
+  exec(sql: string): void;
+  prepare(sql: string): {
+    get(): Readonly<Record<string, unknown>> | undefined;
+    run(value: string): unknown;
+  };
+  close(): void;
+}
+
+/** Where {@link faultStore} throws. */
+type Fault = 'read' | 'write' | 'commit' | 'after-commit' | 'none';
+
+/** The real file system, under the OS temporary directory. */
+const files: FileEnvironment = {
+  createDirectory: () => mkdtempSync(join(tmpdir(), 'canvas-persistence-')),
+  removeDirectory: (directory) => rmSync(directory, { recursive: true, force: true }),
+};
+
+/** Creates the one-table store holding `raw`, and wraps its prepared statements as a port. */
 function initializeDriver(database: TestDatabase, raw: unknown): DatabasePort {
   database.exec('CREATE TABLE data(payload TEXT)');
   const initialize = database.prepare('INSERT INTO data VALUES(?)');
@@ -81,7 +112,11 @@ function initializeDriver(database: TestDatabase, raw: unknown): DatabasePort {
     close: () => database.close(),
   };
 }
-/** Close may already have been exercised by a test; cleanup still runs after failed assertions. */
+
+/**
+ * Closes the fixture database at test end. The test may already have closed it, so a failed close
+ * is returned, not thrown.
+ */
 function closeFixture(database: TestDatabase): Result<void> {
   try {
     database.close();
@@ -98,7 +133,11 @@ function closeFixture(database: TestDatabase): Result<void> {
     };
   }
 }
-/** Fault policy preserves the actual driver effect ordering, including acknowledgement loss after COMMIT. */
+
+/**
+ * Runs a transaction command with the fault applied. COMMIT either throws instead of running
+ * (`commit`), or runs and then throws (`after-commit`); other commands always run.
+ */
 function executeFault(
   driver: DatabasePort,
   fault: Fault,
@@ -111,8 +150,11 @@ function executeFault(
   failAt(fault, 'commit', () => driver.exec(sql));
   failAt(fault, 'after-commit', () => undefined);
 }
-/** The SQLite adapter owns deliberate native-driver exception recovery; no application callback receives this throw. */
+
+/** Throws the injected driver failure when `actual` is `target`; otherwise runs `action`. */
 function failAt<T>(actual: Fault, target: Fault, action: () => T): T {
-  if (actual === target) throw new Error('Injected driver failure');
+  if (actual === target) {
+    throw new Error('Injected driver failure');
+  }
   return action();
 }

@@ -183,6 +183,7 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   node @tr-cap concept "capability/" size=small {}
   node @tr-webad concept "web/adapters/" size=small {}
   node @tr-webreact concept "web/adapters/react/" size=small {}
+  node @tr-webtests concept "web/tests/" size=small {}
   node @tr-webed concept "web/core/editing/" size=small {}
   node @tr-webout concept "web/core/output/" size=small {}
   node @tr-webcontract concept "web/contract/" size=small {}
@@ -196,6 +197,10 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   node @tr-f-rp concept "route-preview.ts" size=small {}
   node @tr-f-ss concept "submission-session.ts" size=small {}
   node @tr-f-mr concept "MovementReview.tsx" size=small {}
+  node @tr-f-rr concept "RequestRecovery.tsx" size=small {}
+  node @tr-f-mvtest concept "movement.test.ts" size=small {}
+  node @tr-f-dp concept "diagram-planners.ts" size=small {}
+  node @tr-f-as concept "authoring-store.ts" size=small {}
   node @tr-f-plan concept "plan.ts" size=small {}
   node @tr-f-regroup concept "regroup.ts" size=small {}
   node @tr-f-mc concept "movement-capture.ts" size=small {}
@@ -216,7 +221,7 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   node @tr-f-drop concept "drop-choice.ts (new)" size=small role=primary {}
   node @tr-f-changes concept "changes.ts" size=small {}
   node @tr-f-api concept "api.ts" size=small {}
-  node @tr-note note "Second count: 24 files, one of them new. The first count (13 files) missed the movement-review machinery — the biggest single deletion in the build. The Opus 5.5 audit caught it." size=medium {}
+  node @tr-note note "Third count: 28 files, one of them new. The first count (13) missed the movement-review machinery; the second (24) missed the test file and the conflict sources. Both misses were caught by the Opus 5.5 audits." size=medium {}
 
   wire @tr-e1 @tr-root -> @tr-apps "contains" kind=parent
   wire @tr-e2 @tr-root -> @tr-cap "contains" kind=parent
@@ -255,6 +260,11 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   wire @tr-e35 @tr-interaction -> @tr-f-changes "contains" kind=parent
   wire @tr-e36 @tr-cap -> @tr-authcontract "contains" kind=parent
   wire @tr-e37 @tr-authcontract -> @tr-f-api "contains" kind=parent
+  wire @tr-e38 @tr-webreact -> @tr-f-rr "contains" kind=parent
+  wire @tr-e39 @tr-apps -> @tr-webtests "contains" kind=parent
+  wire @tr-e40 @tr-webtests -> @tr-f-mvtest "contains" kind=parent
+  wire @tr-e41 @tr-svcad -> @tr-f-dp "contains" kind=parent
+  wire @tr-e42 @tr-svcad -> @tr-f-as "contains" kind=parent
 
   node @mg-surface module "Canvas surface" size=medium {
     code @mg-surface-x "landDrop()"
@@ -266,23 +276,23 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   }
   node @mg-session module "Workspace session" size=medium {
     signature @mg-session-sig "submit" parameters=["move: NodeMove", "meaning: DropMeaning"] returns="void"
-    text @mg-session-d "change — loses the edit-lock wiring and the movement review; the gatekeeper becomes a messenger." role=caption
+    text @mg-session-d "change — loses the edit-lock wiring and the movement review; the gatekeeper becomes a messenger. submit() is a proposed name." role=caption
   }
   node @mg-capture module "Movement capture" size=medium {
     signature @mg-capture-sig "captureMove" parameters=["move: NodeMove", "meaning: DropMeaning"] returns="MoveCapture"
-    text @mg-capture-d "change — the 'captured group missing' throw dies; a group-edge drop is captured as a question." role=caption
+    text @mg-capture-d "change — the 'captured group missing' throw dies; a group-edge drop is captured as a question. captureMove() is a proposed name." role=caption
   }
   node @mg-planner module "Edit planner" size=medium {
     signature @mg-planner-sig "planRegroup" parameters=["capture: MoveCapture"] returns="EditRequest"
-    text @mg-planner-d "change — plan.ts + regroup.ts: plans both meanings (keep-in via expand, move-out via section replace); stops deciding legality itself." role=caption
+    text @mg-planner-d "change — plan.ts + regroup.ts: plans both meanings (keep-in via expand, move-out via section replace, regroupSections at regroup.ts:25); stops deciding legality itself. planRegroup() is a proposed name." role=caption
   }
   node @mg-expand module "Movement expand" size=medium {
-    signature @mg-expand-sig "buildExpandOption" parameters=["group: GroupId", "node: NodeId"] returns="ExpandOption"
-    text @mg-expand-d "change — movement-expand.ts SURVIVES: buildExpandOption() (exists today, :52) becomes the keep-in implementation, rewired from review to popup." role=caption
+    signature @mg-expand-sig "buildExpandOption" parameters=["intent: MoveIntent", "context: MoveContext"] returns="Result<MoveOption | null>"
+    text @mg-expand-d "change — buildExpandOption() exists today (:52) but is modules-only (:90-93) and borrows the in-browser preview (:85-86). The rewire: its preview comes from the SERVER preview instead. Keep-in on plain groups (flow, tree, er, sequence) is NEW work — no mode has group-grow today. Real signature this time." role=caption
   }
   node @mg-routes module "Route preview — demoted" size=medium {
     signature @mg-routes-sig "adviseRoutes" parameters=["request: EditRequest"] returns="RouteAdvice"
-    text @mg-routes-d "change — calls the existing server preview; the in-browser module solve is deleted." role=caption
+    text @mg-routes-d "change — calls the existing server preview; the in-browser module solve is deleted. adviseRoutes() is a proposed name." role=caption
   }
   node @mg-journal module "Submission session" size=medium {
     signature @mg-journal-sig "reconcile" parameters=["entry: Submission"] returns="Receipt | Retry"
@@ -307,7 +317,7 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   }
   node @mg-geometry module "Law: Geometry — feasibility render" size=small {
     signature @mg-geometry-sig "checkFeasibility" parameters=["scene: Scene"] returns="Verdict — drawable | not drawable + reasons"
-    text @mg-geometry-d "existing — apps/service/adapters/feasibility.ts already does a full render job on every apply; a 'no' carries the constraint conflict." role=caption
+    text @mg-geometry-d "existing — the feasibility step (pipeline.ts:32, private today) backed by apps/service/adapters/feasibility.ts; runs a full render job on every apply and a 'no' carries the constraint conflict." role=caption
   }
   node @mg-store module "Law: Store — Persistence" size=small {
     signature @mg-store-sig "commit" parameters=["tx: Transaction"] returns="Receipt"
@@ -334,9 +344,12 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
     field @be-request-id "request" type="RequestId" key=primary
     field @be-request-ws "workspace" type="WorkspaceId"
     field @be-request-actor "actor" type="{ id, kind: human | agent }"
+    field @be-request-version "version" type="1"
     field @be-request-exp "expected" type="Version[]"
+    field @be-request-scope "scope" type="Key[]"
+    field @be-request-assets "assets" type="AssetRef[]"
     field @be-request-intent "intent" type="Intent"
-    text @be-request-d "existing — unchanged; the real record (authoring/contract/records/request.ts:12-21). The first version of this diagram invented its fields." role=caption
+    text @be-request-d "existing — unchanged; the real record (authoring/contract/records/request.ts:12-21). scope is what decides whether an edit is blocked (submissions.ts:13)." role=caption
   }
   node @be-receipt entity "Receipt" {
     field @be-receipt-id "id" type="ReceiptId" key=primary
@@ -347,44 +360,48 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   node @be-journal entity "Submission (journal)" {
     field @be-journal-id "id" type="EntryId" key=primary
     field @be-journal-request "request_id" type="RequestId" key=foreign references=@be-request.@be-request-id
-    field @be-journal-state "state" type="sending | uncertain | retryable | rejected"
-    text @be-journal-d "change — 'rejected' already frees the next edit (PR #104); the fix is a reconcile path for 'uncertain'. Real states: contract/records/submission.ts:12." role=caption
+    field @be-journal-state "state" type="sending | uncertain | retryable | rejected | abandoned (proposed)"
+    text @be-journal-d "change — 'rejected' already frees the next edit (PR #104), and recovery buttons already exist (RequestRecovery.tsx). The remaining gap: a 'retryable' edit (no receipt found) blocks and cannot be dismissed — the build adds 'abandoned'. Real states: contract/records/submission.ts:12." role=caption
   }
   node @be-note note "Transient objects — LandedDrop, DropMeaning, previews — are never persisted, so they are not entities. No entity is deleted." size=medium {}
 
   wire @be-w1 @be-receipt -> @be-request "answers" kind=association from="1" to="1"
   wire @be-w2 @be-journal -> @be-request "tracks" kind=association from="0..many" to="1"
 
-  node @cs-table-node concept "Change summary — second count, file by file" role=primary size=large {
+  node @cs-table-node concept "Change summary — third count, file by file" role=primary size=large {
     table @cs-table columns=["new/change/remove", "File", "Role — what the builder should know", "Current lines", "Lines added (est)", "Lines removed (est)", "Final lines (est)"] {
-      row @cs-r1 cells=["change", "apps/web/adapters/workspace-session.ts", "loses the edit-lock wiring and movement review; the gatekeeper becomes a messenger — see refactor flag below", "2905", "+40", "-380", "2565"]
+      row @cs-r1 cells=["change", "apps/web/adapters/workspace-session.ts", "loses the edit-lock wiring and the movement review call sites (~512 lines of move/review code); the gatekeeper becomes a messenger — see refactor flag below", "2905", "+40", "-500", "2445"]
       row @cs-r2 cells=["change", "apps/web/core/editing/movement-capture.ts", "the 'captured group missing' throw dies; a group-edge drop is captured as a question", "427", "+90", "-60", "457"]
       row @cs-r3 cells=["change", "apps/web/core/editing/plan.ts", "plans both meanings of an ambiguous drop; stops deciding legality itself", "67", "+30", "-15", "82"]
-      row @cs-r4 cells=["change", "apps/web/core/editing/regroup.ts", "move-out is already a model section replace (:25-42); extended for the explicit move-out meaning", "43", "+55", "0", "98"]
-      row @cs-r5 cells=["change", "apps/web/core/editing/movement.ts", "placement path: stale-target handling where the throw was caught (:51-54)", "146", "+20", "-20", "146"]
-      row @cs-r6 cells=["change", "apps/web/core/editing/movement-expand.ts", "SURVIVES as keep-in: buildExpandOption() rewired from review to popup", "556", "+60", "-40", "576"]
+      row @cs-r4 cells=["change", "apps/web/core/editing/regroup.ts", "move-out is already a model section replace (regroupSections, :25); extended for the explicit move-out meaning", "43", "+55", "0", "98"]
+      row @cs-r5 cells=["change", "apps/web/core/editing/movement.ts", "the review core itself (buildMoveReview, chooseMoveOption, :20/:127) — gutted with the review teardown", "146", "+10", "-120", "36"]
+      row @cs-r6 cells=["change", "apps/web/core/editing/movement-expand.ts", "keep-in: expand rewired so its preview comes from the server, plus NEW generic keep-in for plain groups (expand is modules-only today)", "556", "+140", "-40", "656"]
       row @cs-r7 cells=["change", "apps/web/core/editing/movement-rearrange.ts", "gutted: the rearrange review dies; what survives moves under the judge's preview", "795", "+20", "-700", "115"]
       row @cs-r8 cells=["change", "apps/web/core/editing/movement-preview.ts", "review preview demoted; server preview replaces it", "313", "+10", "-260", "63"]
-      row @cs-r9 cells=["change", "apps/web/core/editing/movement-intent.ts", "review intent classification simplified away", "367", "+10", "-300", "77"]
+      row @cs-r9 cells=["change", "apps/web/core/editing/movement-intent.ts", "part dies with the review — but expand uses ~300 lines of it, so most survives", "367", "+10", "-120", "257"]
       row @cs-r10 cells=["remove", "apps/web/adapters/react/MovementReview.tsx", "the review popup UI; replaced by the drop-choice popup in CanvasSurface", "146", "0", "-146", "0"]
       row @cs-r11 cells=["change", "apps/web/contract/records/movement.ts", "review record types shrink to what the popup needs", "57", "+5", "-40", "22"]
-      row @cs-r12 cells=["change", "apps/web/core/editing/submissions.ts", "blocksSubmission() guard: uncertain still blocks, reconciled entries free it", "66", "+15", "-5", "76"]
-      row @cs-r13 cells=["change", "apps/web/contract/records/submission.ts", "submission record: reconcile metadata", "38", "+5", "0", "43"]
-      row @cs-r14 cells=["change", "apps/web/adapters/submission-session.ts", "reconcile path for uncertain entries; HTTP adapter for preview + apply", "213", "+40", "-10", "243"]
-      row @cs-r15 cells=["change", "apps/web/contract/compose.ts", "wiring: review machinery out, popup and preview in (:254-276, :355-357)", "533", "+10", "-30", "513"]
-      row @cs-r16 cells=["change", "apps/web/adapters/route-preview.ts", "adviser: calls the existing server preview; in-browser solve deleted", "108", "+30", "-70", "68"]
-      row @cs-r17 cells=["change", "apps/web/core/output/diagnostics.ts", "extends the plain-English mapping (PR #104) with the laws' typed reasons", "63", "+45", "0", "108"]
-      row @cs-r18 cells=["change", "capability/canvas/adapters/react-flow/CanvasSurface.tsx", "hosts the keep-in / move-out / cancel popup at the drop spot", "227", "+65", "-10", "282"]
-      row @cs-r19 cells=["new", "capability/canvas/core/drafts/drop-choice.ts", "the only new file; pure logic turning a landed drop into the three-way question", "0", "+120", "0", "120"]
-      row @cs-r20 cells=["change", "capability/canvas/core/drafts/regroup.ts", "edge-ambiguity detection extends today's regroup draft (:31-53)", "75", "+25", "0", "100"]
-      row @cs-r21 cells=["change", "capability/canvas/core/interaction/changes.ts", "second edit lock removed (:22)", "25", "+5", "-10", "20"]
-      row @cs-r22 cells=["change", "apps/service/core/transport/admission.ts", "turn-taking: revision-conflict carries rebase guidance; per-author planners stay", "110", "+10", "-5", "115"]
-      row @cs-r23 cells=["change", "capability/authoring/contract/api.ts", "prepare(preview) exists (:48-55); typed reasons surface in rejections", "95", "+25", "0", "120"]
-      row @cs-r24 cells=["change", "apps/service/adapters/feasibility.ts", "the geometry law: render-job verdict already carries constraint conflicts", "102", "+15", "0", "117"]
-      row @cs-total cells=["TOTAL", "24 files — 22 changed, 1 new, 1 removed", "", "7477", "+750", "-2101", "6126"]
+      row @cs-r12 cells=["change", "apps/web/core/editing/submissions.ts", "blocksSubmission() learns to ignore abandoned entries (scope decides blocking, :13)", "66", "+10", "-5", "71"]
+      row @cs-r13 cells=["change", "apps/web/contract/records/submission.ts", "adds the 'abandoned' state (proposed)", "38", "+5", "0", "43"]
+      row @cs-r14 cells=["change", "apps/web/adapters/submission-session.ts", "a retryable edit (no receipt found) can be dismissed; reconcile/retry already exist (:137-194)", "213", "+30", "-5", "238"]
+      row @cs-r15 cells=["change", "apps/web/adapters/react/RequestRecovery.tsx", "the existing recovery buttons (:71, :78) gain 'abandon'", "100", "+10", "0", "110"]
+      row @cs-r16 cells=["change", "apps/web/contract/compose.ts", "wiring: review machinery out, popup and preview in (:254-276, :355-357)", "533", "+10", "-30", "513"]
+      row @cs-r17 cells=["change", "apps/web/adapters/route-preview.ts", "adviser: calls the existing server preview; in-browser solve deleted", "108", "+30", "-70", "68"]
+      row @cs-r18 cells=["change", "apps/web/core/output/diagnostics.ts", "extends the plain-English mapping (PR #104) with the laws' typed reasons", "63", "+45", "0", "108"]
+      row @cs-r19 cells=["change", "capability/canvas/adapters/react-flow/CanvasSurface.tsx", "hosts the keep-in / move-out / cancel popup at the drop spot", "227", "+65", "-10", "282"]
+      row @cs-r20 cells=["new", "capability/canvas/core/drafts/drop-choice.ts", "the only new file; pure logic turning a landed drop into the three-way question", "0", "+120", "0", "120"]
+      row @cs-r21 cells=["change", "capability/canvas/core/drafts/regroup.ts", "edge-ambiguity detection extends today's regroup draft (:31-53)", "75", "+25", "0", "100"]
+      row @cs-r22 cells=["change", "capability/canvas/core/interaction/changes.ts", "second edit lock removed (:22)", "25", "+5", "-10", "20"]
+      row @cs-r23 cells=["change", "apps/service/core/transport/admission.ts", "per-author planners stay; turn-taking admission tweaks", "110", "+10", "-5", "115"]
+      row @cs-r24 cells=["change", "apps/service/adapters/diagram-planners.ts", "where revision conflicts actually originate (:55) — rebase guidance added here", "141", "+25", "-5", "161"]
+      row @cs-r25 cells=["change", "apps/service/adapters/authoring-store.ts", "the other conflict source (:15) — carries the 'what changed' detail for rebase", "102", "+15", "-5", "117"]
+      row @cs-r26 cells=["change", "capability/authoring/contract/api.ts", "prepare(preview) exists (:48-55); typed reasons surface in rejections", "95", "+25", "0", "120"]
+      row @cs-r27 cells=["change", "apps/service/adapters/feasibility.ts", "the geometry law's adapter: render-job verdict already carries constraint conflicts", "102", "+15", "0", "117"]
+      row @cs-r28 cells=["change", "apps/web/tests/movement.test.ts", "review tests deleted/rewritten for the popup (existing file, missed twice)", "286", "+40", "-200", "126"]
+      row @cs-total cells=["TOTAL", "28 files — 26 changed, 1 new, 1 removed", "", "8106", "+895", "-2346", "6655"]
     }
-    text @cs-note "Second count. The first (+730 / -575 over 13 files) missed ~2,400 lines of movement-review machinery — the Opus 5.5 audit caught it. The truth is removal-heavy: 2,101 lines of refusal/review machinery out, 750 in. No longer in scope (first count was wrong): nested-support-expansion.ts, structural.ts, authoring outcomes.ts, transactions/apply.ts." role=caption
-    text @cs-refactor "!! REFACTOR FLAG — workspace-session.ts is 2,905 lines: far past single responsibility, and this build leaves it at ~2,565. De-gating is its first cut, not its fix. Splitting it (session / advice / coordination) is a scope decision for this build — stage 10 in the build-plan collection." role=caption
+    text @cs-note "Third count. First (+730/-575, 13 files) missed the movement-review machinery; second (+750/-2101, 24 files) missed the test file, the conflict sources, and overestimated deletions in files that surviving code shares. Estimates, not gates." role=caption
+    text @cs-refactor "!! REFACTOR FLAG — workspace-session.ts is 2,905 lines: far past single responsibility, and this build leaves it at ~2,445. De-gating is its first cut, not its fix. Splitting it (session / advice / coordination) is a scope decision for this build — stage 10 in the build-plan collection." role=caption
   }
 
   node @ow-table-node concept "Capability ownership — who may do what to each object" size=large {
@@ -392,9 +409,9 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
       row @ow-r1 cells=["EditRequest", "apps/web/core/editing/plan.ts — planRegroup() (proposed)", "capability/authoring/contract/api.ts — prepare(), apply() (existing)", "never", "never"]
       row @ow-r2 cells=["Receipt", "authoring pipeline — apply() on commit (existing)", "apps/web/adapters/submission-session.ts — receipt path (existing)", "never", "never"]
       row @ow-r3 cells=["Submission (journal)", "apps/web/adapters/submission-session.ts — submit() (existing)", "apps/web/core/editing/submissions.ts — blocksSubmission() (existing)", "submission-session.ts — reconcile()/retry() on uncertain (existing, extended)", "never"]
-      row @ow-r4 cells=["Group membership", "apps/web/core/editing/movement-expand.ts — buildExpandOption() on keep-in (existing, rewired)", "capability/layout/core (measure + arrange)", "apps/web/core/editing/regroup.ts — section replace on move-out (existing)", "apps/web/core/editing/regroup.ts — same path (existing)"]
+      row @ow-r4 cells=["Group membership", "apps/web/core/editing/movement-expand.ts — buildExpandOption() on keep-in (existing, modules-only today; plain-group keep-in is new)", "capability/layout/core (measure + arrange)", "apps/web/core/editing/regroup.ts — regroupSections() on move-out (existing)", "apps/web/core/editing/regroup.ts — same path (existing)"]
     }
-    text @ow-note "File + function, with (existing) vs (proposed) marked. Where a function is named it exists on a B.3 card." role=caption
+    text @ow-note "File + function, with (existing) vs (proposed) marked. Where a function is named it exists on a B.3 card. scope on EditRequest decides whether an edit is blocked (submissions.ts:13)." role=caption
   }
 
   node @bq-you participant "You" role=primary {}
@@ -411,11 +428,11 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   node @bq-diagnostics participant "Diagnostics (web)" {}
   node @bq-note note "Same function names as B.3 — if a name here is not on a card there, this spec is wrong. A law's 'no' returns a rejection carrying reasons; the browser's diagnostics mapping renders the human words." size=medium {}
 
-  node @bo-1 step "Un-wedge for real: reconcile" size=medium {
-    text @bo-1-d "Uncertain submissions (did it save?) get a reconcile path. The stuck case that actually remains."
+  node @bo-1 step "Un-wedge: abandon the undismissable" size=medium {
+    text @bo-1-d "A retryable edit (no receipt found) blocks today and cannot be dismissed. Recovery buttons already exist (PR #104); this adds 'abandon'."
   }
   node @bo-2 step "Turn-taking: rebase rules" size=medium {
-    text @bo-2-d "revision-conflict learns to say what changed and how to rebase. Prerequisite for removing the edit lock."
+    text @bo-2-d "revision-conflict learns to say what changed and how to rebase — in diagram-planners.ts and authoring-store.ts, where conflicts actually originate. Prerequisite for removing the edit lock."
   }
   node @bo-3 step "The group-edge popup" size=medium {
     text @bo-3-d "The drop lands, then keep-in / move-out / cancel — built on existing expand and regroup."
@@ -434,8 +451,8 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
   wire @bo-w4 @bo-4 -> @bo-5 "then" kind=flow step=4
 
   section @s-spec-tree "B.1 · Build spec — target repo tree (files in scope, second count)" mode=tree direction=down gap=compact order=6 {
-    show @tr-root @tr-apps @tr-cap @tr-webad @tr-webreact @tr-webed @tr-webout @tr-webcontract @tr-transport @tr-svcad @tr-canvasrf @tr-drafts @tr-interaction @tr-authcontract @tr-f-ws @tr-f-rp @tr-f-ss @tr-f-mr @tr-f-plan @tr-f-regroup @tr-f-mc @tr-f-mv @tr-f-mre @tr-f-mex @tr-f-mpv @tr-f-mi @tr-f-submissions @tr-f-diag @tr-f-compose @tr-f-recmove @tr-f-recsub @tr-f-adm @tr-f-feas @tr-f-surface @tr-f-draftregroup @tr-f-drop @tr-f-changes @tr-f-api @tr-note
-    connect @tr-e1 @tr-e2 @tr-e3 @tr-e4 @tr-e5 @tr-e6 @tr-e7 @tr-e8 @tr-e9 @tr-e10 @tr-e11 @tr-e12 @tr-e13 @tr-e14 @tr-e15 @tr-e16 @tr-e17 @tr-e18 @tr-e19 @tr-e20 @tr-e21 @tr-e22 @tr-e23 @tr-e24 @tr-e25 @tr-e26 @tr-e27 @tr-e28 @tr-e29 @tr-e30 @tr-e31 @tr-e32 @tr-e33 @tr-e34 @tr-e35 @tr-e36 @tr-e37
+    show @tr-root @tr-apps @tr-cap @tr-webad @tr-webreact @tr-webtests @tr-webed @tr-webout @tr-webcontract @tr-transport @tr-svcad @tr-canvasrf @tr-drafts @tr-interaction @tr-authcontract @tr-f-ws @tr-f-rp @tr-f-ss @tr-f-mr @tr-f-rr @tr-f-mvtest @tr-f-dp @tr-f-as @tr-f-plan @tr-f-regroup @tr-f-mc @tr-f-mv @tr-f-mre @tr-f-mex @tr-f-mpv @tr-f-mi @tr-f-submissions @tr-f-diag @tr-f-compose @tr-f-recmove @tr-f-recsub @tr-f-adm @tr-f-feas @tr-f-surface @tr-f-draftregroup @tr-f-drop @tr-f-changes @tr-f-api @tr-note
+    connect @tr-e1 @tr-e2 @tr-e3 @tr-e4 @tr-e5 @tr-e6 @tr-e7 @tr-e8 @tr-e9 @tr-e10 @tr-e11 @tr-e12 @tr-e13 @tr-e14 @tr-e15 @tr-e16 @tr-e17 @tr-e18 @tr-e19 @tr-e20 @tr-e21 @tr-e22 @tr-e23 @tr-e24 @tr-e25 @tr-e26 @tr-e27 @tr-e28 @tr-e29 @tr-e30 @tr-e31 @tr-e32 @tr-e33 @tr-e34 @tr-e35 @tr-e36 @tr-e37 @tr-e38 @tr-e39 @tr-e40 @tr-e41 @tr-e42
     root @tr-root
   }
 
@@ -502,15 +519,15 @@ collection @gatekeeper-story "The gatekeeper — today and proposed" {
     event @bq-e1 @bq-you -> @bq-surface "drop a node on a group's edge" kind=call activate=true
     event @bq-e2 @bq-surface -> @bq-you "popup: keep-in / move-out / cancel" kind=async activate=false
     event @bq-e3 @bq-you -> @bq-surface "move-out" kind=call activate=true
-    event @bq-e4 @bq-surface -> @bq-session "submit(move, meaning): void" kind=call
-    event @bq-e5 @bq-session -> @bq-capture "captureMove(move, meaning): MoveCapture" kind=call
+    event @bq-e4 @bq-surface -> @bq-session "submit(move, meaning): void (proposed)" kind=call
+    event @bq-e5 @bq-session -> @bq-capture "captureMove(move, meaning): MoveCapture (proposed)" kind=call
     event @bq-e6 @bq-capture -> @bq-session "MoveCapture" kind=return activate=false
-    event @bq-e7 @bq-session -> @bq-planner "planRegroup(capture): EditRequest" kind=call
+    event @bq-e7 @bq-session -> @bq-planner "planRegroup(capture): EditRequest (proposed)" kind=call
     event @bq-e8 @bq-session -> @bq-journal "submit over HTTP (adapter, existing)" kind=call
     event @bq-e9 @bq-journal -> @bq-door "admit(actor, request): Admitted | Refused (existing route)" kind=call
     event @bq-e10 @bq-door -> @bq-judge "prepare(request, preview=true): Candidate | Rejection (existing)" kind=call
     event @bq-e11 @bq-judge -> @bq-rulebook "validate(request): Verdict — legal | illegal + reasons" kind=call
-    event @bq-e12 @bq-judge -> @bq-geometry "checkFeasibility(scene): Verdict — drawable | not drawable + reasons (existing render job)" kind=call
+    event @bq-e12 @bq-judge -> @bq-geometry "the feasibility step (pipeline.ts:32, private) over the adapter: drawable | not drawable + reasons (existing render job)" kind=call
     fragment @bq-outcome alt "The judge's verdict" {
       branch @bq-yes "Every law says yes" {
         event @bq-e13 @bq-journal -> @bq-door "admit(actor, request): Admitted | Refused" kind=call

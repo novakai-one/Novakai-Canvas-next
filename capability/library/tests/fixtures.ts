@@ -1,6 +1,7 @@
 /*
  * Library test data: frozen fixture IDs and a fresh valid snapshot per call. Data only; the
- * result assertions live in `assertions.ts`.
+ * result assertions live in `assertions.ts`. A fixture that fails to build fails the test run;
+ * correct the fixture and rerun the tests.
  */
 import {
   catalogIdSchema,
@@ -30,15 +31,7 @@ export interface FixtureIds {
 }
 
 /** Fixture IDs, checked with the public ID schemas (no private code is used). */
-export const ids: FixtureIds = Object.freeze({
-  catalog: catalogIdSchema().parse('catalog'),
-  folder: folderIdSchema().parse('engineering'),
-  child: folderIdSchema().parse('backend'),
-  alpha: collectionIdSchema().parse('alpha'),
-  beta: collectionIdSchema().parse('beta'),
-  section: sectionIdSchema().parse('er'),
-  object: objectIdSchema().parse('invoice'),
-});
+export const ids: FixtureIds = Object.freeze(checkedIds());
 
 /**
  * A valid snapshot: catalog `catalog` (revision 7) with folder `engineering` and its child
@@ -96,5 +89,23 @@ export function snapshot(): LibrarySnapshot {
       { collection: ids.alpha, openedAt: 100 },
       { collection: ids.beta, openedAt: 200 },
     ],
+  };
+}
+
+/** Checks each fixture ID with a schema of its kind; the folder schema is used for both folders. */
+function checkedIds(): FixtureIds {
+  const catalogIds = catalogIdSchema();
+  const folderIds = folderIdSchema();
+  const collectionIds = collectionIdSchema();
+  const sectionIds = sectionIdSchema();
+  const objectIds = objectIdSchema();
+  return {
+    catalog: catalogIds.parse('catalog'),
+    folder: folderIds.parse('engineering'),
+    child: folderIds.parse('backend'),
+    alpha: collectionIds.parse('alpha'),
+    beta: collectionIds.parse('beta'),
+    section: sectionIds.parse('er'),
+    object: objectIds.parse('invoice'),
   };
 }

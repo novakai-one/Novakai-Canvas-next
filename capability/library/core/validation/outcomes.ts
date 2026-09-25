@@ -123,6 +123,7 @@ interface ShapeIssue {
 
 /** The part of a schema {@link parse} uses. Declared here so core does not import zod. */
 interface Parser<T> {
+  /** Checks input: the parsed value or the rejecting issues. A throwing getter still throws. */
   safeParse(
     input: unknown,
   ):

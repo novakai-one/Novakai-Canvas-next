@@ -1,6 +1,7 @@
 /*
  * Library catalog planning: a batch of catalog changes applied to a snapshot without storing
  * anything, and the named-input boundary shared with search.
+ * A failing test changes nothing outside the test; correct the code or the test and rerun.
  */
 import { describe, expect, test } from 'vitest';
 import { plan, query, type PlanInput, type QueryInput } from '../contract/index.js';
@@ -116,7 +117,7 @@ describe('Library catalog planning', /** The planning tests. */ () => {
     const newer = { snapshot: base, changes: [], proposedCollections: projected };
     expect(valueOf(plan(newer)).changed).toBe(false);
     const nulled = { snapshot: base, changes: [], proposedCollections: null };
-    expect(plan(nulled).ok).toBe(false);
+    expect(diagnosticsOf(plan(nulled))).toEqual(['shape ']);
   }
 
   test(
@@ -126,8 +127,8 @@ describe('Library catalog planning', /** The planning tests. */ () => {
 
   /**
    * A folder with contents is removed only under `rehome`, which moves its direct child folders
-   * and entries to its parent. No collection is dropped. (Deeper folders staying attached is the
-   * product rule, but this fixture has no grandchild folder, so this test does not show it.)
+   * and entries to its parent. No collection is dropped. Deeper folders stay attached to their
+   * own parent.
    */
   function removesOnlyUnderRehome(): void {
     const base = snapshot();
@@ -147,6 +148,15 @@ describe('Library catalog planning', /** The planning tests. */ () => {
     const ungrouped = valueOf(plan({ snapshot: base, changes: child }));
     expect(ungrouped.candidate.entries[0]?.folder).toBe(ids.folder);
     expect(ungrouped.candidate.entries[1]?.archived).toBe(true);
+
+    // Add `deep` under `backend`, then remove `engineering`: `deep` stays under `backend`.
+    const deep = { id: 'deep', title: 'Deep', parent: ids.child, order: 0 };
+    const grandchild = [
+      { op: 'create-folder', value: deep },
+      { op: 'remove-folder', id: ids.folder, policy: 'rehome' },
+    ];
+    const kept = valueOf(plan({ snapshot: base, changes: grandchild }));
+    expect(kept.candidate.folders).toEqual([{ id: ids.child, title: 'Backend', order: 0 }, deep]);
   }
 
   test(
@@ -160,12 +170,14 @@ describe('Library catalog planning', /** The planning tests. */ () => {
    */
   function reportsThrowingInputs(): void {
     const planInput: PlanInput = {
+      /** Throws on every read, like a revoked or hostile input. */
       get snapshot(): unknown {
         throw new Error('unreadable');
       },
       changes: [],
     };
     const queryInput: QueryInput = {
+      /** Throws on every read, like a revoked or hostile input. */
       get snapshot(): unknown {
         throw new Error('unreadable');
       },

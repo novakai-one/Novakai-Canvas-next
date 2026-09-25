@@ -22,10 +22,16 @@ export const HIT_KINDS = Object.freeze(['collection', 'section', 'object'] as co
 export type HitKind = (typeof HIT_KINDS)[number];
 
 /** Which archived collections a search returns: none, all, or only archived ones. */
-export type ArchiveMode = 'exclude' | 'include' | 'only';
+export type ArchiveMode = (typeof ARCHIVE_MODES)[number];
 
 /** How hits are sorted: by catalog order, by title, or most recently opened first. */
-export type SortMode = 'order' | 'title' | 'recent';
+export type SortMode = (typeof SORT_MODES)[number];
+
+/** Every archive mode, in the order the schema's error message lists them. Frozen, private. */
+const ARCHIVE_MODES = Object.freeze(['exclude', 'include', 'only'] as const);
+
+/** Every sort mode, in the order the schema's error message lists them. Frozen, private. */
+const SORT_MODES = Object.freeze(['order', 'title', 'recent'] as const);
 
 /** Search criteria that passed {@link querySchema}, with defaults filled in. */
 export interface QueryRequest {
@@ -90,8 +96,8 @@ export function querySchema(): z.ZodType<QueryRequest> {
       text: textSchema().default(''),
       folder: folderIdSchema().optional(),
       descendants: z.boolean().default(false),
-      archived: z.enum(['exclude', 'include', 'only']).default('exclude'),
-      sort: z.enum(['order', 'title', 'recent']).default('order'),
+      archived: z.enum(ARCHIVE_MODES).default('exclude'),
+      sort: z.enum(SORT_MODES).default('order'),
       kinds: z.array(z.enum(HIT_KINDS)).max(3).readonly().default(allHitKinds),
       limit: z.number().int().min(1).max(200).default(50),
       cursor: z.string().max(MAX_CURSOR_LENGTH).optional(),

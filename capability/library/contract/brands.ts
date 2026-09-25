@@ -6,11 +6,14 @@
  */
 import { z } from 'zod';
 
-/** The most items any one record list (folders, entries, collections, sections, objects, visits) may hold. */
+/**
+ * The most items any one record list (folders, entries, collections, sections, objects, visits)
+ * may hold.
+ */
 export const MAX_RECORDS = 10_000;
 
 /** The longest display or search text, in characters. */
-export const MAX_TEXT_LENGTH = 10_000;
+const MAX_TEXT_LENGTH = 10_000;
 
 /**
  * Builds the catalog ID schema. A catalog is separate from its folders and the collections it

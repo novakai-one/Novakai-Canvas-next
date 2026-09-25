@@ -1,5 +1,6 @@
 /*
- * Library test assertions over the public `Result`. They read results only and never change them.
+ * Library test assertions over the public `Result` and schema checks. They read results only and
+ * never change them. A failing assertion changes nothing; correct the code or the test and rerun.
  */
 import { assert } from 'vitest';
 import type { Result, DiagnosticCode } from '../contract/index.js';
@@ -68,4 +69,21 @@ export function isDeepFrozen(value: unknown): boolean {
     return true;
   }
   return Object.isFrozen(value) && Object.values(value).every(isDeepFrozen);
+}
+
+/** What a schema check returns, as far as {@link issueCodes} reads it. */
+interface SchemaOutcome {
+  readonly error?: { readonly issues: readonly { readonly code: string }[] } | undefined;
+}
+
+/**
+ * The issue codes of a schema check, in the order the schema reported them.
+ *
+ * @param outcome - What a schema's `safeParse` returned.
+ * @returns The codes; empty when the check passed.
+ * @throws Never.
+ */
+export function issueCodes(outcome: SchemaOutcome): readonly string[] {
+  const issues = outcome.error?.issues ?? [];
+  return issues.map(/** The issue's code. */ (issue) => issue.code);
 }

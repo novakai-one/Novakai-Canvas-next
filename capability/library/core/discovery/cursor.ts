@@ -74,16 +74,16 @@ export function nextCursor(
 
 /** The keys a cursor is bound to. */
 interface CursorIdentity {
-  /** JSON of the request without its cursor (page size and filters included) and the recent visits. */
+  /** JSON of the request without its cursor (page size and filters included) and recent visits. */
   readonly queryKey: string;
   /** JSON of the snapshot's source revisions. */
   readonly versionKey: string;
 }
 
-/** Builds the keys; recent visits are sorted by collection ID so their input order does not matter. */
+/** Builds the keys. Recent visits are sorted by collection ID, so their input order is ignored. */
 function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): CursorIdentity {
   const { cursor: previousCursor, ...criteria } = request;
-  // The cursor itself is not part of the identity; `void` marks the variable as deliberately unused.
+  // The cursor is not part of the identity; `void` marks the variable as deliberately unused.
   void previousCursor;
   const recent = snapshot.recent.toSorted(byVisitedCollection);
   return {
@@ -96,7 +96,8 @@ function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): Curso
 function decodeCursor(cursor: string): Result<CursorEnvelope> {
   try {
     // The schema is built before the JSON is parsed.
-    const parsed = cursorSchema().safeParse(JSON.parse(cursor));
+    const schema = cursorSchema();
+    const parsed = schema.safeParse(JSON.parse(cursor));
     if (!parsed.success) {
       return staleCursor('Cursor is malformed');
     }

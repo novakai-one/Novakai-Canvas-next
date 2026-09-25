@@ -9,7 +9,7 @@ import { folderIdSchema, collectionIdSchema, type CollectionId, type FolderId } 
 import { folderSchema, entrySchema, type CatalogEntry, type Folder } from './catalog.js';
 
 /** The most changes one batch may hold. */
-export const MAX_CHANGES = 1000;
+const MAX_CHANGES = 1000;
 
 /**
  * One catalog change:
@@ -28,36 +28,16 @@ export type CatalogChange =
   | { readonly op: 'unregister'; readonly collection: CollectionId };
 
 /** What removing a folder with contents does: refuse, or move the contents to its parent. */
-export type RemovalPolicy = 'reject' | 'rehome';
+export type RemovalPolicy = (typeof REMOVAL_POLICIES)[number];
+
+/** Every removal policy, in the order the schema's error message lists them. Frozen, private. */
+const REMOVAL_POLICIES = Object.freeze(['reject', 'rehome'] as const);
 
 /** The name of one kind of change. */
-export type ChangeOperation = CatalogChange['op'];
+type ChangeOperation = CatalogChange['op'];
 
 /** One change of the named kind. */
 export type ChangeOf<Op extends ChangeOperation> = Extract<CatalogChange, { readonly op: Op }>;
-
-/**
- * Builds the schema of one change. `remove-folder`'s `policy` defaults to `reject`.
- *
- * @returns A new change schema.
- * @throws Never.
- */
-export function changeSchema(): z.ZodType<CatalogChange> {
-  return z.discriminatedUnion('op', [
-    z.strictObject({ op: z.literal('create-folder'), value: folderSchema() }).readonly(),
-    z.strictObject({ op: z.literal('replace-folder'), value: folderSchema() }).readonly(),
-    z
-      .strictObject({
-        op: z.literal('remove-folder'),
-        id: folderIdSchema(),
-        policy: z.enum(['reject', 'rehome']).default('reject'),
-      })
-      .readonly(),
-    z.strictObject({ op: z.literal('register'), value: entrySchema() }).readonly(),
-    z.strictObject({ op: z.literal('replace-entry'), value: entrySchema() }).readonly(),
-    z.strictObject({ op: z.literal('unregister'), collection: collectionIdSchema() }).readonly(),
-  ]);
-}
 
 /**
  * Builds the schema of an ordered batch of at most {@link MAX_CHANGES} changes. Planning applies
@@ -71,4 +51,22 @@ export function changeSchema(): z.ZodType<CatalogChange> {
  */
 export function changesSchema(): z.ZodType<readonly CatalogChange[]> {
   return z.array(changeSchema()).max(MAX_CHANGES).readonly();
+}
+
+/** Builds the schema of one change. `remove-folder`'s `policy` defaults to `reject`. */
+function changeSchema(): z.ZodType<CatalogChange> {
+  return z.discriminatedUnion('op', [
+    z.strictObject({ op: z.literal('create-folder'), value: folderSchema() }).readonly(),
+    z.strictObject({ op: z.literal('replace-folder'), value: folderSchema() }).readonly(),
+    z
+      .strictObject({
+        op: z.literal('remove-folder'),
+        id: folderIdSchema(),
+        policy: z.enum(REMOVAL_POLICIES).default('reject'),
+      })
+      .readonly(),
+    z.strictObject({ op: z.literal('register'), value: entrySchema() }).readonly(),
+    z.strictObject({ op: z.literal('replace-entry'), value: entrySchema() }).readonly(),
+    z.strictObject({ op: z.literal('unregister'), collection: collectionIdSchema() }).readonly(),
+  ]);
 }

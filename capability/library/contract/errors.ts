@@ -37,7 +37,7 @@ export type DiagnosticCode =
 export interface Diagnostic {
   /** The kind of problem. */
   readonly code: DiagnosticCode;
-  /** Dotted path to the problem, for example `catalog.folders.<id>.parent`, or `$` for the input. */
+  /** Dotted path to the problem, such as `catalog.folders.<id>.parent`; `$` for the input. */
   readonly path: string;
   /** A human-readable explanation. Its wording is not part of the contract. */
   readonly message: string;

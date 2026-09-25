@@ -97,6 +97,7 @@ function rehomeEntry(entry: CatalogEntry, removed: Folder): CatalogEntry {
 /** A copy of the folder under `parent`. At the root the `parent` key is left out, not undefined. */
 function moveFolder(folder: Folder, parent: FolderId | undefined): Folder {
   const { parent: previousParent, ...record } = folder;
+  // The old parent is replaced below; `void` marks the variable as deliberately unused.
   void previousParent;
   if (parent === undefined) {
     return record;
@@ -104,9 +105,10 @@ function moveFolder(folder: Folder, parent: FolderId | undefined): Folder {
   return { ...record, parent };
 }
 
-/** A copy of the entry in `folder`, keeping order and archive state. At the root the key is left out. */
+/** A copy of the entry in `folder`, keeping order and archive state; no `folder` key at root. */
 function moveEntry(entry: CatalogEntry, folder: FolderId | undefined): CatalogEntry {
   const { folder: previousFolder, ...record } = entry;
+  // The old folder is replaced below; `void` marks the variable as deliberately unused.
   void previousFolder;
   if (folder === undefined) {
     return record;

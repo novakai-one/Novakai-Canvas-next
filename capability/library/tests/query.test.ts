@@ -1,6 +1,7 @@
 /*
  * Library search over one snapshot: filters, paging with cursors, sorting, and equal frozen
  * results for every consumer.
+ * A failing test changes nothing outside the test; correct the code or the test and rerun.
  */
 import { describe, expect, test } from 'vitest';
 import { query, type SearchHit } from '../contract/index.js';

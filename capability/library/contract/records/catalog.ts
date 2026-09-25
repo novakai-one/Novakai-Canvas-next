@@ -18,7 +18,7 @@ import {
   type FolderId,
 } from '../brands.js';
 
-/** A folder. Without a parent it sits at the catalog root. Folders are independent of collections. */
+/** A folder. Without a parent it is at the catalog root. Folders are separate from collections. */
 export interface Folder {
   readonly id: FolderId;
   /** Nonblank display title. */

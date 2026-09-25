@@ -1,7 +1,7 @@
 /*
- * Existence checks by ID, shared by validation, catalog changes and search. Each check reads the
- * given list only. Pure: the same lists always give the same answer; Authoring owns commit and
- * recovery.
+ * Existence checks and record keys by ID, shared by validation, catalog changes and search. Each
+ * check reads the given list only. Pure: the same lists always give the same answer; Authoring owns
+ * commit and recovery.
  */
 import type { CollectionId, FolderId, SectionId } from '../../contract/brands.js';
 import type { CatalogEntry, Folder } from '../../contract/records/catalog.js';
@@ -60,4 +60,27 @@ export function hasCollection(
  */
 export function hasSection(sections: readonly SectionProjection[], id: SectionId): boolean {
   return sections.some(/** Whether this section has the ID. */ (section) => section.id === id);
+}
+
+/**
+ * A folder's key: its ID. Shared by catalog changes and validation.
+ *
+ * @param folder - The folder.
+ * @returns Its ID.
+ * @throws Never.
+ */
+export function folderKey(folder: Folder): FolderId {
+  return folder.id;
+}
+
+/**
+ * A catalog entry's key: its collection's ID (one entry per collection). Shared by catalog changes
+ * and validation.
+ *
+ * @param entry - The entry.
+ * @returns Its collection's ID.
+ * @throws Never.
+ */
+export function entryKey(entry: CatalogEntry): CollectionId {
+  return entry.collection;
 }

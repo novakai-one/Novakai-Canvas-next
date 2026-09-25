@@ -1,6 +1,7 @@
 /*
  * Library snapshot validation: a snapshot's shape and the rules across its records, and the public
  * ID schema factories.
+ * A failing test changes nothing outside the test; correct the code or the test and rerun.
  */
 import { describe, expect, test } from 'vitest';
 import {
@@ -12,7 +13,7 @@ import {
   sectionIdSchema,
 } from '../contract/index.js';
 import { snapshot, ids } from './fixtures.js';
-import { valueOf, diagnosticsOf } from './assertions.js';
+import { valueOf, diagnosticsOf, issueCodes } from './assertions.js';
 
 describe('Library snapshot validation', /** The validation and ID schema tests. */ () => {
   /**
@@ -120,8 +121,8 @@ describe('Library snapshot validation', /** The validation and ID schema tests. 
     for (const factory of factories) {
       expect(factory()).not.toBe(factory());
       expect(factory().safeParse('alpha')).toMatchObject({ success: true, data: 'alpha' });
-      expect(factory().safeParse('').success).toBe(false);
-      expect(factory().safeParse('a b').success).toBe(false);
+      expect(issueCodes(factory().safeParse(''))).toEqual(['invalid_format']);
+      expect(issueCodes(factory().safeParse('a b'))).toEqual(['invalid_format']);
     }
   }
 

@@ -7,7 +7,7 @@ import type { Catalog, CatalogEntry, Folder } from '../../contract/records/catal
 import type { CatalogChange, ChangeOf } from '../../contract/records/change.js';
 import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
-import { hasEntry, hasFolder } from '../validation/lookups.js';
+import { entryKey, folderKey, hasEntry, hasFolder } from '../validation/lookups.js';
 import { removeFolder } from './removal.js';
 
 /**
@@ -127,10 +127,10 @@ function requireAbsent(exists: boolean, path: string): Result<true> {
 }
 
 /** A new list: `value` appended (create), or put in place of the item with its key (replace). */
-function writeList<T>(
+function writeList<T, K extends string>(
   items: readonly T[],
   value: T,
-  keyOf: (record: T) => string,
+  keyOf: (record: T) => K,
   mode: WriteMode,
 ): readonly T[] {
   if (mode === 'create') {
@@ -142,19 +142,9 @@ function writeList<T>(
 }
 
 /** `value` when it has the item's key, so a replacement keeps its position; otherwise the item. */
-function replaceMatching<T>(item: T, value: T, keyOf: (record: T) => string): T {
+function replaceMatching<T, K extends string>(item: T, value: T, keyOf: (record: T) => K): T {
   if (keyOf(item) !== keyOf(value)) {
     return item;
   }
   return value;
-}
-
-/** A folder's key: its ID. */
-function folderKey(folder: Folder): string {
-  return folder.id;
-}
-
-/** An entry's key: its collection's ID. */
-function entryKey(entry: CatalogEntry): string {
-  return entry.collection;
 }

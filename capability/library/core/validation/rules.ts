@@ -4,6 +4,7 @@
  * corrects the input, and Authoring owns commit and recovery.
  */
 import type { Diagnostic } from '../../contract/errors.js';
+import type { CollectionId, ObjectId, SectionId } from '../../contract/brands.js';
 import type {
   LibrarySnapshot,
   CollectionProjection,
@@ -14,7 +15,7 @@ import type {
 import type { Catalog, CatalogEntry, Folder } from '../../contract/records/catalog.js';
 import { ancestry } from '../catalog/ancestry.js';
 import { duplicateIssues } from './identities.js';
-import { hasCollection, hasEntry, hasFolder, hasSection } from './lookups.js';
+import { entryKey, folderKey, hasCollection, hasEntry, hasFolder, hasSection } from './lookups.js';
 import { diagnoseWhen } from './outcomes.js';
 
 /**
@@ -171,37 +172,27 @@ function recentIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   return [...duplicates, ...references];
 }
 
-/** A folder's key: its ID. */
-function folderKey(folder: Folder): string {
-  return folder.id;
-}
-
-/** An entry's key: its collection's ID. */
-function entryKey(entry: CatalogEntry): string {
-  return entry.collection;
-}
-
 /** A collection's key: its ID. */
-function collectionKey(collection: CollectionProjection): string {
+function collectionKey(collection: CollectionProjection): CollectionId {
   return collection.id;
 }
 
 /** A section's key: its ID. */
-function sectionKey(section: SectionProjection): string {
+function sectionKey(section: SectionProjection): SectionId {
   return section.id;
 }
 
 /** An object's key: its ID. */
-function objectKey(object: ObjectProjection): string {
+function objectKey(object: ObjectProjection): ObjectId {
   return object.id;
 }
 
 /** A visible-section entry's key: the section ID itself. */
-function sectionIdKey(id: string): string {
+function sectionIdKey(id: SectionId): SectionId {
   return id;
 }
 
 /** A visit's key: its collection's ID. */
-function visitKey(visit: RecentVisit): string {
+function visitKey(visit: RecentVisit): CollectionId {
   return visit.collection;
 }

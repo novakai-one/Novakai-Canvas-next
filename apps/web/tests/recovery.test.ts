@@ -6,7 +6,7 @@ import type { Request, TransportResponse } from '../contract/records/owners.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { Result } from '../contract/index.js';
 import { failure } from '../contract/index.js';
-import { createSubmissionSession } from '../adapters/submission-session.js';
+import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
 import { createSubmissionReaders } from '../adapters/submission-readers.js';
 import {
   controller,

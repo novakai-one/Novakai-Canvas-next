@@ -236,7 +236,7 @@ it('rejects missing and extra preview targets before producing a movement option
   }
 });
 
-import { createSubmissionSession } from '../adapters/submission-session.js';
+import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
 import { createSubmissionReaders } from '../adapters/submission-readers.js';
 import { failure } from '../contract/index.js';
 import { memoryRetention, snapshot } from './recovery-fixtures.js';

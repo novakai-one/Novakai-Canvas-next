@@ -1,13 +1,13 @@
 import { historyStatusSchema } from '@novakai/canvas-authoring';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
-import type { ObjectDraft } from '../contract/records/inspector.js';
-import type { DiagramObject, Group, Relationship, Section } from '../contract/records/owners.js';
+import type { ObjectDraft } from '../../contract/records/inspector.js';
+import type { DiagramObject, Group, Relationship, Section } from '../../contract/records/owners.js';
 import type {
   AddDiagramDraft,
   AddGroupDraft,
   AddObjectDraft,
-} from '../contract/records/creation.js';
-import type { ConnectionDraft, ConnectionEdit } from '../contract/records/connection.js';
+} from '../../contract/records/creation.js';
+import type { ConnectionDraft, ConnectionEdit } from '../../contract/records/connection.js';
 import {
   compatibleWires,
   memberEndpoints,
@@ -16,24 +16,24 @@ import {
   targetEndpoints,
   resolveCallableEndpoint,
 } from '@novakai/canvas-model';
-import type { DefinitionDraft } from '../contract/records/definitions.js';
-import type { Submission } from '../contract/records/submission.js';
-import type { Receipt } from '../contract/records/owners.js';
+import type { DefinitionDraft } from '../../contract/records/definitions.js';
+import type { Submission } from '../../contract/records/submission.js';
+import type { Receipt } from '../../contract/records/owners.js';
 import type {
   WorkspaceController,
   WorkspaceView,
   ActiveDiagram,
-} from '../contract/records/workspace.js';
-import type { WorkspaceBindings } from '../contract/ports/workspace.js';
+} from '../../contract/records/workspace.js';
+import type { WorkspaceBindings } from '../../contract/ports/workspace.js';
 import type {
   Request,
   CanvasEffect,
   RenderDocument,
   EditIntent,
-} from '../contract/records/owners.js';
-import type { Diagnostic, Result } from '../contract/errors.js';
+} from '../../contract/records/owners.js';
+import type { Diagnostic, Result } from '../../contract/errors.js';
 import type { RelationshipKind } from '@novakai/canvas-model';
-import type { BinaryResponse } from '../contract/ports/client.js';
+import type { BinaryResponse } from '../../contract/ports/client.js';
 import {
   plainMessage,
   emptyRefusalOrder,
@@ -42,7 +42,7 @@ import {
   groupDraftProblem,
   groupCreationChanges,
   chooseMoveOption as chooseReviewedMoveOption,
-} from '../contract/api.js';
+} from '../../contract/api.js';
 
 const creationKinds = ['diagram', 'object', 'group'] as const;
 const restingStatuses = new Set([
@@ -480,7 +480,7 @@ function endpointValue(endpoint: ConnectionDraft['source']): Relationship['sourc
 
 function definitionChanges(
   draft: DefinitionDraft,
-): readonly import('../contract/records/owners.js').Change[] {
+): readonly import('../../contract/records/owners.js').Change[] {
   if (draft.operation === 'remove')
     return [{ op: 'remove', target: 'definitions', id: draft.definition.id }];
   return [{ op: draft.operation, target: 'definitions', value: draft.definition }];
@@ -556,7 +556,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let movementCapture: {
     active: ActiveDiagram;
     intent: Extract<EditIntent, { kind: 'placement' }>;
-    review: import('../contract/records/movement.js').MoveReview;
+    review: import('../../contract/records/movement.js').MoveReview;
     workspace: string;
   } | null = null;
   let movementApplying = false;
@@ -708,7 +708,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** A restarted service keeps drafts visible; new-generation data never silently advances a draft's captured preconditions. */
   function acceptCurrent(
     latest: {
-      readonly snapshot: import('../contract/records/owners.js').Snapshot;
+      readonly snapshot: import('../../contract/records/owners.js').Snapshot;
       readonly collections: WorkspaceView['collections'];
     },
     generation: string,
@@ -739,7 +739,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** A checked snapshot can invalidate the current request before it is allowed to install. */
   function settleChangedRender(
     latest: {
-      readonly snapshot: import('../contract/records/owners.js').Snapshot;
+      readonly snapshot: import('../../contract/records/owners.js').Snapshot;
       readonly collections: WorkspaceView['collections'];
     },
     generation: string,
@@ -910,7 +910,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return transportDocument(response.value, id, request.generation);
   }
   function transportDocument(
-    response: import('../contract/records/owners.js').TransportResponse,
+    response: import('../../contract/records/owners.js').TransportResponse,
     id: string,
     generation: string,
   ): Result<RenderDocument> {
@@ -1192,12 +1192,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return moduleTargets.length > 0;
   }
   function movementOption(
-    review: import('../contract/records/movement.js').MoveReview,
-  ): import('../contract/records/movement.js').MoveOption | undefined {
+    review: import('../../contract/records/movement.js').MoveReview,
+  ): import('../../contract/records/movement.js').MoveOption | undefined {
     return review.options.find((item) => item.kind === 'expand' || item.kind === 'rearrange');
   }
   function movementBaseError(
-    review: import('../contract/records/movement.js').MoveReview,
+    review: import('../../contract/records/movement.js').MoveReview,
   ): Diagnostic {
     return {
       code: 'unsupported-edit',
@@ -1228,7 +1228,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function handleReviewedMovement(
     active: ActiveDiagram,
     intent: Extract<EditIntent, { kind: 'placement' }>,
-    review: import('../contract/records/movement.js').MoveReview,
+    review: import('../../contract/records/movement.js').MoveReview,
   ): boolean {
     // Nothing changed (e.g. dropped back in place): the node returns quietly.
     if (review.options.length === 0 && review.reason !== undefined) {
@@ -1261,8 +1261,8 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function retainMovementReview(
     active: ActiveDiagram,
     intent: Extract<EditIntent, { kind: 'placement' }>,
-    review: import('../contract/records/movement.js').MoveReview,
-    option: import('../contract/records/movement.js').MoveOption,
+    review: import('../../contract/records/movement.js').MoveReview,
+    option: import('../../contract/records/movement.js').MoveOption,
   ): boolean {
     movementCapture = { active, intent, review, workspace: state.snapshot?.workspace ?? '' };
     const accepted = active.session.dispatch({
@@ -1352,7 +1352,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function movementPreview(
     active: ActiveDiagram,
     intent: EditIntent,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
     acceptedPreview?: GeometryPreview,
   ): Result<GeometryPreview | null> {
     return previewAcceptedOrRoutes(active, intent, changes, acceptedPreview);
@@ -1360,7 +1360,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function previewAcceptedOrRoutes(
     active: ActiveDiagram,
     intent: EditIntent,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
     acceptedPreview: GeometryPreview | undefined,
   ): Result<GeometryPreview | null> {
     if (acceptedPreview !== undefined) return { ok: true, value: acceptedPreview };
@@ -1369,7 +1369,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function previewMovementRoutes(
     active: ActiveDiagram,
     intent: EditIntent,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
   ): Result<GeometryPreview | null> {
     return bindings.previewRoutes?.(active.document, intent, changes) ?? { ok: true, value: null };
   }
@@ -1456,7 +1456,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   async function submitFeasibleCanvas(
     active: ActiveDiagram,
     intent: EditIntent,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
     acceptedPreview?: GeometryPreview,
   ): Promise<Result<Receipt> | null> {
     const start = performance.now();
@@ -1507,7 +1507,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   async function submitCanvas(
     active: ActiveDiagram,
     intent: EditIntent,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
   ): Promise<Result<Receipt>> {
     const request = bindings.inputs.model(
       active.base,
@@ -1792,7 +1792,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Captured Model changes share request assembly; their feature decides the semantic change list. */
   async function applyChanges(
     draft: Pick<ObjectDraft | DefinitionDraft, 'base' | 'collection' | 'generation'>,
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
   ): Promise<Result<Receipt>> {
     const request = bindings.inputs.model(
       draft.base,
@@ -1923,7 +1923,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       readonly generation: string;
       request: Request | null;
     },
-    changes: readonly import('../contract/records/owners.js').Change[],
+    changes: readonly import('../../contract/records/owners.js').Change[],
   ): Promise<Result<Receipt>> {
     const request =
       capture.request === null
@@ -2387,7 +2387,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     object: DiagramObject,
     reuseObject: string | null,
     section: Section,
-  ): readonly import('../contract/records/owners.js').Change[] {
+  ): readonly import('../../contract/records/owners.js').Change[] {
     const appearance = { op: 'replace' as const, target: 'sections' as const, value: section };
     return reuseObject === null
       ? [{ op: 'create' as const, target: 'objects' as const, value: object }, appearance]
@@ -2406,7 +2406,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** Library commands use the same durable request journal and captured catalog versions as diagram editing. */
   async function applyLibrary(
-    base: import('../contract/records/owners.js').Snapshot,
+    base: import('../../contract/records/owners.js').Snapshot,
     changes: readonly import('@novakai/canvas-library').OrganisationChange[],
   ): Promise<Result<Receipt>> {
     const request = bindings.inputs.library(base, changes, bindings.nextId());
@@ -2976,7 +2976,7 @@ function reusableSession(
 /** A restore may lower revision; a fresh Canvas session can retain the viewing position, but never old edit preconditions. */
 function retainCamera(
   active: ActiveDiagram | null,
-  session: import('../contract/records/owners.js').SessionStore,
+  session: import('../../contract/records/owners.js').SessionStore,
   document: RenderDocument,
   base: NonNullable<WorkspaceView['snapshot']>,
 ): void {

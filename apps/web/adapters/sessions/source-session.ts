@@ -1,15 +1,15 @@
-import type { SourceBindings, SourceController, SourceView } from '../contract/records/source.js';
+import type { SourceBindings, SourceController, SourceView } from '../../contract/records/source.js';
 import type {
   Receipt,
   Snapshot,
   Request,
   ReadVersion,
   StoredRecord,
-} from '../contract/records/owners.js';
-import type { Submission } from '../contract/records/submission.js';
-import type { Result } from '../contract/errors.js';
-import { encodeSourceRecovery } from '../contract/api.js';
-import { failure } from '../contract/errors.js';
+} from '../../contract/records/owners.js';
+import type { Submission } from '../../contract/records/submission.js';
+import type { Result } from '../../contract/errors.js';
+import { encodeSourceRecovery } from '../../contract/api.js';
+import { failure } from '../../contract/errors.js';
 /** Source editor owns its draft, captured base and recovery record. It cannot commit without the injected submission owner. */
 export function createSourceController(bindings: SourceBindings): SourceController {
   let state: SourceView = {

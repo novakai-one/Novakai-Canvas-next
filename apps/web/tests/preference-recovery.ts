@@ -6,7 +6,7 @@ import {
   createScopeInstaller,
 } from '@novakai/canvas-design-system';
 import type { ScopeSnapshot, Environment } from '@novakai/canvas-design-system';
-import { createPreferenceController } from '../adapters/preference-session.js';
+import { createPreferenceController } from '../adapters/sessions/preference-session.js';
 import type { DraftRetention } from '../contract/ports/workspace.js';
 /** Host case6 extension: real token resolution, checked retention and a deterministic target; visible theme quality remains a browser check. */
 export async function verifyPreferenceRecovery(retention: DraftRetention): Promise<void> {

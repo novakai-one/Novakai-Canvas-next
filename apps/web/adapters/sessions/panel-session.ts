@@ -7,7 +7,7 @@ import type {
   PanelTab,
   InterfaceControl,
   InterfaceVisibility,
-} from '../contract/panel-types.js';
+} from '../../contract/panel-types.js';
 import {
   defaultPanels,
   panelMode,
@@ -19,7 +19,7 @@ import {
   panelGeometry,
   panelTabSide,
   reconcilePanelPreferences,
-} from '../contract/api.js';
+} from '../../contract/api.js';
 /** This external store owns only panel presentation. Preference failures are reported; no operation changes a diagram or draft. */
 export function createPanelController(bindings: PanelBindings): PanelController {
   let state: PanelState = {

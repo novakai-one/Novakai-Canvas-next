@@ -1,7 +1,7 @@
 import type { Definition } from '@novakai/canvas-model';
-import type { Result, Diagnostic } from '../contract/errors.js';
-import type { Request } from '../contract/records/owners.js';
-import { failure } from '../contract/errors.js';
+import type { Result, Diagnostic } from '../../contract/errors.js';
+import type { Request } from '../../contract/records/owners.js';
+import { failure } from '../../contract/errors.js';
 import type {
   DefinitionBindings,
   DefinitionDraft,
@@ -9,8 +9,8 @@ import type {
   DefinitionSession,
   DefinitionState,
   LiteralDraft,
-} from '../contract/records/definitions.js';
-import { captureCollectionBase } from '../contract/api.js';
+} from '../../contract/records/definitions.js';
+import { captureCollectionBase } from '../../contract/api.js';
 
 /** Definitions share the retained-editor lifecycle while keeping one stable ID per draft. */
 export function createDefinitionSession(bindings: DefinitionBindings): DefinitionSession {

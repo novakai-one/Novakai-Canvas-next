@@ -3,9 +3,9 @@ import type {
   RetainedEditor,
   RetainedEditorBindings,
   RetainedEditorState,
-} from '../contract/records/retained-editor.js';
-import type { Result, Diagnostic } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+} from '../../contract/records/retained-editor.js';
+import type { Result, Diagnostic } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** Browser forms share persistence and acknowledgement policy; feature bindings own command replay and admission. */
 export function createRetainedEditor<Selection, Command, Draft extends RetainedDraft>(
   bindings: RetainedEditorBindings<Selection, Command, Draft>,

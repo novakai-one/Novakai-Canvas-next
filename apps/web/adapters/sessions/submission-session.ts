@@ -2,11 +2,11 @@ import type {
   Submission,
   SubmissionBindings,
   SubmissionSession,
-} from '../contract/records/submission.js';
-import type { Receipt } from '../contract/records/owners.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
-import { blocksSubmission, submissionStatus, refused } from '../contract/api.js';
+} from '../../contract/records/submission.js';
+import type { Receipt } from '../../contract/records/owners.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
+import { blocksSubmission, submissionStatus, refused } from '../../contract/api.js';
 
 /** Durable browser recovery coordinates transmission only; Authoring remains the sole commit/idempotency authority.
  * Consumers keep drafts on every failure and call reconcile before an explicit retry.

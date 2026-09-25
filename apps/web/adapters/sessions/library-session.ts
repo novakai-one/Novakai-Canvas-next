@@ -4,8 +4,8 @@ import type {
   LibraryView,
   LibraryFilters,
   FolderDraft,
-} from '../contract/records/library.js';
-import type { Snapshot, Collection } from '../contract/records/owners.js';
+} from '../../contract/records/library.js';
+import type { Snapshot, Collection } from '../../contract/records/owners.js';
 import type { OrganisationChange, RecentVisit } from '@novakai/canvas-library';
 /** The session owns browse filters and local visits; every catalog mutation goes to Authoring with a captured revision. */
 export function createLibraryController(bindings: LibraryBindings): LibraryController {

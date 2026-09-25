@@ -9,9 +9,9 @@ import type {
   PreferenceController,
   PreferenceView,
   PreferenceInstallation,
-} from '../contract/records/preferences.js';
-import type { Result, Diagnostic } from '../contract/errors.js';
-import { defaultPreferences } from '../contract/api.js';
+} from '../../contract/records/preferences.js';
+import type { Result, Diagnostic } from '../../contract/errors.js';
+import { defaultPreferences } from '../../contract/api.js';
 /** Start with a valid scope, then restore checked preferences. Rejection preserves stored evidence and a usable default session. */
 export function createPreferenceController(
   bindings: PreferenceBindings,

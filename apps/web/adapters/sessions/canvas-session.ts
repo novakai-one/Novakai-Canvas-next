@@ -6,9 +6,9 @@ import type {
   Result as CanvasResult,
 } from '@novakai/canvas-canvas';
 import type { RenderDocument } from '@novakai/canvas-service';
-import type { CanvasSessions } from '../contract/ports/workspace.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { CanvasSessions } from '../../contract/ports/workspace.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** Effects must be drained after every dispatch, including unchanged state; rendering subscribers never submit them. */
 function observed(
   session: SessionStore,

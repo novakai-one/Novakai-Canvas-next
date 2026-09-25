@@ -1,7 +1,7 @@
 import { it, expect } from 'vitest';
 import { requestSchema } from '@novakai/canvas-authoring';
 import { failure, plainMessage } from '../contract/index.js';
-import { createSubmissionSession } from '../adapters/submission-session.js';
+import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
 import { createSubmissionReaders } from '../adapters/submission-readers.js';
 import type { Submission } from '../contract/records/submission.js';
 import type { TransportResponse } from '../contract/records/owners.js';

@@ -3,7 +3,11 @@
  * given. References are checked later, on the final candidate. Pure; Authoring owns the commit
  * and recovery.
  */
-import type { Organisation, OrganisationEntry, Folder } from '../../contract/records/organisation.js';
+import type {
+  Organisation,
+  OrganisationEntry,
+  Folder,
+} from '../../contract/records/organisation.js';
 import type { OrganisationChange, ChangeOf } from '../../contract/records/change.js';
 import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
@@ -13,10 +17,10 @@ import { removeFolder } from './removal.js';
 /**
  * Applies one parsed organisation change and returns the new organisation.
  *
- * - `create-folder` / `register`: appended; an existing ID is `duplicate`.
- * - `replace-folder` / `replace-entry`: replaced in place; a missing ID is `not-found`.
- * - `remove-folder`: see `removeFolder` (`not-found`, `folder-not-empty`, or rehomed contents).
- * - `unregister`: the entry is removed; a missing one is `not-found`.
+ * - `create-folder` / `register`: appended; an existing ID is `duplicate-id`.
+ * - `replace-folder` / `replace-entry`: replaced in place; a missing ID is `unknown-id`.
+ * - `remove-folder`: see `removeFolder` (`unknown-id`, `folder-not-empty`, or rehomed contents).
+ * - `unregister`: the entry is removed; a missing one is `unknown-id`.
  *
  * References are not checked here, so a later change in the batch may repair them; planning
  * validates the final organisation. A failure stops the batch.
@@ -52,7 +56,11 @@ type WriteMode = 'create' | 'replace';
  */
 function unsupported(change: never): LibraryResult<Organisation> {
   void change;
-  return failure({ code: 'shape', path: 'changes', message: 'Unsupported organisation operation' });
+  return failure({
+    code: 'invalid-input',
+    path: 'changes',
+    message: 'Unsupported organisation operation',
+  });
 }
 
 /** Creates or replaces a complete folder (covering rename, move and reorder; no field patches). */
@@ -95,7 +103,7 @@ function unregister(
 ): LibraryResult<Organisation> {
   if (!hasEntry(organisation.entries, change.collection)) {
     return failure({
-      code: 'not-found',
+      code: 'unknown-id',
       path: `organisation.entries.${change.collection}`,
       message: 'Membership must exist',
     });
@@ -104,7 +112,7 @@ function unregister(
   return success({ ...organisation, entries });
 }
 
-/** Create needs an absent ID (`duplicate`); replace needs an existing one (`not-found`). */
+/** Create needs an absent ID (`duplicate-id`); replace needs an existing one (`unknown-id`). */
 function checkIdentity(
   mode: WriteMode,
   exists: boolean,
@@ -115,7 +123,7 @@ function checkIdentity(
   }
   if (!exists) {
     return failure({
-      code: 'not-found',
+      code: 'unknown-id',
       path,
       message: 'Replacement requires an existing identity',
     });
@@ -130,7 +138,7 @@ function requireAbsent(
 ): LibraryResult<true> {
   if (exists) {
     return failure({
-      code: 'duplicate',
+      code: 'duplicate-id',
       path,
       message: 'Creation requires an absent identity',
     });

@@ -2,7 +2,7 @@
  * The Library snapshot: the organisation, the host's complete collection inventory and the recent
  * visits, all read at one consistent point. Every Library operation runs on one snapshot. The
  * record types are declared first; each schema is built by a function, so no schema object is
- * shared between calls. A snapshot these schemas reject is a `shape` diagnostic; the caller
+ * shared between calls. A snapshot these schemas reject is a `invalid-input` diagnostic; the caller
  * corrects it, and Authoring owns commit and recovery.
  */
 import { z } from 'zod';

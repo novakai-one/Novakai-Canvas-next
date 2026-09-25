@@ -1,6 +1,6 @@
 /*
  * Library's callable boundary: the three entry points, composed from core. Each stores nothing,
- * never throws and returns a frozen result: a throw while reading the input becomes a `shape`
+ * never throws and returns a frozen result: a throw while reading the input becomes a `invalid-input`
  * failure at `$`. The same input always gives the same result, so a retry is always safe.
  * Authoring owns admission, durable writes and crash recovery.
  *

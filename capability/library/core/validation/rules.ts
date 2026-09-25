@@ -61,7 +61,7 @@ function parentIssues(
     return [];
   }
   return diagnoseWhen(!hasFolder(organisation.folders, folder.parent), {
-    code: 'reference',
+    code: 'broken-reference',
     path: `organisation.folders.${folder.id}.parent`,
     message: 'Parent folder must exist',
   });
@@ -74,7 +74,7 @@ function cycleIssues(
 ): readonly Diagnostic[] {
   const walk = ancestry(folder.id, organisation.folders);
   return diagnoseWhen(walk.cycle, {
-    code: 'cycle',
+    code: 'folder-cycle',
     path: `organisation.folders.${folder.id}.parent`,
     message: 'Folder ancestry must be acyclic',
   });
@@ -102,12 +102,12 @@ function entryIssues(
   const folderExists =
     entry.folder === undefined || hasFolder(snapshot.organisation.folders, entry.folder);
   const missingCollection = diagnoseWhen(!collectionExists, {
-    code: 'reference',
+    code: 'broken-reference',
     path: `organisation.entries.${entry.collection}`,
     message: 'Collection projection must exist',
   });
   const missingFolder = diagnoseWhen(!folderExists, {
-    code: 'reference',
+    code: 'broken-reference',
     path: `organisation.entries.${entry.collection}.folder`,
     message: 'Containing folder must exist',
   });
@@ -120,7 +120,7 @@ function missingEntryIssues(
   organisation: Organisation,
 ): readonly Diagnostic[] {
   return diagnoseWhen(!hasEntry(organisation.entries, collection.id), {
-    code: 'reference',
+    code: 'broken-reference',
     path: `collections.${collection.id}`,
     message: 'Collection must have exactly one organisation entry',
   });
@@ -148,7 +148,7 @@ function objectVisibility(
   const duplicates = duplicateIssues(object.visibleIn, sectionIdKey, path);
   const references = object.visibleIn.flatMap((id) =>
     diagnoseWhen(!hasSection(collection.sections, id), {
-      code: 'reference',
+      code: 'broken-reference',
       path: `${path}.${id}`,
       message: 'Visible section must exist',
     }),
@@ -161,7 +161,7 @@ function recentIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   const duplicates = duplicateIssues(snapshot.recent, visitKey, 'recent');
   const references = snapshot.recent.flatMap((visit) =>
     diagnoseWhen(!hasCollection(snapshot.collections, visit.collection), {
-      code: 'reference',
+      code: 'broken-reference',
       path: `recent.${visit.collection}`,
       message: 'Visited collection must exist',
     }),

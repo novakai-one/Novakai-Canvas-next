@@ -2,7 +2,7 @@
  * The organisation records: folders, entries and the organisation that holds them. The record types are
  * declared first; each schema is built by a function whose return type proves it produces that
  * record, and no schema object is shared between calls. A record these schemas reject is a
- * `shape` diagnostic; the caller corrects it, and Authoring owns commit and recovery.
+ * `invalid-input` diagnostic; the caller corrects it, and Authoring owns commit and recovery.
  */
 import { z } from 'zod';
 import {

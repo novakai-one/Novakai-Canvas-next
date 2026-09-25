@@ -30,13 +30,13 @@ import { readVersions } from './versions.js';
  * 2. Validate the snapshot, then parse the request (defaults filled in).
  * 3. Normalize the criteria: text trimmed, lowercased and single-spaced; kinds de-duplicated and
  *    sorted. Display labels are never changed.
- * 4. Check the requested folder exists (`not-found`, path `query.folder`).
+ * 4. Check the requested folder exists (`unknown-id`, path `query.folder`).
  * 5. Build every hit, filter, sort (see `sortHits`), then apply the cursor's offset. A bad or
- *    stale cursor is `stale-cursor` (path `query.cursor`).
+ *    stale cursor is `invalid-cursor` (path `query.cursor`).
  * 6. Return up to `limit` hits, the total, the source revisions and, when more hits follow, the
- *    next cursor. A next cursor longer than `MAX_CURSOR_LENGTH` is a `limit` failure instead.
+ *    next cursor. A next cursor longer than `MAX_CURSOR_LENGTH` is a `cursor-too-long` failure instead.
  *
- * A throw while reading the input becomes a `shape` failure at `$`.
+ * A throw while reading the input becomes a `invalid-input` failure at `$`.
  */
 export function queryLibrary(input: QueryInput): LibraryResult<QueryPage> {
   return protect(() => prepareQuery(input));
@@ -96,7 +96,7 @@ function validateFolder(
   }
   if (!hasFolder(snapshot.organisation.folders, request.folder)) {
     return failure({
-      code: 'not-found',
+      code: 'unknown-id',
       path: 'query.folder',
       message: 'Search folder must exist',
     });
@@ -106,7 +106,7 @@ function validateFolder(
 
 /**
  * Builds the page. On the last page the `nextCursor` key is left out, not set to undefined. A
- * next cursor longer than `MAX_CURSOR_LENGTH` is a `limit` failure.
+ * next cursor longer than `MAX_CURSOR_LENGTH` is a `cursor-too-long` failure.
  */
 function completePage(
   snapshot: LibrarySnapshot,

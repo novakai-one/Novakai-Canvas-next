@@ -1,7 +1,7 @@
 /*
  * Organisation change records. Each change carries a complete record or an ID, never a partial patch
  * or a JSON path. The schema is built by a function, so no schema object is shared between calls.
- * A change these schemas reject is a `shape` diagnostic; the caller corrects it, and Authoring
+ * A change these schemas reject is a `invalid-input` diagnostic; the caller corrects it, and Authoring
  * owns admission, commit and recovery.
  */
 import { z } from 'zod';
@@ -41,8 +41,8 @@ export type ChangeOf<Op extends ChangeOperation> = Extract<OrganisationChange, {
 
 /**
  * Builds the schema of an ordered batch of at most 1,000 changes. Planning applies
- * them in order. Each change's own checks fail at once: a missing ID is `not-found`, an ID
- * already present is `duplicate`, and `reject` on a non-empty folder is `folder-not-empty`.
+ * them in order. Each change's own checks fail at once: a missing ID is `unknown-id`, an ID
+ * already present is `duplicate-id`, and `reject` on a non-empty folder is `folder-not-empty`.
  * Only the rules across records wait for the final organisation, so a later change may repair an
  * earlier one there.
  */

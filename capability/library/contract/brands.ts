@@ -1,7 +1,7 @@
 /*
  * Library's checked identities and shared value rules. Every schema is built by a function, so
  * each caller gets its own schema object and no schema is shared between calls or consumers.
- * Input these schemas reject is a `shape` diagnostic; the caller corrects the input and Authoring
+ * Input these schemas reject is a `invalid-input` diagnostic; the caller corrects the input and Authoring
  * owns commit and recovery.
  */
 import { z } from 'zod';

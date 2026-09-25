@@ -16,7 +16,7 @@ import { readVersions } from './versions.js';
  * The offset a request starts at: 0 without a cursor, otherwise the cursor's offset.
  *
  * A cursor may be replayed, but only with the same query and the same snapshot. It is
- * `stale-cursor` (path `query.cursor`) when:
+ * `invalid-cursor` (path `query.cursor`) when:
  * - it is not valid cursor JSON ("Cursor is malformed");
  * - the query, the recent visits or the source versions changed (organisation ID or revision, or the
  *   collection IDs and revisions, so an added or removed collection counts);
@@ -42,7 +42,7 @@ export function cursorOffset(
 /**
  * Builds the cursor for the next page: JSON of the offset and the query and version keys. A
  * cursor longer than `MAX_CURSOR_LENGTH` would be rejected by the next request, so it is a
- * `limit` failure instead.
+ * `cursor-too-long` failure instead.
  */
 export function nextCursor(
   snapshot: LibrarySnapshot,
@@ -52,7 +52,7 @@ export function nextCursor(
   const cursor = JSON.stringify({ offset, ...cursorIdentity(snapshot, request) });
   if (cursor.length > MAX_CURSOR_LENGTH) {
     return failure({
-      code: 'limit',
+      code: 'cursor-too-long',
       path: 'query.cursor',
       message: 'Snapshot identity exceeds the cursor budget; narrow the supplied inventory',
     });
@@ -83,7 +83,7 @@ function cursorIdentity(
   };
 }
 
-/** Parses the cursor. Text that is not JSON is `stale-cursor` too, not a generic read failure. */
+/** Parses the cursor. Text that is not JSON is `invalid-cursor` too, not a generic read failure. */
 function decodeCursor(cursor: string): LibraryResult<CursorEnvelope> {
   try {
     // The schema is built before the JSON is parsed.
@@ -115,9 +115,9 @@ function validateCursor(
   return success(cursor.offset);
 }
 
-/** A new `stale-cursor` failure at `query.cursor` with the given message. */
+/** A new `invalid-cursor` failure at `query.cursor` with the given message. */
 function staleCursor<T>(message: string): LibraryResult<T> {
-  return failure({ code: 'stale-cursor', path: 'query.cursor', message });
+  return failure({ code: 'invalid-cursor', path: 'query.cursor', message });
 }
 
 /** Sorts recent visits by collection ID, by code unit. */

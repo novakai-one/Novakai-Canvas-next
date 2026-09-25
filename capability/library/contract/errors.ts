@@ -7,30 +7,31 @@
 /**
  * What kind of problem a diagnostic reports. Consumers branch on this code, never on the message.
  *
- * Schema checks come first: anything a schema rejects is `shape`, including a cursor that is not
+ * Schema checks come first: anything a schema rejects is `invalid-input`, including a cursor that is not
  * a string or is longer than `MAX_CURSOR_LENGTH`. The other codes come from the rules checked
  * after parsing.
  *
- * - `shape`: the input does not match its schema, or could not be read.
- * - `limit`: the next page's cursor would exceed `MAX_CURSOR_LENGTH` (the only current producer).
- * - `duplicate`: an ID is used twice where it must be unique, whether repeated within the input
+ * - `invalid-input`: the input does not match its schema, or could not be read.
+ * - `cursor-too-long`: the next page's cursor would exceed `MAX_CURSOR_LENGTH` (the only current
+ *   producer).
+ * - `duplicate-id`: an ID is used twice where it must be unique, whether repeated within the input
  *   or named by a create whose ID already exists.
- * - `reference`: an ID refers to something that does not exist.
- * - `cycle`: folder parents form a loop.
- * - `not-found`: an operation or query names something that does not exist.
+ * - `broken-reference`: an ID refers to something that does not exist.
+ * - `folder-cycle`: folder parents form a loop.
+ * - `unknown-id`: an operation or query names something that does not exist.
  * - `folder-not-empty`: a folder with contents was removed without `rehome`.
- * - `stale-cursor`: a cursor string the schema accepted is not valid cursor JSON, is from another
+ * - `invalid-cursor`: a cursor string the schema accepted is not valid cursor JSON, is from another
  *   query or snapshot, or its offset is past the results.
  */
 export type DiagnosticCode =
-  | 'shape'
-  | 'limit'
-  | 'duplicate'
-  | 'reference'
-  | 'cycle'
-  | 'not-found'
+  | 'invalid-input'
+  | 'cursor-too-long'
+  | 'duplicate-id'
+  | 'broken-reference'
+  | 'folder-cycle'
+  | 'unknown-id'
   | 'folder-not-empty'
-  | 'stale-cursor';
+  | 'invalid-cursor';
 
 /** One problem found in the input. */
 export interface Diagnostic {

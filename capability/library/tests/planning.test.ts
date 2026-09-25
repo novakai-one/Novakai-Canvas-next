@@ -56,11 +56,11 @@ describe('Library organisation planning', () => {
     // Failures: creating an existing folder; unregistering a missing entry at the end.
     const existing = [{ op: 'create-folder', value: { id: ids.folder, title: 'Duplicate' } }];
     expect(diagnosticsOf(planOrganisation({ snapshot: base, changes: existing }))).toEqual([
-      'duplicate organisation.folders.engineering',
+      'duplicate-id organisation.folders.engineering',
     ]);
     const absent = [...changes, { op: 'unregister', collection: 'absent' }];
     const failed = planOrganisation({ snapshot: base, changes: absent });
-    expect(diagnosticsOf(failed)).toEqual(['not-found organisation.entries.absent']);
+    expect(diagnosticsOf(failed)).toEqual(['unknown-id organisation.entries.absent']);
     expect(failed).not.toHaveProperty('value');
   }
 
@@ -90,7 +90,7 @@ describe('Library organisation planning', () => {
     expect(
       hasFailure(
         planOrganisation({ snapshot: base, changes: register }),
-        'reference',
+        'broken-reference',
         'organisation.entries.gamma',
       ),
     ).toBe(true);
@@ -106,7 +106,7 @@ describe('Library organisation planning', () => {
     expect(
       hasFailure(
         planOrganisation({ snapshot: base, changes: unregister }),
-        'reference',
+        'broken-reference',
         'collections.beta',
       ),
     ).toBe(true);
@@ -124,7 +124,7 @@ describe('Library organisation planning', () => {
     const newer = { snapshot: base, changes: [], proposedCollections: projected };
     expect(valueOf(planOrganisation(newer)).changed).toBe(false);
     const nulled = { snapshot: base, changes: [], proposedCollections: null };
-    expect(diagnosticsOf(planOrganisation(nulled))).toEqual(['shape ']);
+    expect(diagnosticsOf(planOrganisation(nulled))).toEqual(['invalid-input ']);
   }
 
   test(
@@ -173,7 +173,7 @@ describe('Library organisation planning', () => {
 
   /**
    * Plan and search read their named inputs inside the failure boundary: an input whose
-   * `snapshot` throws when read gives one `shape` failure at `$`, never a thrown error.
+   * `snapshot` throws when read gives one `invalid-input` failure at `$`, never a thrown error.
    */
   function reportsThrowingInputs(): void {
     const planInput: PlanInput = {
@@ -190,8 +190,8 @@ describe('Library organisation planning', () => {
       },
       request: {},
     };
-    expect(diagnosticsOf(planOrganisation(planInput))).toEqual(['shape $']);
-    expect(diagnosticsOf(queryLibrary(queryInput))).toEqual(['shape $']);
+    expect(diagnosticsOf(planOrganisation(planInput))).toEqual(['invalid-input $']);
+    expect(diagnosticsOf(queryLibrary(queryInput))).toEqual(['invalid-input $']);
   }
 
   test('reports an input that throws when read as a shape failure', reportsThrowingInputs);

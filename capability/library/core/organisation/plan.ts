@@ -32,7 +32,7 @@ import { applyOperation } from './operations.js';
  *    inventory are dropped for this check.
  *
  * Nothing is written. The candidate keeps the original revision, `versions` are the original read
- * revisions, and `changed` is the net effect. A throw while reading the input becomes a `shape`
+ * revisions, and `changed` is the net effect. A throw while reading the input becomes a `invalid-input`
  * failure at `$`.
  */
 export function planOrganisation(input: PlanInput): LibraryResult<OrganisationPlan> {

@@ -1,6 +1,6 @@
 /*
  * Search requests and results. The request schema is built by a function, so no schema object is
- * shared between calls. A request the schema rejects is a `shape` diagnostic; the caller corrects
+ * shared between calls. A request the schema rejects is a `invalid-input` diagnostic; the caller corrects
  * it and searches again. Library writes nothing, so a retry is always safe; Authoring owns commit
  * and recovery.
  */
@@ -11,7 +11,7 @@ import type { ReadVersions } from '../types.js';
 
 /**
  * The longest cursor accepted or produced (1,000,000 characters). A next cursor longer than this
- * is a `limit` failure instead.
+ * is a `cursor-too-long` failure instead.
  */
 export const MAX_CURSOR_LENGTH = 1_000_000;
 

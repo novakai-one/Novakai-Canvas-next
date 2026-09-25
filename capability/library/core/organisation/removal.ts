@@ -4,7 +4,11 @@
  * and recovery.
  */
 import type { FolderId } from '../../contract/brands.js';
-import type { Organisation, Folder, OrganisationEntry } from '../../contract/records/organisation.js';
+import type {
+  Organisation,
+  Folder,
+  OrganisationEntry,
+} from '../../contract/records/organisation.js';
 import type { ChangeOf, RemovalPolicy } from '../../contract/records/change.js';
 import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
@@ -12,7 +16,7 @@ import { failure, success } from '../validation/outcomes.js';
 /**
  * Removes one folder from a organisation.
  *
- * A missing folder is `not-found`. A folder with child folders or entries is `folder-not-empty`
+ * A missing folder is `unknown-id`. A folder with child folders or entries is `folder-not-empty`
  * under the `reject` policy. Under `rehome`, its direct child folders and its entries move to its
  * parent (the root when it has none); deeper descendants stay where they are.
  */
@@ -23,7 +27,7 @@ export function removeFolder(
   const folder = organisation.folders.find((candidate) => candidate.id === removal.id);
   if (folder === undefined) {
     return failure({
-      code: 'not-found',
+      code: 'unknown-id',
       path: `organisation.folders.${removal.id}`,
       message: 'Folder must exist',
     });
@@ -68,7 +72,7 @@ function removeEmpty(
  */
 function unsupported(policy: never): LibraryResult<Organisation> {
   void policy;
-  return failure({ code: 'shape', path: 'changes', message: 'Unsupported removal policy' });
+  return failure({ code: 'invalid-input', path: 'changes', message: 'Unsupported removal policy' });
 }
 
 /** Whether any folder has this folder as its parent, or any entry sits in it. */

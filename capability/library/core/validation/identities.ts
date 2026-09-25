@@ -8,7 +8,7 @@ import { diagnoseWhen } from './outcomes.js';
 
 /**
  * Reports every repeated key within one scope. The first occurrence of a key is fine; each later
- * occurrence gives one `duplicate` diagnostic at `<path>.<key>`, in input order.
+ * occurrence gives one `duplicate-id` diagnostic at `<path>.<key>`, in input order.
  */
 export function duplicateIssues<T, K extends string>(
   items: readonly T[],
@@ -19,7 +19,7 @@ export function duplicateIssues<T, K extends string>(
   const firstIndex = firstIndexes(keys);
   return keys.flatMap((key, index) =>
     diagnoseWhen(firstIndex.get(key) !== index, {
-      code: 'duplicate',
+      code: 'duplicate-id',
       path: `${path}.${key}`,
       message: 'Identity must be unique in this scope',
     }),

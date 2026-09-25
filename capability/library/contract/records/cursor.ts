@@ -1,6 +1,6 @@
 /*
  * The decoded form of a paging cursor. Library-internal: the package index does not export it, and
- * hosts treat the cursor string as opaque. A cursor this schema rejects is `stale-cursor`; the host
+ * hosts treat the cursor string as opaque. A cursor this schema rejects is `invalid-cursor`; the host
  * searches again without a cursor. Authoring owns commit and recovery.
  */
 import { z } from 'zod';

@@ -12,7 +12,7 @@ describe('Library search', () => {
   /**
    * Text search ignores case and extra spaces and matches labels and descriptions, including
    * objects in no section. Folder, archive and kind filters narrow the results; a missing folder
-   * is `not-found`.
+   * is `unknown-id`.
    */
   function findsWithinFilters(): void {
     const base = snapshot();
@@ -46,7 +46,7 @@ describe('Library search', () => {
       [ids.section],
     );
     const missing = queryLibrary({ snapshot: base, request: { folder: 'missing' } });
-    expect(diagnosticsOf(missing)).toEqual(['not-found query.folder']);
+    expect(diagnosticsOf(missing)).toEqual(['unknown-id query.folder']);
   }
 
   test(
@@ -56,9 +56,9 @@ describe('Library search', () => {
 
   /**
    * Pages follow a stable order (collection, section, object); the last page has no `nextCursor`
-   * key. A cursor fails with `stale-cursor` after a source revision changes, with another page
+   * key. A cursor fails with `invalid-cursor` after a source revision changes, with another page
    * size, or when it is not JSON. When the next cursor would exceed the size budget, the query
-   * fails with `limit` instead of returning it.
+   * fails with `cursor-too-long` instead of returning it.
    */
   function pagesWithCursors(): void {
     const base = snapshot();
@@ -77,17 +77,17 @@ describe('Library search', () => {
     // Stale: the organisation revision changed; the page size changed; not JSON. A zero page size.
     const revised = { ...base, organisation: { ...base.organisation, revision: 8 } };
     expect(diagnosticsOf(queryLibrary({ snapshot: revised, request: secondRequest }))).toEqual([
-      'stale-cursor query.cursor',
+      'invalid-cursor query.cursor',
     ]);
     const resized = { limit: 2, cursor: first.nextCursor };
     expect(diagnosticsOf(queryLibrary({ snapshot: base, request: resized }))).toEqual([
-      'stale-cursor query.cursor',
+      'invalid-cursor query.cursor',
     ]);
     expect(
       diagnosticsOf(queryLibrary({ snapshot: base, request: { cursor: 'not-json' } })),
-    ).toEqual(['stale-cursor query.cursor']);
+    ).toEqual(['invalid-cursor query.cursor']);
     expect(diagnosticsOf(queryLibrary({ snapshot: base, request: { limit: 0 } }))).toEqual([
-      'shape limit',
+      'invalid-input limit',
     ]);
 
     // A organisation ID over 1,000,000 characters makes the next cursor too long.
@@ -106,7 +106,7 @@ describe('Library search', () => {
       recent: [],
     };
     expect(diagnosticsOf(queryLibrary({ snapshot: huge, request: { limit: 1 } }))).toEqual([
-      'limit query.cursor',
+      'cursor-too-long query.cursor',
     ]);
   }
 

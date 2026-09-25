@@ -30,29 +30,36 @@ describe('Library snapshot validation', () => {
     // `alpha` listed twice.
     const duplicate = {
       ...base,
-      organisation: { ...base.organisation, entries: [...base.organisation.entries, base.organisation.entries[0]] },
+      organisation: {
+        ...base.organisation,
+        entries: [...base.organisation.entries, base.organisation.entries[0]],
+      },
     };
     expect(diagnosticsOf(validateLibrarySnapshot(duplicate))).toEqual([
-      'duplicate organisation.entries.alpha',
+      'duplicate-id organisation.entries.alpha',
     ]);
 
     // Entries without collections (their visits too), then collections without entries.
     expect(diagnosticsOf(validateLibrarySnapshot({ ...base, collections: [] }))).toEqual([
-      'reference organisation.entries.alpha',
-      'reference organisation.entries.beta',
-      'reference recent.alpha',
-      'reference recent.beta',
+      'broken-reference organisation.entries.alpha',
+      'broken-reference organisation.entries.beta',
+      'broken-reference recent.alpha',
+      'broken-reference recent.beta',
     ]);
     const unlisted = { ...base, organisation: { ...base.organisation, entries: [] } };
     expect(diagnosticsOf(validateLibrarySnapshot(unlisted))).toEqual([
-      'reference collections.alpha',
-      'reference collections.beta',
+      'broken-reference collections.alpha',
+      'broken-reference collections.beta',
     ]);
 
     // Shape: unknown schema version; unknown key (reported at the root, path '').
     const future = { ...base, organisation: { ...base.organisation, schemaVersion: 99 } };
-    expect(diagnosticsOf(validateLibrarySnapshot(future))).toEqual(['shape organisation.schemaVersion']);
-    expect(diagnosticsOf(validateLibrarySnapshot({ ...base, extra: true }))).toEqual(['shape ']);
+    expect(diagnosticsOf(validateLibrarySnapshot(future))).toEqual([
+      'invalid-input organisation.schemaVersion',
+    ]);
+    expect(diagnosticsOf(validateLibrarySnapshot({ ...base, extra: true }))).toEqual([
+      'invalid-input ',
+    ]);
   }
 
   test(
@@ -73,8 +80,13 @@ describe('Library snapshot validation', () => {
       { id: ids.child, title: 'Backend', parent: ids.folder, order: 0 },
     ];
     expect(
-      diagnosticsOf(validateLibrarySnapshot({ ...base, organisation: { ...base.organisation, folders } })),
-    ).toEqual(['cycle organisation.folders.engineering.parent', 'cycle organisation.folders.backend.parent']);
+      diagnosticsOf(
+        validateLibrarySnapshot({ ...base, organisation: { ...base.organisation, folders } }),
+      ),
+    ).toEqual([
+      'folder-cycle organisation.folders.engineering.parent',
+      'folder-cycle organisation.folders.backend.parent',
+    ]);
 
     // An object visible in a section that does not exist.
     const collections = base.collections.map((collection) => ({
@@ -82,23 +94,23 @@ describe('Library snapshot validation', () => {
       objects: [{ id: ids.object, label: 'Invoice', description: '', visibleIn: ['missing'] }],
     }));
     expect(diagnosticsOf(validateLibrarySnapshot({ ...base, collections }))).toEqual([
-      'reference collections.alpha.objects.invoice.visibleIn.missing',
-      'reference collections.beta.objects.invoice.visibleIn.missing',
+      'broken-reference collections.alpha.objects.invoice.visibleIn.missing',
+      'broken-reference collections.beta.objects.invoice.visibleIn.missing',
     ]);
 
     // Visits: to a missing collection, with a negative time; then duplicate collections.
     const missingVisit = { ...base, recent: [{ collection: 'missing', openedAt: 1 }] };
     expect(diagnosticsOf(validateLibrarySnapshot(missingVisit))).toEqual([
-      'reference recent.missing',
+      'broken-reference recent.missing',
     ]);
     const negativeVisit = { ...base, recent: [{ collection: ids.alpha, openedAt: -1 }] };
     expect(diagnosticsOf(validateLibrarySnapshot(negativeVisit))).toEqual([
-      'shape recent.0.openedAt',
+      'invalid-input recent.0.openedAt',
     ]);
     const twice = { ...base, collections: [...base.collections, ...base.collections] };
     expect(diagnosticsOf(validateLibrarySnapshot(twice))).toEqual([
-      'duplicate collections.alpha',
-      'duplicate collections.beta',
+      'duplicate-id collections.alpha',
+      'duplicate-id collections.beta',
     ]);
   }
 

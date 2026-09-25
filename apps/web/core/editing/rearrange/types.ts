@@ -20,6 +20,12 @@ export type NodeRearrangementEntry = RearrangementEntry & {
   readonly target: Extract<RearrangementEntry['target'], { readonly kind: 'node' }>;
 };
 
+/** One group record of a section. */
+export type SectionGroup = Section['groups'][number];
+
+/** One appearance record of a section. */
+export type SectionAppearance = Section['appearances'][number];
+
 /** The captured rearrangement target: intent, the three section views and the selected node. */
 export type RearrangementPreparation = {
   readonly intent: PlacementIntent;

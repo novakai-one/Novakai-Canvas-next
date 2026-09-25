@@ -1,59 +1,96 @@
 /*
  * Releasing a section for rearrangement: the selected node takes its requested placement, its
  * closure keeps source-relative placements, and everything else is unpinned so the native reflow
- * can move it.
+ * can move it. A captured node missing from the scene is a `stale-target` failure, never a throw.
  */
 import type { RenderDocument, Section } from '../../../contract/records/owners.js';
 import type { Result } from '../../../contract/errors.js';
+import { failure } from '../../../contract/errors.js';
+import { mapResults } from '../results.js';
 import { changes } from '../capture/settling.js';
 import { pinnedSections, sourcePlacement } from '../capture/pinning.js';
 import { parentNode } from '../capture/scene.js';
 import type { SceneNode, SceneSection } from '../capture/scene.js';
-import type { RearrangementPreparation, ReleasedCandidate } from './types.js';
+import type {
+  RearrangementPreparation,
+  ReleasedCandidate,
+  SectionAppearance,
+  SectionGroup,
+} from './types.js';
 
-/** Release every section's placements implied by the intent; only the target section changes. */
+/**
+ * Release every section's placements implied by the intent; only the target section changes.
+ *
+ * A pinned section that cannot settle fails as `stale-target`; a captured group or appearance
+ * missing from the scene does the same.
+ */
 export function releaseRearrangement(
   prepared: RearrangementPreparation,
   document: RenderDocument,
 ): Result<ReleasedCandidate> {
   const frozen = pinnedSections(document, prepared.intent);
-  if (!frozen.ok) return frozen;
-  const candidate = frozen.value.map((section) => releaseSection(section, prepared));
-  const releasedChanges = changes(document, candidate);
-  return { ok: true, value: { sections: candidate, changes: releasedChanges } };
+  return frozen.ok ? releaseSections(frozen.value, prepared, document) : frozen;
+}
+
+/** Release each pinned section, then diff the released list into replace changes. */
+function releaseSections(
+  sections: readonly Section[],
+  prepared: RearrangementPreparation,
+  document: RenderDocument,
+): Result<ReleasedCandidate> {
+  const candidate = mapResults(sections, (section) => releaseSection(section, prepared));
+  return candidate.ok
+    ? {
+        ok: true,
+        value: { sections: candidate.value, changes: changes(document, candidate.value) },
+      }
+    : candidate;
 }
 
 /** Other sections pass through; the target section's groups and appearances are released. */
 function releaseSection(
   section: Section,
   prepared: RearrangementPreparation,
-): Section {
-  if (section.id !== prepared.sectionId) return section;
-  return {
-    ...section,
-    groups: section.groups.map((group) => releaseGroup(group, prepared)),
-    appearances: section.appearances.map((appearance) => releaseAppearance(appearance, prepared)),
-  };
+): Result<Section> {
+  return section.id === prepared.sectionId
+    ? releaseContents(section, prepared)
+    : { ok: true, value: section };
+}
+
+/** Release the target section's groups and appearances. */
+function releaseContents(
+  section: Section,
+  prepared: RearrangementPreparation,
+): Result<Section> {
+  const groups = mapResults(section.groups, (group) => releaseGroup(group, prepared));
+  if (!groups.ok) return groups;
+  const appearances = mapResults(section.appearances, (appearance) =>
+    releaseAppearance(appearance, prepared),
+  );
+  return appearances.ok
+    ? { ok: true, value: { ...section, groups: groups.value, appearances: appearances.value } }
+    : appearances;
 }
 
 /** Release one group's placement from its measured scene node. */
 function releaseGroup(
-  group: Section['groups'][number],
+  group: SectionGroup,
   prepared: RearrangementPreparation,
-): Section['groups'][number] {
+): Result<SectionGroup> {
   const node = prepared.scene.nodes.find((item) => item.measured.groupId === group.id);
-  if (node === undefined) throw new Error('captured rearrangement group missing');
+  if (node === undefined)
+    return failure('stale-target', 'The rearrangement scene is missing a captured group');
   const parent = parentNode(prepared.scene, node);
-  return releaseGroupPlacement(group, node, parent, prepared);
+  return { ok: true, value: releaseGroupPlacement(group, node, parent, prepared) };
 }
 
 /** The selected group takes the requested placement; its closure keeps source positions. */
 function releaseGroupPlacement(
-  group: Section['groups'][number],
+  group: SectionGroup,
   node: SceneNode,
   parent: SceneNode | undefined,
   prepared: RearrangementPreparation,
-): Section['groups'][number] {
+): SectionGroup {
   if (node.measured.groupId === prepared.selectedGroupId)
     return selectedGroupPlacement(group, node, prepared);
   return isInSelectedClosure(node, prepared)
@@ -72,10 +109,10 @@ function releaseGroupPlacement(
 
 /** The selected group is placed where the intent asks. */
 function selectedGroupPlacement(
-  group: Section['groups'][number],
+  group: SectionGroup,
   node: SceneNode,
   prepared: RearrangementPreparation,
-): Section['groups'][number] {
+): SectionGroup {
   return {
     ...group,
     placement: sourcePlacement(
@@ -90,24 +127,25 @@ function selectedGroupPlacement(
 
 /** Release one appearance's placement from its measured scene node. */
 function releaseAppearance(
-  appearance: Section['appearances'][number],
+  appearance: SectionAppearance,
   prepared: RearrangementPreparation,
-): Section['appearances'][number] {
+): Result<SectionAppearance> {
   const node = prepared.scene.nodes.find(
     (item) => item.measured.groupId === null && item.measured.objectId === appearance.object,
   );
-  if (node === undefined) throw new Error('captured rearrangement appearance missing');
+  if (node === undefined)
+    return failure('stale-target', 'The rearrangement scene is missing a captured appearance');
   const parent = parentNode(prepared.scene, node);
-  return releaseAppearancePlacement(appearance, node, parent, prepared);
+  return { ok: true, value: releaseAppearancePlacement(appearance, node, parent, prepared) };
 }
 
 /** An ungrouped selected node is placed by the intent; every other appearance is preserved. */
 function releaseAppearancePlacement(
-  appearance: Section['appearances'][number],
+  appearance: SectionAppearance,
   node: SceneNode,
   parent: SceneNode | undefined,
   prepared: RearrangementPreparation,
-): Section['appearances'][number] {
+): SectionAppearance {
   return node.id === prepared.selected.id && prepared.selectedGroupId === null
     ? selectedAppearancePlacement(appearance, node, prepared)
     : preservedAppearancePlacement(appearance, node, parent, prepared);
@@ -115,10 +153,10 @@ function releaseAppearancePlacement(
 
 /** The selected node's appearance is placed where the intent asks. */
 function selectedAppearancePlacement(
-  appearance: Section['appearances'][number],
+  appearance: SectionAppearance,
   node: SceneNode,
   prepared: RearrangementPreparation,
-): Section['appearances'][number] {
+): SectionAppearance {
   return {
     ...appearance,
     placement: sourcePlacement(
@@ -133,11 +171,11 @@ function selectedAppearancePlacement(
 
 /** Closure members keep source-relative placements; outsiders are unpinned for the reflow. */
 function preservedAppearancePlacement(
-  appearance: Section['appearances'][number],
+  appearance: SectionAppearance,
   node: SceneNode,
   parent: SceneNode | undefined,
   prepared: RearrangementPreparation,
-): Section['appearances'][number] {
+): SectionAppearance {
   return isInSelectedClosure(node, prepared) || prepared.ancestors.has(node.parent ?? '')
     ? {
         ...appearance,

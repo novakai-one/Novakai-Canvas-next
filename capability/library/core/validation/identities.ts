@@ -26,7 +26,13 @@ export function duplicateIssues<T, K extends string>(
   );
 }
 
-/** Each key's first position in `keys`, built in one pass (later repeats do not overwrite it). */
+/** Each key's first position in `keys`, built in one pass. */
 function firstIndexes<K extends string>(keys: readonly K[]): ReadonlyMap<K, number> {
-  return new Map(keys.map((key, index) => [key, index] as const).toReversed());
+  const first = new Map<K, number>();
+  keys.forEach((key, index) => {
+    if (!first.has(key)) {
+      first.set(key, index);
+    }
+  });
+  return first;
 }

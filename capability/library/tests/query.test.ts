@@ -90,7 +90,7 @@ describe('Library search', () => {
       'invalid-input limit',
     ]);
 
-    // A organisation ID over 1,000,000 characters makes the next cursor too long.
+    // An organisation ID over 1,000,000 characters makes the next cursor too long.
     const longId = 'x'.repeat(1_000_001);
     const huge = {
       organisation: {

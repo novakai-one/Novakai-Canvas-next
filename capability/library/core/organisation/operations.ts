@@ -121,14 +121,7 @@ function checkIdentity(
   if (mode === 'create') {
     return requireAbsent(exists, path);
   }
-  if (!exists) {
-    return failure({
-      code: 'unknown-id',
-      path,
-      message: 'Replacement requires an existing identity',
-    });
-  }
-  return success(true);
+  return requirePresent(exists, path);
 }
 
 /** Create never silently replaces an existing folder or entry. */
@@ -141,6 +134,21 @@ function requireAbsent(
       code: 'duplicate-id',
       path,
       message: 'Creation requires an absent identity',
+    });
+  }
+  return success(true);
+}
+
+/** Replace never silently creates a missing folder or entry. */
+function requirePresent(
+  exists: boolean,
+  path: string,
+): LibraryResult<true> {
+  if (!exists) {
+    return failure({
+      code: 'unknown-id',
+      path,
+      message: 'Replacement requires an existing identity',
     });
   }
   return success(true);

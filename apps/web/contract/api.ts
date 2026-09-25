@@ -1,4 +1,4 @@
-import { definitionId } from '@novakai/canvas-model';
+import { definitionId, type DefinitionId } from '@novakai/canvas-model';
 
 export { planCanvasEdit } from '../core/editing/plan.js';
 
@@ -46,9 +46,34 @@ export { formatFailure, failureSummary, plainMessage } from '../core/output/diag
 export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';
 export { palette, planPaletteDrop, type PaletteDrop } from '../core/editing/palette-drop.js';
 
-export function definitionDraftId(value: string): import('@novakai/canvas-model').Definition['id'] {
+/** Brands a new definition ID; `parse` throws only for text outside Model's ID grammar. */
+export function definitionDraftId(value: string): DefinitionId {
   return definitionId.parse(value);
 }
+export { buildDefinitionsPanel, newDefinition, applyLabel } from '../core/definitions/panel.js';
+export type { DefinitionModel } from '../core/definitions/panel.js';
+export { usageSelection } from '../core/definitions/usages.js';
+export {
+  rootPath,
+  replaceAlternative,
+  addAlternative,
+  removeLastAlternative,
+  canRemoveAlternative,
+} from '../core/definitions/expression-edits.js';
+export {
+  literalKinds,
+  chosenPrimitive,
+  chosenReference,
+  chosenLiteralKind,
+} from '../core/definitions/choices.js';
+export {
+  literalKindOf,
+  literalKindChange,
+  literalTextChange,
+  literalBooleanChange,
+  literalDraftAt,
+} from '../core/definitions/literal-edits.js';
+export { samePath, isPathWithin } from '../core/definitions/paths.js';
 
 export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';
 export {

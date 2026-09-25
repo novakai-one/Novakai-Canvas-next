@@ -30,6 +30,8 @@ export type {
   RegroupIntent,
   RouteIntent,
   Target,
+  NodeTarget,
+  CanvasEvent,
   SceneStamp,
   CanvasEffect,
 } from '@novakai/canvas-canvas';

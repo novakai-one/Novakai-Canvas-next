@@ -87,6 +87,7 @@ import { createSourceEditor } from '../adapters/react/SourceEditor.js';
 import { createExportPanel } from '../adapters/react/ExportPanel.js';
 import { createObjectEditor } from '../adapters/react/ObjectEditor.js';
 import { createDefinitionsEditor } from '../adapters/react/Definitions.js';
+import { createExpressionEditor } from '../adapters/react/DefinitionExpression.js';
 import { createContentEditor } from '../adapters/react/ContentEditor.js';
 import { descendantId } from '@novakai/canvas-model';
 import { createSectionNavigator } from '../adapters/react/SectionNavigator.js';
@@ -185,7 +186,7 @@ function featureSections(
       tab: 'browse',
       id: 'definitions',
       title: 'Definitions',
-      Content: createDefinitionsEditor(design),
+      Content: createDefinitionsEditor({ ...design, Expression: createExpressionEditor(design) }),
     },
     {
       tab: 'inspect',

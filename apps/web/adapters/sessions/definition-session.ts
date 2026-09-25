@@ -10,7 +10,7 @@ import type {
   DefinitionState,
   LiteralDraft,
 } from '../../contract/records/definitions.js';
-import { captureCollectionBase } from '../../contract/api.js';
+import { captureCollectionBase, isPathWithin, samePath } from '../../contract/api.js';
 
 /** Definitions share the retained-editor lifecycle while keeping one stable ID per draft. */
 export function createDefinitionSession(bindings: DefinitionBindings): DefinitionSession {
@@ -56,8 +56,8 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     selection: DefinitionSelection,
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
-    literalDraft?: LiteralDraft,
-    editedPath?: readonly number[],
+    literalDraft: LiteralDraft | null,
+    editedPath: readonly number[] | null,
   ) => {
     const scope = checkScope(selection, workspace);
     if (!scope.ok) return reject(scope.error);
@@ -67,8 +67,8 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     selection: DefinitionSelection,
     definition: Definition,
     operation: 'create' | 'replace' | 'remove',
-    literalDraft?: LiteralDraft,
-    editedPath?: readonly number[],
+    literalDraft: LiteralDraft | null,
+    editedPath: readonly number[] | null,
   ): Result<void> => {
     const key = `${selection.collection.id}:${definition.id}`;
     const current = state.drafts.find((draft) => draft.key === key);
@@ -82,8 +82,8 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     selection: DefinitionSelection,
     definition: Definition,
     operation: DefinitionDraft['operation'],
-    literalDraft?: LiteralDraft,
-    editedPath?: readonly number[],
+    literalDraft: LiteralDraft | null,
+    editedPath: readonly number[] | null,
   ): Result<void> => {
     if (uncommittedDelete(current, operation))
       return write(state.drafts.filter((item) => item.key !== key));
@@ -148,10 +148,10 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
       return () => listeners.delete(listener);
     },
     restore,
-    create: (selection, definition) => retain(selection, definition, 'create'),
+    create: (selection, definition) => retain(selection, definition, 'create', null, null),
     edit: (selection, definition, literalDraft, editedPath) =>
       retain(selection, definition, 'replace', literalDraft, editedPath),
-    remove: (selection, definition) => retain(selection, definition, 'remove'),
+    remove: (selection, definition) => retain(selection, definition, 'remove', null, null),
     discard: (key) =>
       state.pending.includes(key) ||
       state.drafts.some((draft) => draft.key === key && draft.request !== undefined)
@@ -240,8 +240,8 @@ function draftValue(
   selection: DefinitionSelection,
   definition: Definition,
   operation: DefinitionDraft['operation'],
-  literalDraft?: LiteralDraft,
-  editedPath?: readonly number[],
+  literalDraft: LiteralDraft | null,
+  editedPath: readonly number[] | null,
 ): Result<DefinitionDraft> {
   const base = capturedBase(current?.base, selection);
   if (!base.ok) return base;
@@ -264,8 +264,8 @@ function draftValue(
 function nextLiteralDrafts(
   current: DefinitionDraft | undefined,
   definition: Definition,
-  literalDraft: LiteralDraft | undefined,
-  editedPath: readonly number[] | undefined,
+  literalDraft: LiteralDraft | null,
+  editedPath: readonly number[] | null,
 ): readonly LiteralDraft[] | undefined {
   const retained = (current?.literalDrafts ?? []).filter((item) =>
     canRetainLiteralDraft(definition, item, editedPath),
@@ -275,9 +275,9 @@ function nextLiteralDrafts(
 
 function withLiteralDraft(
   retained: readonly LiteralDraft[],
-  literalDraft: LiteralDraft | undefined,
+  literalDraft: LiteralDraft | null,
 ): readonly LiteralDraft[] | undefined {
-  return literalDraft === undefined
+  return literalDraft === null
     ? emptyRetained(retained)
     : [...retained.filter((item) => !samePath(item.path, literalDraft.path)), literalDraft];
 }
@@ -289,12 +289,12 @@ function emptyRetained(retained: readonly LiteralDraft[]): readonly LiteralDraft
 function canRetainLiteralDraft(
   definition: Definition,
   literalDraft: LiteralDraft,
-  editedPath: readonly number[] | undefined,
+  editedPath: readonly number[] | null,
 ): boolean {
   const next = expressionAtPath(definition.expression, literalDraft.path);
   return (
     next?.kind === 'literal' &&
-    (editedPath === undefined || !isPathWithin(literalDraft.path, editedPath))
+    (editedPath === null || !isPathWithin(literalDraft.path, editedPath))
   );
 }
 
@@ -306,20 +306,6 @@ function expressionAtPath(
     (current, index) => (current?.kind === 'union' ? current.items[index] : undefined),
     expression,
   );
-}
-
-function samePath(
-  left: readonly number[],
-  right: readonly number[],
-): boolean {
-  return left.length === right.length && left.every((value, index) => value === right[index]);
-}
-
-function isPathWithin(
-  path: readonly number[],
-  ancestor: readonly number[],
-): boolean {
-  return ancestor.length <= path.length && ancestor.every((value, index) => path[index] === value);
 }
 
 function nextOperation(

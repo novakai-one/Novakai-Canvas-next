@@ -12,19 +12,12 @@ import type {
   MovementPreviewContext,
 } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
-import {
-  changes,
-  exactBox,
-  plannedSections,
-  sceneBox,
-  sourcePlacement,
-  targetKey,
-  type Box,
-} from './movement-capture.js';
+import { changes, plannedSections } from './capture/settling.js';
+import { sourcePlacement } from './capture/pinning.js';
+import { exactBox, sceneBox, targetKey, type Box } from './capture/boxes.js';
+import type { SceneNode, SceneSection } from './capture/scene.js';
 import { expectedBoxes, normalizedEntries, sameStamp } from './movement-intent.js';
 
-type SceneSection = RenderDocument['scene']['sections'][number];
-type SceneNode = SceneSection['nodes'][number];
 type ExpansionEntry = PlacementIntent['entries'][number];
 type NodeExpansionEntry = ExpansionEntry & {
   readonly target: Extract<ExpansionEntry['target'], { readonly kind: 'node' }>;
@@ -293,14 +286,11 @@ function materializeExpansion(
   geometry: ExpansionGeometry,
   document: RenderDocument,
 ): Result<{ readonly sections: readonly Section[]; readonly changes: readonly Change[] }> {
-  let sections: readonly Section[];
-  try {
-    sections = plannedSections(document, prepared.intent).map((candidate) =>
-      expandSection(candidate, prepared, geometry, document),
-    );
-  } catch {
-    return failure('stale-target', 'Captured expansion placements are no longer available');
-  }
+  const planned = plannedSections(document, prepared.intent);
+  if (!planned.ok) return planned;
+  const sections = planned.value.map((candidate) =>
+    expandSection(candidate, prepared, geometry, document),
+  );
   return { ok: true, value: { sections, changes: changes(document, sections) } };
 }
 

@@ -1,7 +1,7 @@
 import type { PlacementIntent, RenderDocument, SceneStamp } from '../../contract/records/owners.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
-import { sceneBox, targetKey, type Box } from './movement-capture.js';
+import { sceneBox, targetKey, type Box } from './capture/boxes.js';
 
 export function sameStamp(
   intent: PlacementIntent,

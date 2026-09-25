@@ -7,7 +7,7 @@ import type {
   MovementPreviewContext,
 } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
-import { changes, plannedSections } from './movement-capture.js';
+import { changes, plannedSections } from './capture/settling.js';
 import { normalizedEntries, validateMoveIntent } from './movement-intent.js';
 import { geometryChanges } from './movement-preview.js';
 
@@ -46,17 +46,13 @@ function prepareMovePlan(
   const normalized = normalizedEntries(context.document, intent);
   if (!normalized.ok) return normalized;
   const preparedIntent = { ...intent, entries: normalized.value };
-  let sections: readonly import('../../contract/records/owners.js').Section[];
-  try {
-    sections = plannedSections(context.document, preparedIntent);
-  } catch {
-    return failure('stale-target', 'The movement target is no longer available');
-  }
+  const planned = plannedSections(context.document, preparedIntent);
+  if (!planned.ok) return planned;
   return {
     ok: true,
     value: {
       intent: preparedIntent,
-      changes: changes(context.document, sections),
+      changes: changes(context.document, planned.value),
     },
   };
 }

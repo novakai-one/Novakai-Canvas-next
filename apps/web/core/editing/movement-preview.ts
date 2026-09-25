@@ -2,7 +2,7 @@ import type { PlacementIntent, RenderDocument, Target } from '../../contract/rec
 import type { Result } from '../../contract/errors.js';
 import type { GeometryChange, MoveOption } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
-import { exactBox, sceneBox, targetKey, type Box } from './movement-capture.js';
+import { exactBox, sceneBox, targetKey, type Box } from './capture/boxes.js';
 import { expectedBoxes } from './movement-intent.js';
 
 type GeometryPreview = MoveOption['preview'];

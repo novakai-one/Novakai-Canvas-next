@@ -12,21 +12,13 @@ import type {
   MovementPreviewContext,
 } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
-import {
-  changes,
-  closureKeys,
-  exactBox,
-  pinnedSections,
-  sceneBox,
-  sourcePlacement,
-  targetKey,
-  type Box,
-} from './movement-capture.js';
+import { changes } from './capture/settling.js';
+import { pinnedSections, sourcePlacement } from './capture/pinning.js';
+import { closureKeys, exactBox, sceneBox, targetKey, type Box } from './capture/boxes.js';
+import type { SceneNode, SceneSection } from './capture/scene.js';
 import { completePreview } from './movement-preview.js';
 import { normalizedEntries, expectedBoxes, sameStamp } from './movement-intent.js';
 
-type SceneSection = RenderDocument['scene']['sections'][number];
-type SceneNode = SceneSection['nodes'][number];
 type RearrangementEntry = PlacementIntent['entries'][number];
 type NodeRearrangementEntry = RearrangementEntry & {
   readonly target: Extract<RearrangementEntry['target'], { readonly kind: 'node' }>;
@@ -178,19 +170,10 @@ function releaseRearrangement(
   prepared: RearrangementPreparation,
   document: RenderDocument,
 ): Result<ReleasedCandidate> {
-  let frozen: readonly Section[];
-  try {
-    frozen = pinnedSections(document, prepared.intent);
-  } catch {
-    return failure('stale-target', 'Captured rearrangement placements are no longer available');
-  }
-  const candidate = frozen.map((section) => releaseSection(section, prepared));
-  let releasedChanges: readonly Change[];
-  try {
-    releasedChanges = changes(document, candidate);
-  } catch {
-    return failure('stale-target', 'Captured rearrangement placements are no longer available');
-  }
+  const frozen = pinnedSections(document, prepared.intent);
+  if (!frozen.ok) return frozen;
+  const candidate = frozen.value.map((section) => releaseSection(section, prepared));
+  const releasedChanges = changes(document, candidate);
   return { ok: true, value: { sections: candidate, changes: releasedChanges } };
 }
 

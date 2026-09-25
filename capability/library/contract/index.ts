@@ -1,9 +1,11 @@
 /**
- * Library's public surface: organisation validation, organisation change planning and collection search.
+ * The package entry point of `@novakai/canvas-library` (see package.json `exports`): every name a
+ * consumer may import, listed explicitly.
  *
- * Start with `validateLibrarySnapshot`, `planOrganisation` and `queryLibrary`. Each stores nothing,
- * never throws and returns a frozen result. The ID schema factories check and brand IDs; each call
- * returns a new schema. Everything else is a type. Organisation rules and search mechanics stay private.
+ * The three entry points — `validateLibrarySnapshot`, `planOrganisation`, `queryLibrary` — come
+ * from `api.ts`, the only file allowed to import core; their behaviour is documented there. The
+ * ID schema factories check and brand IDs; each call returns a new schema. Everything else is a
+ * type. Nothing in this file imports the implementation.
  */
 export { validateLibrarySnapshot, planOrganisation, queryLibrary } from './api.js';
 export {

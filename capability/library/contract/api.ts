@@ -1,8 +1,11 @@
 /*
- * Library's three pure entry points, composed from core. None of them stores anything; Authoring
- * owns admission, durable writes and crash recovery. Each returns a frozen result and never
- * throws: a throw while reading the input becomes a `shape` failure at `$`. The same input always
- * gives the same result, so a retry is always safe.
+ * Library's callable boundary: the three entry points, composed from core. Each stores nothing,
+ * never throws and returns a frozen result: a throw while reading the input becomes a `shape`
+ * failure at `$`. The same input always gives the same result, so a retry is always safe.
+ * Authoring owns admission, durable writes and crash recovery.
+ *
+ * This is the only Library file permitted to import from `core/` (`no-restricted-imports` in
+ * eslint.config.js allows it for `contract/api.ts` by name). `index.ts` re-exports these names.
  */
 export { validateLibrarySnapshot } from '../core/validation/validate.js';
 export { planOrganisation } from '../core/organisation/plan.js';

@@ -7,7 +7,7 @@ import type { Result } from '../../../contract/errors.js';
 import type { GeometryChange } from '../../../contract/records/movement.js';
 import { failure } from '../../../contract/errors.js';
 import { exactBox, sceneBox, targetKey, type Box } from '../capture/boxes.js';
-import { expectedBoxes } from '../movement-intent.js';
+import { expectedBoxes } from '../movement-intent/expected.js';
 import { collectResults } from '../results.js';
 import { indexMovePreview } from './indexing.js';
 import { matchesAllowedMovement } from './rules.js';

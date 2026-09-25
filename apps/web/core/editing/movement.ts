@@ -8,7 +8,8 @@ import type {
 } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
 import { changes, plannedSections } from './capture/settling/sections.js';
-import { normalizedEntries, validateMoveIntent } from './movement-intent.js';
+import { sameStampValue, validateMoveIntent } from './movement-intent/admission.js';
+import { movableEntries } from './movement-intent/selection.js';
 import { geometryChanges } from './preview/geometry.js';
 
 export { buildExpandOption } from './expand/option.js';
@@ -36,12 +37,7 @@ export function chooseMoveOption(
   optionId: string,
   current: SceneStamp,
 ): Result<MoveOption> {
-  if (
-    review.stamp.collectionId !== current.collectionId ||
-    review.stamp.revision !== current.revision ||
-    review.stamp.inputKey !== current.inputKey ||
-    review.stamp.generation !== current.generation
-  )
+  if (!sameStampValue(review.stamp, current))
     return failure('stale-gesture', 'The diagram changed while this move was under review');
   const selected = review.options.find((option) => option.id === optionId);
   if (selected === undefined)
@@ -64,7 +60,7 @@ function prepareMovePlan(
   intent: PlacementIntent,
   context: MovementPreviewContext,
 ): Result<PreparedMove> {
-  const normalized = normalizedEntries(context.document, intent);
+  const normalized = movableEntries(context.document, intent);
   if (!normalized.ok) return normalized;
   const preparedIntent = { ...intent, entries: normalized.value };
   const planned = plannedSections(context.document, preparedIntent);

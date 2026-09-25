@@ -11,9 +11,10 @@ import type {
 } from '../../../contract/records/movement.js';
 import type { Box } from '../capture/boxes.js';
 import type { SceneNode, SceneSection } from '../capture/scene.js';
+import type { PlacementEntry } from '../movement-intent/types.js';
 
 /** One placement entry of a rearrangement intent. */
-export type RearrangementEntry = PlacementIntent['entries'][number];
+export type RearrangementEntry = PlacementEntry;
 
 /** A rearrangement entry whose target is a node. */
 export type NodeRearrangementEntry = RearrangementEntry & {

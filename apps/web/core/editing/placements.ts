@@ -5,7 +5,8 @@ import type {
   Placement,
 } from '../../contract/records/owners.js';
 import { sectionFor, nodeFor, missing } from './targets.js';
-type Entry = PlacementIntent['entries'][number];
+import type { PlacementEntry } from './movement-intent/types.js';
+type Entry = PlacementEntry;
 /** Coordinates have already been converted by Canvas to immediate-parent local space. Applying another origin would corrupt nested drags. */
 function place(
   entry: Entry,

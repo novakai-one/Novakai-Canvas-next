@@ -9,7 +9,8 @@ import type { MovementPreviewContext } from '../../../contract/records/movement.
 import { failure } from '../../../contract/errors.js';
 import { sceneBox } from '../capture/boxes.js';
 import type { SceneNode, SceneSection } from '../capture/scene.js';
-import { normalizedEntries, sameStamp } from '../movement-intent.js';
+import { hasSize, sameStamp } from '../movement-intent/admission.js';
+import { movableEntries } from '../movement-intent/selection.js';
 import type { ExpansionEntry, ExpansionPreparation, NodeExpansionEntry } from './types.js';
 
 /** Validate the intent and capture its target, or name why expansion cannot run. */
@@ -49,17 +50,12 @@ function validateExpansionShape(intent: PlacementIntent): Result<void> {
     : { ok: true, value: undefined };
 }
 
-/** An entry carries a size when width or height is set. */
-function hasSize(entry: ExpansionEntry): boolean {
-  return entry.placement.width !== undefined || entry.placement.height !== undefined;
-}
-
 /** Normalise the intent's entries against the document before capturing the target. */
 function resolveExpansionTarget(
   intent: PlacementIntent,
   context: MovementPreviewContext,
 ): Result<ExpansionPreparation> {
-  const normalized = normalizedEntries(context.document, intent);
+  const normalized = movableEntries(context.document, intent);
   return normalized.ok
     ? resolveNormalizedExpansionTarget(intent, context, normalized.value)
     : normalized;

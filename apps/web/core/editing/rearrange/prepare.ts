@@ -7,7 +7,8 @@ import type { PlacementIntent } from '../../../contract/records/owners.js';
 import type { Result } from '../../../contract/errors.js';
 import type { MovementPreviewContext } from '../../../contract/records/movement.js';
 import { failure } from '../../../contract/errors.js';
-import { normalizedEntries, sameStamp } from '../movement-intent.js';
+import { sameStamp } from '../movement-intent/admission.js';
+import { movableEntries } from '../movement-intent/selection.js';
 import type { SceneNode, SceneSection } from '../capture/scene.js';
 import type {
   NodeRearrangementEntry,
@@ -54,7 +55,7 @@ function resolveRearrangementTarget(
   intent: PlacementIntent,
   context: MovementPreviewContext,
 ): Result<RearrangementPreparation> {
-  const normalized = normalizedEntries(context.document, intent);
+  const normalized = movableEntries(context.document, intent);
   return normalized.ok
     ? resolveNormalizedRearrangementTarget(intent, context, normalized.value)
     : normalized;

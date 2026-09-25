@@ -8,7 +8,7 @@ import type { Result } from '../../../contract/errors.js';
 import type { MoveOption, MovementPreviewContext } from '../../../contract/records/movement.js';
 import { failure } from '../../../contract/errors.js';
 import { exactBox, sceneBox, targetKey, type Box } from '../capture/boxes.js';
-import { expectedBoxes } from '../movement-intent.js';
+import { expectedBoxes } from '../movement-intent/expected.js';
 import { materializeExpansion } from './materialize.js';
 import type {
   ExpandedGroup,

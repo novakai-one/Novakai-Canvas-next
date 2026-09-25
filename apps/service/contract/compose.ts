@@ -25,6 +25,7 @@ import { produce } from '../core/rendering/produce.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import { createWorkspaceExporter } from '../adapters/workspace/export.js';
+import { createPngRuntime } from '../adapters/rendering/png-runtime.js';
 import { cacheRenders } from '../adapters/rendering/render-cache.js';
 /** Explicit worker lifecycle keeps native measurement away from browser imports; the parent owns worker failure/retry. */
 export async function runRenderWorker(): Promise<Result<void>> {
@@ -262,11 +263,11 @@ async function wireWorkspace(
     workspace: options.workspace,
     installation,
     assets: native.assets,
-    templates,
     language,
     views,
     resources,
     renderer,
+    png: createPngRuntime(),
     authoring: (signal) => requestAuthoring(runtime, signal, feasibilityModule.createFeasibility),
   });
   if (!exporter.ok) throw new Error(exporter.error.message);

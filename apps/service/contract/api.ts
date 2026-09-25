@@ -5,6 +5,22 @@ import { inspectCollection } from '../core/rendering/inspection.js';
 import type { RouteOutcome } from './records/protocol.js';
 export { createAdmission as createHttpAdmission } from '../core/transport/admission.js';
 export { readCommand } from '../core/transport/command.js';
+export { readExportRequest } from '../core/export/request.js';
+export {
+  cancelledExport,
+  exportRejection,
+  exportRouteFailure,
+  releaseOutcome,
+  settledFailure,
+} from '../core/export/faults.js';
+export {
+  exportSnapshot,
+  renderedDocument,
+  selectedCollection,
+  workspaceSnapshot,
+} from '../core/export/snapshot.js';
+export { resourceInspector } from '../core/export/resources.js';
+export { artifactOutcome, dslFile, markdownFile } from '../core/export/files.js';
 /** Bind a persistent workspace to read, mutation and render consumers; HTTP owns authentication and caller identity. */
 export function createWorkspaceSession(dependencies: SessionDependencies): WorkspaceSession {
   const lifetime = dependencies.lifetime;

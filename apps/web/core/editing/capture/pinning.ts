@@ -13,6 +13,7 @@ import type {
   Section,
 } from '../../../contract/records/owners.js';
 import type { SceneNode, SceneSection } from './scene.js';
+import { mapResults } from '../results.js';
 
 /** A node's placement as captured, keeping a prior lock. */
 export function sourcePlacement(
@@ -176,17 +177,4 @@ function parentBox(
   indexed: ReadonlyMap<string, SceneNode>,
 ) {
   return node.parent === null ? undefined : indexed.get(node.parent)?.box;
-}
-
-/** The mapped values, or the first failure. */
-function mapResults<T, U>(
-  items: readonly T[],
-  map: (item: T) => Result<U>,
-): Result<readonly U[]> {
-  const mapped = items.map(map);
-  const failed = mapped.find((result) => !result.ok);
-  if (failed !== undefined) {
-    return failed;
-  }
-  return { ok: true, value: mapped.flatMap((result) => (result.ok ? [result.value] : [])) };
 }

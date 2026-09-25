@@ -50,7 +50,7 @@ export function sectionIdSchema(): z.core.$ZodBranded<z.ZodString, 'SectionId'> 
 }
 
 /**
- * Builds the schema for display or search text: at most {@link MAX_TEXT_LENGTH} characters, kept
+ * Builds the schema for display or search text: at most 10,000 characters, kept
  * exactly as given.
  */
 export function textSchema(): z.ZodString {

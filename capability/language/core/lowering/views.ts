@@ -24,6 +24,40 @@ interface ViewParts {
 }
 
 /**
+ * Lowers a section. The mode defaults to `flow`. The section's layout algorithm is its written
+ * `layout=`, or else the mode's (see `modeLayout`). A group without its own `layout=` uses the
+ * mode's algorithm, even when the section writes a different `layout=`.
+ *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
+ * @param item - The section declaration.
+ * @returns The section's own fields (without layout attributes), then `mode`, `layout`,
+ * `appearances`, `groups`, `wires`, `sequence` and, when written, `root`; or `validation-failed`
+ * with the first diagnostic, including a `syntax` diagnostic for a second `root`, or
+ * `provider-failure` for an unexpected throw.
+ * @throws Never.
+ */
+export function lowerSection(item: Declaration): Result<RawRecord> {
+  return protect(
+    /** Builds the section record. */
+    () => {
+      const mode = textOr(item.fields, 'mode', 'flow');
+      const views = lowerViews(item.children, modeLayout(mode));
+      return {
+        ...partitionLayout(lowerRecord(item)).remaining,
+        mode,
+        layout: accepted(lowerLayout(item.fields, item.children, modeLayout(mode))),
+        ...views,
+        wires: lowerWires(item.children),
+        sequence: lowerSequence(item.children),
+        ...rootField(item.children),
+      };
+    },
+  );
+}
+
+/**
  * Lowers a `show` statement: one appearance per listed object, each with the same written
  * preferences (role, size, frame and so on).
  *
@@ -33,12 +67,13 @@ interface ViewParts {
  * with the diagnostic of a bad value.
  * @throws Never.
  */
-export function lowerShows(item: Declaration, group?: string): Result<readonly RawRecord[]> {
+function lowerShows(item: Declaration, group?: string): Result<readonly RawRecord[]> {
   return protect(
     /** Builds the appearances. */
     () => {
       const preferences = preferencesOf(item);
-      return list(item.fields, 'ids').map(
+      const ids = list(item.fields, 'ids');
+      return ids.map(
         /** One listed object's appearance. */ (value) => ({
           object: lowerValue(value, 'id'),
           ...preferences,
@@ -58,12 +93,13 @@ export function lowerShows(item: Declaration, group?: string): Result<readonly R
  * with the diagnostic of a bad value.
  * @throws Never.
  */
-export function lowerConnections(item: Declaration): Result<readonly RawRecord[]> {
+function lowerConnections(item: Declaration): Result<readonly RawRecord[]> {
   return protect(
     /** Builds the wire preferences. */
     () => {
       const preferences = preferencesOf(item);
-      return list(item.fields, 'ids').map(
+      const ids = list(item.fields, 'ids');
+      return ids.map(
         /** One listed wire's preferences. */ (value) => ({
           relationship: lowerValue(value, 'id'),
           ...preferences,
@@ -73,34 +109,13 @@ export function lowerConnections(item: Declaration): Result<readonly RawRecord[]
   );
 }
 
-/**
- * Lowers a section. The layout algorithm defaults to the mode's (see `modeLayout`; mode defaults
- * to `flow`) and is also used for the section's groups.
- *
- * @param item - The section declaration.
- * @returns The section's own fields (without layout attributes), then `mode`, `layout`,
- * `appearances`, `groups`, `wires`, `sequence` and, when written, `root`; or `validation-failed`
- * with the first diagnostic, including a `syntax` diagnostic for a second `root`.
- * @throws Never.
- */
-export function lowerSection(item: Declaration): Result<RawRecord> {
-  return protect(
-    /** Builds the section record. */
-    () => {
-      const mode = textOr(item.fields, 'mode', 'flow');
-      const views = lowerViews(item.children, modeLayout(mode));
-      return {
-        ...partitionLayout(lowerRecord(item)).remaining,
-        mode,
-        layout: accepted(lowerLayout(item.fields, item.children, modeLayout(mode))),
-        ...views,
-        wires: item.children
-          .filter(/** Whether the child is a `connect`. */ (child) => child.kind === 'connect')
-          .flatMap(/** Lowers one `connect`. */ (child) => accepted(lowerConnections(child))),
-        sequence: lowerSequence(item.children),
-        ...rootField(item.children),
-      };
-    },
+/** The wire preferences of every `connect` statement, in written order. */
+function lowerWires(children: readonly Declaration[]): readonly RawRecord[] {
+  const connects = children.filter(
+    /** Whether the child is a `connect`. */ (child) => child.kind === 'connect',
+  );
+  return connects.flatMap(
+    /** Lowers one `connect`. */ (child) => accepted(lowerConnections(child)),
   );
 }
 
@@ -140,9 +155,10 @@ function lowerViews(
   algorithm: string,
   parent?: string,
 ): ViewParts {
-  return children
-    .map(/** Lowers one statement. */ (item) => lowerView(item, algorithm, parent))
-    .reduce(mergeViews, { appearances: [], groups: [] });
+  const parts = children.map(
+    /** Lowers one statement. */ (item) => lowerView(item, algorithm, parent),
+  );
+  return parts.reduce(mergeViews, { appearances: [], groups: [] });
 }
 
 /** A `show` gives appearances; a `group` gives groups; other statements give nothing here. */

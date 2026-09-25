@@ -18,65 +18,20 @@ import { accepted, protect, reject } from '../validation/outcomes.js';
 import { lowerDefinition } from './definitions.js';
 
 /**
- * Lowers a parsed document to the raw collection record, before Model checks it. The written
- * `theme=` (default `paper`) is replaced by the resolved theme; the layout attributes become
- * `arrangement` (default algorithm `grid`). Nodes, wires, sections, sources, assets and type
- * definitions keep their written order. Model checks IDs and relations afterwards.
- *
- * @param document - The parsed `canvas 1` document.
- * @param request - The request; its snapshot's revision (default 0) and its resolved resources
- * are read.
- * @returns The raw collection record; or `validation-failed` with the diagnostics of the first
- * failing step (for example an unresolved theme, an asset not admitted, or a bad layout target).
- * @throws Never.
- */
-export function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
-  return protect(
-    /** Builds the collection record. */
-    () => {
-      const item = document.declaration;
-      const metadata = lowerRecord(item);
-      const { theme: alias, ...remaining } = partitionLayout(metadata).remaining;
-      void alias;
-      const theme = resolveTheme(
-        textOr(item.fields, 'theme', 'paper'),
-        request.resources,
-        item.span,
-      );
-      return {
-        ...remaining,
-        schemaVersion: 1,
-        revision: request.snapshot?.revision ?? 0,
-        theme,
-        arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
-        objects: records(item, 'node').map(lowerNode),
-        relationships: records(item, 'wire').map(lowerRecord),
-        sections: records(item, 'section').map(
-          /** Lowers one section. */ (section) => accepted(lowerSection(section)),
-        ),
-        sources: records(item, 'source').map(lowerRecord),
-        assets: records(item, 'asset').map(
-          /** Lowers one asset against the admitted assets. */ (asset) =>
-            lowerAsset(asset, request.resources),
-        ),
-        definitions: records(item, 'type').map(lowerDefinition),
-      };
-    },
-  );
-}
-
-/**
  * Lowers a document to the change list for `create` or `replace`.
  *
  * Steps, in order:
  * 1. Checks the mode: `create` needs no snapshot; `replace` needs the snapshot with the
  *    document's collection ID; `patch` is rejected here.
- * 2. Lowers the raw record ({@link lowerDocumentData}) and has Model validate it.
+ * 2. Lowers the raw record (`lowerDocumentData`) and has Model validate it.
  * 3. Builds an empty shell of the new collection (no records, no layout constraints). The
  *    starting point is the snapshot, or for `create` the shell after Model validates it.
  * 4. Stages one `replace-document` change, then has Model's planner check it.
  *
  * A Model rejection is mapped back to the source span of the record it names.
+ *
+ * No writes: a retry with the same input and the same Model roles returns the same result.
+ * Language owns correcting the source; Authoring owns commit recovery.
  *
  * @param document - The parsed `canvas 1` document.
  * @param request - The mode, snapshot and resolved resources.
@@ -119,6 +74,76 @@ export function lowerDocument(
       };
     },
   );
+}
+
+/**
+ * Lowers a parsed document to the raw collection record, before Model checks it. The written
+ * `theme=` (default `paper`) is replaced by the resolved theme; the layout attributes become
+ * `arrangement` (default algorithm `grid`). Nodes, wires, sections, sources, assets and type
+ * definitions keep their written order. Model checks IDs and relations afterwards.
+ *
+ * @param document - The parsed `canvas 1` document.
+ * @param request - The request; its snapshot's revision (default 0) and its resolved resources
+ * are read.
+ * @returns The raw collection record; or `validation-failed` with the diagnostics of the first
+ * failing step (for example an unresolved theme, an asset not admitted, or a bad layout target),
+ * or `provider-failure` for an unexpected throw.
+ * @throws Never.
+ */
+function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
+  return protect(
+    /** Builds the collection record. */
+    () => {
+      const item = document.declaration;
+      const metadata = lowerRecord(item);
+      const { theme: writtenTheme, ...remaining } = partitionLayout(metadata).remaining;
+      void writtenTheme;
+      const theme = resolveTheme(
+        textOr(item.fields, 'theme', 'paper'),
+        request.resources,
+        item.span,
+      );
+      return {
+        ...remaining,
+        schemaVersion: 1,
+        revision: request.snapshot?.revision ?? 0,
+        theme,
+        arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
+        objects: lowerEach(item, 'node', lowerNode),
+        relationships: lowerEach(item, 'wire', lowerRecord),
+        sections: lowerEach(
+          item,
+          'section',
+          /** Lowers one section. */ (section) => accepted(lowerSection(section)),
+        ),
+        sources: lowerEach(item, 'source', lowerRecord),
+        assets: lowerEach(
+          item,
+          'asset',
+          /** Lowers one asset against the admitted assets. */ (asset) =>
+            lowerAsset(asset, request.resources),
+        ),
+        definitions: lowerEach(item, 'type', lowerDefinition),
+      };
+    },
+  );
+}
+
+/**
+ * Lowers each top-level declaration of one construct, in written order.
+ *
+ * @param item - The collection declaration.
+ * @param kind - The construct to lower.
+ * @param lower - Lowers one declaration.
+ * @returns One lowered record per declaration.
+ */
+function lowerEach<T>(
+  item: Declaration,
+  kind: Declaration['kind'],
+  lower: (declaration: Declaration) => T,
+): readonly T[] {
+  const found = records(item, kind);
+  return found.map(lower);
 }
 
 /** The top-level declarations of one construct, in written order. */

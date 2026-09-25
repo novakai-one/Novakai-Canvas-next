@@ -16,6 +16,9 @@ const checkedMetadata: readonly string[] = ['alt', 'license', 'attribution'];
  * A theme's exact pin, `id@version#digest`. Printing and theme resolution both use it; the
  * digest is already prefixed (for example `sha256:`).
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param theme - A resolved theme.
  * @returns The pin text.
  * @throws Never.
@@ -28,6 +31,9 @@ export function themePin(theme: ResolvedResources['themes'][string]): string {
  * Finds the resolved theme for a written theme: first by alias (the `themes` key), then by exact
  * pin. The written text must then be the theme's ID (for an alias) or its full pin (when it
  * contains `#`).
+ *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
  *
  * @param alias - The written theme: an alias or a pin.
  * @param resources - The host's resolved resources; only `themes` is read.
@@ -60,11 +66,15 @@ export function resolveTheme(
  * written `source` (when a `sha256:` digest), `alt`, `license` and `attribution` must match the
  * admitted record, and an image or icon must have `alt` text.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param item - The asset declaration.
  * @param resources - The host's resolved resources; only `assets` is read.
  * @returns A copy of the admitted record with `id` set to the written ID.
- * @throws A `LanguageFault`: `missing-resource` for an asset not admitted, `invalid-value` for an
- * image or icon without `alt`, and `resource-mismatch` for a digest or metadata that differs.
+ * @throws A `LanguageFault`: a fault reading the ID, kind or source; `missing-resource` for an
+ * asset not admitted; `invalid-value` for an image or icon without `alt`; and
+ * `resource-mismatch` for a digest or metadata that differs.
  */
 export function lowerAsset(item: Declaration, resources: ResolvedResources): RawRecord {
   const alias = id(item.fields);
@@ -82,6 +92,41 @@ export function lowerAsset(item: Declaration, resources: ResolvedResources): Raw
 }
 
 /**
+ * The resource requests of a document: always its theme first (`paper` when not written), then
+ * each top-level asset in written order.
+ *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
+ * @param item - The document's collection declaration.
+ * @returns The requests.
+ * @throws A `LanguageFault` from `assetRequest`: `invalid-value` for an unknown asset kind, or a
+ * fault reading an asset's ID or source.
+ */
+export function documentResources(item: Declaration): readonly ResourceRequest[] {
+  const theme = textOr(item.fields, 'theme', 'paper');
+  return [themeRequest(theme, item.span), ...assetRequests(item)];
+}
+
+/**
+ * The resource requests of one patch operation: the asset an operation declares; for a
+ * collection target, the theme it sets, or `paper` when it unsets `theme`; otherwise none.
+ *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
+ * @param operation - A parsed patch operation.
+ * @returns The requests (at most one).
+ * @throws A `LanguageFault` from `assetRequest`: `invalid-value` for an unknown asset kind, or a
+ * fault reading an asset's ID or source.
+ */
+export function patchResources(operation: Operation): readonly ResourceRequest[] {
+  if (operation.declaration?.kind === 'asset') return [assetRequest(operation.declaration)];
+  if (operation.target !== 'collection') return [];
+  return patchThemeRequest(operation);
+}
+
+/**
  * The resource request for one asset declaration, so the host can resolve and admit it before
  * lowering. No bytes are read here.
  *
@@ -91,7 +136,7 @@ export function lowerAsset(item: Declaration, resources: ResolvedResources): Raw
  * @throws A `LanguageFault` with an `invalid-value` diagnostic for a kind other than `image`,
  * `icon` or `font`, and the faults of reading the ID or source.
  */
-export function assetRequest(item: Declaration): ResourceRequest {
+function assetRequest(item: Declaration): ResourceRequest {
   const kind = text(item.fields, 'kind');
   if (kind !== 'image' && kind !== 'icon' && kind !== 'font')
     reject('invalid-value', item.span, 'image / icon / font', 'Unknown resource kind');
@@ -106,44 +151,13 @@ export function assetRequest(item: Declaration): ResourceRequest {
   };
 }
 
-/**
- * The resource requests of a document: always its theme first (`paper` when not written), then
- * each top-level asset in written order.
- *
- * @param item - The document's collection declaration.
- * @returns The requests.
- * @throws A `LanguageFault` from {@link assetRequest}.
- */
-export function documentResources(item: Declaration): readonly ResourceRequest[] {
-  const theme = textOr(item.fields, 'theme', 'paper');
-  return [
-    { kind: 'theme', alias: theme, source: theme, span: item.span },
-    ...item.children
-      .filter(/** Whether the child is an asset. */ (child) => child.kind === 'asset')
-      .map(assetRequest),
-  ];
-}
-
-/**
- * The resource requests of one patch operation: the asset an operation declares; for a
- * collection target, the theme it sets, or `paper` when it unsets `theme`; otherwise none.
- *
- * @param operation - A parsed patch operation.
- * @returns The requests (at most one).
- * @throws A `LanguageFault` from {@link assetRequest}.
- */
-export function patchResources(operation: Operation): readonly ResourceRequest[] {
-  if (operation.declaration?.kind === 'asset') return [assetRequest(operation.declaration)];
-  if (operation.target !== 'collection') return [];
-  return patchThemeRequest(operation);
-}
-
 /** The first resolved theme whose pin is exactly `alias`. */
 function findPinnedTheme(
   alias: string,
   resources: ResolvedResources,
 ): ResolvedResources['themes'][string] | undefined {
-  return Object.values(resources.themes).find(
+  const themes = Object.values(resources.themes);
+  return themes.find(
     /** Whether this theme's pin is the written text. */ (theme) => themePin(theme) === alias,
   );
 }
@@ -211,9 +225,20 @@ function checkMetadata(item: Declaration, record: RawRecord, name: string): void
 /** A set theme asks for that theme; an unset theme asks for `paper`; otherwise nothing. */
 function patchThemeRequest(operation: Operation): readonly ResourceRequest[] {
   const theme = operation.fields.theme?.value;
-  if (typeof theme === 'string')
-    return [{ kind: 'theme', alias: theme, source: theme, span: operation.span }];
-  if (operation.properties.includes('theme'))
-    return [{ kind: 'theme', alias: 'paper', source: 'paper', span: operation.span }];
+  if (typeof theme === 'string') return [themeRequest(theme, operation.span)];
+  if (operation.properties.includes('theme')) return [themeRequest('paper', operation.span)];
   return [];
+}
+
+/** The request for one theme: the written alias is also its source. */
+function themeRequest(alias: string, span: Span): ResourceRequest {
+  return { kind: 'theme', alias, source: alias, span };
+}
+
+/** The requests of a collection's top-level assets, in written order. */
+function assetRequests(item: Declaration): readonly ResourceRequest[] {
+  const assets = item.children.filter(
+    /** Whether the child is an asset. */ (child) => child.kind === 'asset',
+  );
+  return assets.map(assetRequest);
 }

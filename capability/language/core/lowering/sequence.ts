@@ -9,7 +9,7 @@ import { lowerRecord } from './content.js';
 import { reject } from '../validation/outcomes.js';
 
 /** Where a nested item sits: its fragment and, inside an `alt`, its branch. */
-interface Scope {
+interface SequenceScope {
   /** The ID of the fragment that contains the item. */
   readonly parent?: string;
 
@@ -20,8 +20,12 @@ interface Scope {
 /**
  * Flattens the events and fragments among `children` (other statements are skipped). Each item
  * gets its `order` among the kept siblings and the scope's `parent`/`branch`, and a fragment is
- * followed by its own flattened contents. An `alt` fragment lists its `branches` (an unnamed
- * branch gets the ID `<fragment>-branch-<n>`); any other fragment has no branches.
+ * followed by its own flattened contents. An `alt` fragment lists its `branches`; a branch
+ * without an `@id` gets the ID `<fragment>-branch-<n>`, where `n` is its position among all of
+ * the `alt`'s branches, counting from 1. Any other fragment has no branches.
+ *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
  *
  * @param children - A section's or fragment's statements.
  * @param scope - The containing fragment and branch; none at the top level.
@@ -31,13 +35,12 @@ interface Scope {
  */
 export function lowerSequence(
   children: readonly Declaration[],
-  scope: Scope = {},
+  scope: SequenceScope = {},
 ): readonly RawRecord[] {
-  return children
-    .filter(isSequence)
-    .flatMap(
-      /** Lowers one item at its position. */ (item, order) => lowerItem(item, order, scope),
-    );
+  const items = children.filter(isSequence);
+  return items.flatMap(
+    /** Lowers one item at its position. */ (item, order) => lowerItem(item, order, scope),
+  );
 }
 
 /** Whether a statement is in the message order: an event or a fragment (not a `show`). */
@@ -46,16 +49,20 @@ function isSequence(item: Declaration): boolean {
 }
 
 /**
- * One item: its record, then the scope, its `order`, and `kind` (`event` or `fragment`), which
- * replaces a written message kind. A fragment is followed by its contents.
+ * One item: its record, then the scope, its `order`, and `kind` (`event` or `fragment`). `kind`
+ * is the construct; an event's written `kind=` is kept as `message`. A fragment is followed by
+ * its contents.
  */
-function lowerItem(item: Declaration, order: number, scope: Scope): readonly RawRecord[] {
+function lowerItem(item: Declaration, order: number, scope: SequenceScope): readonly RawRecord[] {
   const base = { ...lowerRecord(item), ...scope, order, kind: item.kind };
   if (item.kind === 'event') return [base];
   return lowerFragment(item, base);
 }
 
-/** A branch's written ID, or else `<fragment>-branch-<n>` counting from 1. */
+/**
+ * A branch's written ID, or else `<fragment>-branch-<n>`: `n` is the branch's position among all
+ * of the `alt`'s branches, counting from 1.
+ */
 function branchId(fragment: string, branch: Declaration, index: number): string {
   if (branch.fields.id !== undefined) return id(branch.fields);
   return `${fragment}-branch-${index + 1}`;

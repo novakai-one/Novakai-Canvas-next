@@ -2,9 +2,9 @@ import { open, realpath } from 'node:fs/promises';
 import type { FileHandle } from 'node:fs/promises';
 import { dirname, resolve, relative, isAbsolute, extname, sep } from 'node:path';
 import type { ResourceRequest } from '@novakai/canvas-language';
-import type { ResourceFiles, LocalInput } from '../contract/records/resources.js';
-import type { Diagnostic, Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { ResourceFiles, LocalInput } from '../../contract/records/resources.js';
+import type { Diagnostic, Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 const byteLimit = 16 * 1024 * 1024;
 const media: Readonly<Record<string, string>> = {
   '.png': 'image/png',

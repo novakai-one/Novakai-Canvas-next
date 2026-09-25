@@ -2,12 +2,12 @@ import { snapshotSchema, requestSchema, receiptSchema } from '@novakai/canvas-au
 import type { Request, Snapshot, StoredRecord } from '@novakai/canvas-authoring';
 import { validate } from '@novakai/canvas-model';
 import type { Language } from '@novakai/canvas-language';
-import { byteBackup } from '../contract/records/resources.js';
+import { byteBackup } from '../../contract/records/resources.js';
 import { z } from 'zod';
-import type { SemanticInputs, ReceiptExpectation } from '../contract/ports/runtime.js';
-import type { Command } from '../contract/records/command.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { SemanticInputs, ReceiptExpectation } from '../../contract/ports/runtime.js';
+import type { Command } from '../../contract/records/command.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 const manualTarget = z
   .strictObject({
     target: z.string(),

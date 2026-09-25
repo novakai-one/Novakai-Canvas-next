@@ -1,8 +1,8 @@
 import { parseArgs } from 'node:util';
-import { commandName } from '../contract/records/command.js';
-import type { CliOptions, Command } from '../contract/records/command.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import { commandName } from '../../contract/records/command.js';
+import type { CliOptions, Command } from '../../contract/records/command.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 import { z } from 'zod';
 const mode = z.enum(['create', 'replace', 'patch']);
 const revision = z

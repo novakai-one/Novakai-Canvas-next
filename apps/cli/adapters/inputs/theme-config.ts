@@ -3,9 +3,9 @@ import {
   chromeName,
   type ChromeName,
   type PortableToken,
-} from '../../../capability/design-system/contract/index.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+} from '../../../../capability/design-system/contract/index.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 interface Override {
   readonly token: string;
   // Existing raw color/scalar syntax stays at the grammar edge; dimensions reuse the owner vocabulary.

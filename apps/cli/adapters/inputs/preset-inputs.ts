@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { requestSchema } from '@novakai/canvas-authoring';
 import type { Snapshot, Request } from '@novakai/canvas-authoring';
-import type { PresetInputs, ResourceSyntax } from '../contract/records/resources.js';
-import type { Command } from '../contract/records/command.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { PresetInputs, ResourceSyntax } from '../../contract/records/resources.js';
+import type { Command } from '../../contract/records/command.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 const flags = z.object({
   id: z.string().min(1),
   version: z.string().min(1),

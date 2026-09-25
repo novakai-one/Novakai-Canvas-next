@@ -1,11 +1,11 @@
 import { readFile, mkdir, open, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { requestSchema, requestId } from '@novakai/canvas-authoring';
-import { byteBackup } from '../contract/records/resources.js';
+import { byteBackup } from '../../contract/records/resources.js';
 import { z } from 'zod';
-import type { RequestFiles, RequestDraft } from '../contract/ports/runtime.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { RequestFiles, RequestDraft } from '../../contract/ports/runtime.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 const retained = z.strictObject({
   generation: z.string(),
   request: requestSchema,

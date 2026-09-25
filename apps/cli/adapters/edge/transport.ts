@@ -1,8 +1,8 @@
 import { responseEnvelope } from '@novakai/canvas-service';
 import type { TransportResponse } from '@novakai/canvas-service';
-import type { Transport } from '../contract/ports/runtime.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { Transport } from '../../contract/ports/runtime.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** Credentials can only be sent to the declared IPv4 loopback origin, never a redirect or user-provided remote host. */
 function origin(input: string): Result<string> {
   try {

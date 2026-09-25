@@ -8,7 +8,7 @@ import { createPresetInputs } from '../adapters/inputs/preset-inputs.js';
 import { readThemeConfig } from '../adapters/inputs/theme-config.js';
 import { createResourceFiles } from '../adapters/inputs/resource-inputs.js';
 import { createRequestFiles } from '../adapters/inputs/files.js';
-import { createTransport } from '../adapters/transport.js';
+import { createTransport } from '../adapters/edge/transport.js';
 import { createSemanticInputs } from '../adapters/inputs/semantic-inputs.js';
 import { executeCommand, usage } from './api.js';
 import { executeProfile, isProfileCommand } from '../core/commands/profiles.js';
@@ -77,7 +77,7 @@ export async function runHeadless(
 ): Promise<Result<HeadlessReport, HeadlessFailure | Diagnostic>> {
   try {
     const [adapter, service] = await Promise.all([
-      import('../adapters/headless.js'),
+      import('../adapters/edge/headless.js'),
       import('@novakai/canvas-service'),
     ]);
     return adapter.renderHeadless(options, {

@@ -3,27 +3,27 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { z } from 'zod';
-import { openAssets, type Assets } from '../../../capability/assets/contract/index.js';
+import { openAssets, type Assets } from '../../../../capability/assets/contract/index.js';
 import { prepareInstallation, type RenderDocument } from '@novakai/canvas-service';
 import {
   composeDesignSystem,
   type DesignSystem,
-} from '../../../capability/design-system/contract/index.js';
+} from '../../../../capability/design-system/contract/index.js';
 import {
   composeTemplates,
   themeInput,
   type Catalog,
   type Templates,
-} from '../../../capability/templates/contract/index.js';
+} from '../../../../capability/templates/contract/index.js';
 import {
   createLanguage,
   type ResolvedResources,
   type ResourceRequest,
   type LoweredIntent,
 } from '@novakai/canvas-language';
-import { validateLibrarySnapshot } from '../../../capability/library/contract/index.js';
+import { validateLibrarySnapshot } from '../../../../capability/library/contract/index.js';
 import { digest, validate, plan, stage, type Collection } from '@novakai/canvas-model';
-import { createReactBindings } from '../../../capability/presentation/contract/index.js';
+import { createReactBindings } from '../../../../capability/presentation/contract/index.js';
 import {
   composeExport,
   initializeRaster,
@@ -31,16 +31,16 @@ import {
   type Snapshot,
   type Documents,
   type Resources,
-} from '../../../capability/export/contract/index.js';
-import { filePath, headlessFault, type FilePath } from '../contract/records/headless.js';
+} from '../../../../capability/export/contract/index.js';
+import { filePath, headlessFault, type FilePath } from '../../contract/records/headless.js';
 import type {
   HeadlessOptions,
   HeadlessOwners,
   HeadlessReport,
   HeadlessSource,
   HeadlessFailure,
-} from '../contract/records/headless.js';
-import type { Result } from '../contract/errors.js';
+} from '../../contract/records/headless.js';
+import type { Result } from '../../contract/errors.js';
 /** Owner failures remain structured until the CLI prints them; no partial render is reported as success. */
 class RenderFault extends Error {
   constructor(readonly evidence: HeadlessSource) {
@@ -156,7 +156,7 @@ async function admitResource(
   request: ResourceRequest,
   assets: Pick<Assets, 'stage' | 'resolve'>,
   owners: HeadlessOwners,
-): Promise<NonNullable<import('../contract/records/resources.js').LocalInput['digest']>> {
+): Promise<NonNullable<import('../../contract/records/resources.js').LocalInput['digest']>> {
   const resource = accepted(await owners.resourceFiles.read(file, request));
   if (resource.digest !== null) return resource.digest;
   return accepted(await assets.stage(resource.stage)).descriptor.digest;

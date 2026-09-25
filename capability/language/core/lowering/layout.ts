@@ -1,7 +1,8 @@
 /*
  * Lowering layout: a collection's or section's layout attributes and its `rank`, `align`,
- * `before` and `below` constraints become one plain layout record for Model. No side effects.
- * Language owns correcting the source; Authoring owns commit recovery.
+ * `before` and `below` constraints become one plain layout record for Model. Nothing is written
+ * except that a written `columns` value is kept by reference and frozen in place with the
+ * result. Language owns correcting the source; Authoring owns commit recovery.
  */
 import type {
   Declaration,
@@ -20,26 +21,13 @@ import { list, optional, textOr, type RawRecord } from './fields.js';
 const constraintKinds = ['rank', 'align', 'before', 'below'];
 
 /**
- * Whether a declaration is a layout constraint (`rank`, `align`, `before` or `below`).
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param declaration - Any parsed declaration.
- * @returns `true` for a constraint.
- * @throws Never.
- */
-export function isConstraint(declaration: Declaration): boolean {
-  return constraintKinds.includes(declaration.kind);
-}
-
-/**
  * Lowers layout attributes and constraints. Missing attributes take their defaults: the
  * algorithm `fallback`, direction `right` and gap `normal`; `columns` is left out when not
- * written. Constraint targets keep their written order.
+ * written. Constraint targets keep their written order. A written `columns` value is kept by
+ * reference, so the caller's object is frozen in place with the result.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
+ * A retry with the same input returns the same result. Language owns correcting the source;
+ * Authoring owns commit recovery.
  *
  * @param fields - The collection's or section's parsed fields.
  * @param children - Its declarations; only constraints are read.
@@ -86,6 +74,11 @@ export function lowerLayout(
  */
 export function modeLayout(mode: string): string {
   return layouts[mode] ?? 'flow';
+}
+
+/** Whether a declaration is a layout constraint (`rank`, `align`, `before` or `below`). */
+function isConstraint(declaration: Declaration): boolean {
+  return constraintKinds.includes(declaration.kind);
 }
 
 /** One constraint: its kind and its targets in written order. */

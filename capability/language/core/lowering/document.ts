@@ -137,11 +137,11 @@ function lowerDocumentData(document: Document, request: LowerRequest): Result<Ra
  * @param lower - Lowers one declaration.
  * @returns One lowered record per declaration.
  */
-function lowerEach<T>(
+function lowerEach(
   item: Declaration,
   kind: Declaration['kind'],
-  lower: (declaration: Declaration) => T,
-): readonly T[] {
+  lower: (declaration: Declaration) => RawRecord,
+): readonly RawRecord[] {
   const found = records(item, kind);
   return found.map(lower);
 }

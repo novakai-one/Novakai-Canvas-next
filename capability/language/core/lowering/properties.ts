@@ -12,8 +12,10 @@ import { endpoint, type RawRecord } from './fields.js';
 
 /**
  * Lowers one value for a property of the given type. Each list item lowers with the item type
- * `endpoint` for an `endpoints` list and `id` for any other list; signature parameters lower to
- * names and `{ name, type }` pairs. Values that are not references or lists are kept.
+ * `endpoint` for an `endpoints` list and `id` for any other list. For `signature-parameters`, a
+ * list lowers item by item: text stays text, a `[name, type]` pair becomes `{ name, type }`, and
+ * any other item (a reference included) is kept unlowered; a value that is not a list lowers to
+ * `[]`. For any other type, values that are not references or lists are kept.
  *
  * Pure: a retry with the same input returns the same result. Language owns correcting the
  * source; Authoring owns commit recovery.
@@ -26,25 +28,6 @@ import { endpoint, type RawRecord } from './fields.js';
 export function lowerValue(value: SyntaxValue, type: ValueType): unknown {
   if (type === 'signature-parameters') return lowerSignatureParameters(value);
   return lowerComposite(value, type);
-}
-
-/**
- * Lowers the written attributes only, under their Model field names, in the property table's
- * order. No defaults are added (patches use this).
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param properties - The property table, by attribute name.
- * @returns The lowered fields.
- * @throws Never.
- */
-export function mapProperties(
-  fields: Fields,
-  properties: Readonly<Record<string, Property>>,
-): RawRecord {
-  return Object.fromEntries(writtenEntries(fields, properties));
 }
 
 /**
@@ -65,6 +48,14 @@ export function mapDeclaredProperties(
 ): RawRecord {
   const defaults = Object.fromEntries(defaultEntries(properties));
   return { ...defaults, ...mapProperties(fields, properties) };
+}
+
+/**
+ * The written attributes only, under their Model field names, in the property table's order.
+ * No defaults are added; `mapDeclaredProperties` adds them.
+ */
+function mapProperties(fields: Fields, properties: Readonly<Record<string, Property>>): RawRecord {
+  return Object.fromEntries(writtenEntries(fields, properties));
 }
 
 /** Parameters: text stays text; a `[name, type]` pair becomes `{ name, type }`; others are kept. */

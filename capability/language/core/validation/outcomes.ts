@@ -11,12 +11,12 @@ import type { Span } from '../../contract/records/syntax.js';
 
 /**
  * The empty span at the start of the source (line 1, column 1), for diagnostics with no better
- * place. It is one shared object and is not frozen; diagnostics that use it share it.
+ * place. It is one shared object, deep-frozen, so no diagnostic that holds it can change it.
  */
-export const origin: Span = {
+export const origin: Span = deepFreeze({
   start: { offset: 0, line: 1, column: 1 },
   end: { offset: 0, line: 1, column: 1 },
-};
+});
 
 /**
  * Stops compiling with one diagnostic. The recovery text is always "Retain the source, correct
@@ -80,6 +80,22 @@ export function protect<T>(operation: () => T): Result<T> {
   } catch (error) {
     return faultResult(error);
   }
+}
+
+/**
+ * Freezes a value Language owns, and every object inside it, children first. Used for the shared
+ * vocabulary tables and `origin`, so no caller can change them.
+ *
+ * Pure apart from freezing its argument in place; a retry is a no-op. Language owns correcting
+ * the source; Authoring owns commit recovery.
+ *
+ * @param value - A record Language built (never caller data).
+ * @returns The same value, now deep-frozen.
+ * @throws Never for plain data; a getter or proxy trap that throws is passed through.
+ */
+export function deepFreeze<T>(value: T): T {
+  freezeOwned(value);
+  return value;
 }
 
 /** Freezes the value and every object inside it, children first. Other values are left alone. */

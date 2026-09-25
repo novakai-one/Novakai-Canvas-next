@@ -1,8 +1,20 @@
+/*
+ * The shipped grammar: every construct, its positional values, its attributes and the constructs
+ * it may contain. Parsing, lowering, printing and `describe` read it. Plain data, deep-frozen when
+ * the module loads, so no caller can change it. Language owns correcting the source; Authoring
+ * owns commit recovery.
+ */
 import type { ConstructDefinition } from '../../contract/records/vocabulary.js';
+import { deepFreeze } from '../validation/outcomes.js';
 import { properties as p, layoutProperties } from './properties.js';
 import { nodeKinds } from './defaults.js';
-/** Closed shipped grammar; each construct owns positional framing and accepted child forms. */
-export const constructs: readonly ConstructDefinition[] = [
+
+/**
+ * Every construct, in the order `describe` lists them. Each entry names its positional values
+ * (`positions`, in written order), its attributes (`properties`, by attribute name) and the
+ * constructs it may contain (`children`; `null` for none).
+ */
+export const constructs: readonly ConstructDefinition[] = deepFreeze([
   {
     kind: 'type',
     positions: [
@@ -352,4 +364,4 @@ export const constructs: readonly ConstructDefinition[] = [
     properties: {},
     children: null,
   },
-];
+]);

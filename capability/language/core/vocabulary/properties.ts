@@ -3,17 +3,19 @@
  * lowers to (`field`), its allowed words (`values`), whether a declaration must write it
  * (`required`: a patch cannot `unset` it, but a `set` need not write it), and the value used
  * when it is left out (`fallback`).
- * Parsing, lowering, patching, printing and `describe` all read these tables. Plain data:
- * nothing here runs. Language owns correcting the source; Authoring owns commit recovery.
+ * Parsing, lowering, patching, printing and `describe` all read these tables. Plain data,
+ * deep-frozen when the module loads, so no caller can change them. Language owns correcting the
+ * source; Authoring owns commit recovery.
  */
 import type { Property } from '../../contract/records/vocabulary.js';
+import { deepFreeze } from '../validation/outcomes.js';
 import { nodeKinds, relationshipKinds } from './defaults.js';
 
 /**
  * The shared properties, by name. Constructs pick from this table and may give an entry another
  * attribute name (for example `wireKind` is written `kind=` on a wire).
  */
-export const properties = {
+export const properties = deepFreeze({
   /** A collection's theme. */
   theme: { type: 'word', field: 'theme', fallback: 'paper' },
   /** Free description text (collection, source). */
@@ -182,15 +184,15 @@ export const properties = {
   activate: { type: 'boolean', field: 'activate' },
   /** The operation a sequence event calls. */
   operation: { type: 'endpoint', field: 'operation' },
-} as const satisfies Readonly<Record<string, Property>>;
+} as const satisfies Readonly<Record<string, Property>>);
 
 /**
  * The layout properties of a collection or section. Here `columns` is a number of grid tracks,
  * unlike a table's `columns`, which is a list of headings.
  */
-export const layoutProperties = {
+export const layoutProperties = deepFreeze({
   columns: { type: 'integer', field: 'columns' },
   layout: properties.layout,
   direction: properties.direction,
   gap: properties.gap,
-} as const satisfies Readonly<Record<string, Property>>;
+} as const satisfies Readonly<Record<string, Property>>);

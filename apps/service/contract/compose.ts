@@ -389,12 +389,12 @@ export async function serveWorkspace(
   try {
     const [credentials, requests, router, source, io, files, server] = await Promise.all([
       import('../adapters/local-credentials.js'),
-      import('../adapters/request-reader.js'),
-      import('../adapters/http-router.js'),
+      import('../adapters/http/request-reader.js'),
+      import('../adapters/http/http-router.js'),
       import('../adapters/language-readout.js'),
-      import('../adapters/http-io.js'),
-      import('../adapters/static-files.js'),
-      import('../adapters/http-server.js'),
+      import('../adapters/http/http-io.js'),
+      import('../adapters/http/static-files.js'),
+      import('../adapters/http/http-server.js'),
     ]);
     const security = await credentials.createLocalSecurity(options.port, options.credentialFile);
     if (!security.ok) return security;

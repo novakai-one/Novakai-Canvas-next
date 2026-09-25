@@ -3,13 +3,13 @@ import type {
   ApiRouter,
   RouteOutcome,
   WireOutcome,
-} from '../contract/records/protocol.js';
+} from '../../contract/records/protocol.js';
 import type { Snapshot } from '@novakai/canvas-authoring';
-import type { RouterBindings } from '../contract/records/server.js';
-import { httpBodyLimit } from '../contract/records/http.js';
-import { failure } from '../contract/errors.js';
-import type { Result } from '../contract/errors.js';
-import type { ResourceCommands } from '../contract/records/resource-commands.js';
+import type { RouterBindings } from '../../contract/records/server.js';
+import { httpBodyLimit } from '../../contract/records/http.js';
+import { failure } from '../../contract/errors.js';
+import type { Result } from '../../contract/errors.js';
+import type { ResourceCommands } from '../../contract/records/resource-commands.js';
 type ResourceHandler = (input: unknown) => Promise<WireOutcome>;
 /** Read one current collection without reinterpreting its semantic shape; Language/Presentation validate before their use. */
 async function source(

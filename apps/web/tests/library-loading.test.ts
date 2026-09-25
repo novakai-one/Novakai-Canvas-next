@@ -9,7 +9,7 @@ import { createLibraryResults } from '../adapters/react/LibraryResults.js';
 import type { LibraryView } from '../contract/records/library.js';
 
 /** Real owner validation and query must remain usable when browser history names a removed collection. */
-it('ignores obsolete local visits without masking invalid canonical catalog references', () => {
+it('ignores obsolete local visits without masking invalid canonical organisation references', () => {
   const collection = sampleCollection();
   const snapshot = snapshotSchema.parse({
     workspace: 'local',
@@ -67,12 +67,12 @@ it('ignores obsolete local visits without masking invalid canonical catalog refe
     ok: true,
     value: { recent: [], collections: [] },
   });
-  // Canonical catalog corruption must still reject with typed originating diagnostics.
+  // Canonical organisation corruption must still reject with typed originating diagnostics.
   const rejected = reader.read(snapshot, [], visits);
   assert(!rejected.ok);
   expect(rejected.error).toMatchObject({
     code: 'invalid-library',
-    source: { diagnostics: [{ code: 'reference' }] },
+    source: { diagnostics: [{ code: 'broken-reference' }] },
   });
 });
 

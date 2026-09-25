@@ -34,7 +34,10 @@ import { applyOperation } from './operations.js';
  * (detached) changes, or `validation-failed`. Either outcome is deeply frozen.
  * @throws Never.
  */
-export function stageChanges(snapshot: unknown, changes: unknown): Result<ChangeStage> {
+export function stageChanges(
+  snapshot: unknown,
+  changes: unknown,
+): Result<ChangeStage> {
   try {
     return freeze(inspectStageInputs(snapshot, changes));
   } catch {
@@ -43,7 +46,10 @@ export function stageChanges(snapshot: unknown, changes: unknown): Result<Change
 }
 
 /** Validates the snapshot, then inspects the changes as plain data, then applies them. */
-function inspectStageInputs(snapshot: unknown, changes: unknown): Result<ChangeStage> {
+function inspectStageInputs(
+  snapshot: unknown,
+  changes: unknown,
+): Result<ChangeStage> {
   const before = validateCollection(snapshot);
   if (!before.ok) {
     return before;
@@ -59,7 +65,10 @@ function inspectStageInputs(snapshot: unknown, changes: unknown): Result<ChangeS
  * Parses the changes once with the changes schema, then applies them in order to the snapshot.
  * Returns the unchecked candidate with the parsed changes.
  */
-function applyCheckedChanges(before: Collection, changes: unknown): Result<ChangeStage> {
+function applyCheckedChanges(
+  before: Collection,
+  changes: unknown,
+): Result<ChangeStage> {
   const parsed = changesSchema.safeParse(changes);
   if (!parsed.success) {
     return rejected(shapeErrors(parsed.error.issues));
@@ -72,7 +81,10 @@ function applyCheckedChanges(before: Collection, changes: unknown): Result<Chang
 }
 
 /** Applies one change to the result so far; once a change has failed, keeps that failure. */
-function applyNextOperation(current: Result<Collection>, change: Change): Result<Collection> {
+function applyNextOperation(
+  current: Result<Collection>,
+  change: Change,
+): Result<Collection> {
   if (!current.ok) {
     return current;
   }

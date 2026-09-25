@@ -34,7 +34,10 @@ function projectCollection(collection: CollectionProjection): readonly SearchHit
 }
 
 /** A section's hit: its title, no description, visible in itself. */
-function sectionHit(collection: CollectionProjection, section: SectionProjection): SearchHit {
+function sectionHit(
+  collection: CollectionProjection,
+  section: SectionProjection,
+): SearchHit {
   return {
     kind: 'section',
     collection: collection.id,
@@ -46,7 +49,10 @@ function sectionHit(collection: CollectionProjection, section: SectionProjection
 }
 
 /** An object's hit: its label, description and the sections it is visible in. */
-function objectHit(collection: CollectionProjection, object: ObjectProjection): SearchHit {
+function objectHit(
+  collection: CollectionProjection,
+  object: ObjectProjection,
+): SearchHit {
   return {
     kind: 'object',
     collection: collection.id,

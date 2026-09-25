@@ -29,7 +29,10 @@ import { cascadeSection } from './cascade-views.js';
  * `validation-failed`. Not frozen.
  * @throws Never for a parsed change and collection.
  */
-export function deleteObject(collection: Collection, change: ObjectDeletion): Result<Collection> {
+export function deleteObject(
+  collection: Collection,
+  change: ObjectDeletion,
+): Result<Collection> {
   const objectExists = collection.objects.some(
     /** Tells whether this is the object to delete. */
     (object) => object.id === change.id,
@@ -55,7 +58,10 @@ export function deleteObject(collection: Collection, change: ObjectDeletion): Re
  * frozen.
  * @throws Never for a parsed change and collection.
  */
-export function removeRecord(collection: Collection, change: RecordRemoval): Result<Collection> {
+export function removeRecord(
+  collection: Collection,
+  change: RecordRemoval,
+): Result<Collection> {
   const recordExists = collection[change.target].some(
     /** Tells whether this record has the change's ID. */
     (record) => record.id === change.id,
@@ -77,7 +83,10 @@ type RecordRemoval = Extract<Change, { op: 'remove' }>;
  * the object; removes the object and cleans the other objects' content; removes those
  * relationships; cleans every section.
  */
-function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Collection {
+function cascadeObjectDeletion(
+  collection: Collection,
+  removedId: ObjectId,
+): Collection {
   const incidentRelationships = collection.relationships.filter(
     /** Tells whether the relationship starts or ends at the deleted object. */
     (relationship) =>
@@ -107,7 +116,10 @@ function cascadeObjectDeletion(collection: Collection, removedId: ObjectId): Col
  * Computes the full cascade, then allows it when `cascade` is set or when it changes nothing
  * beyond removing the object itself (compared as JSON).
  */
-function planObjectDeletion(collection: Collection, change: ObjectDeletion): Result<Collection> {
+function planObjectDeletion(
+  collection: Collection,
+  change: ObjectDeletion,
+): Result<Collection> {
   const cascaded = cascadeObjectDeletion(collection, change.id);
   const objectOnly = {
     ...collection,
@@ -142,7 +154,10 @@ function withoutRecord<T extends { readonly id: string }>(
  * Returns a copy of the collection without the record, in the list the change targets. One
  * remover per list keeps each list's own record type.
  */
-function removeFromNamespace(collection: Collection, change: RecordRemoval): Collection {
+function removeFromNamespace(
+  collection: Collection,
+  change: RecordRemoval,
+): Collection {
   const removers: Readonly<Record<RecordRemoval['target'], () => Collection>> = {
     /** Removes an object. */
     objects: () => ({ ...collection, objects: withoutRecord(collection.objects, change.id) }),

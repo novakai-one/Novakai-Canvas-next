@@ -53,7 +53,10 @@ export interface WriteLease {
    * the digest; `missing-asset` when stored bytes vanish between two reads; and
    * `storage-unavailable` when storage fails.
    */
-  stage(digest: unknown, base64: unknown): Promise<Result<void>>;
+  stage(
+    digest: unknown,
+    base64: unknown,
+  ): Promise<Result<void>>;
   /**
    * Deletes the lease. Releasing twice is not an error.
    *
@@ -146,7 +149,10 @@ export interface Assets {
    * @returns Success when the bytes match. Fails `invalid-input`, `corrupt-asset`,
    * `unsupported-media` or `unsafe-media`.
    */
-  verify(digest: unknown, base64: unknown): Promise<Result<void>>;
+  verify(
+    digest: unknown,
+    base64: unknown,
+  ): Promise<Result<void>>;
   /**
    * Deletes stored bytes that nothing references, in one storage transaction. Leases of dead
    * owner processes are deleted first; leases of live (or possibly live) owners keep their

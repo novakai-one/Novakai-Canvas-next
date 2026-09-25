@@ -56,14 +56,20 @@ export interface WireEditorSession {
   getSnapshot(): WireEditorState;
   subscribe(listener: () => void): () => void;
   restore(workspace: string): Result<void>;
-  edit(selection: WireSelection, command: WireEdit): Result<void>;
+  edit(
+    selection: WireSelection,
+    command: WireEdit,
+  ): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
 }
 export interface WireEditorBindings {
   readonly retention: DraftRetention;
   read(input: unknown): Result<readonly WireDraft[]>;
-  apply(draft: WireDraft, changes: readonly Change[]): Promise<Result<Receipt>>;
+  apply(
+    draft: WireDraft,
+    changes: readonly Change[],
+  ): Promise<Result<Receipt>>;
   report(error: Diagnostic): void;
 }
 export type WireEditorFactory = (

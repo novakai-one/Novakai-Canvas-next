@@ -12,7 +12,10 @@ import { reject } from '../validation/outcomes.js';
  * @param expected - The record versions to check against the snapshot.
  * @throws AuthoringFault `revision-conflict` at the first record whose version has changed.
  */
-export function compareVersions(snapshot: Snapshot, expected: readonly ReadVersion[]): void {
+export function compareVersions(
+  snapshot: Snapshot,
+  expected: readonly ReadVersion[],
+): void {
   const staleRead = expected.find((read) => versionOf(snapshot, read.key).version !== read.version);
   if (staleRead === undefined) return;
   reject('revision-conflict', keyText(staleRead.key), 'The observed record version has changed');
@@ -27,7 +30,10 @@ export function compareVersions(snapshot: Snapshot, expected: readonly ReadVersi
  * @param path - The field name reported in the error.
  * @throws AuthoringFault `invalid-input` when any key repeats.
  */
-export function uniqueKeys(keys: readonly RecordKey[], path: string): void {
+export function uniqueKeys(
+  keys: readonly RecordKey[],
+  path: string,
+): void {
   const distinctKeys = new Set(keys.map(keyText));
   const hasDuplicates = distinctKeys.size !== keys.length;
   if (hasDuplicates) reject('invalid-input', path, 'Duplicate record identities');
@@ -45,7 +51,10 @@ export function uniqueKeys(keys: readonly RecordKey[], path: string): void {
  * @throws AuthoringFault `permission-denied` when a key is outside the scope. This is checked first.
  * @throws AuthoringFault `invalid-input` when a key has no expected version.
  */
-export function checkWriteAuthority(request: Request, keys: readonly RecordKey[]): void {
+export function checkWriteAuthority(
+  request: Request,
+  keys: readonly RecordKey[],
+): void {
   const scopedKeys = new Set(request.scope.map(keyText));
   const expectedKeys = new Set(request.expected.map((read) => keyText(read.key)));
 
@@ -76,7 +85,10 @@ export function mergeVersions(groups: readonly (readonly ReadVersion[])[]): read
 }
 
 /** Rejects a read whose version differs from the merged entry for the same key. */
-function checkMergedVersion(read: ReadVersion, readByKey: ReadonlyMap<string, ReadVersion>): void {
+function checkMergedVersion(
+  read: ReadVersion,
+  readByKey: ReadonlyMap<string, ReadVersion>,
+): void {
   const mergedRead = readByKey.get(keyText(read.key));
   if (mergedRead === undefined)
     reject('invalid-input', 'reads', 'A dependency identity could not be resolved');

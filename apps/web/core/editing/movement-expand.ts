@@ -168,7 +168,10 @@ function captureExpansionGeometry(
   };
 }
 
-function expansionParent(section: SceneSection, node: SceneNode): Result<SceneNode | undefined> {
+function expansionParent(
+  section: SceneSection,
+  node: SceneNode,
+): Result<SceneNode | undefined> {
   if (node.parent === null) return { ok: true, value: undefined };
   const parent = section.nodes.find((item) => item.id === node.parent);
   return parent === undefined
@@ -234,7 +237,10 @@ function growAncestor(
   };
 }
 
-function parentNode(section: SceneSection, node: SceneNode): SceneNode | undefined {
+function parentNode(
+  section: SceneSection,
+  node: SceneNode,
+): SceneNode | undefined {
   return node.parent === null ? undefined : section.nodes.find((item) => item.id === node.parent);
 }
 
@@ -540,7 +546,11 @@ function checkedExpansionItem(
     : undefined;
 }
 
-function expansionDelta(prior: Box, target: Target, after: Box): ExpansionInspection {
+function expansionDelta(
+  prior: Box,
+  target: Target,
+  after: Box,
+): ExpansionInspection {
   return exactBox(prior, after)
     ? { valid: true }
     : { valid: true, change: { target, before: prior, after } };

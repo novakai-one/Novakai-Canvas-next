@@ -49,7 +49,10 @@ function folderIssues(catalog: Catalog): readonly Diagnostic[] {
 }
 
 /** A folder without a parent is at the root; a named parent must exist in this catalog. */
-function parentIssues(folder: Folder, catalog: Catalog): readonly Diagnostic[] {
+function parentIssues(
+  folder: Folder,
+  catalog: Catalog,
+): readonly Diagnostic[] {
   if (folder.parent === undefined) {
     return [];
   }
@@ -61,7 +64,10 @@ function parentIssues(folder: Folder, catalog: Catalog): readonly Diagnostic[] {
 }
 
 /** A folder whose parent chain comes back to a folder already visited is in a cycle. */
-function cycleIssues(folder: Folder, catalog: Catalog): readonly Diagnostic[] {
+function cycleIssues(
+  folder: Folder,
+  catalog: Catalog,
+): readonly Diagnostic[] {
   const walk = ancestry(folder.id, catalog.folders);
   return diagnoseWhen(walk.cycle, {
     code: 'cycle',
@@ -82,7 +88,10 @@ function membershipIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
 }
 
 /** An entry's collection must exist, and its folder too when it names one. */
-function entryIssues(entry: CatalogEntry, snapshot: LibrarySnapshot): readonly Diagnostic[] {
+function entryIssues(
+  entry: CatalogEntry,
+  snapshot: LibrarySnapshot,
+): readonly Diagnostic[] {
   const collectionExists = hasCollection(snapshot.collections, entry.collection);
   const folderExists =
     entry.folder === undefined || hasFolder(snapshot.catalog.folders, entry.folder);

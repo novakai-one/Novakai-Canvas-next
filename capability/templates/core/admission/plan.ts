@@ -136,7 +136,10 @@ function finish(
 }
 
 /** Parses the record with its digest (the schema gives the final type), then checks payload rules. */
-function finishRecord(content: Omit<Preset, 'digest'>, digest: Digest): Result<Preset> {
+function finishRecord(
+  content: Omit<Preset, 'digest'>,
+  digest: Digest,
+): Result<Preset> {
   const parsed = parse(preset, { ...content, digest });
   if (!parsed.ok) {
     return parsed;
@@ -149,7 +152,11 @@ function finishRecord(content: Omit<Preset, 'digest'>, digest: Digest): Result<P
 }
 
 /** A version that exists may be replayed only with the same content; otherwise `version-exists`. */
-function existing(records: Catalog, previous: Preset, value: Preset): Result<PresetPlan> {
+function existing(
+  records: Catalog,
+  previous: Preset,
+  value: Preset,
+): Result<PresetPlan> {
   if (previous.digest !== value.digest) {
     return fail(
       'version-exists',

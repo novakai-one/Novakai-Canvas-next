@@ -100,7 +100,10 @@ function connectionSectionBlocker(
   return null;
 }
 
-function findConnectionSection(active: ActiveDiagram, sectionId: string): Result<Section> {
+function findConnectionSection(
+  active: ActiveDiagram,
+  sectionId: string,
+): Result<Section> {
   const section = active.document.collection.sections.find((item) => item.id === sectionId);
   if (section === undefined || section.mode === 'sequence')
     return {
@@ -121,30 +124,45 @@ function canonicalMemberKind(
   return memberPortKind(object, member) ?? contentMemberKind(object, member);
 }
 
-function memberPortKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+function memberPortKind(
+  object: DiagramObject,
+  member: string,
+): CanonicalMemberKind | undefined {
   return object.ports.some((port) => port.id === member) ? 'port' : undefined;
 }
 
-function contentMemberKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+function contentMemberKind(
+  object: DiagramObject,
+  member: string,
+): CanonicalMemberKind | undefined {
   const block = object.content.find((item) => item.id === member);
   if (block !== undefined && block.kind !== 'table') return block.kind as CanonicalMemberKind;
   return tableRowKind(object, member);
 }
 
-function tableRowKind(object: DiagramObject, member: string): CanonicalMemberKind | undefined {
+function tableRowKind(
+  object: DiagramObject,
+  member: string,
+): CanonicalMemberKind | undefined {
   const table = object.content.find(
     (item) => item.kind === 'table' && item.rows.some((row) => row.id === member),
   );
   return table === undefined ? undefined : 'row';
 }
 
-function canonicalMemberAllowed(object: DiagramObject, member: string): boolean {
+function canonicalMemberAllowed(
+  object: DiagramObject,
+  member: string,
+): boolean {
   const kind = canonicalMemberKind(object, member);
   const allowed = memberEndpoints[object.kind] ?? genericMemberEndpoints;
   return kind !== undefined && (allowed as readonly string[]).includes(kind);
 }
 
-function editedConnection(draft: ConnectionDraft, edit: ConnectionEdit): ConnectionDraft {
+function editedConnection(
+  draft: ConnectionDraft,
+  edit: ConnectionEdit,
+): ConnectionDraft {
   if (edit.kind === 'label') return { ...draft, label: edit.value, problem: null };
   if (edit.kind === 'relationship-kind') return { ...draft, kind: edit.value, problem: null };
   return { ...draft, [edit.side]: edit.value, problem: null };
@@ -468,7 +486,10 @@ function definitionChanges(
   return [{ op: draft.operation, target: 'definitions', value: draft.definition }];
 }
 
-function definitionRequest(draft: DefinitionDraft, bindings: WorkspaceBindings): Result<Request> {
+function definitionRequest(
+  draft: DefinitionDraft,
+  bindings: WorkspaceBindings,
+): Result<Request> {
   if (draft.request !== undefined) return { ok: true, value: draft.request };
   return bindings.inputs.model(
     draft.base,
@@ -672,7 +693,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     acceptSnapshot(response.value.outcome.value, response.value.generation);
   }
   /** Snapshot sequence prevents out-of-order reads from moving the sidebar backward. */
-  function acceptSnapshot(input: unknown, generation: string): void {
+  function acceptSnapshot(
+    input: unknown,
+    generation: string,
+  ): void {
     const checked = bindings.inputs.snapshot(input);
     if (!checked.ok) {
       report(checked.error);
@@ -774,7 +798,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     await requestOpen(id, 'navigation');
   }
   /** Explicit choices supersede every older render; token checks decide delivery after transport aborts. */
-  async function requestOpen(id: string, mode: RenderRequest['mode']): Promise<void> {
+  async function requestOpen(
+    id: string,
+    mode: RenderRequest['mode'],
+  ): Promise<void> {
     const request = beginRender(id, mode);
     if (request === null) return;
     const response = await bindings.client.get(
@@ -792,22 +819,34 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (document === null) return;
     settleDocument(request, document);
   }
-  function settleDocument(request: RenderRequest, document: Result<RenderDocument>): void {
+  function settleDocument(
+    request: RenderRequest,
+    document: Result<RenderDocument>,
+  ): void {
     if (!document.ok) return settleFailure(request, document.error);
     finishRequest(request, document.value);
   }
-  function finishRequest(request: RenderRequest, document: RenderDocument): void {
+  function finishRequest(
+    request: RenderRequest,
+    document: RenderDocument,
+  ): void {
     if (!currentRequest(request)) return;
     const installed = installAdmitted(request, document);
     if (!installed.ok) return settleFailure(request, installed.error);
     settleSuccess(request);
   }
-  function installAdmitted(request: RenderRequest, document: RenderDocument): Result<void> {
+  function installAdmitted(
+    request: RenderRequest,
+    document: RenderDocument,
+  ): Result<void> {
     const admission = admitRender(request, document);
     if (!admission.ok) return admission;
     return install(document);
   }
-  function admitRender(request: RenderRequest, document: RenderDocument): Result<void> {
+  function admitRender(
+    request: RenderRequest,
+    document: RenderDocument,
+  ): Result<void> {
     const current = state.collections.find((item) => item.id === request.id);
     const changed =
       state.snapshot?.workspace !== request.workspace ||
@@ -827,7 +866,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     return { ok: true, value: undefined };
   }
   /** A request captures the checked revision and service generation used for its admission. */
-  function beginRender(id: string, mode: RenderRequest['mode']): RenderRequest | null {
+  function beginRender(
+    id: string,
+    mode: RenderRequest['mode'],
+  ): RenderRequest | null {
     if (disposed) return null;
     invalidateRender();
     const job = new AbortController();
@@ -845,7 +887,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     update(renderPatch(id, mode));
     return request;
   }
-  function renderPatch(id: string, mode: RenderRequest['mode']): Partial<WorkspaceView> {
+  function renderPatch(
+    id: string,
+    mode: RenderRequest['mode'],
+  ): Partial<WorkspaceView> {
     if (mode === 'chooser')
       return {
         opening: id,
@@ -885,7 +930,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     };
   }
   /** Selected collection identity must match the requested document, even if a delayed server returns another valid diagram. */
-  function readRender(input: unknown, id: string): Result<RenderDocument> {
+  function readRender(
+    input: unknown,
+    id: string,
+  ): Result<RenderDocument> {
     const document = bindings.inputs.diagram(input);
     if (!document.ok) return document;
     if (document.value.collection.id !== id)
@@ -999,7 +1047,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     releaseHistory();
   }
   /** Failed chooser attempts are recoverable and never replace the retained active diagram. */
-  function settleFailure(request: RenderRequest, error: Diagnostic): void {
+  function settleFailure(
+    request: RenderRequest,
+    error: Diagnostic,
+  ): void {
     if (!currentRequest(request)) return;
     request.job.abort();
     rendering = null;
@@ -1007,7 +1058,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const problem = owned(error);
     update(failurePatch(request, problem));
   }
-  function failurePatch(request: RenderRequest, problem: Diagnostic): Partial<WorkspaceView> {
+  function failurePatch(
+    request: RenderRequest,
+    problem: Diagnostic,
+  ): Partial<WorkspaceView> {
     const basePatch: Partial<WorkspaceView> = {
       opening: null,
       problem,
@@ -1052,7 +1106,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function owned(error: Diagnostic): Diagnostic {
     return error.owner === undefined ? { ...error, owner: 'workspace' } : error;
   }
-  function diagnostic(code: string, message: string, recovery: string): Diagnostic {
+  function diagnostic(
+    code: string,
+    message: string,
+    recovery: string,
+  ): Diagnostic {
     return { code, message, recovery, owner: 'workspace' };
   }
   /** A panel-owned migration notice survives diagram navigation; load failures clear on the next render attempt. */
@@ -1239,7 +1297,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       state.active.session.dispatch({ kind: 'reject', id: intent.id, message: error.message });
     report(error);
   }
-  function planAndSubmit(active: ActiveDiagram, intent: EditIntent): void {
+  function planAndSubmit(
+    active: ActiveDiagram,
+    intent: EditIntent,
+  ): void {
     const planned = bindings.edits.plan(intent, {
       document: active.document,
       stamp: active.session.getSnapshot().stamp,
@@ -1257,7 +1318,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (active === null) return;
     await continueCanvasEdit(active, intent);
   }
-  async function continueCanvasEdit(active: ActiveDiagram, intent: EditIntent): Promise<void> {
+  async function continueCanvasEdit(
+    active: ActiveDiagram,
+    intent: EditIntent,
+  ): Promise<void> {
     if (intent.kind === 'connection') {
       beginConnection(active, intent);
       return;
@@ -1476,7 +1540,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function unresolvedInverse(item: Submission): boolean {
     return item.state !== 'rejected' && item.request.intent.kind !== 'change';
   }
-  function rejectBlocked(request: Request, gesture: string | null): Result<void> {
+  function rejectBlocked(
+    request: Request,
+    gesture: string | null,
+  ): Result<void> {
     const allowed = allowSubmission(request);
     if (allowed.ok) return allowed;
     report(allowed.error);
@@ -1497,25 +1564,37 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!result.ok) handleSubmitFailure(result.error, gesture);
     return result;
   }
-  function handleSubmitFailure(error: Diagnostic, gesture: string | null): void {
+  function handleSubmitFailure(
+    error: Diagnostic,
+    gesture: string | null,
+  ): void {
     report(error);
     void refresh();
     if (gesture !== null) handleGestureFailure(error, gesture);
   }
-  function handleGestureFailure(error: Diagnostic, gesture: string): void {
+  function handleGestureFailure(
+    error: Diagnostic,
+    gesture: string,
+  ): void {
     const retained = state.pending.find((item) => item.request.request === gesture);
     if (isUncertainMovement(gesture, retained)) return retainUncertainMovement(gesture);
     clearMovementApplying(gesture);
     rejectGesture(gesture, error.message);
     settleGestureFailure(gesture, retained?.state === 'rejected');
   }
-  function isUncertainMovement(gesture: string, retained: Submission | undefined): boolean {
+  function isUncertainMovement(
+    gesture: string,
+    retained: Submission | undefined,
+  ): boolean {
     return movementCapture?.intent.id === gesture && isPendingMovement(retained);
   }
   function clearMovementApplying(gesture: string): void {
     if (movementCapture?.intent.id === gesture) movementApplying = false;
   }
-  function settleGestureFailure(gesture: string, rejected: boolean): void {
+  function settleGestureFailure(
+    gesture: string,
+    rejected: boolean,
+  ): void {
     if (movementCapture?.intent.id !== gesture) return;
     const phase = gestureFailurePhase(rejected);
     update({ movementReview: state.movementReview ? { ...state.movementReview, phase } : null });
@@ -1532,11 +1611,17 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
         : null,
     });
   }
-  function rejectGesture(gesture: string, message: string): void {
+  function rejectGesture(
+    gesture: string,
+    message: string,
+  ): void {
     state.active?.session.dispatch({ kind: 'reject', id: gesture, message });
   }
   /** Only a matching Authoring receipt may acknowledge a gesture or mark its submitted source generation saved. */
-  function confirmed(submission: Submission, receipt: Receipt): void {
+  function confirmed(
+    submission: Submission,
+    receipt: Receipt,
+  ): void {
     source.confirmed(submission, receipt);
     update({ status: editStatus() });
     definitions.confirmed(submission.request.request);
@@ -1603,7 +1688,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function submissionGestureMatches(gesture: string | null): boolean {
     return gesture === movementCapture?.intent.id;
   }
-  function finishConfirmedSubmission(submission: Submission, receipt: Receipt): void {
+  function finishConfirmedSubmission(
+    submission: Submission,
+    receipt: Receipt,
+  ): void {
     if (submission.request.intent.kind !== 'change') void finishHistory(receipt.sequence);
     else void refresh();
   }
@@ -1663,17 +1751,26 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     await createSubmitted(request.value, id);
   }
   /** Open only after a confirmed creation and matching snapshot; a failed create keeps the current canvas. */
-  async function createSubmitted(request: Request, id: string): Promise<void> {
+  async function createSubmitted(
+    request: Request,
+    id: string,
+  ): Promise<void> {
     const result = await submit(request, state.generation, state.sourceEdit, null);
     if (!result.ok) return;
     await refresh();
     await open(id);
   }
   /** The inspector supplies a captured base and typed replacement; the same Authoring request journal owns its write. */
-  async function applyObject(draft: ObjectDraft, object: DiagramObject): Promise<Result<Receipt>> {
+  async function applyObject(
+    draft: ObjectDraft,
+    object: DiagramObject,
+  ): Promise<Result<Receipt>> {
     return applyChanges(draft, [{ op: 'replace', target: 'objects', value: object }]);
   }
-  function retainDefinitionRequest(draft: DefinitionDraft, request: Request): Result<Request> {
+  function retainDefinitionRequest(
+    draft: DefinitionDraft,
+    request: Request,
+  ): Result<Request> {
     if (draft.request !== undefined) return { ok: true, value: request };
     const retained = definitions.bindRequest(draft.key, request);
     if (!retained.ok) return retained;
@@ -1845,12 +1942,18 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     settleCreationElsewhere(origin, result);
     return result;
   }
-  function settleCreation(result: Result<Receipt>, kind: 'diagram' | 'object' | 'group'): void {
+  function settleCreation(
+    result: Result<Receipt>,
+    kind: 'diagram' | 'object' | 'group',
+  ): void {
     if (!result.ok) return settleRefusedCreation(result.error, kind);
     clearCreationCapture(kind);
     update({ creation: creationAfterSuccess(kind) });
   }
-  function settleRefusedCreation(error: Diagnostic, kind: 'diagram' | 'object' | 'group'): void {
+  function settleRefusedCreation(
+    error: Diagnostic,
+    kind: 'diagram' | 'object' | 'group',
+  ): void {
     releaseRefusedCreation(kind);
     update({
       creation: { ...state.creation, problem: plainMessage(error.message), busy: creationLocked() },
@@ -1983,7 +2086,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       update({ connection: { ...draft, problem: error.message }, problem: error });
     return { ok: false, error };
   }
-  function connectionErrorView(draft: ConnectionDraft, error: Diagnostic): ConnectionDraft {
+  function connectionErrorView(
+    draft: ConnectionDraft,
+    error: Diagnostic,
+  ): ConnectionDraft {
     const current = state.connection?.id === draft.id ? state.connection : draft;
     return { ...current, problem: error.message };
   }
@@ -2242,13 +2348,20 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       value: newObject(objectCapture?.id ?? bindings.nextId(), draft.kind, label),
     };
   }
-  function existingObject(objects: readonly DiagramObject[], id: string): Result<DiagramObject> {
+  function existingObject(
+    objects: readonly DiagramObject[],
+    id: string,
+  ): Result<DiagramObject> {
     const object = objects.find((item) => item.id === id);
     return object === undefined
       ? creationFailure('Choose an existing object to reuse.')
       : { ok: true, value: object };
   }
-  function newObject(id: string, kind: AddObjectDraft['kind'], label: string): DiagramObject {
+  function newObject(
+    id: string,
+    kind: AddObjectDraft['kind'],
+    label: string,
+  ): DiagramObject {
     return {
       id: `object-${id}` as DiagramObject['id'],
       kind,
@@ -2262,7 +2375,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       sources: [],
     };
   }
-  function checkAppearance(section: Section, object: DiagramObject): Result<void> {
+  function checkAppearance(
+    section: Section,
+    object: DiagramObject,
+  ): Result<void> {
     return section.appearances.some((appearance) => appearance.object === object.id)
       ? creationFailure('That object is already in this diagram.')
       : { ok: true, value: undefined };
@@ -2400,7 +2516,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     handleReconciliationResult(result.value, id);
   }
-  function handleReconciliationResult(receipt: Receipt | null, id: string): void {
+  function handleReconciliationResult(
+    receipt: Receipt | null,
+    id: string,
+  ): void {
     clearSettledUncertainty();
     if (receipt === null) update({ status: 'No receipt found — retry remains an explicit action' });
     else settleConfirmedCreation(id);
@@ -2436,7 +2555,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const pending = state.pending.find((item) => item.request.request === requestId);
     applyMovementRecoveryPhase(requestId, pending);
   }
-  function applyMovementRecoveryPhase(requestId: string, pending: Submission | undefined): void {
+  function applyMovementRecoveryPhase(
+    requestId: string,
+    pending: Submission | undefined,
+  ): void {
     if (pending?.state === 'rejected') return retainRejectedMovement(requestId);
     if (isPendingMovement(pending)) retainUncertainMovement(requestId);
   }
@@ -2502,7 +2624,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function releaseNavigationAttempt(): void {
     if (!historyRefreshing) setHistoryGate(false);
   }
-  async function sendHistory(status: unknown, direction: 'undo' | 'redo'): Promise<void> {
+  async function sendHistory(
+    status: unknown,
+    direction: 'undo' | 'redo',
+  ): Promise<void> {
     const request = bindings.inputs.history(status, direction, bindings.nextId());
     if (!request.ok) return report(request.error);
     if (request.value !== null) await applyHistoryRequest(request.value);
@@ -2829,7 +2954,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   };
 }
 
-function connectionDiagnostic(code: string, message: string, recovery: string): Diagnostic {
+function connectionDiagnostic(
+  code: string,
+  message: string,
+  recovery: string,
+): Diagnostic {
   return { code, message, recovery } as Diagnostic;
 }
 /** Same-workspace monotonic revisions can update the existing session without losing its camera or selection. */
@@ -2868,7 +2997,11 @@ function sameCollection(
 }
 
 /** Transport generation is part of the render input even when the collection revision is unchanged. */
-function renderChanged(active: ActiveDiagram, revision: number, generation: string): boolean {
+function renderChanged(
+  active: ActiveDiagram,
+  revision: number,
+  generation: string,
+): boolean {
   return revision !== active.document.collection.revision || active.generation !== generation;
 }
 

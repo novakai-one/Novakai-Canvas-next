@@ -59,7 +59,10 @@ export function snapshot(revision: number) {
   });
 }
 /** Receipt fixtures express the actual committed version separately from the submitted precondition. */
-export function receipt(request: Request, revision: number): Receipt {
+export function receipt(
+  request: Request,
+  revision: number,
+): Receipt {
   return receiptSchema.parse({
     request: request.request,
     fingerprint: 'a'.repeat(64),
@@ -75,7 +78,10 @@ export function receipt(request: Request, revision: number): Receipt {
   });
 }
 /** Test service envelope contains unknown owner payload, exactly as the browser transport does. */
-export function response(value: unknown, generation = 'generation-one'): Result<TransportResponse> {
+export function response(
+  value: unknown,
+  generation = 'generation-one',
+): Result<TransportResponse> {
   return { ok: true, value: { version: 1, generation, outcome: { ok: true, value } } };
 }
 /** JSON round trips model browser persistence rather than sharing live references with session state. */
@@ -97,7 +103,10 @@ export function memoryRetention(): DraftRetention {
   };
 }
 /** Recovery harness uses real Language and Canvas owners; only transport delivery and browser retention are controlled. */
-export function controller(client: ServiceClient, retention: DraftRetention) {
+export function controller(
+  client: ServiceClient,
+  retention: DraftRetention,
+) {
   const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
   const canvas = createCanvas({ sceneAdmission: createSceneAdmission() });
   let identity = 0;

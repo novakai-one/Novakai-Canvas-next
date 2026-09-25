@@ -146,7 +146,10 @@ async function checkFeasibility(
  * Hashes the canonical text of the preparation's hashed parts.
  * The hashed parts are checked and written as text before the hasher is looked up on `deps`.
  */
-function hashPreparation(hashed: HashedPreparation, deps: PlanningDependencies): Digest {
+function hashPreparation(
+  hashed: HashedPreparation,
+  deps: PlanningDependencies,
+): Digest {
   const hashInput = readShape(jsonSchema, hashed, 'corrupt-record');
   const canonicalText = canonical(hashInput);
   const hashedText = accepted(deps.hash.digest(canonicalText));

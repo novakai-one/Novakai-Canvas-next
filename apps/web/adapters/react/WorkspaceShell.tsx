@@ -300,12 +300,18 @@ function useAlertClearance(): {
 }
 
 /** Alerts clear the zoom controls only when a canvas shows them; the Library has none. */
-function alertsClass(active: WorkspaceView['active'], zoom: boolean): string | undefined {
+function alertsClass(
+  active: WorkspaceView['active'],
+  zoom: boolean,
+): string | undefined {
   return active !== null && zoom ? `${styles.alerts} ${styles.alertsAboveZoom}` : styles.alerts;
 }
 
 /** UI wiring for a palette drop; the decision itself is made in core. */
-function dropObject(controller: WorkspaceController, drop: PaletteDrop): void {
+function dropObject(
+  controller: WorkspaceController,
+  drop: PaletteDrop,
+): void {
   if (drop.kind === 'refuse') controller.report(drop.problem);
   if (drop.kind === 'add') void controller.addObject(drop.draft);
 }

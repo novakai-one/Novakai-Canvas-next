@@ -103,7 +103,10 @@ const files: FileEnvironment = {
 };
 
 /** Creates the one-table store holding `raw`, and wraps its prepared statements as a port. */
-function initializeDriver(database: TestDatabase, raw: unknown): DatabasePort {
+function initializeDriver(
+  database: TestDatabase,
+  raw: unknown,
+): DatabasePort {
   database.exec('CREATE TABLE data(payload TEXT)');
   const initialize = database.prepare('INSERT INTO data VALUES(?)');
   initialize.run(JSON.stringify(raw));
@@ -159,7 +162,11 @@ function executeFault(
 }
 
 /** Throws the injected driver failure when `actual` is `target`; otherwise runs `action`. */
-function failAt<T>(actual: Fault, target: Fault, action: () => T): T {
+function failAt<T>(
+  actual: Fault,
+  target: Fault,
+  action: () => T,
+): T {
   if (actual === target) {
     throw new Error('Injected driver failure');
   }

@@ -69,7 +69,10 @@ interface CursorIdentity {
 }
 
 /** Builds the keys. Recent visits are sorted by collection ID, so their input order is ignored. */
-function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): CursorIdentity {
+function cursorIdentity(
+  snapshot: LibrarySnapshot,
+  request: QueryRequest,
+): CursorIdentity {
   const { cursor: previousCursor, ...criteria } = request;
   // The cursor is not part of the identity; `void` marks the variable as deliberately unused.
   void previousCursor;
@@ -118,6 +121,9 @@ function staleCursor<T>(message: string): Result<T> {
 }
 
 /** Sorts recent visits by collection ID, by code unit. */
-function byVisitedCollection(left: RecentVisit, right: RecentVisit): number {
+function byVisitedCollection(
+  left: RecentVisit,
+  right: RecentVisit,
+): number {
   return compareText(left.collection, right.collection);
 }

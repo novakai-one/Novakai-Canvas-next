@@ -44,7 +44,11 @@ export type Result<T, E = StorageError> =
  * @param message - What went wrong.
  * @returns `{ ok: false, error: { code, path, message, recovery } }`.
  */
-export function fail<T>(code: ErrorCode, path: string, message: string): Result<T> {
+export function fail<T>(
+  code: ErrorCode,
+  path: string,
+  message: string,
+): Result<T> {
   const recovery = recoveryByCode[code];
   return { ok: false, error: { code, path, message, recovery } };
 }

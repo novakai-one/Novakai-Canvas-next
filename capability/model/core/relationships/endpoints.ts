@@ -49,7 +49,10 @@ export function validateRelationships(collection: Collection): readonly Diagnost
  * Tells whether a member exists and its kind is one the owner kind allows. A missing member is
  * never allowed.
  */
-function isAllowedMember(member: ObjectDescendant | undefined, ownerKind: ObjectKind): boolean {
+function isAllowedMember(
+  member: ObjectDescendant | undefined,
+  ownerKind: ObjectKind,
+): boolean {
   if (member === undefined) {
     return false;
   }
@@ -59,7 +62,10 @@ function isAllowedMember(member: ObjectDescendant | undefined, ownerKind: Object
 }
 
 /** Finds the endpoint's object; a missing one is reported by the endpoint check. */
-function resolveEndpoint(endpoint: Endpoint, collection: Collection): DiagramObject | undefined {
+function resolveEndpoint(
+  endpoint: Endpoint,
+  collection: Collection,
+): DiagramObject | undefined {
   return collection.objects.find(
     /** Tells whether this is the endpoint's object. */
     (object) => object.id === endpoint.object,
@@ -132,7 +138,10 @@ function validateEndpoint(
 }
 
 /** Checks cardinalities: an association needs both; every other kind must have none. */
-function validateCardinalities(relationship: Relationship, path: string): readonly Diagnostic[] {
+function validateCardinalities(
+  relationship: Relationship,
+  path: string,
+): readonly Diagnostic[] {
   if (relationship.kind === 'association') {
     const missingCardinality = relationship.from === undefined || relationship.to === undefined;
     return diagnoseWhen(

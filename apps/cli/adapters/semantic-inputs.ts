@@ -177,7 +177,10 @@ function scopeNotice(scope: { readonly kind: string }): string {
     : '# Read-only partial context; referenced objects/views and manual geometry may be omitted. Read those IDs separately or use the full collection.\n';
 }
 /** Receipt output reports confirmed identity and sequence, not an optimistic saved status. */
-function receipt(input: unknown, expected: ReceiptExpectation): Result<string> {
+function receipt(
+  input: unknown,
+  expected: ReceiptExpectation,
+): Result<string> {
   if (input === null) return absentReceipt(expected);
   return receiptReadout(input, expected.request);
 }
@@ -191,7 +194,10 @@ function absentReceipt(expected: ReceiptExpectation): Result<string> {
   );
 }
 /** Malformed receipts cannot release a pending request or be reported as a successful write. */
-function receiptReadout(input: unknown, request: string): Result<string> {
+function receiptReadout(
+  input: unknown,
+  request: string,
+): Result<string> {
   const parsed = receiptSchema.safeParse(input);
   if (!parsed.success) return failure('invalid-response', 'Service returned an invalid receipt');
   if (parsed.data.request !== request)

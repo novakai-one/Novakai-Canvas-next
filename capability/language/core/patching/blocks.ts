@@ -63,14 +63,20 @@ export function replaceBlock(
  * `move` without `before=`; and the faults of lowering the added block. Callers run it inside
  * `protect`.
  */
-export function editBlocks(collection: Collection, operation: Operation): RawRecord {
+export function editBlocks(
+  collection: Collection,
+  operation: Operation,
+): RawRecord {
   const owner = blockOwner(collection, operation);
   const content = changedContent(owner.content, operation);
   return objectChange(owner, content);
 }
 
 /** The Model change that replaces the owning object with a new content list. */
-function objectChange(owner: DiagramObject, content: readonly RawRecord[]): RawRecord {
+function objectChange(
+  owner: DiagramObject,
+  content: readonly RawRecord[],
+): RawRecord {
   return { op: 'replace', target: 'objects', value: { ...owner, content } };
 }
 
@@ -86,7 +92,10 @@ function changedContent(
 }
 
 /** Inserts the operation's one content declaration, lowered. */
-function addContent(content: readonly ContentBlock[], operation: Operation): readonly RawRecord[] {
+function addContent(
+  content: readonly ContentBlock[],
+  operation: Operation,
+): readonly RawRecord[] {
   if (operation.declaration === null)
     reject('syntax', operation.span, 'One content declaration', 'Missing inserted block');
   return insertBefore(content, lowerContent(operation.declaration), beforeId(operation), operation);

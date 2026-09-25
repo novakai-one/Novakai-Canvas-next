@@ -17,7 +17,10 @@ export interface DragPreview {
   readonly moved: ReadonlySet<string>;
 }
 export interface SessionReducer {
-  transition(state: SessionState, event: unknown): Result<Transition>;
+  transition(
+    state: SessionState,
+    event: unknown,
+  ): Result<Transition>;
 }
 /** Explicit effect draining makes rendering subscriptions incapable of submitting mutations twice. */
 export interface SessionStore {

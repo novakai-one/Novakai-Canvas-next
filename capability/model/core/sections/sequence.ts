@@ -46,7 +46,10 @@ import { sectionPath } from './paths.js';
  * @returns Every diagnostic, in the order above, or an empty list.
  * @throws Never for parsed data.
  */
-export function validateSequence(section: Section, collection: Collection): readonly Diagnostic[] {
+export function validateSequence(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   if (section.mode !== 'sequence') {
     return [];
   }
@@ -102,7 +105,10 @@ function hasValidBranchCount(fragment: Fragment): boolean {
 }
 
 /** Checks a fragment's branch count, then that its branch labels are unique. Events give nothing. */
-function validateFragment(item: SequenceItem, path: string): readonly Diagnostic[] {
+function validateFragment(
+  item: SequenceItem,
+  path: string,
+): readonly Diagnostic[] {
   if (item.kind !== 'fragment') {
     return [];
   }
@@ -149,7 +155,11 @@ function validateBranchMembership(
  * Checks an item's parent: a root item (no parent) has no branch; a named parent must be a
  * fragment, then the branch is checked against it.
  */
-function validateParent(item: SequenceItem, section: Section, path: string): readonly Diagnostic[] {
+function validateParent(
+  item: SequenceItem,
+  section: Section,
+  path: string,
+): readonly Diagnostic[] {
   if (item.parent === undefined) {
     return diagnoseWhen(item.branch !== undefined, 'sequence', path, 'Root item has no branch');
   }
@@ -167,7 +177,11 @@ function validateParent(item: SequenceItem, section: Section, path: string): rea
  * Tells whether an event endpoint is a visible participant, or a visible module appearing
  * directly at the section's top level.
  */
-function isVisibleParticipant(id: ObjectId, section: Section, collection: Collection): boolean {
+function isVisibleParticipant(
+  id: ObjectId,
+  section: Section,
+  collection: Collection,
+): boolean {
   const object = collection.objects.find(
     /** Tells whether this is the endpoint object. */
     (candidate) => candidate.id === id,
@@ -201,7 +215,10 @@ function canParticipate(
 }
 
 /** Tells whether the object has an ordinary appearance outside any group. */
-function directAppearance(id: ObjectId, section: Section): boolean {
+function directAppearance(
+  id: ObjectId,
+  section: Section,
+): boolean {
   return section.appearances.some(
     /** Tells whether this appearance shows the object at top level. */
     (appearance) => appearance.object === id && appearance.group === undefined,
@@ -285,7 +302,10 @@ function validateCallableOperation(
 }
 
 /** Builds one `sequence` diagnostic. */
-function sequenceDiagnostic(path: string, message: string): readonly Diagnostic[] {
+function sequenceDiagnostic(
+  path: string,
+  message: string,
+): readonly Diagnostic[] {
   return [{ code: 'sequence', path, message }];
 }
 
@@ -293,7 +313,10 @@ function sequenceDiagnostic(path: string, message: string): readonly Diagnostic[
  * Builds the diagnostic for an operation that is not callable: at the operation path without a
  * member, at its `member` path with one.
  */
-function invalidOperation(operation: Operation, operationPath: string): readonly Diagnostic[] {
+function invalidOperation(
+  operation: Operation,
+  operationPath: string,
+): readonly Diagnostic[] {
   if (operation.member === undefined) {
     return sequenceDiagnostic(
       operationPath,
@@ -304,7 +327,10 @@ function invalidOperation(operation: Operation, operationPath: string): readonly
 }
 
 /** Returns an item's parent ID; a missing item, or a root item, has none. */
-function parentId(id: DescendantId, section: Section): DescendantId | undefined {
+function parentId(
+  id: DescendantId,
+  section: Section,
+): DescendantId | undefined {
   const item = section.sequence.find(
     /** Tells whether this is the item. */
     (candidate) => candidate.id === id,

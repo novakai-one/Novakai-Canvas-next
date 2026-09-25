@@ -61,7 +61,10 @@ function entityFields(object: DiagramObject): readonly Field[] {
 }
 
 /** Finds a field block by ID. A missing ID, or one naming another kind of block, finds nothing. */
-function findField(object: DiagramObject, memberId: DescendantId | undefined): Field | undefined {
+function findField(
+  object: DiagramObject,
+  memberId: DescendantId | undefined,
+): Field | undefined {
   return entityFields(object).find(
     /** Tells whether this is the field. */
     (field) => field.id === memberId,
@@ -105,7 +108,10 @@ function targetKeys(object: DiagramObject | undefined): readonly OrderedKey[] {
 }
 
 /** Resolves a foreign reference to a field of an entity; ports and other object kinds do not. */
-function resolveForeignField(endpoint: Endpoint, collection: Collection): Field | undefined {
+function resolveForeignField(
+  endpoint: Endpoint,
+  collection: Collection,
+): Field | undefined {
   const object = collection.objects.find(
     /** Tells whether this is the referenced object. */
     (candidate) => candidate.id === endpoint.object,
@@ -117,7 +123,10 @@ function resolveForeignField(endpoint: Endpoint, collection: Collection): Field 
 }
 
 /** Tells whether the references name exactly the key's fields, in the same order. */
-function matchesOrderedKey(key: OrderedKey, references: readonly Endpoint[]): boolean {
+function matchesOrderedKey(
+  key: OrderedKey,
+  references: readonly Endpoint[],
+): boolean {
   if (key.length !== references.length) {
     return false;
   }
@@ -205,7 +214,10 @@ function validateForeignKey(
  * Tells whether two fields have the same type. Definition references compare by ID; when either
  * type is a plain string, the two must be equal. A missing target never matches.
  */
-function sameFieldType(left: Field, right: Field | undefined): boolean {
+function sameFieldType(
+  left: Field,
+  right: Field | undefined,
+): boolean {
   if (right === undefined) {
     return false;
   }
@@ -306,7 +318,10 @@ function validateBlockKey(
 }
 
 /** Checks one object: at most one primary definition, then every block's key. */
-function validateObjectKeys(object: DiagramObject, collection: Collection): readonly Diagnostic[] {
+function validateObjectKeys(
+  object: DiagramObject,
+  collection: Collection,
+): readonly Diagnostic[] {
   const primaryDefinitions = object.content.filter(
     /** Tells whether the block is a primary key definition. */
     (block) => 'key' in block && block.key === 'primary',

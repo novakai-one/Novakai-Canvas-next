@@ -78,7 +78,10 @@ export function resolveTheme(
  * asset not admitted; `invalid-value` for an image or icon without `alt`; and
  * `resource-mismatch` for a digest or metadata that differs.
  */
-export function lowerAsset(item: Declaration, resources: ResolvedResources): RawRecord {
+export function lowerAsset(
+  item: Declaration,
+  resources: ResolvedResources,
+): RawRecord {
   const alias = id(item.fields);
   const record = resources.assets[alias];
   if (record === undefined)
@@ -182,7 +185,10 @@ function checkThemeIdentity(
 }
 
 /** Checks `alt`, then a `sha256:` source against the admitted digest, then the metadata. */
-function checkAssetRequest(item: Declaration, record: ResolvedResources['assets'][string]): void {
+function checkAssetRequest(
+  item: Declaration,
+  record: ResolvedResources['assets'][string],
+): void {
   checkAlt(item);
   const source = text(item.fields, 'source');
   if (source.startsWith('sha256:') && source !== record.digest)
@@ -212,7 +218,11 @@ function checkAlt(item: Declaration): void {
 }
 
 /** Rejects a written attribute whose value differs from the admitted record's. */
-function checkMetadata(item: Declaration, record: RawRecord, name: string): void {
+function checkMetadata(
+  item: Declaration,
+  record: RawRecord,
+  name: string,
+): void {
   if (item.fields[name] === undefined) return;
   if (field(item.fields, name).value !== record[name])
     reject(
@@ -233,7 +243,10 @@ function patchThemeRequest(operation: Operation): readonly ResourceRequest[] {
 }
 
 /** The request for one theme: the written alias is also its source; the span is a copy. */
-function themeRequest(alias: string, span: Span): ResourceRequest {
+function themeRequest(
+  alias: string,
+  span: Span,
+): ResourceRequest {
   return { kind: 'theme', alias, source: alias, span: copySpan(span) };
 }
 

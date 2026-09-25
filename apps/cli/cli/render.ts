@@ -25,7 +25,10 @@ function options(args: readonly string[]): HeadlessOptions {
   });
 }
 /** Raw argv text is guarded for presence here and branded by headlessOptions; required arguments fail before any temporary asset store is created; main prints usage and permits retry. */
-function required(value: string | undefined, name: string): string {
+function required(
+  value: string | undefined,
+  name: string,
+): string {
   if (!value) throw new TypeError(name + ' is required');
   return value;
 }

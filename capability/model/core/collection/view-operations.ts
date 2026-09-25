@@ -32,7 +32,10 @@ import { sectionPath } from '../sections/paths.js';
  * position), or `validation-failed`. Not frozen.
  * @throws Never for a parsed change and collection.
  */
-export function editView(collection: Collection, change: ViewChange): Result<Collection> {
+export function editView(
+  collection: Collection,
+  change: ViewChange,
+): Result<Collection> {
   const section = collection.sections.find(
     /** Tells whether this is the section to edit. */
     (candidate) => candidate.id === change.section,
@@ -87,7 +90,10 @@ function hideAppearance(
 }
 
 /** Clears the manual route of the wire for the relationship; any other wire as it is. */
-function resetMatchingWire(wire: WireAppearance, relationshipId: RelationshipId): WireAppearance {
+function resetMatchingWire(
+  wire: WireAppearance,
+  relationshipId: RelationshipId,
+): WireAppearance {
   if (wire.relationship !== relationshipId) {
     return wire;
   }
@@ -95,7 +101,10 @@ function resetMatchingWire(wire: WireAppearance, relationshipId: RelationshipId)
 }
 
 /** Clears one wire's manual route; the wire must be in the section. */
-function resetVisibleRoute(section: Section, relationshipId: RelationshipId): Result<Section> {
+function resetVisibleRoute(
+  section: Section,
+  relationshipId: RelationshipId,
+): Result<Section> {
   const routeExists = section.wires.some(
     /** Tells whether this wire draws the relationship. */
     (wire) => wire.relationship === relationshipId,
@@ -130,7 +139,10 @@ function applySectionEdit(
 }
 
 /** Returns the edited section in place of the section with its ID; any other section as it is. */
-function replaceMatchingSection(section: Section, edited: Section): Section {
+function replaceMatchingSection(
+  section: Section,
+  edited: Section,
+): Section {
   if (section.id !== edited.id) {
     return section;
   }

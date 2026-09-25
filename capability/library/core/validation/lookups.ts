@@ -8,12 +8,18 @@ import type { CatalogEntry, Folder } from '../../contract/records/catalog.js';
 import type { CollectionProjection, SectionProjection } from '../../contract/records/snapshot.js';
 
 /** Whether a folder with this ID exists. */
-export function hasFolder(folders: readonly Folder[], id: FolderId): boolean {
+export function hasFolder(
+  folders: readonly Folder[],
+  id: FolderId,
+): boolean {
   return folders.some((folder) => folder.id === id);
 }
 
 /** Whether a catalog entry lists this collection. */
-export function hasEntry(entries: readonly CatalogEntry[], collection: CollectionId): boolean {
+export function hasEntry(
+  entries: readonly CatalogEntry[],
+  collection: CollectionId,
+): boolean {
   return entries.some((entry) => entry.collection === collection);
 }
 
@@ -26,7 +32,10 @@ export function hasCollection(
 }
 
 /** Whether a section with this ID is in the collection. */
-export function hasSection(sections: readonly SectionProjection[], id: SectionId): boolean {
+export function hasSection(
+  sections: readonly SectionProjection[],
+  id: SectionId,
+): boolean {
   return sections.some((section) => section.id === id);
 }
 

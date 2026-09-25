@@ -27,7 +27,11 @@ export function sourcePlacement(
   };
 }
 
-export function originPlacement(prior: Placement | undefined, x: number, y: number): Placement {
+export function originPlacement(
+  prior: Placement | undefined,
+  x: number,
+  y: number,
+): Placement {
   return prior === undefined ? { x, y, locked: false } : { ...prior, x, y };
 }
 
@@ -171,7 +175,10 @@ function frameOf(
     nodes.find((item) => item.id === node.parent),
   );
 }
-function outside(nodes: readonly SceneNode[], from: SceneNode | undefined): SceneNode | undefined {
+function outside(
+  nodes: readonly SceneNode[],
+  from: SceneNode | undefined,
+): SceneNode | undefined {
   if (from?.measured.groupId == null) return from;
   return outside(
     nodes,
@@ -261,7 +268,10 @@ function nearestFree(
 }
 
 /** A child dragged past its group's top or left edge grows the group up or left; the child stays where dropped. */
-function growToHold(section: Section, document: RenderDocument): Section {
+function growToHold(
+  section: Section,
+  document: RenderDocument,
+): Section {
   const scene = document.scene.sections.find((item) => item.id === section.id);
   if (scene === undefined) return section;
   const padding = document.options.padding;
@@ -351,7 +361,10 @@ function freeRoom(
   };
 }
 
-export function changes(document: RenderDocument, sections: readonly Section[]): readonly Change[] {
+export function changes(
+  document: RenderDocument,
+  sections: readonly Section[],
+): readonly Change[] {
   return sections
     .filter(
       (section) => document.collection.sections.find((item) => item.id === section.id) !== section,
@@ -359,13 +372,19 @@ export function changes(document: RenderDocument, sections: readonly Section[]):
     .map((value) => ({ op: 'replace' as const, target: 'sections' as const, value }));
 }
 
-export function sceneBox(document: RenderDocument, target: Target): Box | undefined {
+export function sceneBox(
+  document: RenderDocument,
+  target: Target,
+): Box | undefined {
   if (target.kind === 'section') return sectionBox(document, target.id);
   if (target.kind === 'node') return nodeWorldBox(document, target);
   return undefined;
 }
 
-function sectionBox(document: RenderDocument, id: string): Box | undefined {
+function sectionBox(
+  document: RenderDocument,
+  id: string,
+): Box | undefined {
   return document.scene.sections.find((section) => section.id === id)?.box;
 }
 
@@ -385,7 +404,10 @@ export function targetKey(target: Target): string {
   return `node:${target.section}:${target.id}`;
 }
 
-export function exactBox(before: Box, after: Box): boolean {
+export function exactBox(
+  before: Box,
+  after: Box,
+): boolean {
   return boxDimensions(before).every((value, index) => value === boxDimensions(after)[index]);
 }
 

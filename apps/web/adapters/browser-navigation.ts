@@ -41,7 +41,10 @@ function opened(
 }
 
 /** The library root omits collection identity; a selected collection uses one explicit query parameter. */
-function setCollection(url: URL, collection: string | null): void {
+function setCollection(
+  url: URL,
+  collection: string | null,
+): void {
   if (collection === null) {
     url.searchParams.delete('collection');
     return;

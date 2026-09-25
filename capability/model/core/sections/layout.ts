@@ -44,7 +44,10 @@ export function validateLayouts(collection: Collection): readonly Diagnostic[] {
 }
 
 /** Checks one constraint: repeated targets, then that `before`/`below` have exactly two. */
-function validateConstraint(constraint: LayoutConstraint, path: string): readonly Diagnostic[] {
+function validateConstraint(
+  constraint: LayoutConstraint,
+  path: string,
+): readonly Diagnostic[] {
   const duplicateTargets = duplicates(
     constraint.targets,
     /** A target's key is its kind and ID. */
@@ -63,7 +66,10 @@ function validateConstraint(constraint: LayoutConstraint, path: string): readonl
 }
 
 /** Checks the rules shared by every layout level: `columns` needs `grid`, then each constraint. */
-function validateConstraintShapes(layout: LayoutIntent, path: string): readonly Diagnostic[] {
+function validateConstraintShapes(
+  layout: LayoutIntent,
+  path: string,
+): readonly Diagnostic[] {
   const columnIssues = diagnoseWhen(
     layout.columns !== undefined && layout.algorithm !== 'grid',
     'layout',
@@ -82,7 +88,10 @@ function validateConstraintShapes(layout: LayoutIntent, path: string): readonly 
  * Tells whether a section-level target resolves: an object the section shows, or one of its
  * groups. A section target never resolves here.
  */
-function isVisibleTarget(target: LayoutTarget, section: Section): boolean {
+function isVisibleTarget(
+  target: LayoutTarget,
+  section: Section,
+): boolean {
   if (target.kind === 'object') {
     return visibleObjects(section).includes(target.id);
   }
@@ -101,7 +110,10 @@ function isVisibleTarget(target: LayoutTarget, section: Section): boolean {
  * target's ID; when there is no such appearance or its `group` is undefined, the parent of the
  * first group that represents that ID.
  */
-function targetParent(target: LayoutTarget, section: Section): GroupId | undefined {
+function targetParent(
+  target: LayoutTarget,
+  section: Section,
+): GroupId | undefined {
   if (target.kind === 'group') {
     const group = section.groups.find(
       /** Tells whether this is the target group. */

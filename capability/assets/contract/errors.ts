@@ -68,7 +68,11 @@ export type Result<T, E = AssetError> =
  * @returns `{ ok: false, error: { code, path, message, recovery } }`.
  * @throws Never.
  */
-export function fail<T>(code: ErrorCode, path: string, message: string): Result<T> {
+export function fail<T>(
+  code: ErrorCode,
+  path: string,
+  message: string,
+): Result<T> {
   return { ok: false, error: { code, path, message, recovery: recovery[code] } };
 }
 

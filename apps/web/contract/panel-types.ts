@@ -52,16 +52,35 @@ export interface PanelController {
   getSnapshot(): PanelState;
   subscribe(listener: () => void): () => void;
   restore(workspace: string): void;
-  open(side: PanelId, open: boolean): void;
+  open(
+    side: PanelId,
+    open: boolean,
+  ): void;
   selectTab(tab: PanelTab): void;
   viewport(width: number): void;
-  resize(side: PanelId, width: number): void;
-  expand(id: string, expanded: boolean): void;
-  hide(id: string, hidden: boolean): void;
-  move(id: string, side: PanelId, index: number): void;
+  resize(
+    side: PanelId,
+    width: number,
+  ): void;
+  expand(
+    id: string,
+    expanded: boolean,
+  ): void;
+  hide(
+    id: string,
+    hidden: boolean,
+  ): void;
+  move(
+    id: string,
+    side: PanelId,
+    index: number,
+  ): void;
   customize(open: boolean): void;
   reset(): void;
-  setInterfaceVisibility(control: InterfaceControl, visible: boolean): void;
+  setInterfaceVisibility(
+    control: InterfaceControl,
+    visible: boolean,
+  ): void;
   hideInterface(): void;
   revealInterface(): void;
 }
@@ -70,6 +89,9 @@ export interface PanelBindings {
   readonly sizing: PanelSizing;
   readonly initialWidth: number;
   readonly retention: DraftRetention;
-  read(input: unknown, workspace: string): Result<PanelPreferences>;
+  read(
+    input: unknown,
+    workspace: string,
+  ): Result<PanelPreferences>;
   report(message: string): void;
 }

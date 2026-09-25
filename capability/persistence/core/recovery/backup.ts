@@ -84,7 +84,10 @@ async function collectBlobs(
  * Reads one asset and checks it as a blob record (digest plus bounded base64). A failed read
  * is returned with its own recovery; a malformed record is `corrupt-record`.
  */
-async function readBlob(lease: ResourceLease, digest: Digest): Promise<Result<BlobRecord>> {
+async function readBlob(
+  lease: ResourceLease,
+  digest: Digest,
+): Promise<Result<BlobRecord>> {
   const bytes = await lease.read(digest);
   if (!bytes.ok) {
     return bytes;
@@ -109,7 +112,10 @@ async function verifyAndPack(
  * Copies and checks the whole bundle against the backup schema and {@link BACKUP_JSON_LIMIT}.
  * Any failure, including a throw, is `corrupt-record`.
  */
-function packBackup(state: WorkspaceState, blobs: readonly BlobRecord[]): Result<BackupBundle> {
+function packBackup(
+  state: WorkspaceState,
+  blobs: readonly BlobRecord[],
+): Result<BackupBundle> {
   return protect(
     () =>
       parse(

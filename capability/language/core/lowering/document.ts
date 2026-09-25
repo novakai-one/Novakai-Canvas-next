@@ -91,7 +91,10 @@ export function lowerDocument(
  * or `provider-failure` for an unexpected throw.
  * @throws Never.
  */
-function lowerDocumentData(document: Document, request: LowerRequest): Result<RawRecord> {
+function lowerDocumentData(
+  document: Document,
+  request: LowerRequest,
+): Result<RawRecord> {
   return protect(
     /** Builds the collection record. */
     () => {
@@ -147,7 +150,10 @@ function lowerEach(
 }
 
 /** The top-level declarations of one construct, in written order. */
-function records(item: Declaration, kind: Declaration['kind']): readonly Declaration[] {
+function records(
+  item: Declaration,
+  kind: Declaration['kind'],
+): readonly Declaration[] {
   return item.children.filter(
     /** Whether the child is of this construct. */ (child) => child.kind === kind,
   );
@@ -168,7 +174,10 @@ function emptyShell(candidate: LoweredIntent['collection']): RawRecord {
 }
 
 /** `create` needs no snapshot; any other mode must be `replace` with the matching snapshot. */
-function checkMode(document: Document, request: LowerRequest): void {
+function checkMode(
+  document: Document,
+  request: LowerRequest,
+): void {
   if (request.mode === 'create') {
     requireAbsent(document, request);
     return;
@@ -177,7 +186,10 @@ function checkMode(document: Document, request: LowerRequest): void {
 }
 
 /** Rejects a mode other than `replace`, then a snapshot missing or with another collection ID. */
-function requireReplacement(document: Document, request: LowerRequest): void {
+function requireReplacement(
+  document: Document,
+  request: LowerRequest,
+): void {
   if (request.mode !== 'replace')
     reject(
       'invalid-input',
@@ -198,7 +210,10 @@ function requireReplacement(document: Document, request: LowerRequest): void {
  * Rejects `create` with a snapshot. Language checks only the request; Authoring checks that the
  * collection does not already exist when it commits.
  */
-function requireAbsent(document: Document, request: LowerRequest): void {
+function requireAbsent(
+  document: Document,
+  request: LowerRequest,
+): void {
   if (request.snapshot !== null)
     reject(
       'invalid-input',

@@ -27,7 +27,10 @@ import type { Placement } from '../../contract/records/layout.js';
  * and `wires` lists; records that inherit nothing are the same objects as in `next`.
  * @throws Never for parsed sections.
  */
-export function preserveSection(next: Section, previous: Section): Section {
+export function preserveSection(
+  next: Section,
+  previous: Section,
+): Section {
   const section = inheritPlacement(next, previous.placement);
   const appearances = next.appearances.map(
     /** Inherits the appearance's previous placement, if it has none. */
@@ -63,7 +66,10 @@ export function preserveSection(next: Section, previous: Section): Section {
  * (inherited fields are added as {@link preserveSection} describes).
  * @throws Never for parsed collections.
  */
-export function preserveOverrides(next: Collection, previous: Collection): Collection {
+export function preserveOverrides(
+  next: Collection,
+  previous: Collection,
+): Collection {
   const sections = next.sections.map(
     /** Preserves one section's geometry from its previous version, if any. */
     (section) => preserveMatchingSection(section, previous),
@@ -153,7 +159,10 @@ function previousAppearancePlacement(
  * Finds a group's previous placement: from the previous group with the same ID; only when there
  * was none, from the previous appearance of the object the group represents.
  */
-function previousGroupPlacement(group: Group, previous: Section): Placement | undefined {
+function previousGroupPlacement(
+  group: Group,
+  previous: Section,
+): Placement | undefined {
   const previousGroup = previous.groups.find(
     /** Tells whether this previous group has the same ID. */
     (item) => item.id === group.id,
@@ -173,7 +182,10 @@ function previousGroupPlacement(group: Group, previous: Section): Placement | un
  * `locked`, when the previous wire of the same relationship had a manual route; otherwise the
  * wire as it is.
  */
-function preserveWireRoute(wire: WireAppearance, previous: Section): WireAppearance {
+function preserveWireRoute(
+  wire: WireAppearance,
+  previous: Section,
+): WireAppearance {
   if (wire.manual !== undefined) {
     return wire;
   }
@@ -188,7 +200,10 @@ function preserveWireRoute(wire: WireAppearance, previous: Section): WireAppeara
 }
 
 /** Preserves a section's geometry from the previous section with its ID; a new section as it is. */
-function preserveMatchingSection(section: Section, previous: Collection): Section {
+function preserveMatchingSection(
+  section: Section,
+  previous: Collection,
+): Section {
   const previousSection = previous.sections.find(
     /** Tells whether this is the previous version of the section. */
     (item) => item.id === section.id,

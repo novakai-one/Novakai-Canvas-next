@@ -95,7 +95,10 @@ function lowerConstraint(declaration: Declaration): RawRecord {
  * One constraint target: `{ kind: 'group' | 'section', id }` for a `group:` or `section:`
  * reference, otherwise `{ kind: 'object', id }`. It must be a reference.
  */
-function lowerTarget(value: SyntaxValue, span: Span): RawRecord {
+function lowerTarget(
+  value: SyntaxValue,
+  span: Span,
+): RawRecord {
   if (!isReference(value))
     reject('invalid-value', span, 'Reference', 'Constraint needs reference targets');
   checkTarget(value, span);
@@ -103,7 +106,10 @@ function lowerTarget(value: SyntaxValue, span: Span): RawRecord {
 }
 
 /** Rejects a target with a member or section part, which a layout constraint cannot place. */
-function checkTarget(value: Reference, span: Span): void {
+function checkTarget(
+  value: Reference,
+  span: Span,
+): void {
   if (value.member !== undefined || value.section !== undefined)
     reject(
       'invalid-value',

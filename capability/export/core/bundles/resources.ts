@@ -62,7 +62,10 @@ function checkResources(
  * Checks sizes until the first resource over 20 MiB; if none is, checks digests until the first
  * mismatch. No owner has decoded a font or image yet.
  */
-function checkBytes(resources: readonly Resource[], deps: InspectionDependencies): Result<void> {
+function checkBytes(
+  resources: readonly Resource[],
+  deps: InspectionDependencies,
+): Result<void> {
   if (
     resources.some(
       /** Whether the resource is over 20 MiB. */ (item) =>

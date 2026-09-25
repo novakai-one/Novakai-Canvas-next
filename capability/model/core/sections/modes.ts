@@ -56,7 +56,10 @@ export function visibleRelationships(
  * @returns Every diagnostic, in the order above, or an empty list.
  * @throws Never for parsed data.
  */
-export function validateModes(section: Section, collection: Collection): readonly Diagnostic[] {
+export function validateModes(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   const path = sectionPath(section);
   const layoutIssues = validateLayoutCompatibility(section);
   const wireIssues = visibleRelationships(section, collection).flatMap(
@@ -85,7 +88,10 @@ export function validateModes(section: Section, collection: Collection): readonl
  * In `flow` mode, reports repeated labels among the `flow` relationships leaving each visible
  * decision object. Other modes give nothing.
  */
-function validateDecisionLabels(section: Section, collection: Collection): readonly Diagnostic[] {
+function validateDecisionLabels(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   if (section.mode !== 'flow') {
     return [];
   }
@@ -137,7 +143,10 @@ function validateTreeOnlyFields(section: Section): readonly Diagnostic[] {
 }
 
 /** Tells whether a mode allows a relationship kind; a mode with no policy entry allows all. */
-function isAllowedWire(kind: RelationshipKind, mode: Mode): boolean {
+function isAllowedWire(
+  kind: RelationshipKind,
+  mode: Mode,
+): boolean {
   const allowedKinds = compatibleWires[mode];
   if (allowedKinds === undefined) {
     return true;

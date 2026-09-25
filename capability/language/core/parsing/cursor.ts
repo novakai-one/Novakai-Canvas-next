@@ -40,7 +40,10 @@ export interface Parsed<T> {
  * @throws A `LanguageFault` with a `syntax` diagnostic ("Unexpected end of source") past the
  * last token. The diagnostic is at the start of the source (`origin`), not at the cursor.
  */
-export function peek(cursor: Cursor, ahead = 0): Token {
+export function peek(
+  cursor: Cursor,
+  ahead = 0,
+): Token {
   const token = cursor.tokens[cursor.index + ahead];
   if (token === undefined)
     reject('syntax', origin, 'Complete statement', 'Unexpected end of source');
@@ -55,7 +58,10 @@ export function peek(cursor: Cursor, ahead = 0): Token {
  * @returns A new cursor.
  * @throws Never.
  */
-export function advance(cursor: Cursor, count = 1): Cursor {
+export function advance(
+  cursor: Cursor,
+  count = 1,
+): Cursor {
   return { ...cursor, index: cursor.index + count };
 }
 
@@ -68,7 +74,10 @@ export function advance(cursor: Cursor, count = 1): Cursor {
  * @throws A `LanguageFault` with a `syntax` diagnostic ("Expected …") when the token differs,
  * or from {@link peek} at the end of the tokens.
  */
-export function consume(cursor: Cursor, expected: string): Cursor {
+export function consume(
+  cursor: Cursor,
+  expected: string,
+): Cursor {
   const token = peek(cursor);
   if (token.text !== expected) reject('syntax', token.span, expected, `Expected ${expected}`);
   return advance(cursor);
@@ -108,7 +117,10 @@ export function leave(cursor: Cursor): Cursor {
  * @returns The span; when nothing was read, the span of the token at `start`.
  * @throws From {@link peek} when `start` is past the last token.
  */
-export function consumedSpan(start: Cursor, end: Cursor): Span {
+export function consumedSpan(
+  start: Cursor,
+  end: Cursor,
+): Span {
   const final = start.tokens[Math.max(start.index, end.index - 1)];
   return { start: peek(start).span.start, end: final?.span.end ?? peek(start).span.end };
 }

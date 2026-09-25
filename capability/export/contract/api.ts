@@ -60,7 +60,10 @@ async function exportInput(
  * Parses the import request (`invalid-input` if malformed), then prepares it. Nothing is
  * committed; the caller submits through Authoring.
  */
-async function importInput(input: unknown, deps: Dependencies): Promise<Result<PreparedImport>> {
+async function importInput(
+  input: unknown,
+  deps: Dependencies,
+): Promise<Result<PreparedImport>> {
   const request = parse(importSchema, input);
   if (!request.ok) return request;
   return prepareImport(request.value, deps);

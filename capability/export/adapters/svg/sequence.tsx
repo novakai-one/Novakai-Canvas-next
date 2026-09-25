@@ -42,7 +42,10 @@ export function createSequenceDrawing(
   Marker: MarkerDrawing,
 ): (geometry: SequenceGeometry, paint: Paint) => ReactElement {
   /** Draws one section's sequence geometry; see {@link createSequenceDrawing}. */
-  function sequence(geometry: SequenceGeometry, paint: Paint): ReactElement {
+  function sequence(
+    geometry: SequenceGeometry,
+    paint: Paint,
+  ): ReactElement {
     return (
       <g stroke={paint.text} data-layer="sequence">
         {geometry.lifelines.map(
@@ -72,7 +75,10 @@ export function createSequenceDrawing(
    * Draws a fragment frame and its label, then each branch's separator line (the top edge of the
    * branch box Layout supplied) and label.
    */
-  function frame(item: Frame, paint: Paint): ReactElement {
+  function frame(
+    item: Frame,
+    paint: Paint,
+  ): ReactElement {
     return (
       <g key={item.id}>
         <rect {...item.box} fill="none" />
@@ -95,7 +101,10 @@ export function createSequenceDrawing(
   }
 
   /** Draws one message: its line (dashed for `return`), its label and its target marker. */
-  function message(event: Event, paint: Paint): ReactElement {
+  function message(
+    event: Event,
+    paint: Paint,
+  ): ReactElement {
     const dash = event.message === 'return' ? SEQUENCE_DASH : undefined;
     return (
       <g key={event.id} data-sequence-event={event.id}>

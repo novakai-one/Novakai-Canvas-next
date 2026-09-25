@@ -57,7 +57,10 @@ export function captureManual(collection: Collection): ManualSnapshot {
  * @returns The overlaid collection (not yet validated, hence `unknown`), or `invalid-import`.
  * @throws Never for plain parsed data; a throwing getter or proxy propagates.
  */
-export function overlayManual(collection: Collection, manual: ManualSnapshot): Result<unknown> {
+export function overlayManual(
+  collection: Collection,
+  manual: ManualSnapshot,
+): Result<unknown> {
   const invalid = validateTargets(collection, manual);
   if (!invalid.ok) return invalid;
   const sections = collection.sections.map(
@@ -127,7 +130,10 @@ function captureWire(item: Section['wires'][number]): ManualSection['wires'][num
  * Checks every override target before anything is applied. `find` and `map` would silently
  * ignore unknown or duplicate targets, so they are rejected here.
  */
-function validateTargets(collection: Collection, manual: ManualSnapshot): Result<void> {
+function validateTargets(
+  collection: Collection,
+  manual: ManualSnapshot,
+): Result<void> {
   const overriddenIds = manual.sections.map(
     /** The overridden section's ID. */ (section) => section.id,
   );
@@ -143,7 +149,10 @@ function validateTargets(collection: Collection, manual: ManualSnapshot): Result
 }
 
 /** Whether `actual` has no repeated IDs and every ID is in `allowed`. An empty list is valid. */
-function validIds(actual: readonly string[], allowed: readonly string[]): boolean {
+function validIds(
+  actual: readonly string[],
+  allowed: readonly string[],
+): boolean {
   return (
     new Set(actual).size === actual.length &&
     actual.every(/** Whether the ID is allowed. */ (id) => allowed.includes(id))
@@ -156,7 +165,10 @@ function validIds(actual: readonly string[], allowed: readonly string[]): boolea
  * not checked here: on import the bundle schema checked them; when building a bundle they come
  * from the collection.
  */
-function validSection(collection: Collection, manual: ManualSection): boolean {
+function validSection(
+  collection: Collection,
+  manual: ManualSection,
+): boolean {
   const section = collection.sections.find(
     /** Whether this is the overridden section. */ (item) => item.id === manual.id,
   );
@@ -185,7 +197,10 @@ function validSection(collection: Collection, manual: ManualSection): boolean {
  * override, if any, is looked up and applied). Wires keep the DSL's order. Returns the section
  * itself when there is no override.
  */
-function overlaySection(section: Section, manual: ManualSection | undefined): unknown {
+function overlaySection(
+  section: Section,
+  manual: ManualSection | undefined,
+): unknown {
   if (!manual) return section;
   const ordered = restoreOrder(section, manual);
   const next = {

@@ -38,7 +38,10 @@ interface NativeFactories {
  * On `storage-unavailable`, keep the original files and retry opening.
  * @throws Never.
  */
-export function openAssets(root: string, factories: NativeFactories = native): Result<Assets> {
+export function openAssets(
+  root: string,
+  factories: NativeFactories = native,
+): Result<Assets> {
   try {
     const files = factories.files(join(root, 'blobs'));
     const store = createSqliteFiles(factories.database(join(root, 'assets.sqlite')), files);

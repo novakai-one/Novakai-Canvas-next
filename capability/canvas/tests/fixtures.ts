@@ -187,7 +187,11 @@ export function harness(
   return { canvas, state };
 }
 /** Public transitions are replayed in order; only their explicit effects represent output operations. */
-export function step(canvas: Canvas, state: SessionState, event: CanvasEvent): Transition {
+export function step(
+  canvas: Canvas,
+  state: SessionState,
+  event: CanvasEvent,
+): Transition {
   return value(canvas.transition(state, event));
 }
 /** Begin one selected movement with a caller-controlled identity. */

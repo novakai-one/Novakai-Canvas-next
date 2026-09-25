@@ -13,7 +13,10 @@ export interface EditContext {
   readonly stamp: SceneStamp;
 }
 export interface EditPlanner {
-  plan(intent: EditIntent, context: EditContext): Result<readonly Change[]>;
+  plan(
+    intent: EditIntent,
+    context: EditContext,
+  ): Result<readonly Change[]>;
 }
 export interface SectionEdit {
   readonly before: Section;

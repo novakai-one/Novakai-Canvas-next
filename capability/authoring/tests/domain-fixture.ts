@@ -94,7 +94,10 @@ function projection(collection: Collection): unknown {
  * Checks the catalog with Library. A workspace with no live catalog and no live collections passes;
  * otherwise there must be exactly one live catalog, and Library must accept it.
  */
-function validateInventory(snapshot: Snapshot, collections: readonly Collection[]): Result<void> {
+function validateInventory(
+  snapshot: Snapshot,
+  collections: readonly Collection[],
+): Result<void> {
   const catalogs = snapshot.records.filter(
     (record) => record.key.kind === 'catalog' && !record.deleted,
   );
@@ -108,7 +111,10 @@ function validateInventory(snapshot: Snapshot, collections: readonly Collection[
 }
 
 /** Fails unless there is exactly one live catalog and Library accepted it. */
-function checkedInventory(count: number, valid: boolean): Result<void> {
+function checkedInventory(
+  count: number,
+  valid: boolean,
+): Result<void> {
   if (count !== 1 || !valid)
     return failure('invariant-violation', 'catalog', 'Library rejected catalog membership');
   return { ok: true, value: undefined };

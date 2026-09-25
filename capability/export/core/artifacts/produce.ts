@@ -79,7 +79,10 @@ export async function produce(
  * the primary failure and a release failure is attached to it as `cleanup`. When the export
  * succeeded, a release failure is returned instead of the artifact.
  */
-function settle(result: Result<Artifact>, cleanup: Result<void>): Result<Artifact> {
+function settle(
+  result: Result<Artifact>,
+  cleanup: Result<void>,
+): Result<Artifact> {
   if (cleanup.ok) return result;
   if (result.ok) return cleanup;
   return { ok: false, error: { ...result.error, cleanup: cleanup.error } };
@@ -149,7 +152,11 @@ async function allocateAndEncode(
  * Rejects bounds that are not finite and positive, and bundles for one section
  * (`invalid-input`), then checks the scene counts and raster size.
  */
-function checkAllocation(snapshot: Snapshot, request: ExportRequest, box: Box): Result<void> {
+function checkAllocation(
+  snapshot: Snapshot,
+  request: ExportRequest,
+  box: Box,
+): Result<void> {
   if (!validBounds(box))
     return failure('invalid-input', 'scene.bounds', 'Scene bounds must be finite and positive');
   if (isSectionBundle(request))
@@ -167,7 +174,11 @@ function isSectionBundle(request: ExportRequest): boolean {
  * (`limit-exceeded`), and for PNG the raster size at the requested scale, rounded up the way the
  * encoder rounds it.
  */
-function checkCounts(snapshot: Snapshot, request: ExportRequest, box: Box): Result<void> {
+function checkCounts(
+  snapshot: Snapshot,
+  request: ExportRequest,
+  box: Box,
+): Result<void> {
   const counts = [
     snapshot.scene.sections.length / PROJECTION_CAPACITY.maxSections,
     snapshot.scene.sections.flatMap(/** The section's nodes. */ (section) => section.nodes).length /
@@ -193,7 +204,10 @@ function checkCounts(snapshot: Snapshot, request: ExportRequest, box: Box): Resu
  * million pixels.
  * @throws Never.
  */
-function checkRaster(width: number, height: number): Result<void> {
+function checkRaster(
+  width: number,
+  height: number,
+): Result<void> {
   if (Math.max(width, height) > 8192 || width * height > 64000000)
     return failure(
       'limit-exceeded',

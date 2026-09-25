@@ -45,7 +45,10 @@ function open(
   return { ok: true, value: observed(createSession(canvas, opened.value), effects) };
 }
 /** New generation is requested before delivery; old worker results cannot replace the accepted scene. */
-function update(session: SessionStore, document: RenderDocument): Result<void> {
+function update(
+  session: SessionStore,
+  document: RenderDocument,
+): Result<void> {
   const current = session.getSnapshot();
   if (document.scene.revision < current.stamp.revision)
     return failure('stale-diagram', 'An older render was ignored');

@@ -21,7 +21,11 @@ export interface IntentPlanner {
    * @param pins - The resource pins resolved for this request.
    * @returns The proposed writes, reads, diff and warnings, or a failure.
    */
-  plan(request: Request, snapshot: Snapshot, pins: Json): Promise<Result<Proposal>>;
+  plan(
+    request: Request,
+    snapshot: Snapshot,
+    pins: Json,
+  ): Promise<Result<Proposal>>;
 }
 
 /**

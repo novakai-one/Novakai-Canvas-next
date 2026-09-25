@@ -41,7 +41,10 @@ function nativeHash(text: string): string {
  * Hashes text and checks the output. A failing hasher or a malformed digest becomes a failed result.
  * `digest.safeParse` is read before the hasher runs.
  */
-function hashText(hash: (text: string) => string, text: string): Result<Digest> {
+function hashText(
+  hash: (text: string) => string,
+  text: string,
+): Result<Digest> {
   try {
     return checkedDigest(digest.safeParse(hash(text)));
   } catch {

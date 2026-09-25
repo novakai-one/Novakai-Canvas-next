@@ -48,7 +48,10 @@ export async function releaseProtection(lease: ResourceLease): Promise<void> {
  * Lists the resources one write depends on: the record's current resources, plus a put's new ones.
  * A delete keeps the old resources because history still needs them for undo.
  */
-function resourcesUsedByWrite(snapshot: Snapshot, write: Write): readonly Digest[] {
+function resourcesUsedByWrite(
+  snapshot: Snapshot,
+  write: Write,
+): readonly Digest[] {
   const previous = findRecord(snapshot, write.key);
   const currentResources = previous === null ? [] : previous.resources;
   if (write.kind === 'delete') return currentResources;

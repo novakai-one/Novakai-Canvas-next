@@ -71,7 +71,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return transmit(item, item.generation);
   }
   /** A transport failure or malformed success is uncertain. Neither permits clearing the journal or draft. */
-  async function transmit(item: Submission, generation: string): Promise<Result<Receipt>> {
+  async function transmit(
+    item: Submission,
+    generation: string,
+  ): Promise<Result<Receipt>> {
     const response = await bindings.client.post('/api/v1/authoring/apply', {
       version: 1,
       generation,
@@ -84,7 +87,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return received(response.value.outcome, item);
   }
   /** Even a typed rejection is reconciled before releasing its slot; a receipt may already exist after a lost earlier response. */
-  function received(outcome: Result<unknown>, item: Submission): Result<Receipt> {
+  function received(
+    outcome: Result<unknown>,
+    item: Submission,
+  ): Result<Receipt> {
     if (!outcome.ok) {
       rejectOutcome(item, outcome.error.code);
       return outcome;
@@ -92,12 +98,18 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return readAppliedReceipt(outcome.value, item);
   }
   /** Proven owner refusal releases the collection slot; infrastructure uncertainty retains it. */
-  function rejectOutcome(item: Submission, code: string): void {
+  function rejectOutcome(
+    item: Submission,
+    code: string,
+  ): void {
     const status = refused(code) ? 'rejected' : 'uncertain';
     mark(item, status);
   }
   /** Decode a claimed success through Authoring before clearing any local state. */
-  function readAppliedReceipt(input: unknown, item: Submission): Result<Receipt> {
+  function readAppliedReceipt(
+    input: unknown,
+    item: Submission,
+  ): Result<Receipt> {
     const receipt = bindings.readers.receipt(input, item.request);
     if (!receipt.ok) {
       mark(item, 'uncertain');
@@ -106,7 +118,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return receivedReceipt(receipt.value, item);
   }
   /** Apply success must contain a receipt. Null is only meaningful in the separate receipt lookup operation. */
-  function receivedReceipt(receipt: Receipt | null, item: Submission): Result<Receipt> {
+  function receivedReceipt(
+    receipt: Receipt | null,
+    item: Submission,
+  ): Result<Receipt> {
     if (receipt === null) {
       mark(item, 'uncertain');
       return failure('invalid-receipt', 'Apply returned no confirmation');
@@ -115,7 +130,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return { ok: true, value: receipt };
   }
   /** Confirmation releases its slot even when journal cleanup fails; a later recovery lookup is idempotent. */
-  function complete(item: Submission, receipt: Receipt): void {
+  function complete(
+    item: Submission,
+    receipt: Receipt,
+  ): void {
     const remaining = pending.filter((other) => other.request.request !== item.request.request);
     const saved = retain(remaining);
     if (!saved.ok) {
@@ -125,7 +143,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     bindings.confirmed(item, receipt);
   }
   /** Persist status transitions without changing the immutable semantic request. */
-  function mark(item: Submission, state: Submission['state']): void {
+  function mark(
+    item: Submission,
+    state: Submission['state'],
+  ): void {
     const next = submissionStatus(pending, item.request.request, state);
     const saved = retain(next);
     if (!saved.ok) {
@@ -150,7 +171,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return lookedUp(response.value.outcome.value, item);
   }
   /** Confirmed and absent outcomes are distinct; absence cannot be called Saved. */
-  function lookedUp(input: unknown, item: Submission): Result<Receipt | null> {
+  function lookedUp(
+    input: unknown,
+    item: Submission,
+  ): Result<Receipt | null> {
     const receipt = bindings.readers.receipt(input, item.request);
     if (!receipt.ok) return receipt;
     if (receipt.value === null) {
@@ -165,7 +189,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     if (item.state !== 'rejected') mark(item, 'retryable');
   }
   /** Explicit retry rechecks the receipt first, then resends the exact body under the current transport generation. */
-  async function retry(id: string, generation: string): Promise<Result<Receipt>> {
+  async function retry(
+    id: string,
+    generation: string,
+  ): Promise<Result<Receipt>> {
     const item = pending.find((item) => item.request.request === id);
     if (!item) return failure('unknown-request', 'There is no retained request with this ID');
     if (occupied(item))
@@ -173,7 +200,10 @@ export function createSubmissionSession(bindings: SubmissionBindings): Submissio
     return recoverExclusively(item, generation);
   }
   /** Reconnect changes authentication generation, never the semantic request's identity or captured preconditions. */
-  async function retryChecked(item: Submission, generation: string): Promise<Result<Receipt>> {
+  async function retryChecked(
+    item: Submission,
+    generation: string,
+  ): Promise<Result<Receipt>> {
     const receipt = await lookup(item);
     if (!receipt.ok) return receipt;
     if (receipt.value !== null) return { ok: true, value: receipt.value };

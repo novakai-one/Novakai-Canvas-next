@@ -67,7 +67,10 @@ export function lowerSection(item: Declaration): Result<RawRecord> {
  * with the diagnostic of a bad value.
  * @throws Never.
  */
-function lowerShows(item: Declaration, group?: string): Result<readonly RawRecord[]> {
+function lowerShows(
+  item: Declaration,
+  group?: string,
+): Result<readonly RawRecord[]> {
   return protect(
     /** Builds the appearances. */
     () => {
@@ -125,7 +128,10 @@ function preferencesOf(item: Declaration): RawRecord {
 }
 
 /** Joins two scopes' parts into new arrays; neither input is changed. */
-function mergeViews(left: ViewParts, right: ViewParts): ViewParts {
+function mergeViews(
+  left: ViewParts,
+  right: ViewParts,
+): ViewParts {
   return {
     appearances: [...left.appearances, ...right.appearances],
     groups: [...left.groups, ...right.groups],
@@ -136,7 +142,11 @@ function mergeViews(left: ViewParts, right: ViewParts): ViewParts {
  * A group: its record (without layout attributes, with `parent` and `layout`), then its nested
  * groups; the appearances come from its contents.
  */
-function lowerGroup(item: Declaration, algorithm: string, parent?: string): ViewParts {
+function lowerGroup(
+  item: Declaration,
+  algorithm: string,
+  parent?: string,
+): ViewParts {
   const group = {
     ...lowerRecord(item),
     ...optional('parent', parent),
@@ -160,7 +170,11 @@ function lowerViews(
 }
 
 /** A `show` gives appearances; a `group` gives groups; other statements give nothing here. */
-function lowerView(item: Declaration, algorithm: string, parent?: string): ViewParts {
+function lowerView(
+  item: Declaration,
+  algorithm: string,
+  parent?: string,
+): ViewParts {
   if (item.kind === 'show') return { appearances: accepted(lowerShows(item, parent)), groups: [] };
   if (item.kind === 'group') return lowerGroup(item, algorithm, parent);
   return { appearances: [], groups: [] };

@@ -237,7 +237,10 @@ it('16 real adapter callbacks coalesce drag, cancel safely, preserve viewport an
   expect(errors).not.toHaveBeenCalled();
 });
 /** Actual adapter node data uses the public projected view; fixture expected coordinates are independently literal. */
-function flowNode(view: ViewNode, actions: ViewActions): FlowNode {
+function flowNode(
+  view: ViewNode,
+  actions: ViewActions,
+): FlowNode {
   return {
     id: view.id,
     type: 'scene',

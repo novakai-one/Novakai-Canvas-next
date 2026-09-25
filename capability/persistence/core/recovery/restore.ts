@@ -150,7 +150,10 @@ async function stageAndInstall(
  * Inside the install transaction: validates the destination's current state and checks it
  * belongs to the same workspace, then chooses the decision.
  */
-function installIntoPristine(raw: unknown, restored: WorkspaceState): Result<Decision<void>> {
+function installIntoPristine(
+  raw: unknown,
+  restored: WorkspaceState,
+): Result<Decision<void>> {
   const current = validateState(raw);
   if (!current.ok) {
     return current;

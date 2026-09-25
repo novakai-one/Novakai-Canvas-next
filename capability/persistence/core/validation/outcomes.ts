@@ -38,7 +38,11 @@ export function success<T>(value: T): Result<T> {
  * @param code - The error code for a schema failure.
  * @returns The parsed value, or a failure with `code`.
  */
-export function parse<T>(schema: Parser<T>, input: unknown, code: ErrorCode): Result<T> {
+export function parse<T>(
+  schema: Parser<T>,
+  input: unknown,
+  code: ErrorCode,
+): Result<T> {
   const parsed = schema.safeParse(input);
   if (parsed.success) {
     return success(parsed.data);
@@ -62,7 +66,10 @@ export function parse<T>(schema: Parser<T>, input: unknown, code: ErrorCode): Re
  * @throws RangeError when the serialized input is larger than `limit`.
  * Callers run this inside {@link protect}, which turns either throw into a typed failure.
  */
-export function boundedClone(input: unknown, limit = JSON_LIMIT): Json {
+export function boundedClone(
+  input: unknown,
+  limit = JSON_LIMIT,
+): Json {
   const checked = jsonValue.safeParse(input);
   if (!checked.success) {
     throw new TypeError('Unsupported JSON value');
@@ -110,7 +117,10 @@ export function freeze<T>(value: T): T {
  * @returns The step's result, frozen; or, when it throws, a frozen failure with `code`, path `$`
  * and the message `Data or operation could not be read safely`.
  */
-export function protect<T>(action: () => Result<T>, code: ErrorCode = 'invalid-input'): Result<T> {
+export function protect<T>(
+  action: () => Result<T>,
+  code: ErrorCode = 'invalid-input',
+): Result<T> {
   try {
     return freeze(action());
   } catch {

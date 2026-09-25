@@ -109,7 +109,10 @@ function compactTypeDeclaration(
 }
 
 /** Rejects a compact type where `type` is not allowed. */
-function requireAllowedType(cursor: Cursor, allowed: readonly Construct[]): void {
+function requireAllowedType(
+  cursor: Cursor,
+  allowed: readonly Construct[],
+): void {
   if (!allowed.includes('type'))
     reject(
       'syntax',
@@ -176,7 +179,10 @@ function readTypeTokens(cursor: Cursor): Parsed<TypeTokens> {
 }
 
 /** Whether the expression ends here: outside parentheses, at `}` or a declaration word. */
-function endsTypeDeclaration(token: Token, depth: number): boolean {
+function endsTypeDeclaration(
+  token: Token,
+  depth: number,
+): boolean {
   if (depth > 0) return false;
   return token.text === '}' || isTypeExpressionEnder(token);
 }
@@ -187,14 +193,21 @@ function isTypeExpressionEnder(token: Token): boolean {
 }
 
 /** The parenthesis depth after this token: `(` opens one level, `)` closes one. */
-function nextTypeDepth(token: string, depth: number): number {
+function nextTypeDepth(
+  token: string,
+  depth: number,
+): number {
   if (token === '(') return depth + 1;
   if (token === ')') return depth - 1;
   return depth;
 }
 
 /** Rejects an empty expression or unbalanced parentheses, at the token after the expression. */
-function requireCompleteType(tokens: readonly string[], depth: number, span: Token['span']): void {
+function requireCompleteType(
+  tokens: readonly string[],
+  depth: number,
+  span: Token['span'],
+): void {
   if (tokens.length === 0 || depth !== 0)
     reject('syntax', span, 'Type expression', 'Expected a complete type expression');
 }
@@ -208,14 +221,20 @@ function joinTypeTokens(tokens: readonly string[]): string {
  * Appends one token. `.` and the pieces of an exponent join with no space; any other token
  * follows one space, except at the start or right after a `.`.
  */
-function joinTypeToken(source: string, token: string): string {
+function joinTypeToken(
+  source: string,
+  token: string,
+): string {
   if (token === '.' || exponentContinuation(source, token)) return `${source}${token}`;
   if (needsTypeSpace(source)) return `${source} ${token}`;
   return `${source}${token}`;
 }
 
 /** Whether the token continues a number's exponent (see {@link exponentMatchers}). */
-function exponentContinuation(source: string, token: string): boolean {
+function exponentContinuation(
+  source: string,
+  token: string,
+): boolean {
   return exponentMatchers.some(
     /** Whether this case matches. */ (matcher) => matcher(source, token),
   );
@@ -227,7 +246,10 @@ function needsTypeSpace(source: string): boolean {
 }
 
 /** The construct named by the word at the cursor; it must exist and be allowed here. */
-function declarationDefinition(cursor: Cursor, allowed: readonly Construct[]): ConstructDefinition {
+function declarationDefinition(
+  cursor: Cursor,
+  allowed: readonly Construct[],
+): ConstructDefinition {
   const definition = constructs.find(
     /** Whether this construct is named by the word. */ (item) => item.kind === peek(cursor).text,
   );
@@ -248,7 +270,10 @@ function declarationDefinition(cursor: Cursor, allowed: readonly Construct[]): C
  * attribute with the same name as a positional value replaces it. Required properties are
  * checked after the body is read.
  */
-function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<Declaration> {
+function readDefined(
+  cursor: Cursor,
+  definition: ConstructDefinition,
+): Parsed<Declaration> {
   const positional = definition.positions.reduce(readPosition, {
     value: {},
     next: advance(cursor),
@@ -272,14 +297,20 @@ function readDefined(cursor: Cursor, definition: ConstructDefinition): Parsed<De
  * Reads one positional value. A literal (such as a wire's `->`) is consumed and not stored. An
  * optional ID is skipped when the next token is not an ID.
  */
-function readPosition(current: Parsed<Fields>, rule: PositionRule): Parsed<Fields> {
+function readPosition(
+  current: Parsed<Fields>,
+  rule: PositionRule,
+): Parsed<Fields> {
   if (rule.literal !== undefined) return { ...current, next: consume(current.next, rule.literal) };
   if (optionalIdentityMissing(current.next, rule)) return current;
   return readRequiredPosition(current, rule);
 }
 
 /** Whether an optional ID position is left out: the next token is not an ID. */
-function optionalIdentityMissing(cursor: Cursor, rule: PositionRule): boolean {
+function optionalIdentityMissing(
+  cursor: Cursor,
+  rule: PositionRule,
+): boolean {
   return rule.optional === true && peek(cursor).kind !== 'id';
 }
 
@@ -287,7 +318,10 @@ function optionalIdentityMissing(cursor: Cursor, rule: PositionRule): boolean {
  * Reads a positional value, checks its form, then (for text) checks that it was quoted, and
  * stores it under the rule's name.
  */
-function readRequiredPosition(current: Parsed<Fields>, rule: PositionRule): Parsed<Fields> {
+function readRequiredPosition(
+  current: Parsed<Fields>,
+  rule: PositionRule,
+): Parsed<Fields> {
   const raw = positionalValue(current.next, rule.type);
   const checked = checkValue(raw.value, { ...rule, field: rule.name }, rule.name);
   requireQuotedPosition(current.next, rule);
@@ -295,13 +329,19 @@ function readRequiredPosition(current: Parsed<Fields>, rule: PositionRule): Pars
 }
 
 /** Reads the value; `references` and `targets` positions are unbracketed lists (`show @a @b`). */
-function positionalValue(cursor: Cursor, type: PositionRule['type']): Parsed<LocatedValue> {
+function positionalValue(
+  cursor: Cursor,
+  type: PositionRule['type'],
+): Parsed<LocatedValue> {
   if (type === 'references' || type === 'targets') return readReferenceList(cursor);
   return readValue(cursor);
 }
 
 /** Text positions must be quoted, so a bare word (such as a keyword) is not taken as text. */
-function requireQuotedPosition(cursor: Cursor, rule: PositionRule): void {
+function requireQuotedPosition(
+  cursor: Cursor,
+  rule: PositionRule,
+): void {
   if (rule.type !== 'string') return;
   if (peek(cursor).kind !== 'string')
     reject('syntax', peek(cursor).span, 'Quoted string', 'Positional text must be quoted');
@@ -312,7 +352,11 @@ function requireQuotedPosition(cursor: Cursor, rule: PositionRule): void {
  * declaration's first token. A required property has no default; Model checks relations
  * afterwards.
  */
-function checkRequired(fields: Fields, definition: ConstructDefinition, cursor: Cursor): void {
+function checkRequired(
+  fields: Fields,
+  definition: ConstructDefinition,
+  cursor: Cursor,
+): void {
   Object.entries(definition.properties).forEach(
     /** Rejects this property when it is required and missing. */ ([name, property]) => {
       if (property.required && !Object.hasOwn(fields, name))

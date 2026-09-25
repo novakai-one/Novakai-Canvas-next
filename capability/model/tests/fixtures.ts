@@ -61,7 +61,11 @@ export function layout(
  * @param extra - Fields to add or override, spread last.
  * @returns `{ id, kind, label: id, ...extra }`, unvalidated; `extra` may replace any field.
  */
-export function node(id: string, kind: string = 'step', extra: RawRecord = {}): RawRecord {
+export function node(
+  id: string,
+  kind: string = 'step',
+  extra: RawRecord = {},
+): RawRecord {
   return { id, kind, label: id, ...extra };
 }
 
@@ -73,7 +77,10 @@ export function node(id: string, kind: string = 'step', extra: RawRecord = {}): 
  * @returns `{ id, kind: 'field', label: id, type: 'Id', ...extra }`, unvalidated; `extra` may
  * replace any field.
  */
-export function field(id: string, extra: RawRecord = {}): RawRecord {
+export function field(
+  id: string,
+  extra: RawRecord = {},
+): RawRecord {
   return { id, kind: 'field', label: id, type: 'Id', ...extra };
 }
 
@@ -184,7 +191,11 @@ export function value<T>(result: Result<T>): T {
  * @returns Nothing; the checks are the point.
  * @throws AssertionError when the result succeeded, has a value, or has no matching diagnostic.
  */
-export function invalid(result: Result<unknown>, code: DiagnosticCode, path: string): void {
+export function invalid(
+  result: Result<unknown>,
+  code: DiagnosticCode,
+  path: string,
+): void {
   assert(!result.ok, 'Expected rejected public result');
   expect(result).not.toHaveProperty('value');
   const expectedDiagnostic = expect.objectContaining({ code, path: expect.stringContaining(path) });
@@ -200,7 +211,11 @@ export function invalid(result: Result<unknown>, code: DiagnosticCode, path: str
  * @returns Nothing; the checks are the point.
  * @throws AssertionError as {@link invalid} does.
  */
-export function rejects(input: unknown, code: DiagnosticCode, path: string): void {
+export function rejects(
+  input: unknown,
+  code: DiagnosticCode,
+  path: string,
+): void {
   invalid(validate(input), code, path);
 }
 
@@ -231,7 +246,10 @@ export function rejectsPlan(
  * @returns The object.
  * @throws AssertionError when no object has this ID.
  */
-export function objectAt(collection: Collection, id: string): DiagramObject {
+export function objectAt(
+  collection: Collection,
+  id: string,
+): DiagramObject {
   const result = collection.objects.find(
     /** Tells whether this is the object. */
     (object) => object.id === id,
@@ -248,7 +266,10 @@ export function objectAt(collection: Collection, id: string): DiagramObject {
  * @returns The section.
  * @throws AssertionError when no section has this ID.
  */
-export function sectionAt(collection: Collection, id: string = 'view'): Section {
+export function sectionAt(
+  collection: Collection,
+  id: string = 'view',
+): Section {
   const result = collection.sections.find(
     /** Tells whether this is the section. */
     (section) => section.id === id,

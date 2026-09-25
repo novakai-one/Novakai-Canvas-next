@@ -54,7 +54,10 @@ export function lowerDefinition(declaration: Declaration): RawRecord {
 }
 
 /** The expression record; every token must be used. */
-function parseExpression(source: string, span: Span): RawRecord {
+function parseExpression(
+  source: string,
+  span: Span,
+): RawRecord {
   const tokens = expressionTokens(source, span);
   const parsed = readUnion(tokens, 0, span);
   if (parsed.next !== tokens.length)
@@ -63,7 +66,10 @@ function parseExpression(source: string, span: Span): RawRecord {
 }
 
 /** Splits the text into tokens, skipping whitespace; at least one token is required. */
-function expressionTokens(source: string, span: Span): readonly string[] {
+function expressionTokens(
+  source: string,
+  span: Span,
+): readonly string[] {
   const tokens: string[] = [];
   let index = 0;
   while (index < source.length) {
@@ -75,39 +81,61 @@ function expressionTokens(source: string, span: Span): readonly string[] {
 }
 
 /** Adds a token; the empty token that stands for skipped whitespace is left out. */
-function appendToken(tokens: string[], token: string): void {
+function appendToken(
+  tokens: string[],
+  token: string,
+): void {
   if (token !== '') tokens.push(token);
 }
 
 /** An empty expression is rejected. */
-function requireExpressionTokens(tokens: readonly string[], span: Span): readonly string[] {
+function requireExpressionTokens(
+  tokens: readonly string[],
+  span: Span,
+): readonly string[] {
   if (tokens.length === 0)
     reject('invalid-value', span, 'Type expression', 'Definition expression is empty');
   return tokens;
 }
 
 /** Whitespace is skipped as an empty token; anything else is read as a symbol or token. */
-function nextExpressionToken(source: string, index: number, span: Span): Scan {
+function nextExpressionToken(
+  source: string,
+  index: number,
+  span: Span,
+): Scan {
   const char = source[index] ?? '';
   if (/\s/.test(char)) return { token: '', next: index + 1 };
   return readSymbolOrToken(source, index, span);
 }
 
 /** `|`, `(` and `)` are one-character tokens; a quote starts a literal; anything else a word. */
-function readSymbolOrToken(source: string, index: number, span: Span): Scan {
+function readSymbolOrToken(
+  source: string,
+  index: number,
+  span: Span,
+): Scan {
   const char = source[index] ?? '';
   if ('|()'.includes(char)) return { token: char, next: index + 1 };
   return char === '"' ? readQuotedToken(source, index, span) : readBareToken(source, index, span);
 }
 
 /** A quoted literal, quotes included, up to its closing quote. */
-function readQuotedToken(source: string, start: number, span: Span): Scan {
+function readQuotedToken(
+  source: string,
+  start: number,
+  span: Span,
+): Scan {
   const end = requireClosingQuote(source, start, span);
   return { token: source.slice(start, end + 1), next: end + 1 };
 }
 
 /** The index of the literal's closing quote; a backslash escapes the next character. */
-function requireClosingQuote(source: string, start: number, span: Span): number {
+function requireClosingQuote(
+  source: string,
+  start: number,
+  span: Span,
+): number {
   const match = source.slice(start).match(/^"(?:[^"\\]|\\.)*"/);
   if (match === null) reject('invalid-value', span, 'Closing quote', 'Unterminated type literal');
   return start + match[0].length - 1;
@@ -117,7 +145,11 @@ function requireClosingQuote(source: string, start: number, span: Span): number 
  * A word (`@` allowed first) or a number. Only the word pattern is anchored at the start, so a
  * number later in the text is also found; the next index still moves by the token's length.
  */
-function readBareToken(source: string, index: number, span: Span): Scan {
+function readBareToken(
+  source: string,
+  index: number,
+  span: Span,
+): Scan {
   const match = source
     .slice(index)
     .match(/^@?[A-Za-z][A-Za-z0-9_-]*|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
@@ -128,7 +160,11 @@ function readBareToken(source: string, index: number, span: Span): Scan {
 }
 
 /** Atoms separated by `|`. One atom is returned as itself; more become a `union`. */
-function readUnion(tokens: readonly string[], start: number, span: Span): Parsed {
+function readUnion(
+  tokens: readonly string[],
+  start: number,
+  span: Span,
+): Parsed {
   const first = readAtom(tokens, start, span);
   const items: RawRecord[] = [first.value];
   let next = first.next;
@@ -142,7 +178,11 @@ function readUnion(tokens: readonly string[], start: number, span: Span): Parsed
 }
 
 /** A parenthesized union, or one atom. */
-function readAtom(tokens: readonly string[], start: number, span: Span): Parsed {
+function readAtom(
+  tokens: readonly string[],
+  start: number,
+  span: Span,
+): Parsed {
   if (tokens[start] === '(') {
     return readParenthesized(tokens, start, span);
   }
@@ -152,7 +192,11 @@ function readAtom(tokens: readonly string[], start: number, span: Span): Parsed 
 }
 
 /** The union inside `(` … `)`; the closing parenthesis is required. */
-function readParenthesized(tokens: readonly string[], start: number, span: Span): Parsed {
+function readParenthesized(
+  tokens: readonly string[],
+  start: number,
+  span: Span,
+): Parsed {
   const nested = readUnion(tokens, start + 1, span);
   if (tokens[nested.next] !== ')')
     reject('invalid-value', span, 'Closing parenthesis', 'Unclosed nested type expression');
@@ -160,13 +204,19 @@ function readParenthesized(tokens: readonly string[], start: number, span: Span)
 }
 
 /** An atom cannot be missing, `|` or `)`. */
-function requireAtomToken(token: string | undefined, span: Span): asserts token is string {
+function requireAtomToken(
+  token: string | undefined,
+  span: Span,
+): asserts token is string {
   if (token === undefined || token === '|' || token === ')')
     reject('invalid-value', span, 'Type expression atom', 'Expected a type expression atom');
 }
 
 /** The atom the first matching reader gives; a token no reader matches is rejected. */
-function atom(token: string, span: Span): Atom {
+function atom(
+  token: string,
+  span: Span,
+): Atom {
   const matcher = atomMatchers.find(
     /** Whether this reader recognises the token. */ (candidate) => candidate.matches(token),
   );
@@ -205,12 +255,18 @@ function isQuotedToken(token: string): boolean {
 }
 
 /** A quoted literal's string value; invalid escapes are rejected. */
-function literalString(token: string, span: Span): Atom {
+function literalString(
+  token: string,
+  span: Span,
+): Atom {
   return { kind: 'literal', value: quotedValue(token, span) };
 }
 
 /** Reads the quoted literal as JSON; a quoted JSON literal is always a string. */
-function quotedValue(token: string, span: Span): string {
+function quotedValue(
+  token: string,
+  span: Span,
+): string {
   const value = parsedLiteral(token, span);
   if (typeof value !== 'string')
     reject('invalid-value', span, 'Quoted literal', 'Invalid type literal');
@@ -218,7 +274,10 @@ function quotedValue(token: string, span: Span): string {
 }
 
 /** `JSON.parse` of the token; a parse error is rejected as an invalid literal. */
-function parsedLiteral(token: string, span: Span): unknown {
+function parsedLiteral(
+  token: string,
+  span: Span,
+): unknown {
   try {
     return JSON.parse(token);
   } catch {

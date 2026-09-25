@@ -7,7 +7,10 @@ import type { RenderDocument } from '@novakai/canvas-service';
 import type { Result } from '../contract/errors.js';
 
 /** Reuse the exact Authoring placement merge; moving retains prior explicit dimensions. */
-function placed(section: VisualSection, source: Section): VisualSection {
+function placed(
+  section: VisualSection,
+  source: Section,
+): VisualSection {
   return {
     ...section,
     placement: source.placement ?? null,
@@ -40,11 +43,17 @@ function plannedSections(changes: readonly Change[]): readonly Section[] {
     return change.target === 'sections' ? [change.value] : [];
   });
 }
-function projected(section: VisualSection, sources: readonly Section[]): VisualSection {
+function projected(
+  section: VisualSection,
+  sources: readonly Section[],
+): VisualSection {
   const source = sources.find((source) => source.id === section.id);
   return source === undefined ? section : placed(section, source);
 }
-function supportedMove(document: RenderDocument, intent: PlacementIntent): boolean {
+function supportedMove(
+  document: RenderDocument,
+  intent: PlacementIntent,
+): boolean {
   const resized = intent.entries.some(
     (entry) => entry.placement.width !== undefined || entry.placement.height !== undefined,
   );

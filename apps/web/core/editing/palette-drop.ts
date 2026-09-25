@@ -34,7 +34,10 @@ export function planPaletteDrop(
   };
 }
 
-function treeRefusal(label: string, title: string): Diagnostic {
+function treeRefusal(
+  label: string,
+  title: string,
+): Diagnostic {
   return {
     code: 'tree-section-drop',
     message: `${label}s can't be dropped into a tree. Drop it into a diagram section instead.`,

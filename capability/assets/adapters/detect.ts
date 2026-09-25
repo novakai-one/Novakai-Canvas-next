@@ -53,11 +53,19 @@ const signatures: readonly Signature[] = [
 ];
 
 /** The bytes from `start` up to `end`, as lowercase hex. */
-function hexAt(bytes: Buffer, start: number, end: number): string {
+function hexAt(
+  bytes: Buffer,
+  start: number,
+  end: number,
+): string {
   return bytes.subarray(start, end).toString('hex');
 }
 
 /** The bytes from `start` up to `end`, decoded as UTF-8. */
-function textAt(bytes: Buffer, start: number, end: number): string {
+function textAt(
+  bytes: Buffer,
+  start: number,
+  end: number,
+): string {
   return bytes.subarray(start, end).toString();
 }

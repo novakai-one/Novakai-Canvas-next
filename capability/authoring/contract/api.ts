@@ -48,7 +48,10 @@ export function createAuthoring(deps: Dependencies): Authoring {
   }
 
   /** Looks up a request's checked receipt, or `null`. Needs no source files, aliases or draft. */
-  function receipt(workspace: unknown, request: unknown): Promise<Result<Receipt | null>> {
+  function receipt(
+    workspace: unknown,
+    request: unknown,
+  ): Promise<Result<Receipt | null>> {
     // Check the registration and both IDs, then look up and check the receipt.
     return protect(async () => {
       accepted(registration);
@@ -64,7 +67,10 @@ export function createAuthoring(deps: Dependencies): Authoring {
    * Prepares a request without committing it, and returns the preparation to review.
    * Uses no revision. When the request already committed, returns its original receipt instead.
    */
-  function prepare(input: unknown, preview = false): Promise<Result<Preparation | Receipt>> {
+  function prepare(
+    input: unknown,
+    preview = false,
+  ): Promise<Result<Preparation | Receipt>> {
     // Check the registration, request and flag, then build the candidate and return its preparation.
     return protect(async () => {
       accepted(registration);
@@ -77,17 +83,26 @@ export function createAuthoring(deps: Dependencies): Authoring {
   }
 
   /** Commits a request's intent. A lost acknowledgement is reconciled before resources are released. */
-  function apply(input: unknown, options: unknown = {}): Promise<Result<Receipt>> {
+  function apply(
+    input: unknown,
+    options: unknown = {},
+  ): Promise<Result<Receipt>> {
     return submit(input, options, null);
   }
 
   /** Undoes an original change with new validated writes. Storage is never rewound. */
-  function undo(input: unknown, options: unknown = {}): Promise<Result<Receipt>> {
+  function undo(
+    input: unknown,
+    options: unknown = {},
+  ): Promise<Result<Receipt>> {
     return submit(input, options, 'undo');
   }
 
   /** Redoes an undone change. An edit made in between is a conflict that needs a new request. */
-  function redo(input: unknown, options: unknown = {}): Promise<Result<Receipt>> {
+  function redo(
+    input: unknown,
+    options: unknown = {},
+  ): Promise<Result<Receipt>> {
     return submit(input, options, 'redo');
   }
 
@@ -114,7 +129,11 @@ export function createAuthoring(deps: Dependencies): Authoring {
    * Shared path for `apply`, `undo` and `redo`: decode the request and options, check the intent
    * kind, then admit and commit in one continuation.
    */
-  function submit(input: unknown, options: unknown, kind: RequiredKind): Promise<Result<Receipt>> {
+  function submit(
+    input: unknown,
+    options: unknown,
+    kind: RequiredKind,
+  ): Promise<Result<Receipt>> {
     // Check the registration, request, options and intent kind, then admit and commit.
     return protect(async () => {
       accepted(registration);
@@ -135,7 +154,10 @@ export function createAuthoring(deps: Dependencies): Authoring {
  * Rejects a request whose intent kind does not match the operation, for example a change sent to `undo`.
  * The request keeps one envelope and one fingerprint whichever operation receives it.
  */
-function requireKind(request: Request, kind: RequiredKind): void {
+function requireKind(
+  request: Request,
+  kind: RequiredKind,
+): void {
   if (kind === null) return;
   if (request.intent.kind !== kind)
     reject('invalid-input', 'intent', 'Intent does not match the selected authoring operation');

@@ -3,7 +3,10 @@ import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
 import { sceneBox, targetKey, type Box } from './movement-capture.js';
 
-export function sameStamp(intent: PlacementIntent, stamp: SceneStamp): boolean {
+export function sameStamp(
+  intent: PlacementIntent,
+  stamp: SceneStamp,
+): boolean {
   return (
     intent.base.collectionId === stamp.collectionId &&
     intent.base.revision === stamp.revision &&
@@ -285,7 +288,10 @@ function addExpectedSection(
   section.nodes.forEach((node) => addExpectedNode(expected, section, node, roots, sectionRoot));
 }
 
-function translatedSectionBox(box: Box, root: { dx: number; dy: number } | undefined): Box {
+function translatedSectionBox(
+  box: Box,
+  root: { dx: number; dy: number } | undefined,
+): Box {
   return root === undefined ? box : { ...box, x: box.x + root.dx, y: box.y + root.dy };
 }
 
@@ -332,7 +338,10 @@ export function validateMoveIntent(
   return validateMoveTargets(intent, context.document);
 }
 
-function validateMoveTargets(intent: PlacementIntent, document: RenderDocument): Result<void> {
+function validateMoveTargets(
+  intent: PlacementIntent,
+  document: RenderDocument,
+): Result<void> {
   if (intent.entries.some((entry) => !moduleTarget(document, entry)))
     return failure('unsupported-edit', 'Movement review supports module sections only');
   if (

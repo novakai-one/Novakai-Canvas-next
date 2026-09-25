@@ -62,7 +62,10 @@ function expectedVersions(
 ): Result<readonly ExpectedVersion[]> {
   return create ? createVersions(base, collection) : replaceVersions(base, collection);
 }
-function createVersions(base: EditingBase, collection: string): Result<readonly ExpectedVersion[]> {
+function createVersions(
+  base: EditingBase,
+  collection: string,
+): Result<readonly ExpectedVersion[]> {
   if ('record' in base)
     return failure(
       'invalid-request',
@@ -90,7 +93,10 @@ type ExpectedVersion = {
   readonly version: number | 'absent';
 };
 /** Human starter content is ordinary readable DSL, admitted through the same Language and Authoring path as agent source. */
-function newSource(id: string, title: string): string {
+function newSource(
+  id: string,
+  title: string,
+): string {
   return `canvas 1\ncollection @${id} ${JSON.stringify(title)} theme=paper {\n  node @start start "Start" {}\n  node @step step "Describe the next step" {}\n  node @end end "Done" {}\n  wire @first @start -> @step "begin"\n  wire @next @step -> @end "complete"\n  section @process "Process" mode=flow layout=flow direction=right {\n    show @start @step @end\n    connect @first @next\n  }\n}`;
 }
 /** Inputs are owner-based translators. Diagram readout and Language printing are supplied at composition, avoiding sibling imports. */
@@ -242,7 +248,11 @@ function libraryRequest(
 }
 
 /** Inverse requests use the selected target's exact snapshot and never claim reserved history scope. */
-function history(input: unknown, direction: 'undo' | 'redo', id: string): Result<Request | null> {
+function history(
+  input: unknown,
+  direction: 'undo' | 'redo',
+  id: string,
+): Result<Request | null> {
   const checked = historyStatusSchema.safeParse(input);
   if (!checked.success) return failure('invalid-history', 'History status is invalid');
   return historyRequest(checked.data, direction, id);

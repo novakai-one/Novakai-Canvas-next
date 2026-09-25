@@ -153,7 +153,10 @@ function themeChoices(
   });
 }
 /** Numeric panel bounds are read from the resolved token scope, preserving one CSS/TS authority. */
-function dimension(element: HTMLElement, variable: string): number {
+function dimension(
+  element: HTMLElement,
+  variable: string,
+): number {
   const value = parseFloat(getComputedStyle(element).getPropertyValue(variable));
   if (!Number.isFinite(value)) throw new InitializationRejected(`Missing UI token ${variable}`);
   return value;

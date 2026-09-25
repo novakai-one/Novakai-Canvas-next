@@ -33,7 +33,10 @@ import type { StorePort, Decision } from '../contract/ports/store.js';
  * @returns The store. `close` closes the database; later operations fail with
  * `storage-unavailable`.
  */
-export function createSqliteStore(database: DatabasePort, workspace: WorkspaceId): StorePort {
+export function createSqliteStore(
+  database: DatabasePort,
+  workspace: WorkspaceId,
+): StorePort {
   const last: Decoded = {
     text: null,
     value: undefined,
@@ -110,7 +113,10 @@ function readDecision<T>(
  * The stored text: the text already held when no other connection has committed since this
  * store's last read or write, otherwise a fresh read. Records the data version it saw.
  */
-function currentStoredText(database: DatabasePort, last: Decoded): unknown {
+function currentStoredText(
+  database: DatabasePort,
+  last: Decoded,
+): unknown {
   const version = database.version?.();
   const current = last.text !== null && version !== undefined && version === last.version;
   const stored = current ? last.text : database.read();
@@ -146,7 +152,10 @@ function installDecision<T>(
  * Rolls back the open transaction and returns `result`. When the rollback itself fails the
  * outcome is uncertain: `storage-unavailable`, and Authoring reconciles the receipt after reopen.
  */
-function rollback<T>(database: DatabasePort, result: Result<T>): Result<T> {
+function rollback<T>(
+  database: DatabasePort,
+  result: Result<T>,
+): Result<T> {
   try {
     database.exec('ROLLBACK');
     return result;
@@ -196,7 +205,11 @@ function decodeStored(
  * @throws SyntaxError for text that is not JSON, and Error when listed item rows are missing or
  * malformed.
  */
-function decodeText(serialized: string, last: Decoded, parts: PartsPort | undefined): unknown {
+function decodeText(
+  serialized: string,
+  last: Decoded,
+  parts: PartsPort | undefined,
+): unknown {
   if (serialized === last.text) {
     return last.value;
   }
@@ -287,14 +300,21 @@ function assembleItem(
 }
 
 /** Remembers the id an object value is stored under, so a later commit reuses its row. */
-function rememberId(last: Decoded, value: unknown, id: string): void {
+function rememberId(
+  last: Decoded,
+  value: unknown,
+  id: string,
+): void {
   if (typeof value === 'object' && value !== null) {
     last.ids.set(value, id);
   }
 }
 
 /** Loads and parses one item row. Throws when the row is missing or not JSON. */
-function load(parts: PartsPort, id: string): Item {
+function load(
+  parts: PartsPort,
+  id: string,
+): Item {
   const body = parts.get(id);
   if (body === undefined) {
     throw new Error('item row missing');
@@ -391,7 +411,10 @@ function itemIdFinder(
 }
 
 /** The id and stored row of an object stored before, when the current head still lists it. */
-function storedBefore(last: Decoded, item: object): { id: string; stored: Item } | undefined {
+function storedBefore(
+  last: Decoded,
+  item: object,
+): { id: string; stored: Item } | undefined {
   const id = last.ids.get(item);
   if (id === undefined) {
     return undefined;
@@ -432,7 +455,11 @@ function lazyIdsByBody(last: Decoded): () => Map<string, string> {
 }
 
 /** Removes the rows of the current head that the new head no longer lists, in stored order. */
-function removeUnlistedRows(last: Decoded, items: Map<string, Item>, parts: PartsPort): void {
+function removeUnlistedRows(
+  last: Decoded,
+  items: Map<string, Item>,
+  parts: PartsPort,
+): void {
   const unlisted = [...last.items.keys()].filter((id) => !items.has(id));
   unlisted.forEach((id) => parts.remove(id));
 }

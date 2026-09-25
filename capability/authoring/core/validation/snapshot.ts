@@ -29,7 +29,10 @@ const envelopes = new WeakMap<object, Snapshot>();
  *   workspace, has a malformed tombstone, or has a versioned document header that differs from its record.
  * @throws AuthoringFault `invalid-input` at `records` when a record key appears twice.
  */
-export function readSnapshot(input: unknown, workspace: WorkspaceId): Snapshot {
+export function readSnapshot(
+  input: unknown,
+  workspace: WorkspaceId,
+): Snapshot {
   const snapshot = readEnvelope(input);
   if (snapshot.workspace !== workspace)
     reject('corrupt-record', 'workspace', 'Snapshot belongs to a different workspace');
@@ -49,7 +52,10 @@ export function readSnapshot(input: unknown, workspace: WorkspaceId): Snapshot {
  * @throws AuthoringFault `corrupt-record` when the receipt does not match the receipt shape or belongs to another request.
  * @throws AuthoringFault `invalid-input` at `receipt.versions` when a record key appears twice.
  */
-export function readReceipt(input: unknown, request: RequestId): Receipt {
+export function readReceipt(
+  input: unknown,
+  request: RequestId,
+): Receipt {
   const receipt = readShape(receiptSchema, input, 'corrupt-record', storedLimits);
   if (receipt.request !== request)
     reject('corrupt-record', 'request', 'Receipt belongs to a different request');

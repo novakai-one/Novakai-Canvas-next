@@ -39,5 +39,8 @@ export interface ResourceAdmission {
    * @param snapshot - The current workspace snapshot.
    * @returns The held lease, or a failure.
    */
-  acquire(request: Request, snapshot: Snapshot): Promise<Result<ResourceLease>>;
+  acquire(
+    request: Request,
+    snapshot: Snapshot,
+  ): Promise<Result<ResourceLease>>;
 }

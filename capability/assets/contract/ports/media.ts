@@ -19,7 +19,10 @@ export interface MediaHandler {
    * @throws The built-in processors never throw or reject. A throw or rejection from another one
    * becomes `unsafe-media` at `$`.
    */
-  normalize(base64: string, declared: SupportedMedia): Promise<Result<NormalizedMedia>>;
+  normalize(
+    base64: string,
+    declared: SupportedMedia,
+  ): Promise<Result<NormalizedMedia>>;
 }
 
 /** The registered media processors, plus detection of a media type from bytes. */

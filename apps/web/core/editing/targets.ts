@@ -16,7 +16,10 @@ export function missing(target: string): never {
   });
 }
 /** Resolve the section by its explicit canonical identity, never by decoding a generated scene ID. */
-export function sectionFor(target: Target, sections: readonly Section[]): Section {
+export function sectionFor(
+  target: Target,
+  sections: readonly Section[],
+): Section {
   const id = target.kind === 'section' ? target.id : target.section;
   const section = sections.find((item) => item.id === id);
   if (!section) return missing(id);

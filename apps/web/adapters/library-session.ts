@@ -25,7 +25,10 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
     listeners.forEach((listener) => listener());
   }
   /** A new canonical revision invalidates paging, never the user's query. */
-  function refresh(snapshot: Snapshot, collections: readonly Collection[]): void {
+  function refresh(
+    snapshot: Snapshot,
+    collections: readonly Collection[],
+  ): void {
     if (snapshot.workspace !== base?.workspace) restoreLocal(snapshot.workspace);
     const checked = bindings.reader.read(snapshot, collections, recent);
     if (!checked.ok) {
@@ -151,7 +154,10 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
     storeCheckedVisits(base.workspace, checked.value);
   }
   /** Checked visits are retained before replacing the active ranking preferences. */
-  function storeCheckedVisits(workspace: string, visits: readonly RecentVisit[]): void {
+  function storeCheckedVisits(
+    workspace: string,
+    visits: readonly RecentVisit[],
+  ): void {
     const stored = bindings.retention.write(`visits.${workspace}`, visits);
     if (!stored.ok) {
       bindings.report(stored.error);
@@ -167,7 +173,10 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
     search(null);
   }
   /** A form prepared against an older catalog is rejected visibly; no implicit overwrite or rebase occurs. */
-  async function commit(changes: readonly CatalogChange[], revision: number): Promise<boolean> {
+  async function commit(
+    changes: readonly CatalogChange[],
+    revision: number,
+  ): Promise<boolean> {
     if (base === null) return false;
     if (state.source?.catalog.revision !== revision) {
       publish({
@@ -182,7 +191,10 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
     return applyCatalog(base, changes);
   }
   /** Typed Authoring failure remains visible and never clears an unconfirmed folder form. */
-  async function applyCatalog(base: Snapshot, changes: readonly CatalogChange[]): Promise<boolean> {
+  async function applyCatalog(
+    base: Snapshot,
+    changes: readonly CatalogChange[],
+  ): Promise<boolean> {
     const result = await bindings.apply(base, changes);
     if (!result.ok) publish({ problem: result.error });
     return result.ok;

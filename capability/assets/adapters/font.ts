@@ -78,7 +78,10 @@ function normalizeFont(
 }
 
 /** For WOFF and WOFF2, rejects a header that declares an expanded size over the byte limit. */
-function checkExpandedSize(bytes: Buffer, declared: SupportedMedia): Result<void> {
+function checkExpandedSize(
+  bytes: Buffer,
+  declared: SupportedMedia,
+): Result<void> {
   if (!['font/woff', 'font/woff2'].includes(declared)) {
     return { ok: true, value: undefined };
   }

@@ -16,7 +16,10 @@ function profileError(target: string): Result<string> {
   return failure('unknown-profile', `Unknown profile: ${target}`, 'Use build-spec@1.');
 }
 
-function validText(value: string | undefined, label: string): Result<string> {
+function validText(
+  value: string | undefined,
+  label: string,
+): Result<string> {
   if (value === undefined || value.trim() === '')
     return failure('invalid-arguments', `Scaffold requires --${label}.`);
   return { ok: true, value };

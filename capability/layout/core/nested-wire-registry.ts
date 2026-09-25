@@ -49,7 +49,11 @@ function placedAccess(
   const join = roadJoin(street, mouth);
   return { portId: port.portId, side, port: port.point, mouth, join, roadId: street.id, drive };
 }
-function attachAccess(index: Map<string, Access>, scene: RoadPrototypeScene, c: RoadContact): void {
+function attachAccess(
+  index: Map<string, Access>,
+  scene: RoadPrototypeScene,
+  c: RoadContact,
+): void {
   const drive = c.b.kind === 'driveway' ? c.b : c.a;
   const street = c.a === drive ? c.b : c.a;
   const access = contactAccess(scene, drive, street);
@@ -63,7 +67,10 @@ export function wireRegistry(
 ): WireRegistry {
   return measure('wire-registry', () => compile(scene, contacts));
 }
-function compile(scene: RoadPrototypeScene, contacts: readonly RoadContact[]): WireRegistry {
+function compile(
+  scene: RoadPrototypeScene,
+  contacts: readonly RoadContact[],
+): WireRegistry {
   const registry = roadRegistry(scene.roads);
   const crossings = new Map<string, Crossing[]>(),
     accesses = new Map<string, Access>();
@@ -114,7 +121,10 @@ function addCrossing(
   ]);
 }
 
-function roadJoin(street: PrototypeRoad, mouth: PrototypePoint): PrototypePoint {
+function roadJoin(
+  street: PrototypeRoad,
+  mouth: PrototypePoint,
+): PrototypePoint {
   const r = street.bounds;
   return street.axis === 'vertical'
     ? { x: r.x + r.width / 2, y: mouth.y }

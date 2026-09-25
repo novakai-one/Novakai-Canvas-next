@@ -166,7 +166,11 @@ function terminal(
   );
   return { anchor: center, offset: point[axis] - center.position };
 }
-function fanFootprint(input: Input, support: Supports, source: boolean): NestedSupportFootprint {
+function fanFootprint(
+  input: Input,
+  support: Supports,
+  source: boolean,
+): NestedSupportFootprint {
   const fan = source ? support.start : support.end;
   const travel = source ? support.travels[0] : support.travels.at(-1);
   return retainedFan(input, support.wire.id, fan, travel, source);
@@ -221,7 +225,10 @@ function gateReferences(
   const line = required(graph.anchors, `${port.nodeId}:${axes[road.axis].along}:${side}`);
   return { from: reference(line, join.nominal.from), to: reference(line, join.nominal.to) };
 }
-function reference(line: Anchor, point: PrototypePoint): Reference {
+function reference(
+  line: Anchor,
+  point: PrototypePoint,
+): Reference {
   return { anchor: line, offset: point[line.axis] - line.position };
 }
 function admittedFrom(

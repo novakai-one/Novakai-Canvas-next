@@ -95,7 +95,10 @@ function authentication(admission: HttpAdmission): Caller {
   return agent.value;
 }
 /** Decode rejection uses byte limits and owner schemas, independent of network timing. */
-function payloads(admission: HttpAdmission, caller: Caller): void {
+function payloads(
+  admission: HttpAdmission,
+  caller: Caller,
+): void {
   const context = { caller, metadata, generation: security.generation, ingress: admission };
   expect(readCommand(body, context).ok).toBe(true);
   for (const malformed of [

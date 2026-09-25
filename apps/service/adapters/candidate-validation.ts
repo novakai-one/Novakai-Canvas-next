@@ -22,11 +22,18 @@ class AdmissionFault extends Error {
   }
 }
 /** Failure is raised only inside the named candidate boundary; Authoring retains the original committed snapshot. */
-function requireFact(condition: boolean, message: string): void {
+function requireFact(
+  condition: boolean,
+  message: string,
+): void {
   if (!condition) throw new AdmissionFault(message);
 }
 /** Every authoritative entity must occupy its expected composite storage identity and exact stamped version. */
-function record(snapshot: Snapshot, kind: StoredRecord['key']['kind'], id: string): StoredRecord {
+function record(
+  snapshot: Snapshot,
+  kind: StoredRecord['key']['kind'],
+  id: string,
+): StoredRecord {
   const value = snapshot.records.find(
     (item) => !item.deleted && item.key.kind === kind && item.key.id === id,
   );
@@ -34,7 +41,10 @@ function record(snapshot: Snapshot, kind: StoredRecord['key']['kind'], id: strin
   return value;
 }
 /** Resources are actual blob hashes; immutable preset provenance remains in canonical preset records, not fake blob storage. */
-function resources(record: StoredRecord, expected: readonly string[]): void {
+function resources(
+  record: StoredRecord,
+  expected: readonly string[],
+): void {
   requireFact(
     JSON.stringify([...record.resources].toSorted()) ===
       JSON.stringify([...new Set(expected)].toSorted()),
@@ -42,7 +52,11 @@ function resources(record: StoredRecord, expected: readonly string[]): void {
   );
 }
 /** Every diagram pin/media binding is checked through its owners before comparing its retained byte manifest. */
-function collections(snapshot: Snapshot, view: WorkspaceContents, owners: AdmissionOwners): void {
+function collections(
+  snapshot: Snapshot,
+  view: WorkspaceContents,
+  owners: AdmissionOwners,
+): void {
   view.collections.forEach((collection) => {
     const slot = record(snapshot, 'collection', collection.id);
     requireFact(
@@ -60,7 +74,11 @@ function presetResources(preset: Preset): readonly string[] {
   return preset.payload.assets;
 }
 /** Preset hashes/dependency closure have already passed Templates; the bridge checks their physical byte retention. */
-function presets(snapshot: Snapshot, view: WorkspaceContents, owners: AdmissionOwners): void {
+function presets(
+  snapshot: Snapshot,
+  view: WorkspaceContents,
+  owners: AdmissionOwners,
+): void {
   view.presets.forEach((preset) => {
     const slot = record(snapshot, 'preset', `preset:${preset.digest}`);
     const expected = presetResources(preset);
@@ -71,7 +89,10 @@ function presets(snapshot: Snapshot, view: WorkspaceContents, owners: AdmissionO
   });
 }
 /** Discovery metadata does not mint a blob; a corresponding mechanically admitted resource must already exist. */
-function asset(record: StoredRecord, owners: AdmissionOwners): void {
+function asset(
+  record: StoredRecord,
+  owners: AdmissionOwners,
+): void {
   const parsed = assetMetadata.safeParse(record.value);
   if (!parsed.success) throw new AdmissionFault('Invalid asset discovery metadata');
   requireFact(
@@ -85,7 +106,11 @@ function asset(record: StoredRecord, owners: AdmissionOwners): void {
   );
 }
 /** Workspace identity cannot switch through an ordinary mutation; verified restore owns that host lifecycle. */
-function metadata(snapshot: Snapshot, view: WorkspaceContents, owners: AdmissionOwners): void {
+function metadata(
+  snapshot: Snapshot,
+  view: WorkspaceContents,
+  owners: AdmissionOwners,
+): void {
   const slot = record(snapshot, 'workspace', 'metadata');
   const parsed = workspaceMetadata.safeParse(slot.value);
   if (!parsed.success) throw new AdmissionFault('Invalid workspace metadata');

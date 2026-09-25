@@ -55,7 +55,10 @@ function preparePlan(input: PlanInput): Result<CatalogPlan> {
 }
 
 /** The snapshot's own collections when none are proposed; otherwise the proposed value as given. */
-function chooseInventory(before: LibrarySnapshot, proposedCollections: unknown): unknown {
+function chooseInventory(
+  before: LibrarySnapshot,
+  proposedCollections: unknown,
+): unknown {
   if (proposedCollections === undefined) {
     return before.collections;
   }
@@ -81,7 +84,10 @@ function applyBatch(
 }
 
 /** Applies the next change, or passes an earlier failure on unchanged. */
-function applyNext(current: Result<Catalog>, change: CatalogChange): Result<Catalog> {
+function applyNext(
+  current: Result<Catalog>,
+  change: CatalogChange,
+): Result<Catalog> {
   if (!current.ok) {
     return current;
   }

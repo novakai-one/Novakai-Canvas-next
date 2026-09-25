@@ -35,7 +35,10 @@ import { sectionPath } from './paths.js';
  * @returns Every diagnostic, in the order above, or an empty list.
  * @throws Never for parsed data.
  */
-export function validateTree(section: Section, collection: Collection): readonly Diagnostic[] {
+export function validateTree(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   if (section.mode !== 'tree') {
     return [];
   }
@@ -67,7 +70,11 @@ export function validateTree(section: Section, collection: Collection): readonly
  * Tells whether an object takes part in the tree. An explicit participation decides; without
  * one, notes are annotations and every other object (or a missing one) takes part.
  */
-function participatesInTree(id: ObjectId, section: Section, collection: Collection): boolean {
+function participatesInTree(
+  id: ObjectId,
+  section: Section,
+  collection: Collection,
+): boolean {
   const appearance = section.appearances.find(
     /** Tells whether this appearance shows the object. */
     (candidate) => candidate.object === id,
@@ -83,7 +90,10 @@ function participatesInTree(id: ObjectId, section: Section, collection: Collecti
 }
 
 /** Checks the root: none for an empty tree, otherwise one of the participants. */
-function validateRoot(participants: readonly ObjectId[], section: Section): readonly Diagnostic[] {
+function validateRoot(
+  participants: readonly ObjectId[],
+  section: Section,
+): readonly Diagnostic[] {
   const path = `${sectionPath(section)}.root`;
   if (participants.length === 0) {
     return diagnoseWhen(section.root !== undefined, 'tree', path, 'Empty tree has no root');
@@ -117,7 +127,10 @@ function validateParentEdge(
 }
 
 /** Returns how many parents an object should have: none for the root, one otherwise. */
-function expectedParentCount(id: ObjectId, section: Section): number {
+function expectedParentCount(
+  id: ObjectId,
+  section: Section,
+): number {
   if (id === section.root) {
     return 0;
   }
@@ -125,12 +138,18 @@ function expectedParentCount(id: ObjectId, section: Section): number {
 }
 
 /** Tells whether a parent edge points at the object (the child end). */
-function pointsAt(wire: Relationship, id: ObjectId): boolean {
+function pointsAt(
+  wire: Relationship,
+  id: ObjectId,
+): boolean {
   return wire.target.object === id;
 }
 
 /** Returns the source of the first parent edge into an object, if any. */
-function firstParent(id: ObjectId, parents: readonly Relationship[]): ObjectId | undefined {
+function firstParent(
+  id: ObjectId,
+  parents: readonly Relationship[],
+): ObjectId | undefined {
   const edge = parents.find(
     /** Tells whether the edge points at the object. */
     (wire) => pointsAt(wire, id),

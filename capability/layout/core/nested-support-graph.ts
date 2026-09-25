@@ -63,12 +63,19 @@ export function anchor(
   graph.anchors.set(key, value);
   return value;
 }
-function matching(prior: Anchor, axis: Anchor['axis'], position: number): Anchor {
+function matching(
+  prior: Anchor,
+  axis: Anchor['axis'],
+  position: number,
+): Anchor {
   if (prior.axis !== axis || Math.abs(prior.position - position) > 0.0000001)
     reject('mismatched-contact', [prior.key], [prior.position], [position]);
   return prior;
 }
-function representative(graph: SupportGraph, key: string): string {
+function representative(
+  graph: SupportGraph,
+  key: string,
+): string {
   const parent = graph.equalities.get(key);
   if (parent === undefined) return key;
   const root = representative(graph, parent);
@@ -77,13 +84,21 @@ function representative(graph: SupportGraph, key: string): string {
 }
 
 /** Equalities arise only from shared construction lines, never proximity. */
-export function equate(graph: SupportGraph, a: Anchor, b: Anchor): void {
+export function equate(
+  graph: SupportGraph,
+  a: Anchor,
+  b: Anchor,
+): void {
   matching(a, b.axis, b.position);
   equateOffset(graph, a, b);
 }
 
 /** Preserve a measured port's offset while its body and driveway translate together. */
-export function equateOffset(graph: SupportGraph, a: Anchor, b: Anchor): void {
+export function equateOffset(
+  graph: SupportGraph,
+  a: Anchor,
+  b: Anchor,
+): void {
   if (a.axis !== b.axis) reject('unsupported-support', [a.key, b.key]);
   const left = representative(graph, a.key),
     right = representative(graph, b.key);

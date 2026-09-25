@@ -47,7 +47,10 @@ export function pinOf(value: Preset): Pin {
  * @throws `InputFault` from `canonical` for non-JSON content, and whatever the provider throws;
  * callers run inside `protect`.
  */
-export function hashContent(value: unknown, identity: IdentityPort): Result<Digest> {
+export function hashContent(
+  value: unknown,
+  identity: IdentityPort,
+): Result<Digest> {
   const result = identity.hash(canonical(value));
   if (!result.ok) {
     return result;
@@ -64,7 +67,10 @@ export function hashContent(value: unknown, identity: IdentityPort): Result<Dige
  * when the digest differs (path: the pin's key).
  * @throws Never.
  */
-export function exact(records: Catalog, pin: Pin): Result<Preset> {
+export function exact(
+  records: Catalog,
+  pin: Pin,
+): Result<Preset> {
   const found = records.find((item) => key(item) === key(pin));
   return checkPinned(found, pin);
 }
@@ -136,7 +142,10 @@ export function checkTheme(input: unknown): Result<void> {
  * @throws `InputFault` from `clone`/`canonical`, and whatever the provider throws; callers
  * run inside `protect`.
  */
-export function validateCatalog(input: unknown, identity: IdentityPort): Result<Catalog> {
+export function validateCatalog(
+  input: unknown,
+  identity: IdentityPort,
+): Result<Catalog> {
   const parsed = parse(catalog, clone(input));
   if (!parsed.ok) {
     return parsed;
@@ -154,7 +163,10 @@ export function validateCatalog(input: unknown, identity: IdentityPort): Result<
  * @returns The reached presets, sorted by key (`localeCompare`, locale `en`).
  * @throws Never on a validated catalog.
  */
-export function reachableThemes(records: Catalog, pins: readonly Pin[]): readonly Preset[] {
+export function reachableThemes(
+  records: Catalog,
+  pins: readonly Pin[],
+): readonly Preset[] {
   const values = pins.flatMap((pin) => {
     const result = exact(records, pin);
     if (!result.ok) {
@@ -168,7 +180,10 @@ export function reachableThemes(records: Catalog, pins: readonly Pin[]): readonl
 }
 
 /** Rehashes every field except the digest and compares; a difference is `digest-mismatch`. */
-function verifyHash(value: Preset, identity: IdentityPort): Result<void> {
+function verifyHash(
+  value: Preset,
+  identity: IdentityPort,
+): Result<void> {
   const { digest: expected, ...content } = value;
   const result = identity.hash(canonical(content));
   if (!result.ok) {
@@ -246,7 +261,10 @@ function validateReferences(records: Catalog): Result<void> {
 }
 
 /** Like {@link exact}, against the index: `missing-preset` or `digest-mismatch`. */
-function indexedReference(index: ReadonlyMap<string, Preset>, pin: Pin): Result<Preset> {
+function indexedReference(
+  index: ReadonlyMap<string, Preset>,
+  pin: Pin,
+): Result<Preset> {
   const found = index.get(key(pin));
   return checkPinned(found, pin);
 }
@@ -255,7 +273,10 @@ function indexedReference(index: ReadonlyMap<string, Preset>, pin: Pin): Result<
  * The preset a pin was looked up to: `missing-preset` when none was found, `digest-mismatch` when
  * its digest differs (path: the pin's key), otherwise the preset itself.
  */
-function checkPinned(found: Preset | undefined, pin: Pin): Result<Preset> {
+function checkPinned(
+  found: Preset | undefined,
+  pin: Pin,
+): Result<Preset> {
   if (!found) {
     return fail('missing-preset', key(pin), 'Pinned preset is absent');
   }
@@ -321,7 +342,10 @@ function uniqueManifest(value: RecipePayload): Result<void> {
  * Runs every check even after a returned failure (so each record is hashed), then returns the
  * first failure or the catalog. A throw stops the remaining checks.
  */
-function validateRecords(records: Catalog, identity: IdentityPort): Result<Catalog> {
+function validateRecords(
+  records: Catalog,
+  identity: IdentityPort,
+): Result<Catalog> {
   const checks = [
     uniqueRecords(records),
     ...records.map((value) => verifyHash(value, identity)),

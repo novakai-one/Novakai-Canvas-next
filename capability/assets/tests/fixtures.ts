@@ -86,7 +86,10 @@ export function value<T>(result: Result<T>): T {
  * @throws Vitest's assertion error when the result succeeded or has another code. Vitest reports
  * it as the test's failure.
  */
-export function rejects(result: Result<unknown>, code: ErrorCode): void {
+export function rejects(
+  result: Result<unknown>,
+  code: ErrorCode,
+): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
 }
 
@@ -118,7 +121,10 @@ export function unavailable<T>(): Result<T> {
  * @throws Never. A processor's promise rejects when `pause` rejects (the handler is not called)
  * or when the real handler rejects or throws. Staging's own boundary turns that into a failure.
  */
-export function delayedMedia(media: MediaRegistry, pause: Promise<void>): MediaRegistry {
+export function delayedMedia(
+  media: MediaRegistry,
+  pause: Promise<void>,
+): MediaRegistry {
   return {
     detect: media.detect,
     // One delayed processor per real processor, for the same media types.

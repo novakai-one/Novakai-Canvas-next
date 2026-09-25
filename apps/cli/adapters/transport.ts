@@ -56,7 +56,10 @@ async function send(
   }
 }
 /** The token comes from protected local storage. It is never returned in command output or diagnostic details. */
-export function createTransport(url: string, token: string): Result<Transport> {
+export function createTransport(
+  url: string,
+  token: string,
+): Result<Transport> {
   const checked = origin(url);
   if (!checked.ok) return checked;
   return {

@@ -27,7 +27,10 @@ import { requirePlainAddress } from './targets.js';
  * @throws `invalid-value` for an address that is not a plain `@id`; `syntax` for an `add` or
  * `replace` without a declaration; and the faults of lowering the declaration.
  */
-export function structuralChange(operation: Operation, resources: ResolvedResources): RawRecord {
+export function structuralChange(
+  operation: Operation,
+  resources: ResolvedResources,
+): RawRecord {
   requirePlainAddress(operation);
   if (operation.action === 'delete') return deleteRecord(operation);
   const value = declarationRecord(operation, resources);
@@ -71,7 +74,10 @@ function deleteRecord(operation: Operation): RawRecord {
 }
 
 /** The declaration lowered as in a document: node, section and asset have their own lowering. */
-function declarationRecord(operation: Operation, resources: ResolvedResources): RawRecord {
+function declarationRecord(
+  operation: Operation,
+  resources: ResolvedResources,
+): RawRecord {
   const item = operation.declaration;
   if (item === null)
     reject('syntax', operation.span, 'Complete declaration', 'Missing replacement declaration');

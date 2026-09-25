@@ -40,7 +40,10 @@ interface StageDependencies {
  * failure, re-read and retry; Authoring owns retrying, and collection removes any orphan bytes.
  * @throws Never. Anything thrown becomes `unsafe-media` at `$`.
  */
-export function stageMedia(input: unknown, deps: StageDependencies): Promise<Result<Admission>> {
+export function stageMedia(
+  input: unknown,
+  deps: StageDependencies,
+): Promise<Result<Admission>> {
   return protectAsync(async () => {
     const parsed = validateInput(input);
     if (!parsed.ok) {

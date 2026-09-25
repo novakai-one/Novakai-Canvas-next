@@ -20,7 +20,10 @@ import type { DiagramObject } from '../../contract/records/object.js';
  * @returns A new object with the same fields in the same order and a new `content` list.
  * @throws Never for a parsed object.
  */
-export function cascadeContent(object: DiagramObject, removedId: ObjectId): DiagramObject {
+export function cascadeContent(
+  object: DiagramObject,
+  removedId: ObjectId,
+): DiagramObject {
   const survivingBlocks = object.content.filter(
     /** Keeps the block unless it is a dependent keygroup or link. */
     (block) => !keyGroupReferencesObject(block, removedId) && !linksToObject(block, removedId),
@@ -33,7 +36,10 @@ export function cascadeContent(object: DiagramObject, removedId: ObjectId): Diag
 }
 
 /** Tells whether a block is a keygroup with a reference to the deleted object. */
-function keyGroupReferencesObject(block: ContentBlock, removedId: ObjectId): boolean {
+function keyGroupReferencesObject(
+  block: ContentBlock,
+  removedId: ObjectId,
+): boolean {
   if (block.kind !== 'keygroup') {
     return false;
   }
@@ -47,7 +53,10 @@ function keyGroupReferencesObject(block: ContentBlock, removedId: ObjectId): boo
 }
 
 /** Tells whether a block is a link to the deleted object; URI links never are. */
-function linksToObject(block: ContentBlock, removedId: ObjectId): boolean {
+function linksToObject(
+  block: ContentBlock,
+  removedId: ObjectId,
+): boolean {
   if (block.kind !== 'link') {
     return false;
   }
@@ -58,7 +67,10 @@ function linksToObject(block: ContentBlock, removedId: ObjectId): boolean {
  * Returns a field that referenced the deleted object as a copy without `key` and `references`
  * (other fields in their order). Any other block is returned as it is.
  */
-function clearDeletedFieldReference(block: ContentBlock, removedId: ObjectId): ContentBlock {
+function clearDeletedFieldReference(
+  block: ContentBlock,
+  removedId: ObjectId,
+): ContentBlock {
   if (block.kind !== 'field') {
     return block;
   }

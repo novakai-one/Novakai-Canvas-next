@@ -106,7 +106,10 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
     publish({ ...state, pending: [...state.pending, key], problem: null });
     return settleApply(key, draft);
   };
-  async function settleApply(key: string, draft: DefinitionDraft): Promise<Result<void>> {
+  async function settleApply(
+    key: string,
+    draft: DefinitionDraft,
+  ): Promise<Result<void>> {
     const result = await bindings.apply(draft);
     if (!result.ok) {
       unlockWithoutRequest(key);
@@ -165,7 +168,11 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
   };
 }
 
-function applyGuard(state: DefinitionState, key: string, draft: DefinitionDraft): Result<void> {
+function applyGuard(
+  state: DefinitionState,
+  key: string,
+  draft: DefinitionDraft,
+): Result<void> {
   if (state.pending.includes(key))
     return failure('pending-request', 'This definition is already being submitted');
   return literalDraftGuard(draft);
@@ -189,7 +196,10 @@ function capturedBase(
     : captureCollectionBase(current, selection.collection.id);
 }
 
-function checkScope(selection: DefinitionSelection, workspace: string): Result<void> {
+function checkScope(
+  selection: DefinitionSelection,
+  workspace: string,
+): Result<void> {
   return selection.base.workspace === workspace
     ? { ok: true, value: undefined }
     : failure('wrong-workspace', 'Recover the original workspace before editing');
@@ -298,11 +308,17 @@ function expressionAtPath(
   );
 }
 
-function samePath(left: readonly number[], right: readonly number[]): boolean {
+function samePath(
+  left: readonly number[],
+  right: readonly number[],
+): boolean {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
-function isPathWithin(path: readonly number[], ancestor: readonly number[]): boolean {
+function isPathWithin(
+  path: readonly number[],
+  ancestor: readonly number[],
+): boolean {
   return ancestor.length <= path.length && ancestor.every((value, index) => path[index] === value);
 }
 

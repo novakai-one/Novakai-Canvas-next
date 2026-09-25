@@ -48,7 +48,10 @@ type Transition = Transaction['transitions'][number];
  * @throws AuthoringFault `revision-conflict` when the change is in the wrong state, is not the next step,
  *   or a record it touched has changed.
  */
-export function planInverse(request: Request, snapshot: Snapshot): Proposal {
+export function planInverse(
+  request: Request,
+  snapshot: Snapshot,
+): Proposal {
   if (request.intent.kind === 'change')
     return reject('invalid-input', 'intent', 'An inverse intent is required');
 
@@ -77,7 +80,10 @@ export function planInverse(request: Request, snapshot: Snapshot): Proposal {
 }
 
 /** Picks the image to restore: the before image for undo, the after image for redo. */
-function imageToRestore(transition: Transition, direction: Direction): StoredRecord | null {
+function imageToRestore(
+  transition: Transition,
+  direction: Direction,
+): StoredRecord | null {
   switch (direction) {
     case 'undo':
       return transition.before;
@@ -90,7 +96,10 @@ function imageToRestore(transition: Transition, direction: Direction): StoredRec
  * Builds the write that restores a record to an image.
  * A missing or deleted image becomes a delete; a live image restores its exact value and resources.
  */
-function restoreRecord(transition: Transition, image: StoredRecord | null): Write {
+function restoreRecord(
+  transition: Transition,
+  image: StoredRecord | null,
+): Write {
   if (image === null) return { kind: 'delete', key: transition.key };
   if (image.deleted) return { kind: 'delete', key: transition.key };
   return { kind: 'put', key: transition.key, value: image.value, resources: image.resources };
@@ -100,7 +109,11 @@ function restoreRecord(transition: Transition, image: StoredRecord | null): Writ
  * Checks the change is in the state the intent needs, then that it may run now.
  * Both matter: equal content after a different edit is still a conflict.
  */
-function checkHead(snapshot: Snapshot, request: Request, head: HistoryHead): void {
+function checkHead(
+  snapshot: Snapshot,
+  request: Request,
+  head: HistoryHead,
+): void {
   if (head.state !== requiredState(request))
     reject('revision-conflict', 'history', 'Transaction is not in the required undo/redo state');
 
@@ -120,7 +133,10 @@ function requiredState(request: Request): HistoryHead['state'] {
 }
 
 /** Checks the change is the next step in navigation, and the request saw the current navigation version. */
-function checkNavigation(snapshot: Snapshot, request: Request): void {
+function checkNavigation(
+  snapshot: Snapshot,
+  request: Request,
+): void {
   if (request.intent.kind === 'change') return;
 
   const history = readNavigation(snapshot);
@@ -134,7 +150,10 @@ function checkNavigation(snapshot: Snapshot, request: Request): void {
 }
 
 /** Checks the request's expected versions include the navigation record, and that it is unchanged. */
-function checkNavigationToken(snapshot: Snapshot, request: Request): void {
+function checkNavigationToken(
+  snapshot: Snapshot,
+  request: Request,
+): void {
   const navigationText = keyText(navigationKey);
   const token = request.expected.find((read) => keyText(read.key) === navigationText);
   if (token === undefined)
@@ -150,7 +169,10 @@ function checkTransitionIdentity(transition: Transition): void {
 }
 
 /** Rejects an image stored for a different record. Corrupt history is never silently repaired. */
-function checkImageIdentity(image: StoredRecord, expected: RecordKey): void {
+function checkImageIdentity(
+  image: StoredRecord,
+  expected: RecordKey,
+): void {
   if (keyText(image.key) !== keyText(expected))
     reject('corrupt-record', 'history', 'Historical image belongs to another participant');
 }

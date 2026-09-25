@@ -66,7 +66,10 @@ export async function applyCandidate(
  * Rejects the commit when the caller's `candidateHash` differs from the freshly prepared one.
  * This is an extra check on top of the client's expected versions, never a replacement for them.
  */
-function checkPreparation(candidate: PreparedCandidate, options: ApplyOptions): void {
+function checkPreparation(
+  candidate: PreparedCandidate,
+  options: ApplyOptions,
+): void {
   if (options.candidateHash === undefined) return;
   if (options.candidateHash !== candidate.preparation.candidateHash)
     reject('revision-conflict', 'candidateHash', 'Prepared candidate or its dependencies changed');

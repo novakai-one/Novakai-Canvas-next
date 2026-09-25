@@ -251,7 +251,10 @@ function embeddedScene(
   };
 }
 
-function rejectedScene(scene: RoadPrototypeScene, error: SupportRejection): RoadPrototypeScene {
+function rejectedScene(
+  scene: RoadPrototypeScene,
+  error: SupportRejection,
+): RoadPrototypeScene {
   const unwired = { ...scene };
   delete unwired.wiring;
   return { ...unwired, embeddingFailure: error.evidence };

@@ -37,7 +37,10 @@ type HtmlDependencies = Pick<RenderDependencies, 'renderer'> & {
  * `encoding-failed`.
  * @throws Never.
  */
-export function createHtmlEncoder(deps: HtmlDependencies, css: string): FormatHandler {
+export function createHtmlEncoder(
+  deps: HtmlDependencies,
+  css: string,
+): FormatHandler {
   /** Renders every section, then builds and encodes the page; see {@link createHtmlEncoder}. */
   async function encode(input: RenderInput): Promise<Result<Encoded>> {
     const rendered = input.selection.sections.map(
@@ -87,7 +90,10 @@ export function createHtmlEncoder(deps: HtmlDependencies, css: string): FormatHa
    * its `<section>` element with the heading, the SVG and the text list. Its anchor is
    * `section-<index>`, where `<index>` is the section's first position in the selection.
    */
-  function renderSection(section: PlacedSection, input: RenderInput): Result<ReactElement> {
+  function renderSection(
+    section: PlacedSection,
+    input: RenderInput,
+  ): Result<ReactElement> {
     const result = deps.renderer.render({
       ...input,
       selection: { sections: [section], bounds: section.box },

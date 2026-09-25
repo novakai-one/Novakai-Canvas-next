@@ -27,7 +27,10 @@ function collection(
   return { ok: true, value: [...records.value, checked.value] };
 }
 /** Complete workspace decoding composes owner validation; final Authoring validation supplies the exact stamped candidate. */
-function read(snapshot: Snapshot, owners: WorkspaceReaderOwners): Result<WorkspaceContents> {
+function read(
+  snapshot: Snapshot,
+  owners: WorkspaceReaderOwners,
+): Result<WorkspaceContents> {
   const live = snapshot.records.filter((record) => !record.deleted);
   const collections = live
     .filter((record) => record.key.kind === 'collection')

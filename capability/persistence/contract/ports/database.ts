@@ -38,7 +38,10 @@ export interface PartsPort {
   /** One row's text, or `undefined` when there is no such row. */
   get(id: string): string | undefined;
   /** Writes a new row. */
-  put(id: string, body: string): void;
+  put(
+    id: string,
+    body: string,
+  ): void;
   /** Removes a row. */
   remove(id: string): void;
 }

@@ -15,7 +15,10 @@ import { pinOf } from '../validation/catalog.js';
  * @returns Negative when `left` is earlier, positive when later, 0 when equal.
  * @throws Never.
  */
-export function compareVersions(left: Version, right: Version): number {
+export function compareVersions(
+  left: Version,
+  right: Version,
+): number {
   const a = left.split('.').map(Number);
   const b = right.split('.').map(Number);
   return (
@@ -33,7 +36,10 @@ export function compareVersions(left: Version, right: Version): number {
  * `digest-mismatch` (path: the id) when the digest differs.
  * @throws Never.
  */
-export function select(records: Catalog, request: Selection): Result<Preset> {
+export function select(
+  records: Catalog,
+  request: Selection,
+): Result<Preset> {
   const choices = records.filter((value) => value.kind === request.kind && value.id === request.id);
   const releases = choices.filter(
     (value) => request.version === undefined || value.version === request.version,
@@ -58,7 +64,10 @@ export function select(records: Catalog, request: Selection): Result<Preset> {
  * @returns The summaries: pin, title, description, and the recipe family (`null` for themes).
  * @throws Never.
  */
-export function list(records: Catalog, query: Query): readonly Summary[] {
+export function list(
+  records: Catalog,
+  query: Query,
+): readonly Summary[] {
   return records
     .filter((value) => matches(value, query))
     .toSorted(compare)
@@ -66,7 +75,10 @@ export function list(records: Catalog, query: Query): readonly Summary[] {
 }
 
 /** A given digest is a hard requirement, not a hint: a different digest is `digest-mismatch`. */
-function verifySelection(value: Preset, request: Selection): Result<Preset> {
+function verifySelection(
+  value: Preset,
+  request: Selection,
+): Result<Preset> {
   if (request.digest && request.digest !== value.digest) {
     return fail('digest-mismatch', request.id, 'Requested content digest differs');
   }
@@ -74,7 +86,10 @@ function verifySelection(value: Preset, request: Selection): Result<Preset> {
 }
 
 /** True when the kind matches (if given) and the search text appears in the readable fields. */
-function matches(value: Preset, query: Query): boolean {
+function matches(
+  value: Preset,
+  query: Query,
+): boolean {
   if (query.kind && value.kind !== query.kind) {
     return false;
   }
@@ -88,7 +103,10 @@ function searchable(value: Preset): string {
 }
 
 /** Orders by `kind/id`, then by version (earliest first). */
-function compare(left: Preset, right: Preset): number {
+function compare(
+  left: Preset,
+  right: Preset,
+): number {
   const identity = `${left.kind}/${left.id}`.localeCompare(`${right.kind}/${right.id}`, 'en');
   if (identity !== 0) {
     return identity;

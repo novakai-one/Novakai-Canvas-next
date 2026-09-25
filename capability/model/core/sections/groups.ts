@@ -128,7 +128,10 @@ interface Ancestry<Id extends string> {
 }
 
 /** Tells whether the walk can continue: the ID exists and was not visited yet. */
-function canVisit<Id extends string>(id: Id | undefined, visited: ReadonlySet<Id>): id is Id {
+function canVisit<Id extends string>(
+  id: Id | undefined,
+  visited: ReadonlySet<Id>,
+): id is Id {
   return id !== undefined && !visited.has(id);
 }
 
@@ -150,7 +153,10 @@ function traceAncestors<Id extends string>(
 }
 
 /** Returns a group's parent; a missing group, or one at top level, has none. */
-function parentGroup(id: GroupId, section: Section): GroupId | undefined {
+function parentGroup(
+  id: GroupId,
+  section: Section,
+): GroupId | undefined {
   const group = section.groups.find(
     /** Tells whether this is the group. */
     (candidate) => candidate.id === id,

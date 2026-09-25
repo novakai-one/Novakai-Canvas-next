@@ -43,7 +43,10 @@ export function createNodeDrawing(
     );
   }
   /** Draws measured content at a section-local point. */
-  function label(content: MeasuredContent, point: Point): ReactElement {
+  function label(
+    content: MeasuredContent,
+    point: Point,
+  ): ReactElement {
     return (
       <g transform={`translate(${point.x} ${point.y})`}>
         <Measured content={content} embedFonts={false} />

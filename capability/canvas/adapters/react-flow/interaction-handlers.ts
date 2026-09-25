@@ -34,7 +34,11 @@ function applySelectionChange(
   setSelected(selected, target, change.selected);
 }
 /** Immutable domain selection is assembled outside the temporary local Map. */
-function setSelected(selected: Map<string, Target>, target: Target, enabled: boolean): void {
+function setSelected(
+  selected: Map<string, Target>,
+  target: Target,
+  enabled: boolean,
+): void {
   if (enabled) {
     selected.set(targetAddress(target), target);
     return;
@@ -50,7 +54,10 @@ function stillActive(
   return owners.session.getSnapshot().draft?.id === active.id;
 }
 /** Sequence and tree sections draw from node positions outside the node itself; they keep the full per-frame path. */
-function previewable(state: SessionState, targets: readonly Target[]): boolean {
+function previewable(
+  state: SessionState,
+  targets: readonly Target[],
+): boolean {
   return targets.every((target) => {
     if (target.kind !== 'node') return false;
     const section = state.scene.sections.find((item) => item.id === target.section);
@@ -58,13 +65,20 @@ function previewable(state: SessionState, targets: readonly Target[]): boolean {
   });
 }
 /** True when the key or any of its ancestors is dragged. */
-function under(state: SessionState, key: string | null, dragged: ReadonlySet<string>): boolean {
+function under(
+  state: SessionState,
+  key: string | null,
+  dragged: ReadonlySet<string>,
+): boolean {
   if (key === null) return false;
   if (dragged.has(key)) return true;
   return under(state, state.index.targets[key]?.parentKey ?? null, dragged);
 }
 /** Dragged targets plus every descendant; children are separate React Flow nodes and must move too. */
-function movedKeys(state: SessionState, dragged: readonly string[]): ReadonlySet<string> {
+function movedKeys(
+  state: SessionState,
+  dragged: readonly string[],
+): ReadonlySet<string> {
   const roots = new Set(dragged);
   return new Set(Object.keys(state.index.targets).filter((key) => under(state, key, roots)));
 }
@@ -105,7 +119,11 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     dispatch({ kind: 'target-enter', target });
   }
   /** Initial geometry comes from the admitted view, not a possibly already-moved callback position. */
-  function startDrag(event: MouseEvent | TouchEvent, node: FlowNode, nodes: FlowNode[]): void {
+  function startDrag(
+    event: MouseEvent | TouchEvent,
+    node: FlowNode,
+    nodes: FlowNode[],
+  ): void {
     if (owners.input.ownsNativeInput(event.target)) return;
     suppressHover('drag');
     const id = owners.nextGestureId();
@@ -129,14 +147,20 @@ export function createInteractions(owners: InteractionOwners): Interactions {
       : null;
   }
   /** Frame updates carry a total delta from drag start; reducers retain original geometry for recovery. */
-  function moveDrag(_event: MouseEvent | TouchEvent, node: FlowNode): void {
+  function moveDrag(
+    _event: MouseEvent | TouchEvent,
+    node: FlowNode,
+  ): void {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) return;
     const delta = { x: node.position.x - active.start.x, y: node.position.y - active.start.y };
     livePreview(active.id, delta);
   }
   /** Previewable drags publish only the offset; others take the full per-frame path. */
-  function livePreview(id: string, delta: Point): void {
+  function livePreview(
+    id: string,
+    delta: Point,
+  ): void {
     if (moved?.id === id) owners.session.writePreview({ id, delta, moved: moved.keys });
     else dispatch({ kind: 'move', id, delta });
   }
@@ -174,7 +198,10 @@ export function createInteractions(owners: InteractionOwners): Interactions {
     dispatch({ kind: 'begin', id, gesture: 'resize', targets: [target] });
   }
   /** React Flow resize coordinates are parent-relative; add the displayed parent's world origin once. */
-  function resize(target: Target, box: Box): void {
+  function resize(
+    target: Target,
+    box: Box,
+  ): void {
     const active = owners.session.readPointer();
     if (!stillActive(owners, active)) return;
     const state = owners.session.getSnapshot();

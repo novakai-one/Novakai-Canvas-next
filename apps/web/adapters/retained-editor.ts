@@ -49,14 +49,20 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
     return restoreValue(stored.value, id);
   }
   /** Recovery never replays a command. The storage key changes only after the destination was read and admitted. */
-  function restoreValue(value: unknown, id: string): Result<void> {
+  function restoreValue(
+    value: unknown,
+    id: string,
+  ): Result<void> {
     if (value === null) return restored([], id);
     const checked = bindings.read(value);
     if (!checked.ok) return reject(checked.error);
     return restored(checked.value, id);
   }
   /** Foreign-workspace payloads cannot become forms under a newly admitted storage key. */
-  function restored(drafts: readonly Draft[], id: string): Result<void> {
+  function restored(
+    drafts: readonly Draft[],
+    id: string,
+  ): Result<void> {
     if (drafts.some((draft) => draft.base.workspace !== id))
       return reject(
         failure(
@@ -69,7 +75,10 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
     return { ok: true, value: undefined };
   }
   /** The feature captures the first version and replays later edits against it. */
-  function edit(selection: Selection, command: Command): Result<void> {
+  function edit(
+    selection: Selection,
+    command: Command,
+  ): Result<void> {
     const next = bindings.edit(selection, command, state.drafts);
     if (next.base.workspace !== workspace)
       return reject(
@@ -97,7 +106,10 @@ export function createRetainedEditor<Selection, Command, Draft extends RetainedD
     return finishSubmission(draft, result);
   }
   /** Late outcomes retain their original workspace identity; the new workspace cannot acknowledge them. */
-  function finishSubmission(draft: Draft, result: Result<unknown>): Result<void> {
+  function finishSubmission(
+    draft: Draft,
+    result: Result<unknown>,
+  ): Result<void> {
     if (draft.base.workspace !== workspace)
       return failure(
         'wrong-workspace',

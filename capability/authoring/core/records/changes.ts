@@ -30,7 +30,10 @@ type PutWrite = Extract<Write, { kind: 'put' }>;
  *   or when a versioned document's payload is not a JSON object.
  * @throws AuthoringFault `invariant-violation` when a versioned document's `id` differs from its key.
  */
-export function netWrite(snapshot: Snapshot, write: Write): readonly Write[] {
+export function netWrite(
+  snapshot: Snapshot,
+  write: Write,
+): readonly Write[] {
   const previous = findRecord(snapshot, write.key);
   if (writeChangesNothing(previous, write)) return [];
 
@@ -51,7 +54,10 @@ export function netWrite(snapshot: Snapshot, write: Write): readonly Write[] {
  * @returns The stored record after the write. A delete produces a tombstone with a `null` value.
  * @throws AuthoringFault `invalid-input` when the record's revision is already at the largest safe integer.
  */
-export function nextRecord(snapshot: Snapshot, write: Write): StoredRecord {
+export function nextRecord(
+  snapshot: Snapshot,
+  write: Write,
+): StoredRecord {
   const previous = findRecord(snapshot, write.key);
   const version = nextVersion(previous);
 
@@ -80,7 +86,10 @@ export function nextRecord(snapshot: Snapshot, write: Write): StoredRecord {
  * @returns A new snapshot. The input snapshot is not modified.
  * @throws AuthoringFault `invalid-input` when a written record's revision is already at the largest safe integer.
  */
-export function installWrites(snapshot: Snapshot, writes: readonly Write[]): Snapshot {
+export function installWrites(
+  snapshot: Snapshot,
+  writes: readonly Write[],
+): Snapshot {
   const writtenKeys = new Set(writes.map((write) => keyText(write.key)));
   const untouchedRecords = snapshot.records.filter(
     (record) => !writtenKeys.has(keyText(record.key)),
@@ -93,7 +102,10 @@ export function installWrites(snapshot: Snapshot, writes: readonly Write[]): Sna
 }
 
 /** Tells whether a write would leave the stored record exactly as it is. */
-function writeChangesNothing(previous: StoredRecord | null, write: Write): boolean {
+function writeChangesNothing(
+  previous: StoredRecord | null,
+  write: Write,
+): boolean {
   if (write.kind === 'put') return putChangesNothing(previous, write);
   return deleteChangesNothing(previous);
 }
@@ -108,7 +120,10 @@ function deleteChangesNothing(previous: StoredRecord | null): boolean {
  * A put changes nothing when the live record already holds the same normalized value and resources.
  * The comparison uses the record's current revision, so no revision is spent on an unchanged put.
  */
-function putChangesNothing(previous: StoredRecord | null, write: PutWrite): boolean {
+function putChangesNothing(
+  previous: StoredRecord | null,
+  write: PutWrite,
+): boolean {
   if (previous === null) return false;
   if (previous.deleted) return false;
 
@@ -137,7 +152,10 @@ function nextVersion(previous: StoredRecord | null): number {
  * Normalizes a put for storage.
  * Resources are treated as a set, so their order or repetition never creates a new revision.
  */
-function normalizePut(write: PutWrite, version: number): Write {
+function normalizePut(
+  write: PutWrite,
+  version: number,
+): Write {
   const stampedValue = stampRevision(write.key, write.value, version);
   const uniqueResources = [...new Set(write.resources)];
   return {
@@ -152,7 +170,11 @@ function normalizePut(write: PutWrite, version: number): Write {
  * Any revision the author submitted is overwritten; it is never used as a write precondition.
  * Payloads of other record kinds are returned unchanged.
  */
-function stampRevision(key: RecordKey, value: Json, version: number): Json {
+function stampRevision(
+  key: RecordKey,
+  value: Json,
+  version: number,
+): Json {
   if (!isVersionedDocument(key.kind)) return value;
 
   const fields = documentFields(value);

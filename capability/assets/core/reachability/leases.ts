@@ -210,7 +210,11 @@ function requireMember(
 }
 
 /** Requires the stored lease to have the expected ID and to list the digest. */
-function checkMembership(lease: LeaseRecord, id: LeaseId, digest: Digest): Result<void> {
+function checkMembership(
+  lease: LeaseRecord,
+  id: LeaseId,
+  digest: Digest,
+): Result<void> {
   if (lease.id !== id || !lease.digests.includes(digest)) {
     return fail('lease-expired', 'digest', 'Digest is not protected by this lease');
   }
@@ -262,7 +266,10 @@ async function normalizeRestored(
 }
 
 /** Requires the normalized bytes to be exactly the pinned ones. */
-function compareRestored(blob: StoredBlob, expected: Digest): Result<StoredBlob> {
+function compareRestored(
+  blob: StoredBlob,
+  expected: Digest,
+): Result<StoredBlob> {
   if (blob.descriptor.digest !== expected) {
     return fail(
       'corrupt-asset',

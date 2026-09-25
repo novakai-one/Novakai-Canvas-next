@@ -187,7 +187,10 @@ function usageList(
   );
 }
 
-function navigateUsage(view: FeatureProps['view'], objectId: string | undefined): void {
+function navigateUsage(
+  view: FeatureProps['view'],
+  objectId: string | undefined,
+): void {
   if (view.active === null || objectId === undefined) return;
   const node = findUsageNode(view, objectId);
   if (node === undefined) return;
@@ -198,7 +201,10 @@ function navigateUsage(view: FeatureProps['view'], objectId: string | undefined)
   });
 }
 
-function findUsageNode(view: FeatureProps['view'], objectId: string | undefined) {
+function findUsageNode(
+  view: FeatureProps['view'],
+  objectId: string | undefined,
+) {
   if (view.active === null || objectId === undefined) return undefined;
   return view.active.document.scene.sections
     .flatMap((section) => section.nodes.map((item) => ({ section: section.id, node: item })))
@@ -522,6 +528,9 @@ function finiteNumber(value: string): number | null {
   return completeNumber(value) && Number.isFinite(Number(value)) ? Number(value) : null;
 }
 
-function samePath(left: readonly number[], right: readonly number[]): boolean {
+function samePath(
+  left: readonly number[],
+  right: readonly number[],
+): boolean {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 }

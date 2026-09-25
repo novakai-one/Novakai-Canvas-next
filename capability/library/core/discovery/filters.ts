@@ -81,7 +81,10 @@ function folderMatches(
 }
 
 /** Every word occurs in the hit's lowercased label or description (no DOM content involved). */
-function textMatches(hit: SearchHit, words: readonly string[]): boolean {
+function textMatches(
+  hit: SearchHit,
+  words: readonly string[],
+): boolean {
   const searchable = `${hit.label} ${hit.description}`.toLowerCase();
   return words.every((word) => searchable.includes(word));
 }

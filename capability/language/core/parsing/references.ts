@@ -44,7 +44,10 @@ export function readReference(cursor: Cursor): Parsed<LocatedValue> {
 }
 
 /** Reads what follows an ID: `.@member`, `/@item`, or nothing. */
-function readAddressTail(id: string, cursor: Cursor): Parsed<Reference> {
+function readAddressTail(
+  id: string,
+  cursor: Cursor,
+): Parsed<Reference> {
   const separator = peek(cursor).text;
   if (separator === '.') return readMember(id, advance(cursor));
   if (separator === '/') return readSectionMember(id, advance(cursor));
@@ -52,13 +55,19 @@ function readAddressTail(id: string, cursor: Cursor): Parsed<Reference> {
 }
 
 /** Reads the member ID after `.`: the reference is to a member of object `id`. */
-function readMember(id: string, cursor: Cursor): Parsed<Reference> {
+function readMember(
+  id: string,
+  cursor: Cursor,
+): Parsed<Reference> {
   const member = readIdentity(cursor);
   return { value: { kind: 'reference', id, member: member.value }, next: member.next };
 }
 
 /** Reads the item ID after `/`: the reference is to that item inside section `section`. */
-function readSectionMember(section: string, cursor: Cursor): Parsed<Reference> {
+function readSectionMember(
+  section: string,
+  cursor: Cursor,
+): Parsed<Reference> {
   const item = readIdentity(cursor);
   return { value: { kind: 'reference', id: item.value, section }, next: item.next };
 }

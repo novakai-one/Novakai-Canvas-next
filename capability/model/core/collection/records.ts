@@ -26,7 +26,10 @@ import { preserveSection } from './preservation.js';
  * identity), or `validation-failed`. Not frozen.
  * @throws Never for a parsed change and collection.
  */
-export function writeRecord(collection: Collection, change: RecordChange): Result<Collection> {
+export function writeRecord(
+  collection: Collection,
+  change: RecordChange,
+): Result<Collection> {
   const exists = collection[change.target].some(
     /** Tells whether this record has the change's ID. */
     (record) => record.id === change.value.id,
@@ -60,7 +63,10 @@ function writeRecordList<T extends { readonly id: string }>(
 }
 
 /** Returns the replacement for the record with its ID; any other record as it is. */
-function replaceMatchingRecord<T extends { readonly id: string }>(item: T, replacement: T): T {
+function replaceMatchingRecord<T extends { readonly id: string }>(
+  item: T,
+  replacement: T,
+): T {
   if (item.id !== replacement.id) {
     return item;
   }
@@ -68,7 +74,10 @@ function replaceMatchingRecord<T extends { readonly id: string }>(item: T, repla
 }
 
 /** Writes an object. */
-function writeObjects(collection: Collection, change: RecordChange): Collection {
+function writeObjects(
+  collection: Collection,
+  change: RecordChange,
+): Collection {
   if (change.target !== 'objects') {
     return collection;
   }
@@ -77,7 +86,10 @@ function writeObjects(collection: Collection, change: RecordChange): Collection 
 }
 
 /** Writes a relationship. Section wires keep their own routing. */
-function writeRelationships(collection: Collection, change: RecordChange): Collection {
+function writeRelationships(
+  collection: Collection,
+  change: RecordChange,
+): Collection {
   if (change.target !== 'relationships') {
     return collection;
   }
@@ -104,7 +116,10 @@ function sectionReplacement(
 }
 
 /** Writes a section, after inheriting geometry from the section it replaces. */
-function writeSections(collection: Collection, change: RecordChange): Collection {
+function writeSections(
+  collection: Collection,
+  change: RecordChange,
+): Collection {
   if (change.target !== 'sections') {
     return collection;
   }
@@ -114,7 +129,10 @@ function writeSections(collection: Collection, change: RecordChange): Collection
 }
 
 /** Writes asset metadata; no bytes are stored or fetched. */
-function writeAssets(collection: Collection, change: RecordChange): Collection {
+function writeAssets(
+  collection: Collection,
+  change: RecordChange,
+): Collection {
   if (change.target !== 'assets') {
     return collection;
   }
@@ -123,7 +141,10 @@ function writeAssets(collection: Collection, change: RecordChange): Collection {
 }
 
 /** Writes a provenance source; the source itself is not checked. */
-function writeSources(collection: Collection, change: RecordChange): Collection {
+function writeSources(
+  collection: Collection,
+  change: RecordChange,
+): Collection {
   if (change.target !== 'sources') {
     return collection;
   }
@@ -132,7 +153,10 @@ function writeSources(collection: Collection, change: RecordChange): Collection 
 }
 
 /** Writes a shared type definition. */
-function writeDefinitions(collection: Collection, change: RecordChange): Collection {
+function writeDefinitions(
+  collection: Collection,
+  change: RecordChange,
+): Collection {
   if (change.target !== 'definitions') {
     return collection;
   }

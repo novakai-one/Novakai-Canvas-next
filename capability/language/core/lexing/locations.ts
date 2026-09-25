@@ -31,7 +31,10 @@ export function lineStarts(source: string): readonly number[] {
  * @returns The offset with its line and column, both counted from 1.
  * @throws Never.
  */
-export function position(starts: readonly number[], offset: number): Position {
+export function position(
+  starts: readonly number[],
+  offset: number,
+): Position {
   const line = lineIndex(starts, offset, 0, starts.length);
   return { offset, line: line + 1, column: offset - (starts[line] ?? 0) + 1 };
 }
@@ -45,7 +48,11 @@ export function position(starts: readonly number[], offset: number): Position {
  * @returns The span.
  * @throws Never.
  */
-export function sourceSpan(starts: readonly number[], start: number, end: number): Span {
+export function sourceSpan(
+  starts: readonly number[],
+  start: number,
+  end: number,
+): Span {
   return { start: position(starts, start), end: position(starts, end) };
 }
 

@@ -16,7 +16,10 @@ const escapes: Readonly<Record<string, string>> = { '"': '"', '\\': '\\', n: '\n
  * @returns The text between the quotes with each escape replaced.
  * @throws A `LanguageFault` with a `syntax` diagnostic at `span` for any other escape.
  */
-export function decodeString(text: string, span: Span): string {
+export function decodeString(
+  text: string,
+  span: Span,
+): string {
   return text.slice(1, -1).replace(
     /\\([\s\S])/g,
     /** The character this escape stands for. */
@@ -25,7 +28,10 @@ export function decodeString(text: string, span: Span): string {
 }
 
 /** The character for one escape; any escape outside the four is a `syntax` error. */
-function decodeEscape(code: string, span: Span): string {
+function decodeEscape(
+  code: string,
+  span: Span,
+): string {
   const value = escapes[code];
   if (value === undefined)
     reject('syntax', span, 'quote, backslash, n or t escape', 'Unknown string escape');

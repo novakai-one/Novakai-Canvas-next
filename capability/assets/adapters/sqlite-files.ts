@@ -46,7 +46,10 @@ import type { StoredBlob } from '../contract/records/media.js';
  * @throws Only when checking a thrown value itself throws (see above), from opening, `transact`
  * or `close`. Otherwise never.
  */
-export function createSqliteFiles(database: AssetDatabase, files: BlobFiles): Result<AssetStorage> {
+export function createSqliteFiles(
+  database: AssetDatabase,
+  files: BlobFiles,
+): Result<AssetStorage> {
   try {
     const prepared = initialize(database);
     const view = createView(prepared, files);
@@ -84,7 +87,10 @@ function statements(database: AssetDatabase): Statements {
 }
 
 /** Reads and decodes one metadata value, or returns `null` when the key has no row. */
-function readMetadata(key: string, read: Pick<AssetStatement, 'get'>): unknown | null {
+function readMetadata(
+  key: string,
+  read: Pick<AssetStatement, 'get'>,
+): unknown | null {
   const row = read.get(key);
   if (!row) {
     return null;
@@ -154,7 +160,10 @@ function readDigestKey(key: unknown): Digest {
  * Builds the transaction view over the prepared statements and the blob files. One view object is
  * built per storage and shared by every transaction; it is not frozen.
  */
-function createView(prepared: Statements, files: BlobFiles): AssetTransaction {
+function createView(
+  prepared: Statements,
+  files: BlobFiles,
+): AssetTransaction {
   return {
     readBlob: (id) => readBlob(id, prepared.read, files),
     writeBlob: (blob) => writeBlob(blob, prepared.write, files),
@@ -183,7 +192,10 @@ function failed<T>(error: unknown): Result<T> {
 }
 
 /** Rolls back and returns `outcome`; a failed rollback is reported instead. Deleted files stay deleted. */
-function rollback<T>(database: AssetDatabase, outcome: Result<T>): Result<T> {
+function rollback<T>(
+  database: AssetDatabase,
+  outcome: Result<T>,
+): Result<T> {
   try {
     database.exec('ROLLBACK');
     return outcome;
@@ -197,7 +209,10 @@ function rollback<T>(database: AssetDatabase, outcome: Result<T>): Result<T> {
 }
 
 /** Commits a success; rolls back a failure. */
-function settle<T>(database: AssetDatabase, result: Result<T>): Result<T> {
+function settle<T>(
+  database: AssetDatabase,
+  result: Result<T>,
+): Result<T> {
   if (!result.ok) {
     return rollback(database, result);
   }

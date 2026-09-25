@@ -47,7 +47,11 @@ function stamp(document: RenderDocument): SceneStamp {
   };
 }
 
-function intent(document: RenderDocument, targetId: string, id = 'movement') {
+function intent(
+  document: RenderDocument,
+  targetId: string,
+  id = 'movement',
+) {
   const section = document.scene.sections.find((item) => item.id === 'affected');
   assert(section);
   const node = section.nodes.find(

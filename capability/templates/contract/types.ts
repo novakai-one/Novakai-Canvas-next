@@ -82,7 +82,10 @@ export interface Templates<T> {
    * @param input - The untrusted admission.
    * @returns The frozen admitted preset, or the first failure (including a codec's own failure).
    */
-  validatePreset(catalog: unknown, input: unknown): Result<Preset>;
+  validatePreset(
+    catalog: unknown,
+    input: unknown,
+  ): Result<Preset>;
   /**
    * Admits `input` and plans adding it. An existing version with the same content is a no-op plan
    * (`changed: false`); with different content it is `version-exists`.
@@ -91,7 +94,10 @@ export interface Templates<T> {
    * @param input - The untrusted admission.
    * @returns The frozen plan, or the first failure (including a codec's own failure).
    */
-  planAdmission(catalog: unknown, input: unknown): Result<PresetPlan>;
+  planAdmission(
+    catalog: unknown,
+    input: unknown,
+  ): Result<PresetPlan>;
   /**
    * Lists presets matching the query: `kind` if given, and `search` found in the id, title,
    * description or recipe family. Ordered by kind/id, then by version numerically ascending.
@@ -100,7 +106,10 @@ export interface Templates<T> {
    * @param query - The untrusted query (`search` defaults to empty).
    * @returns The frozen summaries, or the first failure (`invalid-input` for a bad query).
    */
-  list(catalog: unknown, query: unknown): Result<readonly Summary[]>;
+  list(
+    catalog: unknown,
+    query: unknown,
+  ): Result<readonly Summary[]>;
   /**
    * Returns one preset: the named version, or the latest when none is given. A digest may be
    * given only with an exact version, and must then match.
@@ -109,7 +118,10 @@ export interface Templates<T> {
    * @param selection - The untrusted selection.
    * @returns The frozen preset, or `invalid-input`, `missing-preset` or `digest-mismatch`.
    */
-  read(catalog: unknown, selection: unknown): Result<Preset>;
+  read(
+    catalog: unknown,
+    selection: unknown,
+  ): Result<Preset>;
   /**
    * Expands a pinned recipe into diagram intent under a namespace. The recipe is re-inspected by
    * the codec first and must match its admitted payload.
@@ -119,5 +131,8 @@ export interface Templates<T> {
    * @returns The frozen expansion, or the first failure (`invalid-input` for a theme pin,
    * `missing-preset`, `digest-mismatch`, or a codec's own failure).
    */
-  instantiate(catalog: unknown, request: unknown): Result<Expansion<T>>;
+  instantiate(
+    catalog: unknown,
+    request: unknown,
+  ): Result<Expansion<T>>;
 }

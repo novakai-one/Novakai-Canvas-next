@@ -43,7 +43,10 @@ export function compareVersions(
  * @param writes - The request's writes.
  * @returns Success, or `invalid-input` with path `writes` and the broken rule's message.
  */
-export function checkWrites(state: WorkspaceState, writes: readonly Write[]): Result<void> {
+export function checkWrites(
+  state: WorkspaceState,
+  writes: readonly Write[],
+): Result<void> {
   const broken = writeRules.find((rule) => anyWriteBreaks(rule, state, writes));
   if (broken) {
     return fail('invalid-input', 'writes', broken.message);
@@ -64,7 +67,10 @@ export function checkWrites(state: WorkspaceState, writes: readonly Write[]): Re
  * @param write - A put or delete write.
  * @returns The new slot. A put reuses the write's `key`, `value` and `resources` by reference.
  */
-export function writeSlot(state: WorkspaceState, write: SlotWrite): Slot {
+export function writeSlot(
+  state: WorkspaceState,
+  write: SlotWrite,
+): Slot {
   const previousVersion = currentVersion(state, write.key);
   const version = previousVersion === 'absent' ? 0 : previousVersion + 1;
   if (write.kind !== 'put') {
@@ -91,7 +97,10 @@ export function writeSlot(state: WorkspaceState, write: SlotWrite): Slot {
  * @param key - The record to look up.
  * @returns The stored slot's version number, or `'absent'` when there is no slot.
  */
-function currentVersion(state: WorkspaceState, key: ReadVersion['key']): ReadVersion['version'] {
+function currentVersion(
+  state: WorkspaceState,
+  key: ReadVersion['key'],
+): ReadVersion['version'] {
   const previous = findSlot(state, key);
   if (!previous) {
     return 'absent';
@@ -113,12 +122,19 @@ const writeRules: readonly WriteRule[] = [
 ];
 
 /** True when at least one write breaks the rule; writes are checked in order. */
-function anyWriteBreaks(rule: WriteRule, state: WorkspaceState, writes: readonly Write[]): boolean {
+function anyWriteBreaks(
+  rule: WriteRule,
+  state: WorkspaceState,
+  writes: readonly Write[],
+): boolean {
   return writes.some((write) => rule.breaks(state, write));
 }
 
 /** True for a delete whose record is missing or already a tombstone. */
-function invalidDelete(state: WorkspaceState, write: Write): boolean {
+function invalidDelete(
+  state: WorkspaceState,
+  write: Write,
+): boolean {
   if (write.kind !== 'delete') {
     return false;
   }
@@ -127,11 +143,17 @@ function invalidDelete(state: WorkspaceState, write: Write): boolean {
 }
 
 /** True for a purge whose record has no stored slot, live or tombstoned. */
-function invalidPurge(state: WorkspaceState, write: Write): boolean {
+function invalidPurge(
+  state: WorkspaceState,
+  write: Write,
+): boolean {
   return write.kind === 'purge' && findSlot(state, write.key) === undefined;
 }
 
 /** True when the written record is already at the largest safe version number. */
-function exhausted(state: WorkspaceState, write: Write): boolean {
+function exhausted(
+  state: WorkspaceState,
+  write: Write,
+): boolean {
   return currentVersion(state, write.key) === Number.MAX_SAFE_INTEGER;
 }

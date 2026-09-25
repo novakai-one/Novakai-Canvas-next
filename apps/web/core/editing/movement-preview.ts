@@ -174,13 +174,22 @@ function inspectGeometryItem(
 }
 
 /** A section fits its content, so it may shrink or grow when a child moves; it never drifts. */
-function refitted(target: Target, expected: Box, actual: Box): boolean {
+function refitted(
+  target: Target,
+  expected: Box,
+  actual: Box,
+): boolean {
   if (target.kind !== 'section') return false;
   return Math.abs(actual.x - expected.x) < 0.01 && Math.abs(actual.y - expected.y) < 0.01;
 }
 
 /** A group or section may grow to hold a moved child; it never shrinks or drifts away. */
-function grewToHold(document: RenderDocument, target: Target, expected: Box, actual: Box): boolean {
+function grewToHold(
+  document: RenderDocument,
+  target: Target,
+  expected: Box,
+  actual: Box,
+): boolean {
   const container =
     target.kind === 'section' ||
     (target.kind === 'node' &&
@@ -280,7 +289,10 @@ function stoppedShort(
   );
 }
 
-function validateExpectedBox(expected: Box, actual: Box): Result<void> {
+function validateExpectedBox(
+  expected: Box,
+  actual: Box,
+): Result<void> {
   return exactBox(expected, actual)
     ? { ok: true, value: undefined }
     : failure('invalid-edit', 'Movement preview does not match the requested geometry');

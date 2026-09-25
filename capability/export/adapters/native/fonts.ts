@@ -58,7 +58,10 @@ export function createFontDecoder(
   }
 
   /** Decompresses WOFF2; bytes of any other media type pass through unchanged. */
-  async function nativeBytes(bytes: Uint8Array, mediaType: string): Promise<Uint8Array> {
+  async function nativeBytes(
+    bytes: Uint8Array,
+    mediaType: string,
+  ): Promise<Uint8Array> {
     if (mediaType === 'font/woff2') return decompress(bytes);
     return bytes;
   }

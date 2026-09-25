@@ -13,7 +13,11 @@ import type { Diagnostic, ErrorCode, Result } from '../../contract/errors.js';
  * @returns Never returns.
  * @throws AuthoringFault always, carrying the diagnostic built from the arguments.
  */
-export function reject(code: ErrorCode, path: string, message: string): never {
+export function reject(
+  code: ErrorCode,
+  path: string,
+  message: string,
+): never {
   const rejection = failure<never>(code, path, message, [path]);
   return accepted(rejection);
 }
@@ -64,7 +68,10 @@ export function freeze<T>(value: T): T {
  * @param traceId - The trace ID that links the failure to its request.
  * @returns A failed result.
  */
-export function boundaryFailure<T>(error: unknown, traceId: string): Result<T> {
+export function boundaryFailure<T>(
+  error: unknown,
+  traceId: string,
+): Result<T> {
   if (error instanceof AuthoringFault) return { ok: false, error: error.diagnostic };
   return {
     ok: false,
@@ -89,7 +96,10 @@ export function boundaryFailure<T>(error: unknown, traceId: string): Result<T> {
  * @param traceId - The trace ID used when an unexpected error must be reported.
  * @returns The operation's value as a successful result, or the failure it raised.
  */
-export async function protect<T>(operation: () => Promise<T>, traceId: string): Promise<Result<T>> {
+export async function protect<T>(
+  operation: () => Promise<T>,
+  traceId: string,
+): Promise<Result<T>> {
   try {
     const value = await operation();
     return freeze({ ok: true, value });

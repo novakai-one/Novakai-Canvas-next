@@ -51,7 +51,10 @@ export interface Authoring {
    *   receipt has aged out of the bounded receipt log), or a failure: `invalid-input` for a malformed
    *   ID, or `corrupt-record` for a malformed or foreign receipt.
    */
-  receipt(workspace: unknown, request: unknown): Promise<Result<Receipt | null>>;
+  receipt(
+    workspace: unknown,
+    request: unknown,
+  ): Promise<Result<Receipt | null>>;
 
   /**
    * Prepares a request without committing it, for review. Uses no revision.
@@ -62,7 +65,10 @@ export interface Authoring {
    *   failure: for example `invalid-input` when `preview` is not a boolean, `unsupported-version`,
    *   `permission-denied`, `revision-conflict`, `request-reused` or `cancelled`.
    */
-  prepare(request: unknown, preview?: boolean): Promise<Result<Preparation | Receipt>>;
+  prepare(
+    request: unknown,
+    preview?: boolean,
+  ): Promise<Result<Preparation | Receipt>>;
 
   /**
    * Commits a request of any intent kind as one atomic transaction.
@@ -73,7 +79,10 @@ export interface Authoring {
    * @returns The receipt, or a failure: for example `revision-conflict` when a version or the
    *   candidate hash changed, `request-reused`, `permission-denied` or `cancelled`.
    */
-  apply(request: unknown, options?: unknown): Promise<Result<Receipt>>;
+  apply(
+    request: unknown,
+    options?: unknown,
+  ): Promise<Result<Receipt>>;
 
   /**
    * Commits an undo request. Works like `apply`, but the intent must be `undo`.
@@ -82,7 +91,10 @@ export interface Authoring {
    * @param options - Untrusted apply options.
    * @returns The receipt, or a failure: `invalid-input` when the intent is not `undo`, or any `apply` failure.
    */
-  undo(request: unknown, options?: unknown): Promise<Result<Receipt>>;
+  undo(
+    request: unknown,
+    options?: unknown,
+  ): Promise<Result<Receipt>>;
 
   /**
    * Commits a redo request. Works like `apply`, but the intent must be `redo`.
@@ -91,7 +103,10 @@ export interface Authoring {
    * @param options - Untrusted apply options.
    * @returns The receipt, or a failure: `invalid-input` when the intent is not `redo`, or any `apply` failure.
    */
-  redo(request: unknown, options?: unknown): Promise<Result<Receipt>>;
+  redo(
+    request: unknown,
+    options?: unknown,
+  ): Promise<Result<Receipt>>;
 }
 
 /** The collaborators needed to plan and check a candidate. */

@@ -93,7 +93,10 @@ function storageCode(code: string): ErrorCode {
 }
 
 /** Converts a Persistence result: decodes a success, and maps a failure's code, keeping its path and message. */
-function convert<T, U>(result: StorageResult<T>, decode: (input: T) => U): Result<U> {
+function convert<T, U>(
+  result: StorageResult<T>,
+  decode: (input: T) => U,
+): Result<U> {
   if (!result.ok) {
     return failure(storageCode(result.error.code), result.error.path, result.error.message);
   }

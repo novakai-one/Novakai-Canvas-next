@@ -23,7 +23,11 @@ import type { ServiceClient } from './client.js';
 import type { EditPlanner } from '../records/editing.js';
 import type { MoveOption, MoveReview } from '../records/movement.js';
 export interface WorkspaceInputs {
-  history(input: unknown, direction: 'undo' | 'redo', id: string): Result<Request | null>;
+  history(
+    input: unknown,
+    direction: 'undo' | 'redo',
+    id: string,
+  ): Result<Request | null>;
   snapshot(
     input: unknown,
   ): Result<{ readonly snapshot: Snapshot; readonly collections: readonly Collection[] }>;
@@ -49,8 +53,15 @@ export interface WorkspaceInputs {
     changes: readonly Change[],
     request: string,
   ): Result<Request>;
-  library(snapshot: Snapshot, changes: readonly CatalogChange[], request: string): Result<Request>;
-  newSource(id: string, title: string): string;
+  library(
+    snapshot: Snapshot,
+    changes: readonly CatalogChange[],
+    request: string,
+  ): Result<Request>;
+  newSource(
+    id: string,
+    title: string,
+  ): string;
 }
 /** Canvas session construction is separate from server subscriptions and browser editor state. */
 export interface CanvasSessions {
@@ -59,10 +70,16 @@ export interface CanvasSessions {
     document: RenderDocument,
     effects: (effects: readonly CanvasEffect[]) => void,
   ): Result<SessionStore>;
-  update(session: SessionStore, document: RenderDocument): Result<void>;
+  update(
+    session: SessionStore,
+    document: RenderDocument,
+  ): Result<void>;
 }
 export interface DraftRetention {
-  write(key: string, value: unknown): Result<void>;
+  write(
+    key: string,
+    value: unknown,
+  ): Result<void>;
   read(key: string): Result<unknown>;
   remove(key: string): Result<void>;
 }

@@ -70,7 +70,11 @@ function afterFonts(
  * Sizes the raster, checks the native limits, then draws. Only drawing is inside the `try`: a
  * throw while drawing becomes `encoding-failed`, but a throwing bounds or scale read escapes.
  */
-function rasterize(svg: string, input: RenderInput, fonts: readonly NativeFont[]): Result<Encoded> {
+function rasterize(
+  svg: string,
+  input: RenderInput,
+  fonts: readonly NativeFont[],
+): Result<Encoded> {
   const width = Math.ceil(input.selection.bounds.width * input.request.scale);
   const height = Math.ceil(input.selection.bounds.height * input.request.scale);
   if (Math.max(width, height) > 8192 || width * height > 64000000)
@@ -90,7 +94,10 @@ function rasterize(svg: string, input: RenderInput, fonts: readonly NativeFont[]
  * Replaces each `font-family="canvas-<digest>"` attribute with the font's real family name, so
  * resvg finds the pinned font. Other font rules in the SVG are left as they are.
  */
-function bindFamilies(svg: string, fonts: readonly NativeFont[]): string {
+function bindFamilies(
+  svg: string,
+  fonts: readonly NativeFont[],
+): string {
   return fonts.reduce(
     /** Replaces one font's alias with its escaped family name. */
     (text, font) =>
@@ -130,7 +137,12 @@ function renderNative(
  * Wraps the SVG in an outer element of whole pixels whose view box keeps the requested scale.
  * Rounding the size up only adds the fractional remainder as empty space at the edges.
  */
-function rasterViewport(svg: string, width: number, height: number, scale: number): string {
+function rasterViewport(
+  svg: string,
+  width: number,
+  height: number,
+  scale: number,
+): string {
   const size = `width="${width}" height="${height}"`;
   const viewBox = `viewBox="0 0 ${width / scale} ${height / scale}"`;
   return `<svg xmlns="${SVG_NAMESPACE}" ${size} ${viewBox}>${svg}</svg>`;

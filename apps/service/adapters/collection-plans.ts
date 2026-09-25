@@ -65,7 +65,10 @@ function proposal(
   );
 }
 /** Authoring's public schema mints record identity brands and JSON payloads before admitting this owner proposal. */
-function checked(writes: readonly unknown[], collection: string): Result<Proposal> {
+function checked(
+  writes: readonly unknown[],
+  collection: string,
+): Result<Proposal> {
   const result = proposalSchema.safeParse({
     writes,
     reads: [],

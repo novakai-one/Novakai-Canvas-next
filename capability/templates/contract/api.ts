@@ -71,7 +71,11 @@ function withCatalog<T, U>(
  * Admits the input and plans it, so pins and cycles are checked and a changed preset under an
  * existing version is `version-exists`; then returns the admitted preset. Saves nothing.
  */
-function validate<T>(records: Catalog, input: unknown, deps: Dependencies<T>): Result<Preset> {
+function validate<T>(
+  records: Catalog,
+  input: unknown,
+  deps: Dependencies<T>,
+): Result<Preset> {
   const result = admit(records, input, deps);
   if (!result.ok) {
     return result;
@@ -84,7 +88,11 @@ function validate<T>(records: Catalog, input: unknown, deps: Dependencies<T>): R
 }
 
 /** Admits the input in full, then plans it; a failed admission exposes no partial record. */
-function planInput<T>(records: Catalog, input: unknown, deps: Dependencies<T>): Result<PresetPlan> {
+function planInput<T>(
+  records: Catalog,
+  input: unknown,
+  deps: Dependencies<T>,
+): Result<PresetPlan> {
   const result = admit(records, input, deps);
   if (!result.ok) {
     return result;
@@ -93,7 +101,10 @@ function planInput<T>(records: Catalog, input: unknown, deps: Dependencies<T>): 
 }
 
 /** Parses a strict selection (a digest needs an exact version), then selects the preset. */
-function readInput(records: Catalog, input: unknown): Result<Preset> {
+function readInput(
+  records: Catalog,
+  input: unknown,
+): Result<Preset> {
   const request = parse(selection, clone(input));
   if (!request.ok) {
     return request;
@@ -102,7 +113,10 @@ function readInput(records: Catalog, input: unknown): Result<Preset> {
 }
 
 /** Parses the query (applying its defaults once), then lists matching summaries. */
-function listInput(records: Catalog, input: unknown): Result<readonly Summary[]> {
+function listInput(
+  records: Catalog,
+  input: unknown,
+): Result<readonly Summary[]> {
   const request = parse(query, clone(input));
   if (!request.ok) {
     return request;

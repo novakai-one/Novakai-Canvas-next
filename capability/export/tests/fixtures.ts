@@ -532,7 +532,10 @@ function translate(
  * nodes in a row 260 apart, the `apply` wire between the first and last node, and one sequence
  * message with an activation. Every label uses `label`'s measured size.
  */
-function placed(projection: Projection, label: MeasuredContent): PlacedSection {
+function placed(
+  projection: Projection,
+  label: MeasuredContent,
+): PlacedSection {
   const section = projection.sections.at(0);
   assert(section);
   const nodes = section.nodes.map(
@@ -612,7 +615,11 @@ function placed(projection: Projection, label: MeasuredContent): PlacedSection {
 }
 
 /** The scene: one supplied section at revision 7, bounded by that section's box. */
-function fixtureScene(original: Collection, projection: Projection, section: PlacedSection): Scene {
+function fixtureScene(
+  original: Collection,
+  projection: Projection,
+  section: PlacedSection,
+): Scene {
   return {
     collectionId: original.id,
     revision: 7,
@@ -626,7 +633,10 @@ function fixtureScene(original: Collection, projection: Projection, section: Pla
 }
 
 /** The snapshot's resources: the WebP image, the theme preset, then the three pinned fonts. */
-function fixtureResources(image: Resource, fonts: FontSet): readonly Resource[] {
+function fixtureResources(
+  image: Resource,
+  fonts: FontSet,
+): readonly Resource[] {
   return [
     image,
     {

@@ -50,7 +50,10 @@ export async function verifyResources(
  * @param blobs - The backup's blobs.
  * @returns Success, or `corrupt-record` with path `blobs`.
  */
-export function checkCoverage(state: WorkspaceState, blobs: readonly BlobRecord[]): Result<void> {
+export function checkCoverage(
+  state: WorkspaceState,
+  blobs: readonly BlobRecord[],
+): Result<void> {
   const expected = reachableResources(state);
   const supplied = blobs.map((blob) => blob.digest).sort();
   if (!sameDigests(expected, supplied)) {
@@ -88,7 +91,10 @@ export async function withLease<T>(
 }
 
 /** True when both sorted digest lists hold the same digests in the same order. */
-function sameDigests(expected: readonly Digest[], supplied: readonly Digest[]): boolean {
+function sameDigests(
+  expected: readonly Digest[],
+  supplied: readonly Digest[],
+): boolean {
   if (expected.length !== supplied.length) {
     return false;
   }

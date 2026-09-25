@@ -29,7 +29,10 @@ export interface Export {
    * @returns The finished artifact, or a failure. A malformed request fails before any revision
    * is acquired; a throw becomes `encoding-failed`.
    */
-  exportArtifact(input: unknown, signal?: Cancellation): Promise<Result<Artifact>>;
+  exportArtifact(
+    input: unknown,
+    signal?: Cancellation,
+  ): Promise<Result<Artifact>>;
 
   /**
    * Checks bundle bytes without admitting anything.

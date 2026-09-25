@@ -170,7 +170,10 @@ function normalizeSvg(encoded: string): NormalizedMedia {
  * Parses the XML strictly, checking and serializing each element as it opens. An XML declaration
  * is allowed; a DOCTYPE, a processing instruction or a parse error is rejected.
  */
-function parseSvg(source: string, state: SvgState): void {
+function parseSvg(
+  source: string,
+  state: SvgState,
+): void {
   const parser = new SaxesParser({ xmlns: false });
   parser.on('doctype', rejectUnsafe);
   parser.on('processinginstruction', rejectUnsafe);
@@ -206,7 +209,10 @@ function finishSvg(state: SvgState): NormalizedMedia {
 }
 
 /** Checks an opening element and its attributes, then records and serializes it. */
-function openTag(state: SvgState, tag: SaxesTagPlain): void {
+function openTag(
+  state: SvgState,
+  tag: SaxesTagPlain,
+): void {
   checkElement(state, tag);
   state.stack.push(tag);
   Object.entries(tag.attributes).forEach(([name, value]) => inspectAttribute(state, name, value));
@@ -238,7 +244,10 @@ function escapeXml(value: string): string {
 }
 
 /** Checks the attribute name and length, then its value (`xmlns` must be the SVG namespace). */
-function checkAttribute(name: string, value: string): void {
+function checkAttribute(
+  name: string,
+  value: string,
+): void {
   if (!attributes.has(name) || value.length > 65536) {
     rejectUnsafe();
   }
@@ -278,7 +287,10 @@ function checkLocalUrl(value: string): void {
 }
 
 /** Records an ID; it must be well-formed and not seen before. */
-function recordId(state: SvgState, id: string): void {
+function recordId(
+  state: SvgState,
+  id: string,
+): void {
   if (!/^[A-Za-z_][A-Za-z0-9_.:-]*$/.test(id) || state.ids.has(id)) {
     rejectUnsafe();
   }
@@ -286,7 +298,10 @@ function recordId(state: SvgState, id: string): void {
 }
 
 /** Records a `url(#id)` reference; it is not allowed inside a definition element. */
-function recordReference(state: SvgState, value: string): void {
+function recordReference(
+  state: SvgState,
+  value: string,
+): void {
   if (!value.startsWith('url(#')) {
     return;
   }
@@ -297,7 +312,11 @@ function recordReference(state: SvgState, value: string): void {
 }
 
 /** Checks one attribute, then records it as an ID and as a reference where it applies. */
-function inspectAttribute(state: SvgState, name: string, value: string): void {
+function inspectAttribute(
+  state: SvgState,
+  name: string,
+  value: string,
+): void {
   checkAttribute(name, value);
   if (name === 'id') {
     recordId(state, value);
@@ -306,7 +325,10 @@ function inspectAttribute(state: SvgState, name: string, value: string): void {
 }
 
 /** Checks the element is allowed, the root is `svg`, and the count and depth limits hold. */
-function checkElement(state: SvgState, tag: SaxesTagPlain): void {
+function checkElement(
+  state: SvgState,
+  tag: SaxesTagPlain,
+): void {
   if (!elements.has(tag.name)) {
     rejectUnsafe();
   }
@@ -315,7 +337,10 @@ function checkElement(state: SvgState, tag: SaxesTagPlain): void {
 }
 
 /** The first element must be `svg`. */
-function checkRoot(state: SvgState, tag: SaxesTagPlain): void {
+function checkRoot(
+  state: SvgState,
+  tag: SaxesTagPlain,
+): void {
   if (state.tags.length !== 0) {
     return;
   }
@@ -341,7 +366,10 @@ function rootAttributes(tag: SaxesTagPlain): Readonly<Record<string, string>> {
 }
 
 /** Serializes an opening tag with its attributes sorted by name and escaped. */
-function serializeTag(tag: SaxesTagPlain, root: boolean): string {
+function serializeTag(
+  tag: SaxesTagPlain,
+  root: boolean,
+): string {
   const values = root ? rootAttributes(tag) : tag.attributes;
   const serialized = Object.entries(values)
     .sort(([a], [b]) => a.localeCompare(b, 'en'))
@@ -352,7 +380,10 @@ function serializeTag(tag: SaxesTagPlain, root: boolean): string {
 }
 
 /** Reads one root dimension: the attribute (an optional `px` suffix), or else the viewBox value. */
-function dimension(value: string | undefined, fallback: number | undefined): number {
+function dimension(
+  value: string | undefined,
+  fallback: number | undefined,
+): number {
   const parsed = value === undefined ? fallback : Number(value.replace(/px$/, ''));
   if (typeof parsed !== 'number') {
     rejectUnsafe();

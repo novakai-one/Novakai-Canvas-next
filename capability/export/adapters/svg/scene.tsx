@@ -86,7 +86,10 @@ export function createSceneRenderer(
    * Draws one section: its frame, then its title, nodes, wires and sequence geometry moved by the
    * section origin once. Nodes inside groups already include their groups' offsets.
    */
-  function section(item: PlacedSection, paint: Paint): ReactElement {
+  function section(
+    item: PlacedSection,
+    paint: Paint,
+  ): ReactElement {
     return (
       <g key={item.id} data-section={item.id}>
         <rect {...item.box} fill={paint.fill} stroke={paint.stroke} />
@@ -126,7 +129,10 @@ export function createSceneRenderer(
  * Checks every font alias in the SVG (`font-family="canvas-<64 hex digits>"`) names a pinned
  * font, so no text silently falls back to a browser or system font.
  */
-function checkFonts(svg: string, fontDigests: readonly string[]): Result<string> {
+function checkFonts(
+  svg: string,
+  fontDigests: readonly string[],
+): Result<string> {
   const aliases = Array.from(
     svg.matchAll(/font-family="canvas-([a-f0-9]{64})"/g),
     /** The digest part of one font alias. */ (match) => match[1],

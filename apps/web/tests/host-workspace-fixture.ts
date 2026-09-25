@@ -73,7 +73,10 @@ export function request(
   });
 }
 /** Creation must atomically register catalog membership; existing edits never acquire catalog write scope. */
-function catalogVersions(snapshot: Snapshot, create: boolean) {
+function catalogVersions(
+  snapshot: Snapshot,
+  create: boolean,
+) {
   if (!create) return [];
   return snapshot.records
     .filter((item) => item.key.kind === 'catalog' && !item.deleted)

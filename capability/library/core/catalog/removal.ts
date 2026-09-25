@@ -32,7 +32,11 @@ export function removeFolder(
 }
 
 /** Applies the removal policy: `reject` refuses a folder with contents; `rehome` moves them. */
-function removeExisting(catalog: Catalog, folder: Folder, policy: RemovalPolicy): Result<Catalog> {
+function removeExisting(
+  catalog: Catalog,
+  folder: Folder,
+  policy: RemovalPolicy,
+): Result<Catalog> {
   switch (policy) {
     case 'reject':
       return removeEmpty(catalog, folder);
@@ -44,7 +48,10 @@ function removeExisting(catalog: Catalog, folder: Folder, policy: RemovalPolicy)
 }
 
 /** Removes the folder only when it has no child folders and no entries. */
-function removeEmpty(catalog: Catalog, folder: Folder): Result<Catalog> {
+function removeEmpty(
+  catalog: Catalog,
+  folder: Folder,
+): Result<Catalog> {
   if (hasContents(catalog, folder.id)) {
     return failure({
       code: 'folder-not-empty',
@@ -65,14 +72,20 @@ function unsupported(policy: never): Result<Catalog> {
 }
 
 /** Whether any folder has this folder as its parent, or any entry sits in it. */
-function hasContents(catalog: Catalog, id: FolderId): boolean {
+function hasContents(
+  catalog: Catalog,
+  id: FolderId,
+): boolean {
   const hasChildFolder = catalog.folders.some((child) => child.parent === id);
   const hasEntries = catalog.entries.some((entry) => entry.folder === id);
   return hasChildFolder || hasEntries;
 }
 
 /** Removes the folder and moves its direct contents to its parent; every collection is kept. */
-function rehomeContents(catalog: Catalog, removed: Folder): Catalog {
+function rehomeContents(
+  catalog: Catalog,
+  removed: Folder,
+): Catalog {
   const surviving = catalog.folders.filter((folder) => folder.id !== removed.id);
   const folders = surviving.map((folder) => rehomeFolder(folder, removed));
   const entries = catalog.entries.map((entry) => rehomeEntry(entry, removed));
@@ -80,7 +93,10 @@ function rehomeContents(catalog: Catalog, removed: Folder): Catalog {
 }
 
 /** Moves a direct child of the removed folder to its parent; other folders are unchanged. */
-function rehomeFolder(folder: Folder, removed: Folder): Folder {
+function rehomeFolder(
+  folder: Folder,
+  removed: Folder,
+): Folder {
   if (folder.parent !== removed.id) {
     return folder;
   }
@@ -88,7 +104,10 @@ function rehomeFolder(folder: Folder, removed: Folder): Folder {
 }
 
 /** Moves an entry in the removed folder to its parent; other entries are unchanged. */
-function rehomeEntry(entry: CatalogEntry, removed: Folder): CatalogEntry {
+function rehomeEntry(
+  entry: CatalogEntry,
+  removed: Folder,
+): CatalogEntry {
   if (entry.folder !== removed.id) {
     return entry;
   }
@@ -96,7 +115,10 @@ function rehomeEntry(entry: CatalogEntry, removed: Folder): CatalogEntry {
 }
 
 /** A copy of the folder under `parent`. At the root the `parent` key is left out, not undefined. */
-function moveFolder(folder: Folder, parent: FolderId | undefined): Folder {
+function moveFolder(
+  folder: Folder,
+  parent: FolderId | undefined,
+): Folder {
   const { parent: previousParent, ...record } = folder;
   // The old parent is replaced below; `void` marks the variable as deliberately unused.
   void previousParent;
@@ -107,7 +129,10 @@ function moveFolder(folder: Folder, parent: FolderId | undefined): Folder {
 }
 
 /** A copy of the entry in `folder`, keeping order and archive state; no `folder` key at root. */
-function moveEntry(entry: CatalogEntry, folder: FolderId | undefined): CatalogEntry {
+function moveEntry(
+  entry: CatalogEntry,
+  folder: FolderId | undefined,
+): CatalogEntry {
   const { folder: previousFolder, ...record } = entry;
   // The old folder is replaced below; `void` marks the variable as deliberately unused.
   void previousFolder;

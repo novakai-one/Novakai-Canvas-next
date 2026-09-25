@@ -68,7 +68,10 @@ function normalizeRequest(request: QueryRequest): QueryRequest {
 }
 
 /** Checks the folder, then filters and sorts every hit and applies the cursor's offset. */
-function searchSnapshot(snapshot: LibrarySnapshot, request: QueryRequest): Result<QueryPage> {
+function searchSnapshot(
+  snapshot: LibrarySnapshot,
+  request: QueryRequest,
+): Result<QueryPage> {
   const folder = validateFolder(snapshot, request);
   if (!folder.ok) {
     return folder;
@@ -84,7 +87,10 @@ function searchSnapshot(snapshot: LibrarySnapshot, request: QueryRequest): Resul
 }
 
 /** A named folder must exist; no folder means every folder. */
-function validateFolder(snapshot: LibrarySnapshot, request: QueryRequest): Result<true> {
+function validateFolder(
+  snapshot: LibrarySnapshot,
+  request: QueryRequest,
+): Result<true> {
   if (request.folder === undefined) {
     return success(true);
   }

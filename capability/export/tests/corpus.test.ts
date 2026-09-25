@@ -81,7 +81,10 @@ async function collectionMatches(id: string): Promise<void> {
  * without recomputing any routes. Each node: its content, frame kind, shape and frame. Each
  * wire: its label content, its path, and its source and target markers.
  */
-function sectionMatches(element: Element, section: PlacedSection): void {
+function sectionMatches(
+  element: Element,
+  section: PlacedSection,
+): void {
   expect(element.querySelectorAll('[data-node-id]')).toHaveLength(section.nodes.length);
   for (const node of section.nodes) {
     const rendered = element.querySelector(`[data-node-id="${node.id}"]`);
@@ -105,7 +108,10 @@ function sectionMatches(element: Element, section: PlacedSection): void {
  * Checks every measured text run (in order), every rule, and every media reference (in order)
  * appears in the element.
  */
-function contentMatches(element: Element, content: MeasuredContent): void {
+function contentMatches(
+  element: Element,
+  content: MeasuredContent,
+): void {
   const expectedText = content.primitives
     .filter(/** Whether the primitive is text. */ (item) => item.kind === 'text')
     .map(/** The run's text. */ (item) => item.text);
@@ -129,7 +135,10 @@ function contentMatches(element: Element, content: MeasuredContent): void {
  * Checks every measured rule (a table or content separator) is drawn as a visible line with the
  * same end points, stroke colour and width, not only present as text.
  */
-function rulesMatch(element: Element, content: MeasuredContent): void {
+function rulesMatch(
+  element: Element,
+  content: MeasuredContent,
+): void {
   const lines = [...element.querySelectorAll('line')];
   const rendered = lines.map(
     /** The line's end points, stroke colour and stroke width. */
@@ -150,7 +159,10 @@ function rulesMatch(element: Element, content: MeasuredContent): void {
  * Checks the element's marker groups are exactly `kinds`, in order (source before target), and
  * that each one paints its expected shapes (see {@link markerPaintMatches}).
  */
-function markersMatch(element: Element, kinds: readonly MarkerKind[]): void {
+function markersMatch(
+  element: Element,
+  kinds: readonly MarkerKind[],
+): void {
   const expected = kinds;
   expect(
     [...element.querySelectorAll('[data-marker]')].map(
@@ -172,7 +184,10 @@ function markersMatch(element: Element, kinds: readonly MarkerKind[]): void {
  * with a move/line pair and a hex stroke) and circles (each with a positive radius and a hex
  * stroke).
  */
-function markerPaintMatches(element: Element, kind: MarkerKind): void {
+function markerPaintMatches(
+  element: Element,
+  kind: MarkerKind,
+): void {
   const [paths, circles] = markerElements[kind];
   expect(element.querySelectorAll('path')).toHaveLength(paths);
   expect(element.querySelectorAll('circle')).toHaveLength(circles);
@@ -191,7 +206,10 @@ function markerPaintMatches(element: Element, kind: MarkerKind): void {
  * `rect` or `polygon` child in its paint colours, with its measured size (see
  * {@link frameBoundsMatch}) and, where it applies, its header divider.
  */
-function frameMatches(element: Element, placed: PlacedNode): void {
+function frameMatches(
+  element: Element,
+  placed: PlacedNode,
+): void {
   const node = placed.measured;
   const frames = [...element.children].filter(
     /** Whether the child is a frame shape. */ (child) =>
@@ -214,7 +232,10 @@ function frameMatches(element: Element, placed: PlacedNode): void {
  * Checks a frame's size: a decision's diamond has four points; every rectangular frame has the
  * node's measured width and height.
  */
-function frameBoundsMatch(frame: Element, box: Box): void {
+function frameBoundsMatch(
+  frame: Element,
+  box: Box,
+): void {
   if (frame.tagName === 'polygon') {
     expect(frame.getAttribute('points')?.trim().split(/\s+/u)).toHaveLength(4);
     return;
@@ -227,7 +248,10 @@ function frameBoundsMatch(frame: Element, box: Box): void {
  * For a node with a member compartment, checks the first `line` child is the header divider:
  * full width at the header height, in the node's stroke colour. It does not look at field text.
  */
-function headingDividerMatches(element: Element, node: VisualNode): void {
+function headingDividerMatches(
+  element: Element,
+  node: VisualNode,
+): void {
   if (!hasMemberCompartment(node)) return;
   const divider = [...element.children].find(
     /** Whether the child is a line. */ (child) => child.tagName === 'line',
@@ -255,7 +279,10 @@ function hasMemberCompartment(node: VisualNode): boolean {
 }
 
 /** Checks each sequence event: its message content, its marker and its supplied points. */
-function sequenceEventsMatch(element: Element, section: PlacedSection): void {
+function sequenceEventsMatch(
+  element: Element,
+  section: PlacedSection,
+): void {
   expect(element.querySelectorAll('[data-sequence-event]')).toHaveLength(
     section.sequence.events.length,
   );
@@ -276,7 +303,10 @@ function sequenceEventsMatch(element: Element, section: PlacedSection): void {
  * its branches' text, then every event's text, in that order; and each fragment's box is drawn
  * as a rectangle.
  */
-function sequenceFramesMatch(element: Element, section: PlacedSection): void {
+function sequenceFramesMatch(
+  element: Element,
+  section: PlacedSection,
+): void {
   const layer = element.querySelector('[data-layer="sequence"]');
   assert(layer);
   const geometry = section.sequence;
@@ -311,6 +341,9 @@ function sequenceFramesMatch(element: Element, section: PlacedSection): void {
 }
 
 /** The element's `keys` attributes, read in order and converted with `Number`. */
-function numericAttributes(element: Element, keys: readonly string[]): readonly number[] {
+function numericAttributes(
+  element: Element,
+  keys: readonly string[],
+): readonly number[] {
   return keys.map(/** The attribute as a number. */ (key) => Number(element.getAttribute(key)));
 }

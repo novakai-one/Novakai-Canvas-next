@@ -51,5 +51,8 @@ export interface Notifications {
    * @param receipt - The committed receipt.
    * @returns Success, or a failure that Authoring ignores.
    */
-  publish(workspace: WorkspaceId, receipt: Receipt): Promise<Result<void>>;
+  publish(
+    workspace: WorkspaceId,
+    receipt: Receipt,
+  ): Promise<Result<void>>;
 }

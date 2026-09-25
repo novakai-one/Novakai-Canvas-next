@@ -103,7 +103,11 @@ export function success<T>(value: T): Result<T> {
  * the provider, then retry.
  * @throws Never.
  */
-export function failure(code: ErrorCode, path: string, message: string): Result<never> {
+export function failure(
+  code: ErrorCode,
+  path: string,
+  message: string,
+): Result<never> {
   return {
     ok: false,
     error: {

@@ -59,7 +59,10 @@ export function createPanelController(bindings: PanelBindings): PanelController 
     if (stored.value !== null) restoreChecked(stored.value, workspace);
   }
   /** Known registrations decide applicability; persisted values can never inject React renderers. */
-  function restoreChecked(input: unknown, workspace: string): void {
+  function restoreChecked(
+    input: unknown,
+    workspace: string,
+  ): void {
     const checked = bindings.read(input, workspace);
     if (!checked.ok) {
       bindings.report(checked.error.message);
@@ -75,12 +78,20 @@ export function createPanelController(bindings: PanelBindings): PanelController 
       bindings.report('Panel layout was updated for available features');
   }
   /** Only trusted registered section IDs may change preference membership. */
-  function membership(id: string, kind: 'collapsed' | 'hidden', present: boolean): void {
+  function membership(
+    id: string,
+    kind: 'collapsed' | 'hidden',
+    present: boolean,
+  ): void {
     if (!bindings.definitions.some((item) => item.id === id)) return;
     save({ ...state.preferences, [kind]: panelMembership(state.preferences[kind], id, present) });
   }
   /** Numeric layout inputs are bounded; invalid reorder indices cannot move or duplicate a section. */
-  function move(id: string, side: PanelId, index: number): void {
+  function move(
+    id: string,
+    side: PanelId,
+    index: number,
+  ): void {
     if (!Number.isInteger(index)) return;
     if (!bindings.definitions.some((item) => item.id === id && item.defaultSide === side)) return;
     save(movePanelSection(state.preferences, id, side, index));

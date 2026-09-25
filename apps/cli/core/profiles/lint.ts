@@ -16,11 +16,17 @@ type Reference = { readonly kind: 'reference'; readonly id: string };
 const reserved = new Map(buildSpecProfile.slots.map((slot) => [slot.id.slice(1), slot]));
 const appendixPattern = /^(flow|sequence|state)-5([1-9][0-9]*)$/;
 
-function field(declaration: Declaration, name: string): SyntaxValue | undefined {
+function field(
+  declaration: Declaration,
+  name: string,
+): SyntaxValue | undefined {
   return declaration.fields[name]?.value;
 }
 
-function text(declaration: Declaration, name: string): string | undefined {
+function text(
+  declaration: Declaration,
+  name: string,
+): string | undefined {
   const value = field(declaration, name);
   return typeof value === 'string' ? value : undefined;
 }
@@ -41,7 +47,10 @@ function id(declaration: Declaration): string | undefined {
   return reference(field(declaration, 'id'))?.id;
 }
 
-function ids(declaration: Declaration, name: string): readonly string[] {
+function ids(
+  declaration: Declaration,
+  name: string,
+): readonly string[] {
   const value = field(declaration, name);
   if (!Array.isArray(value)) return [];
   return value.flatMap((item) => {
@@ -50,7 +59,10 @@ function ids(declaration: Declaration, name: string): readonly string[] {
   });
 }
 
-function descendants(declaration: Declaration, kind: Declaration['kind']): readonly Declaration[] {
+function descendants(
+  declaration: Declaration,
+  kind: Declaration['kind'],
+): readonly Declaration[] {
   return declaration.children.flatMap((child) => [
     ...(child.kind === kind ? [child] : []),
     ...descendants(child, kind),
@@ -69,7 +81,10 @@ function index(source: ParsedSource): ProfileDeclarationIndex | null {
   };
 }
 
-function span(declaration: Declaration, name?: string): Span {
+function span(
+  declaration: Declaration,
+  name?: string,
+): Span {
   return name === undefined
     ? declaration.span
     : (declaration.fields[name]?.span ?? declaration.span);
@@ -85,7 +100,10 @@ function finding(
   findings.push({ path, message, span: span(declaration, fieldName) });
 }
 
-function sectionById(sections: readonly Declaration[], sectionId: string): Declaration | undefined {
+function sectionById(
+  sections: readonly Declaration[],
+  sectionId: string,
+): Declaration | undefined {
   return sections.find((section) => id(section) === sectionId);
 }
 
@@ -100,14 +118,20 @@ function order(section: Declaration): number | undefined {
   return typeof value === 'number' ? value : undefined;
 }
 
-function lintSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintSections(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   lintSectionIdentity(indexed, findings);
   lintRequiredSections(indexed, findings);
   lintRequiredOrder(indexed, findings);
   lintAppendixShape(indexed, findings);
 }
 
-function lintSectionIdentity(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintSectionIdentity(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   const seen = new Map<string, Declaration>();
   indexed.sections.forEach((section) => {
     const sectionId = id(section);
@@ -145,7 +169,10 @@ function reportReservedMode(
     );
 }
 
-function lintRequiredSections(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintRequiredSections(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   for (const slot of buildSpecProfile.slots) {
     const section = sectionById(indexed.sections, slot.id.slice(1));
     reportRequiredSection(section, slot, indexed.declaration, findings);
@@ -166,7 +193,10 @@ function reportRequiredSection(
     finding(findings, section, `section ${slot.id}`, `Expected mode ${slot.modes[0]}.`, 'mode');
 }
 
-function lintRequiredOrder(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintRequiredOrder(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   const requiredSections = buildSpecProfile.slots.flatMap((slot) => {
     const section = sectionById(indexed.sections, slot.id.slice(1));
     return section === undefined ? [] : [{ slot, section }];
@@ -194,7 +224,10 @@ function reportRequiredOrder(
     );
 }
 
-function lintAppendixShape(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintAppendixShape(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   const appendices = indexed.sections.flatMap((section) => {
     const sectionId = id(section);
     const match = sectionId === undefined ? null : appendixPattern.exec(sectionId);
@@ -288,7 +321,10 @@ function reportAppendixOrder(
     );
 }
 
-function lintRepo(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintRepo(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   const section = sectionById(indexed.sections, 'repo');
   if (section === undefined) return;
   const roots = section.children.filter((child) => child.kind === 'root');
@@ -462,7 +498,10 @@ function processReachability(
   queue.push(...(childrenByParent.get(current) ?? []));
 }
 
-function lintModules(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintModules(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   const repo = sectionById(indexed.sections, 'repo');
   const modules = sectionById(indexed.sections, 'modules');
   if (repo === undefined || modules === undefined) return;
@@ -502,7 +541,10 @@ function isModuleKind(node: Declaration): boolean {
   return ['module', 'interface'].includes(text(node, 'kind') ?? '');
 }
 
-function lintEntitiesAndCrud(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintEntitiesAndCrud(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   const entities = sectionById(indexed.sections, 'entities');
   const ownership = sectionById(indexed.sections, 'ownership');
   if (entities === undefined || ownership === undefined) return;
@@ -583,7 +625,10 @@ function lacksInvariant(entity: Declaration): boolean {
   return !entity.children.some((child) => child.kind === 'text');
 }
 
-function reportCrudTableCount(ownership: Declaration, findings: ProfileFinding[]): void {
+function reportCrudTableCount(
+  ownership: Declaration,
+  findings: ProfileFinding[],
+): void {
   finding(
     findings,
     ownership,
@@ -592,7 +637,10 @@ function reportCrudTableCount(ownership: Declaration, findings: ProfileFinding[]
   );
 }
 
-function reportCrudColumns(table: Declaration, findings: ProfileFinding[]): void {
+function reportCrudColumns(
+  table: Declaration,
+  findings: ProfileFinding[],
+): void {
   const columns = field(table, 'columns');
   const expected = ['Object', 'Create', 'Read', 'Update', 'Delete'];
   if (invalidCrudColumns(columns, expected))
@@ -605,7 +653,10 @@ function reportCrudColumns(table: Declaration, findings: ProfileFinding[]): void
     );
 }
 
-function invalidCrudColumns(columns: SyntaxValue, expected: readonly string[]): boolean {
+function invalidCrudColumns(
+  columns: SyntaxValue,
+  expected: readonly string[],
+): boolean {
   return (
     !Array.isArray(columns) ||
     columns.length !== expected.length ||
@@ -644,7 +695,10 @@ function reportCrudRow(
     finding(findings, row, `row @${rowId ?? '?'}`, 'CRUD rows must contain five cells.', 'cells');
 }
 
-function invalidCrudRowId(rowId: string | undefined, expectedRows: ReadonlySet<string>): boolean {
+function invalidCrudRowId(
+  rowId: string | undefined,
+  expectedRows: ReadonlySet<string>,
+): boolean {
   return rowId === undefined || !expectedRows.has(rowId);
 }
 
@@ -684,7 +738,10 @@ function reportDuplicateRows(
   });
 }
 
-function lintAppendices(indexed: ProfileDeclarationIndex, findings: ProfileFinding[]): void {
+function lintAppendices(
+  indexed: ProfileDeclarationIndex,
+  findings: ProfileFinding[],
+): void {
   indexed.sections.forEach((section) => {
     const sectionId = id(section);
     const match = sectionId === undefined ? null : appendixPattern.exec(sectionId);

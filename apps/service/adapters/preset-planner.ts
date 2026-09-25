@@ -78,7 +78,10 @@ function compared(
   return insertion(prepared, snapshot);
 }
 /** Every new identity changes shared metadata in the same proposal; competing inserts cannot both pass physical CAS. */
-function insertion(prepared: PresetPreparation, snapshot: Snapshot): Result<Proposal> {
+function insertion(
+  prepared: PresetPreparation,
+  snapshot: Snapshot,
+): Result<Proposal> {
   const metadata = snapshot.records.find(
     (item) => item.key.kind === 'workspace' && item.key.id === 'metadata' && !item.deleted,
   );

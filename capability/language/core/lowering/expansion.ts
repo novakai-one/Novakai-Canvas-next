@@ -25,12 +25,18 @@ import { lowerDocument } from './document.js';
  * `provider-failure` when a Model role throws.
  * @throws Never.
  */
-export function expandRecipe(input: ExpansionRequest, deps: Dependencies): Result<LoweredIntent> {
+export function expandRecipe(
+  input: ExpansionRequest,
+  deps: Dependencies,
+): Result<LoweredIntent> {
   return protect(/** Expands the recipe. */ () => expandedRecipe(input, deps));
 }
 
 /** Parses the recipe, gives its root the new ID, then lowers it as a new collection. */
-function expandedRecipe(input: ExpansionRequest, deps: Dependencies): LoweredIntent {
+function expandedRecipe(
+  input: ExpansionRequest,
+  deps: Dependencies,
+): LoweredIntent {
   const parsed = parseSource(input.source);
   if (parsed.kind !== 'canvas')
     reject(

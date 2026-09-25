@@ -26,7 +26,10 @@ export function success<T>(value: T): Result<T> {
  * One diagnostic when a rule is violated, none otherwise. Throughout Library, `true` means the
  * rule is violated (the same convention as Model).
  */
-export function diagnoseWhen(violated: boolean, diagnostic: Diagnostic): readonly Diagnostic[] {
+export function diagnoseWhen(
+  violated: boolean,
+  diagnostic: Diagnostic,
+): readonly Diagnostic[] {
   if (!violated) {
     return [];
   }
@@ -42,7 +45,10 @@ export function diagnoseWhen(violated: boolean, diagnostic: Diagnostic): readonl
  *
  * @throws Whatever reading the input throws (for example a getter); {@link protect} catches it.
  */
-export function parse<T>(parser: Parser<T>, input: unknown): Result<T> {
+export function parse<T>(
+  parser: Parser<T>,
+  input: unknown,
+): Result<T> {
   const parsed = parser.safeParse(input);
   if (parsed.success) {
     return success(parsed.data);

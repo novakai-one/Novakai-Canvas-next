@@ -39,7 +39,11 @@ export async function commitAndReconcile(
 }
 
 /** Checks the store's receipt belongs to this request and has its fingerprint. */
-function checkCommitted(request: Request, input: unknown, commit: CommitRequest): Receipt {
+function checkCommitted(
+  request: Request,
+  input: unknown,
+  commit: CommitRequest,
+): Receipt {
   const receipt = readReceipt(input, request.request);
   if (receipt.fingerprint !== commit.fingerprint)
     reject('corrupt-record', 'receipt', 'Commit returned a different request fingerprint');

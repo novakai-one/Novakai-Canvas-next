@@ -12,7 +12,10 @@ export const byteBackup = z.strictObject({
 export type ByteBackup = z.infer<typeof byteBackup>;
 /** Filesystem reads are confined to the DSL or theme source directory. */
 export interface ResourceFiles {
-  read(file: string, request: ResourceRequest): Promise<Result<LocalInput>>;
+  read(
+    file: string,
+    request: ResourceRequest,
+  ): Promise<Result<LocalInput>>;
 }
 export interface LocalInput {
   readonly alias: string;
@@ -31,7 +34,10 @@ export interface PresetInputs {
     id: string,
     assets: readonly { readonly alias: string; readonly digest: string }[],
   ): Result<Request>;
-  expansion(pin: string, namespace: string): Result<unknown>;
+  expansion(
+    pin: string,
+    namespace: string,
+  ): Result<unknown>;
 }
 export interface ResourceSyntax {
   requests(source: string): Result<readonly ResourceRequest[]>;

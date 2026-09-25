@@ -53,7 +53,11 @@ function isSequence(item: Declaration): boolean {
  * is the construct; an event's written `kind=` is kept as `message`. A fragment is followed by
  * its contents.
  */
-function lowerItem(item: Declaration, order: number, scope: SequenceScope): readonly RawRecord[] {
+function lowerItem(
+  item: Declaration,
+  order: number,
+  scope: SequenceScope,
+): readonly RawRecord[] {
   const base = { ...lowerRecord(item), ...scope, order, kind: item.kind };
   if (item.kind === 'event') return [base];
   return lowerFragment(item, base);
@@ -63,13 +67,20 @@ function lowerItem(item: Declaration, order: number, scope: SequenceScope): read
  * A branch's written ID, or else `<fragment>-branch-<n>`: `n` is the branch's position among all
  * of the `alt`'s branches, counting from 1.
  */
-function branchId(fragment: string, branch: Declaration, index: number): string {
+function branchId(
+  fragment: string,
+  branch: Declaration,
+  index: number,
+): string {
   if (branch.fields.id !== undefined) return id(branch.fields);
   return `${fragment}-branch-${index + 1}`;
 }
 
 /** An `alt` fragment (see {@link lowerAlternatives}); any other must not contain branches. */
-function lowerFragment(item: Declaration, base: RawRecord): readonly RawRecord[] {
+function lowerFragment(
+  item: Declaration,
+  base: RawRecord,
+): readonly RawRecord[] {
   if (text(item.fields, 'operator') === 'alt') return lowerAlternatives(item, base);
   if (item.children.some(/** Whether the child is a branch. */ (child) => child.kind === 'branch'))
     reject('syntax', item.span, 'event or fragment', 'Only alt contains branches');
@@ -80,7 +91,10 @@ function lowerFragment(item: Declaration, base: RawRecord): readonly RawRecord[]
  * An `alt` fragment: only branches inside. The fragment lists its branches (ID and label) in
  * order; then each branch's contents follow, with `parent` and `branch` set.
  */
-function lowerAlternatives(item: Declaration, base: RawRecord): readonly RawRecord[] {
+function lowerAlternatives(
+  item: Declaration,
+  base: RawRecord,
+): readonly RawRecord[] {
   if (
     item.children.some(/** Whether the child is not a branch. */ (child) => child.kind !== 'branch')
   )

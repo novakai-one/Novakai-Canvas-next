@@ -103,7 +103,10 @@ const native: FileSystem = {
 };
 
 /** Reads a file, or returns `null` when it does not exist. Other errors are thrown. */
-function readFile(path: string, io: Pick<FileSystem, 'read'>): string | null {
+function readFile(
+  path: string,
+  io: Pick<FileSystem, 'read'>,
+): string | null {
   try {
     return io.read(path);
   } catch (error) {
@@ -112,7 +115,10 @@ function readFile(path: string, io: Pick<FileSystem, 'read'>): string | null {
 }
 
 /** Tells whether an error has the given native `code`. The message is never parsed. */
-function hasCode(error: unknown, code: string): boolean {
+function hasCode(
+  error: unknown,
+  code: string,
+): boolean {
   if (typeof error !== 'object' || error === null) {
     return false;
   }
@@ -120,7 +126,10 @@ function hasCode(error: unknown, code: string): boolean {
 }
 
 /** Throws `corrupt-asset` unless the existing bytes equal the new ones; a digest's file never changes. */
-function requireSame(previous: string | null, encoded: string): void {
+function requireSame(
+  previous: string | null,
+  encoded: string,
+): void {
   if (previous !== encoded) {
     throw new StorageFault(
       'corrupt-asset',
@@ -146,7 +155,10 @@ function writeTemporary(
 }
 
 /** Deletes a file; a missing file is not an error, so cleanup can run twice. */
-function removeFile(path: string, io: Pick<FileSystem, 'remove'>): void {
+function removeFile(
+  path: string,
+  io: Pick<FileSystem, 'remove'>,
+): void {
   try {
     io.remove(path);
   } catch (error) {
@@ -224,7 +236,10 @@ function cleanupTemporary(
 }
 
 /** Cleans up temporary files, then lists the digests of blob files. Other names are ignored. */
-function listFiles(root: string, io: Pick<FileSystem, 'list' | 'remove'>): readonly Digest[] {
+function listFiles(
+  root: string,
+  io: Pick<FileSystem, 'list' | 'remove'>,
+): readonly Digest[] {
   const names = io.list(root);
   cleanupTemporary(root, names, io);
   return names

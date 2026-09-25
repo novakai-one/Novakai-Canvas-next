@@ -139,6 +139,9 @@ function FailureState({
   );
 }
 
-function collectionTitle(view: CollectionChooserProps['view'], id: string): string {
+function collectionTitle(
+  view: CollectionChooserProps['view'],
+  id: string,
+): string {
   return view.collections.find((item) => item.id === id)?.title ?? 'this collection';
 }

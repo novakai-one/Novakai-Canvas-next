@@ -18,7 +18,10 @@ import { success } from '../validation/outcomes.js';
  * @throws Never for plain snapshot data. A throwing getter or proxy in the snapshot propagates;
  * `produce` runs this inside `protect`, which turns it into `encoding-failed`.
  */
-export function selectScope(snapshot: Snapshot, scope: Scope): Result<Selection> {
+export function selectScope(
+  snapshot: Snapshot,
+  scope: Scope,
+): Result<Selection> {
   if (scope.kind === 'all')
     return success({ sections: snapshot.scene.sections, bounds: snapshot.scene.bounds });
   const section = snapshot.scene.sections.find(

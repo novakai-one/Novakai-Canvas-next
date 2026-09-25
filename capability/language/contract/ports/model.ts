@@ -29,7 +29,10 @@ export interface ModelPlanner {
    * @returns The checked plan, or Model's rejection.
    * @throws Whatever the implementation throws; Language reports it as `provider-failure`.
    */
-  plan(snapshot: unknown, changes: unknown): Result<ChangePlan>;
+  plan(
+    snapshot: unknown,
+    changes: unknown,
+  ): Result<ChangePlan>;
 }
 
 /** Model's step-by-step application of changes, including unchecked intermediate states. */
@@ -43,7 +46,10 @@ export interface ModelStage {
    * @returns The staged candidate and changes, or Model's rejection.
    * @throws Whatever the implementation throws; Language reports it as `provider-failure`.
    */
-  stage(snapshot: unknown, changes: unknown): Result<ChangeStage>;
+  stage(
+    snapshot: unknown,
+    changes: unknown,
+  ): Result<ChangeStage>;
 }
 
 export type {

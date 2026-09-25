@@ -122,7 +122,10 @@ export type UseScene = (session: SurfaceSession, reader: ViewReader) => Result<V
 export interface ViewActions {
   dispatch(event: CanvasEvent): void;
   beginResize(target: Target): void;
-  resize(target: Target, box: Box): void;
+  resize(
+    target: Target,
+    box: Box,
+  ): void;
   finishGeometry(): void;
   cancelGeometry(): void;
   nextId(): string;

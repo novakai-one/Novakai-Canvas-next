@@ -72,7 +72,11 @@ function collectTokens(source: string): readonly Token[] {
  * Adds one lexeme as a token, unless it is whitespace or a comment. A lone `"` is rejected, and
  * the token limit is checked before the array grows.
  */
-function appendToken(tokens: Token[], match: RegExpExecArray, starts: readonly number[]): void {
+function appendToken(
+  tokens: Token[],
+  match: RegExpExecArray,
+  starts: readonly number[],
+): void {
   if (isTrivia(match[0])) return;
   requireCompleteLexeme(match, starts);
   if (tokens.length >= maxTokens)
@@ -90,7 +94,10 @@ function isTrivia(text: string): boolean {
 }
 
 /** Rejects a lone `"`: a string that never closes matched only the any-character fallback. */
-function requireCompleteLexeme(match: RegExpExecArray, starts: readonly number[]): void {
+function requireCompleteLexeme(
+  match: RegExpExecArray,
+  starts: readonly number[],
+): void {
   if (match[0] === '"')
     reject(
       'syntax',

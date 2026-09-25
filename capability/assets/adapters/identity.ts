@@ -63,7 +63,10 @@ const native: NativeIdentity = {
 };
 
 /** Hashes canonical base64; any throw becomes `invalid-input`. */
-function hashBytes(encoded: string, identity: Pick<NativeIdentity, 'hash'>): Result<Digest> {
+function hashBytes(
+  encoded: string,
+  identity: Pick<NativeIdentity, 'hash'>,
+): Result<Digest> {
   try {
     return hashChecked(encoded, identity);
   } catch {
@@ -75,7 +78,10 @@ function hashBytes(encoded: string, identity: Pick<NativeIdentity, 'hash'>): Res
  * Checks the alphabet and the canonical round trip, then hashes. One spelling per byte sequence
  * means junk or alternative encodings cannot change an asset's identity.
  */
-function hashChecked(encoded: string, identity: Pick<NativeIdentity, 'hash'>): Result<Digest> {
+function hashChecked(
+  encoded: string,
+  identity: Pick<NativeIdentity, 'hash'>,
+): Result<Digest> {
   const parsed = base64Schema.safeParse(encoded);
   if (!parsed.success) {
     return fail('invalid-input', 'base64', 'Invalid base64 encoding');
@@ -88,7 +94,10 @@ function hashChecked(encoded: string, identity: Pick<NativeIdentity, 'hash'>): R
 }
 
 /** Only `ESRCH` proves a process is gone; every other outcome keeps the lease. */
-function ownerAlive(pid: number, identity: Pick<NativeIdentity, 'signal'>): boolean {
+function ownerAlive(
+  pid: number,
+  identity: Pick<NativeIdentity, 'signal'>,
+): boolean {
   try {
     identity.signal(pid);
     return true;

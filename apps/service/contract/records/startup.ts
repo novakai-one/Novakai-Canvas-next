@@ -12,7 +12,10 @@ export interface WorkspaceOptions {
 }
 export interface NativeFactories {
   assets(root: string): AssetResult<Assets>;
-  storage(location: string, workspace: string): StorageResult<Persistence>;
+  storage(
+    location: string,
+    workspace: string,
+  ): StorageResult<Persistence>;
 }
 export interface NativeWorkspace {
   readonly assets: Assets;

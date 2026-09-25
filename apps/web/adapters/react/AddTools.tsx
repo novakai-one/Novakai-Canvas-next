@@ -112,7 +112,10 @@ function barShowsSame(view: FeatureProps['view']): boolean {
   return shown.includes(view.creation.problem ?? '');
 }
 /** A section from another collection (or none) falls back to the first diagram, so the select and the submit agree. */
-function selectedSection(current: string, sections: readonly Section[]): string {
+function selectedSection(
+  current: string,
+  sections: readonly Section[],
+): string {
   return sections.some((section) => section.id === current) ? current : (sections[0]?.id ?? '');
 }
 type FormSlots = Pick<DesignSlots, 'Field' | 'Button'>;
@@ -441,16 +444,25 @@ function moduleField(
 function objectActionLabel(draft: AddObjectDraft): string {
   return draft.reuseObject === null ? 'Add module' : 'Reuse object';
 }
-function objectDisabled(busy: boolean, draft: AddObjectDraft): boolean {
+function objectDisabled(
+  busy: boolean,
+  draft: AddObjectDraft,
+): boolean {
   return busy || (draft.reuseObject === null && draft.label.trim().length === 0);
 }
 
 /** Objects that already appear in the target diagram cannot be reused there again. */
-function presentObjects(sections: readonly Section[], target: string): ReadonlySet<string> {
+function presentObjects(
+  sections: readonly Section[],
+  target: string,
+): ReadonlySet<string> {
   const section = sections.find((item) => item.id === target);
   return new Set(section?.appearances.map((appearance) => appearance.object) ?? []);
 }
-function reuseLabel(item: DiagramObject, present: ReadonlySet<string>): string {
+function reuseLabel(
+  item: DiagramObject,
+  present: ReadonlySet<string>,
+): string {
   return present.has(item.id) ? `${item.label} · already in this diagram` : item.label;
 }
 

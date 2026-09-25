@@ -57,7 +57,10 @@ const commitGates: readonly ((state: WorkspaceState, request: CommitRequest) => 
 ];
 
 /** Runs every gate, returns the first failure, and otherwise builds the commit. */
-function admitCommit(state: WorkspaceState, request: CommitRequest): Result<Decision<Receipt>> {
+function admitCommit(
+  state: WorkspaceState,
+  request: CommitRequest,
+): Result<Decision<Receipt>> {
   const results = commitGates.map((gate) => gate(state, request));
   const failure = results.find(isFailure);
   if (failure !== undefined) {
@@ -84,7 +87,10 @@ function checkSequence(state: WorkspaceState): Result<void> {
  * - The receipt lists each new slot's version, then `'absent'` for each purged record.
  * - Only the newest {@link RECEIPT_LIMIT} receipts are kept.
  */
-function createCommit(state: WorkspaceState, request: CommitRequest): Result<Decision<Receipt>> {
+function createCommit(
+  state: WorkspaceState,
+  request: CommitRequest,
+): Result<Decision<Receipt>> {
   const kept = request.writes.filter(createsSlot);
   const replacements = kept.map((write) => writeSlot(state, write));
   const removed = new Set(request.writes.map((write) => keyText(write.key)));

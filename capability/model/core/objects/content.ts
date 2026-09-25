@@ -100,7 +100,10 @@ function validateContentPlacement(
 }
 
 /** Reports each row of a table block whose cell count differs from its column count. */
-function validateTableWidth(block: ContentBlock, path: string): readonly Diagnostic[] {
+function validateTableWidth(
+  block: ContentBlock,
+  path: string,
+): readonly Diagnostic[] {
   if (block.kind !== 'table') {
     return [];
   }

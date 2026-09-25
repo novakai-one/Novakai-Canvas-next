@@ -195,7 +195,10 @@ export function createWorkspaceSidePanel(slots: PanelSlots): ComponentType<Panel
 }
 
 /** Modal geometry is chosen from shell mode; the shared Dialog owns its token styling and focus behavior. */
-function placement(mode: PanelMode, side: PanelId): 'left' | 'right' | 'bottom' {
+function placement(
+  mode: PanelMode,
+  side: PanelId,
+): 'left' | 'right' | 'bottom' {
   if (mode === 'sheet') return 'bottom';
   return side;
 }

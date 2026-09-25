@@ -54,13 +54,20 @@ function collect<T>(
 }
 
 /** Rejects another item once `maximum` items are read (for example 1000 patch operations). */
-function requireCapacity(count: number, maximum: number, cursor: Cursor): void {
+function requireCapacity(
+  count: number,
+  maximum: number,
+  cursor: Cursor,
+): void {
   if (count >= maximum)
     reject('limit', peek(cursor).span, `At most ${maximum} items`, 'Statement limit exceeded');
 }
 
 /** Rejects a reader that did not move the cursor forward, as a `provider-failure`. */
-function checkProgress(before: Cursor, after: Cursor): void {
+function checkProgress(
+  before: Cursor,
+  after: Cursor,
+): void {
   if (after.index <= before.index)
     reject(
       'provider-failure',

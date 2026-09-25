@@ -93,7 +93,10 @@ function validateRoleOverride(
  * Checks a section's references to shared records: shown objects exist, role overrides are in
  * the theme, one wire per relationship, then each wire.
  */
-function validateViewReferences(section: Section, collection: Collection): readonly Diagnostic[] {
+function validateViewReferences(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   const path = sectionPath(section);
   const objectIssues = visibleObjects(section).flatMap(
     /** Reports a shown object that does not exist. */
@@ -137,7 +140,10 @@ const sectionRules: readonly SectionRule[] = Object.freeze([
 ]);
 
 /** Checks one section with every section rule, groups first. */
-function validateSection(section: Section, collection: Collection): readonly Diagnostic[] {
+function validateSection(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   return sectionRules.flatMap(
     /** Runs one rule on the section. */
     (rule) => rule(section, collection),

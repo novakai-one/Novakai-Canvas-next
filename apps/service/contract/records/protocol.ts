@@ -40,7 +40,10 @@ export interface ApiRouter {
   invoke(call: ApiCall): Promise<RouteOutcome>;
 }
 export interface CommandDecoder {
-  read(body: string, context: CommandAdmission): Result<AdmittedMutation>;
+  read(
+    body: string,
+    context: CommandAdmission,
+  ): Result<AdmittedMutation>;
 }
 /** HTTP consumers decode this envelope before handing success values to their respective capability readers. */
 export const responseEnvelope = z.strictObject({

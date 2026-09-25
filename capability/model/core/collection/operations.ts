@@ -26,7 +26,10 @@ import { editView } from './view-operations.js';
  * @returns The new collection, or `validation-failed` from the operation. Not frozen.
  * @throws Never for a parsed change and collection.
  */
-export function applyOperation(collection: Collection, change: Change): Result<Collection> {
+export function applyOperation(
+  collection: Collection,
+  change: Change,
+): Result<Collection> {
   const handler = operationHandlers[change.op];
   return handler(collection, change);
 }
@@ -38,7 +41,10 @@ type OperationHandler = (collection: Collection, change: Change) => Result<Colle
  * Replaces the whole collection. The replacement must keep the current ID and revision; geometry
  * its sections omit is carried over from the current sections with the same ID.
  */
-function replaceDocument(collection: Collection, replacement: Collection): Result<Collection> {
+function replaceDocument(
+  collection: Collection,
+  replacement: Collection,
+): Result<Collection> {
   const identityChanged =
     collection.id !== replacement.id || collection.revision !== replacement.revision;
   if (identityChanged) {

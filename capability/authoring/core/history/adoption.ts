@@ -56,7 +56,10 @@ export async function initializeHistory(
 }
 
 /** Checks an already adopted workspace, then trims its history when it is over the limits. */
-async function reopenedAndTrimmed(snapshot: Snapshot, deps: Dependencies): Promise<HistoryStatus> {
+async function reopenedAndTrimmed(
+  snapshot: Snapshot,
+  deps: Dependencies,
+): Promise<HistoryStatus> {
   const adoptionReceipt = accepted(await deps.receipts.find(snapshot.workspace, migrationId));
   const status = reopened(snapshot, adoptionReceipt, deps);
 
@@ -72,7 +75,11 @@ async function reopenedAndTrimmed(snapshot: Snapshot, deps: Dependencies): Promi
  * Checks the adoption receipt, when one is still stored, and returns the history status.
  * The receipt may be missing because the receipt log is bounded.
  */
-function reopened(snapshot: Snapshot, receipt: Receipt | null, deps: Dependencies): HistoryStatus {
+function reopened(
+  snapshot: Snapshot,
+  receipt: Receipt | null,
+  deps: Dependencies,
+): HistoryStatus {
   if (receipt === null) return historyStatus(snapshot);
 
   readReceipt(receipt, migrationId);
@@ -101,7 +108,10 @@ function checkAdoptionReceipt(receipt: Receipt): void {
  * The commit expects every existing record at its current version and a unique receipt, so
  * concurrent adoptions cannot both succeed.
  */
-async function adopt(snapshot: Snapshot, deps: Dependencies): Promise<HistoryStatus> {
+async function adopt(
+  snapshot: Snapshot,
+  deps: Dependencies,
+): Promise<HistoryStatus> {
   const frontier = snapshot.records
     .filter((record) => record.key.kind !== 'history')
     .map((record) => versionOf(snapshot, record.key));
@@ -141,7 +151,10 @@ async function adopt(snapshot: Snapshot, deps: Dependencies): Promise<HistorySta
  * Builds the commit that trims history to the limits and purges unreachable history records.
  * Returns `null` when history is already within the limits and nothing is stale.
  */
-function compaction(snapshot: Snapshot, deps: Dependencies): CommitRequest | null {
+function compaction(
+  snapshot: Snapshot,
+  deps: Dependencies,
+): CommitRequest | null {
   const history = readNavigation(snapshot);
   const bounded = boundNavigation(snapshot, history);
   const purges = staleHistory(snapshot, bounded.actions, []);
@@ -164,7 +177,10 @@ function compaction(snapshot: Snapshot, deps: Dependencies): CommitRequest | nul
 }
 
 /** Commits a history-only change, treating a lost acknowledgement as success when its receipt is stored. */
-async function commitHistoryChange(commit: CommitRequest, deps: Dependencies): Promise<void> {
+async function commitHistoryChange(
+  commit: CommitRequest,
+  deps: Dependencies,
+): Promise<void> {
   try {
     accepted(await deps.commits.commit(commit));
   } catch (error) {
@@ -188,7 +204,10 @@ async function reconcileHistoryCommit(
 }
 
 /** Tries a trimming commit. Returns `false` instead of failing, so opening never fails over trimming. */
-async function settled(commit: CommitRequest, deps: Dependencies): Promise<boolean> {
+async function settled(
+  commit: CommitRequest,
+  deps: Dependencies,
+): Promise<boolean> {
   try {
     await commitHistoryChange(commit, deps);
     return true;
@@ -198,7 +217,10 @@ async function settled(commit: CommitRequest, deps: Dependencies): Promise<boole
 }
 
 /** Hashes the fixed adoption identity of a workspace. */
-function adoptionFingerprint(snapshot: Snapshot, deps: Dependencies): Digest {
+function adoptionFingerprint(
+  snapshot: Snapshot,
+  deps: Dependencies,
+): Digest {
   return accepted(deps.hash.digest(`history-adoption-v1:${snapshot.workspace}`));
 }
 

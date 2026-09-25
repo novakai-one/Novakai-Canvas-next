@@ -46,7 +46,10 @@ const comparators: Readonly<Record<SortMode, (left: RankedHit, right: RankedHit)
  * guarantees every hit's collection has an entry; a collection never visited gets -1, below every
  * real epoch.
  */
-function rankMetadata(hit: SearchHit, snapshot: LibrarySnapshot): RankedHit {
+function rankMetadata(
+  hit: SearchHit,
+  snapshot: LibrarySnapshot,
+): RankedHit {
   const entry = snapshot.catalog.entries.find(
     (candidate) => candidate.collection === hit.collection,
   );
@@ -55,7 +58,10 @@ function rankMetadata(hit: SearchHit, snapshot: LibrarySnapshot): RankedHit {
 }
 
 /** The `order` sort: entry order, collection ID, hit kind, then hit ID. */
-function compareOrder(left: RankedHit, right: RankedHit): number {
+function compareOrder(
+  left: RankedHit,
+  right: RankedHit,
+): number {
   const membershipOrder = left.order - right.order;
   const collectionIdentity = compareText(left.hit.collection, right.hit.collection);
   const kind = HIT_KINDS.indexOf(left.hit.kind) - HIT_KINDS.indexOf(right.hit.kind);
@@ -64,14 +70,20 @@ function compareOrder(left: RankedHit, right: RankedHit): number {
 }
 
 /** The `title` sort: the lowercased label, then the `order` sort. */
-function compareTitle(left: RankedHit, right: RankedHit): number {
+function compareTitle(
+  left: RankedHit,
+  right: RankedHit,
+): number {
   const leftTitle = left.hit.label.toLowerCase();
   const rightTitle = right.hit.label.toLowerCase();
   return firstDifference([compareText(leftTitle, rightTitle), compareOrder(left, right)]);
 }
 
 /** The `recent` sort: the most recent visit first, then the `order` sort. */
-function compareRecent(left: RankedHit, right: RankedHit): number {
+function compareRecent(
+  left: RankedHit,
+  right: RankedHit,
+): number {
   return firstDifference([right.openedAt - left.openedAt, compareOrder(left, right)]);
 }
 

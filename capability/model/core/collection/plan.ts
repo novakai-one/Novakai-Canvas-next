@@ -29,7 +29,10 @@ import { describeImpact } from './impact.js';
  * Either outcome is deeply frozen.
  * @throws Never.
  */
-export function planChanges(snapshot: unknown, changes: unknown): Result<ChangePlan> {
+export function planChanges(
+  snapshot: unknown,
+  changes: unknown,
+): Result<ChangePlan> {
   try {
     return freeze(validateFinalCandidate(snapshot, changes));
   } catch {
@@ -41,7 +44,10 @@ export function planChanges(snapshot: unknown, changes: unknown): Result<ChangeP
  * Validates the snapshot, stages the changes, then validates the candidate. Staging uses exactly
  * the same rules as `stage`; only the final check turns a staged candidate into a plan.
  */
-function validateFinalCandidate(snapshot: unknown, changes: unknown): Result<ChangePlan> {
+function validateFinalCandidate(
+  snapshot: unknown,
+  changes: unknown,
+): Result<ChangePlan> {
   const before = validateCollection(snapshot);
   if (!before.ok) {
     return before;
@@ -57,7 +63,10 @@ function validateFinalCandidate(snapshot: unknown, changes: unknown): Result<Cha
  * Validates the staged candidate as a whole collection and, when valid, adds its net impact.
  * Staging success never implies validity.
  */
-function finalizeCandidate(before: Collection, unchecked: Collection): Result<ChangePlan> {
+function finalizeCandidate(
+  before: Collection,
+  unchecked: Collection,
+): Result<ChangePlan> {
   const candidate = validateCollection(unchecked);
   if (!candidate.ok) {
     return candidate;

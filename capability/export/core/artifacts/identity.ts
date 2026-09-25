@@ -15,7 +15,10 @@ import type { ExportRequest } from '../../contract/records/input.js';
  * @throws Never for plain snapshot data. A throwing getter or proxy in the snapshot propagates;
  * `produce` runs this inside `protect`, which turns it into `encoding-failed`.
  */
-export function matchesIdentity(snapshot: Snapshot, request: ExportRequest): boolean {
+export function matchesIdentity(
+  snapshot: Snapshot,
+  request: ExportRequest,
+): boolean {
   const ids = [snapshot.identity.collectionId, snapshot.collection.id, snapshot.scene.collectionId];
   const revisions = [
     snapshot.identity.revision,

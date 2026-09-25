@@ -73,7 +73,10 @@ async function ensureCredential(path: string): Promise<void> {
   }
 }
 /** Reject unequal sizes before the native constant-time comparison; secret content never controls a string comparison loop. */
-function equal(left: string, right: string): boolean {
+function equal(
+  left: string,
+  right: string,
+): boolean {
   const first = Buffer.from(left);
   const second = Buffer.from(right);
   if (first.length !== second.length) return false;

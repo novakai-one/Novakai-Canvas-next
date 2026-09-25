@@ -113,7 +113,10 @@ export function service(): Templates<Intent> {
  * @param source - The recipe source. Defaults to `fixture:hello`.
  * @returns The admission.
  */
-export function input(release = '1.0.0', source = 'fixture:hello'): Admission {
+export function input(
+  release = '1.0.0',
+  source = 'fixture:hello',
+): Admission {
   return {
     schemaVersion: 1,
     id: presetId.parse('demo'),
@@ -134,7 +137,10 @@ export function input(release = '1.0.0', source = 'fixture:hello'): Admission {
  * @param release - The version. Defaults to `1.0.0`.
  * @returns The admission.
  */
-export function themeInput(id = 'paper', release = '1.0.0'): Admission {
+export function themeInput(
+  id = 'paper',
+  release = '1.0.0',
+): Admission {
   return {
     schemaVersion: 1,
     id: presetId.parse(id),
@@ -169,7 +175,10 @@ export function value<T>(result: Result<T>): T {
  * @param code - The expected failure code.
  * @throws Vitest's assertion error otherwise.
  */
-export function rejects(result: Result<unknown>, code: ErrorCode): void {
+export function rejects(
+  result: Result<unknown>,
+  code: ErrorCode,
+): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
 }
 
@@ -198,7 +207,10 @@ export function failed<T>(): Result<T> {
  * @param identity - The hasher used for each theme's digest.
  * @returns The catalog.
  */
-export function chainedThemes(size: number, identity: Pick<IdentityPort, 'hash'>): Catalog {
+export function chainedThemes(
+  size: number,
+  identity: Pick<IdentityPort, 'hash'>,
+): Catalog {
   return Array.from({ length: size }).reduce<Catalog>(
     (records) => appendTheme(records, identity),
     [],
@@ -209,7 +221,10 @@ export function chainedThemes(size: number, identity: Pick<IdentityPort, 'hash'>
  * Appends theme `theme<n>` based on the last record. Its digest hashes a JSON text written here in
  * canonical key order, independently of the production canonicalizer.
  */
-function appendTheme(records: Catalog, identity: Pick<IdentityPort, 'hash'>): Catalog {
+function appendTheme(
+  records: Catalog,
+  identity: Pick<IdentityPort, 'hash'>,
+): Catalog {
   const previous = records.at(-1);
   const base = fixtureBase(previous);
   const content = {

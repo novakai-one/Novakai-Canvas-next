@@ -28,9 +28,18 @@ export interface WorkspaceSession {
     options?: unknown,
   ): Promise<AuthoringResult<Receipt>>;
   receipt(request: unknown): Promise<AuthoringResult<Receipt | null>>;
-  render(collection: string, signal: AbortSignal): Promise<Result<RenderDocument>>;
-  inspect(collection: string, signal: AbortSignal): Promise<Result<InspectionReport>>;
-  exportArtifact(input: unknown, signal: AbortSignal): Promise<RouteOutcome>;
+  render(
+    collection: string,
+    signal: AbortSignal,
+  ): Promise<Result<RenderDocument>>;
+  inspect(
+    collection: string,
+    signal: AbortSignal,
+  ): Promise<Result<InspectionReport>>;
+  exportArtifact(
+    input: unknown,
+    signal: AbortSignal,
+  ): Promise<RouteOutcome>;
   subscribe(listener: (change: CommittedChange) => void): () => void;
   close(): Promise<Result<void>>;
 }

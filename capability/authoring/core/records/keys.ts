@@ -30,7 +30,10 @@ export function keyText(key: RecordKey): string {
  * @param key - The record key to look for.
  * @returns The stored record, or `null` when the snapshot has never stored this key.
  */
-export function findRecord(snapshot: Snapshot, key: RecordKey): StoredRecord | null {
+export function findRecord(
+  snapshot: Snapshot,
+  key: RecordKey,
+): StoredRecord | null {
   const wantedKey = keyText(key);
   const record = snapshot.records.find((candidate) => keyText(candidate.key) === wantedKey);
   if (record === undefined) return null;
@@ -47,7 +50,10 @@ export function findRecord(snapshot: Snapshot, key: RecordKey): StoredRecord | n
  * @param key - The record key to read.
  * @returns The key with its stored version, or with `'absent'` when no record is stored under it.
  */
-export function versionOf(snapshot: Snapshot, key: RecordKey): ReadVersion {
+export function versionOf(
+  snapshot: Snapshot,
+  key: RecordKey,
+): ReadVersion {
   const record = findRecord(snapshot, key);
   if (record === null) return { key, version: 'absent' };
   return { key, version: record.version };

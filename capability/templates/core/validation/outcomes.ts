@@ -33,7 +33,10 @@ export function success<T>(value: T): Result<T> {
  * @throws Whatever the schema throws (for example a throwing getter on the input); callers run
  * inside `protect`.
  */
-export function parse<T>(schema: Parser<T>, input: unknown): Result<T> {
+export function parse<T>(
+  schema: Parser<T>,
+  input: unknown,
+): Result<T> {
   const result = schema.safeParse(input);
   if (result.success) {
     return success(result.data);
@@ -127,7 +130,10 @@ export function firstFailure(results: readonly Result<unknown>[]): Result<void> 
 }
 
 /** Checks one value at `depth`; deeper than 48 levels is an `InputFault`. */
-function inspect(value: unknown, depth: number): void {
+function inspect(
+  value: unknown,
+  depth: number,
+): void {
   if (depth > 48) {
     throw new InputFault('invalid-input', '$', 'Input nesting exceeds 48');
   }
@@ -135,7 +141,10 @@ function inspect(value: unknown, depth: number): void {
 }
 
 /** `null` passes; objects are checked as containers; anything else must be a JSON scalar. */
-function inspectValue(value: unknown, depth: number): void {
+function inspectValue(
+  value: unknown,
+  depth: number,
+): void {
   if (value === null) {
     return;
   }
@@ -155,7 +164,10 @@ function isScalar(value: unknown): boolean {
 }
 
 /** Only arrays and plain objects are allowed (no Date or class instances); then checks each child. */
-function inspectContainer(value: object, depth: number): void {
+function inspectContainer(
+  value: object,
+  depth: number,
+): void {
   const prototype = Object.getPrototypeOf(value);
   if (!Array.isArray(value) && prototype !== Object.prototype && prototype !== null) {
     throw new InputFault('invalid-input', '$', 'Expected plain container');

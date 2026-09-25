@@ -107,7 +107,10 @@ function lowerLink(declaration: Declaration): RawRecord {
 }
 
 /** A link to an object: target `{ kind: 'object', id, section? }`. */
-function objectLink(declaration: Declaration, value: Reference): RawRecord {
+function objectLink(
+  declaration: Declaration,
+  value: Reference,
+): RawRecord {
   return {
     kind: 'link',
     id: id(declaration.fields),
@@ -117,7 +120,10 @@ function objectLink(declaration: Declaration, value: Reference): RawRecord {
 }
 
 /** A link to quoted text: target `{ kind: 'uri', uri }`, kept as written and never opened here. */
-function uriLink(declaration: Declaration, value: SyntaxValue): RawRecord {
+function uriLink(
+  declaration: Declaration,
+  value: SyntaxValue,
+): RawRecord {
   return {
     kind: 'link',
     id: id(declaration.fields),

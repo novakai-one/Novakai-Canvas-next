@@ -49,7 +49,10 @@ export const storedLimits: JsonLimits = {
  * @returns The copied JSON value. It shares nothing with the input.
  * @throws AuthoringFault `invalid-input` when the data is not plain JSON or breaks a limit.
  */
-export function copyJson(value: unknown, limits: JsonLimits = requestLimits): Json {
+export function copyJson(
+  value: unknown,
+  limits: JsonLimits = requestLimits,
+): Json {
   const copied = readValue(value, 0, limits.values).value;
   const serialized = JSON.stringify(copied);
   const byteLength = new TextEncoder().encode(serialized).byteLength;
@@ -74,26 +77,42 @@ export function isFrozenObject(value: unknown): value is object {
  * Copies one value of any type. The checks run in this order:
  * depth, `null`, string or boolean, number, object or array, and finally rejection.
  */
-function readValue(value: unknown, depth: number, maximum: number): ReadValue {
+function readValue(
+  value: unknown,
+  depth: number,
+  maximum: number,
+): ReadValue {
   if (depth > MAXIMUM_DEPTH) reject('invalid-input', '$', 'JSON exceeds depth 64');
   if (value === null) return { value: null, count: 1 };
   return readNonNull(value, depth, maximum);
 }
 
 /** Copies a non-null value. Strings and booleans are kept exactly; no conversion method runs. */
-function readNonNull(value: unknown, depth: number, maximum: number): ReadValue {
+function readNonNull(
+  value: unknown,
+  depth: number,
+  maximum: number,
+): ReadValue {
   if (typeof value === 'string' || typeof value === 'boolean') return { value, count: 1 };
   return readNumberOrContainer(value, depth, maximum);
 }
 
 /** Copies a number, or passes any other value on to be read as an object or array. */
-function readNumberOrContainer(value: unknown, depth: number, maximum: number): ReadValue {
+function readNumberOrContainer(
+  value: unknown,
+  depth: number,
+  maximum: number,
+): ReadValue {
   if (typeof value === 'number') return readNumber(value);
   return readContainerOrReject(value, depth, maximum);
 }
 
 /** Copies an object or array. Every other value, such as `undefined` or a function, is rejected. */
-function readContainerOrReject(value: unknown, depth: number, maximum: number): ReadValue {
+function readContainerOrReject(
+  value: unknown,
+  depth: number,
+  maximum: number,
+): ReadValue {
   if (typeof value === 'object' && value !== null) return readContainer(value, depth, maximum);
   return reject('invalid-input', '$', 'Only JSON values are accepted');
 }
@@ -105,13 +124,21 @@ function readNumber(value: number): ReadValue {
 }
 
 /** Copies an array or an object. */
-function readContainer(value: object, depth: number, maximum: number): ReadValue {
+function readContainer(
+  value: object,
+  depth: number,
+  maximum: number,
+): ReadValue {
   if (Array.isArray(value)) return readArray(value, depth, maximum);
   return readObject(value, depth, maximum);
 }
 
 /** Copies a plain array. Every element must be an ordinary data property, so sparse arrays are rejected. */
-function readArray(value: readonly unknown[], depth: number, maximum: number): ReadValue {
+function readArray(
+  value: readonly unknown[],
+  depth: number,
+  maximum: number,
+): ReadValue {
   checkPlainArray(value);
   if (Object.keys(value).length !== value.length)
     reject('invalid-input', '$', 'Sparse or decorated arrays are not JSON');
@@ -124,7 +151,11 @@ function readArray(value: readonly unknown[], depth: number, maximum: number): R
 }
 
 /** Copies a plain object's fields. No getter runs, and cycles stop at the depth limit. */
-function readObject(value: object, depth: number, maximum: number): ReadValue {
+function readObject(
+  value: object,
+  depth: number,
+  maximum: number,
+): ReadValue {
   checkPlainObject(value);
   const entries = Object.keys(value).map((key) => ({
     key,
@@ -156,7 +187,10 @@ function checkPlainObject(value: object): void {
  * Reads a property through its descriptor, so a getter on untrusted input never runs.
  * Rejects accessor properties and missing properties.
  */
-function readOwnDataProperty(value: object, key: string): unknown {
+function readOwnDataProperty(
+  value: object,
+  key: string,
+): unknown {
   const descriptor = Object.getOwnPropertyDescriptor(value, key);
   if (descriptor === undefined || !('value' in descriptor))
     reject('invalid-input', key, 'Only ordinary data properties are accepted');
@@ -167,7 +201,10 @@ function readOwnDataProperty(value: object, key: string): unknown {
  * Counts a container and all values inside it, and rejects the count when it is over the limit.
  * The whole subtree is counted, so many shallow branches cannot get around the limit.
  */
-function countSubtree(children: readonly ReadValue[], maximum: number): number {
+function countSubtree(
+  children: readonly ReadValue[],
+  maximum: number,
+): number {
   const childCount = children.reduce((sum, child) => sum + child.count, 0);
   const count = 1 + childCount;
   if (count > maximum) reject('invalid-input', '$', 'JSON value-count limit exceeded');

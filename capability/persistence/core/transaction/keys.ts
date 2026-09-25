@@ -22,7 +22,10 @@ export function keyText(key: RecordKey): string {
  * @param key - The record to find.
  * @returns The slot, live or tombstoned, or `undefined` when there is none.
  */
-export function findSlot(state: WorkspaceState, key: RecordKey): Slot | undefined {
+export function findSlot(
+  state: WorkspaceState,
+  key: RecordKey,
+): Slot | undefined {
   return state.slots.find((slot) => keyText(slot.key) === keyText(key));
 }
 

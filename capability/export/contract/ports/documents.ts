@@ -37,5 +37,8 @@ export interface Documents {
    * @param resources - The resources the source may reference.
    * @returns The collection, or a failure.
    */
-  parse(source: string, resources: readonly Resource[]): Result<Collection>;
+  parse(
+    source: string,
+    resources: readonly Resource[],
+  ): Result<Collection>;
 }

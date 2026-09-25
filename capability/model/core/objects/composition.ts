@@ -112,7 +112,10 @@ function validateAppearance(
 }
 
 /** Reports each group in a section whose role is not declared by the collection theme. */
-function validateGroupRoles(section: Section, collection: Collection): readonly Diagnostic[] {
+function validateGroupRoles(
+  section: Section,
+  collection: Collection,
+): readonly Diagnostic[] {
   return section.groups.flatMap(
     /** Checks one group's role. */
     (group) =>

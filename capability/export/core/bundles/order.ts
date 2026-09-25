@@ -19,7 +19,10 @@ type Section = Collection['sections'][number];
  * @throws Never for plain parsed data; a throwing getter or proxy propagates to the enclosing
  * `protect`.
  */
-export function validOrder(section: Section, manual: ManualSection): boolean {
+export function validOrder(
+  section: Section,
+  manual: ManualSection,
+): boolean {
   const checks = [
     completeOrder(
       manual.appearanceOrder,
@@ -48,7 +51,10 @@ export function validOrder(section: Section, manual: ManualSection): boolean {
  * @throws Never for plain parsed data; a throwing getter or proxy propagates to the enclosing
  * `protect`.
  */
-export function restoreOrder(section: Section, manual: ManualSection): Section {
+export function restoreOrder(
+  section: Section,
+  manual: ManualSection,
+): Section {
   return {
     ...section,
     appearances: sortedAppearances(section, manual),
@@ -58,7 +64,10 @@ export function restoreOrder(section: Section, manual: ManualSection): Section {
 }
 
 /** Whether `actual` is a permutation of `expected`: same length, no repeats, all known IDs. */
-function completeOrder(actual: readonly string[], expected: readonly string[]): boolean {
+function completeOrder(
+  actual: readonly string[],
+  expected: readonly string[],
+): boolean {
   return (
     actual.length === expected.length &&
     new Set(actual).size === actual.length &&
@@ -67,7 +76,10 @@ function completeOrder(actual: readonly string[], expected: readonly string[]): 
 }
 
 /** A sorted copy of the section's appearances, in the manual appearance order. */
-function sortedAppearances(section: Section, manual: ManualSection): Section['appearances'] {
+function sortedAppearances(
+  section: Section,
+  manual: ManualSection,
+): Section['appearances'] {
   return [...section.appearances].sort(
     /** Orders appearances by their position in the manual order. */ (a, b) =>
       manual.appearanceOrder.indexOf(a.object) - manual.appearanceOrder.indexOf(b.object),
@@ -75,7 +87,10 @@ function sortedAppearances(section: Section, manual: ManualSection): Section['ap
 }
 
 /** A sorted copy of the section's groups, in the manual group order. */
-function sortedGroups(section: Section, manual: ManualSection): Section['groups'] {
+function sortedGroups(
+  section: Section,
+  manual: ManualSection,
+): Section['groups'] {
   return [...section.groups].sort(
     /** Orders groups by their position in the manual order. */ (a, b) =>
       manual.groupOrder.indexOf(a.id) - manual.groupOrder.indexOf(b.id),
@@ -83,7 +98,10 @@ function sortedGroups(section: Section, manual: ManualSection): Section['groups'
 }
 
 /** The section's sequence items listed in the manual order, each with its stored order number. */
-function orderedSequence(section: Section, manual: ManualSection): Section['sequence'] {
+function orderedSequence(
+  section: Section,
+  manual: ManualSection,
+): Section['sequence'] {
   return manual.sequenceOrder.flatMap(
     /** The sequence item for this order entry, with its stored order number. */ (order) =>
       sequenceEntry(section, order),

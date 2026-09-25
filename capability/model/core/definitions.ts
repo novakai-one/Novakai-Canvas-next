@@ -111,7 +111,10 @@ export function validateDefinitionGraph(collection: Collection): readonly Diagno
  * "Definition ID must exist", when no definition has that ID. Not frozen.
  * @throws Only if given data that is not a validated collection.
  */
-export function definitionDisplay(collection: Collection, id: DefinitionId): Result<string> {
+export function definitionDisplay(
+  collection: Collection,
+  id: DefinitionId,
+): Result<string> {
   const exists = collection.definitions.some(
     /** Tells whether this is the definition. */
     (definition) => definition.id === id,
@@ -133,7 +136,10 @@ export function definitionDisplay(collection: Collection, id: DefinitionId): Res
  * @returns The display text.
  * @throws Only if given data that is not a validated collection.
  */
-export function fieldTypeDisplay(collection: Collection, field: Field): string {
+export function fieldTypeDisplay(
+  collection: Collection,
+  field: Field,
+): string {
   return typeUseDisplay(collection, field.type);
 }
 
@@ -147,7 +153,10 @@ export function fieldTypeDisplay(collection: Collection, field: Field): string {
  * @returns The display text.
  * @throws Only if given data that is not a validated collection.
  */
-export function typeUseDisplay(collection: Collection, type: TypeUse): string {
+export function typeUseDisplay(
+  collection: Collection,
+  type: TypeUse,
+): string {
   if (typeof type === 'string') {
     return type;
   }
@@ -230,7 +239,10 @@ interface NodeCounter {
  * Checks one expression against the depth and node limits, depth-first (the last child is
  * visited first). Stops at the first problem and returns it alone.
  */
-function expressionLimitIssues(expression: TypeExpression, path: string): readonly Diagnostic[] {
+function expressionLimitIssues(
+  expression: TypeExpression,
+  path: string,
+): readonly Diagnostic[] {
   const pending: LimitFrame[] = [{ expression, path, depth: 0 }];
   const counter: NodeCounter = { visited: 0 };
   let issue: Diagnostic | undefined;
@@ -247,7 +259,10 @@ function expressionLimitIssues(expression: TypeExpression, path: string): readon
  * Visits the next pending expression: counts it, checks the limits, queues its union items, and
  * empties the queue when a limit is hit.
  */
-function visitLimitFrame(pending: LimitFrame[], counter: NodeCounter): Diagnostic | undefined {
+function visitLimitFrame(
+  pending: LimitFrame[],
+  counter: NodeCounter,
+): Diagnostic | undefined {
   const frame = pending.pop();
   if (frame === undefined) {
     return undefined;
@@ -262,12 +277,19 @@ function visitLimitFrame(pending: LimitFrame[], counter: NodeCounter): Diagnosti
 }
 
 /** Returns the depth problem, else the node-count problem, else nothing. */
-function expressionLimit(depth: number, nodes: number, path: string): Diagnostic | undefined {
+function expressionLimit(
+  depth: number,
+  nodes: number,
+  path: string,
+): Diagnostic | undefined {
   return depthLimit(depth, path) ?? nodeLimit(nodes, path);
 }
 
 /** Reports nesting deeper than {@link MAX_DEPTH}. */
-function depthLimit(depth: number, path: string): Diagnostic | undefined {
+function depthLimit(
+  depth: number,
+  path: string,
+): Diagnostic | undefined {
   if (depth > MAX_DEPTH) {
     return { code: 'limit', path, message: 'Definition expression nesting exceeds the limit' };
   }
@@ -275,7 +297,10 @@ function depthLimit(depth: number, path: string): Diagnostic | undefined {
 }
 
 /** Reports more than {@link MAX_NODES} nodes. */
-function nodeLimit(nodes: number, path: string): Diagnostic | undefined {
+function nodeLimit(
+  nodes: number,
+  path: string,
+): Diagnostic | undefined {
   if (nodes > MAX_NODES) {
     return { code: 'limit', path, message: 'Definition expression is too large' };
   }
@@ -283,7 +308,10 @@ function nodeLimit(nodes: number, path: string): Diagnostic | undefined {
 }
 
 /** Queues a union's items, in order, one level deeper. Other expressions have no children. */
-function pushLimitChildren(frame: LimitFrame, pending: LimitFrame[]): void {
+function pushLimitChildren(
+  frame: LimitFrame,
+  pending: LimitFrame[],
+): void {
   const expression = frame.expression;
   if (expression.kind !== 'union') {
     return;
@@ -332,7 +360,10 @@ function expressionReferences(
 }
 
 /** Visits the next pending expression: records it if it is a reference, then queues its items. */
-function visitReferenceFrame(pending: ReferenceFrame[], references: ExpressionReference[]): void {
+function visitReferenceFrame(
+  pending: ReferenceFrame[],
+  references: ExpressionReference[],
+): void {
   const frame = pending.pop();
   if (frame === undefined) {
     return;
@@ -342,14 +373,20 @@ function visitReferenceFrame(pending: ReferenceFrame[], references: ExpressionRe
 }
 
 /** Records the expression when it is a definition reference. */
-function addReference(frame: ReferenceFrame, references: ExpressionReference[]): void {
+function addReference(
+  frame: ReferenceFrame,
+  references: ExpressionReference[],
+): void {
   if (frame.expression.kind === 'reference') {
     references.push({ id: frame.expression.id, path: frame.path });
   }
 }
 
 /** Queues a union's items, in order. Other expressions have no children. */
-function pushReferenceChildren(frame: ReferenceFrame, pending: ReferenceFrame[]): void {
+function pushReferenceChildren(
+  frame: ReferenceFrame,
+  pending: ReferenceFrame[],
+): void {
   const expression = frame.expression;
   if (expression.kind !== 'union') {
     return;
@@ -760,7 +797,10 @@ function displayUnion(
  * Returns the union item at `index`. A validated union has no missing items; for a missing one it
  * throws the same TypeError that reading the item's `kind` would.
  */
-function unionItem(items: readonly TypeExpression[], index: number): TypeExpression {
+function unionItem(
+  items: readonly TypeExpression[],
+  index: number,
+): TypeExpression {
   const item = items[index];
   if (item === undefined) {
     throw new TypeError("Cannot read properties of undefined (reading 'kind')");
@@ -769,7 +809,11 @@ function unionItem(items: readonly TypeExpression[], index: number): TypeExpress
 }
 
 /** Marks the display truncated when items remain but the budget is spent. */
-function markTruncated(budget: DisplayBudget, index: number, length: number): void {
+function markTruncated(
+  budget: DisplayBudget,
+  index: number,
+  length: number,
+): void {
   if (index < length && budget.remaining <= 0) {
     budget.truncated = true;
   }
@@ -804,7 +848,10 @@ function displayReference(
  * Shows one definition with a fresh budget of {@link MAX_NODES} nodes, adding ` …` when it was
  * cut short. A missing definition shows as `@id`.
  */
-function resolvedDefinitionDisplay(collection: Collection, id: DefinitionId): string {
+function resolvedDefinitionDisplay(
+  collection: Collection,
+  id: DefinitionId,
+): string {
   const definition = collection.definitions.find(
     /** Tells whether this is the definition. */
     (item) => item.id === id,
@@ -915,12 +962,18 @@ function parameterUsage(
 }
 
 /** Returns a content block's collection path, `objects.<object>.content.<block>`. */
-function contentPath(object: ObjectId, block: DescendantId): string {
+function contentPath(
+  object: ObjectId,
+  block: DescendantId,
+): string {
   return `objects.${object}.content.${block}`;
 }
 
 /** Tells whether a type use is a reference to the definition (a plain string type never is). */
-function referencesDefinition(type: TypeUse, id: DefinitionId): boolean {
+function referencesDefinition(
+  type: TypeUse,
+  id: DefinitionId,
+): boolean {
   return typeof type !== 'string' && type.id === id;
 }
 

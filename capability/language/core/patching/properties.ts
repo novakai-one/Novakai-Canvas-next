@@ -88,7 +88,10 @@ function collectionProperties(
 }
 
 /** A plain copy of Model's nested record; null, a non-object or an array is refused. */
-function nestedRecord(value: unknown, operation: Operation): RawRecord {
+function nestedRecord(
+  value: unknown,
+  operation: Operation,
+): RawRecord {
   if (value === null || typeof value !== 'object' || Array.isArray(value))
     reject(
       'invalid-input',
@@ -126,7 +129,11 @@ function nestedLayout(
  * A link's `target` record after the change: `section=` selects a section (object links only);
  * unsetting `section` removes it; otherwise the target as it is or as reassigned.
  */
-function linkProperties(previous: RawRecord, next: RawRecord, operation: Operation): RawRecord {
+function linkProperties(
+  previous: RawRecord,
+  next: RawRecord,
+  operation: Operation,
+): RawRecord {
   const target = linkTarget(previous, operation);
   const section = operation.fields.section;
   const remaining = withoutField(next, 'section');
@@ -141,7 +148,10 @@ function linkProperties(previous: RawRecord, next: RawRecord, operation: Operati
  * A new `target=` replaces the link target: a reference becomes an object link that keeps the
  * old section; text becomes a URI link. Without `target=`, the old target is kept.
  */
-function linkTarget(previous: RawRecord, operation: Operation): RawRecord {
+function linkTarget(
+  previous: RawRecord,
+  operation: Operation,
+): RawRecord {
   const assigned = operation.fields.target;
   if (assigned === undefined) return nestedRecord(previous.target, operation);
   if (isReference(assigned.value))
@@ -150,7 +160,11 @@ function linkTarget(previous: RawRecord, operation: Operation): RawRecord {
 }
 
 /** Only an object link can select a section, and the section must be a reference. */
-function withSection(target: RawRecord, value: SyntaxValue, operation: Operation): RawRecord {
+function withSection(
+  target: RawRecord,
+  value: SyntaxValue,
+  operation: Operation,
+): RawRecord {
   if (target.kind !== 'object')
     reject(
       'invalid-value',
@@ -164,14 +178,20 @@ function withSection(target: RawRecord, value: SyntaxValue, operation: Operation
 }
 
 /** The old target's section, kept when an object link is re-pointed; a URI never carries one. */
-function retainedSection(previous: RawRecord, operation: Operation): RawRecord {
+function retainedSection(
+  previous: RawRecord,
+  operation: Operation,
+): RawRecord {
   const target = nestedRecord(previous.target, operation);
   if (target.section === undefined) return {};
   return { section: target.section };
 }
 
 /** Unsetting `columns` removes it; otherwise the nested layout is kept as it is. */
-function retainedColumns(layout: RawRecord, operation: Operation): RawRecord {
+function retainedColumns(
+  layout: RawRecord,
+  operation: Operation,
+): RawRecord {
   if (!operation.properties.includes('columns')) return layout;
   return withoutField(layout, 'columns');
 }

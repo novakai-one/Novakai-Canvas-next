@@ -128,14 +128,20 @@ function parseShape<T>(
 }
 
 /** Returns the cache for one shape and one set of limits, creating it when needed. */
-function parsedCache(shape: object, limits: object | undefined): ParsedByInput {
+function parsedCache(
+  shape: object,
+  limits: object | undefined,
+): ParsedByInput {
   const byLimits = childMap(parsedByShape, shape);
   const limitsKey = limits ?? noLimitsKey;
   return childMap(byLimits, limitsKey);
 }
 
 /** Returns the inner map stored under a key, creating and storing an empty one when needed. */
-function childMap<V>(parent: WeakMap<object, WeakMap<object, V>>, key: object): WeakMap<object, V> {
+function childMap<V>(
+  parent: WeakMap<object, WeakMap<object, V>>,
+  key: object,
+): WeakMap<object, V> {
   const existing = parent.get(key);
   if (existing !== undefined) return existing;
 

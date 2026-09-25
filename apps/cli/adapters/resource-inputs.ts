@@ -18,7 +18,10 @@ const media: Readonly<Record<string, string>> = {
   '.woff2': 'font/woff2',
 };
 /** A path is admitted only beneath the real source directory; absolute and symlink escapes are explicit outcomes. */
-async function confined(file: string, source: string): Promise<Result<string>> {
+async function confined(
+  file: string,
+  source: string,
+): Promise<Result<string>> {
   if (isAbsolute(source)) return failure('absolute-path', 'Absolute resource paths are forbidden');
   try {
     const root = await realpath(dirname(file));
@@ -29,7 +32,10 @@ async function confined(file: string, source: string): Promise<Result<string>> {
   }
 }
 /** Prefixes such as `..media` are ordinary child names; only an exact parent segment escapes. */
-function inside(root: string, path: string): Result<string> {
+function inside(
+  root: string,
+  path: string,
+): Result<string> {
   const remainder = relative(root, path);
   if (remainder === '..' || remainder.startsWith(`..${sep}`) || isAbsolute(remainder))
     return failure('path-escape', 'Resource escapes its source directory');
@@ -52,7 +58,10 @@ async function readBounded(handle: FileHandle): Promise<Result<Buffer>> {
   return { ok: true, value: buffer.subarray(0, filled.value) };
 }
 /** Native read failures become explicit outcomes without changing the fixed allocation bound. */
-async function fill(handle: FileHandle, buffer: Buffer): Promise<Result<number>> {
+async function fill(
+  handle: FileHandle,
+  buffer: Buffer,
+): Promise<Result<number>> {
   let progress = { offset: 0, eof: false };
   try {
     while (!complete(progress, buffer.length))
@@ -72,7 +81,10 @@ async function nextChunk(
   return { offset: offset + result.bytesRead, eof: result.bytesRead === 0 };
 }
 /** Capacity means the explicit over-limit byte was observed; EOF means the complete file was observed. */
-function complete(progress: { readonly offset: number; readonly eof: boolean }, capacity: number) {
+function complete(
+  progress: { readonly offset: number; readonly eof: boolean },
+  capacity: number,
+) {
   return progress.eof || progress.offset === capacity;
 }
 /** Closing is a typed cleanup outcome so a successful read cannot conceal handle uncertainty. */
@@ -99,7 +111,10 @@ async function readOpen(handle: FileHandle): Promise<Result<Buffer>> {
   return read;
 }
 /** Declared kind and extension must agree; Assets subsequently checks actual MIME and safe normalized content. */
-function mediaType(path: string, request: ResourceRequest): Result<string> {
+function mediaType(
+  path: string,
+  request: ResourceRequest,
+): Result<string> {
   const type = media[extname(path).toLowerCase()];
   if (!type) return failure('unsupported-media', 'Resource extension is unsupported');
   if (!type.startsWith(expectedMedia(request.kind)))
@@ -107,7 +122,10 @@ function mediaType(path: string, request: ResourceRequest): Result<string> {
   return { ok: true, value: type };
 }
 /** Pinned digests deliberately bypass filesystem reads; local failures retain source/span/alias context. */
-async function read(file: string, request: ResourceRequest): Promise<Result<LocalInput>> {
+async function read(
+  file: string,
+  request: ResourceRequest,
+): Promise<Result<LocalInput>> {
   if (/^sha256:[a-f0-9]{64}$/.test(request.source))
     return {
       ok: true,
@@ -157,7 +175,11 @@ function localInput(
   };
 }
 /** Add source location without replacing the stable failure code or recovery instruction. */
-function contextual<T>(file: string, request: ResourceRequest, error: Diagnostic): Result<T> {
+function contextual<T>(
+  file: string,
+  request: ResourceRequest,
+  error: Diagnostic,
+): Result<T> {
   const location = `${file}:${request.span.start.line}:${request.span.start.column} asset @${request.alias}`;
   return { ok: false, error: { ...error, message: `${location}: ${error.message}` } };
 }

@@ -65,7 +65,10 @@ export function readNavigation(snapshot: Snapshot): HistoryNavigation {
  * @throws AuthoringFault `invalid-input` when either list repeats a record key.
  * @throws AuthoringFault `corrupt-record` when the two lists name different records.
  */
-export function checkParticipantCoverage(transaction: Transaction, head: HistoryHead): void {
+export function checkParticipantCoverage(
+  transaction: Transaction,
+  head: HistoryHead,
+): void {
   const transitionKeys = transaction.transitions.map((transition) => transition.key);
   const participantKeys = head.participants.map((participant) => participant.key);
   uniqueKeys(transitionKeys, 'history.transitions');
@@ -82,7 +85,10 @@ export function checkParticipantCoverage(transaction: Transaction, head: History
  * @param direction - `undo` for the step before the cursor, `redo` for the step after it.
  * @returns The step's request ID, or `null` when there is nothing to undo or redo.
  */
-export function nextAction(history: HistoryNavigation, direction: Direction): RequestId | null {
+export function nextAction(
+  history: HistoryNavigation,
+  direction: Direction,
+): RequestId | null {
   const index = actionIndex(history, direction);
   const action = history.actions[index];
   if (action === undefined) return null;
@@ -169,7 +175,10 @@ function checkedNavigation(snapshot: Snapshot): HistoryNavigation {
 }
 
 /** Checks the cursor, repeated steps, the frontier and then every step. These are storage invariants. */
-function validateNavigation(navigation: HistoryNavigation, snapshot: Snapshot): void {
+function validateNavigation(
+  navigation: HistoryNavigation,
+  snapshot: Snapshot,
+): void {
   if (navigation.cursor > navigation.actions.length)
     reject('corrupt-record', 'history', 'History cursor is out of bounds');
 
@@ -201,13 +210,19 @@ function validateAction(
 }
 
 /** Steps before the cursor must be `active`; steps at or after it must be `undone`. */
-function stateAtIndex(index: number, cursor: number): HistoryHead['state'] {
+function stateAtIndex(
+  index: number,
+  cursor: number,
+): HistoryHead['state'] {
   if (index < cursor) return 'active';
   return 'undone';
 }
 
 /** The step an undo acts on is just before the cursor; the step a redo acts on is at the cursor. */
-function actionIndex(history: HistoryNavigation, direction: Direction): number {
+function actionIndex(
+  history: HistoryNavigation,
+  direction: Direction,
+): number {
   switch (direction) {
     case 'undo':
       return history.cursor - 1;
@@ -217,7 +232,10 @@ function actionIndex(history: HistoryNavigation, direction: Direction): number {
 }
 
 /** Checks the frontier lists every content record once, at its current version. */
-function validateFrontier(navigation: HistoryNavigation, snapshot: Snapshot): void {
+function validateFrontier(
+  navigation: HistoryNavigation,
+  snapshot: Snapshot,
+): void {
   const frontierKeys = navigation.frontier.map((read) => read.key);
   uniqueKeys(frontierKeys, 'history.frontier');
 
@@ -231,7 +249,10 @@ function validateFrontier(navigation: HistoryNavigation, snapshot: Snapshot): vo
 }
 
 /** Tells whether two key lists name the same keys, ignoring order. */
-function sameKeys(left: readonly RecordKey[], right: readonly RecordKey[]): boolean {
+function sameKeys(
+  left: readonly RecordKey[],
+  right: readonly RecordKey[],
+): boolean {
   const leftTexts = left.map(keyText).toSorted();
   const rightTexts = right.map(keyText).toSorted();
   if (leftTexts.length !== rightTexts.length) return false;
@@ -239,7 +260,10 @@ function sameKeys(left: readonly RecordKey[], right: readonly RecordKey[]): bool
 }
 
 /** Rejects a retained image stored for a different record. */
-function validateImages(key: RecordKey, images: readonly (StoredRecord | null)[]): void {
+function validateImages(
+  key: RecordKey,
+  images: readonly (StoredRecord | null)[],
+): void {
   const expectedText = keyText(key);
   const hasForeignImage = images.some(
     (image) => image !== null && keyText(image.key) !== expectedText,
@@ -259,14 +283,20 @@ function mergedFrontier(
 }
 
 /** A change drops the redo steps and appends itself. Undo and redo keep the steps unchanged. */
-function actionsAfter(history: HistoryNavigation, request: Request): readonly RequestId[] {
+function actionsAfter(
+  history: HistoryNavigation,
+  request: Request,
+): readonly RequestId[] {
   if (request.intent.kind !== 'change') return history.actions;
   const stepsUpToCursor = history.actions.slice(0, history.cursor);
   return [...stepsUpToCursor, request.request];
 }
 
 /** An undo moves the cursor back one step. A change or redo moves it forward one step. */
-function cursorAfter(history: HistoryNavigation, request: Request): number {
+function cursorAfter(
+  history: HistoryNavigation,
+  request: Request,
+): number {
   switch (request.intent.kind) {
     case 'undo':
       return history.cursor - 1;

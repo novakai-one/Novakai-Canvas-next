@@ -23,8 +23,14 @@ export interface SourceController {
   apply(): Promise<void>;
   close(decision: 'keep' | 'discard' | 'stay'): void;
   restore(workspace: string): void;
-  confirmed(submission: Submission, receipt: Receipt): void;
-  reconcile(snapshot: Snapshot, generation: string): void;
+  confirmed(
+    submission: Submission,
+    receipt: Receipt,
+  ): void;
+  reconcile(
+    snapshot: Snapshot,
+    generation: string,
+  ): void;
 }
 export interface SourceCallbacks {
   current(): { readonly active: ActiveDiagram | null; readonly generation: string };

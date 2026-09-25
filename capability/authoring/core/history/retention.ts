@@ -31,7 +31,10 @@ const transactionSizes = new WeakMap<object, number>();
  * @param history - The history navigation to bound.
  * @returns The same `history` object when nothing needs removing, otherwise a new navigation.
  */
-export function boundNavigation(snapshot: Snapshot, history: HistoryNavigation): HistoryNavigation {
+export function boundNavigation(
+  snapshot: Snapshot,
+  history: HistoryNavigation,
+): HistoryNavigation {
   const sizes = history.actions.map((id) => stepSize(snapshot, id));
   const order = removalOrder(sizes.length, history.cursor);
   const removed = order.slice(0, removalCount(sizes, order));
@@ -71,7 +74,10 @@ export function staleHistory(
 }
 
 /** Returns the JSON text length of one step's transaction record. A step not yet stored counts as zero. */
-function stepSize(snapshot: Snapshot, id: RequestId): number {
+function stepSize(
+  snapshot: Snapshot,
+  id: RequestId,
+): number {
   const record = findRecord(snapshot, transactionKey(id));
   if (record === null) return 0;
 
@@ -87,7 +93,10 @@ function stepSize(snapshot: Snapshot, id: RequestId): number {
  * Lists step indexes in the order they are removed: oldest undo steps, then the furthest redo steps.
  * The newest step is never listed.
  */
-function removalOrder(length: number, cursor: number): readonly number[] {
+function removalOrder(
+  length: number,
+  cursor: number,
+): readonly number[] {
   const undoIndexes = Array.from({ length: cursor }, (_unused, index) => index);
   const redoIndexes = Array.from(
     { length: length - cursor },
@@ -98,7 +107,10 @@ function removalOrder(length: number, cursor: number): readonly number[] {
 }
 
 /** Counts how many steps, taken in removal order, must go before the rest fit both limits. */
-function removalCount(sizes: readonly number[], order: readonly number[]): number {
+function removalCount(
+  sizes: readonly number[],
+  order: readonly number[],
+): number {
   const bytesLeft = bytesLeftAfterEachRemoval(sizes, order);
   const firstFit = bytesLeft.findIndex((bytes, removed) =>
     fitsLimits(sizes.length - removed, bytes),
@@ -128,13 +140,19 @@ function bytesLeftAfterEachRemoval(
 }
 
 /** Reads one step's size. Every index in a removal order is inside the list. */
-function sizeAt(sizes: readonly number[], index: number): number {
+function sizeAt(
+  sizes: readonly number[],
+  index: number,
+): number {
   const size = sizes[index];
   if (size === undefined) return Number.NaN;
   return size;
 }
 
 /** Tells whether a number of steps with a total size fits both history limits. */
-function fitsLimits(steps: number, bytes: number): boolean {
+function fitsLimits(
+  steps: number,
+  bytes: number,
+): boolean {
   return steps <= HISTORY_LIMIT && bytes <= HISTORY_BYTES;
 }

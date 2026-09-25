@@ -21,7 +21,10 @@ import { removeFolder } from './removal.js';
  * References are not checked here, so a later change in the batch may repair them; planning
  * validates the final catalog. A failure stops the batch.
  */
-export function applyOperation(catalog: Catalog, change: CatalogChange): Result<Catalog> {
+export function applyOperation(
+  catalog: Catalog,
+  change: CatalogChange,
+): Result<Catalog> {
   switch (change.op) {
     case 'create-folder':
       return writeFolder(catalog, change.value, 'create');
@@ -53,7 +56,11 @@ function unsupported(change: never): Result<Catalog> {
 }
 
 /** Creates or replaces a complete folder (covering rename, move and reorder; no field patches). */
-function writeFolder(catalog: Catalog, value: Folder, mode: WriteMode): Result<Catalog> {
+function writeFolder(
+  catalog: Catalog,
+  value: Folder,
+  mode: WriteMode,
+): Result<Catalog> {
   const exists = hasFolder(catalog.folders, value.id);
   const identity = checkIdentity(mode, exists, `catalog.folders.${value.id}`);
   if (!identity.ok) {
@@ -64,7 +71,11 @@ function writeFolder(catalog: Catalog, value: Folder, mode: WriteMode): Result<C
 }
 
 /** Creates or replaces a complete entry (covering move, reorder, archive and restore). */
-function writeEntry(catalog: Catalog, value: CatalogEntry, mode: WriteMode): Result<Catalog> {
+function writeEntry(
+  catalog: Catalog,
+  value: CatalogEntry,
+  mode: WriteMode,
+): Result<Catalog> {
   const exists = hasEntry(catalog.entries, value.collection);
   const identity = checkIdentity(mode, exists, `catalog.entries.${value.collection}`);
   if (!identity.ok) {
@@ -78,7 +89,10 @@ function writeEntry(catalog: Catalog, value: CatalogEntry, mode: WriteMode): Res
  * Removes a collection's entry. Whether the collection itself is gone is checked on the final
  * candidate, so a deletion can be planned together with its collection's removal.
  */
-function unregister(catalog: Catalog, change: ChangeOf<'unregister'>): Result<Catalog> {
+function unregister(
+  catalog: Catalog,
+  change: ChangeOf<'unregister'>,
+): Result<Catalog> {
   if (!hasEntry(catalog.entries, change.collection)) {
     return failure({
       code: 'not-found',
@@ -91,7 +105,11 @@ function unregister(catalog: Catalog, change: ChangeOf<'unregister'>): Result<Ca
 }
 
 /** Create needs an absent ID (`already-exists`); replace needs an existing one (`not-found`). */
-function checkIdentity(mode: WriteMode, exists: boolean, path: string): Result<true> {
+function checkIdentity(
+  mode: WriteMode,
+  exists: boolean,
+  path: string,
+): Result<true> {
   if (mode === 'create') {
     return requireAbsent(exists, path);
   }
@@ -106,7 +124,10 @@ function checkIdentity(mode: WriteMode, exists: boolean, path: string): Result<t
 }
 
 /** Create never silently replaces an existing folder or entry. */
-function requireAbsent(exists: boolean, path: string): Result<true> {
+function requireAbsent(
+  exists: boolean,
+  path: string,
+): Result<true> {
   if (exists) {
     return failure({
       code: 'already-exists',
@@ -131,7 +152,11 @@ function writeList<T, K extends string>(
 }
 
 /** `value` when it has the item's key, so a replacement keeps its position; otherwise the item. */
-function replaceMatching<T, K extends string>(item: T, value: T, keyOf: (record: T) => K): T {
+function replaceMatching<T, K extends string>(
+  item: T,
+  value: T,
+  keyOf: (record: T) => K,
+): T {
   if (keyOf(item) !== keyOf(value)) {
     return item;
   }

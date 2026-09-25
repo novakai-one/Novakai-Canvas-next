@@ -84,13 +84,20 @@ function ownProperty(
 }
 
 /** For an integer property, rejects `1.5`, which would otherwise read as `1` then `.5`. */
-function requireIntegerValue(raw: Parsed<LocatedValue>, property: Property, name: string): void {
+function requireIntegerValue(
+  raw: Parsed<LocatedValue>,
+  property: Property,
+  name: string,
+): void {
   if (property.type !== 'integer') return;
   rejectFraction(raw, name);
 }
 
 /** Rejects a `.` plus integer right after the value, with a span covering the whole number. */
-function rejectFraction(raw: Parsed<LocatedValue>, name: string): void {
+function rejectFraction(
+  raw: Parsed<LocatedValue>,
+  name: string,
+): void {
   if (peek(raw.next).text !== '.' || peek(raw.next, 1).kind !== 'integer') return;
   reject(
     'invalid-value',
@@ -105,7 +112,11 @@ function rejectFraction(raw: Parsed<LocatedValue>, name: string): void {
  * Text properties must be quoted, even when the text looks like a bare word: a `string` value
  * must be one string token; every item of a `strings` list must be a string token.
  */
-function requireQuotedValues(start: Cursor, end: Cursor, property: Property): void {
+function requireQuotedValues(
+  start: Cursor,
+  end: Cursor,
+  property: Property,
+): void {
   if (property.type === 'string') return requireStringToken(start);
   if (property.type !== 'strings') return;
   requireQuotedList(start, end);
@@ -118,7 +129,10 @@ function requireStringToken(cursor: Cursor): void {
 }
 
 /** Rejects the first token between the list's brackets that is neither a comma nor a string. */
-function requireQuotedList(start: Cursor, end: Cursor): void {
+function requireQuotedList(
+  start: Cursor,
+  end: Cursor,
+): void {
   const between = start.tokens.slice(start.index + 1, end.index - 1);
   const values = between.filter(
     /** Whether the token is not a comma. */ (token) => token.text !== ',',
@@ -131,7 +145,10 @@ function requireQuotedList(start: Cursor, end: Cursor): void {
 }
 
 /** For a `signature-parameters` property, checks every bracketed item. */
-function requireSignatureParameters(raw: LocatedValue, property: Property): void {
+function requireSignatureParameters(
+  raw: LocatedValue,
+  property: Property,
+): void {
   if (property.type !== 'signature-parameters') return;
   (raw.items ?? []).forEach(validateSignatureParameter);
 }
@@ -155,14 +172,20 @@ function validateLegacyParameter(item: LocatedValue): void {
 }
 
 /** A pair's name must be quoted and not blank; `fallback` locates a missing name. */
-function validateParameterName(name: LocatedValue | undefined, fallback: Span): void {
+function validateParameterName(
+  name: LocatedValue | undefined,
+  fallback: Span,
+): void {
   if (name?.token?.kind !== 'string')
     reject('syntax', name?.span ?? fallback, 'Quoted string', 'Parameter name must be quoted');
   rejectBlankParameterName(name, fallback);
 }
 
 /** Rejects a pair's name that is blank text; `fallback` locates a missing name. */
-function rejectBlankParameterName(name: LocatedValue | undefined, fallback: Span): void {
+function rejectBlankParameterName(
+  name: LocatedValue | undefined,
+  fallback: Span,
+): void {
   const nameText = name?.value as string | undefined;
   if (nameText === undefined || !isBlank(nameText)) return;
   reject(
@@ -174,7 +197,10 @@ function rejectBlankParameterName(name: LocatedValue | undefined, fallback: Span
 }
 
 /** A pair's type is quoted text, or a plain reference to a definition. */
-function validateParameterType(type: LocatedValue | undefined, fallback: Span): void {
+function validateParameterType(
+  type: LocatedValue | undefined,
+  fallback: Span,
+): void {
   if (typeof type?.value === 'string') return validateStringParameterType(type);
   validateReferenceParameterType(type, fallback);
 }
@@ -193,7 +219,10 @@ function validateStringParameterType(type: LocatedValue): void {
 }
 
 /** A linked type must be a plain `@id`; `fallback` locates a missing type. */
-function validateReferenceParameterType(type: LocatedValue | undefined, fallback: Span): void {
+function validateReferenceParameterType(
+  type: LocatedValue | undefined,
+  fallback: Span,
+): void {
   if (!isIdentityReference(type?.value))
     reject(
       'invalid-value',
@@ -216,7 +245,10 @@ function isIdentityReference(value: LocatedValue['value'] | undefined): boolean 
 }
 
 /** For a `type-expression` property written as text, rejects blank text. */
-function requireNonblankTypeExpression(raw: LocatedValue, property: Property): void {
+function requireNonblankTypeExpression(
+  raw: LocatedValue,
+  property: Property,
+): void {
   if (property.type !== 'type-expression' || typeof raw.value !== 'string') return;
   if (isBlank(raw.value))
     reject('invalid-value', raw.span, 'Nonblank type', 'Type must be nonblank');
@@ -228,7 +260,10 @@ function isBlank(text: string): boolean {
 }
 
 /** Adds one attribute to the fields; the same name twice is a `syntax` error. */
-function insertUnique(fields: Fields, [name, value]: Attribute): Fields {
+function insertUnique(
+  fields: Fields,
+  [name, value]: Attribute,
+): Fields {
   if (Object.hasOwn(fields, name))
     reject('syntax', value.span, 'One assignment per property', 'Duplicate property', name);
   return { ...fields, [name]: value };

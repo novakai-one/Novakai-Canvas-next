@@ -75,7 +75,10 @@ const SCHEMA_SQL = [
 ].join(' ');
 
 /** Runs initialization; on any throw, closes the database and returns a typed open failure. */
-function initialize(database: NativeDatabase, workspace: unknown): Result<Persistence> {
+function initialize(
+  database: NativeDatabase,
+  workspace: unknown,
+): Result<Persistence> {
   try {
     return initializeChecked(database, workspace);
   } catch {
@@ -87,7 +90,10 @@ function initialize(database: NativeDatabase, workspace: unknown): Result<Persis
  * Checks the workspace ID, builds the service and validates the stored state before returning
  * it. A failed check closes what was opened.
  */
-function initializeChecked(database: NativeDatabase, workspace: unknown): Result<Persistence> {
+function initializeChecked(
+  database: NativeDatabase,
+  workspace: unknown,
+): Result<Persistence> {
   const identity = workspaceId.safeParse(workspace);
   if (!identity.success) {
     database.close();

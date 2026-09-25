@@ -20,7 +20,10 @@ function observe(
 ): Promise<Result<unknown>> {
   return new Promise((resolve) => {
     let settled = false;
-    function finish(result: Result<unknown>, reusable = false): void {
+    function finish(
+      result: Result<unknown>,
+      reusable = false,
+    ): void {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
@@ -72,7 +75,10 @@ interface WorkerSlot {
   readonly ready: Promise<void>;
 }
 /** Startup readiness precedes jobs; it loads code only and never computes a diagram. */
-function initialized(worker: NodeWorker, timeoutMs: number): Promise<void> {
+function initialized(
+  worker: NodeWorker,
+  timeoutMs: number,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     function finish(error?: Error): void {
       clearTimeout(timer);

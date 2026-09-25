@@ -229,7 +229,10 @@ function writePage(
  * The registered alias for an SVG font family. Throws unless the family is exactly a pinned
  * font's alias, so PDFKit never falls back to its built-in Helvetica.
  */
-function fontAlias(family: string, fonts: readonly NativeFont[]): string {
+function fontAlias(
+  family: string,
+  fonts: readonly NativeFont[],
+): string {
   const font = fonts.find(
     /** Whether the font's alias is exactly the family. */ (item) => item.alias === family,
   );
@@ -241,7 +244,10 @@ function fontAlias(family: string, fonts: readonly NativeFont[]): string {
  * The embeddable data URL for an SVG image link. Throws unless the link is exactly a key of the
  * converted images; there is no file or network fallback.
  */
-function imageData(link: string, images: ReadonlyMap<string, string>): string {
+function imageData(
+  link: string,
+  images: ReadonlyMap<string, string>,
+): string {
   const image = images.get(link);
   if (!image) throw new Error('Missing retained image');
   return image;
@@ -252,7 +258,11 @@ function imageData(link: string, images: ReadonlyMap<string, string>): string {
  * across the drawable width, 12 points above the bottom margin. Throws when there is no font;
  * the operating system's fonts are never used.
  */
-function writeFooter(document: PDFKit.PDFDocument, page: Page, fonts: readonly NativeFont[]): void {
+function writeFooter(
+  document: PDFKit.PDFDocument,
+  page: Page,
+  fonts: readonly NativeFont[],
+): void {
   const font = fonts.at(0);
   if (!font) throw new Error('Missing footer font');
   document

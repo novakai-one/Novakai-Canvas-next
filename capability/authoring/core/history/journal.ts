@@ -88,7 +88,10 @@ export function createJournal(
 }
 
 /** Builds the receipt outcome. A candidate with no changes is a `no-op` with no transaction. */
-function commitOutcome(request: Request, candidate: PreparedCandidate): CommitOutcome {
+function commitOutcome(
+  request: Request,
+  candidate: PreparedCandidate,
+): CommitOutcome {
   const prepared = candidate.preparation;
   if (prepared.changes.length === 0)
     return {
@@ -122,14 +125,20 @@ function unchangedJournal(
  * Checks the history keys this commit generates do not exist yet.
  * The only lawful reuse of a request ID is a retry that finds its receipt, which happens earlier.
  */
-function checkJournalIdentity(request: Request, candidate: PreparedCandidate): void {
+function checkJournalIdentity(
+  request: Request,
+  candidate: PreparedCandidate,
+): void {
   requireAbsent(candidate, transactionKey(request.request));
   if (request.intent.kind !== 'change') return;
   requireAbsent(candidate, headKey(request.request));
 }
 
 /** Rejects a generated history key that already exists, before the commit is attempted. */
-function requireAbsent(candidate: PreparedCandidate, key: RecordKey): void {
+function requireAbsent(
+  candidate: PreparedCandidate,
+  key: RecordKey,
+): void {
   if (findRecord(candidate.before, key) !== null)
     reject(
       'corrupt-record',
@@ -212,7 +221,10 @@ function headState(request: Request): 'active' | 'undone' {
 }
 
 /** Builds one record's transition: its image before the change and its exact stamped image after. */
-function transition(candidate: PreparedCandidate, write: Write): unknown {
+function transition(
+  candidate: PreparedCandidate,
+  write: Write,
+): unknown {
   const after = findRecord(candidate.after, write.key);
   if (after === null)
     reject('corrupt-record', 'candidate', 'Changed participant is missing from the candidate');
@@ -263,7 +275,10 @@ function actionLabel(candidate: PreparedCandidate): string {
 }
 
 /** Describes one write: `Create`, `Edit` or `Delete`, then the record's title or ID. */
-function changedLabel(candidate: PreparedCandidate, write: Write): string {
+function changedLabel(
+  candidate: PreparedCandidate,
+  write: Write,
+): string {
   const before = findRecord(candidate.before, write.key);
   const after = findRecord(candidate.after, write.key);
   const title = recordTitle(after) ?? recordTitle(before) ?? write.key.id;

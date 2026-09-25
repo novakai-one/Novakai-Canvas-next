@@ -64,7 +64,10 @@ export function value<T>(result: Result<T>): T {
  * @param code - The expected failure code.
  * @throws AssertionError when the result succeeded, has another code, or carries a value.
  */
-export function rejects(result: Result<unknown>, code: ErrorCode): void {
+export function rejects(
+  result: Result<unknown>,
+  code: ErrorCode,
+): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
   expect(result).not.toHaveProperty('value');
 }
@@ -77,7 +80,10 @@ export function rejects(result: Result<unknown>, code: ErrorCode): void {
  * @returns The key.
  * @throws ZodError when the ID is invalid.
  */
-export function key(kind: RecordKey['kind'], id: string): RecordKey {
+export function key(
+  kind: RecordKey['kind'],
+  id: string,
+): RecordKey {
   return { kind, id: recordId.parse(id) };
 }
 
@@ -90,7 +96,11 @@ export function key(kind: RecordKey['kind'], id: string): RecordKey {
  * @param themeDigest - The digest of the theme asset.
  * @returns The diagram as JSON.
  */
-export function diagram(id = 'demo', title = 'Original', themeDigest: Digest = media): Json {
+export function diagram(
+  id = 'demo',
+  title = 'Original',
+  themeDigest: Digest = media,
+): Json {
   return {
     schemaVersion: 1,
     id,
@@ -223,7 +233,10 @@ export function observed(
  * @returns The stored record.
  * @throws AssertionError, showing the key, when the record is not stored.
  */
-export function record(snapshot: Snapshot, target: RecordKey): StoredRecord {
+export function record(
+  snapshot: Snapshot,
+  target: RecordKey,
+): StoredRecord {
   const found = findStored(snapshot, target);
   assert(found, JSON.stringify(target));
   return found;
@@ -288,7 +301,10 @@ export function harness(overrides: Partial<Dependencies> = {}): Harness {
  * @throws AssertionError when reading or applying fails.
  * @throws ZodError when a collection ID is not a valid record ID.
  */
-export async function seed(h: Harness, ids: readonly string[] = ['demo']): Promise<Receipt> {
+export async function seed(
+  h: Harness,
+  ids: readonly string[] = ['demo'],
+): Promise<Receipt> {
   const before = value(await h.api.read(workspace));
   return value(
     await h.api.apply(
@@ -311,7 +327,10 @@ export function liveCollections(snapshot: Snapshot): readonly StoredRecord[] {
 }
 
 /** Finds the record stored under a key, or `undefined`. */
-function findStored(snapshot: Snapshot, target: RecordKey): StoredRecord | undefined {
+function findStored(
+  snapshot: Snapshot,
+  target: RecordKey,
+): StoredRecord | undefined {
   // Kind is compared first, then ID.
   return snapshot.records.find(
     (item) => item.key.kind === target.kind && item.key.id === target.id,

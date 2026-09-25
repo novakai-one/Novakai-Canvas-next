@@ -158,7 +158,10 @@ collection @build-spec-starter "Edit a title safely — build spec starter" them
   }
 }`;
 
-export function scaffoldBuildSpec(id: string, title: string): string {
+export function scaffoldBuildSpec(
+  id: string,
+  title: string,
+): string {
   const escapedTitle = title.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
   return buildSpecStarter
     .replace(

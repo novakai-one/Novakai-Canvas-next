@@ -90,7 +90,10 @@ async function normalizeRaster(
 }
 
 /** Rejects a format that differs from the declared type, and animated or multipage images. */
-function inspectMetadata(metadata: Metadata, declared: SupportedMedia): Result<void> {
+function inspectMetadata(
+  metadata: Metadata,
+  declared: SupportedMedia,
+): Result<void> {
   if (metadata.format !== rasterFormats[declared]) {
     return fail('unsupported-media', 'mediaType', 'Declared raster format differs from bytes');
   }
@@ -101,7 +104,10 @@ function inspectMetadata(metadata: Metadata, declared: SupportedMedia): Result<v
 }
 
 /** Rejects a side over the dimension limit, then a pixel count over the pixel limit. */
-function checkDimensions(width: number, height: number): Result<void> {
+function checkDimensions(
+  width: number,
+  height: number,
+): Result<void> {
   if (Math.max(width, height) > limits.dimension) {
     return fail('unsafe-media', 'dimensions', 'Raster dimension exceeds limit');
   }

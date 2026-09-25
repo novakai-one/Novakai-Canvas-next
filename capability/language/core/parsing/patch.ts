@@ -342,7 +342,10 @@ function blockMoveProperties(action: 'move' | 'remove'): Readonly<Record<string,
 }
 
 /** The target word at the cursor; it must be one of `allowed`. */
-function targetKind(cursor: Cursor, allowed: readonly TargetKind[]): TargetKind {
+function targetKind(
+  cursor: Cursor,
+  allowed: readonly TargetKind[],
+): TargetKind {
   const kind = allowed.find(
     /** Whether this is the target word at the cursor. */ (item) => item === peek(cursor).text,
   );
@@ -355,7 +358,11 @@ function targetKind(cursor: Cursor, allowed: readonly TargetKind[]): TargetKind 
  * Builds an operation record spanning from `start` to `end`. Left out, `fields` is `{}`,
  * `declaration` is `null` and `properties` is `[]`.
  */
-function operation(start: Cursor, end: Cursor, parts: OperationParts): Parsed<Operation> {
+function operation(
+  start: Cursor,
+  end: Cursor,
+  parts: OperationParts,
+): Parsed<Operation> {
   const { action, target, address, fields = {}, declaration = null, properties = [] } = parts;
   return {
     value: {

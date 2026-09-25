@@ -54,7 +54,11 @@ async function edit(
 }
 
 /** Builds the undo or redo request a client submits from a history status. */
-function inverseFromStatus(status: HistoryStatus, id: string, direction: Direction): Request {
+function inverseFromStatus(
+  status: HistoryStatus,
+  id: string,
+  direction: Direction,
+): Request {
   const action = status[direction];
   assert(action);
   return requestSchema.parse({
@@ -84,7 +88,11 @@ async function title(api: Authoring): Promise<Json> {
 }
 
 /** Applies edits `E<from>` up to, but not including, `E<to>`, one after another. */
-async function edits(api: Authoring, from: number, to: number): Promise<void> {
+async function edits(
+  api: Authoring,
+  from: number,
+  to: number,
+): Promise<void> {
   for (let index = from; index < to; index++) {
     value(await edit(api, `E${index}`, `E${index}`));
   }

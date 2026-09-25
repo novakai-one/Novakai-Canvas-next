@@ -28,7 +28,10 @@ export interface ReceiptReader {
    * @param request - The request ID.
    * @returns The stored receipt, `null` when the request has not committed, or a failure.
    */
-  find(workspace: WorkspaceId, request: RequestId): Promise<Result<Receipt | null>>;
+  find(
+    workspace: WorkspaceId,
+    request: RequestId,
+  ): Promise<Result<Receipt | null>>;
 }
 
 /**

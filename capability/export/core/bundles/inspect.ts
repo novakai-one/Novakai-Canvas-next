@@ -73,7 +73,10 @@ async function inspectText(
  * behind an unchanged DSL digest), then the 16 MiB limit on the source's UTF-8 bytes. Both
  * digests are always checked; neither check skips the other.
  */
-function checkHashes(bundle: Bundle, deps: InspectionDependencies): Result<void> {
+function checkHashes(
+  bundle: Bundle,
+  deps: InspectionDependencies,
+): Result<void> {
   const hashes = [
     deps.encoding.hash(deps.encoding.utf8(bundle.source)) === bundle.sourceDigest,
     deps.encoding.hash(deps.encoding.utf8(canonical(bundle.manual))) === bundle.manualDigest,

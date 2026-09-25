@@ -17,7 +17,10 @@ import type {
  * @param base64 - The bytes as base64.
  * @returns Success when the bytes hash to `identity`; otherwise a `corrupt-record` failure.
  */
-export async function verifyBytes(identity: Digest, base64: string): Promise<Result<void>> {
+export async function verifyBytes(
+  identity: Digest,
+  base64: string,
+): Promise<Result<void>> {
   const actual = createHash('sha256').update(Buffer.from(base64, 'base64')).digest('hex');
   if (actual !== identity) {
     return failure('corrupt-record');

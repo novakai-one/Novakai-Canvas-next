@@ -38,7 +38,10 @@ export interface PropertyTarget {
  * wrong address or an unknown content kind; `unknown-target` for a missing record, block,
  * appearance or visible wire.
  */
-export function propertyTarget(collection: Collection, operation: Operation): PropertyTarget {
+export function propertyTarget(
+  collection: Collection,
+  operation: Operation,
+): PropertyTarget {
   const target = operation.target;
   switch (target) {
     case 'collection':
@@ -83,7 +86,10 @@ function canonicalTarget(
 }
 
 /** A content block accepts its own kind's properties plus its positional ones, except `id`. */
-function contentTarget(collection: Collection, operation: Operation): PropertyTarget {
+function contentTarget(
+  collection: Collection,
+  operation: Operation,
+): PropertyTarget {
   const owner = blockOwner(collection, operation);
   const record = findRecord(owner.content, blockId(operation), operation);
   const definition = constructs.find((item) => item.kind === record.kind);
@@ -109,7 +115,10 @@ function contentTarget(collection: Collection, operation: Operation): PropertyTa
 }
 
 /** An object's ordinary appearance in a section; one drawn as part of a group is refused. */
-function appearanceTarget(collection: Collection, operation: Operation): PropertyTarget {
+function appearanceTarget(
+  collection: Collection,
+  operation: Operation,
+): PropertyTarget {
   const section = viewOwner(collection, operation);
   const record = section.appearances.find((item) => item.object === operation.address.id);
   if (record === undefined)
@@ -133,7 +142,10 @@ function appearanceTarget(collection: Collection, operation: Operation): Propert
 }
 
 /** A visible wire's route preferences in a section; manual points are not properties. */
-function routeTarget(collection: Collection, operation: Operation): PropertyTarget {
+function routeTarget(
+  collection: Collection,
+  operation: Operation,
+): PropertyTarget {
   const section = viewOwner(collection, operation);
   const record = section.wires.find((item) => item.relationship === operation.address.id);
   if (record === undefined)
@@ -167,7 +179,10 @@ function refuseEdits(operation: Operation): never {
 }
 
 /** Refuses a target of no known kind; `never` proves every target kind is handled above. */
-function unknownTarget(target: never, operation: Operation): never {
+function unknownTarget(
+  target: never,
+  operation: Operation,
+): never {
   void target;
   return refuseEdits(operation);
 }

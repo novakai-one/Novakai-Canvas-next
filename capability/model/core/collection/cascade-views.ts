@@ -77,7 +77,10 @@ export function cascadeSection(
  * Returns an appearance whose group was removed as a copy without `group` (other fields in their
  * order). Any other appearance is returned as it is.
  */
-function detachAppearance(appearance: Appearance, removedGroups: readonly GroupId[]): Appearance {
+function detachAppearance(
+  appearance: Appearance,
+  removedGroups: readonly GroupId[],
+): Appearance {
   if (appearance.group === undefined) {
     return appearance;
   }
@@ -91,7 +94,10 @@ function detachAppearance(appearance: Appearance, removedGroups: readonly GroupI
  * Returns a group whose parent was removed as a copy without `parent` (other fields in their
  * order). Any other group is returned as it is.
  */
-function detachGroup(group: Group, removedGroups: readonly GroupId[]): Group {
+function detachGroup(
+  group: Group,
+  removedGroups: readonly GroupId[],
+): Group {
   if (group.parent === undefined) {
     return group;
   }
@@ -136,7 +142,10 @@ function pruneLayout(
  * Returns a section rooted at the deleted object as a copy without `root`; any other section as
  * it is. Final validation decides whether a new root is needed.
  */
-function clearDeletedRoot(section: Section, removedId: ObjectId): Section {
+function clearDeletedRoot(
+  section: Section,
+  removedId: ObjectId,
+): Section {
   if (section.root !== removedId) {
     return section;
   }
@@ -144,7 +153,10 @@ function clearDeletedRoot(section: Section, removedId: ObjectId): Section {
 }
 
 /** Tells whether a sequence item stays: fragments always; events not from or to the object. */
-function sequenceItemSurvives(item: SequenceItem, removedId: ObjectId): boolean {
+function sequenceItemSurvives(
+  item: SequenceItem,
+  removedId: ObjectId,
+): boolean {
   if (item.kind !== 'event') {
     return true;
   }
@@ -155,7 +167,10 @@ function sequenceItemSurvives(item: SequenceItem, removedId: ObjectId): boolean 
  * Returns a copy of the record without one optional field; the other own fields keep their order.
  * Reads the field first, then copies the rest (the same reads as a rest destructuring).
  */
-function withoutField<T extends object, K extends keyof T>(record: T, key: K): Omit<T, K> {
+function withoutField<T extends object, K extends keyof T>(
+  record: T,
+  key: K,
+): Omit<T, K> {
   const { [key]: removedValue, ...rest } = record;
   // `void` marks the removed value as deliberately unused; only the rest copy is kept.
   void removedValue;

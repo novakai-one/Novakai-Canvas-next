@@ -83,7 +83,10 @@ async function check(
   return { ok: true, value: report(documents.value, preview) };
 }
 /** Preview serialization is separate from mandatory geometry checks; an apply never returns an unused image payload. */
-function report(documents: readonly RenderDocument[], preview: boolean): FeasibilityReport {
+function report(
+  documents: readonly RenderDocument[],
+  preview: boolean,
+): FeasibilityReport {
   return {
     warnings: warnings(documents),
     diff: z.json().parse(

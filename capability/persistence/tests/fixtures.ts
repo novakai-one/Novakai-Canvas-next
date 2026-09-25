@@ -44,7 +44,10 @@ export function value<T>(result: Result<T>): T {
  * @param code - The expected failure code.
  * @throws Vitest's assertion error when the result succeeded or has another code.
  */
-export function rejects(result: Result<unknown>, code: ErrorCode): void {
+export function rejects(
+  result: Result<unknown>,
+  code: ErrorCode,
+): void {
   expect(result).toMatchObject({ ok: false, error: { code } });
 }
 

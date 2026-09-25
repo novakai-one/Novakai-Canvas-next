@@ -78,7 +78,10 @@ export interface BlobFiles {
    * @throws A `StorageFault` `corrupt-asset` when different bytes already exist at the digest, or
    * the native error for a write failure.
    */
-  write(digest: Digest, base64: string): void;
+  write(
+    digest: Digest,
+    base64: string,
+  ): void;
   /**
    * Removes a digest's file. Removing a missing file is not an error.
    *

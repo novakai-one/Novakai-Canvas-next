@@ -55,7 +55,10 @@ export function createAssets(deps: AssetDependencies): Assets {
 }
 
 /** Checks the digest, then reads and verifies its bytes in a storage transaction. */
-function resolveInput(input: unknown, deps: AssetDependencies): Result<StoredBlob> {
+function resolveInput(
+  input: unknown,
+  deps: AssetDependencies,
+): Result<StoredBlob> {
   const parsed = parse(digest, input);
   if (!parsed.ok) {
     return parsed;
@@ -64,7 +67,11 @@ function resolveInput(input: unknown, deps: AssetDependencies): Result<StoredBlo
 }
 
 /** Checks the digest, then re-checks the lease covers it and verifies its bytes. */
-function readLeaseInput(id: LeaseId, input: unknown, deps: AssetDependencies): Result<StoredBlob> {
+function readLeaseInput(
+  id: LeaseId,
+  input: unknown,
+  deps: AssetDependencies,
+): Result<StoredBlob> {
   const parsed = parse(digest, input);
   if (!parsed.ok) {
     return parsed;
@@ -76,7 +83,11 @@ function readLeaseInput(id: LeaseId, input: unknown, deps: AssetDependencies): R
  * Checks the digest list, removes duplicates, sorts it and records a new lease. In `acquire`
  * mode, every digest's bytes are verified before the lease is recorded.
  */
-function openLease(input: unknown, mode: LeaseMode, deps: AssetDependencies): Result<LeaseId> {
+function openLease(
+  input: unknown,
+  mode: LeaseMode,
+  deps: AssetDependencies,
+): Result<LeaseId> {
   const parsed = parse(digestList, input);
   if (!parsed.ok) {
     return parsed;
@@ -90,7 +101,10 @@ function openLease(input: unknown, mode: LeaseMode, deps: AssetDependencies): Re
 }
 
 /** Deletes the lease. Releasing twice is not an error; storage failures are returned. */
-function releaseLease(id: LeaseId, deps: AssetDependencies): Result<void> {
+function releaseLease(
+  id: LeaseId,
+  deps: AssetDependencies,
+): Result<void> {
   return protect(() =>
     deps.storage.transact((view) => {
       view.deleteLease(id);
@@ -100,7 +114,10 @@ function releaseLease(id: LeaseId, deps: AssetDependencies): Result<void> {
 }
 
 /** Leases existing, verified digests and returns a lease that reads and releases them. */
-function acquire(input: unknown, deps: AssetDependencies): Result<ReadLease> {
+function acquire(
+  input: unknown,
+  deps: AssetDependencies,
+): Result<ReadLease> {
   const opened = openLease(input, 'acquire', deps);
   if (!opened.ok) {
     return opened;
@@ -116,7 +133,10 @@ function acquire(input: unknown, deps: AssetDependencies): Result<ReadLease> {
 }
 
 /** Leases digests whose bytes may be absent and returns a lease that installs and releases them. */
-function reserve(input: unknown, deps: AssetDependencies): Result<WriteLease> {
+function reserve(
+  input: unknown,
+  deps: AssetDependencies,
+): Result<WriteLease> {
   const opened = openLease(input, 'reserve', deps);
   if (!opened.ok) {
     return opened;

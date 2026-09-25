@@ -71,7 +71,10 @@ export function requirePlainAddress(operation: Operation): void {
  * @throws `invalid-value` for a wrong number of address parts or a section or namespace
  * selector; `unknown-target` for a missing object.
  */
-export function blockOwner(collection: Collection, operation: Operation): DiagramObject {
+export function blockOwner(
+  collection: Collection,
+  operation: Operation,
+): DiagramObject {
   requireBlockAddress(operation);
   return findRecord(collection.objects, operation.address.id, operation);
 }
@@ -82,7 +85,10 @@ export function blockOwner(collection: Collection, operation: Operation): Diagra
  * @throws `invalid-value` when the address has no section or has other parts; `unknown-target`
  * for a missing section.
  */
-export function viewOwner(collection: Collection, operation: Operation): Section {
+export function viewOwner(
+  collection: Collection,
+  operation: Operation,
+): Section {
   const section = operation.address.section;
   if (section === undefined)
     reject('invalid-value', operation.span, VIEW_ADDRESS, 'Missing section address');

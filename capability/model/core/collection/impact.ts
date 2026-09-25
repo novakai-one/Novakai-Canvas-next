@@ -21,7 +21,10 @@ import type { Impact, Target } from '../../contract/types.js';
  * @returns A new, unfrozen list of changes; empty when nothing changed.
  * @throws Never for validated collections.
  */
-export function describeImpact(before: Collection, after: Collection): readonly Impact[] {
+export function describeImpact(
+  before: Collection,
+  after: Collection,
+): readonly Impact[] {
   const targets: readonly Target[] = [
     'objects',
     'relationships',
@@ -48,7 +51,10 @@ type CollectionMetadata = Omit<Collection, Target>;
  * Tells whether two values differ as JSON. The inputs are detached JSON data; array order and
  * explicit overrides count as differences on purpose.
  */
-function hasChanged(before: unknown, after: unknown): boolean {
+function hasChanged(
+  before: unknown,
+  after: unknown,
+): boolean {
   return JSON.stringify(before) !== JSON.stringify(after);
 }
 

@@ -32,7 +32,10 @@ export function diagnoseWhen(
  * @returns A new list with one diagnostic, or an empty list.
  * @throws Never.
  */
-export function referenceIssue(missing: boolean, path: string): readonly Diagnostic[] {
+export function referenceIssue(
+  missing: boolean,
+  path: string,
+): readonly Diagnostic[] {
   return diagnoseWhen(
     missing,
     'reference',
@@ -51,7 +54,11 @@ export function referenceIssue(missing: boolean, path: string): readonly Diagnos
  * @returns A new failure.
  * @throws Never.
  */
-export function failure<T>(code: DiagnosticCode, path: string, message: string): Result<T> {
+export function failure<T>(
+  code: DiagnosticCode,
+  path: string,
+  message: string,
+): Result<T> {
   return {
     ok: false,
     error: { code: 'validation-failed', diagnostics: [{ code, path, message }] },

@@ -26,7 +26,10 @@ import { reject, origin } from '../validation/outcomes.js';
  * other than 1; a `DataCloneError` when `policies` cannot be cloned. The public `describe`
  * runs it inside `protect`.
  */
-export function describeLanguage(version: number, policies: Description['policies']): Description {
+export function describeLanguage(
+  version: number,
+  policies: Description['policies'],
+): Description {
   if (version !== 1)
     reject('unsupported-version', origin, 'Version 1', 'Unsupported language version');
   return structuredClone({

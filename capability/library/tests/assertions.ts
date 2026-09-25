@@ -24,7 +24,11 @@ export function valueOf<T>(result: Result<T>): T {
  * True when the result failed with a diagnostic of `code` at exactly `path`. Other diagnostics in
  * the same failure are allowed.
  */
-export function hasFailure<T>(result: Result<T>, code: DiagnosticCode, path: string): boolean {
+export function hasFailure<T>(
+  result: Result<T>,
+  code: DiagnosticCode,
+  path: string,
+): boolean {
   if (result.ok) {
     return false;
   }

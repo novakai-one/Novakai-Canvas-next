@@ -32,8 +32,15 @@ export interface ServerBindings {
 export interface HttpIo {
   metadata(request: IncomingMessage): import('./http.js').HttpMetadata;
   body(request: BodyStream): Promise<Result<string>>;
-  json(response: ServerResponse, outcome: WireOutcome, generation: string): void;
-  bytes(response: ServerResponse, file: StaticFile): void;
+  json(
+    response: ServerResponse,
+    outcome: WireOutcome,
+    generation: string,
+  ): void;
+  bytes(
+    response: ServerResponse,
+    file: StaticFile,
+  ): void;
 }
 export interface StaticFile {
   readonly bytes: Uint8Array;
@@ -63,7 +70,10 @@ export interface RouterBindings {
   readonly decoder: CommandDecoder;
   readonly source: {
     describe(): unknown;
-    print(collection: unknown, scope?: Scope): WireReadout;
+    print(
+      collection: unknown,
+      scope?: Scope,
+    ): WireReadout;
   };
   readonly exporter?: (
     input: unknown,

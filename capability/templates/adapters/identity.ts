@@ -26,7 +26,10 @@ function nativeHash(value: string): string {
 }
 
 /** Computes and checks one digest; any throw or bad output becomes `provider-failed`. */
-function hash(value: string, compute: (value: string) => string): Result<Digest> {
+function hash(
+  value: string,
+  compute: (value: string) => string,
+): Result<Digest> {
   try {
     return { ok: true, value: digest.parse(compute(value)) };
   } catch {

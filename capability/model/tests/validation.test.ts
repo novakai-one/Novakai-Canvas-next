@@ -240,6 +240,9 @@ function cyclic() {
  * @param collectionFields - Collection fields placed before `objects` (for example `sources`).
  * @returns The collection data (unvalidated).
  */
-function noteCollection(noteFields: RawRecord, collectionFields: RawRecord = {}): RawRecord {
+function noteCollection(
+  noteFields: RawRecord,
+  collectionFields: RawRecord = {},
+): RawRecord {
   return base({ ...collectionFields, objects: [node('a', 'note', noteFields)] });
 }

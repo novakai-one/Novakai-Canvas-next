@@ -36,7 +36,10 @@ function planOrganization(
   return checkedProposal(planned.value.candidate, snapshot);
 }
 /** Collection inventory dependencies participate in conditional admission; catalog changes never rewrite diagrams. */
-function checkedProposal(catalog: unknown, snapshot: Snapshot): Result<Proposal> {
+function checkedProposal(
+  catalog: unknown,
+  snapshot: Snapshot,
+): Result<Proposal> {
   const catalogs = snapshot.records.filter(
     (record) => record.key.kind === 'catalog' && !record.deleted,
   );

@@ -24,12 +24,19 @@ interface Boundary {
   readonly section: PrototypeBlock;
   readonly exiting: boolean;
 }
-function ancestry(scene: RoadPrototypeScene, id: string | null): readonly PrototypeBlock[] {
+function ancestry(
+  scene: RoadPrototypeScene,
+  id: string | null,
+): readonly PrototypeBlock[] {
   const section = scene.sections.find((s) => s.id === id);
   if (section === undefined) return [];
   return [section, ...ancestry(scene, section.parentSectionId ?? null)];
 }
-function boundaries(scene: RoadPrototypeScene, from: string, to: string): readonly Boundary[] {
+function boundaries(
+  scene: RoadPrototypeScene,
+  from: string,
+  to: string,
+): readonly Boundary[] {
   const source = ancestry(scene, scene.nodes.find((n) => n.id === from)?.sectionId ?? null);
   const target = ancestry(scene, scene.nodes.find((n) => n.id === to)?.sectionId ?? null);
   const common = new Set(source.filter((s) => target.some((t) => s.id === t.id)).map((s) => s.id));
@@ -41,7 +48,10 @@ function boundaries(scene: RoadPrototypeScene, from: string, to: string): readon
       .map((section) => ({ section, exiting: false })),
   ];
 }
-function alignment(source: PrototypePoint, target: PrototypePoint) {
+function alignment(
+  source: PrototypePoint,
+  target: PrototypePoint,
+) {
   const dx = target.x - source.x,
     dy = target.y - source.y;
   return { right: dx, bottom: dy, left: -dx, top: -dy };
@@ -67,7 +77,10 @@ function cross(
   );
   return firstGate(ordered, registry, state, boundary, owner);
 }
-function manhattan(a: PrototypePoint, b: PrototypePoint): number {
+function manhattan(
+  a: PrototypePoint,
+  b: PrototypePoint,
+): number {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 interface GateChoice {
@@ -110,7 +123,11 @@ function firstGate(
   }
   return null;
 }
-function gateLeg(registry: WireRegistry, state: State, choice: GateChoice): State | null {
+function gateLeg(
+  registry: WireRegistry,
+  state: State,
+  choice: GateChoice,
+): State | null {
   const leg = lawLeg(
     state.terminal,
     gateTerminal(choice.approach),

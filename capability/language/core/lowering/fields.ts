@@ -27,7 +27,10 @@ export type RawRecord = Readonly<Record<string, unknown>>;
  * @throws A `LanguageFault` with an `invalid-value` diagnostic at the start of the source
  * (`origin`) when the field is missing.
  */
-export function field(fields: Fields, name: string): LocatedValue {
+export function field(
+  fields: Fields,
+  name: string,
+): LocatedValue {
   const value = fields[name];
   if (value === undefined) reject('invalid-value', origin, name, 'Required syntax value is absent');
   return value;
@@ -45,7 +48,10 @@ export function field(fields: Fields, name: string): LocatedValue {
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is missing (see
  * {@link field}) or is not text.
  */
-export function text(fields: Fields, name: string): string {
+export function text(
+  fields: Fields,
+  name: string,
+): string {
   const item = field(fields, name);
   if (typeof item.value !== 'string')
     reject('invalid-value', item.span, 'String', 'Expected textual value', name);
@@ -65,7 +71,11 @@ export function text(fields: Fields, name: string): string {
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is present but is
  * not text.
  */
-export function textOr(fields: Fields, name: string, fallback: string): string {
+export function textOr(
+  fields: Fields,
+  name: string,
+  fallback: string,
+): string {
   if (fields[name] === undefined) return fallback;
   return text(fields, name);
 }
@@ -99,7 +109,10 @@ export function reference(value: LocatedValue): Reference {
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is missing or is
  * not a reference.
  */
-export function id(fields: Fields, name: string = 'id'): string {
+export function id(
+  fields: Fields,
+  name: string = 'id',
+): string {
   return reference(field(fields, name)).id;
 }
 
@@ -116,7 +129,10 @@ export function id(fields: Fields, name: string = 'id'): string {
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is missing or is
  * not a list.
  */
-export function list(fields: Fields, name: string): readonly SyntaxValue[] {
+export function list(
+  fields: Fields,
+  name: string,
+): readonly SyntaxValue[] {
   const value = field(fields, name);
   if (!isList(value.value)) reject('invalid-value', value.span, 'List', 'Expected a list');
   return value.value;
@@ -134,7 +150,10 @@ export function list(fields: Fields, name: string): readonly SyntaxValue[] {
  * @returns `{ [name]: value }`, or `{}` when `value` is `undefined`.
  * @throws Never.
  */
-export function optional(name: string, value: unknown): RawRecord {
+export function optional(
+  name: string,
+  value: unknown,
+): RawRecord {
   if (value === undefined) return {};
   return { [name]: value };
 }
@@ -166,7 +185,10 @@ export function endpoint(value: Reference): RawRecord {
  * @returns The copy.
  * @throws Never for plain data; a getter that throws is passed through.
  */
-export function withoutField(record: RawRecord, field: string): RawRecord {
+export function withoutField(
+  record: RawRecord,
+  field: string,
+): RawRecord {
   const { [field]: removed, ...remaining } = record;
   // `void` marks the removed value as deliberately unused; only the copy is kept.
   void removed;

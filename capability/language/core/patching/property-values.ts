@@ -38,7 +38,11 @@ export function changedProperties(
 }
 
 /** The target's own property with this name; an inherited or unknown name is refused. */
-function owningProperty(name: string, operation: Operation, properties: PropertyTable): Property {
+function owningProperty(
+  name: string,
+  operation: Operation,
+  properties: PropertyTable,
+): Property {
   const property = Object.hasOwn(properties, name) ? properties[name] : undefined;
   if (property === undefined)
     reject(

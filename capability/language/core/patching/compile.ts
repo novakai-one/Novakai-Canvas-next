@@ -116,7 +116,10 @@ function compileNext(
 }
 
 /** A section deleted earlier in the patch cannot be added again; `replace section` is used. */
-function checkSectionIdentity(state: Compilation, operation: Operation): void {
+function checkSectionIdentity(
+  state: Compilation,
+  operation: Operation,
+): void {
   if (operation.target !== 'section' || operation.action !== 'add') return;
   if (state.deletedSections.includes(operation.address.id))
     reject(
@@ -128,7 +131,10 @@ function checkSectionIdentity(state: Compilation, operation: Operation): void {
 }
 
 /** The deleted-section IDs after this operation; only a section `delete` adds one. */
-function deletedSections(state: Compilation, operation: Operation): readonly string[] {
+function deletedSections(
+  state: Compilation,
+  operation: Operation,
+): readonly string[] {
   if (operation.target !== 'section' || operation.action !== 'delete') return state.deletedSections;
   return [...state.deletedSections, operation.address.id];
 }

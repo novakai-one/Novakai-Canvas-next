@@ -98,7 +98,10 @@ function visitNext(scan: InputScan): Result<readonly InputFrame[]> {
 }
 
 /** Queues a successful visit's children; a failed visit queues nothing. */
-function queueChildren(scan: InputScan, children: Result<readonly InputFrame[]>): void {
+function queueChildren(
+  scan: InputScan,
+  children: Result<readonly InputFrame[]>,
+): void {
   if (!children.ok) {
     return;
   }
@@ -106,7 +109,10 @@ function queueChildren(scan: InputScan, children: Result<readonly InputFrame[]>)
 }
 
 /** Checks the value budget and depth limit before looking at the value itself. */
-function inspectFrame(frame: InputFrame, visited: number): Result<readonly InputFrame[]> {
+function inspectFrame(
+  frame: InputFrame,
+  visited: number,
+): Result<readonly InputFrame[]> {
   if (visited > MAX_VALUES || frame.depth > MAX_DEPTH) {
     return failure(
       'limit',
@@ -145,7 +151,10 @@ function isObject(value: unknown): value is object {
 }
 
 /** Rejects a non-plain prototype or symbol key, then a cycle, before looking at the fields. */
-function inspectObject(frame: InputFrame, value: object): Result<readonly InputFrame[]> {
+function inspectObject(
+  frame: InputFrame,
+  value: object,
+): Result<readonly InputFrame[]> {
   if (!hasPlainPrototype(value)) {
     return failure('shape', frame.path, 'Expected plain JSON data');
   }
@@ -171,7 +180,10 @@ function hasPlainPrototype(value: object): boolean {
 }
 
 /** Rejects an array that is sparse or has extra fields, then lists the children. */
-function inspectArrayShape(frame: InputFrame, value: object): Result<readonly InputFrame[]> {
+function inspectArrayShape(
+  frame: InputFrame,
+  value: object,
+): Result<readonly InputFrame[]> {
   if (Array.isArray(value) && !isDenseArray(value)) {
     return failure('shape', frame.path, 'Array must be dense with no extra properties');
   }
@@ -198,7 +210,10 @@ function isDenseArray(value: readonly unknown[]): boolean {
  * must be an enumerable data property (an array's `length` is skipped), and there may be at most
  * 100,000 of them.
  */
-function childFrames(frame: InputFrame, value: object): Result<readonly InputFrame[]> {
+function childFrames(
+  frame: InputFrame,
+  value: object,
+): Result<readonly InputFrame[]> {
   const descriptors = Object.entries(Object.getOwnPropertyDescriptors(value));
   const fields = descriptors.filter(
     /** Keeps every field except an array's `length`. */

@@ -20,6 +20,9 @@ function collectionVersion(collection: CollectionProjection): CollectionVersion 
 }
 
 /** Sorts versions by collection ID, by code unit. */
-function byCollectionId(left: CollectionVersion, right: CollectionVersion): number {
+function byCollectionId(
+  left: CollectionVersion,
+  right: CollectionVersion,
+): number {
   return compareText(left.id, right.id);
 }

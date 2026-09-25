@@ -15,7 +15,10 @@ interface Exchange {
   readonly url: URL;
 }
 /** Committed messages are hints. Every connection first receives the host generation and rereads authoritative state. */
-function events(exchange: Exchange, bindings: ServerBindings): void {
+function events(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): void {
   const response = exchange.response;
   response.writeHead(200, {
     'Content-Type': 'text/event-stream',
@@ -37,7 +40,10 @@ function events(exchange: Exchange, bindings: ServerBindings): void {
   });
 }
 /** Authentication precedes streaming reads and route lookup. Unsupported API methods cannot bootstrap a browser session. */
-async function api(exchange: Exchange, bindings: ServerBindings): Promise<void> {
+async function api(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): Promise<void> {
   const caller = bindings.admission.authenticate(exchange.metadata);
   if (!caller.ok) {
     bindings.io.json(exchange.response, caller, bindings.security.generation);
@@ -97,7 +103,11 @@ function queryValues(
   return Object.fromEntries(values);
 }
 
-function appendQueryValue(values: Map<string, string>, key: string, value: string): void {
+function appendQueryValue(
+  values: Map<string, string>,
+  key: string,
+  value: string,
+): void {
   if (key !== 'section' && key !== 'object') {
     values.set(key, value);
     return;
@@ -105,24 +115,36 @@ function appendQueryValue(values: Map<string, string>, key: string, value: strin
   values.set(key, joinedScopeValue(values.get(key), value));
 }
 
-function joinedScopeValue(previous: string | undefined, value: string): string {
+function joinedScopeValue(
+  previous: string | undefined,
+  value: string,
+): string {
   return previous === undefined ? value : `${previous}\u0000${value}`;
 }
 /** A navigation grants only an HttpOnly browser session. Subsequent resource reads still pass exact host/origin admission. */
-function browserAccess(exchange: Exchange, bindings: ServerBindings): Result<void> {
+function browserAccess(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): Result<void> {
   if (exchange.metadata.mode !== 'navigate') {
     return existingBrowserAccess(exchange, bindings);
   }
   return establishBrowserAccess(exchange, bindings);
 }
 /** Resource fetches can only reuse an already established session. */
-function existingBrowserAccess(exchange: Exchange, bindings: ServerBindings): Result<void> {
+function existingBrowserAccess(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): Result<void> {
   const caller = bindings.admission.authenticate(exchange.metadata);
   if (!caller.ok) return caller;
   return { ok: true, value: undefined };
 }
 /** Only the navigation branch can issue the session cookie. */
-function establishBrowserAccess(exchange: Exchange, bindings: ServerBindings): Result<void> {
+function establishBrowserAccess(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): Result<void> {
   const navigation = bindings.admission.bootstrap(exchange.metadata);
   if (!navigation.ok) return navigation;
   exchange.response.setHeader(
@@ -132,7 +154,10 @@ function establishBrowserAccess(exchange: Exchange, bindings: ServerBindings): R
   return { ok: true, value: undefined };
 }
 /** Built application requests cannot invoke handlers and never read outside the configured static root. */
-async function browser(exchange: Exchange, bindings: ServerBindings): Promise<void> {
+async function browser(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): Promise<void> {
   const access = browserAccess(exchange, bindings);
   if (!access.ok) {
     bindings.io.json(exchange.response, access, bindings.security.generation);
@@ -146,7 +171,10 @@ async function browser(exchange: Exchange, bindings: ServerBindings): Promise<vo
   bindings.io.bytes(exchange.response, file.value);
 }
 /** URL construction failures and provider throws stop at the HTTP boundary; clients retain requests for receipt recovery. */
-async function route(exchange: Exchange, bindings: ServerBindings): Promise<void> {
+async function route(
+  exchange: Exchange,
+  bindings: ServerBindings,
+): Promise<void> {
   if (exchange.url.pathname.startsWith('/api/')) return api(exchange, bindings);
   return browser(exchange, bindings);
 }

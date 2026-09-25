@@ -48,9 +48,18 @@ export interface ResourceCommands {
   stage(input: unknown): Promise<AssetResult<Admission>>;
   restore(input: unknown): Promise<AssetResult<void>>;
   blob(input: unknown): AssetResult<StoredBlob>;
-  freeze(input: unknown, snapshot: Snapshot): ResourceResult<Request>;
-  preparePreset(input: unknown, snapshot: Snapshot): ResourceResult<PresetPreparation>;
-  instantiate(input: unknown, snapshot: Snapshot): ResourceResult<string>;
+  freeze(
+    input: unknown,
+    snapshot: Snapshot,
+  ): ResourceResult<Request>;
+  preparePreset(
+    input: unknown,
+    snapshot: Snapshot,
+  ): ResourceResult<PresetPreparation>;
+  instantiate(
+    input: unknown,
+    snapshot: Snapshot,
+  ): ResourceResult<string>;
 }
 /** Codec construction receives normalized resources; no mutable alias registry survives a call. */
 export interface PresetOwners {

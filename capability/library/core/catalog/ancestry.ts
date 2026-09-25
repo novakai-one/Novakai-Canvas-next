@@ -18,7 +18,10 @@ export interface Ancestry {
  * Walks up from `start` through parent links until it reaches the root, a missing folder, or a
  * folder already visited.
  */
-export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry {
+export function ancestry(
+  start: FolderId,
+  folders: readonly Folder[],
+): Ancestry {
   const visited = new Set<FolderId>();
   let current: FolderId | undefined = start;
   while (canVisit(current, visited)) {
@@ -45,12 +48,18 @@ export function isWithin(
 }
 
 /** Whether the walk may continue: not past the root, and not to a folder already visited. */
-function canVisit(id: FolderId | undefined, visited: ReadonlySet<FolderId>): id is FolderId {
+function canVisit(
+  id: FolderId | undefined,
+  visited: ReadonlySet<FolderId>,
+): id is FolderId {
   return id !== undefined && !visited.has(id);
 }
 
 /** The parent of the folder with this ID; `undefined` at the root or for a missing folder. */
-function parentOf(id: FolderId, folders: readonly Folder[]): FolderId | undefined {
+function parentOf(
+  id: FolderId,
+  folders: readonly Folder[],
+): FolderId | undefined {
   const folder = folders.find((candidate) => candidate.id === id);
   return folder?.parent;
 }

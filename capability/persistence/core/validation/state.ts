@@ -235,7 +235,10 @@ function keptReceipt(part: unknown): Receipt | null {
 /**
  * Puts the parts set aside back in their places; the freshly parsed parts fill the gaps in order.
  */
-function merge<T>(kept: readonly (T | null)[], fresh: readonly T[]): readonly T[] {
+function merge<T>(
+  kept: readonly (T | null)[],
+  fresh: readonly T[],
+): readonly T[] {
   let next = 0;
   // `fresh` has one parsed part for each gap, so the index never runs past its end.
   return kept.map((part) => part ?? (fresh[next++] as T));
@@ -247,7 +250,10 @@ function jsonRecord(value: Json | undefined): value is { readonly [key: string]:
 }
 
 /** The payload under `key` when the record has it and it is not `undefined`; otherwise none. */
-function presentPayload(record: { readonly [key: string]: Json }, key: string): readonly Json[] {
+function presentPayload(
+  record: { readonly [key: string]: Json },
+  key: string,
+): readonly Json[] {
   if (!Object.hasOwn(record, key)) {
     return [];
   }
@@ -259,7 +265,11 @@ function presentPayload(record: { readonly [key: string]: Json }, key: string): 
 }
 
 /** The payloads under `key` of every object in the `records` array of the copy. */
-function payloads(input: Json, records: string, key: string): readonly Json[] {
+function payloads(
+  input: Json,
+  records: string,
+  key: string,
+): readonly Json[] {
   if (!jsonRecord(input)) {
     return [];
   }

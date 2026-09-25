@@ -43,7 +43,10 @@ export function canonical(value: Json): string {
  * @throws AuthoringFault with the hasher's own diagnostic when hashing fails.
  * @throws AuthoringFault `corrupt-record` when the hasher returns a malformed digest.
  */
-export function fingerprint(request: Request, hash: Hasher): Digest {
+export function fingerprint(
+  request: Request,
+  hash: Hasher,
+): Digest {
   const submittedFields = withoutRequestId(request);
   const hashed = accepted(hash.digest(canonical(submittedFields)));
   return readShape(digest, hashed, 'corrupt-record');
@@ -81,7 +84,10 @@ function canonicalObject(value: JsonObject): string {
 }
 
 /** Sort order for object entries: by key, in plain string order. */
-function compareEntryKeys([leftKey]: JsonEntry, [rightKey]: JsonEntry): number {
+function compareEntryKeys(
+  [leftKey]: JsonEntry,
+  [rightKey]: JsonEntry,
+): number {
   if (leftKey < rightKey) return -1;
   return 1;
 }

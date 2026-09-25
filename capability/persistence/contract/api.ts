@@ -33,7 +33,10 @@ import { restoreBackup } from '../core/recovery/restore.js';
  * @param workspace - The workspace this service serves.
  * @returns The frozen Persistence service.
  */
-export function createPersistence(store: StorePort, workspace: WorkspaceId): Persistence {
+export function createPersistence(
+  store: StorePort,
+  workspace: WorkspaceId,
+): Persistence {
   /** Reads one consistent, validated state. The adapter owns rollback. */
   const readSnapshot = (): Result<WorkspaceState> =>
     protect(
@@ -70,7 +73,11 @@ export function createPersistence(store: StorePort, workspace: WorkspaceId): Per
  * this workspace. Inside the transaction the receipt check comes first, so a retry of a committed
  * request returns its original receipt.
  */
-function commitInput(store: StorePort, workspace: WorkspaceId, input: unknown): Result<Receipt> {
+function commitInput(
+  store: StorePort,
+  workspace: WorkspaceId,
+  input: unknown,
+): Result<Receipt> {
   const request = validateRequest(input);
   if (!request.ok) {
     return request;

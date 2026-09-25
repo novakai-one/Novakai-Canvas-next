@@ -18,14 +18,20 @@ export interface ResourceSelection {
   readonly reads: readonly ReadVersion[];
 }
 export interface ResourceSelector {
-  select(request: Request, snapshot: Snapshot): AuthoringResult<ResourceSelection>;
+  select(
+    request: Request,
+    snapshot: Snapshot,
+  ): AuthoringResult<ResourceSelection>;
   forCollection(
     collection: Collection,
     workspace: WorkspaceContents,
   ): AuthoringResult<readonly Digest[]>;
 }
 export interface CollectionPlanner {
-  propose(snapshot: Snapshot, collection: Collection): AuthoringResult<Proposal>;
+  propose(
+    snapshot: Snapshot,
+    collection: Collection,
+  ): AuthoringResult<Proposal>;
 }
 export interface DiagramPlannerOwners {
   readonly language: Language;

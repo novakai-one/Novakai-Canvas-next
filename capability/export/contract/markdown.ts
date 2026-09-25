@@ -81,7 +81,10 @@ type ContentHandlers = {
  * @throws Never for a Model-valid collection. A throwing getter or proxy in the input
  * propagates; the service host owns that boundary.
  */
-export function formatMarkdown(collection: Collection, scope: MarkdownScope): string | undefined {
+export function formatMarkdown(
+  collection: Collection,
+  scope: MarkdownScope,
+): string | undefined {
   const sections = selectedSections(collection, scope);
   if (sections === undefined) return undefined;
   const objects = new Map(
@@ -124,7 +127,10 @@ function selectedSections(
 }
 
 /** The section with this ID as a one-item list, or `undefined` when there is none. */
-function selectedSection(collection: Collection, id: string): readonly Section[] | undefined {
+function selectedSection(
+  collection: Collection,
+  id: string,
+): readonly Section[] | undefined {
   const section = collection.sections.find(
     /** Whether this is the section with the ID. */ (candidate) => candidate.id === id,
   );
@@ -136,7 +142,10 @@ function selectedSection(collection: Collection, id: string): readonly Section[]
  * its resolved form when Model resolves it. Model is asked first, with the definition's ID,
  * before its label and expression are read.
  */
-function appendDefinitions(lines: string[], collection: Collection): void {
+function appendDefinitions(
+  lines: string[],
+  collection: Collection,
+): void {
   lines.push('## Shared definitions', '');
   if (collection.definitions.length === 0) {
     lines.push('_No shared definitions are declared in this revision._', '');
@@ -156,7 +165,10 @@ function appendDefinitions(lines: string[], collection: Collection): void {
 }
 
 /** Appends the "Sources" part: one entry per source record. */
-function appendSources(lines: string[], collection: Collection): void {
+function appendSources(
+  lines: string[],
+  collection: Collection,
+): void {
   lines.push('## Sources', '');
   if (collection.sources.length === 0) {
     lines.push('_No source records are attached to this revision._', '');
@@ -167,7 +179,10 @@ function appendSources(lines: string[], collection: Collection): void {
 }
 
 /** Appends one source: ID, URI, status, optional revision and location, optional description. */
-function appendSource(lines: string[], source: Collection['sources'][number]): void {
+function appendSource(
+  lines: string[],
+  source: Collection['sources'][number],
+): void {
   const location = optionalSourceDetail(source.location, ' at ');
   const revision = optionalSourceDetail(source.revision, ', revision ');
   lines.push(
@@ -177,7 +192,10 @@ function appendSource(lines: string[], source: Collection['sources'][number]): v
 }
 
 /** `prefix` followed by the escaped value, or nothing when the value is missing. */
-function optionalSourceDetail(value: string | undefined, prefix: string): string {
+function optionalSourceDetail(
+  value: string | undefined,
+  prefix: string,
+): string {
   return value === undefined ? '' : `${prefix}${inline(value)}`;
 }
 
@@ -207,7 +225,10 @@ function appendSection(
 }
 
 /** Appends the "Groups" part (nothing when the section has no groups). */
-function appendGroups(lines: string[], section: Section): void {
+function appendGroups(
+  lines: string[],
+  section: Section,
+): void {
   if (section.groups.length === 0) return;
   lines.push('### Groups', '');
   section.groups.forEach(
@@ -303,7 +324,11 @@ function appendObjects(
  * Appends one object: its heading, optional step and sources, each port, then each content
  * block. Nothing is appended for a missing object.
  */
-function appendObject(lines: string[], entry: SectionObject, collection: Collection): void {
+function appendObject(
+  lines: string[],
+  entry: SectionObject,
+  collection: Collection,
+): void {
   const object = entry.object;
   if (object === undefined) return;
   lines.push(objectHeading(object, entry));
@@ -320,7 +345,10 @@ function appendObject(lines: string[], entry: SectionObject, collection: Collect
 }
 
 /** The object's heading line: ID, label, kind, role, its groups and the groups representing it. */
-function objectHeading(object: DiagramObject, entry: SectionObject): string {
+function objectHeading(
+  object: DiagramObject,
+  entry: SectionObject,
+): string {
   const name = `- \`${object.id}\` **${inline(object.label)}**`;
   const kind = `${object.kind}${objectRole(object)}`;
   const groups = `group: ${groupList(entry)}${representedGroups(entry)}`;
@@ -345,7 +373,10 @@ function representedGroups(entry: SectionObject): string {
 }
 
 /** Appends the object's step and its source IDs, when it has them. */
-function appendOptionalObjectFields(lines: string[], object: DiagramObject): void {
+function appendOptionalObjectFields(
+  lines: string[],
+  object: DiagramObject,
+): void {
   if (object.step !== undefined) lines.push(`  - Step: ${object.step}`);
   if (object.sources.length > 0) lines.push(`  - Sources: ${codeList(object.sources)}`);
 }
@@ -380,7 +411,10 @@ function appendContent<K extends BlockKind>(
 }
 
 /** Appends a text block: ID, escaped text and role. */
-function appendText(lines: string[], block: BlocksByKind['text']): void {
+function appendText(
+  lines: string[],
+  block: BlocksByKind['text'],
+): void {
   lines.push(`  - Text \`${block.id}\`: ${inline(block.text)} (${block.role})`);
 }
 
@@ -388,7 +422,10 @@ function appendText(lines: string[], block: BlocksByKind['text']): void {
  * Appends a code block: its ID, its language metadata when present, then the code inside a
  * fence longer than any backtick run in it. Line endings are normalized to `\n`.
  */
-function appendCode(lines: string[], block: BlocksByKind['code']): void {
+function appendCode(
+  lines: string[],
+  block: BlocksByKind['code'],
+): void {
   const fence = codeFence(block.text);
   lines.push(`  - Code \`${block.id}\`:`);
   if (block.language !== undefined) {
@@ -411,19 +448,28 @@ function appendCode(lines: string[], block: BlocksByKind['code']): void {
 }
 
 /** Appends an image or icon block: kind, ID, asset ID, fit and size. */
-function appendAsset(lines: string[], block: BlocksByKind['image']): void {
+function appendAsset(
+  lines: string[],
+  block: BlocksByKind['image'],
+): void {
   lines.push(
     `  - ${block.kind} \`${block.id}\`: asset \`${block.asset}\` (${block.fit}, ${block.size})`,
   );
 }
 
 /** Appends a figure block: ID, form and every other field as `key=value`. */
-function appendFigure(lines: string[], block: BlocksByKind['figure']): void {
+function appendFigure(
+  lines: string[],
+  block: BlocksByKind['figure'],
+): void {
   lines.push(`  - Figure \`${block.id}\`: ${block.form} (${figureDetails(block)})`);
 }
 
 /** Appends a link block: ID, escaped label and target. */
-function appendLink(lines: string[], block: BlocksByKind['link']): void {
+function appendLink(
+  lines: string[],
+  block: BlocksByKind['link'],
+): void {
   lines.push(`  - Link \`${block.id}\`: ${inline(block.label)} → ${linkTarget(block.target)}`);
 }
 
@@ -459,7 +505,10 @@ function appendMember(
 }
 
 /** Appends a list block's heading, then each item (numbered from 1 when the list is ordered). */
-function appendList(lines: string[], block: BlocksByKind['list']): void {
+function appendList(
+  lines: string[],
+  block: BlocksByKind['list'],
+): void {
   lines.push(`  - ${block.ordered ? 'Ordered' : 'Unordered'} list \`${block.id}\`:`);
   block.items.forEach(
     /** Appends one list item. */ (item, index) =>
@@ -468,7 +517,12 @@ function appendList(lines: string[], block: BlocksByKind['list']): void {
 }
 
 /** Appends one list item, with `<n>. ` in front for an ordered list. */
-function appendListItem(lines: string[], item: string, index: number, ordered: boolean): void {
+function appendListItem(
+  lines: string[],
+  item: string,
+  index: number,
+  ordered: boolean,
+): void {
   const marker = ordered ? `${index + 1}. ` : '';
   lines.push(`    - ${marker}${inline(item)}`);
 }
@@ -486,7 +540,10 @@ function appendField(
 }
 
 /** The field's type as shown by Model, plus the definition ID when it uses a shared definition. */
-function fieldType(collection: Collection, block: BlocksByKind['field']): string {
+function fieldType(
+  collection: Collection,
+  block: BlocksByKind['field'],
+): string {
   const display = fieldTypeDisplay(collection, block);
   if (typeof block.type === 'string') return inline(display);
   return `${inline(display)} (definition ${codeSpan(block.type.id)})`;
@@ -516,7 +573,10 @@ function fieldReference(block: BlocksByKind['field']): string | undefined {
 }
 
 /** Appends a key group: ID, key kind, field IDs and the referenced endpoints when present. */
-function appendKeyGroup(lines: string[], block: BlocksByKind['keygroup']): void {
+function appendKeyGroup(
+  lines: string[],
+  block: BlocksByKind['keygroup'],
+): void {
   const references =
     block.references === undefined
       ? ''
@@ -527,7 +587,10 @@ function appendKeyGroup(lines: string[], block: BlocksByKind['keygroup']): void 
 }
 
 /** Appends a table block: ID and column names, then each row's ID and cells. */
-function appendTable(lines: string[], block: BlocksByKind['table']): void {
+function appendTable(
+  lines: string[],
+  block: BlocksByKind['table'],
+): void {
   lines.push(`  - Table \`${block.id}\`: ${block.columns.map(inline).join(' | ')}`);
   block.rows.forEach(
     /** Appends one table row: its ID and escaped cells. */ (row) =>
@@ -588,7 +651,10 @@ function relationshipCardinality(relationship: Relationship): string {
 }
 
 /** `; <label> <value>`, or nothing when the value is missing. */
-function optionalRelationshipDetail(value: string | undefined, label: string): string {
+function optionalRelationshipDetail(
+  value: string | undefined,
+  label: string,
+): string {
   return value === undefined ? '' : `; ${label} ${inline(value)}`;
 }
 
@@ -690,7 +756,10 @@ function appendEvent(
 }
 
 /** The participant as `<label> (<ID>)`, or just the ID when there is no such object. */
-function sequenceEndpoint(objects: ReadonlyMap<string, DiagramObject>, id: string): string {
+function sequenceEndpoint(
+  objects: ReadonlyMap<string, DiagramObject>,
+  id: string,
+): string {
   const label = objects.get(id)?.label;
   return label === undefined ? codeSpan(id) : `${inline(label)} (${codeSpan(id)})`;
 }

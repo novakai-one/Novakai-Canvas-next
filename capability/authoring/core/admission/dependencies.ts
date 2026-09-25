@@ -26,7 +26,10 @@ const MAXIMUM_READ_DEPENDENCIES = 10000;
  * @throws AuthoringFault `permission-denied` when `scope` includes a history record.
  * @throws AuthoringFault `revision-conflict` when an expected version has changed.
  */
-export function checkRequest(request: Request, snapshot: Snapshot): void {
+export function checkRequest(
+  request: Request,
+  snapshot: Snapshot,
+): void {
   uniqueKeys(request.scope, 'scope');
   const expectedKeys = request.expected.map((read) => read.key);
   uniqueKeys(expectedKeys, 'expected');
@@ -49,7 +52,10 @@ export function checkRequest(request: Request, snapshot: Snapshot): void {
  * @throws AuthoringFault `invalid-input` when a key repeats or a write has no expected version.
  * @throws AuthoringFault `permission-denied` when a write targets history or falls outside `scope`.
  */
-export function checkProposal(request: Request, writes: readonly Write[]): void {
+export function checkProposal(
+  request: Request,
+  writes: readonly Write[],
+): void {
   const keys = writes.map((write) => write.key);
   uniqueKeys(keys, 'writes');
 

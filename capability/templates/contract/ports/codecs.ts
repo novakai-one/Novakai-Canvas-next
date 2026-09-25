@@ -16,7 +16,10 @@ export interface RecipePort<T> {
    * @returns The canonical payload, or a typed failure.
    * @throws Must not throw. A throw becomes `provider-failed` at `$` (Templates' `protect`).
    */
-  inspect(source: string, family: RecipePayload['family']): Result<RecipePayload>;
+  inspect(
+    source: string,
+    family: RecipePayload['family'],
+  ): Result<RecipePayload>;
   /**
    * Remaps every alias and reference in the source into `namespace`. The same source and
    * namespace always give the same result.
@@ -26,7 +29,10 @@ export interface RecipePort<T> {
    * @returns Plain editable diagram intent as JSON data, or a typed failure.
    * @throws Must not throw. A throw becomes `provider-failed` at `$` (Templates' `protect`).
    */
-  expand(source: string, namespace: PresetId): Result<T>;
+  expand(
+    source: string,
+    namespace: PresetId,
+  ): Result<T>;
 }
 
 /**
@@ -45,5 +51,8 @@ export interface ThemePort {
    * @returns The complete theme payload, or a typed failure.
    * @throws Must not throw. A throw becomes `provider-failed` at `$` (Templates' `protect`).
    */
-  resolve(raw: unknown, availableThemes: readonly ThemePreset[]): Result<ThemePayload>;
+  resolve(
+    raw: unknown,
+    availableThemes: readonly ThemePreset[],
+  ): Result<ThemePayload>;
 }

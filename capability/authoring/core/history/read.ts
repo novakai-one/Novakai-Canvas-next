@@ -50,7 +50,10 @@ export function headKey(request: RequestId): RecordKey {
  *   (at `$`, or at the property name for an accessor property).
  * @throws AuthoringFault `invalid-input` at `history` when the transaction is itself an undo or redo.
  */
-export function readTransaction(snapshot: Snapshot, request: RequestId): Transaction {
+export function readTransaction(
+  snapshot: Snapshot,
+  request: RequestId,
+): Transaction {
   const record = retainedRecord(snapshot, transactionKey(request));
   const transaction = readShape(transactionSchema, record.value, 'corrupt-record', storedLimits);
   if (transaction.id !== request)
@@ -71,7 +74,10 @@ export function readTransaction(snapshot: Snapshot, request: RequestId): Transac
  * @throws AuthoringFault `invalid-input` when the stored value is not plain JSON or is over the stored size limits
  *   (at `$`, or at the property name for an accessor property).
  */
-export function readHead(snapshot: Snapshot, request: RequestId): HistoryHead {
+export function readHead(
+  snapshot: Snapshot,
+  request: RequestId,
+): HistoryHead {
   const record = retainedRecord(snapshot, headKey(request));
   const head = readShape(headSchema, record.value, 'corrupt-record', storedLimits);
   if (head.original !== request)
@@ -80,7 +86,10 @@ export function readHead(snapshot: Snapshot, request: RequestId): HistoryHead {
 }
 
 /** Finds a live history record. A missing or deleted record is an error, never an empty undo. */
-function retainedRecord(snapshot: Snapshot, key: RecordKey): StoredRecord {
+function retainedRecord(
+  snapshot: Snapshot,
+  key: RecordKey,
+): StoredRecord {
   const record = findRecord(snapshot, key);
   if (record === null) reject('unknown-reference', 'history', 'Retained transaction was not found');
   if (record.deleted) reject('corrupt-record', 'history', 'History cannot be tombstoned');

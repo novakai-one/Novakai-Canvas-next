@@ -84,7 +84,10 @@ const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
 };
 
 /** A number becomes text when the property has allowed words; other values are unchanged. */
-function normalizeEnum(value: SyntaxValue, property: Property): SyntaxValue {
+function normalizeEnum(
+  value: SyntaxValue,
+  property: Property,
+): SyntaxValue {
   if (property.values === undefined) return value;
   if (typeof value === 'number') return String(value);
   return value;
@@ -131,7 +134,10 @@ function isEndpoint(value: SyntaxValue): boolean {
 }
 
 /** Whether the value is a list whose every item passes `predicate` (an empty list passes). */
-function listOf(value: SyntaxValue, predicate: (value: SyntaxValue) => boolean): boolean {
+function listOf(
+  value: SyntaxValue,
+  predicate: (value: SyntaxValue) => boolean,
+): boolean {
   return isList(value) && value.every(predicate);
 }
 

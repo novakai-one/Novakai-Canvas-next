@@ -25,7 +25,10 @@ import { endpoint, type RawRecord } from './fields.js';
  * @returns The lowered value.
  * @throws Never.
  */
-export function lowerValue(value: SyntaxValue, type: ValueType): unknown {
+export function lowerValue(
+  value: SyntaxValue,
+  type: ValueType,
+): unknown {
   if (type === 'signature-parameters') return lowerSignatureParameters(value);
   return lowerComposite(value, type);
 }
@@ -54,7 +57,10 @@ export function mapDeclaredProperties(
  * The written attributes only, under their Model field names, in the property table's order.
  * No defaults are added; `mapDeclaredProperties` adds them.
  */
-function mapProperties(fields: Fields, properties: Readonly<Record<string, Property>>): RawRecord {
+function mapProperties(
+  fields: Fields,
+  properties: Readonly<Record<string, Property>>,
+): RawRecord {
   return Object.fromEntries(writtenEntries(fields, properties));
 }
 
@@ -79,7 +85,10 @@ function isPair(value: SyntaxValue): value is readonly [SyntaxValue, SyntaxValue
 }
 
 /** A list lowers item by item; a reference by the property's type; anything else is kept. */
-function lowerComposite(value: SyntaxValue, type: ValueType): unknown {
+function lowerComposite(
+  value: SyntaxValue,
+  type: ValueType,
+): unknown {
   if (isList(value))
     return value.map(/** Lowers one item. */ (item) => lowerValue(item, scalarType(type)));
   if (isReference(value)) return lowerReference(value, type);

@@ -7,7 +7,10 @@
  * Compares two strings by UTF-16 code unit, so the order is the same on every machine and in every
  * locale.
  */
-export function compareText(left: string, right: string): number {
+export function compareText(
+  left: string,
+  right: string,
+): number {
   if (left < right) {
     return -1;
   }

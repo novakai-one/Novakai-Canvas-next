@@ -147,7 +147,10 @@ function uniqueOverrides(overrides: readonly Override[]): readonly Override[] {
 }
 
 /** Regex captures are checked before becoming semantic identifiers. */
-function required(match: RegExpExecArray, index: number): string {
+function required(
+  match: RegExpExecArray,
+  index: number,
+): string {
   const value = match[index];
   if (value === undefined) throw new Error('Missing capture');
   return value;

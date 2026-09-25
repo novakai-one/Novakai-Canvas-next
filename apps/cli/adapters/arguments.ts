@@ -201,7 +201,10 @@ function duplicateScopeFlag(
   return names.some((name) => names.indexOf(name) !== names.lastIndexOf(name));
 }
 
-function validatedMode(name: Command['name'], fallback: string): Result<Command['mode']> {
+function validatedMode(
+  name: Command['name'],
+  fallback: string,
+): Result<Command['mode']> {
   const selected = ['create', 'replace', 'patch'].includes(name) ? name : fallback;
   const checked = mode.safeParse(selected);
   return checked.success
@@ -226,7 +229,10 @@ function scopeValue(flags: {
   return { kind: 'all' };
 }
 /** A revision is optional for read/create commands; semantic admission makes it mandatory for existing diagram changes. */
-function versioned(command: Omit<Command, 'revision'>, input: string | undefined): Result<Command> {
+function versioned(
+  command: Omit<Command, 'revision'>,
+  input: string | undefined,
+): Result<Command> {
   if (input === undefined) return { ok: true, value: { ...command, revision: null } };
   const checked = revision.safeParse(input);
   if (!checked.success)

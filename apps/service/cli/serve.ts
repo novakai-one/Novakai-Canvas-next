@@ -10,12 +10,18 @@ function report(result: Result<unknown>): void {
   process.exitCode = 1;
 }
 /** Drain the listener before native owners; callers reconcile outstanding receipt IDs on restart. */
-async function stop(server: LocalServer, workspace: WorkspaceSession): Promise<void> {
+async function stop(
+  server: LocalServer,
+  workspace: WorkspaceSession,
+): Promise<void> {
   report(await server.close());
   report(await workspace.close());
 }
 /** Node owns process signals. One shared shutdown promise makes SIGINT/SIGTERM races harmless. */
-function shutdown(server: LocalServer, workspace: WorkspaceSession): void {
+function shutdown(
+  server: LocalServer,
+  workspace: WorkspaceSession,
+): void {
   let closing: Promise<void> | null = null;
   const close = (): void => {
     closing ??= stop(server, workspace);
@@ -68,7 +74,10 @@ async function start(
   return started(server, workspace.value);
 }
 /** Only the loopback URL and credential path are public startup information; the secret remains in its owner-only file. */
-async function started(server: Result<LocalServer>, workspace: WorkspaceSession): Promise<void> {
+async function started(
+  server: Result<LocalServer>,
+  workspace: WorkspaceSession,
+): Promise<void> {
   if (!server.ok) {
     report(server);
     report(await workspace.close());

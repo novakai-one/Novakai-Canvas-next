@@ -118,7 +118,10 @@ function capturedDraft(
   if (!collection.ok) return collection;
   return originalWire(value, collection.value);
 }
-function admitCollection(record: StoredRecord, id: string): Result<Collection> {
+function admitCollection(
+  record: StoredRecord,
+  id: string,
+): Result<Collection> {
   if (!isLiveCollection(record, id))
     return invalid('The wire form has no valid captured collection');
   const collection = validate(record.value);
@@ -134,7 +137,10 @@ function checkedCollection(
     return invalid('The captured collection identity or revision is invalid');
   return { ok: true, value: collection };
 }
-function isLiveCollection(record: StoredRecord, id: string): boolean {
+function isLiveCollection(
+  record: StoredRecord,
+  id: string,
+): boolean {
   if (record.key.kind !== 'collection') return false;
   if (record.key.id !== id) return false;
   return !record.deleted;

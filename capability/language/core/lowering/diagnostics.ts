@@ -76,7 +76,10 @@ export function ownerValue<T>(
  * @throws A `LanguageFault` for a nested or top-level declaration whose `id` is not an ID (see
  * `id`). Callers run it inside `protect`.
  */
-export function sourceMappings(item: Declaration, prefix = ''): readonly SourceMapping[] {
+export function sourceMappings(
+  item: Declaration,
+  prefix = '',
+): readonly SourceMapping[] {
   const name = mappingPath(item, prefix);
   const expression = item.kind === 'type' ? item.fields.expression : undefined;
   return [
@@ -126,7 +129,11 @@ function sourceDiagnostic(
 }
 
 /** The most specific mapping contained in the path wins; else the fallback. */
-function nearestSpan(path: string, mappings: readonly SourceMapping[], fallback: Span): Span {
+function nearestSpan(
+  path: string,
+  mappings: readonly SourceMapping[],
+  fallback: Span,
+): Span {
   const containing = mappings.filter(
     /** Whether Model's path contains this mapping's path. */ (mapping) =>
       path.includes(mapping.path),
@@ -135,7 +142,10 @@ function nearestSpan(path: string, mappings: readonly SourceMapping[], fallback:
 }
 
 /** Longer paths first; for equal paths, narrower spans first. */
-function compareSpecificity(left: SourceMapping, right: SourceMapping): number {
+function compareSpecificity(
+  left: SourceMapping,
+  right: SourceMapping,
+): number {
   const pathOrder = right.path.length - left.path.length;
   if (pathOrder !== 0) return pathOrder;
   return spanWidth(left.span) - spanWidth(right.span);
@@ -147,12 +157,18 @@ function spanWidth(span: Span): number {
 }
 
 /** An event's operation, then a member's or signature's type parts. */
-function contentMappings(name: string, item: Declaration): readonly SourceMapping[] {
+function contentMappings(
+  name: string,
+  item: Declaration,
+): readonly SourceMapping[] {
   return [operationMapping(name, item), ...typeMappings(name, item)].filter(isMapping);
 }
 
 /** A sequence event's written `operation`, if any. */
-function operationMapping(name: string, item: Declaration): SourceMapping | undefined {
+function operationMapping(
+  name: string,
+  item: Declaration,
+): SourceMapping | undefined {
   const operation = item.fields.operation;
   return operation === undefined
     ? undefined
@@ -160,7 +176,10 @@ function operationMapping(name: string, item: Declaration): SourceMapping | unde
 }
 
 /** A member's `type`; a signature's `returns` and parameters; nothing for other kinds. */
-function typeMappings(name: string, item: Declaration): readonly SourceMapping[] {
+function typeMappings(
+  name: string,
+  item: Declaration,
+): readonly SourceMapping[] {
   if (item.kind === 'member') return propertyMapping(name, 'type', item.fields.type);
   if (item.kind !== 'signature') return [];
   return [
@@ -251,7 +270,10 @@ function hasTopLevelUnion(tokens: readonly Token[]): boolean {
 }
 
 /** The depth after a token: `(` opens, `)` closes. */
-function unionDepth(token: string, depth: number): number {
+function unionDepth(
+  token: string,
+  depth: number,
+): number {
   return depth + (unionDepthDelta[token] ?? 0);
 }
 
@@ -262,7 +284,11 @@ const unionDepthDelta: Readonly<Record<string, number>> = Object.freeze({ '(': 1
 const atomEnds: readonly string[] = Object.freeze(['|', ')']);
 
 /** A union's items, at `items.0`, `items.1`, … under the path. */
-function mapUnion(tokens: readonly Token[], start: number, path: string): MappingParse {
+function mapUnion(
+  tokens: readonly Token[],
+  start: number,
+  path: string,
+): MappingParse {
   let parsed = mapAtom(tokens, start, `${path}.items.0`);
   const mappings: SourceMapping[] = [...parsed.mappings];
   let item = 0;
@@ -275,7 +301,11 @@ function mapUnion(tokens: readonly Token[], start: number, path: string): Mappin
 }
 
 /** A parenthesized union, a reference, or any other atom (which maps nothing). */
-function mapAtom(tokens: readonly Token[], start: number, path: string): MappingParse {
+function mapAtom(
+  tokens: readonly Token[],
+  start: number,
+  path: string,
+): MappingParse {
   const token = tokens[start];
   if (token?.text === '(') return mapParenthesized(tokens, start, path);
   if (token?.text.startsWith('@') === true) return mapReference(token, start, path);
@@ -283,14 +313,22 @@ function mapAtom(tokens: readonly Token[], start: number, path: string): Mapping
 }
 
 /** The union inside parentheses; a single item takes the parenthesis's own path. */
-function mapParenthesized(tokens: readonly Token[], start: number, path: string): MappingParse {
+function mapParenthesized(
+  tokens: readonly Token[],
+  start: number,
+  path: string,
+): MappingParse {
   const nested = mapUnion(tokens, start + 1, path);
   const mappings = nested.items === 1 ? collapseSingleItem(nested.mappings, path) : nested.mappings;
   return { next: nested.next + 1, mappings, items: nested.items };
 }
 
 /** A reference token maps to the path. */
-function mapReference(token: Token, start: number, path: string): MappingParse {
+function mapReference(
+  token: Token,
+  start: number,
+  path: string,
+): MappingParse {
   return { next: start + 1, mappings: [{ path, span: copySpan(token.span) }], items: 1 };
 }
 
@@ -309,28 +347,40 @@ function collapseSingleItem(
 }
 
 /** The index of the next `|` or `)` after the atom's first token, or the end. */
-function atomEnd(tokens: readonly Token[], start: number): number {
+function atomEnd(
+  tokens: readonly Token[],
+  start: number,
+): number {
   let next = start + 1;
   while (next < tokens.length && !atomEnds.includes(tokens[next]?.text ?? '')) next += 1;
   return next;
 }
 
 /** The collection maps to the empty path; a declaration without an ID keeps its parent's path. */
-function mappingPath(item: Declaration, prefix: string): string {
+function mappingPath(
+  item: Declaration,
+  prefix: string,
+): string {
   if (item.kind === 'collection') return '';
   if (item.fields.id === undefined) return prefix;
   return ownedPath(item, prefix);
 }
 
 /** A top-level declaration's path is its Model list plus its ID. */
-function ownedPath(item: Declaration, prefix: string): string {
+function ownedPath(
+  item: Declaration,
+  prefix: string,
+): string {
   const top = topLevelLists[item.kind];
   if (top !== undefined) return `${top}.${id(item.fields)}`;
   return descendantPath(item, prefix);
 }
 
 /** A nested declaration's path: the parent's path, its Model list (else `content`) and its ID. */
-function descendantPath(item: Declaration, prefix: string): string {
+function descendantPath(
+  item: Declaration,
+  prefix: string,
+): string {
   const name = nestedLists[item.kind] ?? 'content';
   return `${prefix}.${name}.${id(item.fields)}`;
 }

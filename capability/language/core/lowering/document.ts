@@ -6,7 +6,7 @@
 import type { Declaration, Document } from '../../contract/records/syntax.js';
 import type { LowerRequest, LoweredIntent } from '../../contract/records/requests.js';
 import type { Dependencies } from '../../contract/types.js';
-import { textOr, type RawRecord } from './fields.js';
+import { textOr, withoutField, type RawRecord } from './fields.js';
 import { lowerRecord, lowerNode } from './content.js';
 import { lowerSection } from './views.js';
 import { lowerLayout } from './layout.js';
@@ -97,8 +97,7 @@ function lowerDocumentData(document: Document, request: LowerRequest): Result<Ra
     () => {
       const item = document.declaration;
       const metadata = lowerRecord(item);
-      const { theme: writtenTheme, ...remaining } = partitionLayout(metadata).remaining;
-      void writtenTheme;
+      const remaining = withoutField(partitionLayout(metadata).remaining, 'theme');
       const theme = resolveTheme(
         textOr(item.fields, 'theme', defaults.theme),
         request.resources,

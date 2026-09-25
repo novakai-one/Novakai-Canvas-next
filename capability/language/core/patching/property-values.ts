@@ -1,12 +1,13 @@
 /*
  * The field values a `set` or `unset` produces on one record. `set` checks each written value
  * with the same rules as creating the record, then lowers it; `unset` removes an optional field
- * or restores its default. Every other field is kept. Pure: new records only. Language owns
- * correcting the source; Authoring owns commit recovery.
+ * or restores its default. Every other field is kept. Pure: new records only. Faults are
+ * `LanguageFault`s for `protect`. Language owns correcting the source; Authoring owns commit
+ * recovery.
  */
 import type { Operation, Fields } from '../../contract/records/syntax.js';
-import type { Property } from '../../contract/records/vocabulary.js';
-import type { RawRecord } from '../lowering/fields.js';
+import type { Property, PropertyTable } from '../../contract/records/vocabulary.js';
+import { withoutField, type RawRecord } from '../lowering/fields.js';
 import { lowerValue } from '../lowering/properties.js';
 import { checkValue } from '../parsing/value-types.js';
 import { reject } from '../validation/outcomes.js';
@@ -17,59 +18,27 @@ import { reject } from '../validation/outcomes.js';
  * - `unset name ...`: an optional field is removed, or reset to its default when it has one.
  * - `set name=value ...`: each value is checked against the property and lowered to its field.
  *
- * Pure: a retry with the same input returns the same record. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param record - The record being edited.
- * @param operation - The `set` or `unset` operation.
- * @param properties - The properties this target accepts, by attribute name.
- * @returns A new record with the changes.
- * @throws A `LanguageFault`: `unknown-property` for a name the target does not own (the expected
- * text lists every owned name); `invalid-value` for unsetting a required property; and the faults
- * of `checkValue` for a value of the wrong form. Callers run it inside `protect`.
+ * @throws `unknown-property` for a name the target does not own (the expected text lists every
+ * owned name); `invalid-value` for unsetting a required property; and the faults of `checkValue`.
  */
 export function changedProperties(
   record: RawRecord,
   operation: Operation,
-  properties: Readonly<Record<string, Property>>,
+  properties: PropertyTable,
 ): RawRecord {
   if (operation.action === 'unset')
     return operation.properties.reduce(
-      /** The record with one more property unset. */ (next, name) =>
-        removeProperty(next, name, operation, properties),
+      (next, name) => removeProperty(next, name, operation, properties),
       record,
     );
   return Object.entries(operation.fields).reduce(
-    /** The record with one more property set. */ (next, [name, value]) =>
-      assignProperty(next, name, value, operation, properties),
+    (next, [name, value]) => assignProperty(next, name, value, operation, properties),
     record,
   );
 }
 
-/**
- * Returns a copy of a record without one field; the other own fields keep their order. Reads
- * the field first, then copies the rest (the same reads as a rest destructuring).
- *
- * Pure. Language owns correcting the source; Authoring owns commit recovery.
- *
- * @param record - The record.
- * @param field - The field to leave out.
- * @returns The copy.
- * @throws Never for plain data; a getter that throws is passed through.
- */
-export function withoutField(record: RawRecord, field: string): RawRecord {
-  const { [field]: removed, ...remaining } = record;
-  // `void` marks the removed value as deliberately unused; only the copy is kept.
-  void removed;
-  return remaining;
-}
-
 /** The target's own property with this name; an inherited or unknown name is refused. */
-function owningProperty(
-  name: string,
-  operation: Operation,
-  properties: Readonly<Record<string, Property>>,
-): Property {
+function owningProperty(name: string, operation: Operation, properties: PropertyTable): Property {
   const property = Object.hasOwn(properties, name) ? properties[name] : undefined;
   if (property === undefined)
     reject(
@@ -88,7 +57,7 @@ function assignProperty(
   name: string,
   value: Fields[string],
   operation: Operation,
-  properties: Readonly<Record<string, Property>>,
+  properties: PropertyTable,
 ): RawRecord {
   const property = owningProperty(name, operation, properties);
   const checked = checkValue(value, property, name);
@@ -100,7 +69,7 @@ function removeProperty(
   record: RawRecord,
   name: string,
   operation: Operation,
-  properties: Readonly<Record<string, Property>>,
+  properties: PropertyTable,
 ): RawRecord {
   const property = owningProperty(name, operation, properties);
   if (property.required)

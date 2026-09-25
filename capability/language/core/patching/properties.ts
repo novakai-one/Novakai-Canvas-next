@@ -2,21 +2,22 @@
  * Compiling a `set` or `unset` into one Model change. Fields the operation does not mention,
  * and any geometry a person placed, are kept. Layout attributes are written flat in the source
  * but stored nested (`layout` on a section, `arrangement` on the collection), and a link's
- * `target=` and `section=` are stored together in its `target` record. Pure: nothing is written.
- * Language owns correcting the source; Authoring owns commit recovery.
+ * `target=` and `section=` are stored together in its `target` record. Pure apart from freezing
+ * the change it returns (see `editProperties`). Language owns correcting the source; Authoring
+ * owns commit recovery.
  */
 import type { Collection } from '../../contract/ports/model.js';
 import type { Operation, SyntaxValue } from '../../contract/records/syntax.js';
 import type { ResolvedResources } from '../../contract/records/requests.js';
 import type { Result } from '../../contract/errors.js';
-import type { RawRecord } from '../lowering/fields.js';
+import { withoutField, type RawRecord } from '../lowering/fields.js';
 import { resolveTheme } from '../lowering/resources.js';
 import { modeLayout } from '../lowering/layout.js';
 import { partitionLayout } from '../lowering/layout-fields.js';
 import { isReference } from '../parsing/value-types.js';
 import { protect, reject } from '../validation/outcomes.js';
 import { propertyTarget } from './property-targets.js';
-import { changedProperties, withoutField } from './property-values.js';
+import { changedProperties } from './property-values.js';
 
 /**
  * Compiles a `set` or `unset` into one Model change.
@@ -31,33 +32,25 @@ import { changedProperties, withoutField } from './property-values.js';
  * Unsetting `layout` resets the algorithm to the default (`grid` for the collection, the
  * section mode's layout for a section); unsetting `columns` removes it.
  *
- * Pure: nothing is written, so a retry is safe; Model validates the whole batch later. Language
- * owns correcting the source; Authoring owns commit recovery.
+ * On success the change is deep-frozen in place, including the unchanged records it shares
+ * with `collection`; pass the staged copy, never a record the caller still edits.
  *
- * @param collection - The staged collection.
- * @param operation - The `set` or `unset` operation.
- * @param resources - The resolved resources, for theme aliases.
- * @returns `{ ok: true, value }` with the deep-frozen Model change. Otherwise `{ ok: false }`
- * with `validation-failed` holding: the address, target and value diagnostics of
- * `propertyTarget` and `changedProperties`; `invalid-input` when Model's nested layout or link
- * target is not a plain record; `invalid-value` for a `section=` on a URI link or a `section=`
- * that is not a reference; theme diagnostics from `resolveTheme`; or one `provider-failure`
- * diagnostic for any other throw (see `protect`).
- * @throws Never.
+ * @returns The change, or `validation-failed` with: the diagnostics of `propertyTarget` and
+ * `changedProperties`; `invalid-input` when Model's nested layout or link target is null, not an
+ * object, or an array; `invalid-value` for a `section=` on a URI link or a `section=` that is not
+ * a reference; theme diagnostics from `resolveTheme`; or `provider-failure` for any other throw.
  */
 export function editProperties(
   collection: Collection,
   operation: Operation,
   resources: ResolvedResources,
 ): Result<RawRecord> {
-  return protect(
-    /** Finds the target, applies the changes and writes the change. */ () => {
-      const target = propertyTarget(collection, operation);
-      const changed = changedProperties(target.record, operation, target.properties);
-      const semantic = adjustNestedProperties(target.record, changed, operation, resources);
-      return target.write(semantic);
-    },
-  );
+  return protect(() => {
+    const target = propertyTarget(collection, operation);
+    const changed = changedProperties(target.record, operation, target.properties);
+    const semantic = adjustNestedProperties(target.record, changed, operation, resources);
+    return target.write(semantic);
+  });
 }
 
 /** The collection's nested parts; otherwise a section's or a link's. */
@@ -94,7 +87,7 @@ function collectionProperties(
   return { ...layout, theme: resolveTheme(next.theme, resources, operation.span) };
 }
 
-/** A plain copy of Model's nested record; anything that is not a plain record is refused. */
+/** A plain copy of Model's nested record; null, a non-object or an array is refused. */
 function nestedRecord(value: unknown, operation: Operation): RawRecord {
   if (value === null || typeof value !== 'object' || Array.isArray(value))
     reject(
@@ -119,9 +112,7 @@ function nestedLayout(
   const before = nestedRecord(previous[field], operation);
   const { layout: modified, remaining } = partitionLayout(next);
   const updates = Object.fromEntries(
-    Object.entries(modified).filter(
-      /** Whether the layout field has a value. */ ([, value]) => value !== undefined,
-    ),
+    Object.entries(modified).filter(([, value]) => value !== undefined),
   );
   const resetAlgorithm = operation.properties.includes('layout');
   const defaultAlgorithm = field === 'arrangement' ? 'grid' : modeLayout(String(next.mode));

@@ -153,3 +153,22 @@ export function optional(name: string, value: unknown): RawRecord {
 export function endpoint(value: Reference): RawRecord {
   return { object: value.id, ...optional('member', value.member) };
 }
+
+/**
+ * Returns a copy of a record without one field; the other own enumerable fields (symbol keys
+ * included) keep their order. Reads the field first, then copies the rest (the same reads as a
+ * rest destructuring).
+ *
+ * Pure. Language owns correcting the source; Authoring owns commit recovery.
+ *
+ * @param record - The record.
+ * @param field - The field to leave out.
+ * @returns The copy.
+ * @throws Never for plain data; a getter that throws is passed through.
+ */
+export function withoutField(record: RawRecord, field: string): RawRecord {
+  const { [field]: removed, ...remaining } = record;
+  // `void` marks the removed value as deliberately unused; only the copy is kept.
+  void removed;
+  return remaining;
+}

@@ -6,7 +6,7 @@
  */
 import type { Declaration } from '../../contract/records/syntax.js';
 import { lowerRecord } from './content.js';
-import { id, list, optional, textOr, type RawRecord } from './fields.js';
+import { id, list, optional, textOr, withoutField, type RawRecord } from './fields.js';
 import { lowerLayout, modeLayout } from './layout.js';
 import { lowerSequence } from './sequence.js';
 import { lowerValue } from './properties.js';
@@ -121,9 +121,7 @@ function lowerWires(children: readonly Declaration[]): readonly RawRecord[] {
 
 /** A `show` or `connect` record without its `ids`: the preferences shared by every listed ID. */
 function preferencesOf(item: Declaration): RawRecord {
-  const { ids: ignored, ...preferences } = lowerRecord(item);
-  void ignored;
-  return preferences;
+  return withoutField(lowerRecord(item), 'ids');
 }
 
 /** Joins two scopes' parts into new arrays; neither input is changed. */

@@ -68,6 +68,9 @@ export interface Property {
   readonly fallback?: SyntaxValue;
 }
 
+/** The properties one construct or patch target accepts, by property name. */
+export type PropertyTable = Readonly<Record<string, Property>>;
+
 /** One value a construct takes by position, such as the ID and label in `node @id "Label"`. */
 export interface PositionRule {
   /** The field the value is stored in. */
@@ -95,7 +98,7 @@ export interface ConstructDefinition {
   readonly positions: readonly PositionRule[];
 
   /** The named properties it accepts, by property name. */
-  readonly properties: Readonly<Record<string, Property>>;
+  readonly properties: PropertyTable;
 
   /** The constructs allowed inside its braces, or `null` when it takes no braces. */
   readonly children: readonly Construct[] | null;
@@ -107,7 +110,7 @@ export interface ConstructDefinition {
  */
 export interface Description {
   /** The properties `set` and `unset` accept, per patch target kind. */
-  readonly patchTargets: Readonly<Record<TargetKind, Readonly<Record<string, Property>>>>;
+  readonly patchTargets: Readonly<Record<TargetKind, PropertyTable>>;
 
   /** The shape of each patch operation, as short templates. */
   readonly patchForms: readonly string[];

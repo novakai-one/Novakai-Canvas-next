@@ -1,6 +1,6 @@
 /*
- * Default values and closed word lists shared by the grammar, lowering and `describe`. Plain
- * data, deep-frozen when the module loads, so no caller can change them. Language owns
+ * Default values and closed word lists shared by the grammar, lowering, patching and `describe`.
+ * Plain data, deep-frozen when the module loads, so no caller can change them. Language owns
  * correcting the source; Authoring owns commit recovery.
  */
 import type { Action } from '../../contract/records/syntax.js';
@@ -81,3 +81,18 @@ export const membershipActions: readonly Action[] = deepFreeze([
   'connect',
   'disconnect',
 ]);
+
+/**
+ * The Model namespace each whole-record patch target is stored in. Patching reads it to name the
+ * namespace of a `replace`, `create` or `remove` change.
+ */
+export const recordNamespaces: Readonly<Record<RecordTarget, string>> = deepFreeze({
+  node: 'objects',
+  wire: 'relationships',
+  section: 'sections',
+  asset: 'assets',
+  source: 'sources',
+});
+
+/** A patch target stored as whole records in one Model namespace. */
+export type RecordTarget = 'node' | 'wire' | 'section' | 'asset' | 'source';

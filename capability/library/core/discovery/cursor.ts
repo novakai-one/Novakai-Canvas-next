@@ -18,7 +18,7 @@ import { readVersions } from './versions.js';
  * A cursor may be replayed, but only with the same query and the same snapshot. It is
  * `stale-cursor` (path `query.cursor`) when:
  * - it is not valid cursor JSON ("Cursor is malformed");
- * - the query, the recent visits or the source versions changed (catalog ID or revision, or the
+ * - the query, the recent visits or the source versions changed (organisation ID or revision, or the
  *   collection IDs and revisions, so an added or removed collection counts);
  * - its offset is past the end of the results.
  *

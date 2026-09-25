@@ -57,7 +57,7 @@ function checkedCatalogs(
   owners: WorkspaceReaderOwners,
 ): Result<WorkspaceContents> {
   const library = validateLibrarySnapshot({
-    catalog,
+    organisation: catalog,
     collections: collections.map(projectCollection),
     recent: [],
   });

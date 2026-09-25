@@ -1,5 +1,5 @@
 import type {
-  CatalogChange,
+  OrganisationChange,
   LibrarySnapshot,
   QueryPage,
   QueryRequest,
@@ -55,7 +55,7 @@ export interface LibraryController {
   next(): void;
   visit(collection: string): void;
   apply(
-    changes: readonly CatalogChange[],
+    changes: readonly OrganisationChange[],
     revision: number,
   ): Promise<void>;
   editFolderTitle(title: string): void;
@@ -69,7 +69,7 @@ export interface LibraryBindings {
   nextFolderId(): FolderId;
   apply(
     base: Snapshot,
-    changes: readonly CatalogChange[],
+    changes: readonly OrganisationChange[],
   ): Promise<Result<Receipt>>;
   report(error: Diagnostic): void;
 }

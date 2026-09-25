@@ -1,10 +1,10 @@
 /*
- * Existence checks and record keys by ID, shared by validation, catalog changes and search. Each
+ * Existence checks and record keys by ID, shared by validation, organisation changes and search. Each
  * check reads the given list only. Pure: the same lists always give the same answer; Authoring owns
  * commit and recovery.
  */
 import type { CollectionId, FolderId, SectionId } from '../../contract/brands.js';
-import type { CatalogEntry, Folder } from '../../contract/records/catalog.js';
+import type { OrganisationEntry, Folder } from '../../contract/records/organisation.js';
 import type { CollectionProjection, SectionProjection } from '../../contract/records/snapshot.js';
 
 /** Whether a folder with this ID exists. */
@@ -15,9 +15,9 @@ export function hasFolder(
   return folders.some((folder) => folder.id === id);
 }
 
-/** Whether a catalog entry lists this collection. */
+/** Whether a organisation entry lists this collection. */
 export function hasEntry(
-  entries: readonly CatalogEntry[],
+  entries: readonly OrganisationEntry[],
   collection: CollectionId,
 ): boolean {
   return entries.some((entry) => entry.collection === collection);
@@ -39,15 +39,15 @@ export function hasSection(
   return sections.some((section) => section.id === id);
 }
 
-/** A folder's key: its ID. Shared by catalog changes and validation. */
+/** A folder's key: its ID. Shared by organisation changes and validation. */
 export function folderKey(folder: Folder): FolderId {
   return folder.id;
 }
 
 /**
- * A catalog entry's key: its collection's ID (one entry per collection). Shared by catalog changes
+ * A organisation entry's key: its collection's ID (one entry per collection). Shared by organisation changes
  * and validation.
  */
-export function entryKey(entry: CatalogEntry): CollectionId {
+export function entryKey(entry: OrganisationEntry): CollectionId {
   return entry.collection;
 }

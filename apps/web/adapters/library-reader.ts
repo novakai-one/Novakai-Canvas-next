@@ -11,7 +11,7 @@ import type { Collection } from '../contract/records/owners.js';
 import type { LibraryReader } from '../contract/records/library.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
-/** Host projections are shared with service validation; Library remains the search and organization authority. */
+/** Host projections are shared with service validation; Library remains the search and organisation authority. */
 export function createLibraryReader(): LibraryReader {
   return {
     read: (snapshot, collections, recent) => {
@@ -22,7 +22,7 @@ export function createLibraryReader(): LibraryReader {
         return failure('invalid-library', 'Workspace requires one library catalog');
       return checked(
         validateLibrarySnapshot({
-          catalog: catalogs[0]?.value,
+          organisation: catalogs[0]?.value,
           collections: collections.map(projectCollection),
           recent: currentVisits(collections, recent),
         }),

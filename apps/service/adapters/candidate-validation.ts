@@ -116,8 +116,8 @@ function metadata(
   if (!parsed.success) throw new AdmissionFault('Invalid workspace metadata');
   requireFact(parsed.data.id === snapshot.workspace, 'Workspace metadata identity differs');
   resources(slot, []);
-  const catalog = record(snapshot, 'catalog', view.library.catalog.id);
-  requireFact(catalog.version === view.library.catalog.revision, 'Catalog revision differs');
+  const catalog = record(snapshot, 'catalog', view.library.organisation.id);
+  requireFact(catalog.version === view.library.organisation.revision, 'Catalog revision differs');
   resources(catalog, []);
   snapshot.records
     .filter((item) => !item.deleted && item.key.kind === 'asset-admission')

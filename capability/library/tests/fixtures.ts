@@ -4,13 +4,13 @@
  * correct the fixture and rerun the tests.
  */
 import {
-  catalogIdSchema,
+  organisationIdSchema,
   collectionIdSchema,
   folderIdSchema,
   sectionIdSchema,
   objectIdSchema,
   type LibrarySnapshot,
-  type CatalogId,
+  type OrganisationId,
   type FolderId,
   type CollectionId,
   type SectionId,
@@ -19,7 +19,7 @@ import {
 
 /** The fixture IDs. The object is frozen, so no test can change an ID another test reads. */
 export interface FixtureIds {
-  readonly catalog: CatalogId;
+  readonly organisation: OrganisationId;
   /** Folder `engineering`. */
   readonly folder: FolderId;
   /** Folder `backend`, a child of `engineering`. */
@@ -34,7 +34,7 @@ export interface FixtureIds {
 export const ids: FixtureIds = Object.freeze(checkedIds());
 
 /**
- * A valid snapshot: catalog `catalog` (revision 7) with folder `engineering` and its child
+ * A valid snapshot: organisation `organisation` (revision 7) with folder `engineering` and its child
  * `backend`; collection `alpha` ("Billing", revision 3) in `backend` with section `er` and the
  * unplaced object `invoice`; archived collection `beta` ("Architecture", revision 4) at the root;
  * `alpha` opened at 100 and `beta` at 200.
@@ -44,9 +44,9 @@ export const ids: FixtureIds = Object.freeze(checkedIds());
  */
 export function snapshot(): LibrarySnapshot {
   return {
-    catalog: {
+    organisation: {
       schemaVersion: 1,
-      id: ids.catalog,
+      id: ids.organisation,
       revision: 7,
       folders: [
         { id: ids.folder, title: 'Engineering', order: 0 },
@@ -91,13 +91,13 @@ export function snapshot(): LibrarySnapshot {
 
 /** Checks each fixture ID with a schema of its kind; the folder schema is used for both folders. */
 function checkedIds(): FixtureIds {
-  const catalogIds = catalogIdSchema();
+  const organisationIds = organisationIdSchema();
   const folderIds = folderIdSchema();
   const collectionIds = collectionIdSchema();
   const sectionIds = sectionIdSchema();
   const objectIds = objectIdSchema();
   return {
-    catalog: catalogIds.parse('catalog'),
+    organisation: organisationIds.parse('organisation'),
     folder: folderIds.parse('engineering'),
     child: folderIds.parse('backend'),
     alpha: collectionIds.parse('alpha'),

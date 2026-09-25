@@ -6,7 +6,7 @@ import type {
   FolderDraft,
 } from '../contract/records/library.js';
 import type { Snapshot, Collection } from '../contract/records/owners.js';
-import type { CatalogChange, RecentVisit } from '@novakai/canvas-library';
+import type { OrganisationChange, RecentVisit } from '@novakai/canvas-library';
 /** The session owns browse filters and local visits; every catalog mutation goes to Authoring with a captured revision. */
 export function createLibraryController(bindings: LibraryBindings): LibraryController {
   let state: LibraryView = {
@@ -73,7 +73,7 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
     const original = state.folderDraft ?? {
       id: bindings.nextFolderId(),
       title: '',
-      revision: state.source.catalog.revision,
+      revision: state.source.organisation.revision,
     };
     saveFolder({ ...original, title });
   }
@@ -88,7 +88,7 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
           value: {
             id: draft.id,
             title: draft.title,
-            order: state.source?.catalog.folders.length ?? 0,
+            order: state.source?.organisation.folders.length ?? 0,
           },
         },
       ],
@@ -174,11 +174,11 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
   }
   /** A form prepared against an older catalog is rejected visibly; no implicit overwrite or rebase occurs. */
   async function commit(
-    changes: readonly CatalogChange[],
+    changes: readonly OrganisationChange[],
     revision: number,
   ): Promise<boolean> {
     if (base === null) return false;
-    if (state.source?.catalog.revision !== revision) {
+    if (state.source?.organisation.revision !== revision) {
       publish({
         problem: {
           code: 'revision-conflict',
@@ -188,12 +188,12 @@ export function createLibraryController(bindings: LibraryBindings): LibraryContr
       });
       return false;
     }
-    return applyCatalog(base, changes);
+    return applyOrganisation(base, changes);
   }
   /** Typed Authoring failure remains visible and never clears an unconfirmed folder form. */
-  async function applyCatalog(
+  async function applyOrganisation(
     base: Snapshot,
-    changes: readonly CatalogChange[],
+    changes: readonly OrganisationChange[],
   ): Promise<boolean> {
     const result = await bindings.apply(base, changes);
     if (!result.ok) publish({ problem: result.error });

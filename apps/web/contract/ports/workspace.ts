@@ -1,5 +1,5 @@
 import type { LibraryFactory } from '../records/library.js';
-import type { CatalogChange } from '@novakai/canvas-library';
+import type { OrganisationChange } from '@novakai/canvas-library';
 import type { WireEditorFactory } from '../records/wire-editor.js';
 import type { InspectorFactory } from '../records/inspector.js';
 import type { DefinitionFactory } from '../records/definitions.js';
@@ -55,7 +55,7 @@ export interface WorkspaceInputs {
   ): Result<Request>;
   library(
     snapshot: Snapshot,
-    changes: readonly CatalogChange[],
+    changes: readonly OrganisationChange[],
     request: string,
   ): Result<Request>;
   newSource(

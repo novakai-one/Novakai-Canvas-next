@@ -103,7 +103,7 @@ function validateInventory(
   );
   if (catalogs.length === 0 && collections.length === 0) return { ok: true, value: undefined };
   const result = validateLibrarySnapshot({
-    catalog: catalogs[0]?.value,
+    organisation: catalogs[0]?.value,
     collections: collections.map(projection),
     recent: [],
   });

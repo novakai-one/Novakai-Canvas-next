@@ -2,14 +2,14 @@
  * The inputs and results of Library's entry points. Library writes nothing: a host that commits a
  * plan or pages results checks the read versions, and Authoring owns commit and crash recovery.
  */
-import type { CatalogId, CollectionId } from './brands.js';
-import type { Catalog } from './records/catalog.js';
+import type { OrganisationId, CollectionId } from './brands.js';
+import type { Organisation } from './records/organisation.js';
 
-/** The input of `planCatalog`. Every value is untrusted and checked by Library. */
+/** The input of `planOrganisation`. Every value is untrusted and checked by Library. */
 export interface PlanInput {
   /** The original snapshot (see `LibrarySnapshot`). */
   readonly snapshot: unknown;
-  /** The ordered batch of catalog changes (see `CatalogChange`). */
+  /** The ordered batch of organisation changes (see `OrganisationChange`). */
   readonly changes: unknown;
   /**
    * The collection inventory Authoring is about to commit, when the batch registers or removes
@@ -27,9 +27,9 @@ export interface QueryInput {
   readonly request: unknown;
 }
 
-/** The catalog's ID and the revision read. */
-export interface CatalogVersion {
-  readonly id: CatalogId;
+/** The organisation's ID and the revision read. */
+export interface OrganisationVersion {
+  readonly id: OrganisationId;
   readonly revision: number;
 }
 
@@ -40,26 +40,26 @@ export interface CollectionVersion {
 }
 
 /**
- * The source revisions an operation read: the catalog's, and each collection's, sorted by
+ * The source revisions an operation read: the organisation's, and each collection's, sorted by
  * collection ID. A host that commits a plan or pages results must make sure these sources have not
  * changed. (The current service host builds its commit conditions from its own snapshot instead
  * of reading this record.)
  */
 export interface ReadVersions {
-  readonly catalog: CatalogVersion;
+  readonly organisation: OrganisationVersion;
   /** Sorted by collection ID. */
   readonly collections: readonly CollectionVersion[];
 }
 
 /**
- * A proposed catalog, not yet stored. The host commits it only if the sources in `versions` are
+ * A proposed organisation, not yet stored. The host commits it only if the sources in `versions` are
  * unchanged; Authoring performs the commit.
  */
-export interface CatalogPlan {
-  /** The catalog after the changes. Its `revision` is unchanged; Authoring assigns the next one. */
-  readonly candidate: Catalog;
+export interface OrganisationPlan {
+  /** The organisation after the changes. Its `revision` is unchanged; Authoring assigns the next one. */
+  readonly candidate: Organisation;
   /** The revisions of the original snapshot the plan was made from. */
   readonly versions: ReadVersions;
-  /** True when the candidate differs from the original catalog (the net effect of all changes). */
+  /** True when the candidate differs from the original organisation (the net effect of all changes). */
   readonly changed: boolean;
 }

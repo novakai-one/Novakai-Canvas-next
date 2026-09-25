@@ -3,9 +3,9 @@
  * and Authoring owns recovery.
  */
 import type { LibrarySnapshot } from '../../contract/records/snapshot.js';
-import type { CatalogEntry } from '../../contract/records/catalog.js';
+import type { OrganisationEntry } from '../../contract/records/organisation.js';
 import type { ArchiveMode, QueryRequest, SearchHit } from '../../contract/records/query.js';
-import { isWithin } from '../catalog/ancestry.js';
+import { isWithin } from '../organisation/ancestry.js';
 import { searchWords } from './text.js';
 
 /**
@@ -21,7 +21,7 @@ export function filterHits(
   snapshot: LibrarySnapshot,
   request: QueryRequest,
 ): readonly SearchHit[] {
-  const entries = snapshot.catalog.entries.filter(
+  const entries = snapshot.organisation.entries.filter(
     (entry) => archiveModes[request.archived](entry) && folderMatches(entry, request, snapshot),
   );
   const visibleCollections = new Set(entries.map(entryCollection));
@@ -38,12 +38,11 @@ export function filterHits(
  * Which entries each archive mode keeps: `exclude` keeps entries that are not archived, `include`
  * keeps every entry, `only` keeps archived entries. Every mode has a rule (checked by the type).
  */
-const archiveModes: Readonly<Record<ArchiveMode, (entry: CatalogEntry) => boolean>> = Object.freeze(
-  { exclude: isLive, include: isAnyEntry, only: isArchived },
-);
+const archiveModes: Readonly<Record<ArchiveMode, (entry: OrganisationEntry) => boolean>> =
+  Object.freeze({ exclude: isLive, include: isAnyEntry, only: isArchived });
 
 /** Whether the entry is not archived. */
-function isLive(entry: CatalogEntry): boolean {
+function isLive(entry: OrganisationEntry): boolean {
   return !entry.archived;
 }
 
@@ -53,12 +52,12 @@ function isAnyEntry(): boolean {
 }
 
 /** Whether the entry is archived. */
-function isArchived(entry: CatalogEntry): boolean {
+function isArchived(entry: OrganisationEntry): boolean {
   return entry.archived;
 }
 
 /** The collection an entry lists. */
-function entryCollection(entry: CatalogEntry): CatalogEntry['collection'] {
+function entryCollection(entry: OrganisationEntry): OrganisationEntry['collection'] {
   return entry.collection;
 }
 
@@ -67,7 +66,7 @@ function entryCollection(entry: CatalogEntry): CatalogEntry['collection'] {
  * subfolders when `descendants` is set.
  */
 function folderMatches(
-  entry: CatalogEntry,
+  entry: OrganisationEntry,
   request: QueryRequest,
   snapshot: LibrarySnapshot,
 ): boolean {
@@ -75,7 +74,7 @@ function folderMatches(
     return true;
   }
   if (request.descendants) {
-    return isWithin(entry.folder, request.folder, snapshot.catalog.folders);
+    return isWithin(entry.folder, request.folder, snapshot.organisation.folders);
   }
   return entry.folder === request.folder;
 }

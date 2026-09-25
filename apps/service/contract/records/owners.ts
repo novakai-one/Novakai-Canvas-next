@@ -28,4 +28,4 @@ export type {
 export type { Collection, Change, ChangePlan } from '@novakai/canvas-model';
 export type { Persistence } from '@novakai/canvas-persistence';
 export type { Language, ResolvedResources } from '@novakai/canvas-language';
-export type { Catalog, LibrarySnapshot } from '@novakai/canvas-library';
+export type { Organisation, LibrarySnapshot } from '@novakai/canvas-library';

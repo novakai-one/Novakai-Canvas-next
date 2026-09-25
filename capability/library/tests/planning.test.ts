@@ -1,14 +1,19 @@
 /*
- * Library catalog planning: a batch of catalog changes applied to a snapshot without storing
+ * Library organisation planning: a batch of organisation changes applied to a snapshot without storing
  * anything, and the named-input boundary shared with search.
  * A failing test changes nothing outside the test; correct the code or the test and rerun.
  */
 import { describe, expect, test } from 'vitest';
-import { planCatalog, queryLibrary, type PlanInput, type QueryInput } from '../contract/index.js';
+import {
+  planOrganisation,
+  queryLibrary,
+  type PlanInput,
+  type QueryInput,
+} from '../contract/index.js';
 import { snapshot, ids } from './fixtures.js';
 import { valueOf, hasFailure, diagnosticsOf, isDeepFrozen } from './assertions.js';
 
-describe('Library catalog planning', () => {
+describe('Library organisation planning', () => {
   /**
    * Changes apply in order, and a change may name a folder a later change creates. The candidate
    * keeps revision 7 and is frozen throughout; the input is not changed. `changed` is the net
@@ -26,7 +31,7 @@ describe('Library catalog planning', () => {
       },
       { op: 'create-folder', value: { id: 'new', title: 'New' } },
     ];
-    const result = valueOf(planCatalog({ snapshot: base, changes }));
+    const result = valueOf(planOrganisation({ snapshot: base, changes }));
     expect(result.candidate.revision).toBe(7);
     expect(result.candidate.entries[0]).toEqual({
       collection: ids.alpha,
@@ -43,19 +48,19 @@ describe('Library catalog planning', () => {
     expect(isDeepFrozen(result)).toBe(true);
 
     // Replacing an entry with itself, and undoing the batch within the batch: unchanged.
-    const same = [{ op: 'replace-entry', value: base.catalog.entries[0] }];
-    expect(valueOf(planCatalog({ snapshot: base, changes: same })).changed).toBe(false);
+    const same = [{ op: 'replace-entry', value: base.organisation.entries[0] }];
+    expect(valueOf(planOrganisation({ snapshot: base, changes: same })).changed).toBe(false);
     const undone = [...changes, ...same, { op: 'remove-folder', id: 'new' }];
-    expect(valueOf(planCatalog({ snapshot: base, changes: undone })).changed).toBe(false);
+    expect(valueOf(planOrganisation({ snapshot: base, changes: undone })).changed).toBe(false);
 
     // Failures: creating an existing folder; unregistering a missing entry at the end.
     const existing = [{ op: 'create-folder', value: { id: ids.folder, title: 'Duplicate' } }];
-    expect(diagnosticsOf(planCatalog({ snapshot: base, changes: existing }))).toEqual([
-      'duplicate catalog.folders.engineering',
+    expect(diagnosticsOf(planOrganisation({ snapshot: base, changes: existing }))).toEqual([
+      'duplicate organisation.folders.engineering',
     ]);
     const absent = [...changes, { op: 'unregister', collection: 'absent' }];
-    const failed = planCatalog({ snapshot: base, changes: absent });
-    expect(diagnosticsOf(failed)).toEqual(['not-found catalog.entries.absent']);
+    const failed = planOrganisation({ snapshot: base, changes: absent });
+    expect(diagnosticsOf(failed)).toEqual(['not-found organisation.entries.absent']);
     expect(failed).not.toHaveProperty('value');
   }
 
@@ -67,7 +72,7 @@ describe('Library catalog planning', () => {
   /**
    * Registering or unregistering a collection needs the matching inventory from Authoring;
    * Library never adds or deletes a collection itself. Newer collection revisions alone do not
-   * change the catalog.
+   * change the organisation.
    */
   function registersOnlyWithInventory(): void {
     const base = snapshot();
@@ -84,14 +89,14 @@ describe('Library catalog planning', () => {
     const register = [{ op: 'register', value: { collection: 'gamma' } }];
     expect(
       hasFailure(
-        planCatalog({ snapshot: base, changes: register }),
+        planOrganisation({ snapshot: base, changes: register }),
         'reference',
-        'catalog.entries.gamma',
+        'organisation.entries.gamma',
       ),
     ).toBe(true);
     const withGamma = [...base.collections, added];
     const registered = valueOf(
-      planCatalog({ snapshot: base, changes: register, proposedCollections: withGamma }),
+      planOrganisation({ snapshot: base, changes: register, proposedCollections: withGamma }),
     );
     expect(registered.candidate.entries.at(-1)?.collection).toBe('gamma');
     expect(registered.versions.collections).toHaveLength(2);
@@ -100,26 +105,26 @@ describe('Library catalog planning', () => {
     const unregister = [{ op: 'unregister', collection: ids.beta }];
     expect(
       hasFailure(
-        planCatalog({ snapshot: base, changes: unregister }),
+        planOrganisation({ snapshot: base, changes: unregister }),
         'reference',
         'collections.beta',
       ),
     ).toBe(true);
     const remaining = base.collections.filter((collection) => collection.id !== ids.beta);
     const removed = valueOf(
-      planCatalog({ snapshot: base, changes: unregister, proposedCollections: remaining }),
+      planOrganisation({ snapshot: base, changes: unregister, proposedCollections: remaining }),
     );
     expect(removed.candidate.entries.map((entry) => entry.collection)).toEqual([ids.alpha]);
 
-    // Every collection one revision newer, no changes: catalog unchanged. `null` is rejected.
+    // Every collection one revision newer, no changes: organisation unchanged. `null` is rejected.
     const projected = base.collections.map((collection) => ({
       ...collection,
       revision: collection.revision + 1,
     }));
     const newer = { snapshot: base, changes: [], proposedCollections: projected };
-    expect(valueOf(planCatalog(newer)).changed).toBe(false);
+    expect(valueOf(planOrganisation(newer)).changed).toBe(false);
     const nulled = { snapshot: base, changes: [], proposedCollections: null };
-    expect(diagnosticsOf(planCatalog(nulled))).toEqual(['shape ']);
+    expect(diagnosticsOf(planOrganisation(nulled))).toEqual(['shape ']);
   }
 
   test(
@@ -135,19 +140,19 @@ describe('Library catalog planning', () => {
   function removesOnlyUnderRehome(): void {
     const base = snapshot();
     const refused = [{ op: 'remove-folder', id: ids.folder }];
-    expect(diagnosticsOf(planCatalog({ snapshot: base, changes: refused }))).toEqual([
-      'folder-not-empty catalog.folders.engineering',
+    expect(diagnosticsOf(planOrganisation({ snapshot: base, changes: refused }))).toEqual([
+      'folder-not-empty organisation.folders.engineering',
     ]);
 
     // Remove `engineering`: `backend` moves to the root; entries are unchanged.
     const parent = [{ op: 'remove-folder', id: ids.folder, policy: 'rehome' }];
-    const rehomed = valueOf(planCatalog({ snapshot: base, changes: parent }));
+    const rehomed = valueOf(planOrganisation({ snapshot: base, changes: parent }));
     expect(rehomed.candidate.folders).toEqual([{ id: ids.child, title: 'Backend', order: 0 }]);
-    expect(rehomed.candidate.entries).toEqual(base.catalog.entries);
+    expect(rehomed.candidate.entries).toEqual(base.organisation.entries);
 
     // Remove `backend`: `alpha` moves up to `engineering`; `beta` keeps its archive flag.
     const child = [{ op: 'remove-folder', id: ids.child, policy: 'rehome' }];
-    const ungrouped = valueOf(planCatalog({ snapshot: base, changes: child }));
+    const ungrouped = valueOf(planOrganisation({ snapshot: base, changes: child }));
     expect(ungrouped.candidate.entries[0]?.folder).toBe(ids.folder);
     expect(ungrouped.candidate.entries[1]?.archived).toBe(true);
 
@@ -157,7 +162,7 @@ describe('Library catalog planning', () => {
       { op: 'create-folder', value: deep },
       { op: 'remove-folder', id: ids.folder, policy: 'rehome' },
     ];
-    const kept = valueOf(planCatalog({ snapshot: base, changes: grandchild }));
+    const kept = valueOf(planOrganisation({ snapshot: base, changes: grandchild }));
     expect(kept.candidate.folders).toEqual([{ id: ids.child, title: 'Backend', order: 0 }, deep]);
   }
 
@@ -185,7 +190,7 @@ describe('Library catalog planning', () => {
       },
       request: {},
     };
-    expect(diagnosticsOf(planCatalog(planInput))).toEqual(['shape $']);
+    expect(diagnosticsOf(planOrganisation(planInput))).toEqual(['shape $']);
     expect(diagnosticsOf(queryLibrary(queryInput))).toEqual(['shape $']);
   }
 

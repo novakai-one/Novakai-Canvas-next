@@ -24,7 +24,7 @@ export type HitKind = (typeof HIT_KINDS)[number];
 /** Which archived collections a search returns: none, all, or only archived ones. */
 export type ArchiveMode = (typeof ARCHIVE_MODES)[number];
 
-/** How hits are sorted: by catalog order, by title, or most recently opened first. */
+/** How hits are sorted: by organisation order, by title, or most recently opened first. */
 export type SortMode = (typeof SORT_MODES)[number];
 
 /** Every archive mode, in the order the schema's error message lists them. Frozen, private. */
@@ -104,7 +104,7 @@ export function querySchema(): z.ZodType<QueryRequest> {
 
 /**
  * What every hit shows and navigates by, copied from the collection projection (never stored in
- * the catalog).
+ * the organisation).
  */
 interface HitContent {
   /** The collection the hit belongs to. */

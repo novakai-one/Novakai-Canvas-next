@@ -12,7 +12,7 @@ import { validateRecords } from './rules.js';
  *
  * Steps: parse the snapshot's shape (defaults filled in; every schema issue reported), then check
  * the rules across records (see `validateRecords`): unique IDs, existing references, no folder
- * cycles, and exactly one catalog entry per collection. All rule violations are reported together.
+ * cycles, and exactly one organisation entry per collection. All rule violations are reported together.
  *
  * Returns a detached, frozen copy of the snapshot. Writes nothing and reads no clock. A throw
  * while reading the input becomes a `shape` failure.

@@ -5,5 +5,5 @@
  * gives the same result, so a retry is always safe.
  */
 export { validateLibrarySnapshot } from '../core/validation/validate.js';
-export { planCatalog } from '../core/catalog/plan.js';
+export { planOrganisation } from '../core/organisation/plan.js';
 export { queryLibrary } from '../core/discovery/query.js';

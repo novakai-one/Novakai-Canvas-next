@@ -1,5 +1,5 @@
 /*
- * The Library snapshot: the catalog, the host's complete collection inventory and the recent
+ * The Library snapshot: the organisation, the host's complete collection inventory and the recent
  * visits, all read at one consistent point. Every Library operation runs on one snapshot. The
  * record types are declared first; each schema is built by a function, so no schema object is
  * shared between calls. A snapshot these schemas reject is a `shape` diagnostic; the caller
@@ -19,7 +19,7 @@ import {
   type ObjectId,
   type SectionId,
 } from '../brands.js';
-import { catalogSchema, type Catalog } from './catalog.js';
+import { organisationSchema, type Organisation } from './organisation.js';
 
 /** One section of a collection. */
 export interface SectionProjection {
@@ -65,7 +65,7 @@ export interface RecentVisit {
 
 /** A snapshot that passed {@link snapshotSchema}, with defaults filled in. */
 export interface LibrarySnapshot {
-  readonly catalog: Catalog;
+  readonly organisation: Organisation;
   /** The host's complete collection inventory. */
   readonly collections: readonly CollectionProjection[];
   readonly recent: readonly RecentVisit[];
@@ -73,18 +73,18 @@ export interface LibrarySnapshot {
 
 /**
  * Builds the schema of the host's complete collection inventory: at most 10,000 projections.
- * Validation checks that every collection has exactly one catalog entry and every entry has a
+ * Validation checks that every collection has exactly one organisation entry and every entry has a
  * collection.
  */
 export function inventorySchema(): z.ZodType<readonly CollectionProjection[]> {
   return z.array(collectionProjectionSchema()).max(MAX_RECORDS).readonly();
 }
 
-/** Builds the snapshot schema: the catalog, the inventory and the recent visits (default none). */
+/** Builds the snapshot schema: the organisation, the inventory and the recent visits (default none). */
 export function snapshotSchema(): z.ZodType<LibrarySnapshot> {
   return z
     .strictObject({
-      catalog: catalogSchema(),
+      organisation: organisationSchema(),
       collections: inventorySchema(),
       recent: recordList(recentSchema()),
     })

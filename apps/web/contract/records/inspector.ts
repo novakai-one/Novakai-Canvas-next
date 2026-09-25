@@ -66,7 +66,7 @@ export interface ObjectSelection {
   readonly collection: Collection;
   readonly object: DiagramObject;
 }
-/** Component reorganization does not own draft lifetime. The host's inspector session does. */
+/** Component reorganisation does not own draft lifetime. The host's inspector session does. */
 export interface InspectorSession {
   getSnapshot(): InspectorState;
   subscribe(listener: () => void): () => void;

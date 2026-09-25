@@ -7,11 +7,14 @@ import type { LibrarySnapshot, CollectionProjection } from '../../contract/recor
 import type { CollectionVersion, ReadVersions } from '../../contract/types.js';
 import { compareText } from './text.js';
 
-/** The source revisions of a snapshot: the catalog's, and each collection's sorted by ID. */
+/** The source revisions of a snapshot: the organisation's, and each collection's sorted by ID. */
 export function readVersions(snapshot: LibrarySnapshot): ReadVersions {
   const versions = snapshot.collections.map(collectionVersion);
   const collections = versions.toSorted(byCollectionId);
-  return { catalog: { id: snapshot.catalog.id, revision: snapshot.catalog.revision }, collections };
+  return {
+    organisation: { id: snapshot.organisation.id, revision: snapshot.organisation.revision },
+    collections,
+  };
 }
 
 /** One collection's ID and revision. */

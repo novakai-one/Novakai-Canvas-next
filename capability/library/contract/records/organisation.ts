@@ -1,24 +1,24 @@
 /*
- * The catalog records: folders, entries and the catalog that holds them. The record types are
+ * The organisation records: folders, entries and the organisation that holds them. The record types are
  * declared first; each schema is built by a function whose return type proves it produces that
  * record, and no schema object is shared between calls. A record these schemas reject is a
  * `shape` diagnostic; the caller corrects it, and Authoring owns commit and recovery.
  */
 import { z } from 'zod';
 import {
-  catalogIdSchema,
+  organisationIdSchema,
   folderIdSchema,
   collectionIdSchema,
   labelSchema,
   nonnegativeIntegerSchema,
   orderSchema,
   recordList,
-  type CatalogId,
+  type OrganisationId,
   type CollectionId,
   type FolderId,
 } from '../brands.js';
 
-/** A folder. Without a parent it is at the catalog root. Folders are separate from collections. */
+/** A folder. Without a parent it is at the organisation root. Folders are separate from collections. */
 export interface Folder {
   readonly id: FolderId;
   /** Nonblank display title. */
@@ -33,7 +33,7 @@ export interface Folder {
  * The one entry for a live or archived collection: where it sits and how it sorts. The
  * collection's title and content stay in the collection.
  */
-export interface CatalogEntry {
+export interface OrganisationEntry {
   readonly collection: CollectionId;
   /** The containing folder; absent at the root. */
   readonly folder?: FolderId | undefined;
@@ -43,14 +43,14 @@ export interface CatalogEntry {
   readonly archived: boolean;
 }
 
-/** A catalog (schema version 1) with its folders and entries. */
-export interface Catalog {
+/** A organisation (schema version 1) with its folders and entries. */
+export interface Organisation {
   readonly schemaVersion: 1;
-  readonly id: CatalogId;
+  readonly id: OrganisationId;
   /** The stored revision; Authoring assigns the next one. */
   readonly revision: number;
   readonly folders: readonly Folder[];
-  readonly entries: readonly CatalogEntry[];
+  readonly entries: readonly OrganisationEntry[];
 }
 
 /**
@@ -69,10 +69,10 @@ export function folderSchema(): z.ZodType<Folder> {
 }
 
 /**
- * Builds the catalog entry schema: the collection, an optional folder (none means the root), the
+ * Builds the organisation entry schema: the collection, an optional folder (none means the root), the
  * sort position (default 0) and whether it is archived (default false).
  */
-export function entrySchema(): z.ZodType<CatalogEntry> {
+export function entrySchema(): z.ZodType<OrganisationEntry> {
   return z
     .strictObject({
       collection: collectionIdSchema(),
@@ -84,16 +84,16 @@ export function entrySchema(): z.ZodType<CatalogEntry> {
 }
 
 /**
- * Builds the catalog schema: its ID, revision, and up to 10,000 folders and 10,000 entries (each
+ * Builds the organisation schema: its ID, revision, and up to 10,000 folders and 10,000 entries (each
  * defaults to empty). Unknown keys are rejected. The rules across records (unique IDs, existing
  * parents and collections, entry folders exist, one entry per collection, no parent cycles) are
  * checked by validation, not here.
  */
-export function catalogSchema(): z.ZodType<Catalog> {
+export function organisationSchema(): z.ZodType<Organisation> {
   return z
     .strictObject({
       schemaVersion: z.literal(1),
-      id: catalogIdSchema(),
+      id: organisationIdSchema(),
       revision: nonnegativeIntegerSchema(),
       folders: recordList(folderSchema()),
       entries: recordList(entrySchema()),

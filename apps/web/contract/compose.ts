@@ -6,7 +6,7 @@ import { createLibraryReader } from '../adapters/library-reader.js';
 import { createLibraryBrowser } from '../adapters/react/LibraryBrowser.js';
 import { createLibraryFilters } from '../adapters/react/LibraryFilters.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
-import { createLibraryOrganization } from '../adapters/react/LibraryOrganization.js';
+import { createLibraryOrganisation } from '../adapters/react/LibraryOrganisation.js';
 import { createElement, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
 import type { LibraryBrowserProps } from './library-react.js';
@@ -393,7 +393,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
   const Browser = createLibraryBrowser([
     { id: 'filters', Content: createLibraryFilters(design) },
     { id: 'results', Content: createLibraryResults(design) },
-    { id: 'organization', Content: createLibraryOrganization(design) },
+    { id: 'organisation', Content: createLibraryOrganisation(design) },
   ]);
   const ChooserBrowser = createLibraryBrowser([
     { id: 'filters', Content: createLibraryFilters(design, { compact: true }) },

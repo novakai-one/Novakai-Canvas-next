@@ -1,21 +1,21 @@
 /**
- * Library's public surface: catalog validation, catalog change planning and collection search.
+ * Library's public surface: organisation validation, organisation change planning and collection search.
  *
- * Start with `validateLibrarySnapshot`, `planCatalog` and `queryLibrary`. Each stores nothing,
+ * Start with `validateLibrarySnapshot`, `planOrganisation` and `queryLibrary`. Each stores nothing,
  * never throws and returns a frozen result. The ID schema factories check and brand IDs; each call
- * returns a new schema. Everything else is a type. Catalog rules and search mechanics stay private.
+ * returns a new schema. Everything else is a type. Organisation rules and search mechanics stay private.
  */
-export { validateLibrarySnapshot, planCatalog, queryLibrary } from './api.js';
+export { validateLibrarySnapshot, planOrganisation, queryLibrary } from './api.js';
 export {
-  catalogIdSchema,
+  organisationIdSchema,
   folderIdSchema,
   collectionIdSchema,
   objectIdSchema,
   sectionIdSchema,
 } from './brands.js';
-export type { CatalogId, FolderId, CollectionId, ObjectId, SectionId } from './brands.js';
+export type { OrganisationId, FolderId, CollectionId, ObjectId, SectionId } from './brands.js';
 export type { LibraryResult, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';
-export type { Catalog, Folder, CatalogEntry } from './records/catalog.js';
+export type { Organisation, Folder, OrganisationEntry } from './records/organisation.js';
 export type {
   LibrarySnapshot,
   CollectionProjection,
@@ -23,7 +23,7 @@ export type {
   ObjectProjection,
   RecentVisit,
 } from './records/snapshot.js';
-export type { CatalogChange, RemovalPolicy } from './records/change.js';
+export type { OrganisationChange, RemovalPolicy } from './records/change.js';
 export type {
   QueryRequest,
   QueryPage,
@@ -36,7 +36,7 @@ export type {
   PlanInput,
   QueryInput,
   ReadVersions,
-  CatalogVersion,
+  OrganisationVersion,
   CollectionVersion,
-  CatalogPlan,
+  OrganisationPlan,
 } from './types.js';

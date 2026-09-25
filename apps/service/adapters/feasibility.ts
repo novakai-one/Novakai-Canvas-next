@@ -62,7 +62,7 @@ function warnings(documents: readonly RenderDocument[]): readonly Diagnostic[] {
     })),
   );
 }
-/** Validate changed collection geometry only; catalog/preset organization alone creates no new scene to solve. */
+/** Validate changed collection geometry only; catalog/preset organisation alone creates no new scene to solve. */
 async function check(
   candidate: Snapshot,
   changed: readonly RecordKey[],

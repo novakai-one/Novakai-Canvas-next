@@ -1,17 +1,17 @@
 /*
- * Applying one parsed catalog change. Each change returns a new catalog and never changes the one
+ * Applying one parsed organisation change. Each change returns a new organisation and never changes the one
  * given. References are checked later, on the final candidate. Pure; Authoring owns the commit
  * and recovery.
  */
-import type { Catalog, CatalogEntry, Folder } from '../../contract/records/catalog.js';
-import type { CatalogChange, ChangeOf } from '../../contract/records/change.js';
+import type { Organisation, OrganisationEntry, Folder } from '../../contract/records/organisation.js';
+import type { OrganisationChange, ChangeOf } from '../../contract/records/change.js';
 import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
 import { entryKey, folderKey, hasEntry, hasFolder } from '../validation/lookups.js';
 import { removeFolder } from './removal.js';
 
 /**
- * Applies one parsed catalog change and returns the new catalog.
+ * Applies one parsed organisation change and returns the new organisation.
  *
  * - `create-folder` / `register`: appended; an existing ID is `duplicate`.
  * - `replace-folder` / `replace-entry`: replaced in place; a missing ID is `not-found`.
@@ -19,25 +19,25 @@ import { removeFolder } from './removal.js';
  * - `unregister`: the entry is removed; a missing one is `not-found`.
  *
  * References are not checked here, so a later change in the batch may repair them; planning
- * validates the final catalog. A failure stops the batch.
+ * validates the final organisation. A failure stops the batch.
  */
 export function applyOperation(
-  catalog: Catalog,
-  change: CatalogChange,
-): LibraryResult<Catalog> {
+  organisation: Organisation,
+  change: OrganisationChange,
+): LibraryResult<Organisation> {
   switch (change.op) {
     case 'create-folder':
-      return writeFolder(catalog, change.value, 'create');
+      return writeFolder(organisation, change.value, 'create');
     case 'replace-folder':
-      return writeFolder(catalog, change.value, 'replace');
+      return writeFolder(organisation, change.value, 'replace');
     case 'remove-folder':
-      return removeFolder(catalog, change);
+      return removeFolder(organisation, change);
     case 'register':
-      return writeEntry(catalog, change.value, 'create');
+      return writeEntry(organisation, change.value, 'create');
     case 'replace-entry':
-      return writeEntry(catalog, change.value, 'replace');
+      return writeEntry(organisation, change.value, 'replace');
     case 'unregister':
-      return unregister(catalog, change);
+      return unregister(organisation, change);
     default:
       return unsupported(change);
   }
@@ -50,39 +50,39 @@ type WriteMode = 'create' | 'replace';
  * The failure for a change of no known kind. Parsing makes this unreachable; the `never` type
  * proves every kind above is handled.
  */
-function unsupported(change: never): LibraryResult<Catalog> {
+function unsupported(change: never): LibraryResult<Organisation> {
   void change;
-  return failure({ code: 'shape', path: 'changes', message: 'Unsupported catalog operation' });
+  return failure({ code: 'shape', path: 'changes', message: 'Unsupported organisation operation' });
 }
 
 /** Creates or replaces a complete folder (covering rename, move and reorder; no field patches). */
 function writeFolder(
-  catalog: Catalog,
+  organisation: Organisation,
   value: Folder,
   mode: WriteMode,
-): LibraryResult<Catalog> {
-  const exists = hasFolder(catalog.folders, value.id);
-  const identity = checkIdentity(mode, exists, `catalog.folders.${value.id}`);
+): LibraryResult<Organisation> {
+  const exists = hasFolder(organisation.folders, value.id);
+  const identity = checkIdentity(mode, exists, `organisation.folders.${value.id}`);
   if (!identity.ok) {
     return identity;
   }
-  const folders = writeList(catalog.folders, value, folderKey, mode);
-  return success({ ...catalog, folders });
+  const folders = writeList(organisation.folders, value, folderKey, mode);
+  return success({ ...organisation, folders });
 }
 
 /** Creates or replaces a complete entry (covering move, reorder, archive and restore). */
 function writeEntry(
-  catalog: Catalog,
-  value: CatalogEntry,
+  organisation: Organisation,
+  value: OrganisationEntry,
   mode: WriteMode,
-): LibraryResult<Catalog> {
-  const exists = hasEntry(catalog.entries, value.collection);
-  const identity = checkIdentity(mode, exists, `catalog.entries.${value.collection}`);
+): LibraryResult<Organisation> {
+  const exists = hasEntry(organisation.entries, value.collection);
+  const identity = checkIdentity(mode, exists, `organisation.entries.${value.collection}`);
   if (!identity.ok) {
     return identity;
   }
-  const entries = writeList(catalog.entries, value, entryKey, mode);
-  return success({ ...catalog, entries });
+  const entries = writeList(organisation.entries, value, entryKey, mode);
+  return success({ ...organisation, entries });
 }
 
 /**
@@ -90,18 +90,18 @@ function writeEntry(
  * candidate, so a deletion can be planned together with its collection's removal.
  */
 function unregister(
-  catalog: Catalog,
+  organisation: Organisation,
   change: ChangeOf<'unregister'>,
-): LibraryResult<Catalog> {
-  if (!hasEntry(catalog.entries, change.collection)) {
+): LibraryResult<Organisation> {
+  if (!hasEntry(organisation.entries, change.collection)) {
     return failure({
       code: 'not-found',
-      path: `catalog.entries.${change.collection}`,
+      path: `organisation.entries.${change.collection}`,
       message: 'Membership must exist',
     });
   }
-  const entries = catalog.entries.filter((entry) => entry.collection !== change.collection);
-  return success({ ...catalog, entries });
+  const entries = organisation.entries.filter((entry) => entry.collection !== change.collection);
+  return success({ ...organisation, entries });
 }
 
 /** Create needs an absent ID (`duplicate`); replace needs an existing one (`not-found`). */

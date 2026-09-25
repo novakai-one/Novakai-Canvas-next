@@ -57,7 +57,7 @@ it('preserves two different Model codes and paths through planning and JSON tran
     { code: 'reference', path: 'sections.flow.appearances.missing' },
   ]);
   const library = validateLibrarySnapshot({
-    catalog: {
+    organisation: {
       schemaVersion: 1,
       id: 'catalog',
       revision: 0,

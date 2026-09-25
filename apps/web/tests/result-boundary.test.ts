@@ -13,7 +13,7 @@ it('preserves Library diagnostics through the browser reader and leaves success 
     ],
     entries: [],
   };
-  const expected = validateLibrarySnapshot({ catalog, collections: [], recent: [] });
+  const expected = validateLibrarySnapshot({ organisation: catalog, collections: [], recent: [] });
   assert(!expected.ok);
   expect(expected.error.diagnostics.length).toBeGreaterThanOrEqual(2);
   const snapshot = snapshotSchema.parse({
@@ -41,6 +41,6 @@ it('preserves Library diagnostics through the browser reader and leaves success 
     [],
   );
   expect(accepted).toEqual(
-    validateLibrarySnapshot({ catalog: valid, collections: [], recent: [] }),
+    validateLibrarySnapshot({ organisation: valid, collections: [], recent: [] }),
   );
 });

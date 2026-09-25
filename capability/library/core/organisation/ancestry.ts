@@ -1,10 +1,10 @@
 /*
  * Walking the folder tree upward: the ancestry of a folder, and whether one folder is inside
  * another. Loops instead of recursion, so a malformed cyclic tree still ends. Pure; the caller
- * corrects the catalog, and Authoring owns commit and recovery.
+ * corrects the organisation, and Authoring owns commit and recovery.
  */
 import type { FolderId } from '../../contract/brands.js';
-import type { Folder } from '../../contract/records/catalog.js';
+import type { Folder } from '../../contract/records/organisation.js';
 
 /** The result of {@link ancestry}. */
 export interface Ancestry {

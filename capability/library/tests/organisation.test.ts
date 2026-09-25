@@ -6,7 +6,7 @@
 import { describe, expect, test } from 'vitest';
 import {
   validateLibrarySnapshot,
-  catalogIdSchema,
+  organisationIdSchema,
   collectionIdSchema,
   folderIdSchema,
   objectIdSchema,
@@ -17,46 +17,46 @@ import { valueOf, diagnosticsOf, issueCodes } from './assertions.js';
 
 describe('Library snapshot validation', () => {
   /**
-   * A valid snapshot comes back parsed. Catalog entries and collections must match one to one:
+   * A valid snapshot comes back parsed. Organisation entries and collections must match one to one:
    * a duplicate entry, an entry without a collection and a collection without an entry are each
    * reported at their path. An unknown schema version or an unknown top-level key is rejected.
    */
   function requiresOneEntryPerCollection(): void {
     const base = snapshot();
     const valid = valueOf(validateLibrarySnapshot(base));
-    expect(valid.catalog.revision).toBe(7);
-    expect(valid.catalog.entries).toHaveLength(2);
+    expect(valid.organisation.revision).toBe(7);
+    expect(valid.organisation.entries).toHaveLength(2);
 
     // `alpha` listed twice.
     const duplicate = {
       ...base,
-      catalog: { ...base.catalog, entries: [...base.catalog.entries, base.catalog.entries[0]] },
+      organisation: { ...base.organisation, entries: [...base.organisation.entries, base.organisation.entries[0]] },
     };
     expect(diagnosticsOf(validateLibrarySnapshot(duplicate))).toEqual([
-      'duplicate catalog.entries.alpha',
+      'duplicate organisation.entries.alpha',
     ]);
 
     // Entries without collections (their visits too), then collections without entries.
     expect(diagnosticsOf(validateLibrarySnapshot({ ...base, collections: [] }))).toEqual([
-      'reference catalog.entries.alpha',
-      'reference catalog.entries.beta',
+      'reference organisation.entries.alpha',
+      'reference organisation.entries.beta',
       'reference recent.alpha',
       'reference recent.beta',
     ]);
-    const unlisted = { ...base, catalog: { ...base.catalog, entries: [] } };
+    const unlisted = { ...base, organisation: { ...base.organisation, entries: [] } };
     expect(diagnosticsOf(validateLibrarySnapshot(unlisted))).toEqual([
       'reference collections.alpha',
       'reference collections.beta',
     ]);
 
     // Shape: unknown schema version; unknown key (reported at the root, path '').
-    const future = { ...base, catalog: { ...base.catalog, schemaVersion: 99 } };
-    expect(diagnosticsOf(validateLibrarySnapshot(future))).toEqual(['shape catalog.schemaVersion']);
+    const future = { ...base, organisation: { ...base.organisation, schemaVersion: 99 } };
+    expect(diagnosticsOf(validateLibrarySnapshot(future))).toEqual(['shape organisation.schemaVersion']);
     expect(diagnosticsOf(validateLibrarySnapshot({ ...base, extra: true }))).toEqual(['shape ']);
   }
 
   test(
-    'accepts a valid snapshot and requires one catalog entry per collection',
+    'accepts a valid snapshot and requires one organisation entry per collection',
     requiresOneEntryPerCollection,
   );
 
@@ -73,8 +73,8 @@ describe('Library snapshot validation', () => {
       { id: ids.child, title: 'Backend', parent: ids.folder, order: 0 },
     ];
     expect(
-      diagnosticsOf(validateLibrarySnapshot({ ...base, catalog: { ...base.catalog, folders } })),
-    ).toEqual(['cycle catalog.folders.engineering.parent', 'cycle catalog.folders.backend.parent']);
+      diagnosticsOf(validateLibrarySnapshot({ ...base, organisation: { ...base.organisation, folders } })),
+    ).toEqual(['cycle organisation.folders.engineering.parent', 'cycle organisation.folders.backend.parent']);
 
     // An object visible in a section that does not exist.
     const collections = base.collections.map((collection) => ({
@@ -114,7 +114,7 @@ describe('Library snapshot validation', () => {
    */
   function buildsFreshIdSchemas(): void {
     const factories = [
-      catalogIdSchema,
+      organisationIdSchema,
       folderIdSchema,
       collectionIdSchema,
       objectIdSchema,

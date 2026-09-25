@@ -1,6 +1,6 @@
 /*
  * Building search hits from the collection projections. Rebuilt on every search; nothing is
- * cached and the catalog is not touched. Pure; Authoring owns commit and recovery.
+ * cached and the organisation is not touched. Pure; Authoring owns commit and recovery.
  */
 import type {
   LibrarySnapshot,

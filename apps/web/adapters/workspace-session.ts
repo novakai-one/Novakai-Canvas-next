@@ -2407,7 +2407,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Library commands use the same durable request journal and captured catalog versions as diagram editing. */
   async function applyLibrary(
     base: import('../contract/records/owners.js').Snapshot,
-    changes: readonly import('@novakai/canvas-library').CatalogChange[],
+    changes: readonly import('@novakai/canvas-library').OrganisationChange[],
   ): Promise<Result<Receipt>> {
     const request = bindings.inputs.library(base, changes, bindings.nextId());
     if (!request.ok) return request;

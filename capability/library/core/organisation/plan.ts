@@ -1,16 +1,16 @@
 /*
- * Planning an ordered batch of catalog changes as one atomic transition. Nothing is written: the
+ * Planning an ordered batch of organisation changes as one atomic transition. Nothing is written: the
  * host commits the candidate only if the read versions are unchanged. Authoring owns admission,
  * the conditional commit and crash recovery.
  */
-import type { Catalog } from '../../contract/records/catalog.js';
-import { changesSchema, type CatalogChange } from '../../contract/records/change.js';
+import type { Organisation } from '../../contract/records/organisation.js';
+import { changesSchema, type OrganisationChange } from '../../contract/records/change.js';
 import {
   inventorySchema,
   type LibrarySnapshot,
   type CollectionProjection,
 } from '../../contract/records/snapshot.js';
-import type { CatalogPlan, PlanInput } from '../../contract/types.js';
+import type { OrganisationPlan, PlanInput } from '../../contract/types.js';
 import type { LibraryResult } from '../../contract/errors.js';
 import { validateLibrarySnapshot } from '../validation/validate.js';
 import { parse, protect, success } from '../validation/outcomes.js';
@@ -19,7 +19,7 @@ import { readVersions } from '../discovery/versions.js';
 import { applyOperation } from './operations.js';
 
 /**
- * Plans an ordered batch of catalog changes as one atomic transition.
+ * Plans an ordered batch of organisation changes as one atomic transition.
  *
  * Steps; the first failure stops the plan and no partial candidate is returned:
  * 1. Read the input's `snapshot`, `changes` and `proposedCollections`.
@@ -27,7 +27,7 @@ import { applyOperation } from './operations.js';
  * 3. Parse the changes.
  * 4. Parse the inventory: `proposedCollections` when given (even `null`, which is rejected), or
  *    the snapshot's own collections when it is absent or `undefined`.
- * 5. Apply the changes in order to the original catalog.
+ * 5. Apply the changes in order to the original organisation.
  * 6. Validate the candidate against that inventory. Recent visits to collections no longer in the
  *    inventory are dropped for this check.
  *
@@ -35,12 +35,12 @@ import { applyOperation } from './operations.js';
  * revisions, and `changed` is the net effect. A throw while reading the input becomes a `shape`
  * failure at `$`.
  */
-export function planCatalog(input: PlanInput): LibraryResult<CatalogPlan> {
+export function planOrganisation(input: PlanInput): LibraryResult<OrganisationPlan> {
   return protect(() => preparePlan(input));
 }
 
 /** Validates the original snapshot before reading or applying any change. */
-function preparePlan(input: PlanInput): LibraryResult<CatalogPlan> {
+function preparePlan(input: PlanInput): LibraryResult<OrganisationPlan> {
   const { snapshot, changes, proposedCollections } = input;
   const before = validateLibrarySnapshot(snapshot);
   if (!before.ok) {
@@ -68,15 +68,15 @@ function chooseInventory(
 /** Parses the inventory, applies every change, then validates the candidate. */
 function applyBatch(
   before: LibrarySnapshot,
-  changes: readonly CatalogChange[],
+  changes: readonly OrganisationChange[],
   proposedCollections: unknown,
-): LibraryResult<CatalogPlan> {
+): LibraryResult<OrganisationPlan> {
   const inventory = parse(inventorySchema(), proposedCollections);
   if (!inventory.ok) {
     return inventory;
   }
   // `applyNext` passes the first failure along unchanged, so later changes are skipped.
-  const applied = changes.reduce(applyNext, success(before.catalog));
+  const applied = changes.reduce(applyNext, success(before.organisation));
   if (!applied.ok) {
     return applied;
   }
@@ -85,9 +85,9 @@ function applyBatch(
 
 /** Applies the next change, or passes an earlier failure on unchanged. */
 function applyNext(
-  current: LibraryResult<Catalog>,
-  change: CatalogChange,
-): LibraryResult<Catalog> {
+  current: LibraryResult<Organisation>,
+  change: OrganisationChange,
+): LibraryResult<Organisation> {
   if (!current.ok) {
     return current;
   }
@@ -95,20 +95,20 @@ function applyNext(
 }
 
 /**
- * Validates the candidate catalog with the final inventory (recent visits to removed collections
- * dropped), then builds the plan. `changed` compares the JSON text of both catalogs.
+ * Validates the candidate organisation with the final inventory (recent visits to removed collections
+ * dropped), then builds the plan. `changed` compares the JSON text of both organisations.
  */
 function validateCandidate(
   before: LibrarySnapshot,
-  catalog: Catalog,
+  organisation: Organisation,
   collections: readonly CollectionProjection[],
-): LibraryResult<CatalogPlan> {
+): LibraryResult<OrganisationPlan> {
   const recent = before.recent.filter((visit) => hasCollection(collections, visit.collection));
-  const validated = validateLibrarySnapshot({ catalog, collections, recent });
+  const validated = validateLibrarySnapshot({ organisation, collections, recent });
   if (!validated.ok) {
     return validated;
   }
-  const candidate = validated.value.catalog;
-  const changed = JSON.stringify(candidate) !== JSON.stringify(before.catalog);
+  const candidate = validated.value.organisation;
+  const changed = JSON.stringify(candidate) !== JSON.stringify(before.organisation);
   return success({ candidate, changed, versions: readVersions(before) });
 }

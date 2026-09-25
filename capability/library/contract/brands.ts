@@ -16,15 +16,15 @@ export const MAX_RECORDS = 10_000;
 const MAX_TEXT_LENGTH = 10_000;
 
 /**
- * Builds the catalog ID schema. A catalog is separate from its folders and the collections it
+ * Builds the organisation ID schema. A organisation is separate from its folders and the collections it
  * lists.
  */
-export function catalogIdSchema(): z.core.$ZodBranded<z.ZodString, 'CatalogId'> {
-  return identifierSchema().brand<'CatalogId'>();
+export function organisationIdSchema(): z.core.$ZodBranded<z.ZodString, 'OrganisationId'> {
+  return identifierSchema().brand<'OrganisationId'>();
 }
 
 /**
- * Builds the folder ID schema. A folder ID is unique within one catalog. The catalog root has no
+ * Builds the folder ID schema. A folder ID is unique within one organisation. The organisation root has no
  * ID: an entry or folder at the root simply has no folder or parent.
  */
 export function folderIdSchema(): z.core.$ZodBranded<z.ZodString, 'FolderId'> {
@@ -88,8 +88,8 @@ export function recordList<T extends z.ZodType>(
   return z.array(item).max(MAX_RECORDS).readonly().default([]);
 }
 
-/** A catalog ID that passed {@link catalogIdSchema}. */
-export type CatalogId = string & z.core.$brand<'CatalogId'>;
+/** A organisation ID that passed {@link organisationIdSchema}. */
+export type OrganisationId = string & z.core.$brand<'OrganisationId'>;
 
 /** A folder ID that passed {@link folderIdSchema}. */
 export type FolderId = string & z.core.$brand<'FolderId'>;

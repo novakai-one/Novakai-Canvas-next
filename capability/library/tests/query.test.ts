@@ -74,8 +74,8 @@ describe('Library search', () => {
     expect(third.hits.map(hitKind)).toEqual(['object']);
     expect(third).not.toHaveProperty('nextCursor');
 
-    // Stale: the catalog revision changed; the page size changed; not JSON. A zero page size.
-    const revised = { ...base, catalog: { ...base.catalog, revision: 8 } };
+    // Stale: the organisation revision changed; the page size changed; not JSON. A zero page size.
+    const revised = { ...base, organisation: { ...base.organisation, revision: 8 } };
     expect(diagnosticsOf(queryLibrary({ snapshot: revised, request: secondRequest }))).toEqual([
       'stale-cursor query.cursor',
     ]);
@@ -90,10 +90,10 @@ describe('Library search', () => {
       'shape limit',
     ]);
 
-    // A catalog ID over 1,000,000 characters makes the next cursor too long.
+    // A organisation ID over 1,000,000 characters makes the next cursor too long.
     const longId = 'x'.repeat(1_000_001);
     const huge = {
-      catalog: {
+      organisation: {
         schemaVersion: 1,
         id: longId,
         revision: 0,

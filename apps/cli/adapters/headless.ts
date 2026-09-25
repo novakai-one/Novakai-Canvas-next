@@ -419,7 +419,13 @@ async function renderEnvironment(
         presets: catalog,
         library: accepted(
           validateLibrarySnapshot({
-            catalog: { schemaVersion: 1, id: 'headless', revision: 0, folders: [], entries: [] },
+            organisation: {
+              schemaVersion: 1,
+              id: 'headless',
+              revision: 0,
+              folders: [],
+              entries: [],
+            },
             collections: [],
             recent: [],
           }),

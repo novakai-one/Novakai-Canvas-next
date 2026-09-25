@@ -2,8 +2,8 @@ import { assert, expect } from 'vitest';
 import { requestSchema } from '@novakai/canvas-authoring';
 import type { Snapshot } from '@novakai/canvas-authoring';
 import type { WorkspaceSession } from '@novakai/canvas-service';
-/** Extends host case2: organization uses the real Library planner and conditional Authoring transaction. */
-export async function verifyLibraryOrganization(
+/** Extends host case2: organisation uses the real Library planner and conditional Authoring transaction. */
+export async function verifyLibraryOrganisation(
   session: WorkspaceSession,
   before: Snapshot,
 ): Promise<void> {

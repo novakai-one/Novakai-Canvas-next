@@ -223,10 +223,10 @@ function checkedSourceCollection(
   return { ok: true, value: collection };
 }
 
-/** Organization changes acquire only the observed catalog's write scope; Library owns their validation. */
+/** Organisation changes acquire only the observed catalog's write scope; Library owns their validation. */
 function libraryRequest(
   snapshot: Snapshot,
-  changes: readonly import('@novakai/canvas-library').CatalogChange[],
+  changes: readonly import('@novakai/canvas-library').OrganisationChange[],
   id: string,
 ): Result<Request> {
   const expected = snapshot.records

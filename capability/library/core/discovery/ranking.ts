@@ -50,7 +50,7 @@ function rankMetadata(
   hit: SearchHit,
   snapshot: LibrarySnapshot,
 ): RankedHit {
-  const entry = snapshot.catalog.entries.find(
+  const entry = snapshot.organisation.entries.find(
     (candidate) => candidate.collection === hit.collection,
   );
   const visit = snapshot.recent.find((candidate) => candidate.collection === hit.collection);

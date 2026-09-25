@@ -94,7 +94,7 @@ function validateFolder(
   if (request.folder === undefined) {
     return success(true);
   }
-  if (!hasFolder(snapshot.catalog.folders, request.folder)) {
+  if (!hasFolder(snapshot.organisation.folders, request.folder)) {
     return failure({
       code: 'not-found',
       path: 'query.folder',

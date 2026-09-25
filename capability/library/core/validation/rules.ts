@@ -1,6 +1,6 @@
 /*
  * The rules across records of a parsed snapshot: unique IDs, existing references, no folder
- * cycles, and one catalog entry per collection. Every violation is reported. Pure; the caller
+ * cycles, and one organisation entry per collection. Every violation is reported. Pure; the caller
  * corrects the input, and Authoring owns commit and recovery.
  */
 import type { Diagnostic } from '../../contract/errors.js';
@@ -12,8 +12,12 @@ import type {
   RecentVisit,
   SectionProjection,
 } from '../../contract/records/snapshot.js';
-import type { Catalog, CatalogEntry, Folder } from '../../contract/records/catalog.js';
-import { ancestry } from '../catalog/ancestry.js';
+import type {
+  Organisation,
+  OrganisationEntry,
+  Folder,
+} from '../../contract/records/organisation.js';
+import { ancestry } from '../organisation/ancestry.js';
 import { duplicateIssues } from './identities.js';
 import { entryKey, folderKey, hasCollection, hasEntry, hasFolder, hasSection } from './lookups.js';
 import { diagnoseWhen } from './outcomes.js';
@@ -33,7 +37,7 @@ import { diagnoseWhen } from './outcomes.js';
  * boundary of `validateLibrarySnapshot`.
  */
 export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[] {
-  const folders = folderIssues(snapshot.catalog);
+  const folders = folderIssues(snapshot.organisation);
   const membership = membershipIssues(snapshot);
   const projections = snapshot.collections.flatMap(projectionIssues);
   const visits = recentIssues(snapshot);
@@ -41,24 +45,24 @@ export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[
 }
 
 /** Folder rules: unique IDs, existing parents and no parent cycles, each checked separately. */
-function folderIssues(catalog: Catalog): readonly Diagnostic[] {
-  const identities = duplicateIssues(catalog.folders, folderKey, 'catalog.folders');
-  const references = catalog.folders.flatMap((folder) => parentIssues(folder, catalog));
-  const cycles = catalog.folders.flatMap((folder) => cycleIssues(folder, catalog));
+function folderIssues(organisation: Organisation): readonly Diagnostic[] {
+  const identities = duplicateIssues(organisation.folders, folderKey, 'organisation.folders');
+  const references = organisation.folders.flatMap((folder) => parentIssues(folder, organisation));
+  const cycles = organisation.folders.flatMap((folder) => cycleIssues(folder, organisation));
   return [...identities, ...references, ...cycles];
 }
 
-/** A folder without a parent is at the root; a named parent must exist in this catalog. */
+/** A folder without a parent is at the root; a named parent must exist in this organisation. */
 function parentIssues(
   folder: Folder,
-  catalog: Catalog,
+  organisation: Organisation,
 ): readonly Diagnostic[] {
   if (folder.parent === undefined) {
     return [];
   }
-  return diagnoseWhen(!hasFolder(catalog.folders, folder.parent), {
+  return diagnoseWhen(!hasFolder(organisation.folders, folder.parent), {
     code: 'reference',
-    path: `catalog.folders.${folder.id}.parent`,
+    path: `organisation.folders.${folder.id}.parent`,
     message: 'Parent folder must exist',
   });
 }
@@ -66,57 +70,59 @@ function parentIssues(
 /** A folder whose parent chain comes back to a folder already visited is in a cycle. */
 function cycleIssues(
   folder: Folder,
-  catalog: Catalog,
+  organisation: Organisation,
 ): readonly Diagnostic[] {
-  const walk = ancestry(folder.id, catalog.folders);
+  const walk = ancestry(folder.id, organisation.folders);
   return diagnoseWhen(walk.cycle, {
     code: 'cycle',
-    path: `catalog.folders.${folder.id}.parent`,
+    path: `organisation.folders.${folder.id}.parent`,
     message: 'Folder ancestry must be acyclic',
   });
 }
 
-/** The catalog entries and the collection inventory match one to one; neither has orphans. */
+/** The organisation entries and the collection inventory match one to one; neither has orphans. */
 function membershipIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
-  const entries = duplicateIssues(snapshot.catalog.entries, entryKey, 'catalog.entries');
+  const entries = duplicateIssues(snapshot.organisation.entries, entryKey, 'organisation.entries');
   const collections = duplicateIssues(snapshot.collections, collectionKey, 'collections');
-  const orphanEntries = snapshot.catalog.entries.flatMap((entry) => entryIssues(entry, snapshot));
+  const orphanEntries = snapshot.organisation.entries.flatMap((entry) =>
+    entryIssues(entry, snapshot),
+  );
   const missingEntries = snapshot.collections.flatMap((collection) =>
-    missingEntryIssues(collection, snapshot.catalog),
+    missingEntryIssues(collection, snapshot.organisation),
   );
   return [...entries, ...collections, ...orphanEntries, ...missingEntries];
 }
 
 /** An entry's collection must exist, and its folder too when it names one. */
 function entryIssues(
-  entry: CatalogEntry,
+  entry: OrganisationEntry,
   snapshot: LibrarySnapshot,
 ): readonly Diagnostic[] {
   const collectionExists = hasCollection(snapshot.collections, entry.collection);
   const folderExists =
-    entry.folder === undefined || hasFolder(snapshot.catalog.folders, entry.folder);
+    entry.folder === undefined || hasFolder(snapshot.organisation.folders, entry.folder);
   const missingCollection = diagnoseWhen(!collectionExists, {
     code: 'reference',
-    path: `catalog.entries.${entry.collection}`,
+    path: `organisation.entries.${entry.collection}`,
     message: 'Collection projection must exist',
   });
   const missingFolder = diagnoseWhen(!folderExists, {
     code: 'reference',
-    path: `catalog.entries.${entry.collection}.folder`,
+    path: `organisation.entries.${entry.collection}.folder`,
     message: 'Containing folder must exist',
   });
   return [...missingCollection, ...missingFolder];
 }
 
-/** Every collection needs a catalog entry. */
+/** Every collection needs a organisation entry. */
 function missingEntryIssues(
   collection: CollectionProjection,
-  catalog: Catalog,
+  organisation: Organisation,
 ): readonly Diagnostic[] {
-  return diagnoseWhen(!hasEntry(catalog.entries, collection.id), {
+  return diagnoseWhen(!hasEntry(organisation.entries, collection.id), {
     code: 'reference',
     path: `collections.${collection.id}`,
-    message: 'Collection must have exactly one catalog entry',
+    message: 'Collection must have exactly one organisation entry',
   });
 }
 

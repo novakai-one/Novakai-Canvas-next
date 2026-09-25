@@ -7,7 +7,7 @@ import type { RenderDocument, Section } from '../../../contract/records/owners.j
 import type { Result } from '../../../contract/errors.js';
 import { failure } from '../../../contract/errors.js';
 import { mapResults } from '../results.js';
-import { changes } from '../capture/settling.js';
+import { changes } from '../capture/settling/sections.js';
 import { pinnedSections, sourcePlacement } from '../capture/pinning.js';
 import { parentNode } from '../capture/scene.js';
 import type { SceneNode, SceneSection } from '../capture/scene.js';

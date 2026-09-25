@@ -8,7 +8,7 @@ import type {
 import type { Result } from '../../contract/errors.js';
 import { missing, nodeFor, sectionFor } from './targets.js';
 import { pinnedFor } from './capture/pinning.js';
-import { settled } from './capture/settling.js';
+import { settled } from './capture/settling/sections.js';
 
 /** Move one appearance into another group (or out of all groups), placed local to that group.
  * Everything else keeps its place, as in a plain move. */

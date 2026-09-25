@@ -3,7 +3,7 @@ import type { EditContext } from '../../contract/records/editing.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
 import { EditRejected } from './targets.js';
-import { plannedSections } from './capture/settling.js';
+import { plannedSections } from './capture/settling/sections.js';
 import { routeWire } from './routes.js';
 import { regroupSections } from './regroup.js';
 /** A gesture authored on another revision, layout input or display generation is kept as a draft instead of rebased silently. */

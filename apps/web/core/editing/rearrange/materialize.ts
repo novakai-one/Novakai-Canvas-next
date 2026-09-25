@@ -9,7 +9,7 @@ import type { Result } from '../../../contract/errors.js';
 import type { MoveOption } from '../../../contract/records/movement.js';
 import { failure } from '../../../contract/errors.js';
 import { mapResults } from '../results.js';
-import { changes } from '../capture/settling.js';
+import { changes } from '../capture/settling/sections.js';
 import { sourcePlacement } from '../capture/pinning.js';
 import { exactBox, targetKey, type Box } from '../capture/boxes.js';
 import type { SceneNode } from '../capture/scene.js';

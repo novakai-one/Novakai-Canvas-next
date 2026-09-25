@@ -7,7 +7,7 @@ import type {
   MovementPreviewContext,
 } from '../../contract/records/movement.js';
 import { failure } from '../../contract/errors.js';
-import { changes, plannedSections } from './capture/settling.js';
+import { changes, plannedSections } from './capture/settling/sections.js';
 import { normalizedEntries, validateMoveIntent } from './movement-intent.js';
 import { geometryChanges } from './preview/geometry.js';
 

@@ -5,7 +5,7 @@
  */
 import type { RenderDocument, Section } from '../../../contract/records/owners.js';
 import type { Result } from '../../../contract/errors.js';
-import { changes, plannedSections } from '../capture/settling.js';
+import { changes, plannedSections } from '../capture/settling/sections.js';
 import { sourcePlacement } from '../capture/pinning.js';
 import { parentNode } from '../capture/scene.js';
 import type {

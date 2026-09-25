@@ -19,9 +19,6 @@ export interface CursorEnvelope {
 /**
  * Builds the schema of a decoded cursor: a whole-number offset from 0 and the two keys. Unknown
  * keys are rejected.
- *
- * @returns A new cursor schema.
- * @throws Never.
  */
 export function cursorSchema(): z.ZodType<CursorEnvelope> {
   return z

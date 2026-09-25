@@ -36,15 +36,10 @@ import { readVersions } from './versions.js';
  * 6. Return up to `limit` hits, the total, the source revisions and, when more hits follow, the
  *    next cursor. A next cursor longer than `MAX_CURSOR_LENGTH` is a `limit` failure instead.
  *
- * A throw while reading the input becomes a `shape` failure at `$`. The same input always gives
- * the same page, so a retry is safe; Authoring owns source changes, commit and recovery.
- *
- * @param input - The untrusted snapshot and search request.
- * @returns The frozen page, or a failure.
- * @throws Never; a throw while reading the input becomes a `shape` failure.
+ * A throw while reading the input becomes a `shape` failure at `$`.
  */
 export function queryLibrary(input: QueryInput): Result<QueryPage> {
-  return protect(/** Runs the search. */ () => prepareQuery(input));
+  return protect(() => prepareQuery(input));
 }
 
 /** Validates the snapshot and parses the request before any search work. */

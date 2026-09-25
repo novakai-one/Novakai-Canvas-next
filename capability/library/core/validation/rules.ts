@@ -30,12 +30,7 @@ import { diagnoseWhen } from './outcomes.js';
  * 4. Recent visits: duplicates, then visits to missing collections.
  *
  * Works on parsed projections only, never on raw Model documents. Runs inside the protected
- * boundary of `validateSnapshot`; the caller corrects the input, and Authoring owns commit and
- * recovery.
- *
- * @param snapshot - The parsed snapshot.
- * @returns The diagnostics; empty when the snapshot is consistent.
- * @throws Never (the snapshot is already parsed plain data).
+ * boundary of `validateSnapshot`.
  */
 export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   const folders = folderIssues(snapshot.catalog);
@@ -48,13 +43,8 @@ export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[
 /** Folder rules: unique IDs, existing parents and no parent cycles, each checked separately. */
 function folderIssues(catalog: Catalog): readonly Diagnostic[] {
   const identities = duplicateIssues(catalog.folders, folderKey, 'catalog.folders');
-  const references = catalog.folders.flatMap(
-    /** The folder's missing-parent diagnostic, if any. */ (folder) =>
-      parentIssues(folder, catalog),
-  );
-  const cycles = catalog.folders.flatMap(
-    /** The folder's cycle diagnostic, if any. */ (folder) => cycleIssues(folder, catalog),
-  );
+  const references = catalog.folders.flatMap((folder) => parentIssues(folder, catalog));
+  const cycles = catalog.folders.flatMap((folder) => cycleIssues(folder, catalog));
   return [...identities, ...references, ...cycles];
 }
 
@@ -84,12 +74,9 @@ function cycleIssues(folder: Folder, catalog: Catalog): readonly Diagnostic[] {
 function membershipIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   const entries = duplicateIssues(snapshot.catalog.entries, entryKey, 'catalog.entries');
   const collections = duplicateIssues(snapshot.collections, collectionKey, 'collections');
-  const orphanEntries = snapshot.catalog.entries.flatMap(
-    /** The entry's missing collection or folder. */ (entry) => entryIssues(entry, snapshot),
-  );
-  const missingEntries = snapshot.collections.flatMap(
-    /** The collection's missing entry, if any. */ (collection) =>
-      missingEntryIssues(collection, snapshot.catalog),
+  const orphanEntries = snapshot.catalog.entries.flatMap((entry) => entryIssues(entry, snapshot));
+  const missingEntries = snapshot.collections.flatMap((collection) =>
+    missingEntryIssues(collection, snapshot.catalog),
   );
   return [...entries, ...collections, ...orphanEntries, ...missingEntries];
 }
@@ -130,10 +117,7 @@ function projectionIssues(collection: CollectionProjection): readonly Diagnostic
   const objectsPath = `collections.${collection.id}.objects`;
   const sections = duplicateIssues(collection.sections, sectionKey, sectionsPath);
   const objects = duplicateIssues(collection.objects, objectKey, objectsPath);
-  const visibility = collection.objects.flatMap(
-    /** The object's visible-section diagnostics. */ (object) =>
-      objectVisibility(object, collection),
-  );
+  const visibility = collection.objects.flatMap((object) => objectVisibility(object, collection));
   return [...sections, ...objects, ...visibility];
 }
 
@@ -147,13 +131,12 @@ function objectVisibility(
 ): readonly Diagnostic[] {
   const path = `collections.${collection.id}.objects.${object.id}.visibleIn`;
   const duplicates = duplicateIssues(object.visibleIn, sectionIdKey, path);
-  const references = object.visibleIn.flatMap(
-    /** The missing-section diagnostic, if any. */ (id) =>
-      diagnoseWhen(!hasSection(collection.sections, id), {
-        code: 'reference',
-        path: `${path}.${id}`,
-        message: 'Visible section must exist',
-      }),
+  const references = object.visibleIn.flatMap((id) =>
+    diagnoseWhen(!hasSection(collection.sections, id), {
+      code: 'reference',
+      path: `${path}.${id}`,
+      message: 'Visible section must exist',
+    }),
   );
   return [...duplicates, ...references];
 }
@@ -161,13 +144,12 @@ function objectVisibility(
 /** One visit per collection. A visit may name an archived collection, never a missing one. */
 function recentIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   const duplicates = duplicateIssues(snapshot.recent, visitKey, 'recent');
-  const references = snapshot.recent.flatMap(
-    /** The missing-collection diagnostic, if any. */ (visit) =>
-      diagnoseWhen(!hasCollection(snapshot.collections, visit.collection), {
-        code: 'reference',
-        path: `recent.${visit.collection}`,
-        message: 'Visited collection must exist',
-      }),
+  const references = snapshot.recent.flatMap((visit) =>
+    diagnoseWhen(!hasCollection(snapshot.collections, visit.collection), {
+      code: 'reference',
+      path: `recent.${visit.collection}`,
+      message: 'Visited collection must exist',
+    }),
   );
   return [...duplicates, ...references];
 }

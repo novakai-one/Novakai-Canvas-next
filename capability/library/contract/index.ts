@@ -3,7 +3,7 @@
  *
  * Start with `validate`, `plan` and `query`. The ID schema factories check and brand IDs; each
  * call returns a new schema. Everything else is a type. Catalog rules and search mechanics stay
- * private. Library writes nothing: Authoring owns durable writes and crash recovery.
+ * private.
  */
 export { validate, plan, query } from './api.js';
 export {

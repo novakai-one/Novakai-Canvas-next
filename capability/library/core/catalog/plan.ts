@@ -33,15 +33,10 @@ import { applyOperation } from './operations.js';
  *
  * Nothing is written. The candidate keeps the original revision, `versions` are the original read
  * revisions, and `changed` is the net effect. A throw while reading the input becomes a `shape`
- * failure at `$`. The same input always gives the same plan, so a retry is safe; Authoring owns
- * admission, the conditional commit and crash recovery.
- *
- * @param input - The untrusted snapshot, changes and optional proposed inventory.
- * @returns The frozen plan, or a failure.
- * @throws Never; a throw while reading the input becomes a `shape` failure.
+ * failure at `$`.
  */
 export function planCatalog(input: PlanInput): Result<CatalogPlan> {
-  return protect(/** Plans the batch. */ () => preparePlan(input));
+  return protect(() => preparePlan(input));
 }
 
 /** Validates the original snapshot before reading or applying any change. */
@@ -102,10 +97,7 @@ function validateCandidate(
   catalog: Catalog,
   collections: readonly CollectionProjection[],
 ): Result<CatalogPlan> {
-  const recent = before.recent.filter(
-    /** Whether the visited collection is still in the inventory. */ (visit) =>
-      hasCollection(collections, visit.collection),
-  );
+  const recent = before.recent.filter((visit) => hasCollection(collections, visit.collection));
   const validated = validateSnapshot({ catalog, collections, recent });
   if (!validated.ok) {
     return validated;

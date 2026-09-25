@@ -15,7 +15,7 @@ import {
 import { snapshot, ids } from './fixtures.js';
 import { valueOf, diagnosticsOf, issueCodes } from './assertions.js';
 
-describe('Library snapshot validation', /** The validation and ID schema tests. */ () => {
+describe('Library snapshot validation', () => {
   /**
    * A valid snapshot comes back parsed. Catalog entries and collections must match one to one:
    * a duplicate entry, an entry without a collection and a collection without an entry are each
@@ -76,12 +76,10 @@ describe('Library snapshot validation', /** The validation and ID schema tests. 
     ]);
 
     // An object visible in a section that does not exist.
-    const collections = base.collections.map(
-      /** The collection with one object in a missing section. */ (collection) => ({
-        ...collection,
-        objects: [{ id: ids.object, label: 'Invoice', description: '', visibleIn: ['missing'] }],
-      }),
-    );
+    const collections = base.collections.map((collection) => ({
+      ...collection,
+      objects: [{ id: ids.object, label: 'Invoice', description: '', visibleIn: ['missing'] }],
+    }));
     expect(diagnosticsOf(validate({ ...base, collections }))).toEqual([
       'reference collections.alpha.objects.invoice.visibleIn.missing',
       'reference collections.beta.objects.invoice.visibleIn.missing',

@@ -75,20 +75,12 @@ export interface LibrarySnapshot {
  * Builds the schema of the host's complete collection inventory: at most 10,000 projections.
  * Validation checks that every collection has exactly one catalog entry and every entry has a
  * collection.
- *
- * @returns A new inventory schema.
- * @throws Never.
  */
 export function inventorySchema(): z.ZodType<readonly CollectionProjection[]> {
   return z.array(collectionProjectionSchema()).max(MAX_RECORDS).readonly();
 }
 
-/**
- * Builds the snapshot schema: the catalog, the inventory and the recent visits (default none).
- *
- * @returns A new snapshot schema.
- * @throws Never.
- */
+/** Builds the snapshot schema: the catalog, the inventory and the recent visits (default none). */
 export function snapshotSchema(): z.ZodType<LibrarySnapshot> {
   return z
     .strictObject({

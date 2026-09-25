@@ -7,68 +7,30 @@ import type { CollectionId, FolderId, SectionId } from '../../contract/brands.js
 import type { CatalogEntry, Folder } from '../../contract/records/catalog.js';
 import type { CollectionProjection, SectionProjection } from '../../contract/records/snapshot.js';
 
-/**
- * Whether a folder with this ID exists.
- *
- * @param folders - The catalog's folders.
- * @param id - The folder ID to look for.
- * @returns True when some folder has the ID.
- * @throws Never.
- */
+/** Whether a folder with this ID exists. */
 export function hasFolder(folders: readonly Folder[], id: FolderId): boolean {
-  return folders.some(/** Whether this folder has the ID. */ (folder) => folder.id === id);
+  return folders.some((folder) => folder.id === id);
 }
 
-/**
- * Whether a catalog entry lists this collection.
- *
- * @param entries - The catalog's entries.
- * @param collection - The collection ID to look for.
- * @returns True when some entry lists the collection.
- * @throws Never.
- */
+/** Whether a catalog entry lists this collection. */
 export function hasEntry(entries: readonly CatalogEntry[], collection: CollectionId): boolean {
-  return entries.some(
-    /** Whether this entry lists the collection. */ (entry) => entry.collection === collection,
-  );
+  return entries.some((entry) => entry.collection === collection);
 }
 
-/**
- * Whether a collection with this ID is in the inventory.
- *
- * @param collections - The collection inventory.
- * @param id - The collection ID to look for.
- * @returns True when some collection has the ID.
- * @throws Never.
- */
+/** Whether a collection with this ID is in the inventory. */
 export function hasCollection(
   collections: readonly CollectionProjection[],
   id: CollectionId,
 ): boolean {
-  return collections.some(
-    /** Whether this collection has the ID. */ (collection) => collection.id === id,
-  );
+  return collections.some((collection) => collection.id === id);
 }
 
-/**
- * Whether a section with this ID is in the collection.
- *
- * @param sections - The collection's sections.
- * @param id - The section ID to look for.
- * @returns True when some section has the ID.
- * @throws Never.
- */
+/** Whether a section with this ID is in the collection. */
 export function hasSection(sections: readonly SectionProjection[], id: SectionId): boolean {
-  return sections.some(/** Whether this section has the ID. */ (section) => section.id === id);
+  return sections.some((section) => section.id === id);
 }
 
-/**
- * A folder's key: its ID. Shared by catalog changes and validation.
- *
- * @param folder - The folder.
- * @returns Its ID.
- * @throws Never.
- */
+/** A folder's key: its ID. Shared by catalog changes and validation. */
 export function folderKey(folder: Folder): FolderId {
   return folder.id;
 }
@@ -76,10 +38,6 @@ export function folderKey(folder: Folder): FolderId {
 /**
  * A catalog entry's key: its collection's ID (one entry per collection). Shared by catalog changes
  * and validation.
- *
- * @param entry - The entry.
- * @returns Its collection's ID.
- * @throws Never.
  */
 export function entryKey(entry: CatalogEntry): CollectionId {
   return entry.collection;

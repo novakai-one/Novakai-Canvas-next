@@ -15,22 +15,12 @@ import { failure, success } from '../validation/outcomes.js';
  * A missing folder is `not-found`. A folder with child folders or entries is `folder-not-empty`
  * under the `reject` policy. Under `rehome`, its direct child folders and its entries move to its
  * parent (the root when it has none); deeper descendants stay where they are.
- *
- * Pure: the same catalog and change always give the same result.
- *
- * @param catalog - The catalog.
- * @param removal - The `remove-folder` change: the folder ID and the policy.
- * @returns The new catalog, or a failure with no partial value.
- * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
- * reaches the `protect` in `planCatalog`.
  */
 export function removeFolder(
   catalog: Catalog,
   removal: ChangeOf<'remove-folder'>,
 ): Result<Catalog> {
-  const folder = catalog.folders.find(
-    /** Whether this is the folder to remove. */ (candidate) => candidate.id === removal.id,
-  );
+  const folder = catalog.folders.find((candidate) => candidate.id === removal.id);
   if (folder === undefined) {
     return failure({
       code: 'not-found',
@@ -76,26 +66,16 @@ function unsupported(policy: never): Result<Catalog> {
 
 /** Whether any folder has this folder as its parent, or any entry sits in it. */
 function hasContents(catalog: Catalog, id: FolderId): boolean {
-  const hasChildFolder = catalog.folders.some(
-    /** Whether this folder is a direct child. */ (child) => child.parent === id,
-  );
-  const hasEntries = catalog.entries.some(
-    /** Whether this entry sits in the folder. */ (entry) => entry.folder === id,
-  );
+  const hasChildFolder = catalog.folders.some((child) => child.parent === id);
+  const hasEntries = catalog.entries.some((entry) => entry.folder === id);
   return hasChildFolder || hasEntries;
 }
 
 /** Removes the folder and moves its direct contents to its parent; every collection is kept. */
 function rehomeContents(catalog: Catalog, removed: Folder): Catalog {
-  const surviving = catalog.folders.filter(
-    /** Whether this folder is kept. */ (folder) => folder.id !== removed.id,
-  );
-  const folders = surviving.map(
-    /** Moves a direct child to the parent. */ (folder) => rehomeFolder(folder, removed),
-  );
-  const entries = catalog.entries.map(
-    /** Moves an entry in the folder to the parent. */ (entry) => rehomeEntry(entry, removed),
-  );
+  const surviving = catalog.folders.filter((folder) => folder.id !== removed.id);
+  const folders = surviving.map((folder) => rehomeFolder(folder, removed));
+  const entries = catalog.entries.map((entry) => rehomeEntry(entry, removed));
   return { ...catalog, folders, entries };
 }
 

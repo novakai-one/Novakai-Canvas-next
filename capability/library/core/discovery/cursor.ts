@@ -23,12 +23,6 @@ import { readVersions } from './versions.js';
  * - its offset is past the end of the results.
  *
  * Recover by searching again without a cursor.
- *
- * @param snapshot - The validated snapshot.
- * @param request - The normalized request.
- * @param total - The number of matching hits.
- * @returns The offset, or a `stale-cursor` failure.
- * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function cursorOffset(
   snapshot: LibrarySnapshot,
@@ -49,12 +43,6 @@ export function cursorOffset(
  * Builds the cursor for the next page: JSON of the offset and the query and version keys. A
  * cursor longer than `MAX_CURSOR_LENGTH` would be rejected by the next request, so it is a
  * `limit` failure instead.
- *
- * @param snapshot - The validated snapshot.
- * @param request - The normalized request.
- * @param offset - The offset of the next page's first hit.
- * @returns The cursor, or a `limit` failure.
- * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function nextCursor(
   snapshot: LibrarySnapshot,

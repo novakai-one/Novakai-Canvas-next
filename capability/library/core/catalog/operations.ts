@@ -19,14 +19,7 @@ import { removeFolder } from './removal.js';
  * - `unregister`: the entry is removed; a missing one is `not-found`.
  *
  * References are not checked here, so a later change in the batch may repair them; planning
- * validates the final catalog. A failure stops the batch. The same inputs always give the same
- * result; Authoring owns the commit and recovery.
- *
- * @param catalog - The catalog so far.
- * @param change - The change to apply.
- * @returns The new catalog, or a failure with no partial value.
- * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
- * reaches the `protect` in `planCatalog`.
+ * validates the final catalog. A failure stops the batch.
  */
 export function applyOperation(catalog: Catalog, change: CatalogChange): Result<Catalog> {
   switch (change.op) {
@@ -93,9 +86,7 @@ function unregister(catalog: Catalog, change: ChangeOf<'unregister'>): Result<Ca
       message: 'Membership must exist',
     });
   }
-  const entries = catalog.entries.filter(
-    /** Whether this entry is kept. */ (entry) => entry.collection !== change.collection,
-  );
+  const entries = catalog.entries.filter((entry) => entry.collection !== change.collection);
   return success({ ...catalog, entries });
 }
 
@@ -136,9 +127,7 @@ function writeList<T, K extends string>(
   if (mode === 'create') {
     return [...items, value];
   }
-  return items.map(
-    /** The replacement for the matching item. */ (item) => replaceMatching(item, value, keyOf),
-  );
+  return items.map((item) => replaceMatching(item, value, keyOf));
 }
 
 /** `value` when it has the item's key, so a replacement keeps its position; otherwise the item. */

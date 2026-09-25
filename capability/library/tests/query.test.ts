@@ -8,7 +8,7 @@ import { query, type SearchHit } from '../contract/index.js';
 import { snapshot, ids } from './fixtures.js';
 import { valueOf, diagnosticsOf, isDeepFrozen } from './assertions.js';
 
-describe('Library search', /** The search tests. */ () => {
+describe('Library search', () => {
   /**
    * Text search ignores case and extra spaces and matches labels and descriptions, including
    * objects in no section. Folder, archive and kind filters narrow the results; a missing folder
@@ -38,9 +38,7 @@ describe('Library search', /** The search tests. */ () => {
 
     // Archived only: `beta`. Sections only: `er`, visible in itself.
     const archived = valueOf(query({ snapshot: base, request: { archived: 'only' } }));
-    expect(archived.hits.map(/** The hit's collection. */ (hit) => hit.collection)).toEqual([
-      ids.beta,
-    ]);
+    expect(archived.hits.map((hit) => hit.collection)).toEqual([ids.beta]);
     const sections = { text: 'database', kinds: ['section'] };
     expect(valueOf(query({ snapshot: base, request: sections })).hits[0]?.visibleIn).toEqual([
       ids.section,
@@ -128,16 +126,10 @@ describe('Library search', /** The search tests. */ () => {
 
     // `beta` (opened at 200) before `alpha` (100); the same result from both consumers.
     const recent = valueOf(browser);
-    expect(recent.hits.map(/** The hit's collection. */ (hit) => hit.collection)).toEqual([
-      ids.beta,
-      ids.alpha,
-    ]);
+    expect(recent.hits.map((hit) => hit.collection)).toEqual([ids.beta, ids.alpha]);
     expect(cli).toEqual(browser);
     const titled = valueOf(query({ snapshot: base, request: { ...request, sort: 'title' } }));
-    expect(titled.hits.map(/** The hit's label. */ (hit) => hit.label)).toEqual([
-      'Architecture',
-      'Billing',
-    ]);
+    expect(titled.hits.map((hit) => hit.label)).toEqual(['Architecture', 'Billing']);
 
     // Frozen throughout, and not the input's collection object.
     expect(isDeepFrozen(recent)).toBe(true);
@@ -150,13 +142,7 @@ describe('Library search', /** The search tests. */ () => {
   );
 });
 
-/**
- * A hit's kind.
- *
- * @param hit - A search hit.
- * @returns Its kind.
- * @throws Never.
- */
+/** A hit's kind. */
 function hitKind(hit: SearchHit): string {
   return hit.kind;
 }

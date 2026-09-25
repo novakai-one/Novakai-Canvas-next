@@ -8,10 +8,6 @@ import type { Diagnostic, Result } from '../../contract/errors.js';
 /**
  * Builds a failure with one diagnostic and no partial value. Public entry points freeze it (see
  * {@link protect}).
- *
- * @param diagnostic - The code, path and message of the problem.
- * @returns `{ ok: false, error: { code: 'validation-failed', diagnostics: [diagnostic] } }`.
- * @throws Never.
  */
 export function failure<T>(diagnostic: Diagnostic): Result<T> {
   const { code, path, message } = diagnostic;
@@ -21,13 +17,7 @@ export function failure<T>(diagnostic: Diagnostic): Result<T> {
   };
 }
 
-/**
- * Wraps a successful value.
- *
- * @param value - The value.
- * @returns `{ ok: true, value }`.
- * @throws Never.
- */
+/** Wraps a successful value. */
 export function success<T>(value: T): Result<T> {
   return { ok: true, value };
 }
@@ -35,11 +25,6 @@ export function success<T>(value: T): Result<T> {
 /**
  * One diagnostic when a rule is violated, none otherwise. Throughout Library, `true` means the
  * rule is violated (the same convention as Model).
- *
- * @param violated - Whether the rule is violated.
- * @param diagnostic - The code, path and message to report.
- * @returns `[{ code, path, message }]` when violated; otherwise `[]`.
- * @throws Never.
  */
 export function diagnoseWhen(violated: boolean, diagnostic: Diagnostic): readonly Diagnostic[] {
   if (!violated) {
@@ -52,11 +37,9 @@ export function diagnoseWhen(violated: boolean, diagnostic: Diagnostic): readonl
 /**
  * Parses input with a schema and turns every schema issue into a `shape` diagnostic, in the
  * schema's order: its path joined with `.` (the input root is `''`) and its message. The parse
- * never throws for bad data; a throw while reading the input is left to {@link protect}.
+ * never throws for bad data; a throw while reading the input is left to {@link protect}. Only
+ * `safeParse` is used, so core does not import the schema library.
  *
- * @param parser - The schema. Only `safeParse` is used, so core does not import the schema library.
- * @param input - The untrusted input.
- * @returns The parsed value, or every issue as a diagnostic.
  * @throws Whatever reading the input throws (for example a getter); {@link protect} catches it.
  */
 export function parse<T>(parser: Parser<T>, input: unknown): Result<T> {
@@ -74,12 +57,7 @@ export function parse<T>(parser: Parser<T>, input: unknown): Result<T> {
  * not be read as supported data", so the entry point never throws.
  *
  * The result must be freshly built, acyclic data, never the caller's input. Proxies are not
- * supported: their traps may run before the input is rejected. The same plain input always gives
- * the same result; Authoring owns correction, commit and recovery.
- *
- * @param action - The operation to run.
- * @returns The frozen result.
- * @throws Never.
+ * supported: their traps may run before the input is rejected.
  */
 export function protect<T>(action: () => Result<T>): Result<T> {
   try {
@@ -98,10 +76,6 @@ export function protect<T>(action: () => Result<T>): Result<T> {
  * Builds a failure from a list of diagnostics. A list with none would be a provider fault, so it
  * becomes a `shape` failure at `$`, "Validation provider rejected input without diagnostic
  * evidence".
- *
- * @param diagnostics - The diagnostics, in order.
- * @returns A failure carrying all of them.
- * @throws Never.
  */
 export function rejected<T>(diagnostics: readonly Diagnostic[]): Result<T> {
   const [first, ...remaining] = diagnostics;

@@ -41,9 +41,6 @@ export const ids: FixtureIds = Object.freeze(checkedIds());
  *
  * Every field is given explicitly, so schema defaults never produce an expected value. A fresh
  * object is returned on every call.
- *
- * @returns The snapshot, built from {@link ids}.
- * @throws Never.
  */
 export function snapshot(): LibrarySnapshot {
   return {

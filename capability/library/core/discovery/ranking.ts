@@ -19,22 +19,15 @@ import { compareText } from './text.js';
  * - `title`: the lowercased label, then the `order` sort.
  * - `recent`: the most recently opened collection first (never-opened collections last), then the
  *   `order` sort.
- *
- * @param hits - The filtered hits.
- * @param snapshot - The validated snapshot (for entry order and recent visits).
- * @param request - The normalized request.
- * @returns The hits in order.
- * @throws Never for validated input. It runs inside `queryLibrary`'s `protect` boundary, which
- * turns any unexpected throw into a failed result.
  */
 export function sortHits(
   hits: readonly SearchHit[],
   snapshot: LibrarySnapshot,
   request: QueryRequest,
 ): readonly SearchHit[] {
-  const ranked = hits.map(/** The hit with its sort keys. */ (hit) => rankMetadata(hit, snapshot));
+  const ranked = hits.map((hit) => rankMetadata(hit, snapshot));
   const ordered = ranked.toSorted(comparators[request.sort]);
-  return ordered.map(/** The hit itself. */ (item) => item.hit);
+  return ordered.map((item) => item.hit);
 }
 
 /** A hit with the keys it is sorted by. */
@@ -55,13 +48,9 @@ const comparators: Readonly<Record<SortMode, (left: RankedHit, right: RankedHit)
  */
 function rankMetadata(hit: SearchHit, snapshot: LibrarySnapshot): RankedHit {
   const entry = snapshot.catalog.entries.find(
-    /** Whether this entry lists the hit's collection. */ (candidate) =>
-      candidate.collection === hit.collection,
+    (candidate) => candidate.collection === hit.collection,
   );
-  const visit = snapshot.recent.find(
-    /** Whether this visit is to the hit's collection. */ (candidate) =>
-      candidate.collection === hit.collection,
-  );
+  const visit = snapshot.recent.find((candidate) => candidate.collection === hit.collection);
   return { hit, order: entry?.order ?? 0, openedAt: visit?.openedAt ?? -1 };
 }
 
@@ -88,6 +77,6 @@ function compareRecent(left: RankedHit, right: RankedHit): number {
 
 /** The first nonzero comparison, or 0 for an exact tie. */
 function firstDifference(values: readonly number[]): number {
-  const decisive = values.find(/** Whether this comparison decides. */ (value) => value !== 0);
+  const decisive = values.find((value) => value !== 0);
   return decisive ?? 0;
 }

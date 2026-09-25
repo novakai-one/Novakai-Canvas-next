@@ -15,12 +15,6 @@ import { searchWords } from './text.js';
  * - every word of `text` appears in its label or description (lowercased).
  *
  * Objects in no section are kept like any other hit.
- *
- * @param hits - All hits of the snapshot.
- * @param snapshot - The validated snapshot.
- * @param request - The normalized request (text already lowercased).
- * @returns The kept hits, in their original order.
- * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function filterHits(
   hits: readonly SearchHit[],
@@ -28,13 +22,12 @@ export function filterHits(
   request: QueryRequest,
 ): readonly SearchHit[] {
   const entries = snapshot.catalog.entries.filter(
-    /** Whether the entry matches the archive and folder filters. */ (entry) =>
-      archiveModes[request.archived](entry) && folderMatches(entry, request, snapshot),
+    (entry) => archiveModes[request.archived](entry) && folderMatches(entry, request, snapshot),
   );
   const visibleCollections = new Set(entries.map(entryCollection));
   const words = searchWords(request.text);
   return hits.filter(
-    /** Whether the hit is kept. */ (hit) =>
+    (hit) =>
       visibleCollections.has(hit.collection) &&
       request.kinds.includes(hit.kind) &&
       textMatches(hit, words),
@@ -90,5 +83,5 @@ function folderMatches(
 /** Every word occurs in the hit's lowercased label or description (no DOM content involved). */
 function textMatches(hit: SearchHit, words: readonly string[]): boolean {
   const searchable = `${hit.label} ${hit.description}`.toLowerCase();
-  return words.every(/** Whether the word occurs. */ (word) => searchable.includes(word));
+  return words.every((word) => searchable.includes(word));
 }

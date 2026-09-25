@@ -17,14 +17,6 @@ export interface Ancestry {
 /**
  * Walks up from `start` through parent links until it reaches the root, a missing folder, or a
  * folder already visited.
- *
- * @param start - The folder to start from (included in `visited`).
- * @param folders - The catalog's folders.
- * @returns The folders visited, and `cycle: true` when the walk stopped at a folder it had
- * already visited.
- * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
- * reaches the `protect` of the public operation that called it (`validateSnapshot`,
- * `planCatalog` or `queryLibrary`).
  */
 export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry {
   const visited = new Set<FolderId>();
@@ -39,13 +31,6 @@ export function ancestry(start: FolderId, folders: readonly Folder[]): Ancestry 
 /**
  * True when `folder` is `owner` itself or one of its descendants. Used for searches that include
  * subfolders. An entry at the root (`folder` undefined) is never within a folder.
- *
- * @param folder - The entry's folder, or `undefined` for the root.
- * @param owner - The folder searched.
- * @param folders - The catalog's folders.
- * @returns True when `owner` is `folder` or one of its ancestors.
- * @throws Never on parsed, plain catalog data (the only input it is given). Any unexpected throw
- * reaches the `protect` in `queryLibrary`.
  */
 export function isWithin(
   folder: FolderId | undefined,
@@ -66,8 +51,6 @@ function canVisit(id: FolderId | undefined, visited: ReadonlySet<FolderId>): id 
 
 /** The parent of the folder with this ID; `undefined` at the root or for a missing folder. */
 function parentOf(id: FolderId, folders: readonly Folder[]): FolderId | undefined {
-  const folder = folders.find(
-    /** Whether this is the folder. */ (candidate) => candidate.id === id,
-  );
+  const folder = folders.find((candidate) => candidate.id === id);
   return folder?.parent;
 }

@@ -14,16 +14,11 @@ import { validateRecords } from './rules.js';
  * the rules across records (see `validateRecords`): unique IDs, existing references, no folder
  * cycles, and exactly one catalog entry per collection. All rule violations are reported together.
  *
- * Writes nothing and reads no clock. A throw while reading the input becomes a `shape` failure.
- * The same plain input always gives the same result; Authoring owns correction, admission, commit
- * and recovery.
- *
- * @param input - The untrusted snapshot.
- * @returns The parsed snapshot, a detached frozen copy; or a failure with every diagnostic.
- * @throws Never.
+ * Returns a detached, frozen copy of the snapshot. Writes nothing and reads no clock. A throw
+ * while reading the input becomes a `shape` failure.
  */
 export function validateSnapshot(input: unknown): Result<LibrarySnapshot> {
-  return protect(/** Validates the snapshot. */ () => validateInput(input));
+  return protect(() => validateInput(input));
 }
 
 /** Parses the snapshot, then checks the rules across records on the parsed copy. */

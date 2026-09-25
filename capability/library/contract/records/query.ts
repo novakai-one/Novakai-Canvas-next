@@ -86,9 +86,6 @@ export interface QueryPage {
  * - `cursor` (optional): a string of at most {@link MAX_CURSOR_LENGTH} characters.
  *
  * Unknown keys are rejected.
- *
- * @returns A new request schema.
- * @throws Never.
  */
 export function querySchema(): z.ZodType<QueryRequest> {
   return z

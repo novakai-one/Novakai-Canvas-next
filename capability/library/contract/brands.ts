@@ -18,9 +18,6 @@ const MAX_TEXT_LENGTH = 10_000;
 /**
  * Builds the catalog ID schema. A catalog is separate from its folders and the collections it
  * lists.
- *
- * @returns A new schema that brands a checked ID as `CatalogId`.
- * @throws Never.
  */
 export function catalogIdSchema(): z.core.$ZodBranded<z.ZodString, 'CatalogId'> {
   return identifierSchema().brand<'CatalogId'>();
@@ -29,9 +26,6 @@ export function catalogIdSchema(): z.core.$ZodBranded<z.ZodString, 'CatalogId'> 
 /**
  * Builds the folder ID schema. A folder ID is unique within one catalog. The catalog root has no
  * ID: an entry or folder at the root simply has no folder or parent.
- *
- * @returns A new schema that brands a checked ID as `FolderId`.
- * @throws Never.
  */
 export function folderIdSchema(): z.core.$ZodBranded<z.ZodString, 'FolderId'> {
   return identifierSchema().brand<'FolderId'>();
@@ -40,30 +34,17 @@ export function folderIdSchema(): z.core.$ZodBranded<z.ZodString, 'FolderId'> {
 /**
  * Builds the collection ID schema, for IDs given by the host's authoritative collection
  * projection.
- *
- * @returns A new schema that brands a checked ID as `CollectionId`.
- * @throws Never.
  */
 export function collectionIdSchema(): z.core.$ZodBranded<z.ZodString, 'CollectionId'> {
   return identifierSchema().brand<'CollectionId'>();
 }
 
-/**
- * Builds the object ID schema. An object ID is unique within its collection.
- *
- * @returns A new schema that brands a checked ID as `ObjectId`.
- * @throws Never.
- */
+/** Builds the object ID schema. An object ID is unique within its collection. */
 export function objectIdSchema(): z.core.$ZodBranded<z.ZodString, 'ObjectId'> {
   return identifierSchema().brand<'ObjectId'>();
 }
 
-/**
- * Builds the section ID schema. A section ID is unique within its collection.
- *
- * @returns A new schema that brands a checked ID as `SectionId`.
- * @throws Never.
- */
+/** Builds the section ID schema. A section ID is unique within its collection. */
 export function sectionIdSchema(): z.core.$ZodBranded<z.ZodString, 'SectionId'> {
   return identifierSchema().brand<'SectionId'>();
 }
@@ -71,9 +52,6 @@ export function sectionIdSchema(): z.core.$ZodBranded<z.ZodString, 'SectionId'> 
 /**
  * Builds the schema for display or search text: at most {@link MAX_TEXT_LENGTH} characters, kept
  * exactly as given.
- *
- * @returns A new text schema.
- * @throws Never.
  */
 export function textSchema(): z.ZodString {
   return z.string().max(MAX_TEXT_LENGTH);
@@ -82,9 +60,6 @@ export function textSchema(): z.ZodString {
 /**
  * Builds the schema for a display name: text (see {@link textSchema}) that is not empty or only
  * whitespace. The rejection message is "Must be nonblank".
- *
- * @returns A new label schema.
- * @throws Never.
  */
 export function labelSchema(): z.ZodType<string, string> {
   return textSchema().refine(isNonblank, 'Must be nonblank');
@@ -93,20 +68,12 @@ export function labelSchema(): z.ZodType<string, string> {
 /**
  * Builds the schema for a revision or epoch: a whole number from 0 to `Number.MAX_SAFE_INTEGER`,
  * so it survives a JSON round trip exactly.
- *
- * @returns A new schema.
- * @throws Never.
  */
 export function nonnegativeIntegerSchema(): z.ZodNumber {
   return z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
 }
 
-/**
- * Builds the schema for a sort position: any safe whole number, negative allowed.
- *
- * @returns A new schema.
- * @throws Never.
- */
+/** Builds the schema for a sort position: any safe whole number, negative allowed. */
 export function orderSchema(): z.ZodNumber {
   return z.number().int().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER);
 }
@@ -114,10 +81,6 @@ export function orderSchema(): z.ZodNumber {
 /**
  * Builds the schema of a record list: a readonly array of at most {@link MAX_RECORDS} items,
  * empty when omitted.
- *
- * @param item - The schema of one item.
- * @returns A new list schema.
- * @throws Never.
  */
 export function recordList<T extends z.ZodType>(
   item: T,

@@ -8,7 +8,7 @@ import { plan, query, type PlanInput, type QueryInput } from '../contract/index.
 import { snapshot, ids } from './fixtures.js';
 import { valueOf, hasFailure, diagnosticsOf, isDeepFrozen } from './assertions.js';
 
-describe('Library catalog planning', /** The planning tests. */ () => {
+describe('Library catalog planning', () => {
   /**
    * Changes apply in order, and a change may name a folder a later change creates. The candidate
    * keeps revision 7 and is frozen throughout; the input is not changed. `changed` is the net
@@ -97,23 +97,17 @@ describe('Library catalog planning', /** The planning tests. */ () => {
     expect(
       hasFailure(plan({ snapshot: base, changes: unregister }), 'reference', 'collections.beta'),
     ).toBe(true);
-    const remaining = base.collections.filter(
-      /** Whether the collection is not `beta`. */ (collection) => collection.id !== ids.beta,
-    );
+    const remaining = base.collections.filter((collection) => collection.id !== ids.beta);
     const removed = valueOf(
       plan({ snapshot: base, changes: unregister, proposedCollections: remaining }),
     );
-    expect(
-      removed.candidate.entries.map(/** The listed collection. */ (entry) => entry.collection),
-    ).toEqual([ids.alpha]);
+    expect(removed.candidate.entries.map((entry) => entry.collection)).toEqual([ids.alpha]);
 
     // Every collection one revision newer, no changes: catalog unchanged. `null` is rejected.
-    const projected = base.collections.map(
-      /** The collection one revision newer. */ (collection) => ({
-        ...collection,
-        revision: collection.revision + 1,
-      }),
-    );
+    const projected = base.collections.map((collection) => ({
+      ...collection,
+      revision: collection.revision + 1,
+    }));
     const newer = { snapshot: base, changes: [], proposedCollections: projected };
     expect(valueOf(plan(newer)).changed).toBe(false);
     const nulled = { snapshot: base, changes: [], proposedCollections: null };

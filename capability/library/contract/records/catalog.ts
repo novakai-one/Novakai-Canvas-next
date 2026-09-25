@@ -56,9 +56,6 @@ export interface Catalog {
 /**
  * Builds the folder schema: its ID, nonblank title, optional parent folder and sort position
  * (default 0).
- *
- * @returns A new folder schema.
- * @throws Never.
  */
 export function folderSchema(): z.ZodType<Folder> {
   return z
@@ -74,9 +71,6 @@ export function folderSchema(): z.ZodType<Folder> {
 /**
  * Builds the catalog entry schema: the collection, an optional folder (none means the root), the
  * sort position (default 0) and whether it is archived (default false).
- *
- * @returns A new entry schema.
- * @throws Never.
  */
 export function entrySchema(): z.ZodType<CatalogEntry> {
   return z
@@ -94,9 +88,6 @@ export function entrySchema(): z.ZodType<CatalogEntry> {
  * defaults to empty). Unknown keys are rejected. The rules across records (unique IDs, existing
  * parents and collections, entry folders exist, one entry per collection, no parent cycles) are
  * checked by validation, not here.
- *
- * @returns A new catalog schema.
- * @throws Never.
  */
 export function catalogSchema(): z.ZodType<Catalog> {
   return z

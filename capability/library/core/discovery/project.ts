@@ -13,10 +13,6 @@ import type { SearchHit } from '../../contract/records/query.js';
 /**
  * Builds every search hit of a snapshot, in inventory order: for each collection, the collection
  * itself, then its sections, then its objects (including objects in no section).
- *
- * @param snapshot - The validated snapshot.
- * @returns The hits, before filtering and sorting.
- * @throws Never for a validated snapshot; any throw reaches the `protect` in `queryLibrary`.
  */
 export function projectHits(snapshot: LibrarySnapshot): readonly SearchHit[] {
   return snapshot.collections.flatMap(projectCollection);
@@ -32,12 +28,8 @@ function projectCollection(collection: CollectionProjection): readonly SearchHit
     description: collection.description,
     visibleIn: [],
   };
-  const sections = collection.sections.map(
-    /** The hit of one section. */ (section) => sectionHit(collection, section),
-  );
-  const objects = collection.objects.map(
-    /** The hit of one object. */ (object) => objectHit(collection, object),
-  );
+  const sections = collection.sections.map((section) => sectionHit(collection, section));
+  const objects = collection.objects.map((object) => objectHit(collection, object));
   return [collectionHit, ...sections, ...objects];
 }
 

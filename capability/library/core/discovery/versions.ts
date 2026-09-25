@@ -7,13 +7,7 @@ import type { LibrarySnapshot, CollectionProjection } from '../../contract/recor
 import type { CollectionVersion, ReadVersions } from '../../contract/types.js';
 import { compareText } from './text.js';
 
-/**
- * The source revisions of a snapshot: the catalog's, and each collection's sorted by collection ID.
- *
- * @param snapshot - The validated snapshot.
- * @returns A new `ReadVersions` record.
- * @throws Never for a validated snapshot; any throw reaches the caller's `protect`.
- */
+/** The source revisions of a snapshot: the catalog's, and each collection's sorted by ID. */
 export function readVersions(snapshot: LibrarySnapshot): ReadVersions {
   const versions = snapshot.collections.map(collectionVersion);
   const collections = versions.toSorted(byCollectionId);

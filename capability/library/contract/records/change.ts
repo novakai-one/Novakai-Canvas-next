@@ -45,9 +45,6 @@ export type ChangeOf<Op extends ChangeOperation> = Extract<CatalogChange, { read
  * already present is `already-exists`, and `reject` on a non-empty folder is `folder-not-empty`.
  * Only the rules across records wait for the final catalog, so a later change may repair an
  * earlier one there.
- *
- * @returns A new batch schema.
- * @throws Never.
  */
 export function changesSchema(): z.ZodType<readonly CatalogChange[]> {
   return z.array(changeSchema()).max(MAX_CHANGES).readonly();

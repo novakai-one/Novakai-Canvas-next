@@ -1,4 +1,8 @@
-import type { SourceBindings, SourceController, SourceView } from '../../contract/records/source.js';
+import type {
+  SourceBindings,
+  SourceController,
+  SourceView,
+} from '../../contract/records/source.js';
 import type {
   Receipt,
   Snapshot,

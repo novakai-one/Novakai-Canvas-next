@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import type { PanelPreferences } from '../contract/panel-types.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { PanelPreferences } from '../../contract/panel-types.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 const ids = z.array(z.string().min(1)).max(100);
 const preferences = z.strictObject({
   schemaVersion: z.literal(1),

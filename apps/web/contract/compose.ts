@@ -11,7 +11,10 @@ import { createElement, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
 import type { LibraryBrowserProps } from './library-react.js';
 import { createPreferenceController } from '../adapters/sessions/preference-session.js';
-import { readEnvironment, observeEnvironment } from '../adapters/browser-preferences.js';
+import {
+  readEnvironment,
+  observeEnvironment,
+} from '../adapters/preferences/browser-preferences.js';
 import { createInterfacePreferences } from '../adapters/react/InterfacePreferences.js';
 import { createThemeSelector } from '../adapters/react/ThemeSelector.js';
 import type { PreferenceController, ThemeChoice } from './records/preferences.js';
@@ -36,11 +39,11 @@ import { readInspectorDrafts } from '../adapters/readers/inspector-reader.js';
 import { createDefinitionSession } from '../adapters/sessions/definition-session.js';
 import { readDefinitionDrafts } from '../adapters/readers/definition-reader.js';
 import { createSourceController } from '../adapters/sessions/source-session.js';
-import { createWorkspaceNavigation } from '../adapters/browser-navigation.js';
+import { createWorkspaceNavigation } from '../adapters/edge/browser-navigation.js';
 import panelDefaults from '../../../resources/ui/panels.default.json' with { type: 'json' };
 import type { PanelController, PanelSectionDefinition, PanelSizing } from './panel-types.js';
 import { createPanelController } from '../adapters/sessions/panel-session.js';
-import { readPanelPreferences } from '../adapters/panel-preferences.js';
+import { readPanelPreferences } from '../adapters/preferences/panel-preferences.js';
 import type { RegisteredSection } from '../adapters/react/WorkspaceSidePanel.js';
 import { z } from 'zod';
 import {
@@ -60,9 +63,9 @@ import {
 import { createCanvas, createReactBindings as canvasBindings } from '@novakai/canvas-canvas';
 import { createLanguage } from '@novakai/canvas-language';
 import { validate, plan, stage } from '@novakai/canvas-model';
-import { createServiceClient } from '../adapters/service-client.js';
+import { createServiceClient } from '../adapters/edge/service-client.js';
 import { readDiagram, createSceneAdmission } from '../adapters/readers/diagram-reader.js';
-import { createWorkspaceInputs } from '../adapters/workspace-inputs.js';
+import { createWorkspaceInputs } from '../adapters/edge/workspace-inputs.js';
 import { createCanvasSessions } from '../adapters/sessions/canvas-session.js';
 import { createDraftRetention } from '../adapters/sessions/draft-retention.js';
 import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
@@ -89,7 +92,7 @@ import { descendantId } from '@novakai/canvas-model';
 import { createSectionNavigator } from '../adapters/react/SectionNavigator.js';
 import { ObjectOutline } from '../adapters/react/ObjectOutline.js';
 import { createWorkspaceShell } from '../adapters/react/WorkspaceShell.js';
-import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/browser-host.js';
+import { mountWorkspace, viewport, observeWorkspaceWidth } from '../adapters/edge/browser-host.js';
 import { planCanvasEdit } from './api.js';
 import {
   buildMoveReview,

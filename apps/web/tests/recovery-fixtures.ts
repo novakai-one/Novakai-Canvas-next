@@ -21,7 +21,7 @@ import type { Request, Receipt, TransportResponse } from '../contract/records/ow
 import type { Result } from '../contract/index.js';
 import { failure } from '../contract/index.js';
 import { createWorkspaceController } from '../adapters/sessions/workspace-session.js';
-import { createWorkspaceInputs } from '../adapters/workspace-inputs.js';
+import { createWorkspaceInputs } from '../adapters/edge/workspace-inputs.js';
 import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
 import { createSubmissionReaders } from '../adapters/readers/submission-readers.js';
 

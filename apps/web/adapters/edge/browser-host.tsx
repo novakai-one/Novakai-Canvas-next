@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client';
 import type { ComponentType } from 'react';
-import type { WorkspaceProps } from '../contract/react-types.js';
-import type { WorkspaceController } from '../contract/records/workspace.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { WorkspaceProps } from '../../contract/react-types.js';
+import type { WorkspaceController } from '../../contract/records/workspace.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** DOM ownership is explicit. React unmount releases subscriptions through component effect cleanup. */
 export function mountWorkspace(
   element: HTMLElement,

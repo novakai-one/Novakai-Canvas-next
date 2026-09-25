@@ -4,15 +4,18 @@ import type { Snapshot, Request } from '@novakai/canvas-authoring';
 import { validate } from '@novakai/canvas-model';
 import type { Collection, Change } from '@novakai/canvas-model';
 import type { Language } from '@novakai/canvas-language';
-import type { WorkspaceInputs } from '../contract/ports/workspace.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
-import type { CapturedCollectionBase, EditingBase } from '../contract/records/editor-recovery.js';
-import { baseWorkspace, captureCollectionBase, collectionRecord } from '../contract/api.js';
+import type { WorkspaceInputs } from '../../contract/ports/workspace.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
+import type {
+  CapturedCollectionBase,
+  EditingBase,
+} from '../../contract/records/editor-recovery.js';
+import { baseWorkspace, captureCollectionBase, collectionRecord } from '../../contract/api.js';
 import {
   capturedCollectionBaseSchema,
   hasRecoveryTag,
-} from '../contract/schemas/editor-recovery.js';
+} from '../../contract/schemas/editor-recovery.js';
 /** Invalid canonical data is surfaced, not hidden as an empty collection. */
 function collections(snapshot: Snapshot): Result<readonly Collection[]> {
   const candidates = snapshot.records

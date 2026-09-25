@@ -1,8 +1,8 @@
 import { responseEnvelope } from '@novakai/canvas-service';
 import type { TransportResponse } from '@novakai/canvas-service';
-import type { BinaryResponse, ServiceClient } from '../contract/ports/client.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { BinaryResponse, ServiceClient } from '../../contract/ports/client.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** Same-origin cookies authenticate each request. Redirects and non-versioned results are rejected, preserving uncertain drafts. */
 async function request(
   path: string,

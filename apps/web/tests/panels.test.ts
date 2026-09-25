@@ -1,6 +1,6 @@
 import { it, expect } from 'vitest';
 import { createPanelController } from '../adapters/sessions/panel-session.js';
-import { readPanelPreferences } from '../adapters/panel-preferences.js';
+import { readPanelPreferences } from '../adapters/preferences/panel-preferences.js';
 import { panelVisible, reconcilePanelPreferences } from '../contract/index.js';
 import type { PanelSectionDefinition, PanelSizing } from '../contract/panel-types.js';
 import { memoryRetention } from './recovery-fixtures.js';

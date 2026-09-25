@@ -2,7 +2,10 @@ import { z } from 'zod';
 import { objectId, descendantId, validate } from '@novakai/canvas-model';
 import { snapshotSchema } from '@novakai/canvas-authoring';
 import type { WireDraft, WireEdit } from '../../contract/records/wire-editor.js';
-import type { CapturedCollectionBase, EditingBase } from '../../contract/records/editor-recovery.js';
+import type {
+  CapturedCollectionBase,
+  EditingBase,
+} from '../../contract/records/editor-recovery.js';
 import type { Collection } from '../../contract/records/owners.js';
 import type { StoredRecord } from '../../contract/records/owners.js';
 import type { Result } from '../../contract/errors.js';

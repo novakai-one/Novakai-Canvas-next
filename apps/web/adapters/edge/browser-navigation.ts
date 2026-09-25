@@ -1,7 +1,7 @@
 import { collectionId } from '@novakai/canvas-model';
-import type { WorkspaceNavigation } from '../contract/ports/navigation.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { WorkspaceNavigation } from '../../contract/ports/navigation.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** URL identity survives browser refresh and service restart. Navigation failure leaves the readable canvas and durable diagram intact. */
 export function createWorkspaceNavigation(
   location: Pick<Location, 'href'>,

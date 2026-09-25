@@ -9,7 +9,7 @@
  */
 import type { Property } from '../../contract/records/vocabulary.js';
 import { deepFreeze } from '../validation/outcomes.js';
-import { nodeKinds, relationshipKinds } from './defaults.js';
+import { defaults, modeLayouts, relationshipKinds } from './defaults.js';
 
 /**
  * The shared properties, by name. Constructs pick from this table and may give an entry another
@@ -17,7 +17,7 @@ import { nodeKinds, relationshipKinds } from './defaults.js';
  */
 export const properties = deepFreeze({
   /** A collection's theme. */
-  theme: { type: 'word', field: 'theme', fallback: 'paper' },
+  theme: { type: 'word', field: 'theme', fallback: defaults.theme },
   /** Free description text (collection, source). */
   description: { type: 'string', field: 'description' },
   /** A visual role word (node, group, a section's `show` entry). */
@@ -47,16 +47,21 @@ export const properties = deepFreeze({
     type: 'word',
     field: 'direction',
     values: ['right', 'down', 'left', 'up'],
-    fallback: 'right',
+    fallback: defaults.direction,
   },
   /** A layout spacing. */
-  gap: { type: 'word', field: 'gap', values: ['compact', 'normal', 'roomy'], fallback: 'normal' },
-  /** A section's diagram mode. */
+  gap: {
+    type: 'word',
+    field: 'gap',
+    values: ['compact', 'normal', 'roomy'],
+    fallback: defaults.gap,
+  },
+  /** A section's diagram mode: every mode that has a default layout. */
   mode: {
     type: 'word',
     field: 'mode',
-    values: ['flow', 'er', 'modules', 'tree', 'sequence', 'state', 'story', 'grid'],
-    fallback: 'flow',
+    values: Object.keys(modeLayouts),
+    fallback: defaults.mode,
   },
   /** A section's position among sections. */
   order: { type: 'integer', field: 'order', fallback: 0 },
@@ -77,7 +82,7 @@ export const properties = deepFreeze({
     type: 'word',
     field: 'status',
     values: ['asserted', 'source-backed', 'unverified'],
-    fallback: 'unverified',
+    fallback: defaults.sourceStatus,
   },
   /** A code block's language. */
   language: { type: 'string', field: 'language' },
@@ -92,9 +97,9 @@ export const properties = deepFreeze({
   /** How an image fits its box. */
   fit: { type: 'word', field: 'fit', values: ['contain', 'cover'], fallback: 'contain' },
   /** A figure's level, written `level=`. */
-  figureLevel: { type: 'word', field: 'level', values: ['low', 'half', 'full'] },
+  figureLevel: { type: 'word', field: 'level', values: figureAmounts() },
   /** A figure's fill, written `fill=`. */
-  figureFill: { type: 'word', field: 'fill', values: ['low', 'half', 'full'] },
+  figureFill: { type: 'word', field: 'fill', values: figureAmounts() },
   /** A figure's `pass` setting. */
   pass: { type: 'word', field: 'pass', values: ['one', 'few'] },
   /** A figure's `layers` setting. */
@@ -108,13 +113,13 @@ export const properties = deepFreeze({
   /** A type: text or a plain ID (field, member, port; required). */
   type: { type: 'type-expression', field: 'type', required: true },
   /** A field's key. */
-  key: { type: 'word', field: 'key', values: ['primary', 'foreign', 'unique'] },
+  key: { type: 'word', field: 'key', values: keyKinds() },
   /** Whether a field may be empty. */
   nullable: { type: 'boolean', field: 'nullable', fallback: false },
   /** The field a field refers to. */
   references: { type: 'endpoint', field: 'references' },
   /** A key group's kind, written `kind=` (required). */
-  keyKind: { type: 'word', field: 'key', values: ['primary', 'foreign', 'unique'], required: true },
+  keyKind: { type: 'word', field: 'key', values: keyKinds(), required: true },
   /** A key group's fields (required). */
   fields: { type: 'ids', field: 'fields', required: true },
   /** The fields a key group refers to, written `references=`. */
@@ -136,15 +141,10 @@ export const properties = deepFreeze({
   cells: { type: 'strings', field: 'cells', required: true },
   /** A wire's kind, written `kind=`. */
   wireKind: { type: 'word', field: 'kind', values: relationshipKinds, fallback: 'flow' },
-  /**
-   * A node's kind (required). No construct uses this entry: a node's kind is its positional
-   * value (see `constructs`).
-   */
-  nodeKind: { type: 'word', field: 'kind', values: nodeKinds, required: true },
   /** The cardinality at a wire's start. */
-  from: { type: 'word', field: 'from', values: ['0..1', '1', '0..many', '1..many'] },
+  from: { type: 'word', field: 'from', values: cardinalities() },
   /** The cardinality at a wire's end. */
-  to: { type: 'word', field: 'to', values: ['0..1', '1', '0..many', '1..many'] },
+  to: { type: 'word', field: 'to', values: cardinalities() },
   /** A wire's guard, as on a state transition. */
   guard: { type: 'string', field: 'guard' },
   /** A wire's effect, as on a state transition. */
@@ -161,14 +161,14 @@ export const properties = deepFreeze({
   sourceSide: {
     type: 'word',
     field: 'sourceSide',
-    values: ['auto', 'top', 'right', 'bottom', 'left'],
+    values: connectionSides(),
     fallback: 'auto',
   },
   /** The side a connection arrives at. */
   targetSide: {
     type: 'word',
     field: 'targetSide',
-    values: ['auto', 'top', 'right', 'bottom', 'left'],
+    values: connectionSides(),
     fallback: 'auto',
   },
   /** The object a group stands for. */
@@ -196,3 +196,34 @@ export const layoutProperties = deepFreeze({
   direction: properties.direction,
   gap: properties.gap,
 } as const satisfies Readonly<Record<string, Property>>);
+
+/**
+ * How an object is presented: shared by a node and by a section's `show` entry (and so by a
+ * patch's `node` and `appearance` targets), in this order.
+ */
+export const presentationProperties = deepFreeze({
+  role: properties.role,
+  size: properties.size,
+  frame: properties.frame,
+  composition: properties.composition,
+} as const satisfies Readonly<Record<string, Property>>);
+
+/** Key kinds: a field's `key=` and a key group's `kind=`. A new list per call. */
+function keyKinds(): readonly string[] {
+  return ['primary', 'foreign', 'unique'];
+}
+
+/** Figure amounts: a figure's `level=` and `fill=`. A new list per call. */
+function figureAmounts(): readonly string[] {
+  return ['low', 'half', 'full'];
+}
+
+/** Cardinalities at a wire's two ends (`from=`, `to=`). A new list per call. */
+function cardinalities(): readonly string[] {
+  return ['0..1', '1', '0..many', '1..many'];
+}
+
+/** The sides a connection leaves from or arrives at. A new list per call. */
+function connectionSides(): readonly string[] {
+  return ['auto', 'top', 'right', 'bottom', 'left'];
+}

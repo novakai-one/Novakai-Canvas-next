@@ -3,14 +3,16 @@
  * data, deep-frozen when the module loads, so no caller can change them. Language owns
  * correcting the source; Authoring owns commit recovery.
  */
+import type { Action } from '../../contract/records/syntax.js';
 import { deepFreeze } from '../validation/outcomes.js';
 
 /**
- * The layout algorithm each section `mode` uses when the section names none. Lowering reads it
- * (unknown modes fall back to `flow` there), patching reads it through lowering when a layout is
- * reset, and `describe` publishes it.
+ * The layout algorithm each section `mode` uses when the section names none. Its keys are every
+ * section mode, in the order the `mode=` values list them. Lowering reads it (unknown modes fall
+ * back to `flow` there), patching reads it through lowering when a layout is reset, and
+ * `describe` publishes it.
  */
-export const layouts: Readonly<Record<string, string>> = deepFreeze({
+export const modeLayouts: Readonly<Record<string, string>> = deepFreeze({
   flow: 'flow',
   er: 'layered',
   modules: 'layered',
@@ -23,7 +25,8 @@ export const layouts: Readonly<Record<string, string>> = deepFreeze({
 
 /**
  * The values used when the source leaves a setting out. `describe` publishes the whole record;
- * layout lowering uses `direction` and `gap`.
+ * the property vocabulary uses them as fallbacks, and lowering uses `direction`, `gap` and
+ * `collectionLayout`. Read-only in its type too.
  */
 export const defaults = deepFreeze({
   theme: 'paper',
@@ -34,7 +37,7 @@ export const defaults = deepFreeze({
   gap: 'normal',
   collectionLayout: 'grid',
   sourceStatus: 'unverified',
-});
+} as const);
 
 /** Every node kind, the word after a node's ID (as in `node @a step "Label"`). */
 export const nodeKinds: readonly string[] = deepFreeze([
@@ -66,4 +69,15 @@ export const relationshipKinds: readonly string[] = deepFreeze([
   'parent',
   'reference',
   'transition',
+]);
+
+/**
+ * The actions that change a section's membership (`show @a in @s`, and `hide`, `connect`,
+ * `disconnect`). Parsing reads them after an action word; patching routes them to membership.
+ */
+export const membershipActions: readonly Action[] = deepFreeze([
+  'show',
+  'hide',
+  'connect',
+  'disconnect',
 ]);

@@ -11,7 +11,7 @@ import type {
   Span,
   Reference,
 } from '../../contract/records/syntax.js';
-import { defaults, layouts } from '../vocabulary/defaults.js';
+import { defaults, modeLayouts } from '../vocabulary/defaults.js';
 import { isReference } from '../parsing/value-types.js';
 import type { Result } from '../../contract/errors.js';
 import { protect, reject } from '../validation/outcomes.js';
@@ -73,7 +73,7 @@ export function lowerLayout(
  * @throws Never.
  */
 export function modeLayout(mode: string): string {
-  return layouts[mode] ?? 'flow';
+  return modeLayouts[mode] ?? 'flow';
 }
 
 /** Whether a declaration is a layout constraint (`rank`, `align`, `before` or `below`). */

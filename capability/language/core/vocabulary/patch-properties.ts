@@ -8,7 +8,8 @@
 import type { TargetKind } from '../../contract/records/syntax.js';
 import type { Property } from '../../contract/records/vocabulary.js';
 import { deepFreeze } from '../validation/outcomes.js';
-import { properties as p, layoutProperties } from './properties.js';
+import { properties, layoutProperties, presentationProperties } from './properties.js';
+import { showProperties, connectProperties } from './constructs.js';
 
 /** A node, wire or block label. `required`: a patch cannot `unset` it. */
 const label: Property = deepFreeze({ type: 'string', field: 'label', required: true });
@@ -18,69 +19,66 @@ const title: Property = deepFreeze({ type: 'string', field: 'title', required: t
 
 /**
  * The properties `set` and `unset` accept, by target. The attribute name is the key; `asset`,
- * `source` and `layout` have none. Patching also uses these tables to lower values, and printing
- * uses the `appearance` and `route` tables for a section's `show` and `connect` entries.
+ * `source` and `layout` have none. `appearance` and `route` copy the `show` and `connect` entry
+ * tables (the same property records, in their own table). Patching also uses these tables to
+ * lower values, and printing uses the `appearance` and `route` tables for a section's `show` and
+ * `connect` entries.
  */
 export const patchProperties: Readonly<Record<TargetKind, Readonly<Record<string, Property>>>> =
   deepFreeze({
-    collection: { title, description: p.description, theme: p.theme, ...layoutProperties },
+    collection: {
+      title,
+      description: properties.description,
+      theme: properties.theme,
+      ...layoutProperties,
+    },
     node: {
       label,
-      role: p.role,
-      size: p.size,
-      frame: p.frame,
-      composition: p.composition,
-      step: p.step,
-      sources: p.sources,
+      ...presentationProperties,
+      step: properties.step,
+      sources: properties.sources,
     },
     wire: {
       label,
-      step: p.step,
-      from: p.from,
-      to: p.to,
-      guard: p.guard,
-      effect: p.effect,
-      style: p.style,
-      sources: p.sources,
+      step: properties.step,
+      from: properties.from,
+      to: properties.to,
+      guard: properties.guard,
+      effect: properties.effect,
+      style: properties.style,
+      sources: properties.sources,
       'from-end': { type: 'endpoint', field: 'source', required: true },
       'to-end': { type: 'endpoint', field: 'target', required: true },
     },
-    section: { title, mode: p.mode, order: p.order, ...layoutProperties },
-    appearance: {
-      role: p.role,
-      size: p.size,
-      frame: p.frame,
-      composition: p.composition,
-      detail: p.detail,
-      participation: p.participation,
-    },
-    route: { route: p.route, 'source-side': p.sourceSide, 'target-side': p.targetSide },
+    section: { title, mode: properties.mode, order: properties.order, ...layoutProperties },
+    appearance: { ...showProperties },
+    route: { ...connectProperties },
     block: {
       label,
-      role: p.textRole,
+      role: properties.textRole,
       text: { type: 'string', field: 'text', required: true },
       items: { type: 'strings', field: 'items', required: true },
-      language: p.language,
-      target: p.target,
-      section: p.section,
-      ordered: p.ordered,
-      asset: p.asset,
-      size: p.size,
-      fit: p.fit,
-      level: p.figureLevel,
-      fill: p.figureFill,
-      pass: p.pass,
-      layers: p.layers,
-      agitator: p.agitator,
-      mark: p.mark,
-      debris: p.debris,
-      type: p.type,
-      key: p.key,
-      nullable: p.nullable,
+      language: properties.language,
+      target: properties.target,
+      section: properties.section,
+      ordered: properties.ordered,
+      asset: properties.asset,
+      size: properties.size,
+      fit: properties.fit,
+      level: properties.figureLevel,
+      fill: properties.figureFill,
+      pass: properties.pass,
+      layers: properties.layers,
+      agitator: properties.agitator,
+      mark: properties.mark,
+      debris: properties.debris,
+      type: properties.type,
+      key: properties.key,
+      nullable: properties.nullable,
       references: { type: 'reference-value', field: 'references' },
-      parameters: p.parameters,
-      returns: p.returns,
-      visibility: p.visibility,
+      parameters: properties.parameters,
+      returns: properties.returns,
+      visibility: properties.visibility,
     },
     asset: {},
     source: {},

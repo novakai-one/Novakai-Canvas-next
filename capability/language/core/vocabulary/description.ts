@@ -7,7 +7,7 @@
 import type { DiagnosticCode } from '../../contract/errors.js';
 import type { Description } from '../../contract/records/vocabulary.js';
 import { constructs } from './constructs.js';
-import { defaults, layouts } from './defaults.js';
+import { defaults, modeLayouts } from './defaults.js';
 import { operationWords, patchProperties } from './patch-properties.js';
 import { reject, origin } from '../validation/outcomes.js';
 
@@ -36,7 +36,7 @@ export function describeLanguage(version: number, policies: Description['policie
     patchTargets: patchProperties,
     policies,
     patchForms,
-    defaults: { ...defaults, ...layouts },
+    defaults: { ...defaults, ...modeLayouts },
     examples,
     diagnostics: diagnosticCodes,
     definitionSyntax: 'type @id "Label" = <expression>',

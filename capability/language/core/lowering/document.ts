@@ -16,6 +16,7 @@ import { partitionLayout } from './layout-fields.js';
 import type { Result } from '../../contract/errors.js';
 import { accepted, protect, reject } from '../validation/outcomes.js';
 import { lowerDefinition } from './definitions.js';
+import { defaults } from '../vocabulary/defaults.js';
 
 /**
  * Lowers a document to the change list for `create` or `replace`.
@@ -99,7 +100,7 @@ function lowerDocumentData(document: Document, request: LowerRequest): Result<Ra
       const { theme: writtenTheme, ...remaining } = partitionLayout(metadata).remaining;
       void writtenTheme;
       const theme = resolveTheme(
-        textOr(item.fields, 'theme', 'paper'),
+        textOr(item.fields, 'theme', defaults.theme),
         request.resources,
         item.span,
       );
@@ -108,7 +109,7 @@ function lowerDocumentData(document: Document, request: LowerRequest): Result<Ra
         schemaVersion: 1,
         revision: request.snapshot?.revision ?? 0,
         theme,
-        arrangement: accepted(lowerLayout(item.fields, item.children, 'grid')),
+        arrangement: accepted(lowerLayout(item.fields, item.children, defaults.collectionLayout)),
         objects: lowerEach(item, 'node', lowerNode),
         relationships: lowerEach(item, 'wire', lowerRecord),
         sections: lowerEach(

@@ -8,10 +8,16 @@ import type { Submission } from '../contract/records/submission.js';
 function Button({ label }: { readonly label: string }) {
   return createElement('button', null, label);
 }
-function submission(id: string, state: Submission['state']): Submission {
+function submission(
+  id: string,
+  state: Submission['state'],
+): Submission {
   return { state, request: { request: id } } as unknown as Submission;
 }
-function markup(pending: readonly Submission[], problem: unknown): string {
+function markup(
+  pending: readonly Submission[],
+  problem: unknown,
+): string {
   const Recovery = createRequestRecovery({ Button } as never);
   const view = { pending, problem } as unknown as FeatureProps['view'];
   const controller = {} as FeatureProps['controller'];

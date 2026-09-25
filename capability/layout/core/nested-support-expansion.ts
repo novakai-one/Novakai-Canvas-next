@@ -53,7 +53,10 @@ function bridgeGrowth(
     provenance: [wireId, String(join.incoming.first), road.id, 'complete-bridge-footprint'],
   });
 }
-function record(growth: Map<string, NestedSupportSpanGrowth>, span: NestedSupportSpanGrowth): void {
+function record(
+  growth: Map<string, NestedSupportSpanGrowth>,
+  span: NestedSupportSpanGrowth,
+): void {
   if (span.negative === 0 && span.positive === 0) return;
   const key = JSON.stringify([span.roadId, span.axis]),
     prior = growth.get(key);
@@ -87,7 +90,11 @@ function capGrowth(
   });
 }
 
-function matchingReach(edge: number, contact: number, reach: number): number {
+function matchingReach(
+  edge: number,
+  contact: number,
+  reach: number,
+): number {
   return edge === contact ? reach : 0;
 }
 
@@ -138,7 +145,11 @@ function reachIncrease(
   if (population === undefined) return reject('missing-contact', [span.roadId]);
   return sideIncrease(from, population.key, span);
 }
-function sideIncrease(from: readonly string[], key: string, span: NestedSupportSpanGrowth): number {
+function sideIncrease(
+  from: readonly string[],
+  key: string,
+  span: NestedSupportSpanGrowth,
+): number {
   const positive = [key, `${key}:end`].some((alias) => from.includes(alias));
   return positive ? span.positive : span.negative;
 }

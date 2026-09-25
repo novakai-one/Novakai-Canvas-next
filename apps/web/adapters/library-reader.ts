@@ -1,12 +1,17 @@
-import type { Result as LibraryResult, RecentVisit } from '@novakai/canvas-library';
+import type { LibraryResult, RecentVisit } from '@novakai/canvas-library';
 import { z } from 'zod';
-import { validate, query, collectionId, folderId } from '@novakai/canvas-library';
+import {
+  validateLibrarySnapshot,
+  queryLibrary,
+  collectionIdSchema,
+  folderIdSchema,
+} from '@novakai/canvas-library';
 import { projectCollection } from '@novakai/canvas-service';
 import type { Collection } from '../contract/records/owners.js';
 import type { LibraryReader } from '../contract/records/library.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
-/** Host projections are shared with service validation; Library remains the search and organization authority. */
+/** Host projections are shared with service validation; Library remains the search and organisation authority. */
 export function createLibraryReader(): LibraryReader {
   return {
     read: (snapshot, collections, recent) => {
@@ -16,8 +21,8 @@ export function createLibraryReader(): LibraryReader {
       if (catalogs.length !== 1)
         return failure('invalid-library', 'Workspace requires one library catalog');
       return checked(
-        validate({
-          catalog: catalogs[0]?.value,
+        validateLibrarySnapshot({
+          organisation: catalogs[0]?.value,
           collections: collections.map(projectCollection),
           recent: currentVisits(collections, recent),
         }),
@@ -25,9 +30,9 @@ export function createLibraryReader(): LibraryReader {
     },
     query: (snapshot, filters, cursor) =>
       checked(
-        query(
-          { ...snapshot, recent: currentVisits(snapshot.collections, snapshot.recent) },
-          {
+        queryLibrary({
+          snapshot: { ...snapshot, recent: currentVisits(snapshot.collections, snapshot.recent) },
+          request: {
             text: filters.text,
             archived: filters.archived,
             sort: filters.sort,
@@ -36,7 +41,7 @@ export function createLibraryReader(): LibraryReader {
             ...folderFilter(filters.folder),
             ...cursorFilter(cursor),
           },
-        ),
+        }),
       ),
     visits: (input) => {
       const parsed = visits.safeParse(input);
@@ -46,7 +51,11 @@ export function createLibraryReader(): LibraryReader {
     },
     folderDraft: (input) => {
       const parsed = z
-        .strictObject({ id: folderId, title: z.string(), revision: z.number().int().nonnegative() })
+        .strictObject({
+          id: folderIdSchema(),
+          title: z.string(),
+          revision: z.number().int().nonnegative(),
+        })
         .safeParse(input);
       if (!parsed.success)
         return failure(
@@ -58,7 +67,9 @@ export function createLibraryReader(): LibraryReader {
   };
 }
 const visits = z
-  .array(z.strictObject({ collection: collectionId, openedAt: z.number().int().nonnegative() }))
+  .array(
+    z.strictObject({ collection: collectionIdSchema(), openedAt: z.number().int().nonnegative() }),
+  )
   .max(10000)
   .readonly();
 /** Omitted folder means all folders, matching the Library contract. */

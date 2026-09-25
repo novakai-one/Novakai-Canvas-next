@@ -4,7 +4,10 @@ import { httpBodyLimit } from '../../contract/records/http.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
 /** Decode only bounded JSON with the advertised content type; malformed input never reaches Authoring. */
-function envelope(body: string, contentType: string): Result<unknown> {
+function envelope(
+  body: string,
+  contentType: string,
+): Result<unknown> {
   if (contentType.split(';')[0]?.trim() !== 'application/json')
     return failure('invalid-input', 'content-type', 'Use application/json for a mutation');
   return boundedJson(body);
@@ -21,7 +24,10 @@ function boundedJson(body: string): Result<unknown> {
   }
 }
 /** Require generation before owner schema admission; a retained request needs receipt reconciliation after restart. */
-function admitEnvelope(input: unknown, context: CommandAdmission): Result<AdmittedMutation> {
+function admitEnvelope(
+  input: unknown,
+  context: CommandAdmission,
+): Result<AdmittedMutation> {
   const parsed = mutationEnvelope.safeParse(input);
   if (!parsed.success)
     return failure('invalid-input', 'body', 'Expected a version 1 mutation envelope');
@@ -46,7 +52,10 @@ function admitCurrent(
   };
 }
 /** The HTTP adapter authenticates before reading a body. This pure boundary validates payload policy before invoking handlers. */
-export function readCommand(body: string, context: CommandAdmission): Result<AdmittedMutation> {
+export function readCommand(
+  body: string,
+  context: CommandAdmission,
+): Result<AdmittedMutation> {
   const decoded = envelope(body, context.metadata.contentType);
   if (!decoded.ok) return decoded;
   return admitEnvelope(decoded.value, context);

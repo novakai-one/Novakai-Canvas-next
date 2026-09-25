@@ -37,6 +37,9 @@ function isConnectable(
   return ['field', 'member', 'signature'].includes(item.kind);
 }
 /** A single formatter keeps controlled select values consistent with their semantic identities. */
-function choice(label: string, endpoint: Endpoint): EndpointChoice {
+function choice(
+  label: string,
+  endpoint: Endpoint,
+): EndpointChoice {
   return { value: endpointKey(endpoint), label, endpoint };
 }

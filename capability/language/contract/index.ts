@@ -1,4 +1,8 @@
-/** Language's only consumer entry. Authoring owns all writes; these operations are pure and retry-safe. */
+/*
+ * Language's public entry: `createLanguage` and the types its callers use. Nothing else in the
+ * capability is imported from outside. Language only reads and compiles, and owns correcting
+ * the source; Authoring owns every write, retry and recovery.
+ */
 export { createLanguage } from './api.js';
 export type { Language, Dependencies } from './types.js';
 export type { Result, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';

@@ -60,7 +60,10 @@ function session(
     return installResolved(preferences, resolved.value);
   }
   /** A stale DOM lease is a visible failure; it cannot overwrite a newer theme owner. */
-  function installResolved(preferences: UiPreferences, resolved: ResolvedTokenSet): boolean {
+  function installResolved(
+    preferences: UiPreferences,
+    resolved: ResolvedTokenSet,
+  ): boolean {
     const replaced = lease.replace(resolved);
     if (!replaced.ok) {
       report(diagnostic(replaced.error));
@@ -102,7 +105,10 @@ function session(
     persistMigration(stored, current);
   }
   /** Persist release migration separately; the installed theme remains usable when storage is unavailable. */
-  function persistMigration(stored: UiPreferences, current: UiPreferences): void {
+  function persistMigration(
+    stored: UiPreferences,
+    current: UiPreferences,
+  ): void {
     if (current === stored) return;
     const saved = bindings.retention.write('ui-preferences', current);
     if (!saved.ok) report(diagnostic(saved.error));
@@ -138,7 +144,10 @@ function currentTheme(
   return { ...preferences, theme: { mode: 'pinned', theme: selected } };
 }
 /** Exact fields stay owner-issued; the host compares provenance but never constructs it. */
-function samePin(left: UiThemePin, right: UiThemePin): boolean {
+function samePin(
+  left: UiThemePin,
+  right: UiThemePin,
+): boolean {
   return left.id === right.id && left.version === right.version && left.digest === right.digest;
 }
 /** Owner validation controls system/pinned selection, contrast and all emitted CSS variables. */

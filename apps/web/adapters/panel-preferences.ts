@@ -18,7 +18,10 @@ const preferences = z.strictObject({
   }),
 });
 /** Stored preference shape and workspace are admitted before registered-ID reconciliation; invalid records are never applied. */
-export function readPanelPreferences(input: unknown, workspace: string): Result<PanelPreferences> {
+export function readPanelPreferences(
+  input: unknown,
+  workspace: string,
+): Result<PanelPreferences> {
   const checked = preferences.safeParse(input);
   if (!checked.success)
     return failure(

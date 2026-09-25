@@ -161,7 +161,10 @@ function captureRearrangementTarget(
   };
 }
 
-function ancestorIds(scene: SceneSection, selected: SceneNode): ReadonlySet<string> {
+function ancestorIds(
+  scene: SceneSection,
+  selected: SceneNode,
+): ReadonlySet<string> {
   const ancestors = new Set<string>();
   let parent = selected.parent;
   while (parent !== null) {
@@ -191,7 +194,10 @@ function releaseRearrangement(
   return { ok: true, value: { sections: candidate, changes: releasedChanges } };
 }
 
-function releaseSection(section: Section, prepared: RearrangementPreparation): Section {
+function releaseSection(
+  section: Section,
+  prepared: RearrangementPreparation,
+): Section {
   if (section.id !== prepared.sectionId) return section;
   return {
     ...section,
@@ -309,11 +315,17 @@ function preservedAppearancePlacement(
     : { ...appearance, placement: undefined };
 }
 
-function parentNode(scene: SceneSection, node: SceneNode): SceneNode | undefined {
+function parentNode(
+  scene: SceneSection,
+  node: SceneNode,
+): SceneNode | undefined {
   return node.parent === null ? undefined : scene.nodes.find((item) => item.id === node.parent);
 }
 
-function isInSelectedClosure(node: SceneNode, prepared: RearrangementPreparation): boolean {
+function isInSelectedClosure(
+  node: SceneNode,
+  prepared: RearrangementPreparation,
+): boolean {
   if (node.id === prepared.selected.id || prepared.ancestors.has(node.id)) return true;
   return hasSelectedAncestor(prepared.scene, node.parent, prepared.selected.id);
 }
@@ -439,7 +451,10 @@ function hasUnselectedChange(
   );
 }
 
-function wantedBox(prepared: RearrangementPreparation, selectedBefore: Box): Box {
+function wantedBox(
+  prepared: RearrangementPreparation,
+  selectedBefore: Box,
+): Box {
   const parent = parentNode(prepared.scene, prepared.selected);
   const parentOrigin =
     parent === undefined
@@ -547,7 +562,11 @@ function matchesExpectedClosure(
   return expectedBox !== undefined && exactBox(expectedBox, actual);
 }
 
-function matchesCaptured(document: RenderDocument, target: Target, actual: Box): boolean {
+function matchesCaptured(
+  document: RenderDocument,
+  target: Target,
+  actual: Box,
+): boolean {
   const captured = sceneBox(document, target);
   return captured !== undefined && exactBox(captured, actual);
 }
@@ -608,7 +627,10 @@ function materializeSection(
   };
 }
 
-function findSectionPreviewBox(preview: MoveOption['preview'], sectionId: string): Box {
+function findSectionPreviewBox(
+  preview: MoveOption['preview'],
+  sectionId: string,
+): Box {
   const box = preview.boxes.find(
     (item) => item.target.kind === 'section' && item.target.id === sectionId,
   )?.box;
@@ -778,7 +800,11 @@ function sameGeometryMap(
   });
 }
 
-function inspectSecondTarget(input: MaterializedPreview, key: string, firstBox: Box): boolean {
+function inspectSecondTarget(
+  input: MaterializedPreview,
+  key: string,
+  firstBox: Box,
+): boolean {
   const target = input.firstPreview.boxes.find((item) => targetKey(item.target) === key)?.target;
   return (
     target !== undefined &&

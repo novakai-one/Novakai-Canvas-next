@@ -9,7 +9,10 @@ import type {
 } from '../contract/records/startup.js';
 import { failure, type Result } from '../contract/errors.js';
 /** Closing both owners is attempted even if one reports a failure; callers preserve the original files. */
-async function close(storage: Persistence, assets: Assets): Promise<Result<void>> {
+async function close(
+  storage: Persistence,
+  assets: Assets,
+): Promise<Result<void>> {
   const database = storage.close();
   const blobs = assets.close();
   if (!database.ok)
@@ -18,7 +21,10 @@ async function close(storage: Persistence, assets: Assets): Promise<Result<void>
   return { ok: true, value: undefined };
 }
 /** Asset opening precedes canonical storage; failed database opening releases the already-open byte owner. */
-function open(options: WorkspaceOptions, factories: NativeFactories): Result<NativeWorkspace> {
+function open(
+  options: WorkspaceOptions,
+  factories: NativeFactories,
+): Result<NativeWorkspace> {
   const assets = factories.assets(join(options.directory, 'assets'));
   if (!assets.ok)
     return failure('unavailable', assets.error.path, assets.error.message, assets.error);

@@ -19,7 +19,10 @@ function accepted<T>(result: { readonly ok: true; readonly value: T } | { readon
   return result.value;
 }
 /** Structured clone preserves property order; these fields must be exactly the admitted job's values. */
-function same(expected: unknown, actual: unknown): void {
+function same(
+  expected: unknown,
+  actual: unknown,
+): void {
   if (JSON.stringify(expected) !== JSON.stringify(actual))
     throw new ReadoutFault('Worker response differs from its request');
 }
@@ -29,7 +32,10 @@ function translated<T>(result: PresentationResult<T>): LayoutResult<T> {
   return { ok: false, error: { ...result.error, code: 'invalid-input', targets: [] } };
 }
 /** Reconstruct all scene payloads using admitted job semantics; no wire payload is cast into trusted records. */
-function decode(input: unknown, job: RenderingJob): RenderDocument {
+function decode(
+  input: unknown,
+  job: RenderingJob,
+): RenderDocument {
   const raw = renderEnvelope.parse(input);
   same(
     [job.collection, job.fonts, job.style, job.options],
@@ -70,7 +76,10 @@ function decode(input: unknown, job: RenderingJob): RenderDocument {
   };
 }
 /** Reject stale/malformed worker output; host keeps the prior scene and exposes a retry instead of mounting unchecked data. */
-export function readRenderDocument(input: unknown, job: RenderingJob): Result<RenderDocument> {
+export function readRenderDocument(
+  input: unknown,
+  job: RenderingJob,
+): Result<RenderDocument> {
   try {
     return { ok: true, value: decode(input, job) };
   } catch {

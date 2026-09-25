@@ -38,7 +38,10 @@ function accepted<T>(
   return result.value;
 }
 /** Build only a semantic selection envelope, never a persistence transaction or canonical binding. */
-function selectionRequest(value: ReturnType<typeof input.parse>, snapshot: Snapshot): Request {
+function selectionRequest(
+  value: ReturnType<typeof input.parse>,
+  snapshot: Snapshot,
+): Request {
   const header = sourceHeader.parse(value.admission);
   return requestSchema.parse({
     workspace: snapshot.workspace,
@@ -56,7 +59,10 @@ function selectionRequest(value: ReturnType<typeof input.parse>, snapshot: Snaps
   });
 }
 /** Read catalog records through Templates against the exact supplied snapshot. */
-function catalog(snapshot: Snapshot, owners: PresetOwners): Catalog {
+function catalog(
+  snapshot: Snapshot,
+  owners: PresetOwners,
+): Catalog {
   const templates = unboundTemplates(owners);
   const records = snapshot.records
     .filter((item) => item.key.kind === 'preset' && !item.deleted)
@@ -73,7 +79,11 @@ function normalizedAdmission(
   return { ...original, source: preset.payload.source };
 }
 /** Preparation binds codecs to selected resources; no catalog or workspace state is mutated. */
-function prepare(raw: unknown, snapshot: Snapshot, owners: PresetOwners): PresetPreparation {
+function prepare(
+  raw: unknown,
+  snapshot: Snapshot,
+  owners: PresetOwners,
+): PresetPreparation {
   const value = input.parse(raw);
   const records = catalog(snapshot, owners);
   const admission = z
@@ -97,7 +107,11 @@ function prepare(raw: unknown, snapshot: Snapshot, owners: PresetOwners): Preset
   };
 }
 /** Retained DSL requests carry checked alias-to-exact-pin selections, including patch theme changes. */
-function freeze(raw: unknown, snapshot: Snapshot, owners: PresetOwners): Request {
+function freeze(
+  raw: unknown,
+  snapshot: Snapshot,
+  owners: PresetOwners,
+): Request {
   const request = requestSchema.parse(raw);
   if (request.intent.kind !== 'change') return request;
   if (request.intent.planner !== 'dsl') return request;
@@ -115,7 +129,11 @@ function freeze(raw: unknown, snapshot: Snapshot, owners: PresetOwners): Request
   });
 }
 /** Expansion uses exact stored recipe source and normalized resource bindings; Language owns all identity remapping. */
-function instantiate(raw: unknown, snapshot: Snapshot, owners: PresetOwners): string {
+function instantiate(
+  raw: unknown,
+  snapshot: Snapshot,
+  owners: PresetOwners,
+): string {
   const records = catalog(snapshot, owners);
   const request = z.strictObject({ pin: z.unknown(), namespace: z.string() }).parse(raw);
   const templates = unboundTemplates(owners);

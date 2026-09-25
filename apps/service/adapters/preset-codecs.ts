@@ -6,7 +6,10 @@ import type { LoweredIntent, Result as LanguageResult } from '@novakai/canvas-la
 import type { PresetCodecs, PresetContext } from '../contract/records/presets.js';
 import { themeInput, type ThemeInput } from '../contract/records/theme-input.js';
 /** Codec failures leave immutable preset admission uncommitted; Authoring callers correct the source or selected base. */
-function rejected<T>(message: string, source?: FailureSource): Result<T> {
+function rejected<T>(
+  message: string,
+  source?: FailureSource,
+): Result<T> {
   return {
     ok: false,
     error: {

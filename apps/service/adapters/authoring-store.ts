@@ -32,7 +32,10 @@ function translate<T>(result: StorageResult<T>): Result<T> {
   return mapped;
 }
 /** Map physical storage without interpreting Authoring's shape; the consumer admits this raw snapshot. */
-function rawSnapshot(storage: ConditionalStorage, workspace: WorkspaceId): Result<unknown> {
+function rawSnapshot(
+  storage: ConditionalStorage,
+  workspace: WorkspaceId,
+): Result<unknown> {
   const current = translate(storage.readSnapshot());
   if (!current.ok) return current;
   if (String(current.value.workspace) !== workspace)
@@ -85,7 +88,10 @@ function foundReceipt(result: Result<unknown>): Result<Receipt | null> {
   return checkedReceipt(result.value);
 }
 /** Conditional expected versions and receipt fingerprint cross unchanged into one physical transaction. */
-function commit(storage: ConditionalStorage, request: CommitRequest): Result<Receipt> {
+function commit(
+  storage: ConditionalStorage,
+  request: CommitRequest,
+): Result<Receipt> {
   const current = rawSnapshot(storage, request.workspace);
   if (!current.ok) return current;
   const written = translate(storage.commit(request));

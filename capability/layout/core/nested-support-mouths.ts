@@ -94,7 +94,11 @@ function terminalMouth(
     );
   });
 }
-function admitPins(port: PrototypePortLocation, count: number, available: number): void {
+function admitPins(
+  port: PrototypePortLocation,
+  count: number,
+  available: number,
+): void {
   if (count === 0 || port.fixed) return;
   const need = nestedLanePitch * 2 + Math.max(0, count - 1) * nestedLanePitch;
   if (need > available)
@@ -221,7 +225,10 @@ function gateNormal(
   );
   return id;
 }
-function sideOrder(context: MouthContext, gates: readonly NestedSupportGate[]): void {
+function sideOrder(
+  context: MouthContext,
+  gates: readonly NestedSupportGate[],
+): void {
   const groups = new Map<string, NestedSupportGate[]>();
   const ports = new Map(context.scene.ports.map((p) => [p.portId, p]));
   gates.forEach((g) => {

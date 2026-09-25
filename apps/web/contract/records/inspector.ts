@@ -66,19 +66,25 @@ export interface ObjectSelection {
   readonly collection: Collection;
   readonly object: DiagramObject;
 }
-/** Component reorganization does not own draft lifetime. The host's inspector session does. */
+/** Component reorganisation does not own draft lifetime. The host's inspector session does. */
 export interface InspectorSession {
   getSnapshot(): InspectorState;
   subscribe(listener: () => void): () => void;
   restore(workspace: string): Result<void>;
-  edit(selection: ObjectSelection, command: ObjectEdit): Result<void>;
+  edit(
+    selection: ObjectSelection,
+    command: ObjectEdit,
+  ): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
 }
 export interface InspectorBindings {
   readonly retention: DraftRetention;
   read(input: unknown): Result<readonly ObjectDraft[]>;
-  apply(draft: ObjectDraft, object: DiagramObject): Promise<Result<Receipt>>;
+  apply(
+    draft: ObjectDraft,
+    object: DiagramObject,
+  ): Promise<Result<Receipt>>;
   report(error: Diagnostic): void;
 }
 export type InspectorFactory = (

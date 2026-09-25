@@ -26,7 +26,7 @@ export function createLibraryFilters(
               }
             >
               <option value="">All folders</option>
-              {state.source?.catalog.folders.map((folder) => (
+              {state.source?.organisation.folders.map((folder) => (
                 <option key={folder.id} value={folder.id}>
                   {folder.title}
                 </option>

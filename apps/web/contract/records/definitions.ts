@@ -37,18 +37,27 @@ export interface DefinitionSession {
   getSnapshot(): DefinitionState;
   subscribe(listener: () => void): () => void;
   restore(workspace: string): Result<void>;
-  create(selection: DefinitionSelection, definition: Definition): Result<void>;
+  create(
+    selection: DefinitionSelection,
+    definition: Definition,
+  ): Result<void>;
   edit(
     selection: DefinitionSelection,
     definition: Definition,
     literalDraft?: LiteralDraft,
     editedPath?: readonly number[],
   ): Result<void>;
-  remove(selection: DefinitionSelection, definition: Definition): Result<void>;
+  remove(
+    selection: DefinitionSelection,
+    definition: Definition,
+  ): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
   /** A matching Authoring receipt may settle a retained request after reload/reconciliation. */
-  bindRequest(key: string, request: Request): Result<void>;
+  bindRequest(
+    key: string,
+    request: Request,
+  ): Result<void>;
   confirmed(requestId: string): void;
   released(requestId: string): void;
   /** Clears only a temporary Apply lock when no request was retained. */

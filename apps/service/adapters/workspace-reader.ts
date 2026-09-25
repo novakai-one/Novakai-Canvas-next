@@ -1,6 +1,6 @@
 import { projectCollection } from '../contract/api.js';
 import { validate as validateModel } from '@novakai/canvas-model';
-import { validate as validateLibrary } from '@novakai/canvas-library';
+import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import { failure } from '@novakai/canvas-authoring';
 import type { Snapshot, Result, StoredRecord } from '@novakai/canvas-authoring';
 import type { Collection } from '@novakai/canvas-model';
@@ -27,7 +27,10 @@ function collection(
   return { ok: true, value: [...records.value, checked.value] };
 }
 /** Complete workspace decoding composes owner validation; final Authoring validation supplies the exact stamped candidate. */
-function read(snapshot: Snapshot, owners: WorkspaceReaderOwners): Result<WorkspaceContents> {
+function read(
+  snapshot: Snapshot,
+  owners: WorkspaceReaderOwners,
+): Result<WorkspaceContents> {
   const live = snapshot.records.filter((record) => !record.deleted);
   const collections = live
     .filter((record) => record.key.kind === 'collection')
@@ -53,8 +56,8 @@ function checkedCatalogs(
   collections: readonly Collection[],
   owners: WorkspaceReaderOwners,
 ): Result<WorkspaceContents> {
-  const library = validateLibrary({
-    catalog,
+  const library = validateLibrarySnapshot({
+    organisation: catalog,
     collections: collections.map(projectCollection),
     recent: [],
   });

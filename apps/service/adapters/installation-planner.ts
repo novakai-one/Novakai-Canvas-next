@@ -42,7 +42,10 @@ function proposal(installation: Installation): Proposal {
   });
 }
 /** Private startup envelope cannot substitute arbitrary preset/workspace JSON; HTTP never exposes this planner. */
-function plan(request: Request, installation: Installation): Result<Proposal> {
+function plan(
+  request: Request,
+  installation: Installation,
+): Result<Proposal> {
   if (request.intent.kind !== 'change')
     return failure('invalid-input', 'bootstrap', 'Initialization requires a change request');
   if (!initialize.safeParse(request.intent.payload).success)

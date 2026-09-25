@@ -6,7 +6,10 @@ import { failure } from '../contract/errors.js';
 import type { BodyStream, HttpIo, StaticFile } from '../contract/records/server.js';
 import type { WireOutcome } from '../contract/records/protocol.js';
 /** Ambiguous duplicated headers are rejected by returning a value that cannot pass exact admission. */
-function header(request: IncomingMessage, name: string): string {
+function header(
+  request: IncomingMessage,
+  name: string,
+): string {
   const values = request.headersDistinct[name] ?? [];
   if (values.length > 1) return '<duplicate>';
   return values[0] ?? '';
@@ -45,7 +48,10 @@ function checkedChunk(input: unknown): Buffer {
   return input;
 }
 /** Fail before allocating a concatenated body beyond the advertised limit. */
-function checkedSize(previous: number, chunk: Buffer): number {
+function checkedSize(
+  previous: number,
+  chunk: Buffer,
+): number {
   const next = previous + chunk.byteLength;
   if (next > httpBodyLimit) throw new BodyRejected();
   return next;
@@ -90,7 +96,11 @@ function headers(response: ServerResponse): void {
   );
 }
 /** Version and generation accompany every result, including failure; uncertain clients reconcile the original receipt. */
-function json(response: ServerResponse, outcome: WireOutcome, generation: string): void {
+function json(
+  response: ServerResponse,
+  outcome: WireOutcome,
+  generation: string,
+): void {
   if (response.destroyed) return;
   headers(response);
   response.statusCode = status(outcome);
@@ -98,7 +108,10 @@ function json(response: ServerResponse, outcome: WireOutcome, generation: string
   response.end(JSON.stringify({ version: 1, generation, outcome: wireValue(outcome) }));
 }
 /** Static content is already constrained to the built web root; bytes are sent without interpolation. */
-function bytes(response: ServerResponse, file: StaticFile): void {
+function bytes(
+  response: ServerResponse,
+  file: StaticFile,
+): void {
   headers(response);
   response.statusCode = 200;
   response.setHeader('Content-Type', file.mediaType);

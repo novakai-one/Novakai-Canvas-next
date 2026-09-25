@@ -1,4 +1,7 @@
-/** Public Templates boundary; no parser, token resolver, store or private helper escapes. */
+/**
+ * Public entry point of Templates. It exports the facade, its schemas and its types only; parsers,
+ * token resolvers and internal helpers stay private.
+ */
 export { themeInput } from './records/preset.js';
 export { createTemplates } from './api.js';
 export { composeTemplates } from './compose.js';

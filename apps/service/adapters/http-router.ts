@@ -12,7 +12,10 @@ import type { Result } from '../contract/errors.js';
 import type { ResourceCommands } from '../contract/records/resource-commands.js';
 type ResourceHandler = (input: unknown) => Promise<WireOutcome>;
 /** Read one current collection without reinterpreting its semantic shape; Language/Presentation validate before their use. */
-async function source(call: ApiCall, owners: RouterBindings): Promise<WireOutcome> {
+async function source(
+  call: ApiCall,
+  owners: RouterBindings,
+): Promise<WireOutcome> {
   const scope = sourceScope(call.query);
   if (!scope.ok) return scope;
   return readSourceRecord(call, owners, scope.value);
@@ -43,7 +46,10 @@ function sourceScope(
   return validSourceScope(section, selected);
 }
 
-function bothScopes(section: string | undefined, object: string | undefined): boolean {
+function bothScopes(
+  section: string | undefined,
+  object: string | undefined,
+): boolean {
   return section !== undefined && object !== undefined;
 }
 
@@ -105,7 +111,10 @@ async function mutate(
   return owners.session.apply(admitted.value.request, call.signal, admitted.value.options);
 }
 /** Authentication precedes body consumption in the server; resource routes share its bounded JSON policy. */
-async function resource(call: ApiCall, handler: ResourceHandler): Promise<WireOutcome> {
+async function resource(
+  call: ApiCall,
+  handler: ResourceHandler,
+): Promise<WireOutcome> {
   const policy = resourcePolicy(call);
   if (!policy.ok) return policy;
   return handler(policy.value);
@@ -205,7 +214,10 @@ export function createHttpRouter(owners: RouterBindings): ApiRouter {
   };
 }
 
-async function exportRoute(call: ApiCall, owners: RouterBindings): Promise<RouteOutcome> {
+async function exportRoute(
+  call: ApiCall,
+  owners: RouterBindings,
+): Promise<RouteOutcome> {
   const checked = resourcePolicy(call);
   if (!checked.ok) return checked;
   if (owners.exporter === undefined)

@@ -27,13 +27,20 @@ function accepted<T>(result: Result<T, FailureSource>): T {
   return result.value;
 }
 /** Startup candidates are fixed trusted installation data; ordinary requests read only authoritative stored presets. */
-function presets(request: Request, snapshot: Snapshot, owners: ResourceOwners): Catalog {
+function presets(
+  request: Request,
+  snapshot: Snapshot,
+  owners: ResourceOwners,
+): Catalog {
   if (request.intent.kind !== 'change') return storedPresets(snapshot, owners);
   if (request.intent.planner === 'bootstrap') return owners.installation;
   return storedPresets(snapshot, owners);
 }
 /** Complete catalog decoding checks hashes and dependency closure, including versions not selected by this request. */
-function storedPresets(snapshot: Snapshot, owners: ResourceOwners): Catalog {
+function storedPresets(
+  snapshot: Snapshot,
+  owners: ResourceOwners,
+): Catalog {
   return accepted(
     owners.templates.readCatalog(
       snapshot.records
@@ -62,7 +69,10 @@ function binding(preset: Preset): Collection['theme'] {
   ).theme;
 }
 /** Exact pins and latest aliases are distinct keys; Templates owns version ordering for the latter. */
-function themes(catalog: Catalog, owners: ResourceOwners): ResolvedResources['themes'] {
+function themes(
+  catalog: Catalog,
+  owners: ResourceOwners,
+): ResolvedResources['themes'] {
   const records = catalog.filter((item) => item.kind === 'theme');
   const exact = records.map(
     (item) => [`${item.id}@${item.version}#sha256:${item.digest}`, binding(item)] as const,
@@ -77,7 +87,10 @@ interface AuthoredResources {
   readonly requests: readonly ResourceRequest[];
 }
 /** Only a checked DSL envelope contributes authored resource metadata; no arbitrary JSON field is interpreted as a file path. */
-function authored(request: Request, owners: ResourceOwners): AuthoredResources {
+function authored(
+  request: Request,
+  owners: ResourceOwners,
+): AuthoredResources {
   if (request.intent.kind !== 'change') return { collection: null, requests: [] };
   return authoredChange(request.intent, owners);
 }
@@ -103,7 +116,10 @@ function authoredModel(
   return { collection: null, requests: [] };
 }
 /** Preset acquisition distinguishes theme fonts from recipe asset declarations without inventing collection metadata. */
-function presetAuthored(input: unknown, owners: ResourceOwners): AuthoredResources {
+function presetAuthored(
+  input: unknown,
+  owners: ResourceOwners,
+): AuthoredResources {
   const payload = z
     .looseObject({
       admission: z.looseObject({
@@ -117,7 +133,10 @@ function presetAuthored(input: unknown, owners: ResourceOwners): AuthoredResourc
   return { collection: null, requests: parsed.resources };
 }
 /** Existing bindings are collection-local; identical aliases in another collection never leak into this request. */
-function priorAssets(id: string | null, snapshot: Snapshot): Collection['assets'] {
+function priorAssets(
+  id: string | null,
+  snapshot: Snapshot,
+): Collection['assets'] {
   const record = snapshot.records.find(
     (item) => item.key.kind === 'collection' && item.key.id === id && !item.deleted,
   );
@@ -227,7 +246,11 @@ function pinnedThemes(
   return { ...available, ...Object.fromEntries(pins) };
 }
 /** Hold actual bytes for current content, history, installation fonts and submitted bindings until physical commit settles. */
-function coverage(request: Request, snapshot: Snapshot, catalog: Catalog): readonly Digest[] {
+function coverage(
+  request: Request,
+  snapshot: Snapshot,
+  catalog: Catalog,
+): readonly Digest[] {
   const fontDigests = catalog
     .filter((item) => item.kind === 'theme')
     .flatMap((item) => item.payload.fonts);
@@ -242,7 +265,11 @@ function coverage(request: Request, snapshot: Snapshot, catalog: Catalog): reado
     .map((value) => digest.parse(value));
 }
 /** Resolve immutable aliases and conservative read dependencies; unrelated data is not granted write scope. */
-function select(request: Request, snapshot: Snapshot, owners: ResourceOwners): ResourceSelection {
+function select(
+  request: Request,
+  snapshot: Snapshot,
+  owners: ResourceOwners,
+): ResourceSelection {
   const catalog = presets(request, snapshot, owners);
   const resolvedThemes = pinnedThemes(request, themes(catalog, owners));
   const source = authored(request, owners);

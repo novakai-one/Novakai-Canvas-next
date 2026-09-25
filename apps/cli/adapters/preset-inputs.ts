@@ -74,7 +74,10 @@ function checkedResult(checked: ReturnType<typeof requestSchema.safeParse>): Res
   return { ok: true, value: checked.data };
 }
 /** Expansion requires an exact recipe pin and explicit fresh namespace; Language remaps the resulting editable document. */
-function expansion(pin: string, namespace: string): Result<unknown> {
+function expansion(
+  pin: string,
+  namespace: string,
+): Result<unknown> {
   const exact = /^([^@]+)@([^#]+)#sha256:([a-f0-9]{64})$/.exec(pin);
   if (!exact || namespace.length === 0)
     return failure(

@@ -21,7 +21,7 @@ import {
   type ResourceRequest,
   type LoweredIntent,
 } from '@novakai/canvas-language';
-import { validate as validateLibrary } from '../../../capability/library/contract/index.js';
+import { validateLibrarySnapshot } from '../../../capability/library/contract/index.js';
 import { digest, validate, plan, stage, type Collection } from '@novakai/canvas-model';
 import { createReactBindings } from '../../../capability/presentation/contract/index.js';
 import {
@@ -177,7 +177,10 @@ async function themes(
   return admitTheme(filePath.parse(resolve(options.themeFile)), catalog, env, owners);
 }
 /** Pins are copied from admitted catalog records; Language and Presentation both verify them. */
-function resources(catalog: Catalog, assets: Collection['assets'] = []): ResolvedResources {
+function resources(
+  catalog: Catalog,
+  assets: Collection['assets'] = [],
+): ResolvedResources {
   return {
     themes: Object.fromEntries(
       catalog
@@ -303,7 +306,11 @@ function retained(
   ];
 }
 /** Document adapters translate owner values into Export's public shape; Export owns terminal error reporting. */
-function documents(env: Environment, catalog: Catalog, assets: Collection['assets']): Documents {
+function documents(
+  env: Environment,
+  catalog: Catalog,
+  assets: Collection['assets'],
+): Documents {
   return {
     read: (value) => ({ ok: true, value: accepted(validate(value)) }),
     print: (collection) => ({
@@ -411,8 +418,14 @@ async function renderEnvironment(
         collections: [collection],
         presets: catalog,
         library: accepted(
-          validateLibrary({
-            catalog: { schemaVersion: 1, id: 'headless', revision: 0, folders: [], entries: [] },
+          validateLibrarySnapshot({
+            organisation: {
+              schemaVersion: 1,
+              id: 'headless',
+              revision: 0,
+              folders: [],
+              entries: [],
+            },
             collections: [],
             recent: [],
           }),
@@ -461,7 +474,10 @@ async function renderEnvironment(
 }
 
 /** Bare collection IDs are resolved from shipped semantic sources; filesystem paths remain explicit. */
-async function sourceFromId(options: HeadlessOptions, env: Environment): Promise<SourceFile> {
+async function sourceFromId(
+  options: HeadlessOptions,
+  env: Environment,
+): Promise<SourceFile> {
   const root = join(options.root, 'resources');
   const names = (await readdir(root, { recursive: true }))
     .filter((name) => name.endsWith('.canvas'))
@@ -511,7 +527,10 @@ function resourceInspector(retained: readonly Resource[]): Resources {
   };
 }
 /** Byte equality and complete metadata equality prevent a new input from borrowing a retained identity. */
-function sameResource(left: Resource, right: Resource): boolean {
+function sameResource(
+  left: Resource,
+  right: Resource,
+): boolean {
   return (
     left.kind === right.kind &&
     left.digest === right.digest &&

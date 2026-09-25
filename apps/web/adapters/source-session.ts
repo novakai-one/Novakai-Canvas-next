@@ -32,14 +32,20 @@ export function createSourceController(bindings: SourceBindings): SourceControll
   /** Preserve drafts on owner/provider failure and let the shell display the correction action. */
   const report = bindings.report;
   /** Receipt acknowledgement applies only to this source editor's submitted collection and generation. */
-  function confirmed(submission: Submission, receipt: Receipt): void {
+  function confirmed(
+    submission: Submission,
+    receipt: Receipt,
+  ): void {
     if (!isSourceSubmission(submission.request)) return;
     sourceReceipt = receipt;
     update({ sourceDirty: remainingSourceDraft(submission.request, submission.sourceEdit) });
     retainSource();
   }
   /** Newer typing can advance its base only across its own confirmed commit, never across a foreign edit. */
-  function rebaseConfirmedSource(snapshot: Snapshot, generation: string): void {
+  function rebaseConfirmedSource(
+    snapshot: Snapshot,
+    generation: string,
+  ): void {
     const receipt = sourceReceipt;
     if (receipt === null) return;
     const version = receipt.versions.find(
@@ -54,7 +60,10 @@ export function createSourceController(bindings: SourceBindings): SourceControll
     retainSource();
   }
   /** Geometry and creation receipts cannot clear an unrelated source draft. */
-  function remainingSourceDraft(request: Request, sourceEdit: number): boolean {
+  function remainingSourceDraft(
+    request: Request,
+    sourceEdit: number,
+  ): boolean {
     if (!isSourceSubmission(request)) return state.sourceDirty;
     return state.sourceDirty && state.sourceEdit !== sourceEdit;
   }
@@ -165,7 +174,10 @@ export function createSourceController(bindings: SourceBindings): SourceControll
     restoreCheckedSource(stored.value, workspace);
   }
   /** Reject cross-workspace recovery records even when their source and snapshot are individually valid. */
-  function restoreCheckedSource(input: unknown, workspace: string): void {
+  function restoreCheckedSource(
+    input: unknown,
+    workspace: string,
+  ): void {
     const checked = bindings.inputs.sourceRecovery(input);
     if (!checked.ok) {
       report(checked.error);

@@ -81,7 +81,10 @@ function admitIdentity(
   return identity.ok ? { ok: true, value: collection } : identity;
 }
 
-function hasDefinition(collection: Collection, id: DefinitionDraft['definition']['id']): boolean {
+function hasDefinition(
+  collection: Collection,
+  id: DefinitionDraft['definition']['id'],
+): boolean {
   return collection.definitions.some((item) => item.id === id);
 }
 
@@ -141,7 +144,10 @@ function createIdentity(original: boolean): Result<void> {
     : { ok: true, value: undefined };
 }
 
-function existingIdentity(operation: 'replace' | 'remove', original: boolean): Result<void> {
+function existingIdentity(
+  operation: 'replace' | 'remove',
+  original: boolean,
+): Result<void> {
   return original
     ? { ok: true, value: undefined }
     : failure('invalid-definition-draft', `The ${operation} definition identity is invalid`);

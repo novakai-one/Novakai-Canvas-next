@@ -18,5 +18,8 @@ export interface FeasibilityOwners {
   readonly producer: DiagramProducer;
 }
 export interface ChangedCollections {
-  read(snapshot: Snapshot, changed: readonly RecordKey[]): AuthoringResult<readonly Collection[]>;
+  read(
+    snapshot: Snapshot,
+    changed: readonly RecordKey[],
+  ): AuthoringResult<readonly Collection[]>;
 }

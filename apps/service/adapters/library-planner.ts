@@ -1,9 +1,9 @@
-import { plan as planLibrary } from '@novakai/canvas-library';
+import { planOrganisation } from '@novakai/canvas-library';
 import { failure, plannerId, proposalSchema } from '@novakai/canvas-authoring';
 import type { IntentPlanner, Request, Snapshot, Proposal, Result } from '@novakai/canvas-authoring';
 import { libraryCommand } from '../contract/records/commands.js';
 import type { WorkspaceReader } from '../contract/records/workspace.js';
-/** Organization commands are interpreted only by Library; the host cannot write an arbitrary catalog payload. */
+/** Organisation commands are interpreted only by Library; the host cannot write an arbitrary organisation record. */
 function propose(
   request: Request,
   snapshot: Snapshot,
@@ -14,17 +14,17 @@ function propose(
   const command = libraryCommand.safeParse(request.intent.payload);
   if (!command.success)
     return failure('invalid-input', 'library', 'Library changes require a bounded change batch');
-  return planOrganization(command.data.changes, snapshot, workspace);
+  return planOrganisationChange(command.data.changes, snapshot, workspace);
 }
 /** The complete inventory checks membership and folder invariants before any write is proposed. */
-function planOrganization(
+function planOrganisationChange(
   changes: readonly unknown[],
   snapshot: Snapshot,
   workspace: WorkspaceReader,
 ): Result<Proposal> {
   const current = workspace.read(snapshot);
   if (!current.ok) return current;
-  const planned = planLibrary(current.value.library, changes);
+  const planned = planOrganisation({ snapshot: current.value.library, changes });
   if (!planned.ok)
     return failure(
       'invariant-violation',
@@ -35,8 +35,11 @@ function planOrganization(
     );
   return checkedProposal(planned.value.candidate, snapshot);
 }
-/** Collection inventory dependencies participate in conditional admission; catalog changes never rewrite diagrams. */
-function checkedProposal(catalog: unknown, snapshot: Snapshot): Result<Proposal> {
+/** Collection inventory dependencies participate in conditional admission; organisation changes never rewrite diagrams. */
+function checkedProposal(
+  organisation: unknown,
+  snapshot: Snapshot,
+): Result<Proposal> {
   const catalogs = snapshot.records.filter(
     (record) => record.key.kind === 'catalog' && !record.deleted,
   );
@@ -44,11 +47,11 @@ function checkedProposal(catalog: unknown, snapshot: Snapshot): Result<Proposal>
   if (current === undefined)
     return failure('invariant-violation', 'catalog', 'A library catalog is required');
   const parsed = proposalSchema.safeParse({
-    writes: [{ kind: 'put', key: current.key, value: catalog, resources: [] }],
+    writes: [{ kind: 'put', key: current.key, value: organisation, resources: [] }],
     reads: snapshot.records
       .filter((record) => ['collection', 'catalog'].includes(record.key.kind))
       .map((record) => ({ key: record.key, version: record.version })),
-    diff: { kind: 'library-organization' },
+    diff: { kind: 'library-organisation' },
     warnings: [],
   });
   if (!parsed.success)

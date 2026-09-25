@@ -27,7 +27,10 @@ function accepted<T>(result: Result<T, FailureSource>): T {
   return result.value;
 }
 /** Read the normalized admitted font bytes and family that both measurement and browser/export must use. */
-function font(digest: string, owners: RenderResourceOwners): FontSource {
+function font(
+  digest: string,
+  owners: RenderResourceOwners,
+): FontSource {
   const blob = accepted(owners.assets.resolve(digest));
   return fontSource.parse({
     digest,
@@ -37,7 +40,10 @@ function font(digest: string, owners: RenderResourceOwners): FontSource {
   });
 }
 /** Image dimensions come from Assets' mechanical admission, never authored pixel hints. */
-function asset(digest: string, owners: RenderResourceOwners): VisualAsset {
+function asset(
+  digest: string,
+  owners: RenderResourceOwners,
+): VisualAsset {
   const blob = accepted(owners.assets.resolve(digest));
   return visualAsset.parse({
     digest,

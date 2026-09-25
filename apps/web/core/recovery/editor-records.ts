@@ -10,7 +10,10 @@ import type { ObjectDraft } from '../../contract/records/inspector.js';
 import type { WireDraft } from '../../contract/records/wire-editor.js';
 import type { Snapshot, StoredRecord } from '../../contract/records/owners.js';
 
-function rejected(code: string, message: string): Extract<Result<never>, { ok: false }> {
+function rejected(
+  code: string,
+  message: string,
+): Extract<Result<never>, { ok: false }> {
   return {
     ok: false,
     error: {
@@ -29,7 +32,10 @@ export function baseWorkspace(base: EditingBase): Snapshot['workspace'] {
   return base.workspace;
 }
 
-export function collectionRecord(base: EditingBase, collection: string): Result<StoredRecord> {
+export function collectionRecord(
+  base: EditingBase,
+  collection: string,
+): Result<StoredRecord> {
   const matches = records(base).filter(
     (item) => item.key.kind === 'collection' && item.key.id === collection,
   );
@@ -68,7 +74,10 @@ function captureExisting(
     );
   return { ok: true, value: base };
 }
-function captureSnapshot(base: Snapshot, collection: string): Result<CapturedCollectionBase> {
+function captureSnapshot(
+  base: Snapshot,
+  collection: string,
+): Result<CapturedCollectionBase> {
   const record = collectionRecord(base, collection);
   if (!record.ok) return record;
   return {
@@ -86,7 +95,10 @@ function liveCollection(record: StoredRecord): boolean {
   if (record.key.kind !== 'collection') return false;
   return !record.deleted;
 }
-function isCapturedCollection(record: StoredRecord, collection: string): boolean {
+function isCapturedCollection(
+  record: StoredRecord,
+  collection: string,
+): boolean {
   if (record.key.kind !== 'collection') return false;
   if (record.key.id !== collection) return false;
   return !record.deleted;

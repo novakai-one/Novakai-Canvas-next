@@ -3,7 +3,10 @@ import type { ChangeChannel, CommittedChange } from '../contract/ports/notificat
 import { failure } from '@novakai/canvas-authoring';
 import type { Result } from '@novakai/canvas-authoring';
 /** Listener failure never reverses a committed transaction; Authoring returns the receipt with delivery recovery semantics. */
-function publish(emitter: EventEmitter, change: CommittedChange): Result<void> {
+function publish(
+  emitter: EventEmitter,
+  change: CommittedChange,
+): Result<void> {
   try {
     emitter.emit('committed', change);
     return { ok: true, value: undefined };

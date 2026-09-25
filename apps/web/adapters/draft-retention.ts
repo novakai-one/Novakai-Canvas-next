@@ -2,7 +2,11 @@ import type { DraftRetention } from '../contract/ports/workspace.js';
 import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 /** Browser quota/privacy failure is visible. The runtime refuses a submission whose pending request could not be retained. */
-function write(storage: Storage, key: string, value: unknown): Result<void> {
+function write(
+  storage: Storage,
+  key: string,
+  value: unknown,
+): Result<void> {
   try {
     storage.setItem(`novakai.canvas.${key}`, JSON.stringify(value));
     return { ok: true, value: undefined };
@@ -11,7 +15,10 @@ function write(storage: Storage, key: string, value: unknown): Result<void> {
   }
 }
 /** Recovered content remains unknown until the owning editor/Authoring schema admits it. */
-function read(storage: Storage, key: string): Result<unknown> {
+function read(
+  storage: Storage,
+  key: string,
+): Result<unknown> {
   try {
     const text = storage.getItem(`novakai.canvas.${key}`);
     if (text === null) return { ok: true, value: null };
@@ -22,7 +29,10 @@ function read(storage: Storage, key: string): Result<unknown> {
   }
 }
 /** Clear only a confirmed/discarded host key; other collections and preferences are unaffected. */
-function remove(storage: Storage, key: string): Result<void> {
+function remove(
+  storage: Storage,
+  key: string,
+): Result<void> {
   try {
     storage.removeItem(`novakai.canvas.${key}`);
     return { ok: true, value: undefined };

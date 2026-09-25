@@ -7,29 +7,45 @@ import type {
   PanelSectionDefinition,
 } from '../../contract/panel-types.js';
 /** Breakpoint thresholds are injected from Design System's resolved variables, matching CSS without another numeric authority. */
-export function panelMode(width: number, sizing: Pick<PanelSizing, 'medium' | 'large'>): PanelMode {
+export function panelMode(
+  width: number,
+  sizing: Pick<PanelSizing, 'medium' | 'large'>,
+): PanelMode {
   if (width >= sizing.large) return 'docked';
   return width >= sizing.medium ? 'overlay' : 'sheet';
 }
 /** Opening one transient panel replaces the prior overlay; desktop panels retain independent open state. */
-export function openPanel(state: PanelState, side: PanelId, open: boolean): PanelState {
+export function openPanel(
+  state: PanelState,
+  side: PanelId,
+  open: boolean,
+): PanelState {
   if (state.mode === 'docked')
     return { ...state, docked: { ...state.docked, [side]: open }, lastOpened: side };
   return { ...state, overlay: open ? side : null, lastOpened: side };
 }
 /** Responsive changes retain layout and editor identity; only the most recently opened desktop pane becomes modal. */
-export function resizePanels(state: PanelState, mode: PanelMode): PanelState {
+export function resizePanels(
+  state: PanelState,
+  mode: PanelMode,
+): PanelState {
   if (state.mode === mode) return state;
   return { ...state, mode, overlay: responsiveOverlay(state, mode) };
 }
 /** Initial narrow layout stays closed; transitioning from desktop establishes at most one modal panel. */
-function responsiveOverlay(state: PanelState, mode: PanelMode): PanelId | null {
+function responsiveOverlay(
+  state: PanelState,
+  mode: PanelMode,
+): PanelId | null {
   if (mode === 'docked') return null;
   if (state.mode !== 'docked') return state.overlay;
   return lastDockedPanel(state);
 }
 /** Consumers ask one owner whether a side is visible, instead of storing duplicate inspector booleans. */
-export function panelVisible(state: PanelState, side: PanelId): boolean {
+export function panelVisible(
+  state: PanelState,
+  side: PanelId,
+): boolean {
   if (state.mode === 'docked') return state.docked[side];
   return state.overlay === side;
 }
@@ -104,7 +120,11 @@ export function panelGeometry(
   };
 }
 /** Closed panes reserve no canvas space. */
-function visibleWidth(state: PanelState, sizing: PanelSizing, side: PanelId): number {
+function visibleWidth(
+  state: PanelState,
+  sizing: PanelSizing,
+  side: PanelId,
+): number {
   if (!panelVisible(state, side)) return 0;
   return Math.max(sizing.sides[side].minimum, state.preferences.widths[side]);
 }

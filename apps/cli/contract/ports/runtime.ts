@@ -10,7 +10,10 @@ import type { Command } from '../records/command.js';
 import type { ParsedSource } from '@novakai/canvas-language';
 export interface Transport {
   get(path: string): Promise<Result<TransportResponse>>;
-  post(path: string, body: unknown): Promise<Result<TransportResponse>>;
+  post(
+    path: string,
+    body: unknown,
+  ): Promise<Result<TransportResponse>>;
 }
 export interface RequestDraft {
   readonly generation: string;
@@ -21,7 +24,10 @@ export interface RequestFiles {
   source(path: string): Promise<Result<string>>;
   save(draft: RequestDraft): Promise<Result<void>>;
   read(id: string): Promise<Result<RequestDraft>>;
-  output(path: string, text: string): Promise<Result<void>>;
+  output(
+    path: string,
+    text: string,
+  ): Promise<Result<void>>;
 }
 export interface SemanticInputs extends ResourceSyntax {
   profileParse(source: string): Result<ParsedSource>;
@@ -29,10 +35,18 @@ export interface SemanticInputs extends ResourceSyntax {
   admissionDigest(input: unknown): Result<string>;
   backup(input: unknown): Result<ByteBackup>;
   snapshot(input: unknown): Result<Snapshot>;
-  request(command: Command, source: string, snapshot: Snapshot, id: string): Result<Request>;
+  request(
+    command: Command,
+    source: string,
+    snapshot: Snapshot,
+    id: string,
+  ): Result<Request>;
   readout(input: unknown): Result<string>;
   collections(input: unknown): Result<string>;
-  receipt(input: unknown, expected: ReceiptExpectation): Result<string>;
+  receipt(
+    input: unknown,
+    expected: ReceiptExpectation,
+  ): Result<string>;
 }
 /** Narrow effects are bound once at CLI composition. Tests exercise the same flow without booting a process or server. */
 export interface CliDependencies {

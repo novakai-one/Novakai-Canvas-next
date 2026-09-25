@@ -1,4 +1,4 @@
-import { verifyLibraryOrganization } from './library-organization.js';
+import { verifyLibraryOrganisation } from './library-organisation.js';
 import { it, expect, assert } from 'vitest';
 import { requestSchema } from '@novakai/canvas-authoring';
 import { validate } from '@novakai/canvas-model';
@@ -66,7 +66,7 @@ it('host 2 atomically registers DSL collections, rejects stale changes and retur
     expect(await session.apply(invalid, signal)).toMatchObject({ ok: false });
     expect(await session.read()).toEqual(current);
     expect(await session.receipt(invalid.request)).toEqual({ ok: true, value: null });
-    await verifyLibraryOrganization(session, current.value);
+    await verifyLibraryOrganisation(session, current.value);
   } finally {
     await fixture.close();
   }

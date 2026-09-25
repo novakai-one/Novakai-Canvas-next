@@ -29,7 +29,10 @@ async function request(
   }
 }
 /** Events only prompt a fresh snapshot. Event payloads never become canonical UI records. */
-function changes(changed: () => void, connection: (connected: boolean) => void): () => void {
+function changes(
+  changed: () => void,
+  connection: (connected: boolean) => void,
+): () => void {
   const stream = new EventSource('/api/v1/events', { withCredentials: true });
   stream.addEventListener('connected', () => {
     connection(true);

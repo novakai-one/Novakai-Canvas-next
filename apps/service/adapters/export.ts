@@ -61,7 +61,10 @@ export async function createWorkspaceExporter(
 }
 
 export interface ExportHandler {
-  invoke(input: unknown, signal: AbortSignal): Promise<RouteOutcome>;
+  invoke(
+    input: unknown,
+    signal: AbortSignal,
+  ): Promise<RouteOutcome>;
 }
 
 interface ExportInput {
@@ -604,7 +607,10 @@ function markdownSource(
   return markdownCompletion(source, signal);
 }
 
-function markdownCompletion(source: string, signal: AbortSignal): ExportResult<string> {
+function markdownCompletion(
+  source: string,
+  signal: AbortSignal,
+): ExportResult<string> {
   return signal.aborted ? cancelledExport() : { ok: true, value: source };
 }
 
@@ -612,7 +618,10 @@ function cancelledExport(): ExportResult<never> {
   return rejected('cancelled', 'export', 'Export was cancelled');
 }
 
-function markdownFile(input: ExportInput, source: string): RouteOutcome {
+function markdownFile(
+  input: ExportInput,
+  source: string,
+): RouteOutcome {
   const scope = input.scope.kind === 'all' ? 'all' : input.scope.id;
   return {
     kind: 'bytes',
@@ -646,7 +655,10 @@ function dslSource(
     : documents(owners).print(collection);
 }
 
-function dslFile(input: ExportInput, source: string): RouteOutcome {
+function dslFile(
+  input: ExportInput,
+  source: string,
+): RouteOutcome {
   return {
     kind: 'bytes',
     file: {
@@ -689,7 +701,10 @@ function releaseLease(lease: ReadLease): ExportResult<void> {
   }
 }
 
-function settledFailure<T>(primary: ExportResult<T>, cleanup: ExportResult<void>): ExportResult<T> {
+function settledFailure<T>(
+  primary: ExportResult<T>,
+  cleanup: ExportResult<void>,
+): ExportResult<T> {
   if (cleanup.ok) return primary;
   if (primary.ok) return cleanup;
   return { ok: false, error: { ...primary.error, cleanup: cleanup.error } };

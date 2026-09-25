@@ -1,5 +1,5 @@
 import { it, expect, assert } from 'vitest';
-import { validate as validateLibrary } from '@novakai/canvas-library';
+import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import { snapshotSchema } from '@novakai/canvas-authoring';
 import { createLibraryReader } from '../adapters/library-reader.js';
 it('preserves Library diagnostics through the browser reader and leaves success unchanged', () => {
@@ -13,7 +13,7 @@ it('preserves Library diagnostics through the browser reader and leaves success 
     ],
     entries: [],
   };
-  const expected = validateLibrary({ catalog, collections: [], recent: [] });
+  const expected = validateLibrarySnapshot({ organisation: catalog, collections: [], recent: [] });
   assert(!expected.ok);
   expect(expected.error.diagnostics.length).toBeGreaterThanOrEqual(2);
   const snapshot = snapshotSchema.parse({
@@ -40,5 +40,7 @@ it('preserves Library diagnostics through the browser reader and leaves success 
     [],
     [],
   );
-  expect(accepted).toEqual(validateLibrary({ catalog: valid, collections: [], recent: [] }));
+  expect(accepted).toEqual(
+    validateLibrarySnapshot({ organisation: valid, collections: [], recent: [] }),
+  );
 });

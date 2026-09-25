@@ -57,7 +57,10 @@ function embed(request: NestedSupportRequest): NestedEmbeddingResult {
 /** The ordinary builder supplies its once-selected input and support-only observation.
  * No placement, routing, allocation, network or projection is repeated here.
  */
-export function prepareNestedEmbedding(input: Input, scene: NestedSupportRequest['scene']) {
+export function prepareNestedEmbedding(
+  input: Input,
+  scene: NestedSupportRequest['scene'],
+) {
   return materialize(input, scene, compileSupportInput(input, scene));
 }
 function materialize(

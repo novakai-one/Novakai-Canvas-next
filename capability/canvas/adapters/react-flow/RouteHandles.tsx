@@ -23,7 +23,10 @@ export function RouteHandles({
     actions.dispatch({ kind: 'begin', id, gesture: 'route', targets: [edge.target] });
   }
   /** Translate browser client coordinates into the section-local route coordinate system exactly once. */
-  function move(event: PointerEvent<SVGCircleElement>, index: number): void {
+  function move(
+    event: PointerEvent<SVGCircleElement>,
+    index: number,
+  ): void {
     const id = active.current;
     if (id === null) return;
     const world = flow.screenToFlowPosition({ x: event.clientX, y: event.clientY });
@@ -63,7 +66,10 @@ export function RouteHandles({
     actions.dispatch({ kind: 'finish', id });
   }
   /** Interior points can move or be removed; endpoints remain owned by their chosen attachment sides. */
-  function key(event: KeyboardEvent<SVGCircleElement>, index: number): void {
+  function key(
+    event: KeyboardEvent<SVGCircleElement>,
+    index: number,
+  ): void {
     event.stopPropagation();
     const direction: Readonly<Record<string, Point>> = {
       ArrowLeft: { x: -nudge, y: 0 },
@@ -84,7 +90,10 @@ export function RouteHandles({
     deleteBend(event, index);
   }
   /** Delete is confined to the focused bend; it cannot propagate as appearance deletion. */
-  function deleteBend(event: KeyboardEvent<SVGCircleElement>, index: number): void {
+  function deleteBend(
+    event: KeyboardEvent<SVGCircleElement>,
+    index: number,
+  ): void {
     if (event.key !== 'Delete' && event.key !== 'Backspace') return;
     event.preventDefault();
     commit(edge.wire.points.filter((_point, position) => position !== index));

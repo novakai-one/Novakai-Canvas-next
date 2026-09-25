@@ -17,7 +17,10 @@ type Axis = Anchor['axis'];
 const dimensions = { x: 'width', y: 'height' } as const;
 
 /** Construction aliases collapse only shared spans/contact endpoints, not coincident objects. */
-export function supportStructure(graph: SupportGraph, input: Input) {
+export function supportStructure(
+  graph: SupportGraph,
+  input: Input,
+) {
   const lines = new Map<string, Anchor>();
   input.populations.forEach((p) => {
     const road = required(input.final, p.roadId),

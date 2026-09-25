@@ -10,12 +10,19 @@ import { pinnedFor, settled } from './movement-capture.js';
 
 type GroupId = Section['groups'][number]['id'];
 /** A section target means "no group"; a group node target names one of this section's groups. */
-function groupOf(into: Target, section: Section, document: RenderDocument): GroupId | undefined {
+function groupOf(
+  into: Target,
+  section: Section,
+  document: RenderDocument,
+): GroupId | undefined {
   if (into.kind === 'section') return undefined;
   const id = nodeFor(into, document).measured.groupId;
   return section.groups.find((group) => group.id === id)?.id ?? missing(into.id);
 }
-function withGroup(appearance: Appearance, group: GroupId | undefined): Appearance {
+function withGroup(
+  appearance: Appearance,
+  group: GroupId | undefined,
+): Appearance {
   const rest = { ...appearance };
   delete rest.group;
   return group === undefined ? rest : { ...rest, group };

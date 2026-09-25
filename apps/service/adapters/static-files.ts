@@ -4,7 +4,10 @@ import type { Result } from '../contract/errors.js';
 import { failure } from '../contract/errors.js';
 import type { StaticFile, StaticFiles } from '../contract/records/server.js';
 /** A checked real path must remain below the built root, including when an installation contains symlinks. */
-async function locate(root: string, path: string): Promise<Result<string>> {
+async function locate(
+  root: string,
+  path: string,
+): Promise<Result<string>> {
   const directory = await realpath(root);
   const file = await realpath(resolve(directory, `.${path}`));
   if (!file.startsWith(`${directory}${sep}`))
@@ -12,7 +15,10 @@ async function locate(root: string, path: string): Promise<Result<string>> {
   return { ok: true, value: file };
 }
 /** Only passive build formats are served. Repository sources, credentials and arbitrary document types are not routes. */
-async function read(root: string, pathname: string): Promise<Result<StaticFile>> {
+async function read(
+  root: string,
+  pathname: string,
+): Promise<Result<StaticFile>> {
   try {
     const path = resourcePath(pathname);
     const location = await locate(root, path);

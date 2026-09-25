@@ -73,7 +73,10 @@ async function withSample(test: (service: WorkspaceSession) => Promise<void>): P
     await fixture.close();
   }
 }
-async function opened(client: ServiceClient, retention: DraftRetention = memoryRetention()) {
+async function opened(
+  client: ServiceClient,
+  retention: DraftRetention = memoryRetention(),
+) {
   const human = controller(client, retention);
   await human.start();
   await human.open('sample');

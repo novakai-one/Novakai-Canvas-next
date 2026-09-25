@@ -1,7 +1,11 @@
 import type { Change, Relationship, WireAppearance } from '../../contract/records/owners.js';
 import type { WireDraft, WireEdit, EditedWire } from '../../contract/records/wire-editor.js';
 /** Shared relationship plus local section identify a wire form without parsing generated scene IDs. */
-export function wireDraftKey(collection: string, section: string, relationship: string): string {
+export function wireDraftKey(
+  collection: string,
+  section: string,
+  relationship: string,
+): string {
   return JSON.stringify([collection, section, relationship]);
 }
 /** Replay against the captured version, even after an agent changes the displayed collection. */
@@ -25,31 +29,49 @@ const operations: Readonly<
   'automatic-route': automatic,
 };
 /** Each operation preserves every field outside its declared scope. */
-function applyWireEdit(current: EditedWire, edit: WireEdit): EditedWire {
+function applyWireEdit(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   return operations[edit.kind](current, edit);
 }
 /** A blank label can be typed and recovered; Model rejects it at apply. */
-function text(current: EditedWire, edit: WireEdit): EditedWire {
+function text(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'label' && edit.kind !== 'guard' && edit.kind !== 'effect') return current;
   return { ...current, relationship: { ...current.relationship, [edit.kind]: edit.value } };
 }
 /** Changing notation does not silently discard cardinalities or other semantics. */
-function relationshipKind(current: EditedWire, edit: WireEdit): EditedWire {
+function relationshipKind(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'relationship-kind') return current;
   return { ...current, relationship: { ...current.relationship, kind: edit.value } };
 }
 /** Line style belongs to the shared relationship and is visible in every appearance. */
-function style(current: EditedWire, edit: WireEdit): EditedWire {
+function style(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'style') return current;
   return { ...current, relationship: { ...current.relationship, style: edit.value } };
 }
 /** Endpoints are stable object/member identities; layout chooses their pixel anchors. */
-function endpoint(current: EditedWire, edit: WireEdit): EditedWire {
+function endpoint(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'endpoint') return current;
   return { ...current, relationship: { ...current.relationship, [edit.side]: edit.value } };
 }
 /** Clearing multiplicity removes the optional property rather than storing an invalid sentinel. */
-function cardinality(current: EditedWire, edit: WireEdit): EditedWire {
+function cardinality(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'cardinality') return current;
   return { ...current, relationship: withCardinality(current.relationship, edit) };
 }
@@ -64,17 +86,26 @@ function withCardinality(
   return { ...remaining, [edit.side]: edit.value };
 }
 /** Routing style is local to the selected diagram, retaining authored bends until explicitly reset. */
-function route(current: EditedWire, edit: WireEdit): EditedWire {
+function route(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'route') return current;
   return { ...current, wire: { ...current.wire, route: edit.value } };
 }
 /** Attachment sides constrain the local router, not the semantic endpoints. */
-function side(current: EditedWire, edit: WireEdit): EditedWire {
+function side(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'side') return current;
   return { ...current, wire: { ...current.wire, [edit.side]: edit.value } };
 }
 /** A lock is valid only with manual points; the form disables it until bends exist and Model enforces the invariant. */
-function locked(current: EditedWire, edit: WireEdit): EditedWire {
+function locked(
+  current: EditedWire,
+  edit: WireEdit,
+): EditedWire {
   if (edit.kind !== 'locked') return current;
   return { ...current, wire: { ...current.wire, locked: edit.value } };
 }
@@ -99,12 +130,18 @@ function explicitRouteReset(draft: WireDraft): readonly Change[] {
   return [{ op: 'reset-route', section: draft.section.id, relationship: draft.relationship.id }];
 }
 /** Reference identity is retained until a semantic command actually changes the relationship. */
-function relationshipChanges(original: Relationship, next: Relationship): readonly Change[] {
+function relationshipChanges(
+  original: Relationship,
+  next: Relationship,
+): readonly Change[] {
   if (original === next) return [];
   return [{ op: 'replace', target: 'relationships', value: next }];
 }
 /** Only one wire appearance is replaced inside its captured section. */
-function routeChanges(draft: WireDraft, next: WireAppearance): readonly Change[] {
+function routeChanges(
+  draft: WireDraft,
+  next: WireAppearance,
+): readonly Change[] {
   if (draft.wire === next) return [];
   const section = {
     ...draft.section,

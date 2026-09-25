@@ -62,7 +62,7 @@ function warnings(documents: readonly RenderDocument[]): readonly Diagnostic[] {
     })),
   );
 }
-/** Validate changed collection geometry only; catalog/preset organization alone creates no new scene to solve. */
+/** Validate changed collection geometry only; catalog/preset organisation alone creates no new scene to solve. */
 async function check(
   candidate: Snapshot,
   changed: readonly RecordKey[],
@@ -83,7 +83,10 @@ async function check(
   return { ok: true, value: report(documents.value, preview) };
 }
 /** Preview serialization is separate from mandatory geometry checks; an apply never returns an unused image payload. */
-function report(documents: readonly RenderDocument[], preview: boolean): FeasibilityReport {
+function report(
+  documents: readonly RenderDocument[],
+  preview: boolean,
+): FeasibilityReport {
   return {
     warnings: warnings(documents),
     diff: z.json().parse(

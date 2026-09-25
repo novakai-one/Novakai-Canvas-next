@@ -466,7 +466,10 @@ async function resourceWorkspace() {
 }
 
 /** Distinct filesystem/media failures retain one code while sharing precise source context. */
-async function expectInvalidResources(root: string, base: string): Promise<void> {
+async function expectInvalidResources(
+  root: string,
+  base: string,
+): Promise<void> {
   const invalidSources: readonly { readonly source: string; readonly code: string }[] = [
     { source: join(base, 'wetland.png'), code: 'absolute-path' },
     { source: './escape.png', code: 'path-escape' },

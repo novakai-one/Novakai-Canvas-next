@@ -14,7 +14,10 @@ export interface RetainedEditor<Selection, Command, Draft> {
   getSnapshot(): RetainedEditorState<Draft>;
   subscribe(listener: () => void): () => void;
   restore(workspace: string): Result<void>;
-  edit(selection: Selection, command: Command): Result<void>;
+  edit(
+    selection: Selection,
+    command: Command,
+  ): Result<void>;
   discard(key: string): Result<void>;
   apply(key: string): Promise<Result<void>>;
 }
@@ -23,7 +26,11 @@ export interface RetainedEditorBindings<Selection, Command, Draft extends Retain
   readonly retention: Pick<DraftRetention, 'read' | 'write'>;
   readonly encode: (drafts: readonly Draft[]) => Result<unknown>;
   read(input: unknown): Result<readonly Draft[]>;
-  edit(selection: Selection, command: Command, drafts: readonly Draft[]): Draft;
+  edit(
+    selection: Selection,
+    command: Command,
+    drafts: readonly Draft[],
+  ): Draft;
   apply(draft: Draft): Promise<Result<unknown>>;
   report(error: Diagnostic): void;
 }

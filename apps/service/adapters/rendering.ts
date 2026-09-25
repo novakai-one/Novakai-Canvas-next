@@ -46,7 +46,10 @@ const presentationDomain = {
   resolveTypeUse: typeUseDisplay,
 };
 /** Missing immutable media is an explicit preview failure, never an empty visual substitute. */
-function asset(digest: string, assets: readonly VisualAsset[]): PresentationResult<VisualAsset> {
+function asset(
+  digest: string,
+  assets: readonly VisualAsset[],
+): PresentationResult<VisualAsset> {
   const found = assets.find((item) => item.digest === digest);
   if (found) return { ok: true, value: found };
   return {
@@ -79,7 +82,10 @@ function yieldJob(): Promise<void> {
   return new Promise((resolve) => setImmediate(resolve));
 }
 /** Compose real measurement and engines inside the worker, with no database handle or mutable service state. */
-async function derive(job: RenderingJob, signal: AbortSignal): Promise<RenderDocument> {
+async function derive(
+  job: RenderingJob,
+  signal: AbortSignal,
+): Promise<RenderDocument> {
   const bound = accepted(
     await composePresentation(
       {

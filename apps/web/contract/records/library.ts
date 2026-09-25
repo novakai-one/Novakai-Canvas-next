@@ -1,5 +1,5 @@
 import type {
-  CatalogChange,
+  OrganisationChange,
   LibrarySnapshot,
   QueryPage,
   QueryRequest,
@@ -47,11 +47,17 @@ export interface LibraryReader {
 export interface LibraryController {
   getSnapshot(): LibraryView;
   subscribe(listener: () => void): () => void;
-  refresh(snapshot: Snapshot, collections: readonly Collection[]): void;
+  refresh(
+    snapshot: Snapshot,
+    collections: readonly Collection[],
+  ): void;
   filter(filters: LibraryFilters): void;
   next(): void;
   visit(collection: string): void;
-  apply(changes: readonly CatalogChange[], revision: number): Promise<void>;
+  apply(
+    changes: readonly OrganisationChange[],
+    revision: number,
+  ): Promise<void>;
   editFolderTitle(title: string): void;
   createFolder(): Promise<void>;
   discardFolder(): void;
@@ -61,7 +67,10 @@ export interface LibraryBindings {
   readonly retention: DraftRetention;
   now(): number;
   nextFolderId(): FolderId;
-  apply(base: Snapshot, changes: readonly CatalogChange[]): Promise<Result<Receipt>>;
+  apply(
+    base: Snapshot,
+    changes: readonly OrganisationChange[],
+  ): Promise<Result<Receipt>>;
   report(error: Diagnostic): void;
 }
 export type LibraryFactory = (

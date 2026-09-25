@@ -2,13 +2,19 @@ import type { Submission } from '../../contract/records/submission.js';
 import type { Request } from '../../contract/records/owners.js';
 
 /** One in-flight request per collection prevents overlapping browser edits; different collections remain independent. */
-export function blocksSubmission(pending: readonly Submission[], request: Request): boolean {
+export function blocksSubmission(
+  pending: readonly Submission[],
+  request: Request,
+): boolean {
   return pending
     .filter((item) => item.state !== 'rejected')
     .some((item) => sameCollection(item.request, request));
 }
 /** Non-collection operations conflict only with an identical key in their declared write scopes. */
-function sameCollection(left: Request, right: Request): boolean {
+function sameCollection(
+  left: Request,
+  right: Request,
+): boolean {
   if (left.workspace !== right.workspace) return false;
   return left.scope.some((key) =>
     right.scope.some((other) => key.kind === other.kind && key.id === other.id),
@@ -45,7 +51,10 @@ export interface RefusalOrder {
 }
 export const emptyRefusalOrder: RefusalOrder = { tick: 0, started: new Map(), refused: new Map() };
 /** Stamp new requests and new refusals; requests that left the journal are forgotten. */
-export function observeRefusals(order: RefusalOrder, pending: readonly Submission[]): RefusalOrder {
+export function observeRefusals(
+  order: RefusalOrder,
+  pending: readonly Submission[],
+): RefusalOrder {
   let tick = order.tick;
   const stamp = (known: number | undefined): number => known ?? ++tick;
   const started = new Map(

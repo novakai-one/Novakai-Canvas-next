@@ -14,7 +14,10 @@ interface Context {
   readonly keys: ReadonlyMap<string, string>;
   readonly growth: ReadonlyMap<string, NestedSupportSpanGrowth>;
 }
-function street(road: PrototypeRoad, context: Context): PrototypeRoad {
+function street(
+  road: PrototypeRoad,
+  context: Context,
+): PrototypeRoad {
   const { values, old, keys } = context,
     key = required(keys, road.id),
     a = axes[road.axis],

@@ -3,6 +3,17 @@
 A local React diagram workspace. Humans and agents author semantic DSL; the app measures, lays out and routes it.
 Start with [README.md](README.md) for the walkthrough and running instructions.
 
+## Standards and Mandatory Reading for Agents:
+
+CODING-STANDARDS.md
+
+All files in the repo root directory with AGENTS-*.md
+
+AGENTS-AUTHORING-GUIDE-1OF2.md
+AGENTS-AUTHORING-GUIDE-2OF2.md
+AGENTS-TYPESCRIPT-CODING-STANDARDS
+AGENTS-SPEC-AUTHORING.md
+
 ## Find the code
 
 | Work on | Start here |

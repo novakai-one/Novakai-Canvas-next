@@ -1,12 +1,12 @@
 import { previewModuleRoutes } from '../adapters/route-preview.js';
 import type { Diagnostic } from './errors.js';
-import { folderId } from '@novakai/canvas-library';
+import { folderIdSchema } from '@novakai/canvas-library';
 import { createLibraryController } from '../adapters/library-session.js';
 import { createLibraryReader } from '../adapters/library-reader.js';
 import { createLibraryBrowser } from '../adapters/react/LibraryBrowser.js';
 import { createLibraryFilters } from '../adapters/react/LibraryFilters.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
-import { createLibraryOrganization } from '../adapters/react/LibraryOrganization.js';
+import { createLibraryOrganisation } from '../adapters/react/LibraryOrganisation.js';
 import { createElement, type ComponentType, type ReactElement } from 'react';
 import type { FeatureProps, ThemeSelectorProps } from './react-types.js';
 import type { LibraryBrowserProps } from './library-react.js';
@@ -153,7 +153,10 @@ function themeChoices(
   });
 }
 /** Numeric panel bounds are read from the resolved token scope, preserving one CSS/TS authority. */
-function dimension(element: HTMLElement, variable: string): number {
+function dimension(
+  element: HTMLElement,
+  variable: string,
+): number {
   const value = parseFloat(getComputedStyle(element).getPropertyValue(variable));
   if (!Number.isFinite(value)) throw new InitializationRejected(`Missing UI token ${variable}`);
   return value;
@@ -335,7 +338,7 @@ function controller(
         retention,
         reader: createLibraryReader(),
         now: () => Date.now(),
-        nextFolderId: () => folderId.parse(`folder-${crypto.randomUUID()}`),
+        nextFolderId: () => folderIdSchema().parse(`folder-${crypto.randomUUID()}`),
         ...callbacks,
       }),
     wires: (callbacks) => createWireSession({ retention, read: readWireDrafts, ...callbacks }),
@@ -390,7 +393,7 @@ async function mount(element: HTMLElement): Promise<Result<{ dispose(): void }>>
   const Browser = createLibraryBrowser([
     { id: 'filters', Content: createLibraryFilters(design) },
     { id: 'results', Content: createLibraryResults(design) },
-    { id: 'organization', Content: createLibraryOrganization(design) },
+    { id: 'organisation', Content: createLibraryOrganisation(design) },
   ]);
   const ChooserBrowser = createLibraryBrowser([
     { id: 'filters', Content: createLibraryFilters(design, { compact: true }) },

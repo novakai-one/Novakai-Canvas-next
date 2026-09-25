@@ -156,7 +156,10 @@ function readCapturedCollection(
   if (!collection.ok) return collection;
   return readOriginal(record, collection.value);
 }
-function admitCollection(record: StoredRecord, id: string): Result<ObjectDraft['collection']> {
+function admitCollection(
+  record: StoredRecord,
+  id: string,
+): Result<ObjectDraft['collection']> {
   if (!isLiveCollection(record, id))
     return failure('invalid-inspector-draft', 'The draft base does not contain its collection');
   const collection = validate(record.value);
@@ -176,7 +179,10 @@ function checkedCollection(
     );
   return { ok: true, value: collection };
 }
-function isLiveCollection(record: StoredRecord, id: string): boolean {
+function isLiveCollection(
+  record: StoredRecord,
+  id: string,
+): boolean {
   if (record.key.kind !== 'collection') return false;
   if (record.key.id !== id) return false;
   return !record.deleted;

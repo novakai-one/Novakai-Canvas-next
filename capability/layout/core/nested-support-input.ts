@@ -120,7 +120,10 @@ export function retainedSupportRecords(
 }
 
 /** Absence is a typed contact failure; no substitute identity is invented. */
-export function required<T>(index: ReadonlyMap<string, T>, key: string): T {
+export function required<T>(
+  index: ReadonlyMap<string, T>,
+  key: string,
+): T {
   const value = index.get(key);
   if (value === undefined) return reject('missing-contact', [key]);
   return value;
@@ -161,7 +164,10 @@ function population(
   };
 }
 
-function checkRoad(expected: PrototypeRoad, actual: PrototypeRoad): void {
+function checkRoad(
+  expected: PrototypeRoad,
+  actual: PrototypeRoad,
+): void {
   if (JSON.stringify(expected) !== JSON.stringify(actual))
     reject(
       'mismatched-contact',
@@ -171,7 +177,11 @@ function checkRoad(expected: PrototypeRoad, actual: PrototypeRoad): void {
     );
 }
 
-function addNeighbor(index: Map<string, PrototypeRoad[]>, id: string, road: PrototypeRoad): void {
+function addNeighbor(
+  index: Map<string, PrototypeRoad[]>,
+  id: string,
+  road: PrototypeRoad,
+): void {
   const group = index.get(id) ?? [];
   group.push(road);
   index.set(id, group);

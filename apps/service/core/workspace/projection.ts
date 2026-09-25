@@ -21,7 +21,11 @@ export function projectCollection(collection: Collection): unknown {
   };
 }
 /** Ordinary appearances and represented groups both expose canonical objects to discovery. */
-function visible(collection: Collection, sectionId: string, objectId: string): boolean {
+function visible(
+  collection: Collection,
+  sectionId: string,
+  objectId: string,
+): boolean {
   const section = collection.sections.find((section) => section.id === sectionId);
   if (!section) return false;
   return (

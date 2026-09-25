@@ -53,8 +53,9 @@ export function lowerRecord(declaration: Declaration): RawRecord {
  * @param declaration - A parsed content declaration.
  * @returns The content record.
  * @throws A `LanguageFault` with an `invalid-input` diagnostic for an unknown construct, or an
- * `invalid-value` diagnostic for a link whose target, ID or label is missing or malformed, or
- * whose object target has a malformed `section`.
+ * `invalid-value` diagnostic for a link whose target is missing, whose ID or label is missing or
+ * malformed, or whose object target has a malformed `section`. A target that is present but not a
+ * reference (for example `42`) is kept as a URI target, not rejected.
  */
 export function lowerContent(declaration: Declaration): RawRecord {
   if (declaration.kind === 'link') return lowerLink(declaration);

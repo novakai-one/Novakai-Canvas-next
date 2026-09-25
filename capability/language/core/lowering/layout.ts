@@ -80,8 +80,8 @@ export function lowerLayout(
  * @param mode - A section mode.
  * @returns The mode's algorithm, or `flow` for a mode the table does not have. The table is a
  * plain object, so a name it inherits is found too: `constructor` returns the `Object`
- * function and `__proto__` returns `Object.prototype`, not `flow`. Callers pass a mode written
- * in the source; Model validates the resulting layout.
+ * function and `__proto__` returns `Object.prototype`, not `flow`. The mode comes from the
+ * source, a section default or existing patch state; Model validates the resulting layout.
  * @throws Never.
  */
 export function modeLayout(mode: string): string {

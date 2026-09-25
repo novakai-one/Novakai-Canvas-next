@@ -44,12 +44,7 @@ export function mapProperties(
   fields: Fields,
   properties: Readonly<Record<string, Property>>,
 ): RawRecord {
-  const entries = Object.entries(properties);
-  const written = entries.flatMap(
-    /** The lowered entry for this property, if written. */ ([name, property]) =>
-      mappedEntry(fields, name, property),
-  );
-  return Object.fromEntries(written);
+  return Object.fromEntries(writtenEntries(fields, properties));
 }
 
 /**
@@ -68,14 +63,7 @@ export function mapDeclaredProperties(
   fields: Fields,
   properties: Readonly<Record<string, Property>>,
 ): RawRecord {
-  const all = Object.values(properties);
-  const withDefaults = all.filter(
-    /** Whether the property has a default. */ (property) => property.fallback !== undefined,
-  );
-  const defaultEntries = withDefaults.map(
-    /** The property's field and default. */ (property) => [property.field, property.fallback],
-  );
-  const defaults = Object.fromEntries(defaultEntries);
+  const defaults = Object.fromEntries(defaultEntries(properties));
   return { ...defaults, ...mapProperties(fields, properties) };
 }
 
@@ -121,6 +109,38 @@ function lowerReference(
   if (type === 'endpoint') return endpoint(value);
   if (type === 'type-expression') return { kind: 'definition', id: value.id };
   return value.id;
+}
+
+/**
+ * The lowered `[field, value]` entries of the written properties, in the table's order. Built as
+ * the argument of `Object.fromEntries`, so that function is looked up before any input is read.
+ */
+function writtenEntries(
+  fields: Fields,
+  properties: Readonly<Record<string, Property>>,
+): readonly (readonly [string, unknown])[] {
+  const entries = Object.entries(properties);
+  return entries.flatMap(
+    /** The lowered entry for this property, if written. */ ([name, property]) =>
+      mappedEntry(fields, name, property),
+  );
+}
+
+/**
+ * The `[field, fallback]` entries of the properties that have a default, in the table's order.
+ * Built as the argument of `Object.fromEntries`, so that function is looked up before any input
+ * is read.
+ */
+function defaultEntries(
+  properties: Readonly<Record<string, Property>>,
+): readonly (readonly [string, unknown])[] {
+  const all = Object.values(properties);
+  const withDefaults = all.filter(
+    /** Whether the property has a default. */ (property) => property.fallback !== undefined,
+  );
+  return withDefaults.map(
+    /** The property's field and default. */ (property) => [property.field, property.fallback],
+  );
 }
 
 /** The lowered `[field, value]` entry for one property, or none when it is not written. */

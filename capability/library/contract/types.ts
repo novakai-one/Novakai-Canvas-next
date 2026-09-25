@@ -11,12 +11,15 @@ export interface PlanInput {
   readonly snapshot: unknown;
   /** The ordered batch of organisation changes (see `OrganisationChange`). */
   readonly changes: unknown;
-  /**
-   * The collection inventory Authoring is about to commit, when the batch registers or removes
-   * collections. Absent or `undefined`: the snapshot's own collections are used. `null` is
-   * rejected.
-   */
-  readonly proposedCollections?: unknown;
+}
+
+/**
+ * The input of `planMembership`: the same batch, checked against the collection inventory
+ * Authoring is about to commit instead of the snapshot's own. Every value is untrusted.
+ */
+export interface MembershipInput extends PlanInput {
+  /** The collection inventory Authoring is about to commit (see `CollectionProjection`). */
+  readonly inventory: unknown;
 }
 
 /** The input of `queryLibrary`. Both values are untrusted and checked by Library. */

@@ -10,7 +10,7 @@ import {
   type LibrarySnapshot,
   type CollectionProjection,
 } from '../../contract/records/snapshot.js';
-import type { OrganisationPlan, PlanInput } from '../../contract/types.js';
+import type { MembershipInput, OrganisationPlan, PlanInput } from '../../contract/types.js';
 import type { LibraryResult } from '../../contract/errors.js';
 import { validateLibrarySnapshot } from '../validation/validate.js';
 import { parse, protect, success } from '../shared/outcomes.js';
@@ -19,68 +19,78 @@ import { readVersions } from '../shared/versions.js';
 import { applyOperation } from './operations.js';
 
 /**
- * Plans an ordered batch of organisation changes as one atomic transition.
+ * Plans an ordered batch of organisation changes as one atomic transition, checked against the
+ * snapshot's own collections.
  *
  * Steps; the first failure stops the plan and no partial candidate is returned:
- * 1. Read the input's `snapshot`, `changes` and `proposedCollections`.
- * 2. Validate the original snapshot.
- * 3. Parse the changes.
- * 4. Parse the inventory: `proposedCollections` when given (even `null`, which is rejected), or
- *    the snapshot's own collections when it is absent or `undefined`.
- * 5. Apply the changes in order to the original organisation.
- * 6. Validate the candidate against that inventory. Recent visits to collections no longer in the
- *    inventory are dropped for this check.
+ * 1. Validate the original snapshot.
+ * 2. Parse the changes.
+ * 3. Apply the changes in order to the original organisation.
+ * 4. Validate the candidate against the inventory.
  *
  * Nothing is written. The candidate keeps the original revision, `versions` are the original read
- * revisions, and `changed` is the net effect. A throw while reading the input becomes a `invalid-input`
- * failure at `$`.
+ * revisions, and `changed` is the net effect. A throw while reading the input becomes an
+ * `invalid-input` failure at `$`.
  */
 export function planOrganisation(input: PlanInput): LibraryResult<OrganisationPlan> {
-  return protect(() => preparePlan(input));
+  return protect(() => {
+    const prepared = preparePlan(input);
+    if (!prepared.ok) {
+      return prepared;
+    }
+    return applyBatch(prepared.value, prepared.value.before.collections);
+  });
 }
 
-/** Validates the original snapshot before reading or applying any change. */
-function preparePlan(input: PlanInput): LibraryResult<OrganisationPlan> {
-  const { snapshot, changes, proposedCollections } = input;
-  const before = validateLibrarySnapshot(snapshot);
+/**
+ * Plans a batch that registers or removes collections: the candidate is checked against the
+ * collection inventory Authoring is about to commit (`inventory`) instead of the snapshot's own.
+ * Everything else matches `planOrganisation`.
+ */
+export function planMembership(input: MembershipInput): LibraryResult<OrganisationPlan> {
+  return protect(() => {
+    const prepared = preparePlan(input);
+    if (!prepared.ok) {
+      return prepared;
+    }
+    return applyBatch(prepared.value, input.inventory);
+  });
+}
+
+/** A validated snapshot and its parsed change batch, ready to apply. */
+interface PreparedBatch {
+  readonly before: LibrarySnapshot;
+  readonly changes: readonly OrganisationChange[];
+}
+
+/** Validates the original snapshot, then parses the change batch. */
+function preparePlan(input: PlanInput): LibraryResult<PreparedBatch> {
+  const before = validateLibrarySnapshot(input.snapshot);
   if (!before.ok) {
     return before;
   }
-  const parsedChanges = parse(changesSchema(), changes);
-  if (!parsedChanges.ok) {
-    return parsedChanges;
+  const changes = parse(changesSchema(), input.changes);
+  if (!changes.ok) {
+    return changes;
   }
-  const inventory = chooseInventory(before.value, proposedCollections);
-  return applyBatch(before.value, parsedChanges.value, inventory);
-}
-
-/** The snapshot's own collections when none are proposed; otherwise the proposed value as given. */
-function chooseInventory(
-  before: LibrarySnapshot,
-  proposedCollections: unknown,
-): unknown {
-  if (proposedCollections === undefined) {
-    return before.collections;
-  }
-  return proposedCollections;
+  return success({ before: before.value, changes: changes.value });
 }
 
 /** Parses the inventory, applies every change, then validates the candidate. */
 function applyBatch(
-  before: LibrarySnapshot,
-  changes: readonly OrganisationChange[],
-  proposedCollections: unknown,
+  prepared: PreparedBatch,
+  inventory: unknown,
 ): LibraryResult<OrganisationPlan> {
-  const inventory = parse(inventorySchema(), proposedCollections);
-  if (!inventory.ok) {
-    return inventory;
+  const collections = parse(inventorySchema(), inventory);
+  if (!collections.ok) {
+    return collections;
   }
   // `applyNext` passes the first failure along unchanged, so later changes are skipped.
-  const applied = changes.reduce(applyNext, success(before.organisation));
+  const applied = prepared.changes.reduce(applyNext, success(prepared.before.organisation));
   if (!applied.ok) {
     return applied;
   }
-  return validateCandidate(before, applied.value, inventory.value);
+  return validateCandidate(prepared.before, applied.value, collections.value);
 }
 
 /** Applies the next change, or passes an earlier failure on unchanged. */

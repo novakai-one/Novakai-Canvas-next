@@ -1,4 +1,4 @@
-import { planOrganisation } from '@novakai/canvas-library';
+import { planMembership } from '@novakai/canvas-library';
 import { proposalSchema, failure } from '@novakai/canvas-authoring';
 import type { Snapshot, Proposal, Result, Digest } from '@novakai/canvas-authoring';
 import type { Collection } from '@novakai/canvas-model';
@@ -33,7 +33,7 @@ function proposal(
   if (view.collections.some((item) => item.id === collection.id))
     return checked([write], collection.id);
   const inventory = [...view.library.collections, workspace.project(collection)];
-  const organisation = planOrganisation({
+  const organisation = planMembership({
     snapshot: view.library,
     changes: [
       {
@@ -41,7 +41,7 @@ function proposal(
         value: { collection: collection.id, order: view.library.organisation.entries.length },
       },
     ],
-    proposedCollections: inventory,
+    inventory,
   });
   if (!organisation.ok)
     return failure(

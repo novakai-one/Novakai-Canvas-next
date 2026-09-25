@@ -5,6 +5,7 @@
  */
 import { describe, expect, test } from 'vitest';
 import {
+  planMembership,
   planOrganisation,
   queryLibrary,
   type PlanInput,
@@ -96,7 +97,7 @@ describe('Library organisation planning', () => {
     ).toBe(true);
     const withGamma = [...base.collections, added];
     const registered = valueOf(
-      planOrganisation({ snapshot: base, changes: register, proposedCollections: withGamma }),
+      planMembership({ snapshot: base, changes: register, inventory: withGamma }),
     );
     expect(registered.candidate.entries.at(-1)?.collection).toBe('gamma');
     expect(registered.versions.collections).toHaveLength(2);
@@ -112,7 +113,7 @@ describe('Library organisation planning', () => {
     ).toBe(true);
     const remaining = base.collections.filter((collection) => collection.id !== ids.beta);
     const removed = valueOf(
-      planOrganisation({ snapshot: base, changes: unregister, proposedCollections: remaining }),
+      planMembership({ snapshot: base, changes: unregister, inventory: remaining }),
     );
     expect(removed.candidate.entries.map((entry) => entry.collection)).toEqual([ids.alpha]);
 
@@ -121,10 +122,10 @@ describe('Library organisation planning', () => {
       ...collection,
       revision: collection.revision + 1,
     }));
-    const newer = { snapshot: base, changes: [], proposedCollections: projected };
-    expect(valueOf(planOrganisation(newer)).changed).toBe(false);
-    const nulled = { snapshot: base, changes: [], proposedCollections: null };
-    expect(diagnosticsOf(planOrganisation(nulled))).toEqual(['invalid-input ']);
+    const newer = { snapshot: base, changes: [], inventory: projected };
+    expect(valueOf(planMembership(newer)).changed).toBe(false);
+    const nulled = { snapshot: base, changes: [], inventory: null };
+    expect(diagnosticsOf(planMembership(nulled))).toEqual(['invalid-input ']);
   }
 
   test(

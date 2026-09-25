@@ -1,19 +1,19 @@
 import { folderIdSchema } from '@novakai/canvas-library';
-import { createLibraryReader } from '../adapters/library-reader.js';
+import { createLibraryReader } from '../adapters/readers/library-reader.js';
 import { createLibraryController } from '../adapters/sessions/library-session.js';
 import { createWireSession } from '../contract/index.js';
-import { readWireDrafts } from '../adapters/wire-reader.js';
+import { readWireDrafts } from '../adapters/readers/wire-reader.js';
 import { createInspectorSession } from '../contract/index.js';
-import { readInspectorDrafts } from '../adapters/inspector-reader.js';
+import { readInspectorDrafts } from '../adapters/readers/inspector-reader.js';
 import { createDefinitionSession } from '../adapters/sessions/definition-session.js';
-import { readDefinitionDrafts } from '../adapters/definition-reader.js';
+import { readDefinitionDrafts } from '../adapters/readers/definition-reader.js';
 import { createSourceController } from '../adapters/sessions/source-session.js';
 import { assert } from 'vitest';
 import { snapshotSchema, requestSchema, receiptSchema } from '@novakai/canvas-authoring';
 import { validate, plan, stage } from '@novakai/canvas-model';
 import { createLanguage } from '@novakai/canvas-language';
 import { createCanvas } from '@novakai/canvas-canvas';
-import { readDiagram, createSceneAdmission } from '../adapters/diagram-reader.js';
+import { readDiagram, createSceneAdmission } from '../adapters/readers/diagram-reader.js';
 import { createCanvasSessions } from '../adapters/sessions/canvas-session.js';
 import type { ServiceClient } from '../contract/ports/client.js';
 import type { DraftRetention } from '../contract/ports/workspace.js';
@@ -23,7 +23,7 @@ import { failure } from '../contract/index.js';
 import { createWorkspaceController } from '../adapters/sessions/workspace-session.js';
 import { createWorkspaceInputs } from '../adapters/workspace-inputs.js';
 import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
-import { createSubmissionReaders } from '../adapters/submission-readers.js';
+import { createSubmissionReaders } from '../adapters/readers/submission-readers.js';
 
 /** Real owner schemas admit canonical fixtures; test transport scheduling is explicitly controlled. */
 export function snapshot(revision: number) {

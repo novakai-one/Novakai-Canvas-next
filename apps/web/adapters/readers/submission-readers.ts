@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { requestSchema, receiptSchema } from '@novakai/canvas-authoring';
-import type { SubmissionReaders } from '../contract/records/submission.js';
-import { failure } from '../contract/errors.js';
+import type { SubmissionReaders } from '../../contract/records/submission.js';
+import { failure } from '../../contract/errors.js';
 const submission = z.strictObject({
   request: requestSchema,
   generation: z.string().min(1),
@@ -24,7 +24,7 @@ export function createSubmissionReaders(): SubmissionReaders {
 /** Null is a valid lookup result; non-null values require schema and request-identity admission. */
 function readReceipt(
   input: unknown,
-  request: import('../contract/records/owners.js').Request,
+  request: import('../../contract/records/owners.js').Request,
 ): ReturnType<SubmissionReaders['receipt']> {
   if (input === null) return { ok: true, value: null };
   const result = receiptSchema.safeParse(input);
@@ -34,8 +34,8 @@ function readReceipt(
 }
 /** A valid receipt for another request cannot confirm this local draft. */
 function matchingReceipt(
-  receipt: import('../contract/records/owners.js').Receipt,
-  request: import('../contract/records/owners.js').Request,
+  receipt: import('../../contract/records/owners.js').Receipt,
+  request: import('../../contract/records/owners.js').Request,
 ): ReturnType<SubmissionReaders['receipt']> {
   if (receipt.request !== request.request)
     return failure('invalid-receipt', 'The receipt belongs to a different request');

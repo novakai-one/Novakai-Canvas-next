@@ -7,10 +7,10 @@ import {
   folderIdSchema,
 } from '@novakai/canvas-library';
 import { projectCollection } from '@novakai/canvas-service';
-import type { Collection } from '../contract/records/owners.js';
-import type { LibraryReader } from '../contract/records/library.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { Collection } from '../../contract/records/owners.js';
+import type { LibraryReader } from '../../contract/records/library.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** Host projections are shared with service validation; Library remains the search and organisation authority. */
 export function createLibraryReader(): LibraryReader {
   return {

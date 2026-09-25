@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { definitionSchema, validate, type Collection } from '@novakai/canvas-model';
-import { capturedCollectionBaseSchema } from '../contract/schemas/editor-recovery.js';
-import type { DefinitionDraft } from '../contract/records/definitions.js';
+import { capturedCollectionBaseSchema } from '../../contract/schemas/editor-recovery.js';
+import type { DefinitionDraft } from '../../contract/records/definitions.js';
 import { requestSchema } from '@novakai/canvas-authoring';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 
 const draftSchema = z.strictObject({
   kind: z.literal('definition-draft'),

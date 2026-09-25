@@ -1,16 +1,16 @@
 import { z } from 'zod';
 import { descendantId, objectId, definitionId, validate } from '@novakai/canvas-model';
 import { snapshotSchema } from '@novakai/canvas-authoring';
-import type { ObjectDraft, ObjectEdit } from '../contract/records/inspector.js';
-import type { CapturedCollectionBase, EditingBase } from '../contract/records/editor-recovery.js';
-import type { StoredRecord } from '../contract/records/owners.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
-import { captureCollectionBase, objectDraftKey } from '../contract/api.js';
+import type { ObjectDraft, ObjectEdit } from '../../contract/records/inspector.js';
+import type { CapturedCollectionBase, EditingBase } from '../../contract/records/editor-recovery.js';
+import type { StoredRecord } from '../../contract/records/owners.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
+import { captureCollectionBase, objectDraftKey } from '../../contract/api.js';
 import {
   capturedCollectionBaseSchema,
   hasRecoveryTag,
-} from '../contract/schemas/editor-recovery.js';
+} from '../../contract/schemas/editor-recovery.js';
 /** Draft command schemas admit unfinished strings; they do not claim domain validity. */
 const command: z.ZodType<ObjectEdit> = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.enum(['label', 'role']), value: z.string() }),

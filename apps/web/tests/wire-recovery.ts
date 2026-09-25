@@ -3,7 +3,7 @@ import { validate, plan } from '@novakai/canvas-model';
 import { snapshotSchema, receiptSchema } from '@novakai/canvas-authoring';
 import { createWireSession } from '../contract/index.js';
 import { editedWire, wireDraftKey, wireChanges } from '../contract/index.js';
-import { readWireDrafts } from '../adapters/wire-reader.js';
+import { readWireDrafts } from '../adapters/readers/wire-reader.js';
 import { failure } from '../contract/index.js';
 import type { WireSelection, WireEditorBindings } from '../contract/records/wire-editor.js';
 import { snapshot, memoryRetention, deferred } from './recovery-fixtures.js';

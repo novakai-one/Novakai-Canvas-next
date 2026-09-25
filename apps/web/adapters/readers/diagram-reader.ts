@@ -12,8 +12,8 @@ import type { Result as PresentationResult } from '@novakai/canvas-presentation'
 import { readScene, defaultEngineVersions, options } from '@novakai/canvas-layout';
 import type { Result as LayoutResult } from '@novakai/canvas-layout';
 import type { SceneAdmission } from '@novakai/canvas-canvas';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
 /** Private boundary rejection is caught into a readable failure; the browser retains its previous scene. */
 class DiagramRejected extends Error {}
 /** Owner results, never casts, turn serialized content into a trusted diagram. */

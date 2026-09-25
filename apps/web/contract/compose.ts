@@ -1,8 +1,8 @@
-import { previewModuleRoutes } from '../adapters/route-preview.js';
+import { previewModuleRoutes } from '../adapters/readers/route-preview.js';
 import type { Diagnostic } from './errors.js';
 import { folderIdSchema } from '@novakai/canvas-library';
 import { createLibraryController } from '../adapters/sessions/library-session.js';
-import { createLibraryReader } from '../adapters/library-reader.js';
+import { createLibraryReader } from '../adapters/readers/library-reader.js';
 import { createLibraryBrowser } from '../adapters/react/LibraryBrowser.js';
 import { createLibraryFilters } from '../adapters/react/LibraryFilters.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
@@ -17,7 +17,7 @@ import { createThemeSelector } from '../adapters/react/ThemeSelector.js';
 import type { PreferenceController, ThemeChoice } from './records/preferences.js';
 import { createEngineeringFields } from '../adapters/react/EngineeringFields.js';
 import { createRetainedEditor } from '../adapters/sessions/retained-editor.js';
-import { readWireDrafts } from '../adapters/wire-reader.js';
+import { readWireDrafts } from '../adapters/readers/wire-reader.js';
 import { createWireEditor } from '../adapters/react/WireEditor.js';
 import { createWireSemantics } from '../adapters/react/WireSemantics.js';
 import { createWireEndpoints } from '../adapters/react/WireEndpoints.js';
@@ -32,9 +32,9 @@ import {
   encodeObjectRecovery,
   encodeWireRecovery,
 } from './api.js';
-import { readInspectorDrafts } from '../adapters/inspector-reader.js';
+import { readInspectorDrafts } from '../adapters/readers/inspector-reader.js';
 import { createDefinitionSession } from '../adapters/sessions/definition-session.js';
-import { readDefinitionDrafts } from '../adapters/definition-reader.js';
+import { readDefinitionDrafts } from '../adapters/readers/definition-reader.js';
 import { createSourceController } from '../adapters/sessions/source-session.js';
 import { createWorkspaceNavigation } from '../adapters/browser-navigation.js';
 import panelDefaults from '../../../resources/ui/panels.default.json' with { type: 'json' };
@@ -61,12 +61,12 @@ import { createCanvas, createReactBindings as canvasBindings } from '@novakai/ca
 import { createLanguage } from '@novakai/canvas-language';
 import { validate, plan, stage } from '@novakai/canvas-model';
 import { createServiceClient } from '../adapters/service-client.js';
-import { readDiagram, createSceneAdmission } from '../adapters/diagram-reader.js';
+import { readDiagram, createSceneAdmission } from '../adapters/readers/diagram-reader.js';
 import { createWorkspaceInputs } from '../adapters/workspace-inputs.js';
 import { createCanvasSessions } from '../adapters/sessions/canvas-session.js';
 import { createDraftRetention } from '../adapters/sessions/draft-retention.js';
 import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
-import { createSubmissionReaders } from '../adapters/submission-readers.js';
+import { createSubmissionReaders } from '../adapters/readers/submission-readers.js';
 import { createWorkspaceController } from '../adapters/sessions/workspace-session.js';
 import { createHistoryControls } from '../adapters/react/HistoryControls.js';
 import { createWorkspaceHeader } from '../adapters/react/WorkspaceHeader.js';

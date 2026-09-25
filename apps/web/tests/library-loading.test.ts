@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { snapshotSchema } from '@novakai/canvas-authoring';
 import { validate, type Collection } from '@novakai/canvas-model';
 import { collectionIdSchema } from '@novakai/canvas-library';
-import { createLibraryReader } from '../adapters/library-reader.js';
+import { createLibraryReader } from '../adapters/readers/library-reader.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
 import type { LibraryView } from '../contract/records/library.js';
 

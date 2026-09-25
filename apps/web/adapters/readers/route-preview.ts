@@ -1,10 +1,10 @@
-import type { Change, Section } from '../contract/records/owners.js';
+import type { Change, Section } from '../../contract/records/owners.js';
 import { previewModuleCollection } from '@novakai/canvas-layout';
 import { remeasureModuleEnvelopes } from '@novakai/canvas-presentation';
 import type { VisualSection } from '@novakai/canvas-presentation';
 import type { EditIntent, PlacementIntent, GeometryPreview } from '@novakai/canvas-canvas';
 import type { RenderDocument } from '@novakai/canvas-service';
-import type { Result } from '../contract/errors.js';
+import type { Result } from '../../contract/errors.js';
 
 /** Reuse the exact Authoring placement merge; moving retains prior explicit dimensions. */
 function placed(

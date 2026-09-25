@@ -2,7 +2,7 @@ import { assert, expect } from 'vitest';
 import { validate, plan, descendantId } from '@novakai/canvas-model';
 import { snapshotSchema, receiptSchema } from '@novakai/canvas-authoring';
 import { createInspectorSession } from '../contract/index.js';
-import { readInspectorDrafts } from '../adapters/inspector-reader.js';
+import { readInspectorDrafts } from '../adapters/readers/inspector-reader.js';
 import { editedObject, objectDraftKey, failure } from '../contract/index.js';
 import { snapshot, memoryRetention, deferred } from './recovery-fixtures.js';
 import type { InspectorBindings, ObjectSelection } from '../contract/index.js';

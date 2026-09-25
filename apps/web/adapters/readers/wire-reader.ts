@@ -1,17 +1,17 @@
 import { z } from 'zod';
 import { objectId, descendantId, validate } from '@novakai/canvas-model';
 import { snapshotSchema } from '@novakai/canvas-authoring';
-import type { WireDraft, WireEdit } from '../contract/records/wire-editor.js';
-import type { CapturedCollectionBase, EditingBase } from '../contract/records/editor-recovery.js';
-import type { Collection } from '../contract/records/owners.js';
-import type { StoredRecord } from '../contract/records/owners.js';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
-import { captureCollectionBase, wireDraftKey } from '../contract/api.js';
+import type { WireDraft, WireEdit } from '../../contract/records/wire-editor.js';
+import type { CapturedCollectionBase, EditingBase } from '../../contract/records/editor-recovery.js';
+import type { Collection } from '../../contract/records/owners.js';
+import type { StoredRecord } from '../../contract/records/owners.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
+import { captureCollectionBase, wireDraftKey } from '../../contract/api.js';
 import {
   capturedCollectionBaseSchema,
   hasRecoveryTag,
-} from '../contract/schemas/editor-recovery.js';
+} from '../../contract/schemas/editor-recovery.js';
 /** Recovery admits unfinished text, but never arbitrary fields or untyped endpoint identities. */
 const command: z.ZodType<WireEdit> = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.enum(['label', 'guard', 'effect']), value: z.string() }),

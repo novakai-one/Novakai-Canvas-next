@@ -15,6 +15,9 @@ import { endpoint, type RawRecord } from './fields.js';
  * `endpoint` for an `endpoints` list and `id` for any other list; signature parameters lower to
  * names and `{ name, type }` pairs. Values that are not references or lists are kept.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param value - A parsed value.
  * @param type - The owning property's value type.
  * @returns The lowered value.
@@ -29,6 +32,9 @@ export function lowerValue(value: SyntaxValue, type: ValueType): unknown {
  * Lowers the written attributes only, under their Model field names, in the property table's
  * order. No defaults are added (patches use this).
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param fields - The parsed fields.
  * @param properties - The property table, by attribute name.
  * @returns The lowered fields.
@@ -38,17 +44,20 @@ export function mapProperties(
   fields: Fields,
   properties: Readonly<Record<string, Property>>,
 ): RawRecord {
-  return Object.fromEntries(
-    Object.entries(properties).flatMap(
-      /** The lowered entry for this property, if written. */ ([name, property]) =>
-        mappedEntry(fields, name, property),
-    ),
+  const entries = Object.entries(properties);
+  const written = entries.flatMap(
+    /** The lowered entry for this property, if written. */ ([name, property]) =>
+      mappedEntry(fields, name, property),
   );
+  return Object.fromEntries(written);
 }
 
 /**
  * Lowers a new declaration's attributes: every property with a `fallback` starts at it, then
  * the written attributes replace those defaults.
+ *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
  *
  * @param fields - The parsed fields.
  * @param properties - The property table, by attribute name.
@@ -59,15 +68,14 @@ export function mapDeclaredProperties(
   fields: Fields,
   properties: Readonly<Record<string, Property>>,
 ): RawRecord {
-  const defaults = Object.fromEntries(
-    Object.values(properties)
-      .filter(
-        /** Whether the property has a default. */ (property) => property.fallback !== undefined,
-      )
-      .map(
-        /** The property's field and default. */ (property) => [property.field, property.fallback],
-      ),
+  const all = Object.values(properties);
+  const withDefaults = all.filter(
+    /** Whether the property has a default. */ (property) => property.fallback !== undefined,
   );
+  const defaultEntries = withDefaults.map(
+    /** The property's field and default. */ (property) => [property.field, property.fallback],
+  );
+  const defaults = Object.fromEntries(defaultEntries);
   return { ...defaults, ...mapProperties(fields, properties) };
 }
 
@@ -80,9 +88,15 @@ function lowerSignatureParameters(value: SyntaxValue): readonly unknown[] {
 /** One parameter; the pair's type lowers as a type expression. */
 function lowerSignatureParameter(item: SyntaxValue): unknown {
   if (typeof item === 'string') return item;
-  if (!isList(item) || item.length !== 2) return item;
+  if (!isPair(item)) return item;
   const name = item[0];
-  return { name, type: lowerValue(item[1] as SyntaxValue, 'type-expression') };
+  const type = item[1];
+  return { name, type: lowerValue(type, 'type-expression') };
+}
+
+/** Whether a value is a two-item list, such as a `[name, type]` parameter pair. */
+function isPair(value: SyntaxValue): value is readonly [SyntaxValue, SyntaxValue] {
+  return isList(value) && value.length === 2;
 }
 
 /** A list lowers item by item; a reference by the property's type; anything else is kept. */

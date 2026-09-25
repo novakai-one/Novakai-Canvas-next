@@ -17,6 +17,9 @@ import { mapDeclaredProperties, lowerValue } from './properties.js';
  * attributes, with defaults for attributes not written. An attribute with the same field name as
  * a positional value replaces it.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param declaration - A parsed declaration.
  * @returns The record.
  * @throws A `LanguageFault` with an `invalid-input` diagnostic for a construct not in the
@@ -44,6 +47,9 @@ export function lowerRecord(declaration: Declaration): RawRecord {
 /**
  * Lowers one content block, with its `kind`. A link and a table have their own shapes.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param declaration - A parsed content declaration.
  * @returns The content record.
  * @throws A `LanguageFault` with an `invalid-input` diagnostic for an unknown construct, or an
@@ -59,20 +65,24 @@ export function lowerContent(declaration: Declaration): RawRecord {
 /**
  * Lowers a node: its own record, then its content blocks and its ports, each in written order.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param declaration - A parsed node declaration.
  * @returns The node record with `content` and `ports`.
  * @throws A `LanguageFault` from lowering the node or any child (see {@link lowerContent}).
  */
 export function lowerNode(declaration: Declaration): RawRecord {
-  return {
-    ...lowerRecord(declaration),
-    content: declaration.children
-      .filter(/** Whether the child is content (not a port). */ (item) => item.kind !== 'port')
-      .map(lowerContent),
-    ports: declaration.children
-      .filter(/** Whether the child is a port. */ (item) => item.kind === 'port')
-      .map(lowerRecord),
-  };
+  const record = lowerRecord(declaration);
+  const contentDeclarations = declaration.children.filter(
+    /** Whether the child is content (not a port). */ (item) => item.kind !== 'port',
+  );
+  const content = contentDeclarations.map(lowerContent);
+  const portDeclarations = declaration.children.filter(
+    /** Whether the child is a port. */ (item) => item.kind === 'port',
+  );
+  const ports = portDeclarations.map(lowerRecord);
+  return { ...record, content, ports };
 }
 
 /** The `[name, value]` entry for one position, or none when the position was not written. */

@@ -22,6 +22,9 @@ const constraintKinds = ['rank', 'align', 'before', 'below'];
 /**
  * Whether a declaration is a layout constraint (`rank`, `align`, `before` or `below`).
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param declaration - Any parsed declaration.
  * @returns `true` for a constraint.
  * @throws Never.
@@ -35,29 +38,35 @@ export function isConstraint(declaration: Declaration): boolean {
  * algorithm `fallback`, direction `right` and gap `normal`; `columns` is left out when not
  * written. Constraint targets keep their written order.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param fields - The collection's or section's parsed fields.
  * @param children - Its declarations; only constraints are read.
  * @param fallback - The algorithm when `layout=` is not written; defaults to `flow`.
- * @returns The deep-frozen layout record; or `validation-failed` with an `invalid-value`
- * diagnostic for a non-text attribute, a constraint without a target list, or a target that is
- * not a plain object, `group:` or `section:` reference.
+ * @returns `{ ok: true, value }` whose `value` is the deep-frozen layout record. `layout=`,
+ * `direction=` and `gap=` must be text; `columns=` is passed through unchecked for Model to
+ * validate. Otherwise `{ ok: false }` with `validation-failed`, holding an `invalid-value`
+ * diagnostic for a non-text `layout`, `direction` or `gap`, a constraint without a target list,
+ * or a target that is not a plain object, `group:` or `section:` reference; or one
+ * `provider-failure` diagnostic when reading the input throws anything else (see `protect`).
  * @throws Never.
  */
 export function lowerLayout(
   fields: Fields,
   children: readonly Declaration[],
-  fallback = 'flow',
+  fallback: string = 'flow',
 ): Result<RawRecord> {
   return protect(
     /** Builds the layout record. */
     () => {
-      return {
-        ...optional('columns', fields.columns?.value),
-        algorithm: textOr(fields, 'layout', fallback),
-        direction: textOr(fields, 'direction', defaults.direction),
-        gap: textOr(fields, 'gap', defaults.gap),
-        constraints: children.filter(isConstraint).map(lowerConstraint),
-      };
+      const columns = optional('columns', fields.columns?.value);
+      const algorithm = textOr(fields, 'layout', fallback);
+      const direction = textOr(fields, 'direction', defaults.direction);
+      const gap = textOr(fields, 'gap', defaults.gap);
+      const constraintDeclarations = children.filter(isConstraint);
+      const constraints = constraintDeclarations.map(lowerConstraint);
+      return { ...columns, algorithm, direction, gap, constraints };
     },
   );
 }
@@ -65,8 +74,14 @@ export function lowerLayout(
 /**
  * The layout algorithm a section `mode` uses by default.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param mode - A section mode.
- * @returns The mode's algorithm, or `flow` for an unknown mode.
+ * @returns The mode's algorithm, or `flow` for a mode the table does not have. The table is a
+ * plain object, so a name it inherits is found too: `constructor` returns the `Object`
+ * function and `__proto__` returns `Object.prototype`, not `flow`. Callers pass a mode written
+ * in the source; Model validates the resulting layout.
  * @throws Never.
  */
 export function modeLayout(mode: string): string {
@@ -75,12 +90,12 @@ export function modeLayout(mode: string): string {
 
 /** One constraint: its kind and its targets in written order. */
 function lowerConstraint(declaration: Declaration): RawRecord {
-  return {
-    kind: declaration.kind,
-    targets: list(declaration.fields, 'targets').map(
-      /** Lowers one target. */ (value) => lowerTarget(value, declaration.span),
-    ),
-  };
+  const kind = declaration.kind;
+  const written = list(declaration.fields, 'targets');
+  const targets = written.map(
+    /** Lowers one target. */ (value) => lowerTarget(value, declaration.span),
+  );
+  return { kind, targets };
 }
 
 /**

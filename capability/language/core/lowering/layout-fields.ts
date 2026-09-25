@@ -10,6 +10,9 @@ import type { RawRecord } from './fields.js';
  * Splits a record into the layout fields (`columns`, `algorithm`, `direction`, `gap`) and the
  * rest. Both parts keep the record's key order.
  *
+ * Pure: a retry with the same input returns the same result. Language owns correcting the
+ * source; Authoring owns commit recovery.
+ *
  * @param record - A lowered collection or section record.
  * @returns `layout` with the layout fields, and `remaining` with every other field.
  * @throws Never.
@@ -31,7 +34,10 @@ export function partitionLayout(record: RawRecord): {
   };
 }
 
+/** The layout properties, in table order. */
+const layoutPropertyList = Object.values(layoutProperties);
+
 /** The Model field names of the layout properties. */
-const fields: readonly string[] = Object.values(layoutProperties).map(
+const fields: readonly string[] = layoutPropertyList.map(
   /** The property's Model field name. */ (property) => property.field,
 );

@@ -62,3 +62,5 @@ export {
   type ConnectionReview,
 } from '../core/editing/connection-draft.js';
 export { definitionRequest } from '../core/editing/definition-request.js';
+export { reusableSession, retainCamera, renderChanged } from '../core/workspace/session-reuse.js';
+export { bindHistoryKeys } from '../core/workspace/history-keys.js';

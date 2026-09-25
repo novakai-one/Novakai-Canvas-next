@@ -50,6 +50,10 @@ import {
   editedConnection,
   resolveConnectionSection,
   reviewConnection,
+  reusableSession,
+  retainCamera,
+  renderChanged,
+  bindHistoryKeys,
   type ConnectionCapture,
   type ConnectionPolicy,
   type ConnectionReview,
@@ -2516,80 +2520,4 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       listeners.clear();
     },
   };
-}
-
-/** Same-workspace monotonic revisions can update the existing session without losing its camera or selection. */
-function reusableSession(
-  active: ActiveDiagram | null,
-  document: RenderDocument,
-  base: NonNullable<WorkspaceView['snapshot']>,
-): boolean {
-  if (active === null) return false;
-  return (
-    sameCollection(active, document, base) &&
-    document.collection.revision >= active.document.collection.revision
-  );
-}
-/** A restore may lower revision; a fresh Canvas session can retain the viewing position, but never old edit preconditions. */
-function retainCamera(
-  active: ActiveDiagram | null,
-  session: import('../../contract/records/owners.js').SessionStore,
-  document: RenderDocument,
-  base: NonNullable<WorkspaceView['snapshot']>,
-): void {
-  if (active === null) return;
-  if (sameCollection(active, document, base))
-    session.dispatch({ kind: 'viewport', camera: active.session.getSnapshot().camera });
-}
-/** Collection IDs are meaningful only within their workspace. */
-function sameCollection(
-  active: ActiveDiagram,
-  document: RenderDocument,
-  base: NonNullable<WorkspaceView['snapshot']>,
-): boolean {
-  return (
-    active.base.workspace === base.workspace &&
-    active.document.collection.id === document.collection.id
-  );
-}
-
-/** Transport generation is part of the render input even when the collection revision is unchanged. */
-function renderChanged(
-  active: ActiveDiagram,
-  revision: number,
-  generation: string,
-): boolean {
-  return revision !== active.document.collection.revision || active.generation !== generation;
-}
-
-/** Keep browser editing shortcuts native, including composition and nested editable elements. */
-function editorOwns(event: KeyboardEvent): boolean {
-  if (event.defaultPrevented || event.isComposing) return true;
-  return event.composedPath().some(editableTarget);
-}
-function editableTarget(target: EventTarget): boolean {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || target.matches('input, textarea, select'))
-  );
-}
-function direction(event: KeyboardEvent): 'undo' | 'redo' | null {
-  if (!historyKey(event) || editorOwns(event)) return null;
-  return event.shiftKey ? 'redo' : 'undo';
-}
-function historyKey(event: KeyboardEvent): boolean {
-  return (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !event.altKey;
-}
-
-/** The host owns shortcuts even when all interface chrome is hidden. */
-function bindHistoryKeys(navigate: (direction: 'undo' | 'redo') => Promise<void>): () => void {
-  if (typeof window === 'undefined') return () => undefined;
-  const handle = (event: KeyboardEvent): void => {
-    const target = direction(event);
-    if (target === null) return;
-    event.preventDefault();
-    if (!event.repeat) void navigate(target);
-  };
-  window.addEventListener('keydown', handle);
-  return () => window.removeEventListener('keydown', handle);
 }

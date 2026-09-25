@@ -51,3 +51,14 @@ export function definitionDraftId(value: string): import('@novakai/canvas-model'
 }
 
 export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';
+export {
+  buildConnectionDraft,
+  connectionRequest,
+  editedConnection,
+  resolveConnectionSection,
+  reviewConnection,
+  type ConnectionCapture,
+  type ConnectionPolicy,
+  type ConnectionReview,
+} from '../core/editing/connection-draft.js';
+export { definitionRequest } from '../core/editing/definition-request.js';

@@ -19,7 +19,15 @@ export { validate, plan, stage } from './api.js';
  * Checked ID and digest schemas: `safeParse` builds a typed ID without a cast. They are shared,
  * unfrozen schema objects. Documented in `brands.ts`.
  */
-export { digest, objectId, collectionId, descendantId, assetId, definitionId } from './brands.js';
+export {
+  digest,
+  objectId,
+  collectionId,
+  descendantId,
+  assetId,
+  definitionId,
+  relationshipId,
+} from './brands.js';
 export type { ObjectId, SectionId, DescendantId, DefinitionId } from './brands.js';
 
 /** The result type and the machine-readable failure codes. Documented in `errors.ts`. */
@@ -39,6 +47,7 @@ export { definitionDisplay, definitionUsages, fieldTypeDisplay, typeUseDisplay }
 export { resolveCallableEndpoint } from './api.js';
 export type { CallableEndpoint, DefinitionUsage } from './api.js';
 export type { Relationship, RelationshipKind } from './records/relationship.js';
+export { relationshipKind } from './records/relationship.js';
 export type {
   Section,
   Appearance,
@@ -67,3 +76,4 @@ export {
   sourceEndpoints,
   targetEndpoints,
 } from './records/policies.js';
+export type { MemberEndpointKind } from './records/policies.js';

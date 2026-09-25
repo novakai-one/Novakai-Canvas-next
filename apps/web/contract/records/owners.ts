@@ -11,6 +11,7 @@ export type {
   WireAppearance,
   Relationship,
   Endpoint,
+  MemberEndpointKind,
 } from '@novakai/canvas-model';
 export type { RenderDocument, TransportResponse } from '@novakai/canvas-service';
 export type {

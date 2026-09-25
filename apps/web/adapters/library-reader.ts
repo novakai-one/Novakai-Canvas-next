@@ -1,6 +1,6 @@
 import type { Result as LibraryResult, RecentVisit } from '@novakai/canvas-library';
 import { z } from 'zod';
-import { validate, query, collectionId, folderId } from '@novakai/canvas-library';
+import { validate, query, collectionIdSchema, folderIdSchema } from '@novakai/canvas-library';
 import { projectCollection } from '@novakai/canvas-service';
 import type { Collection } from '../contract/records/owners.js';
 import type { LibraryReader } from '../contract/records/library.js';
@@ -25,9 +25,9 @@ export function createLibraryReader(): LibraryReader {
     },
     query: (snapshot, filters, cursor) =>
       checked(
-        query(
-          { ...snapshot, recent: currentVisits(snapshot.collections, snapshot.recent) },
-          {
+        query({
+          snapshot: { ...snapshot, recent: currentVisits(snapshot.collections, snapshot.recent) },
+          request: {
             text: filters.text,
             archived: filters.archived,
             sort: filters.sort,
@@ -36,7 +36,7 @@ export function createLibraryReader(): LibraryReader {
             ...folderFilter(filters.folder),
             ...cursorFilter(cursor),
           },
-        ),
+        }),
       ),
     visits: (input) => {
       const parsed = visits.safeParse(input);
@@ -46,7 +46,11 @@ export function createLibraryReader(): LibraryReader {
     },
     folderDraft: (input) => {
       const parsed = z
-        .strictObject({ id: folderId, title: z.string(), revision: z.number().int().nonnegative() })
+        .strictObject({
+          id: folderIdSchema(),
+          title: z.string(),
+          revision: z.number().int().nonnegative(),
+        })
         .safeParse(input);
       if (!parsed.success)
         return failure(
@@ -58,7 +62,9 @@ export function createLibraryReader(): LibraryReader {
   };
 }
 const visits = z
-  .array(z.strictObject({ collection: collectionId, openedAt: z.number().int().nonnegative() }))
+  .array(
+    z.strictObject({ collection: collectionIdSchema(), openedAt: z.number().int().nonnegative() }),
+  )
   .max(10000)
   .readonly();
 /** Omitted folder means all folders, matching the Library contract. */

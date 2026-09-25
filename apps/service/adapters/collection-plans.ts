@@ -33,16 +33,16 @@ function proposal(
   if (view.collections.some((item) => item.id === collection.id))
     return checked([write], collection.id);
   const inventory = [...view.library.collections, workspace.project(collection)];
-  const organization = planLibrary(
-    view.library,
-    [
+  const organization = planLibrary({
+    snapshot: view.library,
+    changes: [
       {
         op: 'register',
         value: { collection: collection.id, order: view.library.catalog.entries.length },
       },
     ],
-    inventory,
-  );
+    proposedCollections: inventory,
+  });
   if (!organization.ok)
     return failure(
       'invariant-violation',

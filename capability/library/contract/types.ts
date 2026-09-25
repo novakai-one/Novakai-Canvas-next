@@ -1,5 +1,47 @@
+/*
+ * The inputs and results of Library's entry points. Library writes nothing: a host that commits a
+ * plan or pages results checks the read versions, and Authoring owns commit and crash recovery.
+ */
 import type { CatalogId, CollectionId } from './brands.js';
 import type { Catalog } from './records/catalog.js';
+
+/**
+ * The input of `plan`. Every value is untrusted and checked by Library.
+ */
+export interface PlanInput {
+  /** The original snapshot (see `LibrarySnapshot`). */
+  readonly snapshot: unknown;
+  /** The ordered batch of catalog changes (see `CatalogChange`). */
+  readonly changes: unknown;
+  /**
+   * The collection inventory Authoring is about to commit, when the batch registers or removes
+   * collections. Absent or `undefined`: the snapshot's own collections are used. `null` is
+   * rejected.
+   */
+  readonly proposedCollections?: unknown;
+}
+
+/**
+ * The input of `query`. Both values are untrusted and checked by Library.
+ */
+export interface QueryInput {
+  /** The snapshot to search (see `LibrarySnapshot`). */
+  readonly snapshot: unknown;
+  /** The search criteria (see `QueryRequest`). */
+  readonly request: unknown;
+}
+
+/** The catalog's ID and the revision read. */
+export interface CatalogVersion {
+  readonly id: CatalogId;
+  readonly revision: number;
+}
+
+/** A collection's ID and the revision read. */
+export interface CollectionVersion {
+  readonly id: CollectionId;
+  readonly revision: number;
+}
 
 /**
  * The source revisions an operation read: the catalog's, and each collection's, sorted by
@@ -8,10 +50,9 @@ import type { Catalog } from './records/catalog.js';
  * of reading this record.)
  */
 export interface ReadVersions {
-  /** The catalog's ID and the revision read. */
-  readonly catalog: { readonly id: CatalogId; readonly revision: number };
-  /** Each collection's ID and the revision read, sorted by ID. */
-  readonly collections: readonly { readonly id: CollectionId; readonly revision: number }[];
+  readonly catalog: CatalogVersion;
+  /** Sorted by collection ID. */
+  readonly collections: readonly CollectionVersion[];
 }
 
 /**

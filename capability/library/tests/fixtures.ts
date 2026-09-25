@@ -1,13 +1,14 @@
-import { assert } from 'vitest';
+/*
+ * Library test data: frozen fixture IDs and a fresh valid snapshot per call. Data only; the
+ * result assertions live in `assertions.ts`.
+ */
 import {
-  catalogId,
-  collectionId,
-  folderId,
-  sectionId,
-  objectId,
+  catalogIdSchema,
+  collectionIdSchema,
+  folderIdSchema,
+  sectionIdSchema,
+  objectIdSchema,
   type LibrarySnapshot,
-  type Result,
-  type DiagnosticCode,
   type CatalogId,
   type FolderId,
   type CollectionId,
@@ -15,10 +16,7 @@ import {
   type ObjectId,
 } from '../contract/index.js';
 
-/**
- * The fixture IDs. `readonly` is checked by the compiler only; the object is not frozen, so a
- * test must never assign to it.
- */
+/** The fixture IDs. The object is frozen, so no test can change an ID another test reads. */
 export interface FixtureIds {
   readonly catalog: CatalogId;
   /** Folder `engineering`. */
@@ -32,15 +30,15 @@ export interface FixtureIds {
 }
 
 /** Fixture IDs, checked with the public ID schemas (no private code is used). */
-export const ids: FixtureIds = {
-  catalog: catalogId.parse('catalog'),
-  folder: folderId.parse('engineering'),
-  child: folderId.parse('backend'),
-  alpha: collectionId.parse('alpha'),
-  beta: collectionId.parse('beta'),
-  section: sectionId.parse('er'),
-  object: objectId.parse('invoice'),
-};
+export const ids: FixtureIds = Object.freeze({
+  catalog: catalogIdSchema().parse('catalog'),
+  folder: folderIdSchema().parse('engineering'),
+  child: folderIdSchema().parse('backend'),
+  alpha: collectionIdSchema().parse('alpha'),
+  beta: collectionIdSchema().parse('beta'),
+  section: sectionIdSchema().parse('er'),
+  object: objectIdSchema().parse('invoice'),
+});
 
 /**
  * A valid snapshot: catalog `catalog` (revision 7) with folder `engineering` and its child
@@ -99,39 +97,4 @@ export function snapshot(): LibrarySnapshot {
       { collection: ids.beta, openedAt: 200 },
     ],
   };
-}
-
-/**
- * Asserts a result succeeded and returns its value.
- *
- * The result is turned into JSON before the assertion runs, even on success, so it throws for a
- * value JSON cannot hold (a bigint, a cycle, or a `toJSON` that throws).
- *
- * @param result - The result to check.
- * @returns The success value.
- * @throws Vitest's assertion error, carrying the result as JSON, when the result failed.
- * @throws `TypeError` (or the `toJSON` error) when the result cannot be turned into JSON.
- */
-export function valueOf<T>(result: Result<T>): T {
-  assert(result.ok, JSON.stringify(result));
-  return result.value;
-}
-
-/**
- * True when the result failed with a diagnostic of `code` at exactly `path`. Other diagnostics in
- * the same failure are allowed.
- *
- * @param result - The result to check.
- * @param code - The expected diagnostic code.
- * @param path - The expected diagnostic path, compared exactly.
- * @returns Whether a matching diagnostic exists; `false` for a success.
- * @throws Never.
- */
-export function hasFailure<T>(result: Result<T>, code: DiagnosticCode, path: string): boolean {
-  if (result.ok) {
-    return false;
-  }
-  return result.error.diagnostics.some(
-    (diagnostic) => diagnostic.code === code && diagnostic.path === path,
-  );
 }

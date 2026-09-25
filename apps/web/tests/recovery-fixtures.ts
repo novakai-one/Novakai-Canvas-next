@@ -1,4 +1,4 @@
-import { folderId } from '@novakai/canvas-library';
+import { folderIdSchema } from '@novakai/canvas-library';
 import { createLibraryReader } from '../adapters/library-reader.js';
 import { createLibraryController } from '../adapters/library-session.js';
 import { createWireSession } from '../contract/index.js';
@@ -115,7 +115,7 @@ export function controller(client: ServiceClient, retention: DraftRetention) {
         retention,
         reader: createLibraryReader(),
         now: () => 1,
-        nextFolderId: () => folderId.parse('folder'),
+        nextFolderId: () => folderIdSchema().parse('folder'),
         ...callbacks,
       }),
     wires: (callbacks) => createWireSession({ retention, read: readWireDrafts, ...callbacks }),

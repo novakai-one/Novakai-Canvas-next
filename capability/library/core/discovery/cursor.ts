@@ -1,13 +1,16 @@
-import {
-  cursorSchema,
-  MAX_CURSOR_LENGTH,
-  type QueryRequest,
-  type CursorEnvelope,
-} from '../../contract/records/query.js';
-import type { LibrarySnapshot } from '../../contract/records/snapshot.js';
+/*
+ * Paging cursors: an opaque string that binds the next page's offset to the exact query, recent
+ * visits and source revisions. The cursor schema is built per call and is not exported by the
+ * package. Pure; the host recovers from a stale cursor by searching again without one. Authoring
+ * owns commit and recovery.
+ */
+import { MAX_CURSOR_LENGTH, type QueryRequest } from '../../contract/records/query.js';
+import type { LibrarySnapshot, RecentVisit } from '../../contract/records/snapshot.js';
+import { cursorSchema, type CursorEnvelope } from '../../contract/records/cursor.js';
 import type { Result } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
-import { compareText, readVersions } from './project.js';
+import { compareText } from './text.js';
+import { readVersions } from './versions.js';
 
 /**
  * The offset a request starts at: 0 without a cursor, otherwise the cursor's offset.
@@ -60,11 +63,11 @@ export function nextCursor(
 ): Result<string> {
   const cursor = JSON.stringify({ offset, ...cursorIdentity(snapshot, request) });
   if (cursor.length > MAX_CURSOR_LENGTH) {
-    return failure(
-      'limit',
-      'query.cursor',
-      'Snapshot identity exceeds the cursor budget; narrow the supplied inventory',
-    );
+    return failure({
+      code: 'limit',
+      path: 'query.cursor',
+      message: 'Snapshot identity exceeds the cursor budget; narrow the supplied inventory',
+    });
   }
   return success(cursor);
 }
@@ -82,9 +85,7 @@ function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): Curso
   const { cursor: previousCursor, ...criteria } = request;
   // The cursor itself is not part of the identity; `void` marks the variable as deliberately unused.
   void previousCursor;
-  const recent = snapshot.recent.toSorted((left, right) =>
-    compareText(left.collection, right.collection),
-  );
+  const recent = snapshot.recent.toSorted(byVisitedCollection);
   return {
     queryKey: JSON.stringify({ criteria, recent }),
     versionKey: JSON.stringify(readVersions(snapshot)),
@@ -94,8 +95,8 @@ function cursorIdentity(snapshot: LibrarySnapshot, request: QueryRequest): Curso
 /** Parses the cursor. Text that is not JSON is `stale-cursor` too, not a generic read failure. */
 function decodeCursor(cursor: string): Result<CursorEnvelope> {
   try {
-    // `cursorSchema.safeParse` is read before the JSON is parsed.
-    const parsed = cursorSchema.safeParse(JSON.parse(cursor));
+    // The schema is built before the JSON is parsed.
+    const parsed = cursorSchema().safeParse(JSON.parse(cursor));
     if (!parsed.success) {
       return staleCursor('Cursor is malformed');
     }
@@ -124,5 +125,10 @@ function validateCursor(
 
 /** A new `stale-cursor` failure at `query.cursor` with the given message. */
 function staleCursor<T>(message: string): Result<T> {
-  return failure('stale-cursor', 'query.cursor', message);
+  return failure({ code: 'stale-cursor', path: 'query.cursor', message });
+}
+
+/** Sorts recent visits by collection ID, by code unit. */
+function byVisitedCollection(left: RecentVisit, right: RecentVisit): number {
+  return compareText(left.collection, right.collection);
 }

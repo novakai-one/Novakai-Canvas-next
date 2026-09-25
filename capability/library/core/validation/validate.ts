@@ -1,3 +1,7 @@
+/*
+ * Validating one complete Library snapshot: its shape, then the rules across records. Writes
+ * nothing; the caller corrects the input, and Authoring owns admission, commit and recovery.
+ */
 import { snapshotSchema, type LibrarySnapshot } from '../../contract/records/snapshot.js';
 import type { Result } from '../../contract/errors.js';
 import { parse, protect, success, rejected } from './outcomes.js';
@@ -19,12 +23,12 @@ import { validateRecords } from './rules.js';
  * @throws Never.
  */
 export function validateSnapshot(input: unknown): Result<LibrarySnapshot> {
-  return protect(() => validateInput(input));
+  return protect(/** Validates the snapshot. */ () => validateInput(input));
 }
 
 /** Parses the snapshot, then checks the rules across records on the parsed copy. */
 function validateInput(input: unknown): Result<LibrarySnapshot> {
-  const parsed = parse(snapshotSchema, input);
+  const parsed = parse(snapshotSchema(), input);
   if (!parsed.ok) {
     return parsed;
   }

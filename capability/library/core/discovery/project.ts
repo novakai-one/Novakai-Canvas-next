@@ -1,45 +1,18 @@
-import type { LibrarySnapshot, CollectionProjection } from '../../contract/records/snapshot.js';
-import type { ReadVersions } from '../../contract/types.js';
+/*
+ * Building search hits from the collection projections. Rebuilt on every search; nothing is
+ * cached and the catalog is not touched. Pure; Authoring owns commit and recovery.
+ */
+import type {
+  LibrarySnapshot,
+  CollectionProjection,
+  SectionProjection,
+  ObjectProjection,
+} from '../../contract/records/snapshot.js';
 import type { SearchHit } from '../../contract/records/query.js';
 
 /**
- * Compares two strings by UTF-16 code unit, so the order is the same on every machine and in every
- * locale.
- *
- * @param left - The first string.
- * @param right - The second string.
- * @returns -1 when `left` sorts first, 1 when it sorts after, 0 when equal.
- * @throws Never.
- */
-export function compareText(left: string, right: string): number {
-  if (left < right) {
-    return -1;
-  }
-  if (left > right) {
-    return 1;
-  }
-  return 0;
-}
-
-/**
- * The source revisions of a snapshot: the catalog's, and each collection's sorted by collection ID.
- *
- * @param snapshot - The validated snapshot.
- * @returns A new `ReadVersions` record.
- * @throws Never for a validated snapshot; any throw reaches the caller's `protect`.
- */
-export function readVersions(snapshot: LibrarySnapshot): ReadVersions {
-  const collections = snapshot.collections
-    .map((collection) => ({ id: collection.id, revision: collection.revision }))
-    .toSorted((left, right) => compareText(left.id, right.id));
-  return { catalog: { id: snapshot.catalog.id, revision: snapshot.catalog.revision }, collections };
-}
-
-/**
  * Builds every search hit of a snapshot, in inventory order: for each collection, the collection
- * itself, then its sections, then its objects (including objects in no section). Rebuilt on every
- * call; nothing is cached and the catalog is not touched. Pure; nothing is written, and Authoring
- * owns recovery.
+ * itself, then its sections, then its objects (including objects in no section).
  *
  * @param snapshot - The validated snapshot.
  * @returns The hits, before filtering and sorting.
@@ -59,21 +32,35 @@ function projectCollection(collection: CollectionProjection): readonly SearchHit
     description: collection.description,
     visibleIn: [],
   };
-  const sections = collection.sections.map((section): SearchHit => ({
+  const sections = collection.sections.map(
+    /** The hit of one section. */ (section) => sectionHit(collection, section),
+  );
+  const objects = collection.objects.map(
+    /** The hit of one object. */ (object) => objectHit(collection, object),
+  );
+  return [collectionHit, ...sections, ...objects];
+}
+
+/** A section's hit: its title, no description, visible in itself. */
+function sectionHit(collection: CollectionProjection, section: SectionProjection): SearchHit {
+  return {
     kind: 'section',
     collection: collection.id,
     id: section.id,
     label: section.title,
     description: '',
     visibleIn: [section.id],
-  }));
-  const objects = collection.objects.map((object): SearchHit => ({
+  };
+}
+
+/** An object's hit: its label, description and the sections it is visible in. */
+function objectHit(collection: CollectionProjection, object: ObjectProjection): SearchHit {
+  return {
     kind: 'object',
     collection: collection.id,
     id: object.id,
     label: object.label,
     description: object.description,
     visibleIn: object.visibleIn,
-  }));
-  return [collectionHit, ...sections, ...objects];
+  };
 }

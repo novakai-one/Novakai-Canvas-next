@@ -1,3 +1,8 @@
+/*
+ * Searching one snapshot and returning one page. Reads no clock or locale and writes no storage or
+ * index; a retry with the same input gives the same page. Authoring owns source changes, commit
+ * and recovery.
+ */
 import {
   querySchema,
   type QueryRequest,
@@ -5,57 +10,65 @@ import {
   type SearchHit,
 } from '../../contract/records/query.js';
 import type { LibrarySnapshot } from '../../contract/records/snapshot.js';
+import type { QueryInput } from '../../contract/types.js';
 import type { Result } from '../../contract/errors.js';
 import { failure, parse, protect, success } from '../validation/outcomes.js';
 import { validateSnapshot } from '../validation/validate.js';
-import { projectHits, readVersions, compareText } from './project.js';
+import { hasFolder } from '../validation/lookups.js';
+import { projectHits } from './project.js';
 import { filterHits } from './filters.js';
 import { sortHits } from './ranking.js';
 import { cursorOffset, nextCursor } from './cursor.js';
+import { compareText, searchWords } from './text.js';
+import { readVersions } from './versions.js';
 
 /**
  * Searches one snapshot and returns one page.
  *
  * Steps; the first failure stops the search and no partial page is returned:
- * 1. Validate the snapshot, then parse the request (defaults filled in).
- * 2. Normalize the criteria: text trimmed, lowercased and single-spaced; kinds de-duplicated and
+ * 1. Read the input's `snapshot` and `request`.
+ * 2. Validate the snapshot, then parse the request (defaults filled in).
+ * 3. Normalize the criteria: text trimmed, lowercased and single-spaced; kinds de-duplicated and
  *    sorted. Display labels are never changed.
- * 3. Check the requested folder exists (`not-found`, path `query.folder`).
- * 4. Build every hit, filter, sort (see `sortHits`), then apply the cursor's offset. A bad or
+ * 4. Check the requested folder exists (`not-found`, path `query.folder`).
+ * 5. Build every hit, filter, sort (see `sortHits`), then apply the cursor's offset. A bad or
  *    stale cursor is `stale-cursor` (path `query.cursor`).
- * 5. Return up to `limit` hits, the total, the source revisions and, when more hits follow, the
+ * 6. Return up to `limit` hits, the total, the source revisions and, when more hits follow, the
  *    next cursor. A next cursor longer than `MAX_CURSOR_LENGTH` is a `limit` failure instead.
  *
- * Reads no clock or locale and writes no storage or index. A throw while reading the input
- * becomes a `shape` failure. Authoring owns source changes, commit and recovery.
+ * A throw while reading the input becomes a `shape` failure at `$`. The same input always gives
+ * the same page, so a retry is safe; Authoring owns source changes, commit and recovery.
  *
- * @param snapshot - The untrusted snapshot.
- * @param request - The untrusted search request.
+ * @param input - The untrusted snapshot and search request.
  * @returns The frozen page, or a failure.
  * @throws Never; a throw while reading the input becomes a `shape` failure.
  */
-export function queryLibrary(snapshot: unknown, request: unknown): Result<QueryPage> {
-  return protect(() => prepareQuery(snapshot, request));
+export function queryLibrary(input: QueryInput): Result<QueryPage> {
+  return protect(/** Runs the search. */ () => prepareQuery(input));
 }
 
 /** Validates the snapshot and parses the request before any search work. */
-function prepareQuery(input: unknown, request: unknown): Result<QueryPage> {
-  const snapshot = validateSnapshot(input);
-  if (!snapshot.ok) {
-    return snapshot;
+function prepareQuery(input: QueryInput): Result<QueryPage> {
+  const { snapshot, request } = input;
+  const validated = validateSnapshot(snapshot);
+  if (!validated.ok) {
+    return validated;
   }
-  const parsed = parse(querySchema, request);
+  const parsed = parse(querySchema(), request);
   if (!parsed.ok) {
     return parsed;
   }
-  return searchSnapshot(snapshot.value, normalizeRequest(parsed.value));
+  return searchSnapshot(validated.value, normalizeRequest(parsed.value));
 }
 
 /** Normalizes the search criteria only; labels and descriptions are left as they are. */
 function normalizeRequest(request: QueryRequest): QueryRequest {
-  const text = request.text.trim().toLowerCase().split(/\s+/).join(' ');
+  const trimmed = request.text.trim();
+  const lowered = trimmed.toLowerCase();
+  const text = searchWords(lowered).join(' ');
   // A Set drops repeated kinds; sorting makes the order independent of the request.
-  const kinds = [...new Set(request.kinds)].toSorted(compareText);
+  const distinctKinds = [...new Set(request.kinds)];
+  const kinds = distinctKinds.toSorted(compareText);
   return { ...request, text, kinds };
 }
 
@@ -80,9 +93,12 @@ function validateFolder(snapshot: LibrarySnapshot, request: QueryRequest): Resul
   if (request.folder === undefined) {
     return success(true);
   }
-  const exists = snapshot.catalog.folders.some((folder) => folder.id === request.folder);
-  if (!exists) {
-    return failure('not-found', 'query.folder', 'Search folder must exist');
+  if (!hasFolder(snapshot.catalog.folders, request.folder)) {
+    return failure({
+      code: 'not-found',
+      path: 'query.folder',
+      message: 'Search folder must exist',
+    });
   }
   return success(true);
 }

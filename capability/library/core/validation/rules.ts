@@ -1,8 +1,20 @@
+/*
+ * The rules across records of a parsed snapshot: unique IDs, existing references, no folder
+ * cycles, and one catalog entry per collection. Every violation is reported. Pure; the caller
+ * corrects the input, and Authoring owns commit and recovery.
+ */
 import type { Diagnostic } from '../../contract/errors.js';
-import type { LibrarySnapshot, CollectionProjection } from '../../contract/records/snapshot.js';
-import type { Catalog, Folder } from '../../contract/records/catalog.js';
-import { ancestry } from '../catalog/folders.js';
+import type {
+  LibrarySnapshot,
+  CollectionProjection,
+  ObjectProjection,
+  RecentVisit,
+  SectionProjection,
+} from '../../contract/records/snapshot.js';
+import type { Catalog, CatalogEntry, Folder } from '../../contract/records/catalog.js';
+import { ancestry } from '../catalog/ancestry.js';
 import { duplicateIssues } from './identities.js';
+import { hasCollection, hasEntry, hasFolder, hasSection } from './lookups.js';
 import { diagnoseWhen } from './outcomes.js';
 
 /**
@@ -34,15 +46,13 @@ export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[
 
 /** Folder rules: unique IDs, existing parents and no parent cycles, each checked separately. */
 function folderIssues(catalog: Catalog): readonly Diagnostic[] {
-  const identities = duplicateIssues(catalog.folders, (folder) => folder.id, 'catalog.folders');
-  const references = catalog.folders.flatMap((folder) => parentIssues(folder, catalog));
-  const cycles = catalog.folders.flatMap((folder) =>
-    diagnoseWhen(
-      ancestry(folder.id, catalog.folders).cycle,
-      'cycle',
-      `catalog.folders.${folder.id}.parent`,
-      'Folder ancestry must be acyclic',
-    ),
+  const identities = duplicateIssues(catalog.folders, folderKey, 'catalog.folders');
+  const references = catalog.folders.flatMap(
+    /** The folder's missing-parent diagnostic, if any. */ (folder) =>
+      parentIssues(folder, catalog),
+  );
+  const cycles = catalog.folders.flatMap(
+    /** The folder's cycle diagnostic, if any. */ (folder) => cycleIssues(folder, catalog),
   );
   return [...identities, ...references, ...cycles];
 }
@@ -52,109 +62,146 @@ function parentIssues(folder: Folder, catalog: Catalog): readonly Diagnostic[] {
   if (folder.parent === undefined) {
     return [];
   }
-  const exists = catalog.folders.some((candidate) => candidate.id === folder.parent);
-  return diagnoseWhen(
-    !exists,
-    'reference',
-    `catalog.folders.${folder.id}.parent`,
-    'Parent folder must exist',
-  );
+  return diagnoseWhen(!hasFolder(catalog.folders, folder.parent), {
+    code: 'reference',
+    path: `catalog.folders.${folder.id}.parent`,
+    message: 'Parent folder must exist',
+  });
+}
+
+/** A folder whose parent chain comes back to a folder already visited is in a cycle. */
+function cycleIssues(folder: Folder, catalog: Catalog): readonly Diagnostic[] {
+  const walk = ancestry(folder.id, catalog.folders);
+  return diagnoseWhen(walk.cycle, {
+    code: 'cycle',
+    path: `catalog.folders.${folder.id}.parent`,
+    message: 'Folder ancestry must be acyclic',
+  });
 }
 
 /** The catalog entries and the collection inventory match one to one; neither has orphans. */
 function membershipIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
-  const entries = duplicateIssues(
-    snapshot.catalog.entries,
-    (entry) => entry.collection,
-    'catalog.entries',
+  const entries = duplicateIssues(snapshot.catalog.entries, entryKey, 'catalog.entries');
+  const collections = duplicateIssues(snapshot.collections, collectionKey, 'collections');
+  const orphanEntries = snapshot.catalog.entries.flatMap(
+    /** The entry's missing collection or folder. */ (entry) => entryIssues(entry, snapshot),
   );
-  const collections = duplicateIssues(
-    snapshot.collections,
-    (collection) => collection.id,
-    'collections',
+  const missingEntries = snapshot.collections.flatMap(
+    /** The collection's missing entry, if any. */ (collection) =>
+      missingEntryIssues(collection, snapshot.catalog),
   );
-  const missingEntries = snapshot.collections.flatMap((collection) => {
-    const exists = snapshot.catalog.entries.some((entry) => entry.collection === collection.id);
-    return diagnoseWhen(
-      !exists,
-      'reference',
-      `collections.${collection.id}`,
-      'Collection must have exactly one catalog entry',
-    );
-  });
-  return [...entries, ...collections, ...entryIssues(snapshot), ...missingEntries];
+  return [...entries, ...collections, ...orphanEntries, ...missingEntries];
 }
 
-/** Every entry's collection must exist, and its folder too when it names one. */
-function entryIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
-  return snapshot.catalog.entries.flatMap((entry) => {
-    const collectionExists = snapshot.collections.some(
-      (collection) => collection.id === entry.collection,
-    );
-    const folderExists =
-      entry.folder === undefined ||
-      snapshot.catalog.folders.some((folder) => folder.id === entry.folder);
-    const missingCollection = diagnoseWhen(
-      !collectionExists,
-      'reference',
-      `catalog.entries.${entry.collection}`,
-      'Collection projection must exist',
-    );
-    const missingFolder = diagnoseWhen(
-      !folderExists,
-      'reference',
-      `catalog.entries.${entry.collection}.folder`,
-      'Containing folder must exist',
-    );
-    return [...missingCollection, ...missingFolder];
+/** An entry's collection must exist, and its folder too when it names one. */
+function entryIssues(entry: CatalogEntry, snapshot: LibrarySnapshot): readonly Diagnostic[] {
+  const collectionExists = hasCollection(snapshot.collections, entry.collection);
+  const folderExists =
+    entry.folder === undefined || hasFolder(snapshot.catalog.folders, entry.folder);
+  const missingCollection = diagnoseWhen(!collectionExists, {
+    code: 'reference',
+    path: `catalog.entries.${entry.collection}`,
+    message: 'Collection projection must exist',
+  });
+  const missingFolder = diagnoseWhen(!folderExists, {
+    code: 'reference',
+    path: `catalog.entries.${entry.collection}.folder`,
+    message: 'Containing folder must exist',
+  });
+  return [...missingCollection, ...missingFolder];
+}
+
+/** Every collection needs a catalog entry. */
+function missingEntryIssues(
+  collection: CollectionProjection,
+  catalog: Catalog,
+): readonly Diagnostic[] {
+  return diagnoseWhen(!hasEntry(catalog.entries, collection.id), {
+    code: 'reference',
+    path: `collections.${collection.id}`,
+    message: 'Collection must have exactly one catalog entry',
   });
 }
 
 /** Section IDs and object IDs are each unique within the collection (separately). */
 function projectionIssues(collection: CollectionProjection): readonly Diagnostic[] {
-  const sections = duplicateIssues(
-    collection.sections,
-    (section) => section.id,
-    `collections.${collection.id}.sections`,
+  const sectionsPath = `collections.${collection.id}.sections`;
+  const objectsPath = `collections.${collection.id}.objects`;
+  const sections = duplicateIssues(collection.sections, sectionKey, sectionsPath);
+  const objects = duplicateIssues(collection.objects, objectKey, objectsPath);
+  const visibility = collection.objects.flatMap(
+    /** The object's visible-section diagnostics. */ (object) =>
+      objectVisibility(object, collection),
   );
-  const objects = duplicateIssues(
-    collection.objects,
-    (object) => object.id,
-    `collections.${collection.id}.objects`,
-  );
-  return [...sections, ...objects, ...objectVisibility(collection)];
+  return [...sections, ...objects, ...visibility];
 }
 
 /**
  * An object may be in no section, but each section it names must exist in the same collection and
  * be named only once.
  */
-function objectVisibility(collection: CollectionProjection): readonly Diagnostic[] {
-  return collection.objects.flatMap((object) => {
-    const path = `collections.${collection.id}.objects.${object.id}.visibleIn`;
-    const duplicates = duplicateIssues(object.visibleIn, (id) => id, path);
-    const references = object.visibleIn.flatMap((id) =>
-      diagnoseWhen(
-        !collection.sections.some((section) => section.id === id),
-        'reference',
-        `${path}.${id}`,
-        'Visible section must exist',
-      ),
-    );
-    return [...duplicates, ...references];
-  });
+function objectVisibility(
+  object: ObjectProjection,
+  collection: CollectionProjection,
+): readonly Diagnostic[] {
+  const path = `collections.${collection.id}.objects.${object.id}.visibleIn`;
+  const duplicates = duplicateIssues(object.visibleIn, sectionIdKey, path);
+  const references = object.visibleIn.flatMap(
+    /** The missing-section diagnostic, if any. */ (id) =>
+      diagnoseWhen(!hasSection(collection.sections, id), {
+        code: 'reference',
+        path: `${path}.${id}`,
+        message: 'Visible section must exist',
+      }),
+  );
+  return [...duplicates, ...references];
 }
 
 /** One visit per collection. A visit may name an archived collection, never a missing one. */
 function recentIssues(snapshot: LibrarySnapshot): readonly Diagnostic[] {
-  const duplicates = duplicateIssues(snapshot.recent, (visit) => visit.collection, 'recent');
-  const references = snapshot.recent.flatMap((visit) =>
-    diagnoseWhen(
-      !snapshot.collections.some((collection) => collection.id === visit.collection),
-      'reference',
-      `recent.${visit.collection}`,
-      'Visited collection must exist',
-    ),
+  const duplicates = duplicateIssues(snapshot.recent, visitKey, 'recent');
+  const references = snapshot.recent.flatMap(
+    /** The missing-collection diagnostic, if any. */ (visit) =>
+      diagnoseWhen(!hasCollection(snapshot.collections, visit.collection), {
+        code: 'reference',
+        path: `recent.${visit.collection}`,
+        message: 'Visited collection must exist',
+      }),
   );
   return [...duplicates, ...references];
+}
+
+/** A folder's key: its ID. */
+function folderKey(folder: Folder): string {
+  return folder.id;
+}
+
+/** An entry's key: its collection's ID. */
+function entryKey(entry: CatalogEntry): string {
+  return entry.collection;
+}
+
+/** A collection's key: its ID. */
+function collectionKey(collection: CollectionProjection): string {
+  return collection.id;
+}
+
+/** A section's key: its ID. */
+function sectionKey(section: SectionProjection): string {
+  return section.id;
+}
+
+/** An object's key: its ID. */
+function objectKey(object: ObjectProjection): string {
+  return object.id;
+}
+
+/** A visible-section entry's key: the section ID itself. */
+function sectionIdKey(id: string): string {
+  return id;
+}
+
+/** A visit's key: its collection's ID. */
+function visitKey(visit: RecentVisit): string {
+  return visit.collection;
 }

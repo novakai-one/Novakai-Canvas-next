@@ -1,3 +1,9 @@
+/*
+ * Library's failure vocabulary and its own result envelope. Every entry point returns a failure
+ * instead of throwing. Library writes nothing, so the caller recovers by correcting the named
+ * input and calling again; Authoring owns commit and crash recovery.
+ */
+
 /**
  * What kind of problem a diagnostic reports. Consumers branch on this code, never on the message.
  *
@@ -10,7 +16,6 @@
  * - `duplicate`: an ID appears twice where it must be unique.
  * - `reference`: an ID refers to something that does not exist.
  * - `cycle`: folder parents form a loop.
- * - `identity`: reserved for identity conflicts.
  * - `not-found`: an operation or query names something that does not exist.
  * - `already-exists`: a create names an ID that already exists.
  * - `folder-not-empty`: a folder with contents was removed without `rehome`.
@@ -23,7 +28,6 @@ export type DiagnosticCode =
   | 'duplicate'
   | 'reference'
   | 'cycle'
-  | 'identity'
   | 'not-found'
   | 'already-exists'
   | 'folder-not-empty'

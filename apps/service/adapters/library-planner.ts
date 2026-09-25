@@ -24,7 +24,7 @@ function planOrganization(
 ): Result<Proposal> {
   const current = workspace.read(snapshot);
   if (!current.ok) return current;
-  const planned = planLibrary(current.value.library, changes);
+  const planned = planLibrary({ snapshot: current.value.library, changes });
   if (!planned.ok)
     return failure(
       'invariant-violation',

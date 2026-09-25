@@ -1,6 +1,6 @@
 import { previewModuleRoutes } from '../adapters/route-preview.js';
 import type { Diagnostic } from './errors.js';
-import { folderId } from '@novakai/canvas-library';
+import { folderIdSchema } from '@novakai/canvas-library';
 import { createLibraryController } from '../adapters/library-session.js';
 import { createLibraryReader } from '../adapters/library-reader.js';
 import { createLibraryBrowser } from '../adapters/react/LibraryBrowser.js';
@@ -335,7 +335,7 @@ function controller(
         retention,
         reader: createLibraryReader(),
         now: () => Date.now(),
-        nextFolderId: () => folderId.parse(`folder-${crypto.randomUUID()}`),
+        nextFolderId: () => folderIdSchema().parse(`folder-${crypto.randomUUID()}`),
         ...callbacks,
       }),
     wires: (callbacks) => createWireSession({ retention, read: readWireDrafts, ...callbacks }),

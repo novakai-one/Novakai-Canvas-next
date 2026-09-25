@@ -1,16 +1,20 @@
-import type { Diagnostic, DiagnosticCode, Result } from '../../contract/errors.js';
+/*
+ * Building Library results: successes, failures with diagnostics, schema parsing, and the
+ * `protect` boundary every entry point runs inside. Nothing here stores anything; the caller
+ * corrects the input and calls again, and Authoring owns commit and recovery.
+ */
+import type { Diagnostic, Result } from '../../contract/errors.js';
 
 /**
  * Builds a failure with one diagnostic and no partial value. Public entry points freeze it (see
  * {@link protect}).
  *
- * @param code - The diagnostic code.
- * @param path - Where the problem is.
- * @param message - What went wrong.
- * @returns `{ ok: false, error: { code: 'validation-failed', diagnostics: [{ code, path, message }] } }`.
+ * @param diagnostic - The code, path and message of the problem.
+ * @returns `{ ok: false, error: { code: 'validation-failed', diagnostics: [diagnostic] } }`.
  * @throws Never.
  */
-export function failure<T>(code: DiagnosticCode, path: string, message: string): Result<T> {
+export function failure<T>(diagnostic: Diagnostic): Result<T> {
+  const { code, path, message } = diagnostic;
   return {
     ok: false,
     error: { code: 'validation-failed', diagnostics: [{ code, path, message }] },
@@ -33,21 +37,15 @@ export function success<T>(value: T): Result<T> {
  * rule is violated (the same convention as Model).
  *
  * @param violated - Whether the rule is violated.
- * @param code - The diagnostic code.
- * @param path - Where the problem is.
- * @param message - What went wrong.
+ * @param diagnostic - The code, path and message to report.
  * @returns `[{ code, path, message }]` when violated; otherwise `[]`.
  * @throws Never.
  */
-export function diagnoseWhen(
-  violated: boolean,
-  code: DiagnosticCode,
-  path: string,
-  message: string,
-): readonly Diagnostic[] {
+export function diagnoseWhen(violated: boolean, diagnostic: Diagnostic): readonly Diagnostic[] {
   if (!violated) {
     return [];
   }
+  const { code, path, message } = diagnostic;
   return [{ code, path, message }];
 }
 
@@ -66,11 +64,7 @@ export function parse<T>(parser: Parser<T>, input: unknown): Result<T> {
   if (parsed.success) {
     return success(parsed.data);
   }
-  const diagnostics = parsed.error.issues.map((issue): Diagnostic => ({
-    code: 'shape',
-    path: issue.path.map(String).join('.'),
-    message: issue.message,
-  }));
+  const diagnostics = parsed.error.issues.map(shapeDiagnostic);
   return rejected(diagnostics);
 }
 
@@ -91,7 +85,12 @@ export function protect<T>(action: () => Result<T>): Result<T> {
   try {
     return freeze(action());
   } catch {
-    return freeze(failure('shape', '$', 'Input could not be read as supported data'));
+    const unreadable = failure<T>({
+      code: 'shape',
+      path: '$',
+      message: 'Input could not be read as supported data',
+    });
+    return freeze(unreadable);
   }
 }
 
@@ -107,7 +106,11 @@ export function protect<T>(action: () => Result<T>): Result<T> {
 export function rejected<T>(diagnostics: readonly Diagnostic[]): Result<T> {
   const [first, ...remaining] = diagnostics;
   if (first === undefined) {
-    return failure('shape', '$', 'Validation provider rejected input without diagnostic evidence');
+    return failure({
+      code: 'shape',
+      path: '$',
+      message: 'Validation provider rejected input without diagnostic evidence',
+    });
   }
   return { ok: false, error: { code: 'validation-failed', diagnostics: [first, ...remaining] } };
 }
@@ -127,15 +130,21 @@ interface Parser<T> {
     | { readonly success: false; readonly error: { readonly issues: readonly ShapeIssue[] } };
 }
 
+/** A schema issue as a `shape` diagnostic: its path joined with `.`, and its message. */
+function shapeDiagnostic(issue: ShapeIssue): Diagnostic {
+  const segments = issue.path.map(String);
+  return { code: 'shape', path: segments.join('.'), message: issue.message };
+}
+
 /**
  * Deep-freezes a value: its enumerable own string-keyed values first (symbol keys are skipped),
- * then the value itself. Only for freshly
- * built, acyclic results; never for the caller's input.
+ * then the value itself. Only for freshly built, acyclic results; never for the caller's input.
  */
 function freeze<T>(value: T): T {
   if (value === null || typeof value !== 'object') {
     return value;
   }
-  Object.values(value).forEach(freeze);
+  const children = Object.values(value);
+  children.forEach(freeze);
   return Object.freeze(value);
 }

@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { snapshotSchema } from '@novakai/canvas-authoring';
 import { validate, type Collection } from '@novakai/canvas-model';
-import { collectionId } from '@novakai/canvas-library';
+import { collectionIdSchema } from '@novakai/canvas-library';
 import { createLibraryReader } from '../adapters/library-reader.js';
 import { createLibraryResults } from '../adapters/react/LibraryResults.js';
 import type { LibraryView } from '../contract/records/library.js';
@@ -32,8 +32,8 @@ it('ignores obsolete local visits without masking invalid canonical catalog refe
   });
   const reader = createLibraryReader();
   const visits = [
-    { collection: collectionId.parse('retired-atlas'), openedAt: 200 },
-    { collection: collectionId.parse('current'), openedAt: 100 },
+    { collection: collectionIdSchema().parse('retired-atlas'), openedAt: 200 },
+    { collection: collectionIdSchema().parse('current'), openedAt: 100 },
   ];
   const loaded = reader.read(snapshot, [collection], visits);
   assert(loaded.ok, JSON.stringify(loaded));

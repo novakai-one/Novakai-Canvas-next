@@ -4,7 +4,7 @@
  * and recovery.
  */
 import type { Diagnostic } from '../../contract/errors.js';
-import { diagnoseWhen } from './outcomes.js';
+import { diagnoseWhen } from '../shared/outcomes.js';
 
 /**
  * Reports every repeated key within one scope. The first occurrence of a key is fine; each later

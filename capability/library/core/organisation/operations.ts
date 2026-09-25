@@ -10,8 +10,8 @@ import type {
 } from '../../contract/records/organisation.js';
 import type { OrganisationChange, ChangeOf } from '../../contract/records/change.js';
 import type { LibraryResult } from '../../contract/errors.js';
-import { failure, success } from '../validation/outcomes.js';
-import { entryKey, folderKey, hasEntry, hasFolder } from '../validation/lookups.js';
+import { failure, success } from '../shared/outcomes.js';
+import { entryKey, folderKey, hasEntry, hasFolder } from '../shared/lookups.js';
 import { removeFolder } from './removal.js';
 
 /**

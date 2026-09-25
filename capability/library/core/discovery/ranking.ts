@@ -9,7 +9,7 @@ import {
   type SearchHit,
   type SortMode,
 } from '../../contract/records/query.js';
-import { compareText } from './text.js';
+import { compareText } from '../shared/text.js';
 
 /**
  * Sorts hits for one request, returning a new array.

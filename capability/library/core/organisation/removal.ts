@@ -11,7 +11,7 @@ import type {
 } from '../../contract/records/organisation.js';
 import type { ChangeOf, RemovalPolicy } from '../../contract/records/change.js';
 import type { LibraryResult } from '../../contract/errors.js';
-import { failure, success } from '../validation/outcomes.js';
+import { failure, success } from '../shared/outcomes.js';
 
 /**
  * Removes one folder from a organisation.

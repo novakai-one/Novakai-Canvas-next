@@ -8,9 +8,9 @@ import { MAX_CURSOR_LENGTH, type QueryRequest } from '../../contract/records/que
 import type { LibrarySnapshot, RecentVisit } from '../../contract/records/snapshot.js';
 import { cursorSchema, type CursorEnvelope } from '../../contract/records/cursor.js';
 import type { LibraryResult } from '../../contract/errors.js';
-import { failure, success } from '../validation/outcomes.js';
-import { compareText } from './text.js';
-import { readVersions } from './versions.js';
+import { failure, success } from '../shared/outcomes.js';
+import { compareText } from '../shared/text.js';
+import { readVersions } from '../shared/versions.js';
 
 /**
  * The offset a request starts at: 0 without a cursor, otherwise the cursor's offset.

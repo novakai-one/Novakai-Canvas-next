@@ -4,7 +4,7 @@
  */
 import { snapshotSchema, type LibrarySnapshot } from '../../contract/records/snapshot.js';
 import type { LibraryResult } from '../../contract/errors.js';
-import { parse, protect, success, rejected } from './outcomes.js';
+import { parse, protect, success, rejected } from '../shared/outcomes.js';
 import { validateRecords } from './rules.js';
 
 /**

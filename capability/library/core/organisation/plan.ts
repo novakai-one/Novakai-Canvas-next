@@ -13,9 +13,9 @@ import {
 import type { OrganisationPlan, PlanInput } from '../../contract/types.js';
 import type { LibraryResult } from '../../contract/errors.js';
 import { validateLibrarySnapshot } from '../validation/validate.js';
-import { parse, protect, success } from '../validation/outcomes.js';
-import { hasCollection } from '../validation/lookups.js';
-import { readVersions } from '../discovery/versions.js';
+import { parse, protect, success } from '../shared/outcomes.js';
+import { hasCollection } from '../shared/lookups.js';
+import { readVersions } from '../shared/versions.js';
 import { applyOperation } from './operations.js';
 
 /**

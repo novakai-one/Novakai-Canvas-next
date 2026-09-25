@@ -1,24 +1,7 @@
 /*
- * Locale-independent text handling for search: comparing strings and splitting search text into
- * words. Pure; reads no locale or clock. Authoring owns commit and recovery.
+ * Splitting search text into words for discovery filters and ranking. Pure; reads no locale or
+ * clock. Authoring owns commit and recovery.
  */
-
-/**
- * Compares two strings by UTF-16 code unit, so the order is the same on every machine and in every
- * locale.
- */
-export function compareText(
-  left: string,
-  right: string,
-): number {
-  if (left < right) {
-    return -1;
-  }
-  if (left > right) {
-    return 1;
-  }
-  return 0;
-}
 
 /** Splits search text into its words: split on runs of whitespace, empty pieces dropped. */
 export function searchWords(text: string): readonly string[] {

@@ -19,8 +19,15 @@ import type {
 } from '../../contract/records/organisation.js';
 import { ancestry } from '../organisation/ancestry.js';
 import { duplicateIssues } from './identities.js';
-import { entryKey, folderKey, hasCollection, hasEntry, hasFolder, hasSection } from './lookups.js';
-import { diagnoseWhen } from './outcomes.js';
+import {
+  entryKey,
+  folderKey,
+  hasCollection,
+  hasEntry,
+  hasFolder,
+  hasSection,
+} from '../shared/lookups.js';
+import { diagnoseWhen } from '../shared/outcomes.js';
 
 /**
  * Checks the rules across records of a parsed snapshot, and reports every violation.

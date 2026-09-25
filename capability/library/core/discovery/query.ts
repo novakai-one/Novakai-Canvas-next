@@ -12,15 +12,16 @@ import {
 import type { LibrarySnapshot } from '../../contract/records/snapshot.js';
 import type { QueryInput } from '../../contract/types.js';
 import type { LibraryResult } from '../../contract/errors.js';
-import { failure, parse, protect, success } from '../validation/outcomes.js';
+import { failure, parse, protect, success } from '../shared/outcomes.js';
 import { validateLibrarySnapshot } from '../validation/validate.js';
-import { hasFolder } from '../validation/lookups.js';
+import { hasFolder } from '../shared/lookups.js';
 import { projectHits } from './project.js';
 import { filterHits } from './filters.js';
 import { sortHits } from './ranking.js';
 import { cursorOffset, nextCursor } from './cursor.js';
-import { compareText, searchWords } from './text.js';
-import { readVersions } from './versions.js';
+import { compareText } from '../shared/text.js';
+import { searchWords } from './text.js';
+import { readVersions } from '../shared/versions.js';
 
 /**
  * Searches one snapshot and returns one page.

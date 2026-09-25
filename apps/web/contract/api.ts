@@ -105,3 +105,59 @@ export { definitionRequest } from '../core/editing/definition-request.js';
 export { reusableSession, retainCamera, renderChanged } from '../core/workspace/session-reuse.js';
 export { bindHistoryKeys } from '../core/workspace/history-keys.js';
 export { shellLayout, type ShellLayout } from '../core/workspace/shell-layout.js';
+export {
+  renderTicket,
+  type RenderMode,
+  type RenderTicket,
+} from '../core/workspace/render/ticket.js';
+export {
+  documentFor,
+  generationChanged,
+  generationFailure,
+  renderAdmission,
+  renderInvalidation,
+  snapshotBase,
+  type LatestSnapshot,
+} from '../core/workspace/render/admission.js';
+export {
+  installedPatch,
+  openFailurePatch,
+  openingPatch,
+  openSuccessPatch,
+  ownedProblem,
+  reusedPatch,
+} from '../core/workspace/render/patches.js';
+export {
+  activeRefresh,
+  choosePlan,
+  choosingPatch,
+  closedSwitchPatch,
+  diagramCurrent,
+  gonePatch,
+  staleSnapshot,
+} from '../core/workspace/render/navigation.js';
+export {
+  editingStatus,
+  mutationAvailable,
+  openDraftCount,
+  restingStatus,
+  staleUncertainty,
+  type CollectionDraft,
+} from '../core/workspace/status.js';
+export {
+  heldHistory,
+  historyIdle,
+  historyReady,
+  historyView,
+  inverseSettling,
+  observeSnapshot,
+  settlingHistory,
+  type HistorySlot,
+} from '../core/workspace/history/gate.js';
+export {
+  editsHeld,
+  finishedInverse,
+  navigableStatus,
+  submissionAllowed,
+  unresolvedInverses,
+} from '../core/workspace/history/journal.js';

@@ -33,8 +33,9 @@ import type {
   CanvasEffect,
   RenderDocument,
   EditIntent,
+  TransportResponse,
 } from '../../contract/records/owners.js';
-import { diagnostic, type Diagnostic, type Result } from '../../contract/errors.js';
+import type { Diagnostic, Result } from '../../contract/errors.js';
 import type { BinaryResponse } from '../../contract/ports/client.js';
 import {
   plainMessage,
@@ -52,20 +53,55 @@ import {
   reviewConnection,
   reusableSession,
   retainCamera,
-  renderChanged,
   bindHistoryKeys,
+  renderTicket,
+  documentFor,
+  generationChanged,
+  generationFailure,
+  renderAdmission,
+  renderInvalidation,
+  snapshotBase,
+  installedPatch,
+  openFailurePatch,
+  openingPatch,
+  openSuccessPatch,
+  ownedProblem,
+  reusedPatch,
+  activeRefresh,
+  choosePlan,
+  choosingPatch,
+  closedSwitchPatch,
+  diagramCurrent,
+  gonePatch,
+  staleSnapshot,
+  editingStatus,
+  mutationAvailable,
+  openDraftCount,
+  restingStatus,
+  staleUncertainty,
+  editsHeld,
+  finishedInverse,
+  heldHistory,
+  historyIdle,
+  historyReady,
+  historyView,
+  inverseSettling,
+  navigableStatus,
+  observeSnapshot,
+  settlingHistory,
+  submissionAllowed,
+  unresolvedInverses,
+  type CollectionDraft,
   type ConnectionCapture,
   type ConnectionPolicy,
   type ConnectionReview,
+  type HistorySlot,
+  type LatestSnapshot,
+  type RenderMode,
+  type RenderTicket,
 } from '../../contract/api.js';
 
 const creationKinds = ['diagram', 'object', 'group'] as const;
-const restingStatuses = new Set([
-  'Ready',
-  'Saved',
-  'Draft not applied',
-  'Edit awaiting confirmation',
-]);
 /** Model's connection policy, read once here; the editing core imports no capability's runtime. */
 const connectionPolicy: ConnectionPolicy = {
   compatibleWires,
@@ -78,13 +114,9 @@ const connectionPolicy: ConnectionPolicy = {
   descendantId,
   relationshipId,
 };
-interface RenderRequest {
+/** A render in flight: its ticket, the token that decides delivery, and the transport abort. */
+interface RenderRequest extends RenderTicket {
   readonly token: number;
-  readonly id: string;
-  readonly revision: number;
-  readonly workspace: string;
-  readonly generation: string;
-  readonly mode: 'navigation' | 'chooser';
   readonly job: AbortController;
 }
 /** Ephemeral orchestration state contains immutable snapshots. Authoring is the sole owner of committed diagram data. */
@@ -126,13 +158,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   const listeners = new Set<() => void>();
   const confirmedGestures = new Set<string>();
   let unsubscribe = (): void => undefined;
-  let renderJob: AbortController | null = null;
   let rendering: RenderRequest | null = null;
   let requestToken = 0;
   let disposed = false;
   let snapshotRead = 0;
   let restoredWorkspace: string | null = null;
-  let historyGate = false;
+  let historyGate: HistorySlot = historyIdle;
   let movementCapture: {
     active: ActiveDiagram;
     intent: Extract<EditIntent, { kind: 'placement' }>;
@@ -142,7 +173,6 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   let movementApplying = false;
   let connectionCapture: ConnectionCapture | null = null;
   let historyRead = 0;
-  let historyRefreshing = false;
   let diagramCapture: {
     readonly id: Section['id'];
     readonly base: NonNullable<WorkspaceView['snapshot']>;
@@ -164,8 +194,6 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     readonly generation: string;
     request: Request | null;
   } | null = null;
-  let historySequence = 0;
-  let historySnapshotReady = false;
   let removeHistoryKeys = (): void => undefined;
   const inspector = bindings.inspector({ apply: applyObject, report });
   const definitions = bindings.definitions({ apply: applyDefinition, report });
@@ -176,14 +204,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   );
   let refusalOrder = emptyRefusalOrder;
   const submissions = bindings.submissions({ changed: pendingChanged, confirmed, report });
+  /** An inverse that left the journal unrefused holds the undo/redo gate until it settles. */
   function holdConfirmedHistory(pending: readonly Submission[]): void {
-    const finished = state.pending.some(
-      (item) =>
-        item.request.intent.kind !== 'change' &&
-        item.state !== 'rejected' &&
-        !pending.some((other) => other.request.request === item.request.request),
-    );
-    if (finished) setHistoryGate(true);
+    if (finishedInverse(state.pending, pending)) setHistoryGate(heldHistory(historyGate));
   }
   /** Transmission status is independent of typing and retained failures. */
   function pendingChanged(pending: readonly Submission[]): void {
@@ -286,17 +309,10 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** A restarted service keeps drafts visible; new-generation data never silently advances a draft's captured preconditions. */
   function acceptCurrent(
-    latest: {
-      readonly snapshot: import('../../contract/records/owners.js').Snapshot;
-      readonly collections: WorkspaceView['collections'];
-    },
+    latest: LatestSnapshot,
     generation: string,
   ): void {
-    if (
-      state.generation === generation &&
-      latest.snapshot.sequence < (state.snapshot?.sequence ?? 0)
-    )
-      return;
+    if (staleSnapshot(state, latest.snapshot, generation)) return;
     settleChangedRender(latest, generation);
     update({
       snapshot: latest.snapshot,
@@ -304,7 +320,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       generation,
       connected: true,
     });
-    observeHistorySnapshot(latest.snapshot.sequence);
+    historyGate = observeSnapshot(historyGate, latest.snapshot.sequence);
     restoreEdits();
     library.refresh(latest.snapshot, latest.collections);
     source.reconcile(latest.snapshot, generation);
@@ -312,66 +328,32 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     refreshActive();
     void refreshHistory();
   }
-  function observeHistorySnapshot(sequence: number): void {
-    if (historyRefreshing && sequence >= historySequence) historySnapshotReady = true;
-  }
   /** A checked snapshot can invalidate the current request before it is allowed to install. */
   function settleChangedRender(
-    latest: {
-      readonly snapshot: import('../../contract/records/owners.js').Snapshot;
-      readonly collections: WorkspaceView['collections'];
-    },
+    latest: LatestSnapshot,
     generation: string,
   ): void {
     const request = rendering;
     if (request === null || !currentRequest(request)) return;
-    const target = latest.collections.find((item) => item.id === request.id);
-    if (
-      request.workspace !== latest.snapshot.workspace ||
-      request.generation !== generation ||
-      request.revision !== (target?.revision ?? -1)
-    )
-      settleFailure(
-        request,
-        diagnostic(
-          'render-input-changed',
-          'The workspace changed while opening this collection',
-          'Choose the collection again to retry.',
-          'workspace',
-        ),
-      );
+    settleInvalidated(request, renderInvalidation(request, latest, generation));
+  }
+  /** An invalidated request fails; one the snapshot still matches keeps going. */
+  function settleInvalidated(
+    request: RenderRequest,
+    invalid: Diagnostic | null,
+  ): void {
+    if (invalid !== null) settleFailure(request, invalid);
   }
   /** Foreign commits request a new render only when the active collection revision changed. No update performs Fit. */
   function refreshActive(): void {
-    const active = state.active;
-    if (active === null) return;
-    if (state.collectionSwitch.phase !== 'idle') return;
-    refreshDisplayed(active);
+    const refreshed = activeRefresh(state, rendering);
+    if (refreshed.kind === 'gone') return clearMissingActive(refreshed.active);
+    if (refreshed.kind === 'reopen') void open(refreshed.id);
   }
-  /** Missing collections return to the library; changed render inputs retain the viewing session. */
-  function refreshDisplayed(active: ActiveDiagram): void {
-    const current = state.collections.find((item) => item.id === active.document.collection.id);
-    if (current === undefined) return clearMissingActive(active);
-    if (shouldSkipRefresh(active, current)) return;
-    void open(active.document.collection.id);
-  }
+  /** A collection that left the catalogue returns the view to the library. */
   function clearMissingActive(active: ActiveDiagram): void {
     active.session.dispose();
-    update({ active: null, opening: null, status: 'Collection is no longer available' });
-  }
-  function requestMatches(current: WorkspaceView['collections'][number]): boolean {
-    const requested = rendering;
-    return (
-      requested?.id === current.id &&
-      requested.revision === current.revision &&
-      requested.generation === state.generation
-    );
-  }
-  function shouldSkipRefresh(
-    active: ActiveDiagram,
-    current: WorkspaceView['collections'][number],
-  ): boolean {
-    return requestMatches(current) || !renderChanged(active, current.revision, state.generation);
+    update(gonePatch());
   }
   /** One latest render request owns delivery. Cancelled/superseded jobs cannot mount their results. */
   async function open(id: string): Promise<void> {
@@ -380,7 +362,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   /** Explicit choices supersede every older render; token checks decide delivery after transport aborts. */
   async function requestOpen(
     id: string,
-    mode: RenderRequest['mode'],
+    mode: RenderMode,
   ): Promise<void> {
     const request = beginRender(id, mode);
     if (request === null) return;
@@ -388,14 +370,14 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       `/api/v1/render?id=${encodeURIComponent(id)}`,
       request.job.signal,
     );
-    deliverResponse(request, id, response);
+    deliverResponse(request, response);
   }
+  /** Only the current request reads its response. */
   function deliverResponse(
     request: RenderRequest,
-    id: string,
     response: Awaited<ReturnType<WorkspaceBindings['client']['get']>>,
   ): void {
-    const document = currentRequest(request) ? receiveRender(response, id, request) : null;
+    const document = currentRequest(request) ? receiveRender(response, request) : null;
     if (document === null) return;
     settleDocument(request, document);
   }
@@ -423,112 +405,58 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!admission.ok) return admission;
     return install(document);
   }
+  /** A refused admission starts rereading the workspace before the failure settles. */
   function admitRender(
     request: RenderRequest,
     document: RenderDocument,
   ): Result<void> {
-    const current = state.collections.find((item) => item.id === request.id);
-    const changed =
-      state.snapshot?.workspace !== request.workspace ||
-      state.generation !== request.generation ||
-      current?.revision !== request.revision ||
-      document.collection.revision !== request.revision;
-    if (changed) void refresh();
-    if (changed)
-      return {
-        ok: false,
-        error: diagnostic(
-          'render-input-changed',
-          'The workspace changed while opening this collection',
-          'Choose the collection again to retry.',
-          'workspace',
-        ),
-      };
-    return { ok: true, value: undefined };
+    const admission = renderAdmission(state, request, document);
+    if (!admission.ok) void refresh();
+    return admission;
   }
   /** A request captures the checked revision and service generation used for its admission. */
   function beginRender(
     id: string,
-    mode: RenderRequest['mode'],
+    mode: RenderMode,
   ): RenderRequest | null {
     if (disposed) return null;
     invalidateRender();
     const job = new AbortController();
-    const request: RenderRequest = {
-      token: ++requestToken,
-      id,
-      revision: state.collections.find((item) => item.id === id)?.revision ?? -1,
-      workspace: state.snapshot?.workspace ?? '',
-      generation: state.generation,
-      mode,
-      job,
-    };
-    renderJob = job;
+    const request: RenderRequest = { token: ++requestToken, ...renderTicket(state, id, mode), job };
     rendering = request;
-    update(renderPatch(id, mode));
+    update(openingPatch(state, request));
     return request;
-  }
-  function renderPatch(
-    id: string,
-    mode: RenderRequest['mode'],
-  ): Partial<WorkspaceView> {
-    if (mode === 'chooser')
-      return {
-        opening: id,
-        status: `Opening ${collectionTitle(id)}…`,
-        collectionSwitch: { phase: 'loading', activeId: activeId(), targetId: id },
-        ...renderProblemUpdate(),
-      };
-    return { opening: id, status: 'Rendering diagram…', ...renderProblemUpdate() };
   }
   /** Successful HTTP payloads require owner validation before Canvas sees them. */
   function receiveRender(
     response: Awaited<ReturnType<WorkspaceBindings['client']['get']>>,
-    id: string,
     request: RenderRequest,
   ): Result<RenderDocument> {
     if (!response.ok) return response;
-    return transportDocument(response.value, id, request.generation);
+    return transportDocument(response.value, request);
   }
+  /** A changed generation rereads the workspace; the service's own refusal passes through. */
   function transportDocument(
-    response: import('../../contract/records/owners.js').TransportResponse,
-    id: string,
-    generation: string,
+    response: TransportResponse,
+    request: RenderRequest,
   ): Result<RenderDocument> {
-    if (response.generation !== generation || generation !== state.generation)
+    if (generationChanged(response.generation, request, state.generation))
       return generationMismatch();
-    return response.outcome.ok ? readRender(response.outcome.value, id) : response.outcome;
+    return response.outcome.ok ? readRender(response.outcome.value, request) : response.outcome;
   }
+  /** Rereading starts before the failure settles. */
   function generationMismatch(): Result<RenderDocument> {
     void refresh();
-    return {
-      ok: false,
-      error: diagnostic(
-        'workspace-generation',
-        'The workspace changed while opening this collection',
-        'Refresh the workspace, then try again.',
-        'workspace',
-      ),
-    };
+    return generationFailure();
   }
   /** Selected collection identity must match the requested document, even if a delayed server returns another valid diagram. */
   function readRender(
     input: unknown,
-    id: string,
+    request: RenderRequest,
   ): Result<RenderDocument> {
     const document = bindings.inputs.diagram(input);
     if (!document.ok) return document;
-    if (document.value.collection.id !== id)
-      return {
-        ok: false,
-        error: diagnostic(
-          'stale-diagram',
-          'The response was for a different collection',
-          'Choose the collection again to retry.',
-          'workspace',
-        ),
-      };
-    return document;
+    return documentFor(document.value, request);
   }
   /** Reuse the existing Canvas session for edits; only admitted documents may replace the retained scene. */
   function install(document: RenderDocument): Result<void> {
@@ -555,18 +483,20 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const session = bindings.sessions.open(document, effects);
     if (!session.ok) return session;
     retainCamera(active, session.value, document, base);
-    update({
-      active: {
-        generation: state.generation,
-        document,
-        base,
-        canvas: bindings.sessions.canvas,
-        session: session.value,
-      },
-      status: editStatus(),
-      creation: creationForOpenedCollection(active, document),
-      ...renderProblemUpdate(),
-    });
+    update(
+      installedPatch(
+        state,
+        {
+          generation: state.generation,
+          document,
+          base,
+          canvas: bindings.sessions.canvas,
+          session: session.value,
+        },
+        editStatus(),
+        creationForOpenedCollection(active, document),
+      ),
+    );
     active?.session.dispose();
     updateLocation(document.collection.id);
     source.refreshReadout();
@@ -607,12 +537,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     const updated = bindings.sessions.update(active.session, document);
     if (!updated.ok) return updated;
     releaseConfirmed(active.session);
-    update({
-      opening: null,
-      active: { ...active, generation: state.generation, document, base },
-      status: editStatus(),
-      ...renderProblemUpdate(),
-    });
+    update(reusedPatch(state, active, { document, base }, editStatus()));
     source.refreshReadout();
     updateMutationAvailability();
     return { ok: true, value: undefined };
@@ -621,12 +546,7 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function settleSuccess(request: RenderRequest): void {
     if (!currentRequest(request)) return;
     rendering = null;
-    renderJob = null;
-    update({
-      opening: null,
-      collectionSwitch: { phase: 'idle', activeId: activeId() },
-      status: editStatus(),
-    });
+    update(openSuccessPatch(state, editStatus()));
     releaseHistory();
   }
   /** Failed chooser attempts are recoverable and never replace the retained active diagram. */
@@ -637,39 +557,12 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!currentRequest(request)) return;
     request.job.abort();
     rendering = null;
-    renderJob = null;
-    const problem = owned(error);
-    update(failurePatch(request, problem));
+    update(openFailurePatch(state, request, ownedProblem(error)));
   }
-  function failurePatch(
-    request: RenderRequest,
-    problem: Diagnostic,
-  ): Partial<WorkspaceView> {
-    const basePatch: Partial<WorkspaceView> = {
-      opening: null,
-      problem,
-      status:
-        request.mode === 'chooser'
-          ? `Could not open ${collectionTitle(request.id)}`
-          : problem.message,
-    };
-    return request.mode === 'chooser'
-      ? {
-          ...basePatch,
-          collectionSwitch: {
-            phase: 'failed',
-            activeId: activeId(),
-            targetId: request.id,
-            problem,
-          },
-        }
-      : basePatch;
-  }
-  /** Transport aborts are an optimization; invalidation is the ownership boundary. */
+  /** Transport aborts are an optimisation; invalidation is the ownership boundary. */
   function invalidateRender(): void {
     requestToken += 1;
-    renderJob?.abort();
-    renderJob = null;
+    rendering?.job.abort();
     rendering = null;
   }
   function currentRequest(request: RenderRequest): boolean {
@@ -680,55 +573,32 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       !request.job.signal.aborted
     );
   }
-  function activeId(): string | null {
-    return state.active?.document.collection.id ?? null;
-  }
-  function collectionTitle(id: string): string {
-    return state.collections.find((item) => item.id === id)?.title ?? 'this collection';
-  }
-  function owned(error: Diagnostic): Diagnostic {
-    return error.owner === undefined ? { ...error, owner: 'workspace' } : error;
-  }
-  /** A panel-owned migration notice survives diagram navigation; load failures clear on the next render attempt. */
-  function renderProblemUpdate(): Partial<WorkspaceView> {
-    if (state.problem?.owner === 'panel-preferences') return {};
-    return { problem: null };
-  }
   /** Mutations wait for the scene's own transport generation and any in-flight request; navigation stays available. */
   function updateMutationAvailability(): void {
-    state.active?.session.dispatch({
+    const active = state.active;
+    if (active === null) return;
+    active.session.dispatch({
       kind: 'mutation-available',
-      value:
-        movementCapture === null &&
-        !movementApplying &&
-        !historyBlocked() &&
-        state.active.generation === state.generation,
+      value: mutationAvailable(active, state.generation, {
+        movement: movementCapture !== null || movementApplying,
+        history: historyBlocked(),
+      }),
     });
   }
-  /** Rendering acknowledges geometry only, never an unconfirmed edit. */
   /** An open, unapplied editor form in this collection means "Draft not applied", never "Saved". */
-  function openDraftCount(): number {
-    const open = state.active?.document.collection.id;
-    return [inspector, wires, definitions]
-      .flatMap(
-        (editor): readonly { readonly collection: { readonly id: string } }[] =>
-          editor.getSnapshot().drafts,
-      )
-      .filter((draft) => draft.collection.id === open).length;
+  function editStatus(): string {
+    return editingStatus(state, openDraftCount(state.active, editorDrafts()));
   }
-  function hasUnappliedDraft(): boolean {
-    return state.sourceDirty || openDraftCount() > 0;
+  /** Every editor's drafts, whichever collection they belong to. */
+  function editorDrafts(): readonly CollectionDraft[] {
+    return [inspector, wires, definitions].flatMap(
+      (editor): readonly CollectionDraft[] => editor.getSnapshot().drafts,
+    );
   }
   /** Opening, editing or discarding a form moves a resting status; progress and failure messages stay. */
   function refreshRestingStatus(): void {
-    const next = editStatus();
-    if (restingStatuses.has(state.status) && next !== state.status) update({ status: next });
-  }
-  function editStatus(): string {
-    if (hasUnappliedDraft()) return 'Draft not applied';
-    if (state.pending.some((item) => item.state !== 'rejected'))
-      return 'Edit awaiting confirmation';
-    return 'Saved';
+    const next = restingStatus(state.status, editStatus());
+    if (next !== null) update({ status: next });
   }
   /** Interaction effects are consumed exactly once; semantic/appearance editing still goes through Model then Authoring. */
   function effects(items: readonly CanvasEffect[]): void {
@@ -1097,31 +967,11 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     }
     return submit(request.value, active.generation, state.sourceEdit, intent.id);
   }
-  function allowSubmission(request: Request): Result<void> {
-    if (blockedByHistory(request))
-      return {
-        ok: false,
-        error: diagnostic(
-          'pending-request',
-          'Wait for undo or redo to finish',
-          'Your draft is retained.',
-          'workspace',
-        ),
-      };
-    return { ok: true, value: undefined };
-  }
-  function blockedByHistory(request: Request): boolean {
-    if (historyGate && request.intent.kind === 'change') return true;
-    return state.pending.some(unresolvedInverse);
-  }
-  function unresolvedInverse(item: Submission): boolean {
-    return item.state !== 'rejected' && item.request.intent.kind !== 'change';
-  }
   function rejectBlocked(
     request: Request,
     gesture: string | null,
   ): Result<void> {
-    const allowed = allowSubmission(request);
+    const allowed = submissionAllowed(historyGate, state.pending, request);
     if (allowed.ok) return allowed;
     report(allowed.error);
     if (gesture !== null) rejectGesture(gesture, allowed.error.message);
@@ -1294,22 +1144,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function matchingSnapshot(
     document: RenderDocument,
   ): Result<NonNullable<WorkspaceView['snapshot']>> {
-    if (snapshotMatches(document))
-      return { ok: true, value: state.snapshot as NonNullable<WorkspaceView['snapshot']> };
-    void refresh();
-    return {
-      ok: false,
-      error: diagnostic(
-        'snapshot-mismatch',
-        'The collection changed while it was opening',
-        'Refresh the library, then try the collection again.',
-        'workspace',
-      ),
-    };
-  }
-  function snapshotMatches(document: RenderDocument): boolean {
-    const current = state.collections.find((item) => item.id === document.collection.id);
-    return state.snapshot !== null && current?.revision === document.collection.revision;
+    const base = snapshotBase(state, document);
+    if (!base.ok) void refresh();
+    return base;
   }
   /** Human creation is an ordinary DSL creation with absent collection and observed catalog preconditions. */
   async function create(title: string): Promise<void> {
@@ -1985,32 +1822,21 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   function beginCollectionSwitch(): void {
     if (state.collectionSwitch.phase === 'loading') return;
     invalidateRender();
-    update({
-      opening: null,
-      collectionSwitch: { phase: 'choosing', activeId: activeId() },
-      ...renderProblemUpdate(),
-    });
+    update(choosingPatch(state));
   }
   /** Cancellation invalidates transport ownership before closing the controlled dialog. */
   function cancelCollectionSwitch(): void {
     if (state.collectionSwitch.phase === 'idle') return;
     invalidateRender();
-    update({
-      opening: null,
-      collectionSwitch: { phase: 'idle', activeId: activeId() },
-      status: state.active === null ? 'Ready' : editStatus(),
-      ...renderProblemUpdate(),
-    });
+    update(closedSwitchPatch(state, editStatus()));
     refreshActive();
     void refreshHistory();
   }
   /** A newer explicit target always supersedes an older target, including an in-flight request. */
   function chooseCollection(id: string): void {
-    if (id === activeId()) {
-      cancelCollectionSwitch();
-      return;
-    }
-    if (state.collectionSwitch.phase === 'idle') beginCollectionSwitch();
+    const plan = choosePlan(state, id);
+    if (plan === 'cancel') return cancelCollectionSwitch();
+    if (plan === 'begin') beginCollectionSwitch();
     void requestOpen(id, 'chooser');
   }
   /** Retry uses the failed target but captures the current snapshot and generation again. */
@@ -2094,13 +1920,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
   }
   /** "Could not be confirmed" is stale once no request remains unconfirmed. */
   function clearSettledUncertainty(): void {
-    const stale = staleUncertainty();
+    const stale = staleUncertainty(state);
     if (stale === null) return;
     update({ problem: null, creation: creationWithout(plainMessage(stale.message)) });
-  }
-  function staleUncertainty(): Diagnostic | null {
-    if (state.problem?.code !== 'connection-uncertain') return null;
-    return state.pending.some((item) => item.state === 'uncertain') ? null : state.problem;
   }
   function creationWithout(message: string): WorkspaceView['creation'] {
     return state.creation.problem === message
@@ -2154,30 +1976,32 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!outcome.ok) return clearHistory();
     const checked = historyStatusSchema.safeParse(outcome.value);
     if (!checked.success) return clearHistory();
-    update({ history: { status: checked.data, busy: historyGate } });
+    update({ history: historyView(historyGate, checked.data) });
     releaseHistory();
   }
   function clearHistory(): void {
-    update({ history: { status: null, busy: historyGate } });
+    update({ history: historyView(historyGate, null) });
   }
+  /** Undo/redo or a request in the journal holds edits back. */
   function historyBlocked(): boolean {
-    return historyGate || state.pending.some((item) => item.state !== 'rejected');
+    return editsHeld(historyGate, state.pending);
   }
-  function setHistoryGate(busy: boolean): void {
-    historyGate = busy;
-    update({ history: { status: state.history?.status ?? null, busy } });
+  /** Moves the gate, then publishes its hold and the mutation flag. */
+  function setHistoryGate(next: HistorySlot): void {
+    historyGate = next;
+    update({ history: historyView(next, state.history?.status ?? null) });
     updateMutationAvailability();
   }
   /** Claim synchronously before any await, then retain the exact selected request through submission recovery. */
-  function cannotNavigateHistory(): boolean {
-    return historyBlocked() || Boolean(state.active?.session.getSnapshot().draft);
-  }
   async function navigateHistory(direction: 'undo' | 'redo'): Promise<void> {
-    if (cannotNavigateHistory()) return;
-    const status = state.history?.status;
-    if (!status) return;
-    setHistoryGate(true);
+    const status = navigableStatus(historyGate, state, canvasDraft());
+    if (status === null) return;
+    setHistoryGate(heldHistory(historyGate));
     await submitHistory(status, direction);
+  }
+  /** A canvas gesture is still unfinished. */
+  function canvasDraft(): boolean {
+    return Boolean(state.active?.session.getSnapshot().draft);
   }
   async function submitHistory(
     status: NonNullable<WorkspaceView['history']>['status'],
@@ -2189,8 +2013,9 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
       releaseNavigationAttempt();
     }
   }
+  /** The attempt's hold ends unless an inverse is settling; that one releases in releaseHistory. */
   function releaseNavigationAttempt(): void {
-    if (!historyRefreshing) setHistoryGate(false);
+    if (!inverseSettling(historyGate)) setHistoryGate(historyIdle);
   }
   async function sendHistory(
     status: unknown,
@@ -2205,54 +2030,26 @@ export function createWorkspaceController(bindings: WorkspaceBindings): Workspac
     if (!result.ok) await finishHistory();
   }
   async function reconcileHistory(): Promise<void> {
-    const inverses = state.pending.filter(
-      (item) => item.request.intent.kind !== 'change' && item.state !== 'rejected',
-    );
-    for (const item of inverses) await reconcileRequest(item.request.request);
+    for (const item of unresolvedInverses(state.pending))
+      await reconcileRequest(item.request.request);
   }
   /** A receipt does not release editing until the canonical scene and targets have caught up. */
   async function finishHistory(sequence = state.snapshot?.sequence ?? 0): Promise<void> {
-    historyRefreshing = true;
-    historySequence = sequence;
-    historySnapshotReady = false;
     historyRead += 1;
+    // Cleared with the hold the gate had; the settling gate then holds and publishes again.
     clearHistory();
-    setHistoryGate(true);
+    setHistoryGate(settlingHistory(sequence));
     await refresh();
     await refreshHistory();
     releaseHistory();
   }
+  /** The settling gate releases once the scene and history have caught up and no render is in flight. */
   function releaseHistory(): void {
-    if (!historyReady()) return;
-    historyRefreshing = false;
-    setHistoryGate(false);
+    if (historyReady(historyGate, state, rendering === null)) setHistoryGate(historyIdle);
   }
-  function historyReady(): boolean {
-    return (
-      historyRefreshing &&
-      rendering === null &&
-      historySnapshotReady &&
-      matchingHistoryVersion() &&
-      displayedHistoryCurrent()
-    );
-  }
-  function matchingHistoryVersion(): boolean {
-    const token = state.history?.status?.navigationVersion;
-    if (!token) return false;
-    const record = state.snapshot?.records.find(
-      (item) => item.key.kind === token.key.kind && item.key.id === token.key.id,
-    );
-    return record?.version === token.version;
-  }
-  function displayedHistoryCurrent(): boolean {
-    return state.active === null || currentDiagram(state.active);
-  }
+  /** The catalogue lists the diagram at the revision it shows. */
   function currentDiagram(active: ActiveDiagram): boolean {
-    return state.collections.some(
-      (item) =>
-        item.id === active.document.collection.id &&
-        item.revision === active.document.collection.revision,
-    );
+    return diagramCurrent(state.collections, active);
   }
   function chooseMoveOption(optionId: string): void {
     const capture = movementCapture;

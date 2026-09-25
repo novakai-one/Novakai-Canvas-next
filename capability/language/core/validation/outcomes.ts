@@ -26,15 +26,9 @@ export const origin: Span = deepFreeze({
 });
 
 /**
- * Stops compiling with one diagnostic. The recovery text is always "Retain the source, correct
- * the named input, then check again before applying."
+ * Stops compiling with one diagnostic holding a copy of `span`. The recovery text is always
+ * "Retain the source, correct the named input, then check again before applying."
  *
- * @param code - Why the input was rejected.
- * @param span - Where in the source; the diagnostic holds a copy (start is read, then end).
- * @param expected - What was expected instead.
- * @param message - What went wrong.
- * @param target - The ID or path the problem is about; defaults to empty.
- * @returns Never returns.
  * @throws A `LanguageFault` holding the diagnostic, always. `protect` turns it into a result.
  */
 export function reject(
@@ -59,8 +53,6 @@ export function reject(
 /**
  * Unwraps a result from another compiler step.
  *
- * @param result - The result to unwrap.
- * @returns The value (not copied) when the result succeeded.
  * @throws A `LanguageFault` holding every diagnostic of a failed result.
  */
 export function accepted<T>(result: Result<T>): T {
@@ -71,14 +63,8 @@ export function accepted<T>(result: Result<T>): T {
 /**
  * Runs one operation and turns every throw into a result. On success the value is deep-frozen
  * in place (it must be a record the compiler built, never caller data); a failed result is
- * deep-frozen too.
- *
- * @param operation - The work to run.
- * @returns `{ ok: true, value }` with the frozen value. A `LanguageFault` becomes
- * `validation-failed` with its diagnostics; any other throw, including one while freezing,
- * becomes `validation-failed` with a single `provider-failure` diagnostic that shows none of
- * the error's text.
- * @throws Never.
+ * deep-frozen too. Any throw other than a `LanguageFault`, including one while freezing, becomes
+ * one `provider-failure` diagnostic that shows none of the error's text.
  */
 export function protect<T>(operation: () => T): Result<T> {
   try {

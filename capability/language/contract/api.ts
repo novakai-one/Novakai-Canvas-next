@@ -50,8 +50,7 @@ const policies: Description['policies'] = {
 /**
  * Creates the Language service. It does no I/O and keeps no state, so an operation retried with
  * the same input gives the same result, as long as Model's policy tables and `deps` also behave
- * the same. Language owns correcting the source; Authoring owns every commit, revision, retry
- * and recovery.
+ * the same.
  *
  * - `describe(version = 1)`: the grammar description (constructs, operations, patch targets and
  *   forms, defaults, examples, Model's policies). A version other than 1 fails with
@@ -67,57 +66,38 @@ const policies: Description['policies'] = {
  * - `expand(request)`: copies the request and compiles the recipe source as a new collection
  *   whose ID is the request's namespace.
  *
- * @param deps - Model's reader, planner and stage.
- * @returns A frozen `Language`. Every operation returns `{ ok: true, value }` with a deep-frozen
- * value, or `validation-failed` with the compiler's diagnostics; any other throw (a request
- * `structuredClone` cannot copy, a throwing Model role) becomes one `provider-failure`
- * diagnostic.
- * @throws Never.
+ * Every operation returns a deep-frozen value or `validation-failed`; any other throw becomes one
+ * `provider-failure` diagnostic.
  */
 export function createLanguage(deps: Dependencies): Language {
   /** The grammar description for `version`; see {@link createLanguage}. */
   function describe(version = 1): Result<Description> {
-    return protect(
-      /** Builds the description. */
-      () => describeLanguage(version, policies),
-    );
+    return protect(() => describeLanguage(version, policies));
   }
 
   /** The parsed source; nothing is read from files or the network. */
   function parse(source: string): Result<ParsedSource> {
-    return protect(
-      /** Parses the source. */
-      () => parseSource(source),
-    );
+    return protect(() => parseSource(source));
   }
 
   /** The source compiled against a copy of the request; no partial result on failure. */
   function lower(input: LowerRequest): Result<LoweredIntent> {
-    return protect(
-      /** Copies the request, parses it, then compiles the document or the patch. */
-      () => {
-        const request = structuredClone(input);
-        const parsed = parseSource(request.source);
-        if (parsed.kind === 'canvas') return accepted(lowerDocument(parsed, request, deps));
-        return lowerPatch(parsed, request, deps);
-      },
-    );
+    return protect(() => {
+      const request = structuredClone(input);
+      const parsed = parseSource(request.source);
+      if (parsed.kind === 'canvas') return accepted(lowerDocument(parsed, request, deps));
+      return lowerPatch(parsed, request, deps);
+    });
   }
 
   /** The collection printed as full source or a scoped view that cannot be applied. */
   function print(input: PrintRequest): Result<Readout> {
-    return protect(
-      /** Copies the request, then validates and prints the collection. */
-      () => printCollection(structuredClone(input), deps.reader),
-    );
+    return protect(() => printCollection(structuredClone(input), deps.reader));
   }
 
   /** The recipe compiled under the request's namespace; Authoring checks that it is unused. */
   function expand(input: ExpansionRequest): Result<LoweredIntent> {
-    return protect(
-      /** Copies the request, then compiles the recipe. */
-      () => accepted(expandRecipe(structuredClone(input), deps)),
-    );
+    return protect(() => accepted(expandRecipe(structuredClone(input), deps)));
   }
 
   return Object.freeze({ describe, parse, lower, print, expand });

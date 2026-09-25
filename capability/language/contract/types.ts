@@ -30,57 +30,24 @@ export interface Dependencies {
  * The Language service. No operation writes anything or keeps state between calls, so an
  * operation retried with the same input gives the same result, as long as Model's policy tables
  * and the injected Model roles also behave the same. Every operation returns a
- * `validation-failed` result instead of throwing. Language owns correcting the source; Authoring
- * owns every commit, revision, retry and recovery.
+ * `validation-failed` result instead of throwing.
  */
 export interface Language {
   /**
    * Describes the language: its constructs, operations, patch targets and forms, defaults,
    * examples, diagnostic codes and Model's acceptance policies.
-   *
-   * @param version - The language version; defaults to 1, the only version.
-   * @returns The description, or `unsupported-version` for any other version.
-   * @throws Never.
    */
   describe(version?: number): Result<Description>;
 
-  /**
-   * Parses `canvas 1` or `patch 1` source. Nothing is read from files or the network.
-   *
-   * @param source - The source text.
-   * @returns The parsed document or patch with its resource requests and source mappings, or
-   * the diagnostics (for example `syntax`, `limit`, or `display-only` for a scoped view).
-   * @throws Never.
-   */
+  /** Parses `canvas 1` or `patch 1` source. Nothing is read from files or the network. */
   parse(source: string): Result<ParsedSource>;
 
-  /**
-   * Compiles source against the request's snapshot into a checked collection and changes.
-   *
-   * @param request - The source, mode, snapshot and resolved resources.
-   * @returns The checked intent, or the diagnostics. A throw from a Model role becomes a
-   * `provider-failure` diagnostic.
-   * @throws Never.
-   */
+  /** Compiles source against the request's snapshot into a checked collection and changes. */
   lower(request: LowerRequest): Result<LoweredIntent>;
 
-  /**
-   * Compiles recipe source as a new collection whose ID is the request's namespace.
-   *
-   * @param request - The recipe source, namespace and resolved resources.
-   * @returns The checked intent, or the diagnostics. A throw from a Model role becomes a
-   * `provider-failure` diagnostic.
-   * @throws Never.
-   */
+  /** Compiles recipe source as a new collection whose ID is the request's namespace. */
   expand(request: ExpansionRequest): Result<LoweredIntent>;
 
-  /**
-   * Prints a collection as full source, or as a scoped view that cannot be applied.
-   *
-   * @param request - The collection (validated by Model first), scope and optional heading.
-   * @returns The readout, or the diagnostics. A throw from the Model reader becomes a
-   * `provider-failure` diagnostic.
-   * @throws Never.
-   */
+  /** Prints a collection as full source, or as a scoped view that cannot be applied. */
   print(request: PrintRequest): Result<Readout>;
 }

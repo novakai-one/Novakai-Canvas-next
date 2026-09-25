@@ -16,20 +16,12 @@ import { lowerDocument } from './document.js';
  * not rewritten. The result is lowered in `create` mode, with no snapshot.
  *
  * No writes: a retry with the same input and the same Model roles returns the same result.
- * Language owns correcting the source; Authoring owns commit and retry recovery.
- *
- * @param input - The recipe source, the new collection ID and the resolved resources.
- * @param deps - Model's reader, stage and planner.
- * @returns The lowered intent (see `lowerDocument`); or `validation-failed`: any parse
- * diagnostic, `invalid-input` for `patch 1` source, any lowering or Model diagnostic, or
- * `provider-failure` when a Model role throws.
- * @throws Never.
  */
 export function expandRecipe(
   input: ExpansionRequest,
   deps: Dependencies,
 ): Result<LoweredIntent> {
-  return protect(/** Expands the recipe. */ () => expandedRecipe(input, deps));
+  return protect(() => expandedRecipe(input, deps));
 }
 
 /** Parses the recipe, gives its root the new ID, then lowers it as a new collection. */

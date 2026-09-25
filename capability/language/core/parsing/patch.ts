@@ -101,8 +101,6 @@ interface OperationParts {
 /**
  * Reads one patch operation.
  *
- * @param cursor - Where the operation starts (its action word).
- * @returns The operation and the cursor after it.
  * @throws A `LanguageFault` with a `syntax` diagnostic for an unknown action word, an unknown
  * target, a declaration without an ID, or a `set`/`unset` without properties; and every fault
  * from reading references, attributes and declarations.
@@ -256,9 +254,7 @@ function readPropertyName(cursor: Cursor): Parsed<string> {
 
 /** `show @item in @section` (and `hide`, `connect`, `disconnect`): both IDs are always written. */
 function readMembership(cursor: Cursor): Parsed<Operation> {
-  const action = membershipActions.find(
-    /** Whether this is the action word at the cursor. */ (item) => item === peek(cursor).text,
-  );
+  const action = membershipActions.find((item) => item === peek(cursor).text);
   const item = readIdentity(advance(cursor));
   const section = readIdentity(consume(item.next, 'in'));
   if (action !== 'show' && action !== 'hide' && action !== 'connect' && action !== 'disconnect')
@@ -346,9 +342,7 @@ function targetKind(
   cursor: Cursor,
   allowed: readonly TargetKind[],
 ): TargetKind {
-  const kind = allowed.find(
-    /** Whether this is the target word at the cursor. */ (item) => item === peek(cursor).text,
-  );
+  const kind = allowed.find((item) => item === peek(cursor).text);
   if (kind === undefined)
     reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown operation target');
   return kind;

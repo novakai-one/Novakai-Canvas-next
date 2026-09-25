@@ -106,11 +106,7 @@ export type Result<T, E = ValidationError> =
  * is not exported from the contract index, so callers of the public operations never see it.
  */
 export class LanguageFault extends Error {
-  /**
-   * Creates the fault with the message "Language rejected input".
-   *
-   * @param diagnostics - The diagnostics to return; never empty.
-   */
+  /** Creates the fault with the message "Language rejected input". */
   constructor(readonly diagnostics: readonly [Diagnostic, ...Diagnostic[]]) {
     super('Language rejected input');
   }

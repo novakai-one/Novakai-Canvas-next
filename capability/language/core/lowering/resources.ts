@@ -17,13 +17,6 @@ const checkedMetadata: readonly string[] = ['alt', 'license', 'attribution'];
 /**
  * A theme's exact pin, `id@version#digest`. Printing and theme resolution both use it; the
  * digest is already prefixed (for example `sha256:`).
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param theme - A resolved theme.
- * @returns The pin text.
- * @throws Never.
  */
 export function themePin(theme: ResolvedResources['themes'][string]): string {
   return `${theme.id}@${theme.version}#${theme.digest}`;
@@ -34,13 +27,6 @@ export function themePin(theme: ResolvedResources['themes'][string]): string {
  * pin. The written text must then be the theme's ID (for an alias) or its full pin (when it
  * contains `#`).
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param alias - The written theme: an alias or a pin.
- * @param resources - The host's resolved resources; only `themes` is read.
- * @param span - Where the theme is written, for diagnostics.
- * @returns A copy of the resolved theme.
  * @throws A `LanguageFault` with a `missing-resource` diagnostic when no theme matches, or a
  * `resource-mismatch` diagnostic when the written text is not the theme's ID or pin.
  */
@@ -68,12 +54,6 @@ export function resolveTheme(
  * written `source` (when a `sha256:` digest), `alt`, `license` and `attribution` must match the
  * admitted record, and an image or icon must have `alt` text.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param item - The asset declaration.
- * @param resources - The host's resolved resources; only `assets` is read.
- * @returns A copy of the admitted record with `id` set to the written ID.
  * @throws A `LanguageFault`: a fault reading the ID, kind or source; `missing-resource` for an
  * asset not admitted; `invalid-value` for an image or icon without `alt`; and
  * `resource-mismatch` for a digest or metadata that differs.
@@ -100,11 +80,6 @@ export function lowerAsset(
  * The resource requests of a document: always its theme first (`paper` when not written), then
  * each top-level asset in written order.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param item - The document's collection declaration.
- * @returns The requests.
  * @throws A `LanguageFault` from `assetRequest`: `invalid-value` for an unknown asset kind, or a
  * fault reading an asset's ID or source.
  */
@@ -117,11 +92,6 @@ export function documentResources(item: Declaration): readonly ResourceRequest[]
  * The resource requests of one patch operation: the asset an operation declares; for a
  * collection target, the theme it sets, or `paper` when it unsets `theme`; otherwise none.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param operation - A parsed patch operation.
- * @returns The requests (at most one).
  * @throws A `LanguageFault` from `assetRequest`: `invalid-value` for an unknown asset kind, or a
  * fault reading an asset's ID or source.
  */
@@ -133,11 +103,8 @@ export function patchResources(operation: Operation): readonly ResourceRequest[]
 
 /**
  * The resource request for one asset declaration, so the host can resolve and admit it before
- * lowering. No bytes are read here.
+ * lowering. The request holds a copy of the span. No bytes are read here.
  *
- * @param item - The asset declaration.
- * @returns The request: kind, alias (the ID), source, the written `alt`, `license` and
- * `attribution`, and a copy of the span (never the declaration's own span object).
  * @throws A `LanguageFault` with an `invalid-value` diagnostic for a kind other than `image`,
  * `icon` or `font`, and the faults of reading the ID or source.
  */
@@ -162,9 +129,7 @@ function findPinnedTheme(
   resources: ResolvedResources,
 ): ResolvedResources['themes'][string] | undefined {
   const themes = Object.values(resources.themes);
-  return themes.find(
-    /** Whether this theme's pin is the written text. */ (theme) => themePin(theme) === alias,
-  );
+  return themes.find((theme) => themePin(theme) === alias);
 }
 
 /** Rejects a written theme that is not the theme's pin (when it has `#`) or else its ID. */
@@ -199,9 +164,7 @@ function checkAssetRequest(
       'Asset digest differs from admitted bytes',
       id(item.fields),
     );
-  checkedMetadata.forEach(
-    /** Checks one metadata attribute. */ (name) => checkMetadata(item, record, name),
-  );
+  checkedMetadata.forEach((name) => checkMetadata(item, record, name));
 }
 
 /** Rejects an image or icon without `alt`; a font's metadata may supply it. */
@@ -252,8 +215,6 @@ function themeRequest(
 
 /** The requests of a collection's top-level assets, in written order. */
 function assetRequests(item: Declaration): readonly ResourceRequest[] {
-  const assets = item.children.filter(
-    /** Whether the child is an asset. */ (child) => child.kind === 'asset',
-  );
+  const assets = item.children.filter((child) => child.kind === 'asset');
   return assets.map(assetRequest);
 }

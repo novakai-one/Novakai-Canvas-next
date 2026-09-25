@@ -33,8 +33,6 @@ const maxPatchOperations = 1000;
  * `view`, check the version, read the document or patch, require the end of the source, then
  * list resources and source mappings.
  *
- * @param source - The source text.
- * @returns The parsed document or patch with its resource requests and source mappings.
  * @throws A `LanguageFault`: `display-only` for a `view`; `unsupported-version` for a version
  * other than 1; `syntax` for an unknown envelope, bad grammar or trailing source; `limit` for
  * too many tokens, too much nesting or more than 1000 patch operations; `unknown-property` and
@@ -91,13 +89,7 @@ function readPatch(cursor: Cursor): Parsed<Patch> {
   const identity = readIdentity(advance(cursor, 2));
   const start = enter(consume(identity.next, '{'));
   const operations = accepted(
-    repeat(
-      start,
-      /** Whether another operation follows (not the closing brace). */ (item) =>
-        peek(item).text !== '}',
-      readOperation,
-      maxPatchOperations,
-    ),
+    repeat(start, (item) => peek(item).text !== '}', readOperation, maxPatchOperations),
   );
   if (operations.value.length > maxPatchOperations)
     reject('limit', peek(start).span, 'At most 1000 operations', 'Patch operation limit exceeded');
@@ -128,11 +120,9 @@ function describeParsedSource(parsed: Document | Patch): ParsedSource {
   return {
     ...parsed,
     resources: parsed.operations.flatMap(patchResources),
-    sourceMap: parsed.operations.map(
-      /** The operation's target ID and where it was written. */ (operation) => ({
-        path: operation.address.id,
-        span: operation.span,
-      }),
-    ),
+    sourceMap: parsed.operations.map((operation) => ({
+      path: operation.address.id,
+      span: operation.span,
+    })),
   };
 }

@@ -34,18 +34,14 @@ interface AtomMatcher {
 
 /**
  * Lowers a `type` declaration to `{ id, label, expression }`. Quoted literals are never split,
- * and a parenthesized union stays nested. A union of one item is that item itself.
+ * and a parenthesized union stays nested. A union of one item is that item itself. An
+ * expression is `{ kind: 'reference', id }`, `{ kind: 'literal', value }`,
+ * `{ kind: 'primitive', name }` or `{ kind: 'union', items }`.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param declaration - A parsed `type` declaration.
- * @returns The definition record. `expression` is `{ kind: 'reference', id }`,
- * `{ kind: 'literal', value }`, `{ kind: 'primitive', name }` or `{ kind: 'union', items }`.
  * @throws A `LanguageFault` (`invalid-value` at the expression's span) for an empty expression,
  * an unterminated or invalid quoted literal, a token that is not an atom, an unknown atom, an
  * unclosed parenthesis or a token left over; also for a missing or malformed `expression`, `id`
- * or `label` field (see `text`, `field` and `id`). Callers run it inside `protect`.
+ * or `label` field (see `text`, `field` and `id`).
  */
 export function lowerDefinition(declaration: Declaration): RawRecord {
   const source = text(declaration.fields, 'expression');
@@ -217,9 +213,7 @@ function atom(
   token: string,
   span: Span,
 ): Atom {
-  const matcher = atomMatchers.find(
-    /** Whether this reader recognises the token. */ (candidate) => candidate.matches(token),
-  );
+  const matcher = atomMatchers.find((candidate) => candidate.matches(token));
   if (matcher !== undefined) return matcher.read(token, span);
   reject('invalid-value', span, 'Supported type expression', 'Unknown type expression atom', token);
 }

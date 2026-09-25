@@ -16,16 +16,9 @@ import { blockOwner, blockId, findRecord } from './targets.js';
  * Replaces one content block of an object with a new record, keeping every other block, the
  * object's ports and its other fields.
  *
- * Pure: a retry with the same input returns the same change. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param collection - The staged collection.
- * @param operation - The `set`/`unset` operation addressing `@object.@block`.
- * @param value - The block's new record.
- * @returns `{ op: 'replace', target: 'objects', value }` with the object's new content.
  * @throws A `LanguageFault` (`invalid-value`) for an address that is not `@object.@block`, or
  * (`unknown-target`) for a missing object. A missing block leaves the content unchanged; Model
- * planning checks the result. Callers run it inside `protect`.
+ * planning checks the result.
  */
 export function replaceBlock(
   collection: Collection,
@@ -34,10 +27,7 @@ export function replaceBlock(
 ): RawRecord {
   const owner = blockOwner(collection, operation);
   const target = blockId(operation);
-  const content = owner.content.map(
-    /** The new record for the addressed block; any other block as it is. */ (block) =>
-      block.id === target ? value : block,
-  );
+  const content = owner.content.map((block) => (block.id === target ? value : block));
   return objectChange(owner, content);
 }
 
@@ -52,12 +42,6 @@ export function replaceBlock(
  *
  * Duplicate block IDs are left for Model planning to reject.
  *
- * Pure: a retry with the same input returns the same change. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param collection - The staged collection.
- * @param operation - A block operation.
- * @returns `{ op: 'replace', target: 'objects', value }` with the object's new content.
  * @throws A `LanguageFault`: `invalid-value` for a wrong block address; `unknown-target` for a
  * missing object, block or `before` sibling; `syntax` for an `add` without a declaration or a
  * `move` without `before=`; and the faults of lowering the added block. Callers run it inside
@@ -119,7 +103,7 @@ function withoutBlock(
   content: readonly ContentBlock[],
   block: ContentBlock,
 ): readonly ContentBlock[] {
-  return content.filter(/** Whether this is not the given block. */ (item) => item.id !== block.id);
+  return content.filter((item) => item.id !== block.id);
 }
 
 /** The `before=` block ID, or `null` when it is not written (append). */
@@ -136,9 +120,7 @@ function insertBefore(
   operation: Operation,
 ): readonly RawRecord[] {
   if (before === null) return [...content, block];
-  const index = content.findIndex(
-    /** Whether this is the named sibling. */ (item) => item.id === before,
-  );
+  const index = content.findIndex((item) => item.id === before);
   if (index < 0)
     reject(
       'unknown-target',

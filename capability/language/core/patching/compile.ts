@@ -47,14 +47,6 @@ interface Compilation {
  * 5. Return the planned collection, the staged changes, the patch's resource requests and the
  *    source map (each operation's target ID and a copy of its span).
  *
- * Pure apart from calling the host's stage and planner; a retry with the same input and
- * dependencies returns the same intent. Language owns correcting the source; Authoring owns
- * commit and recovery.
- *
- * @param patch - The parsed patch.
- * @param request - The lowering request; its `snapshot` is the collection being patched.
- * @param deps - The host's Model stage and planner (the only dependencies it uses).
- * @returns The lowered patch intent.
  * @throws A `LanguageFault`: `invalid-input` when the request is not in `patch` mode;
  * `unknown-target` when there is no snapshot or it is another collection; `invalid-value` when
  * a section deleted earlier in the patch is added again; the faults of each operation's
@@ -76,16 +68,13 @@ export function lowerPatch(
   const original = requireSnapshot(request.snapshot, patch);
   const initial = ownerValue(deps.stage.stage(original, []), [], patch.span);
   const compiled = patch.operations.reduce<Compilation>(
-    /** Compiles and stages one more operation. */ (state, operation) =>
-      compileNext(state, operation, original, request, deps.stage),
+    (state, operation) => compileNext(state, operation, original, request, deps.stage),
     { candidate: initial.candidate, changes: initial.changes, deletedSections: [] },
   );
-  const mappings = patch.operations.map(
-    /** The operation's target ID and a copy of where it was written. */ (operation) => ({
-      path: operation.address.id,
-      span: copySpan(operation.span),
-    }),
-  );
+  const mappings = patch.operations.map((operation) => ({
+    path: operation.address.id,
+    span: copySpan(operation.span),
+  }));
   const plan = ownerValue(deps.planner.plan(original, compiled.changes), mappings, patch.span);
   const resources = patch.operations.flatMap(patchResources);
   return {

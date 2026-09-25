@@ -16,12 +16,6 @@ import { reject, origin } from '../validation/outcomes.js';
  * policies, the patch forms, the defaults (the `defaults` record followed by the layout of each
  * section mode), examples, diagnostic codes and how definitions are written and edited.
  *
- * Pure: every call returns a new structured clone, so a caller may change its copy. Language
- * owns correcting the source; Authoring owns commit recovery.
- *
- * @param version - The requested language version; only 1 exists.
- * @param policies - The host's limits and policies, copied into the description.
- * @returns The description.
  * @throws A `LanguageFault` (`unsupported-version` at the start of the source) for any version
  * other than 1; a `DataCloneError` when `policies` cannot be cloned. The public `describe`
  * runs it inside `protect`.

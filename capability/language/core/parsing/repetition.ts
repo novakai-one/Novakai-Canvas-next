@@ -11,16 +11,8 @@ import { peek, type Cursor, type Parsed } from './cursor.js';
 const maxItems = 250000;
 
 /**
- * Reads items while `continues` says so.
- *
- * @param cursor - Where to start.
- * @param continues - Whether another item starts at the cursor.
- * @param read - Reads one item; it must move the cursor forward.
- * @param maximum - The most items allowed; defaults to 250,000.
- * @returns The items in order and the cursor after the last one. A reader's fault becomes its
- * diagnostics; too many items gives `limit`; a reader that does not move forward gives
- * `provider-failure` (so the loop cannot spin forever).
- * @throws Never.
+ * Reads items while `continues` says so. Too many items gives `limit`; a reader that does not
+ * move forward gives `provider-failure`, so the loop cannot spin forever.
  */
 export function repeat<T>(
   cursor: Cursor,
@@ -28,10 +20,7 @@ export function repeat<T>(
   read: (cursor: Cursor) => Parsed<T>,
   maximum = maxItems,
 ): Result<Parsed<readonly T[]>> {
-  return protect(
-    /** Collects the items. */
-    () => collect(cursor, continues, read, maximum),
-  );
+  return protect(() => collect(cursor, continues, read, maximum));
 }
 
 /** The item loop: check the limit, read, check progress, keep the value, move on. */

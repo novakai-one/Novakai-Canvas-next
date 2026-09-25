@@ -19,9 +19,6 @@ type Attribute = readonly [string, LocatedValue];
 /**
  * Reads every attribute at the cursor.
  *
- * @param cursor - Where the attributes start.
- * @param properties - The properties allowed here, by name.
- * @returns The attributes by name, and the cursor after the last one.
  * @throws A `LanguageFault`: `unknown-property` for a name not in `properties`; `syntax` for a
  * duplicate, unquoted text or a malformed parameter; `invalid-value` for a wrong form, a
  * fractional integer or blank text; `limit` for too many attributes.
@@ -31,11 +28,7 @@ export function readAttributes(
   properties: Readonly<Record<string, Property>>,
 ): Parsed<Fields> {
   const entries = accepted(
-    repeat(
-      cursor,
-      startsAttribute,
-      /** Reads one attribute against `properties`. */ (item) => readAttribute(item, properties),
-    ),
+    repeat(cursor, startsAttribute, (item) => readAttribute(item, properties)),
   );
   const fields = entries.value.reduce(insertUnique, {});
   return { value: fields, next: entries.next };
@@ -134,12 +127,8 @@ function requireQuotedList(
   end: Cursor,
 ): void {
   const between = start.tokens.slice(start.index + 1, end.index - 1);
-  const values = between.filter(
-    /** Whether the token is not a comma. */ (token) => token.text !== ',',
-  );
-  const invalid = values.find(
-    /** Whether the token is not a string. */ (token) => token.kind !== 'string',
-  );
+  const values = between.filter((token) => token.text !== ',');
+  const invalid = values.find((token) => token.kind !== 'string');
   if (invalid !== undefined)
     reject('syntax', invalid.span, 'List of quoted strings', 'Text list values must be quoted');
 }

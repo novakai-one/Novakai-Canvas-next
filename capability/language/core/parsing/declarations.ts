@@ -62,9 +62,6 @@ interface TypeTokens {
  *   the construct has a body, its braces are read in that order. Required properties are
  *   checked last.
  *
- * @param cursor - Where the declaration starts (its construct word).
- * @param allowed - The constructs allowed here.
- * @returns The declaration and the cursor after it.
  * @throws A `LanguageFault`: `syntax` for an unknown or disallowed construct, unquoted
  * positional text, a missing required property or an incomplete type expression; `limit` when
  * nesting is too deep; `invalid-value` for a value of the wrong type; and every other fault from
@@ -85,13 +82,9 @@ export function readDeclaration(
  * as `1e-5` or `2E+3` stays one piece. Each takes the text so far and the next token.
  */
 const exponentMatchers: readonly ((source: string, token: string) => boolean)[] = [
-  /** `e` or `E` right after a digit. */
   (source, token) => (token === 'e' || token === 'E') && /\d$/u.test(source),
-  /** A word such as `e5` or `e-5` right after a digit. */
   (source, token) => /^e[+-]?\d+$/u.test(token) && /\d$/u.test(source),
-  /** A sign right after `e` or `E`. */
   (source, token) => (token === '+' || token === '-') && /[eE]$/u.test(source),
-  /** Digits (optionally signed) right after `e`, `E`, or one of them followed by a sign. */
   (source, token) => /^[+-]?\d+$/u.test(token) && /[eE][+-]?$/u.test(source),
 ];
 
@@ -235,9 +228,7 @@ function exponentContinuation(
   source: string,
   token: string,
 ): boolean {
-  return exponentMatchers.some(
-    /** Whether this case matches. */ (matcher) => matcher(source, token),
-  );
+  return exponentMatchers.some((matcher) => matcher(source, token));
 }
 
 /** Whether a space goes before the next token: not at the start, and not right after `.`. */
@@ -250,9 +241,7 @@ function declarationDefinition(
   cursor: Cursor,
   allowed: readonly Construct[],
 ): ConstructDefinition {
-  const definition = constructs.find(
-    /** Whether this construct is named by the word. */ (item) => item.kind === peek(cursor).text,
-  );
+  const definition = constructs.find((item) => item.kind === peek(cursor).text);
   if (definition === undefined)
     reject('syntax', peek(cursor).span, allowed.join(' / '), 'Unknown declaration');
   if (!allowed.includes(definition.kind))
@@ -357,12 +346,10 @@ function checkRequired(
   definition: ConstructDefinition,
   cursor: Cursor,
 ): void {
-  Object.entries(definition.properties).forEach(
-    /** Rejects this property when it is required and missing. */ ([name, property]) => {
-      if (property.required && !Object.hasOwn(fields, name))
-        reject('syntax', peek(cursor).span, name, 'Required property is missing');
-    },
-  );
+  Object.entries(definition.properties).forEach(([name, property]) => {
+    if (property.required && !Object.hasOwn(fields, name))
+      reject('syntax', peek(cursor).span, name, 'Required property is missing');
+  });
 }
 
 /**
@@ -378,9 +365,8 @@ function readChildren(
   const children = accepted(
     repeat(
       body,
-      /** Whether another declaration follows (not the closing brace). */ (item) =>
-        peek(item).text !== '}',
-      /** Reads one nested declaration. */ (item) => readDeclaration(item, allowed),
+      (item) => peek(item).text !== '}',
+      (item) => readDeclaration(item, allowed),
     ),
   );
   return { value: children.value, next: leave(consume(children.next, '}')) };

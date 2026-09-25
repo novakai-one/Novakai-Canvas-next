@@ -33,12 +33,10 @@ import { changedProperties } from './property-values.js';
  * section mode's layout for a section); unsetting `columns` removes it.
  *
  * On success the change is deep-frozen in place, including the unchanged records it shares
- * with `collection`; pass the staged copy, never a record the caller still edits.
- *
- * @returns The change, or `validation-failed` with: the diagnostics of `propertyTarget` and
- * `changedProperties`; `invalid-input` when Model's nested layout or link target is null, not an
- * object, or an array; `invalid-value` for a `section=` on a URI link or a `section=` that is not
- * a reference; theme diagnostics from `resolveTheme`; or `provider-failure` for any other throw.
+ * with `collection`; pass the staged copy, never a record the caller still edits. Fails with
+ * `invalid-input` for a malformed nested layout or link target, `invalid-value` for a bad
+ * `section=`, theme diagnostics, the diagnostics of `propertyTarget` and `changedProperties`, or
+ * `provider-failure` for any other throw.
  */
 export function editProperties(
   collection: Collection,

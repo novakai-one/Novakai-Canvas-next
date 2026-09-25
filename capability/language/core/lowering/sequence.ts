@@ -24,12 +24,6 @@ interface SequenceScope {
  * without an `@id` gets the ID `<fragment>-branch-<n>`, where `n` is its position among all of
  * the `alt`'s branches, counting from 1. Any other fragment has no branches.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param children - A section's or fragment's statements.
- * @param scope - The containing fragment and branch; none at the top level.
- * @returns The flat item list.
  * @throws A `LanguageFault` with a `syntax` diagnostic for a branch outside an `alt`, or a
  * statement other than `branch` directly inside an `alt`; and every fault from lowering an item.
  */
@@ -38,9 +32,7 @@ export function lowerSequence(
   scope: SequenceScope = {},
 ): readonly RawRecord[] {
   const items = children.filter(isSequence);
-  return items.flatMap(
-    /** Lowers one item at its position. */ (item, order) => lowerItem(item, order, scope),
-  );
+  return items.flatMap((item, order) => lowerItem(item, order, scope));
 }
 
 /** Whether a statement is in the message order: an event or a fragment (not a `show`). */
@@ -82,7 +74,7 @@ function lowerFragment(
   base: RawRecord,
 ): readonly RawRecord[] {
   if (text(item.fields, 'operator') === 'alt') return lowerAlternatives(item, base);
-  if (item.children.some(/** Whether the child is a branch. */ (child) => child.kind === 'branch'))
+  if (item.children.some((child) => child.kind === 'branch'))
     reject('syntax', item.span, 'event or fragment', 'Only alt contains branches');
   return [{ ...base, branches: [] }, ...lowerSequence(item.children, { parent: id(item.fields) })];
 }
@@ -95,20 +87,15 @@ function lowerAlternatives(
   item: Declaration,
   base: RawRecord,
 ): readonly RawRecord[] {
-  if (
-    item.children.some(/** Whether the child is not a branch. */ (child) => child.kind !== 'branch')
-  )
+  if (item.children.some((child) => child.kind !== 'branch'))
     reject('syntax', item.span, 'branch', 'Alt contains only named branches');
   const parent = id(item.fields);
-  const branches = item.children.map(
-    /** One branch's ID and label. */ (branch, index) => ({
-      id: branchId(parent, branch, index),
-      label: text(branch.fields, 'label'),
-    }),
-  );
-  const nested = item.children.flatMap(
-    /** One branch's contents. */ (branch, index) =>
-      lowerSequence(branch.children, { parent, ...optional('branch', branches[index]?.id) }),
+  const branches = item.children.map((branch, index) => ({
+    id: branchId(parent, branch, index),
+    label: text(branch.fields, 'label'),
+  }));
+  const nested = item.children.flatMap((branch, index) =>
+    lowerSequence(branch.children, { parent, ...optional('branch', branches[index]?.id) }),
   );
   return [{ ...base, branches }, ...nested];
 }

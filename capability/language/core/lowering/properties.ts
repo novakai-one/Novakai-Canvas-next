@@ -16,14 +16,6 @@ import { endpoint, type RawRecord } from './fields.js';
  * list lowers item by item: text stays text, a `[name, type]` pair becomes `{ name, type }`, and
  * any other item (a reference included) is kept unlowered; a value that is not a list lowers to
  * `[]`. For any other type, values that are not references or lists are kept.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param value - A parsed value.
- * @param type - The owning property's value type.
- * @returns The lowered value.
- * @throws Never.
  */
 export function lowerValue(
   value: SyntaxValue,
@@ -36,14 +28,6 @@ export function lowerValue(
 /**
  * Lowers a new declaration's attributes: every property with a `fallback` starts at it, then
  * the written attributes replace those defaults.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param properties - The property table, by attribute name.
- * @returns The defaults followed by the lowered written fields.
- * @throws Never.
  */
 export function mapDeclaredProperties(
   fields: Fields,
@@ -89,8 +73,7 @@ function lowerComposite(
   value: SyntaxValue,
   type: ValueType,
 ): unknown {
-  if (isList(value))
-    return value.map(/** Lowers one item. */ (item) => lowerValue(item, scalarType(type)));
+  if (isList(value)) return value.map((item) => lowerValue(item, scalarType(type)));
   if (isReference(value)) return lowerReference(value, type);
   return value;
 }
@@ -120,10 +103,7 @@ function writtenEntries(
   properties: Readonly<Record<string, Property>>,
 ): readonly (readonly [string, unknown])[] {
   const entries = Object.entries(properties);
-  return entries.flatMap(
-    /** The lowered entry for this property, if written. */ ([name, property]) =>
-      mappedEntry(fields, name, property),
-  );
+  return entries.flatMap(([name, property]) => mappedEntry(fields, name, property));
 }
 
 /**
@@ -135,12 +115,8 @@ function defaultEntries(
   properties: Readonly<Record<string, Property>>,
 ): readonly (readonly [string, unknown])[] {
   const all = Object.values(properties);
-  const withDefaults = all.filter(
-    /** Whether the property has a default. */ (property) => property.fallback !== undefined,
-  );
-  return withDefaults.map(
-    /** The property's field and default. */ (property) => [property.field, property.fallback],
-  );
+  const withDefaults = all.filter((property) => property.fallback !== undefined);
+  return withDefaults.map((property) => [property.field, property.fallback]);
 }
 
 /** The lowered `[field, value]` entry for one property, or none when it is not written. */

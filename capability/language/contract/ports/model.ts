@@ -11,8 +11,6 @@ export interface ModelReader {
   /**
    * Validates a raw collection record.
    *
-   * @param input - The record to check.
-   * @returns The input as a valid `Collection`, or Model's rejection.
    * @throws Whatever the implementation throws; Language reports it as `provider-failure`.
    */
   validate(input: unknown): Result<Collection>;
@@ -21,12 +19,8 @@ export interface ModelReader {
 /** Model's final check of a complete change list. */
 export interface ModelPlanner {
   /**
-   * Checks a complete change list against a snapshot.
+   * Checks a complete change list against a snapshot (for a new collection, an empty shell).
    *
-   * @param snapshot - The collection the changes apply to; for a new collection, an empty
-   * shell of it.
-   * @param changes - The complete change list.
-   * @returns The checked plan, or Model's rejection.
    * @throws Whatever the implementation throws; Language reports it as `provider-failure`.
    */
   plan(
@@ -38,12 +32,9 @@ export interface ModelPlanner {
 /** Model's step-by-step application of changes, including unchecked intermediate states. */
 export interface ModelStage {
   /**
-   * Applies changes to a snapshot one after another, without the final validity check.
+   * Applies changes to a snapshot one after another, without the final validity check. For a
+   * new collection, the snapshot is an empty shell of it.
    *
-   * @param snapshot - The collection the changes apply to; for a new collection, an empty
-   * shell of it.
-   * @param changes - The changes so far.
-   * @returns The staged candidate and changes, or Model's rejection.
    * @throws Whatever the implementation throws; Language reports it as `provider-failure`.
    */
   stage(

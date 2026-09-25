@@ -25,52 +25,27 @@ const constraintKinds = ['rank', 'align', 'before', 'below'];
  * algorithm `fallback`, direction `right` and gap `normal`; `columns` is left out when not
  * written. Constraint targets keep their written order. A written `columns` value is kept by
  * reference, so the caller's object is frozen in place with the result.
- *
- * A retry with the same input returns the same result. Language owns correcting the source;
- * Authoring owns commit recovery.
- *
- * @param fields - The collection's or section's parsed fields.
- * @param children - Its declarations; only constraints are read.
- * @param fallback - The algorithm when `layout=` is not written; defaults to `flow`.
- * @returns `{ ok: true, value }` whose `value` is the deep-frozen layout record. `layout=`,
- * `direction=` and `gap=` must be text; `columns=` is passed through unchecked for Model to
- * validate. Otherwise `{ ok: false }` with `validation-failed`, holding an `invalid-value`
- * diagnostic for a non-text `layout`, `direction` or `gap`, a constraint without a target list,
- * or a target that is not a plain object, `group:` or `section:` reference; or one
- * `provider-failure` diagnostic when reading the input throws anything else (see `protect`).
- * @throws Never.
  */
 export function lowerLayout(
   fields: Fields,
   children: readonly Declaration[],
   fallback: string = 'flow',
 ): Result<RawRecord> {
-  return protect(
-    /** Builds the layout record. */
-    () => {
-      const columns = optional('columns', fields.columns?.value);
-      const algorithm = textOr(fields, 'layout', fallback);
-      const direction = textOr(fields, 'direction', defaults.direction);
-      const gap = textOr(fields, 'gap', defaults.gap);
-      const constraintDeclarations = children.filter(isConstraint);
-      const constraints = constraintDeclarations.map(lowerConstraint);
-      return { ...columns, algorithm, direction, gap, constraints };
-    },
-  );
+  return protect(() => {
+    const columns = optional('columns', fields.columns?.value);
+    const algorithm = textOr(fields, 'layout', fallback);
+    const direction = textOr(fields, 'direction', defaults.direction);
+    const gap = textOr(fields, 'gap', defaults.gap);
+    const constraintDeclarations = children.filter(isConstraint);
+    const constraints = constraintDeclarations.map(lowerConstraint);
+    return { ...columns, algorithm, direction, gap, constraints };
+  });
 }
 
 /**
- * The layout algorithm a section `mode` uses by default.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param mode - A section mode.
- * @returns The mode's algorithm, or `flow` for a mode the table does not have. The table is a
- * plain object, so a name it inherits is found too: `constructor` returns the `Object`
- * function and `__proto__` returns `Object.prototype`, not `flow`. The mode comes from the
- * source, a section default or existing patch state; Model validates the resulting layout.
- * @throws Never.
+ * The layout algorithm a section `mode` uses by default; `flow` for an unknown mode. The table
+ * is a plain object, so an inherited name is found too (`constructor` gives the `Object`
+ * function).
  */
 export function modeLayout(mode: string): string {
   return modeLayouts[mode] ?? 'flow';
@@ -85,9 +60,7 @@ function isConstraint(declaration: Declaration): boolean {
 function lowerConstraint(declaration: Declaration): RawRecord {
   const kind = declaration.kind;
   const written = list(declaration.fields, 'targets');
-  const targets = written.map(
-    /** Lowers one target. */ (value) => lowerTarget(value, declaration.span),
-  );
+  const targets = written.map((value) => lowerTarget(value, declaration.span));
   return { kind, targets };
 }
 

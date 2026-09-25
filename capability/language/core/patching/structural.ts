@@ -43,6 +43,7 @@ export function structuralChange(
 
 /**
  * Compiles a `reset`: `reset layout @section` becomes `reset-layout`; `reset route
+ *
  * @section/@wire` becomes `reset-route`. Model clears only the manual data.
  *
  * @throws `invalid-value` for a layout reset without a plain `@id`, or a route reset without a

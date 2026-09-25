@@ -5,31 +5,14 @@
  */
 import type { Position, Span } from '../../contract/records/syntax.js';
 
-/**
- * Finds where every line starts. Only `\n` ends a line; a lone `\r` or U+2028 does not.
- *
- * @param source - The source text.
- * @returns The offset of each line's first character, in order; the first is always 0.
- * @throws Never.
- */
+/** Finds where every line starts. Only `\n` ends a line; a lone `\r` or U+2028 does not. */
 export function lineStarts(source: string): readonly number[] {
-  return [
-    0,
-    ...Array.from(
-      source.matchAll(/\n/g),
-      /** The offset just after this line break. */ (match) => match.index + 1,
-    ),
-  ];
+  return [0, ...Array.from(source.matchAll(/\n/g), (match) => match.index + 1)];
 }
 
 /**
  * Turns an offset into a position. The offset is not range-checked: a negative offset gives a
  * column below 1 on line 1, and an offset past the end lands on the last line.
- *
- * @param starts - The line starts from {@link lineStarts}.
- * @param offset - UTF-16 code units from the start of the source.
- * @returns The offset with its line and column, both counted from 1.
- * @throws Never.
  */
 export function position(
   starts: readonly number[],
@@ -39,15 +22,7 @@ export function position(
   return { offset, line: line + 1, column: offset - (starts[line] ?? 0) + 1 };
 }
 
-/**
- * Turns two offsets into a span.
- *
- * @param starts - The line starts from {@link lineStarts}.
- * @param start - The offset of the first character inside the span.
- * @param end - The offset just after the span (exclusive).
- * @returns The span.
- * @throws Never.
- */
+/** Turns two offsets into a span. */
 export function sourceSpan(
   starts: readonly number[],
   start: number,

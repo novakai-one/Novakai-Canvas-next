@@ -27,99 +27,61 @@ interface ViewParts {
  * Lowers a section. The mode defaults to `flow`. The section's layout algorithm is its written
  * `layout=`, or else the mode's (see `modeLayout`). A group without its own `layout=` uses the
  * mode's algorithm, even when the section writes a different `layout=`.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param item - The section declaration.
- * @returns The section's own fields (without layout attributes), then `mode`, `layout`,
- * `appearances`, `groups`, `wires`, `sequence` and, when written, `root`; or `validation-failed`
- * with the first diagnostic, including a `syntax` diagnostic for a second `root`, or
- * `provider-failure` for an unexpected throw.
- * @throws Never.
  */
 export function lowerSection(item: Declaration): Result<RawRecord> {
-  return protect(
-    /** Builds the section record. */
-    () => {
-      const mode = textOr(item.fields, 'mode', 'flow');
-      const views = lowerViews(item.children, modeLayout(mode));
-      return {
-        ...partitionLayout(lowerRecord(item)).remaining,
-        mode,
-        layout: accepted(lowerLayout(item.fields, item.children, modeLayout(mode))),
-        ...views,
-        wires: lowerWires(item.children),
-        sequence: lowerSequence(item.children),
-        ...rootField(item.children),
-      };
-    },
-  );
+  return protect(() => {
+    const mode = textOr(item.fields, 'mode', 'flow');
+    const views = lowerViews(item.children, modeLayout(mode));
+    return {
+      ...partitionLayout(lowerRecord(item)).remaining,
+      mode,
+      layout: accepted(lowerLayout(item.fields, item.children, modeLayout(mode))),
+      ...views,
+      wires: lowerWires(item.children),
+      sequence: lowerSequence(item.children),
+      ...rootField(item.children),
+    };
+  });
 }
 
 /**
  * Lowers a `show` statement: one appearance per listed object, each with the same written
  * preferences (role, size, frame and so on).
- *
- * @param item - The `show` declaration.
- * @param group - The ID of the group the `show` is inside, if any.
- * @returns One `{ object, …preferences, group? }` record per listed ID; or `validation-failed`
- * with the diagnostic of a bad value.
- * @throws Never.
  */
 function lowerShows(
   item: Declaration,
   group?: string,
 ): Result<readonly RawRecord[]> {
-  return protect(
-    /** Builds the appearances. */
-    () => {
-      const preferences = preferencesOf(item);
-      const ids = list(item.fields, 'ids');
-      return ids.map(
-        /** One listed object's appearance. */ (value) => ({
-          object: lowerValue(value, 'id'),
-          ...preferences,
-          ...optional('group', group),
-        }),
-      );
-    },
-  );
+  return protect(() => {
+    const preferences = preferencesOf(item);
+    const ids = list(item.fields, 'ids');
+    return ids.map((value) => ({
+      object: lowerValue(value, 'id'),
+      ...preferences,
+      ...optional('group', group),
+    }));
+  });
 }
 
 /**
  * Lowers a `connect` statement: one wire preference per listed wire. It refers to existing
  * wires and never creates one.
- *
- * @param item - The `connect` declaration.
- * @returns One `{ relationship, …preferences }` record per listed ID; or `validation-failed`
- * with the diagnostic of a bad value.
- * @throws Never.
  */
 function lowerConnections(item: Declaration): Result<readonly RawRecord[]> {
-  return protect(
-    /** Builds the wire preferences. */
-    () => {
-      const preferences = preferencesOf(item);
-      const ids = list(item.fields, 'ids');
-      return ids.map(
-        /** One listed wire's preferences. */ (value) => ({
-          relationship: lowerValue(value, 'id'),
-          ...preferences,
-        }),
-      );
-    },
-  );
+  return protect(() => {
+    const preferences = preferencesOf(item);
+    const ids = list(item.fields, 'ids');
+    return ids.map((value) => ({
+      relationship: lowerValue(value, 'id'),
+      ...preferences,
+    }));
+  });
 }
 
 /** The wire preferences of every `connect` statement, in written order. */
 function lowerWires(children: readonly Declaration[]): readonly RawRecord[] {
-  const connects = children.filter(
-    /** Whether the child is a `connect`. */ (child) => child.kind === 'connect',
-  );
-  return connects.flatMap(
-    /** Lowers one `connect`. */ (child) => accepted(lowerConnections(child)),
-  );
+  const connects = children.filter((child) => child.kind === 'connect');
+  return connects.flatMap((child) => accepted(lowerConnections(child)));
 }
 
 /** A `show` or `connect` record without its `ids`: the preferences shared by every listed ID. */
@@ -163,9 +125,7 @@ function lowerViews(
   algorithm: string,
   parent?: string,
 ): ViewParts {
-  const parts = children.map(
-    /** Lowers one statement. */ (item) => lowerView(item, algorithm, parent),
-  );
+  const parts = children.map((item) => lowerView(item, algorithm, parent));
   return parts.reduce(mergeViews, { appearances: [], groups: [] });
 }
 
@@ -182,9 +142,7 @@ function lowerView(
 
 /** `{ root }` for a tree's single `root`, or nothing; a second `root` is rejected. */
 function rootField(children: readonly Declaration[]): RawRecord {
-  const roots = children.filter(
-    /** Whether the child is a `root`. */ (item) => item.kind === 'root',
-  );
+  const roots = children.filter((item) => item.kind === 'root');
   if (roots.length > 1)
     reject('syntax', roots[1]?.span ?? origin, 'One tree root', 'Duplicate root');
   const root = roots[0];

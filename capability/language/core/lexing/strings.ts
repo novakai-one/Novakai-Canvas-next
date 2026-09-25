@@ -11,20 +11,15 @@ const escapes: Readonly<Record<string, string>> = { '"': '"', '\\': '\\', n: '\n
 /**
  * Decodes a complete quoted string token.
  *
- * @param text - The token text, including both quotes.
- * @param span - Where the token was written, for a diagnostic.
- * @returns The text between the quotes with each escape replaced.
  * @throws A `LanguageFault` with a `syntax` diagnostic at `span` for any other escape.
  */
 export function decodeString(
   text: string,
   span: Span,
 ): string {
-  return text.slice(1, -1).replace(
-    /\\([\s\S])/g,
-    /** The character this escape stands for. */
-    (_whole: string, code: string) => decodeEscape(code, span),
-  );
+  return text
+    .slice(1, -1)
+    .replace(/\\([\s\S])/g, (_whole: string, code: string) => decodeEscape(code, span));
 }
 
 /** The character for one escape; any escape outside the four is a `syntax` error. */

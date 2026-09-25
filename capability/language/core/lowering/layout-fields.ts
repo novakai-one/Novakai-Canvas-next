@@ -9,13 +9,6 @@ import type { RawRecord } from './fields.js';
 /**
  * Splits a record into the layout fields (`columns`, `algorithm`, `direction`, `gap`) and the
  * rest. Both parts keep the record's key order.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param record - A lowered collection or section record.
- * @returns `layout` with the layout fields, and `remaining` with every other field.
- * @throws Never.
  */
 export function partitionLayout(record: RawRecord): {
   readonly layout: RawRecord;
@@ -23,14 +16,8 @@ export function partitionLayout(record: RawRecord): {
 } {
   const entries = Object.entries(record);
   return {
-    layout: Object.fromEntries(
-      entries.filter(/** Whether this is a layout field. */ ([field]) => fields.includes(field)),
-    ),
-    remaining: Object.fromEntries(
-      entries.filter(
-        /** Whether this is not a layout field. */ ([field]) => !fields.includes(field),
-      ),
-    ),
+    layout: Object.fromEntries(entries.filter(([field]) => fields.includes(field))),
+    remaining: Object.fromEntries(entries.filter(([field]) => !fields.includes(field))),
   };
 }
 
@@ -38,6 +25,4 @@ export function partitionLayout(record: RawRecord): {
 const layoutPropertyList = Object.values(layoutProperties);
 
 /** The Model field names of the layout properties. */
-const fields: readonly string[] = layoutPropertyList.map(
-  /** The property's Model field name. */ (property) => property.field,
-);
+const fields: readonly string[] = layoutPropertyList.map((property) => property.field);

@@ -18,12 +18,6 @@ export type RawRecord = Readonly<Record<string, unknown>>;
 /**
  * One field that must be present.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param name - The field's name.
- * @returns The field with its location.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic at the start of the source
  * (`origin`) when the field is missing.
  */
@@ -39,12 +33,6 @@ export function field(
 /**
  * One field that must be text. Lists and references are rejected, never turned into text.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param name - The field's name.
- * @returns The text.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is missing (see
  * {@link field}) or is not text.
  */
@@ -61,13 +49,6 @@ export function text(
 /**
  * One optional text field.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param name - The field's name.
- * @param fallback - The value when the field is missing.
- * @returns The text, or `fallback` when the field is missing.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is present but is
  * not text.
  */
@@ -83,11 +64,6 @@ export function textOr(
 /**
  * The reference held by a field.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param value - The parsed field.
- * @returns The reference.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the value is not a reference.
  */
 export function reference(value: LocatedValue): Reference {
@@ -100,12 +76,6 @@ export function reference(value: LocatedValue): Reference {
  * The ID of the reference held by a field. It stays a plain string; Model gives it its checked
  * type.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param name - The field's name; defaults to `id`.
- * @returns The referenced ID.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is missing or is
  * not a reference.
  */
@@ -120,12 +90,6 @@ export function id(
  * One field that must be a list, in written order. A missing field is an error, not an empty
  * list.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param fields - The parsed fields.
- * @param name - The field's name.
- * @returns The list.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the field is missing or is
  * not a list.
  */
@@ -141,14 +105,6 @@ export function list(
 /**
  * A one-key record for spreading into a larger record, or an empty one when the value is
  * missing, so an absent field is left out rather than stored as `undefined`.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param name - The key.
- * @param value - The value, or `undefined`.
- * @returns `{ [name]: value }`, or `{}` when `value` is `undefined`.
- * @throws Never.
  */
 export function optional(
   name: string,
@@ -161,13 +117,6 @@ export function optional(
 /**
  * An endpoint record: the object's ID, and the member's ID when the reference names one. Model
  * checks which kinds of endpoint are legal.
- *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param value - An `@id` or `@id.@member` reference.
- * @returns `{ object }` or `{ object, member }`.
- * @throws Never.
  */
 export function endpoint(value: Reference): RawRecord {
   return { object: value.id, ...optional('member', value.member) };
@@ -177,13 +126,6 @@ export function endpoint(value: Reference): RawRecord {
  * Returns a copy of a record without one field; the other own enumerable fields (symbol keys
  * included) keep their order. Reads the field first, then copies the rest (the same reads as a
  * rest destructuring).
- *
- * Pure. Language owns correcting the source; Authoring owns commit recovery.
- *
- * @param record - The record.
- * @param field - The field to leave out.
- * @returns The copy.
- * @throws Never for plain data; a getter that throws is passed through.
  */
 export function withoutField(
   record: RawRecord,

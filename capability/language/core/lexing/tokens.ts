@@ -45,18 +45,11 @@ const lexemePatterns: readonly string[] = [
 const lexeme = new RegExp(lexemePatterns.join('|'), 'g');
 
 /**
- * Splits source text into tokens. Nothing outside this call is changed.
- *
- * @param source - The source text.
- * @returns The tokens in order, ending with `eof`; or `syntax` for an unterminated string, or
- * `limit` for more than 250,000 tokens.
- * @throws Never.
+ * Splits source text into tokens, ending with `eof`. Fails with `syntax` for an unterminated
+ * string, or `limit` above 250,000 tokens.
  */
 export function tokenize(source: string): Result<readonly Token[]> {
-  return protect(
-    /** Collects every token. */
-    () => collectTokens(source),
-  );
+  return protect(() => collectTokens(source));
 }
 
 /** Every token in the source, then `eof`. */

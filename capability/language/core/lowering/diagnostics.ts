@@ -34,15 +34,8 @@ interface MappingParse {
  * Model's diagnostic, and `span` is a copy of the span of the longest mapping path contained
  * in Model's path (the narrower span wins a tie), else of `fallback`.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param result - A Model result.
- * @param mappings - Where each Model path was written (see `sourceMappings`).
- * @param fallback - The span used when no mapping matches.
- * @returns A structured clone of the value.
  * @throws A `LanguageFault` holding the translated diagnostics when the result failed; a
- * `DataCloneError` when the value cannot be cloned. Callers run it inside `protect`.
+ * `DataCloneError` when the value cannot be cloned.
  */
 export function ownerValue<T>(
   result: Result<T, OwnerError>,
@@ -67,14 +60,8 @@ export function ownerValue<T>(
  *
  * Every mapping holds a copy of the written span, never the declaration's own span object.
  *
- * Pure: a retry with the same input returns the same result. Language owns correcting the
- * source; Authoring owns commit recovery.
- *
- * @param item - A parsed declaration.
- * @param prefix - The parent's path; empty at the top.
- * @returns The mappings, in the order above.
  * @throws A `LanguageFault` for a nested or top-level declaration whose `id` is not an ID (see
- * `id`). Callers run it inside `protect`.
+ * `id`).
  */
 export function sourceMappings(
   item: Declaration,
@@ -86,9 +73,7 @@ export function sourceMappings(
     { path: name, span: copySpan(item.span) },
     ...contentMappings(name, item),
     ...expressionMapping(name, expression),
-    ...item.children.flatMap(
-      /** The mappings of one child, under this path. */ (child) => sourceMappings(child, name),
-    ),
+    ...item.children.flatMap((child) => sourceMappings(child, name)),
   ];
 }
 
@@ -101,10 +86,7 @@ function rejectOwner(
 ): never {
   throw new LanguageFault([
     sourceDiagnostic(first, mappings, fallback),
-    ...remaining.map(
-      /** One issue, placed in the source. */ (issue) =>
-        sourceDiagnostic(issue, mappings, fallback),
-    ),
+    ...remaining.map((issue) => sourceDiagnostic(issue, mappings, fallback)),
   ]);
 }
 
@@ -134,10 +116,7 @@ function nearestSpan(
   mappings: readonly SourceMapping[],
   fallback: Span,
 ): Span {
-  const containing = mappings.filter(
-    /** Whether Model's path contains this mapping's path. */ (mapping) =>
-      path.includes(mapping.path),
-  );
+  const containing = mappings.filter((mapping) => path.includes(mapping.path));
   return containing.toSorted(compareSpecificity)[0]?.span ?? fallback;
 }
 
@@ -184,9 +163,8 @@ function typeMappings(
   if (item.kind !== 'signature') return [];
   return [
     ...propertyMapping(name, 'returns', item.fields.returns),
-    ...(item.fields.parameters?.items ?? []).flatMap(
-      /** The mappings of one parameter. */ (parameter, index) =>
-        parameterMappings(name, parameter, index),
+    ...(item.fields.parameters?.items ?? []).flatMap((parameter, index) =>
+      parameterMappings(name, parameter, index),
     ),
   ];
 }
@@ -261,12 +239,10 @@ function expressionReferenceMappings(
 /** Whether a `|` appears outside every parenthesis. */
 function hasTopLevelUnion(tokens: readonly Token[]): boolean {
   let depth = 0;
-  return tokens.some(
-    /** Tracks the nesting depth; true for a top-level `|`. */ (token) => {
-      depth = unionDepth(token.text, depth);
-      return depth === 0 && token.text === '|';
-    },
-  );
+  return tokens.some((token) => {
+    depth = unionDepth(token.text, depth);
+    return depth === 0 && token.text === '|';
+  });
 }
 
 /** The depth after a token: `(` opens, `)` closes. */
@@ -338,11 +314,10 @@ function collapseSingleItem(
   path: string,
 ): readonly SourceMapping[] {
   const prefix = `${path}.items.0`;
-  return mappings.map(
-    /** The mapping, moved up when it is under `items.0`. */ (mapping) =>
-      mapping.path === prefix || mapping.path.startsWith(`${prefix}.`)
-        ? { ...mapping, path: `${path}${mapping.path.slice(prefix.length)}` }
-        : mapping,
+  return mappings.map((mapping) =>
+    mapping.path === prefix || mapping.path.startsWith(`${prefix}.`)
+      ? { ...mapping, path: `${path}${mapping.path.slice(prefix.length)}` }
+      : mapping,
   );
 }
 

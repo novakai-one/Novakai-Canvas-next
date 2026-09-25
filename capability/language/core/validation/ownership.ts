@@ -8,13 +8,6 @@ import type { Position, Span } from '../../contract/records/syntax.js';
 /**
  * Freezes a value Language owns, and every object inside it, children first. Used for the shared
  * vocabulary tables, `origin` and every result `protect` returns, so no caller can change them.
- *
- * Pure apart from freezing its argument in place; a retry is a no-op. Language owns correcting
- * the source; Authoring owns commit recovery.
- *
- * @param value - A record Language built (never caller data).
- * @returns The same value, now deep-frozen.
- * @throws Never for plain data; a getter or proxy trap that throws is passed through.
  */
 export function deepFreeze<T>(value: T): T {
   freezeOwned(value);
@@ -24,12 +17,6 @@ export function deepFreeze<T>(value: T): T {
 /**
  * A new span with the same start and end, so an output record never holds the input's span
  * object. Reads `start` (offset, line, column), then `end`.
- *
- * Pure. Language owns correcting the source; Authoring owns commit recovery.
- *
- * @param span - The span to copy.
- * @returns The copy.
- * @throws Never for plain data; a getter or proxy trap that throws is passed through.
  */
 export function copySpan(span: Span): Span {
   return { start: copyPosition(span.start), end: copyPosition(span.end) };

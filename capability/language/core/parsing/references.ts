@@ -11,8 +11,6 @@ import { peek, advance, consume, consumedSpan, type Cursor, type Parsed } from '
 /**
  * Reads one `@name` token.
  *
- * @param cursor - Where the ID should be.
- * @returns The name without the `@`, and the cursor after it.
  * @throws A `LanguageFault` with a `syntax` diagnostic when the token is not an ID.
  */
 export function readIdentity(cursor: Cursor): Parsed<string> {
@@ -27,9 +25,6 @@ export function readIdentity(cursor: Cursor): Parsed<string> {
  * - A word first means a layout reference: `group:@id` or `section:@id`.
  * - Otherwise an ID, then optionally `.@member` or `/@item` (the ID before `/` is the section).
  *
- * @param cursor - Where the reference starts.
- * @returns The reference with its span (and, unless it is a layout reference, its first token),
- * and the cursor after it.
  * @throws A `LanguageFault` with a `syntax` diagnostic for an unknown namespace, a missing `:`
  * after the namespace word (`Expected :`), or a missing ID.
  */

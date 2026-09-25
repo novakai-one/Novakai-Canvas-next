@@ -34,9 +34,6 @@ export interface Parsed<T> {
 /**
  * The token at the cursor, or `ahead` tokens after it, without moving.
  *
- * @param cursor - Where to look.
- * @param ahead - How many tokens further to look; defaults to 0.
- * @returns The token.
  * @throws A `LanguageFault` with a `syntax` diagnostic ("Unexpected end of source") past the
  * last token. The diagnostic is at the start of the source (`origin`), not at the cursor.
  */
@@ -50,14 +47,7 @@ export function peek(
   return token;
 }
 
-/**
- * Moves forward, keeping the nesting depth.
- *
- * @param cursor - The current position.
- * @param count - How many tokens to move; defaults to 1.
- * @returns A new cursor.
- * @throws Never.
- */
+/** Moves forward, keeping the nesting depth. */
 export function advance(
   cursor: Cursor,
   count = 1,
@@ -68,9 +58,6 @@ export function advance(
 /**
  * Moves past a token that must have exactly the text `expected`.
  *
- * @param cursor - The current position.
- * @param expected - The required token text, such as `{` or `in`.
- * @returns The cursor after that token.
  * @throws A `LanguageFault` with a `syntax` diagnostic ("Expected …") when the token differs,
  * or from {@link peek} at the end of the tokens.
  */
@@ -87,8 +74,6 @@ export function consume(
  * Opens one more level of nesting. The limit keeps deeply nested source from exhausting the
  * JavaScript stack.
  *
- * @param cursor - The current position.
- * @returns The same position one level deeper.
  * @throws A `LanguageFault` with a `limit` diagnostic when 64 levels are already open.
  */
 export function enter(cursor: Cursor): Cursor {
@@ -97,13 +82,7 @@ export function enter(cursor: Cursor): Cursor {
   return { ...cursor, depth: cursor.depth + 1 };
 }
 
-/**
- * Closes one level of nesting after a complete brace or list body.
- *
- * @param cursor - The current position.
- * @returns The same position one level shallower.
- * @throws Never.
- */
+/** Closes one level of nesting after a complete brace or list body. */
 export function leave(cursor: Cursor): Cursor {
   return { ...cursor, depth: cursor.depth - 1 };
 }
@@ -112,9 +91,6 @@ export function leave(cursor: Cursor): Cursor {
  * The span of the tokens read between two cursors: from the first token at `start` to the last
  * token before `end`. The token at `end` is not included.
  *
- * @param start - The cursor before reading.
- * @param end - The cursor after reading.
- * @returns The span; when nothing was read, the span of the token at `start`.
  * @throws From {@link peek} when `start` is past the last token.
  */
 export function consumedSpan(

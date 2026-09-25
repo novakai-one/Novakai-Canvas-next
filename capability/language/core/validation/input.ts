@@ -15,8 +15,6 @@ const unpairedSurrogate = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF
 /**
  * Checks that source text can be read. The checks run in this order: type, surrogates, size.
  *
- * @param source - The source, of any type.
- * @returns The same string.
  * @throws A `LanguageFault` at the start of the source: `invalid-input` for a non-string or an
  * unpaired surrogate, `limit` for more than 16 MiB of UTF-8.
  */

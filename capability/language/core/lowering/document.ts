@@ -31,50 +31,38 @@ import { defaults } from '../vocabulary/defaults.js';
  *
  * A Model rejection is mapped back to the source span of the record it names.
  *
- * No writes: a retry with the same input and the same Model roles returns the same result.
- * Language owns correcting the source; Authoring owns commit recovery.
- *
- * @param document - The parsed `canvas 1` document.
- * @param request - The mode, snapshot and resolved resources.
- * @param deps - Model's reader, stage and planner.
- * @returns The mode, the planned collection, the staged changes, the resources the source asks
- * for and the source map; or `validation-failed`: `invalid-input` for a wrong mode or a snapshot
- * given to `create`, `unknown-target` for a missing or different snapshot on `replace`, any
- * lowering diagnostic, or Model's diagnostics at their source spans. A throwing Model role is
- * reported as `provider-failure`.
- * @throws Never.
+ * Fails with `invalid-input` for a wrong mode or a snapshot given to `create`, `unknown-target`
+ * for a missing or different snapshot on `replace`, any lowering or Model diagnostic, or
+ * `provider-failure` when a Model role throws. No writes.
  */
 export function lowerDocument(
   document: Document,
   request: LowerRequest,
   deps: Dependencies,
 ): Result<LoweredIntent> {
-  return protect(
-    /** Checks the mode, then validates, stages and plans the document. */
-    () => {
-      checkMode(document, request);
-      const mappings = sourceMappings(document.declaration);
-      const raw = accepted(lowerDocumentData(document, request));
-      const candidate = ownerValue(deps.reader.validate(raw), mappings, document.span);
-      const shell = emptyShell(candidate);
-      const original =
-        request.snapshot ?? ownerValue(deps.reader.validate(shell), mappings, document.span);
-      const changes = [{ op: 'replace-document', value: candidate }];
-      const staged = ownerValue(deps.stage.stage(original, changes), mappings, document.span);
-      const planned = ownerValue(
-        deps.planner.plan(original, staged.changes),
-        mappings,
-        document.span,
-      );
-      return {
-        mode: request.mode,
-        collection: planned.candidate,
-        changes: staged.changes,
-        resources: documentResources(document.declaration),
-        sourceMap: mappings,
-      };
-    },
-  );
+  return protect(() => {
+    checkMode(document, request);
+    const mappings = sourceMappings(document.declaration);
+    const raw = accepted(lowerDocumentData(document, request));
+    const candidate = ownerValue(deps.reader.validate(raw), mappings, document.span);
+    const shell = emptyShell(candidate);
+    const original =
+      request.snapshot ?? ownerValue(deps.reader.validate(shell), mappings, document.span);
+    const changes = [{ op: 'replace-document', value: candidate }];
+    const staged = ownerValue(deps.stage.stage(original, changes), mappings, document.span);
+    const planned = ownerValue(
+      deps.planner.plan(original, staged.changes),
+      mappings,
+      document.span,
+    );
+    return {
+      mode: request.mode,
+      collection: planned.candidate,
+      changes: staged.changes,
+      resources: documentResources(document.declaration),
+      sourceMap: mappings,
+    };
+  });
 }
 
 /**
@@ -82,64 +70,37 @@ export function lowerDocument(
  * `theme=` (default `paper`) is replaced by the resolved theme; the layout attributes become
  * `arrangement` (default algorithm `grid`). Nodes, wires, sections, sources, assets and type
  * definitions keep their written order. Model checks IDs and relations afterwards.
- *
- * @param document - The parsed `canvas 1` document.
- * @param request - The request; its snapshot's revision (default 0) and its resolved resources
- * are read.
- * @returns The raw collection record; or `validation-failed` with the diagnostics of the first
- * failing step (for example an unresolved theme, an asset not admitted, or a bad layout target),
- * or `provider-failure` for an unexpected throw.
- * @throws Never.
  */
 function lowerDocumentData(
   document: Document,
   request: LowerRequest,
 ): Result<RawRecord> {
-  return protect(
-    /** Builds the collection record. */
-    () => {
-      const item = document.declaration;
-      const metadata = lowerRecord(item);
-      const remaining = withoutField(partitionLayout(metadata).remaining, 'theme');
-      const theme = resolveTheme(
-        textOr(item.fields, 'theme', defaults.theme),
-        request.resources,
-        item.span,
-      );
-      return {
-        ...remaining,
-        schemaVersion: 1,
-        revision: request.snapshot?.revision ?? 0,
-        theme,
-        arrangement: accepted(lowerLayout(item.fields, item.children, defaults.collectionLayout)),
-        objects: lowerEach(item, 'node', lowerNode),
-        relationships: lowerEach(item, 'wire', lowerRecord),
-        sections: lowerEach(
-          item,
-          'section',
-          /** Lowers one section. */ (section) => accepted(lowerSection(section)),
-        ),
-        sources: lowerEach(item, 'source', lowerRecord),
-        assets: lowerEach(
-          item,
-          'asset',
-          /** Lowers one asset against the admitted assets. */ (asset) =>
-            lowerAsset(asset, request.resources),
-        ),
-        definitions: lowerEach(item, 'type', lowerDefinition),
-      };
-    },
-  );
+  return protect(() => {
+    const item = document.declaration;
+    const metadata = lowerRecord(item);
+    const remaining = withoutField(partitionLayout(metadata).remaining, 'theme');
+    const theme = resolveTheme(
+      textOr(item.fields, 'theme', defaults.theme),
+      request.resources,
+      item.span,
+    );
+    return {
+      ...remaining,
+      schemaVersion: 1,
+      revision: request.snapshot?.revision ?? 0,
+      theme,
+      arrangement: accepted(lowerLayout(item.fields, item.children, defaults.collectionLayout)),
+      objects: lowerEach(item, 'node', lowerNode),
+      relationships: lowerEach(item, 'wire', lowerRecord),
+      sections: lowerEach(item, 'section', (section) => accepted(lowerSection(section))),
+      sources: lowerEach(item, 'source', lowerRecord),
+      assets: lowerEach(item, 'asset', (asset) => lowerAsset(asset, request.resources)),
+      definitions: lowerEach(item, 'type', lowerDefinition),
+    };
+  });
 }
 
-/**
- * Lowers each top-level declaration of one construct, in written order.
- *
- * @param item - The collection declaration.
- * @param kind - The construct to lower.
- * @param lower - Lowers one declaration.
- * @returns One lowered record per declaration.
- */
+/** Lowers each top-level declaration of one construct, in written order. */
 function lowerEach(
   item: Declaration,
   kind: Declaration['kind'],
@@ -154,9 +115,7 @@ function records(
   item: Declaration,
   kind: Declaration['kind'],
 ): readonly Declaration[] {
-  return item.children.filter(
-    /** Whether the child is of this construct. */ (child) => child.kind === kind,
-  );
+  return item.children.filter((child) => child.kind === kind);
 }
 
 /** The collection with no records and no layout constraints: where `create` starts. */

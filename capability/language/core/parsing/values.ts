@@ -24,8 +24,6 @@ import { repeat } from './repetition.js';
  * Reads one value: a reference (`@…`), a bracketed list (`[…]`), a layout reference
  * (`word:@…`), or a scalar.
  *
- * @param cursor - Where the value starts.
- * @returns The value with its location, and the cursor after it.
  * @throws A `LanguageFault`: `syntax` for a token that is not a value, a bad escape or an
  * unclosed list; `invalid-value` for an integer that is not a safe integer; `limit` for nesting
  * deeper than 64; and, for a list, any diagnostic its item loop (`repeat`) reports, such as
@@ -42,8 +40,6 @@ export function readValue(cursor: Cursor): Parsed<LocatedValue> {
  * Reads references written one after another without brackets, as in `show @a @b`, up to the
  * first token that does not start a reference.
  *
- * @param cursor - Where the first reference starts.
- * @returns The list of references with its span (no `items`), and the cursor after it.
  * @throws A `LanguageFault` with a `syntax` diagnostic when there is no reference at all; any
  * fault from reading a reference; and any diagnostic the item loop (`repeat`) reports, such as
  * `limit` for too many references.
@@ -54,7 +50,7 @@ export function readReferenceList(cursor: Cursor): Parsed<LocatedValue> {
     reject('syntax', peek(cursor).span, 'One or more references', 'Reference list is empty');
   return {
     value: {
-      value: parsed.value.map(/** The reference itself. */ (item) => item.value),
+      value: parsed.value.map((item) => item.value),
       span: consumedSpan(cursor, parsed.next),
     },
     next: parsed.next,
@@ -114,15 +110,9 @@ function readList(cursor: Cursor): Parsed<LocatedValue> {
   const start = enter(advance(cursor));
   if (peek(start).text === ']') return finishList(cursor, advance(start), []);
   const first = readValue(start);
-  const rest = accepted(
-    repeat(
-      first.next,
-      /** Whether another item follows (a comma). */ (item) => peek(item).text === ',',
-      readFollowingItem,
-    ),
-  );
+  const rest = accepted(repeat(first.next, (item) => peek(item).text === ',', readFollowingItem));
   const locatedItems = [first.value, ...rest.value];
-  const items = locatedItems.map(/** The item's value. */ (item) => item.value);
+  const items = locatedItems.map((item) => item.value);
   return finishList(cursor, consume(rest.next, ']'), items, locatedItems);
 }
 

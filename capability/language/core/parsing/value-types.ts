@@ -8,25 +8,12 @@ import type { SyntaxValue, Reference, LocatedValue } from '../../contract/record
 import type { ValueType, Property } from '../../contract/records/vocabulary.js';
 import { reject } from '../validation/outcomes.js';
 
-/**
- * Whether a value is a list. `Array.isArray` alone would not narrow to a readonly array.
- *
- * @param value - Any syntax value.
- * @returns `true` for a list.
- * @throws Never for parsed syntax values. (`Array.isArray` throws a `TypeError` for a revoked
- * proxy, which the parser never produces.)
- */
+/** Whether a value is a list. `Array.isArray` alone would not narrow to a readonly array. */
 export function isList(value: SyntaxValue): value is readonly SyntaxValue[] {
   return Array.isArray(value);
 }
 
-/**
- * Whether a value is a reference (the only object that is not a list).
- *
- * @param value - Any syntax value.
- * @returns `true` for a reference.
- * @throws Never for parsed syntax values (see {@link isList}).
- */
+/** Whether a value is a reference (the only object that is not a list). */
 export function isReference(value: SyntaxValue): value is Reference {
   if (typeof value !== 'object') return false;
   return !isList(value);
@@ -36,10 +23,6 @@ export function isReference(value: SyntaxValue): value is Reference {
  * Checks a value against its property. A number for a property with allowed words is first
  * turned into text (the cardinality `1` is read as an integer but listed as a word).
  *
- * @param located - The value and where it was written.
- * @param property - The property's declaration.
- * @param target - The property name, for the diagnostic.
- * @returns A copy of `located` holding the possibly converted value.
  * @throws A `LanguageFault` with an `invalid-value` diagnostic when the form is wrong, or when
  * the value is not one of the allowed words.
  */
@@ -65,21 +48,19 @@ export function checkValue(
 const checks: Readonly<Record<ValueType, (value: SyntaxValue) => boolean>> = {
   string: isText,
   word: isText,
-  integer: /** Whether the value is a number. */ (value) => typeof value === 'number',
-  boolean: /** Whether the value is a boolean. */ (value) => typeof value === 'boolean',
+  integer: (value) => typeof value === 'number',
+  boolean: (value) => typeof value === 'boolean',
   id: isIdentity,
   endpoint: isEndpoint,
   address: isReference,
-  strings: /** Whether the value is a list of text. */ (value) => listOf(value, isText),
-  ids: /** Whether the value is a list of plain IDs. */ (value) => listOf(value, isIdentity),
-  endpoints: /** Whether the value is a list of endpoints. */ (value) => listOf(value, isEndpoint),
-  references: /** Whether the value is a list of plain IDs. */ (value) => listOf(value, isIdentity),
-  targets: /** Whether the value is a list of references. */ (value) => listOf(value, isReference),
-  'reference-value': /** Whether the value is an endpoint or a list of them. */ (value) =>
-    isEndpoint(value) || listOf(value, isEndpoint),
+  strings: (value) => listOf(value, isText),
+  ids: (value) => listOf(value, isIdentity),
+  endpoints: (value) => listOf(value, isEndpoint),
+  references: (value) => listOf(value, isIdentity),
+  targets: (value) => listOf(value, isReference),
+  'reference-value': (value) => isEndpoint(value) || listOf(value, isEndpoint),
   'type-expression': isTextOrIdentity,
-  'signature-parameters': /** Whether the value is a list of parameters. */ (value) =>
-    listOf(value, signatureParameter),
+  'signature-parameters': (value) => listOf(value, signatureParameter),
   link: isTextOrIdentity,
 };
 

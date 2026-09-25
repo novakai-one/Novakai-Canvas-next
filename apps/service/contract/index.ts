@@ -8,6 +8,7 @@ export { inspectionReport } from './records/inspection.js';
 export type { InspectionReport } from './records/inspection.js';
 
 export { prepareInstallation } from './compose.js';
+export type { BuiltinResources } from './records/builtins.js';
 
 export { openWorkspace } from './compose.js';
 export { serveWorkspace } from './compose.js';

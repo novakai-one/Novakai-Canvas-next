@@ -15,7 +15,7 @@ export function hasFolder(
   return folders.some((folder) => folder.id === id);
 }
 
-/** Whether a organisation entry lists this collection. */
+/** Whether an organisation entry lists this collection. */
 export function hasEntry(
   entries: readonly OrganisationEntry[],
   collection: CollectionId,
@@ -45,7 +45,7 @@ export function folderKey(folder: Folder): FolderId {
 }
 
 /**
- * A organisation entry's key: its collection's ID (one entry per collection). Shared by organisation changes
+ * An organisation entry's key: its collection's ID (one entry per collection). Shared by organisation changes
  * and validation.
  */
 export function entryKey(entry: OrganisationEntry): CollectionId {

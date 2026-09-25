@@ -1,7 +1,7 @@
 /*
  * Organisation change records. Each change carries a complete record or an ID, never a partial patch
  * or a JSON path. The schema is built by a function, so no schema object is shared between calls.
- * A change these schemas reject is a `invalid-input` diagnostic; the caller corrects it, and Authoring
+ * A change these schemas reject is an `invalid-input` diagnostic; the caller corrects it, and Authoring
  * owns admission, commit and recovery.
  */
 import { z } from 'zod';

@@ -121,7 +121,7 @@ function entryIssues(
   return [...missingCollection, ...missingFolder];
 }
 
-/** Every collection needs a organisation entry. */
+/** Every collection needs an organisation entry. */
 function missingEntryIssues(
   collection: CollectionProjection,
   organisation: Organisation,

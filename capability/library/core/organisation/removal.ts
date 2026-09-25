@@ -1,5 +1,5 @@
 /*
- * Removing a folder from a organisation, refusing or rehoming its contents. Returns a new organisation and
+ * Removing a folder from an organisation, refusing or rehoming its contents. Returns a new organisation and
  * never changes the one given. Planning validates the result afterwards; Authoring owns the commit
  * and recovery.
  */
@@ -14,7 +14,7 @@ import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../shared/outcomes.js';
 
 /**
- * Removes one folder from a organisation.
+ * Removes one folder from an organisation.
  *
  * A missing folder is `unknown-id`. A folder with child folders or entries is `folder-not-empty`
  * under the `reject` policy. Under `rehome`, its direct child folders and its entries move to its

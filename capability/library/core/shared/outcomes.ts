@@ -38,7 +38,7 @@ export function diagnoseWhen(
 }
 
 /**
- * Parses input with a schema and turns every schema issue into a `invalid-input` diagnostic, in the
+ * Parses input with a schema and turns every schema issue into an `invalid-input` diagnostic, in the
  * schema's order: its path joined with `.` (the input root is `''`) and its message. The parse
  * never throws for bad data; a throw while reading the input is left to {@link protect}. Only
  * `safeParse` is used, so core does not import the schema library.
@@ -80,7 +80,7 @@ export function protect<T>(action: () => LibraryResult<T>): LibraryResult<T> {
 
 /**
  * Builds a failure from a list of diagnostics. A list with none would be a provider fault, so it
- * becomes a `invalid-input` failure at `$`, "Validation provider rejected input without diagnostic
+ * becomes an `invalid-input` failure at `$`, "Validation provider rejected input without diagnostic
  * evidence".
  */
 export function rejected<T>(diagnostics: readonly Diagnostic[]): LibraryResult<T> {
@@ -111,7 +111,7 @@ interface Parser<T> {
     | { readonly success: false; readonly error: { readonly issues: readonly ShapeIssue[] } };
 }
 
-/** A schema issue as a `invalid-input` diagnostic: its path joined with `.`, and its message. */
+/** A schema issue as an `invalid-input` diagnostic: its path joined with `.`, and its message. */
 function shapeDiagnostic(issue: ShapeIssue): Diagnostic {
   const segments = issue.path.map(String);
   return { code: 'invalid-input', path: segments.join('.'), message: issue.message };

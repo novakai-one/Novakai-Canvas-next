@@ -1,7 +1,7 @@
 /*
  * Library's checked identities and shared value rules. Every schema is built by a function, so
  * each caller gets its own schema object and no schema is shared between calls or consumers.
- * Input these schemas reject is a `invalid-input` diagnostic; the caller corrects the input and Authoring
+ * Input these schemas reject is an `invalid-input` diagnostic; the caller corrects the input and Authoring
  * owns commit and recovery.
  */
 import { z } from 'zod';
@@ -16,7 +16,7 @@ export const MAX_RECORDS = 10_000;
 const MAX_TEXT_LENGTH = 10_000;
 
 /**
- * Builds the organisation ID schema. A organisation is separate from its folders and the collections it
+ * Builds the organisation ID schema. An organisation is separate from its folders and the collections it
  * lists.
  */
 export function organisationIdSchema(): z.core.$ZodBranded<z.ZodString, 'OrganisationId'> {

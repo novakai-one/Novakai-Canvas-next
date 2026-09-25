@@ -37,7 +37,7 @@ import { readVersions } from '../shared/versions.js';
  * 6. Return up to `limit` hits, the total, the source revisions and, when more hits follow, the
  *    next cursor. A next cursor longer than `MAX_CURSOR_LENGTH` is a `cursor-too-long` failure instead.
  *
- * A throw while reading the input becomes a `invalid-input` failure at `$`.
+ * A throw while reading the input becomes an `invalid-input` failure at `$`.
  */
 export function queryLibrary(input: QueryInput): LibraryResult<QueryPage> {
   return protect(() => prepareQuery(input));

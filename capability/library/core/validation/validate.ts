@@ -15,7 +15,7 @@ import { validateRecords } from './rules.js';
  * cycles, and exactly one organisation entry per collection. All rule violations are reported together.
  *
  * Returns a detached, frozen copy of the snapshot. Writes nothing and reads no clock. A throw
- * while reading the input becomes a `invalid-input` failure.
+ * while reading the input becomes an `invalid-input` failure.
  */
 export function validateLibrarySnapshot(input: unknown): LibraryResult<LibrarySnapshot> {
   return protect(() => validateInput(input));

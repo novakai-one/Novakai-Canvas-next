@@ -1,6 +1,6 @@
 /*
  * Search requests and results. The request schema is built by a function, so no schema object is
- * shared between calls. A request the schema rejects is a `invalid-input` diagnostic; the caller corrects
+ * shared between calls. A request the schema rejects is an `invalid-input` diagnostic; the caller corrects
  * it and searches again. Library writes nothing, so a retry is always safe; Authoring owns commit
  * and recovery.
  */

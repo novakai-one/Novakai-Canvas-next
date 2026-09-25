@@ -25,14 +25,14 @@ import { produce } from '../core/rendering/produce.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
 import { createWorkspaceExporter } from '../adapters/export.js';
-import { cacheRenders } from '../adapters/render-cache.js';
+import { cacheRenders } from '../adapters/rendering/render-cache.js';
 /** Explicit worker lifecycle keeps native measurement away from browser imports; the parent owns worker failure/retry. */
 export async function runRenderWorker(): Promise<Result<void>> {
   try {
     const [entry, input, rendering] = await Promise.all([
-      import('../adapters/worker-entry.js'),
-      import('../adapters/rendering-input.js'),
-      import('../adapters/rendering.js'),
+      import('../adapters/rendering/worker-entry.js'),
+      import('../adapters/rendering/rendering-input.js'),
+      import('../adapters/rendering/rendering.js'),
     ]);
     const prepared = await Promise.all([prepareNativePresentation(), prepareLayoutRuntime()]);
     for (const result of prepared) {
@@ -51,8 +51,8 @@ export async function runRenderWorker(): Promise<Result<void>> {
 export async function createDiagramProducer(timeoutMs = 30000): Promise<Result<DiagramProducer>> {
   try {
     const [worker, output] = await Promise.all([
-      import('../adapters/render-worker.js'),
-      import('../adapters/rendering-output.js'),
+      import('../adapters/rendering/render-worker.js'),
+      import('../adapters/rendering/rendering-output.js'),
     ]);
     const transport = worker.createRenderTransport(timeoutMs);
     await transport.ready;
@@ -176,15 +176,15 @@ async function wireWorkspace(
     import('../adapters/library-planner.js'),
     import('../adapters/diagram-planners.js'),
     import('../adapters/candidate-validation.js'),
-    import('../adapters/render-jobs.js'),
+    import('../adapters/rendering/render-jobs.js'),
     import('../adapters/feasibility.js'),
-    import('../adapters/collection-renderer.js'),
+    import('../adapters/rendering/collection-renderer.js'),
     import('../adapters/installation-planner.js'),
     import('../adapters/change-channel.js'),
     import('../adapters/session-lifetime.js'),
     import('../adapters/resource-commands.js'),
     import('../adapters/preset-planner.js'),
-    import('../adapters/theme-preparation.js'),
+    import('../adapters/rendering/theme-preparation.js'),
   ]);
   const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
   const system = composeDesignSystem();
@@ -391,7 +391,7 @@ export async function serveWorkspace(
       import('../adapters/local-credentials.js'),
       import('../adapters/http/request-reader.js'),
       import('../adapters/http/http-router.js'),
-      import('../adapters/language-readout.js'),
+      import('../adapters/rendering/language-readout.js'),
       import('../adapters/http/http-io.js'),
       import('../adapters/http/static-files.js'),
       import('../adapters/http/http-server.js'),
@@ -433,9 +433,9 @@ export async function readAgentCredential(path: string): Promise<Result<string>>
 export async function createHeadlessBindings() {
   const [codecs, themes, jobs, rendering] = await Promise.all([
     import('../adapters/preset-codecs.js'),
-    import('../adapters/theme-preparation.js'),
-    import('../adapters/render-jobs.js'),
-    import('../adapters/rendering.js'),
+    import('../adapters/rendering/theme-preparation.js'),
+    import('../adapters/rendering/render-jobs.js'),
+    import('../adapters/rendering/rendering.js'),
   ]);
   return {
     createPresetCodecs: codecs.createPresetCodecs,

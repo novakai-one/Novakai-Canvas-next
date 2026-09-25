@@ -5,7 +5,7 @@ import { createLanguage, type ValidationError as LanguageError } from '@novakai/
 import { requestSchema, snapshotSchema, proposalSchema } from '@novakai/canvas-authoring';
 import { responseEnvelope, projectCollection } from '../contract/index.js';
 import { createDiagramPlanners } from '../adapters/diagram-planners.js';
-import { createSourceReadout } from '../adapters/language-readout.js';
+import { createSourceReadout } from '../adapters/rendering/language-readout.js';
 
 /** A forbidden downstream call fails this test instead of manufacturing a successful proposal. */
 function unexpected(): never {

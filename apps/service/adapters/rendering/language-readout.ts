@@ -1,6 +1,6 @@
 import type { Language } from '@novakai/canvas-language';
-import type { RouterBindings } from '../contract/records/server.js';
-import { failure } from '../contract/errors.js';
+import type { RouterBindings } from '../../contract/records/server.js';
+import { failure } from '../../contract/errors.js';
 /** Readout translation keeps language diagnostics readable without teaching HTTP the diagram syntax. */
 export function createSourceReadout(
   language: Pick<Language, 'describe' | 'print'>,

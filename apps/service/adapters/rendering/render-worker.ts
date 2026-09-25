@@ -1,8 +1,8 @@
 import { Worker as NodeWorker } from 'node:worker_threads';
-import type { RenderingJob } from '../contract/records/rendering.js';
-import type { RenderTransport } from '../contract/ports/rendering.js';
-import { resultEnvelope } from '../contract/records/results.js';
-import { failure, type Result } from '../contract/errors.js';
+import type { RenderingJob } from '../../contract/records/rendering.js';
+import type { RenderTransport } from '../../contract/ports/rendering.js';
+import { resultEnvelope } from '../../contract/records/results.js';
+import { failure, type Result } from '../../contract/errors.js';
 /** Structured worker replies remain unknown until the composed reader independently reconstructs the scene. */
 function reply(input: unknown): Result<unknown> {
   const parsed = resultEnvelope.safeParse(input);
@@ -122,7 +122,7 @@ export function createRenderTransport(
 ): RenderTransport & { readonly ready: Promise<void> } {
   let idle: WorkerSlot | null = null;
   function create(): WorkerSlot {
-    const worker = new NodeWorker(new URL('../cli/render-worker.mjs', import.meta.url), {
+    const worker = new NodeWorker(new URL('../../cli/render-worker.mjs', import.meta.url), {
       execArgv: [],
     });
     const retired = (): void => {

@@ -1,6 +1,6 @@
-import type { DiagramProducer } from '../contract/ports/rendering.js';
-import type { RenderingJob, RenderDocument } from '../contract/records/rendering.js';
-import type { Result } from '../contract/errors.js';
+import type { DiagramProducer } from '../../contract/ports/rendering.js';
+import type { RenderingJob, RenderDocument } from '../../contract/records/rendering.js';
+import type { Result } from '../../contract/errors.js';
 /** Recent renders kept; enough for the check render during apply plus the reads after it. */
 const KEEP = 8;
 /** Everything that shapes the output except the job id. Jobs with a previous scene are never cached. */

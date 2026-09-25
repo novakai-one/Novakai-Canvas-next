@@ -75,6 +75,7 @@ export {
 } from '../core/definitions/literal-edits.js';
 export { samePath, isPathWithin } from '../core/definitions/paths.js';
 
+export { buildCreationPanel } from '../core/creation/panel.js';
 export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';
 export {
   buildConnectionDraft,

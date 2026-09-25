@@ -8,6 +8,7 @@ Owns the header, collection chooser, inspector/settings panels, panel visibility
 | Inspector and source panel contents | `adapters/react/ObjectEditor.tsx`, `WireEditor.tsx`, `SourceEditor.tsx`, `InterfacePreferences.tsx` |
 | Panel visibility/layout behavior | `core/panels/` |
 | Definitions panel behavior | `core/definitions/` |
+| Add panel behavior | `core/creation/` |
 | Default panel arrangement | `../../resources/ui/panels.default.json` |
 | Feature and renderer registration | `contract/compose.ts` |
 | Shared controls, styles and tokens | `../../capability/design-system/` |

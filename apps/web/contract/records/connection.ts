@@ -1,6 +1,8 @@
 import type { RelationshipKind } from '@novakai/canvas-model';
 import type { Collection, Section, Snapshot } from './owners.js';
 
+export type { RelationshipKind };
+
 export interface ConnectionEndpointView {
   readonly object: Collection['objects'][number]['id'];
   readonly kind: Collection['objects'][number]['kind'];

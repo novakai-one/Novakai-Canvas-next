@@ -1,6 +1,6 @@
 import { assert, expect, it } from 'vitest';
 import { buildMoveReview } from '../contract/index.js';
-import { previewModuleRoutes } from '../adapters/route-preview.js';
+import { previewModuleRoutes } from '../adapters/readers/route-preview.js';
 import { workspaceFixture, request as makeRequest } from './host-workspace-fixture.js';
 import type { RenderDocument, SceneStamp } from '../contract/records/owners.js';
 import type { GeometryPreview } from '@novakai/canvas-canvas';
@@ -236,8 +236,8 @@ it('rejects missing and extra preview targets before producing a movement option
   }
 });
 
-import { createSubmissionSession } from '../adapters/submission-session.js';
-import { createSubmissionReaders } from '../adapters/submission-readers.js';
+import { createSubmissionSession } from '../adapters/sessions/submission-session.js';
+import { createSubmissionReaders } from '../adapters/readers/submission-readers.js';
 import { failure } from '../contract/index.js';
 import { memoryRetention, snapshot } from './recovery-fixtures.js';
 import type { TransportResponse } from '../contract/records/owners.js';

@@ -3,7 +3,7 @@ import type { EditContext } from '../../contract/records/editing.js';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
 import { EditRejected } from './targets.js';
-import { plannedSections } from './movement-capture.js';
+import { plannedSections } from './capture/settling/sections.js';
 import { routeWire } from './routes.js';
 import { regroupSections } from './regroup.js';
 /** A gesture authored on another revision, layout input or display generation is kept as a draft instead of rebased silently. */
@@ -38,19 +38,21 @@ function planned(
   const sections = plannedIntent(intent, context);
   if (sections === null)
     return failure('unsupported-edit', 'Use the inspector to complete this diagram edit');
-  return { ok: true, value: replacements(sections, context) };
+  if (!sections.ok) return sections;
+  return { ok: true, value: replacements(sections.value, context) };
 }
+/** Placement, regroup and route intents plan to sections; every other kind is unsupported here. */
 function plannedIntent(
   intent: EditIntent,
   context: EditContext,
-): readonly Section[] | null {
+): Result<readonly Section[]> | null {
   switch (intent.kind) {
     case 'placement':
       return plannedSections(context.document, intent);
     case 'regroup':
       return regroupSections(intent, context.document);
     case 'route':
-      return routeWire(intent, context.document);
+      return { ok: true, value: routeWire(intent, context.document) };
     default:
       return null;
   }

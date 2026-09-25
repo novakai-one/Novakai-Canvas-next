@@ -26,11 +26,23 @@ export const headlessOptions = z
   .readonly();
 /** Immutable request inferred from the CLI boundary schema. */
 export type HeadlessOptions = z.infer<typeof headlessOptions>;
+/** The native file envelope; UTF-8 source stays opaque until the Language parser validates it. */
+export const sourceFile = z.strictObject({ source: z.string(), file: filePath }).readonly();
+/** A validated source envelope: UTF-8 text and its confined path. */
+export type SourceFile = z.infer<typeof sourceFile>;
 /** Native provider evidence: preserve the failing path, raw OS code (e.g. ENOENT) and syscall (e.g. open) when supplied. */
 const providerDetail = z
   .strictObject({
     path: filePath.optional(),
     systemCode: z.string().optional(),
+    syscall: z.string().optional(),
+  })
+  .readonly();
+/** Untrusted native error evidence before checking; only data fields are read, never methods. */
+export const nativeErrorDetail = z
+  .object({
+    path: filePath.optional(),
+    code: z.string().optional(),
     syscall: z.string().optional(),
   })
   .readonly();

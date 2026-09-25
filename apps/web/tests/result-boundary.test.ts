@@ -1,7 +1,7 @@
 import { it, expect, assert } from 'vitest';
 import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import { snapshotSchema } from '@novakai/canvas-authoring';
-import { createLibraryReader } from '../adapters/library-reader.js';
+import { createLibraryReader } from '../adapters/readers/library-reader.js';
 it('preserves Library diagnostics through the browser reader and leaves success unchanged', () => {
   const catalog = {
     schemaVersion: 1,

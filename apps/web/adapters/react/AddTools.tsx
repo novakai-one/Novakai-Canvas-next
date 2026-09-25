@@ -1,12 +1,29 @@
-import { useEffect, useRef, useState, type ComponentType, type ReactElement } from 'react';
-import { failureSummary, plainMessage } from '../../contract/api.js';
+/*
+ * The Add panel: three forms that add a diagram, an object or a group to the open collection.
+ * Core builds the panel view from the local drafts; this adapter draws it and forwards edits. An
+ * edit sets the local draft, then the controller's; a submit locks the forms before the controller
+ * call, and new controller creation state replaces the local copies. The add calls return a
+ * Result; a failure is also published as `creation.problem`, which the panel shows in its alert,
+ * so the returned Results are deliberately not read here.
+ */
+import { useEffect, useRef, useState } from 'react';
+import type { ComponentType, FormEvent, ReactElement } from 'react';
+import { buildCreationPanel } from '../../contract/api.js';
 import type { FeatureProps, DesignSlots } from '../../contract/react-types.js';
 import type {
   AddDiagramDraft,
   AddGroupDraft,
   AddObjectDraft,
+  CreationDrafts,
+  CreationKind,
+  CreationView,
+  FormView,
+  GroupFormView,
+  ObjectFormView,
+  SubmitView,
 } from '../../contract/records/creation.js';
-import type { DiagramObject, Section } from '../../contract/records/owners.js';
+import type { Section } from '../../contract/records/owners.js';
+import type { WorkspaceController } from '../../contract/records/workspace.js';
 import styles from './AddTools.module.css';
 
 /** Narrow semantic authoring controls. Drafts stay local until an explicit submit. */
@@ -14,209 +31,311 @@ export function createAddTools({
   Field,
   Button,
 }: Pick<DesignSlots, 'Field' | 'Button'>): ComponentType<FeatureProps> {
+  /** The problem line over the Diagram, Object and Group forms. */
   function AddTools({ controller, view }: FeatureProps): ReactElement {
-    const [diagram, setDiagramLocal] = useState<AddDiagramDraft>(view.creation.diagram);
-    const [object, setObjectLocal] = useState<AddObjectDraft>(view.creation.object);
-    const [group, setGroupLocal] = useState<AddGroupDraft>(view.creation.group);
-    const [busy, setBusy] = useState(view.creation.busy);
-    const [adding, setAdding] = useState(view.creation.adding);
-    const send = (kind: NonNullable<typeof adding>): void => {
-      setBusy(true);
-      setAdding(kind);
-    };
-    const setDiagram = (draft: AddDiagramDraft): void => {
-      setDiagramLocal(draft);
-      controller.setDiagramDraft(draft);
-    };
-    const setObject = (draft: AddObjectDraft): void => {
-      setObjectLocal(draft);
-      controller.setObjectDraft(draft);
-    };
-    const setGroup = (draft: AddGroupDraft): void => {
-      setGroupLocal(draft);
-      controller.setGroupDraft(draft);
-    };
-    useEffect(() => {
-      setDiagramLocal(view.creation.diagram);
-      setObjectLocal(view.creation.object);
-      setGroupLocal(view.creation.group);
-      setBusy(view.creation.busy);
-      setAdding(view.creation.adding);
-    }, [view.creation]);
-    const sections = (view.active?.document.collection.sections ?? []).filter(
-      (section) => section.mode !== 'tree',
-    );
-    const objects = view.active?.document.collection.objects ?? [];
-    const targetSection = selectedSection(object.section, sections);
-    const target = sections.find((section) => section.id === targetSection);
+    const local = useLocalCreation(controller, view.creation);
+    const panel = buildCreationPanel(local.drafts, view);
     return (
       <div className={styles.tools}>
-        <CreationProblem problem={barShowsSame(view) ? null : view.creation.problem} />
+        <CreationProblem problem={panel.problem} />
         <DiagramForm
-          Field={Field}
-          Button={Button}
-          draft={diagram}
-          busy={busy}
-          adding={busy && adding === 'diagram'}
-          onDraft={setDiagram}
+          form={panel.diagram}
+          onDraft={local.setDiagram}
           onCancel={() => controller.cancelCreation('diagram')}
-          onSubmit={async () => {
-            send('diagram');
-            await controller.addDiagram(diagram);
+          onSubmit={async (request) => {
+            local.lock('diagram');
+            await controller.addDiagram(request);
           }}
         />
         <ObjectForm
-          Field={Field}
-          Button={Button}
-          sections={sections}
-          objects={objects}
-          groups={target?.groups ?? []}
-          targetSection={targetSection}
-          draft={object}
-          busy={busy}
-          adding={busy && adding === 'object'}
-          onDraft={setObject}
+          form={panel.object}
+          onDraft={local.setObject}
           onCancel={() => controller.cancelCreation('object')}
-          onSubmit={async () => {
-            send('object');
-            await controller.addObject({ ...object, section: targetSection });
+          onSubmit={async (request) => {
+            local.lock('object');
+            await controller.addObject(request);
           }}
         />
         <GroupForm
-          Field={Field}
-          Button={Button}
-          sections={sections}
-          draft={group}
-          busy={busy}
-          adding={busy && adding === 'group'}
-          onDraft={setGroup}
+          form={panel.group}
+          onDraft={local.setGroup}
           onCancel={() => controller.cancelCreation('group')}
-          onSubmit={async () => {
-            send('group');
-            await controller.addGroup({
-              ...group,
-              section: selectedSection(group.section, sections),
-            });
+          onSubmit={async (request) => {
+            local.lock('group');
+            await controller.addGroup(request);
           }}
         />
       </div>
     );
   }
+
+  /** The Diagram form: a name for a new blank grid diagram. */
+  function DiagramForm({
+    form,
+    onDraft,
+    onCancel,
+    onSubmit,
+  }: FormProps<AddDiagramDraft, FormView<AddDiagramDraft>>): ReactElement {
+    const { draft, busy } = form;
+    return (
+      <section aria-labelledby="add-diagram-title">
+        <h3 id="add-diagram-title">Diagram</h3>
+        <p className={styles.hint}>
+          Start with a blank grid and add the first module when you are ready.
+        </p>
+        <form className={styles.form} onSubmit={submitWith(() => onSubmit(form.request))}>
+          {nameField('Diagram name', draft.title, busy, (title) => onDraft({ ...draft, title }))}
+          {formActions(busy, form.submit, onCancel)}
+        </form>
+      </section>
+    );
+  }
+
+  /** The Object form: diagram, reuse, module name and group; the empty note with no diagram. */
+  function ObjectForm({
+    form,
+    onDraft,
+    onCancel,
+    onSubmit,
+  }: FormProps<AddObjectDraft, ObjectFormView | null>): ReactElement {
+    if (form === null) return <ObjectEmpty />;
+    const { draft, busy } = form;
+    return (
+      <section aria-labelledby="add-object-title">
+        <h3 id="add-object-title">Object</h3>
+        <form className={styles.form} onSubmit={submitWith(() => onSubmit(form.request))}>
+          {diagramField(form.sections, form.section, busy, (section) =>
+            onDraft({ ...draft, section }),
+          )}
+          <Field
+            label="Reuse existing object"
+            control={(field) => (
+              <select
+                {...field}
+                disabled={busy}
+                value={draft.reuseObject ?? ''}
+                onChange={(event) => onDraft({ ...draft, reuseObject: event.target.value || null })}
+              >
+                <option value="">Create a new module</option>
+                {form.reuse.map((choice) => (
+                  <option key={choice.id} value={choice.id} disabled={choice.disabled}>
+                    {choice.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+          {moduleField(form, onDraft)}
+          <Field
+            label="Group"
+            control={(field) => (
+              <select
+                {...field}
+                disabled={busy}
+                value={draft.group ?? ''}
+                onChange={(event) => onDraft({ ...draft, group: event.target.value || null })}
+              >
+                <option value="">No group</option>
+                {form.groups.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+          {form.duplicate && (
+            <p role="alert">
+              That object is already in this diagram. Pick another object or diagram.
+            </p>
+          )}
+          {formActions(busy, form.submit, onCancel)}
+        </form>
+      </section>
+    );
+  }
+
+  /** The Group form: diagram, name and room to move. With no diagram it shows the Object note. */
+  function GroupForm({
+    form,
+    onDraft,
+    onCancel,
+    onSubmit,
+  }: FormProps<AddGroupDraft, GroupFormView | null>): ReactElement {
+    if (form === null) return <ObjectEmpty />;
+    const { draft, busy } = form;
+    return (
+      <section aria-labelledby="add-group-title">
+        <h3 id="add-group-title">Group</h3>
+        <form className={styles.form} onSubmit={submitWith(() => onSubmit(form.request))}>
+          {diagramField(form.sections, form.section, busy, (section) =>
+            onDraft({ ...draft, section }),
+          )}
+          {nameField('Group name', draft.title, busy, (title) => onDraft({ ...draft, title }))}
+          <label>
+            <input
+              type="checkbox"
+              checked={form.findRoom}
+              disabled={busy}
+              onChange={(event) => onDraft({ ...draft, findRoom: event.target.checked })}
+            />
+            Allow this diagram to move to make room
+          </label>
+          <p>May move and resize this diagram. Other diagrams keep their saved positions.</p>
+          {formActions(busy, form.submit, onCancel)}
+        </form>
+      </section>
+    );
+  }
+
+  /** The required Diagram select over the diagrams that take adds. */
+  function diagramField(
+    sections: readonly Section[],
+    section: string,
+    busy: boolean,
+    onSection: (section: string) => void,
+  ): ReactElement {
+    return (
+      <Field
+        label="Diagram"
+        required
+        control={(field) => (
+          <select
+            {...field}
+            disabled={busy}
+            value={section}
+            onChange={(event) => onSection(event.target.value)}
+          >
+            {sections.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.title}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+    );
+  }
+
+  /** The Module name input; none while an existing object is reused. */
+  function moduleField(
+    form: ObjectFormView,
+    onDraft: (draft: AddObjectDraft) => void,
+  ): ReactElement | null {
+    if (!form.newModule) return null;
+    const draft = form.draft;
+    return nameField('Module name', draft.label, form.busy, (label) =>
+      onDraft({ ...draft, label }),
+    );
+  }
+
+  /** A required name input. */
+  function nameField(
+    label: string,
+    value: string,
+    busy: boolean,
+    onName: (name: string) => void,
+  ): ReactElement {
+    return (
+      <Field
+        label={label}
+        required
+        control={(field) => (
+          <input
+            {...field}
+            disabled={busy}
+            value={value}
+            onChange={(event) => onName(event.target.value)}
+          />
+        )}
+      />
+    );
+  }
+
+  /** Cancel, and the form's submit button. */
+  function formActions(
+    busy: boolean,
+    submit: SubmitView,
+    onCancel: () => void,
+  ): ReactElement {
+    return (
+      <div className={styles.actions}>
+        <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
+        <Button label={submit.label} type="submit" variant="primary" disabled={submit.disabled} />
+      </div>
+    );
+  }
+
   return AddTools;
 }
 
-/** The form keeps its own error unless the error bar already says the same thing. */
-function barShowsSame(view: FeatureProps['view']): boolean {
-  if (view.problem === null) return false;
-  const shown = [failureSummary(view.problem), plainMessage(view.problem.message)];
-  return shown.includes(view.creation.problem ?? '');
+/** A form's view, and its draft, cancel and submit callbacks. */
+interface FormProps<Draft, View> {
+  readonly form: View;
+  readonly onDraft: (draft: Draft) => void;
+  readonly onCancel: () => void;
+  readonly onSubmit: (request: Draft) => Promise<void>;
 }
-/** A section from another collection (or none) falls back to the first diagram, so the select and the submit agree. */
-function selectedSection(
-  current: string,
-  sections: readonly Section[],
-): string {
-  return sections.some((section) => section.id === current) ? current : (sections[0]?.id ?? '');
+
+/** The local drafts and lock, the lock itself, and draft setters that also tell the controller. */
+interface LocalCreation {
+  readonly drafts: CreationDrafts;
+  readonly lock: (kind: CreationKind) => void;
+  readonly setDiagram: (draft: AddDiagramDraft) => void;
+  readonly setObject: (draft: AddObjectDraft) => void;
+  readonly setGroup: (draft: AddGroupDraft) => void;
 }
-type FormSlots = Pick<DesignSlots, 'Field' | 'Button'>;
-function DiagramForm({
-  Field,
-  Button,
-  draft,
-  busy,
-  adding,
-  onCancel,
-  onDraft,
-  onSubmit,
-}: FormSlots & {
-  draft: AddDiagramDraft;
-  busy: boolean;
-  adding: boolean;
-  onCancel: () => void;
-  onDraft: (draft: AddDiagramDraft) => void;
-  onSubmit: () => Promise<void>;
-}): ReactElement {
-  return (
-    <section aria-labelledby="add-diagram-title">
-      <h3 id="add-diagram-title">Diagram</h3>
-      <p className={styles.hint}>
-        Start with a blank grid and add the first module when you are ready.
-      </p>
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          event.preventDefault();
-          void onSubmit();
-        }}
-      >
-        <Field
-          label="Diagram name"
-          required
-          control={(field) => (
-            <input
-              {...field}
-              disabled={busy}
-              value={draft.title}
-              onChange={(event) => onDraft({ ...draft, title: event.target.value })}
-            />
-          )}
-        />
-        <div className={styles.actions}>
-          <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
-          <Button
-            label={adding ? 'Adding…' : 'Add diagram'}
-            type="submit"
-            variant="primary"
-            disabled={busy || draft.title.trim().length === 0}
-          />
-        </div>
-      </form>
-    </section>
-  );
+
+/**
+ * Local copies of the drafts and the lock. An edit sets the copy, then tells the controller; a
+ * submit locks before the controller answers; new controller creation state replaces all five.
+ */
+function useLocalCreation(
+  controller: Pick<WorkspaceController, 'setDiagramDraft' | 'setObjectDraft' | 'setGroupDraft'>,
+  creation: CreationView,
+): LocalCreation {
+  const [diagram, setDiagramLocal] = useState(creation.diagram);
+  const [object, setObjectLocal] = useState(creation.object);
+  const [group, setGroupLocal] = useState(creation.group);
+  const [busy, setBusy] = useState(creation.busy);
+  const [adding, setAdding] = useState(creation.adding);
+  useEffect(() => {
+    setDiagramLocal(creation.diagram);
+    setObjectLocal(creation.object);
+    setGroupLocal(creation.group);
+    setBusy(creation.busy);
+    setAdding(creation.adding);
+  }, [creation]);
+  return {
+    drafts: { diagram, object, group, busy, adding },
+    lock: (kind) => {
+      setBusy(true);
+      setAdding(kind);
+    },
+    setDiagram: (draft) => {
+      setDiagramLocal(draft);
+      controller.setDiagramDraft(draft);
+    },
+    setObject: (draft) => {
+      setObjectLocal(draft);
+      controller.setObjectDraft(draft);
+    },
+    setGroup: (draft) => {
+      setGroupLocal(draft);
+      controller.setGroupDraft(draft);
+    },
+  };
 }
-function ObjectForm({
-  Field,
-  Button,
-  sections,
-  objects,
-  groups,
-  targetSection,
-  draft,
-  busy,
-  adding,
-  onCancel,
-  onDraft,
-  onSubmit,
-}: FormSlots & {
-  sections: readonly Section[];
-  objects: readonly DiagramObject[];
-  groups: ReadonlyArray<Section['groups'][number]>;
-  targetSection: string;
-  draft: AddObjectDraft;
-  busy: boolean;
-  adding: boolean;
-  onCancel: () => void;
-  onDraft: (draft: AddObjectDraft) => void;
-  onSubmit: () => Promise<void>;
-}): ReactElement {
-  if (sections.length === 0) return <ObjectEmpty />;
-  return (
-    <ObjectReady
-      Field={Field}
-      Button={Button}
-      sections={sections}
-      objects={objects}
-      groups={groups}
-      targetSection={targetSection}
-      draft={draft}
-      busy={busy}
-      adding={adding}
-      onCancel={onCancel}
-      onDraft={onDraft}
-      onSubmit={onSubmit}
-    />
-  );
+
+/** A submit handler: the page stays, and the action runs without being awaited. */
+function submitWith(action: () => Promise<void>): (event: FormEvent<HTMLFormElement>) => void {
+  return (event) => {
+    event.preventDefault();
+    void action();
+  };
 }
+
+/** The Object form when the collection has no diagram to add to. */
 function ObjectEmpty(): ReactElement {
   return (
     <section aria-labelledby="add-object-title">
@@ -224,246 +343,6 @@ function ObjectEmpty(): ReactElement {
       <p className={styles.empty}>Add a diagram before adding an object.</p>
     </section>
   );
-}
-function ObjectReady({
-  Field,
-  Button,
-  sections,
-  objects,
-  groups,
-  targetSection,
-  draft,
-  busy,
-  adding,
-  onCancel,
-  onDraft,
-  onSubmit,
-}: FormSlots & {
-  sections: readonly Section[];
-  objects: readonly DiagramObject[];
-  groups: ReadonlyArray<Section['groups'][number]>;
-  targetSection: string;
-  draft: AddObjectDraft;
-  busy: boolean;
-  adding: boolean;
-  onCancel: () => void;
-  onDraft: (draft: AddObjectDraft) => void;
-  onSubmit: () => Promise<void>;
-}): ReactElement {
-  const present = presentObjects(sections, targetSection);
-  const duplicate = draft.reuseObject !== null && present.has(draft.reuseObject);
-  return (
-    <section aria-labelledby="add-object-title">
-      <h3 id="add-object-title">Object</h3>
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          event.preventDefault();
-          void onSubmit();
-        }}
-      >
-        <Field
-          label="Diagram"
-          required
-          control={(field) => (
-            <select
-              {...field}
-              disabled={busy}
-              value={targetSection}
-              onChange={(event) => onDraft({ ...draft, section: event.target.value })}
-            >
-              {sections.map((section) => (
-                <option key={section.id} value={section.id}>
-                  {section.title}
-                </option>
-              ))}
-            </select>
-          )}
-        />
-        <Field
-          label="Reuse existing object"
-          control={(field) => (
-            <select
-              {...field}
-              disabled={busy}
-              value={draft.reuseObject ?? ''}
-              onChange={(event) => onDraft({ ...draft, reuseObject: event.target.value || null })}
-            >
-              <option value="">Create a new module</option>
-              {objects.map((item) => (
-                <option key={item.id} value={item.id} disabled={present.has(item.id)}>
-                  {reuseLabel(item, present)}
-                </option>
-              ))}
-            </select>
-          )}
-        />
-        {moduleField(Field, draft, busy, onDraft)}
-        <Field
-          label="Group"
-          control={(field) => (
-            <select
-              {...field}
-              disabled={busy}
-              value={draft.group ?? ''}
-              onChange={(event) => onDraft({ ...draft, group: event.target.value || null })}
-            >
-              <option value="">No group</option>
-              {groups.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.title}
-                </option>
-              ))}
-            </select>
-          )}
-        />
-        {duplicate && (
-          <p role="alert">
-            That object is already in this diagram. Pick another object or diagram.
-          </p>
-        )}
-        <div className={styles.actions}>
-          <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
-          <Button
-            label={adding ? 'Adding…' : objectActionLabel(draft)}
-            type="submit"
-            variant="primary"
-            disabled={duplicate || objectDisabled(busy, draft)}
-          />
-        </div>
-      </form>
-    </section>
-  );
-}
-
-function GroupForm({
-  Field,
-  Button,
-  sections,
-  draft,
-  busy,
-  adding,
-  onCancel,
-  onDraft,
-  onSubmit,
-}: FormSlots & {
-  sections: readonly Section[];
-  draft: AddGroupDraft;
-  busy: boolean;
-  adding: boolean;
-  onCancel: () => void;
-  onDraft: (draft: AddGroupDraft) => void;
-  onSubmit: () => Promise<void>;
-}): ReactElement {
-  if (sections.length === 0) return <ObjectEmpty />;
-  return (
-    <section aria-labelledby="add-group-title">
-      <h3 id="add-group-title">Group</h3>
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          event.preventDefault();
-          void onSubmit();
-        }}
-      >
-        <Field
-          label="Diagram"
-          required
-          control={(field) => (
-            <select
-              {...field}
-              disabled={busy}
-              value={selectedSection(draft.section, sections)}
-              onChange={(event) => onDraft({ ...draft, section: event.target.value })}
-            >
-              {sections.map((section) => (
-                <option key={section.id} value={section.id}>
-                  {section.title}
-                </option>
-              ))}
-            </select>
-          )}
-        />
-        <Field
-          label="Group name"
-          required
-          control={(field) => (
-            <input
-              {...field}
-              disabled={busy}
-              value={draft.title}
-              onChange={(event) => onDraft({ ...draft, title: event.target.value })}
-            />
-          )}
-        />
-        <label>
-          <input
-            type="checkbox"
-            checked={draft.findRoom ?? false}
-            disabled={busy}
-            onChange={(event) => onDraft({ ...draft, findRoom: event.target.checked })}
-          />
-          Allow this diagram to move to make room
-        </label>
-        <p>May move and resize this diagram. Other diagrams keep their saved positions.</p>
-        <div className={styles.actions}>
-          <Button label="Cancel" type="button" disabled={busy} onClick={onCancel} />
-          <Button
-            label={adding ? 'Adding…' : 'Add group'}
-            type="submit"
-            variant="primary"
-            disabled={busy || draft.title.trim().length === 0}
-          />
-        </div>
-      </form>
-    </section>
-  );
-}
-function moduleField(
-  Field: FormSlots['Field'],
-  draft: AddObjectDraft,
-  busy: boolean,
-  onDraft: (draft: AddObjectDraft) => void,
-): ReactElement | null {
-  if (draft.reuseObject !== null) return null;
-  return (
-    <Field
-      label="Module name"
-      required
-      control={(field) => (
-        <input
-          {...field}
-          disabled={busy}
-          value={draft.label}
-          onChange={(event) => onDraft({ ...draft, label: event.target.value })}
-        />
-      )}
-    />
-  );
-}
-function objectActionLabel(draft: AddObjectDraft): string {
-  return draft.reuseObject === null ? 'Add module' : 'Reuse object';
-}
-function objectDisabled(
-  busy: boolean,
-  draft: AddObjectDraft,
-): boolean {
-  return busy || (draft.reuseObject === null && draft.label.trim().length === 0);
-}
-
-/** Objects that already appear in the target diagram cannot be reused there again. */
-function presentObjects(
-  sections: readonly Section[],
-  target: string,
-): ReadonlySet<string> {
-  const section = sections.find((item) => item.id === target);
-  return new Set(section?.appearances.map((appearance) => appearance.object) ?? []);
-}
-function reuseLabel(
-  item: DiagramObject,
-  present: ReadonlySet<string>,
-): string {
-  return present.has(item.id) ? `${item.label} · already in this diagram` : item.label;
 }
 
 /** The panel may be scrolled to the form below, so a new problem scrolls itself into view. */

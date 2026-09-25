@@ -1,0 +1,14 @@
+/*
+ * Render vocabulary: the capability records the headless render speaks in. Type-only re-exports
+ * keep core/render and the render factories inside every capability's public entry.
+ */
+export type { Collection } from '@novakai/canvas-model';
+export type { Language, ResolvedResources } from '@novakai/canvas-language';
+export type { RenderDocument } from '@novakai/canvas-service';
+export type { Assets } from '../../../../capability/assets/contract/index.js';
+export type { Catalog, ThemePreset } from '../../../../capability/templates/contract/index.js';
+export type {
+  Documents,
+  Resource,
+  Resources,
+} from '../../../../capability/export/contract/index.js';

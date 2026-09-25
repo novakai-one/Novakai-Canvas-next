@@ -29,3 +29,14 @@ export function failure<T>(
   if (source === undefined) return rejected;
   return { ok: false, error: { ...rejected.error, source } };
 }
+
+/** One diagnostic with its own recovery text, for failures `failure`'s shared text does not fit. */
+export function diagnostic(
+  code: string,
+  message: string,
+  recovery: string,
+  owner?: DiagnosticOwner,
+): Diagnostic {
+  if (owner === undefined) return { code, message, recovery };
+  return { code, message, recovery, owner };
+}

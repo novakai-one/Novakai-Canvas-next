@@ -9,7 +9,7 @@ import { it, assert, expect } from 'vitest';
 import { fileURLToPath } from 'node:url';
 import { createCanvas, createSession } from '@novakai/canvas-canvas';
 import { createDiagramProducer } from '@novakai/canvas-service';
-import { readDiagram, createSceneAdmission } from '../adapters/diagram-reader.js';
+import { readDiagram, createSceneAdmission } from '../adapters/readers/diagram-reader.js';
 import { workspaceFixture, request, source } from './host-workspace-fixture.js';
 import { verifyRenderGeneration } from './render-generation.js';
 /** Actual measurement/routing output crosses JSON and both owner admission boundaries before Canvas receives it. */

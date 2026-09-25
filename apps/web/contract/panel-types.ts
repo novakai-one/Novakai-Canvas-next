@@ -1,44 +1,22 @@
 import type { Result } from './errors.js';
 import type { DraftRetention } from './ports/workspace.js';
-export type PanelId = 'left' | 'right';
+import type { PanelId, PanelPreferences, PanelState } from './records/panels.js';
+/** Panel state records live in records/panels.ts so Web core can read them. */
+export type {
+  InterfaceVisibility,
+  PanelId,
+  PanelMode,
+  PanelPreferences,
+  PanelState,
+} from './records/panels.js';
 export type PanelTab = 'add' | 'browse' | 'inspect' | 'settings';
-export type PanelMode = 'docked' | 'overlay' | 'sheet';
 export type InterfaceControl = 'tools' | 'zoom' | 'minimap' | 'outline' | 'roads' | 'labels';
-export interface InterfaceVisibility {
-  readonly roads: boolean;
-  readonly labels: boolean;
-  readonly hidden: boolean;
-  readonly tools: boolean;
-  readonly zoom: boolean;
-  readonly minimap: boolean;
-  readonly outline: boolean;
-}
 /** Definitions describe trusted features; persisted layout contains only stable IDs and preferences. */
 export interface PanelSectionDefinition {
   readonly id: string;
   readonly title: string;
   readonly defaultSide: PanelId;
   readonly defaultExpanded: boolean;
-}
-export interface PanelPreferences {
-  readonly schemaVersion: 1;
-  readonly workspace: string;
-  readonly sections: Readonly<Record<PanelId, readonly string[]>>;
-  readonly collapsed: readonly string[];
-  readonly hidden: readonly string[];
-  readonly widths: Readonly<Record<PanelId, number>>;
-  readonly tabs: Readonly<{ left: 'add' | 'browse'; right: 'inspect' | 'settings' }>;
-}
-/** The web shell alone owns panel visibility. Canvas camera and editor draft data never enter this state. */
-export interface PanelState {
-  readonly mode: PanelMode;
-  readonly viewportWidth: number;
-  readonly docked: Readonly<Record<PanelId, boolean>>;
-  readonly overlay: PanelId | null;
-  readonly lastOpened: PanelId;
-  readonly customize: boolean;
-  readonly preferences: PanelPreferences;
-  readonly interfaceVisibility: InterfaceVisibility;
 }
 export interface PanelSizing {
   readonly canvasMinimum?: number;

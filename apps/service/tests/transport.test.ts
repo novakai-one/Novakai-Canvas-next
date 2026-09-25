@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { randomInt } from 'node:crypto';
 import { request as httpRequest } from 'node:http';
 import { openWorkspace } from '@novakai/canvas-service';
-import { startHttpServer } from '../adapters/http-server.js';
-import { createHttpIo } from '../adapters/http-io.js';
+import { startHttpServer } from '../adapters/http/http-server.js';
+import { createHttpIo } from '../adapters/http/http-io.js';
 import { it, expect, assert, vi } from 'vitest';
 import { createHttpAdmission, readCommand, httpBodyLimit } from '../contract/index.js';
 import type {
@@ -16,8 +16,8 @@ import type {
   Caller,
   BodyStream,
 } from '../contract/index.js';
-import { readAuthoringRequest } from '../adapters/request-reader.js';
-import { createHttpRouter } from '../adapters/http-router.js';
+import { readAuthoringRequest } from '../adapters/http/request-reader.js';
+import { createHttpRouter } from '../adapters/http/http-router.js';
 
 /** Test-only credential values are explicit; production supplies random secrets and timing-safe equality. */
 const security: HttpSecurity = {

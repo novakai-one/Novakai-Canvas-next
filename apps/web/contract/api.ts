@@ -1,4 +1,4 @@
-import { definitionId } from '@novakai/canvas-model';
+import { definitionId, type DefinitionId } from '@novakai/canvas-model';
 
 export { planCanvasEdit } from '../core/editing/plan.js';
 
@@ -46,8 +46,118 @@ export { formatFailure, failureSummary, plainMessage } from '../core/output/diag
 export { buildMoveReview, chooseMoveOption } from '../core/editing/movement.js';
 export { palette, planPaletteDrop, type PaletteDrop } from '../core/editing/palette-drop.js';
 
-export function definitionDraftId(value: string): import('@novakai/canvas-model').Definition['id'] {
+/** Brands a new definition ID; `parse` throws only for text outside Model's ID grammar. */
+export function definitionDraftId(value: string): DefinitionId {
   return definitionId.parse(value);
 }
+export { buildDefinitionsPanel, newDefinition, applyLabel } from '../core/definitions/panel.js';
+export type { DefinitionModel } from '../core/definitions/panel.js';
+export { usageSelection } from '../core/definitions/usages.js';
+export {
+  rootPath,
+  replaceAlternative,
+  addAlternative,
+  removeLastAlternative,
+  canRemoveAlternative,
+} from '../core/definitions/expression-edits.js';
+export {
+  literalKinds,
+  chosenPrimitive,
+  chosenReference,
+  chosenLiteralKind,
+} from '../core/definitions/choices.js';
+export {
+  literalKindOf,
+  literalKindChange,
+  literalTextChange,
+  literalBooleanChange,
+  literalDraftAt,
+} from '../core/definitions/literal-edits.js';
+export { samePath, isPathWithin } from '../core/definitions/paths.js';
+export { editedDrafts, type DefinitionEdit } from '../core/definitions/draft-edits.js';
+export {
+  restoredState,
+  applyingState,
+  discardedDrafts,
+  boundDrafts,
+  settledRequest,
+  unlocked,
+  unlockedWithoutRequest,
+  withoutDraft,
+  type RequestOutcome,
+  type SettledRequest,
+} from '../core/definitions/draft-lifecycle.js';
+export { encodeDefinitionDrafts } from '../core/definitions/draft-record.js';
 
+export { buildCreationPanel } from '../core/creation/panel.js';
 export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';
+export {
+  buildConnectionDraft,
+  editedConnection,
+  resolveConnectionSection,
+  reviewConnection,
+  type ConnectionCapture,
+  type ConnectionReview,
+} from '../core/editing/connection/draft.js';
+export { connectionRequest } from '../core/editing/connection/request.js';
+export type { ConnectionPolicy } from '../core/editing/connection/types.js';
+export { definitionRequest } from '../core/editing/definition-request.js';
+export { reusableSession, retainCamera, renderChanged } from '../core/workspace/session-reuse.js';
+export { bindHistoryKeys } from '../core/workspace/history-keys.js';
+export { shellLayout, type ShellLayout } from '../core/workspace/shell-layout.js';
+export {
+  renderTicket,
+  type RenderMode,
+  type RenderTicket,
+} from '../core/workspace/render/ticket.js';
+export {
+  documentFor,
+  generationChanged,
+  generationFailure,
+  renderAdmission,
+  renderInvalidation,
+  snapshotBase,
+  type LatestSnapshot,
+} from '../core/workspace/render/admission.js';
+export {
+  installedPatch,
+  openFailurePatch,
+  openingPatch,
+  openSuccessPatch,
+  ownedProblem,
+  reusedPatch,
+} from '../core/workspace/render/patches.js';
+export {
+  activeRefresh,
+  choosePlan,
+  choosingPatch,
+  closedSwitchPatch,
+  diagramCurrent,
+  gonePatch,
+  staleSnapshot,
+} from '../core/workspace/render/navigation.js';
+export {
+  editingStatus,
+  mutationAvailable,
+  openDraftCount,
+  restingStatus,
+  staleUncertainty,
+  type CollectionDraft,
+} from '../core/workspace/status.js';
+export {
+  heldHistory,
+  historyIdle,
+  historyReady,
+  historyView,
+  inverseSettling,
+  observeSnapshot,
+  settlingHistory,
+  type HistorySlot,
+} from '../core/workspace/history/gate.js';
+export {
+  editsHeld,
+  finishedInverse,
+  navigableStatus,
+  submissionAllowed,
+  unresolvedInverses,
+} from '../core/workspace/history/journal.js';

@@ -3,6 +3,18 @@ import type { RenderingJob, RenderDocument } from '../../contract/records/render
 import type { Result } from '../../contract/errors.js';
 /** Recent renders kept; enough for the check render during apply plus the reads after it. */
 const KEEP = 8;
+/** The apply check renders the candidate; the read right after the commit asks for the same render. */
+export function cacheRenders(producer: DiagramProducer): DiagramProducer {
+  const kept = new Map<string, Result<RenderDocument>>();
+  return {
+    async produce(job, signal) {
+      const key = inputKey(job);
+      const known = key === null ? undefined : kept.get(key);
+      if (known !== undefined) return known;
+      return remember(kept, key, await producer.produce(job, signal));
+    },
+  };
+}
 /** Everything that shapes the output except the job id. Jobs with a previous scene are never cached. */
 function inputKey(job: RenderingJob): string | null {
   if (job.previous !== null) return null;
@@ -15,19 +27,18 @@ function inputKey(job: RenderingJob): string | null {
     job.wasmResource,
   ]);
 }
-/** The apply check renders the candidate; the read right after the commit asks for the same render. */
-export function cacheRenders(producer: DiagramProducer): DiagramProducer {
-  const done = new Map<string, Result<RenderDocument>>();
-  return {
-    async produce(job, signal) {
-      const key = inputKey(job);
-      const known = key === null ? undefined : done.get(key);
-      if (known !== undefined) return known;
-      const result = await producer.produce(job, signal);
-      if (key === null || !result.ok) return result;
-      done.set(key, result);
-      if (done.size > KEEP) done.delete(done.keys().next().value as string);
-      return result;
-    },
-  };
+/** Only successful, cacheable renders are kept; the oldest entry is evicted past KEEP. */
+function remember(
+  kept: Map<string, Result<RenderDocument>>,
+  key: string | null,
+  result: Result<RenderDocument>,
+): Result<RenderDocument> {
+  if (key === null || !result.ok) return result;
+  kept.set(key, result);
+  evictOldest(kept);
+  return result;
+}
+/** Bounded memory: the oldest render is evicted once past KEEP. */
+function evictOldest(kept: Map<string, Result<RenderDocument>>): void {
+  if (kept.size > KEEP) kept.delete(kept.keys().next().value as string);
 }

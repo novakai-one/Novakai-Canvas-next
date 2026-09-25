@@ -14,6 +14,36 @@ import type { Result as LayoutResult } from '@novakai/canvas-layout';
 import type { SceneAdmission } from '@novakai/canvas-canvas';
 import type { Result } from '../../contract/errors.js';
 import { failure } from '../../contract/errors.js';
+/** Raw transport data always receives every owner check; already admitted immutable identity is reusable. */
+export function readDiagram(input: unknown): Result<RenderDocument> {
+  try {
+    const admitted = previouslyAdmitted(input);
+    if (admitted !== undefined) return { ok: true, value: admitted };
+    const document = immutable(decode(input));
+    admittedDocuments.set(document, document);
+    return { ok: true, value: document };
+  } catch {
+    return failure('invalid-diagram', 'The rendered diagram could not be validated');
+  }
+}
+/** Canvas independently checks the stamp and its interaction geometry after this full owner readout. */
+export function createSceneAdmission(): SceneAdmission {
+  return {
+    read: (input) => {
+      const document = readDiagram(input);
+      if (!document.ok)
+        return {
+          ok: false,
+          error: { ...document.error, code: 'invalid-input', path: 'diagram', targets: [] },
+        };
+      return { ok: true, value: document.value.scene };
+    },
+  };
+}
+/** WeakMap identity reuse applies only to object inputs already admitted through this page. */
+function previouslyAdmitted(input: unknown): RenderDocument | undefined {
+  return input !== null && typeof input === 'object' ? admittedDocuments.get(input) : undefined;
+}
 /** Private boundary rejection is caught into a readable failure; the browser retains its previous scene. */
 class DiagramRejected extends Error {}
 /** Owner results, never casts, turn serialized content into a trusted diagram. */
@@ -83,36 +113,9 @@ function decode(input: unknown): RenderDocument {
 }
 /** Only our own immutable admission results can reuse an owner check within this page. */
 const admittedDocuments = new WeakMap<object, RenderDocument>();
+/** Admitted documents are deep-frozen so reuse across readers never mutates owner state. */
 function immutable<T>(value: T): T {
   if (value === null || typeof value !== 'object' || Object.isFrozen(value)) return value;
   Object.values(value).forEach(immutable);
   return Object.freeze(value);
-}
-/** Raw transport data always receives every owner check; already admitted immutable identity is reusable. */
-export function readDiagram(input: unknown): Result<RenderDocument> {
-  try {
-    if (input !== null && typeof input === 'object') {
-      const admitted = admittedDocuments.get(input);
-      if (admitted !== undefined) return { ok: true, value: admitted };
-    }
-    const document = immutable(decode(input));
-    admittedDocuments.set(document, document);
-    return { ok: true, value: document };
-  } catch {
-    return failure('invalid-diagram', 'The rendered diagram could not be validated');
-  }
-}
-/** Canvas independently checks the stamp and its interaction geometry after this full owner readout. */
-export function createSceneAdmission(): SceneAdmission {
-  return {
-    read: (input) => {
-      const document = readDiagram(input);
-      if (!document.ok)
-        return {
-          ok: false,
-          error: { ...document.error, code: 'invalid-input', path: 'diagram', targets: [] },
-        };
-      return { ok: true, value: document.value.scene };
-    },
-  };
 }

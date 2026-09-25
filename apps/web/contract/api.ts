@@ -90,3 +90,4 @@ export type { ConnectionPolicy } from '../core/editing/connection/types.js';
 export { definitionRequest } from '../core/editing/definition-request.js';
 export { reusableSession, retainCamera, renderChanged } from '../core/workspace/session-reuse.js';
 export { bindHistoryKeys } from '../core/workspace/history-keys.js';
+export { shellLayout, type ShellLayout } from '../core/workspace/shell-layout.js';

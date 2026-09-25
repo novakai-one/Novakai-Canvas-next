@@ -57,7 +57,7 @@ export interface CollectionChooserProps {
   readonly portal: HTMLElement;
 }
 export interface ChromeSlots {
-  readonly panels: PanelController;
+  readonly panels: Pick<PanelController, 'subscribe' | 'getSnapshot' | 'revealInterface'>;
   readonly Header: ComponentType<HeaderProps>;
   readonly Library: ComponentType<LibraryProps>;
   readonly Panel: ComponentType<PanelProps>;

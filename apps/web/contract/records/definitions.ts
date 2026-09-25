@@ -148,7 +148,7 @@ export type DefinitionFactory = (
 ) => DefinitionSession;
 
 export interface DefinitionBindings {
-  readonly retention: DraftRetention;
+  readonly retention: Pick<DraftRetention, 'read' | 'write'>;
   read(input: unknown): Result<readonly DefinitionDraft[]>;
   apply(draft: DefinitionDraft): Promise<Result<Receipt>>;
   report(error: Diagnostic): void;

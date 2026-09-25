@@ -74,6 +74,20 @@ export {
   literalDraftAt,
 } from '../core/definitions/literal-edits.js';
 export { samePath, isPathWithin } from '../core/definitions/paths.js';
+export { editedDrafts, type DefinitionEdit } from '../core/definitions/draft-edits.js';
+export {
+  restoredState,
+  applyingState,
+  discardedDrafts,
+  boundDrafts,
+  settledRequest,
+  unlocked,
+  unlockedWithoutRequest,
+  withoutDraft,
+  type RequestOutcome,
+  type SettledRequest,
+} from '../core/definitions/draft-lifecycle.js';
+export { encodeDefinitionDrafts } from '../core/definitions/draft-record.js';
 
 export { buildCreationPanel } from '../core/creation/panel.js';
 export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';

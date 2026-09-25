@@ -1,112 +1,124 @@
-import type { Definition } from '@novakai/canvas-model';
+/*
+ * The definition draft session: the drafts, the keys whose Apply is pending, and the last problem.
+ * Core decides each change (core/definitions, through the contract). This file keeps the state,
+ * calls storage and the Apply binding, and publishes in a fixed order.
+ *
+ * Per key: an edit saves a draft; Apply locks the key; the workspace session saves the request on
+ * the draft (bindRequest); a receipt removes the draft (confirmed); a refusal clears the request
+ * (released). Recovery: Authoring owns the request journal. After a reload, restore locks every
+ * draft that holds a request until the workspace session settles that request: confirmed on its
+ * receipt, released on a refusal. Methods that return nothing report failures through
+ * bindings.report and state.problem.
+ *
+ * Kept as HEAD behaves (tracker quirks):
+ * - restore clears the workspace before it reads. After a failed restore the old drafts stay,
+ *   edits are refused, and discard, Apply and settleRequest write to the key `definitions.`.
+ * - #10 An Apply result that arrives after a workspace switch acts on the new workspace's drafts.
+ * - #11 settleRequest ignores a failed write: the draft keeps its request but its key unlocks.
+ * - #12 A successful Apply writes twice: confirmed removes the draft, then settle writes again.
+ * - #13 A failed Apply can be reported twice: by the workspace session, then by settle.
+ * - #17 The subscribe cleanup returns Set.delete's boolean.
+ */
 import type { Result, Diagnostic } from '../../contract/errors.js';
 import type { Request } from '../../contract/records/owners.js';
-import { failure } from '../../contract/errors.js';
 import type {
   DefinitionBindings,
   DefinitionDraft,
-  DefinitionSelection,
   DefinitionSession,
   DefinitionState,
-  LiteralDraft,
 } from '../../contract/records/definitions.js';
-import { captureCollectionBase, isPathWithin, samePath } from '../../contract/api.js';
+import {
+  applyingState,
+  boundDrafts,
+  discardedDrafts,
+  editedDrafts,
+  encodeDefinitionDrafts,
+  restoredState,
+  settledRequest,
+  unlocked,
+  unlockedWithoutRequest,
+  withoutDraft,
+  type DefinitionEdit,
+  type RequestOutcome,
+} from '../../contract/api.js';
 
-/** Definitions share the retained-editor lifecycle while keeping one stable ID per draft. */
+/** The definition session over injected storage, reader, Apply and report bindings. */
 export function createDefinitionSession(bindings: DefinitionBindings): DefinitionSession {
   let state: DefinitionState = { drafts: [], pending: [], problem: null };
   let workspace = '';
   const listeners = new Set<() => void>();
-  const publish = (next: DefinitionState): void => {
+  /** Each change replaces the immutable snapshot, then calls every listener. */
+  function publish(next: DefinitionState): void {
     state = next;
     listeners.forEach((listener) => listener());
-  };
-  const reject = (error: Diagnostic): Result<void> => {
+  }
+  /** A failure becomes the problem, is reported, and is returned. */
+  function reject(error: Diagnostic): Result<void> {
     publish({ ...state, problem: error });
     bindings.report(error);
     return { ok: false, error };
-  };
-  const write = (drafts: readonly DefinitionDraft[]): Result<void> => {
-    const result = bindings.retention.write(`definitions.${workspace}`, drafts.map(encodeDraft));
+  }
+  /** Stores the drafts, then publishes them with the pending keys; returns storage's own result. */
+  function write(drafts: readonly DefinitionDraft[]): Result<void> {
+    const result = bindings.retention.write(
+      retentionKey(workspace),
+      encodeDefinitionDrafts(drafts),
+    );
     if (!result.ok) return reject(result.error);
     publish({ drafts, pending: state.pending, problem: null });
     return result;
-  };
-  const installWorkspace = (id: string, drafts: readonly DefinitionDraft[]): Result<void> => {
-    workspace = id;
-    publish({ drafts, pending: draftsWithRequests(drafts), problem: null });
-    return { ok: true, value: undefined };
-  };
-  const restoreStored = (id: string, value: unknown): Result<void> => {
-    const checked = bindings.read(value);
-    if (!checked.ok) return reject(checked.error);
-    if (checked.value.some((draft) => draft.base.workspace !== id))
-      return reject(
-        failure('wrong-workspace', 'Stored definitions belong to another workspace').error,
-      );
-    return installWorkspace(id, checked.value);
-  };
-  const restore = (id: string): Result<void> => {
+  }
+  /** Reads a workspace's stored drafts. The workspace is cleared first (see the file header). */
+  function restore(id: string): Result<void> {
     workspace = '';
-    const stored = bindings.retention.read(`definitions.${id}`);
+    const stored = bindings.retention.read(retentionKey(id));
     if (!stored.ok) return reject(stored.error);
-    return stored.value === null ? installWorkspace(id, []) : restoreStored(id, stored.value);
-  };
-  const retain = (
-    selection: DefinitionSelection,
-    definition: Definition,
-    operation: 'create' | 'replace' | 'remove',
-    literalDraft: LiteralDraft | null,
-    editedPath: readonly number[] | null,
-  ) => {
-    const scope = checkScope(selection, workspace);
-    if (!scope.ok) return reject(scope.error);
-    return retainInScope(selection, definition, operation, literalDraft, editedPath);
-  };
-  const retainInScope = (
-    selection: DefinitionSelection,
-    definition: Definition,
-    operation: 'create' | 'replace' | 'remove',
-    literalDraft: LiteralDraft | null,
-    editedPath: readonly number[] | null,
-  ): Result<void> => {
-    const key = `${selection.collection.id}:${definition.id}`;
-    const current = state.drafts.find((draft) => draft.key === key);
-    const locked = lockedDefinition(state, current, key);
-    if (locked !== null) return reject(locked);
-    return saveDefinition(current, key, selection, definition, operation, literalDraft, editedPath);
-  };
-  const saveDefinition = (
-    current: DefinitionDraft | undefined,
-    key: string,
-    selection: DefinitionSelection,
-    definition: Definition,
-    operation: DefinitionDraft['operation'],
-    literalDraft: LiteralDraft | null,
-    editedPath: readonly number[] | null,
-  ): Result<void> => {
-    if (uncommittedDelete(current, operation))
-      return write(state.drafts.filter((item) => item.key !== key));
-    const draft = draftValue(
-      key,
-      current,
-      selection,
-      definition,
-      operation,
-      literalDraft,
-      editedPath,
-    );
-    return saveDraftResult(draft, key, state.drafts, write, reject);
-  };
-  const apply = async (key: string): Promise<Result<void>> => {
+    if (stored.value === null) return install(id, []);
+    return restoreStored(id, stored.value);
+  }
+  /** Stored drafts come back through the reader binding. */
+  function restoreStored(
+    id: string,
+    value: unknown,
+  ): Result<void> {
+    const drafts = bindings.read(value);
+    if (!drafts.ok) return reject(drafts.error);
+    return install(id, drafts.value);
+  }
+  /** Adopts the workspace and its drafts; another workspace's drafts are refused. */
+  function install(
+    id: string,
+    drafts: readonly DefinitionDraft[],
+  ): Result<void> {
+    const restored = restoredState(drafts, id);
+    if (!restored.ok) return reject(restored.error);
+    workspace = id;
+    publish(restored.value);
+    return { ok: true, value: undefined };
+  }
+  /** Create, edit and remove keep one draft per definition; a refused edit becomes the problem. */
+  function retain(edit: DefinitionEdit): Result<void> {
+    const drafts = editedDrafts(state, workspace, edit);
+    if (!drafts.ok) return reject(drafts.error);
+    return write(drafts.value);
+  }
+  /** Removes the key's draft; a draft being submitted cannot be discarded. */
+  function discard(key: string): Result<void> {
+    const drafts = discardedDrafts(state, key);
+    if (!drafts.ok) return reject(drafts.error);
+    return write(drafts.value);
+  }
+  /** Locks the key and submits its draft. A missing draft makes no request. */
+  async function apply(key: string): Promise<Result<void>> {
     const draft = state.drafts.find((item) => item.key === key);
-    if (!draft) return { ok: true, value: undefined };
-    const guard = applyGuard(state, key, draft);
-    if (!guard.ok) return reject(guard.error);
-    publish({ ...state, pending: [...state.pending, key], problem: null });
-    return settleApply(key, draft);
-  };
-  async function settleApply(
+    if (draft === undefined) return { ok: true, value: undefined };
+    const applying = applyingState(state, key, draft);
+    if (!applying.ok) return reject(applying.error);
+    publish(applying.value);
+    return settle(key, draft);
+  }
+  /** Success removes the draft; failure unlocks the key unless its draft holds a request. */
+  async function settle(
     key: string,
     draft: DefinitionDraft,
   ): Promise<Result<void>> {
@@ -115,32 +127,32 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
       unlockWithoutRequest(key);
       return reject(result.error);
     }
-    return write(state.drafts.filter((item) => item.key !== key));
+    return write(withoutDraft(state.drafts, key));
   }
-  const bindRequest = (key: string, request: Request): Result<void> => {
-    const draft = state.drafts.find((item) => item.key === key);
-    if (draft === undefined) return { ok: true, value: undefined };
-    return write(state.drafts.map((item) => (item.key === key ? { ...item, request } : item)));
-  };
-  const confirmed = (requestId: string): void => {
-    const draft = state.drafts.find((item) => item.request?.request === requestId);
-    if (draft === undefined) return;
-    void write(state.drafts.filter((item) => item.key !== draft.key));
-    publish({ ...state, pending: state.pending.filter((item) => item !== draft.key) });
-  };
-  const released = (requestId: string): void => {
-    const draft = state.drafts.find((item) => item.request?.request === requestId);
-    if (draft === undefined) return;
-    void write(
-      state.drafts.map((item) => (item.key === draft.key ? { ...item, request: undefined } : item)),
-    );
-    publish({ ...state, pending: state.pending.filter((item) => item !== draft.key) });
-  };
-  const unlockWithoutRequest = (key: string): void => {
-    const draft = state.drafts.find((item) => item.key === key);
-    if (draft?.request !== undefined) return;
-    publish({ ...state, pending: state.pending.filter((item) => item !== key) });
-  };
+  /** Saves the request on the key's draft so a reload can settle it; no draft saves nothing. */
+  function bindRequest(
+    key: string,
+    request: Request,
+  ): Result<void> {
+    const drafts = boundDrafts(state.drafts, key, request);
+    if (drafts === null) return { ok: true, value: undefined };
+    return write(drafts);
+  }
+  /** A receipt or refusal settles the draft holding its request; the key unlocks after it. */
+  function settleRequest(
+    requestId: string,
+    outcome: RequestOutcome,
+  ): void {
+    const settled = settledRequest(state.drafts, requestId, outcome);
+    if (settled === null) return;
+    void write(settled.drafts);
+    publish(unlocked(state, settled.key));
+  }
+  /** Ends the key's Apply lock unless its draft holds a request. */
+  function unlockWithoutRequest(key: string): void {
+    const next = unlockedWithoutRequest(state, key);
+    if (next !== null) publish(next);
+  }
   return {
     getSnapshot: () => state,
     subscribe: (listener) => {
@@ -148,190 +160,20 @@ export function createDefinitionSession(bindings: DefinitionBindings): Definitio
       return () => listeners.delete(listener);
     },
     restore,
-    create: (selection, definition) => retain(selection, definition, 'create', null, null),
+    create: (selection, definition) => retain({ operation: 'create', selection, definition }),
     edit: (selection, definition, literalDraft, editedPath) =>
-      retain(selection, definition, 'replace', literalDraft, editedPath),
-    remove: (selection, definition) => retain(selection, definition, 'remove', null, null),
-    discard: (key) =>
-      state.pending.includes(key) ||
-      state.drafts.some((draft) => draft.key === key && draft.request !== undefined)
-        ? reject(
-            failure('pending-request', 'This definition is being submitted; wait for confirmation')
-              .error,
-          )
-        : write(state.drafts.filter((draft) => draft.key !== key)),
+      retain({ operation: 'replace', selection, definition, literalDraft, editedPath }),
+    remove: (selection, definition) => retain({ operation: 'remove', selection, definition }),
+    discard,
     apply,
     bindRequest,
-    confirmed,
-    released,
+    confirmed: (requestId) => settleRequest(requestId, 'confirmed'),
+    released: (requestId) => settleRequest(requestId, 'released'),
     unlockWithoutRequest,
   };
 }
 
-function applyGuard(
-  state: DefinitionState,
-  key: string,
-  draft: DefinitionDraft,
-): Result<void> {
-  if (state.pending.includes(key))
-    return failure('pending-request', 'This definition is already being submitted');
-  return literalDraftGuard(draft);
-}
-
-function literalDraftGuard(draft: DefinitionDraft): Result<void> {
-  if (draft.literalDrafts && draft.literalDrafts.length > 0)
-    return failure(
-      'invalid-literal-draft',
-      'Finish the literal value before applying this definition',
-    );
-  return { ok: true, value: undefined };
-}
-
-function capturedBase(
-  current: DefinitionDraft['base'] | undefined,
-  selection: DefinitionSelection,
-): ReturnType<typeof captureCollectionBase> {
-  return current === undefined
-    ? captureCollectionBase(selection.base, selection.collection.id)
-    : captureCollectionBase(current, selection.collection.id);
-}
-
-function checkScope(
-  selection: DefinitionSelection,
-  workspace: string,
-): Result<void> {
-  return selection.base.workspace === workspace
-    ? { ok: true, value: undefined }
-    : failure('wrong-workspace', 'Recover the original workspace before editing');
-}
-
-function lockedDefinition(
-  state: DefinitionState,
-  current: DefinitionDraft | undefined,
-  key: string,
-): Diagnostic | null {
-  return state.pending.includes(key) || current?.request !== undefined
-    ? failure('pending-request', 'This definition is being submitted; wait for confirmation').error
-    : null;
-}
-
-function uncommittedDelete(
-  current: DefinitionDraft | undefined,
-  operation: DefinitionDraft['operation'],
-): boolean {
-  return current?.operation === 'create' && operation === 'remove';
-}
-
-function saveDraftResult(
-  draft: Result<DefinitionDraft>,
-  key: string,
-  drafts: readonly DefinitionDraft[],
-  write: (next: readonly DefinitionDraft[]) => Result<void>,
-  reject: (error: Diagnostic) => Result<void>,
-): Result<void> {
-  return draft.ok
-    ? write([...drafts.filter((item) => item.key !== key), draft.value])
-    : reject(draft.error);
-}
-
-function draftValue(
-  key: string,
-  current: DefinitionDraft | undefined,
-  selection: DefinitionSelection,
-  definition: Definition,
-  operation: DefinitionDraft['operation'],
-  literalDraft: LiteralDraft | null,
-  editedPath: readonly number[] | null,
-): Result<DefinitionDraft> {
-  const base = capturedBase(current?.base, selection);
-  if (!base.ok) return base;
-  const literalDrafts = nextLiteralDrafts(current, definition, literalDraft, editedPath);
-  return {
-    ok: true,
-    value: {
-      key,
-      base: base.value,
-      generation: current?.generation ?? selection.generation,
-      collection: current?.collection ?? selection.collection,
-      definition,
-      operation: nextOperation(current?.operation, operation),
-      request: current?.request,
-      literalDrafts,
-    },
-  };
-}
-
-function nextLiteralDrafts(
-  current: DefinitionDraft | undefined,
-  definition: Definition,
-  literalDraft: LiteralDraft | null,
-  editedPath: readonly number[] | null,
-): readonly LiteralDraft[] | undefined {
-  const retained = (current?.literalDrafts ?? []).filter((item) =>
-    canRetainLiteralDraft(definition, item, editedPath),
-  );
-  return withLiteralDraft(retained, literalDraft);
-}
-
-function withLiteralDraft(
-  retained: readonly LiteralDraft[],
-  literalDraft: LiteralDraft | null,
-): readonly LiteralDraft[] | undefined {
-  return literalDraft === null
-    ? emptyRetained(retained)
-    : [...retained.filter((item) => !samePath(item.path, literalDraft.path)), literalDraft];
-}
-
-function emptyRetained(retained: readonly LiteralDraft[]): readonly LiteralDraft[] | undefined {
-  return retained.length > 0 ? retained : undefined;
-}
-
-function canRetainLiteralDraft(
-  definition: Definition,
-  literalDraft: LiteralDraft,
-  editedPath: readonly number[] | null,
-): boolean {
-  const next = expressionAtPath(definition.expression, literalDraft.path);
-  return (
-    next?.kind === 'literal' &&
-    (editedPath === null || !isPathWithin(literalDraft.path, editedPath))
-  );
-}
-
-function expressionAtPath(
-  expression: Definition['expression'],
-  path: readonly number[],
-): Definition['expression'] | undefined {
-  return path.reduce<Definition['expression'] | undefined>(
-    (current, index) => (current?.kind === 'union' ? current.items[index] : undefined),
-    expression,
-  );
-}
-
-function nextOperation(
-  current: DefinitionDraft['operation'] | undefined,
-  requested: DefinitionDraft['operation'],
-): DefinitionDraft['operation'] {
-  if (requested === 'remove') return 'remove';
-  if (current === 'remove') return 'replace';
-  return current ?? requested;
-}
-
-function encodeDraft(draft: DefinitionDraft): unknown {
-  return {
-    kind: 'definition-draft',
-    schemaVersion: 1,
-    key: draft.key,
-    base: draft.base,
-    generation: draft.generation,
-    collection: draft.collection.id,
-    definition: draft.definition,
-    operation: draft.operation,
-    request: draft.request,
-    literalDrafts: draft.literalDrafts,
-  };
-}
-
-function draftsWithRequests(drafts: readonly DefinitionDraft[]): readonly string[] {
-  return drafts.filter((draft) => draft.request !== undefined).map((draft) => draft.key);
+/** The storage key of a workspace's definition drafts. */
+function retentionKey(workspace: string): string {
+  return `definitions.${workspace}`;
 }

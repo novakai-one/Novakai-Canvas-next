@@ -15,6 +15,7 @@ import type {
 } from '../../contract/records/syntax.js';
 import type { Property } from '../../contract/records/vocabulary.js';
 import { patchProperties, operationWords } from '../vocabulary/patch-properties.js';
+import { membershipActions } from '../vocabulary/defaults.js';
 import { reject, accepted } from '../validation/outcomes.js';
 import {
   peek,
@@ -54,9 +55,6 @@ const propertyTargets: readonly TargetKind[] = [
   'section',
   'route',
 ];
-
-/** The membership action words. */
-const membershipActions: readonly string[] = ['show', 'hide', 'connect', 'disconnect'];
 
 /** What `delete` may delete. */
 const deleteTargets: readonly TargetKind[] = ['node', 'wire', 'section', 'asset', 'source'];

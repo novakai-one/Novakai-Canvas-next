@@ -77,19 +77,32 @@ const examples: readonly string[] = Object.freeze([
   'patch 1 @demo { add block @start { text @detail "Explain why this step matters." } }',
 ]);
 
-/** Every diagnostic code Language reports (the compiler checks each is a `DiagnosticCode`). */
-const diagnosticCodes: readonly DiagnosticCode[] = Object.freeze([
-  'syntax',
-  'unsupported-version',
-  'invalid-input',
-  'unknown-property',
-  'invalid-value',
-  'unknown-target',
-  'missing-resource',
-  'resource-mismatch',
-  'domain',
-  'display-only',
-  'limit',
-  'provider-failure',
-  'unrepresentable',
-]);
+/**
+ * Every diagnostic code Language reports, in the order `describe` lists them. The type requires
+ * every `DiagnosticCode` as a key, so a new code that is not listed here is a compile error.
+ */
+const diagnosticCodeSet: Readonly<Record<DiagnosticCode, true>> = Object.freeze({
+  syntax: true,
+  'unsupported-version': true,
+  'invalid-input': true,
+  'unknown-property': true,
+  'invalid-value': true,
+  'unknown-target': true,
+  'missing-resource': true,
+  'resource-mismatch': true,
+  domain: true,
+  'display-only': true,
+  limit: true,
+  'provider-failure': true,
+  unrepresentable: true,
+});
+
+/** The diagnostic codes, as the list `describe` publishes. */
+const diagnosticCodes: readonly DiagnosticCode[] = Object.freeze(
+  Object.keys(diagnosticCodeSet).filter(isDiagnosticCode),
+);
+
+/** Whether a key of the code table is a diagnostic code (every own key is). */
+function isDiagnosticCode(key: string): key is DiagnosticCode {
+  return Object.hasOwn(diagnosticCodeSet, key);
+}

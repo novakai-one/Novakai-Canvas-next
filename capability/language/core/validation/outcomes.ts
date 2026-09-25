@@ -3,7 +3,8 @@
  * throw a private `LanguageFault` with one diagnostic, or `accepted` to rethrow a failed result's
  * diagnostics. `protect` wraps each public operation and several internal steps (tokenize,
  * repeat, lowering and patch steps). It returns the deep-frozen value on success, the fault's
- * diagnostics as `validation-failed`, or one `provider-failure` diagnostic for any other throw.
+ * diagnostics as `validation-failed`, or one `provider-failure` diagnostic for any other throw;
+ * failed results are deep-frozen as well.
  * Language owns correcting the source; Authoring owns commit recovery.
  */
 import {
@@ -13,7 +14,7 @@ import {
   type Result,
 } from '../../contract/errors.js';
 import type { Span } from '../../contract/records/syntax.js';
-import { deepFreeze } from './ownership.js';
+import { copySpan, deepFreeze } from './ownership.js';
 
 /**
  * The empty span at the start of the source (line 1, column 1), for diagnostics with no better
@@ -29,7 +30,7 @@ export const origin: Span = deepFreeze({
  * the named input, then check again before applying."
  *
  * @param code - Why the input was rejected.
- * @param span - Where in the source.
+ * @param span - Where in the source; the diagnostic holds a copy (start is read, then end).
  * @param expected - What was expected instead.
  * @param message - What went wrong.
  * @param target - The ID or path the problem is about; defaults to empty.
@@ -46,7 +47,7 @@ export function reject(
   throw new LanguageFault([
     {
       code,
-      span,
+      span: copySpan(span),
       expected,
       message,
       target,
@@ -69,7 +70,8 @@ export function accepted<T>(result: Result<T>): T {
 
 /**
  * Runs one operation and turns every throw into a result. On success the value is deep-frozen
- * in place (it must be a record the compiler built, never caller data).
+ * in place (it must be a record the compiler built, never caller data); a failed result is
+ * deep-frozen too.
  *
  * @param operation - The work to run.
  * @returns `{ ok: true, value }` with the frozen value. A `LanguageFault` becomes
@@ -103,7 +105,10 @@ function faultResult(error: unknown): Result<never> {
   ]);
 }
 
-/** A `validation-failed` result holding the diagnostics. */
+/**
+ * A deep-frozen `validation-failed` result holding the diagnostics. Every diagnostic is Language's
+ * own record (spans and Model issues are copies), so freezing changes no caller's data.
+ */
 function failed(diagnostics: readonly [Diagnostic, ...Diagnostic[]]): Result<never> {
-  return { ok: false, error: { code: 'validation-failed', diagnostics } };
+  return deepFreeze({ ok: false, error: { code: 'validation-failed', diagnostics } });
 }

@@ -13,6 +13,8 @@ import type { RawRecord } from '../lowering/fields.js';
 import { ownerValue } from '../lowering/diagnostics.js';
 import { patchResources } from '../lowering/resources.js';
 import { accepted, reject } from '../validation/outcomes.js';
+import { copySpan } from '../validation/ownership.js';
+import { membershipActions } from '../vocabulary/defaults.js';
 import { requireSnapshot, structuralChange, resetChange } from './structural.js';
 import { editBlocks } from './blocks.js';
 import { editMembership } from './views.js';
@@ -38,9 +40,11 @@ interface Compilation {
  *    against the staged collection; stage the original plus all changes so far (Model
  *    diagnostics at that operation).
  * 4. Plan the original plus every staged change. Each Model diagnostic is placed at the operation
- *    with the longest target ID contained in its path, else at the whole patch.
+ *    with the longest target ID contained in its path, else at the whole patch. A `collection`
+ *    operation's target ID is empty, which every path contains, so when the patch has one it
+ *    catches every diagnostic no other operation matches.
  * 5. Return the planned collection, the staged changes, the patch's resource requests and the
- *    source map (each operation's target ID and span).
+ *    source map (each operation's target ID and a copy of its span).
  *
  * Pure apart from calling the host's stage and planner; a retry with the same input and
  * dependencies returns the same intent. Language owns correcting the source; Authoring owns
@@ -48,7 +52,7 @@ interface Compilation {
  *
  * @param patch - The parsed patch.
  * @param request - The lowering request; its `snapshot` is the collection being patched.
- * @param deps - The host's Model stage and planner.
+ * @param deps - The host's Model stage and planner (the only dependencies it uses).
  * @returns The lowered patch intent.
  * @throws A `LanguageFault`: `invalid-input` when the request is not in `patch` mode;
  * `unknown-target` when there is no snapshot or it is another collection; `invalid-value` when
@@ -56,7 +60,11 @@ interface Compilation {
  * compiler; and `domain` diagnostics from Model's stage or plan. The public `lower` runs it
  * inside `protect`.
  */
-export function lowerPatch(patch: Patch, request: LowerRequest, deps: Dependencies): LoweredIntent {
+export function lowerPatch(
+  patch: Patch,
+  request: LowerRequest,
+  deps: Pick<Dependencies, 'stage' | 'planner'>,
+): LoweredIntent {
   if (request.mode !== 'patch')
     reject(
       'invalid-input',
@@ -72,9 +80,9 @@ export function lowerPatch(patch: Patch, request: LowerRequest, deps: Dependenci
     { candidate: initial.candidate, changes: initial.changes, deletedSections: [] },
   );
   const mappings = patch.operations.map(
-    /** The operation's target ID and where it was written. */ (operation) => ({
+    /** The operation's target ID and a copy of where it was written. */ (operation) => ({
       path: operation.address.id,
-      span: operation.span,
+      span: copySpan(operation.span),
     }),
   );
   const plan = ownerValue(deps.planner.plan(original, compiled.changes), mappings, patch.span);
@@ -147,11 +155,3 @@ function compileStructuralOrView(
   if (action === 'reset') return resetChange(operation);
   return structuralChange(operation, request.resources);
 }
-
-/** The actions that change a section's membership. */
-const membershipActions: readonly string[] = Object.freeze([
-  'show',
-  'hide',
-  'connect',
-  'disconnect',
-]);

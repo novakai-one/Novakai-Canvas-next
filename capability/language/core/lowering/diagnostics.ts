@@ -10,6 +10,7 @@ import type { SourceMapping } from '../../contract/records/requests.js';
 import { LanguageFault } from '../../contract/errors.js';
 import type { OwnerDiagnostic, Result, Diagnostic } from '../../contract/errors.js';
 import { id } from './fields.js';
+import { copySpan } from '../validation/ownership.js';
 
 /** A failed Model result: at least one diagnostic. */
 interface OwnerError {
@@ -29,9 +30,9 @@ interface MappingParse {
  * placed in the source.
  *
  * Each Model diagnostic becomes a `domain` diagnostic in the same order: `target` is Model's
- * path, `expected` is Model's code, `message` is Model's message, `source` is Model's diagnostic,
- * and `span` is the span of the longest mapping path contained in Model's path (the narrower
- * span wins a tie), else `fallback`.
+ * path, `expected` is Model's code, `message` is Model's message, `source` is a shallow copy of
+ * Model's diagnostic, and `span` is a copy of the span of the longest mapping path contained
+ * in Model's path (the narrower span wins a tie), else of `fallback`.
  *
  * Pure: a retry with the same input returns the same result. Language owns correcting the
  * source; Authoring owns commit recovery.
@@ -64,6 +65,8 @@ export function ownerValue<T>(
  * plus its ID; a nested one to its parent's path plus `ports`, `rows`, `groups`, `sequence` or
  * `branches` (else `content`) and its ID; one without an ID keeps its parent's path.
  *
+ * Every mapping holds a copy of the written span, never the declaration's own span object.
+ *
  * Pure: a retry with the same input returns the same result. Language owns correcting the
  * source; Authoring owns commit recovery.
  *
@@ -77,7 +80,7 @@ export function sourceMappings(item: Declaration, prefix = ''): readonly SourceM
   const name = mappingPath(item, prefix);
   const expression = item.kind === 'type' ? item.fields.expression : undefined;
   return [
-    { path: name, span: item.span },
+    { path: name, span: copySpan(item.span) },
     ...contentMappings(name, item),
     ...expressionMapping(name, expression),
     ...item.children.flatMap(
@@ -102,7 +105,10 @@ function rejectOwner(
   ]);
 }
 
-/** Adds a source span to Model's issue; Model's code and path are kept, never replaced. */
+/**
+ * Adds a source span (a copy) to Model's issue; Model's code and path are kept, never replaced.
+ * `source` is a shallow copy of the issue (all its fields), never Model's own object.
+ */
 function sourceDiagnostic(
   issue: OwnerDiagnostic,
   mappings: readonly SourceMapping[],
@@ -111,10 +117,10 @@ function sourceDiagnostic(
   return {
     code: 'domain',
     target: issue.path,
-    span: nearestSpan(issue.path, mappings, fallback),
+    span: copySpan(nearestSpan(issue.path, mappings, fallback)),
     expected: issue.code,
     message: issue.message,
-    source: issue,
+    source: { ...issue },
     recovery: 'Correct the referenced diagram declaration; check again before Authoring admission.',
   };
 }
@@ -148,7 +154,9 @@ function contentMappings(name: string, item: Declaration): readonly SourceMappin
 /** A sequence event's written `operation`, if any. */
 function operationMapping(name: string, item: Declaration): SourceMapping | undefined {
   const operation = item.fields.operation;
-  return operation === undefined ? undefined : { path: `${name}.operation`, span: operation.span };
+  return operation === undefined
+    ? undefined
+    : { path: `${name}.operation`, span: copySpan(operation.span) };
 }
 
 /** A member's `type`; a signature's `returns` and parameters; nothing for other kinds. */
@@ -170,7 +178,7 @@ function propertyMapping(
   property: string,
   value: LocatedValue | undefined,
 ): readonly SourceMapping[] {
-  return value === undefined ? [] : [{ path: `${name}.${property}`, span: value.span }];
+  return value === undefined ? [] : [{ path: `${name}.${property}`, span: copySpan(value.span) }];
 }
 
 /** A text parameter maps as a whole; a `[name, type]` pair maps each part. */
@@ -180,7 +188,7 @@ function parameterMappings(
   index: number,
 ): readonly SourceMapping[] {
   if (typeof parameter.value === 'string')
-    return [{ path: `${name}.parameters.${index}`, span: parameter.span }];
+    return [{ path: `${name}.parameters.${index}`, span: copySpan(parameter.span) }];
   const tuple = parameter.items ?? [];
   return [
     parameterPartMapping(name, index, 'name', tuple[0]),
@@ -197,7 +205,7 @@ function parameterPartMapping(
 ): SourceMapping | undefined {
   return value === undefined
     ? undefined
-    : { path: `${name}.parameters.${index}.${part}`, span: value.span };
+    : { path: `${name}.parameters.${index}.${part}`, span: copySpan(value.span) };
 }
 
 /** Whether a mapping is present. */
@@ -213,7 +221,7 @@ function expressionMapping(
   if (expression === undefined) return [];
   return [
     ...expressionReferenceMappings(expression.tokens ?? [], `${name}.expression`),
-    { path: `${name}.expression`, span: expression.span },
+    { path: `${name}.expression`, span: copySpan(expression.span) },
   ];
 }
 
@@ -283,7 +291,7 @@ function mapParenthesized(tokens: readonly Token[], start: number, path: string)
 
 /** A reference token maps to the path. */
 function mapReference(token: Token, start: number, path: string): MappingParse {
-  return { next: start + 1, mappings: [{ path, span: token.span }], items: 1 };
+  return { next: start + 1, mappings: [{ path, span: copySpan(token.span) }], items: 1 };
 }
 
 /** Moves mappings under `items.0` up to the path itself. */

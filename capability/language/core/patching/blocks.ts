@@ -5,7 +5,7 @@
  * never from the original snapshot. Pure: new arrays and records only. Language owns correcting
  * the source; Authoring owns commit recovery.
  */
-import type { Collection, ContentBlock } from '../../contract/ports/model.js';
+import type { Collection, ContentBlock, DiagramObject } from '../../contract/ports/model.js';
 import type { Operation } from '../../contract/records/syntax.js';
 import { lowerContent } from '../lowering/content.js';
 import { id, type RawRecord } from '../lowering/fields.js';
@@ -34,17 +34,11 @@ export function replaceBlock(
 ): RawRecord {
   const owner = blockOwner(collection, operation);
   const target = blockId(operation);
-  return {
-    op: 'replace',
-    target: 'objects',
-    value: {
-      ...owner,
-      content: owner.content.map(
-        /** The new record for the addressed block; any other block as it is. */ (block) =>
-          block.id === target ? value : block,
-      ),
-    },
-  };
+  const content = owner.content.map(
+    /** The new record for the addressed block; any other block as it is. */ (block) =>
+      block.id === target ? value : block,
+  );
+  return objectChange(owner, content);
 }
 
 /**
@@ -72,6 +66,11 @@ export function replaceBlock(
 export function editBlocks(collection: Collection, operation: Operation): RawRecord {
   const owner = blockOwner(collection, operation);
   const content = changedContent(owner.content, operation);
+  return objectChange(owner, content);
+}
+
+/** The Model change that replaces the owning object with a new content list. */
+function objectChange(owner: DiagramObject, content: readonly RawRecord[]): RawRecord {
   return { op: 'replace', target: 'objects', value: { ...owner, content } };
 }
 
@@ -82,10 +81,7 @@ function changedContent(
 ): readonly RawRecord[] {
   if (operation.action === 'add') return addContent(content, operation);
   const target = findRecord(content, blockId(operation), operation);
-  if (operation.action === 'remove')
-    return content.filter(
-      /** Whether the block is not the removed one. */ (item) => item.id !== target.id,
-    );
+  if (operation.action === 'remove') return withoutBlock(content, target);
   return moveContent(content, target, operation);
 }
 
@@ -106,12 +102,15 @@ function moveContent(
   if (before === null)
     reject('syntax', operation.span, 'before=@block', 'Move requires a destination');
   if (before === target.id) return content;
-  return insertBefore(
-    content.filter(/** Whether the block is not the moved one. */ (item) => item.id !== target.id),
-    target,
-    before,
-    operation,
-  );
+  return insertBefore(withoutBlock(content, target), target, before, operation);
+}
+
+/** The content without the given block; its ID is read for each item, as the filter runs. */
+function withoutBlock(
+  content: readonly ContentBlock[],
+  block: ContentBlock,
+): readonly ContentBlock[] {
+  return content.filter(/** Whether this is not the given block. */ (item) => item.id !== block.id);
 }
 
 /** The `before=` block ID, or `null` when it is not written (append). */

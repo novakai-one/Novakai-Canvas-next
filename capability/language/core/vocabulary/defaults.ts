@@ -4,7 +4,7 @@
  * correcting the source; Authoring owns commit recovery.
  */
 import type { Action } from '../../contract/records/syntax.js';
-import { deepFreeze } from '../validation/outcomes.js';
+import { deepFreeze } from '../validation/ownership.js';
 
 /**
  * The layout algorithm each section `mode` uses when the section names none. Its keys are every

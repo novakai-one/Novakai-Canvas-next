@@ -10,7 +10,7 @@ import type {
   PositionRule,
   Property,
 } from '../../contract/records/vocabulary.js';
-import { deepFreeze } from '../validation/outcomes.js';
+import { deepFreeze } from '../validation/ownership.js';
 import { properties, layoutProperties, presentationProperties } from './properties.js';
 import { nodeKinds } from './defaults.js';
 

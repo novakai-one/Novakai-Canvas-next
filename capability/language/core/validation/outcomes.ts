@@ -6,8 +6,14 @@
  * diagnostics as `validation-failed`, or one `provider-failure` diagnostic for any other throw.
  * Language owns correcting the source; Authoring owns commit recovery.
  */
-import { LanguageFault, type DiagnosticCode, type Result } from '../../contract/errors.js';
+import {
+  LanguageFault,
+  type Diagnostic,
+  type DiagnosticCode,
+  type Result,
+} from '../../contract/errors.js';
 import type { Span } from '../../contract/records/syntax.js';
+import { deepFreeze } from './ownership.js';
 
 /**
  * The empty span at the start of the source (line 1, column 1), for diagnostics with no better
@@ -75,55 +81,29 @@ export function accepted<T>(result: Result<T>): T {
 export function protect<T>(operation: () => T): Result<T> {
   try {
     const value = operation();
-    freezeOwned(value);
+    deepFreeze(value);
     return { ok: true, value };
   } catch (error) {
     return faultResult(error);
   }
 }
 
-/**
- * Freezes a value Language owns, and every object inside it, children first. Used for the shared
- * vocabulary tables and `origin`, so no caller can change them.
- *
- * Pure apart from freezing its argument in place; a retry is a no-op. Language owns correcting
- * the source; Authoring owns commit recovery.
- *
- * @param value - A record Language built (never caller data).
- * @returns The same value, now deep-frozen.
- * @throws Never for plain data; a getter or proxy trap that throws is passed through.
- */
-export function deepFreeze<T>(value: T): T {
-  freezeOwned(value);
-  return value;
-}
-
-/** Freezes the value and every object inside it, children first. Other values are left alone. */
-function freezeOwned(value: unknown): void {
-  if (value === null) return;
-  if (typeof value !== 'object') return;
-  Object.values(value).forEach(freezeOwned);
-  Object.freeze(value);
-}
-
 /** The failed result for a caught throw: the fault's diagnostics, or one `provider-failure`. */
 function faultResult(error: unknown): Result<never> {
-  if (error instanceof LanguageFault)
-    return { ok: false, error: { code: 'validation-failed', diagnostics: error.diagnostics } };
-  return {
-    ok: false,
-    error: {
-      code: 'validation-failed',
-      diagnostics: [
-        {
-          code: 'provider-failure',
-          span: origin,
-          target: '',
-          expected: 'Readable immutable input and a successful owner result',
-          message: 'Input or provider could not be read',
-          recovery: 'Retain source; repair the provider or input and check again.',
-        },
-      ],
+  if (error instanceof LanguageFault) return failed(error.diagnostics);
+  return failed([
+    {
+      code: 'provider-failure',
+      span: origin,
+      target: '',
+      expected: 'Readable immutable input and a successful owner result',
+      message: 'Input or provider could not be read',
+      recovery: 'Retain source; repair the provider or input and check again.',
     },
-  };
+  ]);
+}
+
+/** A `validation-failed` result holding the diagnostics. */
+function failed(diagnostics: readonly [Diagnostic, ...Diagnostic[]]): Result<never> {
+  return { ok: false, error: { code: 'validation-failed', diagnostics } };
 }

@@ -7,7 +7,7 @@
  */
 import type { TargetKind } from '../../contract/records/syntax.js';
 import type { Property } from '../../contract/records/vocabulary.js';
-import { deepFreeze } from '../validation/outcomes.js';
+import { deepFreeze } from '../validation/ownership.js';
 import { properties, layoutProperties, presentationProperties } from './properties.js';
 import { showProperties, connectProperties } from './constructs.js';
 

@@ -8,7 +8,7 @@
  * source; Authoring owns commit recovery.
  */
 import type { Property } from '../../contract/records/vocabulary.js';
-import { deepFreeze } from '../validation/outcomes.js';
+import { deepFreeze } from '../validation/ownership.js';
 import { defaults, modeLayouts, relationshipKinds } from './defaults.js';
 
 /**

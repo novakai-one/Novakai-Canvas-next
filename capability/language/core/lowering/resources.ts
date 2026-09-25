@@ -8,6 +8,8 @@ import type { Declaration, Span, Operation } from '../../contract/records/syntax
 import type { ResourceRequest, ResolvedResources } from '../../contract/records/requests.js';
 import { field, id, text, textOr, optional, type RawRecord } from './fields.js';
 import { reject } from '../validation/outcomes.js';
+import { copySpan } from '../validation/ownership.js';
+import { defaults } from '../vocabulary/defaults.js';
 
 /** The asset attributes that must equal the admitted record when written. */
 const checkedMetadata: readonly string[] = ['alt', 'license', 'attribution'];
@@ -104,7 +106,7 @@ export function lowerAsset(item: Declaration, resources: ResolvedResources): Raw
  * fault reading an asset's ID or source.
  */
 export function documentResources(item: Declaration): readonly ResourceRequest[] {
-  const theme = textOr(item.fields, 'theme', 'paper');
+  const theme = textOr(item.fields, 'theme', defaults.theme);
   return [themeRequest(theme, item.span), ...assetRequests(item)];
 }
 
@@ -132,7 +134,7 @@ export function patchResources(operation: Operation): readonly ResourceRequest[]
  *
  * @param item - The asset declaration.
  * @returns The request: kind, alias (the ID), source, the written `alt`, `license` and
- * `attribution`, and the span.
+ * `attribution`, and a copy of the span (never the declaration's own span object).
  * @throws A `LanguageFault` with an `invalid-value` diagnostic for a kind other than `image`,
  * `icon` or `font`, and the faults of reading the ID or source.
  */
@@ -147,7 +149,7 @@ function assetRequest(item: Declaration): ResourceRequest {
     ...optional('alt', item.fields.alt?.value),
     ...optional('license', item.fields.license?.value),
     ...optional('attribution', item.fields.attribution?.value),
-    span: item.span,
+    span: copySpan(item.span),
   };
 }
 
@@ -226,13 +228,13 @@ function checkMetadata(item: Declaration, record: RawRecord, name: string): void
 function patchThemeRequest(operation: Operation): readonly ResourceRequest[] {
   const theme = operation.fields.theme?.value;
   if (typeof theme === 'string') return [themeRequest(theme, operation.span)];
-  if (operation.properties.includes('theme')) return [themeRequest('paper', operation.span)];
+  if (operation.properties.includes('theme')) return [themeRequest(defaults.theme, operation.span)];
   return [];
 }
 
-/** The request for one theme: the written alias is also its source. */
+/** The request for one theme: the written alias is also its source; the span is a copy. */
 function themeRequest(alias: string, span: Span): ResourceRequest {
-  return { kind: 'theme', alias, source: alias, span };
+  return { kind: 'theme', alias, source: alias, span: copySpan(span) };
 }
 
 /** The requests of a collection's top-level assets, in written order. */

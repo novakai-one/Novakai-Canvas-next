@@ -51,7 +51,7 @@ describe('Library catalog planning', () => {
     // Failures: creating an existing folder; unregistering a missing entry at the end.
     const existing = [{ op: 'create-folder', value: { id: ids.folder, title: 'Duplicate' } }];
     expect(diagnosticsOf(planCatalog({ snapshot: base, changes: existing }))).toEqual([
-      'already-exists catalog.folders.engineering',
+      'duplicate catalog.folders.engineering',
     ]);
     const absent = [...changes, { op: 'unregister', collection: 'absent' }];
     const failed = planCatalog({ snapshot: base, changes: absent });

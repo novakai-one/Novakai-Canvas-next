@@ -42,7 +42,7 @@ export type ChangeOf<Op extends ChangeOperation> = Extract<CatalogChange, { read
 /**
  * Builds the schema of an ordered batch of at most {@link MAX_CHANGES} changes. Planning applies
  * them in order. Each change's own checks fail at once: a missing ID is `not-found`, an ID
- * already present is `already-exists`, and `reject` on a non-empty folder is `folder-not-empty`.
+ * already present is `duplicate`, and `reject` on a non-empty folder is `folder-not-empty`.
  * Only the rules across records wait for the final catalog, so a later change may repair an
  * earlier one there.
  */

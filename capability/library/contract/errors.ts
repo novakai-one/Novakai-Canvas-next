@@ -13,11 +13,11 @@
  *
  * - `shape`: the input does not match its schema, or could not be read.
  * - `limit`: the next page's cursor would exceed `MAX_CURSOR_LENGTH` (the only current producer).
- * - `duplicate`: an ID appears twice where it must be unique.
+ * - `duplicate`: an ID is used twice where it must be unique, whether repeated within the input
+ *   or named by a create whose ID already exists.
  * - `reference`: an ID refers to something that does not exist.
  * - `cycle`: folder parents form a loop.
  * - `not-found`: an operation or query names something that does not exist.
- * - `already-exists`: a create names an ID that already exists.
  * - `folder-not-empty`: a folder with contents was removed without `rehome`.
  * - `stale-cursor`: a cursor string the schema accepted is not valid cursor JSON, is from another
  *   query or snapshot, or its offset is past the results.
@@ -29,7 +29,6 @@ export type DiagnosticCode =
   | 'reference'
   | 'cycle'
   | 'not-found'
-  | 'already-exists'
   | 'folder-not-empty'
   | 'stale-cursor';
 

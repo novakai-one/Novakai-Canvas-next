@@ -13,7 +13,7 @@ import { removeFolder } from './removal.js';
 /**
  * Applies one parsed catalog change and returns the new catalog.
  *
- * - `create-folder` / `register`: appended; an existing ID is `already-exists`.
+ * - `create-folder` / `register`: appended; an existing ID is `duplicate`.
  * - `replace-folder` / `replace-entry`: replaced in place; a missing ID is `not-found`.
  * - `remove-folder`: see `removeFolder` (`not-found`, `folder-not-empty`, or rehomed contents).
  * - `unregister`: the entry is removed; a missing one is `not-found`.
@@ -104,7 +104,7 @@ function unregister(
   return success({ ...catalog, entries });
 }
 
-/** Create needs an absent ID (`already-exists`); replace needs an existing one (`not-found`). */
+/** Create needs an absent ID (`duplicate`); replace needs an existing one (`not-found`). */
 function checkIdentity(
   mode: WriteMode,
   exists: boolean,
@@ -130,7 +130,7 @@ function requireAbsent(
 ): LibraryResult<true> {
   if (exists) {
     return failure({
-      code: 'already-exists',
+      code: 'duplicate',
       path,
       message: 'Creation requires an absent identity',
     });

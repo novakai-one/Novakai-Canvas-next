@@ -53,14 +53,14 @@ export function definitionDraftId(value: string): import('@novakai/canvas-model'
 export { groupDraftProblem, groupCreationChanges } from '../core/editing/group-creation.js';
 export {
   buildConnectionDraft,
-  connectionRequest,
   editedConnection,
   resolveConnectionSection,
   reviewConnection,
   type ConnectionCapture,
-  type ConnectionPolicy,
   type ConnectionReview,
-} from '../core/editing/connection-draft.js';
+} from '../core/editing/connection/draft.js';
+export { connectionRequest } from '../core/editing/connection/request.js';
+export type { ConnectionPolicy } from '../core/editing/connection/types.js';
 export { definitionRequest } from '../core/editing/definition-request.js';
 export { reusableSession, retainCamera, renderChanged } from '../core/workspace/session-reuse.js';
 export { bindHistoryKeys } from '../core/workspace/history-keys.js';

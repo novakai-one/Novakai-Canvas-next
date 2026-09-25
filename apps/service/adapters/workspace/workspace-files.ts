@@ -6,8 +6,8 @@ import type {
   WorkspaceOptions,
   NativeFactories,
   NativeWorkspace,
-} from '../contract/records/startup.js';
-import { failure, type Result } from '../contract/errors.js';
+} from '../../contract/records/startup.js';
+import { failure, type Result } from '../../contract/errors.js';
 /** Closing both owners is attempted even if one reports a failure; callers preserve the original files. */
 async function close(
   storage: Persistence,

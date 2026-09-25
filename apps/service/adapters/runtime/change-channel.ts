@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import type { ChangeChannel, CommittedChange } from '../contract/ports/notifications.js';
+import type { ChangeChannel, CommittedChange } from '../../contract/ports/notifications.js';
 import { failure } from '@novakai/canvas-authoring';
 import type { Result } from '@novakai/canvas-authoring';
 /** Listener failure never reverses a committed transaction; Authoring returns the receipt with delivery recovery semantics. */

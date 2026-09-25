@@ -1,4 +1,4 @@
-import { projectCollection } from '../contract/api.js';
+import { projectCollection } from '../../contract/api.js';
 import { validate as validateModel } from '@novakai/canvas-model';
 import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import { failure } from '@novakai/canvas-authoring';
@@ -8,7 +8,7 @@ import type {
   WorkspaceReader,
   WorkspaceReaderOwners,
   WorkspaceContents,
-} from '../contract/records/workspace.js';
+} from '../../contract/records/workspace.js';
 /** Preserve owner rejection across typed record accumulation; no invalid member is dropped from a workspace. */
 function collection(
   records: Result<readonly Collection[]>,

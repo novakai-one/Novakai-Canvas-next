@@ -13,16 +13,16 @@ import {
   type Snapshot,
 } from '@novakai/canvas-export';
 import { createReactBindings, type ReactBindings } from '@novakai/canvas-presentation';
-import type { CollectionRenderer } from '../contract/ports/collection-renderer.js';
-import type { ResourceSelector } from '../contract/records/planning.js';
-import type { WorkspaceContents, WorkspaceReader } from '../contract/records/workspace.js';
-import type { BuiltinResources } from '../contract/records/builtins.js';
-import type { Authoring } from '../contract/records/owners.js';
-import type { RouteOutcome } from '../contract/records/protocol.js';
-import type { StaticFile } from '../contract/records/server.js';
-import type { OperationSource } from '../contract/records/failure-source.js';
+import type { CollectionRenderer } from '../../contract/ports/collection-renderer.js';
+import type { ResourceSelector } from '../../contract/records/planning.js';
+import type { WorkspaceContents, WorkspaceReader } from '../../contract/records/workspace.js';
+import type { BuiltinResources } from '../../contract/records/builtins.js';
+import type { Authoring } from '../../contract/records/owners.js';
+import type { RouteOutcome } from '../../contract/records/protocol.js';
+import type { StaticFile } from '../../contract/records/server.js';
+import type { OperationSource } from '../../contract/records/failure-source.js';
 import { formatMarkdown, type MarkdownScope } from '@novakai/canvas-export';
-import { failure, type Result } from '../contract/errors.js';
+import { failure, type Result } from '../../contract/errors.js';
 type ExportResult<T> = import('@novakai/canvas-export').Result<T>;
 
 interface ExportOwners {
@@ -355,7 +355,7 @@ async function renderDocument(
   selected: SelectedCollection,
   owners: ExportOwners,
   signal: AbortSignal,
-): Promise<ExportResult<import('../contract/records/rendering.js').RenderDocument>> {
+): Promise<ExportResult<import('../../contract/records/rendering.js').RenderDocument>> {
   const document = await owners.renderer.render(selected.collection, selected.view, signal);
   return document.ok ? document : renderFailure(document.error);
 }
@@ -370,7 +370,7 @@ function renderFailure(error: { readonly code: string; readonly message: string 
 
 function buildSnapshot(
   selected: SelectedCollection,
-  document: import('../contract/records/rendering.js').RenderDocument,
+  document: import('../../contract/records/rendering.js').RenderDocument,
   lease: ReadLease,
   signal: AbortSignal,
 ): ExportResult<Snapshot> {
@@ -401,7 +401,7 @@ function buildSnapshot(
 function retainedResources(
   lease: ReadLease,
   collection: import('@novakai/canvas-model').Collection,
-  document: import('../contract/records/rendering.js').RenderDocument,
+  document: import('../../contract/records/rendering.js').RenderDocument,
   presets: Catalog,
 ): ExportResult<readonly Resource[]> {
   const theme = themeResource(collection, presets);
@@ -461,7 +461,7 @@ function assetResources(
 
 function fontResources(
   lease: ReadLease,
-  document: import('../contract/records/rendering.js').RenderDocument,
+  document: import('../../contract/records/rendering.js').RenderDocument,
 ): ExportResult<readonly Resource[]> {
   return resourceList(
     document.fonts.map((font) => {

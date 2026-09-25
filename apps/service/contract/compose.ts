@@ -24,7 +24,7 @@ import type { DiagramProducer } from './ports/rendering.js';
 import { produce } from '../core/rendering/produce.js';
 import type { Result } from './errors.js';
 import { failure } from './errors.js';
-import { createWorkspaceExporter } from '../adapters/export.js';
+import { createWorkspaceExporter } from '../adapters/workspace/export.js';
 import { cacheRenders } from '../adapters/rendering/render-cache.js';
 /** Explicit worker lifecycle keeps native measurement away from browser imports; the parent owns worker failure/retry. */
 export async function runRenderWorker(): Promise<Result<void>> {
@@ -77,9 +77,9 @@ async function prepareInstallationInputs(
   const files = await createTokenFileBindings(tokenRoot);
   if (!files.ok) return failure('unavailable', 'tokens', files.error.message, files.error);
   const [loader, codecs, builtins] = await Promise.all([
-    import('../adapters/builtin-files.js'),
-    import('../adapters/preset-codecs.js'),
-    import('../adapters/builtin-presets.js'),
+    import('../adapters/builtins/builtin-files.js'),
+    import('../adapters/builtins/preset-codecs.js'),
+    import('../adapters/builtins/builtin-presets.js'),
   ]);
   const sources = await loader.loadBuiltinSources(resourceRoot, assets, files.value);
   if (!sources.ok) return sources;
@@ -122,7 +122,7 @@ interface WiredWorkspace {
 function requestAuthoring(
   runtime: AdmissionRuntime,
   signal: AbortSignal,
-  makeFeasibility: typeof import('../adapters/feasibility.js').createFeasibility,
+  makeFeasibility: typeof import('../adapters/planning/feasibility.js').createFeasibility,
 ): Authoring {
   return composeAuthoring({
     ...runtime.store,
@@ -167,23 +167,23 @@ async function wireWorkspace(
     presetPlannerModule,
     themePreparationModule,
   ] = await Promise.all([
-    import('../adapters/authoring-store.js'),
-    import('../adapters/preset-codecs.js'),
-    import('../adapters/workspace-reader.js'),
-    import('../adapters/resource-selection.js'),
-    import('../adapters/resource-leases.js'),
-    import('../adapters/collection-plans.js'),
-    import('../adapters/library-planner.js'),
-    import('../adapters/diagram-planners.js'),
-    import('../adapters/candidate-validation.js'),
+    import('../adapters/workspace/authoring-store.js'),
+    import('../adapters/builtins/preset-codecs.js'),
+    import('../adapters/workspace/workspace-reader.js'),
+    import('../adapters/resources/resource-selection.js'),
+    import('../adapters/resources/resource-leases.js'),
+    import('../adapters/planning/collection-plans.js'),
+    import('../adapters/planning/library-planner.js'),
+    import('../adapters/planning/diagram-planners.js'),
+    import('../adapters/planning/candidate-validation.js'),
     import('../adapters/rendering/render-jobs.js'),
-    import('../adapters/feasibility.js'),
+    import('../adapters/planning/feasibility.js'),
     import('../adapters/rendering/collection-renderer.js'),
-    import('../adapters/installation-planner.js'),
-    import('../adapters/change-channel.js'),
-    import('../adapters/session-lifetime.js'),
-    import('../adapters/resource-commands.js'),
-    import('../adapters/preset-planner.js'),
+    import('../adapters/planning/installation-planner.js'),
+    import('../adapters/runtime/change-channel.js'),
+    import('../adapters/runtime/session-lifetime.js'),
+    import('../adapters/resources/resource-commands.js'),
+    import('../adapters/planning/preset-planner.js'),
     import('../adapters/rendering/theme-preparation.js'),
   ]);
   const language = createLanguage({ reader: { validate }, planner: { plan }, stage: { stage } });
@@ -369,7 +369,7 @@ async function startOpened(
 /** Open a real persistent workspace explicitly. Every canonical initial/edit write passes through Authoring; caller owns startup recovery. */
 export async function openWorkspace(options: WorkspaceOptions): Promise<Result<WorkspaceSession>> {
   try {
-    const files = await import('../adapters/workspace-files.js');
+    const files = await import('../adapters/workspace/workspace-files.js');
     const native = await files.openWorkspaceFiles(options, {
       assets: openAssets,
       storage: openSqlite,
@@ -388,7 +388,7 @@ export async function serveWorkspace(
 ): Promise<Result<LocalServer>> {
   try {
     const [credentials, requests, router, source, io, files, server] = await Promise.all([
-      import('../adapters/local-credentials.js'),
+      import('../adapters/runtime/local-credentials.js'),
       import('../adapters/http/request-reader.js'),
       import('../adapters/http/http-router.js'),
       import('../adapters/rendering/language-readout.js'),
@@ -425,14 +425,14 @@ export async function serveWorkspace(
 }
 /** Local agent bootstrap reads an existing protected credential; browser consumers must use their HttpOnly session instead. */
 export async function readAgentCredential(path: string): Promise<Result<string>> {
-  const credentials = await import('../adapters/local-credentials.js');
+  const credentials = await import('../adapters/runtime/local-credentials.js');
   return credentials.readAgentCredential(path);
 }
 
 /** Read-only headless composition shares service adapters. CLI runHeadless catches import failures, reports render-unavailable and owns retry after dependencies are restored. */
 export async function createHeadlessBindings() {
   const [codecs, themes, jobs, rendering] = await Promise.all([
-    import('../adapters/preset-codecs.js'),
+    import('../adapters/builtins/preset-codecs.js'),
     import('../adapters/rendering/theme-preparation.js'),
     import('../adapters/rendering/render-jobs.js'),
     import('../adapters/rendering/rendering.js'),

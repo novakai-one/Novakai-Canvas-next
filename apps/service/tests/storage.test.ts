@@ -7,7 +7,7 @@ import {
   recordId,
   type CommitRequest,
 } from '@novakai/canvas-authoring';
-import { createAuthoringStore } from '../adapters/authoring-store.js';
+import { createAuthoringStore } from '../adapters/workspace/authoring-store.js';
 
 /** Real in-memory SQLite verifies the mapping; service callers own receipt reconciliation after acknowledgement loss. */
 it('host 1 preserves conditional versions, receipt identity and workspace isolation', async () => {

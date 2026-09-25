@@ -1,4 +1,4 @@
-import type { FailureSource } from '../contract/records/failure-source.js';
+import type { FailureSource } from '../../contract/records/failure-source.js';
 import { z } from 'zod';
 import { validate } from '@novakai/canvas-model';
 import type { Collection } from '@novakai/canvas-model';
@@ -6,10 +6,10 @@ import { digest, failure } from '@novakai/canvas-authoring';
 import type { Request, Snapshot, Result, Digest } from '@novakai/canvas-authoring';
 import type { Catalog, Preset } from '@novakai/canvas-templates';
 import type { ResolvedResources, ResourceRequest } from '@novakai/canvas-language';
-import type { ResourceOwners } from '../contract/records/resources.js';
-import type { ResourceSelector, ResourceSelection } from '../contract/records/planning.js';
-import type { WorkspaceContents } from '../contract/records/workspace.js';
-import { dslCommand, modelCommand } from '../contract/records/commands.js';
+import type { ResourceOwners } from '../../contract/records/resources.js';
+import type { ResourceSelector, ResourceSelection } from '../../contract/records/planning.js';
+import type { WorkspaceContents } from '../../contract/records/workspace.js';
+import { dslCommand, modelCommand } from '../../contract/records/commands.js';
 /** Exact owner diagnostics cross private selection steps; Authoring catches the resulting typed rejection. */
 class ResourceFault extends Error {
   /** Private native/input failures have no invented source; checked owner failures retain theirs. */

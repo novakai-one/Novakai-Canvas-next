@@ -3,9 +3,9 @@ import { mkdir, open } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { dirname } from 'node:path';
 import { z } from 'zod';
-import type { Result } from '../contract/errors.js';
-import { failure } from '../contract/errors.js';
-import type { HttpSecurity } from '../contract/records/http.js';
+import type { Result } from '../../contract/errors.js';
+import { failure } from '../../contract/errors.js';
+import type { HttpSecurity } from '../../contract/records/http.js';
 /** Credentials have no diagram semantics. Their bytes never enter an API response, URL, diagnostic or log. */
 const credential = z.strictObject({
   version: z.literal(1),

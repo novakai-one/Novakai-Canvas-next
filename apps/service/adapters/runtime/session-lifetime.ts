@@ -1,5 +1,5 @@
-import type { SessionLifetime } from '../contract/ports/lifetime.js';
-import { failure, type Result } from '../contract/errors.js';
+import type { SessionLifetime } from '../../contract/ports/lifetime.js';
+import { failure, type Result } from '../../contract/errors.js';
 /** Physical owner shutdown is terminal before the returned result; caller retains the workspace on any failed close. */
 async function shutdown(
   active: readonly Promise<unknown>[],

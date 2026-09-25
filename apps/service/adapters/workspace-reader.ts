@@ -1,6 +1,6 @@
 import { projectCollection } from '../contract/api.js';
 import { validate as validateModel } from '@novakai/canvas-model';
-import { validate as validateLibrary } from '@novakai/canvas-library';
+import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import { failure } from '@novakai/canvas-authoring';
 import type { Snapshot, Result, StoredRecord } from '@novakai/canvas-authoring';
 import type { Collection } from '@novakai/canvas-model';
@@ -56,7 +56,7 @@ function checkedCatalogs(
   collections: readonly Collection[],
   owners: WorkspaceReaderOwners,
 ): Result<WorkspaceContents> {
-  const library = validateLibrary({
+  const library = validateLibrarySnapshot({
     catalog,
     collections: collections.map(projectCollection),
     recent: [],

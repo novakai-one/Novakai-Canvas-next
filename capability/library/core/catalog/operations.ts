@@ -5,7 +5,7 @@
  */
 import type { Catalog, CatalogEntry, Folder } from '../../contract/records/catalog.js';
 import type { CatalogChange, ChangeOf } from '../../contract/records/change.js';
-import type { Result } from '../../contract/errors.js';
+import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
 import { entryKey, folderKey, hasEntry, hasFolder } from '../validation/lookups.js';
 import { removeFolder } from './removal.js';
@@ -24,7 +24,7 @@ import { removeFolder } from './removal.js';
 export function applyOperation(
   catalog: Catalog,
   change: CatalogChange,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   switch (change.op) {
     case 'create-folder':
       return writeFolder(catalog, change.value, 'create');
@@ -50,7 +50,7 @@ type WriteMode = 'create' | 'replace';
  * The failure for a change of no known kind. Parsing makes this unreachable; the `never` type
  * proves every kind above is handled.
  */
-function unsupported(change: never): Result<Catalog> {
+function unsupported(change: never): LibraryResult<Catalog> {
   void change;
   return failure({ code: 'shape', path: 'changes', message: 'Unsupported catalog operation' });
 }
@@ -60,7 +60,7 @@ function writeFolder(
   catalog: Catalog,
   value: Folder,
   mode: WriteMode,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   const exists = hasFolder(catalog.folders, value.id);
   const identity = checkIdentity(mode, exists, `catalog.folders.${value.id}`);
   if (!identity.ok) {
@@ -75,7 +75,7 @@ function writeEntry(
   catalog: Catalog,
   value: CatalogEntry,
   mode: WriteMode,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   const exists = hasEntry(catalog.entries, value.collection);
   const identity = checkIdentity(mode, exists, `catalog.entries.${value.collection}`);
   if (!identity.ok) {
@@ -92,7 +92,7 @@ function writeEntry(
 function unregister(
   catalog: Catalog,
   change: ChangeOf<'unregister'>,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   if (!hasEntry(catalog.entries, change.collection)) {
     return failure({
       code: 'not-found',
@@ -109,7 +109,7 @@ function checkIdentity(
   mode: WriteMode,
   exists: boolean,
   path: string,
-): Result<true> {
+): LibraryResult<true> {
   if (mode === 'create') {
     return requireAbsent(exists, path);
   }
@@ -127,7 +127,7 @@ function checkIdentity(
 function requireAbsent(
   exists: boolean,
   path: string,
-): Result<true> {
+): LibraryResult<true> {
   if (exists) {
     return failure({
       code: 'already-exists',

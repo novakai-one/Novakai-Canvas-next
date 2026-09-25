@@ -1,6 +1,6 @@
 import { it, expect, assert, vi } from 'vitest';
 import { validate, plan, stage } from '@novakai/canvas-model';
-import { validate as validateLibrary } from '@novakai/canvas-library';
+import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import { createLanguage, type ValidationError as LanguageError } from '@novakai/canvas-language';
 import { requestSchema, snapshotSchema, proposalSchema } from '@novakai/canvas-authoring';
 import { responseEnvelope, projectCollection } from '../contract/index.js';
@@ -56,7 +56,7 @@ it('preserves two different Model codes and paths through planning and JSON tran
     { code: 'duplicate', path: 'objects.a' },
     { code: 'reference', path: 'sections.flow.appearances.missing' },
   ]);
-  const library = validateLibrary({
+  const library = validateLibrarySnapshot({
     catalog: {
       schemaVersion: 1,
       id: 'catalog',

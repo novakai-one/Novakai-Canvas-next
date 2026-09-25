@@ -6,7 +6,7 @@
 import type { FolderId } from '../../contract/brands.js';
 import type { Catalog, Folder, CatalogEntry } from '../../contract/records/catalog.js';
 import type { ChangeOf, RemovalPolicy } from '../../contract/records/change.js';
-import type { Result } from '../../contract/errors.js';
+import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
 
 /**
@@ -19,7 +19,7 @@ import { failure, success } from '../validation/outcomes.js';
 export function removeFolder(
   catalog: Catalog,
   removal: ChangeOf<'remove-folder'>,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   const folder = catalog.folders.find((candidate) => candidate.id === removal.id);
   if (folder === undefined) {
     return failure({
@@ -36,7 +36,7 @@ function removeExisting(
   catalog: Catalog,
   folder: Folder,
   policy: RemovalPolicy,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   switch (policy) {
     case 'reject':
       return removeEmpty(catalog, folder);
@@ -51,7 +51,7 @@ function removeExisting(
 function removeEmpty(
   catalog: Catalog,
   folder: Folder,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   if (hasContents(catalog, folder.id)) {
     return failure({
       code: 'folder-not-empty',
@@ -66,7 +66,7 @@ function removeEmpty(
  * The failure for a policy of no known kind. Parsing makes this unreachable; the `never` type
  * proves every policy above is handled.
  */
-function unsupported(policy: never): Result<Catalog> {
+function unsupported(policy: never): LibraryResult<Catalog> {
   void policy;
   return failure({ code: 'shape', path: 'changes', message: 'Unsupported removal policy' });
 }

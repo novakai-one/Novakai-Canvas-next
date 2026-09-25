@@ -21,7 +21,7 @@ import {
   type ResourceRequest,
   type LoweredIntent,
 } from '@novakai/canvas-language';
-import { validate as validateLibrary } from '../../../capability/library/contract/index.js';
+import { validateLibrarySnapshot } from '../../../capability/library/contract/index.js';
 import { digest, validate, plan, stage, type Collection } from '@novakai/canvas-model';
 import { createReactBindings } from '../../../capability/presentation/contract/index.js';
 import {
@@ -418,7 +418,7 @@ async function renderEnvironment(
         collections: [collection],
         presets: catalog,
         library: accepted(
-          validateLibrary({
+          validateLibrarySnapshot({
             catalog: { schemaVersion: 1, id: 'headless', revision: 0, folders: [], entries: [] },
             collections: [],
             recent: [],

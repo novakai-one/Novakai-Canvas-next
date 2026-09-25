@@ -7,7 +7,7 @@
 import { MAX_CURSOR_LENGTH, type QueryRequest } from '../../contract/records/query.js';
 import type { LibrarySnapshot, RecentVisit } from '../../contract/records/snapshot.js';
 import { cursorSchema, type CursorEnvelope } from '../../contract/records/cursor.js';
-import type { Result } from '../../contract/errors.js';
+import type { LibraryResult } from '../../contract/errors.js';
 import { failure, success } from '../validation/outcomes.js';
 import { compareText } from './text.js';
 import { readVersions } from './versions.js';
@@ -28,7 +28,7 @@ export function cursorOffset(
   snapshot: LibrarySnapshot,
   request: QueryRequest,
   total: number,
-): Result<number> {
+): LibraryResult<number> {
   if (request.cursor === undefined) {
     return success(0);
   }
@@ -48,7 +48,7 @@ export function nextCursor(
   snapshot: LibrarySnapshot,
   request: QueryRequest,
   offset: number,
-): Result<string> {
+): LibraryResult<string> {
   const cursor = JSON.stringify({ offset, ...cursorIdentity(snapshot, request) });
   if (cursor.length > MAX_CURSOR_LENGTH) {
     return failure({
@@ -84,7 +84,7 @@ function cursorIdentity(
 }
 
 /** Parses the cursor. Text that is not JSON is `stale-cursor` too, not a generic read failure. */
-function decodeCursor(cursor: string): Result<CursorEnvelope> {
+function decodeCursor(cursor: string): LibraryResult<CursorEnvelope> {
   try {
     // The schema is built before the JSON is parsed.
     const schema = cursorSchema();
@@ -103,7 +103,7 @@ function validateCursor(
   cursor: CursorEnvelope,
   identity: CursorIdentity,
   total: number,
-): Result<number> {
+): LibraryResult<number> {
   const changed =
     cursor.queryKey !== identity.queryKey || cursor.versionKey !== identity.versionKey;
   if (changed) {
@@ -116,7 +116,7 @@ function validateCursor(
 }
 
 /** A new `stale-cursor` failure at `query.cursor` with the given message. */
-function staleCursor<T>(message: string): Result<T> {
+function staleCursor<T>(message: string): LibraryResult<T> {
   return failure({ code: 'stale-cursor', path: 'query.cursor', message });
 }
 

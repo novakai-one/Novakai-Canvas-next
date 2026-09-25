@@ -1,6 +1,11 @@
-import type { Result as LibraryResult, RecentVisit } from '@novakai/canvas-library';
+import type { LibraryResult, RecentVisit } from '@novakai/canvas-library';
 import { z } from 'zod';
-import { validate, query, collectionIdSchema, folderIdSchema } from '@novakai/canvas-library';
+import {
+  validateLibrarySnapshot,
+  queryLibrary,
+  collectionIdSchema,
+  folderIdSchema,
+} from '@novakai/canvas-library';
 import { projectCollection } from '@novakai/canvas-service';
 import type { Collection } from '../contract/records/owners.js';
 import type { LibraryReader } from '../contract/records/library.js';
@@ -16,7 +21,7 @@ export function createLibraryReader(): LibraryReader {
       if (catalogs.length !== 1)
         return failure('invalid-library', 'Workspace requires one library catalog');
       return checked(
-        validate({
+        validateLibrarySnapshot({
           catalog: catalogs[0]?.value,
           collections: collections.map(projectCollection),
           recent: currentVisits(collections, recent),
@@ -25,7 +30,7 @@ export function createLibraryReader(): LibraryReader {
     },
     query: (snapshot, filters, cursor) =>
       checked(
-        query({
+        queryLibrary({
           snapshot: { ...snapshot, recent: currentVisits(snapshot.collections, snapshot.recent) },
           request: {
             text: filters.text,

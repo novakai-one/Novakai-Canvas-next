@@ -11,9 +11,9 @@ import {
 } from '../../contract/records/query.js';
 import type { LibrarySnapshot } from '../../contract/records/snapshot.js';
 import type { QueryInput } from '../../contract/types.js';
-import type { Result } from '../../contract/errors.js';
+import type { LibraryResult } from '../../contract/errors.js';
 import { failure, parse, protect, success } from '../validation/outcomes.js';
-import { validateSnapshot } from '../validation/validate.js';
+import { validateLibrarySnapshot } from '../validation/validate.js';
 import { hasFolder } from '../validation/lookups.js';
 import { projectHits } from './project.js';
 import { filterHits } from './filters.js';
@@ -38,14 +38,14 @@ import { readVersions } from './versions.js';
  *
  * A throw while reading the input becomes a `shape` failure at `$`.
  */
-export function queryLibrary(input: QueryInput): Result<QueryPage> {
+export function queryLibrary(input: QueryInput): LibraryResult<QueryPage> {
   return protect(() => prepareQuery(input));
 }
 
 /** Validates the snapshot and parses the request before any search work. */
-function prepareQuery(input: QueryInput): Result<QueryPage> {
+function prepareQuery(input: QueryInput): LibraryResult<QueryPage> {
   const { snapshot, request } = input;
-  const validated = validateSnapshot(snapshot);
+  const validated = validateLibrarySnapshot(snapshot);
   if (!validated.ok) {
     return validated;
   }
@@ -71,7 +71,7 @@ function normalizeRequest(request: QueryRequest): QueryRequest {
 function searchSnapshot(
   snapshot: LibrarySnapshot,
   request: QueryRequest,
-): Result<QueryPage> {
+): LibraryResult<QueryPage> {
   const folder = validateFolder(snapshot, request);
   if (!folder.ok) {
     return folder;
@@ -90,7 +90,7 @@ function searchSnapshot(
 function validateFolder(
   snapshot: LibrarySnapshot,
   request: QueryRequest,
-): Result<true> {
+): LibraryResult<true> {
   if (request.folder === undefined) {
     return success(true);
   }
@@ -113,7 +113,7 @@ function completePage(
   request: QueryRequest,
   hits: readonly SearchHit[],
   offset: number,
-): Result<QueryPage> {
+): LibraryResult<QueryPage> {
   const page: QueryPage = {
     hits: hits.slice(offset, offset + request.limit),
     total: hits.length,

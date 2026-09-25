@@ -55,5 +55,5 @@ export interface ValidationError {
  * Library's own success-or-failure envelope. `E` defaults to {@link ValidationError}; it is
  * declared here so Library does not depend on another capability's result type.
  */
-export type Result<T, E = ValidationError> =
+export type LibraryResult<T, E = ValidationError> =
   { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };

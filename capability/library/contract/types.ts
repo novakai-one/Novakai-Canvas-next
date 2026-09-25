@@ -5,7 +5,7 @@
 import type { CatalogId, CollectionId } from './brands.js';
 import type { Catalog } from './records/catalog.js';
 
-/** The input of `plan`. Every value is untrusted and checked by Library. */
+/** The input of `planCatalog`. Every value is untrusted and checked by Library. */
 export interface PlanInput {
   /** The original snapshot (see `LibrarySnapshot`). */
   readonly snapshot: unknown;
@@ -19,7 +19,7 @@ export interface PlanInput {
   readonly proposedCollections?: unknown;
 }
 
-/** The input of `query`. Both values are untrusted and checked by Library. */
+/** The input of `queryLibrary`. Both values are untrusted and checked by Library. */
 export interface QueryInput {
   /** The snapshot to search (see `LibrarySnapshot`). */
   readonly snapshot: unknown;

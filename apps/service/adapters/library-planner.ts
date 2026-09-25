@@ -1,4 +1,4 @@
-import { plan as planLibrary } from '@novakai/canvas-library';
+import { planCatalog } from '@novakai/canvas-library';
 import { failure, plannerId, proposalSchema } from '@novakai/canvas-authoring';
 import type { IntentPlanner, Request, Snapshot, Proposal, Result } from '@novakai/canvas-authoring';
 import { libraryCommand } from '../contract/records/commands.js';
@@ -24,7 +24,7 @@ function planOrganization(
 ): Result<Proposal> {
   const current = workspace.read(snapshot);
   if (!current.ok) return current;
-  const planned = planLibrary({ snapshot: current.value.library, changes });
+  const planned = planCatalog({ snapshot: current.value.library, changes });
   if (!planned.ok)
     return failure(
       'invariant-violation',

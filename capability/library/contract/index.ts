@@ -1,11 +1,11 @@
 /**
  * Library's public surface: catalog validation, catalog change planning and collection search.
  *
- * Start with `validate`, `plan` and `query`. The ID schema factories check and brand IDs; each
- * call returns a new schema. Everything else is a type. Catalog rules and search mechanics stay
- * private.
+ * Start with `validateLibrarySnapshot`, `planCatalog` and `queryLibrary`. Each stores nothing,
+ * never throws and returns a frozen result. The ID schema factories check and brand IDs; each call
+ * returns a new schema. Everything else is a type. Catalog rules and search mechanics stay private.
  */
-export { validate, plan, query } from './api.js';
+export { validateLibrarySnapshot, planCatalog, queryLibrary } from './api.js';
 export {
   catalogIdSchema,
   folderIdSchema,
@@ -14,7 +14,7 @@ export {
   sectionIdSchema,
 } from './brands.js';
 export type { CatalogId, FolderId, CollectionId, ObjectId, SectionId } from './brands.js';
-export type { Result, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';
+export type { LibraryResult, ValidationError, Diagnostic, DiagnosticCode } from './errors.js';
 export type { Catalog, Folder, CatalogEntry } from './records/catalog.js';
 export type {
   LibrarySnapshot,

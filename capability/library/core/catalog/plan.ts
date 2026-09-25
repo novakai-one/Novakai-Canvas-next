@@ -11,8 +11,8 @@ import {
   type CollectionProjection,
 } from '../../contract/records/snapshot.js';
 import type { CatalogPlan, PlanInput } from '../../contract/types.js';
-import type { Result } from '../../contract/errors.js';
-import { validateSnapshot } from '../validation/validate.js';
+import type { LibraryResult } from '../../contract/errors.js';
+import { validateLibrarySnapshot } from '../validation/validate.js';
 import { parse, protect, success } from '../validation/outcomes.js';
 import { hasCollection } from '../validation/lookups.js';
 import { readVersions } from '../discovery/versions.js';
@@ -35,14 +35,14 @@ import { applyOperation } from './operations.js';
  * revisions, and `changed` is the net effect. A throw while reading the input becomes a `shape`
  * failure at `$`.
  */
-export function planCatalog(input: PlanInput): Result<CatalogPlan> {
+export function planCatalog(input: PlanInput): LibraryResult<CatalogPlan> {
   return protect(() => preparePlan(input));
 }
 
 /** Validates the original snapshot before reading or applying any change. */
-function preparePlan(input: PlanInput): Result<CatalogPlan> {
+function preparePlan(input: PlanInput): LibraryResult<CatalogPlan> {
   const { snapshot, changes, proposedCollections } = input;
-  const before = validateSnapshot(snapshot);
+  const before = validateLibrarySnapshot(snapshot);
   if (!before.ok) {
     return before;
   }
@@ -70,7 +70,7 @@ function applyBatch(
   before: LibrarySnapshot,
   changes: readonly CatalogChange[],
   proposedCollections: unknown,
-): Result<CatalogPlan> {
+): LibraryResult<CatalogPlan> {
   const inventory = parse(inventorySchema(), proposedCollections);
   if (!inventory.ok) {
     return inventory;
@@ -85,9 +85,9 @@ function applyBatch(
 
 /** Applies the next change, or passes an earlier failure on unchanged. */
 function applyNext(
-  current: Result<Catalog>,
+  current: LibraryResult<Catalog>,
   change: CatalogChange,
-): Result<Catalog> {
+): LibraryResult<Catalog> {
   if (!current.ok) {
     return current;
   }
@@ -102,9 +102,9 @@ function validateCandidate(
   before: LibrarySnapshot,
   catalog: Catalog,
   collections: readonly CollectionProjection[],
-): Result<CatalogPlan> {
+): LibraryResult<CatalogPlan> {
   const recent = before.recent.filter((visit) => hasCollection(collections, visit.collection));
-  const validated = validateSnapshot({ catalog, collections, recent });
+  const validated = validateLibrarySnapshot({ catalog, collections, recent });
   if (!validated.ok) {
     return validated;
   }

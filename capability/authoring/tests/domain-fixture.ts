@@ -3,7 +3,7 @@ import {
   plan as planModel,
   type Collection,
 } from '@novakai/canvas-model';
-import { validate as validateLibrary } from '@novakai/canvas-library';
+import { validateLibrarySnapshot } from '@novakai/canvas-library';
 import {
   proposalSchema,
   plannerId,
@@ -102,7 +102,7 @@ function validateInventory(
     (record) => record.key.kind === 'catalog' && !record.deleted,
   );
   if (catalogs.length === 0 && collections.length === 0) return { ok: true, value: undefined };
-  const result = validateLibrary({
+  const result = validateLibrarySnapshot({
     catalog: catalogs[0]?.value,
     collections: collections.map(projection),
     recent: [],

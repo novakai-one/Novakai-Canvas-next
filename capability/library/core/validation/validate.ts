@@ -3,7 +3,7 @@
  * nothing; the caller corrects the input, and Authoring owns admission, commit and recovery.
  */
 import { snapshotSchema, type LibrarySnapshot } from '../../contract/records/snapshot.js';
-import type { Result } from '../../contract/errors.js';
+import type { LibraryResult } from '../../contract/errors.js';
 import { parse, protect, success, rejected } from './outcomes.js';
 import { validateRecords } from './rules.js';
 
@@ -17,12 +17,12 @@ import { validateRecords } from './rules.js';
  * Returns a detached, frozen copy of the snapshot. Writes nothing and reads no clock. A throw
  * while reading the input becomes a `shape` failure.
  */
-export function validateSnapshot(input: unknown): Result<LibrarySnapshot> {
+export function validateLibrarySnapshot(input: unknown): LibraryResult<LibrarySnapshot> {
   return protect(() => validateInput(input));
 }
 
 /** Parses the snapshot, then checks the rules across records on the parsed copy. */
-function validateInput(input: unknown): Result<LibrarySnapshot> {
+function validateInput(input: unknown): LibraryResult<LibrarySnapshot> {
   const parsed = parse(snapshotSchema(), input);
   if (!parsed.ok) {
     return parsed;

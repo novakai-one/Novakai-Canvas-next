@@ -1,4 +1,4 @@
-import { plan as planLibrary } from '@novakai/canvas-library';
+import { planCatalog } from '@novakai/canvas-library';
 import { proposalSchema, failure } from '@novakai/canvas-authoring';
 import type { Snapshot, Proposal, Result, Digest } from '@novakai/canvas-authoring';
 import type { Collection } from '@novakai/canvas-model';
@@ -33,7 +33,7 @@ function proposal(
   if (view.collections.some((item) => item.id === collection.id))
     return checked([write], collection.id);
   const inventory = [...view.library.collections, workspace.project(collection)];
-  const organization = planLibrary({
+  const organization = planCatalog({
     snapshot: view.library,
     changes: [
       {

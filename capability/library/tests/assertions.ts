@@ -3,7 +3,7 @@
  * never change them. A failing assertion changes nothing; correct the code or the test and rerun.
  */
 import { assert } from 'vitest';
-import type { Result, DiagnosticCode } from '../contract/index.js';
+import type { LibraryResult, DiagnosticCode } from '../contract/index.js';
 
 /**
  * Asserts a result succeeded and returns its value.
@@ -15,7 +15,7 @@ import type { Result, DiagnosticCode } from '../contract/index.js';
  *
  * @throws `TypeError` (or the `toJSON` error) when the result cannot be turned into JSON.
  */
-export function valueOf<T>(result: Result<T>): T {
+export function valueOf<T>(result: LibraryResult<T>): T {
   assert(result.ok, JSON.stringify(result));
   return result.value;
 }
@@ -25,7 +25,7 @@ export function valueOf<T>(result: Result<T>): T {
  * the same failure are allowed.
  */
 export function hasFailure<T>(
-  result: Result<T>,
+  result: LibraryResult<T>,
   code: DiagnosticCode,
   path: string,
 ): boolean {
@@ -38,7 +38,7 @@ export function hasFailure<T>(
 }
 
 /** Every diagnostic of a failed result as `code path` lines, in the order Library reported them. */
-export function diagnosticsOf<T>(result: Result<T>): readonly string[] {
+export function diagnosticsOf<T>(result: LibraryResult<T>): readonly string[] {
   if (result.ok) {
     return [];
   }

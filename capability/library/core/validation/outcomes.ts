@@ -3,13 +3,13 @@
  * `protect` boundary every entry point runs inside. Nothing here stores anything; the caller
  * corrects the input and calls again, and Authoring owns commit and recovery.
  */
-import type { Diagnostic, Result } from '../../contract/errors.js';
+import type { Diagnostic, LibraryResult } from '../../contract/errors.js';
 
 /**
  * Builds a failure with one diagnostic and no partial value. Public entry points freeze it (see
  * {@link protect}).
  */
-export function failure<T>(diagnostic: Diagnostic): Result<T> {
+export function failure<T>(diagnostic: Diagnostic): LibraryResult<T> {
   const { code, path, message } = diagnostic;
   return {
     ok: false,
@@ -18,7 +18,7 @@ export function failure<T>(diagnostic: Diagnostic): Result<T> {
 }
 
 /** Wraps a successful value. */
-export function success<T>(value: T): Result<T> {
+export function success<T>(value: T): LibraryResult<T> {
   return { ok: true, value };
 }
 
@@ -48,7 +48,7 @@ export function diagnoseWhen(
 export function parse<T>(
   parser: Parser<T>,
   input: unknown,
-): Result<T> {
+): LibraryResult<T> {
   const parsed = parser.safeParse(input);
   if (parsed.success) {
     return success(parsed.data);
@@ -65,7 +65,7 @@ export function parse<T>(
  * The result must be freshly built, acyclic data, never the caller's input. Proxies are not
  * supported: their traps may run before the input is rejected.
  */
-export function protect<T>(action: () => Result<T>): Result<T> {
+export function protect<T>(action: () => LibraryResult<T>): LibraryResult<T> {
   try {
     return freeze(action());
   } catch {
@@ -83,7 +83,7 @@ export function protect<T>(action: () => Result<T>): Result<T> {
  * becomes a `shape` failure at `$`, "Validation provider rejected input without diagnostic
  * evidence".
  */
-export function rejected<T>(diagnostics: readonly Diagnostic[]): Result<T> {
+export function rejected<T>(diagnostics: readonly Diagnostic[]): LibraryResult<T> {
   const [first, ...remaining] = diagnostics;
   if (first === undefined) {
     return failure({

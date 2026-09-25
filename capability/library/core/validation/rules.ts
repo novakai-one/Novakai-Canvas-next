@@ -30,7 +30,7 @@ import { diagnoseWhen } from './outcomes.js';
  * 4. Recent visits: duplicates, then visits to missing collections.
  *
  * Works on parsed projections only, never on raw Model documents. Runs inside the protected
- * boundary of `validateSnapshot`.
+ * boundary of `validateLibrarySnapshot`.
  */
 export function validateRecords(snapshot: LibrarySnapshot): readonly Diagnostic[] {
   const folders = folderIssues(snapshot.catalog);

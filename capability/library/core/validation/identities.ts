@@ -22,9 +22,10 @@ export function duplicateIssues<T, K extends string>(
   path: string,
 ): readonly Diagnostic[] {
   const keys = items.map(keyOf);
+  const firstIndex = firstIndexes(keys);
   return keys.flatMap(
     /** A `duplicate` diagnostic when the key appeared earlier in the scope. */ (key, index) =>
-      diagnoseWhen(appearsEarlier(keys, key, index), {
+      diagnoseWhen(firstIndex.get(key) !== index, {
         code: 'duplicate',
         path: `${path}.${key}`,
         message: 'Identity must be unique in this scope',
@@ -32,7 +33,9 @@ export function duplicateIssues<T, K extends string>(
   );
 }
 
-/** Whether `key` occurs in `keys` before position `index`. */
-function appearsEarlier<K extends string>(keys: readonly K[], key: K, index: number): boolean {
-  return keys.indexOf(key) < index;
+/** Each key's first position in `keys`, built in one pass (later repeats do not overwrite it). */
+function firstIndexes<K extends string>(keys: readonly K[]): ReadonlyMap<K, number> {
+  return new Map(
+    keys.map(/** The key with its position. */ (key, index) => [key, index] as const).toReversed(),
+  );
 }

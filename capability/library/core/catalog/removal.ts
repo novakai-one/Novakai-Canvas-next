@@ -41,9 +41,21 @@ export function removeFolder(
   return removeExisting(catalog, folder, removal.policy);
 }
 
-/** Rejects a folder with contents under `reject`; otherwise removes it and rehomes its contents. */
+/** Applies the removal policy: `reject` refuses a folder with contents; `rehome` moves them. */
 function removeExisting(catalog: Catalog, folder: Folder, policy: RemovalPolicy): Result<Catalog> {
-  if (policy === 'reject' && hasContents(catalog, folder.id)) {
+  switch (policy) {
+    case 'reject':
+      return removeEmpty(catalog, folder);
+    case 'rehome':
+      return success(rehomeContents(catalog, folder));
+    default:
+      return unsupported(policy);
+  }
+}
+
+/** Removes the folder only when it has no child folders and no entries. */
+function removeEmpty(catalog: Catalog, folder: Folder): Result<Catalog> {
+  if (hasContents(catalog, folder.id)) {
     return failure({
       code: 'folder-not-empty',
       path: `catalog.folders.${folder.id}`,
@@ -51,6 +63,15 @@ function removeExisting(catalog: Catalog, folder: Folder, policy: RemovalPolicy)
     });
   }
   return success(rehomeContents(catalog, folder));
+}
+
+/**
+ * The failure for a policy of no known kind. Parsing makes this unreachable; the `never` type
+ * proves every policy above is handled.
+ */
+function unsupported(policy: never): Result<Catalog> {
+  void policy;
+  return failure({ code: 'shape', path: 'changes', message: 'Unsupported removal policy' });
 }
 
 /** Whether any folder has this folder as its parent, or any entry sits in it. */

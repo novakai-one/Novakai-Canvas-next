@@ -11,6 +11,9 @@ import { changes, plannedSections } from './capture/settling.js';
 import { normalizedEntries, validateMoveIntent } from './movement-intent.js';
 import { geometryChanges } from './movement-preview.js';
 
+export { buildExpandOption } from './movement-expand.js';
+export { buildRearrangeOption } from './rearrange/option.js';
+
 type GeometryPreview = MoveOption['preview'];
 type PreparedMove = {
   readonly intent: PlacementIntent;
@@ -26,6 +29,24 @@ export function buildMoveReview(
   const previewed = previewMove(prepared.value, context);
   if (!previewed.ok) return previewed;
   return inspectMove(prepared.value, context, previewed.value);
+}
+
+export function chooseMoveOption(
+  review: MoveReview,
+  optionId: string,
+  current: SceneStamp,
+): Result<MoveOption> {
+  if (
+    review.stamp.collectionId !== current.collectionId ||
+    review.stamp.revision !== current.revision ||
+    review.stamp.inputKey !== current.inputKey ||
+    review.stamp.generation !== current.generation
+  )
+    return failure('stale-gesture', 'The diagram changed while this move was under review');
+  const selected = review.options.find((option) => option.id === optionId);
+  if (selected === undefined)
+    return failure('invalid-edit', 'That movement option is no longer available');
+  return { ok: true, value: selected };
 }
 
 function prepareMove(
@@ -119,24 +140,3 @@ function createMoveReview(
     },
   };
 }
-
-export function chooseMoveOption(
-  review: MoveReview,
-  optionId: string,
-  current: SceneStamp,
-): Result<MoveOption> {
-  if (
-    review.stamp.collectionId !== current.collectionId ||
-    review.stamp.revision !== current.revision ||
-    review.stamp.inputKey !== current.inputKey ||
-    review.stamp.generation !== current.generation
-  )
-    return failure('stale-gesture', 'The diagram changed while this move was under review');
-  const selected = review.options.find((option) => option.id === optionId);
-  if (selected === undefined)
-    return failure('invalid-edit', 'That movement option is no longer available');
-  return { ok: true, value: selected };
-}
-
-export { buildExpandOption } from './movement-expand.js';
-export { buildRearrangeOption } from './movement-rearrange.js';

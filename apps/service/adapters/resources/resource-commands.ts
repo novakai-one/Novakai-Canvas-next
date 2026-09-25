@@ -11,14 +11,10 @@ import type {
   ResourceDiagnostic,
   ResourceResult,
 } from '../../contract/records/resource-commands.js';
-import { dslCommand } from '../../contract/records/commands.js';
+import { dslCommand, presetAdmission } from '../../contract/records/commands.js';
 const input = z.strictObject({
   admission: z.json(),
   assets: z.array(z.strictObject({ alias: z.string(), digest: z.string() })).default([]),
-});
-const sourceHeader = z.looseObject({
-  kind: z.enum(['theme', 'recipe']),
-  source: z.string().optional(),
 });
 const restored = z.strictObject({ digest: z.string(), base64: z.string() });
 /** Owner diagnostics cross this boundary unchanged; unexpected provider faults become typed invalid-input outcomes. */
@@ -42,7 +38,7 @@ function selectionRequest(
   value: ReturnType<typeof input.parse>,
   snapshot: Snapshot,
 ): Request {
-  const header = sourceHeader.parse(value.admission);
+  const header = presetAdmission.parse(value.admission);
   return requestSchema.parse({
     workspace: snapshot.workspace,
     request: 'resource-preparation',

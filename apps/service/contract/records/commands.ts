@@ -10,6 +10,11 @@ export const dslCommand = z
 export const modelCommand = z
   .strictObject({ collection: z.string().min(1).max(128), changes: z.array(z.unknown()).max(1000) })
   .readonly();
+/** A preset admission's header: the kind it admits and, for a recipe, its DSL source. Templates checks the rest. */
+export const presetAdmission = z.looseObject({
+  kind: z.enum(['theme', 'recipe']),
+  source: z.string().optional(),
+});
 /** Library owns the inner catalog operation schema and validates the complete batch. */
 export const libraryCommand = z
   .strictObject({ changes: z.array(z.unknown()).max(1000) })

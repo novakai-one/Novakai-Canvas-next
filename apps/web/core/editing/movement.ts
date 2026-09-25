@@ -9,7 +9,7 @@ import type {
 import { failure } from '../../contract/errors.js';
 import { changes, plannedSections } from './capture/settling.js';
 import { normalizedEntries, validateMoveIntent } from './movement-intent.js';
-import { geometryChanges } from './movement-preview.js';
+import { geometryChanges } from './preview/geometry.js';
 
 export { buildExpandOption } from './expand/option.js';
 export { buildRearrangeOption } from './rearrange/option.js';

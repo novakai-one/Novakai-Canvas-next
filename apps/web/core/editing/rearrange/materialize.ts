@@ -13,7 +13,7 @@ import { changes } from '../capture/settling.js';
 import { sourcePlacement } from '../capture/pinning.js';
 import { exactBox, targetKey, type Box } from '../capture/boxes.js';
 import type { SceneNode } from '../capture/scene.js';
-import { completePreview } from '../movement-preview.js';
+import { completePreview } from '../preview/completeness.js';
 import { closureGeometryMatches, otherSectionMatches } from './matching.js';
 import type {
   MaterializedCandidate,

@@ -13,7 +13,7 @@ import type {
 import { failure } from '../../../contract/errors.js';
 import { closureKeys, exactBox, sceneBox, targetKey, type Box } from '../capture/boxes.js';
 import { parentNode } from '../capture/scene.js';
-import { completePreview } from '../movement-preview.js';
+import { completePreview } from '../preview/completeness.js';
 import { expectedBoxes } from '../movement-intent.js';
 import { materializeRearrangement } from './materialize.js';
 import { closureGeometryMatches, otherSectionMatches } from './matching.js';

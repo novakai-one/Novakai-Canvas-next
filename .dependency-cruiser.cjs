@@ -38,10 +38,11 @@ const adapter = (name, root) => ({
   from: { path: `^${root}/${name}/adapters/` },
   to: { path: `^${root}/${name}/(core/|adapters/)`, pathNot: '\\.css$' },
 });
+/** The composition root is the compose.ts file and its compose/ folder; only they wire adapters. */
 const wiring = (name, root) => ({
   name: `${name}-adapter-wiring`,
   severity: 'error',
-  from: { path: `^${root}/${name}/contract/`, pathNot: '/compose\\.ts$' },
+  from: { path: `^${root}/${name}/contract/`, pathNot: '/compose(\\.ts$|/)' },
   to: { path: `^${root}/${name}/adapters/` },
 });
 const rulesFor = (name, root) => [
